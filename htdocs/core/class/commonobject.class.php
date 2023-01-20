@@ -16,6 +16,7 @@
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -592,6 +593,15 @@ abstract class CommonObject
 	protected $labelStatus;
 	protected $labelStatusShort;
 
+	/**
+	 * @var array nb used in load_stateboard
+	 */
+	public $nb = array();
+
+	/**
+	 * @var string output
+	 */
+	public $output;
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
@@ -767,34 +777,6 @@ abstract class CommonObject
 		if (isset($this->personal_email)) {
 			$this->personal_email = dol_strtolower($this->personal_email);
 		}
-	}
-
-	/**
-	 *	Return clicable link of object (with eventually picto)
-	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @return		string								HTML Code for Kanban thumb.
-	 */
-	public function getKanbanView($option = '')
-	{
-		$return = '<div class="box-flex-item box-flex-grow-zero">';
-		$return .= '<div class="info-box info-box-sm">';
-		$return .= '<span class="info-box-icon bg-infobox-action">';
-		$return .= img_picto('', $this->picto);
-		$return .= '</span>';
-		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		if (property_exists($this, 'label')) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
-		}
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
-		}
-		$return .= '</div>';
-		$return .= '</div>';
-		$return .= '</div>';
-
-		return $return;
 	}
 
 	/**
@@ -5740,15 +5722,16 @@ abstract class CommonObject
 	 *
 	 * @param   string              $fieldname          Name of field
 	 * @param   string              $alternatevalue     Alternate value to use
+	 * @param   string              $type    			Type of data
 	 * @return  string|string[]                         Default value (can be an array if the GETPOST return an array)
 	 **/
-	public function getDefaultCreateValueFor($fieldname, $alternatevalue = null)
+	public function getDefaultCreateValueFor($fieldname, $alternatevalue = null, $type = 'alphanohtml')
 	{
 		global $conf, $_POST;
 
 		// If param here has been posted, we use this value first.
 		if (GETPOSTISSET($fieldname)) {
-			return GETPOST($fieldname, 'alphanohtml', 3);
+			return GETPOST($fieldname, $type, 3);
 		}
 
 		if (isset($alternatevalue)) {
@@ -7875,30 +7858,34 @@ abstract class CommonObject
 	/**
 	 * Return validation test result for a field
 	 *
-	 * @param  array   $val		       		Array of properties of field to show
+	 * @param  array   $fields	       		Array of properties of field to show
 	 * @param  string  $fieldKey            Key of attribute
 	 * @param  string  $fieldValue          value of attribute
 	 * @return bool return false if fail true on success, see $this->error for error message
 	 */
-	public function validateField($val, $fieldKey, $fieldValue)
+	public function validateField($fields, $fieldKey, $fieldValue)
 	{
 		global $langs;
 
-		if (!class_exists('Validate')) { require_once DOL_DOCUMENT_ROOT . '/core/class/validate.class.php'; }
+		if (!class_exists('Validate')) {
+			require_once DOL_DOCUMENT_ROOT . '/core/class/validate.class.php';
+		}
 
 		$this->clearFieldError($fieldKey);
 
-		if (!isset($val[$fieldKey])) {
+		if (!isset($fields[$fieldKey])) {
 			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
 			return false;
 		}
 
+		$val = $fields[$fieldKey];
+
 		$param = array();
 		$param['options'] = array();
-		$type  = $val[$fieldKey]['type'];
+		$type  = $val['type'];
 
 		$required = false;
-		if (isset($val[$fieldKey]['notnull']) && $val[$fieldKey]['notnull'] === 1) {
+		if (isset($val['notnull']) && $val['notnull'] === 1) {
 			// 'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 			$required = true;
 		}
@@ -7909,6 +7896,7 @@ abstract class CommonObject
 		//
 		// PREPARE Elements
 		//
+		$reg = array();
 
 		// Convert var to be able to share same code than showOutputField of extrafields
 		if (preg_match('/varchar\((\d+)\)/', $type, $reg)) {
@@ -7922,7 +7910,7 @@ abstract class CommonObject
 			$type = 'select';
 		}
 
-		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
+		if (!empty($val['type']) && preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
 			$type = 'link';
 		}
 
@@ -8581,21 +8569,21 @@ abstract class CommonObject
 	/**
 	 *  Show photos of an object (nbmax maximum), into several columns
 	 *
-	 *  @param		string	$modulepart		'product', 'ticket', ...
-	 *  @param      string	$sdir        	Directory to scan (full absolute path)
-	 *  @param      int		$size        	0=original size, 1='small' use thumbnail if possible
-	 *  @param      int		$nbmax       	Nombre maximum de photos (0=pas de max)
-	 *  @param      int		$nbbyrow     	Number of image per line or -1 to use div separator or 0 to use no separator. Used only if size=1 or 'small'.
-	 * 	@param		int		$showfilename	1=Show filename
-	 * 	@param		int		$showaction		1=Show icon with action links (resize, delete)
-	 * 	@param		int		$maxHeight		Max height of original image when size='small' (so we can use original even if small requested). If 0, always use 'small' thumb image.
-	 * 	@param		int		$maxWidth		Max width of original image when size='small'
-	 *  @param      int     $nolink         Do not add a href link to view enlarged imaged into a new tab
-	 *  @param      int     $notitle        Do not add title tag on image
-	 *  @param		int		$usesharelink	Use the public shared link of image (if not available, the 'nophoto' image will be shown instead)
-	 *  @return     string					Html code to show photo. Number of photos shown is saved in this->nbphoto
+	 *  @param		string		$modulepart		'product', 'ticket', ...
+	 *  @param      string		$sdir        	Directory to scan (full absolute path)
+	 *  @param      int			$size        	0=original size, 1='small' use thumbnail if possible
+	 *  @param      int			$nbmax       	Nombre maximum de photos (0=pas de max)
+	 *  @param      int			$nbbyrow     	Number of image per line or -1 to use div separator or 0 to use no separator. Used only if size=1 or 'small'.
+	 * 	@param		int			$showfilename	1=Show filename
+	 * 	@param		int			$showaction		1=Show icon with action links (resize, delete)
+	 * 	@param		int			$maxHeight		Max height of original image when size='small' (so we can use original even if small requested). If 0, always use 'small' thumb image.
+	 * 	@param		int			$maxWidth		Max width of original image when size='small'
+	 *  @param      int     	$nolink         Do not add a href link to view enlarged imaged into a new tab
+	 *  @param      int|string  $overwritetitle Do not add title tag on image
+	 *  @param		int			$usesharelink	Use the public shared link of image (if not available, the 'nophoto' image will be shown instead)
+	 *  @return     string						Html code to show photo. Number of photos shown is saved in this->nbphoto
 	 */
-	public function show_photos($modulepart, $sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0, $notitle = 0, $usesharelink = 0)
+	public function show_photos($modulepart, $sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0, $overwritetitle = 0, $usesharelink = 0)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -8698,8 +8686,12 @@ abstract class CommonObject
 						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
 						$alt = $langs->transnoentitiesnoconv('File').': '.$relativefile;
 						$alt .= ' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
-						if ($notitle) {
-							$alt = '';
+						if ($overwritetitle) {
+							if (is_numeric($overwritetitle)) {
+								$alt = '';
+							} else {
+								$alt = $overwritetitle;
+							}
 						}
 
 						$addphotorefcss = 1;
@@ -9344,7 +9336,7 @@ abstract class CommonObject
 			$sql .= ' WHERE 1 = 1'; // usage with empty id and empty ref is very rare
 		}
 		if (empty($id) && isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= ' AND t.entity IN ('.getEntity($this->table_element).')';
+			$sql .= ' AND t.entity IN ('.getEntity($this->element).')';
 		}
 		if ($morewhere) {
 			$sql .= $morewhere;

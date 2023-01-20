@@ -28,6 +28,7 @@
 /**
  * Check validity of user/password/entity
  * If test is ko, reason must be filled into $_SESSION["dol_loginmesg"]
+ * Note: On critical error (hack attempt), we put a log "functions_dolibarr::check_user_password_dolibarr authentication KO"
  *
  * @param	string	$usertotest		Login
  * @param	string	$passwordtotest	Password
@@ -56,7 +57,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 		$usernamecol2 = 'email';
 		$entitycol = 'entity';
 
-		$sql = "SELECT rowid, login, entity, pass, pass_crypted, datestartvalidity, dateendvalidity";
+		$sql = "SELECT rowid, login, entity, pass, pass_crypted, datestartvalidity, dateendvalidity, flagdelsessionsbefore";
 		$sql .= " FROM ".$table;
 		$sql .= " WHERE (".$usernamecol1." = '".$db->escape($usertotest)."'";
 		if (preg_match('/@/', $usertotest)) {
@@ -74,16 +75,20 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
 				$now = dol_now();
+				// Check date start validity
 				if ($obj->datestartvalidity && $db->jdate($obj->datestartvalidity) > $now) {
 					// Load translation files required by the page
 					$langs->loadLangs(array('main', 'errors'));
 					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
+					dol_syslog("functions_dolibarr::check_user_password_dolibarr bad datestart validity", LOG_WARNING);
 					return '--bad-login-validity--';
 				}
+				// Check date end validity
 				if ($obj->dateendvalidity && $db->jdate($obj->dateendvalidity) < dol_get_first_hour($now)) {
 					// Load translation files required by the page
 					$langs->loadLangs(array('main', 'errors'));
 					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
+					dol_syslog("functions_dolibarr::check_user_password_dolibarr bad date end validity", LOG_WARNING);
 					return '--bad-login-validity--';
 				}
 

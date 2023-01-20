@@ -227,27 +227,34 @@ print '<br>';
 $moreforfilter = '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = '';
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
-print '<table class="noborder centpercent">';
+print '<table class="tagtable nobottomiftotal liste">';
 
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre_filter">';
+
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<th class="wrapcolumntitle center maxwidthsearch liste_titre">';
+	$searchpicto = $form->showFilterButtons('left');
+	print $searchpicto;
+	print '</th>';
+}
 
 // Filter: Ref
 if (!empty($arrayfields['cp.ref']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<th class="liste_titre">';
 	print '<input class="flat maxwidth100" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
-	print '</td>';
+	print '</th>';
 }
 
 // Filter: Employee
 if (!empty($arrayfields['cp.fk_user']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<th class="liste_titre">';
 	print $form->select_dolusers($search_employee, "search_employee", 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth100');
-	print '</td>';
+	print '</th>';
 }
 
 // Filter: Type
@@ -259,45 +266,50 @@ if (!empty($arrayfields['cp.fk_type']['checked'])) {
 		$arraytypeleaves[$val['rowid']] = $labeltoshow;
 	}
 
-	print '<td class="liste_titre">';
+	print '<th class="liste_titre">';
 	print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1, 0, 0, '', 0, 0, 0, '', '', 1);
-	print '</td>';
+	print '</th>';
 }
 
 if (!empty($arrayfields['cp.date_debut']['checked'])) {
-	print '<td class="liste_titre"></td>';
+	print '<th class="liste_titre"></th>';
 }
 if (!empty($arrayfields['cp.date_fin']['checked'])) {
-	print '<td class="liste_titre"></td>';
+	print '<th class="liste_titre"></th>';
 }
 if (!empty($arrayfields['used_days']['checked'])) {
-	print '<td class="liste_titre"></td>';
+	print '<th class="liste_titre"></th>';
 }
 if (!empty($arrayfields['date_start_month']['checked'])) {
-	print '<td class="liste_titre"></td>';
+	print '<th class="liste_titre"></th>';
 }
 if (!empty($arrayfields['date_end_month']['checked'])) {
-	print '<td class="liste_titre"></td>';
+	print '<th class="liste_titre"></th>';
 }
 if (!empty($arrayfields['used_days_month']['checked'])) {
-	print '<td class="liste_titre"></td>';
+	print '<th class="liste_titre"></th>';
 }
 
 // Filter: Description
 if (!empty($arrayfields['cp.description']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<th class="liste_titre">';
 	print '<input type="text" class="maxwidth100" name="search_description" value="'.$search_description.'">';
-	print '</td>';
+	print '</th>';
 }
-
 // Action column
-print '<td class="liste_titre maxwidthsearch">';
-$searchpicto = $form->showFilterButtons();
-print $searchpicto;
-print '</td>';
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<th class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</th>';
+}
 print '</tr>';
 
 print '<tr class="liste_titre">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+}
 if (!empty($arrayfields['cp.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['cp.ref']['label'], $_SERVER["PHP_SELF"], 'cp.ref', '', '', '', $sortfield, $sortorder);
 }
@@ -331,11 +343,14 @@ if (!empty($arrayfields['used_days_month']['checked'])) {
 if (!empty($arrayfields['cp.description']['checked'])) {
 	print_liste_field_titre($arrayfields['cp.description']['label'], $_SERVER["PHP_SELF"], 'cp.description', '', '', '', $sortfield, $sortorder);
 }
-print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+// Action column
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+}
 print '</tr>';
 
 if ($num == 0) {
-	print '<tr><td colspan="11" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
+	print '<tr><td colspan="11"><span class="opacitymedium">'.$langs->trans('None').'</span></td></tr>';
 } else {
 	while ($obj = $db->fetch_object($resql)) {
 		$user = new User($db);
@@ -385,6 +400,10 @@ if ($num == 0) {
 		$holidaystatic->ref = $obj->ref;
 
 		print '<tr class="oddeven">';
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td></td>';
+		}
 
 		if (!empty($arrayfields['cp.ref']['checked'])) {
 			print '<td class="nowraponall">'.$holidaystatic->getNomUrl(1, 1).'</td>';
@@ -430,8 +449,10 @@ if ($num == 0) {
 		if (!empty($arrayfields['cp.description']['checked'])) {
 			print '<td class="maxwidth300 small">'.dolGetFirstLineOfText(dol_string_nohtmltag($obj->description, 1)).'</td>';
 		}
-
-		print '<td></td>';
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td></td>';
+		}
 		print '</tr>';
 	}
 }

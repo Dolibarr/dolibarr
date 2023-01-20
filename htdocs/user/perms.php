@@ -255,9 +255,12 @@ if ($user->hasRight("user", "user", "read") || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
 $morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 $morehtmlref .= '</a>';
+
+$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
+$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
 dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 
@@ -287,6 +290,23 @@ if (!empty($object->ldap_sid) && $object->statut == 0) {
 	print '</td>';
 }
 print '</tr>'."\n";
+
+// Type
+print '<tr><td>';
+$text = $langs->trans("Type");
+print $form->textwithpicto($text, $langs->trans("InternalExternalDesc"));
+print '</td><td>';
+$type = $langs->trans("Internal");
+if ($object->socid > 0) {
+	$type = $langs->trans("External");
+}
+print '<span class="badgeneutral">';
+print $type;
+if ($object->ldap_sid) {
+	print ' ('.$langs->trans("DomainUser").')';
+}
+print '</span>';
+print '</td></tr>'."\n";
 
 print '</table>';
 

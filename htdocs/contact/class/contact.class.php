@@ -32,6 +32,7 @@
  *	\brief      File of contacts class
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonsocialnetworks.class.php';
 
 
 /**
@@ -39,6 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Contact extends CommonObject
 {
+	use CommonSocialNetworks;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -131,11 +134,26 @@ class Contact extends CommonObject
 	public $civility;
 
 	/**
+	 * @var int egroupware_id
+	 */
+	public $egroupware_id;
+
+	/**
+	 * @var int birthday_alert
+	 */
+	public $birthday_alert;
+
+	/**
 	 * @var string The civilite code, not an integer
 	 * @deprecated
 	 * @see $civility_code
 	 */
 	public $civilite;
+
+	/**
+	 * @var string fullname
+	 */
+	public $fullname;
 
 	/**
 	 * @var string Address
@@ -2123,9 +2141,10 @@ class Contact extends CommonObject
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
 	 *  @return		string								HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '')
+	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $langs;
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
