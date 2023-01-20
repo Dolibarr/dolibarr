@@ -5743,9 +5743,9 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 
 	// If force rounding
 	if ((string) $forcerounding != '-1') {
-		if ($forcerounding == 'MU') {
+		if ($forcerounding === 'MU') {
 			$nbdecimal = $conf->global->MAIN_MAX_DECIMALS_UNIT;
-		} elseif ($forcerounding == 'MT') {
+		} elseif ($forcerounding === 'MT') {
 			$nbdecimal = $conf->global->MAIN_MAX_DECIMALS_TOT;
 		} elseif ($forcerounding >= 0) {
 			$nbdecimal = $forcerounding;
