@@ -786,6 +786,10 @@ class Societe extends CommonObject
 	 */
 	public $multicurrency_code;
 
+	/**
+	 * @var string  Set if company email found into unsubscribe of emailing list table
+	 */
+	public $no_email;
 
 	// Fields loaded by fetchPartnerships()
 
