@@ -501,3 +501,5 @@ BecarefullChangeThirdpartyBeforeAddProductToInvoice=Be carefull, depending on yo
 EmailAlreadyExistsPleaseRewriteYourCompanyName=email already exists please rewrite your company name
 TwoRecordsOfCompanyName=more than one record exists for this company, please contact us to complete your partnership request
 CompanySection=Company section
+ShowSocialNetworks=Show social networks
+HideSocialNetworks=Hide social networks
