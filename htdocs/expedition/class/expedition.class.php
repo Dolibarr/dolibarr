@@ -1393,16 +1393,6 @@ class Expedition extends CommonObject
 					}
 
 					if (empty($lotArray)) {
-						// no lot/serial
-						// We increment stock of product (and sub-products)
-						// We use warehouse selected for each line
-						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref)); // Price is set to 0, because we don't want to see WAP changed
-						if ($result < 0) {
-							$error++;
-							$this->errors = array_merge($this->errors, $mouvS->errors);
-							break;
-						}
-
 						// we try deletion of dispatched lines
 						$line_dispatch = new ExpeditionLineDispatch($this->db);
 						$res = $line_dispatch->fetchAll('', '', 0, 0, array('fk_expeditiondet' => $obj->expeditiondet_id));
@@ -1410,11 +1400,23 @@ class Expedition extends CommonObject
 							$error++; $this->errors[] = "Error ".$this->db->lasterror();
 						}
 						if (!$error) {
-							foreach ($line_dispatch->lines as $line) {
-								$result = $mouvS->reception($user, $line->fk_product, $line->fk_entrepot, $line->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref)); // Price is set to 0, because we don't want to see WAP changed
+							if (!empty($line_dispatch->lines)) {
+								foreach ($line_dispatch->lines as $line) {
+									$result = $mouvS->reception($user, $line->fk_product, $line->fk_entrepot, $line->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref)); // Price is set to 0, because we don't want to see WAP changed
+									if ($result < 0) {
+										$error++;
+										$this->errors = $this->errors + $mouvS->errors;
+										break;
+									}
+								}
+							} else {
+								// no lot/serial
+								// We increment stock of product (and sub-products)
+								// We use warehouse selected for each line
+								$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref)); // Price is set to 0, because we don't want to see WAP changed
 								if ($result < 0) {
 									$error++;
-									$this->errors = $this->errors + $mouvS->errors;
+									$this->errors = array_merge($this->errors, $mouvS->errors);
 									break;
 								}
 							}
@@ -1604,16 +1606,6 @@ class Expedition extends CommonObject
 						$error++; $this->errors[] = "Error ".$this->db->lasterror();
 					}
 					if (empty($lotArray)) {
-						// no lot/serial
-						// We increment stock of product (and sub-products)
-						// We use warehouse selected for each line
-						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref)); // Price is set to 0, because we don't want to see WAP changed
-						if ($result < 0) {
-							$error++;
-							$this->errors = array_merge($this->errors, $mouvS->errors);
-							break;
-						}
-
 						// we try deletion of dispatched lines
 						$line_dispatch = new ExpeditionLineDispatch($this->db);
 						$res = $line_dispatch->fetchAll('', '', 0, 0, array('fk_expeditiondet' => $obj->expeditiondet_id));
@@ -1621,11 +1613,23 @@ class Expedition extends CommonObject
 							$error++; $this->errors[] = "Error ".$this->db->lasterror();
 						}
 						if (!$error) {
-							foreach ($line_dispatch->lines as $line) {
-								$result = $mouvS->reception($user, $line->fk_product, $line->fk_entrepot, $line->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref)); // Price is set to 0, because we don't want to see WAP changed
+							if (!empty($line_dispatch->lines)) {
+								foreach ($line_dispatch->lines as $line) {
+									$result = $mouvS->reception($user, $line->fk_product, $line->fk_entrepot, $line->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref)); // Price is set to 0, because we don't want to see WAP changed
+									if ($result < 0) {
+										$error++;
+										$this->errors = $this->errors + $mouvS->errors;
+										break;
+									}
+								}
+							} else {
+								// no lot/serial
+								// We increment stock of product (and sub-products)
+								// We use warehouse selected for each line
+								$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref)); // Price is set to 0, because we don't want to see WAP changed
 								if ($result < 0) {
 									$error++;
-									$this->errors = $this->errors + $mouvS->errors;
+									$this->errors = array_merge($this->errors, $mouvS->errors);
 									break;
 								}
 							}
