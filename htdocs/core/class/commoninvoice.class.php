@@ -865,7 +865,7 @@ abstract class CommonInvoice extends CommonObject
 
 
 	/**
-	 *	Create a withdrawal request at Stripe for a direct debit order or a credit transfer order.
+	 *	Create a withdrawal request, from a prelevement_demande, to Stripe for a direct debit order or a credit transfer order.
 	 *  Use the remain to pay excluding all existing open direct debit requests.
 	 *
 	 *	@param      User	$fuser      	User asking the direct debit transfer
@@ -901,6 +901,7 @@ abstract class CommonInvoice extends CommonObject
 			$sql = "SELECT rowid, date_demande, amount, fk_facture, fk_facture_fourn";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
 			$sql .= " AND fk_facture = ".((int) $this->fk_facture);		// Add a protection to not pay another invoice than current one
+			$sql .= " AND traite = 0";	// Add a protection to not process twice
 			$sql .= " WHERE rowid = ".((int) $did);
 
 			dol_syslog(get_class($this)."::makeStripeSepaRequest 1", LOG_DEBUG);
@@ -1077,10 +1078,11 @@ abstract class CommonInvoice extends CommonObject
 									$stripecard = null;
 									if ($companypaymentmode->type == 'ban') {
 										$sepaMode = true;
+										// Check into societe_rib if a payment mode for Stripe and ban payment exists
 										$stripecard = $stripe->sepaStripe($customer, $companypaymentmode, $stripeacc, $servicestatus, 0);
 									}
 
-									if ($stripecard) {  // Can be src_... (for sepa) - Other card_... (old mode) or pm_... (new mode) should not happen here.
+									if ($stripecard) {  // Can be src_... (for sepa). Note that card_... (old card mode) or pm_... (new card mode) should not happen here.
 										$FULLTAG = 'INV=' . $this->id . '-CUS=' . $thirdparty->id;
 										$description = 'Stripe payment from makeStripeSepaRequest: ' . $FULLTAG . ' ref=' . $this->ref;
 
@@ -1127,6 +1129,7 @@ abstract class CommonInvoice extends CommonObject
 
 										//var_dump("stripefailurecode=".$stripefailurecode." stripefailuremessage=".$stripefailuremessage." stripefailuredeclinecode=".$stripefailuredeclinecode);
 										//exit;
+
 
 										// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 										if (empty($charge) || $charge->status == 'failed') {
@@ -1179,7 +1182,11 @@ abstract class CommonInvoice extends CommonObject
 											$this->stripechargedone++;
 
 											// Default description used for label of event. Will be overwrite by another value later.
-											$description = 'Stripe payment OK (' . $charge->id . ') from makeStripeSepaRequest: ' . $FULLTAG;
+											$description = 'Stripe payment request OK (' . $charge->id . ') from makeStripeSepaRequest: ' . $FULLTAG;
+
+
+											// TODO Save request to status pending. Done should be set with a webhook.
+
 
 											$db = $this->db;
 
@@ -1549,12 +1556,18 @@ abstract class CommonInvoice extends CommonObject
 						$this->errors[] = "Remain to pay is null for the invoice " . $this->id . " " . $this->ref . ". Why is the invoice not classified 'Paid' ?";
 					}
 
-					// TODO Create a prelevement_bon ?
-					// For the moment no
+					// TODO Create a prelevement_bon and set its status to sent instead of this
+					$idtransferfile = 0;
 
-					// We must update the direct debit payment request as "done"
-					$sql = "UPDATE".MAIN_DB_PREFIX."prelevement_demande SET traite = 1, date_traite = '".$this->db->idate(dol_now())."'";
+					// Update the direct debit payment request of the processed invoice to save the id of the prelevement_bon
+					$sql = "UPDATE".MAIN_DB_PREFIX."prelevement_demande SET";
+					$sql .= " traite = 1,";	// TODO Remove this
+					$sql .= " date_traite = '".$this->db->idate(dol_now())."'";	// TODO Remove this
+					if ($idtransferfile > 0) {
+						$sql .= " fk_prelevement_bons = ".((int) $idtransferfile);
+					}
 					$sql .= "WHERE rowid = ".((int) $did);
+
 
 					dol_syslog(get_class($this)."::makeStripeSepaRequest", LOG_DEBUG);
 					$resql = $this->db->query($sql);
