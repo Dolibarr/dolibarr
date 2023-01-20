@@ -2217,3 +2217,4 @@ SkinAndColors=Thème et couleurs
 IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, you must enable also the first sale tax
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sale tax
 PDF_USE_1A=Générer les PDF au format PDF/A-1b
+ShowQuickAddLink=Afficher un bouton pour ajouter rapidement un élément, dans le menu en haut à droite
