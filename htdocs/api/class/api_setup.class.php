@@ -1692,7 +1692,7 @@ class Setup extends DolibarrApi
 	 * @param int       $active     Payment term is active or not {@min 0} {@max 1}
 	 * @param string    $lang       Code of the language the label of the type must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-	 * @return array				List of ticket types
+	 * @return array				List of incoterm types
 	 *
 	 * @url     GET dictionary/incoterms
 	 *
