@@ -76,7 +76,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 				$login_claim = $conf->global->MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM;
 			}
 
-			if (array_key_exists($login_claim, $userinfo_content)) {
+			if (property_exists($userinfo_content, $login_claim)) {
 				// Success: retrieve claim to return to Dolibarr as login
 				$login = $userinfo_content->$login_claim;
 				$_SESSION["dol_loginmesg"] = "";
