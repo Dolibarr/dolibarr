@@ -63,7 +63,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 		$token_content = json_decode($token_response['content']);
 		dol_syslog("functions_openid_connect::check_user_password_openid_connect /token=".print_r($token_response, true), LOG_DEBUG);
 
-		if ($token_content->access_token) {
+		if (property_exists($token_content, 'access_token')) {
 			// Step 3: retrieve user info using token
 			$userinfo_headers = array('Authorization: Bearer '.$token_content->access_token);
 			$userinfo_response = getURLContent($conf->global->MAIN_AUTHENTICATION_OIDC_USERINFO_URL, 'GET', '', 1, $userinfo_headers);
