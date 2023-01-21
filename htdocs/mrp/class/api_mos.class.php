@@ -19,6 +19,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+require_once DOL_DOCUMENT_ROOT.'/mrp/class/molineconsumable.class.php';
 
 
 /**
@@ -175,6 +176,161 @@ class Mos extends DolibarrApi
 				if ($tmp_object->fetch($obj->rowid)) {
 					$obj_ret[] = $this->_cleanObjectDatas($tmp_object);
 				}
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieve MO list');
+		}
+		if (!count($obj_ret)) {
+			throw new RestException(404, 'No MO found');
+		}
+		return $obj_ret;
+	}
+
+	/**
+	 * List MoLineConsumable's
+	 *
+	 * Get a list of consumabel MoLines
+	 *
+	 * @param string	       $sortfield	        Sort field
+	 * @param string	       $sortorder	        Sort order
+	 * @param int		       $limit		        Limit for list
+	 * @param int		       $page		        Page number
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @return  array                               Array of order objects
+	 *
+	 * @throws RestException
+	 */
+	public function getConsumableMoLines($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	{
+		global $db, $conf;
+
+		if (!DolibarrApiAccess::$user->rights->mrp->read) {
+			throw new RestException(401);
+		}
+
+		$obj_ret = array();
+		$tmpobject = new MoLineConsumable($this->db);
+		$extrafields = new ExtraFields($db);
+
+		// Fetch optionals attributes and labels
+		$extrafields->fetch_name_optionals_label($tmpobject->table_element);
+
+		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+
+		$restrictonsocid = 0; // Set to 1 if there is a field socid in table of object
+
+		// If the internal user must only see his customers, force searching by him
+		$search_sale = 0;
+		if ($restrictonsocid && !DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
+			$search_sale = DolibarrApiAccess::$user->id;
+		}
+
+		// Build and execute select
+		// --------------------------------------------------------------------
+
+		// Definition of array of fields for columns
+		$arrayfields = array();
+		foreach ($tmpobject->fields as $key => $val) {
+			// If $val['visible']==0, then we never show the field
+			if (!empty($val['visible'])) {
+				$visible = (int) dol_eval($val['visible'], 1, 1, '1');
+				$arrayfields[$key] = array(
+					'label'=>$val['label'],
+					'checked'=>(($visible < 0) ? 0 : 1),
+					'enabled'=>($visible != 3 && $visible != -2 && dol_eval($val['enabled'], 1, 1, '1')),
+					'position'=>$val['position'],
+					'help'=> isset($val['help']) ? $val['help'] : ''
+				);
+				if (!empty($val['sqlSelect'])) {
+					$arrayfields[$key]['sqlSelect'] = $val['sqlSelect'];
+				}
+			}
+		}
+
+		$keys = array_keys($arrayfields);
+		$selects = array();
+		foreach ($keys AS $key) {
+			$select = '';
+			If (!empty($arrayfields[$key]['sqlSelect'])) {
+				$select = $arrayfields[$key]['sqlSelect'];
+			} else {
+				$select = 't.'.$key;
+			}
+
+			$selects[] = $select;
+		}
+
+		$sql = 'SELECT t.rowid,t.entity,';
+		$sql .= implode(',', $selects);
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as s";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product as p ON s.fk_product = p.rowid";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."mrp_production as l ON p.rowid = l.fk_product";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmpobject->table_element." as t ON l.fk_mo = t.rowid";
+		if (isset($extrafields->attributes[$tmpobject->table_element]['label']) && is_array($extrafields->attributes[$tmpobject->table_element]['label']) && count($extrafields->attributes[$tmpobject->table_element]['label'])) {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmpobject->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
+		}
+
+		$sqlConsumed = "SELECT fk_mrp_production, SUM(qty) AS qty_consumed";
+		$sqlConsumed .= " FROM ".MAIN_DB_PREFIX."mrp_production";
+		$sqlConsumed .= " WHERE role = 'consumed'";
+		$sqlConsumed .= " GROUP BY fk_mrp_production";
+
+		$sql .= " LEFT JOIN (".$sqlConsumed.") as tChild ON l.rowid = tChild.fk_mrp_production";
+		$sql .= " WHERE 1 = 1";
+		$sql .= " AND t.status IN (1,2,3) AND l.role = 'toconsume' AND p.fk_product_type = 0 AND p.stock > 0";
+		$sql .= " HAVING qtytoconsum > 0";
+
+		// Example of use $mode
+		//if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
+		//if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
+
+		if ($tmpobject->ismultientitymanaged) {
+			$sql .= ' AND t.entity IN ('.getEntity($tmpobject->element).')';
+		}
+		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
+			$sql .= " AND t.fk_soc = sc.fk_soc";
+		}
+		if ($restrictonsocid && $socid) {
+			$sql .= " AND t.fk_soc = ".((int) $socid);
+		}
+		if ($restrictonsocid && $search_sale > 0) {
+			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
+		}
+		// Insert sale filter
+		if ($restrictonsocid && $search_sale > 0) {
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
+		}
+		if ($sqlfilters) {
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
+			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+		}
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($result);
+				$tmp_object = new MoLineConsumable($this->db);
+				$tmp_object->setVarsFromFetchObj($obj);
+				$tmp_object->fetch_optionals();
+				$obj_ret[] = $this->_cleanObjectDatas($tmp_object);
+
 				$i++;
 			}
 		} else {
