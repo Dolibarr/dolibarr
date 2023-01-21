@@ -37,16 +37,18 @@
  */
 
 // Log WARNING to trace_warningphp.log and not display it to user
-error_reporting( E_ALL ^ E_NOTICE );
-@set_error_handler("__error_handler" );
-function __error_handler($errno, $errstr, $errfile, $errline){
-    //echo "<pre><br/>ERREUR/WARNING : $errno, $errstr, $errfile, $errline<br/></pre>"; // for display it to user
-   trace("ERREUR/WARNING: $errno, $errstr, $errfile, $errline" );
+error_reporting(E_ALL ^ E_NOTICE);
+@set_error_handler("__error_handler");
+function __error_handler($errno, $errstr, $errfile, $errline)
+{
+	//echo "<pre><br/>ERREUR/WARNING : $errno, $errstr, $errfile, $errline<br/></pre>"; // for display it to user
+	trace("ERREUR/WARNING: $errno, $errstr, $errfile, $errline");
 }
-function trace($toTrace){
-   $f = fopen("trace_warningphp.log", "a+" );
-   fwrite($f, $toTrace."\n" );
-   fclose($f);
+function trace($toTrace)
+{
+	$f = fopen("trace_warningphp.log", "a+");
+	fwrite($f, $toTrace."\n");
+	fclose($f);
 }
 
 //@ini_set('memory_limit', '128M');	// This may be useless if memory is hard limited by your PHP
