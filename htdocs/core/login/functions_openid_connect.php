@@ -78,8 +78,33 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 
 			if (property_exists($userinfo_content, $login_claim)) {
 				// Success: retrieve claim to return to Dolibarr as login
-				$login = $userinfo_content->$login_claim;
-				$_SESSION["dol_loginmesg"] = "";
+				$sql = 'SELECT login, entity, datestartvalidity, dateendvalidity';
+				$sql .= ' FROM '.MAIN_DB_PREFIX.'user';
+				$sql .= " WHERE login = '".$userinfo_content->$login_claim."'";
+				$sql .= ' AND entity IN (0,'.(array_key_exists('dol_entity', $_SESSION) ? ((int) $_SESSION["dol_entity"]) : 1).')';
+	
+				dol_syslog("functions_openid::check_user_password_openid", LOG_DEBUG);
+				$resql = $db->query($sql);
+				if ($resql) {
+					$obj = $db->fetch_object($resql);
+					if ($obj) {
+						$now = dol_now();
+						if ($obj->datestartvalidity && $db->jdate($obj->datestartvalidity) > $now) {
+							// Load translation files required by the page
+							$langs->loadLangs(array('main', 'errors'));
+							$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
+							return '--bad-login-validity--';
+						}
+						if ($obj->dateendvalidity && $db->jdate($obj->dateendvalidity) < dol_get_first_hour($now)) {
+							// Load translation files required by the page
+							$langs->loadLangs(array('main', 'errors'));
+							$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
+							return '--bad-login-validity--';
+						}
+	
+						$login = $obj->login;
+					}
+				}
 			} elseif ($userinfo_content->error) {
 				// Got user info response but content is an error
 				$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (".$userinfo_content->error_description.")";
