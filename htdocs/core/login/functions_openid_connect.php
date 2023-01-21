@@ -34,7 +34,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
  */
 function check_user_password_openid_connect($usertotest, $passwordtotest, $entitytotest)
 {
-	global $conf;
+	global $db, $conf, $langs;
 
 	dol_syslog("functions_openid_connect::check_user_password_openid_connect");
 
