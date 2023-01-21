@@ -46,7 +46,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 		// OIDC does not require credentials here: pass on to next auth handler
 		$_SESSION["dol_loginmesg"] = "Not an OpenID Connect flow";
 		dol_syslog("functions_openid_connect::check_user_password_openid_connect not an OIDC flow");
-	} elseif (GETPOSTISSET['code']) {
+	} elseif (GETPOSTISSET('code')) {
 		$auth_code = GETPOST('code', 'aZ09');
 		dol_syslog("functions_openid_connect::check_user_password_openid_connect code=".$auth_code);
 
