@@ -82,7 +82,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'user';
 				$sql .= " WHERE login = '".$userinfo_content->$login_claim."'";
 				$sql .= ' AND entity IN (0,'.(array_key_exists('dol_entity', $_SESSION) ? ((int) $_SESSION["dol_entity"]) : 1).')';
-	
+
 				dol_syslog("functions_openid::check_user_password_openid", LOG_DEBUG);
 				$resql = $db->query($sql);
 				if ($resql) {
@@ -101,7 +101,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 							$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
 							return '--bad-login-validity--';
 						}
-	
+
 						$login = $obj->login;
 					}
 				}
