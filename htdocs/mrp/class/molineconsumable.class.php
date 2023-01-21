@@ -168,6 +168,7 @@ class MoLineConsumable extends CommonObject
 			'consumbaleproductref' => array('sqlSelect'=>'p.ref AS consumbaleproductref','label'=>'ProductToConsume', 'enabled'=>(!isModEnabled('product') ? 0 : 1), 'checked'=>1, 'position'=>35, 'visible'=>1),
 			'qtytoconsum' => array('sqlSelect'=>'(l.qty - IFNULL(tChild.qty_consumed, 0)) AS qtytoconsum','label'=>'QtyToConsum', 'enabled'=>1, 'checked'=>1, 'position'=>42, 'type'=>'real', 'visible'=>1, 'css'=>'width75'),
 			'warehousereel' => array('sqlSelect'=>'s.reel AS warehousereel','label'=>'QtyInWarehouse', 'enabled'=>1, 'checked'=>1, 'position'=>43, 'type'=>'real', 'visible'=>1, 'css'=>'width75'),
+			'warehousetoconsume' => array('sqlSelect'=>'s.fk_entrepot AS warehousetoconsume','label'=>'WarehouseToConsume', 'enabled'=>'$conf->stock->enabled', 'checked'=>1, 'position'=>44, 'type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0','picto'=>'stock', 'visible'=>1, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax200'),
 			'molinerowid' => array('sqlSelect'=>'l.rowid AS molinerowid','label'=>'molinerowid', 'enabled'=>1, 'checked'=>0, 'position'=>1, 'visible'=>-2),
 		);
 		$this->fields = array_merge($this->fields, $extendFields);
