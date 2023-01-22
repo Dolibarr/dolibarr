@@ -479,49 +479,49 @@ if ($nolinesbefore) {
 
 <?php
 	print '<tr id="trlinefordates" class="oddeven">'."\n";
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-		print '<td></td>';
-	}
+if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+	print '<td></td>';
+}
 	print '<td colspan="'.($coldisplay - (empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? 0 : 1)).'">';
 	$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 	$date_end = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 
 	$prefillDates = false;
 
-	if (!empty($conf->global->MAIN_FILL_SERVICE_DATES_FROM_LAST_SERVICE_LINE) && !empty($object->lines)) {
-		for ($i = count($object->lines) - 1; $i >= 0; $i--) {
-			$lastline = $object->lines[$i];
+if (!empty($conf->global->MAIN_FILL_SERVICE_DATES_FROM_LAST_SERVICE_LINE) && !empty($object->lines)) {
+	for ($i = count($object->lines) - 1; $i >= 0; $i--) {
+		$lastline = $object->lines[$i];
 
-			if ($lastline->product_type == Product::TYPE_SERVICE && (!empty($lastline->date_start) || !empty($lastline->date_end))) {
-				$date_start_prefill = $lastline->date_start;
-				$date_end_prefill = $lastline->date_end;
+		if ($lastline->product_type == Product::TYPE_SERVICE && (!empty($lastline->date_start) || !empty($lastline->date_end))) {
+			$date_start_prefill = $lastline->date_start;
+			$date_end_prefill = $lastline->date_end;
 
-				$prefillDates = true;
-				break;
-			}
+			$prefillDates = true;
+			break;
 		}
 	}
+}
 
-	if (!empty($object->element) && $object->element == 'contrat') {
-		print $langs->trans("DateStartPlanned").' ';
-		print $form->selectDate($date_start, "date_start", $usehm, $usehm, 1, "addproduct");
-		print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-		print $form->selectDate($date_end, "date_end", $usehm, $usehm, 1, "addproduct");
-	} else {
-		print $langs->trans('LimitedDuration').' '.$langs->trans('From').' ';
-		print $form->selectDate($date_start, 'date_start', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
-		print ' '.$langs->trans('to').' ';
-		print $form->selectDate($date_end, 'date_end', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
-	}
+if (!empty($object->element) && $object->element == 'contrat') {
+	print $langs->trans("DateStartPlanned").' ';
+	print $form->selectDate($date_start, "date_start", $usehm, $usehm, 1, "addproduct");
+	print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
+	print $form->selectDate($date_end, "date_end", $usehm, $usehm, 1, "addproduct");
+} else {
+	print $langs->trans('LimitedDuration').' '.$langs->trans('From').' ';
+	print $form->selectDate($date_start, 'date_start', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
+	print ' '.$langs->trans('to').' ';
+	print $form->selectDate($date_end, 'date_end', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
+}
 
-	if ($prefillDates) {
-		echo ' <span class="small"><a href="#" id="prefill_service_dates">'.$langs->trans('FillWithLastServiceDates').'</a></span>';
-	}
+if ($prefillDates) {
+	echo ' <span class="small"><a href="#" id="prefill_service_dates">'.$langs->trans('FillWithLastServiceDates').'</a></span>';
+}
 
 	print '<script>';
 
-	if ($prefillDates) {
-		?>
+if ($prefillDates) {
+	?>
 		function prefill_service_dates()
 		{
 			$('#date_start').val("<?php echo dol_escape_js(dol_print_date($date_start_prefill, 'day')); ?>").trigger('change');
