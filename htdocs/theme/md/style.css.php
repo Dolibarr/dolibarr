@@ -1856,7 +1856,7 @@ tr.nobottom td {
 .maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
-.maxwidthdate  { max-width: 80px; }
+.maxwidthdate  { max-width: 85px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
@@ -7652,7 +7652,7 @@ div.clipboardCPValue.hidewithsize {
 	.lilevel1 span.paddingright {
 		padding-right: 3px;
 	}
-	
+
 	img.userphotopublicvcard {
 		left: unset;
 		top: unset;
