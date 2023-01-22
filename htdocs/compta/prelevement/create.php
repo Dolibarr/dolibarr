@@ -74,6 +74,8 @@ if ($type == 'bank-transfer') {
 
 $error = 0;
 $option = "";
+$mesg = '';
+
 
 /*
  * Actions
@@ -225,13 +227,13 @@ if ($type == 'bank-transfer') {
 	$title = $langs->trans("NbOfInvoiceToPayByBankTransfer");
 }
 
-print '<tr><td class="titlefieldcreate">'.$title.'</td>';
-print '<td>';
-print $nb;
+print '<tr><td class="titlefield">'.$title.'</td>';
+print '<td class="nowraponall">';
+print dol_escape_htmltag($nb);
 print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("AmountTotal").'</td>';
-print '<td class="amount">';
+print '<td class="amount nowraponall">';
 print price($pricetowithdraw);
 print '</td>';
 print '</tr>';
@@ -417,6 +419,7 @@ if ($resql) {
 		$tradinvoice = "SupplierInvoice";
 	}
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans($tradinvoice).'</td>';
@@ -510,6 +513,8 @@ if ($resql) {
 		print '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 	print "</table>";
+	print "</div>";
+
 	print "</form>";
 	print "<br>\n";
 } else {
