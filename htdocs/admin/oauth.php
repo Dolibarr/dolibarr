@@ -109,13 +109,36 @@ if ($action == 'update') {
 					$error++;
 				}
 			}
-			print $newconstvalue.'_ID'."######".GETPOST($constvalue.'_ID')."\n";
 
+			// If name changed, we have to delete old const and proceed few other changes
 			if ($constvalue !== $newconstvalue) {
 				dolibarr_del_const($db, $constvalue.'_ID', $conf->entity);
 				dolibarr_del_const($db, $constvalue.'_SECRET', $conf->entity);
 				dolibarr_del_const($db, $constvalue.'_URLAUTHORIZE', $conf->entity);
 				dolibarr_del_const($db, $constvalue.'_SCOPE', $conf->entity);
+
+				// Update name of token
+				$oldname = preg_replace('/^OAUTH_/', '', $constvalue);
+				$oldprovider = ucfirst(strtolower(preg_replace('/-.*$/', '', $oldname)));
+				$oldlabel = preg_replace('/^.*-/', '', $oldname);
+				$newlabel = preg_replace('/^.*-/', '', $newconstvalue);
+
+				$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
+				$sql.= " SET service = '".$oldprovider."-".$newlabel."'";
+				$sql.= " WHERE  service = '".$oldprovider."-".$oldlabel."'";
+
+
+				$resql = $db->query($sql);
+				if (!$resql) {
+					$error++;
+				}
+
+				// Update const where the token was used, might not be exhaustive
+				if (getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE') == $oldname) {
+					if (!dolibarr_set_const($db, 'MAIN_MAIL_SMTPS_OAUTH_SERVICE', strtoupper($oldprovider).'-'.$newlabel, 'chaine', 0, '', $conf->entity)) {
+						$error++;
+					}
+				}
 			}
 		}
 	}
