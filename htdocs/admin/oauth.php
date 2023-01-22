@@ -123,9 +123,10 @@ if ($action == 'update') {
 				$oldlabel = preg_replace('/^.*-/', '', $oldname);
 				$newlabel = preg_replace('/^.*-/', '', $newconstvalue);
 
+
 				$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
-				$sql.= " SET service = '".$oldprovider."-".$newlabel."'";
-				$sql.= " WHERE  service = '".$oldprovider."-".$oldlabel."'";
+				$sql.= " SET service = '".$db->escape($oldprovider."-".$newlabel)."'";
+				$sql.= " WHERE  service = '".$db->escape($oldprovider."-".$oldlabel)."'";
 
 
 				$resql = $db->query($sql);
