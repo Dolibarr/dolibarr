@@ -3885,14 +3885,14 @@ function dol_strlen($string, $stringencoding = 'UTF-8')
 /**
  * Make a substring. Works even if mbstring module is not enabled for better compatibility.
  *
- * @param	string	$string				String to scan
- * @param	string	$start				Start position
- * @param	int		$length				Length (in nb of characters or nb of bytes depending on trunconbytes param)
- * @param   string	$stringencoding		Page code used for input string encoding
- * @param	int		$trunconbytes		1=Length is max of bytes instead of max of characters
- * @return  string						substring
+ * @param	string		$string				String to scan
+ * @param	string		$start				Start position
+ * @param	int|null	$length				Length (in nb of characters or nb of bytes depending on trunconbytes param)
+ * @param   string		$stringencoding		Page code used for input string encoding
+ * @param	int			$trunconbytes		1=Length is max of bytes instead of max of characters
+ * @return  string							substring
  */
-function dol_substr($string, $start, $length, $stringencoding = '', $trunconbytes = 0)
+function dol_substr($string, $start, $length = null, $stringencoding = '', $trunconbytes = 0)
 {
 	global $langs;
 
