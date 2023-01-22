@@ -339,12 +339,11 @@ $coldisplay++;
 	</td>
 </tr>
 
-<?php if (isModEnabled("service") && $line->product_type == 1 && $dateSelector) { ?>
 <tr id="service_duration_area" class="treditedlinefordate">
 	<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 		<td class="linecolnum center"></td>
 	<?php } ?>
-	<td colspan="<?php echo $coldisplay - (empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? 0 : 1) ?>"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
+	<td colspan="<?php echo $coldisplay - (empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? 0 : 1) ?>"><?php echo $langs->trans('LimitedDuration').' '.$langs->trans('From').' '; ?>
 	<?php
 	$hourmin = (isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE : '');
 	print $form->selectDate($line->date_start, 'date_start', $hourmin, $hourmin, $line->date_start ? 0 : 1, "updateline", 1, 0);
@@ -388,8 +387,6 @@ $coldisplay++;
 	?>
 	</td>
 </tr>
-<?php }
-?>
 
 
 <script>
