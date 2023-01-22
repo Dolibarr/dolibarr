@@ -478,7 +478,6 @@ if ($nolinesbefore) {
 </tr>
 
 <?php
-if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0') {	// We show date field if required
 	print '<tr id="trlinefordates" class="oddeven">'."\n";
 	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 		print '<td></td>';
@@ -509,7 +508,7 @@ if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelecto
 		print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
 		print $form->selectDate($date_end, "date_end", $usehm, $usehm, 1, "addproduct");
 	} else {
-		print $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
+		print $langs->trans('LimitedDuration').' '.$langs->trans('From').' ';
 		print $form->selectDate($date_start, 'date_start', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
 		print ' '.$langs->trans('to').' ';
 		print $form->selectDate($date_end, 'date_end', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
@@ -558,8 +557,6 @@ if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelecto
 	print '</script>';
 	print '</td>';
 	print '</tr>'."\n";
-}
-
 
 print "<script>\n";
 if (!empty($usemargins) && $user->rights->margins->creer) {
@@ -675,24 +672,11 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 				}
 			}
 		}
-
-		console.log("Hide/show date according to product type");
-		if (jQuery('#select_type').val() == '0')
-		{
-			jQuery('#trlinefordates').hide();
-			jQuery('.divlinefordates').hide();
-		}
-		else
-		{
-			jQuery('#trlinefordates').show();
-			jQuery('.divlinefordates').show();
-		}
 	});
 
 	$("#prod_entry_mode_predef").on( "click", function() {
 		console.log("click prod_entry_mode_predef");
 		setforpredef();
-		jQuery('#trlinefordates').show();
 	});
 
 	<?php
@@ -722,7 +706,6 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 
 		setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva(product)
 
-		jQuery('#trlinefordates').show();
 
 		<?php
 		if (empty($conf->global->MAIN_DISABLE_EDIT_PREDEF_PRICEHT) && empty($senderissupplier)) {
@@ -1183,7 +1166,6 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		/* jQuery("#title_fourn_ref").hide(); */
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
 		jQuery("#buying_price").show();
-		jQuery('#trlinefordates, .divlinefordates').show();
 	}
 
 <?php
