@@ -235,7 +235,7 @@ print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("AmountTotal").'</td>';
 print '<td class="amount nowraponall">';
-print price($pricetowithdraw, 0, $langs, 1,-1, -1, $conf->currency);
+print price($pricetowithdraw, 0, $langs, 1, -1, -1, $conf->currency);
 print '</td>';
 print '</tr>';
 
