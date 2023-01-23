@@ -420,13 +420,13 @@ if (empty($reshook)) {
 				/*
 				* Protection against deletion of ref_employee while the field is not present in the user tab
 				*/
-				if (GETPOSTISSET("ref_employee")){
+				if (GETPOSTISSET("ref_employee")) {
 					$object->ref_employee = GETPOST("ref_employee", 'alphanohtml');
 				}
 				/*
 				* Protection against deletion of national_registration_number while the field is not present in the user tab
 				*/
-				if (GETPOSTISSET("national_registration_number")){
+				if (GETPOSTISSET("national_registration_number")) {
 					$object->national_registration_number = GETPOST("national_registration_number", 'alphanohtml');
 				}
 				$object->gender = GETPOST("gender", 'aZ09');
