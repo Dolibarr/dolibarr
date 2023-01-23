@@ -369,6 +369,7 @@ if (empty($reshook)) {
 					$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
 					// modified by hook
 					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 						$error++;
 					}
 				} else {

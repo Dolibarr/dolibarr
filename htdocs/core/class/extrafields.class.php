@@ -1457,15 +1457,15 @@ class ExtraFields
 							$labeltoshow = dol_trunc($labeltoshow, 45);
 
 							if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
+								$labeltoshow = '';
 								foreach ($fields_label as $field_toshow) {
 									$translabel = $langs->trans($obj->$field_toshow);
 									if ($translabel != $obj->$field_toshow) {
-										$labeltoshow = dol_trunc($translabel, 18).' ';
+										$labeltoshow .= ' '.dol_trunc($translabel, 18).' ';
 									} else {
-										$labeltoshow = dol_trunc($obj->$field_toshow, 18).' ';
+										$labeltoshow .= ' '.dol_trunc($obj->$field_toshow, 18).' ';
 									}
 								}
-
 								$data[$obj->rowid] = $labeltoshow;
 							} else {
 								if (!$notrans) {
@@ -1774,17 +1774,20 @@ class ExtraFields
 						$fields_label = explode('|', $InfoFieldList[1]);
 						if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
 							if (is_array($fields_label) && count($fields_label) > 1) {
+								$label = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">';
 								foreach ($fields_label as $field_toshow) {
 									$translabel = '';
 									if (!empty($obj->$field_toshow)) {
 										$translabel = $langs->trans($obj->$field_toshow);
 									}
 									if ($translabel != $field_toshow) {
-										$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.dol_trunc($translabel, 18).'</li>';
+										$label .= ' '.dol_trunc($translabel, 18);
 									} else {
-										$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$obj->$field_toshow.'</li>';
+										$label .= ' '.$obj->$field_toshow;
 									}
 								}
+								$label .= '</li>';
+								$toprint[] = $label;
 							} else {
 								$translabel = '';
 								if (!empty($obj->{$InfoFieldList[1]})) {
