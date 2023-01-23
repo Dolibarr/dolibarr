@@ -133,6 +133,7 @@ $helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 
 $form = new Form($db);
 $htmlother = new FormOther($db);
+if ($objp->stock_physique < 0) { print '<span class="warning">'; }
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
 $sql .= ' p.fk_product_type, p.tms as datem,';
@@ -406,8 +407,8 @@ if ($resql) {
 	}
 	print '</tr>';
 
-	//Line for column titles
-	print "<tr class=\"liste_titre\">";
+	// Line for column titles
+	print '<tr class="liste_titre">';
 	// Action column
 	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 		print_liste_field_titre('');
@@ -480,14 +481,20 @@ if ($resql) {
 			print '</td>';
 		}
 		//print '<td class="right">'.$objp->stock_theorique.'</td>';
-		print '<td class="right">'.$objp->seuil_stock_alerte.'</td>';
-		print '<td class="right">'.$objp->desiredstock.'</td>';
+		print '<td class="right">';
+		print $objp->seuil_stock_alerte;
+		print '</td>';
+		print '<td class="right">';
+		print $objp->desiredstock;
+		print '</td>';
 		// Real stock
 		print '<td class="right">';
 		if ($objp->seuil_stock_alerte != '' && ($objp->stock_physique < $objp->seuil_stock_alerte)) {
-			print img_warning($langs->trans("StockTooLow")).' ';
+			print img_warning($langs->trans("StockLowerThanLimit", $objp->seuil_stock_alerte)).' ';
 		}
+		if ($objp->stock_physique < 0) { print '<span class="warning">'; }
 		print price2num($objp->stock_physique, 'MS');
+		if ($objp->stock_physique < 0) { print '</span>'; }
 		print '</td>';
 
 		// Details per warehouse
@@ -505,14 +512,16 @@ if ($resql) {
 		if ($virtualdiffersfromphysical) {
 			print '<td class="right">';
 			if ($objp->seuil_stock_alerte != '' && ($product->stock_theorique < $objp->seuil_stock_alerte)) {
-				print img_warning($langs->trans("StockTooLow")).' ';
+				print img_warning($langs->trans("StockLowerThanLimit", $objp->seuil_stock_alerte)).' ';
 			}
+			if ($objp->stock_physique < 0) { print '<span class="warning">'; }
 			print price2num($product->stock_theorique, 'MS');
+			if ($objp->stock_physique < 0) { print '</span>'; }
 			print '</td>';
 		}
 		// Units
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-			print '<td class="left">'.$objp->unit_short.'</td>';
+			print '<td class="left">'.dol_escape_htmltag($objp->unit_short).'</td>';
 		}
 		print '<td class="center">';
 		print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');

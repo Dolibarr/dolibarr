@@ -2048,7 +2048,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							}
 						}
 						if (!empty($contact_id) && $contact_id > 0) {
-							if (!is_object($cachecontacts[$contact_id])) {
+							if (empty($cachecontacts[$contact_id]) || !is_object($cachecontacts[$contact_id])) {
 								$contact = new Contact($db);
 								$contact->fetch($contact_id);
 								$cachecontacts[$contact_id] = $contact;
