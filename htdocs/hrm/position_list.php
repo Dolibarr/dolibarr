@@ -234,7 +234,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
-$sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t, ".MAIN_DB_PREFIX.$userstatic->table_element." as u,".MAIN_DB_PREFIX."hrm_job as j";
+$sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t LEFT JOIN ".MAIN_DB_PREFIX.$userstatic->table_element." as u on t.fk_user = u.rowid, ".MAIN_DB_PREFIX."hrm_job as j";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
