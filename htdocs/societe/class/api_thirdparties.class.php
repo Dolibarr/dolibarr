@@ -524,7 +524,7 @@ class Thirdparties extends DolibarrApi
 	 * Delete thirdparty
 	 *
 	 * @param int $id   Thirdparty ID
-	 * @return integer
+	 * @return array
 	 */
 	public function delete($id)
 	{
@@ -1354,7 +1354,7 @@ class Thirdparties extends DolibarrApi
 	 * @param int 		$id 			Thirdparty id
 	 * @param int 		$companybankid 	Companybank id
 	 * @param string 	$model 			Model of document to generate
-	 * @return void
+	 * @return array
 	 *
 	 * @url GET {id}/generateBankAccountDocument/{companybankid}/{model}
 	 */

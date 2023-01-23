@@ -341,7 +341,7 @@ class Interventions extends DolibarrApi
 	 *
 	 * @url POST    {id}/validate
 	 *
-	 * @return  array
+	 * @return  Object
 	 */
 	public function validate($id, $notrigger = 0)
 	{
@@ -377,7 +377,7 @@ class Interventions extends DolibarrApi
 	 *
 	 * @url POST    {id}/close
 	 *
-	 * @return  array
+	 * @return  Object
 	 */
 	public function closeFichinter($id)
 	{

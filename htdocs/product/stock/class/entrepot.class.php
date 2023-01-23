@@ -564,7 +564,7 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return number of unique different product into a warehouse
 	 *
-	 * 	@return		Array		Array('nb'=>Nb, 'value'=>Value)
+	 * 	@return		array|int		Array('nb'=>Nb, 'value'=>Value)
 	 */
 	public function nb_different_products()
 	{
@@ -595,7 +595,7 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return stock and value of warehosue
 	 *
-	 * 	@return		Array		Array('nb'=>Nb, 'value'=>Value)
+	 * 	@return		array|int		Array('nb'=>Nb, 'value'=>Value)
 	 */
 	public function nb_products()
 	{

@@ -502,7 +502,7 @@ class Receptions extends DolibarrApi
 	 *
 	 * @url POST    {id}/validate
 	 *
-	 * @return  array
+	 * @return  Object
 	 * \todo An error 403 is returned if the request has an empty body.
 	 * Error message: "Forbidden: Content type `text/plain` is not supported."
 	 * Workaround: send this in the body
@@ -630,7 +630,7 @@ class Receptions extends DolibarrApi
 	*
 	* @url POST    {id}/close
 	*
-	* @return  int
+	* @return  Object
 	*/
 	public function close($id, $notrigger = 0)
 	{
