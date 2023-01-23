@@ -97,6 +97,8 @@ $search_accountancy_code_buy_export = GETPOST("search_accountancy_code_buy_expor
 $search_finished = GETPOST("search_finished", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $type = GETPOST("type", "int");
+$mode = GETPOST('mode', 'alpha');
+
 
 //Show/hide child products
 if (isModEnabled('variants') && !empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
@@ -672,6 +674,9 @@ if (GETPOST('delprod')) {
 }
 
 $param = '';
+if (!empty($mode)) {
+	$param = "&mode=".urlencode($mode);
+}
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
@@ -780,7 +785,9 @@ if (in_array($massaction, array('presend', 'predelete','preaffecttag', 'edit_ext
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-$newcardbutton = '';
+	$newcardbutton = '';
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
 if ($type === "") {
 	$perm = ($user->rights->produit->creer || $user->rights->service->creer);
 } elseif ($type == Product::TYPE_SERVICE) {
@@ -788,8 +795,8 @@ if ($type === "") {
 } elseif ($type == Product::TYPE_PRODUCT) {
 	$perm = $user->rights->produit->creer;
 }
-$oldtype = $type;
-$params = array();
+	$oldtype = $type;
+	$params = array();
 if ($type === "") {
 	$params['forcenohideoftext'] = 1;
 }
@@ -797,13 +804,12 @@ if ($type === "") {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewProduct'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', $perm, $params);
 	$type = Product::TYPE_SERVICE;
 }
-$label = 'NewProduct';
+	$label = 'NewProduct';
 if ($type == Product::TYPE_SERVICE) {
 	$label = 'NewService';
 }
-$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type='.$type, '', $perm, $params);
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type='.$type, '', $perm, $params);
 
-$type = $oldtype;
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 if ($optioncss != '') {
@@ -816,6 +822,8 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 //print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
+
 if (empty($arrayfields['p.fk_product_type']['checked'])) {
 	print '<input type="hidden" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
 }
@@ -1321,13 +1329,15 @@ if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 print "</tr>\n";
 
 
-$product_static = new Product($db);
-$product_fourn = new ProductFournisseur($db);
 
-$i = 0;
-$totalarray = array();
-$totalarray['nbfield'] = 0;
-while ($i < min($num, $limit)) {
+	$product_static = new Product($db);
+	$product_fourn = new ProductFournisseur($db);
+
+	$i = 0;
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
+	$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 
 	// Multilangs
@@ -1346,62 +1356,76 @@ while ($i < min($num, $limit)) {
 			}
 		}
 	}
+}
 	$parameters = array('staticdata' => $obj);
 	// Note that $action and $object may have been modified by hook
 	// do product_static fetch in hook if wanted or anything else
 	$reshook = $hookmanager->executeHooks('loadStaticObject', $parameters, $product_static, $action);
-	if (empty($reshook)) {
-		$product_static->id = $obj->rowid;
-		$product_static->ref = $obj->ref;
-		$product_static->ref_fourn = empty($obj->ref_supplier) ? '' : $obj->ref_supplier; // deprecated
-		$product_static->ref_supplier = empty($obj->ref_supplier) ? '' : $obj->ref_supplier;
-		$product_static->label = $obj->label;
-		$product_static->finished = $obj->finished;
-		$product_static->type = $obj->fk_product_type;
-		$product_static->status_buy = $obj->tobuy;
-		$product_static->status = $obj->tosell;
-		$product_static->status_batch = $obj->tobatch;
-		$product_static->entity = $obj->entity;
-		$product_static->pmp = $obj->pmp;
-		$product_static->accountancy_code_sell = $obj->accountancy_code_sell;
-		$product_static->accountancy_code_sell_export = $obj->accountancy_code_sell_export;
-		$product_static->accountancy_code_sell_intra = $obj->accountancy_code_sell_intra;
-		$product_static->accountancy_code_buy = $obj->accountancy_code_buy;
-		$product_static->accountancy_code_buy_intra = $obj->accountancy_code_buy_intra;
-		$product_static->accountancy_code_buy_export = $obj->accountancy_code_buy_export;
-		$product_static->length = $obj->length;
-		$product_static->length_units = $obj->length_units;
-		$product_static->width = $obj->width;
-		$product_static->width_units = $obj->width_units;
-		$product_static->height = $obj->height;
-		$product_static->height_units = $obj->height_units;
-		$product_static->weight = $obj->weight;
-		$product_static->weight_units = $obj->weight_units;
-		$product_static->volume = $obj->volume;
-		$product_static->volume_units = $obj->volume_units;
-		$product_static->surface = $obj->surface;
-		$product_static->surface_units = $obj->surface_units;
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-			$product_static->fk_unit = $obj->fk_unit;
-		}
+if (empty($reshook)) {
+	$product_static->id = $obj->rowid;
+	$product_static->ref = $obj->ref;
+	$product_static->ref_fourn = empty($obj->ref_supplier) ? '' : $obj->ref_supplier; // deprecated
+	$product_static->ref_supplier = empty($obj->ref_supplier) ? '' : $obj->ref_supplier;
+	$product_static->label = $obj->label;
+	$product_static->finished = $obj->finished;
+	$product_static->type = $obj->fk_product_type;
+	$product_static->status_buy = $obj->tobuy;
+	$product_static->status = $obj->tosell;
+	$product_static->status_batch = $obj->tobatch;
+	$product_static->entity = $obj->entity;
+	$product_static->pmp = $obj->pmp;
+	$product_static->accountancy_code_sell = $obj->accountancy_code_sell;
+	$product_static->accountancy_code_sell_export = $obj->accountancy_code_sell_export;
+	$product_static->accountancy_code_sell_intra = $obj->accountancy_code_sell_intra;
+	$product_static->accountancy_code_buy = $obj->accountancy_code_buy;
+	$product_static->accountancy_code_buy_intra = $obj->accountancy_code_buy_intra;
+	$product_static->accountancy_code_buy_export = $obj->accountancy_code_buy_export;
+	$product_static->length = $obj->length;
+	$product_static->length_units = $obj->length_units;
+	$product_static->width = $obj->width;
+	$product_static->width_units = $obj->width_units;
+	$product_static->height = $obj->height;
+	$product_static->height_units = $obj->height_units;
+	$product_static->weight = $obj->weight;
+	$product_static->weight_units = $obj->weight_units;
+	$product_static->volume = $obj->volume;
+	$product_static->volume_units = $obj->volume_units;
+	$product_static->surface = $obj->surface;
+	$product_static->surface_units = $obj->surface_units;
+	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		$product_static->fk_unit = $obj->fk_unit;
+	}
 
-		// STOCK_DISABLE_OPTIM_LOAD can be set to force load_stock whatever is permissions on stock.
-		if ((isModEnabled('stock') && $user->rights->stock->lire && $search_type != 1) || !empty($conf->global->STOCK_DISABLE_OPTIM_LOAD)) {	// To optimize call of load_stock
-			if ($product_static->type != 1 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {    // Not a service
-				$option = 'nobatch';
-				if (empty($arrayfields['stock_virtual']['checked'])) {
-					$option .= ',novirtual';
-				}
-				$product_static->load_stock($option); // Load stock_reel + stock_warehouse. This can also call load_virtual_stock()
+	// STOCK_DISABLE_OPTIM_LOAD can be set to force load_stock whatever is permissions on stock.
+	if ((isModEnabled('stock') && $user->rights->stock->lire && $search_type != 1) || !empty($conf->global->STOCK_DISABLE_OPTIM_LOAD)) {	// To optimize call of load_stock
+		if ($product_static->type != 1 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {    // Not a service
+			$option = 'nobatch';
+			if (empty($arrayfields['stock_virtual']['checked'])) {
+				$option .= ',novirtual';
 			}
+			$product_static->load_stock($option); // Load stock_reel + stock_warehouse. This can also call load_virtual_stock()
 		}
 	}
+}
 
-	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'lire');
-	if ($product_static->isService()) {
-		$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'lire');
+
+		$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'lire');
+if ($product_static->isService()) {
+	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'lire');
+}
+if ($mode == 'Kanban') {
+	if ($i == 0) {
+		print '<tr><td colspan="12">';
+		print '<div class="box-flex-container">';
 	}
-
+	$product_static->price = $obj->price;
+	// Output Kanban
+	print $product_static->getKanbanView('');
+	if ($i == ($imaxinloop - 1)) {
+		print '</div>';
+		print '</td></tr>';
+	}
+} else {
 	print '<tr class="oddeven">';
 
 	// Action column
@@ -1467,7 +1491,7 @@ while ($i < min($num, $limit)) {
 
 	// Label
 	if (!empty($arrayfields['p.label']['checked'])) {
-		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($product_static->label).'">'.$product_static->label.'</td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->label).'">'.$obj->label.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1477,7 +1501,7 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['p.fk_product_type']['checked'])) {
 		print '<td class="center">';
 		$s = '';
-		if ($product_static->type == 0) {
+		if ($obj->fk_product_type == 0) {
 			$s .= img_picto($langs->trans("Product"), 'product', 'class="paddingleftonly paddingrightonly colorgrey"');
 		} else {
 			$s .= img_picto($langs->trans("Service"), 'service', 'class="paddingleftonly paddingrightonly colorgrey"');
@@ -1491,7 +1515,7 @@ while ($i < min($num, $limit)) {
 
 	// Barcode
 	if (!empty($arrayfields['p.barcode']['checked'])) {
-		print '<td>'.$product_static->barcode.'</td>';
+		print '<td>'.$obj->barcode.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1535,7 +1559,7 @@ while ($i < min($num, $limit)) {
 	// Weight
 	if (!empty($arrayfields['p.weight']['checked'])) {
 		print '<td class="center">';
-		print $product_static->weight;
+		print $obj->weight;
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1555,7 +1579,7 @@ while ($i < min($num, $limit)) {
 	// Length
 	if (!empty($arrayfields['p.length']['checked'])) {
 		print '<td class="center">';
-		print $product_static->length;
+		print $obj->length;
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1575,7 +1599,7 @@ while ($i < min($num, $limit)) {
 	// Width
 	if (!empty($arrayfields['p.width']['checked'])) {
 		print '<td align="center">';
-		print $product_static->width;
+		print $obj->width;
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1595,7 +1619,7 @@ while ($i < min($num, $limit)) {
 	// Height
 	if (!empty($arrayfields['p.height']['checked'])) {
 		print '<td align="center">';
-		print $product_static->height;
+		print $obj->height;
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1615,7 +1639,7 @@ while ($i < min($num, $limit)) {
 	// Surface
 	if (!empty($arrayfields['p.surface']['checked'])) {
 		print '<td class="center">';
-		print $product_static->surface;
+		print $obj->surface;
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1635,7 +1659,7 @@ while ($i < min($num, $limit)) {
 	// Volume
 	if (!empty($arrayfields['p.volume']['checked'])) {
 		print '<td class="center">';
-		print $product_static->volume;
+		print $obj->volume;
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1667,7 +1691,7 @@ while ($i < min($num, $limit)) {
 	// Sell price
 	if (!empty($arrayfields['p.sellprice']['checked'])) {
 		print '<td class="right nowraponall">';
-		if ($product_static->status && $usercancreadprice) {
+		if ($obj->tosell && $usercancreadprice) {
 			if ($obj->price_base_type == 'TTC') {
 				print '<span class="amount">'.price($obj->price_ttc).' '.$langs->trans("TTC").'</span>';
 			} else {
@@ -1690,7 +1714,7 @@ while ($i < min($num, $limit)) {
 			$productpricescache[$obj->rowid] = array();
 		}
 
-		if ($product_static->status && $usercancreadprice) {
+		if ($obj->tosell && $usercancreadprice) {
 			// Make 1 request for all price levels (without filter on price_level) and saved result into an cache array
 			// then reuse the cache array if we need prices for other price levels
 			$sqlp = "SELECT p.rowid, p.fk_product, p.price, p.price_ttc, p.price_level, p.date_price, p.price_base_type";
@@ -1735,188 +1759,198 @@ while ($i < min($num, $limit)) {
 				}
 			}
 		}
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+}
 	}
 
 	// Better buy price
-	if (!empty($arrayfields['p.minbuyprice']['checked'])) {
-		print  '<td class="right nowraponall">';
-		if ($product_static->status_buy && $obj->bestpurchaseprice != '' && $usercancreadprice) {
-			if ($product_fourn->find_min_price_product_fournisseur($obj->rowid) > 0) {
-				if ($product_fourn->product_fourn_price_id > 0) {
-					if ((isModEnabled("fournisseur") && !empty($user->rights->fournisseur->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && !empty($user->rights->supplier_order->lire)) || (isModEnabled("supplier_invoice") && !empty($user->rights->supplier_invoice->lire))) {
-						$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
-						print '<span class="amount">'.$form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent / 100) - $product_fourn->fourn_remise).' '.$langs->trans("HT"), $htmltext).'</span>';
-					} else {
-						print '<span class="amount">'.price($product_fourn->fourn_unitprice).' '.$langs->trans("HT").'</span>';
-					}
+if (!empty($arrayfields['p.minbuyprice']['checked'])) {
+	print  '<td class="right nowraponall">';
+	if ($product_static->status_buy && $obj->bestpurchaseprice != '' && $usercancreadprice) {
+		if ($product_fourn->find_min_price_product_fournisseur($obj->rowid) > 0) {
+			if ($product_fourn->product_fourn_price_id > 0) {
+				if ((isModEnabled("fournisseur") && !empty($user->rights->fournisseur->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && !empty($user->rights->supplier_order->lire)) || (isModEnabled("supplier_invoice") && !empty($user->rights->supplier_invoice->lire))) {
+					$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
+					print '<span class="amount">'.$form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent / 100) - $product_fourn->fourn_remise).' '.$langs->trans("HT"), $htmltext).'</span>';
+				} else {
+					print '<span class="amount">'.price($product_fourn->fourn_unitprice).' '.$langs->trans("HT").'</span>';
 				}
 			}
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 	}
+	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+}
 
 	// Number of buy prices
-	if (!empty($arrayfields['p.numbuyprice']['checked'])) {
-		print  '<td class="right">';
-		if ($product_static->status_buy && $usercancreadprice) {
-			if (count($productFournList = $product_fourn->list_product_fournisseur_price($obj->rowid)) > 0) {
-				$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1, $productFournList);
-				print $form->textwithpicto(count($productFournList), $htmltext);
-			}
+if (!empty($arrayfields['p.numbuyprice']['checked'])) {
+	print  '<td class="right">';
+	if ($product_static->status_buy && $usercancreadprice) {
+		if (count($productFournList = $product_fourn->list_product_fournisseur_price($obj->rowid)) > 0) {
+			$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1, $productFournList);
+			print $form->textwithpicto(count($productFournList), $htmltext);
 		}
-		print '</td>';
 	}
+	print '</td>';
+}
 
 	// VAT or Sell Tax Rate
-	if (!empty($arrayfields['p.tva_tx']['checked'])) {
-		print '<td class="right">';
-		print vatrate($obj->tva_tx, true);
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+if (!empty($arrayfields['p.tva_tx']['checked'])) {
+	print '<td class="right">';
+	print vatrate($obj->tva_tx, true);
+	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
 	}
+}
 
 	// WAP
-	if (!empty($arrayfields['p.pmp']['checked'])) {
-		print '<td class="nowrap right">';
-		if ($usercancreadprice) {
-			print '<span class="amount">'.price($product_static->pmp, 1, $langs)."</span>";
-		}
-		print '</td>';
+if (!empty($arrayfields['p.pmp']['checked'])) {
+	print '<td class="nowrap right">';
+	if ($usercancreadprice) {
+		print '<span class="amount">'.price($product_static->pmp, 1, $langs)."</span>";
 	}
+	print '</td>';
+}
 	// Cost price
-	if (!empty($arrayfields['p.cost_price']['checked'])) {
-		print '<td class="nowrap right">';
-		//print $obj->cost_price;
-		if ($usercancreadprice) {
-			print '<span class="amount">'.price($obj->cost_price).' '.$langs->trans("HT").'</span>';
-		}
-		print '</td>';
+if (!empty($arrayfields['p.cost_price']['checked'])) {
+	print '<td class="nowrap right">';
+	//print $obj->cost_price;
+	if ($usercancreadprice) {
+		print '<span class="amount">'.price($obj->cost_price).' '.$langs->trans("HT").'</span>';
 	}
+	print '</td>';
+}
 
 	// Limit alert
-	if (!empty($arrayfields['p.seuil_stock_alerte']['checked'])) {
-		print '<td class="right">';
-		if ($product_static->type != 1) {
-			print $obj->seuil_stock_alerte;
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+if (!empty($arrayfields['p.seuil_stock_alerte']['checked'])) {
+	print '<td class="right">';
+	if ($product_static->type != 1) {
+		print $obj->seuil_stock_alerte;
 	}
+	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+}
 	// Desired stock
-	if (!empty($arrayfields['p.desiredstock']['checked'])) {
-		print '<td class="right">';
-		if ($product_static->type != 1) {
-			print $obj->desiredstock;
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+if (!empty($arrayfields['p.desiredstock']['checked'])) {
+	print '<td class="right">';
+	if ($product_static->type != 1) {
+		print $obj->desiredstock;
 	}
+	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+}
 	// Stock real
-	if (!empty($arrayfields['p.stock']['checked'])) {
-		print '<td class="right">';
-		if ($product_static->type != 1) {
-			if ($obj->seuil_stock_alerte != '' && $product_static->stock_reel < (float) $obj->seuil_stock_alerte) {
-				print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
-			}
-			if ($usercancreadprice) {
-				print price(price2num($product_static->stock_reel, 'MS'));
-			}
+if (!empty($arrayfields['p.stock']['checked'])) {
+	print '<td class="right">';
+	if ($product_static->type != 1) {
+		if ($obj->seuil_stock_alerte != '' && $product_static->stock_reel < (float) $obj->seuil_stock_alerte) {
+			print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+		if ($usercancreadprice) {
+			print price(price2num($product_static->stock_reel, 'MS'));
 		}
 	}
+	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+}
 	// Stock virtual
-	if (!empty($arrayfields['stock_virtual']['checked'])) {
-		print '<td class="right">';
-		if ($product_static->type != 1) {
-			if ($obj->seuil_stock_alerte != '' && $product_static->stock_theorique < (float) $obj->seuil_stock_alerte) {
-				print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
-			}
-			if ($usercancreadprice) {
-				print price(price2num($product_static->stock_theorique, 'MS'));
-			}
+if (!empty($arrayfields['stock_virtual']['checked'])) {
+	print '<td class="right">';
+	if ($product_static->type != 1) {
+		if ($obj->seuil_stock_alerte != '' && $product_static->stock_theorique < (float) $obj->seuil_stock_alerte) {
+			print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+		if ($usercancreadprice) {
+			print price(price2num($product_static->stock_theorique, 'MS'));
 		}
 	}
+	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+}
 	// Lot/Serial
-	if (!empty($arrayfields['p.tobatch']['checked'])) {
-		print '<td class="center">';
-		print $product_static->getLibStatut(1, 2);
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+if (!empty($arrayfields['p.tobatch']['checked'])) {
+	print '<td class="center">';
+	print $product_static->getLibStatut(1, 2);
+	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
 	}
+}
 	// Country
-	if (!empty($arrayfields['p.fk_country']['checked'])) {
-		print '<td>'.getCountry($obj->fk_country, 0, $db).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+if (!empty($arrayfields['p.fk_country']['checked'])) {
+	print '<td>'.getCountry($obj->fk_country, 0, $db).'</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
 	}
+}
 	// State
-	if (!empty($arrayfields['p.fk_state']['checked'])) {
-		print '<td>';
-		if (!empty($obj->fk_state)) {
-			print  getState($obj->fk_state, 0, $db);
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+if (!empty($arrayfields['p.fk_state']['checked'])) {
+	print '<td>';
+	if (!empty($obj->fk_state)) {
+		print  getState($obj->fk_state, 0, $db);
 	}
+	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+}
 	// Accountancy code sell
-	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell']['checked'])) {
-		print '<td>'.$product_static->accountancy_code_sell.'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell']['checked'])) {
+	print '<td>'.$product_static->accountancy_code_sell.'</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
 	}
-	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell_intra']['checked'])) {
-		print '<td>'.$product_static->accountancy_code_sell_intra.'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+}
+if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell_intra']['checked'])) {
+	print '<td>'.$product_static->accountancy_code_sell_intra.'</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
 	}
-	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell_export']['checked'])) {
-		print '<td>'.$product_static->accountancy_code_sell_export.'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+}
+if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell_export']['checked'])) {
+	print '<td>'.$product_static->accountancy_code_sell_export.'</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
 	}
+}
 	// Accountancy code buy
-	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy']['checked'])) {
-		print '<td>'.$product_static->accountancy_code_buy.'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy']['checked'])) {
+	print '<td>'.$product_static->accountancy_code_buy.'</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
 	}
-	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy_intra']['checked'])) {
-		print '<td>'.$product_static->accountancy_code_buy_intra.'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+}
+if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy_intra']['checked'])) {
+	print '<td>'.$product_static->accountancy_code_buy_intra.'</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
 	}
-	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy_export']['checked'])) {
-		print '<td>'.$product_static->accountancy_code_buy_export.'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+}
+if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy_export']['checked'])) {
+	print '<td>'.$product_static->accountancy_code_buy_export.'</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
 	}
+}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
@@ -1924,68 +1958,70 @@ while ($i < min($num, $limit)) {
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
-	if (!empty($arrayfields['p.datec']['checked'])) {
-		print '<td class="center nowraponall">';
-		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+if (!empty($arrayfields['p.datec']['checked'])) {
+	print '<td class="center nowraponall">';
+	print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
+	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
 	}
+}
 	// Date modification
-	if (!empty($arrayfields['p.tms']['checked'])) {
-		print '<td class="center nowraponall">';
-		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+if (!empty($arrayfields['p.tms']['checked'])) {
+	print '<td class="center nowraponall">';
+	print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
 	}
+}
 
 	// Status (to sell)
-	if (!empty($arrayfields['p.tosell']['checked'])) {
-		print '<td class="center nowrap">';
-		if (!empty($conf->use_javascript_ajax) && $user->hasRight("produit", "creer") && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-			print ajax_object_onoff($product_static, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
-		} else {
-			print $product_static->LibStatut($product_static->status, 5, 0);
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+if (!empty($arrayfields['p.tosell']['checked'])) {
+	print '<td class="center nowrap">';
+	if (!empty($conf->use_javascript_ajax) && $user->hasRight("produit", "creer") && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+		print ajax_object_onoff($product_static, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
+	} else {
+		print $product_static->LibStatut($product_static->status, 5, 0);
 	}
+	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+}
 	// Status (to buy)
-	if (!empty($arrayfields['p.tobuy']['checked'])) {
-		print '<td class="center nowrap">';
-		if (!empty($conf->use_javascript_ajax) && $user->hasRight("produit", "creer") && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-			print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
-		} else {
-			print $product_static->LibStatut($product_static->status_buy, 5, 1);
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+if (!empty($arrayfields['p.tobuy']['checked'])) {
+	print '<td class="center nowrap">';
+	if (!empty($conf->use_javascript_ajax) && $user->hasRight("produit", "creer") && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+		print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
+	} else {
+		print $product_static->LibStatut($product_static->status_buy, 5, 1);
 	}
+	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+}
 
 	// Action column
-	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-		print '<td class="nowrap center">';
-		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($obj->rowid, $arrayofselected)) {
-				$selected = 1;
-			}
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print '<td class="nowrap center">';
+	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+		$selected = 0;
+		if (in_array($obj->rowid, $arrayofselected)) {
+			$selected = 1;
 		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 	}
+	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+}
 
 	print "</tr>\n";
+
+}
 	$i++;
 }
 
