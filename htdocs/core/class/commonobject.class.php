@@ -4091,9 +4091,9 @@ abstract class CommonObject
 									$object = new $classname($this->db);
 									$ret = $object->fetch($objectid);
 									if ($ret >= 0) {
-											if(method_exists($object, 'fetch_thirdparty')) {
-												$object->fetch_thirdparty();
-											}
+										if (method_exists($object, 'fetch_thirdparty')) {
+											$object->fetch_thirdparty();
+										}
 										$this->linkedObjects[$objecttype][$i] = $object;
 									}
 								}
