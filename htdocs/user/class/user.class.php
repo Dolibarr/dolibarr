@@ -77,6 +77,11 @@ class User extends CommonObject
 	public $civility_code;
 
 	/**
+	 * @var string fullname
+	 */
+	public $fullname;
+
+	/**
 	 * @var string gender
 	 */
 	public $gender;
@@ -276,6 +281,7 @@ class User extends CommonObject
 
 	public $datelastlogin;
 	public $datepreviouslogin;
+	public $flagdelsessionsbefore;
 	public $iplastlogin;
 	public $ippreviouslogin;
 	public $datestartvalidity;
@@ -441,6 +447,7 @@ class User extends CommonObject
 		$sql .= " u.tms as datem,";
 		$sql .= " u.datelastlogin as datel,";
 		$sql .= " u.datepreviouslogin as datep,";
+		$sql .= " u.flagdelsessionsbefore,";
 		$sql .= " u.iplastlogin,";
 		$sql .= " u.ippreviouslogin,";
 		$sql .= " u.datelastpassvalidation,";
@@ -575,6 +582,7 @@ class User extends CommonObject
 				$this->datem				= $this->db->jdate($obj->datem);
 				$this->datelastlogin = $this->db->jdate($obj->datel);
 				$this->datepreviouslogin = $this->db->jdate($obj->datep);
+				$this->flagdelsessionsbefore = $this->db->jdate($obj->flagdelsessionsbefore, 'gmt');
 				$this->iplastlogin = $obj->iplastlogin;
 				$this->ippreviouslogin = $obj->ippreviouslogin;
 				$this->datestartvalidity = $this->db->jdate($obj->datestartvalidity);
@@ -1776,9 +1784,9 @@ class User extends CommonObject
 				}
 			}
 
-			if ($result > 0 && $member->fk_soc) {	// If member is linked to a thirdparty
+			if ($result > 0 && $member->socid) {	// If member is linked to a thirdparty
 				$sql = "UPDATE ".$this->db->prefix()."user";
-				$sql .= " SET fk_soc=".((int) $member->fk_soc);
+				$sql .= " SET fk_soc=".((int) $member->socid);
 				$sql .= " WHERE rowid=".((int) $this->id);
 
 				dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
@@ -2031,9 +2039,9 @@ class User extends CommonObject
 
 			// Update password
 			if (!empty($this->pass)) {
-				if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted) {
+				if ($this->pass != $this->pass_indatabase && !dol_verifyHash($this->pass, $this->pass_indatabase_crypted)) {
 					// If a new value for password is set and different than the one crypted into database
-					$result = $this->setPassword($user, $this->pass, 0, $notrigger, $nosyncmemberpass);
+					$result = $this->setPassword($user, $this->pass, 0, $notrigger, $nosyncmemberpass, 0, 1);
 					if ($result < 0) {
 						return -5;
 					}
@@ -2243,9 +2251,10 @@ class User extends CommonObject
 	 *	@param	int		$notrigger				1=Does not launch triggers
 	 *	@param	int		$nosyncmember	        Do not synchronize linked member
 	 *  @param	int		$passwordalreadycrypted 0=Value is cleartext password, 1=Value is crypted value.
+	 *  @param	int		$flagdelsessionsbefore  1=Save also the current date to ask to invalidate all other session before this date.
 	 *  @return string 			          		If OK return clear password, 0 if no change (warning, you may retreive 1 instead of 0 even if password was same), < 0 if error
 	 */
-	public function setPassword($user, $password = '', $changelater = 0, $notrigger = 0, $nosyncmember = 0, $passwordalreadycrypted = 0)
+	public function setPassword($user, $password = '', $changelater = 0, $notrigger = 0, $nosyncmember = 0, $passwordalreadycrypted = 0, $flagdelsessionsbefore = 1)
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -2297,6 +2306,9 @@ class User extends CommonObject
 			$sql = "UPDATE ".$this->db->prefix()."user";
 			$sql .= " SET pass_crypted = '".$this->db->escape($password_crypted)."',";
 			$sql .= " pass_temp = null";
+			if (!empty($flagdelsessionsbefore)) {
+				$sql .= ", flagdelsessionsbefore = '".$this->db->idate(dol_now() - 5, 'gmt')."'";
+			}
 			if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
 				$sql .= ", pass = null";
 			} else {
@@ -2647,7 +2659,11 @@ class User extends CommonObject
 		$sql = "DELETE FROM ".$this->db->prefix()."usergroup_user";
 		$sql .= " WHERE fk_user  = ".((int) $this->id);
 		$sql .= " AND fk_usergroup = ".((int) $group);
-		$sql .= " AND entity = ".((int) $entity);
+		if (empty($entity)) {
+			$sql .= " AND entity IN (0, 1)";	// group may be in entity 0 (so $entity=0) and link with user into entity 1.
+		} else {
+			$sql .= " AND entity = ".((int) $entity);
+		}
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -2985,9 +3001,10 @@ class User extends CommonObject
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
 	 *  @return		string								HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '')
+	public function getKanbanView($option = '', $arraydata = null)
 	{
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';

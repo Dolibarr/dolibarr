@@ -374,6 +374,7 @@ if (empty($reshook)) {
 					$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
 					// modified by hook
 					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 						$error++;
 					}
 				} else {
@@ -427,6 +428,7 @@ if (empty($reshook)) {
 		} else {
 			$idprod = GETPOST('idprod', 'int');
 		}
+
 		$tva_tx = GETPOST('tva_tx', 'alpha');
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
@@ -474,11 +476,11 @@ if (empty($reshook)) {
 				$prod->fetch($idprod);
 
 				// Update if prices fields are defined
-				$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
+				/*$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
 				$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
 				if (empty($tva_tx)) {
 					$tva_npr = 0;
-				}
+				}*/
 
 				$price_min = $prod->price_min;
 				$price_min_ttc = $prod->price_min_ttc;
@@ -500,14 +502,14 @@ if (empty($reshook)) {
 						if (count($prodcustprice->lines) > 0) {
 							$price_min =  price($prodcustprice->lines[0]->price_min);
 							$price_min_ttc =  price($prodcustprice->lines[0]->price_min_ttc);
-							$tva_tx = $prodcustprice->lines[0]->tva_tx;
+							/*$tva_tx = $prodcustprice->lines[0]->tva_tx;
 							if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
 								$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
 							}
 							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
 							if (empty($tva_tx)) {
 								$tva_npr = 0;
-							}
+							}*/
 						}
 					}
 				}
@@ -699,7 +701,7 @@ if (empty($reshook)) {
 				$date_end_real_update = $objectline->date_end_real;
 			}
 
-			$vat_rate = GETPOST('eltva_tx');
+			$vat_rate = GETPOST('eltva_tx', 'alpha');
 			// Define info_bits
 			$info_bits = 0;
 			if (preg_match('/\*/', $vat_rate)) {
@@ -1377,7 +1379,7 @@ if ($action == 'create') {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -2046,11 +2048,12 @@ if ($action == 'create') {
 			$dateSelector = 1;
 
 			print "\n";
-			print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+			print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
 			<input type="hidden" name="token" value="'.newToken().'">
 			<input type="hidden" name="action" value="'.(($action != 'editline') ? 'addline' : 'updateline').'">
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="id" value="'.$object->id.'">
+			<input type="hidden" name="page_y" value="">
 			';
 
 			print '<div class="div-table-responsive-no-min">';

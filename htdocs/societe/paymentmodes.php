@@ -6,7 +6,7 @@
  * Copyright (C) 2013       Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016  Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2021  Thibault FOUCART     <support@ptibogxiv.net>
+ * Copyright (C) 2018-2023  Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2021       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -183,8 +183,10 @@ if (empty($reshook)) {
 			$companybankaccount->stripe_card_ref = GETPOST('stripe_card_ref', 'alpha');
 
 			$result = $companybankaccount->update($user);
-			if (!$result) {
+			if ($result <= 0) {
+				// Display error message and get back to edit mode
 				setEventMessages($companybankaccount->error, $companybankaccount->errors, 'errors');
+				$action = 'edit';
 			} else {
 				// If this account is the default bank account, we disable others
 				if ($companybankaccount->default_rib) {
@@ -255,13 +257,8 @@ if (empty($reshook)) {
 	if ($action == 'add') {
 		$error = 0;
 
-		if (!GETPOST('label', 'alpha') || !GETPOST('bank', 'alpha')) {
-			if (!GETPOST('label', 'alpha')) {
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
-			}
-			if (!GETPOST('bank', 'alpha')) {
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankName")), null, 'errors');
-			}
+		if (!GETPOST('label', 'alpha')) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 			$action = 'create';
 			$error++;
 		}
@@ -271,6 +268,8 @@ if (empty($reshook)) {
 			$companybankaccount = new CompanyBankAccount($db);
 
 			$companybankaccount->socid           = $object->id;
+
+			$companybankaccount->fetch_thirdparty();
 
 			$companybankaccount->bank            = GETPOST('bank', 'alpha');
 			$companybankaccount->label           = GETPOST('label', 'alpha');
@@ -290,6 +289,12 @@ if (empty($reshook)) {
 			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOST('date_rummonth', 'int'), GETPOST('date_rumday', 'int'), GETPOST('date_rumyear', 'int'));
 			$companybankaccount->datec = dol_now();
 			$companybankaccount->status          = 1;
+
+			$companybankaccount->bank = trim($companybankaccount->bank);
+			if (empty($companybankaccount->bank) && !empty($companybankaccount->thirdparty)) {
+				$companybankaccount->bank = $langs->trans("Bank").' '.$companybankaccount->thirdparty->name;
+			}
+			$companybankaccount->bic = str_replace(' ', '', $companybankaccount->bic);
 
 			$db->begin();
 
@@ -1376,7 +1381,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		if (is_array($currencybalance)) {
 			foreach ($currencybalance as $cpt) {
-				print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'], 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'] + $cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td></tr>';
+				print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'], 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price(isset($cpt->pending)?$cpt->pending:0, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'] + (isset($cpt->pending)?$cpt->pending:0), 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td></tr>';
 			}
 		}
 
@@ -1978,7 +1983,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td>';
 	print '<td><input class="minwidth200" type="text" id="label" name="label" value="'.(GETPOSTISSET('label') ? GETPOST('label') : $object->name).'"></td></tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("Bank").'</td>';
+	print '<tr><td>'.$langs->trans("Bank").'</td>';
 	print '<td><input class="minwidth200" type="text" id="bank" name="bank" value="'.GETPOST('bank').'"></td></tr>';
 
 	// Show fields of bank account

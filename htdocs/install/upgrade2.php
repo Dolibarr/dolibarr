@@ -4196,7 +4196,7 @@ function migrate_delete_old_dir($db, $langs, $conf)
 	}
 
 	foreach ($filetodeletearray as $filetodelete) {
-		//print '<b>'.$filetodelete."</b><br>\n";
+		$result = 1;
 		if (file_exists($filetodelete)) {
 			$result = dol_delete_dir_recursive($filetodelete);
 		}

@@ -1824,6 +1824,7 @@ tr.nobottom td {
 	.minwidth100 { min-width: 100px; }
 	.minwidth150 { min-width: 150px; }
 	.minwidth200 { min-width: 200px; }
+	.minwidth250 { min-width: 250px; }
 	.minwidth300 { min-width: 300px; }
 	.minwidth400 { min-width: 400px; }
 	.minwidth500 { min-width: 500px; }
@@ -1847,6 +1848,7 @@ tr.nobottom td {
 .width125 { width: 125px; }
 .width150 { width: 150px; }
 .width200 { width: 200px; }
+.width250 { width: 250px; }
 .width300 { width: 300px; }
 .width400 { width: 400px; }
 .width500 { width: 500px; }
@@ -1854,7 +1856,7 @@ tr.nobottom td {
 .maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
-.maxwidthdate  { max-width: 80px; }
+.maxwidthdate  { max-width: 85px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
@@ -7650,7 +7652,7 @@ div.clipboardCPValue.hidewithsize {
 	.lilevel1 span.paddingright {
 		padding-right: 3px;
 	}
-	
+
 	img.userphotopublicvcard {
 		left: unset;
 		top: unset;

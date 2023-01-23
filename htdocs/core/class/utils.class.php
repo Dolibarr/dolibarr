@@ -34,6 +34,9 @@ class Utils
 	 */
 	public $db;
 
+	public $error;
+	public $errors;
+
 	public $output; // Used by Cron method to return message
 	public $result; // Used by Cron method to return data
 

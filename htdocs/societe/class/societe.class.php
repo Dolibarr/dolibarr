@@ -40,6 +40,7 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonsocialnetworks.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 
@@ -49,6 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 class Societe extends CommonObject
 {
 	use CommonIncoterm;
+	use CommonSocialNetworks;
 
 	/**
 	 * @var string ID to identify managed object
@@ -784,11 +786,14 @@ class Societe extends CommonObject
 	 */
 	public $multicurrency_code;
 
+	/**
+	 * @var string  Set if company email found into unsubscribe of emailing list table
+	 */
+	public $no_email;
 
 	// Fields loaded by fetchPartnerships()
 
 	public $partnerships = array();
-
 
 
 	/**
@@ -2764,11 +2769,13 @@ class Societe extends CommonObject
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip refurl"';
+			$linkclose .= ' class="classfortooltip refurl valignmiddle"';
 			$target_value = array('_self', '_blank', '_parent', '_top');
 			if (in_array($target, $target_value)) {
 				$linkclose .= ' target="'.dol_escape_htmltag($target).'"';
 			}
+		} else {
+			$linkclose .= ' class="valignmiddle"';
 		}
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';

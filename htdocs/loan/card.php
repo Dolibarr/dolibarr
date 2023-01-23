@@ -101,7 +101,7 @@ if (empty($reshook)) {
 			$datestart = dol_mktime(12, 0, 0, GETPOST('startmonth', 'int'), GETPOST('startday', 'int'), GETPOST('startyear', 'int'));
 			$dateend	= dol_mktime(12, 0, 0, GETPOST('endmonth', 'int'), GETPOST('endday', 'int'), GETPOST('endyear', 'int'));
 			$capital = price2num(GETPOST('capital'));
-			$rate	   = GETPOST('rate');
+			$rate	   = price2num(GETPOST('rate'));
 
 			if (!$capital) {
 				$error++; $action = 'create';
@@ -441,7 +441,7 @@ if ($id > 0) {
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
 				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 				}
 			} else {
 				if (!empty($object->fk_project)) {
