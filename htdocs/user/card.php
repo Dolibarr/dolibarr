@@ -417,8 +417,18 @@ if (empty($reshook)) {
 				$object->civility_code = GETPOST("civility_code", 'aZ09');
 				$object->lastname = GETPOST("lastname", 'alphanohtml');
 				$object->firstname = GETPOST("firstname", 'alphanohtml');
-				$object->ref_employee = GETPOST("ref_employee", 'alphanohtml');
-				$object->national_registration_number = GETPOST("national_registration_number", 'alphanohtml');
+				/*
+				* Protection against deletion of ref_employee while the field is not present in the user tab
+				*/
+				if (GETPOSTISSET("ref_employee")){
+					$object->ref_employee = GETPOST("ref_employee", 'alphanohtml');
+				}
+				/*
+				* Protection against deletion of national_registration_number while the field is not present in the user tab
+				*/
+				if (GETPOSTISSET("national_registration_number")){
+					$object->national_registration_number = GETPOST("national_registration_number", 'alphanohtml');
+				}
 				$object->gender = GETPOST("gender", 'aZ09');
 				$object->pass = GETPOST("password", 'none');	// We can keep 'none' for password fields
 				$object->api_key = (GETPOST("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
