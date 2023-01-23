@@ -16,7 +16,8 @@
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
- *
+ * Copyright (C) 2023	   Benjamin Falière     <benjamin.faliere@altairis.fr>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -4107,6 +4108,9 @@ abstract class CommonObject
 									$object = new $classname($this->db);
 									$ret = $object->fetch($objectid);
 									if ($ret >= 0) {
+											if(method_exists($object, 'fetch_thirdparty')) {
+												$object->fetch_thirdparty();
+											}
 										$this->linkedObjects[$objecttype][$i] = $object;
 									}
 								}
