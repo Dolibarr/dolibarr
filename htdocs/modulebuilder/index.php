@@ -3739,7 +3739,7 @@ if ($module == 'initmodule') {
 						print '</td>';
 
 						print '<td>';
-						print dol_escape_htmltag($menu['leftmenu']);
+						print !empty($menu['leftmenu']) ? dol_escape_htmltag($menu['leftmenu']) : '';
 						print '</td>';
 
 						print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($menu['url']).'">';
