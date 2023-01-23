@@ -1263,9 +1263,9 @@ foreach ($listofreferent as $key => $value) {
 					if (!empty($element->ref_customer)) {
 						print ' - '.$element->ref_customer;
 					}
-					if($element->element=='propal'){
+					if ($element->element=='propal') {
 						if (!empty($element->ref_client)) {
-						print ' - '.$element->ref_client;
+							print ' - '.$element->ref_client;
 						}
 					}
 				}
