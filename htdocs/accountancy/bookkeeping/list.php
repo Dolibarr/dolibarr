@@ -474,7 +474,7 @@ if (empty($reshook)) {
 			if ($conf->global->ACCOUNTING_REEXPORT == 1) {
 				setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsEnable"), null, 'mesgs');
 			} else {
-				setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsDisable"), null, 'mesgs');
+				setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsDisable"), null, 'warnings');
 			}
 		} else {
 			setEventMessages($langs->trans("Error"), null, 'errors');
@@ -953,11 +953,14 @@ $newcardbutton = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
 if (empty($reshook)) {
 	// Button re-export
 	if (!empty($conf->global->ACCOUNTING_REEXPORT)) {
-		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=0'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("Activated"), 'switch_on').'</a> ';
+		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=0'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("ClickToHideAlreadyExportedLines"), 'switch_off', 'class="small size15x valignmiddle"');
+		$newcardbutton .= '<span class="valignmiddle marginrightonly paddingleft">'.$langs->trans("ClickToHideAlreadyExportedLines").'</span>';
+		$newcardbutton .= '</a>';
 	} else {
-		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a> ';
+		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("DocsAlreadyExportedAreExcluded"), 'switch_on', 'class="warning size15x valignmiddle"').'';
+		$newcardbutton .= '<span class="valignmiddle marginrightonly paddingleft">'.$langs->trans("DocsAlreadyExportedAreExcluded").'</span>';
+		$newcardbutton .= '</a>';
 	}
-	$newcardbutton .= '<span class="valignmiddle marginrightonly">'.$langs->trans("IncludeDocsAlreadyExported").'</span>';
 
 	if ($user->hasRight('accounting', 'mouvements', 'export')) {
 		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file&token='.newToken().($param ? '&'.$param : ''), $user->hasRight('accounting', 'mouvements', 'export'));
