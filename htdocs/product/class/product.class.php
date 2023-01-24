@@ -532,7 +532,7 @@ class Product extends CommonObject
 	{
 		global $conf;
 
-		if (!empty($conf->global->MAIN_DO_NOT_SANITIZE_PRODUCT_REF)) {
+		if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
 			$this->ref = trim($this->ref);
 		} else {
 			$this->ref = dol_sanitizeFileName(stripslashes($this->ref));
@@ -568,7 +568,7 @@ class Product extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		if (!empty($conf->global->MAIN_DO_NOT_SANITIZE_PRODUCT_REF)) {
+		if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
 			$this->ref = trim($this->ref);
 		} else {
 			$this->ref = dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)));
@@ -967,7 +967,7 @@ class Product extends CommonObject
 		}
 
 		// Clean parameters
-		if (!empty($conf->global->MAIN_DO_NOT_SANITIZE_PRODUCT_REF)) {
+		if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
 			$this->ref = trim($this->ref);
 		} else {
 			$this->ref = dol_string_nospecial(trim($this->ref));

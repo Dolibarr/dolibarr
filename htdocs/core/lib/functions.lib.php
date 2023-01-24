@@ -472,7 +472,7 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *                               'aZ'=check it's a-z only
  *                               'aZ09'=check it's simple alpha string (recommended for keys)
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
- *                               'nohtml'=check there is no html content and no " and no ../
+ *                               'nohtml'=check there is no html content
  *                               'restricthtml'=check html content is restricted to some tags only
  *                               'custom'= custom filter specify $filter and $options)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)

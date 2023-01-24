@@ -88,7 +88,7 @@ $mesg = ''; $error = 0; $errors = array();
 $refalreadyexists = 0;
 
 $id = GETPOST('id', 'int');
-if (!empty($conf->global->MAIN_DO_NOT_SANITIZE_PRODUCT_REF)) {
+if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
 	$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'nohtml') : null);
 } else {
 	$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : null);
@@ -111,8 +111,8 @@ $accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
 
 $checkmandatory = GETPOST('accountancy_code_buy_export', 'alpha');
 // by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
-if (!empty($conf->global->MAIN_DO_NOT_SANITIZE_PRODUCT_REF)) {
-	$label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'nohtml' : 'restricthtml';
+if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+	$label_security_check = 'nohtml';
 } else {
 	$label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'alphanohtml' : 'restricthtml';
 }
