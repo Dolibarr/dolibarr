@@ -6490,7 +6490,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	if (!empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC)) {
 		if ($seller_in_cee && $buyer_in_cee) {
 			$isacompany = $thirdparty_buyer->isACompany();
-			if ($isacompany && !empty($conf->global->MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL)) {
+			if ($isacompany && getDolGlobalString('MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL')) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 				if (!isValidVATID($thirdparty_buyer)) {
 					$isacompany = 0;
@@ -6526,7 +6526,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
 	if (($seller_in_cee && $buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
-		if ($isacompany && !empty($conf->global->MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL)) {
+		if ($isacompany && getDolGlobalString('MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			if (!isValidVATID($thirdparty_buyer)) {
 				$isacompany = 0;

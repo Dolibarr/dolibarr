@@ -418,8 +418,8 @@ if ($result) {
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, '', $sortfield, $sortorder, 'right maxwidth50 ');
 	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', '', '', '', 'nowraponall ');
-	print_liste_field_titre("IntoAccount", '', '', '', '', '', '', '', '');
+	print_liste_field_titre("DataUsedToSuggestAccount", '', '', '', '', '', '', '', 'nowraponall ');
+	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', '', '', '', '');
 	$checkpicto = '';
 	if ($massactionbutton) {
 		$checkpicto = $form->showCheckAddButtons('checkforselect', 1);

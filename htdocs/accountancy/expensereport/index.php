@@ -58,6 +58,8 @@ $year_current = $year_start;
 // Validate History
 $action = GETPOST('action', 'aZ09');
 
+$chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
+
 // Security check
 if (!isModEnabled('accounting')) {
 	accessforbidden();
@@ -65,7 +67,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -74,7 +76,7 @@ if (empty($user->rights->accounting->mouvements->lire)) {
  * Actions
  */
 
-if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accounting->bind->write) {
+if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('accounting', 'bind', 'write')) {
 	// Clean database
 	$db->begin();
 	$sql1 = "UPDATE ".MAIN_DB_PREFIX."expensereport_det as erd";
@@ -109,8 +111,7 @@ if ($action == 'validatehistory') {
 	$sql1 = "SELECT erd.rowid, accnt.rowid as suggestedid";
 	$sql1 .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
 	$sql1 .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_fees as t ON erd.fk_c_type_fees = t.id";
-	$sql1 .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as accnt ON t.accountancy_code = accnt.account_number AND accnt.active = 1 AND accnt.entity =".((int) $conf->entity);
-	$sql1 .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as syst ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid = ".((int) $conf->global->CHARTOFACCOUNTS).' AND syst.active = 1,';
+	$sql1 .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as accnt ON t.accountancy_code = accnt.account_number AND accnt.active = 1 AND accnt.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND accnt.entity =".((int) $conf->entity);
 	$sql1 .= " ".MAIN_DB_PREFIX."expensereport as er";
 	$sql1 .= " WHERE erd.fk_expensereport = er.rowid AND er.entity = ".((int) $conf->entity);
 	$sql1 .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.") AND erd.fk_code_ventilation <= 0";
@@ -175,6 +176,7 @@ llxHeader('', $langs->trans("ExpenseReportsVentilation"));
 
 $textprevyear = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current - 1).'">'.img_previous().'</a>';
 $textnextyear = '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current + 1).'">'.img_next().'</a>';
+
 
 print load_fiche_titre($langs->trans("ExpenseReportsVentilation")."&nbsp;".$textprevyear."&nbsp;".$langs->trans("Year")."&nbsp;".$year_start."&nbsp;".$textnextyear, '', 'title_accountancy');
 
@@ -247,7 +249,7 @@ $sql .= " AND aa.account_number IS NULL";
 $sql .= " GROUP BY erd.fk_code_ventilation,aa.account_number,aa.label";
 $sql .= ' ORDER BY aa.account_number';
 
-dol_syslog('/accountancy/expensereport/index.php:: sql='.$sql);
+dol_syslog('/accountancy/expensereport/index.php', LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -277,6 +279,12 @@ if ($resql) {
 		print '</tr>';
 	}
 	$db->free($resql);
+
+	if ($num == 0) {
+		print '<tr class="oddeven"><td colspan="16">';
+		print '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
+		print '</td></tr>';
+	}
 } else {
 	print $db->lasterror(); // Show last sql error
 }

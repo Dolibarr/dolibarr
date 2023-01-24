@@ -519,8 +519,8 @@ if ($result) {
 	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Country", $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("VATIntraShort", $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', '', '', '', 'nowraponall ');
-	print_liste_field_titre("IntoAccount", '', '', '', '', '', '', '', 'center ');
+	print_liste_field_titre("DataUsedToSuggestAccount", '', '', '', '', '', '', '', 'nowraponall ');
+	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', '', '', '', 'center ');
 	$checkpicto = '';
 	if ($massactionbutton) {
 		$checkpicto = $form->showCheckAddButtons('checkforselect', 1);
@@ -639,7 +639,7 @@ if ($result) {
 		print '<td class="center">'.dol_print_date($facture_static->date, 'day').'</td>';
 
 		// Ref Product
-		print '<td class="tdoverflowmax150">';
+		print '<td class="tdoverflowmax100">';
 		if ($product_static->id > 0) {
 			print $product_static->getNomUrl(1);
 		}
@@ -648,7 +648,7 @@ if ($result) {
 		}
 		print '</td>';
 
-		// Description
+		// Description of line
 		print '<td class="tdoverflowonsmartphone small">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facture_static_det->desc, 1));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
@@ -682,15 +682,22 @@ if ($result) {
 
 		// Found accounts
 		print '<td class="small">';
+		// First show default account for any products
 		$s = '1. '.(($facture_static_det->product_type == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': ';
-		$shelp = '';
+		$shelp = ''; $ttype = 'help';
 		if ($suggestedaccountingaccountbydefaultfor == 'eec') {
 			$shelp .= $langs->trans("SaleEEC");
+		} elseif ($suggestedaccountingaccountbydefaultfor == 'eecwithvat') {
+			$shelp = $langs->trans("SaleEECWithVAT");
+		} elseif ($suggestedaccountingaccountbydefaultfor == 'eecwithoutvatnumber') {
+			$shelp = $langs->trans("SaleEECWithoutVATNumber");
+			$ttype = 'warning';
 		} elseif ($suggestedaccountingaccountbydefaultfor == 'export') {
 			$shelp .= $langs->trans("SaleExport");
 		}
 		$s .= ($code_sell_l > 0 ? length_accountg($code_sell_l) : '<span style="'.$code_sell_p_notset.'">'.$langs->trans("NotDefined").'</span>');
-		print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
+		print $form->textwithpicto($s, $shelp, 1, $ttype, '', 0, 2, '', 1);
+		// Now show account for product
 		if ($product_static->id > 0) {
 			print '<br>';
 			$s = '2. '.(($facture_static_det->product_type == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
