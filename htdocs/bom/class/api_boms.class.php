@@ -365,7 +365,7 @@ class Boms extends DolibarrApi
 	 *
 	 * @url	PUT {id}/lines/{lineid}
 	 *
-	 * @return array|bool
+	 * @return object|bool
 	 */
 	public function putLine($id, $lineid, $request_data = null)
 	{
