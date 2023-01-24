@@ -44,10 +44,11 @@ $langs->loadLangs(array("bills", "companies", "compta", "accountancy", "other", 
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'accountancysupplierlist'; // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
+
 $default_account = GETPOST('default_account', 'int');
 
 // Select Box
@@ -74,8 +75,6 @@ $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_s
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_country = GETPOST('search_country', 'alpha');
 $search_tvaintra = GETPOST('search_tvaintra', 'alpha');
-
-$btn_ventil = GETPOST('ventil', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
