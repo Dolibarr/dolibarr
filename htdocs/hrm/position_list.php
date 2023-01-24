@@ -247,7 +247,6 @@ if ($object->ismultientitymanaged == 1) {
 } else {
 	$sql .= " WHERE 1 = 1";
 }
-$sql .= " AND t.fk_user = u.rowid";
 $sql .= " AND t.fk_job = j.rowid";
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
