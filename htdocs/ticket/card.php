@@ -1358,6 +1358,7 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlright = '';
 			$help = "";
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
+			complete_substitutions_array($substitutionarray, $outputlangs, $object);
 			if ($object->fk_soc > 0) {
 				$substitutionarray['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 			}
