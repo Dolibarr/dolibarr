@@ -1010,10 +1010,10 @@ class Expedition extends CommonObject
 						return -1;
 					}
 					$linebatch->qty = $value['q'];
-                    if ($linebatch->qty == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS) {
-                        $linebatch->batch = null;
-                    }
-                    $tab[] = $linebatch;
+					if ($linebatch->qty == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS) {
+						$linebatch->batch = null;
+					}
+					$tab[] = $linebatch;
 
 					if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT) {
 						require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
