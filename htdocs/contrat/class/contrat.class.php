@@ -320,15 +320,15 @@ class Contrat extends CommonObject
 	 *
 	 *  @param	User		$user       Objet User who activate contract
 	 *  @param  int			$line_id    Id of line to activate
-	 *  @param  int			$date       Opening date
+	 *  @param  int			$date_start Opening date
 	 *  @param  int|string	$date_end   Expected end date
 	 * 	@param	string		$comment	A comment typed by user
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
-	public function active_line($user, $line_id, $date, $date_end = '', $comment = '')
+	public function active_line($user, $line_id, $date_start, $date_end = '', $comment = '')
 	{
 		// phpcs:enable
-		$result = $this->lines[$this->lines_id_index_mapper[$line_id]]->active_line($user, $date, $date_end, $comment);
+		$result = $this->lines[$this->lines_id_index_mapper[$line_id]]->active_line($user, $date_start, $date_end, $comment);
 		if ($result < 0) {
 			$this->error = $this->lines[$this->lines_id_index_mapper[$line_id]]->error;
 			$this->errors = $this->lines[$this->lines_id_index_mapper[$line_id]]->errors;
@@ -3554,7 +3554,7 @@ class ContratLigne extends CommonObjectLine
 	 *  Activate a contract line
 	 *
 	 * @param   User 		$user 		Objet User who activate contract
-	 * @param  	int 		$date 		Date activation
+	 * @param  	int 		$date 		Date real activation
 	 * @param  	int|string 	$date_end 	Date planned end. Use '-1' to keep it unchanged.
 	 * @param   string 		$comment 	A comment typed by user
 	 * @return 	int                    	<0 if KO, >0 if OK
@@ -3569,13 +3569,13 @@ class ContratLigne extends CommonObjectLine
 		$this->db->begin();
 
 		$this->statut = ContratLigne::STATUS_OPEN;
-		$this->date_start = $date;
+		$this->date_start_real = $date;
 		$this->date_end = $date_end;
 		$this->fk_user_ouverture = $user->id;
 		$this->date_end_real = null;
 		$this->commentaire = $comment;
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = ".$this->statut.",";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = ".((int) $this->statut).",";
 		$sql .= " date_ouverture = ".(dol_strlen($this->date_start_real) != 0 ? "'".$this->db->idate($this->date_start_real)."'" : "null").",";
 		if ($date_end >= 0) {
 			$sql .= " date_fin_validite = ".(dol_strlen($this->date_end) != 0 ? "'".$this->db->idate($this->date_end)."'" : "null").",";
@@ -3614,7 +3614,7 @@ class ContratLigne extends CommonObjectLine
 	 *  Close a contract line
 	 *
 	 * @param    User 	$user 			Objet User who close contract
-	 * @param  	 int 	$date_end_real 		Date end
+	 * @param  	 int 	$date_end_real 	Date end
 	 * @param    string $comment 		A comment typed by user
 	 * @param    int	$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 * @return int                    	<0 if KO, >0 if OK
