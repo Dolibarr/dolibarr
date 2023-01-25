@@ -822,6 +822,9 @@ while ($i < min($num, $limit)) {
 		if (!$i) {
 			$totalarray['pos'][$totalarray['nbfield']] = 'cd.qty';
 		}
+		if (!$i) {
+			$totalarray['val']['cd.qty'] = $obj->qty;
+		}
 		$totalarray['val']['cd.qty'] += $obj->qty;
 	}
 	if (!empty($arrayfields['cd.total_ht']['checked'])) {
