@@ -72,7 +72,7 @@ if ($origin == 'reception') {
 } else {
 	if ($origin == 'supplierorder' || $origin == 'order_supplier') {
 		$result = restrictedArea($user, 'fournisseur', $origin_id, 'commande_fournisseur', 'commande');
-	} elseif (empty($user->hasRight($origin, "lire")) && empty($user->hasRight($origin, "read"))) {
+	} elseif (!$user->hasRight($origin, "lire") && !$user->hasRight($origin, "read")) {
 		accessforbidden();
 	}
 }
