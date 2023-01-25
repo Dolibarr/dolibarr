@@ -46,6 +46,14 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 class Product extends CommonObject
 {
 	/**
+	 * Const sell or eat by mandatory id
+	 */
+	const SELL_OR_EAT_BY_MANDATORY_ID_NONE = 0;
+	const SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY = 1;
+	const SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY = 2;
+	const SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT = 3;
+
+	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'product';
@@ -267,6 +275,13 @@ class Product extends CommonObject
 	 * @var int
 	 */
 	public $status_batch = 0;
+
+	/**
+	 * Make sell-by or eat-by date mandatory
+	 *
+	 * @var int
+	 */
+	public $sell_or_eat_by_mandatory = 0;
 
 	/**
 	 * If allowed, we can edit batch or serial number mask for each product
@@ -707,6 +722,7 @@ class Product extends CommonObject
 					$sql .= ", canvas";
 					$sql .= ", finished";
 					$sql .= ", tobatch";
+					$sql .= ", sell_or_eat_by_mandatory";
 					$sql .= ", batch_mask";
 					$sql .= ", fk_unit";
 					$sql .= ") VALUES (";
@@ -735,6 +751,7 @@ class Product extends CommonObject
 					$sql .= ", '".$this->db->escape($this->canvas)."'";
 					$sql .= ", ".((!isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'null' : (int) $this->finished);
 					$sql .= ", ".((empty($this->status_batch) || $this->status_batch < 0) ? '0' : $this->status_batch);
+					$sql .= ", ".((empty($this->sell_or_eat_by_mandatory) || $this->sell_or_eat_by_mandatory < 0) ? 0 : ((int) $this->sell_or_eat_by_mandatory));
 					$sql .= ", '".$this->db->escape($this->batch_mask)."'";
 					$sql .= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
 					$sql .= ")";
@@ -1098,6 +1115,7 @@ class Product extends CommonObject
 			$sql .= ", tosell = ".(int) $this->status;
 			$sql .= ", tobuy = ".(int) $this->status_buy;
 			$sql .= ", tobatch = ".((empty($this->status_batch) || $this->status_batch < 0) ? '0' : (int) $this->status_batch);
+			$sql .= ", sell_or_eat_by_mandatory = ".((empty($this->sell_or_eat_by_mandatory) || $this->sell_or_eat_by_mandatory < 0) ? 0 : (int) $this->sell_or_eat_by_mandatory);
 			$sql .= ", batch_mask = '".$this->db->escape($this->batch_mask)."'";
 
 			$sql .= ", finished = ".((!isset($this->finished) || $this->finished < 0 || $this->finished == '') ? "null" : (int) $this->finished);
@@ -1418,6 +1436,42 @@ class Product extends CommonObject
 			$this->error = "ErrorRecordIsUsedCantDelete";
 			return 0;
 		}
+	}
+
+	/**
+	 * Get sell or eat by mandatory list
+	 *
+	 * @return 	array	Sell or eat by mandatory list
+	 */
+	public static function getSellOrEatByMandatoryList()
+	{
+		global $langs;
+
+		$sellByLabel = $langs->trans('SellByDate');
+		$eatByLabel = $langs->trans('EatByDate');
+		return array(
+			self::SELL_OR_EAT_BY_MANDATORY_ID_NONE => $langs->trans('BatchSellOrEatByMandatoryNone'),
+			self::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY => $sellByLabel,
+			self::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY => $eatByLabel,
+			self::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT => $langs->trans('BatchSellOrEatByMandatoryAll', $sellByLabel, $eatByLabel),
+		);
+	}
+
+	/**
+	 * Get sell or eat by mandatory label
+	 *
+	 * @return 	string	Sell or eat by mandatory label
+	 */
+	public function getSellOrEatByMandatoryLabel()
+	{
+		$sellOrEatByMandatoryLabel = '';
+
+		$sellOrEatByMandatoryList = self::getSellOrEatByMandatoryList();
+		if (isset($sellOrEatByMandatoryList[$this->sell_or_eat_by_mandatory])) {
+			$sellOrEatByMandatoryLabel = $sellOrEatByMandatoryList[$this->sell_or_eat_by_mandatory];
+		}
+
+		return $sellOrEatByMandatoryLabel;
 	}
 
 	/**
@@ -2277,7 +2331,7 @@ class Product extends CommonObject
 		} else {
 			$sql .= " p.pmp,";
 		}
-		$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
+		$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
 		$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf,";
 		if ($separatedStock) {
 			$sql .= " SUM(sp.reel) as stock";
@@ -2319,7 +2373,7 @@ class Product extends CommonObject
 			} else {
 				$sql .= " p.pmp,";
 			}
-			$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
+			$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
 			$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf";
 			if (!$separatedStock) {
 				$sql .= ", p.stock";
@@ -2346,7 +2400,8 @@ class Product extends CommonObject
 				$this->type                            = $obj->fk_product_type;
 				$this->status                        = $obj->tosell;
 				$this->status_buy                    = $obj->tobuy;
-				$this->status_batch                    = $obj->tobatch;
+				$this->status_batch                  = $obj->tobatch;
+				$this->sell_or_eat_by_mandatory      = $obj->sell_or_eat_by_mandatory;
 				$this->batch_mask                    = $obj->batch_mask;
 
 				$this->customcode                    = $obj->customcode;
@@ -2796,23 +2851,19 @@ class Product extends CommonObject
 			$this->stats_propale['qty'] = $obj->qty ? $obj->qty : 0;
 
 			// if it's a virtual product, maybe it is in proposal by extension
-			if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
-				$TFather = $this->getFather();
-				if (is_array($TFather) && !empty($TFather)) {
-					foreach ($TFather as &$fatherData) {
-						$pFather = new Product($this->db);
-						$pFather->id = $fatherData['id'];
-						$qtyCoef = $fatherData['qty'];
+			$TFather = $this->getFather();
+			if (is_array($TFather) && !empty($TFather)) {
+				foreach ($TFather as &$fatherData) {
+					$pFather = new Product($this->db);
+					$pFather->id = $fatherData['id'];
+					$qtyCoef = $fatherData['qty'];
 
-						if ($fatherData['incdec']) {
-							$pFather->load_stats_propale($socid);
+					$pFather->load_stats_propale($socid);
 
-							$this->stats_propale['customers'] += $pFather->stats_propale['customers'];
-							$this->stats_propale['nb'] += $pFather->stats_propale['nb'];
-							$this->stats_propale['rows'] += $pFather->stats_propale['rows'];
-							$this->stats_propale['qty'] += $pFather->stats_propale['qty'] * $qtyCoef;
-						}
-					}
+					$this->stats_propale['customers'] += $pFather->stats_propale['customers'];
+					$this->stats_propale['nb'] += $pFather->stats_propale['nb'];
+					$this->stats_propale['rows'] += $pFather->stats_propale['rows'];
+					$this->stats_propale['qty'] += $pFather->stats_propale['qty'] * $qtyCoef;
 				}
 			}
 
@@ -2929,23 +2980,19 @@ class Product extends CommonObject
 			$this->stats_commande['qty'] = $obj->qty ? $obj->qty : 0;
 
 			// if it's a virtual product, maybe it is in order by extension
-			if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
-				$TFather = $this->getFather();
-				if (is_array($TFather) && !empty($TFather)) {
-					foreach ($TFather as &$fatherData) {
-						$pFather = new Product($this->db);
-						$pFather->id = $fatherData['id'];
-						$qtyCoef = $fatherData['qty'];
+			$TFather = $this->getFather();
+			if (is_array($TFather) && !empty($TFather)) {
+				foreach ($TFather as &$fatherData) {
+					$pFather = new Product($this->db);
+					$pFather->id = $fatherData['id'];
+					$qtyCoef = $fatherData['qty'];
 
-						if ($fatherData['incdec']) {
-							$pFather->load_stats_commande($socid, $filtrestatut);
+					$pFather->load_stats_commande($socid, $filtrestatut, $forVirtualStock);
 
-							$this->stats_commande['customers'] += $pFather->stats_commande['customers'];
-							$this->stats_commande['nb'] += $pFather->stats_commande['nb'];
-							$this->stats_commande['rows'] += $pFather->stats_commande['rows'];
-							$this->stats_commande['qty'] += $pFather->stats_commande['qty'] * $qtyCoef;
-						}
-					}
+					$this->stats_commande['customers'] += $pFather->stats_commande['customers'];
+					$this->stats_commande['nb'] += $pFather->stats_commande['nb'];
+					$this->stats_commande['rows'] += $pFather->stats_commande['rows'];
+					$this->stats_commande['qty'] += $pFather->stats_commande['qty'] * $qtyCoef;
 				}
 			}
 
@@ -3096,23 +3143,19 @@ class Product extends CommonObject
 			$this->stats_expedition['qty'] = $obj->qty ? $obj->qty : 0;
 
 			// if it's a virtual product, maybe it is in sending by extension
-			if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
-				$TFather = $this->getFather();
-				if (is_array($TFather) && !empty($TFather)) {
-					foreach ($TFather as &$fatherData) {
-						$pFather = new Product($this->db);
-						$pFather->id = $fatherData['id'];
-						$qtyCoef = $fatherData['qty'];
+			$TFather = $this->getFather();
+			if (is_array($TFather) && !empty($TFather)) {
+				foreach ($TFather as &$fatherData) {
+					$pFather = new Product($this->db);
+					$pFather->id = $fatherData['id'];
+					$qtyCoef = $fatherData['qty'];
 
-						if ($fatherData['incdec']) {
-							$pFather->load_stats_sending($socid, $filtrestatut, $forVirtualStock);
+					$pFather->load_stats_sending($socid, $filtrestatut, $forVirtualStock, $filterShipmentStatus);
 
-							$this->stats_expedition['customers'] += $pFather->stats_expedition['customers'];
-							$this->stats_expedition['nb'] += $pFather->stats_expedition['nb'];
-							$this->stats_expedition['rows'] += $pFather->stats_expedition['rows'];
-							$this->stats_expedition['qty'] += $pFather->stats_expedition['qty'] * $qtyCoef;
-						}
-					}
+					$this->stats_expedition['customers'] += $pFather->stats_expedition['customers'];
+					$this->stats_expedition['nb'] += $pFather->stats_expedition['nb'];
+					$this->stats_expedition['rows'] += $pFather->stats_expedition['rows'];
+					$this->stats_expedition['qty'] += $pFather->stats_expedition['qty'] * $qtyCoef;
 				}
 			}
 
@@ -3322,23 +3365,19 @@ class Product extends CommonObject
 			$this->stats_contrat['qty'] = $obj->qty ? $obj->qty : 0;
 
 			// if it's a virtual product, maybe it is in contract by extension
-			if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
-				$TFather = $this->getFather();
-				if (is_array($TFather) && !empty($TFather)) {
-					foreach ($TFather as &$fatherData) {
-						$pFather = new Product($this->db);
-						$pFather->id = $fatherData['id'];
-						$qtyCoef = $fatherData['qty'];
+			$TFather = $this->getFather();
+			if (is_array($TFather) && !empty($TFather)) {
+				foreach ($TFather as &$fatherData) {
+					$pFather = new Product($this->db);
+					$pFather->id = $fatherData['id'];
+					$qtyCoef = $fatherData['qty'];
 
-						if ($fatherData['incdec']) {
-							$pFather->load_stats_contrat($socid);
+					$pFather->load_stats_contrat($socid);
 
-							$this->stats_contrat['customers'] += $pFather->stats_contrat['customers'];
-							$this->stats_contrat['nb'] += $pFather->stats_contrat['nb'];
-							$this->stats_contrat['rows'] += $pFather->stats_contrat['rows'];
-							$this->stats_contrat['qty'] += $pFather->stats_contrat['qty'] * $qtyCoef;
-						}
-					}
+					$this->stats_contrat['customers'] += $pFather->stats_contrat['customers'];
+					$this->stats_contrat['nb'] += $pFather->stats_contrat['nb'];
+					$this->stats_contrat['rows'] += $pFather->stats_contrat['rows'];
+					$this->stats_contrat['qty'] += $pFather->stats_contrat['qty'] * $qtyCoef;
 				}
 			}
 
@@ -3396,23 +3435,19 @@ class Product extends CommonObject
 			$this->stats_facture['qty'] = $obj->qty ? $obj->qty : 0;
 
 			// if it's a virtual product, maybe it is in invoice by extension
-			if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
-				$TFather = $this->getFather();
-				if (is_array($TFather) && !empty($TFather)) {
-					foreach ($TFather as &$fatherData) {
-						$pFather = new Product($this->db);
-						$pFather->id = $fatherData['id'];
-						$qtyCoef = $fatherData['qty'];
+			$TFather = $this->getFather();
+			if (is_array($TFather) && !empty($TFather)) {
+				foreach ($TFather as &$fatherData) {
+					$pFather = new Product($this->db);
+					$pFather->id = $fatherData['id'];
+					$qtyCoef = $fatherData['qty'];
 
-						if ($fatherData['incdec']) {
-							$pFather->load_stats_facture($socid);
+					$pFather->load_stats_facture($socid);
 
-							$this->stats_facture['customers'] += $pFather->stats_facture['customers'];
-							$this->stats_facture['nb'] += $pFather->stats_facture['nb'];
-							$this->stats_facture['rows'] += $pFather->stats_facture['rows'];
-							$this->stats_facture['qty'] += $pFather->stats_facture['qty'] * $qtyCoef;
-						}
-					}
+					$this->stats_facture['customers'] += $pFather->stats_facture['customers'];
+					$this->stats_facture['nb'] += $pFather->stats_facture['nb'];
+					$this->stats_facture['rows'] += $pFather->stats_facture['rows'];
+					$this->stats_facture['qty'] += $pFather->stats_facture['qty'] * $qtyCoef;
 				}
 			}
 
@@ -3977,10 +4012,9 @@ class Product extends CommonObject
 	 * @param  int $id_pere Id of parent product/service
 	 * @param  int $id_fils Id of child product/service
 	 * @param  int $qty     Quantity
-	 * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
 	 * @return int                < 0 if KO, > 0 if OK
 	 */
-	public function add_sousproduit($id_pere, $id_fils, $qty, $incdec = 1)
+	public function add_sousproduit($id_pere, $id_fils, $qty)
 	{
 		// phpcs:enable
 		// Clean parameters
@@ -3989,9 +4023,6 @@ class Product extends CommonObject
 		}
 		if (!is_numeric($id_fils)) {
 			$id_fils = 0;
-		}
-		if (!is_numeric($incdec)) {
-			$incdec = 0;
 		}
 
 		$result = $this->del_sousproduit($id_pere, $id_fils);
@@ -4013,8 +4044,8 @@ class Product extends CommonObject
 					$this->error = "isFatherOfThis";
 					return -1;
 				} else {
-					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty,incdec)';
-					$sql .= ' VALUES ('.((int) $id_pere).', '.((int) $id_fils).', '.((float) $qty).', '.((int) $incdec).')';
+					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty)';
+					$sql .= ' VALUES ('.((int) $id_pere).', '.((int) $id_fils).', '.((float) $qty).')';
 					if (!$this->db->query($sql)) {
 						dol_print_error($this->db);
 						return -1;
@@ -4033,10 +4064,9 @@ class Product extends CommonObject
 	 * @param  int $id_pere Id of parent product/service
 	 * @param  int $id_fils Id of child product/service
 	 * @param  int $qty     Quantity
-	 * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
 	 * @return int                < 0 if KO, > 0 if OK
 	 */
-	public function update_sousproduit($id_pere, $id_fils, $qty, $incdec = 1)
+	public function update_sousproduit($id_pere, $id_fils, $qty)
 	{
 		// phpcs:enable
 		// Clean parameters
@@ -4046,16 +4076,12 @@ class Product extends CommonObject
 		if (!is_numeric($id_fils)) {
 			$id_fils = 0;
 		}
-		if (!is_numeric($incdec)) {
-			$incdec = 1;
-		}
 		if (!is_numeric($qty)) {
 			$qty = 1;
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_association SET ';
 		$sql .= 'qty='.$qty;
-		$sql .= ',incdec='.$incdec;
 		$sql .= ' WHERE fk_product_pere='.$id_pere.' AND fk_product_fils='.$id_fils;
 
 		if (!$this->db->query($sql)) {
@@ -4108,7 +4134,7 @@ class Product extends CommonObject
 	public function is_sousproduit($fk_parent, $fk_child)
 	{
 		// phpcs:enable
-		$sql = "SELECT fk_product_pere, qty, incdec";
+		$sql = "SELECT fk_product_pere, qty";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_association";
 		$sql .= " WHERE fk_product_pere  = ".((int) $fk_parent);
 		$sql .= " AND fk_product_fils = ".((int) $fk_child);
@@ -4121,7 +4147,6 @@ class Product extends CommonObject
 				$obj = $this->db->fetch_object($result);
 
 				$this->is_sousproduit_qty = $obj->qty;
-				$this->is_sousproduit_incdec = $obj->incdec;
 
 				return true;
 			} else {
@@ -4453,7 +4478,6 @@ class Product extends CommonObject
 				$nb = (!empty($desc_pere[1]) ? $desc_pere[1] : '');
 				$type = (!empty($desc_pere[2]) ? $desc_pere[2] : '');
 				$label = (!empty($desc_pere[3]) ? $desc_pere[3] : '');
-				$incdec = (!empty($desc_pere[4]) ? $desc_pere[4] : 0);
 				$ref = (!empty($desc_pere[5]) ? $desc_pere[5] : '');
 				$fullpath = $compl_path . $ref . (!empty($label) ? ' - ' . $label : '');
 
@@ -4484,7 +4508,6 @@ class Product extends CommonObject
 					'type'=>$type, // Nb of units that compose parent product
 					'desiredstock'=>$tmpproduct->desiredstock,
 					'level'=>$level,
-					'incdec'=>$incdec,
 					'entity'=>$tmpproduct->entity
 				);
 
@@ -4613,7 +4636,7 @@ class Product extends CommonObject
 	 */
 	public function getFather()
 	{
-		$sql = "SELECT p.rowid, p.label as label, p.ref as ref, pa.fk_product_pere as id, p.fk_product_type, pa.qty, pa.incdec, p.entity";
+		$sql = "SELECT p.rowid, p.label as label, p.ref as ref, pa.fk_product_pere as id, p.fk_product_type, pa.qty, p.entity";
 		$sql .= ", p.tosell as status, p.tobuy as status_buy";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
 		$sql .= " ".MAIN_DB_PREFIX."product as p";
@@ -4629,7 +4652,6 @@ class Product extends CommonObject
 				$prods[$record['id']]['ref'] = $record['ref'];
 				$prods[$record['id']]['label'] = $record['label'];
 				$prods[$record['id']]['qty'] = $record['qty'];
-				$prods[$record['id']]['incdec'] = $record['incdec'];
 				$prods[$record['id']]['fk_product_type'] = $record['fk_product_type'];
 				$prods[$record['id']]['entity'] = $record['entity'];
 				$prods[$record['id']]['status'] = $record['status'];
@@ -4673,7 +4695,7 @@ class Product extends CommonObject
 	 * @param  int $firstlevelonly 		Return only direct child
 	 * @param  int $level          		Level of recursing call (start to 1)
 	 * @param  array $parents   	    Array of all parents of $id
-	 * @return array                    Return array(prodid=>array(0=prodid, 1=>qty, 2=>product type, 3=>label, 4=>incdec, 5=>product ref)
+	 * @return array                    Return array(prodid=>array(0=prodid, 1=>qty, 2=>product type, 3=>label, 5=>product ref)
 	 */
 	public function getChildsArbo($id, $firstlevelonly = 0, $level = 1, $parents = array())
 	{
@@ -4684,7 +4706,7 @@ class Product extends CommonObject
 		}
 
 		$sql = "SELECT p.rowid, p.ref, p.label as label, p.fk_product_type,";
-		$sql .= " pa.qty as qty, pa.fk_product_fils as id, pa.incdec";
+		$sql .= " pa.qty as qty, pa.fk_product_fils as id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p,";
 		$sql .= " ".MAIN_DB_PREFIX."product_association as pa";
 		$sql .= " WHERE p.rowid = pa.fk_product_fils";
@@ -4719,7 +4741,6 @@ class Product extends CommonObject
 					1=>$rec['qty'],
 					2=>$rec['fk_product_type'],
 					3=>$this->db->escape($rec['label']),
-					4=>$rec['incdec'],
 					5=>$rec['ref']
 				);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
@@ -4741,7 +4762,7 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *     Return tree of all subproducts for product. Tree contains array of array(0=prodid, 1=>qty, 2=>product type, 3=>label, 4=>incdec, 5=>product ref)
+	 *     Return tree of all subproducts for product. Tree contains array of array(0=prodid, 1=>qty, 2=>product type, 3=>label, 5=>product ref)
 	 *     Set this->sousprods
 	 *
 	 * @return void
@@ -5740,6 +5761,7 @@ class Product extends CommonObject
 		$this->tosell = 1;
 		$this->tobuy = 1;
 		$this->tobatch = 0;
+		$this->sell_or_eat_by_mandatory = 0;
 		$this->note = 'This is a comment (private)';
 		$this->date_creation = $now;
 		$this->date_modification = $now;

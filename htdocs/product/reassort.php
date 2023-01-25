@@ -144,11 +144,11 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s ON p.rowid = s.fk_product';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e ON s.fk_entrepot = e.rowid AND e.entity IN ('.getEntity('stock').')';
 if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_units as u on p.fk_unit = u.rowid';
 }
 $sql .= " WHERE p.entity IN (".getEntity('product').")";
+$sql .= " AND EXISTS (SELECT e.rowid FROM ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = s.fk_entrepot AND e.entity IN (".getEntity('stock')."))";
 if (!empty($search_categ) && $search_categ != '-1') {
 	$sql .= " AND ";
 	if ($search_categ == -2) {
