@@ -117,7 +117,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->COMMANDE_ADDON_PDF == "$value") {
+		if (getDolGlobalString('COMMANDE_ADDON_PDF') == $value) {
 			dolibarr_del_const($db, 'COMMANDE_ADDON_PDF', $conf->entity);
 		}
 	}
