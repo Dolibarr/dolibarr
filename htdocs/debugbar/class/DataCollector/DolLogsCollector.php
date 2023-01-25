@@ -21,6 +21,11 @@ class DolLogsCollector extends MessagesCollector
 	protected $maxnboflines;
 
 	/**
+	 * @var int number of lines
+	 */
+	protected $nboflines;
+
+	/**
 	 * Constructor
 	 *
 	 * @param string $path     Path
@@ -33,7 +38,7 @@ class DolLogsCollector extends MessagesCollector
 		parent::__construct($name);
 
 		$this->nboflines = 0;
-		$this->maxnboflines = empty($conf->global->DEBUGBAR_LOGS_LINES_NUMBER) ? 250 : $conf->global->DEBUGBAR_LOGS_LINES_NUMBER; // High number slows seriously output
+		$this->maxnboflines = getDolGlobalInt('DEBUGBAR_LOGS_LINES_NUMBER', 250); // High number slows seriously output
 
 		$this->path = $path ?: $this->getLogsFile();
 	}
