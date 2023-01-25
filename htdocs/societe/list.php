@@ -492,7 +492,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sqlfields = $sql; // $sql fields to remove for count total
+$sqlfields = $sql; // $sql fields to remove for count totall
 
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s.parent = s2.rowid";
