@@ -1069,7 +1069,7 @@ class FormSetupItem
 		} elseif ($this->type == 'yesno') {
 			$out.= ajax_constantonoff($this->confKey);
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
-			if ($this->fieldValue > 0){
+			if ($this->fieldValue > 0) {
 				include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 				$formmail = new FormMail($this->db);
 
