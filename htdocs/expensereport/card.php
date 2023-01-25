@@ -1162,7 +1162,8 @@ if (empty($reshook)) {
 			}
 		}
 
-		$action = '';
+		header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id', 'int'));
+		exit;
 	}
 
 	if ($action == 'confirm_delete_line' && GETPOST("confirm", 'alpha') == "yes" && $user->rights->expensereport->creer) {
