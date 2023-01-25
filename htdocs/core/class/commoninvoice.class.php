@@ -1175,9 +1175,9 @@ abstract class CommonInvoice extends CommonObject
 											$postactionmessages[] = $errmsg . ' (' . $stripearrayofkeys['publishable_key'] . ')';
 											$this->errors[] = $errmsg;
 										} else {
-											dol_syslog('Successfuly charge direct debit ' . $stripecard->id);
+											dol_syslog('Successfuly request direct debit ' . $stripecard->id);
 
-											$postactionmessages[] = 'Success to charge direct debit (' . $charge->id . ' with ' . $stripearrayofkeys['publishable_key'] . ')';
+											$postactionmessages[] = 'Success to request direct debit (' . $charge->id . ' with ' . $stripearrayofkeys['publishable_key'] . ')';
 
 											// Save a stripe payment was done in realy life so later we will be able to force a commit on recorded payments
 											// even if in batch mode (method doTakePaymentStripe), we will always make all action in one transaction with a forced commit.
@@ -1229,6 +1229,7 @@ abstract class CommonInvoice extends CommonObject
 											$ispostactionok = 1;
 
 											// Creation of payment line
+											// TODO LMR This must be move into the stripe server listening hooks public/stripe/ipn.php
 											include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 											$paiement = new Paiement($this->db);
 											$paiement->datepaye = $now;
