@@ -314,7 +314,7 @@ class pdf_standard extends ModelePDFMovement
 			$sql .= natural_search('p.label', $search_product);
 		}
 		if ($search_warehouse > 0) {
-			$sql .= " AND e.rowid = ".((int) $this->db->escape($search_warehouse));
+			$sql .= " AND e.rowid = ".((int) $search_warehouse);
 		}
 		if (!empty($search_user)) {
 			$sql .= natural_search('u.login', $search_user);

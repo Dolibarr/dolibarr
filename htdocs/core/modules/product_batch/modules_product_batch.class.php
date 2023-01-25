@@ -89,7 +89,7 @@ abstract class ModeleNumRefBatch
 	/**
 	 *	Returns the default description of the numbering template
 	 *
-	 *	@return     string      Texte descripif
+	 *	@return     string      Descriptive text
 	 */
 	public function info()
 	{
@@ -125,7 +125,7 @@ abstract class ModeleNumRefBatch
 	 *	Returns next assigned value
 	 *
 	 *	@param	Societe		$objsoc     Object thirdparty
-	 *	@param	Object		$object		Object we need next value for
+	 *	@param	Productlot	$object		Object we need next value for
 	 *	@return	string      Valeur
 	 */
 	public function getNextValue($objsoc, $object)

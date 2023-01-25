@@ -122,7 +122,7 @@ if ($object->element == 'stock') {
 print '<td class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td>';
 print '<td>';
 if ($object->element == 'product' || $object->element == 'stock') {
-	print '<select name="mouvement" id="mouvement" class="minwidth125 valignmiddle">';
+	print '<select name="mouvement" id="mouvement" class="minwidth100 valignmiddle">';
 	print '<option value="0">'.$langs->trans("Add").'</option>';
 	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
 	print '</select>';

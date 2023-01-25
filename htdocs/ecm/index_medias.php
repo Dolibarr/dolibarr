@@ -37,6 +37,7 @@ $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal'
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 $socid = GETPOST('socid', 'int');
 $file_manager = GETPOST('file_manager', 'alpha');
@@ -50,6 +51,7 @@ $overwritefile = GETPOST('overwritefile', 'int');
 if (empty($action) && $file_manager) {
 	$action = 'file_manager';
 }
+$pageid  = GETPOST('pageid', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -90,7 +92,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'ecm', 0);
 
-$permtouploadfile = ($user->hasRight('ecm', 'setup') || $user->hasRight('mailing', 'creer') || $user->hasRight('website', 'write'));
+$permissiontouploadfile = ($user->hasRight('ecm', 'setup') || $user->hasRight('mailing', 'creer') || $user->hasRight('website', 'write'));
 $diroutput = $conf->medias->multidir_output[$conf->entity];
 
 $relativepath = $section_dir;
@@ -98,7 +100,7 @@ $upload_dir = preg_replace('/\/$/', '', $diroutput).'/'.preg_replace('/^\//', ''
 
 $websitekey = '';
 
-$permissiontoadd = $permtouploadfile;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+$permissiontoadd = $permissiontouploadfile;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 
 
 /*
@@ -123,7 +125,7 @@ if ($action == 'renamefile') {	// Must be after include DOL_DOCUMENT_ROOT.'/core
 
 
 // Add directory
-if ($action == 'add' && $permtouploadfile) {
+if ($action == 'add' && $permissiontouploadfile) {
 	$ecmdir->ref                = 'NOTUSEDYET';
 	$ecmdir->label              = GETPOST("label");
 	$ecmdir->description        = GETPOST("desc");

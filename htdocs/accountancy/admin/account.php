@@ -399,7 +399,7 @@ if ($resql) {
 	}
 	print "</select>";
 	print ajax_combobox("chartofaccounts");
-	print '<input type="'.(empty($conf->use_javascript_ajax) ? 'submit' : 'button').'" class="button button-edit" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
+	print '<input type="'.(empty($conf->use_javascript_ajax) ? 'submit' : 'button').'" class="button button-edit small" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
 
 	print '<br>';
 
@@ -436,7 +436,7 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['aa.account_parent']['checked'])) {
 		print '<td class="liste_titre">';
-		print $formaccounting->select_account($search_accountparent, 'search_accountparent', 2);
+		print $formaccounting->select_account($search_accountparent, 'search_accountparent', 2, array(), 0, 0, 'maxwidth150');
 		print '</td>';
 	}
 	if (!empty($arrayfields['aa.pcg_type']['checked'])) {
