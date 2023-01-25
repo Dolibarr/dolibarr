@@ -9903,7 +9903,7 @@ function showDirectDownloadLink($object)
  * @param   string  $file           Original filename (full or relative path)
  * @param   string  $extName        Extension to differenciate thumb file name ('', '_small', '_mini')
  * @param   string  $extImgTarget   Force image extension for thumbs. Use '' to keep same extension than original image (default).
- * @return  string                  New file name (full or relative path, including the thumbs/)
+ * @return  string                  New file name (full or relative path, including the thumbs/). May be the original path if no thumb can exists.
  */
 function getImageFileNameForSize($file, $extName, $extImgTarget = '')
 {
