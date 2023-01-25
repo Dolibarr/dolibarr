@@ -1076,10 +1076,14 @@ class FormMail extends Form
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 				}
 
-				$withtoselected = GETPOST("receiver", 'array'); // Array of selected value
+				if (getDolGlobalInt('MAIN_MAIL_NO_WITH_TO_SELECTED')) {
+					$withtoselected = '';
+				} else {
+					$withtoselected = GETPOST("receiver", 'array'); // Array of selected value
 
-				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
-					$withtoselected = array_keys($tmparray);
+					if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
+						$withtoselected = array_keys($tmparray);
+					}
 				}
 
 				$out .= $form->multiselectarray("receiver", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
