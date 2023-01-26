@@ -82,26 +82,26 @@ class ModeleImports
 		'actioncomm' => 'agenda',
 		'adherent' => 'member',
 		'adherent_type' => 'member_type',
-		'bank_account' => 'bank_account',
+		//'bank_account' => 'bank_account',
 		'categorie' => 'category',
-		'commande' => 'commande',
-		'commande_fournisseur' => 'commande_fournisseur',
+		//'commande' => 'commande',
+		//'commande_fournisseur' => 'commande_fournisseur',
 		'contrat' => 'contract',
 		'entrepot' => 'stock',
-		'expensereport' => 'expensereport',
+		//'expensereport' => 'expensereport',
 		'facture' => 'invoice',
-		'facture_fourn' => 'facture_fourn',
+		//'facture_fourn' => 'facture_fourn',
 		'fichinter' => 'intervention',
-		'holiday' => 'holiday',
-		'product' => 'product',
+		//'holiday' => 'holiday',
+		//'product' => 'product',
 		'product_price' => 'productprice',
 		'product_fournisseur_price' => 'productsupplierprice',
 		'projet'  => 'project',
-		'propal' => 'propal',
-		'societe' => 'societe',
+		//'propal' => 'propal',
+		//'societe' => 'societe',
 		'socpeople' => 'contact',
-		'supplier_proposal' => 'supplier_proposal',
-		'ticket' => 'ticket',
+		//'supplier_proposal' => 'supplier_proposal',
+		//'ticket' => 'ticket',
 	);
 
 	/**
@@ -313,13 +313,13 @@ class ModeleImports
 	 * Get element from table name with prefix
 	 *
 	 * @param 	string	$tableNameWithPrefix		Table name with prefix
-	 * @return 	string	Element name or '' if not found
+	 * @return 	string	Element name or table element as default
 	 */
 	public function getElementFromTableWithPrefix($tableNameWithPrefix)
 	{
-		$element = '';
-
 		$tableElement = preg_replace('/^'.preg_quote($this->db->prefix(), '/').'/', '', $tableNameWithPrefix);
+		$element = $tableElement;
+
 		if (isset(self::$mapTableToElement[$tableElement])) {
 			$element = self::$mapTableToElement[$tableElement];
 		}
