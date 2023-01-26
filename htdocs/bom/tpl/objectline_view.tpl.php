@@ -269,16 +269,20 @@ if ($resql) {
 		$label = $sub_bom_product->getLabelOfUnit('long');
 		if ($sub_bom_line->qty_frozen > 0) {
 			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty, 0, '', 0, 0).'</td>';
-			print '<td class="linecoluseunit nowrap left">';
-			if ($label !== '') print $langs->trans($label);
-			print '</td>';
+			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+				print '<td class="linecoluseunit nowrap left">';
+				if ($label !== '') print $langs->trans($label);
+				print '</td>';
+			}
 			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">'.$langs->trans('Yes').'</td>';
 		} else {
 			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * $line->qty, 0, '', 0, 0).'</td>';
-			print '<td class="linecoluseunit nowrap left">';
-			if ($label !== '') print $langs->trans($label);
-			print '</td>';
-			print '</td>';
+			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+				print '<td class="linecoluseunit nowrap left">';
+				if ($label !== '') print $langs->trans($label);
+				print '</td>';
+			}
+
 			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">&nbsp;</td>';
 		}
 
