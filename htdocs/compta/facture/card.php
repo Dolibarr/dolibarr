@@ -5551,7 +5551,7 @@ if ($action == 'create') {
 				)
 			) {
 				if ($object->type == Facture::TYPE_DEPOSIT && price2num($object->total_ttc, 'MT') >= price2num($sumofpaymentall, 'MT')) {
-					// We can close a down payment only if paid amount is greater than or equal to amount of down payment 
+					// We can close a down payment only if paid amount is greater than or equal to amount of down payment
 					// By definition, it should be equal, but in case of customer mistake upon payment (in excess) it can be greater
 					$params['attr']['title'] = $langs->trans('AmountPaidMustMatchAmountOfDownPayment');
 					print dolGetButtonAction($langs->trans('ClassifyPaid'), '', 'default', '#', '', false, $params);
