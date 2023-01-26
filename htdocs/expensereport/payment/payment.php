@@ -221,7 +221,7 @@ if ($action == 'create' || $action == 'add_payment') {
 
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-	print '<td valign="top" colspan="2"><textarea name="note_public" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
+	print '<td valign="top" colspan="2"><textarea name="note_public" wrap="soft" cols="60" rows="'.ROWS_3.'">'.GETPOST("note_public", 'restricthtml').'</textarea></td>';
 	print '</tr>';
 
 	print '</table>';
