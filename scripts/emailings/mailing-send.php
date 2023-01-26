@@ -66,6 +66,8 @@ if (empty($conf->global->MAILING_LIMIT_SENDBYCLI))
 	$conf->global->MAILING_LIMIT_SENDBYCLI = 0;
 }
 
+$langs->loadLangs(array("main", "mails"));
+
 
 /*
  * Main
