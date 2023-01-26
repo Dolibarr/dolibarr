@@ -81,6 +81,7 @@ $dateofbirth = dol_mktime(0, 0, 0, GETPOST('dateofbirthmonth', 'int'), GETPOST('
 $canadduser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
 $canreaduser = (!empty($user->admin) || $user->hasRight("user", "user", "read"));
 $canedituser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
+$caneditsensitivedata = $canedituser && (!empty($user->admin) || $user->hasRight("user", "user", "creer"));
 $candisableuser = (!empty($user->admin) || $user->hasRight("user", "user", "delete"));
 $canreadgroup = $canreaduser;
 $caneditgroup = $canedituser;
@@ -2730,7 +2731,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Position/Job
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
 			print '<td>';
-			if ($caneditfield) {
+			if ($caneditsensitivedata) {
 				print '<input type="text" class="minwidth300 maxwidth500" name="job" value="'.dol_escape_htmltag($object->job).'">';
 			} else {
 				print '<input type="hidden" name="job" value="'.dol_escape_htmltag($object->job).'">';
@@ -2741,7 +2742,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Weeklyhours
 			print '<tr><td>'.$langs->trans("WeeklyHours").'</td>';
 			print '<td>';
-			if ($caneditfield) {
+			if ($caneditsensitivedata) {
 				print '<input size="8" type="text" name="weeklyhours" value="'.price2num(GETPOST('weeklyhours') ?GETPOST('weeklyhours') : $object->weeklyhours).'">';
 			} else {
 				print price2num($object->weeklyhours);
@@ -2758,8 +2759,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 				// Salary
 				print '<tr><td>'.$langs->trans("Salary").'</td>';
 				print '<td>';
-				print img_picto('', 'salary', 'class="pictofixedwidth paddingright"').'<input size="8" type="text" name="salary" value="'.price2num(GETPOST('salary') ?GETPOST('salary') : $object->salary).'">';
-				print '</td>';
+				if ($caneditsensitivedata) {
+					print img_picto('', 'salary', 'class="pictofixedwidth paddingright"').'<input size="8" type="text" name="salary" value="'.price2num(GETPOST('salary') ?GETPOST('salary') : $object->salary).'">';
+				} else {
+					print ($object->salary != '' ? img_picto('', 'salary', 'class="pictofixedwidth paddingright"').'<span class="amount">'.price($object->salary, '', $langs, 1, -1, -1, $conf->currency) : '').'</span>';
+				}				print '</td>';
 				print "</tr>\n";
 
 				// THM
@@ -2768,7 +2772,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
 				print '</td>';
 				print '<td>';
-				if ($caneditfield) {
+				if ($caneditsensitivedata) {
 					print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm') ?GETPOST('thm') : $object->thm).'">';
 				} else {
 					print ($object->thm != '' ?price($object->thm, '', $langs, 1, -1, -1, $conf->currency) : '');
@@ -2782,7 +2786,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classthm');
 				print '</td>';
 				print '<td>';
-				if ($caneditfield) {
+				if ($caneditsensitivedata) {
 					print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm') ?GETPOST('tjm') : $object->tjm).'">';
 				} else {
 					print ($object->tjm != '' ?price($object->tjm, '', $langs, 1, -1, -1, $conf->currency) : '');
@@ -2794,7 +2798,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Date employment
 			print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
 			print '<td>';
-			if ($caneditfield) {
+			if ($caneditsensitivedata) {
 				print $form->selectDate($dateemployment ? $dateemployment : $object->dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 1);
 			} else {
 				print dol_print_date($object->dateemployment, 'day');
@@ -2804,7 +2808,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print ' - ';
 			}
 
-			if ($caneditfield) {
+			if ($caneditsensitivedata) {
 				print $form->selectDate($dateemploymentend ? $dateemploymentend : $object->dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
 			} else {
 				print dol_print_date($object->dateemploymentend, 'day');
