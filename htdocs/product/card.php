@@ -1485,7 +1485,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		}
 
-		if ($type == 1  && $conf->workstation->enabled) {
+		if ($type == 1  && isModEnabled("workstation")) {
 				// Default workstation
 				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
 				print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
