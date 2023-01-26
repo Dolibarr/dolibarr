@@ -59,6 +59,8 @@ if (!$user->admin) {
  * Actions
  */
 
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
 if ($action == 'updateMask') {
 	$maskconstinvoice = GETPOST('maskconstinvoice', 'aZ09');
 	$maskconstcredit = GETPOST('maskconstcredit', 'aZ09');

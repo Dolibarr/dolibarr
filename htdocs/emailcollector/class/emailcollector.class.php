@@ -881,7 +881,23 @@ class EmailCollector extends CommonObject
 	 */
 	private function overwritePropertiesOfObject(&$object, $actionparam, $messagetext, $subject, $header, &$operationslog)
 	{
+		global $conf, $langs;
+
 		$errorforthisaction = 0;
+
+		// set output lang
+		$outputlangs = $langs;
+		$newlang = '';
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			$newlang = GETPOST('lang_id', 'aZ09');
+		}
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+			$newlang = $object->thirdparty->default_lang;
+		}
+		if (!empty($newlang)) {
+			$outputlangs = new Translate('', $conf);
+			$outputlangs->setDefaultLang($newlang);
+		}
 
 		// Overwrite values with values extracted from source email
 		// $this->actionparam = 'opportunity_status=123;abc=EXTRACT:BODY:....'
@@ -978,7 +994,8 @@ class EmailCollector extends CommonObject
 
 					if ($regforregex[1] == 'SET' || empty($valuecurrent)) {
 						$valuetouse = $regforregex[2];
-						$substitutionarray = array();
+						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+						complete_substitutions_array($substitutionarray, $outputlangs, $object);
 						$matcharray = array();
 						preg_match_all('/__([a-z0-9]+(?:_[a-z0-9]+)?)__/i', $valuetouse, $matcharray);
 						//var_dump($tmpproperty.' - '.$object->$tmpproperty.' - '.$valuetouse); var_dump($matcharray);
@@ -1501,7 +1518,7 @@ class EmailCollector extends CommonObject
 				$trackidfoundintorecipientid = 0;
 				$reg = array();
 				// See also later list of all supported tags...
-				if (preg_match('/\+(thi|ctc|use|mem|sub|proj|tas|con|tic|job|pro|ord|inv|spro|sor|sin|leav|stockinv|job|surv|salary)([0-9]+)@/', $emailto, $reg)) {
+				if (preg_match('/\+(thi|ctc|use|mem|sub|proj|tas|con|tic|pro|ord|inv|spro|sor|sin|leav|stockinv|job|surv|salary)([0-9]+)@/', $emailto, $reg)) {
 					$trackidfoundintorecipienttype = $reg[1];
 					$trackidfoundintorecipientid = $reg[2];
 				} elseif (preg_match('/\+emailing-(\w+)@/', $emailto, $reg)) {	// Can be 'emailing-test' or 'emailing-IdMailing-IdRecipient'
@@ -2135,6 +2152,118 @@ class EmailCollector extends CommonObject
 													$this->errors = $thirdpartystatic->errors;
 												} else {
 													$operationslog .= '<br>Thirdparty created -> id = '.dol_escape_htmltag($thirdpartystatic->id);
+												}
+											}
+										}
+									}
+								}
+							}
+						} elseif ($operation['type'] == 'loadandcreatecontact') { // Search and create contact
+							if (empty($operation['actionparam'])) {
+								$errorforactions++;
+								$this->error = "Action loadandcreatecontact has empty parameter. Must be 'SET:xxx' or 'EXTRACT:(body|subject):regex' to define how to extract data";
+								$this->errors[] = $this->error;
+							} else {
+								$contact_static = new Contact($this->db);
+								// Overwrite values with values extracted from source email
+								$errorforthisaction = $this->overwritePropertiesOfObject($contact_static, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
+								if ($errorforthisaction) {
+									$errorforactions++;
+								} else {
+									if (!empty($contact_static->email) && $contact_static->email != $from) $from = $contact_static->email;
+
+									$result = $contactstatic->fetch(0, null, '', $from);
+									if ($result < 0) {
+										$errorforactions++;
+										$this->error = 'Error when getting contact with email ' . $from;
+										$this->errors[] = $this->error;
+										break;
+									} elseif ($result == 0) {
+										dol_syslog("Contact with email " . $from . " was not found. We try to create it.");
+										$contactstatic = new Contact($this->db);
+
+										// Create contact
+										$contactstatic->email = $from;
+										$operationslog .= '<br>We set property email='.dol_escape_htmltag($from);
+
+										// Overwrite values with values extracted from source email
+										$errorforthisaction = $this->overwritePropertiesOfObject($contactstatic, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
+
+										if ($errorforthisaction) {
+											$errorforactions++;
+										} else {
+											// Search country by name or code
+											if (!empty($contactstatic->country)) {
+												require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+												$result = getCountry('', 3, $this->db, '', 1, $contactstatic->country);
+												if ($result == 'NotDefined') {
+													$errorforactions++;
+													$this->error = "Error country not found by this name '" . $contactstatic->country . "'";
+												} elseif (!($result > 0)) {
+													$errorforactions++;
+													$this->error = "Error when search country by this name '" . $contactstatic->country . "'";
+													$this->errors[] = $this->db->lasterror();
+												} else {
+													$contactstatic->country_id = $result;
+													$operationslog .= '<br>We set property country_id='.dol_escape_htmltag($result);
+												}
+											} elseif (!empty($contactstatic->country_code)) {
+												require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+												$result = getCountry($contactstatic->country_code, 3, $this->db);
+												if ($result == 'NotDefined') {
+													$errorforactions++;
+													$this->error = "Error country not found by this code '" . $contactstatic->country_code . "'";
+												} elseif (!($result > 0)) {
+													$errorforactions++;
+													$this->error = "Error when search country by this code '" . $contactstatic->country_code . "'";
+													$this->errors[] = $this->db->lasterror();
+												} else {
+													$contactstatic->country_id = $result;
+													$operationslog .= '<br>We set property country_id='.dol_escape_htmltag($result);
+												}
+											}
+
+											if (!$errorforactions) {
+												// Search state by name or code (for country if defined)
+												if (!empty($contactstatic->state)) {
+													require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+													$result = dol_getIdFromCode($this->db, $contactstatic->state, 'c_departements', 'nom', 'rowid');
+													if (empty($result)) {
+														$errorforactions++;
+														$this->error = "Error state not found by this name '" . $contactstatic->state . "'";
+													} elseif (!($result > 0)) {
+														$errorforactions++;
+														$this->error = "Error when search state by this name '" . $contactstatic->state . "'";
+														$this->errors[] = $this->db->lasterror();
+													} else {
+														$contactstatic->state_id = $result;
+														$operationslog .= '<br>We set property state_id='.dol_escape_htmltag($result);
+													}
+												} elseif (!empty($contactstatic->state_code)) {
+													require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+													$result = dol_getIdFromCode($this->db, $contactstatic->state_code, 'c_departements', 'code_departement', 'rowid');
+													if (empty($result)) {
+														$errorforactions++;
+														$this->error = "Error state not found by this code '" . $contactstatic->state_code . "'";
+													} elseif (!($result > 0)) {
+														$errorforactions++;
+														$this->error = "Error when search state by this code '" . $contactstatic->state_code . "'";
+														$this->errors[] = $this->db->lasterror();
+													} else {
+														$contactstatic->state_id = $result;
+														$operationslog .= '<br>We set property state_id='.dol_escape_htmltag($result);
+													}
+												}
+											}
+
+											if (!$errorforactions) {
+												$result = $contactstatic->create($user);
+												if ($result <= 0) {
+													$errorforactions++;
+													$this->error = $contactstatic->error;
+													$this->errors = $contactstatic->errors;
+												} else {
+													$operationslog .= '<br>Contact created -> id = '.dol_escape_htmltag($contactstatic->id);
 												}
 											}
 										}
@@ -3008,13 +3137,14 @@ class EmailCollector extends CommonObject
 			 * Check if the same file name already exists in the upload folder,
 			 * append increment number to the original filename
 			 */
-			while (file_exists($destdir."/" . $file_name . "." . $extension)) {
-				$file_name = (string) $file_name_original . ' (' . $num . ')';
+			while (file_exists($destdir."/".$file_name.".".$extension)) {
+				$file_name = $file_name_original . ' (' . $num . ')';
 				$file_name_complete = $file_name . "." . $extension;
 				$destination = $destdir.'/'.$file_name_complete;
 				$num++;
 			}
 
+			$destination = dol_sanitizePathName($destination);
 
 			file_put_contents($destination, $data);
 		}

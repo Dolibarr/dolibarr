@@ -29,6 +29,7 @@ require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -45,6 +46,7 @@ if ($user->socid) {
 }
 
 $optioncss = GETPOST('optioncss', 'alpha');
+$mode      = GETPOST('mode', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $search_ref = GETPOST('search_ref', 'int');
@@ -312,6 +314,9 @@ if ($resql) {
 	$total = 0;
 
 	$param = '';
+	if (!empty($mode)) {
+		$param .= '&mode='.urlencode($mode);
+	}
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
@@ -362,7 +367,10 @@ if ($resql) {
 	if (!empty($socid)) {
 		$url .= '&socid='.urlencode($socid);
 	}
-	$newcardbutton = dolGetButtonTitle($langs->trans('MenuNewVariousPayment'), '', 'fa fa-plus-circle', $url, '', $user->rights->banque->modifier);
+	$newcardbutton  = '';
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewVariousPayment'), '', 'fa fa-plus-circle', $url, '', $user->rights->banque->modifier);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 
@@ -375,6 +383,8 @@ if ($resql) {
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
+
 
 	print_barre_liste($langs->trans("MenuVariousPayment"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'object_payment', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -466,7 +476,7 @@ if ($resql) {
 	}
 
 	// Accounting account
-	if ($arrayfields['account']['checked']) {
+	if (!empty($arrayfields['account']['checked'])) {
 		print '<td class="liste_titre">';
 		print '<div class="nowrap">';
 		print $formaccounting->select_account($search_accountancy_account, 'search_accountancy_account', 1, array(), 1, 1, 'maxwidth200');
@@ -475,7 +485,7 @@ if ($resql) {
 	}
 
 	// Subledger account
-	if ($arrayfields['subledger']['checked']) {
+	if (!empty($arrayfields['subledger']['checked'])) {
 		print '<td class="liste_titre">';
 		print '<div class="nowrap">';
 		print $formaccounting->select_auxaccount($search_accountancy_subledger, 'search_accountancy_subledger', 1, 'maxwidth200');
@@ -484,7 +494,7 @@ if ($resql) {
 	}
 
 	// Debit
-	if ($arrayfields['debit']['checked']) {
+	if (!empty($arrayfields['debit']['checked'])) {
 		print '<td class="liste_titre right">';
 		print '<input name="search_amount_deb" class="flat maxwidth50" type="text" value="'.dol_escape_htmltag($search_amount_deb).'">';
 		print '</td>';
@@ -535,10 +545,10 @@ if ($resql) {
 	if ($arrayfields['entry']['checked']) {
 		print_liste_field_titre($arrayfields['entry']['label'], $_SERVER["PHP_SELF"], 'ba.label', '', $param, '', $sortfield, $sortorder);
 	}
-	if ($arrayfields['account']['checked']) {
+	if (!empty($arrayfields['account']['checked'])) {
 		print_liste_field_titre($arrayfields['account']['label'], $_SERVER["PHP_SELF"], 'v.accountancy_code', '', $param, '', $sortfield, $sortorder, 'left ');
 	}
-	if ($arrayfields['subledger']['checked']) {
+	if (!empty($arrayfields['subledger']['checked'])) {
 		print_liste_field_titre($arrayfields['subledger']['label'], $_SERVER["PHP_SELF"], 'v.subledger_account', '', $param, '', $sortfield, $sortorder, 'left ');
 	}
 	if ($arrayfields['debit']['checked']) {
@@ -568,167 +578,187 @@ if ($resql) {
 		$variousstatic->id = $obj->rowid;
 		$variousstatic->ref = $obj->rowid;
 		$variousstatic->label = $obj->label;
+		$variousstatic->datep = $obj->datep;
+		$variousstatic->type_payment = $obj->payment_code;
+		$bankline->fetch($obj->fk_bank);
+		$variousstatic->fk_bank = $bankline->getNomUrl(1);
+		$variousstatic->amount = $obj->amount;
 
-		print '<tr class="oddeven">';
+		$accountingaccount->fetch('', $obj->accountancy_code, 1);
+		$variousstatic->accountancy_code = $accountingaccount->getNomUrl(0, 0, 1, $obj->accountingaccount, 1);
 
-		// No
-		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
-			print '<td>'.(($offset * $limit) + $i).'</td>';
-		}
-
-		// Ref
-		if ($arrayfields['ref']['checked']) {
-			print '<td>'.$variousstatic->getNomUrl(1)."</td>";
-			if (!$i) {
-				$totalarray['nbfield']++;
+		if ($mode == 'kanban') {
+			if ($i == 0) {
+				print '<tr><td colspan="12">';
+				print '<div class="box-flex-container">';
 			}
-		}
+			// Output Kanban
 
-		// Label payment
-		if ($arrayfields['label']['checked']) {
-			print '<td class="tdoverflowmax150" title="'.$variousstatic->label.'">'.$variousstatic->label."</td>";
-			if (!$i) {
-				$totalarray['nbfield']++;
+			print $variousstatic->getKanbanView('');
+			if ($i == (min($num, $limit) - 1)) {
+				print '</div>';
+				print '</td></tr>';
 			}
-		}
+		} else {
+			print '<tr class="oddeven">';
 
-		// Date payment
-		if ($arrayfields['datep']['checked']) {
-			print '<td class="center">'.dol_print_date($obj->datep, 'day')."</td>";
-			if (!$i) {
-				$totalarray['nbfield']++;
+			// No
+			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+				print '<td>'.(($offset * $limit) + $i).'</td>';
 			}
-		}
 
-
-		// Date value
-		if ($arrayfields['datev']['checked']) {
-			print '<td class="center">'.dol_print_date($obj->datev, 'day')."</td>";
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-
-		// Type
-		if ($arrayfields['type']['checked']) {
-			print '<td class="center">';
-			if ($obj->payment_code) {
-				print $langs->trans("PaymentTypeShort".$obj->payment_code);
-				print ' ';
-			}
-			print $obj->num_payment;
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-
-		// Project
-		if ($arrayfields['project']['checked']) {
-			print '<td class="nowraponall">';
-			if ($obj->fk_project > 0) {
-				$proj->fetch($obj->fk_project);
-				print $proj->getNomUrl(1);
-			}
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-
-		// Bank account
-		if ($arrayfields['bank']['checked']) {
-			print '<td class="nowraponall">';
-			if ($obj->bid > 0) {
-				$accountstatic->id = $obj->bid;
-				$accountstatic->ref = $obj->bref;
-				$accountstatic->number = $obj->bnumber;
-
-				if (isModEnabled('accounting')) {
-					$accountstatic->account_number = $obj->bank_account_number;
-					$accountingjournal->fetch($obj->accountancy_journal);
-					$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+			// Ref
+			if ($arrayfields['ref']['checked']) {
+				print '<td>'.$variousstatic->getNomUrl(1)."</td>";
+				if (!$i) {
+					$totalarray['nbfield']++;
 				}
-
-				$accountstatic->label = $obj->blabel;
-				print $accountstatic->getNomUrl(1);
-			} else {
-				print '&nbsp;';
 			}
-			print '</td>';
+
+			// Label payment
+			if ($arrayfields['label']['checked']) {
+				print '<td class="tdoverflowmax150" title="'.$variousstatic->label.'">'.$variousstatic->label."</td>";
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Date payment
+			if ($arrayfields['datep']['checked']) {
+				print '<td class="center">'.dol_print_date($obj->datep, 'day')."</td>";
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+
+			// Date value
+			if ($arrayfields['datev']['checked']) {
+				print '<td class="center">'.dol_print_date($obj->datev, 'day')."</td>";
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Type
+			if ($arrayfields['type']['checked']) {
+				print '<td class="center">';
+				if ($obj->payment_code) {
+					print $langs->trans("PaymentTypeShort".$obj->payment_code);
+					print ' ';
+				}
+				print $obj->num_payment;
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Project
+			if ($arrayfields['project']['checked']) {
+				print '<td class="nowraponall">';
+				if ($obj->fk_project > 0) {
+					$proj->fetch($obj->fk_project);
+					print $proj->getNomUrl(1);
+				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Bank account
+			if ($arrayfields['bank']['checked']) {
+				print '<td class="nowraponall">';
+				if ($obj->bid > 0) {
+					$accountstatic->id = $obj->bid;
+					$accountstatic->ref = $obj->bref;
+					$accountstatic->number = $obj->bnumber;
+
+					if (isModEnabled('accounting')) {
+						$accountstatic->account_number = $obj->bank_account_number;
+						$accountingjournal->fetch($obj->accountancy_journal);
+						$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+					}
+
+					$accountstatic->label = $obj->blabel;
+					print $accountstatic->getNomUrl(1);
+				} else {
+					print '&nbsp;';
+				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Bank entry
+			if ($arrayfields['entry']['checked']) {
+				$bankline->fetch($obj->fk_bank);
+				print '<td>'.$bankline->getNomUrl(1).'</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Accounting account
+			if (!empty($arrayfields['account']['checked'])) {
+				$accountingaccount->fetch('', $obj->accountancy_code, 1);
+
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->accountancy_code.' '.$accountingaccount->label).'">'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Accounting subledger account
+			if (!empty($arrayfields['subledger']['checked'])) {
+				print '<td class="tdoverflowmax150">'.length_accounta($obj->subledger_account).'</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Debit
+			if ($arrayfields['debit']['checked']) {
+				print '<td class="nowrap right">';
+				if ($obj->sens == 0) {
+					print '<span class="amount">'.price($obj->amount).'</span>';
+					$totalarray['val']['total_deb'] += $obj->amount;
+				}
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+				if (!$i) {
+					$totalarray['pos'][$totalarray['nbfield']] = 'total_deb';
+				}
+				print '</td>';
+			}
+
+			// Credit
+			if ($arrayfields['credit']['checked']) {
+				print '<td class="nowrap right">';
+				if ($obj->sens == 1) {
+					print '<span class="amount">'.price($obj->amount).'</span>';
+					$totalarray['val']['total_cred'] += $obj->amount;
+				}
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+				if (!$i) {
+					$totalarray['pos'][$totalarray['nbfield']] = 'total_cred';
+				}
+				print '</td>';
+			}
+
+			print '<td></td>';
+
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
+
+			print '</tr>'."\n";
 		}
-
-		// Bank entry
-		if ($arrayfields['entry']['checked']) {
-			$bankline->fetch($obj->fk_bank);
-			print '<td>'.$bankline->getNomUrl(1).'</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-
-		// Accounting account
-		if ($arrayfields['account']['checked']) {
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-			$accountingaccount->fetch('', $obj->accountancy_code, 1);
-
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->accountancy_code.' '.$accountingaccount->label).'">'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-
-		// Accounting subledger account
-		if ($arrayfields['subledger']['checked']) {
-			print '<td class="tdoverflowmax150">'.length_accounta($obj->subledger_account).'</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-
-		// Debit
-		if ($arrayfields['debit']['checked']) {
-			print '<td class="nowrap right">';
-			if ($obj->sens == 0) {
-				print '<span class="amount">'.price($obj->amount).'</span>';
-				$totalarray['val']['total_deb'] += $obj->amount;
-			}
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-			if (!$i) {
-				$totalarray['pos'][$totalarray['nbfield']] = 'total_deb';
-			}
-			print '</td>';
-		}
-
-		// Credit
-		if ($arrayfields['credit']['checked']) {
-			print '<td class="nowrap right">';
-			if ($obj->sens == 1) {
-				print '<span class="amount">'.price($obj->amount).'</span>';
-				$totalarray['val']['total_cred'] += $obj->amount;
-			}
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-			if (!$i) {
-				$totalarray['pos'][$totalarray['nbfield']] = 'total_cred';
-			}
-			print '</td>';
-		}
-
-		print '<td></td>';
-
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-
-		print '</tr>'."\n";
-
 		$i++;
 	}
 

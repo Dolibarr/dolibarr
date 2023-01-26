@@ -77,6 +77,11 @@ class User extends CommonObject
 	public $civility_code;
 
 	/**
+	 * @var string fullname
+	 */
+	public $fullname;
+
+	/**
 	 * @var string gender
 	 */
 	public $gender;
@@ -276,6 +281,7 @@ class User extends CommonObject
 
 	public $datelastlogin;
 	public $datepreviouslogin;
+	public $flagdelsessionsbefore;
 	public $iplastlogin;
 	public $ippreviouslogin;
 	public $datestartvalidity;
@@ -441,6 +447,7 @@ class User extends CommonObject
 		$sql .= " u.tms as datem,";
 		$sql .= " u.datelastlogin as datel,";
 		$sql .= " u.datepreviouslogin as datep,";
+		$sql .= " u.flagdelsessionsbefore,";
 		$sql .= " u.iplastlogin,";
 		$sql .= " u.ippreviouslogin,";
 		$sql .= " u.datelastpassvalidation,";
@@ -575,6 +582,7 @@ class User extends CommonObject
 				$this->datem				= $this->db->jdate($obj->datem);
 				$this->datelastlogin = $this->db->jdate($obj->datel);
 				$this->datepreviouslogin = $this->db->jdate($obj->datep);
+				$this->flagdelsessionsbefore = $this->db->jdate($obj->flagdelsessionsbefore, 'gmt');
 				$this->iplastlogin = $obj->iplastlogin;
 				$this->ippreviouslogin = $obj->ippreviouslogin;
 				$this->datestartvalidity = $this->db->jdate($obj->datestartvalidity);
@@ -720,7 +728,6 @@ class User extends CommonObject
 			'shipping' => 'expedition',
 			'task' => 'task@projet',
 			'fichinter' => 'ficheinter',
-			'propale' => 'propal',
 			'inventory' => 'stock',
 			'invoice' => 'facture',
 			'invoice_supplier' => 'fournisseur',
@@ -1777,9 +1784,9 @@ class User extends CommonObject
 				}
 			}
 
-			if ($result > 0 && $member->fk_soc) {	// If member is linked to a thirdparty
+			if ($result > 0 && $member->socid) {	// If member is linked to a thirdparty
 				$sql = "UPDATE ".$this->db->prefix()."user";
-				$sql .= " SET fk_soc=".((int) $member->fk_soc);
+				$sql .= " SET fk_soc=".((int) $member->socid);
 				$sql .= " WHERE rowid=".((int) $this->id);
 
 				dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
@@ -2244,9 +2251,10 @@ class User extends CommonObject
 	 *	@param	int		$notrigger				1=Does not launch triggers
 	 *	@param	int		$nosyncmember	        Do not synchronize linked member
 	 *  @param	int		$passwordalreadycrypted 0=Value is cleartext password, 1=Value is crypted value.
+	 *  @param	int		$flagdelsessionsbefore  1=Save also the current date to ask to invalidate all other session before this date.
 	 *  @return string 			          		If OK return clear password, 0 if no change (warning, you may retreive 1 instead of 0 even if password was same), < 0 if error
 	 */
-	public function setPassword($user, $password = '', $changelater = 0, $notrigger = 0, $nosyncmember = 0, $passwordalreadycrypted = 0)
+	public function setPassword($user, $password = '', $changelater = 0, $notrigger = 0, $nosyncmember = 0, $passwordalreadycrypted = 0, $flagdelsessionsbefore = 1)
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -2298,6 +2306,9 @@ class User extends CommonObject
 			$sql = "UPDATE ".$this->db->prefix()."user";
 			$sql .= " SET pass_crypted = '".$this->db->escape($password_crypted)."',";
 			$sql .= " pass_temp = null";
+			if (!empty($flagdelsessionsbefore)) {
+				$sql .= ", flagdelsessionsbefore = '".$this->db->idate(dol_now() - 5, 'gmt')."'";
+			}
 			if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
 				$sql .= ", pass = null";
 			} else {
@@ -2648,7 +2659,11 @@ class User extends CommonObject
 		$sql = "DELETE FROM ".$this->db->prefix()."usergroup_user";
 		$sql .= " WHERE fk_user  = ".((int) $this->id);
 		$sql .= " AND fk_usergroup = ".((int) $group);
-		$sql .= " AND entity = ".((int) $entity);
+		if (empty($entity)) {
+			$sql .= " AND entity IN (0, 1)";	// group may be in entity 0 (so $entity=0) and link with user into entity 1.
+		} else {
+			$sql .= " AND entity = ".((int) $entity);
+		}
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -2986,9 +3001,10 @@ class User extends CommonObject
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
 	 *  @return		string								HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '')
+	public function getKanbanView($option = '', $arraydata = null)
 	{
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
@@ -3379,24 +3395,36 @@ class User extends CommonObject
 
 		$socialnetworks = getArrayOfSocialNetworks();
 
-		$this->firstname = $ldapuser->{$conf->global->LDAP_FIELD_FIRSTNAME};
-		$this->lastname = $ldapuser->{$conf->global->LDAP_FIELD_NAME};
-		$this->login = $ldapuser->{$conf->global->LDAP_FIELD_LOGIN};
-		$this->pass = $ldapuser->{$conf->global->LDAP_FIELD_PASSWORD};
-		$this->pass_indatabase_crypted = $ldapuser->{$conf->global->LDAP_FIELD_PASSWORD_CRYPTED};
+		$tmpvar = getDolGlobalString('LDAP_FIELD_FIRSTNAME');
+		$this->firstname = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_NAME');
+		$this->lastname = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_LOGIN');
+		$this->login = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_PASSWORD');
+		$this->pass = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED');
+		$this->pass_indatabase_crypted = $ldapuser->$tmpvar;
 
-		$this->office_phone = $ldapuser->{$conf->global->LDAP_FIELD_PHONE};
-		$this->user_mobile = $ldapuser->{$conf->global->LDAP_FIELD_MOBILE};
-		$this->office_fax = $ldapuser->{$conf->global->LDAP_FIELD_FAX};
-		$this->email = $ldapuser->{$conf->global->LDAP_FIELD_MAIL};
+		$tmpvar = getDolGlobalString('LDAP_FIELD_PHONE');
+		$this->office_phone = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_MOBILE');
+		$this->user_mobile = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_FAX');
+		$this->office_fax = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_MAIL');
+		$this->email = $ldapuser->$tmpvar;
 		foreach ($socialnetworks as $key => $value) {
-			$tmpkey = 'LDAP_FIELD_'.strtoupper($value['label']);
-			$this->socialnetworks[$value['label']] = $ldapuser->{$conf->global->$tmpkey};
+			$tmpvar = getDolGlobalString('LDAP_FIELD_'.strtoupper($value['label']));
+			$this->socialnetworks[$value['label']] = $ldapuser->$tmpvar;
 		}
-		$this->ldap_sid = $ldapuser->{$conf->global->LDAP_FIELD_SID};
+		$tmpvar = getDolGlobalString('LDAP_FIELD_SID');
+		$this->ldap_sid = $ldapuser->$tmpvar;
 
-		$this->job = $ldapuser->{$conf->global->LDAP_FIELD_TITLE};
-		$this->note_public = $ldapuser->{$conf->global->LDAP_FIELD_DESCRIPTION};
+		$tmpvar = getDolGlobalString('LDAP_FIELD_TITLE');
+		$this->job = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_DESCRIPTION');
+		$this->note_public = $ldapuser->$tmpvar;
 
 		$result = $this->update($user);
 
@@ -3478,7 +3506,7 @@ class User extends CommonObject
 	 *
 	 *  @param      int		$deleteafterid      Removed all users including the leaf $deleteafterid (and all its child) in user tree.
 	 *  @param		string	$filter				SQL filter on users. This parameter must not come from user intput.
-	 *	@return		array		      		  	Array of users $this->users. Note: $this->parentof is also set.
+	 *	@return		array|int	      		  	Array of users $this->users. Note: $this->parentof is also set.
 	 */
 	public function get_full_tree($deleteafterid = 0, $filter = '')
 	{
@@ -3650,18 +3678,18 @@ class User extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'user',
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 
@@ -3773,6 +3801,31 @@ class User extends CommonObject
 		} else {
 			dol_print_error($this->db);
 		}
+	}
+
+	/**
+	 * Return string with full Url to virtual card
+	 *
+	 * @param	string		$mode		Mode for link
+	 * @return	string				    Url string link
+	 */
+	public function getOnlineVirtualCardUrl($mode = '')
+	{
+		global $dolibarr_main_instance_unique_id, $dolibarr_main_url_root;
+		global $conf;
+
+		$encodedsecurekey = dol_hash($dolibarr_main_instance_unique_id.'uservirtualcard'.$this->id.'-'.$this->login, 'md5');
+		if (isModEnabled('multicompany')) {
+			$entity_qr = '&entity='.((int) $conf->entity);
+		} else {
+			$entity_qr = '';
+		}
+		// Define $urlwithroot
+		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+		return $urlwithroot.'/public/users/view.php?id='.$this->id.'&securekey='.$encodedsecurekey.$entity_qr.($mode ? '&mode='.urlencode($mode) : '');
 	}
 
 	/**

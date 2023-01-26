@@ -342,6 +342,7 @@ ACCOUNTING_ENABLE_LETTERING=Activer la fonction de lettrage dans la comptabilit�
 NotExportLettering=Ne pas exporter le lettrage lors de la génération du fichier
 NotifiedExportDate=Marquer les lignes exportées comme Exportées <span class="warning"> (pour modifier une ligne, vous devrez supprimer toute la transaction et la retransférer en comptabilité) </span>
 NotifiedValidationDate=Validez et verrouillez les entrées exportées <span class="warning"> (même effet que la fonctionnalité "%s", la modification et la suppression des lignes ne seront définitivement plus possibles) </span>
+NotifiedExportFull=Exporter les pièces ?
 DateValidationAndLock=Validation et verrouillage de la date
 ConfirmExportFile=Confirmation de la génération du fichier d'export comptable ?
 ExportDraftJournal=Exporter le journal brouillon
@@ -442,6 +443,7 @@ AccountancyErrorMismatchLetterCode=Non-concordance dans le code de réconciliati
 AccountancyErrorMismatchBalanceAmount=Le solde (%s) n'est pas égal à 0
 AccountancyErrorLetteringBookkeeping=Des erreurs sont survenues concernant les transactions : %s
 ErrorAccountNumberAlreadyExists=Le code comptable %s existe déjà
+ErrorArchiveAddFile=Impossible d'ajouter le fichier "%s" dans l'archive
 
 ## Import
 ImportAccountingEntries=Écritures comptables

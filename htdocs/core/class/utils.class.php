@@ -649,12 +649,14 @@ class Utils
 		if (!$errormsg && $keeplastnfiles > 0) {
 			$tmpfiles = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '(\.err|\.old|\.sav)$', 'date', SORT_DESC);
 			$i = 0;
-			foreach ($tmpfiles as $key => $val) {
-				$i++;
-				if ($i <= $keeplastnfiles) {
-					continue;
+			if (is_array($tmpfiles)) {
+				foreach ($tmpfiles as $key => $val) {
+					$i++;
+					if ($i <= $keeplastnfiles) {
+						continue;
+					}
+					dol_delete_file($val['fullname'], 0, 0, 0, null, false, 0);
 				}
-				dol_delete_file($val['fullname'], 0, 0, 0, null, false, 0);
 			}
 		}
 
@@ -1293,6 +1295,7 @@ class Utils
 			$message = dol_escape_htmltag($langs->trans('MakeSendLocalDatabaseDumpShort'));
 		}
 
+		$tmpfiles = array();
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		if ($filename) {
 			if (dol_is_file($conf->admin->dir_output.'/backup/'.$filename)) {
@@ -1301,7 +1304,7 @@ class Utils
 		} else {
 			$tmpfiles = dol_most_recent_file($conf->admin->dir_output.'/backup', $filter);
 		}
-		if ($tmpfiles) {
+		if ($tmpfiles && is_array($tmpfiles)) {
 			foreach ($tmpfiles as $key => $val) {
 				if ($key  == 'fullname') {
 					$filepath = array($val);

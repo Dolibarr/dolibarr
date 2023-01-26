@@ -367,7 +367,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	if ($features == 'subscription') {
 		$features = 'adherent';
 		$feature2 = 'cotisation';
-	};
+	}
 	if ($features == 'websitepage') {
 		$features = 'website';
 		$tableandshare = 'website_page';

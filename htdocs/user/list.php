@@ -542,7 +542,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&amp;limit='.urlencode($limit);
 }
 if ($sall != '') {
-	$param .= '&amp;sall='.urlencode($sall);
+	$param .= '&amp;search_all='.urlencode($sall);
 }
 if ($search_user != '') {
 	$param .= "&amp;search_user=".urlencode($search_user);

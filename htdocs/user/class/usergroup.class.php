@@ -180,9 +180,9 @@ class UserGroup extends CommonObject
 	/**
 	 *  Return array of groups objects for a particular user
 	 *
-	 *  @param		int		$userid 		User id to search
-	 *  @param		boolean	$load_members	Load all members of the group
-	 *  @return		array     				Array of groups objects
+	 *  @param		int			$userid 		User id to search
+	 *  @param		boolean		$load_members	Load all members of the group
+	 *  @return		array|int     				Array of groups objects
 	 */
 	public function listGroupsForUser($userid, $load_members = true)
 	{
@@ -544,7 +544,7 @@ class UserGroup extends CommonObject
 	 *  Charge dans l'objet group, la liste des permissions auquels le groupe a droit
 	 *
 	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
-	 *	@return     int						<0 if KO, >0 if OK
+	 *	@return     int						<0 if KO, >=0 if OK
 	 */
 	public function getrights($moduletag = '')
 	{
@@ -552,12 +552,12 @@ class UserGroup extends CommonObject
 
 		if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag]) {
 			// Rights for this module are already loaded, so we leave
-			return;
+			return 0;
 		}
 
 		if (!empty($this->all_permissions_are_loaded)) {
 			// We already loaded all rights for this group, so we leave
-			return;
+			return 0;
 		}
 
 		/*
@@ -916,5 +916,34 @@ class UserGroup extends CommonObject
 		$modelpath = "core/modules/usergroup/doc/";
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+	}
+
+		/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if (property_exists($this, 'members')) {
+			$return .= '<br><span class="info-box-status opacitymedium">'.(!empty($this->members)? $this->members : 0).' '.$langs->trans('Users').'</span>';
+		}
+		if (property_exists($this, 'nb_rights')) {
+			$return .= '<br><div class="info-box-status margintoponly opacitymedium">'.$langs->trans('NbOfPermissions').' : '.$this->nb_rights.'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

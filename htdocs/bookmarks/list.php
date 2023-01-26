@@ -29,15 +29,18 @@ require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 $langs->loadLangs(array('bookmarks', 'admin'));
 
 // Get Parameters
-$action = GETPOST('action', 'aZ09');
+$id = GETPOST("id", 'int');
+
+$action 	= GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
-$confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$confirm 	= GETPOST('confirm', 'alpha');
+$cancel     = GETPOST('cancel', 'alpha');
+$toselect 	= GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bookmarklist'; // To manage different context of search
-$id = GETPOST("id", 'int');
-$optioncss = GETPOST('optioncss', 'alpha');
-$mode = GETPOST('mode', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
+$optioncss 	= GETPOST('optioncss', 'alpha');
+$mode 		= GETPOST('mode', 'aZ09');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;

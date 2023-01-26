@@ -52,6 +52,7 @@ $confirm    = GETPOST('confirm', 'alpha'); // Result of a confirmation
 $cancel     = GETPOST('cancel', 'alpha'); // We click on a Cancel button
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'holidaylist'; // To manage different context of search
+$mode        = GETPOST('mode', 'alpha'); // for switch mode view result
 
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
@@ -204,17 +205,17 @@ if (empty($reshook)) {
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
-		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
+			$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
 	}
 
-	// Mass actions
-	$objectclass = 'Holiday';
-	$objectlabel = 'Holiday';
-	$permissiontoread = $user->hasRight('holiday', 'read');
-	$permissiontodelete = $user->hasRight('holiday', 'delete');
-	$permissiontoapprove = $user->hasRight('holiday', 'approve');
-	$uploaddir = $conf->holiday->dir_output;
-	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+		// Mass actions
+		$objectclass = 'Holiday';
+		$objectlabel = 'Holiday';
+		$permissiontoread = $user->hasRight('holiday', 'read');
+		$permissiontodelete = $user->hasRight('holiday', 'delete');
+		$permissiontoapprove = $user->hasRight('holiday', 'approve');
+		$uploaddir = $conf->holiday->dir_output;
+		include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 
@@ -394,6 +395,9 @@ if ($resql) {
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	$param = '';
+	if (!empty($mode)) {
+		$param .= '&mode='.urlencode($mode);
+	}
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
@@ -476,6 +480,8 @@ if ($resql) {
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
+
 	if ($id > 0) {
 		print '<input type="hidden" name="id" value="'.$id.'">';
 	}
@@ -519,7 +525,11 @@ if ($resql) {
 	} else {
 		$title = $langs->trans("ListeCP");
 
-		$newcardbutton = dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create', '', $user->rights->holiday->write);
+
+		$newcardbutton = '';
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create', '', $user->rights->holiday->write);
 
 		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_hrm', 0, $newcardbutton, '', $limit, 0, 0, 1);
 	}
@@ -787,7 +797,8 @@ if ($resql) {
 			$holidaystatic->id = $obj->rowid;
 			$holidaystatic->ref = ($obj->ref ? $obj->ref : $obj->rowid);
 			$holidaystatic->statut = $obj->status;
-			$holidaystatic->date_debut = $db->jdate($obj->date_debut);
+			$holidaystatic->date_debut = $obj->date_debut;
+			$holidaystatic->date_fin = $obj->date_fin;
 
 			// User
 			$userstatic->id = $obj->fk_user;
@@ -815,145 +826,173 @@ if ($resql) {
 			$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 			$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
 
-			print '<tr class="oddeven">';
-			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-				print '<td class="nowrap center">';
-				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday);	// user jdate(..., 1) because num_open_day need UTC dates
+			$totalduration += $nbopenedday;
+
+			if ($mode == 'kanban') {
+				if ($i == 0) {
+					print '<tr><td colspan="12">';
+					print '<div class="box-flex-container">';
+				}
+
+				$holidaystatic->fk_type = $typeleaves[$obj->fk_type]['rowid'];
+
+				// Output Kanban
+				if ($massactionbutton || $massaction) {
 					$selected = 0;
-					if (in_array($obj->rowid, $arrayofselected)) {
+					if (in_array($object->id, $arrayofselected)) {
 						$selected = 1;
 					}
-					print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
-				}
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			if (!empty($arrayfields['cp.ref']['checked'])) {
-				print '<td class="nowraponall">';
-				print $holidaystatic->getNomUrl(1, 1);
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			if (!empty($arrayfields['cp.fk_user']['checked'])) {
-				print '<td class="tdoverflowmax125">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			if (!empty($arrayfields['cp.fk_validator']['checked'])) {
-				print '<td class="tdoverflowmax125">'.$approbatorstatic->getNomUrl(-1).'</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			if (!empty($arrayfields['cp.fk_type']['checked'])) {
-				if (empty($typeleaves[$obj->fk_type])) {
-					$labeltypeleavetoshow = $langs->trans("TypeWasDisabledOrRemoved", $obj->fk_type);
-				} else {
-					$labeltypeleavetoshow = ($langs->trans($typeleaves[$obj->fk_type]['code']) != $typeleaves[$obj->fk_type]['code'] ? $langs->trans($typeleaves[$obj->fk_type]['code']) : $typeleaves[$obj->fk_type]['label']);
-				}
-
-				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labeltypeleavetoshow).'">';
-				print $labeltypeleavetoshow;
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			if (!empty($arrayfields['duration']['checked'])) {
-				print '<td class="right">';
-				$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday);	// user jdate(..., 1) because num_open_day need UTC dates
-				$totalduration += $nbopenedday;
-				print $nbopenedday;
-				//print ' '.$langs->trans('DurationDays');
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			if (!empty($arrayfields['cp.date_debut']['checked'])) {
-				print '<td class="center">';
-				print dol_print_date($db->jdate($obj->date_debut), 'day');
-				print ' <span class="opacitymedium nowraponall">('.$langs->trans($listhalfday[$starthalfday]).')</span>';
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			if (!empty($arrayfields['cp.date_fin']['checked'])) {
-				print '<td class="center">';
-				print dol_print_date($db->jdate($obj->date_fin), 'day');
-				print ' <span class="opacitymedium nowraponall">('.$langs->trans($listhalfday[$endhalfday]).')</span>';
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Date validation
-			if (!empty($arrayfields['cp.date_valid']['checked'])) {		// date_valid is both date_valid but also date_approval
-				print '<td class="center" title="'.dol_print_date($db->jdate($obj->date_valid), 'dayhour').'">';
-				print dol_print_date($db->jdate($obj->date_valid), 'day');
-				print '</td>';
-				if (!$i) $totalarray['nbfield']++;
-			}
-			// Date approval
-			if (!empty($arrayfields['cp.date_approval']['checked'])) {
-				print '<td class="center" title="'.dol_print_date($db->jdate($obj->date_approval), 'dayhour').'">';
-				print dol_print_date($db->jdate($obj->date_approval), 'day');
-				print '</td>';
-				if (!$i) $totalarray['nbfield']++;
-			}
-
-			// Extra fields
-			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-			// Fields from hook
-			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
-			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
-			print $hookmanager->resPrint;
-
-			// Date creation
-			if (!empty($arrayfields['cp.date_create']['checked'])) {
-				print '<td style="text-align: center;">'.dol_print_date($date, 'dayhour').'</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			if (!empty($arrayfields['cp.tms']['checked'])) {
-				print '<td style="text-align: center;">'.dol_print_date($date_modif, 'dayhour').'</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			if (!empty($arrayfields['cp.statut']['checked'])) {
-				print '<td class="right nowrap">'.$holidaystatic->getLibStatut(5).'</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-
-			// Action column
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-				print '<td class="nowrap center">';
-				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-					$selected = 0;
-					if (in_array($obj->rowid, $arrayofselected)) {
-						$selected = 1;
+					if (empty($typeleaves[$obj->fk_type])) {
+						$labeltypeleavetoshow = $langs->trans("TypeWasDisabledOrRemoved", $obj->fk_type);
+					} else {
+						$labeltypeleavetoshow = ($langs->trans($typeleaves[$obj->fk_type]['code']) != $typeleaves[$obj->fk_type]['code'] ? $langs->trans($typeleaves[$obj->fk_type]['code']) : $typeleaves[$obj->fk_type]['label']);
 					}
-					print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+
+					$arraydata = array('user'=>$userstatic, 'labeltype'=>$labeltypeleavetoshow);
+					print $holidaystatic->getKanbanView('', $arraydata);
 				}
-				print '</td>';
+				if ($i == (min($num, $limit) - 1)) {
+					print '</div>';
+					print '</td></tr>';
+				}
+			} else {
+				print '<tr class="oddeven">';
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+						$selected = 0;
+						if (in_array($obj->rowid, $arrayofselected)) {
+							$selected = 1;
+						}
+						print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+					}
+					print '</td>';
+				}
+				if (!empty($arrayfields['cp.ref']['checked'])) {
+					print '<td class="nowraponall">';
+					print $holidaystatic->getNomUrl(1, 1);
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				if (!empty($arrayfields['cp.fk_user']['checked'])) {
+					print '<td class="tdoverflowmax125">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				if (!empty($arrayfields['cp.fk_validator']['checked'])) {
+					print '<td class="tdoverflowmax125">'.$approbatorstatic->getNomUrl(-1).'</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				if (!empty($arrayfields['cp.fk_type']['checked'])) {
+					if (empty($typeleaves[$obj->fk_type])) {
+						$labeltypeleavetoshow = $langs->trans("TypeWasDisabledOrRemoved", $obj->fk_type);
+					} else {
+						$labeltypeleavetoshow = ($langs->trans($typeleaves[$obj->fk_type]['code']) != $typeleaves[$obj->fk_type]['code'] ? $langs->trans($typeleaves[$obj->fk_type]['code']) : $typeleaves[$obj->fk_type]['label']);
+					}
+
+					print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labeltypeleavetoshow).'">';
+					print $labeltypeleavetoshow;
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				if (!empty($arrayfields['duration']['checked'])) {
+					print '<td class="right">';
+					$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday);	// user jdate(..., 1) because num_open_day need UTC dates
+					$totalduration += $nbopenedday;
+					print $nbopenedday;
+					//print ' '.$langs->trans('DurationDays');
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				if (!empty($arrayfields['cp.date_debut']['checked'])) {
+					print '<td class="center">';
+					print dol_print_date($db->jdate($obj->date_debut), 'day');
+					print ' <span class="opacitymedium nowraponall">('.$langs->trans($listhalfday[$starthalfday]).')</span>';
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				if (!empty($arrayfields['cp.date_fin']['checked'])) {
+					print '<td class="center">';
+					print dol_print_date($db->jdate($obj->date_fin), 'day');
+					print ' <span class="opacitymedium nowraponall">('.$langs->trans($listhalfday[$endhalfday]).')</span>';
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Date validation
+				if (!empty($arrayfields['cp.date_valid']['checked'])) {		// date_valid is both date_valid but also date_approval
+					print '<td class="center" title="'.dol_print_date($db->jdate($obj->date_valid), 'dayhour').'">';
+					print dol_print_date($db->jdate($obj->date_valid), 'day');
+					print '</td>';
+					if (!$i) $totalarray['nbfield']++;
+				}
+				// Date approval
+				if (!empty($arrayfields['cp.date_approval']['checked'])) {
+					print '<td class="center" title="'.dol_print_date($db->jdate($obj->date_approval), 'dayhour').'">';
+					print dol_print_date($db->jdate($obj->date_approval), 'day');
+					print '</td>';
+					if (!$i) $totalarray['nbfield']++;
+				}
+
+				// Extra fields
+				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+				// Fields from hook
+				$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+				print $hookmanager->resPrint;
+
+				// Date creation
+				if (!empty($arrayfields['cp.date_create']['checked'])) {
+					print '<td style="text-align: center;">'.dol_print_date($date, 'dayhour').'</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				if (!empty($arrayfields['cp.tms']['checked'])) {
+					print '<td style="text-align: center;">'.dol_print_date($date_modif, 'dayhour').'</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				if (!empty($arrayfields['cp.statut']['checked'])) {
+					print '<td class="right nowrap">'.$holidaystatic->getLibStatut(5).'</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+
+				// Action column
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+						$selected = 0;
+						if (in_array($obj->rowid, $arrayofselected)) {
+							$selected = 1;
+						}
+						print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+					}
+					print '</td>';
+				}
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
+
+				print '</tr>'."\n";
 			}
-
-			print '</tr>'."\n";
-
 			$i++;
 		}
 

@@ -1679,7 +1679,7 @@ class Product extends CommonObject
 		$sql .= "$field = '".$this->db->escape($value)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(__METHOD__."", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -5155,7 +5155,7 @@ class Product extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('productdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result, 'label' => &$label);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -6131,19 +6131,19 @@ class Product extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param  DoliDB $db        Database handler
-	 * @param  int    $origin_id Old thirdparty id
-	 * @param  int    $dest_id   New thirdparty id
+	 * @param  DoliDB $dbs        	Database handler
+	 * @param  int    $origin_id 	Old thirdparty id
+	 * @param  int    $dest_id   	New thirdparty id
 	 * @return bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'product_customer_price',
 			'product_customer_price_log'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -6302,6 +6302,59 @@ class Product extends CommonObject
 		$prodDurationHours *= $this->duration_value;
 
 		return $prodDurationHours;
+	}
+
+
+		/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		global $langs,$conf;
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<div class="info-box-img">';
+		$label = '';
+		if ($this->is_photo_available($conf->product->multidir_output[$this->entity])) {
+				$label .= $this->show_photos('product', $conf->product->multidir_output[$this->entity]);
+				$return .= $label;
+		} else {
+			if ($this->type == Product::TYPE_PRODUCT) {
+				$label .= img_picto('', 'product');
+			} elseif ($this->type == Product::TYPE_SERVICE) {
+				$label .= img_picto('', 'service');
+			}
+			$return .= $label;
+		}
+		$return .= '</div>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if (property_exists($this, 'label')) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
+		}
+		if (property_exists($this, 'price') && property_exists($this, 'price_ttc')) {
+			if ($this->price_base_type == 'TTC') {
+				$return .= '<br><span class="info-box-status amount">'.price($this->price_ttc).' '.$langs->trans("TTC").'</span>';
+			} else {
+				if ($this->status) {
+					$return .= '<br><span class="info-box-status amount">'.price($this->price).' '.$langs->trans("HT").'</span>';
+				}
+			}
+		}
+		if (property_exists($this, 'stock_reel')) {
+			$return .= '<br><span class="info-box-status opacitymedium">'.$langs->trans('PhysicalStock').' : <span class="bold">'.$this->stock_reel.'</span></span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .='<br><span class="info-box-status margintoponly">'.$this->getLibStatut(5, 1).' '.$this->getLibStatut(5, 0).'</span>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }
 

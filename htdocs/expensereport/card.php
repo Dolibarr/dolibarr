@@ -971,7 +971,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
-			setEventMessages("NOT_AUTHOR", '', 'errors');
+			setEventMessages("NOT_AUTHOR", null, 'errors');
 		}
 	}
 
@@ -1210,11 +1210,17 @@ if (empty($reshook)) {
 
 				unset($date);
 			} else {
+				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 
-		$action = '';
+		if (!$error) {
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id', 'int'));
+			exit;
+		} else {
+			$action = '';
+		}
 	}
 
 	if ($action == 'confirm_delete_line' && GETPOST("confirm", 'alpha') == "yes" && $user->rights->expensereport->creer) {
@@ -2427,12 +2433,14 @@ if ($action == 'create') {
                             } else {
                                 jQuery("input[name=\"senditdisabled\"]").prop("name", "sendit");
                             }
+							// TODO Switch css fa-chevron-dow and add fa-chevron-up
                             return false;
                         });
 				        $( ".aattachtodoc" ).click(function() {
 							console.log("We click on toggle of aattachtodoc");
 				            jQuery(".trattachnewfilenow").toggle();
                             jQuery(".truploadnewfilenow").hide();
+							// TODO Switch css fa-chevron-dow and add fa-chevron-up
                             return false;
                         });'."\n";
 				if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')) && $action != 'updateline') {

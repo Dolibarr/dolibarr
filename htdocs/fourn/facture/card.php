@@ -1648,7 +1648,7 @@ if (empty($reshook)) {
 					$productsupplier->fk_unit,
 					0,
 					$pu_devise,
-					$ref_supplier,
+					GETPOST('fourn_ref', 'alpha'),
 					''
 				);
 			}
@@ -2008,15 +2008,93 @@ if ($action == 'create') {
 
 		$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
 		//$ref_client			= (!empty($objectsrc->ref_client)?$object->ref_client:'');
-
 		$soc = $objectsrc->thirdparty;
-		$cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_supplier_id) ? $soc->cond_reglement_supplier_id : 0)); // TODO maybe add default value option
-		$mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_supplier_id) ? $soc->mode_reglement_supplier_id : 0));
-		$fk_account         = (!empty($objectsrc->fk_account) ? $objectsrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
-		$remise_percent 	= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_supplier_percent) ? $soc->remise_supplier_percent : 0));
-		$remise_absolue 	= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
-		$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '';
-		$transport_mode_id = (!empty($objectsrc->transport_mode_id) ? $objectsrc->transport_mode_id : (!empty($soc->transport_mode_id) ? $soc->transport_mode_id : 0));
+
+		$cond_reglement_id = 0;
+		$mode_reglement_id = 0;
+		$fk_account = 0;
+		$remise_percent = 0;
+		$remise_absolue = 0;
+		$transport_mode_id = 0;
+
+		// set from object source
+		if (!empty($objectsrc->cond_reglement_id)) {
+			$cond_reglement_id = $objectsrc->cond_reglement_id;
+		}
+		if (!empty($objectsrc->mode_reglement_id)) {
+			$mode_reglement_id = $objectsrc->mode_reglement_id;
+		}
+		if (!empty($objectsrc->fk_account)) {
+			$fk_account = $objectsrc->fk_account;
+		}
+		if (!empty($objectsrc->remise_percent)) {
+			$remise_percent = $objectsrc->remise_percent;
+		}
+		if (!empty($objectsrc->remise_absolue)) {
+			$remise_absolue = $objectsrc->remise_absolue;
+		}
+		if (!empty($objectsrc->transport_mode_id)) {
+			$transport_mode_id = $objectsrc->transport_mode_id;
+		}
+
+		if (empty($cond_reglement_id)
+			|| empty($mode_reglement_id)
+			|| empty($fk_account)
+			|| empty($remise_percent)
+			|| empty($remise_absolue)
+			|| empty($transport_mode_id)
+		) {
+			if ($origin == 'reception') {
+				// try to get from source of reception (supplier order)
+				if (!isset($objectsrc->supplier_order)) {
+					$objectsrc->fetch_origin();
+				}
+
+				if (!empty($objectsrc->commandeFournisseur)) {
+					$supplierOrder = $objectsrc->commandeFournisseur;
+					if (empty($cond_reglement_id) && !empty($supplierOrder->cond_reglement_id)) {
+						$cond_reglement_id = $supplierOrder->cond_reglement_id;
+					}
+					if (empty($mode_reglement_id) && !empty($supplierOrder->mode_reglement_id)) {
+						$mode_reglement_id = $supplierOrder->mode_reglement_id;
+					}
+					if (empty($fk_account) && !empty($supplierOrder->fk_account)) {
+						$fk_account = $supplierOrder->fk_account;
+					}
+					if (empty($remise_percent) && !empty($supplierOrder->remise_percent)) {
+						$remise_percent = $supplierOrder->remise_percent;
+					}
+					if (empty($remise_absolue) && !empty($supplierOrder->remise_absolue)) {
+						$remise_absolue = $supplierOrder->remise_absolue;
+					}
+					if (empty($transport_mode_id) && !empty($supplierOrder->transport_mode_id)) {
+						$transport_mode_id = $supplierOrder->transport_mode_id;
+					}
+				}
+			}
+
+			// try to get from third-party of source object
+			if (!empty($soc)) {
+				if (empty($cond_reglement_id) && !empty($soc->cond_reglement_supplier_id)) {
+					$cond_reglement_id = $soc->cond_reglement_supplier_id;
+				}
+				if (empty($mode_reglement_id) && !empty($soc->mode_reglement_supplier_id)) {
+					$mode_reglement_id = $soc->mode_reglement_supplier_id;
+				}
+				if (empty($fk_account) && !empty($soc->fk_account)) {
+					$fk_account = $soc->fk_account;
+				}
+				if (empty($remise_percent) && !empty($soc->remise_supplier_percent)) {
+					$remise_percent = $soc->remise_supplier_percent;
+				}
+				if (empty($remise_absolue) && !empty($soc->remise_absolue)) {
+					$remise_absolue = $soc->remise_absolue;
+				}
+				if (empty($transport_mode_id) && !empty($soc->transport_mode_id)) {
+					$transport_mode_id = $soc->transport_mode_id;
+				}
+			}
+		}
 
 		if (isModEnabled("multicurrency")) {
 			if (!empty($objectsrc->multicurrency_code)) {
@@ -2028,7 +2106,7 @@ if ($action == 'create') {
 		}
 
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datetmp);
+		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ? -1 : '') : $datetmp);
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('echmonth', 'int'), GETPOST('echday', 'int'), GETPOST('echyear', 'int'));
 		$datedue = ($datetmp == '' ?-1 : $datetmp);
 
@@ -2101,14 +2179,15 @@ if ($action == 'create') {
 		// reload page to retrieve supplier informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
 			print '<script type="text/javascript">
-			$(document).ready(function() {
-				$("#socid").change(function() {
-					var socid = $(this).val();
-                    var fac_rec = $(\'#fac_rec\').val();
-        			window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
+				$(document).ready(function() {
+					$("#socid").change(function() {
+						console.log("We have changed the company - Reload page");
+						// reload page
+						$("input[name=action]").val("create");
+						$("form[name=add]").submit();
+					});
 				});
-			});
-			</script>';
+				</script>';
 		}
 		if ($fac_recid <= 0) {
 			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
@@ -2233,7 +2312,7 @@ if ($action == 'create') {
 						jQuery(".checkforselect").prop("disabled", false);
 						jQuery(".checkforselect").prop("checked", true);
 					}
-				};
+				}
     		});
     		</script>';
 
@@ -2670,6 +2749,7 @@ if ($action == 'create') {
 		$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 		// Multicurrency
+		$multicurrency_resteapayer = 0;
 		if (isModEnabled("multicurrency")) {
 			$multicurrency_totalpaid = $object->getSommePaiement(1);
 			$multicurrency_totalcreditnotes = $object->getSumCreditNotesUsed(1);
@@ -2715,6 +2795,7 @@ if ($action == 'create') {
 
 		// Confirmation de la conversion de l'avoir en reduc
 		if ($action == 'converttoreduc') {
+			$type_fac = '';
 			if ($object->type == FactureFournisseur::TYPE_STANDARD) {
 				$type_fac = 'ExcessPaid';
 			} elseif ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
@@ -2990,7 +3071,8 @@ if ($action == 'create') {
 		}
 		if (isset($objectidnext) && $objectidnext > 0) {
 			$facthatreplace = new FactureFournisseur($db);
-			$facthatreplace->fetch($facidnext);
+
+			$facthatreplace->fetch($objectidnext);
 			print ' <span class="opacitymediumbycolor paddingleft">'.str_replace('{s1}', $facthatreplace->getNomUrl(1), $langs->transnoentities("ReplacedByInvoice", '{s1}')).'</span>';
 		}
 		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT) {
