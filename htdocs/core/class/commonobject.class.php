@@ -1207,7 +1207,7 @@ abstract class CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Delete all links between an object $this and all its contacts
+	 *    Delete all links between an object $this and all its contacts in llx_element_contact
 	 *
 	 *	  @param	string	$source		'' or 'internal' or 'external'
 	 *	  @param	string	$code		Type of contact (code or id)
@@ -1224,11 +1224,15 @@ abstract class CommonObject
 		}
 		$listId = implode(",", $temp);
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
-		$sql .= " WHERE element_id = ".((int) $this->id);
-		if ($listId) {
-			$sql .= " AND fk_c_type_contact IN (".$this->db->sanitize($listId).")";
+		// If $listId is empty, we have not criteria on fk_c_type_contact so we will delete record on element_id for
+		// any type or record instead of only the ones of the current object. So we do nothing in such a case.
+		if (empty($listId)) {
+			return 0;
 		}
+
+		$sql = "DELETE FROM ".$this->db->prefix()."element_contact";
+		$sql .= " WHERE element_id = ".((int) $this->id);
+		$sql .= " AND fk_c_type_contact IN (".$this->db->sanitize($listId).")";
 
 		dol_syslog(get_class($this)."::delete_linked_contact", LOG_DEBUG);
 		if ($this->db->query($sql)) {
