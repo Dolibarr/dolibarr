@@ -572,7 +572,11 @@ class Product extends CommonObject
 	 */
 	public function check()
 	{
-		$this->ref = dol_sanitizeFileName(stripslashes($this->ref));
+		if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+			$this->ref = trim($this->ref);
+		} else {
+			$this->ref = dol_sanitizeFileName(stripslashes($this->ref));
+		}
 
 		$err = 0;
 		if (dol_strlen(trim($this->ref)) == 0) {
@@ -604,7 +608,11 @@ class Product extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->ref = dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)));
+		if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+			$this->ref = trim($this->ref);
+		} else {
+			$this->ref = dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)));
+		}
 		$this->label = trim($this->label);
 		$this->price_ttc = price2num($this->price_ttc);
 		$this->price = price2num($this->price);
@@ -999,7 +1007,11 @@ class Product extends CommonObject
 		}
 
 		// Clean parameters
-		$this->ref = dol_string_nospecial(trim($this->ref));
+		if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+			$this->ref = trim($this->ref);
+		} else {
+			$this->ref = dol_string_nospecial(trim($this->ref));
+		}
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
 		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : null);
