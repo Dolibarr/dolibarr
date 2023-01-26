@@ -678,6 +678,44 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules)
 	return $head;
 }
 
+/**
+ * Prepare array with list of tabs
+ *
+ * @return  array				Array of tabs to show
+ */
+function ihm_prepare_head()
+{
+	global $langs, $conf, $user;
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=other";
+	$head[$h][1] = $langs->trans("LanguageAndPresentation");
+	$head[$h][2] = 'other';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=template";
+	$head[$h][1] = $langs->trans("SkinAndColors");
+	$head[$h][2] = 'template';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=dashboard";
+	$head[$h][1] = $langs->trans("Dashboard");
+	$head[$h][2] = 'dashboard';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=login";
+	$head[$h][1] = $langs->trans("LoginPage");
+	$head[$h][2] = 'login';
+	$h++;
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin', 'remove');
+
+
+	return $head;
+}
 
 /**
  * Prepare array with list of tabs
