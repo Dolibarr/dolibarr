@@ -2784,7 +2784,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	}
 
 	/* If draft, validated, cancel, and user can create, he can always delete its card before it is approved */
-	if(!empty($totalpaid)) {
+	if (!empty($totalpaid)) {
 		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("DisabledBecausePayments"))).'">'.$langs->trans("Delete").'</a></div>';
 	} elseif (($user->rights->expensereport->creer && $user->id == $object->fk_user_author && $object->status < ExpenseReport::STATUS_APPROVED)
 		|| ($candelete && $object->status != ExpenseReport::STATUS_CLOSED)) {
