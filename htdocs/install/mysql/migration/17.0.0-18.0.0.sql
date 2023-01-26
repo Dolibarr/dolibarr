@@ -63,3 +63,20 @@ ALTER TABLE llx_website ADD COLUMN pageviews_previous_month BIGINT UNSIGNED DEFA
 
 ALTER TABLE llx_product_stock ADD CONSTRAINT fk_product_product_rowid FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 ALTER TABLE llx_product_stock ADD CONSTRAINT fk_entrepot_entrepot_rowid FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
+
+-- payments on several expense reports
+ALTER TABLE llx_payment_expensereport RENAME TO llx_paymentuser;
+
+create table llx_payment_expense_report
+(
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    fk_paiementuser INTEGER DEFAULT NULL,
+    fk_expensereport  INTEGER DEFAULT NULL,
+    amount double(24,8) DEFAULT 0
+)ENGINE=innodb;
+
+INSERT INTO llx_payment_expense_report (rowid, fk_paiementuser, fk_expensereport, amount) SELECT pu.rowid, pu.rowid, pu.fk_expensereport, pu.amount FROM llx_paymentuser pu WHERE pu.fk_expensereport IS NOT NULL;
+
+-- VPGSQL8.2 CREATE SEQUENCE llx_paymentuser_rowid_seq OWNED BY llx_paymentuser.rowid;
+-- VPGSQL8.2 ALTER TABLE llx_paymentuser ALTER COLUMN rowid SET DEFAULT nextval('llx_paymentuser_rowid_seq');
+-- VPGSQL8.2 SELECT setval('llx_paymentuser_rowid_seq', MAX(rowid)) FROM llx_paymentuser;
