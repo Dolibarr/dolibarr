@@ -171,7 +171,7 @@ $tmpbom->calculateCosts();
 print '<td id="costline_'.$line->id.'" class="linecolcost nowrap right">';
 $coldisplay++;
 if (!empty($line->fk_bom_child)) {
-	echo '<span class="amount">'.price($tmpbom->total_cost).'</span>';
+	echo '<span class="amount">'.price($tmpbom->total_cost * $line->qty).'</span>';
 } else {
 	echo '<span class="amount">'.price($line->total_cost).'</span>';
 }
