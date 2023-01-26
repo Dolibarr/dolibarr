@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017 	Laurent Destailleur		<eldy@products.sourceforge.net>
- * Copyright (C) 2017 	Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2023 	Anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
