@@ -991,11 +991,11 @@ class Expedition extends CommonObject
 		global $conf, $langs;
 
 		$num = count($this->lines);
-		if ($dbatch['qty'] > 0) {
+		if ($dbatch['qty'] > 0 || ($dbatch['qty'] == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
 			$line = new ExpeditionLigne($this->db);
 			$tab = array();
 			foreach ($dbatch['detail'] as $key => $value) {
-				if ($value['q'] > 0) {
+				if ($value['q'] > 0 || ($value['q']  == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
 					// $value['q']=qty to move
 					// $value['id_batch']=id into llx_product_batch of record to move
 					//var_dump($value);
@@ -1007,6 +1007,9 @@ class Expedition extends CommonObject
 						return -1;
 					}
 					$linebatch->qty = $value['q'];
+                    if ($linebatch->qty == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS) {
+                        $linebatch->batch = null;
+                    }
 					$tab[] = $linebatch;
 
 					if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT) {

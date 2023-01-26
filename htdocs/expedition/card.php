@@ -384,7 +384,7 @@ if (empty($reshook)) {
 					}
 				} else {
 					// batch mode
-					if ($batch_line[$i]['qty'] > 0) {
+					if ($batch_line[$i]['qty'] > 0 || ($batch_line[$i]['qty'] == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
 						$ret = $object->addline_batch($batch_line[$i], $array_options[$i]);
 						if ($ret < 0) {
 							setEventMessages($object->error, $object->errors, 'errors');
