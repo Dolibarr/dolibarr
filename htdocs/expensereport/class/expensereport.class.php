@@ -5,6 +5,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (c) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
+ * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2560,7 +2561,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function getSumPayments()
 	{
-		$table = 'payment_expensereport';
+		$table = 'payment_expense_report';
 		$field = 'fk_expensereport';
 
 		$sql = 'SELECT sum(amount) as amount';

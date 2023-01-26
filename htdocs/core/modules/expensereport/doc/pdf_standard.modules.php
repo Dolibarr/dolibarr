@@ -7,6 +7,7 @@
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
  * Copyright (C) 2020       Marc Guenneugues        <marc.guenneugues@simicar.fr>
+ * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1054,15 +1055,16 @@ class pdf_standard extends ModeleExpenseReport
 		// Loop on each payment
 		// TODO create method on expensereport class to get payments
 		// Payments already done (from payment on this expensereport)
-		$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount, p.fk_bank,";
+		$sql = "SELECT p.rowid, pu.num_payment, pu.datep as dp, p.amount, pu.fk_bank,";
 		$sql .= "c.code as p_code, c.libelle as payment_type,";
 		$sql .= "ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."payment_expensereport as p";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_expense_report as p ON p.fk_expensereport = e.rowid";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."paymentuser as pu ON p.fk_paiementuser = pu.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
 		$sql .= " WHERE e.rowid = ".((int) $object->id);
-		$sql .= " AND p.fk_expensereport = e.rowid";
 		$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
 		$sql .= " ORDER BY dp";
 

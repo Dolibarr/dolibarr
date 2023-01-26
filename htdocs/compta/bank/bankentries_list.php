@@ -9,7 +9,7 @@
  * Copyright (C) 2017-2019  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentuser.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
@@ -425,7 +425,7 @@ $paymentvatstatic = new PaymentVAT($db);
 $paymentsalstatic = new PaymentSalary($db);
 $paymentdonationstatic = new PaymentDonation($db);
 $paymentvariousstatic = new PaymentVarious($db);
-$paymentexpensereportstatic = new PaymentExpenseReport($db);
+$paymentexpensereportstatic = new PaymentUser($db);
 $bankstatic = new Account($db);
 $banklinestatic = new AccountLine($db);
 $bordereaustatic = new RemiseCheque($db);
@@ -1571,7 +1571,9 @@ if ($resql) {
 				if ($links[$key]['type'] == 'payment_salary') {
 					$type_link = 'payment_salary';
 				}
-
+				if ($links[$key]['type'] == 'payment_expensereport') {
+					$type_link = 'payment_expensereport';
+				}
 				if ($links[$key]['type'] == 'company') {
 					$companylinked_id = $links[$key]['url_id'];
 				}
@@ -1586,7 +1588,8 @@ if ($resql) {
 				print $companystatic->getNomUrl(1);
 			} elseif ($userlinked_id &&
 					(($type_link == 'payment_salary' && !empty($user->rights->salaries->read))
-						|| ($type_link == 'payment_sc' && !empty($user->rights->tax->charges->lire)))) {
+						|| ($type_link == 'payment_sc' && !empty($user->rights->tax->charges->lire))
+						|| ($type_link == 'payment_expensereport' && !empty($user->rights->expensereport->lire)))) {
 				// Get object user from cache or load it
 				if (!empty($conf->cache['user'][$userlinked_id])) {
 					$tmpuser = $conf->cache['user'][$userlinked_id];

@@ -29,6 +29,9 @@ ConfirmValideTrip=Are you sure you want to approve this expense report?
 DATE_CANCEL=Cancelation date
 DATE_PAIEMENT=Payment date
 DATE_REFUS=Deny date
+ConfirmUserPayment=Do you confirm this payment input for <b>%s</b> %s?
+AllCompletelyPayedExpenseReportWillBeClosed=All expense reports with no remainder to pay will be automatically closed with status "Paid".
+PayedUsersPayments=Payments paid to users
 DATE_SAVE=Validation date
 DefaultCategoryCar=Default transportation mode
 DefaultRangeNumber=Default range number
@@ -117,6 +120,7 @@ VALIDOR=Approved by
 ValidateAndSubmit=Validate and submit for approval
 ValidatedWaitingApproval=Validated (waiting for approval)
 ValideTrip=Approve expense report
+ClosePaidExpenseReportsAutomatically=Classify automatically all expense reports as "Paid" when payment is done entirely.
 
 ## Dictionary
 EX_BRE=Breakfast

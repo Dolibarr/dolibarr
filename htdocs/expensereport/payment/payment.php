@@ -2,6 +2,7 @@
 /* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +27,9 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentuser.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'trips'));
@@ -38,6 +40,7 @@ $action = GETPOST('action', 'aZ09');
 $amounts = array();
 $accountid = GETPOST('accountid', 'int');
 $cancel = GETPOST('cancel');
+$confirm	= GETPOST('confirm', 'alpha');
 
 // Security check
 $socid = 0;
@@ -45,12 +48,13 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
+$form = new Form($db);
+
 
 /*
  * Actions
  */
-
-if ($action == 'add_payment') {
+if ($action === 'add_payment' || ($action === 'confirm_payment' && $confirm === 'yes')) {
 	$error = 0;
 
 	if ($cancel) {
@@ -89,9 +93,10 @@ if ($action == 'add_payment') {
 		// Read possible payments
 		foreach ($_POST as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_') {
+				$cursorexpid = substr($key, 7);
 				if (GETPOST($key)) {
-					$amounts[$expensereport->fk_user_author] = price2num(GETPOST($key));
-					$total += price2num(GETPOST($key));
+					$amounts[$cursorexpid] = price2num(GETPOST($key));
+					$totalpayment += price2num(GETPOST($key));
 				}
 			}
 		}
@@ -101,14 +106,14 @@ if ($action == 'add_payment') {
 			setEventMessages('ErrorNoPaymentDefined', null, 'errors');
 		}
 
-		if (!$error) {
+		if (!$error && $action === 'confirm_payment' && $confirm === 'yes') {
 			$db->begin();
 
 			// Create a line of payments
-			$payment = new PaymentExpenseReport($db);
+			$payment = new PaymentUser($db);
 			$payment->fk_expensereport = $expensereport->id;
 			$payment->datepaid       = $datepaid;
-			$payment->amounts        = $amounts; // Tableau de montant
+			$payment->amounts        = $amounts; // Tableau de montants
 			$payment->total          = $total;
 			$payment->fk_typepayment = GETPOST("fk_typepayment", 'int');
 			$payment->num_payment    = GETPOST("num_payment", 'alphanothtml');
@@ -116,7 +121,7 @@ if ($action == 'add_payment') {
 			$payment->fk_bank        = $accountid;
 
 			if (!$error) {
-				$paymentid = $payment->create($user);
+				$paymentid = $payment->create($user, (GETPOST('closepaidexpensereports', 'alpha') == 'on' ? 1 : 0));
 				if ($paymentid < 0) {
 					setEventMessages($payment->error, $payment->errors, 'errors');
 					$error++;
@@ -132,17 +137,6 @@ if ($action == 'add_payment') {
 			}
 
 			if (!$error) {
-				$payment->fetch($paymentid);
-				if ($expensereport->total_ttc - $payment->amount == 0) {
-					$result = $expensereport->setPaid($expensereport->id, $user);
-					if (!($result > 0)) {
-						setEventMessages($payment->error, $payment->errors, 'errors');
-						$error++;
-					}
-				}
-			}
-
-			if (!$error) {
 				$db->commit();
 				$loc = DOL_URL_ROOT.'/expensereport/card.php?id='.$id;
 				header('Location: '.$loc);
@@ -152,10 +146,9 @@ if ($action == 'add_payment') {
 			}
 		}
 	}
-
+} elseif ($action === 'confirm_payment') {
 	$action = 'create';
 }
-
 
 /*
  * View
@@ -167,11 +160,12 @@ $form = new Form($db);
 
 
 // Form to create expense report payment
-if ($action == 'create' || empty($action)) {
+
+if ($action == 'create' || $action == 'add_payment') {
 	$expensereport = new ExpenseReport($db);
 	$expensereport->fetch($id, $ref);
 
-	$total = $expensereport->total_ttc;
+	//  $total = $expensereport->total_ttc;
 
 	// autofill remainder amount
 	if (!empty($conf->use_javascript_ajax)) {
@@ -196,43 +190,7 @@ if ($action == 'create' || empty($action)) {
 
 	print dol_get_fiche_head(null, '0', '', -1);
 
-	$linkback = '';
-	// $linkback = '<a href="' . DOL_URL_ROOT . '/expensereport/payment/list.php">' . $langs->trans("BackToList") . '</a>';
-
-	dol_banner_tab($expensereport, 'ref', $linkback, 1, 'ref', 'ref', '');
-
-	print '<div class="fichecenter">';
-	print '<div class="underbanner clearboth"></div>';
-
-	print '<table class="border centpercent">'."\n";
-
-	print '<tr><td class="titlefield">'.$langs->trans("Period").'</td><td>'.get_date_range($expensereport->date_debut, $expensereport->date_fin, "", $langs, 0).'</td></tr>';
-	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($expensereport->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
-
-	$sql = "SELECT sum(p.amount) as total";
-	$sql .= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p, ".MAIN_DB_PREFIX."expensereport as e";
-	$sql .= " WHERE p.fk_expensereport = e.rowid AND p.fk_expensereport = ".((int) $id);
-	$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
-	$resql = $db->query($sql);
-	if ($resql) {
-		$obj = $db->fetch_object($resql);
-		$sumpaid = $obj->total;
-		$db->free($resql);
-	}
-	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td><span class="amount">'.price($sumpaid, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
-	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td><span class="amount">'.price($total - $sumpaid, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
-
-	print '</table>';
-
-	print '</div>';
-
-	print dol_get_fiche_end();
-
-	print '<br>';
-
-	print dol_get_fiche_head();
-
-	print '<table class="border centpercent">'."\n";
+	print '<table class="centpercent">'."\n";
 
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
@@ -279,6 +237,7 @@ if ($action == 'create' || empty($action)) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("ExpenseReport").'</td>';
+	print '<td>'.$langs->trans("User").'</td>';
 	print '<td class="right">'.$langs->trans("Amount").'</td>';
 	print '<td class="right">'.$langs->trans("AlreadyPaid").'</td>';
 	print '<td class="right">'.$langs->trans("RemainderToPay").'</td>';
@@ -288,40 +247,64 @@ if ($action == 'create' || empty($action)) {
 	$total_ttc = 0;
 	$totalrecu = 0;
 
-	while ($i < $num) {
-		$objp = $expensereport;
+	$sortorder = 'DESC';
+	$sortfield = 'pe.datep';
 
-		print '<tr class="oddeven">';
+	$sql = 'SELECT e.rowid, e.total_ttc, e.ref, SUM(pe.amount) as total_amount';
+	$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport as e';
+	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'payment_expense_report as pe ON pe.fk_expensereport = e.rowid';
+	$sql.= ' WHERE fk_user_author = '.((int) $expensereport->fk_user_author);
+	$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
+	$sql .= ' AND e.fk_statut = '.ExpenseReport::STATUS_APPROVED;
+	$sql .= ' AND e.paid = 0';
+	$sql.= ' GROUP BY e.rowid, e.ref, e.total_ttc';
+	$resql = $db->query($sql);
 
-		print '<td>'.$expensereport->getNomUrl(1)."</td>";
-		print '<td class="right">'.price($objp->total_ttc)."</td>";
-		print '<td class="right">'.price($sumpaid)."</td>";
-		print '<td class="right">'.price($objp->total_ttc - $sumpaid)."</td>";
-		print '<td class="center">';
-		if ($sumpaid < $objp->total_ttc) {
-			$namef = "amount_".$objp->id;
-			$nameRemain = "remain_".$objp->id; // autofill remainder amount
-			if (!empty($conf->use_javascript_ajax)) { // autofill remainder amount
-					print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->total_ttc - $sumpaid)."'"); // autofill remainder amount
+	$fk_user_author = $expensereport->fk_user_author;
+
+	if (!empty($resql)) {
+		$u_author = new User($db);
+		while ($objp = $db->fetch_object($resql)) {
+			$expensereport = new ExpenseReport($db);
+			$expensereport->id = $objp->rowid;
+			$expensereport->ref = $objp->ref;
+			$sumpaid = $objp->total_amount;
+
+			if (empty($u_author->id)) $u_author->fetch($fk_user_author);
+
+			print '<tr class="oddeven">';
+
+			print '<td>' . $expensereport->getNomUrl(1) . "</td>";
+			print '<td>' . $u_author->getNomUrl(1) . "</td>";
+			print '<td class="right">' . price($objp->total_ttc) . "</td>";
+			print '<td class="right">' . price($sumpaid) . "</td>";
+			print '<td class="right">' . price($objp->total_ttc - $sumpaid) . "</td>";
+			print '<td class="center">';
+			if ($sumpaid < $objp->total_ttc) {
+				$namef = "amount_" . $objp->rowid;
+				$nameRemain = "remain_" . $objp->rowid; // autofill remainder amount
+				if (!empty($conf->use_javascript_ajax)) { // autofill remainder amount
+					print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='" . $namef . "' data-value='" . ($objp->total_ttc - $sumpaid) . "'"); // autofill remainder amount
+				}
+				$remaintopay = $objp->total_ttc - $sumpaid; // autofill remainder amount
+				print '<input type=hidden class="sum_remain" name="' . $nameRemain . '" value="' . $remaintopay . '">'; // autofill remainder amount
+				print '<input type="text" class="width75" name="' . $namef . '" id="' . $namef . '" value="' . GETPOST($namef) . '">';
+			} else {
+				print '-';
 			}
-			$remaintopay = $objp->total_ttc - $sumpaid; // autofill remainder amount
-			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">'; // autofill remainder amount
-			print '<input type="text" class="width75" name="'.$namef.'" id="'.$namef.'" value="'.GETPOST($namef).'">';
-		} else {
-			print '-';
+			print "</td>";
+
+			print "</tr>\n";
+
+			$total_ttc += $objp->total_ttc;
+			$totalrecu += $sumpaid;
+			$i++;
 		}
-		print "</td>";
-
-		print "</tr>\n";
-
-		$total_ttc += $objp->total_ttc;
-		$totalrecu += $sumpaid;
-		$i++;
 	}
 	if ($i > 1) {
 		// Print total
 		print '<tr class="oddeven">';
-		print '<td colspan="2" class="left">'.$langs->trans("Total").':</td>';
+		print '<td class="left">'.$langs->trans("Total").':</td>';
 		print '<td class="right"><b>'.price($total_ttc).'</b></td>';
 		print '<td class="right"><b>'.price($totalrecu).'</b></td>';
 		print '<td class="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
@@ -331,7 +314,29 @@ if ($action == 'create' || empty($action)) {
 
 	print "</table>";
 
-	print $form->buttonsSaveCancel();
+
+	$langs->load('expensereports');
+	if ($action == 'add_payment' && empty($error)) {
+		print '<br>';
+		if (!empty($totalpayment)) {
+			$text = $langs->trans('ConfirmUserPayment', $totalpayment, $langs->trans("Currency".$conf->currency));
+		}
+		if (GETPOST('closepaidexpensereports')) {
+			$text .= '<br>'.$langs->trans("AllCompletelyPayedExpenseReportWillBeClosed");
+			print '<input type="hidden" name="closepaidexpensereports" value="'.GETPOST('closepaidexpensereports').'">';
+		}
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$id, $langs->trans('PayedUsersPayments'), $text, 'confirm_payment', $formquestion, 'yes');
+
+		// Print form confirm
+		print $formconfirm;
+	} else {
+		$checkboxlabel = $langs->trans("ClosePaidExpenseReportsAutomatically");
+		print '<div class="center">';
+		print '<input type="checkbox" checked name="closepaidexpensereports"> ' . $checkboxlabel;
+		print '</div>';
+
+		print $form->buttonsSaveCancel('Save', '');
+	}
 
 	print "</form>\n";
 }

@@ -5,6 +5,7 @@
  * Copyright (C) 2015-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expensereport.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentuser.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (isModEnabled('accounting')) {
@@ -1393,7 +1394,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 $projecttmp = new Project($db);
-$paymentexpensereportstatic = new PaymentExpenseReport($db);
+$paymentexpensereportstatic = new PaymentUser($db);
 $bankaccountstatic = new Account($db);
 $ecmfilesstatic = new EcmFiles($db);
 $formexpensereport = new FormExpenseReport($db);
@@ -1921,16 +1922,17 @@ if ($action == 'create') {
 			print '</tr>';
 
 			// Payments already done (from payment on this expensereport)
-			$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount, p.fk_bank,";
+			$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, pe.amount, p.fk_bank,";
 			$sql .= "c.code as payment_code, c.libelle as payment_type,";
 			$sql .= "ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal";
-			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."payment_expensereport as p";
+			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as exp ";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_expense_report as pe ON pe.fk_expensereport = exp.rowid ";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."paymentuser as p ON pe.fk_paiementuser = p.rowid";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-			$sql .= " WHERE e.rowid = ".((int) $id);
-			$sql .= " AND p.fk_expensereport = e.rowid";
-			$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
+			$sql .= " WHERE pe.fk_expensereport = ".((int) $id);
+			$sql .= ' AND exp.entity IN ('.getEntity('expensereport').')';
 			$sql .= " ORDER BY dp";
 
 			$resql = $db->query($sql);
