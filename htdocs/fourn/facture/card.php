@@ -2990,7 +2990,8 @@ if ($action == 'create') {
 		}
 		if (isset($objectidnext) && $objectidnext > 0) {
 			$facthatreplace = new FactureFournisseur($db);
-			$facthatreplace->fetch($facidnext);
+
+			$facthatreplace->fetch($objectidnext);
 			print ' <span class="opacitymediumbycolor paddingleft">'.str_replace('{s1}', $facthatreplace->getNomUrl(1), $langs->transnoentities("ReplacedByInvoice", '{s1}')).'</span>';
 		}
 		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT) {
