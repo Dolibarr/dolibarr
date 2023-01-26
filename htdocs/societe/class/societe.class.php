@@ -40,6 +40,7 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonsocialnetworks.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 
@@ -49,6 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 class Societe extends CommonObject
 {
 	use CommonIncoterm;
+	use CommonSocialNetworks;
 
 	/**
 	 * @var string ID to identify managed object
@@ -784,6 +786,10 @@ class Societe extends CommonObject
 	 */
 	public $multicurrency_code;
 
+	/**
+	 * @var string  Set if company email found into unsubscribe of emailing list table
+	 */
+	public $no_email;
 
 	// Fields loaded by fetchPartnerships()
 

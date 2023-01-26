@@ -33,18 +33,22 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("users", "companies", "agenda", "commercial", "other", "orders", "bills"));
 
-$action = GETPOST('action', 'aZ09');
+// Get Parameters
+$action 	= GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
+$confirm 	= GETPOST('confirm', 'alpha');
+$cancel     = GETPOST('cancel', 'alpha');
+$toselect 	= GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'actioncommlist'; // To manage different context of search
-$optioncss = GETPOST('optioncss', 'alpha');
-$toselect = GETPOST('toselect', 'array');
-$confirm = GETPOST('confirm', 'alpha');
+$optioncss 	= GETPOST('optioncss', 'alpha');
+
 
 $disabledefaultvalues = GETPOST('disabledefaultvalues', 'int');
 
@@ -70,6 +74,7 @@ if (GETPOST('search_actioncode', 'array')) {
 	$actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 
+// Search Fields
 $search_id = GETPOST('search_id', 'alpha');
 $search_title = GETPOST('search_title', 'alpha');
 $search_note = GETPOST('search_note', 'alpha');
@@ -106,6 +111,7 @@ if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS)) {
 	$filtert = $user->id;
 }
 
+// Pagination parameters
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');

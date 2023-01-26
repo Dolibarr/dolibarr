@@ -225,9 +225,10 @@ class Contrat extends CommonObject
 	 */
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'ref' =>array('type'=>'varchar(50)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'showoncombobox'=>1, 'position'=>15),
+		'ref' =>array('type'=>'varchar(50)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'showoncombobox'=>1, 'position'=>15, 'searchall'=>1),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>20),
-		'ref_supplier' =>array('type'=>'varchar(50)', 'label'=>'Ref supplier', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
+		'ref_customer' =>array('type'=>'varchar(50)', 'label'=>'RefCustomer', 'enabled'=>1, 'visible'=>-1, 'position'=>25, 'searchall'=>1),
+		'ref_supplier' =>array('type'=>'varchar(50)', 'label'=>'RefSupplier', 'enabled'=>1, 'visible'=>-1, 'position'=>26, 'searchall'=>1),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>30, 'index'=>1),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
@@ -237,8 +238,8 @@ class Contrat extends CommonObject
 		'fk_commercial_signature' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'SaleRepresentative Signature', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'fk_commercial_suivi' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'SaleRepresentative follower', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>90),
-		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>105),
-		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>110),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>105, 'searchall'=>1),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>110, 'searchall'=>1),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>115),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>120),
 		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
@@ -320,15 +321,15 @@ class Contrat extends CommonObject
 	 *
 	 *  @param	User		$user       Objet User who activate contract
 	 *  @param  int			$line_id    Id of line to activate
-	 *  @param  int			$date       Opening date
+	 *  @param  int			$date_start Opening date
 	 *  @param  int|string	$date_end   Expected end date
 	 * 	@param	string		$comment	A comment typed by user
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
-	public function active_line($user, $line_id, $date, $date_end = '', $comment = '')
+	public function active_line($user, $line_id, $date_start, $date_end = '', $comment = '')
 	{
 		// phpcs:enable
-		$result = $this->lines[$this->lines_id_index_mapper[$line_id]]->active_line($user, $date, $date_end, $comment);
+		$result = $this->lines[$this->lines_id_index_mapper[$line_id]]->active_line($user, $date_start, $date_end, $comment);
 		if ($result < 0) {
 			$this->error = $this->lines[$this->lines_id_index_mapper[$line_id]]->error;
 			$this->errors = $this->lines[$this->lines_id_index_mapper[$line_id]]->errors;
@@ -3587,7 +3588,7 @@ class ContratLigne extends CommonObjectLine
 	 *  Activate a contract line
 	 *
 	 * @param   User 		$user 		Objet User who activate contract
-	 * @param  	int 		$date 		Date activation
+	 * @param  	int 		$date 		Date real activation
 	 * @param  	int|string 	$date_end 	Date planned end. Use '-1' to keep it unchanged.
 	 * @param   string 		$comment 	A comment typed by user
 	 * @return 	int                    	<0 if KO, >0 if OK
@@ -3602,13 +3603,13 @@ class ContratLigne extends CommonObjectLine
 		$this->db->begin();
 
 		$this->statut = ContratLigne::STATUS_OPEN;
-		$this->date_start = $date;
+		$this->date_start_real = $date;
 		$this->date_end = $date_end;
 		$this->fk_user_ouverture = $user->id;
 		$this->date_end_real = null;
 		$this->commentaire = $comment;
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = ".$this->statut.",";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = ".((int) $this->statut).",";
 		$sql .= " date_ouverture = ".(dol_strlen($this->date_start_real) != 0 ? "'".$this->db->idate($this->date_start_real)."'" : "null").",";
 		if ($date_end >= 0) {
 			$sql .= " date_fin_validite = ".(dol_strlen($this->date_end) != 0 ? "'".$this->db->idate($this->date_end)."'" : "null").",";
@@ -3647,7 +3648,7 @@ class ContratLigne extends CommonObjectLine
 	 *  Close a contract line
 	 *
 	 * @param    User 	$user 			Objet User who close contract
-	 * @param  	 int 	$date_end_real 		Date end
+	 * @param  	 int 	$date_end_real 	Date end
 	 * @param    string $comment 		A comment typed by user
 	 * @param    int	$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 * @return int                    	<0 if KO, >0 if OK

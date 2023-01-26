@@ -229,6 +229,12 @@ if ($object->job && !getDolUserInt('USER_PUBLIC_HIDE_JOBPOSITION', 0, $object)) 
 	print dol_escape_htmltag($object->job);
 	print '</div>';
 }
+if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
+	print '<div class="bold">';
+	print dol_escape_htmltag($mysoc->name);
+	print '</div>';
+}
+
 
 
 print '</div>';
@@ -240,7 +246,7 @@ print '</div>';
 
 if (!empty($conf->global->USER_IMAGE_PUBLIC_INTERFACE)) {
 	print '<div class="backimagepublicrecruitment">';
-	print '<img id="idUSER_IMAGE_PUBLIC_SUGGEST_BOOTH" src="'.$conf->global->USER_IMAGE_PUBLIC_INTERFACE.'">';
+	print '<img id="idUSER_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->USER_IMAGE_PUBLIC_INTERFACE.'">';
 	print '</div>';
 }
 
@@ -292,19 +298,19 @@ if ($object->office_phone && !getDolUserInt('USER_PUBLIC_HIDE_OFFICE_PHONE', 0, 
 	$usersection .= '<div class="flexitemsmall">';
 	$usersection .= img_picto('', 'phone', 'class="pictofixedwidth"');
 	$usersection .= dol_print_phone($object->office_phone, $object->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
-	$usersection .= '<div>';
+	$usersection .= '</div>';
 }
 if ($object->office_fax && !getDolUserInt('USER_PUBLIC_HIDE_OFFICE_FAX', 0, $object)) {
 	$usersection .= '<div class="flexitemsmall">';
 	$usersection .= img_picto('', 'phoning_fax', 'class="pictofixedwidth"');
 	$usersection .= dol_print_phone($object->office_fax, $object->country_code, 0, $mysoc->id, 'fax', ' ', 0, '');
-	$usersection .= '<div>';
+	$usersection .= '</div>';
 }
 if ($object->user_mobile && !getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object)) {
 	$usersection .= '<div class="flexitemsmall">';
 	$usersection .= img_picto('', 'phone', 'class="pictofixedwidth"');
 	$usersection .= dol_print_phone($object->user_mobile, $object->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
-	$usersection .= '<div>';
+	$usersection .= '</div>';
 }
 
 // Social networks
@@ -324,7 +330,7 @@ if ($usersection) {
 	// Output payment summary form
 	print '<tr><td class="left">';
 
-	print '<div class="nowidthimp" id="tablepublicpayment">';
+	print '<div class="nowidthimp nopaddingtoponsmartphone" id="tablepublicpayment">';
 
 	print $usersection;
 
@@ -344,7 +350,7 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 		$companysection .= '<div class="flexitemsmall">';
 		$companysection .= img_picto('', 'email', 'class="pictofixedwidth"');
 		$companysection .= dol_print_email($mysoc->email, 0, 0, 1);
-		$companysection .= '<div>';
+		$companysection .= '</div>';
 	}
 
 	if ($mysoc->url) {
@@ -358,13 +364,13 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 		$companysection .= '<div class="flexitemsmall">';
 		$companysection .= img_picto('', 'phone', 'class="pictofixedwidth"');
 		$companysection .= dol_print_phone($mysoc->phone, $mysoc->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
-		$companysection .= '<div>';
+		$companysection .= '</div>';
 	}
 	if ($mysoc->fax) {
 		$companysection .= '<div class="flexitemsmall">';
 		$companysection .= img_picto('', 'phoning_fax', 'class="pictofixedwidth"');
 		$companysection .= dol_print_phone($mysoc->fax, $mysoc->country_code, 0, $mysoc->id, 'fax', ' ', 0, '');
-		$companysection .= '<div>';
+		$companysection .= '</div>';
 	}
 
 	// Social networks
@@ -414,12 +420,12 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	// Output payment summary form
 	print '<tr><td class="left">';
 
-	print '<div class="nowidthimp" id="tablepublicpayment">';
+	print '<div class="nowidthimp nopaddingtoponsmartphone" id="tablepublicpayment">';
 
 	// Add company info
 	if ($mysoc->name) {
 		print '<div class="center bold">';
-		print $mysoc->name;
+		print dol_escape_htmltag($mysoc->name);
 		print '</div>';
 		print '<br>';
 	}

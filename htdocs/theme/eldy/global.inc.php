@@ -1638,7 +1638,7 @@ table[summary="list_of_modules"] .fa-cog {
 .maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
-.maxwidthdate  { max-width: 80px; }
+.maxwidthdate  { max-width: 85px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
@@ -1769,6 +1769,13 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	.smallonsmartphone {
 		font-size: 0.8em;
+	}
+
+	.nopaddingtoponsmartphone {
+		padding-top: 0 !important;
+	}
+	.nopaddingbottomonsmartphone {
+		padding-bottom: 0 !important;
 	}
 }
 
@@ -3803,7 +3810,7 @@ td.border, div.tagtable div div.border {
 }
 
 
-.fichehalfright table.noborder {
+.fichehalfright table.noborder , .fichehalfleft table.noborder{
 	margin: 0px 0px 0px 0px;
 }
 table.liste, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact), table.formdoc, div.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) {

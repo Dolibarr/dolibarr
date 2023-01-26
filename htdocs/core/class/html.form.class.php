@@ -6287,7 +6287,7 @@ class Form
 		if (!empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC)) {    // If option to have vat for end customer for services is on
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 			if (!isInEEC($societe_vendeuse) && (!is_object($societe_acheteuse) || (isInEEC($societe_acheteuse) && !$societe_acheteuse->isACompany()))) {
-				// We also add the buyer
+				// We also add the buyer country code
 				if (is_numeric($type)) {
 					if ($type == 1) { // We know product is a service
 						$code_country .= ",'".$societe_acheteuse->country_code."'";
