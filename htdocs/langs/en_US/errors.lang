@@ -303,7 +303,7 @@ ErrorValueForTooLow=Value for <b>%s</b> is too low
 ErrorValueCantBeNull=Value for <b>%s</b> can't be null
 ErrorDateOfMovementLowerThanDateOfFileTransmission=The date of the bank transaction can't be lower than the date of the file transmission
 ErrorTooMuchFileInForm=Too much files in form, the maximum number is %s file(s)
-ErrorSessionInvalidatedAfterPasswordChange=The session was invalidated after a password change. Please relogin.
+ErrorSessionInvalidatedAfterPasswordChange=The session was invalidated after a password or dates of validity change. Please relogin.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
