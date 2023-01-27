@@ -56,7 +56,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-$filter = GETPOST("filter");
+$filter = GETPOST("filter", 'alpha');
 $search_name = GETPOST("search_name", 'alpha');
 $search_subprice = GETPOST("search_subprice", 'alpha');
 $search_qty = GETPOST("search_qty", 'alpha');
@@ -110,7 +110,6 @@ $result = restrictedArea($user, 'contrat', $contratid);
 
 if ($search_status != '') {
 	$tmp = explode('&', $search_status);
-	$mode = $tmp[0];
 	if (empty($tmp[1])) {
 		$filter = '';
 	} else {
@@ -120,14 +119,6 @@ if ($search_status != '') {
 		if ($tmp[1] == 'filter=expired') {
 			$filter = 'expired';
 		}
-	}
-} else {
-	$search_status = $mode;
-	if ($filter == 'expired') {
-		$search_status .= '&filter=expired';
-	}
-	if ($filter == 'notexpired') {
-		$search_status .= '&filter=notexpired';
 	}
 }
 
@@ -209,7 +200,6 @@ if (empty($reshook)) {
 		$opclotureday = "";
 		$opclotureyear = "";
 		$filter_opcloture = "";
-		$mode = '';
 		$filter = '';
 		$toselect = array();
 		$search_array_options = array();
@@ -275,13 +265,13 @@ $sql .= " AND c.fk_soc = s.rowid";
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
-if ($mode == "0") {
+if ($search_status == "0") {
 	$sql .= " AND cd.statut = 0";
 }
-if ($mode == "4") {
+if ($search_status == "4") {
 	$sql .= " AND cd.statut = 4";
 }
-if ($mode == "5") {
+if ($search_status == "5") {
 	$sql .= " AND cd.statut = 5";
 }
 if ($filter == "expired") {
@@ -417,6 +407,9 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.$limit;
 }
+if ($mode) {
+	$param .= '&amp;mode='.urlencode($mode);
+}
 if ($search_contract) {
 	$param .= '&amp;search_contract='.urlencode($search_contract);
 }
@@ -441,8 +434,8 @@ if ($search_total_ttc) {
 if ($search_service) {
 	$param .= '&amp;search_service='.urlencode($search_service);
 }
-if ($mode) {
-	$param .= '&amp;mode='.urlencode($mode);
+if ($search_status) {
+	$param .= '&amp;search_status='.urlencode($search_status);
 }
 if ($filter) {
 	$param .= '&amp;filter='.urlencode($filter);
@@ -500,16 +493,16 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $title = $langs->trans("ListOfServices");
-if ($mode == "0") {
+if ($search_status == "0") {
 	$title = $langs->trans("ListOfInactiveServices"); // Must use == "0"
 }
-if ($mode == "4" && $filter != "expired") {
+if ($search_status == "4" && $filter != "expired") {
 	$title = $langs->trans("ListOfRunningServices");
 }
-if ($mode == "4" && $filter == "expired") {
+if ($search_status == "4" && $filter == "expired") {
 	$title = $langs->trans("ListOfExpiredServices");
 }
-if ($mode == "5") {
+if ($search_status == "5") {
 	$title = $langs->trans("ListOfClosedServices");
 }
 
