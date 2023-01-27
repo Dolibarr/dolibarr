@@ -156,6 +156,8 @@ if ($source == 'proposal') {
 	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source", 400, 1);
 }
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('onlinesign'));
 
 /*
  * Actions
@@ -346,10 +348,21 @@ if ($source == 'proposal') {
 	print '</td></tr>'."\n";
 
 	// Amount
-	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
-	print '</td><td class="CTableRow2">';
-	print '<b>'.price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</b>';
-	print '</td></tr>'."\n";
+	$amount = '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
+	$amount .= '</td><td class="CTableRow2">';
+	$amount .= '<b>'.price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</b>';
+	$amount .= '</td></tr>'."\n";
+
+	// Call Hook formConfirm
+	$parameters = array('source' => $source);
+	$reshook = $hookmanager->executeHooks('amountpropalsign', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) {
+		$amount .= $hookmanager->resPrint;
+	} elseif ($reshook > 0) {
+		$amount = $hookmanager->resPrint;
+	}
+
+	print $amount;
 
 	// Object
 	$text = '<b>'.$langs->trans("SignatureProposalRef", $object->ref).'</b>';
@@ -457,6 +470,7 @@ if ($source == 'proposal') {
 	$langs->load("fichinter");
 
 	$result = $object->fetch_thirdparty($object->socid);
+
 	// Proposer
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Proposer");
 	print '</td><td class="CTableRow2">';
@@ -496,13 +510,14 @@ if ($source == 'proposal') {
 			print $langs->trans("DownloadDocument").'</a>';
 		}
 	}
-
-
 	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 	print '</td></tr>'."\n";
 }
 
+// Call Hook addformsign
+$parameters = array('source' => $source);
+$reshook = $hookmanager->executeHooks('addformsign', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 if (!$found && !$mesg) {
 	$mesg = $langs->transnoentitiesnoconv("ErrorBadParameters");
