@@ -1955,9 +1955,8 @@ if ($action == 'create') {
 			}
 		}
 
-		$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '';
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datetmp);
+		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ? -1 : '') : $datetmp);
 		$datetmp = dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']);
 		$datedue = ($datetmp == '' ?-1 : $datetmp);
 
