@@ -46,6 +46,10 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
+$socid = GETPOST('socid', 'int'); if ($socid < 0) {
+	$socid = 0;
+}
+
 $object = new Paiement($db);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('paymentcard', 'globalcard'));
