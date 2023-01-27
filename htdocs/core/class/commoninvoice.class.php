@@ -1079,10 +1079,12 @@ abstract class CommonInvoice extends CommonObject
 									if ($companypaymentmode->type == 'ban') {
 										$sepaMode = true;
 										// Check into societe_rib if a payment mode for Stripe and ban payment exists
+										// To make a Stripe SEPA payment request, we must have the payment mode source already saved into societe_rib and retreived with ->sepaStripe
+										// The payment mode source is created when we create the bank account on Stripe with paymentmodes.php?action=create
 										$stripecard = $stripe->sepaStripe($customer, $companypaymentmode, $stripeacc, $servicestatus, 0);
 									}
 
-									if ($stripecard) {  // Can be src_... (for sepa). Note that card_... (old card mode) or pm_... (new card mode) should not happen here.
+									if ($stripecard) {  // Can be src_... (for sepa) or pm_... (new card mode). Note that card_... (old card mode) should not happen here.
 										$FULLTAG = 'INV=' . $this->id . '-CUS=' . $thirdparty->id;
 										$description = 'Stripe payment from makeStripeSepaRequest: ' . $FULLTAG . ' ref=' . $this->ref;
 
@@ -1097,7 +1099,7 @@ abstract class CommonInvoice extends CommonObject
 										$paymentintent = $stripe->getPaymentIntent($amounttopay, $currency, $FULLTAG, $description, $this, $customer->id, $stripeacc, $servicestatus, 0, 'automatic', true, $stripecard->id, 1);
 
 										$charge = new stdClass();
-										//erics add processing sepa is like success ?
+
 										if ($paymentintent->status === 'succeeded' || $paymentintent->status === 'processing') {
 											$charge->status = 'ok';
 											$charge->id = $paymentintent->id;
@@ -1173,9 +1175,9 @@ abstract class CommonInvoice extends CommonObject
 											$postactionmessages[] = $errmsg . ' (' . $stripearrayofkeys['publishable_key'] . ')';
 											$this->errors[] = $errmsg;
 										} else {
-											dol_syslog('Successfuly charge direct debit ' . $stripecard->id);
+											dol_syslog('Successfuly request direct debit ' . $stripecard->id);
 
-											$postactionmessages[] = 'Success to charge direct debit (' . $charge->id . ' with ' . $stripearrayofkeys['publishable_key'] . ')';
+											$postactionmessages[] = 'Success to request direct debit (' . $charge->id . ' with ' . $stripearrayofkeys['publishable_key'] . ')';
 
 											// Save a stripe payment was done in realy life so later we will be able to force a commit on recorded payments
 											// even if in batch mode (method doTakePaymentStripe), we will always make all action in one transaction with a forced commit.
@@ -1185,7 +1187,7 @@ abstract class CommonInvoice extends CommonObject
 											$description = 'Stripe payment request OK (' . $charge->id . ') from makeStripeSepaRequest: ' . $FULLTAG;
 
 
-											// TODO Save request to status pending. Done should be set with a webhook.
+											// @TODO LMR Save request to status pending instead of done. Done should be set with a webhook.
 
 
 											$db = $this->db;
@@ -1227,6 +1229,7 @@ abstract class CommonInvoice extends CommonObject
 											$ispostactionok = 1;
 
 											// Creation of payment line
+											// TODO LMR This must be move into the stripe server listening hooks public/stripe/ipn.php
 											include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 											$paiement = new Paiement($this->db);
 											$paiement->datepaye = $now;
