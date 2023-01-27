@@ -144,6 +144,7 @@ class DolibarrApiAccess implements iAuthenticate
 				throw new RestException(503, 'Error when searching login user from api key');
 			}
 
+
 			$genericmessageerroruser = 'Error user not valid (not found or bad status or bad validity dates) (conf->entity='.$conf->entity.')';
 
 			$fuser = new User($this->db);
@@ -151,8 +152,12 @@ class DolibarrApiAccess implements iAuthenticate
 			if ($result <= 0) {
 				throw new RestException(503, $genericmessageerroruser);
 			}
-			if ($fuser->statut == 0) {
-				throw new RestException(503, 'Error when fetching user. This user has been locked or disabled');
+
+			// Check if user status is enabled
+			if ($fuser->statut != $fuser::STATUS_ENABLED) {
+				// Status is disabled
+				dol_syslog("The user has been disabled");
+				throw new RestException(503, $genericmessageerroruser);
 			}
 
 			// Check if session was unvalidated by a password change

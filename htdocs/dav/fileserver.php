@@ -131,6 +131,13 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $p
 		return false;
 	}
 
+	// Check if user status is enabled
+	if ($user->statut != $user::STATUS_ENABLED) {
+		// Status is disabled
+		dol_syslog("The user has been disabled.");
+		return false;
+	}
+
 	// Check if session was unvalidated by a password change
 	if (($user->flagdelsessionsbefore && !empty($_SESSION["dol_logindate"]) && $user->flagdelsessionsbefore > $_SESSION["dol_logindate"])) {
 		// Session is no more valid

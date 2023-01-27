@@ -2702,24 +2702,26 @@ class User extends CommonObject
 	 *  Return a link with photo
 	 * 	Use this->id,this->photo
 	 *
-	 *	@return	int		0=No more valid, >0 if OK
+	 *	@return	int		0=Valid, >0 if not valid
 	 */
-	public function isNotIntoValidtyDateRange()
+	public function isNotIntoValidityDateRange()
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 		$now = dol_now();
 
+		//dol_syslog("isNotIntoValidityDateRange ".$this->datestartvalidity);
+
 		// Check date start validity
 		if ($this->datestartvalidity && $this->datestartvalidity > dol_get_last_hour($now)) {
-			return 0;
+			return 1;
 		}
 		// Check date end validity
 		if ($this->dateendvalidity && $this->dateendvalidity < dol_get_first_hour($now)) {
-			return 0;
+			return 1;
 		}
 
-		return 1;
+		return 0;
 	}
 
 
