@@ -1224,6 +1224,7 @@ class FormTicket
 		// External users can't send message email
 		if ($user->rights->ticket->write && !$user->socid) {
 			$mail_intro = GETPOST('mail_intro') ? GETPOST('mail_intro') : $conf->global->TICKET_MESSAGE_MAIL_INTRO;
+			$mail_intro = make_substitutions($mail_intro, $this->substit);
 			print '<tr class="email_line"><td><label for="mail_intro">';
 			print $form->textwithpicto($langs->trans("TicketMessageMailIntro"), $langs->trans("TicketMessageMailIntroHelp"), 1, 'help');
 			print '</label>';
@@ -1276,6 +1277,7 @@ class FormTicket
 		// External users can't send message email
 		if ($user->rights->ticket->write && !$user->socid) {
 			$mail_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
+			$mail_signature = make_substitutions($mail_signature, $this->substit);
 			print '<tr class="email_line"><td><label for="mail_intro">'.$langs->trans("TicketMessageMailSignature").'</label>';
 			print $form->textwithpicto('', $langs->trans("TicketMessageMailSignatureHelp"), 1, 'help');
 			print '</td><td>';
