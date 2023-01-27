@@ -353,9 +353,9 @@ if ($source == 'proposal') {
 	$amount .= '<b>'.price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</b>';
 	$amount .= '</td></tr>'."\n";
 
-	// Call Hook formConfirm
+	// Call Hook amountPropalSign
 	$parameters = array('source' => $source);
-	$reshook = $hookmanager->executeHooks('amountpropalsign', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('amountPropalSign', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$amount .= $hookmanager->resPrint;
 	} elseif ($reshook > 0) {
@@ -515,9 +515,9 @@ if ($source == 'proposal') {
 	print '</td></tr>'."\n";
 }
 
-// Call Hook addformsign
+// Call Hook addFormSign
 $parameters = array('source' => $source);
-$reshook = $hookmanager->executeHooks('addformsign', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('addFormSign', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 if (!$found && !$mesg) {
 	$mesg = $langs->transnoentitiesnoconv("ErrorBadParameters");
