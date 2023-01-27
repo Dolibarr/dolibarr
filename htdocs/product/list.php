@@ -1456,7 +1456,7 @@ while ($i < $imaxinloop) {
 
 		// Ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax250">';
 			print $product_static->getNomUrl(1);
 			print "</td>\n";
 			if (!$i) {
