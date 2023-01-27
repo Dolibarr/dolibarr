@@ -2325,4 +2325,40 @@ class Task extends CommonObjectLine
 
 		return ($datetouse > 0 && ($datetouse < ($now - $conf->project->task->warning_delay)));
 	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs, $conf;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		if (property_exists($this, 'fk_project') ) {
+			$return .= '<br><span class="info-box-status ">'.$this->fk_project.'</span>';
+		}
+		if (property_exists($this, 'budget_amount')) {
+			$return .= '<br><span class="info-box-label amount">'.$langs->trans("Budget").' : '.price($this->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
+		}
+		if (property_exists($this, 'fk_statut')) {
+			$return .= '<br><span class="info-box-status ">'.$this->fk_statut.'</span>';
+		}
+		if (property_exists($this, 'duration_effective')) {
+			$return .= '<div class="info-box-label opacitymedium">'.getTaskProgressView($this, false, false).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
+	}
 }

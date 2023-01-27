@@ -61,7 +61,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		$langs->loadLangs(array('main', 'other'));
 
 		$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLDAPFunctionsAreDisabledOnThisPHP").' '.$langs->transnoentitiesnoconv("TryAnotherConnectionMode");
-		return;
+		return '';
 	}
 
 	if ($usertotest) {

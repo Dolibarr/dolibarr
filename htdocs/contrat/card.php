@@ -143,7 +143,16 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';  // Must be include, not include_once
 
 	if ($action == 'confirm_active' && $confirm == 'yes' && $user->rights->contrat->activer) {
-		$result = $object->active_line($user, GETPOST('ligne', 'int'), GETPOST('date'), GETPOST('dateend'), GETPOST('comment'));
+		$date_start = '';
+		$date_end = '';
+		if (GETPOST('startmonth') && GETPOST('startday') && GETPOST('startyear')) {
+			$date_start = dol_mktime(GETPOST('starthour'), GETPOST('startmin'), 0, GETPOST('startmonth'), GETPOST('startday'), GETPOST('startyear'));
+		}
+		if (GETPOST('endmonth') && GETPOST('endday') && GETPOST('endyear')) {
+			$date_end = dol_mktime(GETPOST('endhour'), GETPOST('endmin'), 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
+		}
+
+		$result = $object->active_line($user, GETPOST('ligne', 'int'), $date_start, $date_end, GETPOST('comment'));
 
 		if ($result > 0) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -152,12 +161,16 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_closeline' && $confirm == 'yes' && $user->rights->contrat->activer) {
-		if (!GETPOST('dateend')) {
+		$date_end = '';
+		if (GETPOST('endmonth') && GETPOST('endday') && GETPOST('endyear')) {
+			$date_end = dol_mktime(GETPOST('endhour'), GETPOST('endmin'), 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
+		}
+		if (!$date_end) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), null, 'errors');
 		}
 		if (!$error) {
-			$result = $object->close_line($user, GETPOST('ligne', 'int'), GETPOST('dateend'), urldecode(GETPOST('comment')));
+			$result = $object->close_line($user, GETPOST('ligne', 'int'), $date_end, urldecode(GETPOST('comment')));
 			if ($result > 0) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
@@ -374,6 +387,7 @@ if (empty($reshook)) {
 					$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
 					// modified by hook
 					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 						$error++;
 					}
 				} else {
@@ -427,6 +441,7 @@ if (empty($reshook)) {
 		} else {
 			$idprod = GETPOST('idprod', 'int');
 		}
+
 		$tva_tx = GETPOST('tva_tx', 'alpha');
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
@@ -474,11 +489,11 @@ if (empty($reshook)) {
 				$prod->fetch($idprod);
 
 				// Update if prices fields are defined
-				$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
+				/*$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
 				$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
 				if (empty($tva_tx)) {
 					$tva_npr = 0;
-				}
+				}*/
 
 				$price_min = $prod->price_min;
 				$price_min_ttc = $prod->price_min_ttc;
@@ -500,14 +515,14 @@ if (empty($reshook)) {
 						if (count($prodcustprice->lines) > 0) {
 							$price_min =  price($prodcustprice->lines[0]->price_min);
 							$price_min_ttc =  price($prodcustprice->lines[0]->price_min_ttc);
-							$tva_tx = $prodcustprice->lines[0]->tva_tx;
+							/*$tva_tx = $prodcustprice->lines[0]->tva_tx;
 							if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
 								$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
 							}
 							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
 							if (empty($tva_tx)) {
 								$tva_npr = 0;
-							}
+							}*/
 						}
 					}
 				}
@@ -699,7 +714,7 @@ if (empty($reshook)) {
 				$date_end_real_update = $objectline->date_end_real;
 			}
 
-			$vat_rate = GETPOST('eltva_tx');
+			$vat_rate = GETPOST('eltva_tx', 'alpha');
 			// Define info_bits
 			$info_bits = 0;
 			if (preg_match('/\*/', $vat_rate)) {
@@ -1377,7 +1392,7 @@ if ($action == 'create') {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -1836,34 +1851,6 @@ if ($action == 'create') {
 				print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
 			}
 
-			/*
-			 * Confirmation de la validation activation
-			 */
-			if ($action == 'active' && !$cancel && $user->rights->contrat->activer && $object->lines[$cursorline - 1]->id == GETPOST('ligne', 'int')) {
-				$dateactstart = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-				$dateactend   = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
-				$comment      = GETPOST('comment', 'alpha');
-				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne', 'int')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("ActivateService"), $langs->trans("ConfirmActivateService", dol_print_date($dateactstart, "%A %d %B %Y")), "confirm_active", '', 0, 1);
-				print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
-			}
-
-			/*
-			 * Confirmation de la validation fermeture
-			 */
-			if ($action == 'closeline' && !$cancel && $user->rights->contrat->activer && $object->lines[$cursorline - 1]->id == GETPOST('ligne', 'int')) {
-				$dateactstart = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-				$dateactend   = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
-				$comment      = GETPOST('comment', 'alpha');
-
-				if (empty($dateactend)) {
-					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEndReal")), null, 'errors');
-				} else {
-					print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne', 'int')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService", dol_print_date($dateactend, "%A %d %B %Y")), "confirm_closeline", '', 0, 1);
-				}
-				print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
-			}
-
-
 			// Area with status and activation info of line
 			if ($object->statut > 0) {
 				print '<table class="notopnoleftnoright tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').'" width="100%">';
@@ -1929,8 +1916,12 @@ if ($action == 'create') {
 
 			// Form to activate line
 			if ($user->rights->contrat->activer && $action == 'activateline' && $object->lines[$cursorline - 1]->id == GETPOST('ligne', 'int')) {
-				print '<form name="active" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.GETPOST('ligne', 'int').'&amp;action=active" method="post">';
+				print '<form name="active" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="action" value="confirm_active">';
+				print '<input type="hidden" name="id" value="'.$object->id.'">';
+				print '<input type="hidden" name="ligne" value="'.GETPOST('ligne', 'int').'">';
+				print '<input type="hidden" name="confirm" value="yes">';
 
 				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').'" width="100%">';
 
@@ -1955,7 +1946,7 @@ if ($action == 'create') {
 
 				print '<tr class="oddeven">';
 				print '<td class="nohover">'.$langs->trans("DateServiceActivate").'</td><td class="nohover">';
-				print $form->selectDate($dateactstart, '', $usehm, $usehm, '', "active", 1, 0);
+				print $form->selectDate($dateactstart, 'start', $usehm, $usehm, '', "active", 1, 0);
 				print '</td>';
 				print '<td class="nohover">'.$langs->trans("DateEndPlanned").'</td><td class="nohover">';
 				print $form->selectDate($dateactend, "end", $usehm, $usehm, '', "active", 1, 0);
@@ -1983,10 +1974,10 @@ if ($action == 'create') {
 				 * Disable a contract line
 				 */
 				print '<!-- Form to disabled a line -->'."\n";
-				print '<form name="closeline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline - 1]->id.'" method="post">';
-
+				print '<form name="confirm_closeline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline - 1]->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
-				print '<input type="hidden" name="action" value="closeline">';
+				print '<input type="hidden" name="confirm" value="yes">';
+				print '<input type="hidden" name="action" value="confirm_closeline">';
 
 				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').'" width="100%">';
 
@@ -2046,11 +2037,12 @@ if ($action == 'create') {
 			$dateSelector = 1;
 
 			print "\n";
-			print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+			print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
 			<input type="hidden" name="token" value="'.newToken().'">
 			<input type="hidden" name="action" value="'.(($action != 'editline') ? 'addline' : 'updateline').'">
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="id" value="'.$object->id.'">
+			<input type="hidden" name="page_y" value="">
 			';
 
 			print '<div class="div-table-responsive-no-min">';

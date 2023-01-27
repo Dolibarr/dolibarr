@@ -229,6 +229,9 @@ llxHeader('', $name);
 //$textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next($langs->trans("Next"), 'class="valignbottom"')."</a>";
 //print load_fiche_titre($langs->transcountry("VAT", $mysoc->country_code), $textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, 'bill');
 
+$periodlink = '';
+$exportlink = '';
+
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 //report_header($name,'',$textprevyear.$langs->trans("Year")." ".$year_start.$textnextyear,'',$description,$builddate,$exportlink,array(),$calcmode);
 
@@ -242,7 +245,7 @@ if ($refresh === true) {
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td width="30%">' . $langs->trans("Year") . " " . $y . '</td>';
+	print '<td width="30%">' . $langs->trans("Year") . '</td>';
 	print '<td class="right">' . $langs->trans("VATToPay") . '</td>';
 	print '<td class="right">' . $langs->trans("VATToCollect") . '</td>';
 	print '<td class="right">' . $langs->trans("Balance") . '</td>';

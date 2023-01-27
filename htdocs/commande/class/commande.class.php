@@ -11,7 +11,7 @@
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2021-2022 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2023 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2022      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -237,6 +237,11 @@ class Commande extends CommonOrder
 	public $user_valid;
 
 	/**
+	 * @var OrderLine one line of an order
+	 */
+	public $line;
+
+	/**
 	 * @var OrderLine[]
 	 */
 	public $lines = array();
@@ -306,7 +311,7 @@ class Commande extends CommonOrder
 		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>25),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>26),
 		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'RefCustomer', 'enabled'=>1, 'visible'=>-1, 'position'=>28),
-		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>20),
+		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'notnull'=>1, 'position'=>20),
 		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>25),
 		'date_commande' =>array('type'=>'date', 'label'=>'Date', 'enabled'=>1, 'visible'=>1, 'position'=>60),
 		'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>62),
@@ -1173,6 +1178,8 @@ class Commande extends CommonOrder
 					return -1;
 				}
 			}
+
+			return 0;
 		} else {
 			dol_print_error($this->db);
 			$this->db->rollback();
@@ -1272,6 +1279,8 @@ class Commande extends CommonOrder
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
+					$this->errors += $hookmanager->errors;
+					$this->error = $hookmanager->error;
 					$error++;
 				}
 			}
@@ -1427,6 +1436,8 @@ class Commande extends CommonOrder
 			$action = '';
 			$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 			if ($reshook < 0) {
+				$this->errors += $hookmanager->errors;
+				$this->error = $hookmanager->error;
 				$error++;
 			}
 
@@ -2307,17 +2318,13 @@ class Commande extends CommonOrder
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Returns a array with expeditions lines number
+	 * Returns an array with expeditions lines number
 	 *
 	 * @return	int		Nb of shipments
-	 *
-	 * TODO deprecate, move to Shipping class
 	 */
-	public function nb_expedition()
+	public function countNbOfShipments()
 	{
-		// phpcs:enable
 		$sql = 'SELECT count(*)';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expedition as e';
 		$sql .= ', '.MAIN_DB_PREFIX.'element_element as el';
@@ -2333,6 +2340,8 @@ class Commande extends CommonOrder
 		} else {
 			dol_print_error($this->db);
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2501,6 +2510,8 @@ class Commande extends CommonOrder
 				return -1 * $error;
 			}
 		}
+
+		return 0;
 	}
 
 
@@ -2565,6 +2576,8 @@ class Commande extends CommonOrder
 				return -1 * $error;
 			}
 		}
+
+		return 0;
 	}
 
 
@@ -3433,7 +3446,7 @@ class Commande extends CommonOrder
 		}
 
 		// Test we can delete
-		if ($this->nb_expedition() != 0) {
+		if ($this->countNbOfShipments() != 0) {
 			$this->errors[] = $langs->trans('SomeShipmentExists');
 			$error++;
 		}
@@ -4592,6 +4605,9 @@ class OrderLine extends CommonOrderLine
 		}
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;
+		}
+		if (empty($this->remise)) {
+			$this->remise = 0;
 		}
 		if (empty($this->info_bits)) {
 			$this->info_bits = 0;

@@ -42,6 +42,7 @@ $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$massaction = GETPOST('massaction', 'alpha');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
@@ -66,6 +67,7 @@ $search_amount = GETPOST('search_amount', 'alpha');
 
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'loanlist'; // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
+$mode = GETPOST('mode', 'alpha');  // mode view result
 
 
 /*
@@ -147,6 +149,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	}
 	$db->free($resql);
 }
+$arrayfields = array();
 
 // Complete request and execute it with limit
 $sql .= $db->order($sortfield, $sortorder);
@@ -171,6 +174,9 @@ if ($resql) {
 	$i = 0;
 
 	$param = '';
+	if (!empty($mode)) {
+		$param .= '&mode='.urlencode($mode);
+	}
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
@@ -194,7 +200,10 @@ if ($resql) {
 	if (!empty($socid)) {
 		$url .= '&socid='.$socid;
 	}
-	$newcardbutton = dolGetButtonTitle($langs->trans('NewLoan'), '', 'fa fa-plus-circle', $url, '', $user->rights->loan->write);
+	$newcardbutton  = '';
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewLoan'), '', 'fa fa-plus-circle', $url, '', $user->rights->loan->write);
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	if ($optioncss != '') {
@@ -206,6 +215,8 @@ if ($resql) {
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
+
 
 	print_barre_liste($langs->trans("Loans"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'money-bill-alt', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -256,31 +267,49 @@ if ($resql) {
 		$loan_static->label = $obj->label;
 		$loan_static->paid = $obj->paid;
 
-		print '<tr class="oddeven">';
 
-		// Ref
-		print '<td>'.$loan_static->getNomUrl(1).'</td>';
+		if ($mode == 'kanban') {
+			if ($i == 0) {
+				print '<tr><td colspan="12">';
+				print '<div class="box-flex-container">';
+			}
+			// Output Kanban
+			$loan_static->datestart= $obj->datestart;
+			$loan_static->dateend = $obj->dateend;
+			$loan_static->capital = $obj->capital;
+			$loan_static->totalpaid = $obj->paid;
 
-		// Label
-		print '<td>'.dol_trunc($obj->label, 42).'</td>';
+			print $loan_static->getKanbanView('');
+			if ($i == (min($num, $limit) - 1)) {
+				print '</div>';
+				print '</td></tr>';
+			}
+		} else {
+			print '<tr class="oddeven">';
 
-		// Capital
-		print '<td class="right maxwidth100"><span class="amount">'.price($obj->capital).'</span></td>';
+			// Ref
+			print '<td>'.$loan_static->getNomUrl(1).'</td>';
 
-		// Date start
-		print '<td class="center width100">'.dol_print_date($db->jdate($obj->datestart), 'day').'</td>';
+			// Label
+			print '<td>'.dol_trunc($obj->label, 42).'</td>';
 
-		// Date end
-		print '<td class="center width100">'.dol_print_date($db->jdate($obj->dateend), 'day').'</td>';
+			// Capital
+			print '<td class="right maxwidth100"><span class="amount">'.price($obj->capital).'</span></td>';
 
-		print '<td class="right nowrap">';
-		print $loan_static->LibStatut($obj->paid, 5, $obj->alreadypaid);
-		print '</td>';
+			// Date start
+			print '<td class="center width100">'.dol_print_date($db->jdate($obj->datestart), 'day').'</td>';
 
-		print '<td></td>';
+			// Date end
+			print '<td class="center width100">'.dol_print_date($db->jdate($obj->dateend), 'day').'</td>';
 
-		print "</tr>\n";
+			print '<td class="right nowrap">';
+			print $loan_static->LibStatut($obj->paid, 5, $obj->alreadypaid);
+			print '</td>';
 
+			print '<td></td>';
+
+			print "</tr>\n";
+		}
 		$i++;
 	}
 

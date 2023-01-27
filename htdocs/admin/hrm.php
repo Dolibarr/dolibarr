@@ -53,7 +53,7 @@ $label = GETPOST('label', 'alpha');
 $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
 $scandir = GETPOST('scan_dir', 'alpha');
-$type = 'myobject';
+$type = 'evaluation';
 
 $arrayofparameters = array(
 	'HRM_MAXRANK'=>array('type'=>'integer','enabled'=>1),
@@ -89,11 +89,11 @@ if ($action == 'update') {
 		}
 	}
 } elseif ($action == 'updateMask') {
-	$maskconstorder = GETPOST('maskconstorder', 'alpha');
-	$maskorder = GETPOST('maskorder', 'alpha');
+	$maskconst = GETPOST('maskconstEvaluation', 'aZ09');
+	$maskvalue = GETPOST('maskEvaluation', 'alpha');
 
-	if ($maskconstorder) {
-		$res = dolibarr_set_const($db, $maskconstorder, $maskorder, 'chaine', 0, '', $conf->entity);
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
+		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
@@ -208,10 +208,10 @@ print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "hrm"
 
 $moduledir = 'hrm';
 $myTmpObjects = array();
-$myTmpObjects['evaluation'] = array('includerefgeneration'=>1, 'includedocgeneration'=>0);
+$myTmpObjects['evaluation'] = array('label'=>'Evaluation', 'includerefgeneration'=>1, 'includedocgeneration'=>0);
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-	if ($myTmpObjectKey == 'MyObject') {
+	if ($myTmpObjectKey != $type) {
 		continue;
 	}
 	if ($myTmpObjectArray['includerefgeneration']) {
@@ -220,7 +220,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		 */
 		$setupnotempty++;
 
-		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectKey), '', '');
+		print load_fiche_titre($langs->trans("NumberingModules").' ('.$myTmpObjectArray['label'].')', '', '');
 
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';

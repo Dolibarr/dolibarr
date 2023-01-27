@@ -157,11 +157,7 @@ class DolEditor
 					define('REQUIRE_CKEDITOR', '1');
 				}
 
-				if (!empty($conf->global->FCKEDITOR_SKIN)) {
-					$skin = $conf->global->FCKEDITOR_SKIN;
-				} else {
-					$skin = 'moono-lisa'; // default with ckeditor 4.6 : moono-lisa
-				}
+				$skin = getDolGlobalString('FCKEDITOR_SKIN', 'moono-lisa');		// default with ckeditor 4.6 : moono-lisa
 
 				$pluginstodisable = 'elementspath,save,flash,div,specialchar,anchor';
 				if (!empty($conf->dol_optimize_smallscreen)) {

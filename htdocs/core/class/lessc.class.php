@@ -1011,7 +1011,7 @@ class Lessc
 		if ($list[0] == "list" && isset($list[2][$idx - 1])) {
 			return $list[2][$idx - 1];
 		}
-		return;
+		return '';
 	}
 
 	protected function lib_isnumber($value)
@@ -1306,7 +1306,7 @@ class Lessc
 		if (!is_null($color = $this->coerceColor($value))) {
 			return isset($color[4]) ? $color[4] : 1;
 		}
-		return;
+		return '';
 	}
 
 	// set the alpha of the color
@@ -1958,7 +1958,8 @@ class Lessc
 		if ($op == '+' || $op == '*') {
 			return $this->op_color_number($op, $rgt, $lft);
 		}
-		return;
+
+		return array();
 	}
 
 	protected function op_color_number($op, $lft, $rgt)

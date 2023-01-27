@@ -40,6 +40,7 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonsocialnetworks.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 
@@ -49,6 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 class Societe extends CommonObject
 {
 	use CommonIncoterm;
+	use CommonSocialNetworks;
 
 	/**
 	 * @var string ID to identify managed object
@@ -784,11 +786,14 @@ class Societe extends CommonObject
 	 */
 	public $multicurrency_code;
 
+	/**
+	 * @var string  Set if company email found into unsubscribe of emailing list table
+	 */
+	public $no_email;
 
 	// Fields loaded by fetchPartnerships()
 
 	public $partnerships = array();
-
 
 
 	/**
@@ -1271,7 +1276,7 @@ class Societe extends CommonObject
 		// Clean parameters
 		$this->id = $id;
 		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
-		$this->name = $this->name ?trim($this->name) : trim($this->nom);
+		$this->name = $this->name ? trim($this->name) : trim($this->nom);
 		$this->nom = $this->name; // For backward compatibility
 		$this->name_alias = trim($this->name_alias);
 		$this->ref_ext		= trim($this->ref_ext);
@@ -2217,6 +2222,7 @@ class Societe extends CommonObject
 			}
 
 			$this->db->commit();
+
 			return 1;
 		}
 	}
@@ -2278,6 +2284,8 @@ class Societe extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
+
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2761,11 +2769,13 @@ class Societe extends CommonObject
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip refurl"';
+			$linkclose .= ' class="classfortooltip refurl valignmiddle"';
 			$target_value = array('_self', '_blank', '_parent', '_top');
 			if (in_array($target, $target_value)) {
 				$linkclose .= ' target="'.dol_escape_htmltag($target).'"';
 			}
+		} else {
+			$linkclose .= ' class="valignmiddle"';
 		}
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
@@ -3091,6 +3101,8 @@ class Societe extends CommonObject
 		} else {
 			dol_print_error($this->db);
 		}
+
+		return '';
 	}
 
 
@@ -3473,9 +3485,9 @@ class Societe extends CommonObject
 			} else {
 				return -1;
 			}
-		} else {
-			return -1;
 		}
+
+		return -1;
 	}
 
 	/**
@@ -4819,6 +4831,8 @@ class Societe extends CommonObject
 		} elseif ($status == 3) {
 			return $langs->trans("ProspectCustomer");
 		}
+
+		return '';
 	}
 
 

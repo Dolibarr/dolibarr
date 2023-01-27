@@ -338,7 +338,7 @@ class AccountancyExport
 			// PHP ZIP extension must be enabled
 			if (!extension_loaded('zip')) {
 				$langs->load('install');
-				$this->errors[] = $langs->trans('ErrorPHPDoesNotSupport', 'ZIP');;
+				$this->errors[] = $langs->trans('ErrorPHPDoesNotSupport', 'ZIP');
 				return -1;
 			}
 		} else {

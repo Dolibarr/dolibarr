@@ -1033,6 +1033,7 @@ if ($source == 'order') {
 		$amount = price2num($amount);
 	}
 
+	$tag = '';
 	if (GETPOST('fulltag', 'alpha')) {
 		$fulltag = GETPOST('fulltag', 'alpha');
 	} else {
