@@ -1885,8 +1885,12 @@ class User extends CommonObject
 		$this->employee						= ($this->employee > 0 ? $this->employee : 0);
 		$this->login						= trim((string) $this->login);
 		$this->gender						= trim((string) $this->gender);
+
 		$this->pass							= trim((string) $this->pass);
 		$this->api_key						= trim((string) $this->api_key);
+		$this->datestartvalidity			= empty($this->datestartvalidity) ? '' : $this->datestartvalidity;
+		$this->dateendvalidity				= empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
+
 		$this->address						= trim((string) $this->address);
 		$this->zip							= trim((string) $this->zip);
 		$this->town							= trim((string) $this->town);
@@ -1911,8 +1915,7 @@ class User extends CommonObject
 		$this->color						= trim((string) $this->color);
 		$this->dateemployment				= empty($this->dateemployment) ? '' : $this->dateemployment;
 		$this->dateemploymentend			= empty($this->dateemploymentend) ? '' : $this->dateemploymentend;
-		$this->datestartvalidity			= empty($this->datestartvalidity) ? '' : $this->datestartvalidity;
-		$this->dateendvalidity				= empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
+
 		$this->birth						= empty($this->birth) ? '' : $this->birth;
 		$this->fk_warehouse					= (int) $this->fk_warehouse;
 
@@ -2692,6 +2695,31 @@ class User extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+
+	/**
+	 *  Return a link with photo
+	 * 	Use this->id,this->photo
+	 *
+	 *	@return	int		0=No more valid, >0 if OK
+	 */
+	public function isNotIntoValidtyDateRange()
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+		$now = dol_now();
+
+		// Check date start validity
+		if ($this->datestartvalidity && $this->datestartvalidity > dol_get_last_hour($now)) {
+			return 0;
+		}
+		// Check date end validity
+		if ($this->dateendvalidity && $this->dateendvalidity < dol_get_first_hour($now)) {
+			return 0;
+		}
+
+		return 1;
 	}
 
 

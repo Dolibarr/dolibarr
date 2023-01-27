@@ -155,17 +155,19 @@ class DolibarrApiAccess implements iAuthenticate
 				throw new RestException(503, 'Error when fetching user. This user has been locked or disabled');
 			}
 
-			$now = dol_now();
-
-			// Check date start validity
-			if ($fuser->datestartvalidity && $this->db->jdate($fuser->datestartvalidity) > $now) {
-				throw new RestException(503, $genericmessageerroruser);
-			}
-			// Check date end validity
-			if ($fuser->dateendvalidity && $this->db->jdate($fuser->dateendvalidity) < dol_get_first_hour($now)) {
+			// Check if session was unvalidated by a password change
+			if (($fuser->flagdelsessionsbefore && !empty($_SESSION["dol_logindate"]) && $fuser->flagdelsessionsbefore > $_SESSION["dol_logindate"])) {
+				// Session is no more valid
+				dol_syslog("The user has a date for session invalidation = ".$fuser->flagdelsessionsbefore." and a session date = ".$_SESSION["dol_logindate"].". We must invalidate its sessions.");
 				throw new RestException(503, $genericmessageerroruser);
 			}
 
+			// Check date validity
+			if ($fuser->isNotIntoValidityDateRange()) {
+				// User validity dates are no more valid
+				dol_syslog("The user login has a validity between [".$fuser->datestartvalidity." and ".$fuser->dateendvalidity."], curren date is ".dol_now());
+				throw new RestException(503, $genericmessageerroruser);
+			}
 
 			// User seems valid
 			$fuser->getrights();
