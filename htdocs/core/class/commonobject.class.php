@@ -6096,12 +6096,15 @@ abstract class CommonObject
 				$InfoFieldList = explode(":", $param_list[0]);
 				$parentName = '';
 				$parentField = '';
+
 				// 0 : tableName
 				// 1 : label field name
 				// 2 : key fields name (if differ of rowid)
 				// 3 : key field parent (for dependent lists)
 				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
-				// 5 : sort field
+				// 5 : category id type (TODO)
+				// 6 : category id list (TODO)
+				// 7 : sort field
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
