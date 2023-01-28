@@ -1279,7 +1279,7 @@ abstract class CommonDocGenerator
 		$extrafieldOptionsKey = $extrafieldsKeyPrefix.$extrafieldKey;
 
 
-		// Load extrafiels if not allready does
+		// Load extra fields if they haven't been loaded already.
 		if (empty($this->extrafieldsCache)) {
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
@@ -1605,7 +1605,7 @@ abstract class CommonDocGenerator
 			return 0;
 		}
 
-		// Load extrafiels if not allready does
+		// Load extra fields if they haven't been loaded already.
 		if (empty($this->extrafieldsCache)) {
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
