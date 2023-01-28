@@ -6158,11 +6158,11 @@ abstract class CommonObject
 				//print $sql;
 
 				//fix #22571 : order by could be set
-				//remember to be close to extrafields 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:Sortfield]]]]]]',
-				if(isset($InfoFieldList[7]) && $InfoFieldList[7] != "") {
-                    $sql .= ' ORDER BY '.$InfoFieldList[7];
+				//remember 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]',
+				if(isset($InfoFieldList[5]) && $InfoFieldList[5] != "") {
+                    $sql .= " ORDER BY ".$this->db->escape($InfoFieldList[5]);
 				} else {
-					$sql .= ' ORDER BY '.implode(', ', $fields_label);
+					$sql .= " ORDER BY ".$this->db->sanitize(implode(', ', $fields_label));
                 }
 
 				dol_syslog(get_class($this).'::showInputField type=sellist', LOG_DEBUG);
