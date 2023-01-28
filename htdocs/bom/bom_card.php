@@ -613,9 +613,6 @@ if (empty($reshook)) {
 
 			print "</form>\n";
 
-			mrpCollapseBomManagement();
-
-
 			//Services
 			$filtertype = 1;
 			$res = $object->fetchLinesbytypeproduct(1);
