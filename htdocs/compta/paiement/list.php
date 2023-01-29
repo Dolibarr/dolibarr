@@ -513,6 +513,7 @@ foreach ($arrayfields as $column) {
 
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
 	$objp = $db->fetch_object($resql);
 
@@ -620,7 +621,11 @@ while ($i < min($num, $limit)) {
 			$totalarray['nbfield']++;
 		}
 		$totalarray['pos'][$checkedCount] = 'amount';
-		$totalarray['val']['amount'] += $objp->amount;
+		if (empty($totalarray['val']['amount'])) {
+			$totalarray['val']['amount'] = $objp->amount;
+		} else {
+			$totalarray['val']['amount'] += $objp->amount;
+		}
 	}
 
 	// Status
