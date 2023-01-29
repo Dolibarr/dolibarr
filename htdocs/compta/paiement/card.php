@@ -46,7 +46,8 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$socid = GETPOST('socid', 'int'); if ($socid < 0) {
+$socid = GETPOST('socid', 'int'); 
+if ($socid < 0) {
 	$socid = 0;
 }
 
