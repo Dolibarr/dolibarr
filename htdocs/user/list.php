@@ -134,9 +134,9 @@ $arrayfields = array(
 	'u.email'=>array('label'=>"EMail", 'checked'=>1, 'position'=>35),
 	'u.api_key'=>array('label'=>"ApiKey", 'checked'=>0, 'position'=>40, "enabled"=>(!empty($conf->api->enabled) && $user->admin)),
 	'u.fk_soc'=>array('label'=>"Company", 'checked'=>($contextpage == 'employeelist' ? 0 : 1), 'position'=>45),
-	'u.ref_employee'=>array('label'=>"RefEmployee", 'checked'=>1, 'position'=>60, 'enabled'=>(isModEnabled('hrm') && $permissiontoreadhr)),
-	'u.national_registration_number'=>array('label'=>"NationalRegistrationNumber", 'checked'=>1, 'position'=>61, 'enabled'=>(isModEnabled('hrm') && $permissiontoreadhr)),
-	'u.salary'=>array('label'=>"Salary", 'checked'=>1, 'position'=>80, 'enabled'=>(isModEnabled('salaries') && $user->hasRight("salaries", "readall"))),
+	'u.ref_employee'=>array('label'=>"RefEmployee", 'checked'=>-1, 'position'=>60, 'enabled'=>(isModEnabled('hrm') && $permissiontoreadhr)),
+	'u.national_registration_number'=>array('label'=>"NationalRegistrationNumber", 'checked'=>-1, 'position'=>61, 'enabled'=>(isModEnabled('hrm') && $permissiontoreadhr)),
+	'u.salary'=>array('label'=>"Salary", 'checked'=>-1, 'position'=>80, 'enabled'=>(isModEnabled('salaries') && $user->hasRight("salaries", "readall"))),
 	'u.datelastlogin'=>array('label'=>"LastConnexion", 'checked'=>1, 'position'=>100),
 	'u.datepreviouslogin'=>array('label'=>"PreviousConnexion", 'checked'=>0, 'position'=>110),
 	'u.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
@@ -753,7 +753,7 @@ if (!empty($arrayfields['u.employee']['checked'])) {
 // Supervisor
 if (!empty($arrayfields['u.fk_user']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, array(), 0, '', 0, 0, 0, 0, '', 0, '', 'maxwidth150');
+	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, array(), 0, '', 0, 0, 0, 0, '', 0, '', 'maxwidth125');
 	print '</td>';
 }
 if (!empty($arrayfields['u.accountancy_code']['checked'])) {
@@ -1019,12 +1019,12 @@ while ($i < $imaxinloop) {
 		// Login
 		if (!empty($arrayfields['u.login']['checked'])) {
 			print '<td class="nowraponall tdoverflowmax150">';
-			print $li;
 			if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
-				print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
+				print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingright"');
 			} elseif ($obj->admin) {
-				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
+				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingright"');
 			}
+			print $li;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1076,8 +1076,7 @@ while ($i < $imaxinloop) {
 
 		// Supervisor
 		if (!empty($arrayfields['u.fk_user']['checked'])) {
-			// Resp
-			print '<td class="nowrap">';
+			print '<td class="tdoverflowmax125">';
 			if ($obj->login2) {
 				$user2->id = $obj->id2;
 				$user2->login = $obj->login2;
@@ -1092,12 +1091,12 @@ while ($i < $imaxinloop) {
 				$user2->socid = $obj->fk_soc2;
 				$user2->statut = $obj->status2;
 				$user2->status = $obj->status2;
-				print $user2->getNomUrl(-1, '', 0, 0, 24, 0, '', '', 1);
 				if (isModEnabled('multicompany') && $obj->admin2 && !$obj->entity2) {
-					print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
+					print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingright"');
 				} elseif ($obj->admin2) {
-					print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
+					print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingright"');
 				}
+				print $user2->getNomUrl(-1, '', 0, 0, 24, 0, '', '', 1);
 			}
 			print '</td>';
 			if (!$i) {
@@ -1181,7 +1180,7 @@ while ($i < $imaxinloop) {
 
 		// Ref employee
 		if (!empty($arrayfields['u.ref_employee']['checked'])) {
-			print '<td class="tdoverflowmax100">';
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->ref_employee).'">';
 			print dol_escape_htmltag($obj->ref_employee);
 			print '</td>';
 			if (!$i) {
@@ -1190,7 +1189,7 @@ while ($i < $imaxinloop) {
 		}
 		// National number
 		if (!empty($arrayfields['u.national_registration_number']['checked'])) {
-			print '<td class="tdoverflowmax100">';
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->national_registration_number).'">';
 			print dol_escape_htmltag($obj->national_registration_number);
 			print '</td>';
 			if (!$i) {
