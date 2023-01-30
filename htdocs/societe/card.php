@@ -95,6 +95,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $confirm 	= GETPOST('confirm', 'alpha');
 
+$dol_openinpopup = '';
 if (!empty($backtopagejsfields)) {
 	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
 	$dol_openinpopup = $tmpbacktopagejsfields[0];
@@ -574,11 +575,11 @@ if (empty($reshook)) {
 				if (!empty($object->email) && !isValidEMail($object->email)) {
 					$langs->load("errors");
 					$error++;
-					setEventMessages('', $langs->trans("ErrorBadEMail", $object->email), 'errors');
+					setEventMessages($langs->trans("ErrorBadEMail", $object->email), null, 'errors');
 				}
 				if (!empty($object->url) && !isValidUrl($object->url)) {
 					$langs->load("errors");
-					setEventMessages('', $langs->trans("ErrorBadUrl", $object->url), 'errors');
+					setEventMessages($langs->trans("ErrorBadUrl", $object->url), null, 'errors');
 				}
 				if (!empty($object->webservices_url)) {
 					//Check if has transport, without any the soap client will give error
@@ -1381,12 +1382,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				  data: function (params) {
 						return {
 							newcompany: params.term // search term
-						};
+						}
 				  },
 				  processResults: function (data, params) {
 					  return {
 						results: data
-					  };
+					  }
 				  },
 				  cache: true
 				},
@@ -1662,21 +1663,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Social networks
 		if (isModEnabled('socialnetworks')) {
-			foreach ($socialnetworks as $key => $value) {
-				if ($value['active']) {
-					print '<tr>';
-					print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
-					print '<td colspan="3">';
-					if (!empty($value['icon'])) {
-						print '<span class="fa '.$value['icon'].' pictofixedwidth"></span>';
-					}
-					print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100 maxwidth300 widthcentpercentminusx" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alphanohtml') : (empty($object->socialnetworks[$key]) ? '' : $object->socialnetworks[$key])).'">';
-					print '</td>';
-					print '</tr>';
-				} elseif (!empty($object->socialnetworks[$key])) {
-					print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
-				}
-			}
+			$object->showSocialNetwork($socialnetworks, ($conf->browser->layout == 'phone' ? 2 : 4));
 		}
 
 		// Prof ids
@@ -2150,7 +2137,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					{
 						jQuery(".visibleifsupplier").show();
 					}
-				};
+				}
 
        			$("#selectcountry_id").change(function() {
        				document.formsoc.action.value="edit";
@@ -2394,21 +2381,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Social network
 			if (isModEnabled('socialnetworks')) {
-				foreach ($socialnetworks as $key => $value) {
-					if ($value['active']) {
-						print '<tr>';
-						print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
-						print '<td colspan="3">';
-						if (!empty($value['icon'])) {
-							print '<span class="fa '.$value['icon'].' pictofixedwidth"></span>';
-						}
-						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100 maxwidth500 widthcentpercentminusx" maxlength="80" value="'.(empty($object->socialnetworks[$key]) ? '' : $object->socialnetworks[$key]).'">';
-						print '</td>';
-						print '</tr>';
-					} elseif (!empty($object->socialnetworks[$key])) {
-						print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
-					}
-				}
+				$object->showSocialNetwork($socialnetworks, ($conf->browser->layout == 'phone' ? 2 : 4));
 			}
 
 			// Prof ids
@@ -3313,11 +3286,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 					$result = show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
 				}
-
-				// Addresses list
-				if (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT)) {
-					$result = show_addresses($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
-				}
 			}
 		}
 
@@ -3330,6 +3298,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}
 }
+
+
 // End of page
 llxFooter();
 $db->close();

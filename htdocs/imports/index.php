@@ -68,7 +68,7 @@ print '</tr>';
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php';
 $model = new ModeleImports();
-$list = $model->liste_modeles($db);
+$list = $model->listOfAvailableImportFormat($db);
 
 foreach ($list as $key) {
 	print '<tr class="oddeven">';

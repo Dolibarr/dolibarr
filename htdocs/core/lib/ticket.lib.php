@@ -91,7 +91,7 @@ function ticket_prepare_head($object)
 	$head[$h][2] = 'tabTicket';
 	$h++;
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && empty($user->socid) && isModEnabled("societe")) {
+	if (!getDolGlobalInt('MAIN_DISABLE_CONTACTS_TAB') && empty($user->socid) && isModEnabled("societe")) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][0] = DOL_URL_ROOT.'/ticket/contact.php?track_id='.$object->track_id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
@@ -166,7 +166,7 @@ function showDirectPublicLink($object)
 	}
 
 	$out = '';
-	if (empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
+	if (!getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 		$langs->load('errors');
 		$out .= '<span class="opacitymedium">'.$langs->trans("ErrorPublicInterfaceNotEnabled").'</span>';
 	} else {
@@ -223,9 +223,9 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	print '<div class="center">';
 
 	// Define urllogo
-	if (!empty($conf->global->TICKET_SHOW_COMPANY_LOGO) || !empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC)) {
+	if (getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO') || getDolGlobalString('TICKET_PUBLIC_INTERFACE_TOPIC')) {
 		// Print logo
-		if (!empty($conf->global->TICKET_SHOW_COMPANY_LOGO)) {
+		if (getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO')) {
 			$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
 
 			if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
@@ -239,28 +239,28 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	}
 
 	// Output html code for logo
-	if ($urllogo || !empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC)) {
+	if ($urllogo || getDolGlobalInt('TICKET_PUBLIC_INTERFACE_TOPIC')) {
 		print '<div class="backgreypublicpayment">';
 		print '<div class="logopublicpayment">';
 		if ($urllogo) {
-			print '<a href="'.($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticket/index.php?entity='.$conf->entity, 1)).'">';
+			print '<a href="'.(getDolGlobalInt('TICKET_URL_PUBLIC_INTERFACE') ? getDolGlobalInt('TICKET_URL_PUBLIC_INTERFACE') : dol_buildpath('/public/ticket/index.php?entity='.$conf->entity, 1)).'">';
 			print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
 			print '>';
 			print '</a>';
 		}
-		if (!empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC)) {
-			print '<div class="clearboth"></div><strong>'.($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC ? $conf->global->TICKET_PUBLIC_INTERFACE_TOPIC : $langs->trans("TicketSystem")).'</strong>';
+		if (getDolGlobalInt('TICKET_PUBLIC_INTERFACE_TOPIC')) {
+			print '<div class="clearboth"></div><strong>'.(getDolGlobalString('TICKET_PUBLIC_INTERFACE_TOPIC') ? getDolGlobalString('TICKET_PUBLIC_INTERFACE_TOPIC') : $langs->trans("TicketSystem")).'</strong>';
 		}
 		print '</div>';
-		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+		if (!getDolGlobalInt('MAIN_HIDE_POWERED_BY')) {
 			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
 		print '</div>';
 	}
 
-	if (!empty($conf->global->TICKET_IMAGE_PUBLIC_INTERFACE)) {
+	if (getDolGlobalInt('TICKET_IMAGE_PUBLIC_INTERFACE')) {
 		print '<div class="backimagepublicticket">';
-		print '<img id="idTICKET_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->TICKET_IMAGE_PUBLIC_INTERFACE.'">';
+		print '<img id="idTICKET_IMAGE_PUBLIC_INTERFACE" src="'.getDolGlobalString('TICKET_IMAGE_PUBLIC_INTERFACE').'">';
 		print '</div>';
 	}
 

@@ -251,7 +251,7 @@ class CdavLib
 	 */
 	public function getFullCalendarObjects($calendarId, $bCalendarData)
 	{
-		$calid = ($calendarId * 1);
+		$calid = (int) $calendarId;
 		$calevents = array();
 
 		if (!$this->user->rights->agenda->myactions->read) {

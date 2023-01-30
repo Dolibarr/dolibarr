@@ -28,15 +28,12 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/position.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_position.lib.php';
 
-
 // Load translation files required by the page
 $langs->loadLangs(array('hrm', 'companies'));
-
 
 // Get parameters
 $id     = GETPOST('id', 'int');
@@ -109,10 +106,10 @@ if ($id > 0 || !empty($ref)) {
 	$morehtmlref = '<div class="refidno">';
 	$u_position = new User(($db));
 	$u_position->fetch($object->fk_user);
-	$morehtmlref .= $langs->trans('Employee').' : '.$u_position->getNomUrl(1);
+	$morehtmlref .= ($u_position->id > 0 ? $u_position->getNomUrl(1) : $langs->trans('Employee').' : ');
 	$job = new Job($db);
 	$job->fetch($object->fk_job);
-	$morehtmlref .= '<br>'.$langs->trans('Job').' : '.$job->getNomUrl(1);
+	$morehtmlref .= '<br>'.$langs->trans('JobPosition').' : '.$job->getNomUrl(1);
 	$morehtmlref .= '</div>';
 
 

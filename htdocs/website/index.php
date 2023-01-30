@@ -3294,7 +3294,7 @@ if (!GETPOST('hide_websitemenu')) {
 									}
 									isEditingEnabled = false;
 								}
-							};
+							}
 						});
 						</script>';
 				print $langs->trans("EditInLine");

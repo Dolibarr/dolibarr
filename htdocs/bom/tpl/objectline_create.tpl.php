@@ -73,7 +73,7 @@ if ($nolinesbefore) {
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 
 	if ($filtertype != 1) {
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			print '<td class="linecoluseunit left">';
 			print '<span id="title_units">';
 			print $langs->trans('Unit');
@@ -145,7 +145,7 @@ print '<td class="bordertop nobottom linecolqty right"><input type="text" size="
 print '</td>';
 
 if ($filtertype != 1) {
-	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
 		print '</td>';

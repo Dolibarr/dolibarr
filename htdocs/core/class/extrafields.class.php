@@ -1141,24 +1141,24 @@ class ExtraFields
 
 				$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
 				$out .= '<option value="0">&nbsp;</option>';
-				foreach ($param['options'] as $key => $val) {
-					if ((string) $key == '') {
+				foreach ($param['options'] as $key2 => $val2) {
+					if ((string) $key2 == '') {
 						continue;
 					}
-					$valarray = explode('|', $val);
-					$val = $valarray[0];
+					$valarray = explode('|', $val2);
+					$val2 = $valarray[0];
 					$parent = '';
 					if (!empty($valarray[1])) {
 						$parent = $valarray[1];
 					}
-					$out .= '<option value="'.$key.'"';
-					$out .= (((string) $value == (string) $key) ? ' selected' : '');
+					$out .= '<option value="'.$key2.'"';
+					$out .= (((string) $value == (string) $key2) ? ' selected' : '');
 					$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
 					$out .= '>';
-					if ($langfile && $val) {
-						$out .= $langs->trans($val);
+					if ($langfile && $val2) {
+						$out .= $langs->trans($val2);
 					} else {
-						$out .= $val;
+						$out .= $val2;
 					}
 					$out .= '</option>';
 				}
@@ -1494,15 +1494,15 @@ class ExtraFields
 							$labeltoshow = dol_trunc($labeltoshow, 45);
 
 							if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
+								$labeltoshow = '';
 								foreach ($fields_label as $field_toshow) {
 									$translabel = $langs->trans($obj->$field_toshow);
 									if ($translabel != $obj->$field_toshow) {
-										$labeltoshow = dol_trunc($translabel, 18).' ';
+										$labeltoshow .= ' '.dol_trunc($translabel, 18).' ';
 									} else {
-										$labeltoshow = dol_trunc($obj->$field_toshow, 18).' ';
+										$labeltoshow .= ' '.dol_trunc($obj->$field_toshow, 18).' ';
 									}
 								}
-
 								$data[$obj->rowid] = $labeltoshow;
 							} else {
 								if (!$notrans) {
@@ -1823,17 +1823,20 @@ class ExtraFields
 						$fields_label = explode('|', $InfoFieldList[1]);
 						if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
 							if (is_array($fields_label) && count($fields_label) > 1) {
+								$label = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">';
 								foreach ($fields_label as $field_toshow) {
 									$translabel = '';
 									if (!empty($obj->$field_toshow)) {
 										$translabel = $langs->trans($obj->$field_toshow);
 									}
 									if ($translabel != $field_toshow) {
-										$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.dol_trunc($translabel, 18).'</li>';
+										$label .= ' '.dol_trunc($translabel, 18);
 									} else {
-										$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$obj->$field_toshow.'</li>';
+										$label .= ' '.$obj->$field_toshow;
 									}
 								}
+								$label .= '</li>';
+								$toprint[] = $label;
 							} else {
 								$translabel = '';
 								if (!empty($obj->{$InfoFieldList[1]})) {

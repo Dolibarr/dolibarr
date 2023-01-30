@@ -349,6 +349,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 				$filearray[$key]['position_name'] = ($filearrayindatabase[$key2]['position'] ? $filearrayindatabase[$key2]['position'] : '0').'_'.$filearrayindatabase[$key2]['name'];
 				$filearray[$key]['position'] = $filearrayindatabase[$key2]['position'];
 				$filearray[$key]['cover'] = $filearrayindatabase[$key2]['cover'];
+				$filearray[$key]['keywords'] = $filearrayindatabase[$key2]['keywords'];
 				$filearray[$key]['acl'] = $filearrayindatabase[$key2]['acl'];
 				$filearray[$key]['rowid'] = $filearrayindatabase[$key2]['rowid'];
 				$filearray[$key]['label'] = $filearrayindatabase[$key2]['label'];
@@ -1991,7 +1992,6 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded')
  */
 function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = '')
 {
-	global $langs;
 	if (class_exists('Imagick')) {
 		$image = new Imagick();
 		try {
@@ -2059,13 +2059,13 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 		dol_syslog("dol_compress_file mode=".$mode." inputfile=".$inputfile." outputfile=".$outputfile);
 
 		$data = implode("", file(dol_osencode($inputfile)));
-		if ($mode == 'gz') {
+		if ($mode == 'gz' && function_exists('gzencode')) {
 			$foundhandler = 1;
 			$compressdata = gzencode($data, 9);
-		} elseif ($mode == 'bz') {
+		} elseif ($mode == 'bz' && function_exists('bzcompress')) {
 			$foundhandler = 1;
 			$compressdata = bzcompress($data, 9);
-		} elseif ($mode == 'zstd') {
+		} elseif ($mode == 'zstd' && function_exists('zstd_compress')) {
 			$foundhandler = 1;
 			$compressdata = zstd_compress($data, 9);
 		} elseif ($mode == 'zip') {
@@ -2425,7 +2425,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(\.meta|_preview.*\.png)$', '^\.'), $nohook = false, $mode = '')
 {
 	$tmparray = dol_dir_list($dir, 'files', 0, $regexfilter, $excludefilter, 'date', SORT_DESC, $mode, $nohook);
-	return $tmparray[0];
+	return isset($tmparray[0])?$tmparray[0]:null;
 }
 
 /**
@@ -2528,14 +2528,37 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$accessallowed = 1;
 		$original_file = $conf->mycompany->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'userphoto' && !empty($conf->user->dir_output)) {
-		// Wrapping for users photos
+		// Wrapping for users photos (user photos are allowed to any connected users)
 		$accessallowed = 0;
 		if (preg_match('/^\d+\/photos\//', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->user->dir_output.'/'.$original_file;
+	} elseif ($modulepart == 'userphotopublic' && !empty($conf->user->dir_output)) {
+		// Wrapping for users photos that were set to public by their owner (public user photos can be read with the public link and securekey)
+		$accessok = false;
+		$reg = array();
+		if (preg_match('/^(\d+)\/photos\//', $original_file, $reg)) {
+			if ($reg[0]) {
+				$tmpobject = new User($db);
+				$tmpobject->fetch($reg[0], '', '', 1);
+				if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $tmpobject)) {
+					$securekey = GETPOST('securekey', 'alpha', 1);
+					// Security check
+					global $dolibarr_main_instance_unique_id;
+					$encodedsecurekey = dol_hash($dolibarr_main_instance_unique_id.'uservirtualcard'.$tmpobject->id.'-'.$tmpobject->login, 'md5');
+					if ($encodedsecurekey == $securekey) {
+						$accessok = true;
+					}
+				}
+			}
+		}
+		if ($accessok) {
+			$accessallowed = 1;
+		}
+		$original_file = $conf->user->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'companylogo') && !empty($conf->mycompany->dir_output)) {
-		// Wrapping for users logos
+		// Wrapping for company logos (company logos are allowed to anyboby, they are public)
 		$accessallowed = 1;
 		$original_file = $conf->mycompany->dir_output.'/logos/'.$original_file;
 	} elseif ($modulepart == 'memberphoto' && !empty($conf->adherent->dir_output)) {
@@ -2546,7 +2569,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->adherent->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'apercufacture' && !empty($conf->facture->multidir_output[$entity])) {
-		// Wrapping pour les apercu factures
+		// Wrapping for invoices (user need permission to read invoices)
 		if ($fuser->rights->facture->{$lire}) {
 			$accessallowed = 1;
 		}
@@ -2699,11 +2722,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->agenda->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'category' && !empty($conf->categorie->multidir_output[$entity])) {
-		// Wrapping for categories
+		// Wrapping for categories (categories are allowed if user has permission to read categories or to work on TakePos)
 		if (empty($entity) || empty($conf->categorie->multidir_output[$entity])) {
 			return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		}
-		if ($fuser->rights->categorie->{$lire} || $fuser->rights->takepos->run) {
+		if ($fuser->hasRight("categorie", $lire) || $fuser->hasRight("takepos", "run")) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->categorie->multidir_output[$entity].'/'.$original_file;

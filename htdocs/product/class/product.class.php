@@ -515,7 +515,7 @@ class Product extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
 		'entity'        =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>5),
-		'label'         =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>2, 'position'=>15),
+		'label'         =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>2, 'position'=>15, 'csslist'=>'tdoverflowmax250'),
 		'barcode'       =>array('type'=>'varchar(255)', 'label'=>'Barcode', 'enabled'=>'isModEnabled("barcode")', 'position'=>20, 'visible'=>-1, 'showoncombobox'=>3),
 		'fk_barcode_type' => array('type'=>'integer', 'label'=>'BarcodeType', 'enabled'=>'1', 'position'=>21, 'notnull'=>0, 'visible'=>-1,),
 		'note_public'   =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61),
@@ -572,7 +572,11 @@ class Product extends CommonObject
 	 */
 	public function check()
 	{
-		$this->ref = dol_sanitizeFileName(stripslashes($this->ref));
+		if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+			$this->ref = trim($this->ref);
+		} else {
+			$this->ref = dol_sanitizeFileName(stripslashes($this->ref));
+		}
 
 		$err = 0;
 		if (dol_strlen(trim($this->ref)) == 0) {
@@ -604,7 +608,11 @@ class Product extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->ref = dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)));
+		if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+			$this->ref = trim($this->ref);
+		} else {
+			$this->ref = dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)));
+		}
 		$this->label = trim($this->label);
 		$this->price_ttc = price2num($this->price_ttc);
 		$this->price = price2num($this->price);
@@ -999,7 +1007,11 @@ class Product extends CommonObject
 		}
 
 		// Clean parameters
-		$this->ref = dol_string_nospecial(trim($this->ref));
+		if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+			$this->ref = trim($this->ref);
+		} else {
+			$this->ref = dol_string_nospecial(trim($this->ref));
+		}
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
 		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : null);
@@ -1460,6 +1472,14 @@ class Product extends CommonObject
 				if (!$resultz) {
 					$error++;
 					$this->errors[] = $this->db->lasterror();
+				}
+			}
+
+			// Delete record into ECM index and physically
+			if (!$error) {
+				$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
+				if (!$res) {
+					$error++;
 				}
 			}
 
@@ -3005,7 +3025,7 @@ class Product extends CommonObject
 	 *
 	 * @param  int    $socid           Id societe pour filtrer sur une societe
 	 * @param  string $filtrestatut    Id statut pour filtrer sur un statut
-	 * @param  int    $forVirtualStock Ignore rights filter for virtual stock calculation.
+	 * @param  int    $forVirtualStock Ignore rights filter for virtual stock calculation. Set when load_stats_commande is used for virtual stock calculation.
 	 * @return integer                 Array of stats in $this->stats_commande (nb=nb of order, qty=qty ordered), <0 if ko or >0 if ok
 	 */
 	public function load_stats_commande($socid = 0, $filtrestatut = '', $forVirtualStock = 0)
@@ -3066,17 +3086,37 @@ class Product extends CommonObject
 
 			// If stock decrease is on invoice validation, the theorical stock continue to
 			// count the orders to ship in theorical stock when some are already removed by invoice validation.
-			// If option DECREASE_ONLY_UNINVOICEDPRODUCTS is on, we make a compensation.
-			if (!empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
+			if ($forVirtualStock && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
 				if (!empty($conf->global->DECREASE_ONLY_UNINVOICEDPRODUCTS)) {
+					// If option DECREASE_ONLY_UNINVOICEDPRODUCTS is on, we make a compensation but only if order not yet invoice.
 					$adeduire = 0;
-					$sql = "SELECT sum(fd.qty) as count FROM ".$this->db->prefix()."facturedet fd ";
-					$sql .= " JOIN ".$this->db->prefix()."facture f ON fd.fk_facture = f.rowid ";
-					$sql .= " JOIN ".$this->db->prefix()."element_element el ON el.fk_target = f.rowid and el.targettype = 'facture' and sourcetype = 'commande'";
-					$sql .= " JOIN ".$this->db->prefix()."commande c ON el.fk_source = c.rowid ";
+					$sql = "SELECT sum(fd.qty) as count FROM ".$this->db->prefix()."facturedet as fd ";
+					$sql .= " JOIN ".$this->db->prefix()."facture as f ON fd.fk_facture = f.rowid ";
+					$sql .= " JOIN ".$this->db->prefix()."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
+					$sql .= " JOIN ".$this->db->prefix()."commande as c ON el.fk_source = c.rowid ";
 					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND c.facture = 0 AND fd.fk_product = ".((int) $this->id);
 					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
+					$resql = $this->db->query($sql);
+					if ($resql) {
+						if ($this->db->num_rows($resql) > 0) {
+							$obj = $this->db->fetch_object($resql);
+							$adeduire += $obj->count;
+						}
+					}
 
+					$this->stats_commande['qty'] -= $adeduire;
+				} else {
+					// If option DECREASE_ONLY_UNINVOICEDPRODUCTS is off, we make a compensation with lines of invoices linked to the order
+					include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
+					// For every order having invoice already validated we need to decrease stock cause it's in physical stock
+					$adeduire = 0;
+					$sql = 'SELECT sum(fd.qty) as count FROM '.MAIN_DB_PREFIX.'facturedet as fd ';
+					$sql .= ' JOIN '.MAIN_DB_PREFIX.'facture as f ON fd.fk_facture = f.rowid ';
+					$sql .= ' JOIN '.MAIN_DB_PREFIX."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
+					$sql .= ' JOIN '.MAIN_DB_PREFIX.'commande as c ON el.fk_source = c.rowid ';
+					$sql .= ' WHERE c.fk_statut IN ('.$this->db->sanitize($filtrestatut).') AND f.fk_statut > '.Facture::STATUS_DRAFT.' AND fd.fk_product = '.((int) $this->id);
+					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
 					$resql = $this->db->query($sql);
 					if ($resql) {
 						if ($this->db->num_rows($resql) > 0) {
@@ -6091,8 +6131,8 @@ class Product extends CommonObject
 	 * Adds it to non existing supplied categories.
 	 * Existing categories are left untouch.
 	 *
-	 * @param  int[]|int $categories Category or categories IDs
-	 * @return void
+	 * @param  int[]|int 	$categories 	Category or categories IDs
+	 * @return int							<0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -6274,6 +6314,59 @@ class Product extends CommonObject
 		$prodDurationHours *= $this->duration_value;
 
 		return $prodDurationHours;
+	}
+
+
+		/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		global $langs,$conf;
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<div class="info-box-img">';
+		$label = '';
+		if ($this->is_photo_available($conf->product->multidir_output[$this->entity])) {
+				$label .= $this->show_photos('product', $conf->product->multidir_output[$this->entity]);
+				$return .= $label;
+		} else {
+			if ($this->type == Product::TYPE_PRODUCT) {
+				$label .= img_picto('', 'product');
+			} elseif ($this->type == Product::TYPE_SERVICE) {
+				$label .= img_picto('', 'service');
+			}
+			$return .= $label;
+		}
+		$return .= '</div>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if (property_exists($this, 'label')) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
+		}
+		if (property_exists($this, 'price') && property_exists($this, 'price_ttc')) {
+			if ($this->price_base_type == 'TTC') {
+				$return .= '<br><span class="info-box-status amount">'.price($this->price_ttc).' '.$langs->trans("TTC").'</span>';
+			} else {
+				if ($this->status) {
+					$return .= '<br><span class="info-box-status amount">'.price($this->price).' '.$langs->trans("HT").'</span>';
+				}
+			}
+		}
+		if (property_exists($this, 'stock_reel')) {
+			$return .= '<br><span class="info-box-status opacitymedium">'.$langs->trans('PhysicalStock').' : <span class="bold">'.$this->stock_reel.'</span></span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .='<br><span class="info-box-status margintoponly">'.$this->getLibStatut(5, 1).' '.$this->getLibStatut(5, 0).'</span>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }
 

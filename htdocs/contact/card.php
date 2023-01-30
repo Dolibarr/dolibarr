@@ -322,9 +322,6 @@ if (empty($reshook)) {
 		$result = $object->fetch($id);
 		$object->oldcopy = clone $object;
 
-		$object->old_lastname = (string) GETPOST("old_lastname", 'alpha');
-		$object->old_firstname = (string) GETPOST("old_firstname", 'alpha');
-
 		$result = $object->delete(); // TODO Add $user as first param
 		if ($result > 0) {
 			setEventMessages("RecordDeleted", null, 'mesgs');
@@ -362,7 +359,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			$contactid = GETPOST("contactid", 'int');
 			$object->fetch($contactid);
-			$object->fetchRoles($contactid);
+			$object->fetchRoles();
 
 			// Photo save
 			$dir = $conf->societe->multidir_output[$object->entity]."/contact/".$object->id."/photos";
@@ -407,9 +404,6 @@ if (empty($reshook)) {
 			}
 
 			$object->oldcopy = clone $object;
-
-			$object->old_lastname = (string) GETPOST("old_lastname", 'alpha');
-			$object->old_firstname = (string) GETPOST("old_firstname", 'alpha');
 
 			$object->socid = GETPOST("socid", 'int');
 			$object->lastname = (string) GETPOST("lastname", 'alpha');
@@ -862,23 +856,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</tr>';
 			}
 
-
+			// Social network
 			if (isModEnabled('socialnetworks')) {
-				foreach ($socialnetworks as $key => $value) {
-					if ($value['active']) {
-						print '<tr>';
-						print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
-						print '<td colspan="3">';
-						if (!empty($value['icon'])) {
-							print '<span class="fa '.$value['icon'].'"></span>';
-						}
-						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ?GETPOST($key, 'alphanohtml') : (!empty($object->socialnetworks[$key]) ? $object->socialnetworks[$key] : "")).'">';
-						print '</td>';
-						print '</tr>';
-					} elseif (!empty($object->socialnetworks[$key])) {
-						print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
-					}
-				}
+				$object->showSocialNetwork($socialnetworks, ($conf->browser->layout == 'phone' ? 2 : 4));
 			}
 
 			// Visibility
@@ -986,7 +966,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 								/* set country at end because it will trigger page refresh */
 								console.log("Set country id to '.dol_escape_js($objsoc->country_id).'");
 								$(\'select[name="country_id"]\').val("'.dol_escape_js($objsoc->country_id).'").trigger("change");   /* trigger required to update select2 components */
-            				});
+							});
 						})'."\n";
 				print '</script>'."\n";
 			}
@@ -996,8 +976,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<input type="hidden" name="id" value="'.$id.'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="contactid" value="'.$object->id.'">';
-			print '<input type="hidden" name="old_lastname" value="'.$object->lastname.'">';
-			print '<input type="hidden" name="old_firstname" value="'.$object->firstname.'">';
 			if (!empty($backtopage)) {
 				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			}
@@ -1047,7 +1025,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<div class="paddingrightonly valignmiddle inline-block quatrevingtpercent">';
 			print '<textarea class="flat minwidth200 centpercent" name="address" id="address">'.(GETPOSTISSET("address") ? GETPOST("address", 'alphanohtml') : $object->address).'</textarea>';
 			print '</div><div class="paddingrightonly valignmiddle inline-block">';
-			if ($conf->use_javascript_ajax) {
+			if (!empty($conf->use_javascript_ajax)) {
 				print '<a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a><br>';
 			}
 			print '</div>';
@@ -1150,22 +1128,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</tr>';
 			}
 
+			// Social network
 			if (isModEnabled('socialnetworks')) {
-				foreach ($socialnetworks as $key => $value) {
-					if ($value['active']) {
-						print '<tr>';
-						print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
-						print '<td colspan="3">';
-						if (!empty($value['icon'])) {
-							print '<span class="fa '.$value['icon'].'"></span>';
-						}
-						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ?GETPOST($key, 'alphanohtml') : (empty($object->socialnetworks[$key]) ? '' : $object->socialnetworks[$key])).'">';
-						print '</td>';
-						print '</tr>';
-					} elseif (!empty($object->socialnetworks[$key])) {
-						print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
-					}
-				}
+				$object->showSocialNetwork($socialnetworks, ($conf->browser->layout == 'phone' ? 2 : 4));
 			}
 
 			// Visibility

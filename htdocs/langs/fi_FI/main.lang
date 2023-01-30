@@ -1,9 +1,15 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
+# Default for FONTFORPDF=helvetica
 # Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese
+# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
+# cid0jp is for Japanish
+# cid0kr is for Korean
+# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# freemono is for ru_RU or uk_UA, uz_UZ
+# freeserif is for Tamil
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -28,6 +34,7 @@ NoTemplateDefined=Tämän tyyliselle sähköpostille ei ole pohjaa saatavilla
 AvailableVariables=Käytettävissä olevat korvaavat muuttujat
 NoTranslation=Ei käännöstä
 Translation=Käännös
+Translations=Translations
 CurrentTimeZone=Aikavyöhyke PHP (palvelin)
 EmptySearchString=Enter non empty search criterias
 EnterADateCriteria=Enter a date criteria
@@ -199,6 +206,7 @@ Valid=Voimassa
 Approve=Hyväksy
 Disapprove=Poista hyväksyntä
 ReOpen=Avaa uudelleen
+OpenVerb=Avoinna
 Upload=Lähetä
 ToLink=Linkki
 Select=Valitse
@@ -216,7 +224,7 @@ UserGroup=User group
 UserGroups=User groups
 NoUserGroupDefined=Käyttäjäryhmää ei ole määritelty
 Password=Salasana
-PasswordRetype=Kirjoitta salasana uudelleen
+PasswordRetype=Repeat your password
 NoteSomeFeaturesAreDisabled=Huomaa, että monet piirteet / modules on poistettu käytöstä tämän esittelyn.
 Name=Nimi
 NameSlashCompany=Nimi / yritys
@@ -481,6 +489,7 @@ ActionsOnContact=Events for this contact/address
 ActionsOnContract=Events for this contract
 ActionsOnMember=Jäsenen tapahtumat
 ActionsOnProduct=Tapahtumat tästä tuotteesta
+ActionsOnAsset=Events for this fixed asset
 NActionsLate=%s myöhässä
 ToDo=Tehtävät
 Completed=Completed
@@ -921,6 +930,7 @@ DirectDownloadInternalLink=Private download link
 PrivateDownloadLinkDesc=You need to be logged and you need permissions to view or download the file
 Download=Lataa
 DownloadDocument=Lataa dokumentti
+DownloadSignedDocument=Download signed document
 ActualizeCurrency=Päivitä valuuttakurssi
 Fiscalyear=Tilivuosi
 ModuleBuilder=Module and Application Builder
@@ -1046,6 +1056,7 @@ SearchIntoContracts=Sopimukset
 SearchIntoCustomerShipments=Asiakas lähetykset
 SearchIntoExpenseReports=Kuluraportit
 SearchIntoLeaves=Poissaolot
+SearchIntoKM=Knowledge base
 SearchIntoTickets=Tiketit
 SearchIntoCustomerPayments=Asiakasmaksut
 SearchIntoVendorPayments=Toimittajien maksut
@@ -1137,15 +1148,29 @@ EventReminder=Event Reminder
 UpdateForAllLines=Päivitys kaikille riveille
 OnHold=On hold
 Civility=Civility
-AffectTag=Affect Tag
+AffectTag=Assign Tag
+AffectUser=Assign User
+SetSupervisor=Set Supervisor
 CreateExternalUser=Create external user
-ConfirmAffectTag=Bulk Tag Affect
-ConfirmAffectTagQuestion=Are you sure you want to affect tags to the %s selected record(s)?
+ConfirmAffectTag=Bulk Tag Assignement
+ConfirmAffectUser=Bulk User Assignement
+ProjectRole=Role assigned on each project
+TasksRole=Role assigned on each task of each project
+ConfirmSetSupervisor=Bulk Supervisor Set
+ConfirmUpdatePrice=Choose a increase/decrease price rate
+ConfirmAffectTagQuestion=Are you sure you want to assign tags to the %s selected record(s)?
+ConfirmAffectUserQuestion=Are you sure you want to assign users to the %s selected record(s)?
+ConfirmSetSupervisorQuestion=Are you sure you want to set supervisor to the %s selected record(s)?
+ConfirmUpdatePriceQuestion=Are you sure you want to update the price of the %s selected record(s)?
 CategTypeNotFound=No tag type found for type of records
+Rate=Kurssi
+SupervisorNotFound=Supervisor not found
 CopiedToClipboard=Copied to clipboard
 InformationOnLinkToContract=This amount is only the total of all the lines of the contract. No notion of time is taken into consideration.
 ConfirmCancel=Are you sure you want to cancel
 EmailMsgID=Email MsgID
+EmailDate=Email date
+SetToStatus=Set to status %s
 SetToEnabled=Set to enabled
 SetToDisabled=Set to disabled
 ConfirmMassEnabling=mass enabling confirmation
@@ -1174,9 +1199,14 @@ Terminated=Terminated
 AddLineOnPosition=Add line on position (at the end if empty)
 ConfirmAllocateCommercial=Assign sales representative confirmation
 ConfirmAllocateCommercialQuestion=Are you sure you want to assign the %s selected record(s)?
-CommercialsAffected=Sales representatives affected
-CommercialAffected=Sales representative affected
+CommercialsAffected=Sales representatives assigned
+CommercialAffected=Sales representative assigned
 YourMessage=Your message
 YourMessageHasBeenReceived=Your message has been received. We will answer or contact you as soon as possible.
 UrlToCheck=Url to check
 Automation=Automation
+CreatedByEmailCollector=Created by Email collector
+CreatedByPublicPortal=Created from Public portal
+UserAgent=User Agent
+InternalUser=Sisäinen käyttäjä
+ExternalUser=Ulkoinen käyttäjä

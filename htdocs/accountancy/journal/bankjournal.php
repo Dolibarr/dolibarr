@@ -349,7 +349,11 @@ if ($result) {
 					$societestatic->email = $tabcompany[$obj->rowid]['email'];
 					$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
 					if ($compta_soc) {
-						$tabtp[$obj->rowid][$compta_soc] += $amounttouse;
+						if (empty($tabtp[$obj->rowid][$compta_soc])) {
+							$tabtp[$obj->rowid][$compta_soc] = $amounttouse;
+						} else {
+							$tabtp[$obj->rowid][$compta_soc] += $amounttouse;
+						}
 					}
 				} elseif ($links[$key]['type'] == 'user') {
 					$userstatic->id = $links[$key]['url_id'];
@@ -510,7 +514,11 @@ if ($result) {
 			}
 		}
 
-		$tabbq[$obj->rowid][$compta_bank] += $amounttouse;
+		if (empty($tabbq[$obj->rowid][$compta_bank])) {
+			$tabbq[$obj->rowid][$compta_bank] = $amounttouse;
+		} else {
+			$tabbq[$obj->rowid][$compta_bank] += $amounttouse;
+		}
 
 		// If no links were found to know the amount on thirdparty, we try to guess it.
 		// This may happens on bank entries without the links lines to 'company'.
@@ -793,7 +801,7 @@ if (!$error && $action == 'writebookkeeping') {
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 							}
 						} else {
-							if ($lettering && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
+							if ($lettering && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && getDolGlobalInt('ACCOUNTING_ENABLE_AUTOLETTERING')) {
 								require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
 								$lettering_static = new Lettering($db);
 								$nb_lettering = $lettering_static->bookkeepingLetteringAll(array($bookkeeping->id));
