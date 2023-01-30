@@ -216,8 +216,7 @@ class SocieteAccount extends CommonObject
 
 		// Clear fields
 		$object->ref = "copy_of_".$object->ref;
-		$object->title = $langs->trans("CopyOf")." ".$object->title;
-		// ...
+		// $object->title = $langs->trans("CopyOf")." ".$object->title;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
