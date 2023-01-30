@@ -332,6 +332,7 @@ abstract class CommonInvoice extends CommonObject
 		$field = 'fk_facture';
 		$field2 = 'fk_paiement';
 		$field3 = ', p.ref_ext';
+		$field4 = ', p.fk_bank'; // Bank line id
 		$sharedentity = 'facture';
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
 			$table = 'paiementfourn_facturefourn';
@@ -342,7 +343,7 @@ abstract class CommonInvoice extends CommonObject
 			$sharedentity = 'facture_fourn';
 		}
 
-		$sql = "SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code".$field3;
+		$sql = "SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code".$field3 . $field4;
 		$sql .= " FROM ".$this->db->prefix().$table." as pf, ".$this->db->prefix().$table2." as p, ".$this->db->prefix()."c_paiement as t";
 		$sql .= " WHERE pf.".$field." = ".((int) $this->id);
 		$sql .= " AND pf.".$field2." = p.rowid";
@@ -362,6 +363,9 @@ abstract class CommonInvoice extends CommonObject
 				$tmp = array('amount'=>$obj->amount, 'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num, 'ref'=>$obj->ref);
 				if (!empty($field3)) {
 					$tmp['ref_ext'] = $obj->ref_ext;
+				}
+				if (!empty($field4)) {
+					$tmp['fk_bank_line'] = $obj->fk_bank;
 				}
 				$retarray[] = $tmp;
 				$i++;
