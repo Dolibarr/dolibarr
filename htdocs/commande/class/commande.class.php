@@ -3714,6 +3714,48 @@ class Commande extends CommonOrder
 		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', array('tooltip' => $labelTooltip));
 	}
 
+	/**
+	 * getTooltipContentArray
+	 * @param array $parameters
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($parameters)
+	{
+		global $conf, $langs, $user;
+
+		$datas = [];
+
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			return ['optimize' => $langs->trans("Order")];
+		}
+
+		if ($user->rights->commande->lire) {
+			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Order").'</u>';
+			if (isset($this->statut)) {
+				$datas[] = ' '.$this->getLibStatut(5);
+			}
+			$datas['Ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+			$datas['RefCustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.(empty($this->ref_customer) ? (empty($this->ref_client) ? '' : $this->ref_client) : $this->ref_customer);
+			if (!empty($this->total_ht)) {
+				$datas['AmountHT'] = '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+			}
+			if (!empty($this->total_tva)) {
+				$datas['VAT'] = '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+			}
+			if (!empty($this->total_ttc)) {
+				$datas['AmountTTC'] = '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+			}
+			if (!empty($this->date)) {
+				$datas['Date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
+			}
+			if (!empty($this->delivery_date)) {
+				$datas['DeliveryDate'] = '<br><b>'.$langs->trans('DeliveryDate').':</b> '.dol_print_date($this->delivery_date, 'dayhour');
+			}
+		}
+
+		return $datas;
+	}
 
 	/**
 	 *	Return clicable link of object (with eventually picto)
@@ -3795,10 +3837,20 @@ class Commande extends CommonOrder
 				$label = $langs->trans("Order");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip"';
+			if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+				$params = [
+					'id' => $this->id,
+					'objecttype' => $this->element,
+					'option' => $option,
+				];
+				$linkclose .= ' data-params='.json_encode($params).' id="order-' . uniqid() . '" title="' . $langs->trans('Loading') . '"';
+				$linkclose .= ' class="classforajaxtooltip"';
+			} else {
+				$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' class="classfortooltip"';
+			}
 
-			$target_value=array('_self', '_blank', '_parent', '_top');
+			$target_value = array('_self', '_blank', '_parent', '_top');
 			if (in_array($target, $target_value)) {
 				$linkclose .= ' target="'.dol_escape_htmltag($target).'"';
 			}

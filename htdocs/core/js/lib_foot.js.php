@@ -65,38 +65,63 @@ if (empty($dolibarr_nocache)) {
 
 
 // Wrapper to show tooltips (html or onclick popup)
-print "\n/* JS CODE TO ENABLE Tooltips on all object with class classfortooltip */\n";
-print "jQuery(document).ready(function () {\n";
+print "\n/* JS CODE TO ENABLE Tooltips on all object with class classfortooltip */
+jQuery(document).ready(function () {\n";
 
 if (empty($conf->dol_no_mouse_hover)) {
-	print 'jQuery(".classfortooltip").tooltip({
+	print '
+	jQuery(".classfortooltip").tooltip({
 		show: { collision: "flipfit", effect:"toggle", delay:50, duration: 20 },
 		hide: { delay: 250, duration: 20 },
 		tooltipClass: "mytooltip",
 		content: function () {
-    		console.log("Return title for popup");
-            return $(this).prop("title");		/* To force to get title as is */
-   		}
-	});'."\n";
+			console.log("Return title for popup");
+			return $(this).prop("title");		/* To force to get title as is */
+		}
+	});
+	jQuery(".classforajaxtooltip").tooltip({
+		show: { collision: "flipfit", effect:"toggle", delay:50, duration: 20 },
+		hide: { delay: 250, duration: 20 },
+		tooltipClass: "mytooltip",
+		open: function (event, ui) {
+			var id = $(this).attr("id");
+			var params = $(this).attr("data-params");
+			$.ajax({
+				url:"' . dol_buildpath('/core/ajax/ajaxtooltip.php', 1) . '",
+				type: "post",
+				data: JSON.parse(params),
+				success: function(response){
+					// Setting content option
+					$("#"+id).tooltip("option","content",response);
+				}
+			});
+			console.log(event);
+		}
+	});
+	jQuery(".classforajaxtooltip").mouseout(function(){
+		console.log("hide ajax tooltip");
+		$(this).tooltip("close");
+	});
+	';
 }
 
 print '
-jQuery(".classfortooltiponclicktext").dialog({
-    closeOnEscape: true, classes: { "ui-dialog": "highlight" },
-    maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max($_SESSION['dol_screenwidth'] - 20, 320) : 700).',
-    modal: true,
-    autoOpen: false
-    }).css("z-index: 5000");
-jQuery(".classfortooltiponclick").click(function () {
-    console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
-    if ($(this).attr(\'dolid\')) {
-        obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));		/* obj is a div component */
-        obj.dialog("open");
-        return false;
-    }
-});'."\n";
-
-print "});\n";
+	jQuery(".classfortooltiponclicktext").dialog({
+		closeOnEscape: true, classes: { "ui-dialog": "highlight" },
+		maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max($_SESSION['dol_screenwidth'] - 20, 320) : 700).',
+		modal: true,
+		autoOpen: false
+	}).css("z-index: 5000");
+	jQuery(".classfortooltiponclick").click(function () {
+		console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
+		if ($(this).attr(\'dolid\')) {
+			obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));		/* obj is a div component */
+			obj.dialog("open");
+			return false;
+		}
+	});
+});
+';
 
 
 // Wrapper to manage dropdown
