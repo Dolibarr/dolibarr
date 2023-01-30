@@ -443,7 +443,7 @@ abstract class CommonDocGenerator
 			}
 		}
 
-		$date = ($object->element == 'contrat' ? $object->date_contrat : $object->date);
+		$date = (isset($object->element) && $object->element == 'contrat' && isset($object->date_contrat)) ? $object->date_contrat : (isset($object->date) ? $object->date : null);
 
 		$resarray = array(
 			$array_key.'_id'=>$object->id,
