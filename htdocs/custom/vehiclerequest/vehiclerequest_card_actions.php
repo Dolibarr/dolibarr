@@ -26,7 +26,7 @@ if ($action == 'confirm_setrejected' && $confirm == 'yes' && $permissiontoapprov
 }
 if ($action == 'confirm_settripstarted' && $confirm == 'yes' && $permissiontorequest) {
 	$result = $object->validate($user);
-	$result = $object->setTripStatus($user,$object::TRIPSTATUS_ONTRIP);
+	$result = $object->setTripStatus($user, $object::TRIPSTATUS_ONTRIP);
 	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF'].'?id='.$object->id);
 		exit;
@@ -38,7 +38,7 @@ if ($action == 'confirm_settripstarted' && $confirm == 'yes' && $permissiontoreq
 }
 if ($action == 'confirm_settripcompleted' && $confirm == 'yes' && $permissiontorequest) {
 	$result = $object->validate($user);
-	$result = $object->setTripStatus($user,$object::TRIPSTATUS_COMPLETED);
+	$result = $object->setTripStatus($user, $object::TRIPSTATUS_COMPLETED);
 	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF'].'?id='.$object->id);
 		exit;

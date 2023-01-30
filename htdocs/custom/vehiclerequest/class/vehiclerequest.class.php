@@ -649,18 +649,16 @@ class VehicleRequest extends CommonObject
 	public function setApprovalApproved($user, $notrigger = 0)
 	{
 		if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fsa->vehicle->supervisorapprove))
-		 ))
-		 {
-		 $this->error='Permission denied';
-		 return -1;
-		 }
+		 )) {
+			$this->error='Permission denied';
+			return -1;
+		}
 		return $this->setApprovalStatus($user, self::APPROVAL_APPROVED, $notrigger, 'VEHICLEREQUEST_APPROVED');
 	}
 	public function setApprovalRejected($user, $notrigger = 0)
 	{
 		if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fsa->vehicle->supervisorapprove))
-		))
-		{
+		)) {
 			$this->error='Permission denied';
 			return -1;
 		}
@@ -678,8 +676,7 @@ class VehicleRequest extends CommonObject
 		$sql .= " SET ".$statusfield." = ".((int) $status)." , fk_approved_by=".$user->id;
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		$this->myQuery($sql,$user,$notrigger,$triggercode);
-
+		$this->myQuery($sql, $user, $notrigger, $triggercode);
 	}
 
 	public function setTripStatus($user, $status, $notrigger = 0, $triggercode = '')
@@ -692,18 +689,16 @@ class VehicleRequest extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET ".$statusfield." = ".((int) $status);
 		$sql .= " WHERE rowid = ".((int) $this->id);
-		$this->myQuery($sql,$user,$notrigger,$triggercode);
-		if($status==$this::TRIPSTATUS_ONTRIP){
+		$this->myQuery($sql, $user, $notrigger, $triggercode);
+		if ($status==$this::TRIPSTATUS_ONTRIP) {
 			//set vehicle status to ontrip
-			$this->setVehicleStatus($user,$this->fk_assigned_vehicle,2);
-		}elseif ($status==$this::TRIPSTATUS_COMPLETED){
+			$this->setVehicleStatus($user, $this->fk_assigned_vehicle, 2);
+		} elseif ($status==$this::TRIPSTATUS_COMPLETED) {
 			//set vehicle status to available
-			$this->setVehicleStatus($user,$this->fk_assigned_vehicle,1);
+			$this->setVehicleStatus($user, $this->fk_assigned_vehicle, 1);
 		}
-
-
 	}
-	public function setVehicleStatus($user,$vehicle_id, $status, $notrigger = 0, $triggercode = '')
+	public function setVehicleStatus($user, $vehicle_id, $status, $notrigger = 0, $triggercode = '')
 	{
 
 
@@ -711,19 +706,17 @@ class VehicleRequest extends CommonObject
 
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."vehiclerequest_vehicle";
-		if($status==1){
+		if ($status==1) {
 			$sql .= " SET ".$statusfield." = ".((int) $status)." , fk_user_modif=".$user->id." , fk_last_request=".$this->id;
-		}else{
+		} else {
 			$sql .= " SET ".$statusfield." = ".((int) $status)." , fk_user_modif=".$user->id;
 		}
 
 		$sql .= " WHERE rowid = ".((int) $vehicle_id);
-		$this->myQuery($sql,$user,$notrigger,$triggercode);
-
-
+		$this->myQuery($sql, $user, $notrigger, $triggercode);
 	}
 
-	public function myQuery($sql,$user,$notrigger=0,$triggercode='')
+	public function myQuery($sql, $user, $notrigger = 0, $triggercode = '')
 	{
 		$error = 0;
 
@@ -745,7 +738,6 @@ class VehicleRequest extends CommonObject
 			}
 
 			if (!$error) {
-
 				$this->db->commit();
 				return 1;
 			} else {

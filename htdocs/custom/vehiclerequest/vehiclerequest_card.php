@@ -512,10 +512,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 	// Buttons for actions
-//if(in_array($object->fk_user_creat,$user->get_children()))
-//	print 'is child'."\n";
-//
-//print $object->fk_user_creat;
+	//if(in_array($object->fk_user_creat,$user->get_children()))
+	//  print 'is child'."\n";
+	//
+	//print $object->fk_user_creat;
 
 
 	if ($action != 'presend' && $action != 'editline') {
@@ -528,17 +528,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		if (empty($reshook)) {
 			// Send
-//			if (empty($user->socid)) {
-//				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&token='.newToken().'#formmailbeforetitle');
-//			}
+			//          if (empty($user->socid)) {
+			//              print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&token='.newToken().'#formmailbeforetitle');
+			//          }
 
-//			// Back to draft
-//			if ($object->status == $object::STATUS_VALIDATED) {
-//				print dolGetButtonAction($langs->trans('SetToDraft'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken(), '', $permissiontoadd);
-//			}
+			//          // Back to draft
+			//          if ($object->status == $object::STATUS_VALIDATED) {
+			//              print dolGetButtonAction($langs->trans('SetToDraft'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken(), '', $permissiontoadd);
+			//          }
 
 			// Approve Vehicle request
-			if ($object->approval_status == $object::APPROVAL_PENDING && in_array($object->fk_user_creat,$user->getAllChildIds())) {
+			if ($object->approval_status == $object::APPROVAL_PENDING && in_array($object->fk_user_creat, $user->getAllChildIds())) {
 				print dolGetButtonAction($langs->trans('Approve'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=setapproved&token='.newToken(), '', $permissiontoapprove);
 				print dolGetButtonAction($langs->trans('Reject'), '', 'danger', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=setrejected&token='.newToken(), '', $permissiontoapprove);
 			}
@@ -551,22 +551,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 
-			if($permissiontoassign){
-
-			print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
+			if ($permissiontoassign) {
+				print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 			}
 			// Validate
-//			if ($object->status == $object::STATUS_DRAFT) {
-//				if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
-//					print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken(), '', $permissiontoadd);
-//				} else {
-//					$langs->load("errors");
-//					print dolGetButtonAction($langs->trans("ErrorAddAtLeastOneLineFirst"), $langs->trans("Validate"), 'default', '#', '', 0);
-//				}
-//			}
+			//          if ($object->status == $object::STATUS_DRAFT) {
+			//              if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
+			//                  print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken(), '', $permissiontoadd);
+			//              } else {
+			//                  $langs->load("errors");
+			//                  print dolGetButtonAction($langs->trans("ErrorAddAtLeastOneLineFirst"), $langs->trans("Validate"), 'default', '#', '', 0);
+			//              }
+			//          }
 
 			// Clone
-//			print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid)?'&socid='.$object->socid:'').'&action=clone&token='.newToken(), '', $permissiontoadd);
+			//          print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid)?'&socid='.$object->socid:'').'&action=clone&token='.newToken(), '', $permissiontoadd);
 
 			/*
 			if ($permissiontoadd) {
@@ -586,12 +585,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			*/
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			if($object->approval_status == $object::APPROVAL_PENDING && $user->id==$object->fk_user_creat){
-
-
-			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));
+			if ($object->approval_status == $object::APPROVAL_PENDING && $user->id==$object->fk_user_creat) {
+				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));
 			}
-			}
+		}
 		print '</div>'."\n";
 	}
 

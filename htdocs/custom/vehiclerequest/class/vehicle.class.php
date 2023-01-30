@@ -216,7 +216,6 @@ class Vehicle extends CommonObject
 				}
 			}
 		}
-
 	}
 
 	/**

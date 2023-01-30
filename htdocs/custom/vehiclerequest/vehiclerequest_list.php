@@ -103,7 +103,7 @@ $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always ''
 $id = GETPOST('id', 'int');
 
 //custom variables
-$idmenu=GETPOST('idmenu','int');
+$idmenu=GETPOST('idmenu', 'int');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -293,13 +293,13 @@ $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
-if($permissiontoassign){
+if ($permissiontoassign) {
 	$sql .= " WHERE 1 = 1";
-}elseif($permissiontoapprove){
+} elseif ($permissiontoapprove) {
 	$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid=t.fk_user_creat ";
 	$sql.=" WHERE  u.fk_user={$user->id}";
 	$sql .= " OR t.fk_user_creat= {$user->id}";
-}else{
+} else {
 	$sql .= "  WHERE t.fk_user_creat= {$user->id}";
 }
 // Add table from hooks
@@ -312,7 +312,7 @@ $sql .= $hookmanager->resPrint;
 if ($object->ismultientitymanaged == 1) {
 	$sql .= " WHERE t.entity IN (".getEntity($object->element).")";
 } else {
-//	$sql .= " WHERE 1 = 1";
+	//  $sql .= " WHERE 1 = 1";
 }
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
