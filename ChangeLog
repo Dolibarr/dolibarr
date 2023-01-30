@@ -176,6 +176,7 @@ NEW: VAT - Admin - Add information on deadline day for submission of VAT declara
 NEW: expand/collapse permissions on user permission page
 NEW: Show delivery mode on PDF for proposals
 NEW: Add the target to select attendees of event for emailings
+NEW: Can set background style with MAIN_LOGIN_BACKGROUND_STYLE
 
  Modules
 NEW: Experimental module Asset
@@ -183,7 +184,7 @@ NEW: Experimental module Asset
 For developers or integrators:
 ------------------------------
 
-NEW: ModuleBuilder can generate code of class from an existing SQL table
+NEW: ModuleBuilder can generate code for a class from an existing SQL table
 NEW: #22370 Modulebuilder supports 'alwayseditable' (like extrafields)
 NEW: #20912 Add trigger to record the event of sending an email from a project
 NEW: #21750 Added "Get lines and Post lines from BOM" at the REST Service
@@ -196,27 +197,27 @@ NEW: hook to modify supplier product html select
 NEW: Add new hook for show virtual stock details on product stock card
 NEW: Add new hooks for actioncomm
 NEW: conf->global->SYSLOG_FILE_ONEPERSESSION accept a string
-NEW: translate for contact type API, setup/ticket API, shipping method API
-NEW: All ajax pages have now a top_httphead()
+NEW: translation for contact type API, setup/ticket API, shipping method API
+NEW: All ajax pages have now a header build with top_httphead()
 NEW: support multilang in Civilities API
 NEW: Add API for the partnership module
 NEW: Add "Get lines and Post lines from BOM" in the API
-NEW: Replace fk_categories_product with categories_product in inventory
-NEW: Rewrite of SQL request. Removed the join on category (for filter on categ), replaced with a EXISTS/NOT
+NEW: Replace property fk_categories_product with categories_product in inventory class
+NEW: Rewrite of SQL request. Removed the join on category table (for filter on category), replaced with a EXISTS/NOT
 
 
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * Minimal PHP version is now PHP 7.0 instead of PHP 5.6
-* The signature of method getNomUrl() of class ProductFournisseur has been modified to match the signature of method Product
+* The signature of method getNomUrl() of class ProductFournisseur has been modified to match the signature of method Product->getNomUrl()
 * Trigger ORDER_SUPPLIER_DISPATCH is removed, use ORDER_SUPPLIER_RECEIVE and/or LINEORDER_SUPPLIER_DISPATCH instead.
 * All functions fetch_all() have been set to deprecated for naming consitency, use fetchAll() instead.
 * Code standardization: '$user->rights->propale' is now '$user->rights->propal' everywhere.
 * Deprecated method set_billed() on shipment and reception class has been removed. Use setBilled() instead.
 * Tables llx_prelevement_facture and llx_prelevement_facture_demande have been renamed into llx_prelevement and llx_prelevement_demande.
 * Rename MAIN_LIST_ALLOW_NOTES into MAIN_LIST_HIDE_NOTES and rename MAIN_LIST_ALLOW_PRIVATE_NOTES into MAIN_LIST_HIDE_PRIVATE_NOTES
-* Rename the substitution for project label instead of project title in substitution variables
+* Rename the substitution for "project label" instead of "project title" in substitution variables
 
 
 ***** ChangeLog for 16.0.4 compared to 16.0.2 *****
