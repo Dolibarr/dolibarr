@@ -213,11 +213,6 @@ if (empty($reshook)) {
 		$object->town = (string) GETPOST("town", 'alpha');
 		$object->country_id = (int) GETPOST("country_id", 'int');
 		$object->state_id = (int) GETPOST("state_id", 'int');
-		//$object->jabberid		= GETPOST("jabberid", 'alpha');
-		//$object->skype		= GETPOST("skype", 'alpha');
-		//$object->twitter		= GETPOST("twitter", 'alpha');
-		//$object->facebook		= GETPOST("facebook", 'alpha');
-		//$object->linkedin		= GETPOST("linkedin", 'alpha');
 		$object->socialnetworks = array();
 		if (isModEnabled('socialnetworks')) {
 			foreach ($socialnetworks as $key => $value) {
@@ -419,11 +414,6 @@ if (empty($reshook)) {
 
 			$object->email = (string) GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
 			$object->no_email = GETPOST("no_email", "int");
-			//$object->jabberid		= GETPOST("jabberid", 'alpha');
-			//$object->skype		= GETPOST("skype", 'alpha');
-			//$object->twitter		= GETPOST("twitter", 'alpha');
-			//$object->facebook		= GETPOST("facebook", 'alpha');
-			//$object->linkedin		= GETPOST("linkedin", 'alpha');
 			$object->socialnetworks = array();
 			if (isModEnabled('socialnetworks')) {
 				foreach ($socialnetworks as $key => $value) {

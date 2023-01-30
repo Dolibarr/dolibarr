@@ -28,6 +28,12 @@
 trait CommonSocialNetworks
 {
 	/**
+	 * @var array array of socialnetworks
+	 */
+	public $socialnetworks;
+
+
+	/**
 	 * Show social network part if the module is enabled with hiding functionality
 	 *
 	 * @param	array	$socialnetworks		Array of social networks

@@ -383,11 +383,6 @@ class Societe extends CommonObject
 	public $no_email;
 
 	/**
-	 * @var array array of socialnetworks
-	 */
-	public $socialnetworks;
-
-	/**
 	 * Skype username
 	 * @var string
 	 * @deprecated
