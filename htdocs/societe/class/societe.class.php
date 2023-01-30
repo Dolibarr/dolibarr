@@ -486,10 +486,10 @@ class Societe extends CommonObject
 	public $idprof6;
 
 	/**
-	 * Object of company
+	 * Social object of the company
 	 * @var string
 	 */
-	public $object;
+	public $socialobject;
 
 	/**
 	 * @var string Prefix comm
