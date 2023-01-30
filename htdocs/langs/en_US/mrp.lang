@@ -102,6 +102,7 @@ NbOperatorsRequired=Number of operators required
 THMOperatorEstimated=Estimated operator THM
 THMMachineEstimated=Estimated machine THM
 WorkstationType=Workstation type
+DefaultWorkstation=Default workstation
 Human=Human
 Machine=Machine
 HumanMachine=Human / Machine
