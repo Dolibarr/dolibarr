@@ -236,7 +236,7 @@ abstract class CommonDocGenerator
 			'mycompany_idprof5'=>$mysoc->idprof5,
 			'mycompany_idprof6'=>$mysoc->idprof6,
 			'mycompany_vatnumber'=>$mysoc->tva_intra,
-			'mycompany_object'=>$mysoc->object,
+			'mycompany_object'=>$mysoc->socialobject,
 			'mycompany_note_private'=>$mysoc->note_private,
 			//'mycompany_note_public'=>$mysoc->note_public,        // Only private not exists for "mysoc" but both for thirdparties
 		);
