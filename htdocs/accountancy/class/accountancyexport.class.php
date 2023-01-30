@@ -203,7 +203,7 @@ class AccountancyExport
 					'ACCOUNTING_EXPORT_FORMAT' => empty($conf->global->ACCOUNTING_EXPORT_FORMAT) ? 'txt' : $conf->global->ACCOUNTING_EXPORT_FORMAT,
 					'ACCOUNTING_EXPORT_SEPARATORCSV' => empty($conf->global->ACCOUNTING_EXPORT_SEPARATORCSV) ? ',' : $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV,
 					'ACCOUNTING_EXPORT_ENDLINE' => empty($conf->global->ACCOUNTING_EXPORT_ENDLINE) ? 1 : $conf->global->ACCOUNTING_EXPORT_ENDLINE,
-					'ACCOUNTING_EXPORT_DATE' => empty($conf->global->ACCOUNTING_EXPORT_DATE) ? '%d%m%Y' : $conf->global->ACCOUNTING_EXPORT_DATE,
+					'ACCOUNTING_EXPORT_DATE' => getDolGlobalString('ACCOUNTING_EXPORT_DATE', '%Y-%m-%d'),
 				),
 				self::$EXPORT_TYPE_CEGID => array(
 					'label' => $langs->trans('Modelcsv_CEGID'),
