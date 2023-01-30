@@ -237,6 +237,8 @@ abstract class CommonObject
 
 	/**
 	 * @var string The object's old reference before update
+	 * @see $oldcopy
+	 * @deprecated
 	 */
 	public $oldref;
 
