@@ -961,27 +961,6 @@ abstract class CommonObject
 					}
 					$outdone++;
 				}
-			} else {	// Old code to remove
-				if (!empty($this->skype)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
-				}
-				$outdone++;
-				if (!empty($this->jabberid)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
-				}
-				$outdone++;
-				if (!empty($this->twitter)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->twitter, $this->id, $object->id, 'twitter');
-				}
-				$outdone++;
-				if (!empty($this->facebook)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->facebook, $this->id, $object->id, 'facebook');
-				}
-				$outdone++;
-				if (!empty($this->linkedin)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->linkedin, $this->id, $object->id, 'linkedin');
-				}
-				$outdone++;
 			}
 
 			if ($outsocialnetwork) {

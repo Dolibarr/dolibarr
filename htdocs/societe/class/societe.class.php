@@ -15,7 +15,7 @@
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018	    Philippe Grand	        <philippe.grand@atoo-net.com>
  * Copyright (C) 2019-2020  Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
  * Copyright (C) 2022		ButterflyOfFire         <butterflyoffire+dolibarr@protonmail.com>
  *
@@ -130,6 +130,22 @@ class Societe extends CommonObject
 	 */
 	public $restrictiononfksoc = 1;
 
+	/**
+	 * @var Societe To store a cloned copy of object before to edit it and keep track of old properties
+	 */
+	public $oldcopy;
+
+	/**
+	 * array of supplier categories
+	 * @var array
+	 */
+	public $SupplierCategories = array();
+
+	/**
+	 * prefixCustomerIsRequired
+	 * @var int
+	 */
+	public $prefixCustomerIsRequired;
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -353,6 +369,7 @@ class Societe extends CommonObject
 	 * @var string
 	 */
 	public $fax;
+
 	/**
 	 * Email
 	 * @var string
@@ -360,9 +377,10 @@ class Societe extends CommonObject
 	public $email;
 
 	/**
-	 * @var array array of socialnetworks
+	 * No Email
+	 * @var int		Set if company email found into unsubscribe of emailing list table
 	 */
-	public $socialnetworks;
+	public $no_email;
 
 	/**
 	 * Skype username
@@ -463,6 +481,12 @@ class Societe extends CommonObject
 	 * @var string
 	 */
 	public $idprof6;
+
+	/**
+	 * Social object of the company
+	 * @var string
+	 */
+	public $socialobject;
 
 	/**
 	 * @var string Prefix comm
@@ -785,11 +809,6 @@ class Societe extends CommonObject
 	 * @var string Multicurrency code
 	 */
 	public $multicurrency_code;
-
-	/**
-	 * @var string  Set if company email found into unsubscribe of emailing list table
-	 */
-	public $no_email;
 
 	// Fields loaded by fetchPartnerships()
 
@@ -4263,14 +4282,15 @@ class Societe extends CommonObject
 		global $langs;
 
 		$this->id = 0;
-		$this->name = empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? '' : $conf->global->MAIN_INFO_SOCIETE_NOM;
-		$this->address = empty($conf->global->MAIN_INFO_SOCIETE_ADDRESS) ? '' : $conf->global->MAIN_INFO_SOCIETE_ADDRESS;
-		$this->zip = empty($conf->global->MAIN_INFO_SOCIETE_ZIP) ? '' : $conf->global->MAIN_INFO_SOCIETE_ZIP;
-		$this->town = empty($conf->global->MAIN_INFO_SOCIETE_TOWN) ? '' : $conf->global->MAIN_INFO_SOCIETE_TOWN;
-		$this->region_code = empty($conf->global->MAIN_INFO_SOCIETE_REGION) ? '' : $conf->global->MAIN_INFO_SOCIETE_REGION;
-		$this->object = empty($conf->global->MAIN_INFO_SOCIETE_OBJECT) ? '' : $conf->global->MAIN_INFO_SOCIETE_OBJECT;
+		$this->name = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
+		$this->address = getDolGlobalString('MAIN_INFO_SOCIETE_ADDRESS');
+		$this->zip = getDolGlobalString('MAIN_INFO_SOCIETE_ZIP');
+		$this->town = getDolGlobalString('MAIN_INFO_SOCIETE_TOWN');
+		$this->region_code = getDolGlobalString('MAIN_INFO_SOCIETE_REGION');
 
-		$this->note_private = empty($conf->global->MAIN_INFO_SOCIETE_NOTE) ? '' : $conf->global->MAIN_INFO_SOCIETE_NOTE;
+		$this->socialobject = getDolGlobalString('MAIN_INFO_SOCIETE_OBJECT');
+
+		$this->note_private = getDolGlobalString('MAIN_INFO_SOCIETE_NOTE');
 
 		$this->nom = $this->name; // deprecated
 
@@ -4282,8 +4302,8 @@ class Societe extends CommonObject
 			if (!empty($tmp[1])) {   // If $conf->global->MAIN_INFO_SOCIETE_COUNTRY is "id:code:label"
 				$country_code = $tmp[1];
 				$country_label = $tmp[2];
-			} else // For backward compatibility
-			{
+			} else {
+				// For backward compatibility
 				dol_syslog("Your country setup use an old syntax. Reedit it using setup area.", LOG_WARNING);
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 				$country_code = getCountry($country_id, 2, $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
@@ -4320,56 +4340,56 @@ class Societe extends CommonObject
 			$this->state = ($langs->trans('State'.$state_code) != 'State'.$state_code) ? $langs->trans('State'.$state_code) : $state_label;
 		}
 
-		$this->phone = empty($conf->global->MAIN_INFO_SOCIETE_TEL) ? '' : $conf->global->MAIN_INFO_SOCIETE_TEL;
-		$this->fax = empty($conf->global->MAIN_INFO_SOCIETE_FAX) ? '' : $conf->global->MAIN_INFO_SOCIETE_FAX;
-		$this->url = empty($conf->global->MAIN_INFO_SOCIETE_WEB) ? '' : $conf->global->MAIN_INFO_SOCIETE_WEB;
+		$this->phone = getDolGlobalString('MAIN_INFO_SOCIETE_TEL');
+		$this->fax = getDolGlobalString('MAIN_INFO_SOCIETE_FAX');
+		$this->url = getDolGlobalString('MAIN_INFO_SOCIETE_WEB');
 
 		// Social networks
-		$this->facebook_url = empty($conf->global->MAIN_INFO_SOCIETE_FACEBOOK_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_FACEBOOK_URL;
-		$this->twitter_url = empty($conf->global->MAIN_INFO_SOCIETE_TWITTER_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_TWITTER_URL;
-		$this->linkedin_url = empty($conf->global->MAIN_INFO_SOCIETE_LINKEDIN_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_LINKEDIN_URL;
-		$this->instagram_url = empty($conf->global->MAIN_INFO_SOCIETE_INSTAGRAM_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_INSTAGRAM_URL;
-		$this->youtube_url = empty($conf->global->MAIN_INFO_SOCIETE_YOUTUBE_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_YOUTUBE_URL;
-		$this->github_url = empty($conf->global->MAIN_INFO_SOCIETE_GITHUB_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_GITHUB_URL;
+		$facebook_url = getDolGlobalString('MAIN_INFO_SOCIETE_FACEBOOK_URL');
+		$twitter_url = getDolGlobalString('MAIN_INFO_SOCIETE_TWITTER_URL');
+		$linkedin_url = getDolGlobalString('MAIN_INFO_SOCIETE_LINKEDIN_URL');
+		$instagram_url = getDolGlobalString('MAIN_INFO_SOCIETE_INSTAGRAM_URL');
+		$youtube_url = getDolGlobalString('MAIN_INFO_SOCIETE_YOUTUBE_URL');
+		$github_url = getDolGlobalString('MAIN_INFO_SOCIETE_GITHUB_URL');
 		$this->socialnetworks = array();
-		if (!empty($this->facebook_url)) {
-			$this->socialnetworks['facebook'] = $this->facebook_url;
+		if (!empty($facebook_url)) {
+			$this->socialnetworks['facebook'] = $facebook_url;
 		}
-		if (!empty($this->twitter_url)) {
-			$this->socialnetworks['twitter'] = $this->twitter_url;
+		if (!empty($twitter_url)) {
+			$this->socialnetworks['twitter'] = $twitter_url;
 		}
-		if (!empty($this->linkedin_url)) {
-			$this->socialnetworks['linkedin'] = $this->linkedin_url;
+		if (!empty($linkedin_url)) {
+			$this->socialnetworks['linkedin'] = $linkedin_url;
 		}
-		if (!empty($this->instagram_url)) {
-			$this->socialnetworks['instagram'] = $this->instagram_url;
+		if (!empty($instagram_url)) {
+			$this->socialnetworks['instagram'] = $instagram_url;
 		}
-		if (!empty($this->youtube_url)) {
-			$this->socialnetworks['youtube'] = $this->youtube_url;
+		if (!empty($youtube_url)) {
+			$this->socialnetworks['youtube'] = $youtube_url;
 		}
-		if (!empty($this->github_url)) {
-			$this->socialnetworks['github'] = $this->github_url;
+		if (!empty($github_url)) {
+			$this->socialnetworks['github'] = $github_url;
 		}
 
 		// Id prof generiques
-		$this->idprof1 = empty($conf->global->MAIN_INFO_SIREN) ? '' : $conf->global->MAIN_INFO_SIREN;
-		$this->idprof2 = empty($conf->global->MAIN_INFO_SIRET) ? '' : $conf->global->MAIN_INFO_SIRET;
-		$this->idprof3 = empty($conf->global->MAIN_INFO_APE) ? '' : $conf->global->MAIN_INFO_APE;
-		$this->idprof4 = empty($conf->global->MAIN_INFO_RCS) ? '' : $conf->global->MAIN_INFO_RCS;
-		$this->idprof5 = empty($conf->global->MAIN_INFO_PROFID5) ? '' : $conf->global->MAIN_INFO_PROFID5;
-		$this->idprof6 = empty($conf->global->MAIN_INFO_PROFID6) ? '' : $conf->global->MAIN_INFO_PROFID6;
-		$this->tva_intra = empty($conf->global->MAIN_INFO_TVAINTRA) ? '' : $conf->global->MAIN_INFO_TVAINTRA; // VAT number, not necessarly INTRA.
-		$this->managers = empty($conf->global->MAIN_INFO_SOCIETE_MANAGERS) ? '' : $conf->global->MAIN_INFO_SOCIETE_MANAGERS;
-		$this->capital = empty($conf->global->MAIN_INFO_CAPITAL) ? '' : $conf->global->MAIN_INFO_CAPITAL;
-		$this->forme_juridique_code = empty($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE) ? '' : $conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE;
-		$this->email = empty($conf->global->MAIN_INFO_SOCIETE_MAIL) ? '' : $conf->global->MAIN_INFO_SOCIETE_MAIL;
-		$this->default_lang = (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT);
-		$this->logo = empty($conf->global->MAIN_INFO_SOCIETE_LOGO) ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO;
-		$this->logo_small = empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL) ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL;
-		$this->logo_mini = empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI) ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
-		$this->logo_squarred = empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED) ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED;
-		$this->logo_squarred_small = empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL) ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL;
-		$this->logo_squarred_mini = empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI) ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI;
+		$this->idprof1 = getDolGlobalString('MAIN_INFO_SIREN');
+		$this->idprof2 = getDolGlobalString('MAIN_INFO_SIRET');
+		$this->idprof3 = getDolGlobalString('MAIN_INFO_APE');
+		$this->idprof4 = getDolGlobalString('MAIN_INFO_RCS');
+		$this->idprof5 = getDolGlobalString('MAIN_INFO_PROFID5');
+		$this->idprof6 = getDolGlobalString('MAIN_INFO_PROFID6');
+		$this->tva_intra = getDolGlobalString('MAIN_INFO_TVAINTRA'); // VAT number, not necessarly INTRA.
+		$this->managers = getDolGlobalString('MAIN_INFO_SOCIETE_MANAGERS');
+		$this->capital = getDolGlobalString('MAIN_INFO_CAPITAL');
+		$this->forme_juridique_code = getDolGlobalString('MAIN_INFO_SOCIETE_FORME_JURIDIQUE');
+		$this->email = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
+		$this->default_lang = getDolGlobalString('MAIN_LANG_DEFAULT', 'auto');
+		$this->logo =getDolGlobalString('MAIN_INFO_SOCIETE_LOGO');
+		$this->logo_small = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SMALL');
+		$this->logo_mini = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_MINI');
+		$this->logo_squarred = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED');
+		$this->logo_squarred_small = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL');
+		$this->logo_squarred_mini = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI');
 
 		// Define if company use vat or not
 		$this->tva_assuj = $conf->global->FACTURE_TVAOPTION;

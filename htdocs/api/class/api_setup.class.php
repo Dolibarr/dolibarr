@@ -1762,11 +1762,6 @@ class Setup extends DolibarrApi
 				throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_COMPANY');
 		}
 
-		unset($mysoc->skype);
-		unset($mysoc->twitter);
-		unset($mysoc->facebook);
-		unset($mysoc->linkedin);
-
 		unset($mysoc->pays);
 		unset($mysoc->note);
 		unset($mysoc->nom);
