@@ -33,6 +33,7 @@ if (($id > 0 || (!empty($ref) && !in_array($action, array('create', 'createtask'
 		$ret = $object->fetch($id, (empty($ref)? '' : $ref));
 		if ($ret > 0) {
 			$object->fetch_thirdparty();
+			$object->oldcopy = dol_clone($object);
 			$id = $object->id;
 		} else {
 			if (empty($object->error) && !count($object->errors)) {
