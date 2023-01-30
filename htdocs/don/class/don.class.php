@@ -772,7 +772,7 @@ class Don extends CommonObject
 	 */
 	public function setPaid($id, $modepayment = 0)
 	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2, paid = 1";
 		if ($modepayment) {
 			$sql .= ", fk_payment = ".((int) $modepayment);
 		}
@@ -782,6 +782,7 @@ class Don extends CommonObject
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
 				$this->statut = 2;
+				$this->paid = 1;
 				return 1;
 			} else {
 				return 0;
@@ -1146,9 +1147,10 @@ class Don extends CommonObject
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @return		string		HTML Code for Kanban thumb.
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '')
+	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $langs;
 

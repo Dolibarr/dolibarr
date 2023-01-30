@@ -835,15 +835,22 @@ if ($resql) {
 					print '<div class="box-flex-container">';
 				}
 
-				$holidaystatic->fk_type = $holidaystatic->getTypes(1, -1)[$obj->fk_type]['rowid'];
-				$holidaystatic->fk_user = $userstatic->getNomUrl(1);
+				$holidaystatic->fk_type = $typeleaves[$obj->fk_type]['rowid'];
+
 				// Output Kanban
 				if ($massactionbutton || $massaction) {
 					$selected = 0;
 					if (in_array($object->id, $arrayofselected)) {
 						$selected = 1;
 					}
-					print $holidaystatic->getKanbanView('');
+					if (empty($typeleaves[$obj->fk_type])) {
+						$labeltypeleavetoshow = $langs->trans("TypeWasDisabledOrRemoved", $obj->fk_type);
+					} else {
+						$labeltypeleavetoshow = ($langs->trans($typeleaves[$obj->fk_type]['code']) != $typeleaves[$obj->fk_type]['code'] ? $langs->trans($typeleaves[$obj->fk_type]['code']) : $typeleaves[$obj->fk_type]['label']);
+					}
+
+					$arraydata = array('user'=>$userstatic, 'labeltype'=>$labeltypeleavetoshow);
+					print $holidaystatic->getKanbanView('', $arraydata);
 				}
 				if ($i == (min($num, $limit) - 1)) {
 					print '</div>';

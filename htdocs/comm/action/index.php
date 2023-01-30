@@ -1945,7 +1945,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						}
 
 						$listofusertoshow = '';
-						$listofusertoshow .= '<br>'.$cacheusers[$tmpid]->getNomUrl(-1, '', 0, 0, 0, 0, '', 'paddingright valigntextbottom');
+						$listofusertoshow .= '<br>'.$cacheusers[$tmpid]->getNomUrl(-1, '', 0, 0, 0, 0, '', 'paddingright valignmiddle');
 						print $listofusertoshow;
 					} else {										// Other calendar
 						// Picto
@@ -2020,7 +2020,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 								$cacheusers[$tmpid] = $newuser;
 							}
 
-							$listofusertoshow .= $cacheusers[$tmpid]->getNomUrl(-3, '', 0, 0, 0, 0, '', 'paddingright valigntextbottom');
+							$listofusertoshow .= $cacheusers[$tmpid]->getNomUrl(-3, '', 0, 0, 0, 0, '', 'valignmiddle');
 						}
 
 						print $titletoshow;
@@ -2048,7 +2048,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							}
 						}
 						if (!empty($contact_id) && $contact_id > 0) {
-							if (!is_object($cachecontacts[$contact_id])) {
+							if (empty($cachecontacts[$contact_id]) || !is_object($cachecontacts[$contact_id])) {
 								$contact = new Contact($db);
 								$contact->fetch($contact_id);
 								$cachecontacts[$contact_id] = $contact;
@@ -2070,7 +2070,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							$linerelatedto .= dolGetElementUrl($event->fk_element, $event->elementtype, 1);
 						}
 						if ($linerelatedto) {
-							print '<br>'.$linerelatedto;
+							print ' '.$linerelatedto;
 						}
 					}
 

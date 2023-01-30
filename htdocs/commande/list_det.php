@@ -137,10 +137,10 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) {
-	$sortfield = 'c.ref';
+	$sortfield = 'pr.ref';
 }
 if (!$sortorder) {
-	$sortorder = 'DESC';
+	$sortorder = 'ASC';
 }
 
 $show_shippable_command = GETPOST('show_shippable_command', 'aZ09');

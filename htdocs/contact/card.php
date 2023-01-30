@@ -213,11 +213,6 @@ if (empty($reshook)) {
 		$object->town = (string) GETPOST("town", 'alpha');
 		$object->country_id = (int) GETPOST("country_id", 'int');
 		$object->state_id = (int) GETPOST("state_id", 'int');
-		//$object->jabberid		= GETPOST("jabberid", 'alpha');
-		//$object->skype		= GETPOST("skype", 'alpha');
-		//$object->twitter		= GETPOST("twitter", 'alpha');
-		//$object->facebook		= GETPOST("facebook", 'alpha');
-		//$object->linkedin		= GETPOST("linkedin", 'alpha');
 		$object->socialnetworks = array();
 		if (isModEnabled('socialnetworks')) {
 			foreach ($socialnetworks as $key => $value) {
@@ -322,9 +317,6 @@ if (empty($reshook)) {
 		$result = $object->fetch($id);
 		$object->oldcopy = clone $object;
 
-		$object->old_lastname = (string) GETPOST("old_lastname", 'alpha');
-		$object->old_firstname = (string) GETPOST("old_firstname", 'alpha');
-
 		$result = $object->delete(); // TODO Add $user as first param
 		if ($result > 0) {
 			setEventMessages("RecordDeleted", null, 'mesgs');
@@ -408,9 +400,6 @@ if (empty($reshook)) {
 
 			$object->oldcopy = clone $object;
 
-			$object->old_lastname = (string) GETPOST("old_lastname", 'alpha');
-			$object->old_firstname = (string) GETPOST("old_firstname", 'alpha');
-
 			$object->socid = GETPOST("socid", 'int');
 			$object->lastname = (string) GETPOST("lastname", 'alpha');
 			$object->firstname = (string) GETPOST("firstname", 'alpha');
@@ -425,11 +414,6 @@ if (empty($reshook)) {
 
 			$object->email = (string) GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
 			$object->no_email = GETPOST("no_email", "int");
-			//$object->jabberid		= GETPOST("jabberid", 'alpha');
-			//$object->skype		= GETPOST("skype", 'alpha');
-			//$object->twitter		= GETPOST("twitter", 'alpha');
-			//$object->facebook		= GETPOST("facebook", 'alpha');
-			//$object->linkedin		= GETPOST("linkedin", 'alpha');
 			$object->socialnetworks = array();
 			if (isModEnabled('socialnetworks')) {
 				foreach ($socialnetworks as $key => $value) {
@@ -862,9 +846,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</tr>';
 			}
 
-
+			// Social network
 			if (isModEnabled('socialnetworks')) {
-				showSocialNetwork();
+				$object->showSocialNetwork($socialnetworks, ($conf->browser->layout == 'phone' ? 2 : 4));
 			}
 
 			// Visibility
@@ -972,7 +956,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 								/* set country at end because it will trigger page refresh */
 								console.log("Set country id to '.dol_escape_js($objsoc->country_id).'");
 								$(\'select[name="country_id"]\').val("'.dol_escape_js($objsoc->country_id).'").trigger("change");   /* trigger required to update select2 components */
-            				});
+							});
 						})'."\n";
 				print '</script>'."\n";
 			}
@@ -982,8 +966,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<input type="hidden" name="id" value="'.$id.'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="contactid" value="'.$object->id.'">';
-			print '<input type="hidden" name="old_lastname" value="'.$object->lastname.'">';
-			print '<input type="hidden" name="old_firstname" value="'.$object->firstname.'">';
 			if (!empty($backtopage)) {
 				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			}
@@ -1033,7 +1015,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<div class="paddingrightonly valignmiddle inline-block quatrevingtpercent">';
 			print '<textarea class="flat minwidth200 centpercent" name="address" id="address">'.(GETPOSTISSET("address") ? GETPOST("address", 'alphanohtml') : $object->address).'</textarea>';
 			print '</div><div class="paddingrightonly valignmiddle inline-block">';
-			if ($conf->use_javascript_ajax) {
+			if (!empty($conf->use_javascript_ajax)) {
 				print '<a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a><br>';
 			}
 			print '</div>';
@@ -1136,8 +1118,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</tr>';
 			}
 
+			// Social network
 			if (isModEnabled('socialnetworks')) {
-				showSocialNetwork();
+				$object->showSocialNetwork($socialnetworks, ($conf->browser->layout == 'phone' ? 2 : 4));
 			}
 
 			// Visibility
@@ -1590,55 +1573,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}
-}
-
-/**
- * Show social network part if the module is enabled with hiding functionality
- *
- * @return void
- */
-function showSocialNetwork()
-{
-	global $socialnetworks, $object, $form, $object, $langs;
-	echo '<script type="text/javascript">$("document").ready(function() {toogleSocialNetwork(false); });</script>';
-
-	print '<tr><td>&nbsp;</td><td><a id="lnk" href="javascript:toogleSocialNetwork(true)"></a></td></tr>';
-	foreach ($socialnetworks as $key => $value) {
-		if ($value['active']) {
-			print '<tr class="soc_network">';
-			print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
-			print '<td colspan="3">';
-			if (!empty($value['icon'])) {
-				print '<span class="fa '.$value['icon'].'"></span>';
-			}
-			print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ?GETPOST($key, 'alphanohtml') : (!empty($object->socialnetworks[$key]) ? $object->socialnetworks[$key] : "")).'">';
-			print '</td>';
-			print '</tr>';
-		} elseif (!empty($object->socialnetworks[$key])) {
-			print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
-		}
-	}
-
-	print '<script type="text/javascript">
-
-	function toogleSocialNetwork(chgCookieState) {
-		const lnk = $("#lnk");
-		const items = $(".soc_network");
-		var cookieState = document.cookie.split(";").some((item) => item.trim().startsWith("DOLUSER_SOCIALNETWORKS_SHOW=true")) == true;
-
-		if (!chgCookieState) cookieState = !cookieState ;
-
-		if (cookieState) {
-			items.hide();
-			lnk.text("'.dol_escape_js($langs->transnoentitiesnoconv("ShowSocialNetwork")).'...");
-			if(chgCookieState) {document.cookie = "DOLUSER_SOCIALNETWORKS_SHOW=false; SameSite=Strict"};
-		} else {
-			items.show();
-			lnk.text("'.dol_escape_js($langs->transnoentitiesnoconv("HideSocialNetwork")).'");
-			if(chgCookieState) {document.cookie = "DOLUSER_SOCIALNETWORKS_SHOW=true; SameSite=Strict";}
-		}				
-	}
-	</script>';
 }
 
 

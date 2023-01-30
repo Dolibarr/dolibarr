@@ -1419,7 +1419,7 @@ if ($object->id > 0) {
 		$sql .= ', f.total_tva';
 		$sql .= ', f.total_ttc';
 		$sql .= ', f.entity';
-		$sql .= ', f.datef as df, f.datec as dc, f.paye as paye, f.fk_statut as status';
+		$sql .= ', f.datef as df, f.date_lim_reglement as dl, f.datec as dc, f.paye as paye, f.fk_statut as status';
 		$sql .= ', s.nom, s.rowid as socid';
 		$sql .= ', SUM(pf.amount) as am';
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
@@ -1427,7 +1427,7 @@ if ($object->id > 0) {
 		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $object->id);
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= ' GROUP BY f.rowid, f.ref, f.type, f.total_ht, f.total_tva, f.total_ttc,';
-		$sql .= ' f.entity, f.datef, f.datec, f.paye, f.fk_statut,';
+		$sql .= ' f.entity, f.datef, f.date_lim_reglement, f.datec, f.paye, f.fk_statut,';
 		$sql .= ' s.nom, s.rowid';
 		$sql .= " ORDER BY f.datef DESC, f.datec DESC";
 
@@ -1441,7 +1441,7 @@ if ($object->id > 0) {
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="5"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllBills").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '<td colspan="5"><table class="centpercent nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllBills").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
@@ -1458,6 +1458,8 @@ if ($object->id > 0) {
 				$facturestatic->total_tva = $objp->total_tva;
 				$facturestatic->total_ttc = $objp->total_ttc;
 				$facturestatic->statut = $objp->status;
+				$facturestatic->date = $db->jdate($objp->df);
+				$facturestatic->date_lim_reglement = $db->jdate($objp->dl);
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
@@ -1493,9 +1495,14 @@ if ($object->id > 0) {
 				//print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
 				print '</td>';
 				if ($objp->df > 0) {
-					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->df), 'day').'</td>';
+					print '<td width="80px" title="'.dol_escape_htmltag($langs->trans('DateInvoice')).'">'.dol_print_date($db->jdate($objp->df), 'day').'</td>';
 				} else {
-					print '<td class="right"><b>!!!</b></td>';
+					print '<td><b>!!!</b></td>';
+				}
+				if ($objp->dl > 0) {
+					print '<td width="80px" title="'.dol_escape_htmltag($langs->trans('DateMaxPayment')).'">'.dol_print_date($db->jdate($objp->dl), 'day').'</td>';
+				} else {
+					print '<td><b>!!!</b></td>';
 				}
 				print '<td class="right" style="min-width: 60px">';
 				print price($objp->total_ht);

@@ -598,6 +598,15 @@ abstract class CommonObject
 	protected $labelStatus;
 	protected $labelStatusShort;
 
+	/**
+	 * @var array nb used in load_stateboard
+	 */
+	public $nb = array();
+
+	/**
+	 * @var string output
+	 */
+	public $output;
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
@@ -773,34 +782,6 @@ abstract class CommonObject
 		if (isset($this->personal_email)) {
 			$this->personal_email = dol_strtolower($this->personal_email);
 		}
-	}
-
-	/**
-	 *	Return clicable link of object (with eventually picto)
-	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @return		string								HTML Code for Kanban thumb.
-	 */
-	public function getKanbanView($option = '')
-	{
-		$return = '<div class="box-flex-item box-flex-grow-zero">';
-		$return .= '<div class="info-box info-box-sm">';
-		$return .= '<span class="info-box-icon bg-infobox-action">';
-		$return .= img_picto('', $this->picto);
-		$return .= '</span>';
-		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		if (property_exists($this, 'label')) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
-		}
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
-		}
-		$return .= '</div>';
-		$return .= '</div>';
-		$return .= '</div>';
-
-		return $return;
 	}
 
 	/**
@@ -985,27 +966,6 @@ abstract class CommonObject
 					}
 					$outdone++;
 				}
-			} else {	// Old code to remove
-				if (!empty($this->skype)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
-				}
-				$outdone++;
-				if (!empty($this->jabberid)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
-				}
-				$outdone++;
-				if (!empty($this->twitter)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->twitter, $this->id, $object->id, 'twitter');
-				}
-				$outdone++;
-				if (!empty($this->facebook)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->facebook, $this->id, $object->id, 'facebook');
-				}
-				$outdone++;
-				if (!empty($this->linkedin)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->linkedin, $this->id, $object->id, 'linkedin');
-				}
-				$outdone++;
 			}
 
 			if ($outsocialnetwork) {
@@ -1315,11 +1275,11 @@ abstract class CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Delete all links between an object $this and all its contacts
+	 *    Delete all links between an object $this and all its contacts in llx_element_contact
 	 *
 	 *	  @param	string	$source		'' or 'internal' or 'external'
 	 *	  @param	string	$code		Type of contact (code or id)
-	 *    @return   int					>0 if OK, <0 if KO
+	 *    @return   int					<0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function delete_linked_contact($source = '', $code = '')
 	{
@@ -1335,11 +1295,15 @@ abstract class CommonObject
 			$listId = implode(",", $temp);
 		}
 
+		// If $listId is empty, we have not criteria on fk_c_type_contact so we will delete record on element_id for
+		// any type or record instead of only the ones of the current object. So we do nothing in such a case.
+		if (empty($listId)) {
+			return 0;
+		}
+
 		$sql = "DELETE FROM ".$this->db->prefix()."element_contact";
 		$sql .= " WHERE element_id = ".((int) $this->id);
-		if (!empty($listId)) {
-			$sql .= " AND fk_c_type_contact IN (".$this->db->sanitize($listId).")";
-		}
+		$sql .= " AND fk_c_type_contact IN (".$this->db->sanitize($listId).")";
 
 		dol_syslog(get_class($this)."::delete_linked_contact", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -1421,6 +1385,7 @@ abstract class CommonObject
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
 					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
 					$tab[$i] = array(
+						'parentId' => $this->id,
 						'source' => $obj->source,
 						'socid' => $obj->socid,
 						'id' => $obj->id,
@@ -7882,30 +7847,34 @@ abstract class CommonObject
 	/**
 	 * Return validation test result for a field
 	 *
-	 * @param  array   $val		       		Array of properties of field to show
+	 * @param  array   $fields	       		Array of properties of field to show
 	 * @param  string  $fieldKey            Key of attribute
 	 * @param  string  $fieldValue          value of attribute
 	 * @return bool return false if fail true on success, see $this->error for error message
 	 */
-	public function validateField($val, $fieldKey, $fieldValue)
+	public function validateField($fields, $fieldKey, $fieldValue)
 	{
 		global $langs;
 
-		if (!class_exists('Validate')) { require_once DOL_DOCUMENT_ROOT . '/core/class/validate.class.php'; }
+		if (!class_exists('Validate')) {
+			require_once DOL_DOCUMENT_ROOT . '/core/class/validate.class.php';
+		}
 
 		$this->clearFieldError($fieldKey);
 
-		if (!isset($val[$fieldKey])) {
+		if (!isset($fields[$fieldKey])) {
 			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
 			return false;
 		}
 
+		$val = $fields[$fieldKey];
+
 		$param = array();
 		$param['options'] = array();
-		$type  = $val[$fieldKey]['type'];
+		$type  = $val['type'];
 
 		$required = false;
-		if (isset($val[$fieldKey]['notnull']) && $val[$fieldKey]['notnull'] === 1) {
+		if (isset($val['notnull']) && $val['notnull'] === 1) {
 			// 'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 			$required = true;
 		}
@@ -7916,6 +7885,7 @@ abstract class CommonObject
 		//
 		// PREPARE Elements
 		//
+		$reg = array();
 
 		// Convert var to be able to share same code than showOutputField of extrafields
 		if (preg_match('/varchar\((\d+)\)/', $type, $reg)) {
@@ -7929,7 +7899,7 @@ abstract class CommonObject
 			$type = 'select';
 		}
 
-		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
+		if (!empty($val['type']) && preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
 			$type = 'link';
 		}
 
@@ -8670,7 +8640,10 @@ abstract class CommonObject
 						// Find name of thumb file
 						$photo_vignette = basename(getImageFileNameForSize($dir.$file, '_small'));
 						if (!dol_is_file($dirthumb.$photo_vignette)) {
-							$photo_vignette = '';
+							// The thumb does not exists, so we will use the original file
+							$dirthumb = $dir;
+							$pdirthumb = $pdir;
+							$photo_vignette = basename($file);
 						}
 
 						// Get filesize of original file

@@ -332,6 +332,7 @@ abstract class CommonInvoice extends CommonObject
 		$field = 'fk_facture';
 		$field2 = 'fk_paiement';
 		$field3 = ', p.ref_ext';
+		$field4 = ', p.fk_bank'; // Bank line id
 		$sharedentity = 'facture';
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
 			$table = 'paiementfourn_facturefourn';
@@ -342,7 +343,7 @@ abstract class CommonInvoice extends CommonObject
 			$sharedentity = 'facture_fourn';
 		}
 
-		$sql = "SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code".$field3;
+		$sql = "SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code".$field3 . $field4;
 		$sql .= " FROM ".$this->db->prefix().$table." as pf, ".$this->db->prefix().$table2." as p, ".$this->db->prefix()."c_paiement as t";
 		$sql .= " WHERE pf.".$field." = ".((int) $this->id);
 		$sql .= " AND pf.".$field2." = p.rowid";
@@ -362,6 +363,9 @@ abstract class CommonInvoice extends CommonObject
 				$tmp = array('amount'=>$obj->amount, 'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num, 'ref'=>$obj->ref);
 				if (!empty($field3)) {
 					$tmp['ref_ext'] = $obj->ref_ext;
+				}
+				if (!empty($field4)) {
+					$tmp['fk_bank_line'] = $obj->fk_bank;
 				}
 				$retarray[] = $tmp;
 				$i++;
@@ -865,7 +869,7 @@ abstract class CommonInvoice extends CommonObject
 
 
 	/**
-	 *	Create a withdrawal request at Stripe for a direct debit order or a credit transfer order.
+	 *	Create a withdrawal request, from a prelevement_demande, to Stripe for a direct debit order or a credit transfer order.
 	 *  Use the remain to pay excluding all existing open direct debit requests.
 	 *
 	 *	@param      User	$fuser      	User asking the direct debit transfer
@@ -901,6 +905,7 @@ abstract class CommonInvoice extends CommonObject
 			$sql = "SELECT rowid, date_demande, amount, fk_facture, fk_facture_fourn";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
 			$sql .= " AND fk_facture = ".((int) $this->fk_facture);		// Add a protection to not pay another invoice than current one
+			$sql .= " AND traite = 0";	// Add a protection to not process twice
 			$sql .= " WHERE rowid = ".((int) $did);
 
 			dol_syslog(get_class($this)."::makeStripeSepaRequest 1", LOG_DEBUG);
@@ -1077,10 +1082,13 @@ abstract class CommonInvoice extends CommonObject
 									$stripecard = null;
 									if ($companypaymentmode->type == 'ban') {
 										$sepaMode = true;
+										// Check into societe_rib if a payment mode for Stripe and ban payment exists
+										// To make a Stripe SEPA payment request, we must have the payment mode source already saved into societe_rib and retreived with ->sepaStripe
+										// The payment mode source is created when we create the bank account on Stripe with paymentmodes.php?action=create
 										$stripecard = $stripe->sepaStripe($customer, $companypaymentmode, $stripeacc, $servicestatus, 0);
 									}
 
-									if ($stripecard) {  // Can be src_... (for sepa) - Other card_... (old mode) or pm_... (new mode) should not happen here.
+									if ($stripecard) {  // Can be src_... (for sepa) or pm_... (new card mode). Note that card_... (old card mode) should not happen here.
 										$FULLTAG = 'INV=' . $this->id . '-CUS=' . $thirdparty->id;
 										$description = 'Stripe payment from makeStripeSepaRequest: ' . $FULLTAG . ' ref=' . $this->ref;
 
@@ -1095,7 +1103,7 @@ abstract class CommonInvoice extends CommonObject
 										$paymentintent = $stripe->getPaymentIntent($amounttopay, $currency, $FULLTAG, $description, $this, $customer->id, $stripeacc, $servicestatus, 0, 'automatic', true, $stripecard->id, 1);
 
 										$charge = new stdClass();
-										//erics add processing sepa is like success ?
+
 										if ($paymentintent->status === 'succeeded' || $paymentintent->status === 'processing') {
 											$charge->status = 'ok';
 											$charge->id = $paymentintent->id;
@@ -1127,6 +1135,7 @@ abstract class CommonInvoice extends CommonObject
 
 										//var_dump("stripefailurecode=".$stripefailurecode." stripefailuremessage=".$stripefailuremessage." stripefailuredeclinecode=".$stripefailuredeclinecode);
 										//exit;
+
 
 										// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 										if (empty($charge) || $charge->status == 'failed') {
@@ -1170,16 +1179,20 @@ abstract class CommonInvoice extends CommonObject
 											$postactionmessages[] = $errmsg . ' (' . $stripearrayofkeys['publishable_key'] . ')';
 											$this->errors[] = $errmsg;
 										} else {
-											dol_syslog('Successfuly charge direct debit ' . $stripecard->id);
+											dol_syslog('Successfuly request direct debit ' . $stripecard->id);
 
-											$postactionmessages[] = 'Success to charge direct debit (' . $charge->id . ' with ' . $stripearrayofkeys['publishable_key'] . ')';
+											$postactionmessages[] = 'Success to request direct debit (' . $charge->id . ' with ' . $stripearrayofkeys['publishable_key'] . ')';
 
 											// Save a stripe payment was done in realy life so later we will be able to force a commit on recorded payments
 											// even if in batch mode (method doTakePaymentStripe), we will always make all action in one transaction with a forced commit.
 											$this->stripechargedone++;
 
 											// Default description used for label of event. Will be overwrite by another value later.
-											$description = 'Stripe payment OK (' . $charge->id . ') from makeStripeSepaRequest: ' . $FULLTAG;
+											$description = 'Stripe payment request OK (' . $charge->id . ') from makeStripeSepaRequest: ' . $FULLTAG;
+
+
+											// @TODO LMR Save request to status pending instead of done. Done should be set with a webhook.
+
 
 											$db = $this->db;
 
@@ -1220,6 +1233,7 @@ abstract class CommonInvoice extends CommonObject
 											$ispostactionok = 1;
 
 											// Creation of payment line
+											// TODO LMR This must be move into the stripe server listening hooks public/stripe/ipn.php
 											include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 											$paiement = new Paiement($this->db);
 											$paiement->datepaye = $now;
@@ -1549,12 +1563,18 @@ abstract class CommonInvoice extends CommonObject
 						$this->errors[] = "Remain to pay is null for the invoice " . $this->id . " " . $this->ref . ". Why is the invoice not classified 'Paid' ?";
 					}
 
-					// TODO Create a prelevement_bon ?
-					// For the moment no
+					// TODO Create a prelevement_bon and set its status to sent instead of this
+					$idtransferfile = 0;
 
-					// We must update the direct debit payment request as "done"
-					$sql = "UPDATE".MAIN_DB_PREFIX."prelevement_demande SET traite = 1, date_traite = '".$this->db->idate(dol_now())."'";
+					// Update the direct debit payment request of the processed invoice to save the id of the prelevement_bon
+					$sql = "UPDATE".MAIN_DB_PREFIX."prelevement_demande SET";
+					$sql .= " traite = 1,";	// TODO Remove this
+					$sql .= " date_traite = '".$this->db->idate(dol_now())."'";	// TODO Remove this
+					if ($idtransferfile > 0) {
+						$sql .= " fk_prelevement_bons = ".((int) $idtransferfile);
+					}
 					$sql .= "WHERE rowid = ".((int) $did);
+
 
 					dol_syslog(get_class($this)."::makeStripeSepaRequest", LOG_DEBUG);
 					$resql = $this->db->query($sql);

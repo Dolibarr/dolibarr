@@ -77,6 +77,11 @@ class User extends CommonObject
 	public $civility_code;
 
 	/**
+	 * @var string fullname
+	 */
+	public $fullname;
+
+	/**
 	 * @var string gender
 	 */
 	public $gender;
@@ -1880,8 +1885,12 @@ class User extends CommonObject
 		$this->employee						= ($this->employee > 0 ? $this->employee : 0);
 		$this->login						= trim((string) $this->login);
 		$this->gender						= trim((string) $this->gender);
+
 		$this->pass							= trim((string) $this->pass);
 		$this->api_key						= trim((string) $this->api_key);
+		$this->datestartvalidity			= empty($this->datestartvalidity) ? '' : $this->datestartvalidity;
+		$this->dateendvalidity				= empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
+
 		$this->address						= trim((string) $this->address);
 		$this->zip							= trim((string) $this->zip);
 		$this->town							= trim((string) $this->town);
@@ -1906,8 +1915,7 @@ class User extends CommonObject
 		$this->color						= trim((string) $this->color);
 		$this->dateemployment				= empty($this->dateemployment) ? '' : $this->dateemployment;
 		$this->dateemploymentend			= empty($this->dateemploymentend) ? '' : $this->dateemploymentend;
-		$this->datestartvalidity			= empty($this->datestartvalidity) ? '' : $this->datestartvalidity;
-		$this->dateendvalidity				= empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
+
 		$this->birth						= empty($this->birth) ? '' : $this->birth;
 		$this->fk_warehouse					= (int) $this->fk_warehouse;
 
@@ -2694,6 +2702,33 @@ class User extends CommonObject
 	 *  Return a link with photo
 	 * 	Use this->id,this->photo
 	 *
+	 *	@return	int		0=Valid, >0 if not valid
+	 */
+	public function isNotIntoValidityDateRange()
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+		$now = dol_now();
+
+		//dol_syslog("isNotIntoValidityDateRange ".$this->datestartvalidity);
+
+		// Check date start validity
+		if ($this->datestartvalidity && $this->datestartvalidity > dol_get_last_hour($now)) {
+			return 1;
+		}
+		// Check date end validity
+		if ($this->dateendvalidity && $this->dateendvalidity < dol_get_first_hour($now)) {
+			return 1;
+		}
+
+		return 0;
+	}
+
+
+	/**
+	 *  Return a link with photo
+	 * 	Use this->id,this->photo
+	 *
 	 *	@param	int		$width			Width of image
 	 *	@param	int		$height			Height of image
 	 *  @param	string	$cssclass		Force a css class
@@ -2996,9 +3031,10 @@ class User extends CommonObject
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
 	 *  @return		string								HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '')
+	public function getKanbanView($option = '', $arraydata = null)
 	{
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';

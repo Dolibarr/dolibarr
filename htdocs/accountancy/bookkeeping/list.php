@@ -493,7 +493,7 @@ if (empty($reshook)) {
 			if ($conf->global->ACCOUNTING_REEXPORT == 1) {
 				setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsEnable"), null, 'mesgs');
 			} else {
-				setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsDisable"), null, 'mesgs');
+				setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsDisable"), null, 'warnings');
 			}
 		} else {
 			setEventMessages($langs->trans("Error"), null, 'errors');
@@ -1002,11 +1002,14 @@ $newcardbutton = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
 if (empty($reshook)) {
 	// Button re-export
 	if (!empty($conf->global->ACCOUNTING_REEXPORT)) {
-		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=0'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("Activated"), 'switch_on').'</a> ';
+		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=0'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("ClickToHideAlreadyExportedLines"), 'switch_off', 'class="small size15x valignmiddle"');
+		$newcardbutton .= '<span class="valignmiddle marginrightonly paddingleft">'.$langs->trans("ClickToHideAlreadyExportedLines").'</span>';
+		$newcardbutton .= '</a>';
 	} else {
-		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a> ';
+		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("DocsAlreadyExportedAreExcluded"), 'switch_on', 'class="warning size15x valignmiddle"').'';
+		$newcardbutton .= '<span class="valignmiddle marginrightonly paddingleft">'.$langs->trans("DocsAlreadyExportedAreExcluded").'</span>';
+		$newcardbutton .= '</a>';
 	}
-	$newcardbutton .= '<span class="valignmiddle marginrightonly">'.$langs->trans("IncludeDocsAlreadyExported").'</span>';
 
 	if ($user->hasRight('accounting', 'mouvements', 'export')) {
 		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file&token='.newToken().($param ? '&'.$param : ''), $user->hasRight('accounting', 'mouvements', 'export'));
@@ -1040,7 +1043,7 @@ if ($massaction == 'preunletteringauto') {
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
 if ($massactionbutton && $contextpage != 'poslist') {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -1066,7 +1069,7 @@ print $moreforfilter;
 print '</div>';
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste centpercent">';
+print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">';
 
 // Filters lines
 print '<tr class="liste_titre_filter">';
@@ -1222,8 +1225,7 @@ print "</tr>\n";
 
 print '<tr class="liste_titre">';
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
-}
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');}
 if (!empty($arrayfields['t.piece_num']['checked'])) {
 	print_liste_field_titre($arrayfields['t.piece_num']['label'], $_SERVER['PHP_SELF'], "t.piece_num", "", $param, "", $sortfield, $sortorder);
 }

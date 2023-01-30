@@ -2423,25 +2423,23 @@ class Holiday extends CommonObject
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Label of holiday type (if known)
 	 *  @return		string		HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '')
+	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $langs, $selected;
+		global $langs;
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		if (property_exists($this, 'fk_user') && !empty($this->id)) {
-			$return .= '| <span class="info-box-label">'.$this->fk_user.'</span>';
-			$return .= '<input class="fright" id="cb'.$this->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		}
+		$return .= '<span class="info-box-ref">'.$arraydata['user']->getNomUrl(-1).'</span>';
 		if (property_exists($this, 'fk_type')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Type").'</span> : ';
-			$return .= '<span class="info_box-label">'.$langs->trans($this->getTypes(1, -1)[$this->fk_type]['code']).'</span>';
+			$return .= '<span class="info_box-label maxwidth100">'.arraydata['labeltype'].'</span>';
 		}
 		if (property_exists($this, 'date_debut') && property_exists($this, 'date_fin')) {
 			$return .= '<br><span class="info-box-label">'.dol_print_date($this->date_debut, 'day').'</span>';

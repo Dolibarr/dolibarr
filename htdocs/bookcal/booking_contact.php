@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/bookcal/class/booking.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_booking.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bookcal@bookcal", "companies", "other", "mails"));
+$langs->loadLangs(array("agenda", "companies", "other", "mails"));
 
 $id     = (GETPOST('id') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref    = GETPOST('ref', 'alpha');

@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
- * Copyright (C) 2016-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2023  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2022  		Lionel Vessiller    <lvessiller@open-dsi.fr>
  * Copyright (C) 2013-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2017       Elarifr. Ari Elbaz  <github@accedinfo.com>
@@ -203,7 +203,7 @@ class AccountancyExport
 					'ACCOUNTING_EXPORT_FORMAT' => empty($conf->global->ACCOUNTING_EXPORT_FORMAT) ? 'txt' : $conf->global->ACCOUNTING_EXPORT_FORMAT,
 					'ACCOUNTING_EXPORT_SEPARATORCSV' => empty($conf->global->ACCOUNTING_EXPORT_SEPARATORCSV) ? ',' : $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV,
 					'ACCOUNTING_EXPORT_ENDLINE' => empty($conf->global->ACCOUNTING_EXPORT_ENDLINE) ? 1 : $conf->global->ACCOUNTING_EXPORT_ENDLINE,
-					'ACCOUNTING_EXPORT_DATE' => empty($conf->global->ACCOUNTING_EXPORT_DATE) ? '%d%m%Y' : $conf->global->ACCOUNTING_EXPORT_DATE,
+					'ACCOUNTING_EXPORT_DATE' => getDolGlobalString('ACCOUNTING_EXPORT_DATE', '%Y-%m-%d'),
 				),
 				self::$EXPORT_TYPE_CEGID => array(
 					'label' => $langs->trans('Modelcsv_CEGID'),
@@ -682,7 +682,7 @@ class AccountancyExport
 	/**
 	 * Export format : Quadratus (Format ASCII)
 	 * Format since 2015 compatible QuadraCOMPTA
-	 * Last review for this format : 2021/09/13 Alexandre Spangaro (aspangaro@open-dsi.fr)
+	 * Last review for this format : 2023/01/28 Alexandre Spangaro (aspangaro@open-dsi.fr)
 	 *
 	 * Help : https://docplayer.fr/20769649-Fichier-d-entree-ascii-dans-quadracompta.html
 	 * In QuadraCompta | Use menu : "Outils" > "Suivi des dossiers" > "Import ASCII(Compta)"
@@ -703,6 +703,14 @@ class AccountancyExport
 		// $date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		// $date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		foreach ($TData as $data) {
+			// Clean some data
+			$data->doc_ref = dol_string_unaccent($data->doc_ref);
+			$data->label_operation = dol_string_unaccent($data->label_operation);
+			$data->numero_compte = dol_string_unaccent($data->numero_compte);
+			$data->label_compte = dol_string_unaccent($data->label_compte);
+			$data->subledger_account = dol_string_unaccent($data->subledger_account);
+			$data->subledger_label = dol_string_unaccent($data->subledger_label);
+
 			$code_compta = $data->numero_compte;
 			if (!empty($data->subledger_account)) {
 				$code_compta = $data->subledger_account;
@@ -734,9 +742,9 @@ class AccountancyExport
 				if ($data->doc_type == 'customer_invoice') {
 					$Tab['type_compte'] = 'C';
 				} elseif ($data->doc_type == 'supplier_invoice') {
-					$Tab['coll_compte'] = 'F';
+					$Tab['type_compte'] = 'F';
 				} else {
-					$Tab['coll_compte'] = 'G';
+					$Tab['type_compte'] = 'G';
 				}
 
 				$Tab['filler3'] = str_repeat(' ', 235);
@@ -761,7 +769,7 @@ class AccountancyExport
 			//$Tab['date_ecriture'] = $date_ecriture;
 			$Tab['date_ecriture'] = dol_print_date($data->doc_date, '%d%m%y');
 			$Tab['filler'] = ' ';
-			$Tab['libelle_ecriture'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref).' '.dol_string_unaccent($data->label_operation), 20), 20);
+			$Tab['libelle_ecriture'] = str_pad(self::trunc($data->doc_ref.' '.$data->label_operation, 20), 20);
 
 			// Credit invoice - invert sens
 			/*
@@ -811,8 +819,8 @@ class AccountancyExport
 			// TODO: we should filter more than only accent to avoid wrong line size
 			// TODO: remove invoice number doc_ref in libelle,
 			// TODO: we should offer an option for customer to build the libelle using invoice number / name / date in accounting software
-			//$Tab['libelle_ecriture2'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref) . ' ' . dol_string_unaccent($data->label_operation), 30), 30);
-			$Tab['libelle_ecriture2'] = str_pad(self::trunc(dol_string_unaccent($data->label_operation), 30), 30);
+			//$Tab['libelle_ecriture2'] = str_pad(self::trunc($data->doc_ref . ' ' . $data->label_operation, 30), 30);
+			$Tab['libelle_ecriture2'] = str_pad(self::trunc($data->label_operation, 30), 30);
 			$Tab['codetva'] = str_repeat(' ', 2);
 
 			// We need to keep the 10 lastest number of invoice doc_ref not the beginning part that is the unusefull almost same part

@@ -32,6 +32,7 @@
  *	\brief      File of contacts class
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonsocialnetworks.class.php';
 
 
 /**
@@ -39,6 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Contact extends CommonObject
 {
+	use CommonSocialNetworks;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -131,11 +134,26 @@ class Contact extends CommonObject
 	public $civility;
 
 	/**
+	 * @var int egroupware_id
+	 */
+	public $egroupware_id;
+
+	/**
+	 * @var int birthday_alert
+	 */
+	public $birthday_alert;
+
+	/**
 	 * @var string The civilite code, not an integer
 	 * @deprecated
 	 * @see $civility_code
 	 */
 	public $civilite;
+
+	/**
+	 * @var string fullname
+	 */
+	public $fullname;
 
 	/**
 	 * @var string Address
@@ -684,22 +702,6 @@ class Contact extends CommonObject
 					$tmpobj->socialnetworks = $this->socialnetworks;
 					$usermustbemodified++;
 				}
-				// if ($tmpobj->skype != $this->skype) {
-				// 	$tmpobj->skype = $this->skype;
-				// 	$usermustbemodified++;
-				// }
-				// if ($tmpobj->twitter != $this->twitter) {
-				// 	$tmpobj->twitter = $this->twitter;
-				// 	$usermustbemodified++;
-				// }
-				// if ($tmpobj->facebook != $this->facebook) {
-				// 	$tmpobj->facebook = $this->facebook;
-				// 	$usermustbemodified++;
-				// }
-				// if ($tmpobj->linkedin != $this->linkedin) {
-				//     $tmpobj->linkedin = $this->linkedin;
-				//     $usermustbemodified++;
-				// }
 				if ($usermustbemodified) {
 					$result = $tmpobj->update($user, 0, 1, 1, 1);
 					if ($result < 0) {
@@ -831,9 +833,6 @@ class Contact extends CommonObject
 		}
 		if ($this->fax && !empty($conf->global->LDAP_CONTACT_FIELD_FAX)) {
 			$info[$conf->global->LDAP_CONTACT_FIELD_FAX] = $this->fax;
-		}
-		if ($this->skype && !empty($conf->global->LDAP_CONTACT_FIELD_SKYPE)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_SKYPE] = $this->skype;
 		}
 		if ($this->note_private && !empty($conf->global->LDAP_CONTACT_FIELD_DESCRIPTION)) {
 			$info[$conf->global->LDAP_CONTACT_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_private, 2);
@@ -2123,9 +2122,10 @@ class Contact extends CommonObject
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
 	 *  @return		string								HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '')
+	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $langs;
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
