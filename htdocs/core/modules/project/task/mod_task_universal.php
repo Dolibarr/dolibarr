@@ -128,8 +128,7 @@ class mod_task_universal extends ModeleNumRefTask
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		// On defini critere recherche compteur
-		$mask = $conf->global->PROJECT_TASK_UNIVERSAL_MASK;
+		$mask = !empty($conf->global->PROJECT_TASK_UNIVERSAL_MASK) ? $conf->global->PROJECT_TASK_UNIVERSAL_MASK : '';
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';
