@@ -1221,4 +1221,5 @@ HideOnVCard=Hide %s
 AddToContacts=Add address to my contacts
 LastAccess=Last access
 UploadAnImageToSeeAPhotoHere=Upload an image from the tab %s to see a photo here
-LastPasswordChangeDate=Last password change date 
+LastPasswordChangeDate=Last password change date
+PublicVirtualCardUrl=Public virtual user card 
