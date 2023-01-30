@@ -1082,11 +1082,11 @@ class FormMail extends Form
 					$withtoselected = array_keys($tmparray);
 				}
 
-                // The function getFormMail is the only one that calls this one, so one uses the hook
-                // getFormMail to set $this->withtoselected via $object->withtoselected in the hook
-                if (!empty($this->withtoselected)) {
-                    $withtoselected = array_keys($this->withtoselected);
-                }
+				// The function getFormMail is the only one that calls this one, so one uses the hook
+				// getFormMail to set $this->withtoselected via $object->withtoselected in the hook
+				if (!empty($this->withtoselected)) {
+					$withtoselected = array_keys($this->withtoselected);
+				}
 
 				$out .= $form->multiselectarray("receiver", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
 			}
