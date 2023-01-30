@@ -116,6 +116,9 @@ if (!empty($conf->api->enabled)) {
 	$fieldstosearchall['u.api_key'] = "ApiKey";
 }
 
+$permissiontoreadhr = $user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write');
+$permissiontowritehr = $user->hasRight('hrm', 'write_personal_information', 'write');
+
 // Definition of fields for list
 $arrayfields = array(
 	'u.login'=>array('label'=>"Login", 'checked'=>1, 'position'=>10),
@@ -124,14 +127,16 @@ $arrayfields = array(
 	'u.entity'=>array('label'=>"Entity", 'checked'=>1, 'position'=>50, 'enabled'=>(isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
 	'u.gender'=>array('label'=>"Gender", 'checked'=>0, 'position'=>22),
 	'u.employee'=>array('label'=>"Employee", 'checked'=>($contextpage == 'employeelist' ? 1 : 0), 'position'=>25),
-	'u.fk_user'=>array('label'=>"HierarchicalResponsible", 'checked'=>1, 'position'=>27),
+	'u.fk_user'=>array('label'=>"HierarchicalResponsible", 'checked'=>1, 'position'=>27, 'csslist'=>'maxwidth150'),
 	'u.accountancy_code'=>array('label'=>"AccountancyCode", 'checked'=>0, 'position'=>30),
 	'u.office_phone'=>array('label'=>"PhonePro", 'checked'=>1, 'position'=>31),
 	'u.user_mobile'=>array('label'=>"PhoneMobile", 'checked'=>1, 'position'=>32),
 	'u.email'=>array('label'=>"EMail", 'checked'=>1, 'position'=>35),
 	'u.api_key'=>array('label'=>"ApiKey", 'checked'=>0, 'position'=>40, "enabled"=>(!empty($conf->api->enabled) && $user->admin)),
 	'u.fk_soc'=>array('label'=>"Company", 'checked'=>($contextpage == 'employeelist' ? 0 : 1), 'position'=>45),
-	'u.salary'=>array('label'=>"Salary", 'checked'=>1, 'position'=>80, 'enabled'=>(!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))),
+	'u.ref_employee'=>array('label'=>"RefEmployee", 'checked'=>1, 'position'=>60, 'enabled'=>(isModEnabled('hrm') && $permissiontoreadhr)),
+	'u.national_registration_number'=>array('label'=>"NationalRegistrationNumber", 'checked'=>1, 'position'=>61, 'enabled'=>(isModEnabled('hrm') && $permissiontoreadhr)),
+	'u.salary'=>array('label'=>"Salary", 'checked'=>1, 'position'=>80, 'enabled'=>(isModEnabled('salaries') && $user->hasRight("salaries", "readall"))),
 	'u.datelastlogin'=>array('label'=>"LastConnexion", 'checked'=>1, 'position'=>100),
 	'u.datepreviouslogin'=>array('label'=>"PreviousConnexion", 'checked'=>0, 'position'=>110),
 	'u.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
@@ -357,7 +362,7 @@ $morehtmlright = "";
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.office_phone, u.user_mobile, u.email, u.api_key, u.accountancy_code, u.gender, u.employee, u.photo,";
-$sql .= " u.salary, u.datelastlogin, u.datepreviouslogin,";
+$sql .= " u.ref_employee, u.national_registration_number, u.salary, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.ldap_sid, u.statut as status, u.entity,";
 $sql .= " u.tms as date_update, u.datec as date_creation,";
 $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.office_phone as ofice_phone2, u2.user_mobile as user_mobile2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as status2,";
@@ -772,6 +777,12 @@ if (!empty($arrayfields['u.fk_soc']['checked'])) {
 if (!empty($arrayfields['u.entity']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
+if (!empty($arrayfields['u.ref_employee']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['u.national_registration_number']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
 if (!empty($arrayfields['u.salary']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
@@ -872,6 +883,14 @@ if (!empty($arrayfields['u.fk_soc']['checked'])) {
 }
 if (!empty($arrayfields['u.entity']['checked'])) {
 	print_liste_field_titre("Entity", $_SERVER['PHP_SELF'], "u.entity", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['u.ref_employee']['checked'])) {
+	print_liste_field_titre("RefEmployee", $_SERVER['PHP_SELF'], "u.ref_employee", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['u.national_registration_number']['checked'])) {
+	print_liste_field_titre("NationalRegistrationNumber", $_SERVER['PHP_SELF'], "u.national_registration_number", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.salary']['checked'])) {
@@ -1160,6 +1179,24 @@ while ($i < $imaxinloop) {
 			}
 		}
 
+		// Ref employee
+		if (!empty($arrayfields['u.ref_employee']['checked'])) {
+			print '<td class="tdoverflowmax100">';
+			print dol_escape_htmltag($obj->ref_employee);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// National number
+		if (!empty($arrayfields['u.national_registration_number']['checked'])) {
+			print '<td class="tdoverflowmax100">';
+			print dol_escape_htmltag($obj->national_registration_number);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Salary
 		if (!empty($arrayfields['u.salary']['checked'])) {
 			print '<td class="nowraponall right amount">';
