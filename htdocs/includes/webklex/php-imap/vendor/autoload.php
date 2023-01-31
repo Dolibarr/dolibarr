@@ -13,9 +13,22 @@ require_once __DIR__ . '/composer/autoload_real.php';
 return ComposerAutoloaderInit4da13270269c89a28e472e1f7324e6d1::getLoader();
 */
 
+
+// Add class/method of PHP8 for compatibility with older versions of PHP
+require_once(__DIR__.'/symfony/polyfill-php80/bootstrap.php');
+
+
 spl_autoload_register(function ($class_name) {
 	// Enable this to detect what we need for require_once
 	//var_dump($class_name);
+
+
+	$preg_match = preg_match('/^Symfony\\\Polyfill\\\Php80\\\/', $class_name);
+	if (1 === $preg_match) {
+		$class_name = preg_replace('/\\\/', '/', $class_name);
+		$class_name = preg_replace('/^Symfony\\/Polyfill\\/Php80\\//', '', $class_name);
+		require_once __DIR__ . '/symfony/polyfill-php80/' . $class_name . '.php';
+	}
 
 	$preg_match = preg_match('/^Webklex\\\PHPIMAP\\\/', $class_name);
 	if (1 === $preg_match) {
