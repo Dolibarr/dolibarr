@@ -267,7 +267,7 @@ if (!empty($arrayfields['cp.fk_type']['checked'])) {
 	}
 
 	print '<th class="liste_titre">';
-	print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1, 0, 0, '', 0, 0, 0, '', '', 1);
+	print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100', 1);
 	print '</th>';
 }
 
