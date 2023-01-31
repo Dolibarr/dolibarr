@@ -88,6 +88,25 @@ if (GETPOSTISSET('formfilteraction')) {
 }
 $searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
 
+$search_date_creation_startmonth = GETPOST('search_date_creation_startmonth', 'int');
+$search_date_creation_startyear = GETPOST('search_date_creation_startyear', 'int');
+$search_date_creation_startday = GETPOST('search_date_creation_startday', 'int');
+$search_date_creation_start = dol_mktime(0, 0, 0, $search_date_creation_startmonth, $search_date_creation_startday, $search_date_creation_startyear);	// Use tzserver
+$search_date_creation_endmonth = GETPOST('search_date_creation_endmonth', 'int');
+$search_date_creation_endyear = GETPOST('search_date_creation_endyear', 'int');
+$search_date_creation_endday = GETPOST('search_date_creation_endday', 'int');
+$search_date_creation_end = dol_mktime(23, 59, 59, $search_date_creation_endmonth, $search_date_creation_endday, $search_date_creation_endyear);	// Use tzserver
+
+$search_date_modif_startmonth = GETPOST('search_date_modif_startmonth', 'int');
+$search_date_modif_startyear = GETPOST('search_date_modif_startyear', 'int');
+$search_date_modif_startday = GETPOST('search_date_modif_startday', 'int');
+$search_date_modif_start = dol_mktime(0, 0, 0, $search_date_modif_startmonth, $search_date_modif_startday, $search_date_modif_startyear);	// Use tzserver
+$search_date_modif_endmonth = GETPOST('search_date_modif_endmonth', 'int');
+$search_date_modif_endyear = GETPOST('search_date_modif_endyear', 'int');
+$search_date_modif_endday = GETPOST('search_date_modif_endday', 'int');
+$search_date_modif_end = dol_mktime(23, 59, 59, $search_date_modif_endmonth, $search_date_modif_endday, $search_date_modif_endyear);	// Use tzserver
+
+
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -196,7 +215,6 @@ if ($reshook < 0) {
 }
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
-
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
 	$search_dfmonth = '';
@@ -224,6 +242,23 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_start = '';
 	$search_date_end = '';
 	$search_all = "";
+	$search_date_creation_startmonth = "";
+	$search_date_creation_startyear = "";
+	$search_date_creation_startday = "";
+	$search_date_creation_start = "";
+	$search_date_creation_endmonth = "";
+	$search_date_creation_endyear = "";
+	$search_date_creation_endday = "";
+	$search_date_creation_end = "";
+	$search_date_modif_startmonth = "";
+	$search_date_modif_startyear = "";
+	$search_date_modif_startday = "";
+	$search_date_modif_start = "";
+	$search_date_modif_endmonth = "";
+	$search_date_modif_endyear = "";
+	$search_date_modif_endday = "";
+	$search_date_modif_end = "";
+	$sall = "";
 	$search_status = "";
 	$toselect = array();
 	$search_type_thirdparty = '';
@@ -342,6 +377,7 @@ if ($search_all) {
 if ($search_user > 0) {
 	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='contrat' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".((int) $search_user);
 }
+
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 $searchCategoryProductOperator = -1;
 $searchCategoryProductList = array($search_product_category);
@@ -416,6 +452,21 @@ if ($searchCategoryCustomerOperator == 1) {
 		$sql .= " AND (".implode(' AND ', $searchCategoryCustomerSqlList).")";
 	}
 }
+
+if ($search_date_creation_start) {
+	$sql .= " AND c.datec >= '".$db->idate($search_date_creation_start)."'";
+}
+if ($search_date_creation_end) {
+	$sql .= " AND c.datec <= '".$db->idate($search_date_creation_end)."'";
+}
+
+if ($search_date_modif_start) {
+	$sql .= " AND c.tms >= '".$db->idate($search_date_modif_start)."'";
+}
+if ($search_date_modif_end) {
+	$sql .= " AND c.tms <= '".$db->idate($search_date_modif_end)."'";
+}
+
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -556,6 +607,54 @@ if ($search_ref_supplier != '') {
 }
 if ($search_op2df != '') {
 	$param .= '&search_op2df='.urlencode($search_op2df);
+}
+if ($search_date_creation_startmonth) {
+	$param .= '&search_date_creation_startmonth='.urlencode($search_date_creation_startmonth);
+}
+if ($search_date_creation_startyear) {
+	$param .= '&search_date_creation_startyear='.urlencode($search_date_creation_startyear);
+}
+if ($search_date_creation_startday) {
+	$param .= '&search_date_creation_startday='.urlencode($search_date_creation_startday);
+}
+if ($search_date_creation_start) {
+	$param .= '&search_date_creation_start='.urlencode($search_date_creation_start);
+}
+if ($search_date_creation_endmonth) {
+	$param .= '&search_date_creation_endmonth='.urlencode($search_date_creation_endmonth);
+}
+if ($search_date_creation_endyear) {
+	$param .= '&search_date_creation_endyear='.urlencode($search_date_creation_endyear);
+}
+if ($search_date_creation_endday) {
+	$param .= '&search_date_creation_endday='.urlencode($search_date_creation_endday);
+}
+if ($search_date_creation_end) {
+	$param .= '&search_date_creation_end='.urlencode($search_date_creation_end);
+}
+if ($search_date_modif_startmonth) {
+	$param .= '&search_date_modif_startmonth='.urlencode($search_date_modif_startmonth);
+}
+if ($search_date_modif_startyear) {
+	$param .= '&search_date_modif_startyear='.urlencode($search_date_modif_startyear);
+}
+if ($search_date_modif_startday) {
+	$param .= '&search_date_modif_startday='.urlencode($search_date_modif_startday);
+}
+if ($search_date_modif_start) {
+	$param .= '&search_date_modif_start='.urlencode($search_date_modif_start);
+}
+if ($search_date_modif_endmonth) {
+	$param .= '&search_date_modif_endmonth='.urlencode($search_date_modif_endmonth);
+}
+if ($search_date_modif_endyear) {
+	$param .= '&search_date_modif_endyear='.urlencode($search_date_modif_endyear);
+}
+if ($search_date_modif_endday) {
+	$param .= '&search_date_modif_endday='.urlencode($search_date_modif_endday);
+}
+if ($search_date_modif_end) {
+	$param .= '&search_date_modif_end=' . urlencode($search_date_modif_end);
 }
 if ($search_date_startday > 0) {
 	$param .= '&search_date_startday='.urlencode($search_date_startday);
@@ -804,14 +903,26 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 $parameters = array('arrayfields'=>$arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-// Date creation
+// Creation date
 if (!empty($arrayfields['c.datec']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center nowraponall">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_creation_start ? $search_date_creation_start : -1, 'search_date_creation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_creation_end ? $search_date_creation_end : -1, 'search_date_creation_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
-// Date modification
+// Modification date
 if (!empty($arrayfields['c.tms']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center nowraponall">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_modif_start ? $search_date_modif_start : -1, 'search_date_modif_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_modif_end ? $search_date_modif_end : -1, 'search_date_modif_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 // First end date

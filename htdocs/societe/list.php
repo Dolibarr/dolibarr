@@ -1017,6 +1017,10 @@ if ($search_date_modif_endday) {
 if ($search_date_modif_end) {
 	$param .= '&search_date_modif_end=' . urlencode($search_date_modif_end);
 }
+if ($search_status != '') {
+	$param .= '&search_status='.urlencode($search_status);
+}
+
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
