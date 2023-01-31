@@ -32,6 +32,7 @@
  *	\brief      File of contacts class
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonsocialnetworks.class.php';
 
 
 /**
@@ -39,6 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Contact extends CommonObject
 {
+	use CommonSocialNetworks;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -131,11 +134,26 @@ class Contact extends CommonObject
 	public $civility;
 
 	/**
+	 * @var int egroupware_id
+	 */
+	public $egroupware_id;
+
+	/**
+	 * @var int birthday_alert
+	 */
+	public $birthday_alert;
+
+	/**
 	 * @var string The civilite code, not an integer
 	 * @deprecated
 	 * @see $civility_code
 	 */
 	public $civilite;
+
+	/**
+	 * @var string fullname
+	 */
+	public $fullname;
 
 	/**
 	 * @var string Address
@@ -353,9 +371,9 @@ class Contact extends CommonObject
 			$this->fields['fk_soc']['searchall'] = 0;
 		}
 
-		if (empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {	// Default behaviour
-			$this->field['fk_stcommcontact']['enabled'] = 0;
-			$this->field['fk_prospectcontactlevel']['enabled'] = 0;
+		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {	// Default behaviour
+			$this->fields['fk_stcommcontact']['enabled'] = 0;
+			$this->fields['fk_prospectlevel']['enabled'] = 0;
 		}
 
 		// Unset fields that are disabled
@@ -608,7 +626,7 @@ class Contact extends CommonObject
 		$sql .= ", phone_perso = ".(isset($this->phone_perso) ? "'".$this->db->escape($this->phone_perso)."'" : "NULL");
 		$sql .= ", phone_mobile = ".(isset($this->phone_mobile) ? "'".$this->db->escape($this->phone_mobile)."'" : "NULL");
 		$sql .= ", priv = '".$this->db->escape($this->priv)."'";
-		$sql .= ", fk_prospectcontactlevel = '".$this->db->escape($this->fk_prospectlevel)."'";
+		$sql .= ", fk_prospectlevel = '".$this->db->escape($this->fk_prospectlevel)."'";
 		if (isset($this->stcomm_id)) {
 			$sql .= ", fk_stcommcontact = ".($this->stcomm_id > 0 || $this->stcomm_id == -1 ? $this->stcomm_id : "0");
 		}
@@ -684,22 +702,6 @@ class Contact extends CommonObject
 					$tmpobj->socialnetworks = $this->socialnetworks;
 					$usermustbemodified++;
 				}
-				// if ($tmpobj->skype != $this->skype) {
-				// 	$tmpobj->skype = $this->skype;
-				// 	$usermustbemodified++;
-				// }
-				// if ($tmpobj->twitter != $this->twitter) {
-				// 	$tmpobj->twitter = $this->twitter;
-				// 	$usermustbemodified++;
-				// }
-				// if ($tmpobj->facebook != $this->facebook) {
-				// 	$tmpobj->facebook = $this->facebook;
-				// 	$usermustbemodified++;
-				// }
-				// if ($tmpobj->linkedin != $this->linkedin) {
-				//     $tmpobj->linkedin = $this->linkedin;
-				//     $usermustbemodified++;
-				// }
 				if ($usermustbemodified) {
 					$result = $tmpobj->update($user, 0, 1, 1, 1);
 					if ($result < 0) {
@@ -831,9 +833,6 @@ class Contact extends CommonObject
 		}
 		if ($this->fax && !empty($conf->global->LDAP_CONTACT_FIELD_FAX)) {
 			$info[$conf->global->LDAP_CONTACT_FIELD_FAX] = $this->fax;
-		}
-		if ($this->skype && !empty($conf->global->LDAP_CONTACT_FIELD_SKYPE)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_SKYPE] = $this->skype;
 		}
 		if ($this->note_private && !empty($conf->global->LDAP_CONTACT_FIELD_DESCRIPTION)) {
 			$info[$conf->global->LDAP_CONTACT_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_private, 2);
@@ -987,7 +986,7 @@ class Contact extends CommonObject
 		$sql .= " c.socialnetworks,";
 		$sql .= " c.photo,";
 		$sql .= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
-		$sql .= " c.fk_prospectcontactlevel, c.fk_stcommcontact, st.libelle as stcomm, st.picto as stcomm_picto,";
+		$sql .= " c.fk_prospectlevel, c.fk_stcommcontact, st.libelle as stcomm, st.picto as stcomm_picto,";
 		$sql .= " c.import_key,";
 		$sql .= " c.datec as date_creation, c.tms as date_modification,";
 		$sql .= " co.label as country, co.code as country_code,";
@@ -1054,7 +1053,7 @@ class Contact extends CommonObject
 				$this->poste			= $obj->poste;
 				$this->statut = $obj->statut;
 
-				$this->fk_prospectlevel = $obj->fk_prospectcontactlevel;
+				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
 				$transcode = $langs->trans('StatusProspect'.$obj->fk_stcommcontact);
 				$libelle = ($transcode != 'StatusProspect'.$obj->fk_stcommcontact ? $transcode : $obj->stcomm);
@@ -1712,18 +1711,18 @@ class Contact extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'socpeople', 'societe_contacts'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -2116,5 +2115,49 @@ class Contact extends CommonObject
 			}
 		}
 		return 0;
+	}
+
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		//var_dump($this->photo);exit;
+		if (property_exists($this, 'photo') && !is_null($this->photo)) {
+			$return.= Form::showphoto('contact', $this, 0, 60, 0, 'photokanban photoref photowithmargin photologintooltip', 'small', 0, 1);
+		} else {
+			$return .= img_picto('', $this->picto);
+		}
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<div class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</div>';
+
+		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+			$return .= '<div class="info-box-ref opacitymedium tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
+		}
+		/*if (property_exists($this, 'phone_pro') && !empty($this->phone_pro)) {
+			$return .= '<br>'.img_picto($langs->trans("Phone"), 'phone');
+			$return .= ' <span class="info-box-label">'.$this->phone_pro.'</span>';
+		}*/
+		/*if (method_exists($this, 'LibPubPriv')) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Visibility").'</span>';
+			$return .= '<span> : '.$this->LibPubPriv($this->priv).'</span>';
+		}*/
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

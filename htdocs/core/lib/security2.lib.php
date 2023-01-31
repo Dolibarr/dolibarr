@@ -52,12 +52,11 @@ function dol_getwebuser($mode)
  *	@param		string	$entitytotest		Instance of data we must check
  *	@param		array	$authmode			Array list of selected authentication mode array('http', 'dolibarr', 'xxx'...)
  *	@param		string	$context			Context checkLoginPassEntity was created for ('api', 'dav', 'ws', '')
- *  @return		string						Login or ''
+ *  @return		string						Login or '' or '--bad-login-validity--'
  */
 function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode, $context = '')
 {
 	global $conf, $langs;
-	//global $dolauthmode;    // To return authentication finally used
 
 	// Check parameters
 	if ($entitytotest == '') {
@@ -97,13 +96,14 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 					// Call function to check user/password
 					$function = 'check_user_password_'.$mode;
 					$login = call_user_func($function, $usertotest, $passwordtotest, $entitytotest, $context);
-					if ($login && $login != '--bad-login-validity--') {	// Login is successfull
+					if ($login && $login != '--bad-login-validity--') {
+						// Login is successfull with this method
 						$test = false; // To stop once at first login success
 						$conf->authmode = $mode; // This properties is defined only when logged to say what mode was successfully used
-						$dol_tz = GETPOST('tz');
+						/*$dol_tz = GETPOST('tz');
 						$dol_dst = GETPOST('dst');
 						$dol_screenwidth = GETPOST('screenwidth');
-						$dol_screenheight = GETPOST('screenheight');
+						$dol_screenheight = GETPOST('screenheight');*/
 					}
 				} else {
 					dol_syslog("Authentication KO - failed to load file '".$authfile."'", LOG_ERR);

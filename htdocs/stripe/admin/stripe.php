@@ -427,31 +427,16 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
 	print '</td></tr>';
 }
 
-// Activate Payment Request API
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("STRIPE_PAYMENT_REQUEST_API").' ?? Not used, what is it for ??</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('STRIPE_PAYMENT_REQUEST_API');
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STRIPE_PAYMENT_REQUEST_API", $arrval, getDolGlobalString('STRIPE_PAYMENT_REQUEST_API'));
-	}
-	print '</td></tr>';
+print '<tr class="oddeven"><td>';
+print $langs->trans("STRIPE_SEPA_DIRECT_DEBIT").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('STRIPE_SEPA_DIRECT_DEBIT');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("STRIPE_SEPA_DIRECT_DEBIT", $arrval, getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT'));
 }
+print '</td></tr>';
 
-// Activate SEPA DIRECT_DEBIT
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("STRIPE_SEPA_DIRECT_DEBIT").'</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('STRIPE_SEPA_DIRECT_DEBIT');
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STRIPE_SEPA_DIRECT_DEBIT", $arrval, getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT'));
-	}
-	print '</td></tr>';
-}
 
 // Activate Klarna
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
@@ -525,7 +510,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
-print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'">';
+print '<input class="width500" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'">';
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': http://mysite/mycss.css</span>';
 print '</td></tr>';
 
@@ -607,6 +592,12 @@ $token = '';
 include DOL_DOCUMENT_ROOT.'/core/tpl/onlinepaymentlinks.tpl.php';
 
 print info_admin($langs->trans("ExampleOfTestCreditCard", '4242424242424242 (no 3DSecure) or 4000000000003063 (3DSecure required) or 4000002760003184 (3DSecure2 required on all transaction) or 4000003800000446 (3DSecure2 required, the off-session allowed)', '4000000000000101', '4000000000000069', '4000000000000341'));
+
+if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
+	print info_admin($langs->trans("ExampleOfTestBankAcountForSEPA", 'AT611904300234573201 (pending->succeed) or AT861904300235473202 (pending->failed)'));
+}
+
+
 
 if (!empty($conf->use_javascript_ajax)) {
 	print "\n".'<script type="text/javascript">';

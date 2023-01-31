@@ -115,7 +115,7 @@ class FormActions
                         $('.hideifna').show();
                     }
                     else {
-                    	if (defaultvalue == 50 && (percentage.val() == 0 || percentage.val() == 100)) { percentage.val(50) };
+                    	if (defaultvalue == 50 && (percentage.val() == 0 || percentage.val() == 100)) { percentage.val(50); }
                     	percentage.removeAttr('disabled');
                         $('.hideifna').show();
                     }

@@ -515,7 +515,7 @@ class Product extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
 		'entity'        =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>5),
-		'label'         =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>2, 'position'=>15),
+		'label'         =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>2, 'position'=>15, 'csslist'=>'tdoverflowmax250'),
 		'barcode'       =>array('type'=>'varchar(255)', 'label'=>'Barcode', 'enabled'=>'isModEnabled("barcode")', 'position'=>20, 'visible'=>-1, 'showoncombobox'=>3),
 		'fk_barcode_type' => array('type'=>'integer', 'label'=>'BarcodeType', 'enabled'=>'1', 'position'=>21, 'notnull'=>0, 'visible'=>-1,),
 		'note_public'   =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61),
@@ -572,7 +572,11 @@ class Product extends CommonObject
 	 */
 	public function check()
 	{
-		$this->ref = dol_sanitizeFileName(stripslashes($this->ref));
+		if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+			$this->ref = trim($this->ref);
+		} else {
+			$this->ref = dol_sanitizeFileName(stripslashes($this->ref));
+		}
 
 		$err = 0;
 		if (dol_strlen(trim($this->ref)) == 0) {
@@ -604,7 +608,11 @@ class Product extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->ref = dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)));
+		if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+			$this->ref = trim($this->ref);
+		} else {
+			$this->ref = dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)));
+		}
 		$this->label = trim($this->label);
 		$this->price_ttc = price2num($this->price_ttc);
 		$this->price = price2num($this->price);
@@ -999,7 +1007,11 @@ class Product extends CommonObject
 		}
 
 		// Clean parameters
-		$this->ref = dol_string_nospecial(trim($this->ref));
+		if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+			$this->ref = trim($this->ref);
+		} else {
+			$this->ref = dol_string_nospecial(trim($this->ref));
+		}
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
 		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : null);
@@ -1679,7 +1691,7 @@ class Product extends CommonObject
 		$sql .= "$field = '".$this->db->escape($value)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(__METHOD__."", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -5155,7 +5167,7 @@ class Product extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('productdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result, 'label' => &$label);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -6131,19 +6143,19 @@ class Product extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param  DoliDB $db        Database handler
-	 * @param  int    $origin_id Old thirdparty id
-	 * @param  int    $dest_id   New thirdparty id
+	 * @param  DoliDB $dbs        	Database handler
+	 * @param  int    $origin_id 	Old thirdparty id
+	 * @param  int    $dest_id   	New thirdparty id
 	 * @return bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'product_customer_price',
 			'product_customer_price_log'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -6302,6 +6314,59 @@ class Product extends CommonObject
 		$prodDurationHours *= $this->duration_value;
 
 		return $prodDurationHours;
+	}
+
+
+		/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		global $langs,$conf;
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<div class="info-box-img">';
+		$label = '';
+		if ($this->is_photo_available($conf->product->multidir_output[$this->entity])) {
+				$label .= $this->show_photos('product', $conf->product->multidir_output[$this->entity]);
+				$return .= $label;
+		} else {
+			if ($this->type == Product::TYPE_PRODUCT) {
+				$label .= img_picto('', 'product');
+			} elseif ($this->type == Product::TYPE_SERVICE) {
+				$label .= img_picto('', 'service');
+			}
+			$return .= $label;
+		}
+		$return .= '</div>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if (property_exists($this, 'label')) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
+		}
+		if (property_exists($this, 'price') && property_exists($this, 'price_ttc')) {
+			if ($this->price_base_type == 'TTC') {
+				$return .= '<br><span class="info-box-status amount">'.price($this->price_ttc).' '.$langs->trans("TTC").'</span>';
+			} else {
+				if ($this->status) {
+					$return .= '<br><span class="info-box-status amount">'.price($this->price).' '.$langs->trans("HT").'</span>';
+				}
+			}
+		}
+		if (property_exists($this, 'stock_reel')) {
+			$return .= '<br><span class="info-box-status opacitymedium">'.$langs->trans('PhysicalStock').' : <span class="bold">'.$this->stock_reel.'</span></span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .='<br><span class="info-box-status margintoponly">'.$this->getLibStatut(5, 1).' '.$this->getLibStatut(5, 0).'</span>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }
 

@@ -34,7 +34,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
 if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '17.0.0'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+	define('DOL_VERSION', '18.0.0-alpha'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 }
 
 if (!defined('EURO')) {
@@ -138,10 +138,10 @@ if (!empty($dolibarr_main_prod)) {
 }
 
 // Clean parameters
-$dolibarr_main_data_root = trim($dolibarr_main_data_root);
-$dolibarr_main_url_root = trim(preg_replace('/\/+$/', '', $dolibarr_main_url_root));
+$dolibarr_main_data_root = (empty($dolibarr_main_data_root) ? '' : trim($dolibarr_main_data_root));
+$dolibarr_main_url_root = trim(preg_replace('/\/+$/', '', empty($dolibarr_main_url_root) ? '' : $dolibarr_main_url_root));
 $dolibarr_main_url_root_alt = (empty($dolibarr_main_url_root_alt) ? '' : trim($dolibarr_main_url_root_alt));
-$dolibarr_main_document_root = trim($dolibarr_main_document_root);
+$dolibarr_main_document_root = (empty($dolibarr_main_document_root) ? '' : trim($dolibarr_main_document_root));
 $dolibarr_main_document_root_alt = (empty($dolibarr_main_document_root_alt) ? '' : trim($dolibarr_main_document_root_alt));
 
 if (empty($dolibarr_main_db_port)) {

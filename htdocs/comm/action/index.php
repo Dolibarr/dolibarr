@@ -49,6 +49,7 @@ if (empty($conf->global->AGENDA_EXT_NB)) {
 	$conf->global->AGENDA_EXT_NB = 5;
 }
 $MAXAGENDA = $conf->global->AGENDA_EXT_NB;
+$DELAYFORCACHE = 300;	// 300 seconds
 
 $disabledefaultvalues = GETPOST('disabledefaultvalues', 'int');
 
@@ -299,6 +300,7 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 		$enabled = 'AGENDA_EXT_ENABLED_'.$user->id.'_'.$i;
 		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
 		$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
+
 		if (getDolUserString($source) && getDolUserString($name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 			$listofextcals[] = array(
@@ -427,36 +429,33 @@ if ($mode == 'show_day' || $mode == 'show_week' || $mode == 'show_month') {
 }
 
 // Show navigation bar
+$nav = '';
+$nav .= '<div class="navselectiondate inline-block nowraponall">';
 if (empty($mode) || $mode == 'show_month') {
-	$nav = "<a href=\"?year=".$prev_year."&month=".$prev_month.$param."\"><i class=\"fa fa-chevron-left\"></i></a> &nbsp;\n";
+	$nav .= "<a href=\"?year=".$prev_year."&month=".$prev_month.$param."\"><i class=\"fa fa-chevron-left\"></i></a> &nbsp;\n";
 	$nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $month, 1, $year), "%b %Y");
 	$nav .= " </span>\n";
 	$nav .= " &nbsp; <a href=\"?year=".$next_year."&month=".$next_month.$param."\"><i class=\"fa fa-chevron-right\"></i></a>\n";
-	if (empty($conf->dol_optimize_smallscreen)) {
-		$nav .= " &nbsp; <a href=\"?year=".$nowyear."&month=".$nowmonth.$param."\">".$langs->trans("Today")."</a> ";
-	}
 	$picto = 'calendar';
 }
 if ($mode == 'show_week') {
-	$nav = "<a href=\"?year=".$prev_year."&month=".$prev_month."&day=".$prev_day.$param."\"><i class=\"fa fa-chevron-left\" title=\"".dol_escape_htmltag($langs->trans("Previous"))."\"></i></a> &nbsp;\n";
-	$nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $first_month, $first_day, $first_year), "%Y").", ".$langs->trans("Week")." ".$week;
+	$nav .= "<a href=\"?year=".$prev_year."&month=".$prev_month."&day=".$prev_day.$param."\"><i class=\"fa fa-chevron-left\" title=\"".dol_escape_htmltag($langs->trans("Previous"))."\"></i></a> &nbsp;\n";
+	$nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $first_month, $first_day, $first_year), "%Y").", ".$langs->trans("WeekShort")." ".$week;
 	$nav .= " </span>\n";
 	$nav .= " &nbsp; <a href=\"?year=".$next_year."&month=".$next_month."&day=".$next_day.$param."\"><i class=\"fa fa-chevron-right\" title=\"".dol_escape_htmltag($langs->trans("Next"))."\"></i></a>\n";
-	if (empty($conf->dol_optimize_smallscreen)) {
-		$nav .= " &nbsp; <a href=\"?year=".$nowyear."&month=".$nowmonth."&day=".$nowday.$param."\">".$langs->trans("Today")."</a> ";
-	}
 	$picto = 'calendarweek';
 }
 if ($mode == 'show_day') {
-	$nav = "<a href=\"?year=".$prev_year."&month=".$prev_month."&day=".$prev_day.$param."\"><i class=\"fa fa-chevron-left\"></i></a> &nbsp;\n";
+	$nav .= "<a href=\"?year=".$prev_year."&month=".$prev_month."&day=".$prev_day.$param."\"><i class=\"fa fa-chevron-left\"></i></a> &nbsp;\n";
 	$nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $month, $day, $year), "daytextshort");
 	$nav .= " </span>\n";
 	$nav .= " &nbsp; <a href=\"?year=".$next_year."&month=".$next_month."&day=".$next_day.$param."\"><i class=\"fa fa-chevron-right\"></i></a>\n";
-	if (empty($conf->dol_optimize_smallscreen)) {
-		$nav .= " &nbsp; <a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a> ";
-	}
 	$picto = 'calendarday';
 }
+if (empty($conf->dol_optimize_smallscreen)) {
+	$nav .= ' &nbsp; <a href="?year='.$nowyear.'&month='.$nowmonth.'&day='.$nowday.$param.'" class="datenowlink">'.$langs->trans("Today").'</a> ';
+}
+$nav .= '</div>';
 
 $nav .= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
 //$nav .= ' <input type="submit" class="button button-save" name="submitdateselect" value="'.$langs->trans("Refresh").'">';
@@ -495,7 +494,8 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 //print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, $listofextcals, $actioncode, $usergroup, '', $resourceid);
 //print dol_get_fiche_end();
 
-$viewmode = '';
+$viewmode = '<div class="navmode inline-block">';
+
 $viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("List"), 'object_calendarlist', 'class="imgforviewmode pictoactionview block"');
@@ -535,12 +535,14 @@ if (empty($reshook)) {
 	$viewmode = $hookmanager->resPrint;
 }
 
+$viewmode .= '</div>';
+
 $viewmode .= '<span class="marginrightonly"></span>';	// To add a space before the navigation tools
 
 
 $newcardbutton = '';
 $newparam = '';
-if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create) {
+if ($user->rights->agenda->myactions->create || $user->hasRight('agenda', 'allactions', 'create')) {
 	$tmpforcreatebutton = dol_getdate(dol_now(), true);
 
 	$newparam .= '&month='.((int) $month).'&year='.((int) $tmpforcreatebutton['year']).'&mode='.urlencode($mode);
@@ -614,7 +616,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 				$default = '';
 			}
 
-			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'> <label for="check_ext'.$htmlname.'">'.dol_escape_htmltag($val['name']).'</label> &nbsp; </div>';
+			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'> <label for="check_ext'.$htmlname.'" title="'.dol_escape_htmltag($langs->trans("Cache").' '.round($DELAYFORCACHE / 60).'mn').'">'.dol_escape_htmltag($val['name']).'</label> &nbsp; </div>';
 		}
 	}
 
@@ -1009,9 +1011,13 @@ if ($mode == 'show_day') {
 	// Request only leaves for the current selected day
 	$sql .= " AND '".$db->escape($year)."-".$db->escape($month)."-".$db->escape($day)."' BETWEEN x.date_debut AND x.date_fin";	// date_debut and date_fin are date without time
 } elseif ($mode == 'show_week') {
-	// TODO: Add filter to reduce database request
+	// Restrict on current month (we get more, but we will filter later)
+	$sql .= " AND date_debut < '".dol_get_last_day($year, $month)."'";
+	$sql .= " AND date_fin >= '".dol_get_first_day($year, $month)."'";
 } elseif ($mode == 'show_month') {
-	// TODO: Add filter to reduce database request
+	// Restrict on current month
+	$sql .= " AND date_debut <= '".dol_get_last_day($year, $month)."'";
+	$sql .= " AND date_fin >= '".dol_get_first_day($year, $month)."'";
 }
 
 $resql = $db->query($sql);
@@ -1082,8 +1088,11 @@ if (count($listofextcals)) {
 		$colorcal = $extcal['color'];
 		$buggedfile = $extcal['buggedfile'];
 
+		$pathforcachefile = dol_sanitizePathName($conf->user->dir_temp).'/'.dol_sanitizeFileName('extcal_'.$namecal.'_user'.$user->id).'.cache';
+		//var_dump($pathforcachefile);exit;
+
 		$ical = new ICal();
-		$ical->parse($url);
+		$ical->parse($url, $pathforcachefile, $DELAYFORCACHE);
 
 		// After this $ical->cal['VEVENT'] contains array of events, $ical->cal['DAYLIGHT'] contains daylight info, $ical->cal['STANDARD'] contains non daylight info, ...
 		//var_dump($ical->cal); exit;
@@ -1703,7 +1712,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	$curtime = dol_mktime(0, 0, 0, $month, $day, $year);
 	$urltoshow = DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year.$newparam;
 	$urltocreate = '';
-	if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create) {
+	if ($user->rights->agenda->myactions->create || $user->hasRight('agenda', 'allactions', 'create')) {
 		$newparam .= '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
 		$hourminsec = '100000';
 		$urltocreate = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $year, $month, $day).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
@@ -1722,7 +1731,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 		}
 		print '</a>';
 		print '</div><div class="nowrap floatright inline-block marginrightonly">';
-		if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create) {
+		if ($user->rights->agenda->myactions->create || $user->hasRight('agenda', 'allactions', 'create')) {
 			print '<a class="cursoradd" href="'.$urltocreate.'">'; // Explicit link, usefull for nojs interfaces
 			print img_picto($langs->trans("NewAction"), 'edit_add.png');
 			print '</a>';
@@ -1849,7 +1858,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							$cssclass .= ' movable cursormove';
 						}
 					} else {
-						if ($user->rights->agenda->allactions->create ||
+						if ($user->hasRight('agenda', 'allactions', 'create') ||
 							(($event->authorid == $user->id || $event->userownerid == $user->id) && $user->rights->agenda->myactions->create)) {
 								$cssclass .= " movable cursormove";
 						} else {
@@ -1936,7 +1945,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						}
 
 						$listofusertoshow = '';
-						$listofusertoshow .= '<br>'.$cacheusers[$tmpid]->getNomUrl(-1, '', 0, 0, 0, 0, '', 'paddingright valigntextbottom');
+						$listofusertoshow .= '<br>'.$cacheusers[$tmpid]->getNomUrl(-1, '', 0, 0, 0, 0, '', 'paddingright valignmiddle');
 						print $listofusertoshow;
 					} else {										// Other calendar
 						// Picto
@@ -2011,7 +2020,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 								$cacheusers[$tmpid] = $newuser;
 							}
 
-							$listofusertoshow .= $cacheusers[$tmpid]->getNomUrl(-3, '', 0, 0, 0, 0, '', 'paddingright valigntextbottom');
+							$listofusertoshow .= $cacheusers[$tmpid]->getNomUrl(-3, '', 0, 0, 0, 0, '', 'valignmiddle');
 						}
 
 						print $titletoshow;
@@ -2039,7 +2048,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							}
 						}
 						if (!empty($contact_id) && $contact_id > 0) {
-							if (!is_object($cachecontacts[$contact_id])) {
+							if (empty($cachecontacts[$contact_id]) || !is_object($cachecontacts[$contact_id])) {
 								$contact = new Contact($db);
 								$contact->fetch($contact_id);
 								$cachecontacts[$contact_id] = $contact;
@@ -2061,7 +2070,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							$linerelatedto .= dolGetElementUrl($event->fk_element, $event->elementtype, 1);
 						}
 						if ($linerelatedto) {
-							print '<br>'.$linerelatedto;
+							print ' '.$linerelatedto;
 						}
 					}
 

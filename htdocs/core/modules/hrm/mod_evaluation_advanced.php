@@ -54,7 +54,7 @@ class mod_evaluation_advanced extends ModeleNumRefEvaluation
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{

@@ -647,7 +647,7 @@ class Menubase
 		$sql .= " ORDER BY m.position, m.rowid";
 		//print $sql;
 
-		//dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu)."", LOG_DEBUG);
+		//dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu), LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$numa = $this->db->num_rows($resql);

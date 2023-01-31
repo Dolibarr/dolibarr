@@ -217,13 +217,6 @@ if (empty($reshook)) {
 			$invoice->update($user);
 		}
 
-		//$sav_FACTURE_ADDON = '';
-		//if (!empty($conf->global->TAKEPOS_ADDON)) {
-		//	$sav_FACTURE_ADDON = $conf->global->FACTURE_ADDON;
-		//	if ($conf->global->TAKEPOS_ADDON == "terminal") $conf->global->FACTURE_ADDON = $conf->global->{'TAKEPOS_ADDON'.$_SESSION["takeposterminal"]};
-		//	else $conf->global->FACTURE_ADDON = $conf->global->TAKEPOS_ADDON;
-		//}
-
 		$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
 		if ($error) {
 			dol_htmloutput_errors($errormsg, null, 1);
@@ -1431,7 +1424,7 @@ if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 			$htmlforlines .= '" onclick="AddProduct(\''.$place.'\', '.$row->id.')">';
 			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 				$htmlforlines .= '<img class="imgwrapper" width="33%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=pro&query=pro&id='.$row->id.'"><br>';
-				$htmlforlines .= $row->label.''.price($row->price_ttc, 1, $langs, 1, -1, -1, $conf->currency);
+				$htmlforlines .= $row->label.' '.price($row->price_ttc, 1, $langs, 1, -1, -1, $conf->currency);
 				$htmlforlines .= '</div>'."\n";
 			} else {
 				$htmlforlines .= '<td class="left">';

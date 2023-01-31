@@ -322,7 +322,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				// Code and Label
 				print '<td class="liste_total tdoverflowmax100" title="'.dol_escape_htmltag($cat['code']).'">';
 				print dol_escape_htmltag($cat['code']);
-				print '</td><td class="tdoverflowmax250" title="'.dol_escape_htmltag($cat['label']).'">';
+				print '</td><td class="tdoverflowmax250 borderright" title="'.dol_escape_htmltag($cat['label']).'">';
 				print dol_escape_htmltag($cat['label']);
 				print '</td>';
 
@@ -374,7 +374,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				//$r = $AccCat->calculate($result);
 				$r = dol_eval($result, 1, 1, '1');
 
-				print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
+				print '<td class="liste_total right borderright"><span class="amount">'.price($r).'</span></td>';
 				if (empty($sommes[$code]['N'])) {
 					$sommes[$code]['N'] = $r;
 				} else {
@@ -567,12 +567,12 @@ if ($modecompta == 'CREANCES-DETTES') {
 				} else {
 					$labeltoshow .= ' - <span class="warning">'.$langs->trans("GroupIsEmptyCheckSetup").'</span>';
 				}
-				print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag(dol_string_nohtmltag($labeltoshow)).'">';
+				print '<td class="tdoverflowmax250 borderright" title="'.dol_escape_htmltag(dol_string_nohtmltag($labeltoshow)).'">';
 				print $labeltoshow;
 				print '</td>';
 
 				print '<td class="right"><span class="amount">'.price($totCat['NP']).'</span></td>';
-				print '<td class="right"><span class="amount">'.price($totCat['N']).'</span></td>';
+				print '<td class="right borderright"><span class="amount">'.price($totCat['N']).'</span></td>';
 
 				// Each month
 				foreach ($totCat['M'] as $k => $v) {
@@ -609,11 +609,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 								$labeldetail = '-';
 							}
 
-							print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($labeldetail).'">';
+							print '<td class="tdoverflowmax250 borderright" title="'.dol_escape_htmltag($labeldetail).'">';
 							print dol_escape_htmltag($labeldetail);
 							print '</td>';
 							print '<td class="right"><span class="amount">'.price($resultNP).'</span></td>';
-							print '<td class="right"><span class="amount">'.price($resultN).'</span></td>';
+							print '<td class="right borderright"><span class="amount">'.price($resultN).'</span></td>';
 
 							// Make one call for each month
 							foreach ($months as $k => $v) {

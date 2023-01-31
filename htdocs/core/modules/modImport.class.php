@@ -67,7 +67,7 @@ class modImport extends DolibarrModules
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module - Need auto_detect_line_endings php option to solve MAC pbs.
 		$this->phpmax = array();
 		$this->need_dolibarr_version = array(2, 7, -1); // Minimum version of Dolibarr required by module
-		$this->need_javascript_ajax = 1;
+		$this->enabled_bydefault = true; // Will be enabled during install
 
 		// Constants
 		$this->const = array();

@@ -220,11 +220,11 @@ if (!$rowid) {
 			// Status
 			print "<td class='right'>";
 			if ($txn->status == 'available') {
-				print img_picto($langs->trans("".$txn->status.""), 'statut4');
+				print img_picto($langs->trans($txn->status), 'statut4');
 			} elseif ($txn->status == 'pending') {
-				print img_picto($langs->trans("".$txn->status.""), 'statut7');
+				print img_picto($langs->trans($txn->status), 'statut7');
 			} elseif ($txn->status == 'failed') {
-				print img_picto($langs->trans("".$txn->status.""), 'statut8');
+				print img_picto($langs->trans($txn->status), 'statut8');
 			}
 			print '</td>';
 			print "</tr>\n";

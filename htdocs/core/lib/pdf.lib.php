@@ -61,9 +61,9 @@ function pdf_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'pdf_admin');
 
-	if (isModEnabled("propal")) {
+	if (isModEnabled("propal") || isModEnabled('facture') || isModEnabled('reception')) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_other.php';
-		$head[$h][1] = $langs->trans("Other");
+		$head[$h][1] = $langs->trans("Others");
 		$head[$h][2] = 'other';
 		$h++;
 	}
@@ -1178,7 +1178,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			$mycustomfooterheight = pdfGetHeightForHtmlContent($pdf, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
 
 			$marginwithfooter = $marge_basse + $freetextheight + $mycustomfooterheight;
-			$posy = $marginwithfooter + 0;
+			$posy = (float) $marginwithfooter;
 
 			// Option for footer background color (without freetext zone)
 			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
@@ -1222,7 +1222,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		} else {
 			// Else default footer
 			$marginwithfooter = $marge_basse + $freetextheight + (!empty($line1) ? 3 : 0) + (!empty($line2) ? 3 : 0) + (!empty($line3) ? 3 : 0) + (!empty($line4) ? 3 : 0);
-			$posy = $marginwithfooter + 0;
+			$posy = (float) $marginwithfooter;
 
 			// Option for footer background color (without freetext zone)
 			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
@@ -1652,7 +1652,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	}
 
 	// Show information for lot
-	if ($dbatch) {
+	if (!empty($dbatch)) {
 		// $object is a shipment.
 		//var_dump($object->lines[$i]->details_entrepot);		// array from llx_expeditiondet (we can have seral lines for one fk_origin_line)
 		//var_dump($object->lines[$i]->detail_batch);			// array from llx_expeditiondet_batch (each line with a lot is linked to llx_expeditiondet)

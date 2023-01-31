@@ -51,7 +51,11 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'aZ09');
-$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
+
+if (!empty($backtopagejsfields)) {
+	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
+	$dol_openinpopup = $tmpbacktopagejsfields[0];
+}
 
 $status = GETPOST('status', 'int');
 $opp_status = GETPOST('opp_status', 'int');
@@ -527,6 +531,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	print '<input type="hidden" name="backtopagejsfields" value="'.$backtopagejsfields.'">';
+	print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
 
 	print dol_get_fiche_head();
 
@@ -694,7 +699,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			// TODO @LDR Implement this
 			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 				$tmpbacktopagejsfields = 'addthirdparty:socid,search_socid';
-				print dolButtonToOpenUrlInDialogPopup('addthirdparty', $langs->transnoentitiesnoconv('AddThirdParty'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
+				print dolButtonToOpenUrlInDialogPopup('addthirdparty', $langs->transnoentitiesnoconv('AddThirdParty'), $newbutton, $url, '', '', '', $tmpbacktopagejsfields);
 			} else {
 				print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';
 			}
@@ -963,7 +968,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 							console.log("Hide opportunities fields "+jQuery("#usage_opportunity").prop("checked"));
 							jQuery(".classuseopportunity").hide();
 						}
-					};
+					}
 				});';
 				print '</script>';
 				print '<br>';
@@ -989,7 +994,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 							console.log("Hide task fields "+jQuery("#usage_task").prop("checked"));
 							jQuery(".classusetask").hide();
 						}
-					};
+					}
 				});';
 				print '</script>';
 				print '<br>';
@@ -1015,7 +1020,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 							console.log("Hide bill time fields "+jQuery("#usage_bill_time").prop("checked"));
 							jQuery(".classusebilltime").hide();
 						}
-					};
+					}
 				});';
 				print '</script>';
 				print '<br>';
@@ -1041,7 +1046,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 							console.log("Hide organize event fields "+jQuery("#usage_organize_event").prop("checked"));
 							jQuery(".classuseorganizeevent").hide();
 						}
-					};
+					}
 				});';
 				print '</script>';
 			}

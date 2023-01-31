@@ -130,7 +130,7 @@ class pdf_beluga extends ModelePDFProjects
 	 * Page orientation
 	 * @var string 'P' or 'Portait' (default), 'L' or 'Landscape'
 	 */
-	private $orientation = '';
+	private $orientation;
 
 	/**
 	 * Issuer

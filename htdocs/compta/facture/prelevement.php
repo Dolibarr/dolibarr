@@ -742,8 +742,8 @@ if ($object->id > 0) {
 				print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
 				print '</form>';
 
-				if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT_SHOW_BUTTON)) {
-					// TODO Replace this with a checkbox for each payment mode: "Send request to PaymentModeManager immediatly..."
+				if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON')) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
+					// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediatly..."
 					print "<br>";
 					//add stripe sepa button
 					$buttonlabel = $langs->trans("MakeWithdrawRequestStripe");
@@ -781,14 +781,14 @@ if ($object->id > 0) {
 
 	if ($type == 'bank-transfer') {
 		print '<div class="opacitymedium">'.$langs->trans("DoCreditTransferBeforePayments");
-		if (isModEnabled('stripe')) {
+		if (isModEnabled('stripe') && getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
 			print ' '.$langs->trans("DoStandingOrdersBeforePayments2");
 		}
 		print ' '.$langs->trans("DoStandingOrdersBeforePayments3");
 		print '</div><br>';
 	} else {
 		print '<div class="opacitymedium">'.$langs->trans("DoStandingOrdersBeforePayments");
-		if (isModEnabled('stripe')) {
+		if (isModEnabled('stripe') && getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
 			print ' '.$langs->trans("DoStandingOrdersBeforePayments2");
 		}
 		print ' '.$langs->trans("DoStandingOrdersBeforePayments3");
@@ -807,12 +807,12 @@ if ($object->id > 0) {
 	print '<td class="center">'.$langs->trans("User").'</td>';
 	print '<td class="center">'.$langs->trans("Amount").'</td>';
 	print '<td class="center">'.$langs->trans("DateProcess").'</td>';
-	print '<td>&nbsp;</td>';
 	if ($type == 'bank-transfer') {
 		print '<td class="center">'.$langs->trans("BankTransferReceipt").'</td>';
 	} else {
 		print '<td class="center">'.$langs->trans("WithdrawalReceipt").'</td>';
 	}
+	print '<td>&nbsp;</td>';
 	print '<td>&nbsp;</td>';
 	print '</tr>';
 
@@ -864,9 +864,10 @@ if ($object->id > 0) {
 			// Amount
 			print '<td class="center"><span class="amount">'.price($obj->amount).'</span></td>';
 
-			// Ref of SEPA request
+			// Date process
 			print '<td class="center"><span class="opacitymedium">'.$langs->trans("OrderWaiting").'</span></td>';
 
+			// Link to make payment now
 			print '<td>';
 			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
 				$langs->load("stripe");
@@ -874,8 +875,10 @@ if ($object->id > 0) {
 			}
 			print '</td>';
 
+			//
 			print '<td align="center">-</td>';
 
+			// Actions
 			print '<td class="right">';
 			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.$type.'">';
 			print img_delete();
@@ -929,14 +932,21 @@ if ($object->id > 0) {
 
 			print '<tr class="oddeven">';
 
+			// Date
 			print '<td class="left">'.dol_print_date($db->jdate($obj->date_demande), 'day')."</td>\n";
 
+			// User
 			print '<td align="center">';
 			print $tmpuser->getNomUrl(1, '', 0, 0, 0, 0, 'login');
 			print '</td>';
 
+			// Amount
 			print '<td class="center">'.price($obj->amount).'</td>';
 
+			// Date process
+			print '<td class="center">'.dol_print_date($db->jdate($obj->date_traite), 'day')."</td>\n";
+
+			// Link to payment request done
 			print '<td class="center">';
 			if ($obj->fk_prelevement_bons > 0) {
 				$withdrawreceipt = new BonPrelevement($db);
@@ -946,10 +956,10 @@ if ($object->id > 0) {
 			}
 			print "</td>\n";
 
+			//
 			print '<td>&nbsp;</td>';
 
-			print '<td class="center">'.dol_print_date($db->jdate($obj->date_traite), 'day')."</td>\n";
-
+			// Actions
 			print '<td>&nbsp;</td>';
 
 			print "</tr>\n";

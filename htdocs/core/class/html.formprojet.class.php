@@ -270,7 +270,7 @@ class FormProjets
 								'value' => $obj->ref,
 								'ref' => $obj->ref,
 								'labelx' => $labeltoshow,
-								'label' => ((bool) $disabled) ? '<span class="opacitymedium">'.$labeltoshow.'</span>' : $labeltoshow,
+								'label' => ($disabled ? '<span class="opacitymedium">'.$labeltoshow.'</span>' : $labeltoshow),
 								'disabled' => (bool) $disabled
 							);
 						}

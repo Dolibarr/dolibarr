@@ -93,7 +93,7 @@ if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL
 }
 
-if (GETPOSTISSET('THEME_DARKMODEENABLED', 'int')) {
+if (GETPOSTISSET('THEME_DARKMODEENABLED')) {
 	$conf->global->THEME_DARKMODEENABLED = GETPOST('THEME_DARKMODEENABLED', 'int'); // If darkmode was forced on URL
 }
 
@@ -879,7 +879,7 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
-.button:hover, .buttonDelete:hover   {
+.button:hover:not(.nohover), .buttonDelete:hover:not(.nohover)   {
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
@@ -1146,6 +1146,9 @@ textarea.centpercent {
 }
 .nomarginright {
 	margin-<?php print $right; ?>: unset;
+}
+.nowidthimp {
+	width: unset !important;
 }
 
 .cursordefault {
@@ -1821,6 +1824,7 @@ tr.nobottom td {
 	.minwidth100 { min-width: 100px; }
 	.minwidth150 { min-width: 150px; }
 	.minwidth200 { min-width: 200px; }
+	.minwidth250 { min-width: 250px; }
 	.minwidth300 { min-width: 300px; }
 	.minwidth400 { min-width: 400px; }
 	.minwidth500 { min-width: 500px; }
@@ -1844,6 +1848,7 @@ tr.nobottom td {
 .width125 { width: 125px; }
 .width150 { width: 150px; }
 .width200 { width: 200px; }
+.width250 { width: 250px; }
 .width300 { width: 300px; }
 .width400 { width: 400px; }
 .width500 { width: 500px; }
@@ -1851,7 +1856,7 @@ tr.nobottom td {
 .maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
-.maxwidthdate  { max-width: 80px; }
+.maxwidthdate  { max-width: 85px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
@@ -1976,6 +1981,13 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.smallonsmartphone {
 		font-size: 0.8em;
 	}
+	
+	.nopaddingtoponsmartphone {
+		padding-top: 0 !important;
+	}
+	.nopaddingbottomonsmartphone {
+		padding-bottom: 0 !important;
+	}	
 }
 
 /* Force values for small screen 570 */
@@ -3232,6 +3244,17 @@ img.userphotosmall {			/* size for user photo in lists */
 }
 img.userphoto[alt="Gravatar avatar"], img.photouserphoto.dropdown-user-image[alt="Gravatar avatar"] {
 	background: #fff;
+}
+img.userphotopublicvcard {
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	background-size: contain;
+	border: 1px solid;
+	border-color: rgba(128, 128, 128, 0.5);
+	position: relative;
+	top: 25px;
+	left: -110px;
 }
 form[name="addtime"] img.userphoto {
 	border: 1px solid #444;
@@ -6446,6 +6469,10 @@ ul.select2-results__options li {
 	}
 }
 
+.parentonrightofpage {
+  direction: rtl;
+}
+
 
 /* ============================================================================== */
 /*  For categories                                                                */
@@ -6498,6 +6525,10 @@ span.noborderoncategories {
   border: 1px solid #aaa;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   display: none;
+}
+
+div.multi-select-menu[role="menu"] {
+	min-width: 220px !important;
 }
 
 .multi-select-menu input {
@@ -6610,7 +6641,7 @@ dl.dropdown {
 	z-index: 1;
 }
 .dropdown dd ul.selectedfieldsleft {
-	right: auto;
+	<?php echo $right; ?>: auto;
 }
 .dropdown dd ul li {
 	white-space: nowrap;
@@ -7632,6 +7663,12 @@ div.clipboardCPValue.hidewithsize {
 
 	.lilevel1 span.paddingright {
 		padding-right: 3px;
+	}
+
+	img.userphotopublicvcard {
+		left: unset;
+		top: unset;
+		margin-top: 30px;
 	}
 }
 

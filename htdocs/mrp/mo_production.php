@@ -158,7 +158,7 @@ if (empty($reshook)) {
 
 		// Line to produce
 		$moline->fk_mo = $object->id;
-		$moline->qty = GETPOST('qtytoadd', 'int'); ;
+		$moline->qty = GETPOST('qtytoadd', 'int');
 		$moline->fk_product = GETPOST('productidtoadd', 'int');
 		if (GETPOST('addconsumelinebutton')) {
 			$moline->role = 'toconsume';

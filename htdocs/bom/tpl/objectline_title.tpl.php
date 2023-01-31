@@ -67,7 +67,7 @@ print '</td>';
 print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('Qty'), ($filtertype != 1) ? $langs->trans("QtyRequiredIfNoLoss") : '').'</td>';
 
 if ($filtertype != 1) {
-	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		print '<td class="linecoluseunit left">' . $langs->trans('Unit') . '</td>';
 	}
 

@@ -1141,24 +1141,24 @@ class ExtraFields
 
 				$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
 				$out .= '<option value="0">&nbsp;</option>';
-				foreach ($param['options'] as $key => $val) {
-					if ((string) $key == '') {
+				foreach ($param['options'] as $key2 => $val2) {
+					if ((string) $key2 == '') {
 						continue;
 					}
-					$valarray = explode('|', $val);
-					$val = $valarray[0];
+					$valarray = explode('|', $val2);
+					$val2 = $valarray[0];
 					$parent = '';
 					if (!empty($valarray[1])) {
 						$parent = $valarray[1];
 					}
-					$out .= '<option value="'.$key.'"';
-					$out .= (((string) $value == (string) $key) ? ' selected' : '');
+					$out .= '<option value="'.$key2.'"';
+					$out .= (((string) $value == (string) $key2) ? ' selected' : '');
 					$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
 					$out .= '>';
-					if ($langfile && $val) {
-						$out .= $langs->trans($val);
+					if ($langfile && $val2) {
+						$out .= $langs->trans($val2);
 					} else {
-						$out .= $val;
+						$out .= $val2;
 					}
 					$out .= '</option>';
 				}
@@ -2040,13 +2040,13 @@ class ExtraFields
 	/**
 	 * Fill array_options property of object by extrafields value (using for data sent by forms)
 	 *
-	 * @param   array	$extralabels    	Deprecated (old $array of extrafields, now set this to null)
-	 * @param   object	$object         	Object
-	 * @param	string	$onlykey			Only some keys are filled:
-	 *                                  	'string' => When we make update of only one extrafield ($action = 'update_extras'), calling page can set this to avoid to have other extrafields being reset.
-	 *                                  	'@GETPOSTISSET' => When we make update of several extrafields ($action = 'update'), calling page can set this to avoid to have fields not into POST being reset.
-	 * @param	int		$todefaultifmissing 1=Set value to the default value in database if value is mandatory and missing
-	 * @return	int							1 if array_options set, 0 if no value, -1 if error (field required missing for example)
+	 * @param   array|null	$extralabels    	Deprecated (old $array of extrafields, now set this to null)
+	 * @param   object		$object         	Object
+	 * @param	string		$onlykey			Only some keys are filled:
+	 *                      	            	'string' => When we make update of only one extrafield ($action = 'update_extras'), calling page can set this to avoid to have other extrafields being reset.
+	 *                          	        	'@GETPOSTISSET' => When we make update of several extrafields ($action = 'update'), calling page can set this to avoid to have fields not into POST being reset.
+	 * @param	int			$todefaultifmissing 1=Set value to the default value in database if value is mandatory and missing
+	 * @return	int								1 if array_options set, 0 if no value, -1 if error (field required missing for example)
 	 */
 	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '', $todefaultifmissing = 0)
 	{
