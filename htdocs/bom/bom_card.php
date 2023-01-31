@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2017-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -565,7 +565,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	  */
 
 	if (!empty($object->table_element_line)) {
-		//Products
+		// Products
 		$res = $object->fetchLinesbytypeproduct(0);
 		$object->calculateCosts();
 
@@ -613,7 +613,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print "</form>\n";
 
-		//Services
+		// Services
 		$filtertype = 1;
 		$res = $object->fetchLinesbytypeproduct(1);
 		$object->calculateCosts();
@@ -657,9 +657,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
 		print '</table>';
 	}
-	 print '</div>';
+	print '</div>';
 
-	 print "</form>\n";
+	print "</form>\n";
 
 
 	 mrpCollapseBomManagement();
