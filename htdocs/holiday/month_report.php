@@ -118,16 +118,16 @@ if (empty($reshook)) {
 }
 
 $arrayfields = array(
-	'cp.ref'=>array('label' => 'Ref', 'checked'=>1),
-	'cp.fk_user'=>array('label' => 'Employee', 'checked'=>1),
-	'cp.fk_type'=>array('label' => 'Type', 'checked'=>1),
-	'cp.date_debut'=>array('label' => 'DateDebCP', 'checked'=>1),
-	'cp.date_fin'=>array('label' => 'DateFinCP', 'checked'=>1),
-	'used_days'=>array('label' => 'NbUseDaysCPShort', 'checked'=>1),
-	'date_start_month'=>array('label' => 'DateStartInMonth', 'checked'=>1),
-	'date_end_month'=>array('label' => 'DateEndInMonth', 'checked'=>1),
-	'used_days_month'=>array('label' => 'NbUseDaysCPShortInMonth', 'checked'=>1),
-	'cp.description'=>array('label' => 'DescCP', 'checked'=>1),
+	'cp.ref'=>array('label' => 'Ref', 'checked'=>1, 'position'=>5),
+	'cp.fk_type'=>array('label' => 'Type', 'checked'=>1, 'position'=>10),
+	'cp.fk_user'=>array('label' => 'Employee', 'checked'=>1, 'position'=>20),
+	'cp.date_debut'=>array('label' => 'DateDebCP', 'checked'=>1, 'position'=>30),
+	'cp.date_fin'=>array('label' => 'DateFinCP', 'checked'=>1, 'position'=>32),
+	'used_days'=>array('label' => 'NbUseDaysCPShort', 'checked'=>1, 'position'=>34),
+	'date_start_month'=>array('label' => 'DateStartInMonth', 'checked'=>1, 'position'=>50),
+	'date_end_month'=>array('label' => 'DateEndInMonth', 'checked'=>1, 'position'=>52),
+	'used_days_month'=>array('label' => 'NbUseDaysCPShortInMonth', 'checked'=>1, 'position'=>54),
+	'cp.description'=>array('label' => 'DescCP', 'checked'=>-1, 'position'=>800),
 );
 
 
@@ -149,7 +149,7 @@ $search_month = GETPOST("remonth", 'int') ?GETPOST("remonth", 'int') : date("m",
 $search_year = GETPOST("reyear", 'int') ?GETPOST("reyear", 'int') : date("Y", time());
 $year_month = sprintf("%04d", $search_year).'-'.sprintf("%02d", $search_month);
 
-$sql = "SELECT cp.rowid, cp.ref, cp.fk_user, cp.date_debut, cp.date_fin, cp.fk_type, cp.description, cp.halfday";
+$sql = "SELECT cp.rowid, cp.ref, cp.fk_user, cp.date_debut, cp.date_fin, cp.fk_type, cp.description, cp.halfday, cp.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."holiday cp";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON cp.fk_user = u.rowid";
 $sql .= " WHERE cp.rowid > 0";
@@ -250,13 +250,6 @@ if (!empty($arrayfields['cp.ref']['checked'])) {
 	print '</th>';
 }
 
-// Filter: Employee
-if (!empty($arrayfields['cp.fk_user']['checked'])) {
-	print '<th class="liste_titre">';
-	print $form->select_dolusers($search_employee, "search_employee", 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth100');
-	print '</th>';
-}
-
 // Filter: Type
 if (!empty($arrayfields['cp.fk_type']['checked'])) {
 	$typeleaves = $holidaystatic->getTypes(1, -1);
@@ -268,6 +261,13 @@ if (!empty($arrayfields['cp.fk_type']['checked'])) {
 
 	print '<th class="liste_titre">';
 	print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100', 1);
+	print '</th>';
+}
+
+// Filter: Employee
+if (!empty($arrayfields['cp.fk_user']['checked'])) {
+	print '<th class="liste_titre">';
+	print $form->select_dolusers($search_employee, "search_employee", 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth100');
 	print '</th>';
 }
 
@@ -313,11 +313,11 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 if (!empty($arrayfields['cp.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['cp.ref']['label'], $_SERVER["PHP_SELF"], 'cp.ref', '', '', '', $sortfield, $sortorder);
 }
-if (!empty($arrayfields['cp.fk_user']['checked'])) {
-	print_liste_field_titre($arrayfields['cp.fk_user']['label'], $_SERVER["PHP_SELF"], 'cp.fk_user', '', '', '', $sortfield, $sortorder);
-}
 if (!empty($arrayfields['cp.fk_type']['checked'])) {
 	print_liste_field_titre($arrayfields['cp.fk_type']['label'], $_SERVER["PHP_SELF"], 'cp.fk_type', '', '', '', $sortfield, $sortorder);
+}
+if (!empty($arrayfields['cp.fk_user']['checked'])) {
+	print_liste_field_titre($arrayfields['cp.fk_user']['label'], $_SERVER["PHP_SELF"], 'cp.fk_user', '', '', '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['ct.label']['checked'])) {
 	print_liste_field_titre($arrayfields['ct.label']['label'], $_SERVER["PHP_SELF"], 'ct.label', '', '', '', $sortfield, $sortorder);
@@ -398,6 +398,15 @@ if ($num == 0) {
 		// Leave request
 		$holidaystatic->id = $obj->rowid;
 		$holidaystatic->ref = $obj->ref;
+		$holidaystatic->statut = $obj->status;
+		$holidaystatic->status = $obj->status;
+		$holidaystatic->fk_user = $obj->fk_user;
+		$holidaystatic->fk_type = $obj->fk_type;
+		$holidaystatic->description = $obj->description;
+		$holidaystatic->halfday = $obj->halfday;
+		$holidaystatic->date_debut = $db->jdate($obj->date_debut);
+		$holidaystatic->date_fin = $db->jdate($obj->date_fin);
+
 
 		print '<tr class="oddeven">';
 		// Action column
@@ -408,11 +417,11 @@ if ($num == 0) {
 		if (!empty($arrayfields['cp.ref']['checked'])) {
 			print '<td class="nowraponall">'.$holidaystatic->getNomUrl(1, 1).'</td>';
 		}
-		if (!empty($arrayfields['cp.fk_user']['checked'])) {
-			print '<td>'.$user->getFullName($langs).'</td>';
-		}
 		if (!empty($arrayfields['cp.fk_type']['checked'])) {
 			print '<td>'.$arraytypeleaves[$obj->fk_type].'</td>';
+		}
+		if (!empty($arrayfields['cp.fk_user']['checked'])) {
+			print '<td class="tdoverflowmax150">'.$user->getFullName($langs).'</td>';
 		}
 
 		if (!empty($arrayfields['cp.date_debut']['checked'])) {
@@ -447,7 +456,11 @@ if ($num == 0) {
 			print '<td class="right">'.num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth).'</td>';
 		}
 		if (!empty($arrayfields['cp.description']['checked'])) {
-			print '<td class="maxwidth300 small">'.dolGetFirstLineOfText(dol_string_nohtmltag($obj->description, 1)).'</td>';
+			print '<td class="maxwidth300 small">';
+			print '<div class="twolinesmax">';
+			print dolGetFirstLineOfText(dol_string_nohtmltag($obj->description, 1));
+			print '</div>';
+			print '</td>';
 		}
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
