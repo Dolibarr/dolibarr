@@ -964,10 +964,9 @@ class Stripe extends CommonObject
 					$dataforcard = array(
 						'type'=>'sepa_debit',
 						"sepa_debit" => array('iban' => $iban),
-						'currency' => strtolower($conf->currency),
-						'usage' => 'reusable',
-						'owner' => array(
+						'billing_details' => array(
 							'name' => $soc->name,
+							'email' => !empty($soc->email) ? $soc->email : "",
 						),
 						"metadata" => array(
 							'dol_type'=>$object->element,
@@ -979,19 +978,19 @@ class Stripe extends CommonObject
 					);
 					// Complete owner name
 					if (!empty($soc->town)) {
-						$dataforcard['owner']['address']['city']=$soc->town;
+						$dataforcard['billing_details']['address']['city']=$soc->town;
 					}
 					if (!empty($soc->country_code)) {
-						$dataforcard['owner']['address']['country']=$soc->country_code;
+						$dataforcard['billing_details']['address']['country']=$soc->country_code;
 					}
 					if (!empty($soc->address)) {
-						$dataforcard['owner']['address']['line1']=$soc->address;
+						$dataforcard['billing_details']['address']['line1']=$soc->address;
 					}
 					if (!empty($soc->zip)) {
-						$dataforcard['owner']['address']['postal_code']=$soc->zip;
+						$dataforcard['billing_details']['address']['postal_code']=$soc->zip;
 					}
 					if (!empty($soc->state)) {
-						$dataforcard['owner']['address']['state']=$soc->state;
+						$dataforcard['billing_details']['address']['state']=$soc->state;
 					}
 
 					//$a = \Stripe\Stripe::getApiKey();
@@ -1013,14 +1012,14 @@ class Stripe extends CommonObject
 
 						$s = new \Stripe\StripeClient($stripeacc);
 
-						// TODO LMR Deprecated with the new Stripe API and SCA.
-						// TODO LMR Replace ->create() and ->createSource() and replace with ->getSetupIntent() to then, get the Payment mode with $payment_method = \Stripe\PaymentMethod::retrieve($setupintent->payment_method); ?
-						$sepa = $s->sources->create($dataforcard);
+						$sepa = $s->paymentMethods->create($dataforcard);
 						if (!$sepa) {
 							$this->error = 'Creation of sepa_debit on Stripe has failed';
 						} else {
 							// link customer and src
-							$cs = $cu->createSource($cu->id, array('source' => $sepa->id));
+							$cs = $s->setupIntents->create(['payment_method_types' => ['sepa_debit'], 'customer' => $cu->id]);
+							$cs = $s->setupIntents->update($cs->id, ['payment_method' => $sepa->id]);
+							$cs = $s->setupIntents->confirm($cs->id, ['mandate_data' => ['customer_acceptance' => ['type' => 'offline']]]);
 							if (!$cs) {
 								$this->error = 'Link SEPA <-> Customer failed';
 							} else {
@@ -1040,6 +1039,7 @@ class Stripe extends CommonObject
 							}
 						}
 					} catch (Exception $e) {
+						$sepa = null;
 						$this->error = $e->getMessage();
 						dol_syslog($this->error, LOG_WARNING);
 					}

@@ -92,6 +92,10 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	const STATUS_ABANDONED = 3;
 
+	/**
+	 * Classified processing because payment requested
+	 */
+	const STATUS_PROCESSING = 4;
 
 	public $totalpaid;			// duplicate with sumpayed
 	public $totaldeposits;		// duplicate with sumdeposit
@@ -610,6 +614,10 @@ abstract class CommonInvoice extends CommonObject
 				$labelStatus = $langs->transnoentitiesnoconv('BillStatusClosedPaidPartially');
 				$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusClosedPaidPartially');
 				$statusType = 'status9';
+			} elseif ($status == 4) {
+				$labelStatus = $langs->transnoentitiesnoconv('BillStatusRequestProcessing');
+				$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusRequestProcessing');
+				$statusType = 'status3';
 			} elseif ($alreadypaid == 0) {
 				$labelStatus = $langs->transnoentitiesnoconv('BillStatusNotPaid');
 				$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusNotPaid');
@@ -900,9 +908,9 @@ abstract class CommonInvoice extends CommonObject
 
 			$sql = "SELECT rowid, date_demande, amount, fk_facture, fk_facture_fourn";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
-			$sql .= " AND fk_facture = ".((int) $this->fk_facture);		// Add a protection to not pay another invoice than current one
-			$sql .= " AND traite = 0";	// Add a protection to not process twice
 			$sql .= " WHERE rowid = ".((int) $did);
+			$sql .= " AND fk_facture = ".((int) $this->id);		// Add a protection to not pay another invoice than current one
+			$sql .= " AND traite = 0";	// Add a protection to not process twice
 
 			dol_syslog(get_class($this)."::makeStripeSepaRequest 1", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1186,126 +1194,11 @@ abstract class CommonInvoice extends CommonObject
 											// Default description used for label of event. Will be overwrite by another value later.
 											$description = 'Stripe payment request OK (' . $charge->id . ') from makeStripeSepaRequest: ' . $FULLTAG;
 
-
-											// @TODO LMR Save request to status pending instead of done. Done should be set with a webhook.
-
-
-											$db = $this->db;
-
-											$ipaddress = getUserRemoteIP();
-
-											$TRANSACTIONID = $charge->id;
-											$currency = $conf->currency;
-											$paymentmethod = 'stripe';
-											$emetteur_name = $charge->customer;
-
-											// Same code than into paymentok.php...
-
-											$paymentTypeId = 0;
-											if ($paymentmethod == 'paybox') {
-												$paymentTypeId = $conf->global->PAYBOX_PAYMENT_MODE_FOR_PAYMENTS;
-											}
-											if ($paymentmethod == 'paypal') {
-												$paymentTypeId = $conf->global->PAYPAL_PAYMENT_MODE_FOR_PAYMENTS;
-											}
-											if ($paymentmethod == 'stripe') {
-												$paymentTypeId = $conf->global->STRIPE_PAYMENT_MODE_FOR_PAYMENTS;
-											}
-											if (empty($paymentTypeId)) {
-												//erics
-												if ($sepaMode) {
-													$paymentType = 'PRE';
-												} else {
-													$paymentType = $_SESSION["paymentType"];
-													if (empty($paymentType)) {
-														$paymentType = 'CB';
-													}
-												}
-												$paymentTypeId = dol_getIdFromCode($this->db, $paymentType, 'c_paiement', 'code', 'id', 1);
-											}
-
-											$currencyCodeType = $currency;
-
-											$ispostactionok = 1;
-
-											// Creation of payment line
-											// TODO LMR This must be move into the stripe server listening hooks public/stripe/ipn.php
-											include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
-											$paiement = new Paiement($this->db);
-											$paiement->datepaye = $now;
-											$paiement->date = $now;
-											if ($currencyCodeType == $conf->currency) {
-												$paiement->amounts = [$this->id => $amounttopay];   // Array with all payments dispatching with invoice id
-											} else {
-												$paiement->multicurrency_amounts = [$this->id => $amounttopay];   // Array with all payments dispatching
-
-												$postactionmessages[] = 'Payment was done in a different currency than currency expected of company';
-												$ispostactionok = -1;
-												// Not yet supported, so error
+											$result =$this->setStatut($this::STATUS_PROCESSING);
+											if ($result < 0) {
 												$error++;
 												$errorforinvoice++;
-											}
-											$paiement->paiementid = $paymentTypeId;
-											$paiement->num_paiement = '';
-											$paiement->num_payment = '';
-											// Add a comment with keyword 'SellYourSaas' in text. Used by trigger.
-											$paiement->note_public = 'StripeSepa payment ' . dol_print_date($now, 'standard') . ' using ' . $paymentmethod . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
-											$paiement->note_private = 'StripeSepa payment ' . dol_print_date($now, 'standard') . ' using ' . $paymentmethod . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
-											$paiement->ext_payment_id = $charge->id . ':' . $customer->id . '@' . $stripearrayofkeys['publishable_key'];
-											$paiement->ext_payment_site = 'stripe';
-
-											if (!$errorforinvoice) {
-												dol_syslog('* Record payment for invoice id ' . $this->id . '. It includes closing of invoice and regenerating document');
-
-												// This include closing invoices to 'paid' (and trigger including unsuspending) and regenerating document
-												$paiement_id = $paiement->create($user, 1);
-												if ($paiement_id < 0) {
-													$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
-													$ispostactionok = -1;
-													$error++;
-													$errorforinvoice++;
-												} else {
-													$postactionmessages[] = 'Payment created';
-												}
-
-												dol_syslog("The payment has been created for invoice id " . $this->id);
-											}
-
-											if (!$errorforinvoice && isModEnabled('banque')) {
-												dol_syslog('* Add payment to bank');
-
-												// The bank used is the one defined into Stripe setup
-												$bankaccountid = 0;
-												if ($paymentmethod == 'stripe') {
-													$bankaccountid = $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS;
-												}
-
-												if ($bankaccountid > 0) {
-													$label = '(CustomerInvoicePayment)';
-													if ($this->type == Facture::TYPE_CREDIT_NOTE) {
-														$label = '(CustomerInvoicePaymentBack)';
-													}  // Refund of a credit note
-													$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, $emetteur_name, '');
-													if ($result < 0) {
-														$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
-														$ispostactionok = -1;
-														$error++;
-														$errorforinvoice++;
-													} else {
-														$postactionmessages[] = 'Bank transaction of payment created (by makeStripeSepaRequest)';
-													}
-												} else {
-													$postactionmessages[] = 'Setup of bank account to use in module ' . $paymentmethod . ' was not set. No way to record the payment.';
-													$ispostactionok = -1;
-													$error++;
-													$errorforinvoice++;
-												}
-											}
-
-											if ($ispostactionok < 1) {
-												$description = 'Stripe payment OK (' . $charge->id . ' - ' . $amounttopay . ' ' . $conf->currency . ') but post action KO from makeStripeSepaRequest: ' . $FULLTAG;
-											} else {
-												$description = 'Stripe payment+post action OK (' . $charge->id . ' - ' . $amounttopay . ' ' . $conf->currency . ') from makeStripeSepaRequest: ' . $FULLTAG;
+												$this->errors[] = 'Error on invoice status change to processing';
 											}
 										}
 
@@ -1563,13 +1456,13 @@ abstract class CommonInvoice extends CommonObject
 					$idtransferfile = 0;
 
 					// Update the direct debit payment request of the processed invoice to save the id of the prelevement_bon
-					$sql = "UPDATE".MAIN_DB_PREFIX."prelevement_demande SET";
+					$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_demande SET";
 					$sql .= " traite = 1,";	// TODO Remove this
 					$sql .= " date_traite = '".$this->db->idate(dol_now())."'";	// TODO Remove this
 					if ($idtransferfile > 0) {
 						$sql .= " fk_prelevement_bons = ".((int) $idtransferfile);
 					}
-					$sql .= "WHERE rowid = ".((int) $did);
+					$sql .= " WHERE rowid = ".((int) $did);
 
 
 					dol_syslog(get_class($this)."::makeStripeSepaRequest", LOG_DEBUG);
