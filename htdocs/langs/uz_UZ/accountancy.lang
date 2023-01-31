@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=Vagonni qaytarish turini tanlang
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 ThisService=Ushbu xizmat
 ThisProduct=Ushbu mahsulot
-DefaultForService=Xizmat uchun standart
-DefaultForProduct=Mahsulot uchun standart
+DefaultForService=Default for services
+DefaultForProduct=Default for products
 ProductForThisThirdparty=Ushbu uchinchi tomon uchun mahsulot
 ServiceForThisThirdparty=Ushbu uchinchi tomon uchun xizmat
 CantSuggest=Taklif qila olmayman
@@ -101,7 +101,8 @@ ShowAccountingAccount=Buxgalteriya hisobini ko'rsatish
 ShowAccountingJournal=Buxgalteriya jurnalini ko'rsatish
 ShowAccountingAccountInLedger=Buxgalteriya hisobini daftarda ko'rsatish
 ShowAccountingAccountInJournals=Buxgalteriya hisobini jurnallarda ko'rsatish
-AccountAccountingSuggest=Buxgalteriya hisobi tavsiya etildi
+DataUsedToSuggestAccount=Data used to suggest account
+AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=Standart hisoblar
 MenuBankAccounts=Bank hisobvaraqlari
 MenuVatAccounts=QQS hisob-kitoblari
@@ -126,6 +127,7 @@ WriteBookKeeping=Buxgalteriya hisobida operatsiyalarni qayd etish
 Bookkeeping=Kitob
 BookkeepingSubAccount=Subledger
 AccountBalance=Hisob balansi
+AccountBalanceSubAccount=Sub-accounts balance
 ObjectsRef=Manba ob'ekti ref
 CAHTF=Soliqqa qadar jami sotib olish sotuvchisi
 TotalExpenseReport=Jami xarajatlar hisoboti
@@ -189,6 +191,7 @@ ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be us
 UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
 UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
@@ -218,6 +221,7 @@ JournalLabel=Jurnal yorlig'i
 NumPiece=Parcha raqami
 TransactionNumShort=Raqam bitim
 AccountingCategory=Custom group of accounts
+AccountingCategories=Custom groups of accounts
 GroupByAccountAccounting=Bosh kitob schyoti bo'yicha guruhlash
 GroupBySubAccountAccounting=Subledger schyoti bo'yicha guruhlash
 AccountingAccountGroupsDesc=Siz bu erda buxgalteriya hisobining ayrim guruhlarini belgilashingiz mumkin. Ular shaxsiylashtirilgan buxgalteriya hisobotlari uchun ishlatiladi.
@@ -265,6 +269,7 @@ ShowSubtotalByGroup=Subtotalni daraja bo'yicha ko'rsatish
 
 Pcgtype=Hisob guruhi
 PcgtypeDesc=Hisob-kitoblar guruhi ba'zi buxgalteriya hisobotlari uchun oldindan belgilangan "filtr" va "guruhlash" mezonlari sifatida ishlatiladi. Masalan, "KIRISh" yoki "XARAJATLAR" xarajatlar / daromadlar to'g'risidagi hisobotni tuzish uchun mahsulotlarning buxgalteriya hisobi guruhlari sifatida ishlatiladi.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 
 Reconcilable=Yarashtiriladigan
 
@@ -294,6 +299,7 @@ DescValidateMovements=Yozishni, xatlarni va o'chirishni har qanday o'zgartirish 
 
 ValidateHistory=Avtomatik bog'lash
 AutomaticBindingDone=Avtomatik ulanishlar bajarildi (%s) - Ba'zi yozuvlar uchun avtomatik bog'lash mumkin emas (%s)
+DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=Harakat to'g'ri muvozanatlanmagan. Debet = %s & Kredit = %s
@@ -337,11 +343,13 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Sotish bo'yicha buxgalteriyada majburiy va o
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Xaridlar bo'yicha buxgalteriyada majburiy va o'tkazishni o'chirib qo'ying (sotuvchi hisob-kitoblari buxgalteriya hisobida hisobga olinmaydi)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Xarajatlar hisobotlari bo'yicha buxgalteriyada majburiy va o'tkazishni o'chirib qo'ying (xarajatlar hisoboti buxgalteriya hisobida hisobga olinmaydi)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
 NotifiedExportDate=Eksport qilingan qatorlarni eksport qilingan deb belgilash <span class="warning"> (chiziqni o‘zgartirish uchun siz butun tranzaksiyani o‘chirib tashlashingiz va uni buxgalteriya hisobiga qayta o‘tkazishingiz kerak) </span>
 NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportFull=Export documents ?
 DateValidationAndLock=Sanani tekshirish va qulflash
 ConfirmExportFile=Buxgalteriya eksporti faylini yaratishni tasdiqlashmi?
 ExportDraftJournal=Jurnal jurnalini eksport qiling
@@ -398,7 +406,7 @@ SaleLocal=Mahalliy sotuv
 SaleExport=Eksportni sotish
 SaleEEC=EECda sotish
 SaleEECWithVAT=EECda QQS bilan sotish bekor bo'lmaydi, shuning uchun bu kommunal ichki savdo emas va taklif qilingan hisob standart mahsulot hisobvarag'i.
-SaleEECWithoutVATNumber=EECda QQSsiz sotish, lekin uchinchi tomonning QQS identifikatori aniqlanmagan. Biz standart sotuvlar uchun mahsulot hisobiga tushamiz. Agar kerak bo'lsa, siz uchinchi tomonning QQS identifikatorini yoki mahsulot hisobini tuzatishingiz mumkin.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Taqiqlangan: tranzaktsiya tasdiqlangan va/yoki eksport qilingan.
 ForbiddenTransactionAlreadyValidated=Taqiqlangan: tranzaksiya tasdiqlangan.
 ## Dictionary
@@ -442,6 +450,7 @@ AccountancyErrorMismatchLetterCode=Kelishuv kodidagi nomuvofiqlik
 AccountancyErrorMismatchBalanceAmount=Balans (%s) 0 ga teng emas
 AccountancyErrorLetteringBookkeeping=Tranzaktsiyalarda xatoliklar yuz berdi: %s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
+ErrorArchiveAddFile=Can't put "%s" file in archive
 
 ## Import
 ImportAccountingEntries=Buxgalteriya yozuvlari
@@ -468,5 +477,7 @@ FECFormatMulticurrencyCode=Ko'p valyuta kodi (Idevise)
 DateExport=Sana eksporti
 WarningReportNotReliable=Diqqat, ushbu hisobot daftarga asoslanmagan, shuning uchun daftarda qo'lda o'zgartirilgan bitimni o'z ichiga olmaydi. Agar sizning jurnalizatsiya dolzarb bo'lsa, buxgalteriya hisobi yanada aniqroq bo'ladi.
 ExpenseReportJournal=Xarajatlar bo'yicha hisobot jurnali
+DocsAlreadyExportedAreExcluded=Docs already exported are excluded
+ClickToHideAlreadyExportedLines=Click to hide already exported lines
 
 NAccounts=%s hisob qaydnomalari

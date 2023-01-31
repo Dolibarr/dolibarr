@@ -26,6 +26,7 @@ Permission56002=ویرایش برگه‌ه
 Permission56003=حذف برگه‌ها
 Permission56004=مدیریت برگه‌ها
 Permission56005=نمایش همۀ برگه‌های مربوط به اشخاص سوم (برای کاربران خارجی مؤثر نیست و همواره به شخص‌سومی که به‌آن وصل است وابسته است)
+Permission56006=Export tickets
 
 Tickets=برگه‌های پشتیبانی
 TicketDictType=برگه‌ها - انواع
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=مشارکت‌کنندۀ بیرونی
 
 OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=ارسال پیام برگه با رایانامه
+
+ExportDataset_ticket_1=برگه‌های پشتیبانی
 
 # Status
 Read=خوانده‌شده

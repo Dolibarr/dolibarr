@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=Välj vagnens returtyp
 ACCOUNTING_EXPORT_PREFIX_SPEC=Ange prefix för filnamnet
 ThisService=Denna tjänst
 ThisProduct=Denna produkt
-DefaultForService=Standard för tjänst
-DefaultForProduct=Standard för produkt
+DefaultForService=Standard för tjänster
+DefaultForProduct=Standard för produkter
 ProductForThisThirdparty=Produkt för denna tredjepart
 ServiceForThisThirdparty=Tjänst för denna tredjepart
 CantSuggest=Kan inte föreslå
@@ -101,7 +101,8 @@ ShowAccountingAccount=Visa bokföringskonto
 ShowAccountingJournal=Visa loggböcker
 ShowAccountingAccountInLedger=Visa redovisningskonto i huvudbok
 ShowAccountingAccountInJournals=Visa redovisningskonto i tidskrifter
-AccountAccountingSuggest=Redovisningskonto föreslås
+DataUsedToSuggestAccount=Data som används för att föreslå konto
+AccountAccountingSuggest=Konto föreslaget
 MenuDefaultAccounts=Standardkonton
 MenuBankAccounts=Bankkonton
 MenuVatAccounts=Vat konton
@@ -126,6 +127,7 @@ WriteBookKeeping=Registrera transaktioner i bokföringen
 Bookkeeping=Huvudbok
 BookkeepingSubAccount=Underledger
 AccountBalance=Kontobalans
+AccountBalanceSubAccount=Saldo på underkonton
 ObjectsRef=Källobjekt ref
 CAHTF=Totalt köpleverantör före skatt
 TotalExpenseReport=Totalkostnadsrapport
@@ -189,6 +191,7 @@ ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Konto (från kontoplanen) som ska användas 
 UseAuxiliaryAccountOnCustomerDeposit=Lagra kundkonto som individuellt konto i huvudboken för rader med förskottsbetalningar (om det är inaktiverat förblir individuellt konto för förskottsrader tomt)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Konto (från kontoplanen) som ska användas som standard
 UseAuxiliaryAccountOnSupplierDeposit=Lagra leverantörskonto som individuellt konto i huvudboken för rader med förskottsbetalningar (om det är inaktiverat förblir individuellt konto för förskottsrader tomt)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Bokföringskonto som standard för att registrera kundbehållen garanti
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Konto (från kontoplanen) som ska användas som standardkonto för produkter köpta inom samma land (används om det inte definieras i produktbladet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Konto (från kontoplanen) som ska användas som standardkonto för de produkter som köpts från EEC till ett annat EEC-land (används om det inte anges i produktbladet)
@@ -218,6 +221,7 @@ JournalLabel=Loggboksetikett
 NumPiece=Stycke nummer
 TransactionNumShort=Num. transaktion
 AccountingCategory=Anpassad grupp av konton
+AccountingCategories=Anpassade grupper av konton
 GroupByAccountAccounting=Gruppera efter huvudbokskonto
 GroupBySubAccountAccounting=Gruppera efter underkontokonto
 AccountingAccountGroupsDesc=Här kan du definiera vissa grupper av bokföringskonto. De kommer att användas för personliga redovisningsrapporter.
@@ -265,6 +269,7 @@ ShowSubtotalByGroup=Visa delsumma efter nivå
 
 Pcgtype=Grupp av konto
 PcgtypeDesc=Kontogrupp används som fördefinierade kriterier för 'filter' och 'gruppering' för vissa redovisningsrapporter. Till exempel används 'INKOMST' eller 'KOSTNAD' som grupper för redovisning av produkter för att skapa en kostnads- / inkomstrapport.
+AccountingCategoriesDesc=Anpassad grupp av konton kan användas för att gruppera redovisningskonton i ett namn för att underlätta filteranvändning eller skapa anpassade rapporter.
 
 Reconcilable=Förenlig
 
@@ -294,6 +299,7 @@ DescValidateMovements=Alla ändringar eller raderingar av skrift, bokstäver och
 
 ValidateHistory=Förbind automatiskt
 AutomaticBindingDone=Automatiska bindningar gjorda (%s) - Automatisk bindning är inte möjlig för vissa poster (%s)
+DoManualBindingForFailedRecord=Du måste göra en manuell länk för %s rad(er) som inte länkas automatiskt.
 
 ErrorAccountancyCodeIsAlreadyUse=Fel, du kan inte ta bort eller inaktivera det här kontoplanen eftersom det används
 MvtNotCorrectlyBalanced=Rörelse inte korrekt balanserad. Debet = %s & kredit = %s
@@ -337,11 +343,13 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Inaktivera bindning och överföring av bokf
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Inaktivera bindning och överföring av bokföring vid köp (leverantörsfakturor kommer inte att beaktas vid redovisning)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Inaktivera bindning och överföring i bokföring på kostnadsrapporter (kostnadsrapporter kommer inte att beaktas vid redovisning)
 ACCOUNTING_ENABLE_LETTERING=Aktivera bokstäverfunktionen i bokföringen
+ACCOUNTING_ENABLE_AUTOLETTERING=Aktivera den automatiska bokstäverna vid överföring till bokföring
 
 ## Export
 NotExportLettering=Exportera inte bokstäverna när filen genereras
 NotifiedExportDate=Flagga exporterade rader som exporterade <span class="warning"> (för att ändra en rad måste du radera hela transaktionen och överföra den till bokföringen igen) </span>
 NotifiedValidationDate=Validera och lås de exporterade posterna <span class="warning"> (samma effekt som "%s"-funktionen, modifiering och radering av raderna kommer DEFINITIVT inte att vara möjligt) </span>
+NotifiedExportFull=Exportera dokument?
 DateValidationAndLock=Datumvalidering och lås
 ConfirmExportFile=Bekräftelse på generering av bokföringsexportfilen?
 ExportDraftJournal=Exportera utkast till loggbok
@@ -398,7 +406,7 @@ SaleLocal=Lokal försäljning
 SaleExport=Exportförsäljning
 SaleEEC=Försäljning i EEG
 SaleEECWithVAT=Försäljning i EEG med moms som inte är null, så vi antar att detta INTE är en försäljning inom gemenskapen och det föreslagna kontot är standardproduktkontot.
-SaleEECWithoutVATNumber=Försäljning i EEG utan moms men tredjeparts moms-ID definieras inte. Vi återgår till produktkontot för standardförsäljning. Du kan fastställa tredjeparts moms-ID eller produktkonto om det behövs.
+SaleEECWithoutVATNumber=Försäljning i EEC utan moms men tredje parts momsregistreringsnummer är inte definierat. Vi faller tillbaka på kontot för standardförsäljning. Du kan fixa tredje parts momsregistreringsnummer eller ändra produktkontot som föreslås för bindning om det behövs.
 ForbiddenTransactionAlreadyExported=Förbjudet: Transaktionen har validerats och/eller exporterats.
 ForbiddenTransactionAlreadyValidated=Förbjudet: Transaktionen har validerats.
 ## Dictionary
@@ -442,6 +450,7 @@ AccountancyErrorMismatchLetterCode=Missmatch i avstämningskod
 AccountancyErrorMismatchBalanceAmount=Saldot (%s) är inte lika med 0
 AccountancyErrorLetteringBookkeeping=Fel har uppstått angående transaktionerna: %s
 ErrorAccountNumberAlreadyExists=Kontonumret %s finns redan
+ErrorArchiveAddFile=Kan inte lägga "%s"-filen i arkivet
 
 ## Import
 ImportAccountingEntries=Redovisningsposter
@@ -468,5 +477,7 @@ FECFormatMulticurrencyCode=Flervalskod (Idevise)
 DateExport=Datum export
 WarningReportNotReliable=Varning, den här rapporten är inte baserad på huvudboken-modulen, så den innehåller inte transaktioner modifierad manuellt i huvudboken. Om din bokföring är uppdaterad är bokföringsvisningen mer exakt.
 ExpenseReportJournal=Kostnadsrapportsloggbok
+DocsAlreadyExportedAreExcluded=Dokument som redan har exporterats exkluderas
+ClickToHideAlreadyExportedLines=Klicka för att dölja redan exporterade rader
 
 NAccounts=%s-konton
