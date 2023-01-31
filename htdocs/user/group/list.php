@@ -380,8 +380,8 @@ while ($i < $imaxinloop) {
 
 	$object->name = $obj->name;
 	$object->note = $obj->note;
-	$object->members = $obj->nb;
 	$object->nb_rights = $obj->nbpermissions;
+	$object->nb_users = $obj->nb;
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
