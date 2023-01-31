@@ -1299,7 +1299,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-		if (strcmp($object->budget_amount, '')) {
+		if (!is_null($object->budget_amount) && strcmp($object->budget_amount, '')) {
 			print '<span class="amount">'.price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
 		}
 		print '</td></tr>';
@@ -1443,9 +1443,11 @@ if ($action == 'create' && $user->rights->projet->creer) {
         </script>';
 	}
 
+
 	/*
 	 * Actions Buttons
 	 */
+
 	print '<div class="tabsAction">';
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
