@@ -303,6 +303,7 @@ ErrorValueForTooLow=Värdet för <b> %s </b> är för lågt
 ErrorValueCantBeNull=Värdet för <b> %s </b> kan inte vara null
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Datumet för banktransaktionen får inte vara tidigare än datumet för filöverföringen
 ErrorTooMuchFileInForm=För många filer i formuläret, det maximala antalet är %s fil(er)
+ErrorSessionInvalidatedAfterPasswordChange=Sessionen ogiltigförklarades efter byte av lösenord, status eller giltighetsdatum. Vänligen logga in igen.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Din PHP-parameter upload_max_filesize (%s) är högre än PHP-parameter post_max_size (%s). Detta är inte en konsekvent installation.
@@ -325,6 +326,7 @@ WarningPaymentDateLowerThanInvoiceDate=Betalningsdag (%s) är tidigare än faktu
 WarningTooManyDataPleaseUseMoreFilters=För många data (mer än %s linjer). Vänligen använd fler filter eller sätt konstanten %s till en högre gräns.
 WarningSomeLinesWithNullHourlyRate=En del gånger registrerades av vissa användare medan deras timpris inte definierades. Ett värde på 0 %s per timme användes men det kan leda till felaktig värdering av tiden.
 WarningYourLoginWasModifiedPleaseLogin=Din inloggning har ändrats. För säkerhetsändamål måste du logga in med din nya inloggning innan nästa åtgärd.
+WarningYourPasswordWasModifiedPleaseLogin=Ditt lösenord har ändrats. Av säkerhetsskäl måste du logga in nu med ditt nya lösenord.
 WarningAnEntryAlreadyExistForTransKey=Det finns redan en post för översättningsnyckeln för det här språket
 WarningNumberOfRecipientIsRestrictedInMassAction=Varning, antalet olika mottagare är begränsat till <b> %s </b> vid användning av massåtgärder på listor
 WarningDateOfLineMustBeInExpenseReportRange=Varning, datumet för raden ligger inte inom kostnadsberäkningsområdet

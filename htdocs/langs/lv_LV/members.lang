@@ -231,4 +231,4 @@ CreateDolibarrLoginDesc=Izveidojot lietotājvārdu dalībniekiem, viņi var izve
 CreateDolibarrThirdPartyDesc=Trešā puse ir juridiska persona, kas tiks izmantota rēķinā, ja jūs nolemjat ģenerēt rēķinu par katru ieguldījumu. To varēsit izveidot vēlāk, ieguldījuma ierakstīšanas procesa laikā.
 MemberFirstname=Dalībnieka vārds
 MemberLastname=Dalībnieka uzvārds
-MemberCodeDesc=Member Code, unique for all members
+MemberCodeDesc=Dalībnieka kods, unikāls visiem dalībniekiem

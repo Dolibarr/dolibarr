@@ -259,6 +259,7 @@ RecordsClosed=%s Projekt(e) geschlossen
 SendProjectRef=Informationen zu Projekt %s
 ModuleSalaryToDefineHourlyRateMustBeEnabled=Das Modul 'Gehälter' muss aktiviert sein, um den Stundensatz des Mitarbeiters zu definieren und den Zeitaufwand zu bewerten
 NewTaskRefSuggested=Aufgabenreferenz bereits verwendet, eine neue Aufgabenreferenz ist erforderlich
+NumberOfTasksCloned=%s Aufgabe(n) geklont
 TimeSpentInvoiced=Zeitaufwand in Rechnung gestellt
 TimeSpentForIntervention=Zeitaufwand
 TimeSpentForInvoice=Zeitaufwand
