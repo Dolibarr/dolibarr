@@ -3124,11 +3124,11 @@ div.login_block {
 	<?php } ?>
 }
 div.login_block a {
-	color: var(--colortextbackhmenu);
+	color: var(--colortexthmenu);
 	display: inline-block;
 }
 div.login_block span.aversion {
-	color: var(--colortextbackhmenu);
+	color: var(--colortexthmenu);
 	filter: contrast(0.7);
 }
 div.login_block table {
@@ -3140,10 +3140,10 @@ div.login {
 	float: right;
 }
 div.login a {
-	color: var(--colortextbackvmenu);
+	color: var(--colortextvmenu);
 }
 div.login a:hover {
-	color: var(--colortextbackvmenu);
+	color: var(--colortextvmenu);
 	text-decoration:underline;
 }
 div.login_block_user, div.login_block_other { clear: both; }
@@ -3165,10 +3165,14 @@ div.login_block_other { padding-top: 15px; }
 	max-width: 200px;
 }
 
+.login_block_other .login_block_elem {
+	height: 25px;
+	line-height: 25px;
+}
 .login_block_elem {
 	float: right;
-	vertical-align: top;
-	padding: 0px 0px 0px 2px !important;
+	vertical-align: middle;
+	padding: 0px 3px 0px 3px !important;
 	height: 18px;
 }
 .login_block_elem_name {
@@ -3183,7 +3187,7 @@ a.aversion {
 }
 
 .atoplogin, .atoplogin:hover {
-	color: var(--colortextbackhmenu) !important;
+	color: var(--colortexthmenu) !important;
 }
 .alogin, .alogin:hover {
 	color: #888 !important;
