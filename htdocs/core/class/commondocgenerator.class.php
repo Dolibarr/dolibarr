@@ -443,7 +443,7 @@ abstract class CommonDocGenerator
 			}
 		}
 
-		$date = ($object->element == 'contrat' ? $object->date_contrat : $object->date);
+		$date = (isset($object->element) && $object->element == 'contrat' && isset($object->date_contrat)) ? $object->date_contrat : (isset($object->date) ? $object->date : null);
 
 		$resarray = array(
 			$array_key.'_id'=>$object->id,
@@ -452,7 +452,7 @@ abstract class CommonDocGenerator
 			$array_key.'_ref_ext' => (property_exists($object, 'ref_ext') ? $object->ref_ext : ''),
 			$array_key.'_ref_customer'=>(!empty($object->ref_client) ? $object->ref_client : (empty($object->ref_customer) ? '' : $object->ref_customer)),
 			$array_key.'_ref_supplier'=>(!empty($object->ref_fournisseur) ? $object->ref_fournisseur : (empty($object->ref_supplier) ? '' : $object->ref_supplier)),
-			$array_key.'_source_invoice_ref'=>$invoice_source->ref,
+			$array_key.'_source_invoice_ref'=>((empty($invoice_source) || empty($invoice_source->ref)) ? '' : $invoice_source->ref),
 			// Dates
 			$array_key.'_hour'=>dol_print_date($date, 'hour'),
 			$array_key.'_date'=>dol_print_date($date, 'day'),

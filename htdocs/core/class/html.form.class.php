@@ -7821,6 +7821,7 @@ class Form
 
 		$tmpescaped = $tmp[2];
 		$regbis = array();
+
 		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 			$tmpescaped = "'".$db->escape($regbis[1])."'";
 		} else {

@@ -2932,7 +2932,11 @@ class EmailCollector extends CommonObject
 							// TODO Move mail using PHP-IMAP
 						}
 					} else {
-						dol_syslog("EmailCollector::doCollectOneCollector message ".$imapemail." to ".$connectstringtarget." was set to read", LOG_DEBUG);
+						if (empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+							dol_syslog("EmailCollector::doCollectOneCollector message ".((string) $imapemail)." to ".$connectstringtarget." was set to read", LOG_DEBUG);
+						} else {
+							dol_syslog("EmailCollector::doCollectOneCollector message '".($imapemail->getHeader()->get('subject'))."' using this->host=".$this->host.", this->access_type=".$this->acces_type." was set to read", LOG_DEBUG);
+						}
 					}
 				} else {
 					$errorforemail++;

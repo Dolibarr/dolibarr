@@ -291,14 +291,14 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 
 	// Opportunity percent
 	print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
-	if (strcmp($object->opp_percent, '')) {
+	if (!is_null($object->opp_percent) && strcmp($object->opp_percent, '')) {
 		print price($object->opp_percent, '', $langs, 1, 0).' %';
 	}
 	print '</td></tr>';
 
 	// Opportunity Amount
 	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
-	if (strcmp($object->opp_amount, '')) {
+	if (!is_null($object->opp_amount) && strcmp($object->opp_amount, '')) {
 		print '<span class="amount">'.price($object->opp_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
 		if (strcmp($object->opp_percent, '')) {
 			print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("Weighted").'</span>: <span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
@@ -309,7 +309,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 
 // Budget
 print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-if (strcmp($object->budget_amount, '')) {
+if (!is_null($object->budget_amount) && strcmp($object->budget_amount, '')) {
 	print '<span class="amount">'.price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
 }
 print '</td></tr>';
@@ -657,7 +657,6 @@ if (!empty($conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN)) {
 }
 
 
-
 $parameters = array('listofreferent'=>$listofreferent);
 $resHook = $hookmanager->executeHooks('completeListOfReferent', $parameters, $object, $action);
 
@@ -693,7 +692,7 @@ if (!$showdatefilter) {
 	print '<div class="center centpercent">';
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="tablename" value="'.$tablename.'">';
+	print '<input type="hidden" name="tablename" value="'.(empty($tablename) ? '' : $tablename).'">';
 	print '<input type="hidden" name="action" value="view">';
 	print '<div class="inline-block">';
 	print $form->selectDate($dates, 'dates', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
@@ -730,7 +729,7 @@ $tooltiponprofitplus = $tooltiponprofitminus = '';
 foreach ($listofreferent as $key => $value) {
 	$name = $langs->trans($value['name']);
 	$qualified = $value['test'];
-	$margin = $value['margin'];
+	$margin = empty($value['margin']) ? 0 : $value['margin'];
 	if ($qualified && isset($margin)) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
 		if ($margin == 'add') {
 			$tooltiponprofitplus .= ' &gt; '.$name." (+)<br>\n";
@@ -777,8 +776,8 @@ foreach ($listofreferent as $key => $value) {
 	$tablename = $value['table'];
 	$datefieldname = $value['datefieldname'];
 	$qualified = $value['test'];
-	$margin = $value['margin'];
-	$project_field = $value['project_field'];
+	$margin = empty($value['margin']) ? 0 : $value['margin'];
+	$project_field = empty($value['project_field']) ? '' : $value['project_field'];
 	if ($qualified && isset($margin)) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
 		$element = new $classname($db);
 
@@ -990,11 +989,11 @@ foreach ($listofreferent as $key => $value) {
 	$tablename = $value['table'];
 	$datefieldname = $value['datefieldname'];
 	$qualified = $value['test'];
-	$langtoload = $value['lang'];
-	$urlnew = $value['urlnew'];
-	$buttonnew = $value['buttonnew'];
-	$testnew = $value['testnew'];
-	$project_field = $value['project_field'];
+	$langtoload = empty($value['lang']) ? '' : $value['lang'];
+	$urlnew = empty($value['urlnew']) ? '' : $value['urlnew'];
+	$buttonnew = empty($value['buttonnew']) ? '' : $value['buttonnew'];
+	$testnew = empty($value['testnew']) ? '' : $value['testnew'];
+	$project_field = empty($value['project_field']) ? '' : $value['project_field'];
 
 	$exclude_select_element = array('payment_various');
 	if (!empty($value['exclude_select_element'])) {

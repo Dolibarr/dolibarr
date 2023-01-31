@@ -694,6 +694,7 @@ class User extends CommonObject
 		global $conf;
 		// For compatibility with bad naming permissions on module
 		$moduletomoduletouse = array(
+			'compta' => 'comptabilite',
 			'contract' => 'contrat',
 			'member' => 'adherent',
 			'mo' => 'mrp',
@@ -721,7 +722,8 @@ class User extends CommonObject
 
 		$moduleRightsMapping = array(
 			'product' => 'produit',	// We must check $user->rights->produit...
-			'margin' => 'margins'
+			'margin' => 'margins',
+			'comptabilite' => 'compta'
 		);
 
 		$rightsPath = $module;
@@ -743,8 +745,10 @@ class User extends CommonObject
 		// In $conf->modules, we have 'accounting', 'product', 'facture', ...
 		// In $user->rights, we have 'accounting', 'produit', 'facture', ...
 		//var_dump($module);
+		//var_dump($rightsPath);
 		//var_dump($this->rights->$rightsPath);
 		//var_dump($conf->modules);
+		//var_dump($module.' '.isModEnabled($module).' '.$rightsPath.' '.$permlevel1.' '.$permlevel2);
 		if (!isModEnabled($module)) {
 			return 0;
 		}
@@ -761,6 +765,7 @@ class User extends CommonObject
 		}
 
 		//var_dump($this->rights);
+		//var_dump($rightsPath.' '.$permlevel1.' '.$permlevel2);
 		if (empty($rightsPath) || empty($this->rights) || empty($this->rights->$rightsPath) || empty($permlevel1)) {
 			return 0;
 		}
