@@ -106,10 +106,6 @@ if ($objecttype == 'facture' || $objecttype == 'invoice') {
 	$classpath = 'adherents/class';
 	$module = 'adherent';
 	$myobject = 'adherent';
-} elseif ($objecttype == 'cabinetmed_cons') {
-	$classpath = 'cabinetmed/class';
-	$module = 'cabinetmed';
-	$myobject = 'cabinetmedcons';
 } elseif ($objecttype == 'fichinter') {
 	$langs->load('interventions');
 	$classpath = 'fichinter/class';

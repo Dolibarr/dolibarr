@@ -668,7 +668,7 @@ abstract class CommonObject
 	 * getTooltipContentArray
 	 *
 	 * @since v18
-	 * @param array $params
+	 * @param array $params params to construct tooltip data
 	 * @return array
 	 */
 	public function getTooltipContentArray($params)
@@ -679,7 +679,7 @@ abstract class CommonObject
 	/**
 	 * getTooltipContent
 	 *
-	 * @param array $params
+	 * @param array $params params
 	 * @since v18
 	 * @return string
 	 */

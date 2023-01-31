@@ -3716,11 +3716,11 @@ class Commande extends CommonOrder
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $parameters
+	 * @param array $params params to construct tooltip data
 	 * @since v18
 	 * @return array
 	 */
-	public function getTooltipContentArray($parameters)
+	public function getTooltipContentArray($params)
 	{
 		global $conf, $langs, $user;
 
@@ -3730,7 +3730,7 @@ class Commande extends CommonOrder
 			return ['optimize' => $langs->trans("Order")];
 		}
 
-		if ($user->rights->commande->lire) {
+		if ($user->hasRight('commande', 'lire')) {
 			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Order").'</u>';
 			if (isset($this->statut)) {
 				$datas[] = ' '.$this->getLibStatut(5);
@@ -3807,7 +3807,7 @@ class Commande extends CommonOrder
 
 		$label = '';
 
-		if ($user->rights->commande->lire) {
+		if ($user->hasRight('commande', 'lire')) {
 			$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Order").'</u>';
 			if (isset($this->statut)) {
 				$label .= ' '.$this->getLibStatut(5);

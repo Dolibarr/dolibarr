@@ -5001,7 +5001,7 @@ class Product extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params
+	 * @param array $params params to construct tooltip data
 	 * @since v18
 	 * @return array
 	 */
