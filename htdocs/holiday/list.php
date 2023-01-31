@@ -607,7 +607,7 @@ if ($resql) {
 			print '<td class="liste_titre maxwidthonsmartphone left">';
 			$validator = new UserGroup($db);
 			$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
-			$valideurobjects = $validator->listUsersForGroup($excludefilter);
+			$valideurobjects = $validator->listUsersForGroup($excludefilter, 1);
 			$valideurarray = array();
 			foreach ($valideurobjects as $val) {
 				$valideurarray[$val->id] = $val->id;

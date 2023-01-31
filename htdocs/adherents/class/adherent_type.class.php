@@ -626,7 +626,7 @@ class AdherentType extends CommonObject
 			$sql .= ' AND ('.$excludefilter.')';
 		}
 
-		dol_syslog(get_class($this)."::listUsersForGroup", LOG_DEBUG);
+		dol_syslog(get_class($this)."::listMembersForMemberType", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
