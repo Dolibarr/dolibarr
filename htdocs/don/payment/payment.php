@@ -95,7 +95,7 @@ if ($action == 'add_payment') {
 			// Create a line of payments
 			$payment = new PaymentDonation($db);
 			$payment->chid         = $chid;
-			$payment->datepaid     = $datepaid;
+			$payment->datep     = $datepaid;
 			$payment->amounts      = $amounts; // Tableau de montant
 			$payment->paymenttype  = GETPOST("paymenttype", 'int');
 			$payment->num_payment  = GETPOST("num_payment", 'alphanohtml');
