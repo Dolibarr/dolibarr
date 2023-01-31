@@ -245,6 +245,7 @@ if ($resql) {
 		print $searchpicto;
 		print '</td>';
 	}
+	print '</tr>';
 
 	// Fields title label
 	// --------------------------------------------------------------------
