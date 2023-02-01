@@ -3691,6 +3691,52 @@ class Propal extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+
+		$datas = [];
+
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			return ['optimize' => $langs->trans("Proposal")];
+		}
+		if ($user->hasRight('propal', 'lire')) {
+			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Proposal").'</u>';
+			if (isset($this->statut)) {
+				$datas['status'] = ' '.$this->getLibStatut(5);
+			}
+			if (!empty($this->ref)) {
+				$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+			}
+			if (!empty($this->ref_client)) {
+				$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_client;
+			}
+			if (!empty($this->total_ht)) {
+				$datas['amountht'] = '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+			}
+			if (!empty($this->total_tva)) {
+				$datas['vat'] = '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+			}
+			if (!empty($this->total_ttc)) {
+				$datas['amountttc'] = '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+			}
+			if (!empty($this->date)) {
+				$datas['date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
+			}
+			if (!empty($this->delivery_date)) {
+				$datas['deliverydate'] = '<br><b>'.$langs->trans('DeliveryDate').':</b> '.dol_print_date($this->delivery_date, 'dayhour');
+			}
+		}
+
+		return $datas;
+	}
+
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      int		$withpicto		          Add picto into link
@@ -3737,7 +3783,7 @@ class Propal extends CommonObject
 				$label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
 			}
 			if (!empty($this->delivery_date)) {
-					$label .= '<br><b>'.$langs->trans('DeliveryDate').':</b> '.dol_print_date($this->delivery_date, 'dayhour');
+				$label .= '<br><b>'.$langs->trans('DeliveryDate').':</b> '.dol_print_date($this->delivery_date, 'dayhour');
 			}
 
 			if ($option == '') {
@@ -3768,8 +3814,18 @@ class Propal extends CommonObject
 				$label = $langs->trans("Proposal");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip"';
+			if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+				$params = [
+					'id' => $this->id,
+					'objecttype' => $this->element,
+					'option' => $option,
+				];
+				$linkclose .= ' data-params='.json_encode($params).' id="propal-' . uniqid() . '" title="' . $langs->trans('Loading') . '"';
+				$linkclose .= ' class="classforajaxtooltip"';
+			} else {
+				$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' class="classfortooltip"';
+			}
 		}
 
 		$linkstart = '<a href="'.$url.'"';
