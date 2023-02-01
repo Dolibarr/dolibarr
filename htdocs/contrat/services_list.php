@@ -36,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 $langs->loadLangs(array('products', 'contracts', 'companies'));
 
 $optioncss = GETPOST('optioncss', 'aZ09');
+$mode = GETPOST("mode");
 
 $massaction = GETPOST('massaction', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -55,11 +56,10 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-$mode = GETPOST("mode");
-$filter = GETPOST("filter");
+$filter = GETPOST("filter", 'alpha');
 $search_name = GETPOST("search_name", 'alpha');
 $search_subprice = GETPOST("search_subprice", 'alpha');
-$search_qty = GETPOST("search_name", 'alpha');
+$search_qty = GETPOST("search_qty", 'alpha');
 $search_total_ht = GETPOST("search_total_ht", 'alpha');
 $search_total_tva = GETPOST("search_total_tva", 'alpha');
 $search_total_ttc = GETPOST("search_total_ttc", 'alpha');
@@ -110,7 +110,6 @@ $result = restrictedArea($user, 'contrat', $contratid);
 
 if ($search_status != '') {
 	$tmp = explode('&', $search_status);
-	$mode = $tmp[0];
 	if (empty($tmp[1])) {
 		$filter = '';
 	} else {
@@ -120,14 +119,6 @@ if ($search_status != '') {
 		if ($tmp[1] == 'filter=expired') {
 			$filter = 'expired';
 		}
-	}
-} else {
-	$search_status = $mode;
-	if ($filter == 'expired') {
-		$search_status .= '&filter=expired';
-	}
-	if ($filter == 'notexpired') {
-		$search_status .= '&filter=notexpired';
 	}
 }
 
@@ -144,10 +135,10 @@ $arrayfields = array(
 	'cd.qty'=>array('label'=>"Qty", 'checked'=>1, 'position'=>108),
 	'cd.total_ht'=>array('label'=>"TotalHT", 'checked'=>-1, 'position'=>109, 'isameasure'=>1),
 	'cd.total_tva'=>array('label'=>"TotalVAT", 'checked'=>-1, 'position'=>110),
-	'cd.date_ouverture_prevue'=>array('label'=>"DateStartPlannedShort", 'checked'=>(($mode == "" || $mode == -1) || $mode == "0"), 'position'=>150),
-	'cd.date_ouverture'=>array('label'=>"DateStartRealShort", 'checked'=>(($mode == "" || $mode == -1) || $mode > 0), 'position'=>160),
-	'cd.date_fin_validite'=>array('label'=>"DateEndPlannedShort", 'checked'=>(($mode == "" || $mode == -1) || $mode < 5), 'position'=>170),
-	'cd.date_cloture'=>array('label'=>"DateEndRealShort", 'checked'=>(($mode == "" || $mode == -1) || $mode >= 5), 'position'=>180),
+	'cd.date_ouverture_prevue'=>array('label'=>"DateStartPlannedShort", 'checked'=>1, 'position'=>150),
+	'cd.date_ouverture'=>array('label'=>"DateStartRealShort", 'checked'=>1, 'position'=>160),
+	'cd.date_fin_validite'=>array('label'=>"DateEndPlannedShort", 'checked'=>1, 'position'=>170),
+	'cd.date_cloture'=>array('label'=>"DateEndRealShort", 'checked'=>1, 'position'=>180),
 	//'cd.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'cd.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 	'status'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
@@ -209,7 +200,6 @@ if (empty($reshook)) {
 		$opclotureday = "";
 		$opclotureyear = "";
 		$filter_opcloture = "";
-		$mode = '';
 		$filter = '';
 		$toselect = array();
 		$search_array_options = array();
@@ -275,13 +265,13 @@ $sql .= " AND c.fk_soc = s.rowid";
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
-if ($mode == "0") {
+if ($search_status == "0") {
 	$sql .= " AND cd.statut = 0";
 }
-if ($mode == "4") {
+if ($search_status == "4") {
 	$sql .= " AND cd.statut = 4";
 }
-if ($mode == "5") {
+if ($search_status == "5") {
 	$sql .= " AND cd.statut = 5";
 }
 if ($filter == "expired") {
@@ -294,7 +284,7 @@ if ($search_subprice) {
 	$sql .= natural_search("cd.subprice", $search_subprice, 1);
 }
 if ($search_qty) {
-	$sql .= natural_search("cd.total_qty", $search_qty, 1);
+	$sql .= natural_search("cd.qty", $search_qty, 1);
 }
 if ($search_total_ht) {
 	$sql .= natural_search("cd.total_ht", $search_total_ht, 1);
@@ -417,6 +407,9 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.$limit;
 }
+if ($mode) {
+	$param .= '&amp;mode='.urlencode($mode);
+}
 if ($search_contract) {
 	$param .= '&amp;search_contract='.urlencode($search_contract);
 }
@@ -441,8 +434,8 @@ if ($search_total_ttc) {
 if ($search_service) {
 	$param .= '&amp;search_service='.urlencode($search_service);
 }
-if ($mode) {
-	$param .= '&amp;mode='.urlencode($mode);
+if ($search_status) {
+	$param .= '&amp;search_status='.urlencode($search_status);
 }
 if ($filter) {
 	$param .= '&amp;filter='.urlencode($filter);
@@ -500,16 +493,16 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $title = $langs->trans("ListOfServices");
-if ($mode == "0") {
+if ($search_status == "0") {
 	$title = $langs->trans("ListOfInactiveServices"); // Must use == "0"
 }
-if ($mode == "4" && $filter != "expired") {
+if ($search_status == "4" && $filter != "expired") {
 	$title = $langs->trans("ListOfRunningServices");
 }
-if ($mode == "4" && $filter == "expired") {
+if ($search_status == "4" && $filter == "expired") {
 	$title = $langs->trans("ListOfExpiredServices");
 }
-if ($mode == "5") {
+if ($search_status == "5") {
 	$title = $langs->trans("ListOfClosedServices");
 }
 
@@ -563,7 +556,7 @@ if (!empty($arrayfields['c.ref']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="hidden" name="filter" value="'.$filter.'">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
-	print '<input type="text" class="flat" size="3" name="search_contract" value="'.dol_escape_htmltag($search_contract).'">';
+	print '<input type="text" class="flat maxwidth75" name="search_contract" value="'.dol_escape_htmltag($search_contract).'">';
 	print '</td>';
 }
 // Service label
@@ -822,6 +815,9 @@ while ($i < min($num, $limit)) {
 		if (!$i) {
 			$totalarray['pos'][$totalarray['nbfield']] = 'cd.qty';
 		}
+		if (!$i) {
+			$totalarray['val']['cd.qty'] = $obj->qty;
+		}
 		$totalarray['val']['cd.qty'] += $obj->qty;
 	}
 	if (!empty($arrayfields['cd.total_ht']['checked'])) {
@@ -960,6 +956,17 @@ while ($i < min($num, $limit)) {
 
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
+// If no record found
+if ($num == 0) {
+	$colspan = 1;
+	foreach ($arrayfields as $key => $val) {
+		if (!empty($val['checked'])) {
+			$colspan++;
+		}
+	}
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+}
 
 $db->free($resql);
 

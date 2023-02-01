@@ -26,6 +26,7 @@ Permission56002=Редагувати заявки
 Permission56003=Видалити заявки
 Permission56004=Управління заявками
 Permission56005=Перегляньте заявки всіх контрагентів (не діє для зовнішніх користувачів, завжди обмежуйтеся третьою стороною, від якої вони залежать)
+Permission56006=Export tickets
 
 Tickets=Заявки
 TicketDictType=Заявка - Типи
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Зовнішній учасник
 
 OriginEmail=Електронна пошта репортера
 Notify_TICKET_SENTBYMAIL=Надішліть повідомлення про квиток електронною поштою
+
+ExportDataset_ticket_1=Заявки
 
 # Status
 Read=Прочитані

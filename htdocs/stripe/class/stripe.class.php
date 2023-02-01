@@ -1013,8 +1013,8 @@ class Stripe extends CommonObject
 
 						$s = new \Stripe\StripeClient($stripeacc);
 
-						// TODO Deprecated with the new Stripe API and SCA.
-						// TODO Replace ->create() and ->createSource() and replace with ->getSetupIntent() to get a Payment mode with $payment_method = \Stripe\PaymentMethod::retrieve($setupintent->payment_method); ?
+						// TODO LMR Deprecated with the new Stripe API and SCA.
+						// TODO LMR Replace ->create() and ->createSource() and replace with ->getSetupIntent() to then, get the Payment mode with $payment_method = \Stripe\PaymentMethod::retrieve($setupintent->payment_method); ?
 						$sepa = $s->sources->create($dataforcard);
 						if (!$sepa) {
 							$this->error = 'Creation of sepa_debit on Stripe has failed';

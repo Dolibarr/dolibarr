@@ -1981,6 +1981,13 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.smallonsmartphone {
 		font-size: 0.8em;
 	}
+	
+	.nopaddingtoponsmartphone {
+		padding-top: 0 !important;
+	}
+	.nopaddingbottomonsmartphone {
+		padding-bottom: 0 !important;
+	}	
 }
 
 /* Force values for small screen 570 */
@@ -3129,11 +3136,11 @@ div.login_block {
 	<?php } ?>
 }
 div.login_block a {
-	color: var(--colortextbackhmenu);
+	color: var(--colortexthmenu);
 	display: inline-block;
 }
 div.login_block span.aversion {
-	color: var(--colortextbackhmenu);
+	color: var(--colortexthmenu);
 	filter: contrast(0.7);
 }
 div.login_block table {
@@ -3145,10 +3152,10 @@ div.login {
 	float: right;
 }
 div.login a {
-	color: var(--colortextbackvmenu);
+	color: var(--colortextvmenu);
 }
 div.login a:hover {
-	color: var(--colortextbackvmenu);
+	color: var(--colortextvmenu);
 	text-decoration:underline;
 }
 div.login_block_user, div.login_block_other { clear: both; }
@@ -3170,10 +3177,14 @@ div.login_block_other { padding-top: 15px; }
 	max-width: 200px;
 }
 
+.login_block_other .login_block_elem {
+	height: 25px;
+	line-height: 25px;
+}
 .login_block_elem {
 	float: right;
-	vertical-align: top;
-	padding: 0px 0px 0px 2px !important;
+	vertical-align: middle;
+	padding: 0px 3px 0px 3px !important;
 	height: 18px;
 }
 .login_block_elem_name {
@@ -3188,7 +3199,7 @@ a.aversion {
 }
 
 .atoplogin, .atoplogin:hover {
-	color: var(--colortextbackhmenu) !important;
+	color: var(--colortexthmenu) !important;
 }
 .alogin, .alogin:hover {
 	color: #888 !important;
@@ -4408,6 +4419,7 @@ tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_tit
 	/* border-bottom: 1px solid var(--colortopbordertitle1); */
 	border-bottom: none;
 }
+tr.liste_titre_filter th.liste_titre { text-align: unset; }
 
 div.liste_titre {
 	padding-left: 3px;
@@ -4491,10 +4503,10 @@ div .tdtop:not(.tagtdnote) {
 	padding-bottom: 0px !important;
 }
 
-#tablelines tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
+#tablelines tr.liste_titre td, #tablelinesservice tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
 	border-bottom: 1px solid #AAA !important;
 }
-#tablelines tr td {
+#tablelines tr td, #tablelinesservice tr td {
 	height: unset;
 }
 

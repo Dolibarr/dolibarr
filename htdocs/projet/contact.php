@@ -387,7 +387,7 @@ if ($id > 0 || !empty($ref)) {
 
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-	if (strcmp($object->budget_amount, '')) {
+	if (!is_null($object->budget_amount) && strcmp($object->budget_amount, '')) {
 		print '<span class="amount">'.price($object->budget_amount, '', $langs, 0, 0, 0, $conf->currency).'</span>';
 	}
 	print '</td></tr>';

@@ -32,6 +32,7 @@ ConfirmCreateThirdParty=Willst du wirklich für dieses Mitglied einen Partner er
 LoginToCreate=Zu erstellende Anmeldung
 NameToCreate=Name des neuen Geschäftspartners
 YourRole=Ihre Rolle
+HierarchicalResponsible=Vorgesetzter
 UseTypeFieldToChange=Nutzen sie das Feld "Typ" zum ändern
 WeeklyHours=Geleistete Stunden pro Woche
 DisabledInMonoUserMode=Im Wartungsmodus deaktiviert

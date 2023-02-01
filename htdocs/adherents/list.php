@@ -30,9 +30,9 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
@@ -41,47 +41,51 @@ $langs->loadLangs(array("members", "companies"));
 
 
 // Get parameters
-$action = GETPOST('action', 'aZ09');
+$action 	= GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
-$confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$confirm 	= GETPOST('confirm', 'alpha');
+$cancel     = GETPOST('cancel', 'alpha');
+$toselect 	= GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'memberslist'; // To manage different context of search
-$mode        = GETPOST('mode', 'alpha');
-
+$backtopage = GETPOST('backtopage', 'alpha');
+$optioncss 	= GETPOST('optioncss', 'aZ');
+$mode 		= GETPOST('mode', 'alpha');
 
 // Search fields
-$search = GETPOST("search", 'alpha');
-$search_ref = GETPOST("search_ref", 'alpha');
-$search_lastname = GETPOST("search_lastname", 'alpha');
-$search_firstname = GETPOST("search_firstname", 'alpha');
-$search_gender = GETPOST("search_gender", 'alpha');
-$search_civility = GETPOST("search_civility", 'alpha');
-$search_company = GETPOST('search_company', 'alphanohtml');
-$search_login = GETPOST("search_login", 'alpha');
-$search_address = GETPOST("search_address", 'alpha');
-$search_zip = GETPOST("search_zip", 'alpha');
-$search_town = GETPOST("search_town", 'alpha');
-$search_state = GETPOST("search_state", 'alpha');
-$search_country = GETPOST("search_country", 'alpha');
-$search_phone = GETPOST("search_phone", 'alpha');
+$search 			= GETPOST("search", 'alpha');
+$search_ref 		= GETPOST("search_ref", 'alpha');
+$search_lastname 	= GETPOST("search_lastname", 'alpha');
+$search_firstname 	= GETPOST("search_firstname", 'alpha');
+$search_gender 		= GETPOST("search_gender", 'alpha');
+$search_civility 	= GETPOST("search_civility", 'alpha');
+$search_company 	= GETPOST('search_company', 'alphanohtml');
+$search_login 		= GETPOST("search_login", 'alpha');
+$search_address 	= GETPOST("search_address", 'alpha');
+$search_zip 		= GETPOST("search_zip", 'alpha');
+$search_town 		= GETPOST("search_town", 'alpha');
+$search_state 		= GETPOST("search_state", 'alpha');  // county / departement / federal state
+$search_country 	= GETPOST("search_country", 'alpha');
+$search_phone 		= GETPOST("search_phone", 'alpha');
 $search_phone_perso = GETPOST("search_phone_perso", 'alpha');
 $search_phone_mobile = GETPOST("search_phone_mobile", 'alpha');
-$search_type = GETPOST("search_type", 'alpha');
-$search_email = GETPOST("search_email", 'alpha');
-$search_categ = GETPOST("search_categ", 'int');
-$search_filter = GETPOST("search_filter", 'alpha');
-$search_status = GETPOST("search_status", 'intcomma');
-$search_morphy = GETPOST("search_morphy", 'alpha');
+$search_type 		= GETPOST("search_type", 'alpha');
+$search_email 		= GETPOST("search_email", 'alpha');
+$search_categ 		= GETPOST("search_categ", 'int');
+$search_morphy 		= GETPOST("search_morphy", 'alpha');
 $search_import_key  = trim(GETPOST("search_import_key", 'alpha'));
-$catid        = GETPOST("catid", 'int');
-$optioncss = GETPOST('optioncss', 'alpha');
-$socid = GETPOST('socid', 'int');
+
+$catid 		= GETPOST("catid", 'int');
+$socid 		= GETPOST('socid', 'int');
+
+$search_filter 		= GETPOST("search_filter", 'alpha');
+$search_status 		= GETPOST("search_status", 'intcomma');  // statut
 
 $filter = GETPOST("filter", 'alpha');
 if ($filter) {
 	$search_filter = $filter; // For backward compatibility
 }
+
 $statut = GETPOST("statut", 'alpha');
 if ($statut != '') {
 	$search_status = $statut; // For backward compatibility
@@ -93,6 +97,7 @@ if ($search_status < -2) {
 	$search_status = '';
 }
 
+// Pagination parameters
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');

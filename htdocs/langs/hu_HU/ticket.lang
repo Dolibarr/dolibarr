@@ -26,6 +26,7 @@ Permission56002=Jegyek módosítása
 Permission56003=Jegyek törlése
 Permission56004=Jegyek kezelése
 Permission56005=Minden harmadik fél jegyeinek megtekintése (külső felhasználókra nem érvényes, mindig csak arra a harmadik félre korlátozódjon, akitől függnek)
+Permission56006=Export tickets
 
 Tickets=Jegyek
 TicketDictType=Jegy - típusok
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Külső közreműködő
 
 OriginEmail=Jelentés e-mail
 Notify_TICKET_SENTBYMAIL=Jegy üzenet küldése e-mailben
+
+ExportDataset_ticket_1=Jegyek
 
 # Status
 Read=Olvasás

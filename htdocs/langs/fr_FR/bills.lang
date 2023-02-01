@@ -629,5 +629,5 @@ BulkPaymentNotPossibleForInvoice=L'enregistrement  de paiements en masse n'est p
 MentionVATDebitOptionIsOn=Option de paiement de taxe sur débits
 MentionCategoryOfOperations=Catégorie d'opérations
 MentionCategoryOfOperations0=Livraison de marchandises
-MentionCategoryOfOperations1=Fourniture de services
+MentionCategoryOfOperations1=Prestation de services
 MentionCategoryOfOperations2=Mixte - Livraison de biens & prestation de services
