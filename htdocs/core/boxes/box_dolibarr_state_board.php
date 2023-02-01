@@ -20,7 +20,7 @@
 
 /**
  *	\file       htdocs/core/boxes/box_dolibarr_state_board.php
- *	\ingroup
+ *	\ingroup	core
  *	\brief      Module Dolibarr state base
  */
 

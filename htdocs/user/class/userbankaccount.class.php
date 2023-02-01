@@ -117,8 +117,6 @@ class UserBankAccount extends Account
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{
-		global $conf;
-
 		if (!$this->id) {
 			$this->create();
 		}
@@ -193,7 +191,7 @@ class UserBankAccount extends Account
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
-				$this->userid = $obj->fk_soc;
+				$this->userid = $obj->fk_user;
 				$this->bank = $obj->bank;
 				$this->code_banque = $obj->code_banque;
 				$this->code_guichet = $obj->code_guichet;
@@ -227,6 +225,63 @@ class UserBankAccount extends Account
 	}
 
 	/**
+	 *  Delete user bank account from database
+	 *
+	 *	@param	User	$user	User deleting
+	 *  @return int             <0 if KO, >0 if OK
+	 */
+	public function delete(User $user = null)
+	{
+		$error = 0;
+
+		$this->db->begin();
+
+		// Delete link between tag and bank account
+		/*
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
+			$sql .= " WHERE fk_account = ".((int) $this->id);
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->error = "Error ".$this->db->lasterror();
+			}
+		}
+		*/
+
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
+			$sql .= " WHERE rowid = ".((int) $this->id);
+
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$result = $this->db->query($sql);
+			if ($result) {
+				// Remove extrafields
+				/*
+				if (!$error) {
+					$result = $this->deleteExtraFields();
+					if ($result < 0) {
+						$error++;
+						dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+					}
+				}*/
+			} else {
+				$error++;
+				$this->error = "Error ".$this->db->lasterror();
+			}
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
 	 * Return RIB
 	 *
 	 * @param   boolean     $displayriblabel     Prepend or Hide Label
@@ -241,7 +296,7 @@ class UserBankAccount extends Account
 				$rib = $this->label." : ";
 			}
 
-			$rib .= (string) $this;
+			$rib .= $this->iban;
 		}
 
 		return $rib;

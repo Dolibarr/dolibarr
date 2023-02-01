@@ -18,37 +18,37 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Kunskapshanteringssystem
+ModuleKnowledgeManagementName = Kunskapsbas
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Hantera en kunskapshanterings- (KM) eller Help-Desk-bas
+ModuleKnowledgeManagementDesc=Hantera en kunskapsbas eller helpdesk-bas
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Konfigurationssystem för kunskapshantering
-Settings = inställningar
-KnowledgeManagementSetupPage = Kunskapshanteringssystem inställningssida
+KnowledgeManagementSetup = Konfiguration av kunskapsbas
+Settings = Inställningar
+KnowledgeManagementSetupPage = Inställningar för kunskapsbas
 
 
 #
 # About page
 #
 About = Om
-KnowledgeManagementAbout = Om kunskapshantering
-KnowledgeManagementAboutPage = Kunshantering om sidan
+KnowledgeManagementAbout = Om kunskapsbasen
+KnowledgeManagementAboutPage = Kunskapsbasens om-sida
 
-KnowledgeManagementArea = Kunskapshantering
+KnowledgeManagementArea = Kunskapsbas
 MenuKnowledgeRecord = Kunskapsbas
 ListKnowledgeRecord = Lista över artiklar
 NewKnowledgeRecord = Ny artikel
-ValidateReply = Validera lösningen
+ValidateReply = Bekräfta lösning
 KnowledgeRecords = Artiklar
 KnowledgeRecord = Artikel
 KnowledgeRecordExtraFields = Extrafält för artikel
-GroupOfTicket=Grupp av biljetter
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
+GroupOfTicket=Grupp av ärenden
+YouCanLinkArticleToATicketCategory=Du kan länka artikeln till en ärendegrupp (så att artikeln markeras på alla ärenden i denna grupp)
+SuggestedForTicketsInGroup=Föreslås vid skapande av ärende
 
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+SetObsolete=Ange som föråldrad
+ConfirmCloseKM=Bekräftar du att denna artikel är föråldrad och skall stängas?
+ConfirmReopenKM=Vill du återställa den här artikeln till statusen "Bekräftad"?

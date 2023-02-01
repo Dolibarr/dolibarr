@@ -11,7 +11,6 @@ WithdrawalsLines=Linhas do pedido para Débito direto
 NotPossibleForThisStatusOfWithdrawReceiptORLine=Ainda não é possível. Retirar o status deve ser definido como 'creditado' antes de declarar rejeitar em linhas específicas.
 NbOfInvoiceToWithdrawWithInfo=Nº. de fatura do cliente com ordens de pagamento por débito direto com informações definidas sobre a conta bancária
 InvoiceWaitingWithdraw=Fatura aguardando o Débito direto
-NoSupplierInvoiceToWithdraw=Nenhuma fatura de fornecedor com 'Solicitações de crédito diretas' abertas está aguardando. Vá na guia '%s' no cartão da fatura para fazer uma solicitação.
 ResponsibleUser=Usuário Responsável
 WithdrawalsSetup=Configuração do pagamento por Débito direto
 WithdrawStatistics=Estatísticas do pagamento por Débito direto

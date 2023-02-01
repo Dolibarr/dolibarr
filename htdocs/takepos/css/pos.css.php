@@ -342,9 +342,9 @@ div.paymentbordline
 		?>
 		overflow-x: hidden;
 		overfloy-y: scroll;
-	<?
+		<?php
 	} else {
-	?>
+		?>
 		overflow: visible;
 		<?php
 	}

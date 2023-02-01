@@ -88,6 +88,10 @@ $search_company = GETPOST('$search_company', 'alpha');
 $search_company_alias = GETPOST('$search_company_alias', 'alpha');
 $search_project_ref = GETPOST('$search_project_ref', 'alpha');
 $search_project_label = GETPOST('$search_project_label', 'alpha');
+$search_timespent_starthour = GETPOSTINT("search_timespent_duration_starthour");
+$search_timespent_startmin = GETPOSTINT("search_timespent_duration_startmin");
+$search_timespent_endhour = GETPOSTINT("search_timespent_duration_endhour");
+$search_timespent_endmin = GETPOSTINT("search_timespent_duration_endmin");
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -191,11 +195,15 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_project_ref = '';
 	$search_project_label = '';
 	$search_task_label = '';
-	$search_user = 0;
+	$search_user = -1;
 	$search_valuebilled = '';
 	$search_product_ref = '';
 	$toselect = array();
 	$search_array_options = array();
+	$search_timespent_starthour = '';
+	$search_timespent_startmin = '';
+	$search_timespent_endhour = '';
+	$search_timespent_endmin = '';
 	$action = '';
 }
 
@@ -1004,7 +1012,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			// Budget
 			print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-			if (strcmp($projectstatic->budget_amount, '')) {
+			if (!is_null($projectstatic->budget_amount) && strcmp($projectstatic->budget_amount, '')) {
 				print '<span class="amount">'.price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
 			}
 			print '</td></tr>';
@@ -1337,6 +1345,18 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		if ($search_date_endyear) {
 			$param .= '&search_date_endyear='.urlencode($search_date_endyear);
 		}
+		if ($search_timespent_starthour) {
+			$param .= '&search_timespent_duration_starthour='.urlencode($search_timespent_starthour);
+		}
+		if ($search_timespent_startmin) {
+			$param .= '&search_timespent_duration_startmin='.urlencode($search_timespent_startmin);
+		}
+		if ($search_timespent_endhour) {
+			$param .= '&search_timespent_duration_endhour='.urlencode($search_timespent_endhour);
+		}
+		if ($search_timespent_endmin) {
+			$param .= '&search_timespent_duration_endmin='.urlencode($search_timespent_endmin);
+		}
 
 		/*
 		 // Add $param from extra fields
@@ -1446,7 +1466,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print $langs->trans('InvoiceToUse');
 				print '</td>';
 				print '<td>';
-				$form->selectInvoice('invoice', '', 'invoiceid', 24, 0, $langs->trans('NewInvoice'), 1, 0, 0, 'maxwidth500', '', 'all');
+				$form->selectInvoice($projectstatic->thirdparty->id, '', 'invoiceid', 24, 0, $langs->trans('NewInvoice'), 1, 0, 0, 'maxwidth500', '', 'all');
 				print '</td>';
 				print '</tr>';
 				/*print '<tr>';
@@ -1561,7 +1581,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if (empty($search_user)) {
 				$search_user = $user->id;
 			}
-			$sql .= " AND t.fk_user = ".((int) $search_user);
+			if ($search_user > 0) $sql .= " AND t.fk_user = ".((int) $search_user);
 		}
 
 		if ($search_note) {
@@ -1607,6 +1627,20 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		if ($search_date_end) {
 			$sql .= " AND t.task_date <= '".$db->idate($search_date_end)."'";
+		}
+
+		if (!empty($arrayfields['t.task_duration']['checked'])) {
+			if ($search_timespent_starthour || $search_timespent_startmin) {
+				$timespent_duration_start = $search_timespent_starthour * 60 * 60; // We store duration in seconds
+				$timespent_duration_start += ($search_timespent_startmin ? $search_timespent_startmin : 0) * 60; // We store duration in seconds
+				$sql .= " AND t.task_duration >= " . $timespent_duration_start;
+			}
+
+			if ($search_timespent_endhour || $search_timespent_endmin) {
+				$timespent_duration_end = $search_timespent_endhour * 60 * 60; // We store duration in seconds
+				$timespent_duration_end += ($search_timespent_endmin ? $search_timespent_endmin : 0) * 60; // We store duration in seconds
+				$sql .= " AND t.task_duration <= " . $timespent_duration_end;
+			}
 		}
 
 		$sql .= dolSqlDateFilter('t.task_datehour', $search_day, $search_month, $search_year);
@@ -1877,7 +1911,26 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		// Duration
 		if (!empty($arrayfields['t.task_duration']['checked'])) {
-			print '<td class="liste_titre right"></td>';
+			// Duration - Time spent
+			print '<td class="liste_titre right">';
+
+			$durationtouse_start = 0;
+			if ($search_timespent_starthour || $search_timespent_startmin) {
+				$durationtouse_start = ($search_timespent_starthour * 3600 + $search_timespent_startmin * 60);
+			}
+			print '<div class="nowraponall">'.$langs->trans('from').'&nbsp;';
+			$form->select_duration('search_timespent_duration_start', $durationtouse_start, 0, 'text');
+			print '</div>';
+
+			$durationtouse_end = 0;
+			if ($search_timespent_endhour || $search_timespent_endmin) {
+				$durationtouse_end = ($search_timespent_endhour * 3600 + $search_timespent_endmin * 60);
+			}
+			print '<div class="nowraponall">'.$langs->trans('at').'&nbsp;';
+			$form->select_duration('search_timespent_duration_end', $durationtouse_end, 0, 'text');
+			print '</div>';
+
+			print '</td>';
 		}
 		// Product
 		if (!empty($arrayfields['t.fk_product']['checked'])) {
@@ -2616,7 +2669,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		if (!count($tasks)) {
 			$totalnboffields = 1;
 			foreach ($arrayfields as $value) {
-				if ($value['checked']) {
+				if (!empty($value['checked'])) {
 					$totalnboffields++;
 				}
 			}

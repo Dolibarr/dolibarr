@@ -54,12 +54,15 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = Dalībnieka izveides/pievienošanas vei
 # Object
 #
 EventOrganizationConfOrBooth= Konference vai stends
+EventOrganizationConfOrBoothes=Konferences vai stendi
 ManageOrganizeEvent = Pārvaldiet pasākuma organizēšanu
 ConferenceOrBooth = Konference vai stends
 ConferenceOrBoothTab = Konference vai stends
 AmountPaid = Samaksātā summa
 DateOfRegistration = Reģistrācijas datums
 ConferenceOrBoothAttendee = Konferences vai stenda apmeklētājs
+ApplicantOrVisitor=Pretendents vai apmeklētājs
+Speaker=Skaļrunis
 
 #
 # Template Mail
@@ -112,15 +115,15 @@ EvntOrgRegistrationHelpMessage = Šeit varat balsot par konferenci vai ieteikt j
 EvntOrgRegistrationConfHelpMessage = Šeit varat ieteikt jaunu konferenci, ko animēt pasākuma laikā.
 EvntOrgRegistrationBoothHelpMessage = Šeit jūs varat pieteikties stendam pasākuma laikā.
 ListOfSuggestedConferences = Ieteicamo konferenču saraksts
-ListOfSuggestedBooths = Ieteicamo kabīņu saraksts
-ListOfConferencesOrBooths=Konferenču vai pasākumu projekta kabīņu saraksts
+ListOfSuggestedBooths=Ieteiktās kabīnes
+ListOfConferencesOrBooths=Konferenču vai pasākumu projektu kabīnes
 SuggestConference = Ieteikt jaunu konferenci
 SuggestBooth = Ieteikt stendu
 ViewAndVote = Skatiet ierosinātos pasākumus un balsojiet par tiem
 PublicAttendeeSubscriptionGlobalPage = Publiska saite reģistrācijai uz pasākumu
 PublicAttendeeSubscriptionPage = Publiska saite reģistrācijai tikai uz šo notikumu
 MissingOrBadSecureKey = Drošības atslēga nav derīga vai tās nav
-EvntOrgWelcomeMessage = Šī veidlapa ļauj reģistrēties kā jaunam pasākuma dalībniekam: <b> %s </b>
+EvntOrgWelcomeMessage = Šī forma ļauj reģistrēties kā jaunam pasākuma dalībniekam
 EvntOrgDuration = Šī konference sākas ar %s un beidzas ar %s.
 ConferenceAttendeeFee = Konferences dalībnieka maksa par pasākumu: '%s', kas notiek no %s līdz %s.
 BoothLocationFee = Pasākuma stenda atrašanās vieta: '%s', kas notiek no %s līdz %s
@@ -130,7 +133,7 @@ LabelOfconference=Konferences etiķete
 ConferenceIsNotConfirmed=Reģistrācija nav pieejama, konference vēl nav apstiprināta
 DateMustBeBeforeThan=%s jābūt pirms %s
 DateMustBeAfterThan=%s jābūt aiz %s
-
+MaxNbOfAttendeesReached=Ir sasniegts maksimālais dalībnieku skaits
 NewSubscription=Reģistrācija
 OrganizationEventConfRequestWasReceived=Jūsu ieteikums par konferenci ir saņemts
 OrganizationEventBoothRequestWasReceived=Jūsu pieprasījums pēc stenda ir saņemts
@@ -139,6 +142,7 @@ OrganizationEventPaymentOfRegistrationWasReceived=Jūsu maksājums par jūsu not
 OrganizationEventBulkMailToAttendees=Šis ir atgādinājums par jūsu dalību pasākumā kā apmeklētājam
 OrganizationEventBulkMailToSpeakers=Šis ir atgādinājums par jūsu dalību pasākumā kā runātājam
 OrganizationEventLinkToThirdParty=Saite ar trešo pusi (klientu, piegādātāju vai partneri)
+OrganizationEvenLabelName=Konferences vai stenda publiskais nosaukums
 
 NewSuggestionOfBooth=Pieteikums stendam
 NewSuggestionOfConference=Pieteikšanās konferencei
@@ -154,7 +158,7 @@ VoteOk = Jūsu balsojums ir pieņemts.
 AlreadyVoted = Jūs jau esat balsojis par šo notikumu.
 VoteError = Balsojuma laikā radās kļūda. Lūdzu, mēģiniet vēlreiz.
 
-SubscriptionOk = Jūsu reģistrācija ir apstiprināta
+SubscriptionOk=Jūsu reģistrācija ir reģistrēta
 ConfAttendeeSubscriptionConfirmation = Pasākuma abonementa apstiprinājums
 Attendee = Dalībnieks
 PaymentConferenceAttendee = Konferences dalībnieka samaksa
@@ -162,8 +166,11 @@ PaymentBoothLocation = Kabīnes atrašanās vietas maksājums
 DeleteConferenceOrBoothAttendee=Noņemt dalībnieku
 RegistrationAndPaymentWereAlreadyRecorder=Reģistrācija un maksājums jau tika reģistrēts e -pastam <b> %s </b>
 EmailAttendee=Dalībnieku e -pasts
+EmailCompany=Uzņēmuma e-pasts
 EmailCompanyForInvoice=Uzņēmuma e -pasts (rēķinam, ja atšķiras no dalībnieka e -pasta adreses)
 ErrorSeveralCompaniesWithEmailContactUs=Ir atrasti vairāki uzņēmumi ar šo e -pastu, tāpēc mēs nevaram automātiski apstiprināt jūsu reģistrāciju. Lūdzu, sazinieties ar mums pa e -pastu %s, lai manuāli apstiprinātu
 ErrorSeveralCompaniesWithNameContactUs=Ir atrasti vairāki uzņēmumi ar šo nosaukumu, tāpēc mēs nevaram automātiski apstiprināt jūsu reģistrāciju. Lūdzu, sazinieties ar mums pa e -pastu %s, lai manuāli apstiprinātu
 NoPublicActionsAllowedForThisEvent=Šajā pasākumā neviena publiska darbība nav pieejama sabiedrībai
 MaxNbOfAttendees=Maksimālais dalībnieku skaits
+DateStartEvent=Pasākuma sākuma datums
+DateEndEvent=Pasākuma beigu datums

@@ -114,7 +114,7 @@ class Ctypent // extends CommonObject
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->libelle) ? 'NULL' : "'".$this->db->escape($this->libelle)."'").",";
 		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'").",";
-		$sql .= " ".(!isset($this->module) ? 'NULL' : "'".$this->db->escape($this->module)."'")."";
+		$sql .= " ".(!isset($this->module) ? 'NULL' : "'".$this->db->escape($this->module)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -227,8 +227,8 @@ class Ctypent // extends CommonObject
 		$sql = "UPDATE ".$this->db->prefix()."c_typent SET";
 		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").",";
 		$sql .= " libelle=".(isset($this->libelle) ? "'".$this->db->escape($this->libelle)."'" : "null").",";
-		$sql .= " active=".(isset($this->active) ? $this->active : "null").",";
-		$sql .= " module=".(isset($this->module) ? "'".$this->db->escape($this->module)."'" : "null")."";
+		$sql .= " active=".(isset($this->active) ? ((int) $this->active) : "null").",";
+		$sql .= " module=".(isset($this->module) ? "'".$this->db->escape($this->module)."'" : "null");
 		$sql .= " WHERE id=".$this->id;
 
 		$this->db->begin();

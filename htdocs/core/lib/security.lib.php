@@ -344,7 +344,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	} else {
 		$objectid = $object;		// $objectid can be X or 'X,Y,Z'
 	}
-	$objectid = preg_replace('/[^0-9\.\,]/', '', $objectid);	// For the case value is coming from a non sanitized user input
+	if ($objectid) {
+		$objectid = preg_replace('/[^0-9\.\,]/', '', $objectid);	// For the case value is coming from a non sanitized user input
+	}
 
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
 	//print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
@@ -367,7 +369,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	if ($features == 'subscription') {
 		$features = 'adherent';
 		$feature2 = 'cotisation';
-	};
+	}
 	if ($features == 'websitepage') {
 		$features = 'website';
 		$tableandshare = 'website_page';
@@ -463,6 +465,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 			}
 		} elseif ($feature == 'payment_supplier') {
 			if (empty($user->rights->fournisseur->facture->lire)) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'payment_sc') {
+			if (empty($user->rights->tax->charges->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -648,6 +655,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				if (!$user->rights->facture->paiement) {
 						$deleteok = 0;
 				}
+			} elseif ($feature == 'payment_sc') {
+				if (!$user->rights->tax->charges->creer) {
+					$deleteok = 0;
+				}
 			} elseif ($feature == 'banque') {
 				if (empty($user->rights->banque->modifier)) {
 					$deleteok = 0;
@@ -723,7 +734,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		if ($mode) {
 			return $ok ? 1 : 0;
 		} else {
-			return $ok ? 1 : accessforbidden('', 1, 1, 0, $params);
+			if ($ok) {
+				return 1;
+			} else {
+				accessforbidden('', 1, 1, 0, $params);
+			}
 		}
 	}
 

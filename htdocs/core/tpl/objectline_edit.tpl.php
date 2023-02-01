@@ -120,7 +120,7 @@ $coldisplay++;
 			print '<input type="hidden" id="product_id" name="productid" value="'.(!empty($line->fk_product) ? $line->fk_product : 0).'">';
 		} else {
 			if ($senderissupplier) {
-				print $form->select_produits_fournisseurs(!empty($line->fk_product) ? $line->fk_product : 0, 'productid');
+				$form->select_produits_fournisseurs(!empty($line->fk_product) ? $line->fk_product : 0, 'productid');
 			} else {
 				print $form->select_produits(!empty($line->fk_product) ? $line->fk_product : 0, 'productid');
 			}

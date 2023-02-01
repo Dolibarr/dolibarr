@@ -119,6 +119,11 @@ class ProductAttribute extends CommonObject
 	 */
 	public $line;
 
+	/**
+	 * @var int		Number of product that use this attribute
+	 */
+	public $is_used_by_products;
+
 
 	/**
 	 * Constructor
@@ -914,7 +919,7 @@ class ProductAttribute extends CommonObject
 			$parameters = array('rowid' => $rowid, 'position' => $position);
 			$action = '';
 			$reshook = $hookmanager->executeHooks('afterPositionOfAttributeUpdate', $parameters, $this, $action);
-			return 1;
+			return ($reshook >= 0 ? 1 : -1);
 		}
 	}
 
