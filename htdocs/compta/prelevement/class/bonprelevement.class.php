@@ -2098,9 +2098,10 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '					<Cd>SEPA</Cd>'.$CrLf;
 				$XML_SEPA_INFO .= '				</SvcLvl>'.$CrLf;
 				$XML_SEPA_INFO .= '				<LclInstrm>'.$CrLf;
-				// Spécifique ATM :
+				/** Spécifique ATM : */
 				// Remplacement de la mention "CORE" en "B2B" afin que les bons de prélèvement soient accepté par les banques
 				$XML_SEPA_INFO .= '					<Cd>B2B</Cd>'.$CrLf;
+				/** END Spécifique ATM : */
 				$XML_SEPA_INFO .= '				</LclInstrm>'.$CrLf;
 				$XML_SEPA_INFO .= '				<SeqTp>'.$format.'</SeqTp>'.$CrLf;
 				$XML_SEPA_INFO .= '			</PmtTpInf>'.$CrLf;
@@ -2165,7 +2166,10 @@ class BonPrelevement extends CommonObject
 					$XML_SEPA_INFO .= '					<Cd>SEPA</Cd>' . $CrLf;
 					$XML_SEPA_INFO .= '				</SvcLvl>' . $CrLf;
 					$XML_SEPA_INFO .= '				<LclInstrm>' . $CrLf;
+					/** Spécifique ATM : */
+					// Remplacement de la mention "CORE" en "B2B" afin que les bons de prélèvement soient accepté par les banques
 					$XML_SEPA_INFO .= '					<Cd>B2B</Cd>' . $CrLf;
+					/** END Spécifique ATM : */
 					$XML_SEPA_INFO .= '				</LclInstrm>' . $CrLf;
 					$XML_SEPA_INFO .= '				<SeqTp>' . $format . '</SeqTp>' . $CrLf;
 					$XML_SEPA_INFO .= '			</PmtTpInf>' . $CrLf;
