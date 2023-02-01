@@ -91,9 +91,10 @@ $hookmanager->initHooks(array('holidaycard', 'globalcard'));
 
 $cancreate = 0;
 $cancreateall = 0;
-if (!empty($user->rights->holiday->write) && in_array($fuserid, $childids)) {
+if (!empty($user->rights->holiday->write) && in_array($object->fk_user, $childids)) {
 	$cancreate = 1;
 }
+
 // TODO Remove the writeall_advance and replace it with writeall
 if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall))
 	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance))) {
@@ -1473,7 +1474,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 								if (($object->date_debut > dol_now()) || !empty($user->admin)) {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
 								} else {
-									print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("HolidayStarted").'-'.$langs->trans("NotAllowed").'">'.$langs->trans("ActionCancelCP").'</a>';
+									print '-<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("HolidayStarted").'-'.$langs->trans("NotAllowed").'">'.$langs->trans("ActionCancelCP").'</a>';
 								}
 							}
 						}
