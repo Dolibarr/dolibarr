@@ -334,7 +334,7 @@ if (empty($reshook) && $action == 'add') {
 			if ($result > 0) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 				$object = $proj;
-				
+
 				if ($object->email) {
 					$subject = '';
 					$msg = '';
