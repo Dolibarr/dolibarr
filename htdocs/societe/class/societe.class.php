@@ -2656,7 +2656,7 @@ class Societe extends CommonObject
 		}
 
 		// By default
-		if (empty($datas['picto'] )) {
+		if (empty($datas['picto'])) {
 			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
 		}
 		if (isset($this->status)) {
