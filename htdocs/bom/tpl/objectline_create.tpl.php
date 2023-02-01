@@ -73,7 +73,7 @@ if ($nolinesbefore) {
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 
 	if ($filtertype != 1) {
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			print '<td class="linecoluseunit left">';
 			print '<span id="title_units">';
 			print $langs->trans('Unit');
@@ -107,7 +107,7 @@ print '<td class="bordertop nobottom linecoldescription minwidth500imp">';
 if (isModEnabled("product") || isModEnabled("service")) {
 	if ($filtertype == 1) {
 		print $langs->trans("Service");
-	} elseif (!empty($conf->global->BOM_SUB_BOM)) {
+	} else {
 		print $langs->trans("Product");
 	}
 	echo '<span class="prod_entry_mode_predef">';
@@ -126,6 +126,17 @@ if (!empty($conf->global->BOM_SUB_BOM) && $filtertype!=1) {
 	// TODO Add component to select a BOM
 	$form->select_bom();
 }
+
+if (is_object($objectline)) {
+	$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', 1, 'line');
+
+	if (!empty($temps)) {
+		print '<div style="padding-top: 10px" id="extrafield_lines_area_create" name="extrafield_lines_area_create">';
+		print $temps;
+		print '</div>';
+	}
+}
+
 print '</td>';
 
 
@@ -134,7 +145,7 @@ print '<td class="bordertop nobottom linecolqty right"><input type="text" size="
 print '</td>';
 
 if ($filtertype != 1) {
-	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
 		print '</td>';

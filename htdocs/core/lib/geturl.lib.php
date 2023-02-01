@@ -266,9 +266,9 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			$maxRedirection--;
 			// TODO Use $info['local_ip'] and $info['primary_ip'] ?
 			continue;
-		} else {
-			$http_code = 0;
 		}
+
+		$http_code = 0;
 	} while ($http_code);
 
 	$request = curl_getinfo($ch, CURLINFO_HEADER_OUT); // Reading of request must be done after sending request

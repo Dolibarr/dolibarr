@@ -40,6 +40,11 @@ class CommActionRapport
 	 */
 	public $db;
 
+	public $error;
+
+	public $errors;
+
+
 	/**
 	 * @var string description
 	 */
@@ -234,7 +239,7 @@ class CommActionRapport
 
 		$sql = "SELECT s.nom as thirdparty, s.rowid as socid, s.client,";
 		$sql .= " a.id, a.datep as dp, a.datep2 as dp2,";
-		$sql .= " a.fk_contact, a.note, a.percent as percent, a.label, a.fk_project,";
+		$sql .= " a.fk_contact, a.note, a.percent as percent, a.fulldayevent, a.label, a.fk_project,";
 		$sql .= " c.code, c.libelle,";
 		$sql .= " u.login";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
@@ -332,7 +337,7 @@ class CommActionRapport
 
 				// Description of event
 				$pdf->SetXY(106, $y);
-				$pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset(dol_string_nohtmltag($text, 0)), 0, 'L', 0);
+				$pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset(dol_trunc(dol_string_nohtmltag($text, 0), 250, 'right', 'UTF-8', 0)), 0, 'L', 0);
 				$y3 = $pdf->GetY();
 
 				$i++;

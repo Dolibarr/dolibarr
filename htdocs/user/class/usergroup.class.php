@@ -100,6 +100,7 @@ class UserGroup extends CommonObject
 	public $members = array(); // Array of users
 
 	public $nb_rights; // Number of rights granted to the user
+	public $nb_users;  // Number of users in the group
 
 	private $_tab_loaded = array(); // Array of cache of already loaded permissions
 
@@ -151,7 +152,7 @@ class UserGroup extends CommonObject
 	 *  @param		boolean	$load_members	Load all members of the group
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	public function fetch($id = '', $groupname = '', $load_members = true)
+	public function fetch($id = '', $groupname = '', $load_members = false)
 	{
 		global $conf;
 
@@ -166,7 +167,7 @@ class UserGroup extends CommonObject
 
 		if ($result) {
 			if ($load_members) {
-				$this->members = $this->listUsersForGroup();
+				$this->members = $this->listUsersForGroup();	// This make a lot of subrequests
 			}
 
 			return 1;
@@ -180,9 +181,9 @@ class UserGroup extends CommonObject
 	/**
 	 *  Return array of groups objects for a particular user
 	 *
-	 *  @param		int		$userid 		User id to search
-	 *  @param		boolean	$load_members	Load all members of the group
-	 *  @return		array     				Array of groups objects
+	 *  @param		int			$userid 		User id to search
+	 *  @param		boolean		$load_members	Load all members of the group
+	 *  @return		array|int     				Array of groups objects
 	 */
 	public function listGroupsForUser($userid, $load_members = true)
 	{
@@ -237,7 +238,7 @@ class UserGroup extends CommonObject
 
 		$ret = array();
 
-		$sql = "SELECT u.rowid";
+		$sql = "SELECT u.rowid, u.login, u.lastname, u.firstname, u.photo, u.fk_soc, u.entity, u.employee, u.email";
 		if (!empty($this->id)) {
 			$sql .= ", ug.entity as usergroup_entity";
 		}
@@ -263,12 +264,23 @@ class UserGroup extends CommonObject
 
 		dol_syslog(get_class($this)."::listUsersForGroup", LOG_DEBUG);
 		$resql = $this->db->query($sql);
+
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				if (!array_key_exists($obj->rowid, $ret)) {
 					if ($mode != 1) {
 						$newuser = new User($this->db);
-						$newuser->fetch($obj->rowid);
+						//$newuser->fetch($obj->rowid);		// We are inside a loop, no subrequests inside a loop
+						$newuser->id = $obj->rowid;
+						$newuser->login = $obj->login;
+						$newuser->photo = $obj->photo;
+						$newuser->lastname = $obj->lastname;
+						$newuser->firstname = $obj->firstname;
+						$newuser->email = $obj->email;
+						$newuser->socid = $obj->fk_soc;
+						$newuser->entity = $obj->entity;
+						$newuser->employee = $obj->employee;
+
 						$ret[$obj->rowid] = $newuser;
 					} else {
 						$ret[$obj->rowid] = $obj->rowid;
@@ -544,7 +556,7 @@ class UserGroup extends CommonObject
 	 *  Charge dans l'objet group, la liste des permissions auquels le groupe a droit
 	 *
 	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
-	 *	@return     int						<0 if KO, >0 if OK
+	 *	@return     int						<0 if KO, >=0 if OK
 	 */
 	public function getrights($moduletag = '')
 	{
@@ -552,12 +564,12 @@ class UserGroup extends CommonObject
 
 		if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag]) {
 			// Rights for this module are already loaded, so we leave
-			return;
+			return 0;
 		}
 
 		if (!empty($this->all_permissions_are_loaded)) {
 			// We already loaded all rights for this group, so we leave
-			return;
+			return 0;
 		}
 
 		/*
@@ -916,5 +928,34 @@ class UserGroup extends CommonObject
 		$modelpath = "core/modules/usergroup/doc/";
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+	}
+
+		/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if (property_exists($this, 'members')) {
+			$return .= '<br><span class="info-box-status opacitymedium">'.(empty($this->nb_users) ? 0 : $this->nb_users).' '.$langs->trans('Users').'</span>';
+		}
+		if (property_exists($this, 'nb_rights')) {
+			$return .= '<br><div class="info-box-status margintoponly opacitymedium">'.$langs->trans('NbOfPermissions').' : '.(empty($this->nb_rights) ? 0 : $this->nb_rights).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

@@ -58,7 +58,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{
@@ -162,7 +162,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 *
 	 *  @param	Societe		$objsoc      	Object thirdparty
 	 *  @param  Object		$object			Objet livraison
-	 *  @return string      				Texte descripif
+	 *  @return string      				Descriptive text
 	 */
 	public function delivery_get_num($objsoc = 0, $object = '')
 	{

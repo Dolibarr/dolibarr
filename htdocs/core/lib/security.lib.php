@@ -201,7 +201,7 @@ function dolDecrypt($chain, $key = '')
  * 	@param 		string		$chain		String to hash
  * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256, '6':password_hash). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		string					Hash of string
- *  @see getRandomPassword()
+ *  @see getRandomPassword(), dol_verifyHash()
  */
 function dol_hash($chain, $type = '0')
 {
@@ -249,6 +249,7 @@ function dol_hash($chain, $type = '0')
  * 	@param 		string		$hash		hash to compare
  * 	@param		string		$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		bool					True if the computed hash is the same as the given one
+ *  @see dol_hash()
  */
 function dol_verifyHash($chain, $hash, $type = '0')
 {
@@ -343,7 +344,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	} else {
 		$objectid = $object;		// $objectid can be X or 'X,Y,Z'
 	}
-	$objectid = preg_replace('/[^0-9\.\,]/', '', $objectid);	// For the case value is coming from a non sanitized user input
+	if ($objectid) {
+		$objectid = preg_replace('/[^0-9\.\,]/', '', $objectid);	// For the case value is coming from a non sanitized user input
+	}
 
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
 	//print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
@@ -366,7 +369,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	if ($features == 'subscription') {
 		$features = 'adherent';
 		$feature2 = 'cotisation';
-	};
+	}
 	if ($features == 'websitepage') {
 		$features = 'website';
 		$tableandshare = 'website_page';
@@ -462,6 +465,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 			}
 		} elseif ($feature == 'payment_supplier') {
 			if (empty($user->rights->fournisseur->facture->lire)) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'payment_sc') {
+			if (empty($user->rights->tax->charges->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -647,6 +655,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				if (!$user->rights->facture->paiement) {
 						$deleteok = 0;
 				}
+			} elseif ($feature == 'payment_sc') {
+				if (!$user->rights->tax->charges->creer) {
+					$deleteok = 0;
+				}
 			} elseif ($feature == 'banque') {
 				if (empty($user->rights->banque->modifier)) {
 					$deleteok = 0;
@@ -722,7 +734,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		if ($mode) {
 			return $ok ? 1 : 0;
 		} else {
-			return $ok ? 1 : accessforbidden('', 1, 1, 0, $params);
+			if ($ok) {
+				return 1;
+			} else {
+				accessforbidden('', 1, 1, 0, $params);
+			}
 		}
 	}
 

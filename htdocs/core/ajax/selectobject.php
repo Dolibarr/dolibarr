@@ -43,6 +43,7 @@ $objectdesc = GETPOST('objectdesc', 'alpha');
 $htmlname = GETPOST('htmlname', 'aZ09');
 $outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
 $id = GETPOST('id', 'int');
+$filter = GETPOST('filter', 'alphanohtml');
 
 
 /*
@@ -84,7 +85,7 @@ $searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlna
 // Add a security test to avoid to get content of all tables
 restrictedArea($user, $objecttmp->element, $id);
 
-$arrayresult = $form->selectForFormsList($objecttmp, $htmlname, '', 0, $searchkey, '', '', '', 0, 1);
+$arrayresult = $form->selectForFormsList($objecttmp, $htmlname, '', 0, $searchkey, '', '', '', 0, 1, 0, '', $filter);
 
 $db->close();
 

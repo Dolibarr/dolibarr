@@ -178,7 +178,7 @@ class SimpleOpenID
 	/**
 	 * SetOpenIDServer
 	 *
-	 * @return	void
+	 * @return	array
 	 */
 	public function GetError()
 	{
@@ -225,7 +225,7 @@ class SimpleOpenID
 	 * splitResponse
 	 *
 	 * @param	string	$response		Server
-	 * @return	void
+	 * @return	array
 	 */
 	public function splitResponse($response)
 	{

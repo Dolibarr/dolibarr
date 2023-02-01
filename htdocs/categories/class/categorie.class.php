@@ -1189,8 +1189,6 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this)."::get_full_arbo dol_sort_array", LOG_DEBUG);
 		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
 
-		//$this->debug_cats();
-
 		return $this->cats;
 	}
 
@@ -1201,7 +1199,7 @@ class Categorie extends CommonObject
 	 *
 	 * 	@param		int		$id_categ		id_categ entry to update
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop
-	 *	@return		void
+	 *	@return		int						<0 if KO, >0 if OK
 	 *  @see get_full_arbo()
 	 */
 	private function buildPathFromId($id_categ, $protection = 1000)
@@ -1211,7 +1209,7 @@ class Categorie extends CommonObject
 		if (!empty($this->cats[$id_categ]['fullpath'])) {
 			// Already defined
 			dol_syslog(get_class($this)."::buildPathFromId fullpath and fulllabel already defined", LOG_WARNING);
-			return;
+			return -1;
 		}
 
 		// First build full array $motherof
@@ -1238,28 +1236,7 @@ class Categorie extends CommonObject
 		$nbunderscore = substr_count($this->cats[$id_categ]['fullpath'], '_');
 		$this->cats[$id_categ]['level'] = ($nbunderscore ? $nbunderscore : null);
 
-		return;
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Display content of $this->cats
-	 *
-	 *	@return	void
-	 */
-	public function debug_cats()
-	{
-		// phpcs:enable
-		// Display $this->cats
-		foreach ($this->cats as $key => $val) {
-			print 'id: '.$this->cats[$key]['id'];
-			print ' label: '.$this->cats[$key]['label'];
-			print ' mother: '.$this->cats[$key]['fk_parent'];
-			//print ' children: '.(is_array($this->cats[$key]['id_children'])?join(',',$this->cats[$key]['id_children']):'');
-			print ' fullpath: '.$this->cats[$key]['fullpath'];
-			print ' fulllabel: '.$this->cats[$key]['fulllabel'];
-			print "<br>\n";
-		}
+		return 1;
 	}
 
 
@@ -1962,18 +1939,18 @@ class Categorie extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'categorie_societe'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables, 1);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables, 1);
 	}
 
 	/**

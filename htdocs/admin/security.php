@@ -56,8 +56,8 @@ if ($action == 'activate_encrypt') {
 
 	$db->begin();
 
-	// On old version a bug created the constant into user entity, so we delete it to be sure, such entry won't exists. We want it in entity 0 or nowhere.
-	dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $conf->entity);
+	// On old version, a bug created the constant into user entity, so we delete it to be sure such entry won't exists. We want it in entity 0 or nowhere.
+	dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED", $conf->entity);
 	// We set entity=0 (all) because DATABASE_PWD_ENCRYPTED is a setup into conf file, so always shared for everybody
 	$entityforall = 0;
 	dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $entityforall);
@@ -271,8 +271,8 @@ print '</div>';
 
 print '</form>';
 
-//if($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK == 1)
-// Patter for Password Perso
+
+// Pattern for Password Perso
 if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
 	print '<br>';
 
@@ -320,10 +320,10 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
 
 	print '</table>';
 
-	print '<br>';
 	print '<div class="center">';
 	print '<a class="button button-save" id="linkChangePattern">'.$langs->trans("Save").'</a>';
 	print '</div>';
+
 	print '<br><br>';
 
 	print '<script type="text/javascript">';
@@ -392,7 +392,7 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
 print '<td class="center">'.$langs->trans("Activated").'</td>';
-print '<td class="center">'.$langs->trans("Action").'</td>';
+print '<td class="center"></td>';
 print '</tr>';
 
 // Disable clear password in database

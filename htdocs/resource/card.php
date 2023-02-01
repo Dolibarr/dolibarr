@@ -50,7 +50,6 @@ if ($user->socid > 0) {
 }
 
 $object = new Dolresource($db);
-
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -226,7 +225,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		// Type
 		print '<tr><td>'.$langs->trans("ResourceType").'</td>';
 		print '<td>';
-		$ret = $formresource->select_types_resource($object->fk_code_type_resource, 'fk_code_type_resource', '', 2);
+		$formresource->select_types_resource($object->fk_code_type_resource, 'fk_code_type_resource', '', 2);
 		print '</td></tr>';
 
 		// Description
@@ -246,7 +245,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '</td></tr>';
 
 		// Other attributes
-		$parameters = array('objectsrc' => $objectsrc);
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		if (empty($reshook)) {

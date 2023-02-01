@@ -60,7 +60,7 @@ class DolEditor
 	 *                       		                    'In' = each window has its own toolbar
 	 *                              		            'Out:name' = share toolbar into the div called 'name'
 	 *  @param  boolean	$toolbarstartexpanded  			Bar is visible or not at start
-	 *  @param	boolean	$uselocalbrowser				Enabled to add links to local object with local browser. If false, only external images can be added in content.
+	 *  @param	boolean|int		$uselocalbrowser		Enabled to add links to local object with local browser. If false, only external images can be added in content.
 	 *  @param  boolean|string	$okforextendededitor    True=Allow usage of extended editor tool if qualified (like ckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
 	 *                                                  Warning: If you use 'ace', don't forget to also include ace.js in page header. Also, the button "save" must have class="buttonforacesave".
 	 *  @param  int		$rows                   		Size of rows for textarea tool
@@ -157,11 +157,7 @@ class DolEditor
 					define('REQUIRE_CKEDITOR', '1');
 				}
 
-				if (!empty($conf->global->FCKEDITOR_SKIN)) {
-					$skin = $conf->global->FCKEDITOR_SKIN;
-				} else {
-					$skin = 'moono-lisa'; // default with ckeditor 4.6 : moono-lisa
-				}
+				$skin = getDolGlobalString('FCKEDITOR_SKIN', 'moono-lisa');		// default with ckeditor 4.6 : moono-lisa
 
 				$pluginstodisable = 'elementspath,save,flash,div,specialchar,anchor';
 				if (!empty($conf->dol_optimize_smallscreen)) {
@@ -183,31 +179,31 @@ class DolEditor
 
 				$htmlencode_force = preg_match('/_encoded$/', $this->toolbarname) ? 'true' : 'false';
 
-				$out .= '<!-- Output ckeditor $disallowAnyContent='.$disallowAnyContent.' toolbarname='.$this->toolbarname.' -->'."\n";
+				$out .= '<!-- Output ckeditor $disallowAnyContent='.dol_escape_htmltag($disallowAnyContent).' toolbarname='.dol_escape_htmltag($this->toolbarname).' -->'."\n";
 				$out .= '<script type="text/javascript">
             			$(document).ready(function () {
 							/* console.log("Run ckeditor"); */
                             /* if (CKEDITOR.loadFullCore) CKEDITOR.loadFullCore(); */
                             /* should be editor=CKEDITOR.replace but what if there is several editors ? */
-                            tmpeditor = CKEDITOR.replace(\''.$this->htmlname.'\',
+                            tmpeditor = CKEDITOR.replace(\''.dol_escape_js($this->htmlname).'\',
             					{
             						/* property:xxx is same than CKEDITOR.config.property = xxx */
             						customConfig: ckeditorConfig,
-									removePlugins: \''.$pluginstodisable.'\',
+									removePlugins: \''.dol_escape_js($pluginstodisable).'\',
             						readOnly: '.($this->readonly ? 'true' : 'false').',
-                            		htmlEncodeOutput:'.$htmlencode_force.',
-            						allowedContent:'.($disallowAnyContent ? 'false' : 'true').',		/* Advanced Content Filter (ACF) is own when allowedContent is false */
+                            		htmlEncodeOutput: '.dol_escape_js($htmlencode_force).',
+            						allowedContent: '.($disallowAnyContent ? 'false' : 'true').',		/* Advanced Content Filter (ACF) is own when allowedContent is false */
             						extraAllowedContent: \'a[target];div{float,display}\',				/* Add the style float and display into div to default other allowed tags */
 									disallowedContent: '.($disallowAnyContent ? '\'\'' : '\'\'').',		/* Tags that are not allowed */
             						fullPage: '.($fullpage ? 'true' : 'false').',						/* if true, the html, header and body tags are kept */
-                            		toolbar: \''.$this->toolbarname.'\',
+                            		toolbar: \''.dol_escape_js($this->toolbarname).'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
-            						width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',
-            						height: '.$this->height.',
-                                    skin: \''.$skin.'\',
+            						width: '.($this->width ? '\''.dol_escape_js($this->width).'\'' : '\'\'').',
+            						height: '.dol_escape_js($this->height).',
+                                    skin: \''.dol_escape_js($skin).'\',
                                     '.$scaytautostartup.'
-                                    language: \''.$langs->defaultlang.'\',
-                                    textDirection: \''.$langs->trans("DIRECTION").'\',
+                                    language: \''.dol_escape_js($langs->defaultlang).'\',
+                                    textDirection: \''.dol_escape_js($langs->trans("DIRECTION")).'\',
                                     on : {
                                                 instanceReady : function( ev )
                                                 {

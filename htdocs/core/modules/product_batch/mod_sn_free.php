@@ -93,7 +93,7 @@ class mod_sn_free extends ModeleNumRefBatch
 	 * Return an example of result returned by getNextValue
 	 *
 	 * @param	Societe		$objsoc	    Object thirdparty
-	 * @param   Object		$object		Object we need next value for
+	 * @param   Productlot	$object		Object we need next value for
 	 * @return	string					Return next value
 	 */
 	public function getNextValue($objsoc, $object)

@@ -93,7 +93,11 @@ $refalreadyexists = 0;
 
 // Get parameters
 $id  = GETPOST('id', 'int');
-$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : null);
+if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+	$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'nohtml') : null);
+} else {
+	$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : null);
+}
 $type = (GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT);
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $cancel = GETPOST('cancel', 'alpha');
@@ -113,7 +117,11 @@ $accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
 $checkmandatory = GETPOST('accountancy_code_buy_export', 'alpha');
 
 // by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
-$label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'alphanohtml' : 'restricthtml';
+if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+	$label_security_check = 'nohtml';
+} else {
+	$label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'alphanohtml' : 'restricthtml';
+}
 
 if (!empty($user->socid)) {
 	$socid = $user->socid;
@@ -444,7 +452,7 @@ if (empty($reshook)) {
 			}
 
 			$error++;
-			setEventMessages($errors, null, 'errors');
+			setEventMessages('', $errors, 'errors');
 		}
 	}
 
@@ -541,7 +549,7 @@ if (empty($reshook)) {
 			if ($result < 0) {
 				$error++;
 				$mesg = 'Failed to get bar code type information ';
-				setEventMessages($mesg.$stdobject->error, $mesg.$stdobject->errors, 'errors');
+				setEventMessages($mesg.$stdobject->error, $stdobject->errors, 'errors');
 			}
 			$object->barcode_type_code      = $stdobject->barcode_type_code;
 			$object->barcode_type_coder     = $stdobject->barcode_type_coder;
@@ -576,7 +584,7 @@ if (empty($reshook)) {
 			$object->volume             	 = GETPOST('volume');
 			$object->volume_units       	 = GETPOST('volume_units'); // This is not the fk_unit but the power of unit
 			$finished = GETPOST('finished', 'int');
-			if ($finished > 0) {
+			if ($finished >= 0) {
 				$object->finished = $finished;
 			} else {
 				$object->finished = null;
@@ -780,7 +788,7 @@ if (empty($reshook)) {
 				if ($result < 0) {
 					$error++;
 					$mesg = 'Failed to get bar code type information ';
-					setEventMessages($mesg.$stdobject->error, $mesg.$stdobject->errors, 'errors');
+					setEventMessages($mesg.$stdobject->error, $stdobject->errors, 'errors');
 				}
 				$object->barcode_type_code      = $stdobject->barcode_type_code;
 				$object->barcode_type_coder     = $stdobject->barcode_type_coder;
@@ -1250,7 +1258,6 @@ if (isModEnabled('barcode') && !empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
 	}
 }
 
-
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// -----------------------------------------
 	// When used with CANVAS
@@ -1486,7 +1493,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		}
 
-		if ($type == 1  && $conf->workstation->enabled) {
+		if ($type == 1  && isModEnabled("workstation")) {
 				// Default workstation
 				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
 				print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
@@ -2382,7 +2389,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="setbarcode">';
 					print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
-					print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
+					print '<input class="width300" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
 					print '&nbsp;<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
 					print '</form>';
 				} else {
@@ -2528,7 +2535,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td>';
 			}
 
-			if ($object->isService() && $conf->workstation->enabled) {
+			if ($object->isService() && isModEnabled('workstation')) {
 				$workstation = new Workstation($db);
 				$res = $workstation->fetch($object->fk_default_workstation);
 

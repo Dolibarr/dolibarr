@@ -1,25 +1,25 @@
 Module68000Name = Intracomm-rapport
-Module68000Desc = Intracomm-rapporthantering (stöd för franska DEB / DES-format)
-IntracommReportSetup = Konfigurering av modul för internkommunikation
-IntracommReportAbout = Om intracommreport
+Module68000Desc = Intracomm-rapporthantering (stöd för franska DEB/DES-format)
+IntracommReportSetup = Konfigurering av modul för Intracomm-rapporter
+IntracommReportAbout = Om Intracomm-rapport
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
-INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
-INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
+INTRACOMMREPORT_NUM_AGREMENT=Godkännandenummer (utfärdat av det CISD som det är kopplat till)
+INTRACOMMREPORT_TYPE_ACTEUR=Typ av aktör
+INTRACOMMREPORT_ROLE_ACTEUR=Roll för aktören
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Nivå av skyldighet för introducerare
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Nivå av skyldighet på försändelser
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Kategori av tjänster av typen "Fraktkostnader"
 
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+INTRACOMMREPORT_NUM_DECLARATION=Deklarantens nummer
 
 # Menu
 MenuIntracommReport=Intracomm-rapport
-MenuIntracommReportNew=Ny förklaring
+MenuIntracommReportNew=Ny deklarant
 MenuIntracommReportList=Lista
 
 # View
-NewDeclaration=Ny förklaring
+NewDeclaration=Ny deklaration
 Declaration=Deklaration
 AnalysisPeriod=Analysperiod
 TypeOfDeclaration=Typ av deklaration
@@ -31,7 +31,7 @@ IntracommReportTitle=Förberedelse av en XML-fil i ProDouane-format
 
 # List
 IntracommReportList=Lista över genererade deklarationer
-IntracommReportNumber=Numero of declaration
+IntracommReportNumber=Deklarationsnummer
 IntracommReportPeriod=Analysperiod
 IntracommReportTypeDeclaration=Typ av deklaration
 IntracommReportDownload=ladda ner XML-fil

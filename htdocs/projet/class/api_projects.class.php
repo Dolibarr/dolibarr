@@ -29,7 +29,6 @@
  */
 class Projects extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
@@ -123,6 +122,7 @@ class Projects extends DolibarrApi
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_extrafields AS ef ON ef.fk_object = t.rowid";	// So we will be able to filter on extrafields
 		if ($category > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."categorie_project as c";
 		}
@@ -267,10 +267,9 @@ class Projects extends DolibarrApi
 	 *
 	 * @param   int   $id             Id of project
 	 * @param   int   $userid         Id of user (0 = connected user)
+	 * @return array
 	 *
 	 * @url	GET {id}/roles
-	 *
-	 * @return int
 	 */
 	public function getRoles($id, $userid = 0)
 	{
@@ -296,11 +295,12 @@ class Projects extends DolibarrApi
 			$userp = new User($this->db);
 			$userp->fetch($userid);
 		}
-		$this->project->roles = $taskstatic->getUserRolesForProjectsOrTasks($userp, 0, $id, 0);
+		$this->project->roles = $taskstatic->getUserRolesForProjectsOrTasks($userp, null, $id, 0);
 		$result = array();
 		foreach ($this->project->roles as $line) {
 			array_push($result, $this->_cleanObjectDatas($line));
 		}
+
 		return $result;
 	}
 
