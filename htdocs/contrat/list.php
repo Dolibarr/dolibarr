@@ -469,6 +469,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	} else {
 		/* The fast and low memory method to get and count full list converts the sql into a sql count */
 		$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+		$sqlforcount = preg_replace('/LEFT JOIN '.MAIN_DB_PREFIX.'contratdet as cd ON c.rowid = cd.fk_contrat /', '', $sqlforcount);
 		$sqlforcount = preg_replace('/GROUP BY.*$/', '', $sqlforcount);
 
 		$resql = $db->query($sqlforcount);

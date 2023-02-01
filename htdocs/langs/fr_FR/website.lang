@@ -155,3 +155,5 @@ WebpageMustBeDisabled=La page Web doit avoir le statut "%s"
 SetWebsiteOnlineBefore=Lorsque le site Web est hors ligne, toutes les pages sont hors ligne. Changez d'abord le statut du site Web.
 Booking=Réservation
 Reservation=Réservation
+PagesViewedPreviousMonth=Pages vues (mois précédent)
+PagesViewedTotal=Pages vues (total)

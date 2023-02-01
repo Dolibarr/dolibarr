@@ -1385,10 +1385,10 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			$newmenu->add("/contrat/list.php?leftmenu=contracts", $langs->trans("List"), 1, $user->hasRight('contrat',  'lire'));
 			$newmenu->add("/contrat/services_list.php?leftmenu=contracts", $langs->trans("MenuServices"), 1, $user->hasRight('contrat',  'lire'));
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "contracts") {
-				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;mode=0", $langs->trans("MenuInactiveServices"), 2, $user->hasRight('contrat',  'lire'));
-				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;mode=4", $langs->trans("MenuRunningServices"), 2, $user->hasRight('contrat',  'lire'));
-				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;mode=4&amp;filter=expired", $langs->trans("MenuExpiredServices"), 2, $user->hasRight('contrat',  'lire'));
-				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;mode=5", $langs->trans("MenuClosedServices"), 2, $user->hasRight('contrat',  'lire'));
+				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=0", $langs->trans("MenuInactiveServices"), 2, $user->hasRight('contrat',  'lire'));
+				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=4", $langs->trans("MenuRunningServices"), 2, $user->hasRight('contrat',  'lire'));
+				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=4&amp;filter=expired", $langs->trans("MenuExpiredServices"), 2, $user->hasRight('contrat',  'lire'));
+				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=5", $langs->trans("MenuClosedServices"), 2, $user->hasRight('contrat',  'lire'));
 			}
 		}
 
@@ -1729,7 +1729,10 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 
 							if ($nature) {
 								$langs->load('accountancy');
-								$journallabel = $langs->transnoentities($objp->label); // Label of bank account in llx_accounting_journal
+								$journallabel = '';
+								if ($objp->label) {
+									$journallabel = '<span class="opacitymedium">('.$langs->transnoentities($objp->label).')</span>'; // Label of bank account in llx_accounting_journal
+								}
 
 								$key = $langs->trans("AccountingJournalType".strtoupper($objp->nature));
 								$transferlabel = ($objp->nature && $key != "AccountingJournalType".strtoupper($langs->trans($objp->nature)) ? $key.($journallabel != $key ? ' '.$journallabel : ''): $journallabel);

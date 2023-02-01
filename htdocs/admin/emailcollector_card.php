@@ -387,7 +387,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref = '<div class="refidno">';
 	$morehtmlref .= '</div>';
 
-	$morehtml = $langs->trans("NbOfEmailsInInbox").' : ';
+	$morehtml = '';
 
 	$sourcedir = $object->source_directory;
 	$targetdir = ($object->target_directory ? $object->target_directory : ''); // Can be '[Gmail]/Trash' or 'mytag'
@@ -404,6 +404,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$connectstringserver = $object->getConnectStringIMAP($usessl);
 
 		if ($action == 'scan') {
+			$nbemail = '';
 			if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 				if ($object->acces_type == 1) {
 					// Mode OAUth2 with PHP-IMAP
@@ -493,7 +494,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 				$f = $client->getFolders(false, $object->source_directory);
 				$nbemail = $f[0]->examine()["exists"];
-				$morehtml .= $nbemail;
 			} else {
 				try {
 					if ($sourcedir) {
@@ -525,15 +525,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 
 				if (!$connection) {
-					$morehtml .= 'Failed to open IMAP connection '.$connectstringsource;
+					$nbemail .= 'Failed to open IMAP connection '.$connectstringsource;
 					if (function_exists('imap_last_error')) {
-						$morehtml .= '<br>'.imap_last_error();
+						$nbemail .= '<br>'.imap_last_error();
 					}
 					dol_syslog("Error ".$morehtml, LOG_WARNING);
 					//var_dump(imap_errors())
 				} else {
 					dol_syslog("Imap connected. Now we call imap_num_msg()");
-					$morehtml .= imap_num_msg($connection);
+					$nbemail .= imap_num_msg($connection);
 				}
 
 				if ($connection) {
@@ -541,12 +541,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					imap_close($connection);
 				}
 			}
-		} else {
-			$morehtml .= '<a class="flat" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=scan&token='.newToken().'">'.img_picto('', 'refresh', 'class="paddingrightonly"').$langs->trans("Refresh").'</a>';
 		}
 
-		$morehtml .= $form->textwithpicto('', 'connect string '.$connectstringserver);
+		$morehtml .= $form->textwithpicto($langs->trans("NbOfEmailsInInbox"), 'connect string '.$connectstringserver).': ';
+
+		$morehtml .= ($nbemail != '' ? $nbemail : '?');
+
+		$morehtml .= ' &nbsp; <a class="flat paddingleft marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=scan&token='.newToken().'">'.img_picto('', 'refresh', 'class="paddingrightonly"').$langs->trans("Refresh").'</a>';
 	} else {
+		$morehtml .= $langs->trans("NbOfEmailsInInbox").': ';
 		$morehtml .= 'IMAP functions not available on your PHP. ';
 	}
 

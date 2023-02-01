@@ -702,22 +702,6 @@ class Contact extends CommonObject
 					$tmpobj->socialnetworks = $this->socialnetworks;
 					$usermustbemodified++;
 				}
-				// if ($tmpobj->skype != $this->skype) {
-				// 	$tmpobj->skype = $this->skype;
-				// 	$usermustbemodified++;
-				// }
-				// if ($tmpobj->twitter != $this->twitter) {
-				// 	$tmpobj->twitter = $this->twitter;
-				// 	$usermustbemodified++;
-				// }
-				// if ($tmpobj->facebook != $this->facebook) {
-				// 	$tmpobj->facebook = $this->facebook;
-				// 	$usermustbemodified++;
-				// }
-				// if ($tmpobj->linkedin != $this->linkedin) {
-				//     $tmpobj->linkedin = $this->linkedin;
-				//     $usermustbemodified++;
-				// }
 				if ($usermustbemodified) {
 					$result = $tmpobj->update($user, 0, 1, 1, 1);
 					if ($result < 0) {
@@ -849,9 +833,6 @@ class Contact extends CommonObject
 		}
 		if ($this->fax && !empty($conf->global->LDAP_CONTACT_FIELD_FAX)) {
 			$info[$conf->global->LDAP_CONTACT_FIELD_FAX] = $this->fax;
-		}
-		if ($this->skype && !empty($conf->global->LDAP_CONTACT_FIELD_SKYPE)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_SKYPE] = $this->skype;
 		}
 		if ($this->note_private && !empty($conf->global->LDAP_CONTACT_FIELD_DESCRIPTION)) {
 			$info[$conf->global->LDAP_CONTACT_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_private, 2);

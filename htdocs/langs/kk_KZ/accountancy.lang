@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=Артқа қайту түрін таңдаңыз
 ACCOUNTING_EXPORT_PREFIX_SPEC=Файл атауының префиксін көрсетіңіз
 ThisService=Бұл қызмет
 ThisProduct=Бұл өнім
-DefaultForService=Қызметтің әдепкі мәні
-DefaultForProduct=Өнімнің әдепкі мәні
+DefaultForService=Default for services
+DefaultForProduct=Default for products
 ProductForThisThirdparty=Бұл үшінші тарапқа арналған өнім
 ServiceForThisThirdparty=Бұл үшінші тарапқа қызмет көрсету
 CantSuggest=Ұсыну мүмкін емес
@@ -101,7 +101,8 @@ ShowAccountingAccount=Бухгалтерлік есепті көрсету
 ShowAccountingJournal=Бухгалтерлік журналды көрсету
 ShowAccountingAccountInLedger=Бухгалтерлік есепті бухгалтерлік есепте көрсету
 ShowAccountingAccountInJournals=Журналдарда бухгалтерлік есепті көрсетіңіз
-AccountAccountingSuggest=Бухгалтерлік есеп ұсынылды
+DataUsedToSuggestAccount=Data used to suggest account
+AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=Әдепкі есептік жазбалар
 MenuBankAccounts=Банктік шоттар
 MenuVatAccounts=ҚҚС шоттары
@@ -126,6 +127,7 @@ WriteBookKeeping=Record transactions in accounting
 Bookkeeping=Кітап
 BookkeepingSubAccount=Қосалқы кітап
 AccountBalance=Шоттың қалдығы
+AccountBalanceSubAccount=Sub-accounts balance
 ObjectsRef=Бастапқы объект реф
 CAHTF=Сатып алушылардың жалпы сомасы салыққа дейін
 TotalExpenseReport=Жалпы шығындар есебі
@@ -189,6 +191,7 @@ ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be us
 UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
 UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
@@ -218,6 +221,7 @@ JournalLabel=Журнал белгісі
 NumPiece=Бөлшектің нөмірі
 TransactionNumShort=Сан транзакция
 AccountingCategory=Custom group of accounts
+AccountingCategories=Custom groups of accounts
 GroupByAccountAccounting=Бас бухгалтерлік есеп бойынша топтастыру
 GroupBySubAccountAccounting=Қосалқы шот бойынша топтастыру
 AccountingAccountGroupsDesc=Мұнда сіз бухгалтерлік есептің кейбір топтарын анықтай аласыз. Олар дербестендірілген бухгалтерлік есептер үшін пайдаланылады.
@@ -265,6 +269,7 @@ ShowSubtotalByGroup=Деңгей бойынша қосалқы жиынтығы�
 
 Pcgtype=Есеп тобы
 PcgtypeDesc=Есептер тобы кейбір бухгалтерлік есептер үшін алдын ала анықталған «сүзгі» және «топтастыру» критерийлері ретінде қолданылады. Мысалы, «КІРІС» немесе «ШЫҒЫНДАР» шығыстар/кірістер туралы есепті құру үшін өнімнің бухгалтерлік есеп шоттары үшін топ ретінде қолданылады.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 
 Reconcilable=Келісімді
 
@@ -294,6 +299,7 @@ DescValidateMovements=Жазуды, жазуды және жоюды кез ке
 
 ValidateHistory=Автоматты түрде байлау
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
+DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
@@ -337,11 +343,13 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Сату кезінде бухгалтерл
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Сатып алу кезінде бухгалтерлік есепте байланыстыруды және аударуды өшіру (жеткізушілердің шот -фактуралары бухгалтерлік есепке алынбайды)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Бухгалтерлік есепте міндеттемелер мен аударымдарды өшіру (шығындар туралы есептер бухгалтерлік есепке алынбайды)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
 NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
 NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportFull=Export documents ?
 DateValidationAndLock=Date validation and lock
 ConfirmExportFile=Бухгалтерлік экспорттық файлдың генерациясын растау?
 ExportDraftJournal=Журналдың жобасын экспорттау
@@ -398,7 +406,7 @@ SaleLocal=Жергілікті сату
 SaleExport=Экспорттық сату
 SaleEEC=ЕЭК -те сату
 SaleEECWithVAT=ЕЭК -те ҚҚС -мен сату нөлге тең емес, сондықтан біздің ойымызша бұл сатылымнан тыс сату емес және ұсынылған шот - бұл өнімнің стандартты шоты.
-SaleEECWithoutVATNumber=ЕЭК -те ҚҚС жоқ сату, бірақ үшінші тараптың ҚҚС идентификаторы анықталмаған. Біз стандартты сату бойынша өнім шотынан бас тартамыз. Қажет болса, үшінші тараптың ҚҚС идентификаторын немесе өнім шотын түзетуге болады.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
 ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
@@ -442,6 +450,7 @@ AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
+ErrorArchiveAddFile=Can't put "%s" file in archive
 
 ## Import
 ImportAccountingEntries=Бухгалтерлік жазбалар
@@ -468,5 +477,7 @@ FECFormatMulticurrencyCode=Көп валюталық код (Idevise)
 DateExport=Күнді экспорттау
 WarningReportNotReliable=Ескерту, бұл есеп кітапқа негізделмеген, сондықтан кітапта қолмен өзгертілген транзакцияны қамтымайды. Егер сіздің журналистика жаңартылған болса, онда бухгалтерлік есеп дәлірек болады.
 ExpenseReportJournal=Шығындар туралы есеп журналы
+DocsAlreadyExportedAreExcluded=Docs already exported are excluded
+ClickToHideAlreadyExportedLines=Click to hide already exported lines
 
 NAccounts=%s есептік жазбалары

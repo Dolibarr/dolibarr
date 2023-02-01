@@ -54,7 +54,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = I skjemaet for å opprette/legge til en
 # Object
 #
 EventOrganizationConfOrBooth= Konferanse eller messe
-EventOrganizationConfOrBoothes=Conferences or Boothes
+EventOrganizationConfOrBoothes=Konferanser eller stander
 ManageOrganizeEvent = Administrer organiseringen av et arrangement
 ConferenceOrBooth = Konferanse eller messe
 ConferenceOrBoothTab = Konferanse eller messe
@@ -115,8 +115,8 @@ EvntOrgRegistrationHelpMessage = Her kan du stemme på en konferanse eller fores
 EvntOrgRegistrationConfHelpMessage = Her kan du foreslå en ny konferanse under arrangementet.
 EvntOrgRegistrationBoothHelpMessage = Her kan du søke om å få stand under arrangementet.
 ListOfSuggestedConferences = Liste over foreslåtte konferanser
-ListOfSuggestedBooths=Suggested booths
-ListOfConferencesOrBooths=Conferences or booths of event project
+ListOfSuggestedBooths=Foreslåtte boder
+ListOfConferencesOrBooths=Konferanser eller stander av arrangementsprosjektet
 SuggestConference = Foreslå en ny konferanse
 SuggestBooth = Foreslå en stand
 ViewAndVote = Se og stem på foreslåtte arrangementer
@@ -172,3 +172,5 @@ ErrorSeveralCompaniesWithEmailContactUs=Flere selskaper med denne epostadressen 
 ErrorSeveralCompaniesWithNameContactUs=Flere selskaper med dette navnet er funnet, så vi kan ikke automatisk validere registreringen din. Vennligst kontakt oss på %s for en manuell validering
 NoPublicActionsAllowedForThisEvent=Ingen offentlige handlinger er åpne for offentligheten for dette arrangementet
 MaxNbOfAttendees=Maks antall deltakere
+DateStartEvent=Startdato for arrangementet
+DateEndEvent=Sluttdato for arrangementet

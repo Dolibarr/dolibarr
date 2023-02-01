@@ -209,6 +209,11 @@ with
 with
 	foreach ($value[1] as $k => $v) {
 
+* Fix by replacing 
+	if ($res[0] == PDF_TYPE_OBJECT)
+with
+	if ($res && $res[0] == PDF_TYPE_OBJECT)
+
 
 
 JSGANTT:
