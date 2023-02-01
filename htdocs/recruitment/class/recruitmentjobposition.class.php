@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2020  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2020       Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2022       Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,10 +63,24 @@ class RecruitmentJobPosition extends CommonObject
 	 */
 	public $picto = 'recruitmentjobposition';
 
-
+	/**
+	 * Draft status
+	 */
 	const STATUS_DRAFT = 0;
+
+	/**
+	 * Validated
+	 */
 	const STATUS_VALIDATED = 1;
+
+	/**
+	 * Recruited
+	 */
 	const STATUS_RECRUITED = 3;
+
+	/**
+	 * Canceled
+	 */
 	const STATUS_CANCELED = 9;
 
 
@@ -109,7 +124,7 @@ class RecruitmentJobPosition extends CommonObject
 		'email_recruiter' => array('type'=>'varchar(255)', 'label'=>'EmailRecruiter', 'enabled'=>'1', 'position'=>54, 'notnull'=>0, 'visible'=>-1, 'help'=>'ToUseAGenericEmail', 'picto'=>'email'),
 		'fk_user_supervisor' => array('type'=>'integer:User:user/class/user.class.php:t.statut = 1', 'label'=>'FutureManager', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1, 'foreignkey'=>'user.rowid', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax150', 'picto'=>'user'),
 		'fk_establishment' => array('type'=>'integer:Establishment:hrm/class/establishment.class.php', 'label'=>'Establishment', 'enabled'=>'$conf->hrm->enabled', 'position'=>56, 'notnull'=>0, 'visible'=>-1, 'foreignkey'=>'establishment.rowid',),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'WorkPlace', 'enabled'=>'$conf->societe->enabled', 'position'=>57, 'notnull'=>-1, 'visible'=>-1, 'css'=>'maxwidth500', 'index'=>1, 'help'=>"IfJobIsLocatedAtAPartner", 'picto'=>'company'),
+		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'WorkPlace', 'enabled'=>'isModEnabled("societe")', 'position'=>57, 'notnull'=>-1, 'visible'=>-1, 'css'=>'maxwidth500', 'index'=>1, 'help'=>"IfJobIsLocatedAtAPartner", 'picto'=>'company'),
 		'date_planned' => array('type'=>'date', 'label'=>'DateExpected', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>1,),
 		'remuneration_suggested' => array('type'=>'varchar(255)', 'label'=>'Remuneration', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>1,),
 		'description' => array('type'=>'html', 'label'=>'Description', 'enabled'=>'1', 'position'=>65, 'notnull'=>0, 'visible'=>3,),
@@ -376,7 +391,7 @@ class RecruitmentJobPosition extends CommonObject
 		$sql .= $this->getFieldList();
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
@@ -651,7 +666,7 @@ class RecruitmentJobPosition extends CommonObject
 	}
 
 	/**
-	 *	Close the commercial proposal
+	 *	Close the recruitment
 	 *
 	 *	@param      User	$user		Object user that close
 	 *	@param      int		$status		Statut
@@ -683,12 +698,6 @@ class RecruitmentJobPosition extends CommonObject
 			if ($status == self::STATUS_RECRUITED) {
 				$triggerName = 'RECRUITMENTJOB_CLOSE_RECRUITED';
 				$modelpdf = $this->model_pdf;
-
-				if ($result < 0) {
-					$this->error = $this->db->lasterror();
-					$this->db->rollback();
-					return -2;
-				}
 			}
 
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -1097,5 +1106,45 @@ class RecruitmentJobPosition extends CommonObject
 		$this->db->commit();
 
 		return $error;
+	}
+
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs, $selected,$arrayofselected,$obj;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		if (in_array($this->id, $arrayofselected)) {
+			$selected = 1;
+		}
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if (property_exists($this, 'date_planned')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->date_planned), 'day').'</span>';
+		}
+		if (property_exists($this, 'qty')) {
+			$return .= '<br><span class="opacitymedium" title="'.$langs->trans("NbOfEmployeesExpected").'">'.$langs->trans("NbOfEmployeesExpected", '', '', '', '', 2).'</span> : <span class="info-box-label">'.$this->qty.'</span>';
+		}
+		if (property_exists($this, 'remuneration_suggested')) {
+			$return .= ' | <span class="opacitymedium">'.$langs->trans("Remuneration").'</span> : <span class="info-box-label">'.$this->remuneration_suggested.'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).' | <span class="opacitymedium" title="'.$langs->trans("RecruitmentCandidatures").'">'.$langs->trans("RecruitmentCandidatures", '', '', '', '', 5).'</span> : <span>'.$obj->nbapplications.'</span></div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

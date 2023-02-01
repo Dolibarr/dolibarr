@@ -1637,7 +1637,7 @@ if ($id > 0) {
 			if ($showfield) {
 				if ($value == 'country') {
 					print '<td class="liste_titre">';
-					print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth150 maxwidthonsmartphone');
+					print $form->select_country($search_country_id, 'search_country_id', '', 28, 'minwidth100 maxwidth150 maxwidthonsmartphone');
 					print '</td>';
 					$filterfound++;
 				} elseif ($value == 'code') {
@@ -1944,7 +1944,7 @@ if ($id > 0) {
 							//var_dump($fieldlist);
 							$class = '';
 							$showfield = 1;
-							$valuetoshow = empty($obj->{$value}) ? '' : $obj->{$value};
+							$valuetoshow = empty($obj->$value) ? '' : $obj->$value;
 							$titletoshow = '';
 
 							if ($value == 'entity') {
@@ -1966,7 +1966,7 @@ if ($id > 0) {
 									$valuetoshow = ($key != "Country".strtoupper($obj->country_code) ? $obj->country_code." - ".$key : $obj->country);
 								}
 							} elseif ($value == 'recuperableonly' || $value == 'deductible' || $value == 'category_type') {
-								$valuetoshow = yn($valuetoshow);
+								$valuetoshow = yn($valuetoshow ? 1 : 0);
 								$class = "center";
 							} elseif ($value == 'type_cdr') {
 								if (empty($valuetoshow)) {
@@ -1985,76 +1985,76 @@ if ($id > 0) {
 							} elseif ($value == 'libelle_facture') {
 								$langs->load("bills");
 								$key = $langs->trans("PaymentCondition".strtoupper($obj->code));
-								$valuetoshow = ($obj->code && $key != "PaymentCondition".strtoupper($obj->code) ? $key : $obj->{$value});
+								$valuetoshow = ($obj->code && $key != "PaymentCondition".strtoupper($obj->code) ? $key : $obj->$value);
 								$valuetoshow = nl2br($valuetoshow);
 							} elseif ($value == 'label' && $tabname[$id] == 'c_country') {
 								$key = $langs->trans("Country".strtoupper($obj->code));
-								$valuetoshow = ($obj->code && $key != "Country".strtoupper($obj->code) ? $key : $obj->{$value});
+								$valuetoshow = ($obj->code && $key != "Country".strtoupper($obj->code) ? $key : $obj->$value);
 							} elseif ($value == 'label' && $tabname[$id] == 'c_availability') {
 								$langs->load("propal");
 								$key = $langs->trans("AvailabilityType".strtoupper($obj->code));
-								$valuetoshow = ($obj->code && $key != "AvailabilityType".strtoupper($obj->code) ? $key : $obj->{$value});
+								$valuetoshow = ($obj->code && $key != "AvailabilityType".strtoupper($obj->code) ? $key : $obj->$value);
 							} elseif ($value == 'libelle' && $tabname[$id] == 'c_actioncomm') {
 								$key = $langs->trans("Action".strtoupper($obj->code));
-								$valuetoshow = ($obj->code && $key != "Action".strtoupper($obj->code) ? $key : $obj->{$value});
+								$valuetoshow = ($obj->code && $key != "Action".strtoupper($obj->code) ? $key : $obj->$value);
 							} elseif (!empty($obj->code_iso) && $value == 'label' && $tabname[$id] == 'c_currencies') {
 								$key = $langs->trans("Currency".strtoupper($obj->code_iso));
-								$valuetoshow = ($obj->code_iso && $key != "Currency".strtoupper($obj->code_iso) ? $key : $obj->{$value});
+								$valuetoshow = ($obj->code_iso && $key != "Currency".strtoupper($obj->code_iso) ? $key : $obj->$value);
 							} elseif ($value == 'libelle' && $tabname[$id] == 'c_typent') {
 								$key = $langs->trans(strtoupper($obj->code));
-								$valuetoshow = ($key != strtoupper($obj->code) ? $key : $obj->{$value});
+								$valuetoshow = ($key != strtoupper($obj->code) ? $key : $obj->$value);
 							} elseif ($value == 'libelle' && $tabname[$id] == 'c_prospectlevel') {
 								$key = $langs->trans(strtoupper($obj->code));
-								$valuetoshow = ($key != strtoupper($obj->code) ? $key : $obj->{$value});
+								$valuetoshow = ($key != strtoupper($obj->code) ? $key : $obj->$value);
 							} elseif ($value == 'label' && $tabname[$id] == 'c_civility') {
 								$key = $langs->trans("Civility".strtoupper($obj->code));
-								$valuetoshow = ($obj->code && $key != "Civility".strtoupper($obj->code) ? $key : $obj->{$value});
+								$valuetoshow = ($obj->code && $key != "Civility".strtoupper($obj->code) ? $key : $obj->$value);
 							} elseif ($value == 'libelle' && $tabname[$id] == 'c_type_contact') {
 								$langs->load('agenda');
 								$key = $langs->trans("TypeContact_".$obj->element."_".$obj->source."_".strtoupper($obj->code));
-								$valuetoshow = ($obj->code && $key != "TypeContact_".$obj->element."_".$obj->source."_".strtoupper($obj->code) ? $key : $obj->{$value});
+								$valuetoshow = ($obj->code && $key != "TypeContact_".$obj->element."_".$obj->source."_".strtoupper($obj->code) ? $key : $obj->$value);
 							} elseif ($value == 'libelle' && $tabname[$id] == 'c_payment_term') {
 								$langs->load("bills");
 								$key = $langs->trans("PaymentConditionShort".strtoupper($obj->code));
-								$valuetoshow = ($obj->code && $key != "PaymentConditionShort".strtoupper($obj->code) ? $key : $obj->{$value});
+								$valuetoshow = ($obj->code && $key != "PaymentConditionShort".strtoupper($obj->code) ? $key : $obj->$value);
 							} elseif ($value == 'libelle' && $tabname[$id] == 'c_paiement') {
 								$langs->load("bills");
 								$key = $langs->trans("PaymentType".strtoupper($obj->code));
-								$valuetoshow = ($obj->code && $key != "PaymentType".strtoupper($obj->code) ? $key : $obj->{$value});
+								$valuetoshow = ($obj->code && $key != "PaymentType".strtoupper($obj->code) ? $key : $obj->$value);
 							} elseif ($value == 'type' && $tabname[$id] == 'c_paiement') {
 								$payment_type_list = array(0=>$langs->trans('PaymentTypeCustomer'), 1=>$langs->trans('PaymentTypeSupplier'), 2=>$langs->trans('PaymentTypeBoth'));
 								$valuetoshow = $payment_type_list[$valuetoshow];
 							} elseif ($value == 'label' && $tabname[$id] == 'c_input_reason') {
 								$key = $langs->trans("DemandReasonType".strtoupper($obj->code));
-								$valuetoshow = ($obj->code && $key != "DemandReasonType".strtoupper($obj->code) ? $key : $obj->{$value});
+								$valuetoshow = ($obj->code && $key != "DemandReasonType".strtoupper($obj->code) ? $key : $obj->$value);
 							} elseif ($value == 'libelle' && $tabname[$id] == 'c_input_method') {
 								$langs->load("orders");
 								$key = $langs->trans($obj->code);
-								$valuetoshow = ($obj->code && $key != $obj->code) ? $key : $obj->{$value};
+								$valuetoshow = ($obj->code && $key != $obj->code) ? $key : $obj->$value;
 							} elseif ($value == 'libelle' && $tabname[$id] == 'c_shipment_mode') {
 								$langs->load("sendings");
 								$key = $langs->trans("SendingMethod".strtoupper($obj->code));
-								$valuetoshow = ($obj->code && $key != "SendingMethod".strtoupper($obj->code) ? $key : $obj->{$value});
+								$valuetoshow = ($obj->code && $key != "SendingMethod".strtoupper($obj->code) ? $key : $obj->$value);
 							} elseif ($value == 'libelle' && $tabname[$id] == 'c_paper_format') {
 								$key = $langs->trans('PaperFormat'.strtoupper($obj->code));
-								$valuetoshow = ($obj->code && $key != 'PaperFormat'.strtoupper($obj->code) ? $key : $obj->{$value});
+								$valuetoshow = ($obj->code && $key != 'PaperFormat'.strtoupper($obj->code) ? $key : $obj->$value);
 							} elseif ($value == 'label' && $tabname[$id] == 'c_type_fees') {
 								$langs->load('trips');
 								$key = $langs->trans(strtoupper($obj->code));
-								$valuetoshow = ($obj->code && $key != strtoupper($obj->code) ? $key : $obj->{$value});
+								$valuetoshow = ($obj->code && $key != strtoupper($obj->code) ? $key : $obj->$value);
 							} elseif ($value == 'region_id' || $value == 'country_id') {
 								$showfield = 0;
 							} elseif ($value == 'unicode') {
 								$valuetoshow = $langs->getCurrencySymbol($obj->code, 1);
 							} elseif ($value == 'label' && $tabname[GETPOST("id", 'int')] == 'c_units') {
 								$langs->load("products");
-								$valuetoshow = $langs->trans($obj->{$value});
+								$valuetoshow = $langs->trans($obj->$value);
 							} elseif ($value == 'short_label' && $tabname[GETPOST("id", 'int')] == 'c_units') {
 								$langs->load("products");
-								$valuetoshow = $langs->trans($obj->{$value});
+								$valuetoshow = $langs->trans($obj->$value);
 							} elseif (($value == 'unit') && ($tabname[$id] == 'c_paper_format')) {
 								$key = $langs->trans('SizeUnit'.strtolower($obj->unit));
-								$valuetoshow = ($obj->code && $key != 'SizeUnit'.strtolower($obj->unit) ? $key : $obj->{$value});
+								$valuetoshow = ($obj->code && $key != 'SizeUnit'.strtolower($obj->unit) ? $key : $obj->$value);
 							} elseif ($value == 'localtax1' || $value == 'localtax2') {
 								$class = "center";
 							} elseif ($value == 'localtax1_type') {
@@ -2128,7 +2128,7 @@ if ($id > 0) {
 								$class .= ' right';
 							}
 							if (in_array($value, array('localtax1_type', 'localtax2_type'))) {
-								$class .= ' nowrap';
+								$class .= ' nowraponall';
 							}
 							if (in_array($value, array('use_default', 'fk_parent', 'sortorder'))) {
 								$class .= ' center';
@@ -2273,8 +2273,9 @@ if ($id > 0) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="2">'.$langs->trans("Dictionary").'</td>';
+	print '<td>'.$langs->trans("Dictionary").'</td>';
 	print '<td></td>';
+	print '<td class="hideonsmartphone"></td>';
 	print '</tr>';
 
 	$showemptyline = '';
@@ -2285,13 +2286,13 @@ if ($id > 0) {
 
 		if ($i) {
 			if ($showemptyline) {
-				print '<tr class="oddeven"><td width="50%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+				print '<tr class="oddeven"><td></td><td></td><td class="hideonsmartphone"></td></tr>';
 				$showemptyline = 0;
 			}
 
 
 			$value = $tabname[$i];
-			print '<tr class="oddeven"><td width="50%">';
+			print '<tr class="oddeven"><td class="minwidth200">';
 			if (!empty($tabcond[$i])) {
 				$tabnamenoprefix = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabname[$i]);
 				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$i.'">';
@@ -2309,7 +2310,7 @@ if ($id > 0) {
 			print img_picto('Edit', 'edit', '');
 			print '</a>';
 			print '</td>';
-			print '<td class="right">';
+			print '<td class="right hideonsmartphone">';
 			print $form->textwithpicto('', $langs->trans("Table").': '.MAIN_DB_PREFIX.$tabname[$i]);
 			print '</td>';
 			print '</tr>';
@@ -2356,7 +2357,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 
 	foreach ($fieldlist as $field => $value) {
 		if ($value == 'entity') {
-			$withentity = $obj->{$value};
+			$withentity = $obj->$value;
 			continue;
 		}
 
@@ -2374,7 +2375,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			}	// For state page, we do not show the country input (we link to region, not country)
 			print '<td>';
 			$fieldname = 'country';
-			print $form->select_country((!empty($obj->country_code) ? $obj->country_code : (!empty($obj->country) ? $obj->country : '')), $fieldname, '', 28, 'maxwidth150 maxwidthonsmartphone');
+			print $form->select_country((!empty($obj->country_code) ? $obj->country_code : (!empty($obj->country) ? $obj->country : '')), $fieldname, '', 28, 'minwidth100 maxwidth150 maxwidthonsmartphone');
 			print '</td>';
 		} elseif ($value == 'country_id') {
 			if (!in_array('country', $fieldlist)) {	// If there is already a field country, we don't show country_id (avoid duplicate)
@@ -2509,11 +2510,11 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '</td>';
 		} elseif ($value == 'block_if_negative') {
 			print '<td>';
-			print $form->selectyesno("block_if_negative", (!empty($obj->{$value}) ? $obj->{$value}:''), 1);
+			print $form->selectyesno("block_if_negative", (empty($obj->block_if_negative) ? '' : $obj->block_if_negative), 1);
 			print '</td>';
 		} elseif ($value == 'type_duration') {
 			print '<td>';
-			print $form->selectTypeDuration('', $obj->{$value}, array('i','h'));
+			print $form->selectTypeDuration('', (empty($obj->type_duration) ? '' : $obj->type_duration), array('i','h'));
 			print '</td>';
 		} else {
 			$fieldValue = isset($obj->{$value}) ? $obj->{$value}: '';

@@ -1084,11 +1084,12 @@ function purgeSessions($mysessionid)
 /**
  *  Enable a module
  *
- *  @param      string		$value      Name of module to activate
- *  @param      int			$withdeps   Activate/Disable also all dependencies
- *  @return     array      			    array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
+ *  @param      string		$value      			Name of module to activate
+ *  @param      int			$withdeps  				Activate/Disable also all dependencies
+ * 	@param		int			$noconfverification		Remove verification of $conf variable for module
+ *  @return     array      			    			array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
  */
-function activateModule($value, $withdeps = 1)
+function activateModule($value, $withdeps = 1, $noconfverification = 0)
 {
 	global $db, $langs, $conf, $mysoc;
 
@@ -1144,8 +1145,10 @@ function activateModule($value, $withdeps = 1)
 	}
 
 	$const_name = $objMod->const_name;
-	if (!empty($conf->global->$const_name)) {
-		return $ret;
+	if ($noconfverification == 0) {
+		if (!empty($conf->global->$const_name)) {
+			return $ret;
+		}
 	}
 
 	$result = $objMod->init(); // Enable module
@@ -1840,10 +1843,12 @@ function showModulesExludedForExternal($modules)
 	global $conf, $langs;
 
 	$text = $langs->trans("OnlyFollowingModulesAreOpenedToExternalUsers");
-	$listofmodules = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	$listofmodules = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);	// List of modules qualified for external user management
+
 	$i = 0;
 	if (!empty($modules)) {
-		foreach ($modules as $module) {
+		$tmpmodules = dol_sort_array($modules, 'module_position');
+		foreach ($tmpmodules as $module) {		// Loop on array of modules
 			$moduleconst = $module->const_name;
 			$modulename = strtolower($module->name);
 			//print 'modulename='.$modulename;
@@ -1860,9 +1865,16 @@ function showModulesExludedForExternal($modules)
 				$text .= ' ';
 			}
 			$i++;
-			$text .= $langs->trans('Module'.$module->numero.'Name');
+
+			$tmptext = $langs->trans('Module'.$module->numero.'Name');
+			if ($tmptext != 'Module'.$module->numero.'Name') {
+				$text .= $langs->trans('Module'.$module->numero.'Name');
+			} else {
+				$text .= $langs->trans($module->name);
+			}
 		}
 	}
+
 	return $text;
 }
 

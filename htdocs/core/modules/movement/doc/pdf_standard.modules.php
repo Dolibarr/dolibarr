@@ -314,7 +314,7 @@ class pdf_standard extends ModelePDFMovement
 			$sql .= natural_search('p.label', $search_product);
 		}
 		if ($search_warehouse > 0) {
-			$sql .= " AND e.rowid = ".((int) $this->db->escape($search_warehouse));
+			$sql .= " AND e.rowid = ".((int) $search_warehouse);
 		}
 		if (!empty($search_user)) {
 			$sql .= natural_search('u.login', $search_user);
@@ -941,7 +941,7 @@ class pdf_standard extends ModelePDFMovement
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param	string		$titlekey		Translation key to show as title of document
-	 *  @return	void
+	 *  @return	int                         Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "")
 	{
@@ -961,8 +961,8 @@ class pdf_standard extends ModelePDFMovement
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == 0 && (!empty($conf->global->COMMANDE_DRAFT_WATERMARK))) {
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->COMMANDE_DRAFT_WATERMARK);
+		if ($object->statut == 0 && getDolGlobalString('COMMANDE_DRAFT_WATERMARK')) {
+			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', getDolGlobalString('COMMANDE_DRAFT_WATERMARK'));
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
@@ -1108,8 +1108,13 @@ class pdf_standard extends ModelePDFMovement
 
 		$posy += 2;
 
+		$top_shift = 0;
 		// Show list of linked objects
+		$current_y = $pdf->getY();
 		//$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size);
+		//if ($current_y < $pdf->getY()) {
+		//	$top_shift = $pdf->getY() - $current_y;
+		//}
 
 		if ($showaddress) {
 			/*
@@ -1146,6 +1151,7 @@ class pdf_standard extends ModelePDFMovement
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+		return $top_shift;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

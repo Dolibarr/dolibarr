@@ -44,13 +44,13 @@ $permtoadd = 0;
 $permtoupload = 0;
 $showroot = 0;
 if ($module == 'ecm') {
-	$permtoadd = $user->rights->ecm->setup;
-	$permtoupload = $user->rights->ecm->upload;
+	$permtoadd = $user->hasRight("ecm", "setup");
+	$permtoupload = $user->hasRight("ecm", "upload");
 	$showroot = 0;
 }
 if ($module == 'medias') {
-	$permtoadd = ($user->rights->mailing->creer || $user->rights->website->write);
-	$permtoupload = ($user->rights->mailing->creer || $user->rights->website->write);
+	$permtoadd = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
+	$permtoupload = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
 	$showroot = 1;
 }
 
@@ -264,7 +264,8 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 	$showonrightsize = '';
 
 	// Manual section
-	$htmltooltip = $langs->trans("ECMAreaDesc2");
+	$htmltooltip = $langs->trans("ECMAreaDesc2a");
+	$htmltooltip .= '<br>'.$langs->trans("ECMAreaDesc2b");
 
 	if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
 		// Show the link to "Root"
@@ -288,7 +289,8 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 		}
 
 		print '</td></tr>';
-	} else { // Show filtree when ajax is disabled (rare)
+	} else {
+		// Show filtree when ajax is disabled (rare)
 		print '<tr><td style="padding-left: 20px">';
 
 		$_POST['modulepart'] = $module;
@@ -325,10 +327,15 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 <?php
 // Start right panel - List of content of a directory
 
-
 $mode = 'noajax';
-if (empty($url)) {
-	$url = DOL_URL_ROOT.'/ecm/index.php';
+if (empty($url)) {	// autoset $url but it is better to have it defined before (for example by ecm/index.php, ecm/index_medias.php, website/index.php)
+	if (!empty($module) && $module == 'medias' && !GETPOST('website')) {
+		$url = DOL_URL_ROOT.'/ecm/index_medias.php';
+	} elseif (GETPOSTISSET('website')) {
+		$url = DOL_URL_ROOT.'/website/index.php';
+	} else {
+		$url = DOL_URL_ROOT.'/ecm/index.php';
+	}
 }
 include DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php'; // Show content of a directory on right side
 

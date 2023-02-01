@@ -70,6 +70,13 @@ $search_task_budget_amount = GETPOST('search_task_budget_amount');
 $search_societe = GETPOST('search_societe');
 $search_societe_alias = GETPOST('search_societe_alias');
 $search_opp_status = GETPOST("search_opp_status", 'alpha');
+$searchCategoryCustomerOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryCustomerOperator = GETPOST('search_category_customer_operator', 'int');
+} elseif (!empty($conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT)) {
+	$searchCategoryCustomerOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
+}
+$searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
 
 $mine = GETPOST('mode', 'alpha') == 'mine' ? 1 : 0;
 if ($mine) {
@@ -235,6 +242,7 @@ if (empty($reshook)) {
 		$search_datelimit_start = '';
 		$search_datelimit_end = '';
 		$toselect = array();
+		$searchCategoryCustomerList = array();
 		$search_array_options = array();
 	}
 
@@ -400,11 +408,15 @@ if ($search_task_progress) {
 if ($search_task_budget_amount) {
 	$sql .= natural_search('t.budget_amount', $search_task_budget_amount, 1);
 }
-if ($search_societe) {
-	$sql .= natural_search('s.nom', $search_societe);
-}
-if ($search_societe_alias) {
-	$sql .= natural_search('s.name_alias', $search_societe_alias);
+if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
+	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
+} else {
+	if ($search_societe) {
+		$sql .= natural_search('s.nom', $search_societe);
+	}
+	if ($search_societe_alias) {
+		$sql .= natural_search('s.name_alias', $search_societe_alias);
+	}
 }
 if ($search_date_start) {
 	$sql .= " AND t.dateo >= '".$db->idate($search_date_start)."'";
@@ -462,6 +474,50 @@ if (!empty($searchCategoryProjectList)) {
 		if (!empty($searchCategoryProjectSqlList)) {
 			$sql .= " AND (".implode(' AND ', $searchCategoryProjectSqlList).")";
 		}
+	}
+}
+$searchCategoryCustomerSqlList = array();
+if ($searchCategoryCustomerOperator == 1) {
+	$existsCategoryCustomerList = array();
+	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+		if (intval($searchCategoryCustomer) == -2) {
+			$sqlCategoryCustomerNotExists  = " NOT EXISTS (";
+			$sqlCategoryCustomerNotExists .= " SELECT cat_cus.fk_soc";
+			$sqlCategoryCustomerNotExists .= " FROM ".$db->prefix()."categorie_societe AS cat_cus";
+			$sqlCategoryCustomerNotExists .= " WHERE cat_cus.fk_soc = p.fk_soc";
+			$sqlCategoryCustomerNotExists .= " )";
+			$searchCategoryCustomerSqlList[] = $sqlCategoryCustomerNotExists;
+		} elseif (intval($searchCategoryCustomer) > 0) {
+			$existsCategoryCustomerList[] = $db->escape($searchCategoryCustomer);
+		}
+	}
+	if (!empty($existsCategoryCustomerList)) {
+		$sqlCategoryCustomerExists = " EXISTS (";
+		$sqlCategoryCustomerExists .= " SELECT cat_cus.fk_soc";
+		$sqlCategoryCustomerExists .= " FROM ".$db->prefix()."categorie_societe AS cat_cus";
+		$sqlCategoryCustomerExists .= " WHERE cat_cus.fk_soc = p.fk_soc";
+		$sqlCategoryCustomerExists .= " AND cat_cus.fk_categorie IN (".$db->sanitize(implode(',', $existsCategoryCustomerList)).")";
+		$sqlCategoryCustomerExists .= " )";
+		$searchCategoryCustomerSqlList[] = $sqlCategoryCustomerExists;
+	}
+	if (!empty($searchCategoryCustomerSqlList)) {
+		$sql .= " AND (".implode(' OR ', $searchCategoryCustomerSqlList).")";
+	}
+} else {
+	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+		if (intval($searchCategoryCustomer) == -2) {
+			$sqlCategoryCustomerNotExists = " NOT EXISTS (";
+			$sqlCategoryCustomerNotExists .= " SELECT cat_cus.fk_soc";
+			$sqlCategoryCustomerNotExists .= " FROM ".$db->prefix()."categorie_societe AS cat_cus";
+			$sqlCategoryCustomerNotExists .= " WHERE cat_cus.fk_soc = p.fk_soc";
+			$sqlCategoryCustomerNotExists .= " )";
+			$searchCategoryCustomerSqlList[] = $sqlCategoryCustomerNotExists;
+		} elseif (intval($searchCategoryCustomer) > 0) {
+			$searchCategoryCustomerSqlList[] = "p.fk_soc IN (SELECT fk_soc FROM ".$db->prefix()."categorie_societe WHERE fk_categorie = ".((int) $searchCategoryCustomer).")";
+		}
+	}
+	if (!empty($searchCategoryCustomerSqlList)) {
+		$sql .= " AND (".implode(' AND ', $searchCategoryCustomerSqlList).")";
 	}
 }
 // Add where from extra fields
@@ -524,6 +580,9 @@ llxHeader('', $title, $help_url);
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
+if (!empty($mode)) {
+	$param .= '&mode='.urlencode($mode);
+}
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
@@ -617,6 +676,9 @@ if ($search_task_user > 0) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+	$param .= "&search_category_customer_list[]=".urlencode($searchCategoryCustomer);
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
@@ -638,7 +700,11 @@ if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'pr
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-$newcardbutton = dolGetButtonTitle($langs->trans('NewTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create', '', $user->rights->projet->creer);
+$newcardbutton = '';
+
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create', '', $user->rights->projet->creer);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') {
@@ -653,6 +719,8 @@ if (!empty($type)) {
 	print '<input type="hidden" name="type" value="'.$type.'">';
 }
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
+
 
 // Show description of content
 $texthelp = '';
@@ -711,6 +779,19 @@ if (empty($user->rights->user->user->lire)) {
 }
 $moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_task_user, 'search_task_user', $tmptitle, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth250');
 $moreforfilter .= '</div>';
+
+// Filter on customer categories
+if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST) && !empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+	$moreforfilter .= '<div class="divsearchfield">';
+	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
+	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
+	$categoriesArr = $form->select_all_categories(Categorie::TYPE_CUSTOMER, '', '', 64, 0, 1);
+	$categoriesArr[-2] = '- '.$langs->trans('NotCategorized').' -';
+	$moreforfilter .= Form::multiselectarray('search_category_customer_list', $categoriesArr, $searchCategoryCustomerList, 0, 0, 'minwidth300', 0, 0, '', 'category', $tmptitle);
+	$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_customer_operator" name="search_category_customer_operator" value="1"'.($searchCategoryCustomerOperator == 1 ? ' checked="checked"' : '').'/>';
+	$moreforfilter .= $form->textwithpicto('', $langs->trans('UseOrOperatorForCategories') . ' : ' . $tmptitle, 1, 'help', '', 0, 2, 'tooltip_cat_cus'); // Tooltip on click
+	$moreforfilter .= '</div>';
+}
 
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -1049,6 +1130,8 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container">';
 		}
 		// Output Kanban
+		$object->fk_statut = $projectstatic->getLibStatut(1);
+		$object->fk_project = $projectstatic->getNomUrl(1, 'task');
 		print $object->getKanbanView('');
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';

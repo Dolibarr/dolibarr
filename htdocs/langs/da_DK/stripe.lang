@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook-livenøgle
 ONLINE_PAYMENT_WAREHOUSE=Lager til brug for lagerreduktion, når online betaling er færdig <br> (TODO Når valgmuligheden for at reducere lagerbeholdningen sker på en handling på faktura, og online betaling genererer selve fakturaen?)
 StripeLiveEnabled=Stripe live aktiveret (ellers test / sandbox mode)
 StripeImportPayment=Import Stripe betalinger
-ExampleOfTestCreditCard=Eksempel på kreditkort til test:%s => gyldigt,%s => fejl CVC,%s => udløbet, %s=> gebyr mislykkes
+ExampleOfTestCreditCard=Eksempel på kreditkort til SEPA-test: %s => gyldig, %s => fejl CVC, %s => udløbet, %s => opladning mislykkes
+ExampleOfTestBankAcountForSEPA=Eksempel på bankkonto BAN til test af direkte debitering: %s
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca. _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca. _...)
@@ -61,6 +62,7 @@ DeleteACard=Slet kort
 ConfirmDeleteCard=Er du sikker på, at du vil slette dette kredit- eller betalingskort?
 CreateCustomerOnStripe=Opret kunde på Stripe
 CreateCardOnStripe=Opret kort på Stripe
+CreateBANOnStripe=Opret bank på Stripe
 ShowInStripe=Vis i Stripe
 StripeUserAccountForActions=Brugerkonto, der skal bruges til e-mail-meddelelse om nogle Stripe begivenheder (Stripe udbetalinger)
 StripePayoutList=Liste over Stripe udbetalinger
@@ -69,4 +71,8 @@ ToOfferALinkForLiveWebhook=Link til opsætning Stripe WebHook for at ringe til I
 PaymentWillBeRecordedForNextPeriod=Betaling registreres for den næste periode.
 ClickHereToTryAgain=<a href="%s">Klik her for at prøve igen ...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=På grund af stærke kunde autentificerings regler skal oprettelse af et kort foretages fra Stripe backoffice. Du kan klikke her for at tænde for Stripe-kundepost:%s
-TERMINAL_LOCATION=Placering (adresse) for terminaler
+STRIPE_CARD_PRESENT=Kort til stede til Stripe-terminaler
+TERMINAL_LOCATION=Placering (adresse) for Stripe Terminals
+RequestDirectDebitWithStripe=Anmod om direkte debitering med Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Aktiver direkte debitering via Stripe
+

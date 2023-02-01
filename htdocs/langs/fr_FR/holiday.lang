@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - holiday
 HRM=GRH
-Holidays=Feuilles
+Holidays=Congés
 Holiday=Demande de congés
 CPTitreMenu=Demande de congés
 MenuReportMonth=État mensuel
@@ -149,10 +149,10 @@ XIsAUsualNonWorkingDay=%s est généralement un jour NON ouvrable
 BlockHolidayIfNegative=Bloqué lorsque le solde est négatif
 LeaveRequestCreationBlockedBecauseBalanceIsNegative=La création de cette demande de congé est bloquée car votre solde est négatif
 ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted=La demande de congé %s doit être brouillon, annulée ou refusée pour être supprimée
-IncreaseHolidays=Augmenter le nombre de jours de vacances
-HolidayRecordsIncreased= %s registres de vacances augmentés
-HolidayRecordIncreased=Registre de vacances augmenté
-ConfirmMassIncreaseHoliday=Augmentation en masse des vacances
+IncreaseHolidays=Augmenter le solde des congés
+HolidayRecordsIncreased= %s soldes de congés augmentés
+HolidayRecordIncreased=Solde des congés augmenté
+ConfirmMassIncreaseHoliday=Augmentation massive du solde des congés
 NumberDayAddMass=Nombre de jours à ajouter à la sélection
 ConfirmMassIncreaseHolidayQuestion=Êtes-vous sûr de vouloir augmenter les vacances du ou des enregistrement(s) sélectionnés %s ?
 HolidayQtyNotModified=Le solde des jours restants pour %s n'a pas été modifié

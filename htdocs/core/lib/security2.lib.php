@@ -52,12 +52,11 @@ function dol_getwebuser($mode)
  *	@param		string	$entitytotest		Instance of data we must check
  *	@param		array	$authmode			Array list of selected authentication mode array('http', 'dolibarr', 'xxx'...)
  *	@param		string	$context			Context checkLoginPassEntity was created for ('api', 'dav', 'ws', '')
- *  @return		string						Login or ''
+ *  @return		string						Login or '' or '--bad-login-validity--'
  */
 function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode, $context = '')
 {
 	global $conf, $langs;
-	//global $dolauthmode;    // To return authentication finally used
 
 	// Check parameters
 	if ($entitytotest == '') {
@@ -97,13 +96,14 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 					// Call function to check user/password
 					$function = 'check_user_password_'.$mode;
 					$login = call_user_func($function, $usertotest, $passwordtotest, $entitytotest, $context);
-					if ($login && $login != '--bad-login-validity--') {	// Login is successfull
+					if ($login && $login != '--bad-login-validity--') {
+						// Login is successfull with this method
 						$test = false; // To stop once at first login success
 						$conf->authmode = $mode; // This properties is defined only when logged to say what mode was successfully used
-						$dol_tz = GETPOST('tz');
+						/*$dol_tz = GETPOST('tz');
 						$dol_dst = GETPOST('dst');
 						$dol_screenwidth = GETPOST('screenwidth');
-						$dol_screenheight = GETPOST('screenheight');
+						$dol_screenheight = GETPOST('screenheight');*/
 					}
 				} else {
 					dol_syslog("Authentication KO - failed to load file '".$authfile."'", LOG_ERR);
@@ -191,8 +191,26 @@ if (!function_exists('dol_loginfunction')) {
 		// and the conf file is loaded.
 		$prefix = dol_getprefix('');
 		$sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
+
 		if (!empty($conf->global->MAIN_SESSION_TIMEOUT)) {
-			setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", null, (empty($dolibarr_main_force_https) ? false : true), true);
+			if (session_status() != PHP_SESSION_ACTIVE) {
+				if (PHP_VERSION_ID < 70300) {
+					session_set_cookie_params(0, '/', null, ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
+				} else {
+					// Only available for php >= 7.3
+					$sessioncookieparams = array(
+						'lifetime' => 0,
+						'path' => '/',
+						//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
+						'secure' => ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true),
+						'httponly' => true,
+						'samesite' => 'Lax'	// None || Lax  || Strict
+					);
+					session_set_cookie_params($sessioncookieparams);
+				}
+
+				setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", null, (empty($dolibarr_main_force_https) ? false : true), true);
+			}
 		}
 
 		if (GETPOST('urlfrom', 'alpha')) {
@@ -543,10 +561,11 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
  *
  * @param		string 		$htmlname			HTML name of element to insert key into
  * @param		string		$htmlnameofbutton	HTML name of button
+ * @param		int			$generic			1=Return a generic pass, 0=Return a pass following setup rules
  * @return		string		    				HTML javascript code to set a password
  * @see getRandomPassword()
  */
-function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token')
+function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token', $generic = 1)
 {
 	global $conf;
 
@@ -554,10 +573,10 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 		print "\n".'<!-- Js code to suggest a security key --><script type="text/javascript">';
 		print '$(document).ready(function () {
             $("#'.dol_escape_js($htmlnameofbutton).'").click(function() {
-				console.log("We click on the button to suggest a key");
+				console.log("We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. We will fill '.dol_escape_js($htmlname).'");
             	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
-            		generic: true,
+            		generic: '.($generic ? '1' : '0').',
 					token: \''.dol_escape_js(newToken()).'\'
 				},
 				function(result) {

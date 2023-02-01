@@ -66,8 +66,8 @@ class Recruitment extends DolibarrApi
 	 *
 	 * Return an array with jobposition informations
 	 *
-	 * @param 	int 	$id ID of jobposition
-	 * @return 	array|mixed data without useless information
+	 * @param 	int 		$id 	ID of jobposition
+	 * @return  Object             	Object with cleaned properties
 	 *
 	 * @url	GET jobposition/{id}
 	 *
@@ -97,8 +97,8 @@ class Recruitment extends DolibarrApi
 	 *
 	 * Return an array with candidature informations
 	 *
-	 * @param 	int 	$id ID of candidature
-	 * @return 	array|mixed data without useless information
+	 * @param 	int 	$id 	ID of candidature
+	 * @return  Object          Object with cleaned properties
 	 *
 	 * @url	GET candidature/{id}
 	 *
@@ -441,7 +441,7 @@ class Recruitment extends DolibarrApi
 		// $this->jobposition->abc = sanitizeVal($this->jobposition->abc, 'alphanohtml');
 
 		if ($this->jobposition->update(DolibarrApiAccess::$user, false) > 0) {
-			return $this->get($id);
+			return $this->getJobPosition($id);
 		} else {
 			throw new RestException(500, $this->jobposition->error);
 		}
@@ -484,7 +484,7 @@ class Recruitment extends DolibarrApi
 		// $this->jobposition->abc = sanitizeVal($this->jobposition->abc, 'alphanohtml');
 
 		if ($this->candidature->update(DolibarrApiAccess::$user, false) > 0) {
-			return $this->get($id);
+			return $this->getCandidature($id);
 		} else {
 			throw new RestException(500, $this->candidature->error);
 		}

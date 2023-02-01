@@ -43,6 +43,7 @@ $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlinelist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$mode       = GETPOST('mode', 'alpha');
 
 $type = GETPOST('type', 'aZ09');
 
@@ -112,6 +113,9 @@ $sql = "SELECT p.rowid, p.ref, p.statut as status, p.datec";
 $sql .= " , f.rowid as facid, f.ref as invoiceref, f.total_ttc";
 $sql .= " , s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur, s.email";
 $sql .= " , pl.amount, pl.statut as statut_ligne, pl.rowid as rowid_ligne";
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";
@@ -152,20 +156,31 @@ if ($search_company) {
 	$sql .= natural_search("s.nom", $search_company);
 }
 
-$sql .= $db->order($sortfield, $sortorder);
-
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 $result = $db->query($sql);
 if ($result) {
@@ -174,12 +189,18 @@ if ($result) {
 
 	$param = "&amp;statut=".urlencode($statut);
 	$param .= "&amp;search_bon=".urlencode($search_bon);
+	if (!empty($mode)) {
+		$param .= '&mode='.urlencode($mode);
+	}
 	if ($type == 'bank-transfer') {
 		$param .= '&amp;type=bank-transfer';
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.urlencode($limit);
 	}
+	$newcardbutton = '';
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
 
 	print"\n<!-- debut table -->\n";
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -192,12 +213,17 @@ if ($result) {
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
+
+	if ($type != '') {
+		print '<input type="hidden" name="type" value="'.$type.'">';
+	}
 
 	$title = $langs->trans("WithdrawalsLines");
 	if ($type == 'bank-transfer') {
 		$title = $langs->trans("CreditTransferLines");
 	}
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, '', '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$moreforfilter = '';
 
@@ -245,61 +271,77 @@ if ($result) {
 			$bon->id = $obj->rowid;
 			$bon->ref = $obj->ref;
 			$bon->statut = $obj->status;
+			$bon->date_echeance = $obj->datec;
+			$bon->total = $obj->amount;
 
 			$company->id = $obj->socid;
 			$company->name = $obj->name;
 			$company->email = $obj->email;
 			$company->code_client = $obj->code_client;
 
-			print '<tr class="oddeven">';
+			if ($mode == 'kanban') {
+				if ($i == 0) {
+					print '<tr><td colspan="12">';
+					print '<div class="box-flex-container">';
+				}
+				// Output Kanban
 
-			print '<td>';
-			print $bon->getNomUrl(1);
-			print "</td>\n";
+				print $bon->getKanbanView('');
+				if ($i == (min($num, $limit) - 1)) {
+					print '</div>';
+					print '</td></tr>';
+				}
+			} else {
+				print '<tr class="oddeven">';
 
-			print '<td>';
-			print $line->LibStatut($obj->statut_ligne, 2);
-			print "&nbsp;";
-			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid_ligne.'">';
-			print substr('000000'.$obj->rowid_ligne, -6);
-			print '</a></td>';
+				print '<td>';
+				print $bon->getNomUrl(1);
+				print "</td>\n";
 
-			print '<td>';
-			$link_to_bill = '/compta/facture/card.php?facid=';
-			$link_title = 'Invoice';
-			$link_picto = 'bill';
-			if ($type == 'bank-transfer') {
-				$link_to_bill = '/fourn/facture/card.php?facid=';
-				$link_title = 'SupplierInvoice';
-				$link_picto = 'supplier_invoice';
+				print '<td>';
+				print $line->LibStatut($obj->statut_ligne, 2);
+				print "&nbsp;";
+				print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid_ligne.'">';
+				print substr('000000'.$obj->rowid_ligne, -6);
+				print '</a></td>';
+
+				print '<td>';
+				$link_to_bill = '/compta/facture/card.php?facid=';
+				$link_title = 'Invoice';
+				$link_picto = 'bill';
+				if ($type == 'bank-transfer') {
+					$link_to_bill = '/fourn/facture/card.php?facid=';
+					$link_title = 'SupplierInvoice';
+					$link_picto = 'supplier_invoice';
+				}
+				print '<a href="'.DOL_URL_ROOT.$link_to_bill.$obj->facid.'">';
+				print img_object($langs->trans($link_title), $link_picto);
+				print '&nbsp;'.$obj->invoiceref."</td>\n";
+				print '</a>';
+				print '</td>';
+
+				print '<td>';
+				print $company->getNomUrl(1);
+				print "</td>\n";
+
+
+				print '<td class="center">';
+				$link_to_tab = '/comm/card.php?socid=';
+				$link_code = $obj->code_client;
+				if ($type == 'bank-transfer') {
+					$link_to_tab = '/fourn/card.php?socid=';
+					$link_code = $obj->code_fournisseur;
+				}
+				print '<a href="'.DOL_URL_ROOT.$link_to_tab.$company->id.'">'.$link_code."</a></td>\n";
+
+				print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
+
+				print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
+
+				print '<td>&nbsp;</td>';
+
+				print "</tr>\n";
 			}
-			print '<a href="'.DOL_URL_ROOT.$link_to_bill.$obj->facid.'">';
-			print img_object($langs->trans($link_title), $link_picto);
-			print '&nbsp;'.$obj->invoiceref."</td>\n";
-			print '</a>';
-			print '</td>';
-
-			print '<td>';
-			print $company->getNomUrl(1);
-			print "</td>\n";
-
-
-			print '<td class="center">';
-			$link_to_tab = '/comm/card.php?socid=';
-			$link_code = $obj->code_client;
-			if ($type == 'bank-transfer') {
-				$link_to_tab = '/fourn/card.php?socid=';
-				$link_code = $obj->code_fournisseur;
-			}
-			print '<a href="'.DOL_URL_ROOT.$link_to_tab.$company->id.'">'.$link_code."</a></td>\n";
-
-			print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
-
-			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
-
-			print '<td>&nbsp;</td>';
-
-			print "</tr>\n";
 			$i++;
 		}
 	} else {

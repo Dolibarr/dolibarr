@@ -306,9 +306,9 @@ class Project extends CommonObject
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModificationShort', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>405),
 		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>410),
 		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModification', 'enabled'=>1, 'visible'=>0, 'position'=>415),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>0, 'position'=>420),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'position'=>420),
 		'email_msgid'=>array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'enabled'=>1, 'visible'=>-1, 'position'=>450, 'help'=>'EmailMsgIDWhenSourceisEmail'),
-		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500)
+		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -435,6 +435,7 @@ class Project extends CommonObject
 		$sql .= ", note_private";
 		$sql .= ", note_public";
 		$sql .= ", entity";
+		$sql .= ", ip";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->escape($this->ref)."'";
 		$sql .= ", '".$this->db->escape($this->title)."'";
@@ -466,6 +467,7 @@ class Project extends CommonObject
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : 'null');
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null');
 		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".(!isset($this->ip) ? 'NULL' : "'".$this->db->escape($this->ip)."'");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -1478,7 +1480,7 @@ class Project extends CommonObject
 	 * @param 	int		$list			0=Return array, 1=Return string list
 	 * @param	int		$socid			0=No filter on third party, id of third party
 	 * @param	string	$filter			additionnal filter on project (statut, ref, ...)
-	 * @return 	array or string			Array of projects id, or string with projects id separated with "," if list is 1
+	 * @return 	array|string			Array of projects id, or string with projects id separated with "," if list is 1
 	 */
 	public function getProjectsAuthorizedForUser($user, $mode = 0, $list = 0, $socid = 0, $filter = '')
 	{
@@ -2121,7 +2123,7 @@ class Project extends CommonObject
 
 
 		$projectsListId = null;
-		if (!$user->rights->projet->all->lire) {
+		if (!$user->hasRight("projet", "all", "lire")) {
 			$response->url = DOL_URL_ROOT.'/projet/list.php?search_status=1&mainmenu=project';
 			$projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1);
 			if (empty($projectsListId)) {
@@ -2165,18 +2167,18 @@ class Project extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
+	 * @param DoliDB $dbs 		Database handler
+	 * @param int $origin_id 	Old thirdparty id
+	 * @param int $dest_id 		New thirdparty id
 	 * @return bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'projet'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 
@@ -2263,7 +2265,7 @@ class Project extends CommonObject
 					$this->user_creation = $cuser;
 				}
 
-				if ($obj->fk_user_cloture) {
+				if (!empty($obj->fk_user_cloture)) {
 					$cluser = new User($this->db);
 					$cluser->fetch($obj->fk_user_cloture);
 					$this->user_cloture = $cluser;
@@ -2287,8 +2289,8 @@ class Project extends CommonObject
 	 * Adds it to non existing supplied categories.
 	 * Existing categories are left untouch.
 	 *
-	 * @param int[]|int $categories Category or categories IDs
-	 * @return void
+	 * @param 	int[]|int 	$categories 	Category or categories IDs
+	 * @return 	int							<0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{

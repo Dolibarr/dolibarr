@@ -422,7 +422,7 @@ class modBom extends DolibarrModules
 
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'bom_bomline');
 		$this->import_regex_array[$r] = array();
-		$this->import_updatekeys_array[$r] = array('bd.fk_bom' => 'BOM Id');
+		$this->import_updatekeys_array[$r] = array('bd.fk_bom' => 'BOM Id', 'bd.fk_product' => 'ProductRef');
 		$this->import_convertvalue_array[$r] = array(
 			'bd.fk_bom' => array(
 				'rule'    => 'fetchidfromref',

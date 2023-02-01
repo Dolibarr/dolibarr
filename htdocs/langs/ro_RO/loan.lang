@@ -28,7 +28,7 @@ CantUseScheduleWithLoanStartedToPaid = Nu se poate genera un grafic de rambursar
 CantModifyInterestIfScheduleIsUsed = Nu poţi modifica dobânda dacă foloseşti scadenţar
 # Admin
 ConfigLoan=Configurare modul Credite - împrumuturi
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Cont contabil de capital implicit
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Cont contabil de dobândă implicit
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Cont contabil de asigurare implicit
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Cont contabil (din Planul de Conturi) care va fi utilizat implicit pentru capital (modul Împrumuturi)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Cont contabil (din Planul de Conturi) care va fi utilizat implicit pentru dobândă (modul Împrumuturi)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Cont contabil (din Planul de Conturi) care va fi utilizat implicit pentru asigurare (modul Împrumuturi)
 CreateCalcSchedule=Editați angajamentul financiar

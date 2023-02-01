@@ -209,6 +209,11 @@ with
 with
 	foreach ($value[1] as $k => $v) {
 
+* Fix by replacing 
+	if ($res[0] == PDF_TYPE_OBJECT)
+with
+	if ($res && $res[0] == PDF_TYPE_OBJECT)
+
 
 
 JSGANTT:
@@ -283,6 +288,9 @@ RESTLER:
 	
 	elseif (count($value) && isset($value[0]) && is_numeric($value[0]))
 
+* Add CommentParser.php line 406 & 407 to remove a warning on api request in php 8.1
+	empty($value[0]) ? null :
+	empty($value[1]) ? null :
 
 +With swagger 2 provided into /explorer:
 ----------------------------------------

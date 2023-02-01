@@ -120,7 +120,7 @@ $coldisplay++;
 			print '<input type="hidden" id="product_id" name="productid" value="'.(!empty($line->fk_product) ? $line->fk_product : 0).'">';
 		} else {
 			if ($senderissupplier) {
-				print $form->select_produits_fournisseurs(!empty($line->fk_product) ? $line->fk_product : 0, 'productid');
+				$form->select_produits_fournisseurs(!empty($line->fk_product) ? $line->fk_product : 0, 'productid');
 			} else {
 				print $form->select_produits(!empty($line->fk_product) ? $line->fk_product : 0, 'productid');
 			}
@@ -196,7 +196,7 @@ $coldisplay++;
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 		$coldisplay++;
 		?>
-		<td class="right linecolrefsupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth125 maxwidth125onsmartphone" value="<?php echo GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref') : ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
+		<td class="right linecolrefsupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth100 maxwidth125onsmartphone" value="<?php echo GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref') : ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
 		<?php
 		print '<input type="hidden" id="fournprice" name="fournprice"  class="" value="'.$line->fk_fournprice.'">';
 	}

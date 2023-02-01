@@ -178,10 +178,10 @@ if ( versioncompare(explode('.', DOL_VERSION), array(15)) < 0 && $action == 'upd
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconst', 'alpha');
+	$maskconst = GETPOST('maskconst', 'aZ09');
 	$maskvalue = GETPOST('maskvalue', 'alpha');
 
-	if ($maskconst) {
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
@@ -315,11 +315,12 @@ if ($action == 'edit') {
 
 $moduledir = 'mymodule';
 $myTmpObjects = array();
-$myTmpObjects['MyObject'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
+// TODO Scan list of objects
+$myTmpObjects['myobject'] = array('label'=>'MyObject', 'includerefgeneration'=>0, 'includedocgeneration'=>0);
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-	if ($myTmpObjectKey == 'MyObject') {
+	if ($myTmpObjectKey != $type) {
 		continue;
 	}
 	if ($myTmpObjectArray['includerefgeneration']) {
@@ -328,7 +329,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		 */
 		$setupnotempty++;
 
-		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectKey), '', '');
+		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectArray['label']), '', '');
 
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
@@ -526,7 +527,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 										// Default
 										print '<td class="center">';
-										$constforvar = 'MYMODULE_'.strtoupper($myTmpObjectKey).'_ADDON';
+										$constforvar = 'MYMODULE_'.strtoupper($myTmpObjectKey).'_ADDON_PDF';
 										if (getDolGlobalString($constforvar) == $name) {
 											//print img_picto($langs->trans("Default"), 'on');
 											// Even if choice is the default value, we allow to disable it. Replace this with previous line if you need to disable unset

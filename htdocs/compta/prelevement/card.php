@@ -54,10 +54,10 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 if (!$sortfield) {
-	$sortfield = 'pl.fk_soc';
+	$sortfield = 'pl.rowid';
 }
 if (!$sortorder) {
-	$sortorder = 'DESC';
+	$sortorder = 'ASC';
 }
 
 $object = new BonPrelevement($db);
@@ -272,7 +272,7 @@ if ($id > 0 || $ref) {
 	print $formconfirm;
 
 
-	if (empty($object->date_trans) && $user->rights->prelevement->bons->send && $action == 'settransmitted') {
+	if (empty($object->date_trans) && (($user->rights->prelevement->bons->send && $object->type != 'bank-transfer') || ($user->rights->paymentbybanktransfer->send && $object->type == 'bank-transfer')) && $action == 'settransmitted') {
 		print '<form method="post" name="userfile" action="card.php?id='.$object->id.'" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="infotrans">';
@@ -291,7 +291,7 @@ if ($id > 0 || $ref) {
 		print '<br>';
 	}
 
-	if (!empty($object->date_trans) && empty($object->date_credit) && $user->rights->prelevement->bons->credit && $action == 'setcredited') {
+	if (!empty($object->date_trans) && empty($object->date_credit) && (($user->rights->prelevement->bons->credit && $object->type != 'bank-transfer') || ($user->rights->paymentbybanktransfer->debit && $object->type == 'bank-transfer')) && $action == 'setcredited') {
 		$btnLabel = ($object->type == 'bank-transfer') ? $langs->trans("ClassDebited") : $langs->trans("ClassCredited");
 		print '<form name="infocredit" method="post" action="card.php?id='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -343,7 +343,7 @@ if ($id > 0 || $ref) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $id);
 	$sql .= " AND pl.fk_prelevement_bons = pb.rowid";
-	$sql .= " AND pb.entity = ".$conf->entity;
+	$sql .= " AND pb.entity = ".((int) $conf->entity);	// No sharing of entity here
 	$sql .= " AND pl.fk_soc = s.rowid";
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
@@ -375,7 +375,8 @@ if ($id > 0 || $ref) {
 			$urladd .= '&limit='.urlencode($limit);
 		}
 
-		print '<form method="get" action="'.$_SERVER ['PHP_SELF'].'" name="search_form">'."\n";
+		print '<form method="POST" action="'.$_SERVER ['PHP_SELF'].'" name="search_form">'."\n";
+		print '<input type="hidden" name="token" value="'.newToken().'"/>';
 		print '<input type="hidden" name="id" value="'.$id.'"/>';
 		print '<input type="hidden" name="socid" value="'.$socid.'"/>';
 		if (!empty($page)) {
@@ -395,9 +396,9 @@ if ($id > 0 || $ref) {
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="noborder liste" width="100%" cellpadding="4">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre("Lines", $_SERVER["PHP_SELF"], "pl.rowid", '', $urladd);
-		print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd);
-		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", $urladd, 'class="right"');
+		print_liste_field_titre("Lines", $_SERVER["PHP_SELF"], "pl.rowid", '', $urladd, '', $sortfield, $sortorder);
+		print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd, '', $sortfield, $sortorder);
+		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", $urladd, 'class="right"', $sortfield, $sortorder);
 		print_liste_field_titre('');
 		print "</tr>\n";
 

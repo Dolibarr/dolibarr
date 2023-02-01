@@ -624,7 +624,7 @@ class ImportXlsx extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsuppliercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$newval = $this->thirdpartyobject->get_codefournisseur(0, 1);
+										$this->thirdpartyobject->get_codefournisseur(0, 1);
 										$newval = $this->thirdpartyobject->code_fournisseur;
 										//print 'code_fournisseur='.$newval;
 									}
@@ -908,8 +908,8 @@ class ImportXlsx extends ModeleImports
 										$stringtosearch = json_encode($socialnetwork).':'.json_encode($json->$socialnetwork);
 										//var_dump($stringtosearch);
 										//var_dump($this->db->escape($stringtosearch));	// This provide a value for sql string (but not for a like)
-										$where[] = $key." LIKE '%".$this->db->escapeforlike($this->db->escape($stringtosearch))."%'";
-										$filters[] = $col." LIKE '%".$this->db->escapeforlike($this->db->escape($stringtosearch))."%'";
+										$where[] = $key." LIKE '%".$this->db->escape($this->db->escapeforlike($stringtosearch))."%'";
+										$filters[] = $col." LIKE '%".$this->db->escape($this->db->escapeforlike($stringtosearch))."%'";
 										//var_dump($where[1]); // This provide a value for sql string inside a like
 									} else {
 										$where[] = $key.' = '.$data[$key];
@@ -1041,7 +1041,9 @@ class ImportXlsx extends ModeleImports
 							if ($sql) {
 								$resql = $this->db->query($sql);
 								if ($resql) {
-									$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
+									if (!$is_table_category_link) {
+										$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
+									}
 									$insertdone = true;
 								} else {
 									//print 'E';

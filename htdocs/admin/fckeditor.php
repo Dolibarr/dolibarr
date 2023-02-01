@@ -100,7 +100,7 @@ foreach ($modules as $const => $desc) {
 		exit;
 	}
 	if ($action == 'disable_'.strtolower($const)) {
-		dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const, $conf->entity);
+		dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "0", 'chaine', 0, '', $conf->entity);
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
@@ -165,14 +165,14 @@ if (empty($conf->use_javascript_ajax)) {
 		$constante = 'FCKEDITOR_ENABLE_'.$const;
 		print '<!-- constant = '.$constante.' -->'."\n";
 		print '<tr class="oddeven">';
-		print '<td width="16">'.img_object("", $picto[$const]).'</td>';
+		print '<td class="width20">'.img_object("", $picto[$const]).'</td>';
 		print '<td>';
 		print $langs->trans($desc);
 		if ($const == 'DETAILS') {
 			print '<br><span class="warning">'.$langs->trans("FCKeditorForProductDetails2").'</span>';
 		}
 		print '</td>';
-		print '<td class="center" width="100">';
+		print '<td class="center centpercent width100">';
 		$value = (isset($conf->global->$constante) ? $conf->global->$constante : 0);
 		if ($value == 0) {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';

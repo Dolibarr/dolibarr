@@ -5,7 +5,7 @@
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
- * Copyright (C) 2018      Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022 Frédéric France       <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -240,7 +240,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 				$realpath = '';
 				foreach ($objphoto->liste_photos($dir, 1) as $key => $obj) {
-					if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES)) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+					if (!getDolGlobalInt('CAT_HIGH_QUALITY_IMAGES')) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
 						if ($obj['photo_vignette']) {
 							$filename = $obj['photo_vignette'];
 						} else {
@@ -972,11 +972,11 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
-		$pdf->SetXY($col1x, $tab2_top + 0);
+		$pdf->SetXY($col1x, $tab2_top);
 		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
 		$total_ht = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
-		$pdf->SetXY($col2x, $tab2_top + 0);
+		$pdf->SetXY($col2x, $tab2_top);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (!empty($object->remise) ? $object->remise : 0)), 0, 'R', 1);
 
 		// Show VAT by rates and total
@@ -1241,9 +1241,9 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		//pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		//Affiche le filigrane brouillon - Print Draft Watermark
-		/*if($object->statut==0 && (!empty($conf->global->COMMANDE_DRAFT_WATERMARK)) )
+		/*if($object->statut==0 && getDolGlobalString('COMMANDE_DRAFT_WATERMARK'))
 		{
-			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->COMMANDE_DRAFT_WATERMARK);
+			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',getDolGlobalString('COMMANDE_DRAFT_WATERMARK'));
 		}*/
 		//Print content
 
@@ -1256,13 +1256,13 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
-		if (empty($conf->global->PDF_DISABLE_MYCOMPANY_LOGO)) {
+		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
 				if (!empty($conf->mycompany->multidir_output[$object->entity])) {
 					$logodir = $conf->mycompany->multidir_output[$object->entity];
 				}
-				if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO)) {
+				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
 				} else {
 					$logo = $logodir.'/logos/'.$this->emetteur->logo;
@@ -1567,7 +1567,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			'border-left' => false, // remove left line separator
 		);
 
-		if (!empty($conf->global->MAIN_GENERATE_ORDERS_WITH_PICTURE)) {
+		if (!empty($conf->global->MAIN_GENERATE_SUPPLIER_ORDER_WITH_PICTURE)) {
 			$this->cols['photo']['status'] = true;
 		}
 
@@ -1623,7 +1623,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			),
 			'border-left' => true, // add left line separator
 		);
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->cols['unit']['status'] = true;
 		}
 

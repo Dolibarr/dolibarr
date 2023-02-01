@@ -139,7 +139,7 @@ if (empty($reshook)) {
 	}
 
 	// Close inventory by recording the stock movements
-	if ($action == 'update' && !empty($user->rights->stock->mouvement->creer)) {
+	if ($action == 'update' && !empty($user->rights->stock->mouvement->creer) && $object->status == $object::STATUS_VALIDATED) {
 		$stockmovment = new MouvementStock($db);
 		$stockmovment->setOrigin($object->element, $object->id);
 
@@ -603,7 +603,7 @@ if ($object->id > 0) {
 			if ($permissiontoadd) {
 				// Link to launch scan tool
 				if (isModEnabled('barcode') || isModEnabled('productbatch')) {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning&token='.currentToken().'" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
 				}
 
 				// Link to autofill
@@ -973,6 +973,7 @@ if ($object->id > 0) {
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated, id.fk_movement, id.pmp_real, id.pmp_expected';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 	$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
+	$sql .= $db->order('id.rowid', 'ASC');
 	$sql .= $db->plimit($limit, $offset);
 
 	$cacheOfProducts = array();

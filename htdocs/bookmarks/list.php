@@ -29,14 +29,18 @@ require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 $langs->loadLangs(array('bookmarks', 'admin'));
 
 // Get Parameters
-$action = GETPOST('action', 'aZ09');
+$id = GETPOST("id", 'int');
+
+$action 	= GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
-$confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$confirm 	= GETPOST('confirm', 'alpha');
+$cancel     = GETPOST('cancel', 'alpha');
+$toselect 	= GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bookmarklist'; // To manage different context of search
-$id = GETPOST("id", 'int');
-$optioncss = GETPOST('optioncss', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+$optioncss 	= GETPOST('optioncss', 'alpha');
+$mode 		= GETPOST('mode', 'aZ09');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -99,12 +103,15 @@ if ($action == 'delete') {
 
 $form = new Form($db);
 
-$title = $langs->trans("ListOfBookmarks");
+$title = $langs->trans("Bookmarks");
 
 llxHeader('', $title);
 
 $sql = "SELECT b.rowid, b.dateb, b.fk_user, b.url, b.target, b.title, b.favicon, b.position,";
 $sql .= " u.login, u.lastname, u.firstname";
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b LEFT JOIN ".MAIN_DB_PREFIX."user as u ON b.fk_user=u.rowid";
 $sql .= " WHERE 1=1";
 $sql .= " AND b.entity IN (".getEntity('bookmark').")";
@@ -116,7 +123,8 @@ if (!$user->admin) {
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/Ui', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
@@ -125,7 +133,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -207,8 +215,6 @@ print_liste_field_titre("Position", $_SERVER["PHP_SELF"], "b.position", "", $par
 print_liste_field_titre('');
 print "</tr>\n";
 
-$cacheOfUsers = array();
-
 $i = 0;
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
@@ -263,13 +269,13 @@ while ($i < min($num, $limit)) {
 	// Author
 	print '<td class="center">';
 	if ($obj->fk_user) {
-		if (empty($cacheOfUsers[$obj->fk_user])) {
+		if (empty($conf->cache['users'][$obj->fk_user])) {
 			$tmpuser = new User($db);
 			$tmpuser->fetch($obj->fk_user);
-			$cacheOfUsers[$obj->fk_user] = $tmpuser;
+			$conf->cache['users'][$obj->fk_user] = $tmpuser;
 		}
-		$tmpuser = $cacheOfUsers[$obj->fk_user];
-		print $tmpuser->getNomUrl(1);
+		$tmpuser = $conf->cache['users'][$obj->fk_user];
+		print $tmpuser->getNomUrl(-1);
 	} else {
 		print '<span class="opacitymedium">'.$langs->trans("Everybody").'</span>';
 		if (!$user->admin) {

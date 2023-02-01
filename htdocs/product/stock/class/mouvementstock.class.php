@@ -834,7 +834,7 @@ class MouvementStock extends CommonObject
 		$sql .= " WHERE fk_product = ".((int) $productidselected);
 		$sql .= " AND datem < '".$this->db->idate($datebefore)."'";
 
-		dol_syslog(get_class($this).__METHOD__.'', LOG_DEBUG);
+		dol_syslog(get_class($this).__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -1094,6 +1094,13 @@ class MouvementStock extends CommonObject
 		$label .= '<div width="100%">';
 		$label .= '<b>'.$langs->trans('Label').':</b> '.$this->label;
 		$label .= '<br><b>'.$langs->trans('Qty').':</b> '.($this->qty > 0 ? '+' : '').$this->qty;
+		if ($this->batch) {
+			$label .= '<br><b>'.$langs->trans('Batch').':</b> '.$this->batch;
+		}
+		/* TODO Get also warehouse label in a property instead of id
+		if ($this->warehouse_id > 0) {
+			$label .= '<br><b>'.$langs->trans('Warehouse').':</b> '.$this->warehouse_id;
+		}*/
 		$label .= '</div>';
 
 		// Link to page of warehouse tab

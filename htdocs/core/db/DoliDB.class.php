@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/db/Database.interface.php';
  */
 abstract class DoliDB implements Database
 {
-	/** @var bool|resource|SQLite3|PgSql\connection Database handler */
+	/** @var bool|resource|mysqli|SQLite3|PgSql\connection Database handler */
 	public $db;
 	/** @var string Database type */
 	public $type;
@@ -37,8 +37,10 @@ abstract class DoliDB implements Database
 	public $forcecharset = 'utf8';
 	/** @var string Collate used to force collate when creating database */
 	public $forcecollate = 'utf8_unicode_ci';
+
 	/** @var resource Resultset of last query */
 	private $_results;
+
 	/** @var bool true if connected, else false */
 	public $connected;
 	/** @var bool true if database selected, else false */
@@ -73,7 +75,8 @@ abstract class DoliDB implements Database
 
 
 	/**
-	 *	Return the DB prefix
+	 *	Return the DB prefix found into prefix_db (if it was set manually by doing $dbhandler->prefix_db=...).
+	 *  Otherwise return MAIN_DB_PREFIX (common use).
 	 *
 	 *	@return string		The DB prefix
 	 */
@@ -107,6 +110,25 @@ abstract class DoliDB implements Database
 		return '';
 	}
 
+
+	/**
+	 *	Format a SQL REGEXP
+	 *
+	 *	@param	string	$subject        string tested
+	 *	@param	string  $pattern        SQL pattern to match
+	 *	@param	string	$sqlstring      whether or not the string being tested is an SQL expression
+	 *	@return	string          		SQL string
+	 */
+	public function regexpsql($subject, $pattern, $sqlstring = false)
+	{
+		if ($sqlstring) {
+			return "(". $subject ." REGEXP '" . $pattern . "')";
+		}
+
+		return "('". $subject ."' REGEXP '" . $pattern . "')";
+	}
+
+
 	/**
 	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
@@ -136,15 +158,12 @@ abstract class DoliDB implements Database
 	 *
 	 * @param   string 	$stringtosanitize 	String to escape
 	 * @param   int		$allowsimplequote 	1=Allow simple quotes in string. When string is used as a list of SQL string ('aa', 'bb', ...)
+	 * @param	string	$allowsequals		1=Allow equals sign
 	 * @return  string                      String escaped
 	 */
-	public function sanitize($stringtosanitize, $allowsimplequote = 0)
+	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0)
 	{
-		if ($allowsimplequote) {
-			return preg_replace('/[^a-z0-9_\-\.,\']/i', '', $stringtosanitize);
-		} else {
-			return preg_replace('/[^a-z0-9_\-\.,]/i', '', $stringtosanitize);
-		}
+		return preg_replace('/[^a-z0-9_\-\.,'.($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').']/i', '', $stringtosanitize);
 	}
 
 	/**

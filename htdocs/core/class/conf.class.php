@@ -133,6 +133,7 @@ class Conf
 			'barcode' => array(),
 			'models' => array(),
 			'societe' => array(),
+			'member' => array(),
 			'hooks' => array(),
 			'dir' => array(),
 			'syslog' => array()
@@ -145,22 +146,22 @@ class Conf
 		$this->expedition_bon = new stdClass();
 		$this->delivery_note = new stdClass();
 		$this->fournisseur = new stdClass();
-		$this->product			= new stdClass();
-		$this->service			= new stdClass();
-		$this->contrat			= new stdClass();
-		$this->actions			= new stdClass();
-		$this->agenda			= new stdClass();
+		$this->product = new stdClass();
+		$this->service = new stdClass();
+		$this->contrat = new stdClass();
+		$this->actions = new stdClass();
+		$this->agenda = new stdClass();
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
-		$this->facture			= new stdClass();
-		$this->contrat			= new stdClass();
+		$this->facture = new stdClass();
+		$this->contrat = new stdClass();
 		$this->user	= new stdClass();
-		$this->adherent			= new stdClass();
+		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
-		$this->notification		= new stdClass();
+		$this->notification = new stdClass();
 		$this->mailing = new stdClass();
-		$this->expensereport	= new stdClass();
-		$this->productbatch		= new stdClass();
+		$this->expensereport = new stdClass();
+		$this->productbatch = new stdClass();
 	}
 
 	/**
@@ -215,26 +216,26 @@ class Conf
 		$this->expedition_bon = new stdClass();
 		$this->delivery_note = new stdClass();
 		$this->fournisseur = new stdClass();
-		$this->product			= new stdClass();
-		$this->service			= new stdClass();
-		$this->contrat			= new stdClass();
-		$this->actions			= new stdClass();
-		$this->agenda			= new stdClass();
+		$this->product = new stdClass();
+		$this->service = new stdClass();
+		$this->contrat = new stdClass();
+		$this->actions = new stdClass();
+		$this->agenda = new stdClass();
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
-		$this->facture			= new stdClass();
-		$this->contrat			= new stdClass();
+		$this->facture = new stdClass();
+		$this->contrat = new stdClass();
 		$this->user	= new stdClass();
-		$this->adherent			= new stdClass();
+		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
-		$this->notification		= new stdClass();
+		$this->notification = new stdClass();
 		$this->mailing = new stdClass();
-		$this->expensereport	= new stdClass();
-		$this->productbatch		= new stdClass();
+		$this->expensereport = new stdClass();
+		$this->productbatch = new stdClass();
 
 		// Common arrays
 		$this->cache = array();
-		$this->modules = array();;
+		$this->modules = array();
 		$this->modules_parts = array(
 			'css' => array(),
 			'js' => array(),
@@ -249,6 +250,7 @@ class Conf
 			'barcode' => array(),
 			'models' => array(),
 			'societe' => array(),
+			'member' => array(),
 			'hooks' => array(),
 			'dir' => array(),
 			'syslog' => array(),
@@ -497,9 +499,9 @@ class Conf
 			// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
 
 			// Sous module bons d'expedition
-			$this->expedition_bon->enabled = (!empty($this->global->MAIN_SUBMODULE_EXPEDITION) ? $this->global->MAIN_SUBMODULE_EXPEDITION : 0);
+			$this->expedition_bon->enabled = (empty($this->global->MAIN_SUBMODULE_EXPEDITION) ? 0 : $this->global->MAIN_SUBMODULE_EXPEDITION);
 			// Sub module delivery note  Sous module bons de livraison
-			$this->delivery_note->enabled = (!empty($this->global->MAIN_SUBMODULE_DELIVERY) ? $this->global->MAIN_SUBMODULE_DELIVERY : 0);
+			$this->delivery_note->enabled = (empty($this->global->MAIN_SUBMODULE_DELIVERY) ? 0 : $this->global->MAIN_SUBMODULE_DELIVERY);
 
 			// Module fournisseur
 			if (!empty($this->fournisseur)) {
@@ -783,6 +785,11 @@ class Conf
 				$this->global->USE_STRICT_CSV_RULES = 2;
 			}
 
+			// By default, option is on. Once set by user, this code is useless
+			if (!isset($this->global->ACCOUNTING_REEXPORT)) {
+				$this->global->ACCOUNTING_REEXPORT = 1;
+			}
+
 			// Use a SCA ready workflow with Stripe module (STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION by default if nothing defined)
 			if (!isset($this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) && empty($this->global->STRIPE_USE_NEW_CHECKOUT)) {
 				$this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 1;
@@ -790,7 +797,7 @@ class Conf
 
 			// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
 			if (!isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) {
-				$this->global->MAIN_MODULES_FOR_EXTERNAL = 'user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent,blockedlog'; // '' means 'all'. Note that contact is added here as it should be a module later.
+				$this->global->MAIN_MODULES_FOR_EXTERNAL = 'user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,reception,agenda,resource,adherent,blockedlog'; // '' means 'all'. Note that contact is added here as it should be a module later.
 			}
 			if (!empty($this->modules_parts['moduleforexternal'])) {		// Module part to include an external module into the MAIN_MODULES_FOR_EXTERNAL list
 				foreach ($this->modules_parts['moduleforexternal'] as $key => $value) {
@@ -921,6 +928,10 @@ class Conf
 				// Value 3 makes also CSRF check for all GET requests with a param action or massaction
 				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2;
 				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
+			}
+
+			if (!isset($this->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA)) {
+				$this->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA = 1;
 			}
 
 			if (!defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {

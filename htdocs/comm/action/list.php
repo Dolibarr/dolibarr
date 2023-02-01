@@ -33,18 +33,22 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("users", "companies", "agenda", "commercial", "other", "orders", "bills"));
 
-$action = GETPOST('action', 'aZ09');
+// Get Parameters
+$action 	= GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
+$confirm 	= GETPOST('confirm', 'alpha');
+$cancel     = GETPOST('cancel', 'alpha');
+$toselect 	= GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'actioncommlist'; // To manage different context of search
-$optioncss = GETPOST('optioncss', 'alpha');
-$toselect = GETPOST('toselect', 'array');
-$confirm = GETPOST('confirm', 'alpha');
+$optioncss 	= GETPOST('optioncss', 'alpha');
+
 
 $disabledefaultvalues = GETPOST('disabledefaultvalues', 'int');
 
@@ -70,6 +74,7 @@ if (GETPOST('search_actioncode', 'array')) {
 	$actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 
+// Search Fields
 $search_id = GETPOST('search_id', 'alpha');
 $search_title = GETPOST('search_title', 'alpha');
 $search_note = GETPOST('search_note', 'alpha');
@@ -106,6 +111,7 @@ if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS)) {
 	$filtert = $user->id;
 }
 
+// Pagination parameters
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -427,6 +433,8 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON (a.id = ef.fk_object)";
 if (empty($user->rights->societe->client->voir) && !$socid) {
@@ -563,21 +571,18 @@ $sql .= $hookmanager->resPrint;
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	/* This old and fast method to get and count full list returns all record so use a high amount of memory.
-	 $resql = $db->query($sql);
-	 $nbtotalofrecords = $db->num_rows($resql);
-	 */
-	/* The slow method does not consume memory on mysql (not tested on pgsql) */
-	/*$resql = $db->query($sql, 0, 'auto', 1);
-	while ($db->fetch_object($resql)) {
-		$nbtotalofrecords++;
-	}*/
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/Ui', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
 	$resql = $db->query($sqlforcount);
-	$objforcount = $db->fetch_object($resql);
-	$nbtotalofrecords = $objforcount->nbtotalofrecords;
-	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -601,7 +606,7 @@ $num = $db->num_rows($resql);
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 // Local calendar
-$newtitle = '<div class="nowrap clear inline-block minheight30 margintoponly">';
+$newtitle = '<div class="nowrap clear inline-block minheight30">';
 $newtitle .= '<input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; ';
 $newtitle .= '</div>';
 //$newtitle=$langs->trans($title);
@@ -701,7 +706,7 @@ $url = DOL_URL_ROOT.'/comm/action/card.php?action=create';
 $url .= '&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec;
 $url .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
 
-$newcardbutton = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, '', $user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create);
+$newcardbutton = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, '', $user->rights->agenda->myactions->create || $user->hasRight('agenda', 'allactions', 'create'));
 
 $param .= '&mode='.$mode;
 
@@ -715,7 +720,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 $moreforfilter = '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -729,6 +734,13 @@ print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 print '<tr class="liste_titre_filter">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre" align="middle">';
+	$searchpicto = $form->showFilterButtons('left');
+	print $searchpicto;
+	print '</td>';
+}
 if (!empty($arrayfields['a.id']['checked'])) {
 	print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_id" value="'.$search_id.'"></td>';
 }
@@ -789,16 +801,17 @@ if (!empty($arrayfields['a.tms']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
 if (!empty($arrayfields['a.percent']['checked'])) {
-	print '<td class="liste_titre center">';
-	$formactions->form_select_status_action('formaction', $search_status, 1, 'search_status', 1, 2, 'minwidth100imp maxwidth125');
-	print ajax_combobox('selectsearch_status');
+	print '<td class="liste_titre right parentonrightofpage">';
+	$formactions->form_select_status_action('formaction', $search_status, 1, 'search_status', 1, 2, 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre" align="middle">';
-$searchpicto = $form->showFilterButtons();
-print $searchpicto;
-print '</td>';
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre" align="middle">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 print '</tr>'."\n";
 
 $totalarray = array();
@@ -807,6 +820,9 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+}
 if (!empty($arrayfields['a.id']['checked'])) {
 	print_liste_field_titre($arrayfields['a.id']['label'], $_SERVER["PHP_SELF"], "a.id", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -868,12 +884,15 @@ if (!empty($arrayfields['a.percent']['checked'])) {
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "a.percent", $param, "", 'align="center"', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+}
 $totalarray['nbfield']++;
 print "</tr>\n";
 
 $now = dol_now();
 $delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
+$today_start_time = dol_mktime(0, 0, 0, date('m', $now), date('d', $now), date('Y', $now));
 
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 $caction = new CActionComm($db);
@@ -886,6 +905,7 @@ $i = 0;
 //$savnbfield = $totalarray['nbfield'];
 //$totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+$cache_user_list = array();
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -920,8 +940,67 @@ while ($i < $imaxinloop) {
 		$actionstatic->fetchResources();
 	}
 
-	print '<tr class="oddeven">';
+	// cache of user list (owners)
+	if ($obj->fk_user_action > 0 && !isset($cache_user_list[$obj->fk_user_action])) {
+		$userstatic = new User($db);
+		$res = $userstatic->fetch($obj->fk_user_action);
+		if ($res > 0) {
+			$cache_user_list[$obj->fk_user_action] = $userstatic;
+		}
+	}
 
+	// get event style for user owner
+	$event_owner_style = '';
+	// We decide to choose color of owner of event (event->userownerid is user id of owner, event->userassigned contains all users assigned to event)
+	if ($cache_user_list[$obj->fk_user_action]->color != '') {
+		$event_owner_style .= 'border-left: #' . $cache_user_list[$obj->fk_user_action]->color . ' 5px solid;';
+	}
+
+	// get event style for start and end date
+	$event_more_class = '';
+	$event_start_date_css = '';
+	$event_end_date_css = '';
+	$event_start_date_time = $actionstatic->datep;
+	if ($event_start_date_time > $now) {
+		// future event
+		$event_more_class = 'event-future';
+		$event_start_date_css = $event_end_date_css = $event_more_class;
+	} else {
+		if ($obj->fulldayevent == 1) {
+			$today_start_date_time = $today_start_time;
+		} else {
+			$today_start_date_time = $now;
+		}
+
+		// check event end date
+		$event_end_date_time = $db->jdate($obj->dp2);
+		if ($event_end_date_time != null && $event_end_date_time < $today_start_date_time) {
+			// past event
+			$event_more_class = 'event-past';
+		} elseif ($event_end_date_time == null && $event_start_date_time < $today_start_date_time) {
+			// past event
+			$event_more_class = 'event-past';
+		} else {
+			// current event
+			$event_more_class = 'event-current';
+		}
+		$event_start_date_css = $event_end_date_css = $event_more_class;
+	}
+	$event_start_date_css = $event_end_date_css = $event_more_class;
+
+	print '<tr class="oddeven' . ($event_more_class != '' ? ' '.$event_more_class : '') . '">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->id, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
+	}
 	// Ref
 	if (!empty($arrayfields['a.id']['checked'])) {
 		print '<td class="nowraponall">';
@@ -931,10 +1010,16 @@ while ($i < $imaxinloop) {
 
 	// User owner
 	if (!empty($arrayfields['owner']['checked'])) {
-		print '<td class="tdoverflowmax150">'; // With edge and chrome the td overflow is not supported correctly when content is not full text.
-		if ($obj->fk_user_action > 0) {
-			$userstatic->fetch($obj->fk_user_action);
-			print $userstatic->getNomUrl(-1);
+		print '<td class="tdoverflowmax150"' . ($event_owner_style != '' ? ' style="'.$event_owner_style.'"' : '') . '>'; // With edge and chrome the td overflow is not supported correctly when content is not full text.
+		if ($obj->fk_user_action > 0 && !isset($cache_user_list[$obj->fk_user_action])) {
+			$userstatic = new User($db);
+			$res = $userstatic->fetch($obj->fk_user_action);
+			if ($res > 0) {
+				$cache_user_list[$obj->fk_user_action] = $userstatic;
+			}
+		}
+		if (isset($cache_user_list[$obj->fk_user_action])) {
+			print $cache_user_list[$obj->fk_user_action]->getNomUrl(-1);
 		} else {
 			print '&nbsp;';
 		}
@@ -949,7 +1034,7 @@ while ($i < $imaxinloop) {
 		if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) {
 			$labeltype = 'AC_OTH';
 		}
-		if ($actionstatic->type_code == 'AC_OTH' && $actionstatic->code == 'TICKET_MSG') {
+		if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 			$labeltype = $langs->trans("Message");
 		} else {
 			if (!empty($arraylist[$labeltype])) {
@@ -982,13 +1067,14 @@ while ($i < $imaxinloop) {
 
 	// Start date
 	if (!empty($arrayfields['a.datep']['checked'])) {
-		print '<td class="center nowraponall">';
+		print '<td class="center nowraponall'.($event_start_date_css ? ' '.$event_start_date_css : '').'"><span>';
 		if (empty($obj->fulldayevent)) {
 			print dol_print_date($db->jdate($obj->dp), $formatToUse, 'tzuserrel');
 		} else {
 			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 			print dol_print_date($db->jdate($obj->dp), $formatToUse, ($tzforfullday ? $tzforfullday : 'tzuserrel'));
 		}
+		print '</span>';
 		$late = 0;
 		if ($actionstatic->hasDelay() && $actionstatic->percentage >= 0 && $actionstatic->percentage < 100 ) {
 			$late = 1;
@@ -1001,13 +1087,14 @@ while ($i < $imaxinloop) {
 
 	// End date
 	if (!empty($arrayfields['a.datep2']['checked'])) {
-		print '<td class="center nowraponall">';
+		print '<td class="center nowraponall'.($event_end_date_css ? ' '.$event_end_date_css : '').'"><span>';
 		if (empty($obj->fulldayevent)) {
 			print dol_print_date($db->jdate($obj->dp2), $formatToUse, 'tzuserrel');
 		} else {
 			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 			print dol_print_date($db->jdate($obj->dp2), $formatToUse, ($tzforfullday ? $tzforfullday : 'tzuserrel'));
 		}
+		print '</span>';
 		print '</td>';
 	}
 
@@ -1100,15 +1187,17 @@ while ($i < $imaxinloop) {
 		print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent, 5, 0, $datep).'</td>';
 	}
 	// Action column
-	print '<td class="nowrap center">';
-	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		$selected = 0;
-		if (in_array($obj->id, $arrayofselected)) {
-			$selected = 1;
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->id, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		print '</td>';
 	}
-	print '</td>';
 
 	print '</tr>'."\n";
 

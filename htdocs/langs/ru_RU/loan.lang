@@ -28,7 +28,7 @@ CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with
 CantModifyInterestIfScheduleIsUsed = Вы не можете изменить интерес, если используете расписание
 # Admin
 ConfigLoan=Настройка модуля займов
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Бухгалтерский учет капитала по умолчанию
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Учет процентов по счету по умолчанию
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Страхование бухгалтерского счета по умолчанию
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
 CreateCalcSchedule=Изменить финансовое обязательство

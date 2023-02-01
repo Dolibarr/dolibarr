@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015 Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019      Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022 Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021      Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2021      Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
@@ -49,9 +49,14 @@ class FormTicket
 	public $db;
 
 	/**
-	 * @var string	The track_id of the ticket. Used also for the $keytoavoidconflict to name session vars to upload files.
+	 * @var string		A hash value of the ticket. Duplicate of ref but for public purposes.
 	 */
 	public $track_id;
+
+	/**
+	 * @var string 		Email $trackid. Used also for the $keytoavoidconflict to name session vars to upload files.
+	 */
+	public $trackid;
 
 	/**
 	 * @var int ID
@@ -81,6 +86,7 @@ class FormTicket
 	public $withtitletopic;
 	public $withtopicreadonly;
 	public $withreadid;
+
 	public $withcompany;  // to show company drop-down list
 	public $withfromsocid;
 	public $withfromcontactid;
@@ -88,8 +94,12 @@ class FormTicket
 	public $withusercreate;  // to show name of creating user in form
 	public $withcreatereadonly;
 
-	public $withref;  // to show ref field
+	/**
+	 * @var int withextrafields
+	 */
+	public $withextrafields;
 
+	public $withref;  // to show ref field
 	public $withcancel;
 
 	public $type_code;
@@ -108,6 +118,7 @@ class FormTicket
 	 * @var string Error code (or message)
 	 */
 	public $error;
+	public $errors = array();
 
 
 	/**
@@ -126,7 +137,7 @@ class FormTicket
 		$this->withcompany = isModEnabled("societe");
 		$this->withfromsocid = 0;
 		$this->withfromcontactid = 0;
-		//$this->withreadid=0;
+		$this->withreadid=0;
 		//$this->withtitletopic='';
 		$this->withnotifytiersatcreate = 0;
 		$this->withusercreate = 1;
@@ -144,9 +155,10 @@ class FormTicket
 	 * @param	string			$mode					Mode ('create' or 'edit')
 	 * @param	int				$public					1=If we show the form for the public interface
 	 * @param	Contact|null	$with_contact			[=NULL] Contact to link to this ticket if exists
+	 * @param	string			$action					[=''] Action in card
 	 * @return 	void
 	 */
-	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0, Contact $with_contact = null)
+	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0, Contact $with_contact = null, $action = '')
 	{
 		global $conf, $langs, $user, $hookmanager;
 
@@ -173,7 +185,7 @@ class FormTicket
 			print dol_get_fiche_head(null, 'card', '', 0, '');
 		}
 
-		print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.(!empty($this->param["returnurl"]) ? $this->param["returnurl"] : "").'">';
+		print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.(!empty($this->param["returnurl"]) ? $this->param["returnurl"] : $_SERVER['PHP_SELF']).'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
 		foreach ($this->param as $key => $value) {
@@ -332,27 +344,25 @@ class FormTicket
 		print '</td></tr>';
 
 		// Severity => Priority
-		print '<tr><td><span class="none"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
+		print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
 		$this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', 2, 1);
 		print '</td></tr>';
 
 		// Subject
 		if ($this->withtitletopic) {
 			print '<tr><td><label for="subject"><span class="fieldrequired">'.$langs->trans("Subject").'</span></label></td><td>';
-
 			// Answer to a ticket : display of the thread title in readonly
 			if ($this->withtopicreadonly) {
 				print $langs->trans('SubjectAnswerToTicket').' '.$this->topic_title;
-				print '</td></tr>';
 			} else {
-				if (isset($this->withreadid) &&  $this->withreadid > 0) {
-					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title.'';
+				if (isset($this->withreadid) && $this->withreadid > 0) {
+					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title;
 				} else {
 					$subject = GETPOST('subject', 'alpha');
 				}
 				print '<input class="text minwidth500" id="subject" name="subject" value="'.$subject.'" autofocus />';
-				print '</td></tr>';
 			}
+			print '</td></tr>';
 		}
 
 		if (!empty($conf->knowledgemanagement->enabled)) {
@@ -361,7 +371,7 @@ class FormTicket
 			print '<!-- Script to manage change of ticket group -->
 			<script>
 			jQuery(document).ready(function() {
-				function groupticketchange(){
+				function groupticketchange() {
 					console.log("We called groupticketchange, so we try to load list KM linked to event");
 					$("#KWwithajax").html("");
 					idgroupticket = $("#selectcategory_code").val();
@@ -636,7 +646,7 @@ class FormTicket
 
 		// Other attributes
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $ticketstat, $this->action); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $ticketstat, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			print $ticketstat->showOptionals($extrafields, 'create');
 		}
@@ -778,7 +788,7 @@ class FormTicket
 	 *      @param	string		$morecss			More CSS
 	 * 		@param	int 		$use_multilevel		If > 0 create a multilevel select which use $htmlname example: $use_multilevel = 1 permit to have 2 select boxes.
 	 * 		@param	Translate	$outputlangs		Output language
-	 *      @return void
+	 *      @return string|void						String of HTML component
 	 */
 	public function selectGroupTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '', $use_multilevel = 0, $outputlangs = null)
 	{
@@ -984,7 +994,6 @@ class FormTicket
 					}
 					$sql = substr($sql, 0, -2);
 					$sql .= ")";
-				} else {
 				}
 				$sql .= $this->db->order('ctc.pos', 'ASC');
 
@@ -1021,7 +1030,7 @@ class FormTicket
 							}
 							$stringtoprint .= '<option '.$iselected.' class="'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
 							if (empty($tabscript[$groupcodefather])) {
-								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'").val() == "'.dol_escape_js($groupcodefather).'"){
+								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ?'_child_'.($levelid-1):'').'").val() == "'.dol_escape_js($groupcodefather).'"){
 									$(".'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'").show()
 									console.log("We show childs tickets of '.$groupcodefather.' group ticket")
 								}else{
@@ -1039,7 +1048,7 @@ class FormTicket
 
 				$stringtoprint .='<script>';
 				$stringtoprint .='arraynotparents = '.json_encode($arraycodenotparent).';';	// when the last visible combo list is number x, this is the array of group
-				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'").val())){
+				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.($levelid-1):'').'").val())){
 					console.log("'.$htmlname.'_child_'.$levelid.'")
 					if($("#'.$htmlname.'_child_'.$levelid.'").val() == "" && ($("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")>'.$child_id.')){
 						$("#'.$htmlname.'_child_'.$levelid.'").hide();
@@ -1051,7 +1060,7 @@ class FormTicket
 						console.log("We choose '.$htmlname.' input and reload hidden input");
 					}
 				}
-				$("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'").change(function() {
+				$("#'.$htmlname.($levelid > 1 ?'_child_'.($levelid-1):'').'").change(function() {
 					child_id = $("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid:'').'").attr("child_id");
 
 					/* Change of value to select this value*/
@@ -1094,7 +1103,7 @@ class FormTicket
 				$levelid++;
 				foreach ($tabscript as $script) {
 					$stringtoprint .= $script;
-				};
+				}
 				$stringtoprint .='})';
 				$stringtoprint .='</script>';
 			}
@@ -1270,7 +1279,7 @@ class FormTicket
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($this->param['langsmodels'])) {
 			$newlang = $this->param['langsmodels'];
 		}
 		if (!empty($newlang)) {
@@ -1281,7 +1290,7 @@ class FormTicket
 
 		// Get message template for $this->param["models"] into c_email_templates
 		$arraydefaultmessage = -1;
-		if ($this->param['models'] != 'none') {
+		if (isset($this->param['models']) && $this->param['models'] != 'none') {
 			$model_id = 0;
 			if (array_key_exists('models_id', $this->param)) {
 				$model_id = (int) $this->param["models_id"];
@@ -1323,7 +1332,7 @@ class FormTicket
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($this->param['langsmodels'])) {
 			$newlang = $this->param['langsmodels'];
 		}
 		if (!empty($newlang)) {
@@ -1380,7 +1389,12 @@ class FormTicket
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
 		print '<input type="hidden" name="actionbis" value="add_message">';
 		print '<input type="hidden" name="backtopage" value="'.$this->backtopage.'">';
-		print '<input type="hidden" name="trackid" value="'.$this->trackid.'">';
+		if (!empty($this->trackid)) {
+			print '<input type="hidden" name="trackid" value="'.$this->trackid.'">';
+		} else {
+			print '<input type="hidden" name="trackid" value="'.(empty($this->track_id) ? '' : $this->track_id).'">';
+			$keytoavoidconflict = empty($this->track_id) ? '' : '-'.$this->track_id; // track_id instead of trackid
+		}
 		foreach ($this->param as $key => $value) {
 			print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 		}
@@ -1392,7 +1406,7 @@ class FormTicket
 			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);
 		}
 
-		$result = $formmail->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
+		$result = $formmail->fetchAllEMailTemplate(!empty($this->param["models"]) ? $this->param["models"] : "", $user, $outputlangs);
 		if ($result < 0) {
 			setEventMessages($this->error, $this->errors, 'errors');
 		}
@@ -1404,7 +1418,7 @@ class FormTicket
 		print '<table class="border" width="'.$width.'">';
 
 		// External users can't send message email
-		if ($user->rights->ticket->write && !$user->socid) {
+		if ($user->hasRight("ticket", "write") && !$user->socid) {
 			$ticketstat = new Ticket($this->db);
 			$res = $ticketstat->fetch('', '', $this->track_id);
 
@@ -1412,6 +1426,9 @@ class FormTicket
 			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : ($conf->global->TICKETS_MESSAGE_FORCE_MAIL?'checked':''));
 			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
 			print '<label for="send_msg_email">'.$langs->trans('SendMessageByEmail').'</label>';
+			$texttooltip = $langs->trans("TicketMessageSendEmailHelp", '{s1}');
+			$texttooltip = str_replace('{s1}', $langs->trans('MarkMessageAsPrivate'), $texttooltip);
+			print ' '.$form->textwithpicto('', $texttooltip, 1, 'help');
 			print '</td></tr>';
 
 			// Private message (not visible by customer/external user)
@@ -1556,7 +1573,7 @@ class FormTicket
 		// Deal with format differences between message and signature (text / HTML)
 		if (dol_textishtml($defaultmessage) && !dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
 			$this->substit['__USER_SIGNATURE__'] = dol_nl2br($this->substit['__USER_SIGNATURE__']);
-		} elseif (!dol_textishtml($defaultmessage) && dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
+		} elseif (!dol_textishtml($defaultmessage) && isset($this->substit['__USER_SIGNATURE__']) && dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
 			$defaultmessage = dol_nl2br($defaultmessage);
 		}
 		if (GETPOSTISSET("message") && !GETPOST('modelselected')) {
@@ -1569,7 +1586,7 @@ class FormTicket
 		}
 
 		print '<tr><td colspan="2"><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span>';
-		if ($user->rights->ticket->write && !$user->socid) {
+		if ($user->hasRight("ticket", "write") && !$user->socid) {
 			$texttooltip = $langs->trans("TicketMessageHelp");
 			if (getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO') || getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE')) {
 				$texttooltip .= '<br><br>'.$langs->trans("ForEmailMessageWillBeCompletedWith").'...';

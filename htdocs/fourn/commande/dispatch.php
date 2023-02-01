@@ -7,7 +7,7 @@
  * Copyright (C) 2014      Cedric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2016      Florian Henry        <florian.henry@atm-consulting.fr>
  * Copyright (C) 2017-2022 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2020 Christophe Battarel	<christophe@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -68,7 +68,7 @@ $hookmanager->initHooks(array('ordersupplierdispatch'));
 
 // Recuperation de l'id de projet
 $projectid = 0;
-if ($_GET["projectid"]) {
+if (GETPOSTISSET("projectid")) {
 	$projectid = GETPOST("projectid", 'int');
 }
 
@@ -554,7 +554,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($action != 'classify' && $caneditproject) {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -782,7 +782,8 @@ if ($id > 0 || !empty($ref)) {
 				if (!$objp->fk_product > 0) {
 					$nbfreeproduct++;
 				} else {
-					$remaintodispatch = price2num($objp->qty - ((float) $products_dispatched[$objp->rowid]), 5); // Calculation of dispatched
+					$alreadydispatched = isset($products_dispatched[$objp->rowid])?$products_dispatched[$objp->rowid]:0;
+					$remaintodispatch = price2num($objp->qty - ((float) $alreadydispatched), 5); // Calculation of dispatched
 					if ($remaintodispatch < 0 && empty($conf->global->SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN)) {
 						$remaintodispatch = 0;
 					}
@@ -799,7 +800,7 @@ if ($id > 0 || !empty($ref)) {
 						print '<!-- Line to dispatch '.$suffix.' -->'."\n";
 						// hidden fields for js function
 						print '<input id="qty_ordered'.$suffix.'" type="hidden" value="'.$objp->qty.'">';
-						print '<input id="qty_dispatched'.$suffix.'" type="hidden" value="'.(float) $products_dispatched[$objp->rowid].'">';
+						print '<input id="qty_dispatched'.$suffix.'" type="hidden" value="'.(float) $alreadydispatched.'">';
 						print '<tr class="oddeven">';
 
 						if (empty($conf->cache['product'][$objp->fk_product])) {
@@ -860,7 +861,7 @@ if ($id > 0 || !empty($ref)) {
 						print '<td class="right">'.$objp->qty.'</td>';
 
 						// Already dispatched
-						print '<td class="right">'.$products_dispatched[$objp->rowid].'</td>';
+						print '<td class="right">'.$alreadydispatched.'</td>';
 
 						if (isModEnabled('productbatch') && $objp->tobatch > 0) {
 							$type = 'batch';
@@ -873,10 +874,11 @@ if ($id > 0 || !empty($ref)) {
 
 							// Enable hooks to append additional columns
 							$parameters = array(
-								'is_information_row' => true, // allows hook to distinguish between the
-															  // rows with information and the rows with
-															  // dispatch form input
-								'objp' => $objp
+								// allows hook to distinguish between the rows with information and the rows with dispatch form input
+								'is_information_row' => true,
+								'i' => $i,
+								'suffix' => $suffix,
+								'objp' => $objp,
 							);
 							$reshook = $hookmanager->executeHooks(
 								'printFieldListValue',
@@ -935,10 +937,11 @@ if ($id > 0 || !empty($ref)) {
 
 							// Enable hooks to append additional columns
 							$parameters = array(
-								'is_information_row' => true, // allows hook to distinguish between the
-															  // rows with information and the rows with
-															  // dispatch form input
-								'objp' => $objp
+								// allows hook to distinguish between the rows with information and the rows with dispatch form input
+								'is_information_row' => true,
+								'i' => $i,
+								'suffix' => $suffix,
+								'objp' => $objp,
 							);
 							$reshook = $hookmanager->executeHooks(
 								'printFieldListValue',
@@ -1016,7 +1019,10 @@ if ($id > 0 || !empty($ref)) {
 
 						// Enable hooks to append additional columns
 						$parameters = array(
-							'is_information_row' => false // this is a dispatch form row
+							'is_information_row' => false, // this is a dispatch form row
+							'i' => $i,
+							'suffix' => $suffix,
+							'objp' => $objp,
 						);
 						$reshook = $hookmanager->executeHooks(
 							'printFieldListValue',
@@ -1153,8 +1159,8 @@ if ($id > 0 || !empty($ref)) {
 			}
 			// Product
 			print '<td>'.$langs->trans("Product").'</td>';
-			print '<td>'.$langs->trans("DateCreation").'</td>';
-			print '<td>'.$langs->trans("DateDeliveryPlanned").'</td>';
+			print '<td class="center">'.$langs->trans("DateCreation").'</td>';
+			print '<td class="center">'.$langs->trans("DateDeliveryPlanned").'</td>';
 			if (isModEnabled('productbatch')) {
 				print '<td class="dispatch_batch_number_title">'.$langs->trans("batch_number").'</td>';
 				if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
@@ -1195,7 +1201,7 @@ if ($id > 0 || !empty($ref)) {
 
 				// Reception ref
 				if (isModEnabled("reception")) {
-					print '<td>';
+					print '<td class="nowraponall">';
 					if (!empty($objp->fk_reception)) {
 						$reception = new Reception($db);
 						$reception->fetch($objp->fk_reception);
@@ -1206,7 +1212,7 @@ if ($id > 0 || !empty($ref)) {
 				}
 
 				// Product
-				print '<td>';
+				print '<td class="tdoverflowmax150">';
 				if (empty($conf->cache['product'][$objp->fk_product])) {
 					$tmpproduct = new Product($db);
 					$tmpproduct->fetch($objp->fk_product);
@@ -1217,9 +1223,14 @@ if ($id > 0 || !empty($ref)) {
 				print $tmpproduct->getNomUrl(1);
 				print ' - '.$objp->label;
 				print "</td>\n";
-				print '<td>'.dol_print_date($db->jdate($objp->datec), 'day').'</td>';
-				print '<td>'.dol_print_date($db->jdate($objp->date_delivery), 'day').'</td>';
 
+				// Date creation
+				print '<td class="center">'.dol_print_date($db->jdate($objp->datec), 'day').'</td>';
+
+				// Date delivery
+				print '<td class="center">'.dol_print_date($db->jdate($objp->date_delivery), 'day').'</td>';
+
+				// Batch / Eat by / Sell by
 				if (isModEnabled('productbatch')) {
 					if ($objp->batch) {
 						include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
@@ -1254,7 +1265,7 @@ if ($id > 0 || !empty($ref)) {
 				print '</td>';
 
 				// Warehouse
-				print '<td>';
+				print '<td class="tdoverflowmax150">';
 				if ($action == 'editline' && $lineid == $objp->dispatchlineid) {
 					if (count($listwarehouses) > 1) {
 						print $formproduct->selectWarehouses(GETPOST("fk_entrepot") ?GETPOST("fk_entrepot") : ($objp->warehouse_id ? $objp->warehouse_id : ''), "fk_entrepot", '', 1, 0, $objp->fk_product, '', 1, 1, null, 'csswarehouse');
@@ -1318,6 +1329,8 @@ if ($id > 0 || !empty($ref)) {
 					}
 					print '</td>';
 				}
+
+				// Action
 				if ($action != 'editline' || $lineid != $objp->dispatchlineid) {
 					if (empty($reception->id) || ($reception->statut == Reception::STATUS_DRAFT)) { // only allow edit on draft reception
 						print '<td class="linecoledit center">';

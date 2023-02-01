@@ -119,28 +119,14 @@ if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accou
 if ($action == 'validatehistory') {
 	$error = 0;
 	$nbbinddone = 0;
+	$nbbindfailed = 0;
 	$notpossible = 0;
 
 	$db->begin();
 
 	// Now make the binding. Bind automatically only for product with a dedicated account that exists into chart of account, others need a manual bind
-	/*if ($db->type == 'pgsql') {
-		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
-		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
-		$sql1 .= " FROM " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
-		$sql1 .= " WHERE " . MAIN_DB_PREFIX . "facture_fourn_det.fk_product = p.rowid  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . ((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.$conf->entity;
-		$sql1 .= " AND accnt.active = 1 AND p.accountancy_code_buy=accnt.account_number";
-		$sql1 .= " AND " . MAIN_DB_PREFIX . "facture_fourn_det.fk_code_ventilation = 0";
-	} else {
-		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det as fd, " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
-		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
-		$sql1 .= " WHERE fd.fk_product = p.rowid AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . ((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.$conf->entity;
-		$sql1 .= " AND accnt.active = 1 AND p.accountancy_code_buy=accnt.account_number";
-		$sql1 .= " AND fd.fk_code_ventilation = 0";
-	}*/
-
 	// Supplier Invoice Lines (must be same request than into page list.php for manual binding)
-	$sql = "SELECT f.rowid as facid, f.ref, f.ref_supplier, f.libelle as invoice_label, f.datef, f.type as ftype,";
+	$sql = "SELECT f.rowid as facid, f.ref, f.ref_supplier, f.libelle as invoice_label, f.datef, f.type as ftype, f.fk_facture_source,";
 	$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
 	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
 	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
@@ -233,7 +219,10 @@ if ($action == 'validatehistory') {
 			$facture_static->ref = $objp->ref;
 			$facture_static->id = $objp->facid;
 			$facture_static->type = $objp->ftype;
-			$facture_static->date = $objp->datef;
+			$facture_static->ref_supplier = $objp->ref_supplier;
+			$facture_static->label = $objp->invoice_label;
+			$facture_static->date = $db->jdate($objp->datef);
+			$facture_static->fk_facture_source = $objp->fk_facture_source;
 
 			$facture_static_det->id = $objp->rowid;
 			$facture_static_det->total_ht = $objp->total_ht;
@@ -276,12 +265,14 @@ if ($action == 'validatehistory') {
 				if (!$resqlupdate) {
 					$error++;
 					setEventMessages($db->lasterror(), null, 'errors');
+					$nbbindfailed++;
 					break;
 				} else {
 					$nbbinddone++;
 				}
 			} else {
 				$notpossible++;
+				$nbbindfailed++;
 			}
 
 			$i++;
@@ -295,7 +286,10 @@ if ($action == 'validatehistory') {
 		$db->rollback();
 	} else {
 		$db->commit();
-		setEventMessages($langs->trans('AutomaticBindingDone', 	$nbbinddone, $notpossible), null, 'mesgs');
+		setEventMessages($langs->trans('AutomaticBindingDone', 	$nbbinddone, $notpossible), null, ($notpossible ? 'warnings' : 'mesgs'));
+		if ($nbbindfailed) {
+			setEventMessages($langs->trans('DoManualBindingForFailedRecord', $nbbindfailed), null, 'warnings');
+		}
 	}
 }
 
@@ -317,7 +311,7 @@ print '</span><br>';
 
 $y = $year_current;
 
-$buttonbind = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'">'.$langs->trans("ValidateHistory").'</a>';
+$buttonbind = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'">'.img_picto('', 'link', 'class="paddingright fa-color-unset"').$langs->trans("ValidateHistory").'</a>';
 
 
 print_barre_liste(img_picto('', 'unlink', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', '', '', '', -1, '', '', 0, $buttonbind, '', 0, 1, 1);
@@ -399,14 +393,37 @@ if ($resql) {
 		print '</td>';
 		print '<td>';
 		if ($row[0] == 'tobind') {
-			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.((int) $y), $langs->transnoentitiesnoconv("ToBind"));
+			$startmonth = ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1);
+			if ($startmonth > 12) {
+				$startmonth -= 12;
+			}
+			$startyear = ($startmonth < ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1)) ? $y + 1 : $y;
+			$endmonth = ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) + 11;
+			if ($endmonth > 12) {
+				$endmonth -= 12;
+			}
+			$endyear = ($endmonth < ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1)) ? $y + 1 : $y;
+			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_date_startday=1&search_date_startmonth='.((int) $startmonth).'&search_date_startyear='.((int) $startyear).'&search_date_endday=&search_date_endmonth='.((int) $endmonth).'&search_date_endyear='.((int) $endyear), $langs->transnoentitiesnoconv("ToBind"));
 		} else {
 			print $row[1];
 		}
 		print '</td>';
 		for ($i = 2; $i <= 13; $i++) {
+			$cursormonth = (($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) + $i - 2);
+			if ($cursormonth > 12) {
+				$cursormonth -= 12;
+			}
+			$cursoryear = ($cursormonth < ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1)) ? $y + 1 : $y;
+			$tmp = dol_getdate(dol_get_last_day($cursoryear, $cursormonth, 'gmt'), false, 'gmt');
+
 			print '<td class="right nowraponall amount">';
 			print price($row[$i]);
+			// Add link to make binding
+			if (!empty(price2num($row[$i]))) {
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&year='.$y.'&validatemonth='.((int) $cursormonth).'&validateyear='.((int) $cursoryear).'&token='.newToken().'">';
+				print img_picto($langs->trans("ValidateHistory").' ('.$langs->trans('Month'.str_pad($cursormonth, 2, '0', STR_PAD_LEFT)).' '.$cursoryear.')', 'link', 'class="marginleft2"');
+				print '</a>';
+			}
 			print '</td>';
 		}
 		print '<td class="right nowraponall amount"><b>'.price($row[14]).'</b></td>';
@@ -538,7 +555,7 @@ print "</table>\n";
 print '</div>';
 
 
-if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange. Why showing a report that should rely on result of this step ?
+if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This part of code looks strange. Why showing a report that should rely on result of this step ?
 	print '<br>';
 	print '<br>';
 

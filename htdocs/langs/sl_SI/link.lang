@@ -7,5 +7,5 @@ ErrorFileNotLinked=Datoteke ni možno povezati
 LinkRemoved=Povezava %s je bila odstranjena
 ErrorFailedToDeleteLink= Napaka pri odstranitvi povezave '<b>%s</b>'.
 ErrorFailedToUpdateLink= Napaka pri posodobitvi povezave '<b>%s</b>'.
-URLToLink=URL to link
-OverwriteIfExists=Overwrite file if exists
+URLToLink=URL za povezavo
+OverwriteIfExists=Prepiši datoteko, če obstaja

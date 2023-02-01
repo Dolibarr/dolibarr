@@ -159,7 +159,7 @@ if ($user->socid && $socid) {
 	$result = restrictedArea($user, 'societe', $socid);
 }
 
-$usercancreate = $user->rights->agenda->allactions->create || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create);
+$usercancreate = $user->hasRight('agenda', 'allactions', 'create') || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create);
 
 
 /*
@@ -218,7 +218,7 @@ if (empty($reshook) && (GETPOST('addassignedtouser') || GETPOST('updateassignedt
 }
 
 // Link to a project
-if (empty($reshook) && $action == 'classin' && ($user->rights->agenda->allactions->create ||
+if (empty($reshook) && $action == 'classin' && ($user->hasRight('agenda', 'allactions', 'create') ||
 	(($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create))) {
 	//$object->fetch($id);
 	$object->setProject(GETPOST('projectid', 'int'));
@@ -716,15 +716,28 @@ if (empty($reshook) && $action == 'update') {
 			$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuser');
 		}
 
-		if ($object->elementtype == 'ticket') {
+		if ($object->elementtype == 'ticket') {	// code should be TICKET_MSG, TICKET_MSG_PRIVATE, TICKET_MSG_SENTBYMAIL, TICKET_MSG_PRIVATE_SENTBYMAIL
 			if ($private) {
-				$object->type_code = 'TICKET_MSG_PRIVATE';
+				if ($object->code == 'TICKET_MSG') {
+					$object->code = 'TICKET_MSG_PRIVATE';
+				}
+				if ($object->code == 'TICKET_MSG_SENTBYMAIL') {
+					$object->code = 'TICKET_MSG_PRIVATE_SENTBYMAIL';
+				}
 			} else {
-				$object->type_id = dol_getIdFromCode($db, 'AC_EMAIL', 'c_actioncomm');
+				if ($object->code == 'TICKET_MSG_PRIVATE') {
+					$object->code = 'TICKET_MSG';
+				}
+				if ($object->code == 'TICKET_MSG_PRIVATE_SENTBYMAIL') {
+					$object->code = 'TICKET_MSG_SENTBYMAIL';
+				}
 			}
+			// type_id and type_code is not modified
 		} else {
 			$object->type_id = dol_getIdFromCode($db, GETPOST("actioncode", 'aZ09'), 'c_actioncomm');
+			$object->type_code = GETPOST("actioncode", 'aZ09');
 		}
+
 		$object->label       = GETPOST("label", "alphanohtml");
 		$object->datep       = $datep;
 		$object->datef       = $datef;
@@ -1080,7 +1093,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate') {
 
 // Actions to delete doc
 $upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
-$permissiontoadd = ($user->rights->agenda->allactions->create || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->read));
+$permissiontoadd = ($user->hasRight('agenda', 'allactions', 'create') || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->read));
 if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
@@ -1253,7 +1266,7 @@ if ($action == 'create') {
 		print $langs->trans("DayOfWeek").': <input type="input" size="4" name="BYDAY" value="'.$selectedrecurrulebyday.'">';
 		print '</div>';
 		// limit date
-		$repeateventlimitdate = $repeateventlimitdate ? $repeateventlimitdate : '';
+		$repeateventlimitdate = !empty($repeateventlimitdate) ? $repeateventlimitdate : '';
 		print '<div class="hidden marginrightonly inline-block repeateventlimitdate">';
 		print $langs->trans("Until")." ";
 		print $form->selectDate($repeateventlimitdate, 'limit', 0, 0, 0, "action", 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
@@ -1315,11 +1328,6 @@ if ($action == 'create') {
 
 	// Date start
 	print '<tr><td class="nowrap">';
-	/*
-	print '<span class="fieldrequired">'.$langs->trans("DateActionStart").'</span>';
-	print ' - ';
-	print '<span id="dateend"'.(GETPOST("actioncode", 'aZ09') == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span>';
-	*/
 	print '</td><td>';
 	if (GETPOST("afaire") == 1) {
 		print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel'); // Empty value not allowed for start date and hours if "todo"
@@ -1345,7 +1353,7 @@ if ($action == 'create') {
 	if (empty($donotclearsession)) {
 		$assignedtouser = GETPOST("assignedtouser") ?GETPOST("assignedtouser") : (!empty($object->userownerid) && $object->userownerid > 0 ? $object->userownerid : $user->id);
 		if ($assignedtouser) {
-			$listofuserid[$assignedtouser] = array('id'=>$assignedtouser, 'mandatory'=>0, 'transparency'=>$object->transparency); // Owner first
+			$listofuserid[$assignedtouser] = array('id'=>$assignedtouser, 'mandatory'=>0); // Owner first
 		}
 		//$listofuserid[$user->id] = array('id'=>$user->id, 'mandatory'=>0, 'transparency'=>(GETPOSTISSET('transparency') ? GETPOST('transparency', 'alpha') : 1)); // 1 by default at first init
 		$listofuserid[$assignedtouser]['transparency'] = (GETPOSTISSET('transparency') ? GETPOST('transparency', 'alpha') : 1); // 1 by default at first init
@@ -1438,7 +1446,7 @@ if ($action == 'create') {
 		}
 		if ($origin=='contact') $preselectedids[GETPOST('originid', 'int')] = GETPOST('originid', 'int');
 		print img_picto('', 'contact', 'class="paddingrightonly"');
-		print $form->selectcontacts(GETPOST('socid', 'int'), $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 quatrevingtpercent', false, 0, array(), false, 'multiple', 'contactid');
+		print $form->selectcontacts(empty($conf->global->MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT) ? GETPOST('socid', 'int') : 0, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 quatrevingtpercent', false, 0, array(), false, 'multiple', 'contactid');
 		print '</td></tr>';
 	}
 
@@ -1594,7 +1602,7 @@ if ($action == 'create') {
 	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
 	            		    } else {
 	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
-	            		    };
+	            		    }
 	            		});
                    })';
 		print '</script>'."\n";
@@ -1716,7 +1724,7 @@ if ($id > 0) {
 		if ($backtopage) {
 			print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : dol_htmlentities($_SERVER["HTTP_REFERER"])).'">';
 		}
-		if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && $object->code != "TICKET_MSG_PRIVATE") {
+		if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && ! preg_match('/^TICKET_MSG_PRIVATE/', $object->code)) {
 			print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">';
 		}
 
@@ -1742,7 +1750,11 @@ if ($id > 0) {
 		}
 
 		// Private
-		if ($object->elementtype == 'ticket') print '<tr><td>'.$langs->trans("PrivateEventMessage").'</td><td colspan="3"><input type="checkbox" id="private" name="private" '.(($object->code == 'TICKET_MSG_PRIVATE') ? ' checked' : '').'></td></tr>';
+		if ($object->elementtype == 'ticket') {
+			print '<tr><td>'.$langs->trans("MarkMessageAsPrivate");
+			print ' '.$form->textwithpicto('', $langs->trans("TicketMessagePrivateHelp"), 1, 'help');
+			print '</td><td colspan="3"><input type="checkbox" id="private" name="private" '.(preg_match('/^TICKET_MSG_PRIVATE/', $object->code) ? ' checked' : '').'></td></tr>';
+		}
 
 		// Title
 		print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE) ? ' class="fieldrequired titlefieldcreate"' : '').'>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" class="soixantepercent" value="'.$object->label.'"></td></tr>';
@@ -1937,7 +1949,7 @@ if ($id > 0) {
 			// related contact
 			print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td>';
 			print '<div class="maxwidth200onsmartphone">';
-			print img_picto('', 'contact', 'class="paddingrightonly"').$form->selectcontacts($object->socid, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'quatrevingtpercent', false, 0, 0, array(), 'multiple', 'contactid');
+			print img_picto('', 'contact', 'class="paddingrightonly"').$form->selectcontacts(empty($conf->global->MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT) ? $object->socid : 0, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'quatrevingtpercent', false, 0, 0, array(), 'multiple', 'contactid');
 			print '</div>';
 			print '</td>';
 			print '</tr>';
@@ -2092,7 +2104,7 @@ if ($id > 0) {
 	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
 	            		    } else {
 	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
-	            		    };
+	            		    }
 	            		});
 
                    })';
@@ -2179,7 +2191,7 @@ if ($id > 0) {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -2205,16 +2217,11 @@ if ($id > 0) {
 		print '<table class="border tableforfield" width="100%">';
 
 		// Type
-		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $object->elementtype != 'ticket') {
+		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
 			print $object->getTypePicto();
 			print $langs->trans("Action".$object->type_code);
 			print '</td></tr>';
-		}
-
-		// Private
-		if ($object->elementtype == 'ticket') {
-			print '<tr><td class="titlefield">'.$langs->trans("PrivateEventMessage").'</td><td>'.yn(($object->code == 'TICKET_MSG_PRIVATE') ? 1 : 0, 3).'</td></tr>';
 		}
 
 		// Full day event
@@ -2338,7 +2345,8 @@ if ($id > 0) {
 
 		if (isModEnabled("societe")) {
 			// Related company
-			print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->thirdparty->id ? $object->thirdparty->getNomUrl(1) : ('<span class="opacitymedium">'.$langs->trans("None").'</span>'));
+			print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td>';
+			print '<td>'.(is_object($object->thirdparty) && $object->thirdparty->id ? $object->thirdparty->getNomUrl(1) : ('<span class="opacitymedium">'.$langs->trans("None").'</span>'));
 			if (is_object($object->thirdparty) && $object->thirdparty->id > 0 && $object->type_code == 'AC_TEL') {
 				if ($object->thirdparty->fetch($object->thirdparty->id)) {
 					print "<br>".dol_print_phone($object->thirdparty->phone);
@@ -2417,7 +2425,7 @@ if ($id > 0) {
 				$tmpuserstatic = new User($db);
 
 				foreach ($object->reminders as $actioncommreminderid => $actioncommreminder) {
-					print $TRemindTypes[$actioncommreminder->typeremind];
+					print $TRemindTypes[$actioncommreminder->typeremind]['label'];
 					if ($actioncommreminder->fk_user > 0) {
 						$tmpuserstatic->fetch($actioncommreminder->fk_user);
 						print ' ('.$tmpuserstatic->getNomUrl(0, '', 0, 0, 16).')';
@@ -2458,14 +2466,14 @@ if ($id > 0) {
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		if ($action != 'edit') {
-			if ($user->rights->agenda->allactions->create ||
+			if ($user->hasRight('agenda', 'allactions', 'create') ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create)) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a></div>';
 			}
 
-			if ($user->rights->agenda->allactions->create ||
+			if ($user->hasRight('agenda', 'allactions', 'create') ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create)) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=clone&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
 			} else {

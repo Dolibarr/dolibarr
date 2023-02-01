@@ -78,6 +78,7 @@
 -- Portugal
 -- Romania -> for Departmements
 -- San Salvador
+-- Slovakia
 -- Slovenia
 -- Spain
 -- Switzerland/Suisse -> for Departmements/Cantons
@@ -448,6 +449,13 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 86, 8601, NULL, NULL, 'Central');
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 86, 8602, NULL, NULL, 'Oriental');
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 86, 8603, NULL, NULL, 'Occidental');
+
+
+-- Slovakia Regions (rowid country=201)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 201, '20101', 'SK01', NULL, 'Bratislava Region');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 201, '20102', 'SK02', NULL, 'Western Slovakia');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 201, '20103', 'SK03', NULL, 'Central Slovakia');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 201, '20104', 'SK04', NULL, 'Eastern Slovakia');
 
 
 -- Slovenia Regions (rowid country=202)

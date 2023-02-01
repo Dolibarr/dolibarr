@@ -52,6 +52,7 @@ $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'positionlist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$mode       = GETPOST('mode', 'aZ');
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -72,6 +73,7 @@ $pagenext = $page + 1;
 // Initialize technical objects
 $object = new Position($db);
 $extrafields = new ExtraFields($db);
+$userstatic = new User($db);
 $diroutputmassaction = $conf->hrm->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('positionlist')); // Note that conf->hooks_modules contains array
 
@@ -217,6 +219,10 @@ $morecss = array();
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
 $sql .= $object->getFieldList('t');
+$sql .= ',';
+$sql .= $userstatic->getFieldList('u');
+$sql .= ',u.email, u.statut';
+$sql .= ',j.rowid, j.label as job_label';
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -228,7 +234,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
-$sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
+$sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t LEFT JOIN ".MAIN_DB_PREFIX.$userstatic->table_element." as u on t.fk_user = u.rowid, ".MAIN_DB_PREFIX."hrm_job as j";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
@@ -241,6 +247,7 @@ if ($object->ismultientitymanaged == 1) {
 } else {
 	$sql .= " WHERE 1 = 1";
 }
+$sql .= " AND t.fk_job = j.rowid";
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
 		if ($key == 'status' && $search[$key] == -1) {
@@ -425,7 +432,10 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/hrm/position.php', 1).'?action=create', '', $permissiontoadd);
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/hrm/position.php', 1).'?action=create', '', $permissiontoadd);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -601,13 +611,33 @@ while ($i < $imaxinloop) {
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 
+
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr><td colspan="12">';
 			print '<div class="box-flex-container">';
 		}
-		// Output Kanban
-		print $object->getKanbanView('');
+		// get info needed
+		$object->date_start = $obj->date_start;
+		$object->date_end = $obj->date_end;
+		$object->fk_job = $obj->job_label;
+
+		$userstatic->id = $obj->fk_user;
+		$userstatic->ref = $obj->fk_user;
+		$userstatic->firstname = $obj->firstname;
+		$userstatic->lastname = $obj->lastname;
+		$userstatic->email = $obj->email;
+		$userstatic->statut = $obj->statut;
+
+		$object->fk_user = $userstatic->getNomUrl(1);
+		// output kanban
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+			print $object->getKanbanView('');
+		}
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

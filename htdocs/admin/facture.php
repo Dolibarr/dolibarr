@@ -6,6 +6,7 @@
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2012-2013  Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2014		Teddy Andreotti				<125155@supinfo.com>
+ * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,24 +58,24 @@ $type = 'invoice';
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstinvoice = GETPOST('maskconstinvoice', 'alpha');
-	$maskconstreplacement = GETPOST('maskconstreplacement', 'alpha');
-	$maskconstcredit = GETPOST('maskconstcredit', 'alpha');
-	$maskconstdeposit = GETPOST('maskconstdeposit', 'alpha');
+	$maskconstinvoice = GETPOST('maskconstinvoice', 'aZ09');
+	$maskconstreplacement = GETPOST('maskconstreplacement', 'aZ09');
+	$maskconstcredit = GETPOST('maskconstcredit', 'aZ09');
+	$maskconstdeposit = GETPOST('maskconstdeposit', 'aZ09');
 	$maskinvoice = GETPOST('maskinvoice', 'alpha');
 	$maskreplacement = GETPOST('maskreplacement', 'alpha');
 	$maskcredit = GETPOST('maskcredit', 'alpha');
 	$maskdeposit = GETPOST('maskdeposit', 'alpha');
-	if ($maskconstinvoice) {
+	if ($maskconstinvoice && preg_match('/_MASK_/', $maskconstinvoice)) {
 		$res = dolibarr_set_const($db, $maskconstinvoice, $maskinvoice, 'chaine', 0, '', $conf->entity);
 	}
-	if ($maskconstreplacement) {
+	if ($maskconstreplacement && preg_match('/_MASK_/', $maskconstreplacement)) {
 		$res = dolibarr_set_const($db, $maskconstreplacement, $maskreplacement, 'chaine', 0, '', $conf->entity);
 	}
-	if ($maskconstcredit) {
+	if ($maskconstcredit && preg_match('/_MASK_/', $maskconstcredit)) {
 		$res = dolibarr_set_const($db, $maskconstcredit, $maskcredit, 'chaine', 0, '', $conf->entity);
 	}
-	if ($maskconstdeposit) {
+	if ($maskconstdeposit && preg_match('/_MASK_/', $maskconstdeposit)) {
 		$res = dolibarr_set_const($db, $maskconstdeposit, $maskdeposit, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -742,7 +743,7 @@ print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td>'.$langs->trans("Parameters").'</td>';
 print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
@@ -754,7 +755,7 @@ print '<input type="hidden" name="action" value="setforcedate" />';
 print '<tr class="oddeven"><td>';
 print $langs->trans("ForceInvoiceDate");
 print '</td><td width="60" class="center">';
-print $form->selectyesno("forcedate", $conf->global->FAC_FORCE_DATE_VALIDATION, 1);
+print $form->selectyesno("forcedate", getDolGlobalInt('FAC_FORCE_DATE_VALIDATION', 0), 1);
 print '</td><td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";

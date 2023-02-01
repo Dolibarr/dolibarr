@@ -171,6 +171,7 @@ if (!empty($conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE)) {
 
 
 $results = $object->fetchAll($sortfield, $sortorder, 0, 0, array('status' => 1));
+$now = dol_now();
 
 if (is_array($results)) {
 	if (empty($results)) {
@@ -251,7 +252,7 @@ if (is_array($results)) {
 				}
 			}
 			print '<b class="wordbreak">';
-			print $tmpuser->getFullName(-1);
+			print $tmpuser->getFullName($langs);
 			print ' &nbsp; '.dol_print_email($emailforcontact, 0, 0, 1, 0, 0, 'envelope');
 			print '</b>';
 			print '</b><br>';

@@ -158,7 +158,7 @@ if (empty($reshook)) {
 		$action = "";
 	}
 
-	// set accountancy code
+	// Set accountancy code
 	if ($action == 'setcustomeraccountancycode') {
 		$result = $object->fetch($id);
 		$object->code_compta_client = GETPOST("customeraccountancycode");
@@ -169,7 +169,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// terms of the settlement
+	// Payment terms of the settlement
 	if ($action == 'setconditions' && $user->rights->societe->creer) {
 		$object->fetch($id);
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'), GETPOST('cond_reglement_id_deposit_percent', 'alpha'));
@@ -178,7 +178,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// mode de reglement
+	// Payment mode
 	if ($action == 'setmode' && $user->rights->societe->creer) {
 		$object->fetch($id);
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
@@ -187,7 +187,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// transport mode
+	// Transport mode
 	if ($action == 'settransportmode' && $user->rights->societe->creer) {
 		$object->fetch($id);
 		$result = $object->setTransportMode(GETPOST('transport_mode_id', 'alpha'));
@@ -421,7 +421,7 @@ if ($object->id > 0) {
 	print "</td>";
 	print '</tr>';
 
-	// Mode de reglement par defaut
+	// Default payment mode
 	print '<tr><td class="nowrap">';
 	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans('PaymentMode');
@@ -440,7 +440,7 @@ if ($object->id > 0) {
 	print '</tr>';
 
 	if (isModEnabled("banque")) {
-		// Compte bancaire par défaut
+		// Default bank account for payments
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('PaymentBankAccount');
@@ -642,16 +642,16 @@ if ($object->id > 0) {
 
 	print "</table>";
 
+	print '</div><div class="fichehalfright">';
+
 	// Prospection level and status
 	if ($object->client == 2 || $object->client == 3) {
-		print '<br>';
-
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent tableforfield">';
 
 		// Level of prospection
 		print '<tr><td class="titlefield nowrap">';
-		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('ProspectLevel');
 		print '<td>';
 		if ($action != 'editlevel' && $user->rights->societe->creer) {
@@ -683,10 +683,11 @@ if ($object->id > 0) {
 		}
 		print '</div></td></tr>';
 		print "</table>";
-	}
 
-	print '</div><div class="fichehalfright">';
-	print '<div class="underbanner underbanner-before-box clearboth"></div>';
+		print '<br>';
+	} else {
+		print '<div class="underbanner underbanner-before-box clearboth"></div><br>';
+	}
 
 	$boxstat = '';
 
@@ -695,7 +696,7 @@ if ($object->id > 0) {
 
 	// Lien recap
 	$boxstat .= '<div class="box box-halfright">';
-	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop" width="100%">';
+	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop boxtablenomarginbottom centpercent">';
 	$boxstat .= '<tr class="impair nohover"><td colspan="2" class="tdboxstats nohover">';
 
 	if (isModEnabled("propal") && $user->rights->propal->lire) {
@@ -1418,7 +1419,7 @@ if ($object->id > 0) {
 		$sql .= ', f.total_tva';
 		$sql .= ', f.total_ttc';
 		$sql .= ', f.entity';
-		$sql .= ', f.datef as df, f.datec as dc, f.paye as paye, f.fk_statut as status';
+		$sql .= ', f.datef as df, f.date_lim_reglement as dl, f.datec as dc, f.paye as paye, f.fk_statut as status';
 		$sql .= ', s.nom, s.rowid as socid';
 		$sql .= ', SUM(pf.amount) as am';
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
@@ -1426,7 +1427,7 @@ if ($object->id > 0) {
 		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $object->id);
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= ' GROUP BY f.rowid, f.ref, f.type, f.total_ht, f.total_tva, f.total_ttc,';
-		$sql .= ' f.entity, f.datef, f.datec, f.paye, f.fk_statut,';
+		$sql .= ' f.entity, f.datef, f.date_lim_reglement, f.datec, f.paye, f.fk_statut,';
 		$sql .= ' s.nom, s.rowid';
 		$sql .= " ORDER BY f.datef DESC, f.datec DESC";
 
@@ -1440,7 +1441,7 @@ if ($object->id > 0) {
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="5"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllBills").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '<td colspan="5"><table class="centpercent nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllBills").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
@@ -1457,6 +1458,8 @@ if ($object->id > 0) {
 				$facturestatic->total_tva = $objp->total_tva;
 				$facturestatic->total_ttc = $objp->total_ttc;
 				$facturestatic->statut = $objp->status;
+				$facturestatic->date = $db->jdate($objp->df);
+				$facturestatic->date_lim_reglement = $db->jdate($objp->dl);
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
@@ -1492,9 +1495,14 @@ if ($object->id > 0) {
 				//print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
 				print '</td>';
 				if ($objp->df > 0) {
-					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->df), 'day').'</td>';
+					print '<td width="80px" title="'.dol_escape_htmltag($langs->trans('DateInvoice')).'">'.dol_print_date($db->jdate($objp->df), 'day').'</td>';
 				} else {
-					print '<td class="right"><b>!!!</b></td>';
+					print '<td><b>!!!</b></td>';
+				}
+				if ($objp->dl > 0) {
+					print '<td width="80px" title="'.dol_escape_htmltag($langs->trans('DateMaxPayment')).'">'.dol_print_date($db->jdate($objp->dl), 'day').'</td>';
+				} else {
+					print '<td><b>!!!</b></td>';
 				}
 				print '<td class="right" style="min-width: 60px">';
 				print price($objp->total_ht);

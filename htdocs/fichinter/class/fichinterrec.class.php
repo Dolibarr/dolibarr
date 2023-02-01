@@ -150,7 +150,7 @@ class FichinterRec extends Fichinter
 		$fichintsrc = new Fichinter($this->db);
 
 		$result = $fichintsrc->fetch($this->id_origin);
-		$result = $fichintsrc->fetch_lines(1); // to get all lines
+		$result = $fichintsrc->fetch_lines(); // to get all lines
 
 
 		if ($result > 0) {
@@ -234,7 +234,7 @@ class FichinterRec extends Fichinter
 						0,
 						$fichintsrc->lines[$i]->product_type,
 						$fichintsrc->lines[$i]->special_code,
-						$fichintsrc->lines[$i]->label,
+						!empty($fichintsrc->lines[$i]->label) ? $fichintsrc->lines[$i]->label : "",
 						$fichintsrc->lines[$i]->fk_unit
 					);
 
@@ -304,10 +304,10 @@ class FichinterRec extends Fichinter
 				$this->note_private = $obj->note_private;
 				$this->note_public			= $obj->note_public;
 				$this->user_author			= $obj->fk_user_author;
-				$this->model_pdf			= $obj->model_pdf;
-				$this->modelpdf				= $obj->model_pdf; // deprecated
-				$this->rang = $obj->rang;
-				$this->special_code = $obj->special_code;
+				$this->model_pdf			= !empty($obj->model_pdf) ? $obj->model_pdf : "";
+				$this->modelpdf				= !empty($obj->model_pdf) ? $obj->model_pdf : ""; // deprecated
+				$this->rang = !empty($obj->rang) ? $obj->rang : "";
+				$this->special_code = !empty($obj->special_code) ? $obj->special_code : "";
 				$this->frequency			= $obj->frequency;
 				$this->unit_frequency = $obj->unit_frequency;
 				$this->date_when			= $this->db->jdate($obj->date_when);
@@ -384,9 +384,9 @@ class FichinterRec extends Fichinter
 				$line->subprice = $objp->subprice;
 				$line->tva_tx = $objp->tva_tx;
 				$line->remise_percent = $objp->remise_percent;
-				$line->fk_remise_except = $objp->fk_remise_except;
+				$line->fk_remise_except = !empty($objp->fk_remise_except) ? $objp->fk_remise_except : "";
 				$line->fk_product = $objp->fk_product;
-				$line->info_bits = $objp->info_bits;
+				$line->info_bits = !empty($objp->info_bits) ? $objp->info_bits : "";
 				$line->total_ht = $objp->total_ht;
 				$line->total_tva = $objp->total_tva;
 				$line->total_ttc = $objp->total_ttc;
@@ -411,16 +411,13 @@ class FichinterRec extends Fichinter
 	/**
 	 * 	Delete template fichinter rec
 	 *
-	 *	@param	 	int		$rowid	  	    Id of fichinter rec to delete. If empty, we delete current instance of fichinter rec
-	 *	@param		int		$notrigger	    1=Does not execute triggers, 0= execute triggers
-	 *	@param		int		$idwarehouse    Id warehouse to use for stock change.
+	 *	@param      User	$user			Object user who delete
+	 *	@param		int		$notrigger		Disable trigger
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	public function delete($rowid = 0, $notrigger = 0, $idwarehouse = -1)
+	public function delete(User $user, $notrigger = 0)
 	{
-		if (empty($rowid)) {
-			$rowid = $this->id;
-		}
+		$rowid = $this->id;
 
 		dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
 
@@ -664,18 +661,15 @@ class FichinterRec extends Fichinter
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *	@param	string		$option		''=Create a specimen fichinter with lines, 'nolines'=No lines
 	 *  @return	void
 	 */
-	public function initAsSpecimen($option = '')
+	public function initAsSpecimen()
 	{
-		global $user, $langs, $conf;
+		//$now = dol_now();
+		//$arraynow = dol_getdate($now);
+		//$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 
-		$now = dol_now();
-		$arraynow = dol_getdate($now);
-		$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
-
-		parent::initAsSpecimen($option);
+		parent::initAsSpecimen();
 
 		$this->usenewprice = 1;
 	}
@@ -683,16 +677,16 @@ class FichinterRec extends Fichinter
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array('fichinter_rec');
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**

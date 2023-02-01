@@ -640,7 +640,17 @@ class Users extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->useraccount->oldcopy = clone $this->useraccount;
-		return $this->useraccount->delete(DolibarrApiAccess::$user);
+
+		if (!$this->useraccount->delete(DolibarrApiAccess::$user)) {
+			throw new RestException(500);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Ticket deleted'
+			)
+		);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -690,11 +700,6 @@ class Users extends DolibarrApi
 
 		unset($object->lines);
 		unset($object->model_pdf);
-
-		unset($object->skype);
-		unset($object->twitter);
-		unset($object->facebook);
-		unset($object->linkedin);
 
 		$canreadsalary = ((!empty($conf->salaries->enabled) && !empty(DolibarrApiAccess::$user->rights->salaries->read)) || (empty($conf->salaries->enabled)));
 

@@ -27,19 +27,24 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 
 // Load translation files required by the page
-$langs->load("mails");
+$langs->load('mails');
 
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$optioncss = GETPOST('optioncss', 'alpha');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+// Get Parameters
+$massaction = GETPOST('massaction', 'alpha');
+$optioncss 	= GETPOST('optioncss', 'alpha');
+
+// Pagination
+$limit 		= GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield 	= GETPOST('sortfield', 'aZ09comma');
+$sortorder 	= GETPOST('sortorder', 'aZ09comma');
+$page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
@@ -47,10 +52,12 @@ if (!$sortfield) {
 	$sortfield = "m.date_creat";
 }
 
+// Search Fields
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_ref = GETPOST("search_ref", "alpha") ? GETPOST("search_ref", "alpha") : GETPOST("sref", "alpha");
 $filteremail = GETPOST('filteremail', 'alpha');
 
+// Initialize objects
 $object = new Mailing($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -127,7 +134,9 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader('', $langs->trans("Mailing"), 'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
+// Page Header
+$help_url = 'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
+llxHeader('', $langs->trans("Mailing"), $help_url);
 
 $form = new Form($db);
 
@@ -187,7 +196,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
-	$title = $langs->trans("ListOfEMailings");
+	$title = $langs->trans("EMailings");
 	if ($filteremail) {
 		$title .= ' ('.$langs->trans("SentTo", $filteremail).')';
 	}

@@ -57,7 +57,7 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{

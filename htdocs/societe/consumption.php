@@ -204,13 +204,13 @@ if ($object->fournisseur) {
 	$obj = $db->fetch_object($resql);
 	$nbCmdsFourn = $obj->nb;
 	$thirdTypeArray['supplier'] = $langs->trans("supplier");
-	if ((isModEnabled('fournisseur') && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)) {
+	if ((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'facture', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 		$elementTypeArray['supplier_invoice'] = $langs->transnoentitiesnoconv('SuppliersInvoices');
 	}
-	if ((isModEnabled('fournisseur') && $user->rights->fournisseur->commande->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire)) {
+	if ((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'commande', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire'))) {
 		$elementTypeArray['supplier_order'] = $langs->transnoentitiesnoconv('SuppliersOrders');
 	}
-	if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire) {
+	if (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire')) {
 		$elementTypeArray['supplier_proposal'] = $langs->transnoentitiesnoconv('SupplierProposals');
 	}
 }
@@ -399,6 +399,7 @@ $typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPO
 $button = '<input type="submit" class="button buttonform small" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 
 $total_qty = 0;
+$param = '';
 
 if ($sql_select) {
 	$resql = $db->query($sql);

@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - orders
+OrderExists=與此提案/建議書相關聯的訂單已打開，因此不會自動建立其他訂單
 OrdersArea=客戶訂單區
 SuppliersOrdersArea=採購訂單區
 OrderCard=訂單資訊
@@ -74,7 +75,7 @@ ValidateOrder=驗證訂單
 UnvalidateOrder=未驗證訂單
 DeleteOrder=刪除訂單
 CancelOrder=取消訂單
-OrderReopened= 訂單%s重新打開
+OrderReopened= 訂單%s重新啟用
 AddOrder=建立訂單
 AddSupplierOrderShort=建立訂單
 AddPurchaseOrder=建立採購訂單

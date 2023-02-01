@@ -423,6 +423,40 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 	print $content;
 }
 
+/**
+ * Increase the website counter of page access.
+ *
+ * @param   int		$websiteid			ID of website
+ * @param	string	$websitepagetype	Type of page ('blogpost', 'page', ...)
+ * @param	int		$websitepageid		ID of page
+ * @return  int							<0 if KO, >0 if OK
+ */
+function dolWebsiteIncrementCounter($websiteid, $websitepagetype, $websitepageid)
+{
+	if (!getDolGlobalInt('WEBSITE_PERF_DISABLE_COUNTERS')) {
+		//dol_syslog("dolWebsiteIncrementCounter websiteid=".$websiteid." websitepagetype=".$websitepagetype." websitepageid=".$websitepageid);
+		if (in_array($websitepagetype, array('blogpost', 'page'))) {
+			global $db;
+
+			$tmpnow = dol_getdate(dol_now('gmt'), true, 'gmt');
+
+			$sql = "UPDATE ".$db->prefix()."website SET ";
+			$sql .= " pageviews_total = pageviews_total + 1,";
+			$sql .= " pageviews_month = pageviews_month + 1,";
+			// if last access was done during previous month, we save pageview_month into pageviews_previous_month
+			$sql .= " pageviews_previous_month = ".$db->ifsql("lastaccess < '".$db->idate(dol_mktime(0, 0, 0, $tmpnow['month'], 1, $tmpnow['year'], 'gmt', 0), 'gmt')."'", 'pageviews_month', 'pageviews_previous_month').",";
+			$sql .= " lastaccess = '".$db->idate(dol_now('gmt'), 'gmt')."'";
+			$sql .= " WHERE rowid = ".((int) $websiteid);
+			$resql = $db->query($sql);
+			if (! $resql) {
+				return -1;
+			}
+		}
+	}
+
+	return 1;
+}
+
 
 /**
  * Format img tags to introduce viewimage on img src.
@@ -936,7 +970,7 @@ function getSocialNetworkSharingLinks()
  * @param	string		$langcode			Language code ('' or 'en', 'fr', 'es', ...)
  * @param	array		$otherfilters		Other filters
  * @param	int			$status				0 or 1, or -1 for both
- * @return  string							HTML content
+ * @return  array							Array with results of search
  */
 function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = 'null', $status = 1)
 {
@@ -974,6 +1008,8 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 	$found = 0;
 
 	if (!$error && (empty($max) || ($found < $max)) && (preg_match('/meta/', $algo) || preg_match('/content/', $algo))) {
+		include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
+
 		$sql = 'SELECT wp.rowid FROM '.MAIN_DB_PREFIX.'website_page as wp';
 		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
 			$sql .= ', '.MAIN_DB_PREFIX.'categorie_website_page as cwp';
@@ -983,7 +1019,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 			$sql .= " AND wp.status = ".((int) $status);
 		}
 		if ($langcode) {
-			$sql .= " AND wp.lang ='".$db->escape($langcode)."'";
+			$sql .= " AND wp.lang = '".$db->escape($langcode)."'";
 		}
 		if ($type) {
 			$tmparrayoftype = explode(',', $type);
@@ -996,11 +1032,11 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$sql .= " AND (";
 		$searchalgo = '';
 		if (preg_match('/meta/', $algo)) {
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.title LIKE '%".$db->escapeforlike($db->escape($searchstring))."%' OR wp.description LIKE '%".$db->escapeforlike($db->escape($searchstring))."%'";
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.keywords LIKE '".$db->escapeforlike($db->escape($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escapeforlike($db->escape($searchstring))."%'"; // TODO Use a better way to scan keywords
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.title LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.description LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.keywords LIKE '".$db->escape($db->escapeforlike($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escape($db->escapeforlike($searchstring))."%'"; // TODO Use a better way to scan keywords
 		}
 		if (preg_match('/content/', $algo)) {
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escapeforlike($db->escape($searchstring))."%'";
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
 		}
 		$sql .= $searchalgo;
 		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
@@ -1012,6 +1048,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		//print $sql;
 
 		$resql = $db->query($sql);
+
 		if ($resql) {
 			$i = 0;
 			while (($obj = $db->fetch_object($resql)) && ($i < $max || $max == 0)) {

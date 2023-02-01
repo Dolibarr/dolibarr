@@ -6,7 +6,7 @@
  * Copyright (C) 2013       Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016  Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2021  Thibault FOUCART     <support@ptibogxiv.net>
+ * Copyright (C) 2018-2023  Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2021       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -80,7 +80,7 @@ $hookmanager->initHooks(array('thirdpartybancard', 'globalcard'));
 
 // Permissions
 $permissiontoread = $user->hasRight('societe', 'lire');
-$permissiontoadd = $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_builddoc.inc.php
+$permissiontoadd = $user->hasRight('societe', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_builddoc.inc.php
 
 $permissiontoaddupdatepaymentinformation = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $permissiontoadd) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->societe->thirdparty_paymentinformation_advance->write)));
 
@@ -111,6 +111,7 @@ if ($cancel) {
 	$action = '';
 }
 
+$morehtmlright = '';
 $parameters = array('id'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -182,8 +183,10 @@ if (empty($reshook)) {
 			$companybankaccount->stripe_card_ref = GETPOST('stripe_card_ref', 'alpha');
 
 			$result = $companybankaccount->update($user);
-			if (!$result) {
+			if ($result <= 0) {
+				// Display error message and get back to edit mode
 				setEventMessages($companybankaccount->error, $companybankaccount->errors, 'errors');
+				$action = 'edit';
 			} else {
 				// If this account is the default bank account, we disable others
 				if ($companybankaccount->default_rib) {
@@ -254,13 +257,8 @@ if (empty($reshook)) {
 	if ($action == 'add') {
 		$error = 0;
 
-		if (!GETPOST('label', 'alpha') || !GETPOST('bank', 'alpha')) {
-			if (!GETPOST('label', 'alpha')) {
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
-			}
-			if (!GETPOST('bank', 'alpha')) {
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankName")), null, 'errors');
-			}
+		if (!GETPOST('label', 'alpha')) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 			$action = 'create';
 			$error++;
 		}
@@ -270,6 +268,8 @@ if (empty($reshook)) {
 			$companybankaccount = new CompanyBankAccount($db);
 
 			$companybankaccount->socid           = $object->id;
+
+			$companybankaccount->fetch_thirdparty();
 
 			$companybankaccount->bank            = GETPOST('bank', 'alpha');
 			$companybankaccount->label           = GETPOST('label', 'alpha');
@@ -289,6 +289,12 @@ if (empty($reshook)) {
 			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOST('date_rummonth', 'int'), GETPOST('date_rumday', 'int'), GETPOST('date_rumyear', 'int'));
 			$companybankaccount->datec = dol_now();
 			$companybankaccount->status          = 1;
+
+			$companybankaccount->bank = trim($companybankaccount->bank);
+			if (empty($companybankaccount->bank) && !empty($companybankaccount->thirdparty)) {
+				$companybankaccount->bank = $langs->trans("Bank").' '.$companybankaccount->thirdparty->name;
+			}
+			$companybankaccount->bic = str_replace(' ', '', $companybankaccount->bic);
 
 			$db->begin();
 
@@ -1128,7 +1134,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 								print '....'.$companypaymentmodetemp->last_four;
 							}
 							if ($companypaymentmodetemp->exp_date_month || $companypaymentmodetemp->exp_date_year) {
-								print ' - '.sprintf("%02d", $companypaymentmodetemp->exp_date_month).'/'.$companypaymentmodetemp->exp_date_year.'';
+								print ' - '.sprintf("%02d", $companypaymentmodetemp->exp_date_month).'/'.$companypaymentmodetemp->exp_date_year;
 							}
 							print '</td><td>';
 							if ($companypaymentmodetemp->country_code) {
@@ -1235,7 +1241,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				// Information
 				print '<td valign="middle">';
 				if ($src->object == 'card') {
-					print '....'.$src->last4.' - '.$src->exp_month.'/'.$src->exp_year.'';
+					print '....'.$src->last4.' - '.$src->exp_month.'/'.$src->exp_year;
 					print '</td><td>';
 					if ($src->country) {
 						$img = picto_from_langcode($src->country);
@@ -1245,7 +1251,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
 				} elseif ($src->object == 'source' && $src->type == 'card') {
-					print '<span class="opacitymedium">'.$src->owner->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
+					print '<span class="opacitymedium">'.$src->owner->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year;
 					print '</td><td>';
 
 					if ($src->card->country) {
@@ -1266,7 +1272,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
 				} elseif ($src->object == 'payment_method' && $src->type == 'card') {
-					print '<span class="opacitymedium">'.$src->billing_details->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
+					print '<span class="opacitymedium">'.$src->billing_details->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year;
 					print '</td><td>';
 
 					if ($src->card->country) {
@@ -1375,7 +1381,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		if (is_array($currencybalance)) {
 			foreach ($currencybalance as $cpt) {
-				print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'], 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'] + $cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td></tr>';
+				print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'], 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price(isset($cpt->pending)?$cpt->pending:0, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'] + (isset($cpt->pending)?$cpt->pending:0), 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td></tr>';
 			}
 		}
 
@@ -1479,20 +1485,22 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print $string;
 			print '</td>';
 			// IBAN
-			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->iban).'">'.dol_escape_htmltag($rib->iban);
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->iban).'">';
 			if (!empty($rib->iban)) {
 				if (!checkIbanForAccount($rib)) {
-					print ' '.img_picto($langs->trans("IbanNotValid"), 'warning');
+					print img_picto($langs->trans("IbanNotValid"), 'warning').' ';
 				}
 			}
+			print dol_escape_htmltag($rib->iban);
 			print '</td>';
 			// BIC
-			print '<td>'.$rib->bic;
+			print '<td>';
 			if (!empty($rib->bic)) {
 				if (!checkSwiftForAccount($rib)) {
-					print ' '.img_picto($langs->trans("SwiftNotValid"), 'warning');
+					print img_picto($langs->trans("SwiftNotValid"), 'warning').' ';
 				}
 			}
+			print dol_escape_htmltag($rib->bic);
 			print '</td>';
 
 			if (!empty($conf->prelevement->enabled)) {
@@ -1975,7 +1983,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td>';
 	print '<td><input class="minwidth200" type="text" id="label" name="label" value="'.(GETPOSTISSET('label') ? GETPOST('label') : $object->name).'"></td></tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("Bank").'</td>';
+	print '<tr><td>'.$langs->trans("Bank").'</td>';
 	print '<td><input class="minwidth200" type="text" id="bank" name="bank" value="'.GETPOST('bank').'"></td></tr>';
 
 	// Show fields of bank account

@@ -93,6 +93,16 @@ if (is_object($hookmanager)) {
 	$reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 }
 
+//Line extrafield
+if (is_object($objectline) && !empty($extrafields)) {
+	$temps = $line->showOptionals($extrafields, 'edit', array('class'=>'tredited'), '', '', 1, 'line');
+	if (!empty($temps)) {
+		print '<div style="padding-top: 10px" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
+		print $temps;
+		print '</div>';
+	}
+}
+
 print '</td>';
 
 /*if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
@@ -116,7 +126,7 @@ if (($line->info_bits & 2) != 2) {
 print '</td>';
 
 if ($filtertype != 1) {
-	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
 		print '</td>';
@@ -159,9 +169,5 @@ print '<input type="submit" class="button buttongen margintoponly marginbottomon
 print '<input type="submit" class="button buttongen margintoponly marginbottomonly button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'">';
 print '</td>';
 print '</tr>';
-
-if (is_object($objectline)) {
-	print $objectline->showOptionals($extrafields, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', 1, 'line');
-}
 
 print "<!-- END PHP TEMPLATE objectline_edit.tpl.php -->\n";

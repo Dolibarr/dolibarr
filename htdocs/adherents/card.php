@@ -6,7 +6,7 @@
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012-2020  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -98,14 +98,14 @@ if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 
 	// Define variables to know what current user can do on users
-	$canadduser = ($user->admin || $user->rights->user->user->creer);
+	$canadduser = ($user->admin || $user->hasRight('user', 'user', 'creer'));
 	// Define variables to know what current user can do on properties of user linked to edited member
 	if ($object->user_id) {
 		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
-		$caneditfielduser = ((($user->id == $object->user_id) && $user->rights->user->self->creer)
-			|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
-		$caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
-			|| (($user->id != $object->user_id) && $user->rights->user->user->password));
+		$caneditfielduser = ((($user->id == $object->user_id) && $user->hasRight('user', 'self', 'creer'))
+			|| (($user->id != $object->user_id) && $user->hasRight('user', 'user', 'creer')));
+		$caneditpassworduser = ((($user->id == $object->user_id) && $user->hasRight('user', 'self', 'password'))
+			|| (($user->id != $object->user_id) && $user->hasRight('user', 'user', 'password')));
 	}
 }
 
@@ -154,9 +154,9 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer)) {
+	if ($action == 'setuserid' && ($user->hasRight('user', 'self', 'creer') || $user->hasRight('user', 'user', 'creer'))) {
 		$error = 0;
-		if (empty($user->rights->user->user->creer)) {	// If can edit only itself user, we can link to itself only
+		if (!$user->hasRight('user', 'user', 'creer')) {	// If can edit only itself user, we can link to itself only
 			if ($userid != $user->id && $userid != $object->user_id) {
 				$error++;
 				setEventMessages($langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly"), null, 'errors');
@@ -206,7 +206,7 @@ if (empty($reshook)) {
 	}
 
 	// Create user from a member
-	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->rights->user->user->creer) {
+	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->hasRight('user', 'user', 'creer')) {
 		if ($result > 0) {
 			// Creation user
 			$nuser = new User($db);
@@ -230,7 +230,7 @@ if (empty($reshook)) {
 	}
 
 	// Create third party from a member
-	if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights->societe->creer) {
+	if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->hasRight('societe', 'creer')) {
 		if ($result > 0) {
 			// User creation
 			$company = new Societe($db);
@@ -305,23 +305,19 @@ if (empty($reshook)) {
 			$object->phone       = trim(GETPOST("phone", 'alpha'));
 			$object->phone_perso = trim(GETPOST("phone_perso", 'alpha'));
 			$object->phone_mobile = trim(GETPOST("phone_mobile", 'alpha'));
-			$object->email       = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
-			$object->url 		 = trim(GETPOST('member_url', 'custom', 0, FILTER_SANITIZE_URL));
+			$object->email = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
+			$object->url = trim(GETPOST('member_url', 'custom', 0, FILTER_SANITIZE_URL));
 			$object->socialnetworks = array();
 			foreach ($socialnetworks as $key => $value) {
 				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
 					$object->socialnetworks[$key] = trim(GETPOST($key, 'alphanohtml'));
 				}
 			}
-			//$object->skype       = trim(GETPOST("skype", 'alpha'));
-			//$object->twitter     = trim(GETPOST("twitter", 'alpha'));
-			//$object->facebook    = trim(GETPOST("facebook", 'alpha'));
-			//$object->linkedin    = trim(GETPOST("linkedin", 'alpha'));
-			$object->birth		= $birthdate;
+			$object->birth = $birthdate;
 			$object->default_lang = GETPOST('default_lang', 'alpha');
-			$object->typeid      = GETPOST("typeid", 'int');
-			//$object->note        = trim(GETPOST("comment","alpha"));
-			$object->morphy      = GETPOST("morphy", 'alpha');
+			$object->typeid = GETPOST("typeid", 'int');
+			//$object->note = trim(GETPOST("comment","alpha"));
+			$object->morphy = GETPOST("morphy", 'alpha');
 
 			if (GETPOST('deletephoto', 'alpha')) {
 				$object->photo = '';
@@ -330,8 +326,8 @@ if (empty($reshook)) {
 			}
 
 			// Get status and public property
-			$object->statut      = GETPOST("statut", 'alpha');
-			$object->public      = GETPOST("public", 'alpha');
+			$object->statut = GETPOST("statut", 'alpha');
+			$object->public = GETPOST("public", 'alpha');
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -342,7 +338,7 @@ if (empty($reshook)) {
 			// Check if we need to also synchronize user information
 			$nosyncuser = 0;
 			if ($object->user_id) {	// If linked to a user
-				if ($user->id != $object->user_id && empty($user->rights->user->user->creer)) {
+				if ($user->id != $object->user_id && !$user->hasRight('user', 'user', 'creer')) {
 					$nosyncuser = 1; // Disable synchronizing
 				}
 			}
@@ -350,7 +346,7 @@ if (empty($reshook)) {
 			// Check if we need to also synchronize password information
 			$nosyncuserpass = 0;
 			if ($object->user_id) {	// If linked to a user
-				if ($user->id != $object->user_id && empty($user->rights->user->user->password)) {
+				if ($user->id != $object->user_id && !$user->hasRight('user', 'user', 'password')) {
 					$nosyncuserpass = 1; // Disable synchronizing
 				}
 			}
@@ -454,7 +450,7 @@ if (empty($reshook)) {
 		// $facebook=GETPOST("member_facebook", 'alpha');
 		// $linkedin=GETPOST("member_linkedin", 'alpha');
 		$email = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
-		$url   = trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
+		$url = trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
 		$login = GETPOST("member_login", 'alphanohtml');
 		$pass = GETPOST("password", 'none');	// For password, we use 'none'
 		$photo = GETPOST("photo", 'alphanohtml');
@@ -487,11 +483,6 @@ if (empty($reshook)) {
 				}
 			}
 		}
-
-		// $object->skype       = $skype;
-		// $object->twitter     = $twitter;
-		// $object->facebook    = $facebook;
-		// $object->linkedin    = $linkedin;
 
 		$object->email       = $email;
 		$object->url       	 = $url;
@@ -565,7 +556,7 @@ if (empty($reshook)) {
 		}
 		if (!empty($object->url) && !isValidUrl($object->url)) {
 			$langs->load("errors");
-			setEventMessages('', $langs->trans("ErrorBadUrl", $object->url), 'errors');
+			setEventMessages($langs->trans("ErrorBadUrl", $object->url), null, 'errors');
 		}
 		$public = 0;
 		if (isset($public)) {
@@ -617,10 +608,11 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($user->rights->adherent->supprimer && $action == 'confirm_delete' && $confirm == 'yes') {
+	if ($user->hasRight('adherent', 'supprimer') && $action == 'confirm_delete' && $confirm == 'yes') {
 		$result = $object->delete($id, $user);
 		if ($result > 0) {
-			if (!empty($backtopage)) {
+			setEventMessages($langs->trans("RecordDeleted"), null, 'errors');
+			if (!empty($backtopage) && !preg_match('/'.preg_quote($_SERVER["PHP_SELF"], '/').'/', $backtopage)) {
 				header("Location: ".$backtopage);
 				exit;
 			} else {
@@ -658,7 +650,7 @@ if (empty($reshook)) {
 				$outputlangs->loadLangs(array("main", "members", "companies", "install", "other"));
 				// Get email content from template
 				$arraydefaultmessage = null;
-				$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION;
+				$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION');
 
 				if (!empty($labeltouse)) {
 					$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
@@ -706,7 +698,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($user->rights->adherent->supprimer && $action == 'confirm_resiliate') {
+	if ($user->hasRight('adherent', 'supprimer') && $action == 'confirm_resiliate') {
 		$error = 0;
 
 		if ($confirm == 'yes') {
@@ -730,7 +722,7 @@ if (empty($reshook)) {
 					$outputlangs->loadLangs(array("main", "members", "companies", "install", "other"));
 					// Get email content from template
 					$arraydefaultmessage = null;
-					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_CANCELATION;
+					$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_CANCELATION');
 
 					if (!empty($labeltouse)) {
 						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
@@ -777,7 +769,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($user->rights->adherent->supprimer && $action == 'confirm_exclude') {
+	if ($user->hasRight('adherent', 'supprimer') && $action == 'confirm_exclude') {
 		$error = 0;
 
 		if ($confirm == 'yes') {
@@ -801,7 +793,7 @@ if (empty($reshook)) {
 					$outputlangs->loadLangs(array("main", "members", "companies", "install", "other"));
 					// Get email content from template
 					$arraydefaultmessage = null;
-					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_EXCLUSION;
+					$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_EXCLUSION');
 
 					if (!empty($labeltouse)) {
 						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
@@ -849,7 +841,7 @@ if (empty($reshook)) {
 	}
 
 	// SPIP Management
-	if ($user->rights->adherent->supprimer && $action == 'confirm_del_spip' && $confirm == 'yes') {
+	if ($user->hasRight('adherent', 'supprimer') && $action == 'confirm_del_spip' && $confirm == 'yes') {
 		if (!count($object->errors)) {
 			if (!$mailmanspip->del_to_spip($object)) {
 				setEventMessages($langs->trans('DeleteIntoSpipError').': '.$mailmanspip->error, null, 'errors');
@@ -1045,7 +1037,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Website
 		print '<tr><td>'.$form->editfieldkey('Web', 'member_url', GETPOST('member_url', 'alpha'), $object, 0).'</td>';
-		print '<td>'.img_picto('', 'globe').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="member_url" id="member_url" value="'.(GETPOSTISSET('member_url', 'alpha') ? GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
+		print '<td>'.img_picto('', 'globe').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="member_url" id="member_url" value="'.(GETPOSTISSET('member_url') ? GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
 
 		// Address
 		print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>';
@@ -1118,7 +1110,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</td></tr>\n";
 
 		// Categories
-		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 			print '<tr><td>'.$form->editfieldkey("Categories", 'memcats', '', $object, 0).'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, null, 'parent', null, null, 1);
 			print img_picto('', 'category').$form->multiselectarray('memcats', $cate_arbo, GETPOST('memcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
@@ -1367,7 +1359,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</td></tr>\n";
 
 		// Categories
-		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 			print '<tr><td>'.$form->editfieldkey("Categories", 'memcats', '', $object, 0).'</td>';
 			print '<td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, null, null, null, null, 1);
@@ -1523,7 +1515,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 				$subject = $arraydefaultmessage->topic;
-				$msg     = $arraydefaultmessage->content;
+				$msg = $arraydefaultmessage->content;
 			}
 
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
@@ -1532,10 +1524,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
 
 			$tmp = $langs->trans("SendingAnEMailToMember");
-			$tmp .= '<br>'.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
+			$tmp .= '<br>'.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM').'</b>, ';
 			$tmp .= '<br>'.$langs->trans("MailRecipient").': <b>'.$object->email.'</b>';
 			$helpcontent = '';
-			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
 			$helpcontent .= $subjecttosend."\n";
@@ -1595,10 +1587,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnResiliate()), $substitutionarray, $outputlangs);
 
 			$tmp = $langs->trans("SendingAnEMailToMember");
-			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
+			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM').'</b>, ';
 			$tmp .= $langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
 			$helpcontent = '';
-			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
 			$helpcontent .= $subjecttosend."\n";
@@ -1638,7 +1630,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$outputlangs->loadLangs(array("main", "members"));
 			// Get email content from template
 			$arraydefaultmessage = null;
-			$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_EXCLUSION;
+			$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_EXCLUSION');
 
 			if (!empty($labeltouse)) {
 				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
@@ -1655,10 +1647,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnExclude()), $substitutionarray, $outputlangs);
 
 			$tmp = $langs->trans("SendingAnEMailToMember");
-			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
+			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM').'</b>, ';
 			$tmp .= $langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
 			$helpcontent = '';
-			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
 			$helpcontent .= $subjecttosend."\n";
@@ -1793,7 +1785,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border tableforfield centpercent">';
 
 		// Tags / Categories
-		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 			print '<tr><td>'.$langs->trans("Categories").'</td>';
 			print '<td colspan="2">';
 			print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
@@ -1862,7 +1854,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Login Dolibarr - Link to user
 		print '<tr><td>';
-		$editenable = $user->hasRight('adherent', 'creer') && $user->rights->user->user->creer;
+		$editenable = $user->hasRight('adherent', 'creer') && $user->hasRight('user', 'user', 'creer');
 		print $form->editfieldkey('LinkedToDolibarrUser', 'login', '', $object, $editenable);
 		print '</td><td colspan="2" class="valeur">';
 		if ($action == 'editlogin') {
@@ -1944,7 +1936,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				// Resiliate
 				if (Adherent::STATUS_VALIDATED == $object->statut) {
-					if ($user->rights->adherent->supprimer) {
+					if ($user->hasRight('adherent', 'supprimer')) {
 						print '<a class="butAction" href="card.php?rowid='.((int) $object->id).'&action=resiliate">'.$langs->trans("Resiliate")."</a></span>\n";
 					} else {
 						print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Resiliate").'</span>'."\n";
@@ -1953,7 +1945,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				// Exclude
 				if (Adherent::STATUS_VALIDATED == $object->statut) {
-					if ($user->rights->adherent->supprimer) {
+					if ($user->hasRight('adherent', 'supprimer')) {
 						print '<a class="butAction" href="card.php?rowid='.((int) $object->id).'&action=exclude">'.$langs->trans("Exclude")."</a></span>\n";
 					} else {
 						print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Exclude").'</span>'."\n";
@@ -1962,7 +1954,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				// Create third party
 				if (isModEnabled('societe') && !$object->socid) {
-					if ($user->rights->societe->creer) {
+					if ($user->hasRight('societe', 'creer')) {
 						if (Adherent::STATUS_DRAFT != $object->statut) {
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.((int) $object->id).'&amp;action=create_thirdparty" title="'.dol_escape_htmltag($langs->trans("CreateDolibarrThirdPartyDesc")).'">'.$langs->trans("CreateDolibarrThirdParty").'</a>'."\n";
 						} else {
@@ -1975,7 +1967,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				// Create user
 				if (!$user->socid && !$object->user_id) {
-					if ($user->rights->user->user->creer) {
+					if ($user->hasRight('user', 'user', 'creer')) {
 						if (Adherent::STATUS_DRAFT != $object->statut) {
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.((int) $object->id).'&amp;action=create_user" title="'.dol_escape_htmltag($langs->trans("CreateDolibarrLoginDesc")).'">'.$langs->trans("CreateDolibarrLogin").'</a>'."\n";
 						} else {
@@ -1999,7 +1991,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 
 				// Delete
-				if ($user->rights->adherent->supprimer) {
+				if ($user->hasRight('adherent', 'supprimer')) {
 					print '<a class="butActionDelete" href="card.php?rowid='.((int) $object->id).'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>'."\n";
 				} else {
 					print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Delete").'</span>'."\n";
@@ -2026,7 +2018,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member');
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
-			$genallowed = $user->rights->adherent->lire;
+			$genallowed = $user->hasRight('adherent', 'lire');
 			$delallowed = $user->hasRight('adherent', 'creer');
 
 			print $formfile->showdocuments('member', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', (empty($object->default_lang) ? '' : $object->default_lang), '', $object);

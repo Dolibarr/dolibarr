@@ -119,6 +119,11 @@ class ProductAttribute extends CommonObject
 	 */
 	public $line;
 
+	/**
+	 * @var int		Number of product that use this attribute
+	 */
+	public $is_used_by_products;
+
 
 	/**
 	 * Constructor
@@ -914,7 +919,7 @@ class ProductAttribute extends CommonObject
 			$parameters = array('rowid' => $rowid, 'position' => $position);
 			$action = '';
 			$reshook = $hookmanager->executeHooks('afterPositionOfAttributeUpdate', $parameters, $this, $action);
-			return 1;
+			return ($reshook >= 0 ? 1 : -1);
 		}
 	}
 
@@ -1272,11 +1277,13 @@ class ProductAttribute extends CommonObject
 	 *	@param	int			$selected		   	Object line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
 	 *  @param	string		$defaulttpldir		Directory where to find the template
+	 *  @param	int			$addcreateline		1=Add create line
 	 *	@return	void
 	 */
-	public function printObjectLines($action, $seller, $buyer, $selected = 0, $dateSelector = 0, $defaulttpldir = '/variants/tpl')
+	public function printObjectLines($action, $seller, $buyer, $selected = 0, $dateSelector = 0, $defaulttpldir = '/variants/tpl', $addcreateline = 0)
 	{
 		global $conf, $hookmanager, $langs, $user, $form, $object;
+		global $mysoc;
 		// TODO We should not use global var for this
 		global $disableedit, $disablemove, $disableremove;
 
@@ -1306,9 +1313,25 @@ class ProductAttribute extends CommonObject
 			}
 		}
 
+
+		if ($addcreateline) {
+			// Form to add new line
+			if ($action != 'selectlines') {
+				if ($action != 'editline') {
+					// Add products/services form
+
+					$parameters = array();
+					$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+					if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+					if (empty($reshook))
+						$object->formAddObjectLine(1, $mysoc, $buyer);
+				}
+			}
+		}
+
 		$i = 0;
 
-		print "<!-- begin printObjectLines() --><tbody>\n";
+		print "<!-- begin printObjectLines() -->\n";
 		foreach ($this->lines as $line) {
 			if (is_object($hookmanager)) {   // Old code is commented on preceding line.
 				$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'selected' => $selected, 'table_element_line' => $line->table_element);
@@ -1320,7 +1343,7 @@ class ProductAttribute extends CommonObject
 
 			$i++;
 		}
-		print "</tbody><!-- end printObjectLines() -->\n";
+		print "<!-- end printObjectLines() -->\n";
 	}
 
 	/**
