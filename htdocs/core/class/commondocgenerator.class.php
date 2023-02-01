@@ -66,6 +66,16 @@ abstract class CommonDocGenerator
 	public $scandir;
 
 	/**
+	 * @var string model name
+	 */
+	public $name;
+
+	/**
+	 * @var string model description (short text)
+	 */
+	public $description;
+
+	/**
 	 * @var array
 	 */
 	public $format;
