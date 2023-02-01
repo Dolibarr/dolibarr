@@ -6314,7 +6314,6 @@ abstract class CommonObject
 									$new_array_options[$key] = $object->id;
 								} else {
 									$this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
-									$this->db->rollback();
 									return -1;
 								}
 							}
