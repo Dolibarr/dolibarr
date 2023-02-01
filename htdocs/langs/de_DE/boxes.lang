@@ -24,6 +24,7 @@ BoxFicheInter=Neueste Serviceaufträge
 BoxCurrentAccounts=Saldo offene Konten
 BoxTitleMemberNextBirthdays=Geburtstage in diesem Monat (Mitglieder)
 BoxTitleMembersByType=Mitglieder nach Typ und Status
+BoxTitleMembersByTags=Mitglieder nach Kategorien und Status
 BoxTitleMembersSubscriptionsByYear=Mitgliederabonnements nach Jahr
 BoxTitleLastRssInfos=%s neueste Neuigkeiten von %s
 BoxTitleLastProducts=Zuletzt bearbeitete Produkte / Leistungen (maximal %s)

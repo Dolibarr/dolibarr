@@ -26,6 +26,7 @@ Permission56002=Изменить тикеты
 Permission56003=Удалить тикеты
 Permission56004=Управлять тикетами
 Permission56005=Просмотр тикетов всех третьих лиц (не действует для внешних пользователей, всегда ограничивается третьей стороной, от которой они зависят)
+Permission56006=Export tickets
 
 Tickets=Тикеты
 TicketDictType=Тикет - Типы
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Внешний участник
 
 OriginEmail=Электронная почта репортера
 Notify_TICKET_SENTBYMAIL=Отправить сообщение тикета по электронной почте
+
+ExportDataset_ticket_1=Тикеты
 
 # Status
 Read=Читать

@@ -303,6 +303,7 @@ ErrorValueForTooLow=Η τιμή για <b> %s </b> είναι πολύ χαμη�
 ErrorValueCantBeNull=Η τιμή για <b> %s </b> δεν μπορεί να είναι μηδενική
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Η ημερομηνία της τραπεζικής συναλλαγής δεν μπορεί να είναι παλαιότερη από την ημερομηνία αποστολής του αρχείου
 ErrorTooMuchFileInForm=Πάρα πολλά αρχεία στην φόρμα, ο μέγιστος αριθμός είναι %s αρχεία 
+ErrorSessionInvalidatedAfterPasswordChange=Η συνεδρία ακυρώθηκε μετά από αλλαγή κωδικού πρόσβασης, κατάστασης ή ημερομηνιών εγκυρότητας. Παρακαλώ συνδεθείτε ξανά.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Η παράμετρος PHP upload_max_filesize (%s) είναι υψηλότερη από την παράμετρο PHP post_max_size (%s). Αυτή δεν είναι μια συνεπής ρύθμιση.
@@ -325,6 +326,7 @@ WarningPaymentDateLowerThanInvoiceDate=Η ημερομηνία πληρωμής 
 WarningTooManyDataPleaseUseMoreFilters=Πάρα πολλά δεδομένα (περισσότερες από %sγραμμές). Χρησιμοποιήστε περισσότερα φίλτρα ή ορίστε τη σταθερά %s σε υψηλότερο όριο.
 WarningSomeLinesWithNullHourlyRate=Κάποιοι χρόνοι καταγράφηκαν από ορισμένους χρήστες ενώ η ωριαία τιμή τους δεν είχε καθοριστεί. Χρησιμοποιήθηκε μια τιμή 0 %s ανά ώρα, αλλά αυτό μπορεί να οδηγήσει σε λανθασμένη εκτίμηση του χρόνου που δαπανήθηκε.
 WarningYourLoginWasModifiedPleaseLogin=Η σύνδεσή σας τροποποιήθηκε. Για λόγους ασφαλείας θα πρέπει να συνδεθείτε με τη νέα σας σύνδεση πριν από την επόμενη ενέργεια.
+WarningYourPasswordWasModifiedPleaseLogin=Ο κωδικός πρόσβασης σας τροποποιήθηκε. Για λόγους ασφαλείας θα πρέπει να συνδεθείτε τώρα με τον νέο σας κωδικό πρόσβασης.
 WarningAnEntryAlreadyExistForTransKey=Υπάρχει ήδη μια καταχώριση για το κλειδί μετάφρασης για αυτήν τη γλώσσα
 WarningNumberOfRecipientIsRestrictedInMassAction=Προειδοποίηση, ο αριθμός διαφορετικών παραληπτών περιορίζεται σε <b>%s</b> όταν χρησιμοποιείτε τις μαζικές ενέργειες σε λίστες
 WarningDateOfLineMustBeInExpenseReportRange=Προειδοποίηση, η ημερομηνία γραμμής δεν είναι στο εύρος της αναφοράς εξόδων

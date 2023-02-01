@@ -7801,7 +7801,7 @@ class Form
 	}
 
 	/**
-	 * Function to forge a SQL criteria
+	 * Function to forge a SQL criteria from a Dolibarr filter syntax string.
 	 *
 	 * @param  array    $matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.nature:is:NULL"
 	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
@@ -7816,17 +7816,30 @@ class Form
 		}
 		$tmp = explode(':', $matches[1]);
 		if (count($tmp) < 3) {
-			return '';
+			return '1=2';	// An always false request
 		}
 
 		$tmpescaped = $tmp[2];
 		$regbis = array();
+
 		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 			$tmpescaped = "'".$db->escape($regbis[1])."'";
 		} else {
 			$tmpescaped = $db->escape($tmpescaped);
 		}
-		return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;
+
+		if ($tmp[1] == '!=') {
+			$tmp[1] = '<>';
+		}
+
+		if (preg_match('/[\(\)]/', $tmp[0])) {
+			return '1=2';	// An always false request
+		}
+		if (! in_array($tmp[1], array('<', '>', '<>', 'is', 'isnot', '=', 'like'))) {
+			return '1=2';	// An always false request
+		}
+
+		return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1])).' '.$tmpescaped;
 	}
 
 	/**

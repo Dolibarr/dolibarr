@@ -102,6 +102,7 @@ NbOperatorsRequired=Número de operadores precisos
 THMOperatorEstimated=THM estimada operador
 THMMachineEstimated=THM estimada máquina
 WorkstationType=Tipo de estación de traballo
+DefaultWorkstation=Estación de traballo predeterminada
 Human=Humano
 Machine=Máquina
 HumanMachine=Humano/Máquina

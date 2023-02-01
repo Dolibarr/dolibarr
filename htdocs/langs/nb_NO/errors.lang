@@ -303,6 +303,7 @@ ErrorValueForTooLow=Verdien for <b> %s </b> er for lav
 ErrorValueCantBeNull=Verdien for <b> %s </b> kan ikke være null
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Datoen for banktransaksjonen kan ikke være lavere enn datoen for filoverføringen
 ErrorTooMuchFileInForm=For mange filer i skjemaet, maksimalt antall er %s fil(er)
+ErrorSessionInvalidatedAfterPasswordChange=Økten ble ugyldig etter endring av passord, status eller gyldighetsdato. Logg på på nytt.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP-parameteren upload_max_filesize (%s) er høyere enn PHP-parameteren post_max_size (%s). Dette er ikke et konsistent oppsett.
@@ -325,6 +326,7 @@ WarningPaymentDateLowerThanInvoiceDate=Betalingsdato (%s) er tidligere enn faktu
 WarningTooManyDataPleaseUseMoreFilters=For mange data (mer enn %s linjer). Bruk flere filtre eller sett konstanten %s til en høyere grense.
 WarningSomeLinesWithNullHourlyRate=Noen tider ble registrert av noen brukere mens deres timepris ikke var definert. En verdi på 0 %s pr. time ble brukt, men dette kan føre til feil verdivurdering av tidsbruk.
 WarningYourLoginWasModifiedPleaseLogin=Din innlogging er blitt endret. Av sikkerhetsgrunner må du logge inn på nytt før du kan gjøre noe.
+WarningYourPasswordWasModifiedPleaseLogin=Passordet ditt ble endret. Av sikkerhetshensyn må du logge på nå med ditt nye passord.
 WarningAnEntryAlreadyExistForTransKey=En oppføring eksisterer allerede for oversettelsesnøkkel for dette språket
 WarningNumberOfRecipientIsRestrictedInMassAction=Advarsel, antall forskjellige mottakere er begrenset til <b> %s </b> ved bruk av massehandlinger på lister
 WarningDateOfLineMustBeInExpenseReportRange=Advarsel, datoen for linjen ligger utenfor tiden til utgiftsrapporten

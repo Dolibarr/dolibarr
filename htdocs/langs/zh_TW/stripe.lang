@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live金鑰
 ONLINE_PAYMENT_WAREHOUSE=完成線上支付時用於減少庫存的庫存<br>（待辦事項 如果針對發票操作完成了減少庫存的選項，線上支付也同時產生發票？）
 StripeLiveEnabled=啟用Stripe live模式（否則為測試/沙盒模式）
 StripeImportPayment=匯入Stripe付款
-ExampleOfTestCreditCard=用於信用卡測試的範例：%s =>有效，%s =>錯誤CVC，%s =>已過期，%s =>加值失敗
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=Stripe閘道
 OAUTH_STRIPE_TEST_ID=Stripe Connect客戶端ID（ca _...）
 OAUTH_STRIPE_LIVE_ID=Stripe Connect客戶端ID（ca _...）
@@ -61,6 +62,7 @@ DeleteACard=刪除卡片
 ConfirmDeleteCard=您確定要刪除此信用卡或金融信用卡嗎？
 CreateCustomerOnStripe=在Stripe上建立客戶
 CreateCardOnStripe=在Stripe上建立卡片
+CreateBANOnStripe=Create bank on Stripe
 ShowInStripe=在Stripe上顯示
 StripeUserAccountForActions=用於某些Stripe事件的電子郵件通知用戶帳戶（Stripe支出）
 StripePayoutList=Stripe支出清單
@@ -69,3 +71,8 @@ ToOfferALinkForLiveWebhook=連結到Stripe WebHook設定以呼叫IPN（live模�
 PaymentWillBeRecordedForNextPeriod=付款將記錄在下一個期間。
 ClickHereToTryAgain=<a href="%s">點擊此處重試... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=由於嚴格的客戶身份驗證規則，必須在Stripe後台進行卡的建立。您可以點擊此處打開Stripe客戶記錄：%s
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
+RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+

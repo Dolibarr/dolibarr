@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=Seleccioneu el tipus de retorn
 ACCOUNTING_EXPORT_PREFIX_SPEC=Especifica el prefix del nom del fitxer
 ThisService=Aquest servei
 ThisProduct=Aquest producte
-DefaultForService=Defecte per al servei
-DefaultForProduct=Defecte per al producte
+DefaultForService=Default for services
+DefaultForProduct=Default for products
 ProductForThisThirdparty=Producte per a aquest tercer
 ServiceForThisThirdparty=Servei per a aquest tercer
 CantSuggest=No es pot suggerir
@@ -101,7 +101,8 @@ ShowAccountingAccount=Mostrar diari de comptes
 ShowAccountingJournal=Mostrar diari comptable
 ShowAccountingAccountInLedger=Mostra el compte comptable al Llibre major
 ShowAccountingAccountInJournals=Mostra el compte comptable als diaris
-AccountAccountingSuggest=Compte comptable suggerit
+DataUsedToSuggestAccount=Data used to suggest account
+AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=Comptes per defecte
 MenuBankAccounts=Comptes bancaris
 MenuVatAccounts=Comptes d'IVA
@@ -126,6 +127,7 @@ WriteBookKeeping=Registrar transaccions en comptabilitat
 Bookkeeping=Llibre major
 BookkeepingSubAccount=Subcompte
 AccountBalance=Compte saldo
+AccountBalanceSubAccount=Sub-accounts balance
 ObjectsRef=Referència de l'objecte origen
 CAHTF=Total de compra a Proveïdor abans d'impostos
 TotalExpenseReport=Informe de despeses totals
@@ -165,8 +167,8 @@ ACCOUNTANCY_COMBO_FOR_AUX=Activa la llista combinada per a un compte subsidiari 
 ACCOUNTING_DATE_START_BINDING=Definiu una data per a començar la vinculació i transferència a la comptabilitat. Per sota d’aquesta data, les transaccions no es transferiran a la comptabilitat.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=En la transferència comptable, quin és el període seleccionat per defecte
 
-ACCOUNTING_SELL_JOURNAL=Sales journal (sales and returns)
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal (purchase and returns)
+ACCOUNTING_SELL_JOURNAL=Diari de vendes (vendes i devolucions)
+ACCOUNTING_PURCHASE_JOURNAL=Diari de compres (compres i devolucions)
 ACCOUNTING_BANK_JOURNAL=Cash journal (receipts and disbursements)
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Diari de l'informe de despeses
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diari general
@@ -189,6 +191,7 @@ ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be us
 UseAuxiliaryAccountOnCustomerDeposit=Emmagatzema el compte del client com a compte individual al llibre major subsidiari per a les línies de pagament inicial (si està desactivat, el compte individual per a les línies de pagament inicial romandrà buit)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
 UseAuxiliaryAccountOnSupplierDeposit=Emmagatzema el compte del proveïdor com a compte individual al llibre major subsidiari per a les línies de pagament inicial (si està desactivat, el compte individual de les línies de pagament inicial romandrà buit)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
@@ -217,7 +220,8 @@ Codejournal=Diari
 JournalLabel=Nom del diari
 NumPiece=Número de peça
 TransactionNumShort=Número de transacció
-AccountingCategory=Custom group of accounts
+AccountingCategory=Grup de comptes personalitzat
+AccountingCategories=Custom groups of accounts
 GroupByAccountAccounting=Agrupa per compte major
 GroupBySubAccountAccounting=Agrupa per subcompte comptable
 AccountingAccountGroupsDesc=Podeu definir aquí alguns grups de comptes comptables. S'utilitzaran per a informes comptables personalitzats.
@@ -265,6 +269,7 @@ ShowSubtotalByGroup=Mostra el subtotal per nivell
 
 Pcgtype=Grup de comptes
 PcgtypeDesc=S'utilitzen grups de comptes com a criteris predefinits de «filtre» i «agrupació» per a alguns informes de comptabilitat. Per exemple, «INGRESSOS» o «DESPESES» s'utilitzen com a grups per a comptes comptables de productes per a crear l'informe de despeses/ingressos.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 
 Reconcilable=Reconciliable
 
@@ -294,6 +299,7 @@ DescValidateMovements=Queda prohibida qualsevol modificació o supressió de reg
 
 ValidateHistory=Comptabilitza automàticament
 AutomaticBindingDone=Enllaços automàtics fets (%s): l'enllaç automàtic no és possible per a alguns registres (%s)
+DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=Moviment no equilibrat correctament. Dèbit = %s i crèdit = %s
@@ -337,11 +343,13 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Desactiva la vinculació i transferència de
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Desactiva la vinculació i transferència a la comptabilitat de les compres (les factures de proveïdors no es tindran en compte a la comptabilitat)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Desactiva la vinculació i transferència de comptes en els informes de despeses (els informes de despeses no es tindran en compte a la comptabilitat)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
 NotifiedExportDate=Marca les línies exportades com a Exportades <span class="warning"> (per a modificar una línia, hauràs de suprimir tota la transacció i tornar-la a transferir a la comptabilitat) </span>
-NotifiedValidationDate=Validar i bloquejar les entrades exportades <span class="warning"> (mateix efecte que la característica "%s", la modificació i la supressió de les línies DEFINITIVAMENT no seran possibles) </span>
+NotifiedValidationDate=Validar i bloquejar les entrades exportades <span class="warning">(mateix efecte que la característica "%s", la modificació i la supressió de les línies DEFINITIVAMENT no seran possibles)</span>
+NotifiedExportFull=Export documents ?
 DateValidationAndLock=Validació de data i bloqueig
 ConfirmExportFile=Confirmació de la generació del fitxer d'exportació comptable?
 ExportDraftJournal=Exporta els esborranys del llibre
@@ -398,7 +406,7 @@ SaleLocal=Venda local
 SaleExport=Venda d’exportació
 SaleEEC=Venda en CEE
 SaleEECWithVAT=Venda a la CEE amb un IVA que no és nul, per la qual cosa suposem que NO es tracta d’una venda intracomunitària i el compte suggerit és el compte estàndard del producte.
-SaleEECWithoutVATNumber=Venda a la CEE sense IVA, però l’identificador d’IVA del tercer no està definit. S'ha emprat el compte del producte per a vendes estàndard. Podeu corregir l’identificador d’IVA del tercer o el compte del producte si cal.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Prohibit: la transacció ha estat validada i/o exportada.
 ForbiddenTransactionAlreadyValidated=Prohibit: la transacció s'ha validat.
 ## Dictionary
@@ -429,19 +437,20 @@ ConfirmMassDeleteBookkeepingWritingQuestion=Això suprimirà la transacció de l
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=No s'han fet alguns passos obligatoris de configuració, si us plau, completeu-los
 ErrorNoAccountingCategoryForThisCountry=No hi ha cap grup de comptes comptables disponible per al país %s (Vegeu Inici - Configuració - Diccionaris)
-ErrorInvoiceContainsLinesNotYetBounded=Intenta actualitzar algunes línies de la factura <strong> %s </strong>, però algunes altres encara no estan vinculades al compte de comptabilitat. Es rebutja el registre comptable de totes les línies d'aquesta factura.
+ErrorInvoiceContainsLinesNotYetBounded=Intenteu registrar algunes línies de la factura <strong>%s</strong>, però algunes altres línies encara no estan vinculades al compte comptable. Es denega el registre al diari de totes les línies d'aquesta factura.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Algunes línies a la factura no estan vinculades al compte de comptabilitat.
 ExportNotSupported=El format d'exportació configurat no està suportat en aquesta pàgina
 BookeppingLineAlreayExists=Les línies ja existeixen en la comptabilitat
 NoJournalDefined=Cap diari definit
 Binded=Línies comptabilitzades
 ToBind=Línies a comptabilitzar
-UseMenuToSetBindindManualy=Línies encara no enllaçades, utilitzeu el menú <a href="%s"> %s </a> per a fer l'enllaç manualment
+UseMenuToSetBindindManualy=Línies encara no enllaçades, utilitzeu el menú <a href="%s">%s</a> per a fer l'enllaç manualment
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Ho sentim, aquest mòdul no és compatible amb la funció experimental de les factures de situació
 AccountancyErrorMismatchLetterCode=No coincideix en el codi de conciliació
 AccountancyErrorMismatchBalanceAmount=El saldo (%s) no és igual a 0
 AccountancyErrorLetteringBookkeeping=S'han produït errors relacionats amb les transaccions: %s
 ErrorAccountNumberAlreadyExists=El número de comptabilitat %s ja existeix
+ErrorArchiveAddFile=Can't put "%s" file in archive
 
 ## Import
 ImportAccountingEntries=Entrades de comptabilitat
@@ -468,5 +477,7 @@ FECFormatMulticurrencyCode=Codi multidivisa (Idevise)
 DateExport=Data d'exportació
 WarningReportNotReliable=Avís, aquest informe no està basat en el Llibre Major, de manera que no conté assentaments modificats manualment en el Llibre Major. Si el registre diari està actualitzat, la vista de comptes és més precisa.
 ExpenseReportJournal=Diari d'informe de despeses
+DocsAlreadyExportedAreExcluded=Docs already exported are excluded
+ClickToHideAlreadyExportedLines=Click to hide already exported lines
 
 NAccounts=comptes %s
