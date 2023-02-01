@@ -30,8 +30,9 @@ var ExpeditionLineDispatcher = function(jQuery) {
 	 * @param	{string}		prefix			Dispatcher prefix
 	 * @param	{string}		lineId			Dispatcher line id (suffix)
 	 * @param	{string}		suffixId		Dispatcher suffix id (suffix)
+	 * @param	{string}		pictoDelete		Picto for delete action
 	 */
-	this.addLine = function(prefix, lineId, suffixId) {
+	this.addLine = function(prefix, lineId, suffixId, pictoDelete) {
 		// dispatcher suffix
 		var suffix = lineId+'_'+suffixId;
 
@@ -63,8 +64,12 @@ var ExpeditionLineDispatcher = function(jQuery) {
 		rowElem.html(
 			rowElem.html().replace(dispatcherRegex, '_'+suffix+'_'+nbLine)
 		);
-		// remove action
-		rowElem.find('td[name="'+prefix+'action_'+suffix+'_'+nbLine+'"]').html('');
+		// modify action (add delete button)
+		rowElem.find('td[name="'+prefix+'action_'+suffix+'_'+nbLine+'"]')
+			.html(''+pictoDelete)
+			.click(function() {
+				jQuery(this).parent('tr').remove();
+			});
 		// change name
 		rowElem.attr('name', prefix+suffix+'_'+nbLine);
 		// insert new row after last cloned row

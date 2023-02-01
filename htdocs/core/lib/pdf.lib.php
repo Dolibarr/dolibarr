@@ -59,9 +59,9 @@ function pdf_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'pdf_admin');
 
-	if (!empty($conf->propal->enabled)) {
+	if (isModEnabled("propal") || isModEnabled('facture')) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_other.php';
-		$head[$h][1] = $langs->trans("Other");
+		$head[$h][1] = $langs->trans("Others");
 		$head[$h][2] = 'other';
 		$h++;
 	}
@@ -1690,23 +1690,30 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 			$tmpresult = '';
 
 			$tmpresult .= vatrate($object->lines[$i]->tva_tx, 0, $object->lines[$i]->info_bits, -1);
+			$tmpresult .= '%';
 			if (empty($conf->global->MAIN_PDF_MAIN_HIDE_SECOND_TAX)) {
-				if ($object->lines[$i]->total_localtax1 != 0) {
+				if ($object->lines[$i]->total_localtax1 >= 0) {
+					/*
 					if (preg_replace('/[\s0%]/', '', $tmpresult)) {
-						$tmpresult .= '/';
+						$tmpresult .= '|';
 					} else {
 						$tmpresult = '';
 					}
+					*/
+					$tmpresult .= '|';
 					$tmpresult .= vatrate(abs($object->lines[$i]->localtax1_tx), 0);
 				}
 			}
 			if (empty($conf->global->MAIN_PDF_MAIN_HIDE_THIRD_TAX)) {
-				if ($object->lines[$i]->total_localtax2 != 0) {
+				if ($object->lines[$i]->total_localtax2 >= 0) {
+					/*
 					if (preg_replace('/[\s0%]/', '', $tmpresult)) {
-						$tmpresult .= '/';
+						$tmpresult .= '|';
 					} else {
 						$tmpresult = '';
 					}
+					*/
+					$tmpresult .= '|';
 					$tmpresult .= vatrate(abs($object->lines[$i]->localtax2_tx), 0);
 				}
 			}

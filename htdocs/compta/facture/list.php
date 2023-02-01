@@ -2250,7 +2250,7 @@ print $langs->trans('to').' ';*/
 			// Note public
 			if (!empty($arrayfields['f.note_public']['checked'])) {
 				print '<td class="center">';
-				print dol_escape_htmltag($obj->note_public);
+				print dol_string_nohtmltag($obj->note_public);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2259,7 +2259,7 @@ print $langs->trans('to').' ';*/
 			// Note private
 			if (!empty($arrayfields['f.note_private']['checked'])) {
 				print '<td class="center">';
-				print dol_escape_htmltag($obj->note_private);
+				print dol_string_nohtmltag($obj->note_private);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

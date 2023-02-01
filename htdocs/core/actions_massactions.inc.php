@@ -567,6 +567,9 @@ if (!$error && $massaction == 'confirm_presend') {
 								$objectobj2->actionmsg2		= $actionmsg2; // Short text
 								$objectobj2->fk_element		= $objid2;
 								$objectobj2->elementtype	= $objectobj2->element;
+								if (!empty($conf->global->MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT)) {
+									$objectobj2->actionmsg2		= $subjectreplaced; // Short text
+								}
 
 								$triggername = strtoupper(get_class($objectobj2)).'_SENTBYMAIL';
 								if ($triggername == 'SOCIETE_SENTBYMAIL') {
@@ -1058,7 +1061,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'\.pdf$';
 	}
 	foreach ($listofobjectref as $tmppdf) {
-		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9-_]+\.pdf$'; // To include PDF generated from ODX files
+		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9\-\_\']+\.pdf$'; // To include PDF generated from ODX files
 	}
 	$listoffiles = dol_dir_list($uploaddir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, true);
 

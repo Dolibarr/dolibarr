@@ -1,9 +1,11 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2022  		Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022  		Progiseize         		<a.bisotti@progiseize.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -703,58 +705,73 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 		// Export files then exit
 		$accountancyexport = new AccountancyExport($db);
 
-		$mimetype = $accountancyexport->getMimeType($formatexportset);
+		$notexportlettering = GETPOST('notexportlettering', 'alpha');
 
-		top_httphead($mimetype, 1);
-
-		// Output data on screen
-		$accountancyexport->export($object->lines, $formatexportset);
+		if (!empty($notexportlettering)) {
+			if (is_array($object->lines)) {
+				foreach ($object->lines as $k => $movement) {
+					unset($object->lines[$k]->lettering_code);
+					unset($object->lines[$k]->date_lettering);
+				}
+			}
+		}
 
 		$notifiedexportdate = GETPOST('notifiedexportdate', 'alpha');
 		$notifiedvalidationdate = GETPOST('notifiedvalidationdate', 'alpha');
+		$withAttachment = !empty(trim(GETPOST('notifiedexportfull', 'alphanohtml'))) ? 1 : 0;
 
-		if (!empty($accountancyexport->errors)) {
-			dol_print_error('', '', $accountancyexport->errors);
-		} elseif (!empty($notifiedexportdate) || !empty($notifiedvalidationdate)) {
-			// Specify as export : update field date_export or date_validated
-			$error = 0;
-			$db->begin();
+		// Output data on screen or download
+		$result = $accountancyexport->export($object->lines, $formatexportset, $withAttachment);
 
-			if (is_array($object->lines)) {
-				foreach ($object->lines as $movement) {
-					$now = dol_now();
+		$error = 0;
+		if ($result < 0) {
+			$error++;
+		} else {
+			if (!empty($notifiedexportdate) || !empty($notifiedvalidationdate)) {
+				if (is_array($object->lines)) {
+					// Specify as export : update field date_export or date_validated
+					$db->begin();
 
-					$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
-					$sql .= " SET";
-					if (!empty($notifiedexportdate) && !empty($notifiedvalidationdate)) {
-						$sql .= " date_export = '".$db->idate($now)."'";
-						$sql .= ", date_validated = '".$db->idate($now)."'";
-					} elseif (!empty($notifiedexportdate)) {
-						$sql .= " date_export = '".$db->idate($now)."'";
-					} elseif (!empty($notifiedvalidationdate)) {
-						$sql .= " date_validated = '".$db->idate($now)."'";
+					foreach ($object->lines as $movement) {
+						$now = dol_now();
+
+						$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
+						$sql .= " SET";
+						if (!empty($notifiedexportdate) && !empty($notifiedvalidationdate)) {
+							$sql .= " date_export = '".$db->idate($now)."'";
+							$sql .= ", date_validated = '".$db->idate($now)."'";
+						} elseif (!empty($notifiedexportdate)) {
+							$sql .= " date_export = '".$db->idate($now)."'";
+						} elseif (!empty($notifiedvalidationdate)) {
+							$sql .= " date_validated = '".$db->idate($now)."'";
+						}
+						$sql .= " WHERE rowid = ".((int) $movement->id);
+
+						dol_syslog("/accountancy/bookkeeping/list.php Function export_file Specify movements as exported", LOG_DEBUG);
+
+						$result = $db->query($sql);
+						if (!$result) {
+							$error++;
+							break;
+						}
 					}
-					$sql .= " WHERE rowid = ".((int) $movement->id);
 
-					dol_syslog("/accountancy/bookkeeping/list.php Function export_file Specify movements as exported", LOG_DEBUG);
-
-					$result = $db->query($sql);
-					if (!$result) {
+					if (!$error) {
+						$db->commit();
+					} else {
 						$error++;
-						break;
+						$accountancyexport->errors[] = $langs->trans('NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated');
+						$db->rollback();
 					}
 				}
 			}
-
-			if (!$error) {
-				$db->commit();
-			} else {
-				$error++;
-				$db->rollback();
-				dol_print_error('', $langs->trans("NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated"));
-			}
 		}
-		exit;
+
+		if ($error) {
+			setEventMessages('', $accountancyexport->errors, 'errors');
+			header('Location: '.$_SERVER['PHP_SELF']);
+		}
+		exit(); // download or show errors
 	}
 }
 
@@ -805,6 +822,19 @@ $formconfirm = '';
 if ($action == 'export_file') {
 	$form_question = array();
 
+	if (getDolGlobalInt("ACCOUNTING_ENABLE_LETTERING")) {
+		// If 1, we check by default.
+		$checked = !empty($conf->global->ACCOUNTING_DEFAULT_NOT_EXPORT_LETTERING) ? 'true' : 'false';
+		$form_question['notexportlettering'] = array(
+			'name' => 'notexportlettering',
+			'type' => 'checkbox',
+			'label' => $langs->trans('NotExportLettering'),
+			'value' => $checked,
+		);
+
+		$form_question['separator'] = array('name'=>'separator', 'type'=>'separator');
+	}
+
 	// If 1 or not set, we check by default.
 	$checked = (!isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE) || !empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE));
 	$form_question['notifiedexportdate'] = array(
@@ -814,7 +844,7 @@ if ($action == 'export_file') {
 		'value' => (!empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE) ? 'false' : 'true'),
 	);
 
-	$form_question['separator'] = array('name'=>'separator', 'type'=>'separator');
+	$form_question['separator2'] = array('name'=>'separator2', 'type'=>'separator');
 
 	if (!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) {
 		// If 0 or not set, we NOT check by default.
@@ -826,10 +856,20 @@ if ($action == 'export_file') {
 			'value' => $checked,
 		);
 
-		$form_question['separator2'] = array('name' => 'separator2', 'type' => 'separator');
+		$form_question['separator3'] = array('name' => 'separator3', 'type' => 'separator');
 	}
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 300, 600);
+	// add documents in an archive for accountancy export (Quadratus)
+	if (getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_QUADRATUS) {
+		$form_question['notifiedexportfull'] = array(
+			'name' => 'notifiedexportfull',
+			'type' => 'checkbox',
+			'label' => $langs->trans('NotifiedExportFull'),
+			'value' => 'false',
+		);
+	}
+
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 400, 600);
 }
 
 //if ($action == 'delbookkeepingyear') {
@@ -919,12 +959,19 @@ if (count($filter)) {
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('addMoreActionsButtonsList', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+$newcardbutton = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
+
 if (empty($reshook)) {
 	// Button re-export
 	if (!empty($conf->global->ACCOUNTING_REEXPORT)) {
-		$newcardbutton = '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=0'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("Activated"), 'switch_on').'</a> ';
+		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=0'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("Activated"), 'switch_on').'</a> ';
 	} else {
-		$newcardbutton = '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a> ';
+		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a> ';
 	}
 	$newcardbutton .= '<span class="valignmiddle marginrightonly">'.$langs->trans("IncludeDocsAlreadyExported").'</span>';
 

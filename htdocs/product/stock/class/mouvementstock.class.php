@@ -743,7 +743,6 @@ class MouvementStock extends CommonObject
 		$sql = "SELECT fk_product_pere, fk_product_fils, qty";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_association";
 		$sql .= " WHERE fk_product_pere = ".((int) $idProduct);
-		$sql .= " AND incdec = 1";
 
 		dol_syslog(get_class($this)."::_createSubProduct for parent product ".$idProduct, LOG_DEBUG);
 		$resql = $this->db->query($sql);

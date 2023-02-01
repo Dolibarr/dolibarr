@@ -207,15 +207,98 @@ if (empty($reshook)) {
 					}
 				}
 			} else {
+				$cond_reglement_id = 0;
+				$mode_reglement_id = 0;
+				$fk_account = 0;
+				$remise_percent = 0;
+				$remise_absolue = 0;
+				$transport_mode_id = 0;
+				if (!empty($rcp->cond_reglement_id)) {
+					$cond_reglement_id = $rcp->cond_reglement_id;
+				}
+				if (!empty($rcp->mode_reglement_id)) {
+					$mode_reglement_id = $rcp->mode_reglement_id;
+				}
+				if (!empty($rcp->fk_account)) {
+					$fk_account = $rcp->fk_account;
+				}
+				if (!empty($rcp->remise_percent)) {
+					$remise_percent = $rcp->remise_percent;
+				}
+				if (!empty($rcp->remise_absolue)) {
+					$remise_absolue = $rcp->remise_absolue;
+				}
+				if (!empty($rcp->transport_mode_id)) {
+					$transport_mode_id = $rcp->transport_mode_id;
+				}
+
+				if (empty($cond_reglement_id)
+					|| empty($mode_reglement_id)
+					|| empty($fk_account)
+					|| empty($remise_percent)
+					|| empty($remise_absolue)
+					|| empty($transport_mode_id)
+				) {
+					if (!isset($rcp->supplier_order)) {
+						$rcp->fetch_origin();
+					}
+
+					// try to get from source of reception (supplier order)
+					if (!empty($rcp->commandeFournisseur)) {
+						$supplierOrder = $rcp->commandeFournisseur;
+						if (empty($cond_reglement_id) && !empty($supplierOrder->cond_reglement_id)) {
+							$cond_reglement_id = $supplierOrder->cond_reglement_id;
+						}
+						if (empty($mode_reglement_id) && !empty($supplierOrder->mode_reglement_id)) {
+							$mode_reglement_id = $supplierOrder->mode_reglement_id;
+						}
+						if (empty($fk_account) && !empty($supplierOrder->fk_account)) {
+							$fk_account = $supplierOrder->fk_account;
+						}
+						if (empty($remise_percent) && !empty($supplierOrder->remise_percent)) {
+							$remise_percent = $supplierOrder->remise_percent;
+						}
+						if (empty($remise_absolue) && !empty($supplierOrder->remise_absolue)) {
+							$remise_absolue = $supplierOrder->remise_absolue;
+						}
+						if (empty($transport_mode_id) && !empty($supplierOrder->transport_mode_id)) {
+							$transport_mode_id = $supplierOrder->transport_mode_id;
+						}
+					}
+
+					// try get from third-party of reception
+					if (!empty($rcp->thirdparty)) {
+						$soc = $rcp->thirdparty;
+						if (empty($cond_reglement_id) && !empty($soc->cond_reglement_supplier_id)) {
+							$cond_reglement_id = $soc->cond_reglement_supplier_id;
+						}
+						if (empty($mode_reglement_id) && !empty($soc->mode_reglement_supplier_id)) {
+							$mode_reglement_id = $soc->mode_reglement_supplier_id;
+						}
+						if (empty($fk_account) && !empty($soc->fk_account)) {
+							$fk_account = $soc->fk_account;
+						}
+						if (empty($remise_percent) && !empty($soc->remise_supplier_percent)) {
+							$remise_percent = $soc->remise_supplier_percent;
+						}
+						if (empty($remise_absolue) && !empty($soc->remise_absolue)) {
+							$remise_absolue = $soc->remise_absolue;
+						}
+						if (empty($transport_mode_id) && !empty($soc->transport_mode_id)) {
+							$transport_mode_id = $soc->transport_mode_id;
+						}
+					}
+				}
+
 				// If we want one invoice per reception or if there is no first invoice yet for this thirdparty.
 				$objecttmp->socid = $rcp->socid;
 				$objecttmp->type = $objecttmp::TYPE_STANDARD;
-				$objecttmp->cond_reglement_id	= $rcp->cond_reglement_id || $rcp->thirdparty->cond_reglement_supplier_id;
-				$objecttmp->mode_reglement_id	= $rcp->mode_reglement_id || $rcp->thirdparty->mode_reglement_supplier_id;
-
-				$objecttmp->fk_account = !empty($rcp->thirdparty->fk_account) ? $rcp->thirdparty->fk_account : 0;
-				$objecttmp->remise_percent 	= !empty($rcp->thirdparty->remise_percent) ? $rcp->thirdparty->remise_percent : 0;
-				$objecttmp->remise_absolue 	= !empty($rcp->thirdparty->remise_absolue) ? $rcp->thirdparty->remise_absolue : 0;
+				$objecttmp->cond_reglement_id = $cond_reglement_id;
+				$objecttmp->mode_reglement_id = $mode_reglement_id;
+				$objecttmp->fk_account = $fk_account;
+				$objecttmp->remise_percent = $remise_percent;
+				$objecttmp->remise_absolue = $remise_absolue;
+				$objecttmp->transport_mode_id = $transport_mode_id;
 
 				$objecttmp->fk_project			= $rcp->fk_project;
 				//$objecttmp->multicurrency_code = $rcp->multicurrency_code;
@@ -234,6 +317,11 @@ if (empty($reshook)) {
 				$objecttmp->date = $datefacture;
 				$objecttmp->origin    = 'reception';
 				$objecttmp->origin_id = $id_reception;
+
+				// Auto calculation of date due if not filled by user
+				if (empty($objecttmp->date_echeance)) {
+					$objecttmp->date_echeance = $objecttmp->calculate_date_lim_reglement();
+				}
 
 				$objecttmp->array_options = $rcp->array_options; // Copy extrafields
 

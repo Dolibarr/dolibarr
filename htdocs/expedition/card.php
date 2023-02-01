@@ -622,6 +622,7 @@ if (empty($reshook)) {
 		$object->fetch($id);
 		$lines = $object->lines;
 		$line = new ExpeditionLigne($db);
+		$line->fk_expedition = $object->id;
 
 		$num_prod = count($lines);
 		for ($i = 0; $i < $num_prod; $i++) {
@@ -663,6 +664,7 @@ if (empty($reshook)) {
 		for ($i = 0; $i < $num_prod; $i++) {
 			if ($lines[$i]->id == $line_id) {		// we have found line to update
 				$line = new ExpeditionLigne($db);
+				$line->fk_expedition = $object->id;
 
 				// Extrafields Lines
 				$line->array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
@@ -1752,7 +1754,13 @@ if ($action == 'create') {
 																print img_picto('', 'split.png');
 																$out_js_line .= 'jQuery("td[name=\"' . $dispatcher_prefix . 'action_' . $dispatcher_suffix_with_line . '\"]").click(function(){';
 																$out_js_line .= '	var expeditionDetDispatcher = new ExpeditionLineDispatcher(jQuery);';
-																$out_js_line .= ' 	expeditionDetDispatcher.addLine("' . $dispatcher_prefix . '", "' . $component_dispatch_line['id'] . '", "' . $dispatcher_suffix_id . '");';
+																$out_js_line .= ' 	expeditionDetDispatcher.addLine("' . $dispatcher_prefix . '", "' . $component_dispatch_line['id'] . '", "' . $dispatcher_suffix_id . '", "' . dol_escape_js(img_picto('', 'delete')) . '");';
+																$out_js_line .= '});';
+															} else {
+																// remove a dispatched line
+																print img_picto('', 'delete');
+																$out_js_line .= 'jQuery("td[name=\"' . $dispatcher_prefix . 'action_' . $dispatcher_suffix_with_line . '\"]").click(function() {';
+																$out_js_line .= '	jQuery(this).parent("tr").remove();';
 																$out_js_line .= '});';
 															}
 														}

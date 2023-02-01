@@ -733,7 +733,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 						<?php
 						if (!empty($conf->global->PRODUCT_LOAD_EXTRAFIELD_INTO_OBJECTLINES)) { ?>
 							jQuery.each(data.array_options, function( key, value ) {
-								jQuery('div[class$="det'+key.replace('options_','_extras_')+'"] > #'+key).val(value);
+								jQuery('div[class*="det'+key.replace('options_','_extras_')+'"] > #'+key).val(value);
 							});
 							<?php
 						} ?>
