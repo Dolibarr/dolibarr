@@ -1405,6 +1405,52 @@ class Contact extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+
+		$datas = [];
+
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			return ['optimize' => $langs->trans("ShowContact")];
+		}
+		if (!empty($this->photo) && class_exists('Form')) {
+			$photo = '<div class="photointooltip floatright">';
+			$photo .= Form::showphoto('contact', $this, 0, 40, 0, 'photoref', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
+			$photo .= '</div>';
+			$datas['photo'] = $photo;
+		}
+
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Contact").'</u> ' . $this->getLibStatut(4);
+		$datas['name'] = '<br><b>'.$langs->trans("Name").':</b> '.$this->getFullName($langs);
+		// if ($this->civility_id) $datas['civility'] = '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate civilty_id code
+		if (!empty($this->poste)) {
+			$datas['job'] = '<br><b>'.$langs->trans("Poste").':</b> '.$this->poste;
+		}
+		$datas['email'] = '<br><b>'.$langs->trans("EMail").':</b> '.$this->email;
+		$phonelist = array();
+		$country_code = empty($this->country_code) ? '': $this->country_code;
+		if ($this->phone_pro) {
+			$phonelist[] = dol_print_phone($this->phone_pro, $country_code, $this->id, 0, '', '&nbsp;', 'phone');
+		}
+		if ($this->phone_mobile) {
+			$phonelist[] = dol_print_phone($this->phone_mobile, $country_code, $this->id, 0, '', '&nbsp;', 'mobile');
+		}
+		if ($this->phone_perso) {
+			$phonelist[] = dol_print_phone($this->phone_perso, $country_code, $this->id, 0, '', '&nbsp;', 'phone');
+		}
+		$datas['phonelist'] = '<br><b>'.$langs->trans("Phone").':</b> '.implode('&nbsp;', $phonelist);
+		$datas['address'] = '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs);
+
+		return $datas;
+	}
+
+	/**
 	 *  Return name of contact with link (and eventually picto)
 	 *	Use $this->id, $this->lastname, $this->firstname, this->civility_id
 	 *
@@ -1421,7 +1467,8 @@ class Contact extends CommonObject
 	{
 		global $conf, $langs, $hookmanager;
 
-		$result = ''; $label = '';
+		$result = '';
+		$label = '';
 		if (!empty($this->photo) && class_exists('Form')) {
 			$label .= '<div class="photointooltip floatright">';
 			$label .= Form::showphoto('contact', $this, 0, 40, 0, 'photoref', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
@@ -1472,8 +1519,18 @@ class Contact extends CommonObject
 				$label = $langs->trans("ShowContact");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+				$params = [
+					'id' => $this->id,
+					'objecttype' => $this->element,
+					'option' => $option,
+				];
+				$linkclose .= ' data-params='.json_encode($params).' id="contact-' . uniqid() . '" title="' . $langs->trans('Loading') . '"';
+				$linkclose .= ' class="classforajaxtooltip'.($morecss ? ' '.$morecss : '').'"';
+			} else {
+				$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			}
 		}
 
 		$linkstart = '<a href="'.$url.'"';

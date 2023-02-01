@@ -141,7 +141,7 @@ if ($objecttype == 'facture' || $objecttype == 'invoice') {
 // Generic case for $classfile and $classname
 $classfile = strtolower($myobject);
 $classname = ucfirst($myobject);
-//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement." classfile=".$classfile." classname=".$classname." classpath=".$classpath;
+// print "objecttype=".$objecttype." module=".$module." subelement=".$subelement." classfile=".$classfile." classname=".$classname." classpath=".$classpath."\n";
 
 if ($objecttype == 'invoice_supplier') {
 	$classfile = 'fournisseur.facture';
@@ -171,6 +171,8 @@ if ($objecttype == 'invoice_supplier') {
 	$classpath = 'comm/mailing/class';
 	$classfile = 'mailing';
 	$classname = 'Mailing';
+} elseif ($objecttype == 'contact') {
+	$module = 'societe';
 }
 
 if (isModEnabled($module)) {
@@ -186,6 +188,7 @@ if (isModEnabled($module)) {
 			}
 			unset($object);
 		} else {
+			print "Class with classname ".$classname." is unknown even after the include";
 			dol_syslog("Class with classname ".$classname." is unknown even after the include", LOG_ERR);
 		}
 	}
