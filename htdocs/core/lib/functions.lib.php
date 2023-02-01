@@ -1318,6 +1318,10 @@ function dol_string_unaccent($str)
 {
 	global $conf;
 
+	if (is_null($str)) {
+		return '';
+	}
+
 	if (utf8_check($str)) {
 		if (extension_loaded('intl') && !empty($conf->global->MAIN_UNACCENT_USE_TRANSLITERATOR)) {
 			$transliterator = \Transliterator::createFromRules(':: Any-Latin; :: Latin-ASCII; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC;', \Transliterator::FORWARD);
@@ -7144,6 +7148,10 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
  */
 function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
 {
+	if (is_null($stringtoencode)) {
+		return '';
+	}
+
 	if (!$nl2brmode) {
 		return nl2br($stringtoencode, $forxml);
 	} else {
