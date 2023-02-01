@@ -1078,11 +1078,8 @@ class FormMail extends Form
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 				}
 
-				if (getDolGlobalInt('MAIN_MAIL_NO_WITH_TO_SELECTED')) {
-					$withtoselected = '';
-				} else {
-					$withtoselected = GETPOST("receiver", 'array'); // Array of selected value
-
+				$withtoselected = GETPOST("receiver", 'array'); // Array of selected value
+				if (!getDolGlobalInt('MAIN_MAIL_NO_WITH_TO_SELECTED')) {
 					if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
 						$withtoselected = array_keys($tmparray);
 					}
