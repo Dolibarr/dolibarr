@@ -145,6 +145,7 @@ class UserBankAccount extends Account
 
 		$result = $this->db->query($sql);
 		if ($result) {
+			$result = $this->call_trigger('USER_IBANMODIFY', $user);
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -273,6 +274,7 @@ class UserBankAccount extends Account
 		}
 
 		if (!$error) {
+			$result = $this->call_trigger('USER_IBANMODIFY', $user);
 			$this->db->commit();
 			return 1;
 		} else {

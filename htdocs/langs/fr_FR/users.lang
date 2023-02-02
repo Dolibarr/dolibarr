@@ -133,3 +133,6 @@ HideAllPerms=Masquer toutes les lignes d'autorisation
 UserPublicPageDesc=Vous pouvez activer une carte virtuelle pour cet utilisateur. Une URL avec le profil utilisateur et un code barre sera disponible pour permettre à quiconque muni d'un smartphone de le scanner et d'ajouter le contact à son carnet d'adresse.
 EnablePublicVirtualCard=Activer la fiche utilisateur virtuelle publique
 PublicVirtualCardUrl=Fiche utilisateur virtuelle publique
+EventUserIbanModifiedHTML=Vos coordonnées bancaires viennent d'être modifiées. Si vous n'êtes pas à l'origine de cette modification, veuillez rapidement en informer votre administrateur.
+EventUserIbanModifiedSubject=Attention - Vos coordonnées bancaires ont été modifiées
+EventUserIbanModified=Coordonnées bancaires modifiées
