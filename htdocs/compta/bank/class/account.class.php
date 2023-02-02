@@ -1070,7 +1070,7 @@ class Account extends CommonObject
 				return 0;
 			}
 		} else {
-			$this->error = $this->db->lasterror;
+			$this->error = $this->db->lasterror();
 			$this->errors[] = $this->error;
 			return -1;
 		}
