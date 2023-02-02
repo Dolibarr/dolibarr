@@ -24,8 +24,18 @@
  *       \file      htdocs/install/step5.php
  *       \ingroup   install
  *       \brief     Last page of upgrade / install process
+ *
+ *       This page is called with parameter action=set by step4.php or action=upgrade by upgrade2.php
+ *       For installation:
+ *         It creates the login admin and set the MAIN_SECURITY_SALT to a random value.
+ *         It set the value for MAIN_VERSION_LAST_INSTALL
+ *         It creates the install.lock and shows the final message.
+ *       For upgrade:
+ *         It updates the value for MAIN_VERSION_LAST_UPGRADE.
+ *         It (re)creates the install.lock and shows the final message.
  */
 
+define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
 if (file_exists($conffile)) {
 	include_once $conffile;
@@ -384,7 +394,7 @@ if ($action == "set") {
 					if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) {
 						$force_install_lockinstall = 444; // For backward compatibility
 					}
-					fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
+					fwrite($fp, "This is a lock file to prevent use of install or upgrade pages (set with permission ".$force_install_lockinstall.")");
 					fclose($fp);
 					@chmod($lockfile, octdec($force_install_lockinstall));
 					$createlock = 1;
@@ -416,8 +426,9 @@ if ($action == "set") {
 } elseif (empty($action) || preg_match('/upgrade/i', $action)) {
 	// If upgrade
 	if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION)) {
-		// Upgrade is finished (database is on same version than files)
-		print '<img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/checklist.svg" width="20" alt="Configuration"> <span class="valignmiddle">'.$langs->trans("SystemIsUpgraded")."</span><br>";
+		// Upgrade is finished (database is on the same version than files)
+		print '<img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/checklist.svg" width="20" alt="Configuration">';
+		print ' <span class="valignmiddle">'.$langs->trans("SystemIsUpgraded")."</span><br>";
 
 		// Create install.lock file if it does not exists.
 		// Note: it should always exists. A better solution to allow upgrade will be to add an upgrade.unlock file
@@ -430,7 +441,7 @@ if ($action == "set") {
 				if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) {
 					$force_install_lockinstall = 444; // For backward compatibility
 				}
-				fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
+				fwrite($fp, "This is a lock file to prevent use of install or upgrade pages (set with permission ".$force_install_lockinstall.")");
 				fclose($fp);
 				@chmod($lockfile, octdec($force_install_lockinstall));
 				$createlock = 1;
