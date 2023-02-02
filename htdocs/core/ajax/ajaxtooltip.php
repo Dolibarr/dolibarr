@@ -141,7 +141,6 @@ if ($objecttype == 'facture' || $objecttype == 'invoice') {
 // Generic case for $classfile and $classname
 $classfile = strtolower($myobject);
 $classname = ucfirst($myobject);
-// print "objecttype=".$objecttype." module=".$module." subelement=".$subelement." classfile=".$classfile." classname=".$classname." classpath=".$classpath."\n";
 
 if ($objecttype == 'invoice_supplier') {
 	$classfile = 'fournisseur.facture';
@@ -171,9 +170,17 @@ if ($objecttype == 'invoice_supplier') {
 	$classpath = 'comm/mailing/class';
 	$classfile = 'mailing';
 	$classname = 'Mailing';
+} elseif ($objecttype == 'adherent_type') {
+	$langs->load('members');
+	$classpath = 'adherents/class';
+	$classfile = 'adherent_type';
+	$module = 'adherent';
+	$myobject = 'adherent_type';
+	$classname = 'AdherentType';
 } elseif ($objecttype == 'contact') {
 	$module = 'societe';
 }
+// print "objecttype=".$objecttype." module=".$module." subelement=".$subelement." classfile=".$classfile." classname=".$classname." classpath=".$classpath."\n";
 
 if (isModEnabled($module)) {
 	$res = dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
