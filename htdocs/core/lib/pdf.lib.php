@@ -724,11 +724,13 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 		$filepath = $conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF;
 		if (file_exists($filepath)) {
 			$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak before adding image
+			if (getDolGlobalString('MAIN_USE_BACKGROUND_ON_PDF_ALPHA')) { $pdf->SetAlpha($conf->global->MAIN_USE_BACKGROUND_ON_PDF_ALPHA); } // Option for change opacity of background
 			$pdf->Image($filepath, (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_X) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_X : 0), (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y : 0), 0, $page_height);
-			$pdf->SetPageMark(); // This option avoid to have the images missing on some pages
+			if (getDolGlobalString('MAIN_USE_BACKGROUND_ON_PDF_ALPHA')) { $pdf->SetAlpha(1); }
 			$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
 		}
 	}
+	$pdf->SetPageMark(); // This option avoid to have the images missing on some pages
 }
 
 
@@ -1246,49 +1248,54 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 			$pdf->SetY(-$posy);
 
-			// Hide footer line if footer background color is set
-			if (!getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
-				$pdf->line($dims['lm'], $dims['hk'] - $posy, $dims['wk'] - $dims['rm'], $dims['hk'] - $posy);
-			}
+			// Option for hide all footer (page number will no hidden)
+			if (getDolGlobalInt('PDF_FOOTER_HIDDEN') !== 1) {
 
-			// Option for set top margin height of footer after freetext
-			if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalInt('PDF_FOOTER_TOP_MARGIN') === 0) {
-				$posy -= floatval(getDolGlobalString('PDF_FOOTER_TOP_MARGIN'));
-			} else {
-				$posy--;
-			}
+				// Hide footer line if footer background color is set
+				if (!getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
+					$pdf->line($dims['lm'], $dims['hk'] - $posy, $dims['wk'] - $dims['rm'], $dims['hk'] - $posy);
+				}
 
-			if (!empty($line1)) {
-				$pdf->SetFont('', 'B', 7);
-				$pdf->SetXY($dims['lm'], -$posy);
-				$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line1, 0, 'C', 0);
-				$posy -= 3;
-				$pdf->SetFont('', '', 7);
-			}
+				// Option for set top margin height of footer after freetext
+				if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalInt('PDF_FOOTER_TOP_MARGIN') === 0) {
+					$posy -= floatval(getDolGlobalString('PDF_FOOTER_TOP_MARGIN'));
+				} else {
+					$posy--;
+				}
 
-			if (!empty($line2)) {
-				$pdf->SetFont('', 'B', 7);
-				$pdf->SetXY($dims['lm'], -$posy);
-				$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line2, 0, 'C', 0);
-				$posy -= 3;
-				$pdf->SetFont('', '', 7);
-			}
+				if (!empty($line1)) {
+					$pdf->SetFont('', 'B', 7);
+					$pdf->SetXY($dims['lm'], -$posy);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line1, 0, 'C', 0);
+					$posy -= 3;
+					$pdf->SetFont('', '', 7);
+				}
 
-			if (!empty($line3)) {
-				$pdf->SetXY($dims['lm'], -$posy);
-				$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line3, 0, 'C', 0);
-			}
+				if (!empty($line2)) {
+					$pdf->SetFont('', 'B', 7);
+					$pdf->SetXY($dims['lm'], -$posy);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line2, 0, 'C', 0);
+					$posy -= 3;
+					$pdf->SetFont('', '', 7);
+				}
 
-			if (!empty($line4)) {
-				$posy -= 3;
-				$pdf->SetXY($dims['lm'], -$posy);
-				$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line4, 0, 'C', 0);
+				if (!empty($line3)) {
+					$pdf->SetXY($dims['lm'], -$posy);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line3, 0, 'C', 0);
+				}
+
+				if (!empty($line4)) {
+					$posy -= 3;
+					$pdf->SetXY($dims['lm'], -$posy);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line4, 0, 'C', 0);
+				}
 			}
 		}
 	}
 	// Show page nb only on iso languages (so default Helvetica font)
 	if (strtolower(pdf_getPDFFont($outputlangs)) == 'helvetica') {
-		$pdf->SetXY($dims['wk'] - $dims['rm'] - 18, -$posy);
+		// Option for change XY position of the page number
+		$pdf->SetXY($dims['wk'] - $dims['rm'] - 18 - ( getDolGlobalString('PDF_FOOTER_PAGE_NUMBER_X') ? floatval(getDolGlobalString('PDF_FOOTER_PAGE_NUMBER_X')) : 0 ) , -$posy - ( getDolGlobalString('PDF_FOOTER_PAGE_NUMBER_Y') ? floatval(getDolGlobalString('PDF_FOOTER_PAGE_NUMBER_Y')) : 0 ));
 		//$pdf->MultiCell(18, 2, $pdf->getPageNumGroupAlias().' / '.$pdf->getPageGroupAlias(), 0, 'R', 0);
 		$pdf->MultiCell(18, 2, $pdf->PageNo().' / '.$pdf->getAliasNbPages(), 0, 'R', 0);
 	}
