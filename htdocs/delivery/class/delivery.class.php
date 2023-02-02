@@ -721,6 +721,24 @@ class Delivery extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$datas = [];
+
+		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("ShowReceiving").'</u>:<br>';
+		$datas['picto'] .= '<b>'.$langs->trans("Status").'</b>: '.$this->ref;
+
+		return $datas;
+	}
+
+	/**
 	 *	Return clicable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
@@ -750,8 +768,16 @@ class Delivery extends CommonObject
 		}
 		//}
 
-
-		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$params = [
+				'id' => $this->id,
+				'objecttype' => $this->element,
+			];
+			$linkstart = '<a href="'.$url.'" data-params='.json_encode($params).' title="' . $langs->trans('Loading') . '"';
+			$linkstart .= ' class="classforajaxtooltip"';
+		} else {
+			$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		}
 		$linkend = '</a>';
 
 		if ($withpicto) {
