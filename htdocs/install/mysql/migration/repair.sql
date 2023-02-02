@@ -576,3 +576,13 @@ DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
 -- DROP TABLE tmp_bank2;
 -- CREATE TABLE tmp_bank2 SELECT b.rowid, b.amount, p.rowid as pid, p.amount as pamount, p.multicurrency_amount as pmulticurrencyamount FROM llx_bank as b INNER JOIN llx_bank_url as bu ON bu.fk_bank=b.rowid AND bu.type = 'payment_supplier' INNER JOIN llx_paiementfourn as p ON bu.url_id = p.rowid WHERE p.multicurrency_amount <> 0 AND p.multicurrency_amount <> p.amount;
 -- UPDATE llx_bank as b SET b.amount_main_currency = (SELECT tb.pamount FROM tmp_bank2 as tb WHERE tb.rowid = b.rowid) WHERE b.amount_main_currency IS NULL;
+
+
+-- Delete duplicate entries into llx_c_transport_mode
+-- VMYSQL4.1 DELETE T1 FROM llx_c_transport_mode as T1, llx_c_transport_mode as T2 where T1.entity = T2.entity AND T1.code = T2.code and T1.rowid > T2.rowid;
+-- VPGSQL8.2 DELETE FROM llx_c_transport_mode as T1 WHERE rowid NOT IN (SELECT min(rowid) FROM llx_c_transport_mode GROUP BY code, entity);
+
+-- Delete department of regions linked to no coutry, then delete region with no country
+DELETE FROM llx_c_departements WHERE fk_region <> 0 AND fk_region IN (select code_region FROM llx_c_regions WHERE fk_pays NOT IN (select rowid from llx_c_country));
+DELETE from llx_c_regions WHERE fk_pays NOT IN (select rowid from llx_c_country);
+
