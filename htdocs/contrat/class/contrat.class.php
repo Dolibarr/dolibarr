@@ -9,7 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -185,6 +185,7 @@ class Contrat extends CommonObject
 	public $nbofserviceswait;
 	public $nbofservicesopened;
 	public $nbofservicesexpired;
+	public $nbofservicesclosed;
 	//public $lower_planned_end_date;
 	//public $higher_planner_end_date;
 
@@ -1981,6 +1982,42 @@ class Contrat extends CommonObject
 		}
 	}
 
+	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+
+		$datas = [];
+
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			return ['optimize' => $langs->trans("ShowContract")];
+		}
+		if ($user->hasRight('contrat', 'lire')) {
+			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Contract").'</u>';
+			/* Status of a contract is status of all services, so disabled
+			if (isset($this->statut)) {
+				$label .= ' '.$this->getLibStatut(5);
+			}*/
+			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.($this->ref ? $this->ref : $this->id);
+			$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '. $this->ref_customer;
+			$datas['refsupplier'] = '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
+			if (!empty($this->total_ht)) {
+				$datas['amountht'] = '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+			}
+			if (!empty($this->total_tva)) {
+				$datas['vatamount'] = '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+			}
+			if (!empty($this->total_ttc)) {
+				$datas['amounttc'] = '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+			}
+		}
+		return $datas;
+	}
 
 	/**
 	 *	Return clicable name (with picto eventually)
@@ -2013,7 +2050,7 @@ class Contrat extends CommonObject
 
 		$label = '';
 
-		if ($user->rights->contrat->lire) {
+		if ($user->hasRight('contrat', 'lire')) {
 			$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Contract").'</u>';
 			/* Status of a contract is status of all services, so disabled
 			if (isset($this->statut)) {
@@ -2037,11 +2074,20 @@ class Contrat extends CommonObject
 		$linkclose = '';
 		if (empty($notooltip) && $user->rights->contrat->lire) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-				$label = $langs->trans("ShowOrder");
+				$label = $langs->trans("ShowContract");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip"';
+			if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+				$params = [
+					'id' => $this->id,
+					'objecttype' => $this->element,
+				];
+				$linkclose .= '" data-params='.json_encode($params).' id="' . uniqid('contract') . '" title="' . $langs->trans('Loading') . '"';
+				$linkclose .= ' class="classforajaxtooltip"';
+			} else {
+				$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' class="classfortooltip"';
+			}
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -3072,7 +3118,26 @@ class ContratLigne extends CommonObjectLine
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually)
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+
+		$datas = [];
+		$datas['label'] = $langs->trans("ShowContractOfService").': '.$this->label;
+		if (empty($datas['label'])) {
+			$datas['label'] = $this->description;
+		}
+
+		return $datas;
+	}
+
+	/**
+	 *	Return clicable name (with picto eventually) for ContratLigne
 	 *
 	 *  @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param	int		$maxlength		Max length
@@ -3087,8 +3152,17 @@ class ContratLigne extends CommonObjectLine
 		if (empty($label)) {
 			$label = $this->description;
 		}
-
-		$link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat;
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$params = [
+				'id' => $this->fk_contrat,
+				'objecttype' => $this->element,
+			];
+			$link .= '" data-params='.json_encode($params).' id="' . uniqid('contract') . '" title="' . $langs->trans('Loading') . '"';
+			$link .= ' class="classforajaxtooltip"';
+		} else {
+			$link = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		}
 		$linkend = '</a>';
 
 		$picto = 'service';

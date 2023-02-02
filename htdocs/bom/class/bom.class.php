@@ -1074,7 +1074,7 @@ class BOM extends CommonObject
 	{
 		global $conf, $langs, $user;
 
-		$langs->load('mrp');
+		$langs->loadLangs(['product', 'mrp']);
 
 		$datas = [];
 
