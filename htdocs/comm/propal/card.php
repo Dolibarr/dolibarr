@@ -914,6 +914,37 @@ if (empty($reshook)) {
 		foreach ($object->lines as $line) {
 			$result = $object->updateline($line->id, $line->subprice, $line->qty, $remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
 		}
+    } elseif (!empty($conf->global->PROPALE_MODIFY_MARGIN_RATES) && $action == 'addline' && GETPOST('submitforallmargins', 'alpha') && GETPOST('marginforalllines', 'none') !== '' && $usercancreate) {
+        // Define margin
+        $margin_rate = (GETPOST('marginforalllines') ? GETPOST('marginforalllines') : 0);
+        foreach ($object->lines as &$line) {
+            $subprice = price2num($line->pa_ht * (1 + $margin_rate/100), 'MU');
+            $prod = new Product($db);
+            $prod->fetch($line->fk_product);
+            if ($prod->price_min > $subprice) {
+                $price_subprice  = price($subprice,        0, $outlangs, 1, -1, -1, 'auto');
+                $price_price_min = price($prod->price_min, 0, $outlangs, 1, -1, -1, 'auto');
+                setEventMessages($prod->ref.' - '.$prod->label.' ('.$price_subprice.' < '.$price_price_min.' '.strtolower($langs->trans("MinPrice")).')'."\n", null, 'warnings');
+            }
+            // Manage $line->subprice and $line->multicurrency_subprice
+            $multicurrency_subprice = $subprice * $line->multicurrency_subprice / $line->subprice;
+            // Update DB
+            $result = $object->updateline($line->id, $subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_rate, $line->localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $multicurrency_subprice);
+            // Update $object with new margin info
+            $line->price = $subprice;
+            $line->marge_tx = $margin_rate;
+            $line->marque_tx = $margin_rate * $line->pa_ht / $subprice;
+            $line->total_ht = $line->qty * $subprice;
+            $line->total_tva = $line->tva_tx * $line->qty * $subprice;
+            $line->total_ttc = (1 + $line->tva_tx) * $line->qty * $subprice;
+            // Manage $line->subprice and $line->multicurrency_subprice
+            $line->multicurrency_total_ht = $line->qty * $subprice * $line->multicurrency_subprice / $line->subprice;
+            $line->multicurrency_total_tva = $line->tva_tx * $line->qty * $subprice * $line->multicurrency_subprice / $line->subprice;
+            $line->multicurrency_total_ttc = (1 + $line->tva_tx) * $line->qty * $subprice * $line->multicurrency_subprice / $line->subprice;
+            // Used previous $line->subprice and $line->multicurrency_subprice above, now they can be set to their new values
+            $line->subprice = $subprice;
+            $line->multicurrency_subprice = $multicurrency_subprice;
+        }
 	} elseif ($action == 'addline' && $usercancreate) {		// Add line
 		// Set if we used free entry or predefined product
 		$predef = '';
