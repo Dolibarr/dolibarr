@@ -1668,7 +1668,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Status To sell
 			print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
 			print '<select class="flat" name="statut">';
-			if (GETPOSTISSET('statut') ? GETPOST('statut') : $object->status) {
+			if ((GETPOSTISSET('statut') && GETPOST('statut')) || (!GETPOSTISSET('statut') && $object->status)) {
 				print '<option value="1" selected>'.$langs->trans("OnSell").'</option>';
 				print '<option value="0">'.$langs->trans("NotOnSell").'</option>';
 			} else {
@@ -1681,7 +1681,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Status To Buy
 			print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="3">';
 			print '<select class="flat" name="statut_buy">';
-			if (GETPOSTISSET('statut_buy') ? GETPOST('statut_buy') : $object->status_buy) {
+			if ((GETPOSTISSET('statut_buy') && GETPOST('statut_buy')) || (!GETPOSTISSET('statut_buy') && $object->status_buy)) {
 				print '<option value="1" selected>'.$langs->trans("ProductStatusOnBuy").'</option>';
 				print '<option value="0">'.$langs->trans("ProductStatusNotOnBuy").'</option>';
 			} else {
