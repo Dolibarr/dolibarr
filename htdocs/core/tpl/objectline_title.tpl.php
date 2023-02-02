@@ -141,7 +141,7 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 	}
 
 	if (!(empty($conf->global->DISPLAY_MARGIN_RATES) && empty($conf->global->PROPALE_MODIFY_MARGIN_RATES)) && $user->rights->margins->liretous) {
-		print '<td class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarginRate');
+		print '<th class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarginRate');
 		if (!empty($conf->global->PROPALE_MODIFY_MARGIN_RATES) && $user->hasRight("propal", "creer")) {
 			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=marginforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickmarginforalllines opacitymedium paddingleft cursorpointer"').'</a>';
 			if (GETPOST('mode', 'aZ09') == 'marginforalllines') {
@@ -151,7 +151,7 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 				print '</div>';
 			}
 		}
-		print '</td>';
+		print '</th>';
 	}
 	if (!empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {
 		print '<th class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarkRate').'</th>';
