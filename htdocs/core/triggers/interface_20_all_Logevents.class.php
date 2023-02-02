@@ -158,6 +158,13 @@ class InterfaceLogevents extends DolibarrTriggers
 			// Initialisation donnees (date,duree,texte,desc)
 			$text = $langs->transnoentities("GroupDeleted", $object->name);
 			$desc = $langs->transnoentities("GroupDeleted", $object->name);
+		} elseif ($action == 'USER_IBANMODIFY') {
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			$langs->load("users");
+			// Initialisation donnees (date,duree,texte,desc)
+			$object->fetch_user($object->userid);
+			$text = $langs->transnoentities("EventUserIbanModified", $object->user->login);
+			$desc = $langs->transnoentities("EventUserIbanModified", $object->user->login);
 		}
 
 		// If not found

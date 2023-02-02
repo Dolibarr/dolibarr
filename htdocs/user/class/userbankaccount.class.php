@@ -145,6 +145,7 @@ class UserBankAccount extends Account
 
 		$result = $this->db->query($sql);
 		if ($result) {
+			$result = $this->call_trigger('USER_IBANMODIFY', $user);
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -266,6 +267,7 @@ class UserBankAccount extends Account
 						dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
 					}
 				}*/
+				$result = $this->call_trigger('USER_IBANMODIFY', $user);
 			} else {
 				$error++;
 				$this->error = "Error ".$this->db->lasterror();

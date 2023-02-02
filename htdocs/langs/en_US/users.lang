@@ -132,3 +132,6 @@ ShowAllPerms=Show all permission rows
 HideAllPerms=Hide all permission rows
 UserPublicPageDesc=You can enable a virtual card for this user. An url with the user profile and a barcode will be available to allow anybody with a smartphone to scan it and add your contact to its address book.
 EnablePublicVirtualCard=Enable the public virtual user card
+EventUserIbanModifiedHTML=Your bank details have just been changed. If you are not the source of this change, please inform your administrator as soon as possible
+EventUserIbanModifiedSubject=Warning - Your bank details have just been changed
+EventUserIbanModified=Bank details have been changed

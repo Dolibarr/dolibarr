@@ -82,10 +82,9 @@ if (empty($account->userid)) {
 // Define value to know what current user can do on users
 $canadduser = (!empty($user->admin) || $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);
 $canreaduser = (!empty($user->admin) || $user->rights->user->user->lire || $user->rights->hrm->read_personal_information->read);
-$permissiontoaddbankaccount = (!empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write) || !empty($user->rights->user->creer));
+$permissiontoaddbankaccount = (!empty($user->rights->user->self->creer) || !empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write) || !empty($user->rights->user->creer));
 $permissiontoreadhr = $user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write');
 $permissiontowritehr = $user->hasRight('hrm', 'write_personal_information', 'write');
-
 // Ok if user->rights->salaries->read or user->rights->hrm->read
 //$result = restrictedArea($user, 'salaries|hrm', $object->id, 'user&user', $feature2);
 $ok = false;
@@ -266,7 +265,7 @@ llxHeader('', $title, $help_url);
 
 $head = user_prepare_head($object);
 
-if ($id && $bankid && $action == 'edit' && ($user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write)) {
+if ($id && $bankid && $action == 'edit' && ($permissiontoaddbankaccount || $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write)) {
 	if ($conf->use_javascript_ajax) {
 		print "\n<script>";
 		print 'jQuery(document).ready(function () {
@@ -287,7 +286,7 @@ if ($id && $bankid && $action == 'edit' && ($user->rights->user->user->creer || 
 	print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">';
 	print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
-if ($id && $action == 'create' && $user->rights->user->user->creer) {
+if ($id && $action == 'create' && ($permissiontoaddbankaccount || $user->rights->user->user->creer)) {
 	if ($conf->use_javascript_ajax) {
 		print "\n<script>";
 		print 'jQuery(document).ready(function () {
@@ -867,7 +866,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 }
 
 // Edit
-if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->user->creer) {
+if ($id && ($action == 'edit' || $action == 'create') && ($permissiontoaddbankaccount || $user->rights->user->user->creer)) {
 	$title = $langs->trans("User");
 	print dol_get_fiche_head($head, 'bank', $title, 0, 'user');
 
@@ -982,11 +981,11 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->us
 	print $form->buttonsSaveCancel("Modify");
 }
 
-if ($id && $action == 'edit' && $user->rights->user->user->creer) {
+if ($id && $action == 'edit' && ($permissiontoaddbankaccount || $user->rights->user->user->creer)) {
 	print '</form>';
 }
 
-if ($id && $action == 'create' && $user->rights->user->user->creer) {
+if ($id && $action == 'create' && ($permissiontoaddbankaccount || $user->rights->user->user->creer)) {
 	print '</form>';
 }
 

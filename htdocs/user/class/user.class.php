@@ -2481,6 +2481,52 @@ class User extends CommonObject
 			return -1;
 		}
 	}
+	
+	/**
+	 *  Send an email to the personnal user adress
+	 *
+	 *  @param	User	$user           Object user that send the email (not the user we send to)
+	 *  @param	string	$subject        Mail subject
+	 *	@param	string  $html 			Mail body in html
+	 *  @return int 		            < 0 si erreur, > 0 si ok
+	 */
+	public function sendPersonalEmail($user, $subject, $html)
+	{
+		global $conf, $langs, $mysoc;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+
+		if (!empty($this->personal_email)) {
+			$subject = '['.$mysoc->name.'] '.$subject;
+
+			$trackid = 'use'.$this->id;
+
+			$mailfile = new CMailFile(
+				$subject,
+				$this->personal_email,
+				$conf->global->MAIN_MAIL_EMAIL_FROM,
+				$html,
+				array(),
+				array(),
+				array(),
+				'',
+				'',
+				0,
+				1,
+				'',
+				'',
+				$trackid
+				);
+
+			if ($mailfile->sendfile()) {
+				return 1;
+			} else {
+				$langs->trans("errors");
+				$this->error = $langs->trans("ErrorFailedToSendEmail").' '.$mailfile->error;
+				return -1;
+			}
+		}
+	}
 
 	/**
 	 * 		Renvoie la derniere erreur fonctionnelle de manipulation de l'objet
