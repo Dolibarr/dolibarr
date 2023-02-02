@@ -1888,7 +1888,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					// Brut Surface
 					print '<tr><td>'.$langs->trans("Surface").'</td><td>';
 					print '<input name="surface" size="5" value="'.(GETPOSTISSET('surface') ? GETPOST('surface') : $object->surface).'"> ';
-					print $formproduct->selectMeasuringUnits("surface_units", "surface", (GETPOSTISSET('surface_units') ? GETPOST('surface_units') : $object->volume), 0, 2);
+					print $formproduct->selectMeasuringUnits("surface_units", "surface", (GETPOSTISSET('surface_units') ? GETPOST('surface_units') : $object->surface_units), 0, 2);
 					print '</td></tr>';
 				}
 				if (empty($conf->global->PRODUCT_DISABLE_VOLUME)) {
