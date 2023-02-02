@@ -8914,6 +8914,7 @@ function verifCond($strToEvaluate)
  */
 function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1')
 {
+    try {
 	// Only global variables can be changed by eval function and returned to caller
 	global $db, $langs, $user, $conf, $website, $websitepage;
 	global $action, $mainmenu, $leftmenu;
@@ -9017,6 +9018,13 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			eval($s);
 		}
 	}
+    } catch (Error $e) {
+            $error = 'Caught error : ';
+            $error .= $e->getMessage() . ', ';
+            $error .= 'Trace : ';
+            $error .= json_encode($e->getTrace());
+            error_log($error, 1);
+    }
 }
 
 /**
