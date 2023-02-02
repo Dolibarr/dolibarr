@@ -1228,7 +1228,7 @@ INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (6
 INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'ZH','ZURICH','Zürich');
 
 
--- Taiwan Divisions / Provinces / Counties (rowid country=886)
+-- Taiwan Divisions / Provinces / Counties (id country=213)
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (21301, 'TW-KLU', 'KLU', NULL, '基隆市');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (21301, 'TW-TPE', 'TPE', NULL, '臺北市');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (21301, 'TW-TPH', 'TPH', NULL, '新北市');
