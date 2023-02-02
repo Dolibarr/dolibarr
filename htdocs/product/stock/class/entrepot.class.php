@@ -690,6 +690,32 @@ class Entrepot extends CommonObject
 
 
 	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+		$langs->load('stocks');
+		$datas = [];
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			return ['optimize' => $langs->trans("Warehouse")];
+		}
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Warehouse").'</u>';
+		if (isset($this->statut)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
+		$datas['ref'] .= '<br><b>'.$langs->trans('Ref').':</b> '.(empty($this->ref) ? $this->label : $this->ref);
+		if (!empty($this->lieu)) {
+			$datas['locationsummary'] .= '<br><b>'.$langs->trans('LocationSummary').':</b> '.$this->lieu;
+		}
+
+		return $datas;
+	}
+
+	/**
 	 *	Return clickable name (possibility with the pictogram)
 	 *
 	 *	@param		int		$withpicto				with pictogram
@@ -743,8 +769,18 @@ class Entrepot extends CommonObject
 				$label = $langs->trans("Warehouse");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip"';
+			if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+				$params = [
+					'id' => $this->id,
+					'objecttype' => $this->element,
+					'option' => $option,
+				];
+				$linkclose .= '" data-params='.json_encode($params).' title="' . $langs->trans('Loading') . '"';
+				$linkclose .= ' class="classforajaxtooltip"';
+			} else {
+				$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' class="classfortooltip"';
+			}
 		}
 
 		$linkstart = '<a href="'.$url.'"';
