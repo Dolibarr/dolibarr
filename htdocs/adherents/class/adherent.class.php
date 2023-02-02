@@ -2377,7 +2377,7 @@ class Adherent extends CommonObject
 					'objecttype' => $this->element,
 					'option' => $option,
 				];
-				$linkclose .= ' data-params='.json_encode($params).' id="' . uniqid('member') . '" title="' . $langs->trans('Loading') . '"';
+				$linkclose .= ' data-params='.json_encode($params).' title="' . $langs->trans('Loading') . '"';
 				$linkclose .= ' class="classforajaxtooltip'.($morecss ? ' '.$morecss : '').'"';
 			} else {
 				$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';

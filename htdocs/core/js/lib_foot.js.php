@@ -84,7 +84,7 @@ if (empty($conf->dol_no_mouse_hover)) {
 		hide: { delay: 250, duration: 20 },
 		tooltipClass: "mytooltip",
 		open: function (event, ui) {
-			var id = $(this).attr("id");
+			var elem = $(this);
 			var params = $(this).attr("data-params");
 			$.ajax({
 				url:"' . dol_buildpath('/core/ajax/ajaxtooltip.php', 1) . '",
@@ -92,7 +92,7 @@ if (empty($conf->dol_no_mouse_hover)) {
 				data: JSON.parse(params),
 				success: function(response){
 					// Setting content option
-					$("#"+id).tooltip("option","content",response);
+					elem.tooltip("option","content",response);
 				}
 			});
 			console.log(event);

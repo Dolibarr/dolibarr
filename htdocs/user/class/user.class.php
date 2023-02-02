@@ -2977,7 +2977,7 @@ class User extends CommonObject
 					'infologin' => $infologin,
 					'option' => $option,
 				];
-				$linkclose .= ' data-params='.json_encode($params).' id="user-' . uniqid() . '" title="' . $langs->trans('Loading') . '"';
+				$linkclose .= ' data-params='.json_encode($params).' title="' . $langs->trans('Loading') . '"';
 				$linkclose .= ' class="classforajaxtooltip'.($morecss ? ' '.$morecss : '').'"';
 			} else {
 				$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';

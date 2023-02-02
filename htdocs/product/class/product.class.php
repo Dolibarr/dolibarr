@@ -5231,7 +5231,7 @@ class Product extends CommonObject
 					'objecttype' => $this->element,
 					'option' => $option,
 				];
-				$linkclose .= ' data-params='.json_encode($params).' id="product-' . uniqid() . '" title="' . $langs->trans('Loading') . '"';
+				$linkclose .= ' data-params='.json_encode($params).' title="' . $langs->trans('Loading') . '"';
 				$linkclose .= ' class="nowraponall classforajaxtooltip'.($morecss ? ' '.$morecss : '').'"';
 			} else {
 				$linkclose .= ' title="'.dol_escape_htmltag($label, 1, 1).'"';

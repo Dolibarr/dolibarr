@@ -1646,14 +1646,10 @@ class Categorie extends CommonObject
 				'objecttype' => $this->element,
 				'option' => $option,
 			];
-			$link2 = $link;
-			$link .= '" data-params='.json_encode($params).' id="' . uniqid('category') . '" title="' . $langs->trans('Loading') . '"';
+			$link .= '" data-params='.json_encode($params).' title="' . $langs->trans('Loading') . '"';
 			$link .= ' class="classforajaxtooltip '.$forced_color.'">';
-			$link2 .= '" data-params='.json_encode($params).' id="' . uniqid('category') . '" title="' . $langs->trans('Loading') . '"';
-			$link2 .= ' class="classforajaxtooltip '.$forced_color.'">';
 		} else {
 			$link .= '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color.'">';
-			$link2 = $link;
 		}
 		$linkend = '</a>';
 
@@ -1667,7 +1663,7 @@ class Categorie extends CommonObject
 			$result .= ' ';
 		}
 		if ($withpicto != 2) {
-			$result .= $link2.dol_trunc(($this->ref ? $this->ref : $this->label), $maxlength).$linkend;
+			$result .= $link.dol_trunc(($this->ref ? $this->ref : $this->label), $maxlength).$linkend;
 		}
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));

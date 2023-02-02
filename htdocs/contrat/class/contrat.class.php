@@ -2082,7 +2082,7 @@ class Contrat extends CommonObject
 					'id' => $this->id,
 					'objecttype' => $this->element,
 				];
-				$linkclose .= '" data-params='.json_encode($params).' id="' . uniqid('contract') . '" title="' . $langs->trans('Loading') . '"';
+				$linkclose .= '" data-params='.json_encode($params).' title="' . $langs->trans('Loading') . '"';
 				$linkclose .= ' class="classforajaxtooltip"';
 			} else {
 				$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
@@ -3158,7 +3158,7 @@ class ContratLigne extends CommonObjectLine
 				'id' => $this->fk_contrat,
 				'objecttype' => $this->element,
 			];
-			$link .= '" data-params='.json_encode($params).' id="' . uniqid('contract') . '" title="' . $langs->trans('Loading') . '"';
+			$link .= '" data-params='.json_encode($params).' title="' . $langs->trans('Loading') . '"';
 			$link .= ' class="classforajaxtooltip"';
 		} else {
 			$link = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';

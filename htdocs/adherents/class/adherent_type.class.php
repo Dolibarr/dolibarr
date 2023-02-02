@@ -752,7 +752,7 @@ class AdherentType extends CommonObject
 				'objecttype' => $this->element,
 				'option' => $option,
 			];
-			$linkstart = '<a href="'.$url.'" data-params='.json_encode($params).' id="' . uniqid($this->element) . '" title="'.$langs->trans('Loading').'" class="classforajaxtooltip">';
+			$linkstart = '<a href="'.$url.'" data-params='.json_encode($params).' title="'.$langs->trans('Loading').'" class="classforajaxtooltip">';
 		} else {
 			$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		}
