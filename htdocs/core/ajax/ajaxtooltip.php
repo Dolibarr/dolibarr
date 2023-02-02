@@ -93,6 +93,11 @@ if ($objecttype == 'facture' || $objecttype == 'invoice') {
 } elseif ($objecttype == 'propal') {
 	$langs->load('propal');
 	$classpath = 'comm/propal/class';
+} elseif ($objecttype == 'action') {
+	$langs->load('agenda');
+	$classpath = 'comm/action/class';
+	$module = 'agenda';
+	$myobject = 'actioncomm';
 } elseif ($objecttype == 'supplier_proposal') {
 	$langs->load('supplier_proposal');
 	$classpath = 'supplier_proposal/class';

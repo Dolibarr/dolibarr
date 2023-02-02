@@ -688,7 +688,6 @@ class Entrepot extends CommonObject
 		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}
 
-
 	/**
 	 * getTooltipContentArray
 	 * @param array $params params to construct tooltip data
