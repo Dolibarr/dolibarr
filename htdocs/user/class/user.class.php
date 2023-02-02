@@ -2481,7 +2481,7 @@ class User extends CommonObject
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *  Send an email to the personnal user adress
 	 *
