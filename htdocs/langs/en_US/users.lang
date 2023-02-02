@@ -130,6 +130,3 @@ IPLastLogin=IP last login
 IPPreviousLogin=IP previous login
 ShowAllPerms=Show all permission rows
 HideAllPerms=Hide all permission rows
-EventUserIbanModifiedHTML=Your bank details have just been changed. If you are not the source of this change, please inform your administrator as soon as possible
-EventUserIbanModifiedSubject=Warning - Your bank details have just been changed
-EventUserIbanModified=Bank details have been changed

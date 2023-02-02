@@ -103,7 +103,6 @@ class Events // extends CommonObject
 		array('id'=>'USERGROUP_CREATE', 'test'=>1),
 		array('id'=>'USERGROUP_MODIFY', 'test'=>1),
 		array('id'=>'USERGROUP_DELETE', 'test'=>1),
-		array('id'=>'USER_IBANMODIFY', 'test'=>1),
 	);
 
 
