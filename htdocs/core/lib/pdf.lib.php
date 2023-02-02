@@ -1295,7 +1295,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	// Show page nb only on iso languages (so default Helvetica font)
 	if (strtolower(pdf_getPDFFont($outputlangs)) == 'helvetica') {
 		// Option for change XY position of the page number
-		$pdf->SetXY($dims['wk'] - $dims['rm'] - 18 - ( getDolGlobalString('PDF_FOOTER_PAGE_NUMBER_X') ? floatval(getDolGlobalString('PDF_FOOTER_PAGE_NUMBER_X')) : 0 ) , -$posy - ( getDolGlobalString('PDF_FOOTER_PAGE_NUMBER_Y') ? floatval(getDolGlobalString('PDF_FOOTER_PAGE_NUMBER_Y')) : 0 ));
+		$pdf->SetXY($dims['wk'] - $dims['rm'] - 18 - ( getDolGlobalString('PDF_FOOTER_PAGE_NUMBER_X') ? floatval(getDolGlobalString('PDF_FOOTER_PAGE_NUMBER_X')) : 0 ), -$posy - ( getDolGlobalString('PDF_FOOTER_PAGE_NUMBER_Y') ? floatval(getDolGlobalString('PDF_FOOTER_PAGE_NUMBER_Y')) : 0 ));
 		//$pdf->MultiCell(18, 2, $pdf->getPageNumGroupAlias().' / '.$pdf->getPageGroupAlias(), 0, 'R', 0);
 		$pdf->MultiCell(18, 2, $pdf->PageNo().' / '.$pdf->getAliasNbPages(), 0, 'R', 0);
 	}
