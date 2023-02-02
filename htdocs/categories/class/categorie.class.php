@@ -10,7 +10,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1598,6 +1598,23 @@ class Categorie extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+
+		$datas = [];
+
+		$datas['label'] = $langs->trans("ShowCategory").': '.($this->ref ? $this->ref : $this->label);
+
+		return $datas;
+	}
+
+	/**
 	 *	Return name and link of category (with picto)
 	 *  Use ->id, ->ref, ->label, ->color
 	 *
@@ -1622,7 +1639,22 @@ class Categorie extends CommonObject
 			}
 		}
 
-		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam ? '?'.$moreparam : '')).'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color.'">';
+		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam ? '?'.$moreparam : ''));
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$params = [
+				'id' => $this->id,
+				'objecttype' => $this->element,
+				'option' => $option,
+			];
+			$link2 = $link;
+			$link .= '" data-params='.json_encode($params).' id="' . uniqid('category') . '" title="' . $langs->trans('Loading') . '"';
+			$link .= ' class="classforajaxtooltip '.$forced_color.'">';
+			$link2 .= '" data-params='.json_encode($params).' id="' . uniqid('category') . '" title="' . $langs->trans('Loading') . '"';
+			$link2 .= ' class="classforajaxtooltip '.$forced_color.'">';
+		} else {
+			$link .= '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color.'">';
+			$link2 = $link;
+		}
 		$linkend = '</a>';
 
 		$picto = 'category';
@@ -1635,7 +1667,7 @@ class Categorie extends CommonObject
 			$result .= ' ';
 		}
 		if ($withpicto != 2) {
-			$result .= $link.dol_trunc(($this->ref ? $this->ref : $this->label), $maxlength).$linkend;
+			$result .= $link2.dol_trunc(($this->ref ? $this->ref : $this->label), $maxlength).$linkend;
 		}
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));

@@ -75,11 +75,16 @@ if ($objecttype == 'facture' || $objecttype == 'invoice') {
 	$classpath = 'compta/facture/class';
 	$module = 'facture';
 	$myobject = 'facture';
-} elseif ($objecttype == 'bank_account') {
+} elseif ($objecttype == 'bank_accoun') {
 	$langs->loadLangs(['banks', 'compta']);
 	$classpath = 'compta/bank/class';
 	$module = 'banque';
 	$myobject = 'account';
+} elseif ($objecttype == 'category') {
+	$langs->loadLangs(['categories']);
+	$classpath = 'categories/class';
+	$module = 'categorie';
+	$myobject = 'categorie';
 } elseif ($objecttype == 'commande' || $objecttype == 'order') {
 	$langs->load('orders');
 	$classpath = 'commande/class';
