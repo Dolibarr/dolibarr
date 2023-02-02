@@ -64,3 +64,10 @@ ALTER TABLE llx_website ADD COLUMN pageviews_previous_month BIGINT UNSIGNED DEFA
 
 ALTER TABLE llx_product_stock ADD CONSTRAINT fk_product_product_rowid FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 ALTER TABLE llx_product_stock ADD CONSTRAINT fk_entrepot_entrepot_rowid FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
+
+
+ALTER TABLE llx_bank_account ADD COLUMN owner_zip varchar(25);
+ALTER TABLE llx_bank_account ADD COLUMN owner_town varchar(50);
+ALTER TABLE llx_bank_account ADD COLUMN owner_country_id integer DEFAULT NULL;
+
+  
