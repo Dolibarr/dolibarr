@@ -75,7 +75,7 @@ if ($objecttype == 'facture' || $objecttype == 'invoice') {
 	$classpath = 'compta/facture/class';
 	$module = 'facture';
 	$myobject = 'facture';
-} elseif ($objecttype == 'bank_accoun') {
+} elseif ($objecttype == 'bank_account') {
 	$langs->loadLangs(['banks', 'compta']);
 	$classpath = 'compta/bank/class';
 	$module = 'banque';
@@ -205,7 +205,6 @@ if (isModEnabled($module)) {
 			}
 			unset($object);
 		} else {
-			print "Class with classname ".$classname." is unknown even after the include";
 			dol_syslog("Class with classname ".$classname." is unknown even after the include", LOG_ERR);
 		}
 	}
