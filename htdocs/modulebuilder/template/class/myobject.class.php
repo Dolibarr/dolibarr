@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2017  Laurent Destailleur      <eldy@users.sourceforge.net>
+ * Copyright (C) 2023  Frédéric France          <frederic.france@netlogic.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -751,6 +752,30 @@ class MyObject extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+
+		$datas = [];
+
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			return ['optimize' => $langs->trans("ShowMyObject")];
+		}
+		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("MyObject").'</u>';
+		if (isset($this->status)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
+		$datas['ref'] .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+
+		return $datas;
+	}
+
+	/**
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -796,8 +821,18 @@ class MyObject extends CommonObject
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+				$params = [
+					'id' => $this->id,
+					'objecttype' => $this->element,
+					'option' => $option,
+				];
+				$linkclose .= ' data-params='.json_encode($params).' id="propal-' . uniqid() . '" title="' . $langs->trans('Loading') . '"';
+				$linkclose .= ' class="classforajaxtooltip'.($morecss ? ' '.$morecss : '').'"';
+			} else {
+				$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			}
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
