@@ -75,6 +75,11 @@ if ($objecttype == 'facture' || $objecttype == 'invoice') {
 	$classpath = 'compta/facture/class';
 	$module = 'facture';
 	$myobject = 'facture';
+} elseif ($objecttype == 'bank_account') {
+	$langs->loadLangs(['banks', 'compta']);
+	$classpath = 'compta/bank/class';
+	$module = 'banque';
+	$myobject = 'account';
 } elseif ($objecttype == 'commande' || $objecttype == 'order') {
 	$langs->load('orders');
 	$classpath = 'commande/class';
@@ -180,7 +185,7 @@ if ($objecttype == 'invoice_supplier') {
 } elseif ($objecttype == 'contact') {
 	$module = 'societe';
 }
-// print "objecttype=".$objecttype." module=".$module." subelement=".$subelement." classfile=".$classfile." classname=".$classname." classpath=".$classpath."\n";
+// print "objecttype=".$objecttype." module=".$module." subelement=".$subelement." classfile=".$classfile." classname=".$classname." classpath=".$classpath."<br>";
 
 if (isModEnabled($module)) {
 	$res = dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
