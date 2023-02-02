@@ -24,8 +24,18 @@
  *       \file      htdocs/install/step5.php
  *       \ingroup   install
  *       \brief     Last page of upgrade / install process
+ *
+ *       This page is called with parameter action=set by step4.php or action=upgrade by upgrade2.php
+ *       For installation:
+ *         It creates the login admin and set the MAIN_SECURITY_SALT to a random value.
+ *         It set the value for MAIN_VERSION_LAST_INSTALL
+ *         It creates the install.lock and shows the final message.
+ *       For upgrade:
+ *         It updates the value for MAIN_VERSION_LAST_UPGRADE.
+ *         It (re)creates the install.lock and shows the final message.
  */
 
+define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
 if (file_exists($conffile)) {
 	include_once $conffile;
@@ -267,11 +277,14 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					if (!$resql) {
 						dol_print_error($db, 'Error in setup program');
 					}
+					// The install.lock file is created few lines later if version is last one or if option MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE is on
+					/* No need to enable this
 					$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_REMOVE_INSTALL_WARNING').", ".$db->encrypt(1).", 'chaine', 1, 'Disable install warnings', 0)");
 					if (!$resql) {
 						dol_print_error($db, 'Error in setup program');
 					}
 					$conf->global->MAIN_REMOVE_INSTALL_WARNING = 1;
+					*/
 				}
 
 				// If we ask to force some modules to be enabled
@@ -365,20 +378,23 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 if ($action == "set") {
 	if ($success) {
 		if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION)) {
-			// Install is finished
+			// Install is finished (database is on same version than files)
 			print '<br>'.$langs->trans("SystemIsInstalled")."<br>";
 
+			// Create install.lock file
+			// No need for the moment to create it automatically, creation by web assistant means permissions are given
+			// to the web user, it is better to show a warning to say to create it manually with correct user/permission (not erasable by a web process)
 			$createlock = 0;
-
 			if (!empty($force_install_lockinstall) || !empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE)) {
-				// Install is finished, we create the lock file
+				// Install is finished, we create the "install.lock" file, so install won't be possible anymore.
+				// TODO Upgrade will be still be possible if a file "upgrade.unlock" is present
 				$lockfile = DOL_DATA_ROOT.'/install.lock';
 				$fp = @fopen($lockfile, "w");
 				if ($fp) {
 					if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) {
 						$force_install_lockinstall = 444; // For backward compatibility
 					}
-					fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
+					fwrite($fp, "This is a lock file to prevent use of install or upgrade pages (set with permission ".$force_install_lockinstall.")");
 					fclose($fp);
 					@chmod($lockfile, octdec($force_install_lockinstall));
 					$createlock = 1;
@@ -410,20 +426,22 @@ if ($action == "set") {
 } elseif (empty($action) || preg_match('/upgrade/i', $action)) {
 	// If upgrade
 	if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION)) {
-		// Upgrade is finished
-		print '<img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/checklist.svg" width="20" alt="Configuration"> <span class="valignmiddle">'.$langs->trans("SystemIsUpgraded")."</span><br>";
+		// Upgrade is finished (database is on the same version than files)
+		print '<img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/checklist.svg" width="20" alt="Configuration">';
+		print ' <span class="valignmiddle">'.$langs->trans("SystemIsUpgraded")."</span><br>";
 
+		// Create install.lock file if it does not exists.
+		// Note: it should always exists. A better solution to allow upgrade will be to add an upgrade.unlock file
 		$createlock = 0;
-
 		if (!empty($force_install_lockinstall) || !empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE)) {
-			// Upgrade is finished, we create the lock file
+			// Upgrade is finished, we modify the lock file
 			$lockfile = DOL_DATA_ROOT.'/install.lock';
 			$fp = @fopen($lockfile, "w");
 			if ($fp) {
 				if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) {
 					$force_install_lockinstall = 444; // For backward compatibility
 				}
-				fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
+				fwrite($fp, "This is a lock file to prevent use of install or upgrade pages (set with permission ".$force_install_lockinstall.")");
 				fclose($fp);
 				@chmod($lockfile, octdec($force_install_lockinstall));
 				$createlock = 1;
@@ -432,6 +450,10 @@ if ($action == "set") {
 		if (empty($createlock)) {
 			print '<br><div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
 		}
+
+		// Delete the upgrade.unlock file it it exists
+		$unlockupgradefile = DOL_DATA_ROOT.'/upgrade.unlock';
+		dol_delete_file($unlockupgradefile, 0, 0, 0, null, false, 0);
 
 		print "<br>";
 

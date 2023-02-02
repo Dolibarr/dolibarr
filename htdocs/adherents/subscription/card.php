@@ -49,13 +49,13 @@ $note = GETPOST('note', 'alpha');
 $typeid = (int) GETPOST('typeid', 'int');
 $amount = price2num(GETPOST('amount', 'alpha'), 'MT');
 
-if (empty($user->rights->adherent->cotisation->lire)) {
+if (!$user->hasRight('adherent', 'cotisation', 'lire')) {
 	 accessforbidden();
 }
 
-$permissionnote = $user->rights->adherent->cotisation->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->adherent->cotisation->creer; // Used by the include of actions_dellink.inc.php
-$permissiontoedit = $user->rights->adherent->cotisation->creer; // Used by the include of actions_lineupdonw.inc.php
+$permissionnote = $user->hasRight('adherent', 'cotisation', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('adherent', 'cotisation', 'creer'); // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $user->hasRight('adherent', 'cotisation', 'creer'); // Used by the include of actions_lineupdonw.inc.php
 
 $hookmanager->initHooks(array('subscriptioncard', 'globalcard'));
 
@@ -78,7 +78,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, n
 //include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
 
 
-if ($user->rights->adherent->cotisation->creer && $action == 'update' && !$cancel) {
+if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'update' && !$cancel) {
 	// Load current object
 	$result = $object->fetch($rowid);
 	if ($result > 0) {
@@ -141,7 +141,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'update' && !$cance
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->adherent->cotisation->creer) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('adherent', 'cotisation', 'creer')) {
 	$result = $object->fetch($rowid);
 	$result = $object->delete($user);
 	if ($result > 0) {
@@ -167,7 +167,7 @@ llxHeader('', $langs->trans("SubscriptionCard"), $help_url);
 dol_htmloutput_errors($errmsg);
 
 
-if ($user->rights->adherent->cotisation->creer && $action == 'edit') {
+if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'edit') {
 	/********************************************
 	 *
 	 * Subscription card in edit mode
@@ -351,7 +351,7 @@ if ($rowid && $action != 'edit') {
 	 */
 	print '<div class="tabsAction">';
 
-	if ($user->rights->adherent->cotisation->creer) {
+	if ($user->hasRight('adherent', 'cotisation', 'creer')) {
 		if (!empty($bankline->rappro)) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify")."</a></div>";
 		} else {
@@ -360,7 +360,7 @@ if ($rowid && $action != 'edit') {
 	}
 
 	// Delete
-	if ($user->rights->adherent->cotisation->creer) {
+	if ($user->hasRight('adherent', 'cotisation', 'creer')) {
 		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>\n";
 	}
 

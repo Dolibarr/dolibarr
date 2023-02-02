@@ -42,6 +42,7 @@ $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $type = GETPOST('type', 'aZ');
+$mode = GETPOST('mode', 'alpha');
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -155,6 +156,9 @@ if ($resql) {
 	$i = 0;
 
 	$param = '';
+	if (!empty($mode)) {
+		$param .= '&mode='.urlencode($mode);
+	}
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
@@ -181,6 +185,8 @@ if ($resql) {
 	}
 
 	$newcardbutton = '';
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
 	if ($user->rights->don->creer) {
 		$newcardbutton .= dolGetButtonTitle($langs->trans('NewDonation'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/don/card.php?action=create');
 	}
@@ -195,6 +201,9 @@ if ($resql) {
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
+
+
 
 	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'object_donation', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -234,14 +243,14 @@ if ($resql) {
 		print '</td>';
 	}
 	print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre right parentonrightofpage">';
 	$liststatus = array(
 		Don::STATUS_DRAFT=>$langs->trans("DonationStatusPromiseNotValidated"),
 		Don::STATUS_VALIDATED=>$langs->trans("DonationStatusPromiseValidated"),
 		Don::STATUS_PAID=>$langs->trans("DonationStatusPaid"),
 		Don::STATUS_CANCELED=>$langs->trans("Canceled")
 	);
-	print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'maxwidth100 onrightofpage');
+	print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'search_status maxwidth100 onrightofpage');
 	print '</td>';
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterAndCheckAddButtons(0);
@@ -269,44 +278,70 @@ if ($resql) {
 
 	while ($i < min($num, $limit)) {
 		$objp = $db->fetch_object($resql);
+		$donationstatic->setVarsFromFetchObj($objp);
+		$company = new Societe($db);
+		$result = $company->fetch($objp->socid);
 
-		print '<tr class="oddeven">';
-		$donationstatic->id = $objp->rowid;
-		$donationstatic->ref = $objp->rowid;
-		$donationstatic->lastname = $objp->lastname;
-		$donationstatic->firstname = $objp->firstname;
-		print "<td>".$donationstatic->getNomUrl(1)."</td>";
-		if (!empty($conf->global->DONATION_USE_THIRDPARTIES)) {
-			$company = new Societe($db);
-			$result = $company->fetch($objp->socid);
+		if ($mode == 'kanban') {
+			if ($i == 0) {
+				print '<tr><td colspan="12">';
+				print '<div class="box-flex-container">';
+			}
+			// Output Kanban
+			$donationstatic->amount = $objp->amount;
+			$donationstatic->date = $objp->datedon;
+			$donationstatic->labelStatus = $objp->status;
+			$donationstatic->id = $objp->rowid;
+			$donationstatic->ref = $objp->rowid;
+
 			if (!empty($objp->socid) && $company->id > 0) {
-				print "<td>".$company->getNomUrl(1)."</td>";
+				$donationstatic->societe = $company->getNomUrl(1);
+			} else {
+				$donationstatic->societe = $objp->societe;
+			}
+
+			print $donationstatic->getKanbanView('');
+			if ($i == (min($num, $limit) - 1)) {
+				print '</div>';
+				print '</td></tr>';
+			}
+		} else {
+			print '<tr class="oddeven">';
+			$donationstatic->id = $objp->rowid;
+			$donationstatic->ref = $objp->rowid;
+			$donationstatic->lastname = $objp->lastname;
+			$donationstatic->firstname = $objp->firstname;
+			print "<td>".$donationstatic->getNomUrl(1)."</td>";
+			if (!empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+				if (!empty($objp->socid) && $company->id > 0) {
+					print "<td>".$company->getNomUrl(1)."</td>";
+				} else {
+					print "<td>".$objp->societe."</td>";
+				}
 			} else {
 				print "<td>".$objp->societe."</td>";
 			}
-		} else {
-			print "<td>".$objp->societe."</td>";
-		}
-		print "<td>".$donationstatic->getFullName($langs)."</td>";
-		print '<td class="center">'.dol_print_date($db->jdate($objp->datedon), 'day').'</td>';
-		if (isModEnabled('project')) {
-			print "<td>";
-			if ($objp->pid) {
-				$projectstatic->id = $objp->pid;
-				$projectstatic->ref = $objp->ref;
-				$projectstatic->id = $objp->pid;
-				$projectstatic->public = $objp->public;
-				$projectstatic->title = $objp->title;
-				print $projectstatic->getNomUrl(1);
-			} else {
-				print '&nbsp;';
+			print "<td>".$donationstatic->getFullName($langs)."</td>";
+			print '<td class="center">'.dol_print_date($db->jdate($objp->datedon), 'day').'</td>';
+			if (isModEnabled('project')) {
+				print "<td>";
+				if ($objp->pid) {
+					$projectstatic->id = $objp->pid;
+					$projectstatic->ref = $objp->ref;
+					$projectstatic->id = $objp->pid;
+					$projectstatic->public = $objp->public;
+					$projectstatic->title = $objp->title;
+					print $projectstatic->getNomUrl(1);
+				} else {
+					print '&nbsp;';
+				}
+				print "</td>\n";
 			}
-			print "</td>\n";
+			print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
+			print '<td class="right">'.$donationstatic->LibStatut($objp->status, 5).'</td>';
+			print '<td></td>';
+			print "</tr>";
 		}
-		print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
-		print '<td class="right">'.$donationstatic->LibStatut($objp->status, 5).'</td>';
-		print '<td></td>';
-		print "</tr>";
 		$i++;
 	}
 	print "</table>";

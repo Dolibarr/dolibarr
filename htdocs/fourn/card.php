@@ -98,10 +98,20 @@ if (empty($reshook)) {
 		$action = "";
 	}
 
+	// Set supplier accounting account
 	if ($action == 'setsupplieraccountancycode' && $user->hasRight('societe', 'creer')) {
 		$result = $object->fetch($id);
 		$object->code_compta_fournisseur = GETPOST("supplieraccountancycode");
 		$result = $object->update($object->id, $user, 1, 0, 1);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+	// Set vat number accounting account
+	if ($action == 'settva_intra' && $user->hasRight('societe', 'creer')) {
+		$result = $object->fetch($id);
+		$object->tva_intra = GETPOST("tva_intra");
+		$result = $object->update($object->id, $user, 1, 0, 0);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -261,8 +271,12 @@ if ($object->id > 0) {
 	}
 
 	// TVA Intra
-	print '<tr><td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
-	print showValueWithClipboardCPButton(dol_escape_htmltag($object->tva_intra));
+	print '<tr><td class="nowrap">';
+	//print $langs->trans('VATIntra').'</td><td>';
+	$vattoshow = ($object->tva_intra ? showValueWithClipboardCPButton(dol_escape_htmltag($object->tva_intra)) : '');
+	print $form->editfieldkey("VATIntra", 'tva_intra', $object->tva_intra, $object, $user->hasRight('societe', 'creer'));
+	print '</td><td>';
+	print $form->editfieldval("VATIntra", 'tva_intra', $vattoshow, $object, $user->hasRight('societe', 'creer'), 'string', $object->tva_intra, null, null, '', 1, '', 'id', 'auto', array('valuealreadyhtmlescaped'=>1));
 	print '</td></tr>';
 
 	// Default terms of the settlement

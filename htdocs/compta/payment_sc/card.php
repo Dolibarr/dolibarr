@@ -63,7 +63,7 @@ $result = restrictedArea($user, 'payment_sc', $id, '');
  */
 
 // Delete payment
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->charges->supprimer) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('tax', 'charges', 'supprimer')) {
 	$db->begin();
 
 	$result = $object->delete($user);

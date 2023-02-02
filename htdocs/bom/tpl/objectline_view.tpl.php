@@ -119,7 +119,7 @@ echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but 
 print '</td>';
 
 if ($filtertype != 1) {
-	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		print '<td class="linecoluseunit nowrap left">';
 		$label = $tmpproduct->getLabelOfUnit('long');
 		if ($label !== '') {

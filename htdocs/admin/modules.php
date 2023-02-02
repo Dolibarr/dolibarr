@@ -65,9 +65,9 @@ $search_version = GETPOST('search_version', 'alpha');
 // For dolistore search
 $options              = array();
 $options['per_page']  = 20;
-$options['categorie'] = ((GETPOST('categorie', 'int') ?GETPOST('categorie', 'int') : 0) + 0);
-$options['start']     = ((GETPOST('start', 'int') ?GETPOST('start', 'int') : 0) + 0);
-$options['end']       = ((GETPOST('end', 'int') ?GETPOST('end', 'int') : 0) + 0);
+$options['categorie'] = ((int) (GETPOST('categorie', 'int') ? GETPOST('categorie', 'int') : 0));
+$options['start']     = ((int) (GETPOST('start', 'int') ?GETPOST('start', 'int') : 0));
+$options['end']       = ((int) (GETPOST('end', 'int') ?GETPOST('end', 'int') : 0));
 $options['search']    = GETPOST('search_keyword', 'alpha');
 $dolistore            = new Dolistore(false);
 
@@ -282,7 +282,36 @@ if ($action == 'set' && $user->admin) {
 	}
 	header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
 	exit;
+} elseif (getDolGlobalInt("MAIN_FEATURES_LEVEL") > 1 && $action == 'reload' && $user->admin && GETPOST('confirm') == 'yes') {
+	$result = unActivateModule($value, 0);
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+	if ($result) {
+		setEventMessages($result, null, 'errors');
+		header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
+	}
+	$resarray = activateModule($value, 0, 1);
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+	if (!empty($resarray['errors'])) {
+		setEventMessages('', $resarray['errors'], 'errors');
+	} else {
+		if ($resarray['nbperms'] > 0) {
+			$tmpsql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."user WHERE admin <> 1";
+			$resqltmp = $db->query($tmpsql);
+			if ($resqltmp) {
+				$obj = $db->fetch_object($resqltmp);
+				if ($obj && $obj->nb > 1) {
+					$msg = $langs->trans('ModuleEnabledAdminMustCheckRights');
+					setEventMessages($msg, null, 'warnings');
+				}
+			} else {
+				dol_print_error($db);
+			}
+		}
+	}
+	header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
+	exit;
 }
+
 
 
 
@@ -464,6 +493,19 @@ if ($action == 'reset_confirm' && $user->admin) {
 	}
 }
 
+if ($action == 'reload_confirm' && $user->admin) {
+	if (!empty($modules[$value])) {
+		$objMod = $modules[$value];
+
+		if (!empty($objMod->langfiles)) {
+			$langs->loadLangs($objMod->langfiles);
+		}
+
+		$form = new Form($db);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?value='.$value.'&mode='.$mode.$param, $langs->trans('ConfirmReload'), $langs->trans(GETPOST('confirm_message_code')), 'reload', '', 'no', 1);
+	}
+}
+
 print $formconfirm;
 
 asort($orders);
@@ -547,6 +589,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
 	$moreforfilter .= $form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), $langs->trans('Origin'), 0, 0, '', 0, 0, 0, '', 'maxwidth250', 1);
 	$moreforfilter .= '</div>';
+
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
 		$array_version = array('stable'=>$langs->transnoentitiesnoconv("Stable"));
 		if ($conf->global->MAIN_FEATURES_LEVEL < 0) {
@@ -559,11 +602,12 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			$array_version['development'] = $langs->trans("Development");
 		}
 		$moreforfilter .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
-		$moreforfilter .= $form->selectarray('search_version', $array_version, $search_version, $langs->trans('Version'), 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
+		$moreforfilter .= $form->selectarray('search_version', $array_version, $search_version, $langs->transnoentitiesnoconv('Version'), 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
 		$moreforfilter .= '</div>';
 	}
+	$array_status = array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled"));
 	$moreforfilter .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
-	$moreforfilter .= $form->selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, $langs->trans('Status'), 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
+	$moreforfilter .= $form->selectarray('search_status', $array_status, $search_status, $langs->transnoentitiesnoconv('Status'), 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
 	$moreforfilter .= '</div>';
 	$moreforfilter .= ' ';
 	$moreforfilter .= '<div class="divsearchfield valignmiddle inline-block">';
@@ -734,15 +778,17 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		// Version (with picto warning or not)
 		$version = $objMod->getVersion(0);
 		$versiontrans = '';
+		$warningstring = '';
 		if (preg_match('/development/i', $version)) {
-			$versiontrans .= img_warning($langs->trans("Development"), '', 'floatleft paddingright');
+			$warningstring = $langs->trans("Development");
 		}
 		if (preg_match('/experimental/i', $version)) {
-			$versiontrans .= img_warning($langs->trans("Experimental"), '', 'floatleft paddingright');
+			$warningstring = $langs->trans("Experimental");
 		}
 		if (preg_match('/deprecated/i', $version)) {
-			$versiontrans .= img_warning($langs->trans("Deprecated"), '', 'floatleft paddingright');
+			$warningstring = $langs->trans("Deprecated");
 		}
+
 		if ($objMod->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
 			$versiontrans .= $objMod->getVersion(1);
 		}
@@ -800,12 +846,24 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			} else {
 				if (!empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.urlencode($objMod->warnings_unactivation[$mysoc->country_code]).'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
-					$codeenabledisable .= img_picto($langs->trans("Activated"), 'switch_on');
+					$codeenabledisable .= img_picto($langs->trans("Activated").($warningstring ? ' '.$warningstring : ''), 'switch_on');
 					$codeenabledisable .= '</a>';
+					if (getDolGlobalInt("MAIN_FEATURES_LEVEL") > 1) {
+						$codeenabledisable .= '&nbsp;';
+						$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reload_confirm&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
+						$codeenabledisable .= img_picto($langs->trans("Reload"), 'refresh', 'class="opacitymedium"');
+						$codeenabledisable .= '</a>';
+					}
 				} else {
 					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
-					$codeenabledisable .= img_picto($langs->trans("Activated"), 'switch_on');
+					$codeenabledisable .= img_picto($langs->trans("Activated").($warningstring ? ' '.$warningstring : ''), 'switch_on');
 					$codeenabledisable .= '</a>';
+					if (getDolGlobalInt("MAIN_FEATURES_LEVEL") > 1) {
+						$codeenabledisable .= '&nbsp;';
+						$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reload&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
+						$codeenabledisable .= img_picto($langs->trans("Reload"), 'refresh', 'class="opacitymedium"');
+						$codeenabledisable .= '</a>';
+					}
 				}
 			}
 
@@ -907,7 +965,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			// Output Kanban
 			print $objMod->getKanbanView($codeenabledisable, $codetoconfig);
 		} else {
-			print '<tr class="oddeven">'."\n";
+			print '<tr class="oddeven'.($warningstring ? ' info-box-content-warning' : '').'">'."\n";
 			if (!empty($conf->global->MAIN_MODULES_SHOW_LINENUMBERS)) {
 				print '<td class="width50">'.$linenum.'</td>';
 			}
@@ -941,7 +999,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print '</td>';
 
 			// Version
-			print '<td class="center nowrap" width="120px">';
+			print '<td class="center nowrap" width="150px" title="'.dol_escape_htmltag(dol_string_nohtmltag($versiontrans)).'">';
 			if ($objMod->needUpdate) {
 				$versionTitle = $langs->trans('ModuleUpdateAvailable').' : '.$objMod->lastVersion;
 				print '<span class="badge badge-warning classfortooltip" title="'.dol_escape_htmltag($versionTitle).'">'.$versiontrans.'</span>';
@@ -951,7 +1009,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print "</td>\n";
 
 			// Link enable/disable
-			print '<td class="center valignmiddle" width="60px">';
+			print '<td class="center valignmiddle left" width="60px">';
 			print $codeenabledisable;
 			print "</td>\n";
 
@@ -1216,10 +1274,10 @@ if ($mode == 'deploy') {
 				print '<script type="text/javascript">
 				$(document).ready(function() {
 					jQuery("#fileinstall").on("change", function() {
-						if(this.files[0].size > '.($maxmin * 1024).'){
+						if(this.files[0].size > '.($maxmin * 1024).') {
 							alert("'.dol_escape_js($langs->trans("ErrorFileSizeTooLarge")).'");
 							this.value = "";
-						};
+						}
 					});
 				});
 				</script>'."\n";

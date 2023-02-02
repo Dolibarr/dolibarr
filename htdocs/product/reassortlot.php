@@ -716,8 +716,9 @@ while ($i < $imaxinloop) {
 	}
 
 	print '<td class="right">';
-	//if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
+	if ($objp->stock_physique < 0) { print '<span class="warning">'; }
 	print $objp->stock_physique;
+	if ($objp->stock_physique < 0) { print '</span>'; }
 	print '</td>';
 
 	print '<td class="right">';

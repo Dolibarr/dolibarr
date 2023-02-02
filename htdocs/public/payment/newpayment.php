@@ -281,19 +281,8 @@ if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('strip
 }
 
 // Initialize $validpaymentmethod
+// The list can be complete by the hook 'doValidatePayment' executed inside getValidOnlinePaymentMethods()
 $validpaymentmethod = getValidOnlinePaymentMethods($paymentmethod);
-
-// This hook is used to push to $validpaymentmethod by external payment modules (ie Payzen, ...)
-$parameters = [
-	'paymentmethod' => $paymentmethod,
-	'validpaymentmethod' => &$validpaymentmethod
-];
-$reshook = $hookmanager->executeHooks('doValidatePayment', $parameters, $object, $action);
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-} elseif ($reshook > 0) {
-	print $hookmanager->resPrint;
-}
 
 // Check security token
 $tmpsource = $source;
@@ -822,6 +811,19 @@ if ($action == 'charge' && isModEnabled('stripe')) {
 		exit;
 	}
 }
+
+// This hook is used to push to $validpaymentmethod by external payment modules (ie Payzen, ...)
+$parameters = array(
+	'paymentmethod' => $paymentmethod,
+	'validpaymentmethod' => &$validpaymentmethod
+);
+$reshook = $hookmanager->executeHooks('doPayment', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+} elseif ($reshook > 0) {
+	print $hookmanager->resPrint;
+}
+
 
 
 /*
@@ -2413,7 +2415,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 				color: '#fa755a',
 				iconColor: '#fa755a'
 			  }
-			};
+			}
 
 			var cardElement = elements.create('card', {style: style});
 
@@ -2453,7 +2455,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 					?>
 			var cardButton = document.getElementById('buttontopay');
 			var clientSecret = cardButton.dataset.secret;
-			var options = { clientSecret: clientSecret,};
+			var options = { clientSecret: clientSecret };
 
 			// Create an instance of Elements
 			var elements = stripe.elements(options);
@@ -2483,7 +2485,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 				color: '#fa755a',
 				iconColor: '#fa755a'
 			  }
-			};
+			}
 
 				<?php
 				if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 2) {
