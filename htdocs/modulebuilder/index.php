@@ -1995,8 +1995,8 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright')&& e
 	$permsForObject =array();
 
 	$allObject = array();
-
-	for ($i =0; $i<count($permissions); $i++) {
+	$nbOfPermissions = count($permissions);
+	for ($i =0; $i<$nbOfPermissions; $i++) {
 		if ($permissions[$i][4] == $objectForPerms) {
 			if (count($permsForObject) < 3) {
 				$permsForObject[] = $permissions[$i];
