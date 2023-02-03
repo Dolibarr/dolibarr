@@ -155,87 +155,101 @@ class ODFTest extends PHPUnit\Framework\TestCase
 				'to_convert' => 'Simple string',
 				'encode' => true,
 				'charset' => null,
-				'expected' => 'Simple string'
+				'expected7.4' => 'Simple string',
+				'expected7.3' => 'Simple string'
 			],
 			2 => [
 				'to_convert' => 'Simple string',
 				'encode' => false,
 				'charset' => null,
-				'expected' => 'Simple string'
+				'expected7.4' => 'Simple string',
+				'expected7.3' => 'Simple string'
 			],
 			3 => [
 				'to_convert' => "Simple string\nwith line break",
 				'encode' => true,
 				'charset' => null,
-				'expected' => "Simple string<text:line-break/>with line break"
+				'expected7.4' => "Simple string<text:line-break/>with line break",
+				'expected7.3' => "Simple string<text:line-break/>with line break"
 			],
 			4 => [
 				'to_convert' => "Simple string\nwith line break",
 				'encode' => false,
 				'charset' => null,
-				'expected' => "Simple string<text:line-break/>with line break"
+				'expected7.4' => "Simple string<text:line-break/>with line break",
+				'expected7.3' => "Simple string<text:line-break/>with line break"
 			],
 			// Special chars
 			5 => [
 				'to_convert' => 'One&two',
 				'encode' => true,
 				'charset' => null,
-				'expected' => 'One&amp;two'
+				'expected7.4' => 'One&amp;two',
+				'expected7.3' => 'One&amp;two'
 			],
 			6 => [
 				'to_convert' => 'One&two',
 				'encode' => false,
 				'charset' => null,
-				'expected' => 'One&two'
+				'expected7.4' => 'One&two',
+				'expected7.3' => 'One&two'
 			],
 			7 => [
 				'to_convert' => "/a&él'èàüöç€Ğ~<>",
 				'encode' => true,
 				'charset' => null,
-				'expected' => utf8_encode("/a&amp;él&apos;èàüöç€Ğ~&lt;&gt;"),
+				'expected7.4' => utf8_encode("/a&amp;él&apos;èàüöç€Ğ~&lt;&gt;"),
+				'expected7.3' => utf8_encode("/a&amp;él&apos;èàüöç€Ğ~&lt;&gt;")
 			],
 			8 => [
 				'to_convert' => "/a&él'èàüöç€Ğ~<>",
 				'encode' => false,
 				'charset' => null,
-				'expected' => utf8_encode("/a&él'èàüöç€Ğ~<>"),
+				'expected7.4' => utf8_encode("/a&él'èàüöç€Ğ~<>"),
+				'expected7.3' => utf8_encode("/a&él'èàüöç€Ğ~<>")
 			],
 			// special chars with non-default charset
 			9 => [
 				'to_convert' => "/a&él'èàüöç€Ğ~<>",
 				'encode' => true,
 				'charset' => 'UTF-16',
-				'expected' => "/a&amp;él&apos;èàüöç€Ğ~&lt;&gt;",
+				'expected7.4' => "/a&amp;él&apos;èàüöç€Ğ~&lt;&gt;",
+				'expected7.3' => "/a&amp;él&apos;èàüöç€Ğ~&lt;&gt;",
 			],
 			10 => [
 				'to_convert' => "/a&él'èàüöç€Ğ~<>",
 				'encode' => false,
 				'charset' => 'UTF-16', // When the charset differs from ISO-8859 string is not converted.
-				'expected' => "/a&él'èàüöç€Ğ~<>",
+				'expected7.4' => "/a&él'èàüöç€Ğ~<>",
+				'expected7.3' => "/a&él'èàüöç€Ğ~<>",
 			],
 			11 => [
 				'to_convert' => "Greater > than",
 				'encode' => true,
 				'charset' => null,
-				'expected' => utf8_encode("Greater &gt; than"),
+				'expected7.4' => utf8_encode("Greater &gt; than"),
+				'expected7.3' => utf8_encode("Greater &gt; than"),
 			],
 			12 => [
 				'to_convert' => "Greater > than",
 				'encode' => false,
 				'charset' => null,
-				'expected' => utf8_encode("Greater > than"),
+				'expected7.4' => utf8_encode("Greater > than"),
+				'expected7.3' => utf8_encode("Greater > than"),
 			],
 			13 => [
 				'to_convert' => "Smaller < than",
 				'encode' => true,
 				'charset' => null,
-				'expected' => utf8_encode("Smaller &lt; than"),
+				'expected7.4' => utf8_encode("Smaller &lt; than"),
+				'expected7.3' => utf8_encode("Smaller &lt; than"),
 			],
 			14 => [
 				'to_convert' => "Smaller < than",
 				'encode' => false,
 				'charset' => null,
-				'expected' => utf8_encode("Smaller < than"),
+				'expected7.4' => utf8_encode("Smaller < than"),
+				'expected7.3' => utf8_encode("Smaller < than"),
 			],
 			/** HTML **/
 			// break lines
@@ -243,56 +257,65 @@ class ODFTest extends PHPUnit\Framework\TestCase
 				'to_convert' => "Break<br>line",
 				'encode' => true,
 				'charset' => null,
-				'expected' => utf8_encode("Break<text:line-break/>line"),
+				'expected7.4' => utf8_encode("Break<text:line-break/>line"),
+				'expected7.3' => utf8_encode("Breakline"),
 			],
 			16 => [
 				'to_convert' => "Break<br>line",
 				'encode' => false,
 				'charset' => null,
-				'expected' => utf8_encode("Break<text:line-break/>line"),
+				'expected7.4' => utf8_encode("Break<text:line-break/>line"),
+				'expected7.3' => utf8_encode("Breakline"),
 			],
 			17 => [
 				'to_convert' => "Break<br />line",
 				'encode' => true,
 				'charset' => null,
-				'expected' => utf8_encode("Break<text:line-break/>line"),
+				'expected7.4' => utf8_encode("Break<text:line-break/>line"),
+				'expected7.3' => utf8_encode("Breakline"),
 			],
 			18 => [
 				'to_convert' => "Break<br />line",
 				'encode' => false,
 				'charset' => null,
-				'expected' => utf8_encode("Break<text:line-break/>line"),
+				'expected7.4' => utf8_encode("Break<text:line-break/>line"),
+				'expected7.3' => utf8_encode("Breakline"),
 			],
 			// HTML tags
 			19 => [
 				'to_convert' => "text with <strong>strong, </strong><em>emphasis</em> and <u>underlined</u> words with <i>it@lic sp&ciàlchärs éè l'</i>",
 				'encode' => false,
 				'charset' => 'UTF-8',
-				'expected' => 'text with <text:span text:style-name="boldText">strong, </text:span><text:span text:style-name="italicText">emphasis</text:span> and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&ciàlchärs éè l\'</text:span>',
+				'expected7.4' => 'text with <text:span text:style-name="boldText">strong, </text:span><text:span text:style-name="italicText">emphasis</text:span> and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&ciàlchärs éè l\'</text:span>',
+				'expected7.3' => 'text with strong, emphasis and underlined words with it@lic sp&ciàlchärs éè l\'',
 			],
 			20 => [
 				'to_convert' => "text with <strong>strong, </strong><em>emphasis</em> and <u>underlined</u> words with <i>it@lic sp&ciàlchärs éè l'</i>",
 				'encode' => true,
 				'charset' => 'UTF-8',
-				'expected' => 'text with <text:span text:style-name="boldText">strong, </text:span><text:span text:style-name="italicText">emphasis</text:span> and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&amp;ciàlchärs éè l&apos;</text:span>',
+				'expected7.4' => 'text with <text:span text:style-name="boldText">strong, </text:span><text:span text:style-name="italicText">emphasis</text:span> and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&amp;ciàlchärs éè l&apos;</text:span>',
+				'expected7.3' => 'text with strong, emphasis and underlined words with it@lic sp&amp;ciàlchärs éè l&apos;',
 			],
 			21 => [
 				'to_convert' => "text with <strong>strong, </strong><em>emphasis</em> and <u>underlined</u> words with <i>it@lic sp&ciàlchärs éè l'</i>",
 				'encode' => false,
 				'charset' => null,
-				'expected' => utf8_encode('text with <text:span text:style-name="boldText">strong, </text:span><text:span text:style-name="italicText">emphasis</text:span> and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&ciàlchärs éè l\'</text:span>'),
+				'expected7.4' => utf8_encode('text with <text:span text:style-name="boldText">strong, </text:span><text:span text:style-name="italicText">emphasis</text:span> and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&ciàlchärs éè l\'</text:span>'),
+				'expected7.3' => utf8_encode('text with strong, emphasis and underlined words with it@lic sp&ciàlchärs éè l\''),
 			],
 			22 => [
 				'to_convert' => "text with <strong>strong, </strong><em>emphasis</em> and <u>underlined</u> words with <i>it@lic sp&ciàlchärs éè l'</i>",
 				'encode' => true,
 				'charset' => null,
-				'expected' => utf8_encode('text with <text:span text:style-name="boldText">strong, </text:span><text:span text:style-name="italicText">emphasis</text:span> and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&amp;ciàlchärs éè l&apos;</text:span>'),
+				'expected7.4' => utf8_encode('text with <text:span text:style-name="boldText">strong, </text:span><text:span text:style-name="italicText">emphasis</text:span> and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&amp;ciàlchärs éè l&apos;</text:span>'),
+				'expected7.3' => utf8_encode('text with strong, emphasis and underlined words with it@lic sp&amp;ciàlchärs éè l&apos;'),
 			],
 			23 => [
 				'to_convert' => "text with <strong>intricated<u>tags</u></strong>",
 				'encode' => true,
 				'charset' => null,
-				'expected' => utf8_encode('text with <text:span text:style-name="boldText">intricated<text:span text:style-name="underlineText">tags</text:span></text:span>'),
+				'expected7.4' => utf8_encode('text with <text:span text:style-name="boldText">intricated<text:span text:style-name="underlineText">tags</text:span></text:span>'),
+				'expected7.3' => utf8_encode('text with intricatedtags'),
 			],
 
 			// One can also pass html-encoded string to the method
@@ -300,31 +323,36 @@ class ODFTest extends PHPUnit\Framework\TestCase
 				'to_convert' => 'One&amp;two',
 				'encode' => true,
 				'charset' => null,
-				'expected' => 'One&amp;two'
+				'expected7.4' => 'One&amp;two',
+				'expected7.3' => 'One&amp;two'
 			],
 			25 => [
 				'to_convert' => "text with &lt;strong&gt;strong, &lt;/strong&gt;&lt;em&gt;emphasis&lt;/em&gt; and &lt;u&gt;underlined&lt;/u&gt; words with &lt;i&gt;it@lic sp&amp;ciàlchärs éè l'&lt;/i&gt;",
 				'encode' => false,
 				'charset' => 'UTF-8',
-				'expected' => 'text with <text:span text:style-name="boldText">strong, </text:span><text:span text:style-name="italicText">emphasis</text:span> and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&ciàlchärs éè l\'</text:span>',
+				'expected7.4' => 'text with <text:span text:style-name="boldText">strong, </text:span><text:span text:style-name="italicText">emphasis</text:span> and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&ciàlchärs éè l\'</text:span>',
+				'expected7.3' => 'text with strong, emphasis and underlined words with it@lic sp&ciàlchärs éè l\'',
 			],
 			26 => [
 				'to_convert' => "text with &lt;strong&gt;strong, &lt;/strong&gt;&lt;em&gt;emphasis&lt;/em&gt; and &lt;u&gt;underlined&lt;/u&gt; words with &lt;i&gt;it@lic sp&amp;ciàlchärs éè l'&lt;/i&gt;",
 				'encode' => true,
 				'charset' => 'UTF-8',
-				'expected' => 'text with <text:span text:style-name="boldText">strong, </text:span><text:span text:style-name="italicText">emphasis</text:span> and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&amp;ciàlchärs éè l&apos;</text:span>',
+				'expected7.4' => 'text with <text:span text:style-name="boldText">strong, </text:span><text:span text:style-name="italicText">emphasis</text:span> and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&amp;ciàlchärs éè l&apos;</text:span>',
+				'expected7.3' => 'text with strong, emphasis and underlined words with it@lic sp&amp;ciàlchärs éè l&apos;',
 			],
 			27 => [
 				'to_convert' => "text with &lt;strong&gt;strong, &lt;/strong&gt;&lt;em&gt;emphasis&lt;/em&gt; and &lt;u&gt;underlined&lt;/u&gt; words with &lt;i&gt;it@lic sp&amp;ciàlchärs éè l'&lt;/i&gt;",
 				'encode' => false,
 				'charset' => null,
-				'expected' => utf8_encode('text with <text:span text:style-name="boldText">strong, </text:span><text:span text:style-name="italicText">emphasis</text:span> and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&ciàlchärs éè l\'</text:span>'),
+				'expected7.4' => utf8_encode('text with <text:span text:style-name="boldText">strong, </text:span><text:span text:style-name="italicText">emphasis</text:span> and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&ciàlchärs éè l\'</text:span>'),
+				'expected7.3' => utf8_encode('text with strong, emphasis and underlined words with it@lic sp&ciàlchärs éè l\''),
 			],
 			28 => [
 				'to_convert' => "text with &lt;strong&gt;strong, &lt;/strong&gt;&lt;em&gt;emphasis&lt;/em&gt; and &lt;u&gt;underlined&lt;/u&gt; words with &lt;i&gt;it@lic sp&amp;ciàlchärs éè l'&lt;/i&gt;",
 				'encode' => true,
 				'charset' => null,
-				'expected' => utf8_encode('text with <text:span text:style-name="boldText">strong, </text:span><text:span text:style-name="italicText">emphasis</text:span> and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&amp;ciàlchärs éè l&apos;</text:span>'),
+				'expected7.4' => utf8_encode('text with <text:span text:style-name="boldText">strong, </text:span><text:span text:style-name="italicText">emphasis</text:span> and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&amp;ciàlchärs éè l&apos;</text:span>'),
+				'expected7.3' => utf8_encode('text with strong, emphasis and underlined words with it@lic sp&amp;ciàlchärs éè l&apos;'),
 			],
 
 			// // TODO custom styles are not tested for now : the custom style have a custom ID based on time. Not random, but hard to mock or predict. generated in _replaceHtmlWithOdtTag() case 'span'.
@@ -332,7 +360,7 @@ class ODFTest extends PHPUnit\Framework\TestCase
 			// 	'to_convert' => '123 <span style="color:#e74c3c">trucmachin > truc < troc > trac</span>bla bla',
 			// 	'encode' => true,
 			// 	'charset' => 'UTF-8',
-			// 	'expected' => "123 <text:span text:style-name="customStyle1668592427018">trucmachin &gt; truc &lt; troc &gt; trac</text:span>bla bla'",
+			// 	'expected7.4' => "123 <text:span text:style-name="customStyle1668592427018">trucmachin &gt; truc &lt; troc &gt; trac</text:span>bla bla'",
 			// ],
 
 			/* Tests that can evolve */
@@ -343,20 +371,23 @@ class ODFTest extends PHPUnit\Framework\TestCase
 				'to_convert' => '123 <a href="/test.php">trucmachin > truc < troc > trac</a>bla bla',
 				'encode' => true,
 				'charset' => null,
-				'expected' => "123 trucmachin &gt; truc &lt; troc &gt; tracbla bla",
+				'expected7.4' => "123 trucmachin &gt; truc &lt; troc &gt; tracbla bla",
+				'expected7.3' => "123 trucmachin &gt; truc &lt; troc &gt; tracbla bla",
 			],
 			30 => [
 				'to_convert' => '123 <h3>Title</h3> bla',
 				'encode' => true,
 				'charset' => null,
-				'expected' => "123 Title bla",
+				'expected7.4' => "123 Title bla",
+				'expected7.3' => "123 Title bla",
 			],
 			// HTML should not take \n into account, but only <br />.
 			31 => [
 				'to_convert' => "text with <strong>strong text </strong>, a line\nbreak and <u>underlined</u> words with <i>it@lic sp&ciàlchärs éè l'</i>",
 				'encode' => false,
 				'charset' => 'UTF-8',
-				'expected' => 'text with <text:span text:style-name="boldText">strong text </text:span>, a line'."\n".'break and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&ciàlchärs éè l\'</text:span>',
+				'expected7.4' => 'text with <text:span text:style-name="boldText">strong text </text:span>, a line'."\n".'break and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&ciàlchärs éè l\'</text:span>',
+				'expected7.3' => 'text with strong text , a line'."\n".'break and underlined words with it@lic sp&ciàlchärs éè l\'',
 			],
 		];
 
@@ -369,7 +400,11 @@ class ODFTest extends PHPUnit\Framework\TestCase
 			} else {
 				$res = $odf->convertVarToOdf($case['to_convert'], $case['encode']);
 			}
-			$this->assertEquals($res, $case['expected']);
+			if (version_compare(phpversion(), '7.4.0', '>=' )) {
+				$this->assertEquals($res, $case['expected7.4']);
+			} else {
+				$this->assertEquals($res, $case['expected7.3']);
+			}
 		}
 
 		print __METHOD__." result=".$result."\n";
