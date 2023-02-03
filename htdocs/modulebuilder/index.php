@@ -1251,17 +1251,6 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 		\$this->rights[\$r][5] = 'delete'; 
 		\$r++;
 		";
-				$rights = $moduleobj->rights;
-				$rightAdd = explode("\$r++", $rightToadd);
-
-				for ($i=0; $i<count($rights);$i++) {
-					for ($j=0;$j<count($rightAdd);$j++) {
-						$permission = explode(";", $rightAdd[$j]);
-						if ($rights[$i][4] == $permission[2]) {
-							setEventMessages($langs->trans('PermissionAlreadyExist'), null, 'errors');
-						}
-					}
-				}
 				dolReplaceInFile($moduledescriptorfile, array('/* END MODULEBUILDER PERMISSIONS */' => '/*'.strtoupper($objectname).'*/'.$rightToadd."/*END ".strtoupper($objectname).'*/'."\n\t\t".'/* END MODULEBUILDER PERMISSIONS */'));
 			}
 		}
