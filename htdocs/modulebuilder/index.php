@@ -1975,7 +1975,7 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOST('p
 
 
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
-		$check = dolReplaceInFile($moduledescriptorfile, array($rightTodelete => ''."\n"));
+		$check = dolReplaceInFile($moduledescriptorfile, array($rightTodelete => ''."\n\t\t"));
 	if ($check > 0) {
 		//check if all permissions of object was deleted
 		$permsForObj = array();
