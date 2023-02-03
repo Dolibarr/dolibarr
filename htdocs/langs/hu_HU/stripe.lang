@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook élő kulcs
 ONLINE_PAYMENT_WAREHOUSE=A készlet csökkentésére használható készlet, amikor online fizetés megtörtént<br>(TODO Amikor a készletcsökkentési lehetőség megtörténik egy számlán végzett műveletnél, és az online fizetés önmagában generálja a számlát?)
 StripeLiveEnabled=Stripe live engedélyezve (egyébként teszt/sandbox mód)
 StripeImportPayment=Stripe fizetések importálása
-ExampleOfTestCreditCard=Példa hitelkártyára a teszteléshez: %s => érvényes, %s => CVC hiba, %s => lejárt, %s => terhelés sikertelen
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=Stripe átjárók
 OAUTH_STRIPE_TEST_ID=Stripe Connect kliensazonosító (ca_...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect kliensazonosító (ca_...)
@@ -61,6 +62,7 @@ DeleteACard=Kártya törlése
 ConfirmDeleteCard=Biztosan törölni szeretné ezt a hitel- vagy betéti kártyát?
 CreateCustomerOnStripe=Ügyfél létrehozása a Stripe-on
 CreateCardOnStripe=Kártya létrehozása a Stripe-on
+CreateBANOnStripe=Create bank on Stripe
 ShowInStripe=Stripe megjelenítés
 StripeUserAccountForActions=Felhasználói fiók, amely e-mailben értesíti egyes Stripe eseményekről (Stripe kifizetések)
 StripePayoutList=Stripe kifizetések listája
@@ -69,4 +71,8 @@ ToOfferALinkForLiveWebhook=Link a Stripe WebHook beállításához az IPN hívá
 PaymentWillBeRecordedForNextPeriod=A fizetés a következő időszakra kerül rögzítésre.
 ClickHereToTryAgain=<a href="%s">Kattintson ide az újrapróbálkozáshoz...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Az erős ügyfél-hitelesítési szabályok miatt a kártyát a Stripe backoffice-ból kell létrehozni. Ide kattintva bekapcsolhatja a Stripe ügyfélrekordot: %s
-TERMINAL_LOCATION=A terminálok helye (címe).
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
+RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+

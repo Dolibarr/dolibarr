@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=Selecteer het nieuwe regel type
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specificeer de prefix voor de bestandsnaam
 ThisService=Deze dienst
 ThisProduct=Dit product
-DefaultForService=Standaard bij dienst
-DefaultForProduct=Standaard bij product
+DefaultForService=Default for services
+DefaultForProduct=Default for products
 ProductForThisThirdparty=Product voor deze relatie
 ServiceForThisThirdparty=Service voor deze relatie
 CantSuggest=Geen suggestie
@@ -101,7 +101,8 @@ ShowAccountingAccount=Toon grootboekrekening
 ShowAccountingJournal=Toon dagboek
 ShowAccountingAccountInLedger=Grootboekrekening in grootboek
 ShowAccountingAccountInJournals=Laat grootboekrekening zien in journaals
-AccountAccountingSuggest=Voorgestelde rekening
+DataUsedToSuggestAccount=Data used to suggest account
+AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=Standaard GB-rekeningen
 MenuBankAccounts=Bankrekeningen
 MenuVatAccounts=BTW rekeningen
@@ -126,6 +127,7 @@ WriteBookKeeping=Boek transacties in de boekhouding
 Bookkeeping=Grootboek
 BookkeepingSubAccount=Sub-grootboek
 AccountBalance=Balans
+AccountBalanceSubAccount=Sub-accounts balance
 ObjectsRef=Ref. bron-object 
 CAHTF=Totaal inkoop leverancier excl. BTW
 TotalExpenseReport=Totaal resultaatrekening kosten
@@ -189,6 +191,7 @@ ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be us
 UseAuxiliaryAccountOnCustomerDeposit=Klantrekening opslaan als individuele rekening in subgrootboek voor vooruitbetalingsregels (indien uitgeschakeld, blijft individuele rekening voor vooruitbetalingsregels leeg)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
 UseAuxiliaryAccountOnSupplierDeposit=Leveranciersrekening opslaan als individuele rekening in subgrootboek voor vooruitbetalingsregels (indien uitgeschakeld, blijft individuele rekening voor vooruitbetalingsregels leeg)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
@@ -218,6 +221,7 @@ JournalLabel=Journaal label
 NumPiece=Boekingstuk
 TransactionNumShort=Transactienummer
 AccountingCategory=Custom group of accounts
+AccountingCategories=Custom groups of accounts
 GroupByAccountAccounting=Groeperen op grootboekrekening
 GroupBySubAccountAccounting=Groepeer op subgrootboekrekening
 AccountingAccountGroupsDesc=Hier kunt u enkele grootboekrekening-groepen definiëren. Deze worden gebruikt voor gepersonaliseerde boekhoudrapporten.
@@ -265,6 +269,7 @@ ShowSubtotalByGroup=Toon subtotaal op niveau
 
 Pcgtype=Rekening hoofdgroep
 PcgtypeDesc=Cluster grootboekrekeningen welke gebruikt worden als vooraf gedefinieerde 'filter'- en' groepeer'-criteria voor sommige boekhoudrapporten. 'INKOMEN' of 'UITGAVEN' worden bijvoorbeeld gebruikt als groepen voor boekhoudrekeningen van producten om het kosten- / inkomstenrapport samen te stellen.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 
 Reconcilable=Samentrekken
 
@@ -294,6 +299,7 @@ DescValidateMovements=Elke wijziging of verwijdering van inboeken, afletteren en
 
 ValidateHistory=Automatisch afstemmen
 AutomaticBindingDone=Automatische bindings uitgevoerd (%s) - Automatische binding was niet mogelijk voor record (%s)
+DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=Beweging niet correct gebalanceerd. Debet = %s & Credit = %s
@@ -337,11 +343,13 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Schakel het koppelen en doorboeken naar de b
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Schakel het koppelen en doorboeken naar de  boekhouding van inkopen uit (facturen van leveranciers worden niet doorgeboekt in de boekhouding)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Schakel het koppelen en doorboeken naar de boekhouding van onkostendeclaraties uit (met onkostendeclaraties wordt geen rekening gehouden in de boekhouding)
 ACCOUNTING_ENABLE_LETTERING=Schakel de afletteren functie in de boekhouding in
+ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
 
 ## Export
 NotExportLettering=Exporteer het afletteren niet bij het genereren van het bestand
 NotifiedExportDate=Geëxporteerde regels markeren als geëxporteerd <span class="warning">(om een regel te wijzigen, moet u de hele transactie verwijderen en opnieuw in de boekhouding opnemen)</span>
 NotifiedValidationDate=Valideer en vergrendel de geëxporteerde items <span class="warning"> (hetzelfde effect als de functie "%s", wijziging en verwijdering van de regels is ZEKER niet mogelijk) </span>
+NotifiedExportFull=Export documents ?
 DateValidationAndLock=Datum validatie en vergrendelen
 ConfirmExportFile=Bevestiging van het genereren van het boekhoudkundige exportbestand ?
 ExportDraftJournal=Journaal exporteren
@@ -398,7 +406,7 @@ SaleLocal=Lokale verkoop
 SaleExport=Verkoop buitenland
 SaleEEC=Verkoop binnen de EU
 SaleEECWithVAT=Verkoop binnen de EU met een btw die niet nul is, dus we veronderstellen dat dit GEEN intracommunautaire verkoop is en de voorgestelde grootboekrekening het standaardproductaccount is.
-SaleEECWithoutVATNumber=Verkoop binnen de EU zonder btw, maar het btw-nummer van een derde partij is niet gedefinieerd. Voor standaardverkoop vallen we terug op het product-grootboekrekening. U kunt indien nodig het btw-nummer van een derde partij of het productaccount aanpassen.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Niet toegestaan: De transactie is gevalideerd en/of geëxporteerd.
 ForbiddenTransactionAlreadyValidated=Niet toegestaan: De transactie is gevalideerd.
 ## Dictionary
@@ -434,14 +442,15 @@ ErrorInvoiceContainsLinesNotYetBoundedShort=Sommige regels op de factuur zijn ni
 ExportNotSupported=Het ingestelde exportformaat wordt niet ondersteund op deze pagina
 BookeppingLineAlreayExists=Reeds doorgeboekte regels
 NoJournalDefined=Geen dagboek ingesteld
-Binded=Geboekte regels
-ToBind=Te boeken regels
-UseMenuToSetBindindManualy=Regels die nog niet zijn gebonden, gebruik het menu <a href="%s"> %s </a> om de binding handmatig te maken
+Binded=Gekoppelde regels
+ToBind=Te koppelen regels
+UseMenuToSetBindindManualy=Regels die nog niet zijn gekoppeld, gebruik het menu <a href="%s"> %s </a> om de koppeling handmatig te maken
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry, deze module is niet compatibel met de experimentele functie van situatiefacturen
 AccountancyErrorMismatchLetterCode=Mismatch in afstemmingscode
 AccountancyErrorMismatchBalanceAmount=Het saldo (%s) is niet gelijk aan 0
 AccountancyErrorLetteringBookkeeping=Er zijn fouten opgetreden met betrekking tot de transacties: %s
 ErrorAccountNumberAlreadyExists=Het boekhoudnummer %s bestaat al
+ErrorArchiveAddFile=Can't put "%s" file in archive
 
 ## Import
 ImportAccountingEntries=Boekingen
@@ -468,5 +477,7 @@ FECFormatMulticurrencyCode=Multivalutacode (Idevise)
 DateExport=Exportdatum
 WarningReportNotReliable=Waarschuwing, dit rapport is niet gebaseerd op het grootboek, dus bevat het niet de transactie die handmatig in het grootboek is gewijzigd. Als uw journalisatie up-to-date is, is de weergave van de boekhouding nauwkeuriger.
 ExpenseReportJournal=Kostenoverzicht
+DocsAlreadyExportedAreExcluded=Docs already exported are excluded
+ClickToHideAlreadyExportedLines=Click to hide already exported lines
 
 NAccounts=%s accounts

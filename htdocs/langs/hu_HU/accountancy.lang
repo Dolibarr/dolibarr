@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=Válassza ki a kocsi-visszaküldésének típusát
 ACCOUNTING_EXPORT_PREFIX_SPEC=Adja meg a fájlnév előtagját
 ThisService=Ez a szolgáltatás
 ThisProduct=Ez a termék
-DefaultForService=Alapértelmezett szolgáltatás
-DefaultForProduct=Alapértelmezett termék
+DefaultForService=Default for services
+DefaultForProduct=Default for products
 ProductForThisThirdparty=Termék ennek a harmadik félnek
 ServiceForThisThirdparty=Szolgáltatás ennek a harmadik félnek
 CantSuggest=Nem tudok javasolni
@@ -101,7 +101,8 @@ ShowAccountingAccount=Számviteli számla megjelenítése
 ShowAccountingJournal=Számviteli napló megjelenítése
 ShowAccountingAccountInLedger=Számviteli számla megjelenítése a főkönyvben
 ShowAccountingAccountInJournals=Számviteli számla megjelenítése a naplókban
-AccountAccountingSuggest=Javasolt számviteli számla
+DataUsedToSuggestAccount=Data used to suggest account
+AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=Alapértelmezett számlák
 MenuBankAccounts=Bankszámlák
 MenuVatAccounts=Áfa-számlák
@@ -126,6 +127,7 @@ WriteBookKeeping=Tranzakciók rögzítése a számvitelben
 Bookkeeping=Főkönyv
 BookkeepingSubAccount=Alkönyv
 AccountBalance=Számlaegyenleg
+AccountBalanceSubAccount=Sub-accounts balance
 ObjectsRef=Forrásobjektum ref
 CAHTF=Teljes beszerzési eladó adózás előtt
 TotalExpenseReport=Összköltségjelentés
@@ -189,6 +191,7 @@ ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be us
 UseAuxiliaryAccountOnCustomerDeposit=Tárolja az ügyfél számát egyéni számlaként a alkönyvben az előlegsorokhoz (ha le van tiltva, az előlegsorokhoz tartozó egyéni számla üres marad)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
 UseAuxiliaryAccountOnSupplierDeposit=Tárolja a szállítói számlát egyéni számlaként a alkönyvben az előlegsorokhoz (letiltás esetén az előlegsorok egyéni számla üresen marad)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
@@ -218,6 +221,7 @@ JournalLabel=Naplócímke
 NumPiece=Darabszám
 TransactionNumShort=Tranzakció száma
 AccountingCategory=Custom group of accounts
+AccountingCategories=Custom groups of accounts
 GroupByAccountAccounting=Főkönyvi számla szerinti csoportosítás
 GroupBySubAccountAccounting=Alkönyvi számla szerinti csoportosítás
 AccountingAccountGroupsDesc=Itt meghatározhatja a számviteli számlák néhány csoportját. Személyre szabott számviteli jelentések készítésére szolgálnak majd.
@@ -265,6 +269,7 @@ ShowSubtotalByGroup=Részösszeg megjelenítése szint szerint
 
 Pcgtype=Számla csoport
 PcgtypeDesc=A számlacsoport előre meghatározott "szűrő" és "csoportosítás" kritériumként használatos egyes számviteli jelentések esetében. Például a „BEVÉTEL” vagy „KIADÁS” csoportként használatos a termékek számviteli számláihoz a kiadás/bevétel jelentés összeállításához.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 
 Reconcilable=Kibékíthető
 
@@ -294,6 +299,7 @@ DescValidateMovements=Az írások, betűk és törlések bármilyen módosítás
 
 ValidateHistory=Automatikus kötés
 AutomaticBindingDone=Automatikus összerendelés megtörtént (%s) - Az automatikus kötés bizonyos rekordokhoz (%s) nem lehetséges
+DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=A mozgás nem megfelelően kiegyensúlyozott. Terhelés = %s és jóváírás = %s
@@ -337,11 +343,13 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=A kötés és az átvitel letiltása az ért
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=A kötés és az átvitel letiltása a vásárlások könyvelésében (a szállítói számlák nem lesznek figyelembe véve a könyvelésben)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=A kötés és az átvitel letiltása a könyvelésben a költségjelentéseken (a költségjelentéseket nem veszik figyelembe a könyvelésben)
 ACCOUNTING_ENABLE_LETTERING=Engedélyezze a feliratozás funkciót a számvitelben
+ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
 
 ## Export
 NotExportLettering=Ne exportálja a betűket a fájl létrehozásakor
 NotifiedExportDate=Az exportált sorok megjelölése Exportáltként <span class="warning"> (egy sor módosításához törölnie kell a teljes tranzakciót, és újra át kell vinnie a könyvelésbe) </span>
 NotifiedValidationDate=Érvényesítse és zárolja az exportált bejegyzéseket <span class="warning"> (ugyanaz a hatás, mint az "%s" funkciónál, a sorok módosítása és törlése BIZTOSAN nem lehetséges) </span>
+NotifiedExportFull=Export documents ?
 DateValidationAndLock=Dátumellenőrzés és zárolás
 ConfirmExportFile=A számviteli exportfájl létrehozásának megerősítése?
 ExportDraftJournal=Naplótervezet exportálása
@@ -398,7 +406,7 @@ SaleLocal=Helyi értékesítés
 SaleExport=Export értékesítés
 SaleEEC=Eladó az EGK-ban
 SaleEECWithVAT=Az EGK-ban történő értékesítés áfával nem nulla, ezért feltételezzük, hogy ez NEM közösségen belüli értékesítés, és a javasolt számla a szabványos termékszámla.
-SaleEECWithoutVATNumber=Az EGK-ban történő értékesítés áfa nélkül, de a harmadik fél áfaazonosítója nincs meghatározva. A szokásos értékesítéseknél a termékszámlát használjuk. Szükség esetén javíthatja a harmadik fél vagy a termékszámla áfaazonosítóját.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Tiltott: A tranzakciót ellenőrizték és/vagy exportálták.
 ForbiddenTransactionAlreadyValidated=Tiltott: A tranzakció érvényesítése megtörtént.
 ## Dictionary
@@ -442,6 +450,7 @@ AccountancyErrorMismatchLetterCode=Nem egyezik az egyeztető kód
 AccountancyErrorMismatchBalanceAmount=Az egyenleg (%s) nem egyenlő 0-val
 AccountancyErrorLetteringBookkeeping=Hibák történtek a következő tranzakciókkal kapcsolatban: %s
 ErrorAccountNumberAlreadyExists=Az %s számviteli szám már létezik
+ErrorArchiveAddFile=Can't put "%s" file in archive
 
 ## Import
 ImportAccountingEntries=Számviteli bejegyzések
@@ -468,5 +477,7 @@ FECFormatMulticurrencyCode=Több pénznem kódja (ötlet)
 DateExport=Dátum exportálás
 WarningReportNotReliable=Figyelem, ez a jelentés nem a Főkönyvön alapul, így nem tartalmaz a Főkönyvben kézzel módosított tranzakciót. Ha a naplózás naprakész, a könyvelési nézet pontosabb.
 ExpenseReportJournal=Költségjelentési napló
+DocsAlreadyExportedAreExcluded=Docs already exported are excluded
+ClickToHideAlreadyExportedLines=Click to hide already exported lines
 
 NAccounts=%s számlák

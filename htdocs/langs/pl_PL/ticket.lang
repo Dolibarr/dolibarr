@@ -26,6 +26,7 @@ Permission56002=Modyfikuj bilety
 Permission56003=Usuwaj bilety
 Permission56004=Zarządzaj biletami
 Permission56005=Zobacz bilety wszystkich stron trzecich (nie dotyczy użytkowników zewnętrznych, zawsze ograniczaj się do strony trzeciej, od której są zależni)
+Permission56006=Export tickets
 
 Tickets=Bilety
 TicketDictType=Bilet - Typ
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Współpracownik zewnętrzny
 
 OriginEmail=E-mail reportera
 Notify_TICKET_SENTBYMAIL=Wyślij wiadomość e-mail z biletem
+
+ExportDataset_ticket_1=Bilety
 
 # Status
 Read=Czytać

@@ -24,6 +24,7 @@ BoxFicheInter=Dernières interventions
 BoxCurrentAccounts=Balance des comptes ouverts
 BoxTitleMemberNextBirthdays=Anniversaires de ce mois (adhérents)
 BoxTitleMembersByType=Adhérents par type et par statut
+BoxTitleMembersByTags=Adhérents par étiquette et état
 BoxTitleMembersSubscriptionsByYear=Cotisations des adhérents par année
 BoxTitleLastRssInfos=Les %s dernières informations de %s
 BoxTitleLastProducts=Les %s derniers produits/services modifiés

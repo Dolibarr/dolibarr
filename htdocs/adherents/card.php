@@ -313,10 +313,6 @@ if (empty($reshook)) {
 					$object->socialnetworks[$key] = trim(GETPOST($key, 'alphanohtml'));
 				}
 			}
-			//$object->skype = trim(GETPOST("skype", 'alpha'));
-			//$object->twitter = trim(GETPOST("twitter", 'alpha'));
-			//$object->facebook = trim(GETPOST("facebook", 'alpha'));
-			//$object->linkedin = trim(GETPOST("linkedin", 'alpha'));
 			$object->birth = $birthdate;
 			$object->default_lang = GETPOST('default_lang', 'alpha');
 			$object->typeid = GETPOST("typeid", 'int');
@@ -487,11 +483,6 @@ if (empty($reshook)) {
 				}
 			}
 		}
-
-		// $object->skype       = $skype;
-		// $object->twitter     = $twitter;
-		// $object->facebook    = $facebook;
-		// $object->linkedin    = $linkedin;
 
 		$object->email       = $email;
 		$object->url       	 = $url;

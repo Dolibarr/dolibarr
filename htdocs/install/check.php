@@ -27,6 +27,7 @@
  *	\brief      Test if file conf can be modified and if does not exists, test if install process can create it
  */
 
+define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
 
 global $langs;

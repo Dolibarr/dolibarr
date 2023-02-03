@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=المفتاح المباشر للخطاف التلقا�
 ONLINE_PAYMENT_WAREHOUSE=المخزون الذي سيتم استخدامه لتقليل المخزون عند إتمام الدفع عبر الإنترنت <br> (TODO عندما يتم تنفيذ خيار تقليل المخزون على إجراء على الفاتورة ويقوم الدفع عبر الإنترنت بإنشاء الفاتورة بنفسه؟)
 StripeLiveEnabled=تم تمكين Stripe Live (بخلاف ذلك وضع الاختبار / وضع الحماية)
 StripeImportPayment=استيراد مدفوعات الشريط
-ExampleOfTestCreditCard=مثال على بطاقة الائتمان للاختبار: %s => صالحة ، %s => خطأ CVC ، %s => منتهية الصلاحية ، %s => فشل الشحن
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=بوابات شريطية
 OAUTH_STRIPE_TEST_ID=معرف عميل Stripe Connect (ca _...)
 OAUTH_STRIPE_LIVE_ID=معرف عميل Stripe Connect (ca _...)
@@ -70,5 +71,8 @@ ToOfferALinkForLiveWebhook=رابط لإعداد Stripe WebHook لاستدعاء
 PaymentWillBeRecordedForNextPeriod=سيتم تسجيل الدفع للفترة القادمة.
 ClickHereToTryAgain= <a href="%s"> انقر هنا للمحاولة مرة أخرى ... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=نظرًا لقواعد مصادقة العميل القوية ، يجب أن يتم إنشاء بطاقة من Stripe backoffice. يمكنك النقر هنا للتبديل إلى سجل عميل Stripe: %s
-TERMINAL_LOCATION=موقع (العنوان) للمحطات
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
 RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+
