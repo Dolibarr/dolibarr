@@ -1867,15 +1867,93 @@ if ($action == 'create') {
 
 		$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
 		//$ref_client			= (!empty($objectsrc->ref_client)?$object->ref_client:'');
-
 		$soc = $objectsrc->thirdparty;
-		$cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_supplier_id) ? $soc->cond_reglement_supplier_id : 0)); // TODO maybe add default value option
-		$mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_supplier_id) ? $soc->mode_reglement_supplier_id : 0));
-		$fk_account         = (!empty($objectsrc->fk_account) ? $objectsrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
-		$remise_percent 	= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_supplier_percent) ? $soc->remise_supplier_percent : 0));
-		$remise_absolue 	= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
-		$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '';
-		$transport_mode_id = (!empty($objectsrc->transport_mode_id) ? $objectsrc->transport_mode_id : (!empty($soc->transport_mode_id) ? $soc->transport_mode_id : 0));
+
+		$cond_reglement_id = 0;
+		$mode_reglement_id = 0;
+		$fk_account = 0;
+		$remise_percent = 0;
+		$remise_absolue = 0;
+		$transport_mode_id = 0;
+
+		// set from object source
+		if (!empty($objectsrc->cond_reglement_id)) {
+			$cond_reglement_id = $objectsrc->cond_reglement_id;
+		}
+		if (!empty($objectsrc->mode_reglement_id)) {
+			$mode_reglement_id = $objectsrc->mode_reglement_id;
+		}
+		if (!empty($objectsrc->fk_account)) {
+			$fk_account = $objectsrc->fk_account;
+		}
+		if (!empty($objectsrc->remise_percent)) {
+			$remise_percent = $objectsrc->remise_percent;
+		}
+		if (!empty($objectsrc->remise_absolue)) {
+			$remise_absolue = $objectsrc->remise_absolue;
+		}
+		if (!empty($objectsrc->transport_mode_id)) {
+			$transport_mode_id = $objectsrc->transport_mode_id;
+		}
+
+		if (empty($cond_reglement_id)
+			|| empty($mode_reglement_id)
+			|| empty($fk_account)
+			|| empty($remise_percent)
+			|| empty($remise_absolue)
+			|| empty($transport_mode_id)
+		) {
+			if ($origin == 'reception') {
+				// try to get from source of reception (supplier order)
+				if (!isset($objectsrc->supplier_order)) {
+					$objectsrc->fetch_origin();
+				}
+
+				if (!empty($objectsrc->commandeFournisseur)) {
+					$supplierOrder = $objectsrc->commandeFournisseur;
+					if (empty($cond_reglement_id) && !empty($supplierOrder->cond_reglement_id)) {
+						$cond_reglement_id = $supplierOrder->cond_reglement_id;
+					}
+					if (empty($mode_reglement_id) && !empty($supplierOrder->mode_reglement_id)) {
+						$mode_reglement_id = $supplierOrder->mode_reglement_id;
+					}
+					if (empty($fk_account) && !empty($supplierOrder->fk_account)) {
+						$fk_account = $supplierOrder->fk_account;
+					}
+					if (empty($remise_percent) && !empty($supplierOrder->remise_percent)) {
+						$remise_percent = $supplierOrder->remise_percent;
+					}
+					if (empty($remise_absolue) && !empty($supplierOrder->remise_absolue)) {
+						$remise_absolue = $supplierOrder->remise_absolue;
+					}
+					if (empty($transport_mode_id) && !empty($supplierOrder->transport_mode_id)) {
+						$transport_mode_id = $supplierOrder->transport_mode_id;
+					}
+				}
+			}
+
+			// try to get from third-party of source object
+			if (!empty($soc)) {
+				if (empty($cond_reglement_id) && !empty($soc->cond_reglement_supplier_id)) {
+					$cond_reglement_id = $soc->cond_reglement_supplier_id;
+				}
+				if (empty($mode_reglement_id) && !empty($soc->mode_reglement_supplier_id)) {
+					$mode_reglement_id = $soc->mode_reglement_supplier_id;
+				}
+				if (empty($fk_account) && !empty($soc->fk_account)) {
+					$fk_account = $soc->fk_account;
+				}
+				if (empty($remise_percent) && !empty($soc->remise_supplier_percent)) {
+					$remise_percent = $soc->remise_supplier_percent;
+				}
+				if (empty($remise_absolue) && !empty($soc->remise_absolue)) {
+					$remise_absolue = $soc->remise_absolue;
+				}
+				if (empty($transport_mode_id) && !empty($soc->transport_mode_id)) {
+					$transport_mode_id = $soc->transport_mode_id;
+				}
+			}
+		}
 
 		if (!empty($conf->multicurrency->enabled)) {
 			if (!empty($objectsrc->multicurrency_code)) {
@@ -1887,7 +1965,7 @@ if ($action == 'create') {
 		}
 
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datetmp);
+		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ? -1 : '') : $datetmp);
 		$datetmp = dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']);
 		$datedue = ($datetmp == '' ?-1 : $datetmp);
 

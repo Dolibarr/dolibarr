@@ -102,6 +102,8 @@ class ImportXlsx extends ModeleImports
 	public function __construct($db, $datatoimport)
 	{
 		global $conf, $langs;
+
+		parent::__construct();
 		$this->db = $db;
 
 		// this is used as an extension from the example file code, so we have to put xlsx here !!!
@@ -833,6 +835,10 @@ class ImportXlsx extends ModeleImports
 
 							if (empty($lastinsertid)) {	// No insert done yet for a parent table
 								$sqlSelect = 'SELECT rowid FROM ' . $tablename;
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$where[] = "entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+									$filters[] = "entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+								}
 								$sqlSelect .= ' WHERE ' . implode(' AND ', $where);
 
 								$resql = $this->db->query($sqlSelect);
@@ -868,6 +874,10 @@ class ImportXlsx extends ModeleImports
 								$sqlSelect .= ' WHERE ' . $keyfield . ' = ' .((int) $lastinsertid);
 								if (!empty($where)) $sqlSelect .= ' AND ' . implode(' AND ', $where);
 
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$sqlSelect .= " AND entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+								}
+
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
 									$res = $this->db->fetch_object($resql);
@@ -902,6 +912,10 @@ class ImportXlsx extends ModeleImports
 								}
 								$sqlend = ' WHERE ' . $keyfield . ' = '.((int) $lastinsertid);
 								if (!empty($where)) $sqlend .= ' AND ' . implode(' AND ', $where);
+
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$sqlend .= " AND entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+								}
 
 								$sql = $sqlstart . $sqlend;
 
