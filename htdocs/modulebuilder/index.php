@@ -3887,6 +3887,36 @@ if ($module == 'initmodule') {
 
 			$perms = $moduleobj->rights;
 
+			// Scan for object class files
+			$dir = $dirread.'/'.$modulelowercase.'/class';
+			$listofobject = dol_dir_list($dir, 'files', 0, '\.class\.php$');
+			$objects = array('myobject');
+			$reg =array();
+			foreach ($listofobject as $fileobj) {
+				$tmpcontent = file_get_contents($fileobj['fullname']);
+				if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
+					$objects[] = $reg[1];
+				}
+			}
+			// declared select list for actions and labels permissions
+			$crud = array('Read','Write','Delete');
+			$labels = array("Read objects of $module","Create/Update objects of $module","Delete objects of $module");
+
+			$action = GETPOST('action', 'alpha');
+
+			if ($action == 'deleteright') {
+				$formconfirm = $form->formconfirm(
+					$_SERVER["PHP_SELF"].'?permskey='.urlencode(GETPOST('permskey', 'int')).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj),
+					$langs->trans('Delete'),
+					$langs->trans('Confirm Delete Right', GETPOST('permskey', 'alpha')),
+					'confirm_deleteright',
+					'',
+					0,
+					1
+				);
+				print $formconfirm;
+			}
+
 			if ($action != 'editfile' || empty($file)) {
 				print '<span class="opacitymedium">';
 				$htmlhelp = $langs->trans("PermissionsDefDescTooltip", '{s1}');
@@ -3913,33 +3943,122 @@ if ($module == 'initmodule') {
 				print '<table class="noborder">';
 
 				print '<tr class="liste_titre">';
-				print_liste_field_titre("ID", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("Label", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("Permission", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("ID", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, "center");
+				print_liste_field_titre("Label", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, "center");
+				print_liste_field_titre("Permission", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, "center");
+				print_liste_field_titre("CRUD", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, "center");
+				print_liste_field_titre("", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, "center");
 				print "</tr>\n";
 
+				//form for add new right
+				print '<tr>';
+				print '<td><input type="text" readonly  name="id" value="'.dol_escape_htmltag($moduleobj->numero.sprintf('%02d', $i + count($perms))).'"></td>';
+				print '<td>';
+				print '<select name="label" >';
+				print '<option value=""></option>';
+				for ($i = 0; $i<count($labels); $i++) {
+					print '<option value="'.dol_escape_htmltag($labels[$i]).'">'.$labels[$i].'</option>';
+				}
+				print '</select></td>';
+
+				print '<td ><select  name="permissionObj">';
+				print '<option value=""></option>';
+				foreach ($objects as $obj) {
+					if ($obj != 'myobject') {
+						print '<option value="'.$obj.'">'.$obj.'</option>';
+					}
+				}
+				print '</select></td>';
+
+				print '<td><select class="maxwidth"  name="crud">';
+				print '<option value=""></option>';
+				for ($i = 0;$i<count($crud);$i++) {
+					print '<option value="'.$crud[$i].'">'.$langs->trans($crud[$i]).'</option>';
+				}
+				print '</td>';
+
+				print '<td class="center tdstickyright tdstickyghostwhite">';
+				print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
+				print '</td>';
+				print '</tr>';
+
 				if (count($perms)) {
+					$i = 0;
 					foreach ($perms as $perm) {
-						print '<tr class="oddeven">';
+						$i++;
+						// section for editing right
+						if ($action == 'edit_right' && $perm[0] == (int) GETPOST('permskey', 'int')) {
+							print '<tr class="oddeven">';
+							print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="modifPerms">';
+							print '<input type="hidden" name="token" value="'.newToken().'">';
+							print '<input type="hidden" name="tab" value="permissions">';
+							print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+							print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
+							print '<input type="hidden" name="action" value="update_right">';
+							print '<input type="hidden" name="counter" value="'.$i.'">';
 
-						print '<td>';
-						print $perm[0];
-						print '</td>';
 
-						print '<td>';
-						print $langs->trans($perm[1]);
-						print '</td>';
+							print '<input type="hidden" name="permskey" value="'.$perm[0].'">';
 
-						print '<td>';
-						print $perm[4];
-						print '</td>';
+							print '<td class="tdsticky tdstickygray">';
+							print '<input type="text" readonly  value="'.dol_escape_htmltag($perm[0]).'"/>';
+							print '</td>';
 
-						print '<td>';
-						print $perm[5];
-						print '</td>';
+							print '<td>';
+							print '<input type="text" name="label" value="'.dol_escape_htmltag(!empty($perm[1]) ? $perm[1] : dol_escape_htmltag(GETPOST('label'))).'"/>';
+							print '</td>';
 
-						print '</tr>';
+							print '<td ><select  name="permissionObj">';
+							print '<option value="'.dol_escape_htmltag($perm[4]).'">'.$perm[4].'</option>';
+							print '</select></td>';
+
+							print '<td>';
+							print '<select name="crud">';
+							print '<option value="'.dol_escape_htmltag($perm[5]).'">'.$langs->trans($perm[5]).'</option>';
+							for ($i = 0; $i<count($crud); $i++) {
+								if ($perm[5] != $crud[$i]) {
+									print '<option value="'.$crud[$i].'">'.$langs->trans($crud[$i]).'</option>';
+								}
+							}
+							print '</select>';
+							print '</td>';
+
+							print '<td class="center tdstickyright tdstickyghostwhite">';
+							print '<input class="reposition button smallpaddingimp" type="submit" name="modifyright" value="'.$langs->trans("Modify").'"/>';
+							print '<br>';
+							print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
+							print '</td>';
+
+							print '</form>';
+							print '</tr>';
+						} else {
+							print '<tr class="oddeven">';
+
+							print '<td>';
+							print $perm[0];
+							print '</td>';
+
+							print '<td>';
+							print $langs->trans($perm[1]);
+							print '</td>';
+
+							print '<td>';
+							print $perm[4];
+							print '</td>';
+
+							print '<td>';
+							print $perm[5];
+							print '</td>';
+
+							print '<td class="center tdstickyright tdstickyghostwhite">';
+							if ($perm[4] != 'myobject') {
+								print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=edit_right&token='.newToken().'&permskey='.urlencode($perm[0]).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_edit().'</a>';
+								print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deleteright&token='.newToken().'&permskey='.urlencode($i).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
+							}
+							print '</td>';
+
+							print '</tr>';
+						}
 					}
 				} else {
 					print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
