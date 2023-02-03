@@ -1942,6 +1942,114 @@ if ($dirins && $action == 'generatepackage') {
 }
 
 
+// Update permission
+if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright')&& empty($cancel)) {
+	$error = 0;
+	// load class and check if right exist
+	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+	dol_include_once($pathtofile);
+		$class = 'mod'.$module;
+	if (class_exists($class)) {
+		try {
+			$moduleobj = new $class($db);
+		} catch (Exception $e) {
+			$error++;
+			dol_print_error($db, $e->getMessage());
+		}
+	}
+	// verify informations entred
+	if (!GETPOST('label', 'alpha')) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
+	}
+	if (!GETPOST('permissionObj', 'alpha')) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Rights")), null, 'errors');
+	}
+
+	$label = GETPOST('label', 'alpha');
+	$objectForPerms = strtolower(GETPOST('permissionObj', 'alpha'));
+	$crud = GETPOST('crud', 'alpha');
+
+
+	if ($label == "Read objects of $module" && $crud != "read") {
+		$crud = "read";
+		$label == "Read objects of $module";
+	}
+	if ($label == "Create/Update objects of $module" && $crud != "write") {
+		$crud = "write";
+		$label == "Create/Update objects of $module";
+	}
+	if ($label == "Delete objects of $module" && $crud != "delete") {
+		$crud = "delete";
+		$label == "Delete objects of $module";
+	}
+
+	$permissions = $moduleobj->rights;
+	$r =(int) GETPOST('counter');
+	//get permission want to delete from permissions array
+	$x1 = $permissions[$r-1][1];
+	$x2 = $permissions[$r-1][4];
+	$x3 = $permissions[$r-1][5];
+	//check existing object permission
+	$permsForObject =array();
+
+	$allObject = array();
+
+	for ($i =0; $i<count($permissions); $i++) {
+		if ($permissions[$i][4] == $objectForPerms) {
+			if (count($permsForObject) < 3) {
+				$permsForObject[] = $permissions[$i];
+			}
+		}
+		$allObject[] = $permissions[$i][4];
+	}
+
+	if ($label != $x1 && $crud != $x3) {
+		$x = count($permsForObject);
+		for ($j = 0; $j<$x; $j++) {
+			if (in_array($label, $permsForObject[$j])) {
+				$error++;
+				setEventMessages($langs->trans("ErrorExistingPermission", $langs->transnoentities($label), $langs->transnoentities($objectForPerms)), null, 'errors');
+			}
+		}
+	}
+
+		//prepare right want to delete
+		$right = "
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
+		\$this->rights[\$r][1] = '$x1'; 
+		\$this->rights[\$r][4] = '$x2';
+		\$this->rights[\$r][5] = '$x3'; 
+		\$r++;
+		";
+		// right after editing
+		$rightUpdated = "
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
+		\$this->rights[\$r][1] = '$label'; 
+		\$this->rights[\$r][4] = '$objectForPerms';
+		\$this->rights[\$r][5] = '$crud'; 
+		\$r++;
+		";
+	if (!$error) {
+		if (isModEnabled(strtolower($module))) {
+			$result = unActivateModule(strtolower($module));
+			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+			if ($result) {
+				setEventMessages($result, null, 'errors');
+			}
+			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+		}
+
+		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+		$check = dolReplaceInFile($moduledescriptorfile, array($right => $rightUpdated));
+
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+		setEventMessages($langs->trans('PermissionUpdatedSuccesfuly'), null);
+		exit;
+	}
+}
 // Save file
 if ($action == 'savefile' && empty($cancel)) {
 	$relofcustom = basename($dirins);
