@@ -303,6 +303,7 @@ ErrorValueForTooLow=La valeur pour <b>%s</b> est trop faible
 ErrorValueCantBeNull=La valeur pour <b>%s</b> ne peut pas être nulle
 ErrorDateOfMovementLowerThanDateOfFileTransmission=La date de l'opération bancaire ne peut être inférieure à la date de transmission du fichier
 ErrorTooMuchFileInForm=Trop de fichiers dans le formulaire, le nombre maximum est de %s fichier(s)
+ErrorExistingPermission = La permission <b>%s</b> pour l'objet <b>%s</b> est dejà existante
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.
@@ -340,6 +341,7 @@ WarningPaypalPaymentNotCompatibleWithStrict=La valeur 'Strict' fait que les fonc
 WarningThemeForcedTo=Attention, le choix du thème a été forcé à <b> %s </b> par la constante cachée MAIN_FORCETHEME
 WarningPagesWillBeDeleted=Attention, cela supprimera également toutes les pages/conteneurs existants du site. Vous devriez exporter votre site Web avant, afin d'avoir une sauvegarde pour le réimporter plus tard.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=La validation automatique est désactivée lorsque l'option de diminution du stock est définie sur "Validation de la facture".
+WarningModuleNeedRefrech = Module <b>%s</b> desactivé. N'oublier pas de le réactivé 
 
 # Validate
 RequireValidValue = Valeur non valide
