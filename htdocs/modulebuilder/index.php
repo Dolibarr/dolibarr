@@ -4005,8 +4005,14 @@ if ($module == 'initmodule') {
 							print '</td>';
 
 							print '<td>';
-							print '<input type="text" name="label" value="'.dol_escape_htmltag(!empty($perm[1]) ? $perm[1] : dol_escape_htmltag(GETPOST('label'))).'"/>';
-							print '</td>';
+							print '<select name="label" >';
+							print '<option value="'.dol_escape_htmltag($perm[1]).'">'.dol_escape_htmltag($perm[1]).'</option>';
+							for ($i = 0; $i<3; $i++) {
+								if ($perm[1] != $labels[$i]) {
+									print '<option value="'.GETPOST('label').'">'.$labels[$i].'</option>';
+								}
+							}
+							print '</select></td>';
 
 							print '<td ><select  name="permissionObj">';
 							print '<option value="'.dol_escape_htmltag($perm[4]).'">'.$perm[4].'</option>';
