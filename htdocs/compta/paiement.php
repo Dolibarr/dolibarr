@@ -9,6 +9,7 @@
  * Copyright (C) 2014       Teddy Andreotti         <125155@supinfo.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023  		Lenin Rivas	            <lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -533,6 +534,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '<td class="tdtop">';
 		print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('comment', 'restricthtml').'</textarea>';
 		print '</td></tr>';
+		
+		// Go Source Invoice (useful when there are many invoices)
+		if ($action != 'add_paiement') {
+			print '<tr><td></td>';
+			print '<td class="tdtop right">';
+			print '<a class="right" href="#amount_'.$facid.'">'.$langs->trans("GoSourceInvoice").'</a>';
+			print '</td></tr>';
+		}
 
 		print '</table>';
 
@@ -782,7 +791,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						if (!empty($conf->use_javascript_ajax)) {
 							print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $remaintopay)."'");
 						}
-						print '<input type="text" class="maxwidth75 amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
+						print '<input type="text" class="maxwidth75 amount" id="'.$namef.'" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
 						print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
 					} else {
 						print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.dol_escape_htmltag(GETPOST($namef)).'" disabled>';
