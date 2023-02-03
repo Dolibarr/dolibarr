@@ -51,12 +51,12 @@ if ($id > 0) {
 	$object->fetch($id);
 }
 
-
 // Security check
-if (empty($user->rights->bookmark->lire)) {
-	restrictedArea($user, 'bookmarks');
-}
+restrictedArea($user, 'bookmark', $object);
 
+$permissiontoread = $user->hasRight('bookmark', 'lire');
+$permissiontoadd = $user->hasRight('bookmark', 'creer');
+$permissiontodelete = $user->hasRight('bookmark', 'supprimer');
 
 
 
@@ -326,12 +326,12 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	print "<div class=\"tabsAction\">\n";
 
 	// Edit
-	if ($user->rights->bookmark->creer && $action != 'edit') {
+	if ($permissiontoadd && $action != 'edit') {
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Edit").'</a>'."\n";
 	}
 
 	// Remove
-	if ($user->rights->bookmark->supprimer && $action != 'edit') {
+	if ($permissiontodelete && $action != 'edit') {
 		print '<a class="butActionDelete" href="list.php?bid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>'."\n";
 	}
 
