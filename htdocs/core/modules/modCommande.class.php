@@ -244,7 +244,7 @@ class modCommande extends DolibarrModules
 		$this->export_entities_array[$r] = array(
 			's.rowid'=>"company", 's.nom'=>'company', 'ps.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'd.nom'=>'company', 'co.label'=>'company',
 			'co.code'=>'company', 's.phone'=>'company', 's.siren'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.siret'=>'company', 'c.rowid'=>"order",
-			'c.ref'=>"order", 'c.ref_client'=>"order", 'c.fk_soc'=>"order", 'c.date_creation'=>"order", 'c.date_commande'=>"order", 'c.amount_ht'=>"order", 
+			'c.ref'=>"order", 'c.ref_client'=>"order", 'c.fk_soc'=>"order", 'c.date_creation'=>"order", 'c.date_commande'=>"order", 'c.amount_ht'=>"order",
 			'c.total_ht'=>"order", 'c.total_ttc'=>"order", 'c.facture'=>"order", 'c.fk_statut'=>"order", 'c.note'=>"order",
 			'c.date_livraison'=>"order", 'sm.code'=>"order", 'pj.ref'=>'project', 'cd.rowid'=>'order_line', 'cd.description'=>"order_line",
 			'cd.product_type'=>'order_line', 'cd.tva_tx'=>"order_line", 'cd.qty'=>"order_line", 'cd.total_ht'=>"order_line", 'cd.total_tva'=>"order_line",
