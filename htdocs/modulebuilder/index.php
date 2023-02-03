@@ -1815,26 +1815,35 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 		}
 
 		// regenerate permissions and delete them
-		$rightToadd = "
-		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); // Permission id (must not be already used)
-		\$this->rights[\$r][1] = 'Read objects of ".$module."'; // Permission label
+		$rights = "
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
+		\$this->rights[\$r][1] = 'Read objects of ".$module."'; 
 		\$this->rights[\$r][4] = '".strtolower($objectname)."';
-		\$this->rights[\$r][5] = 'read'; // In php code, permission will be checked by test if (\$user->rights->toto->myobject->read)
+		\$this->rights[\$r][5] = 'read'; 
 		\$r++;
-		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); // Permission id (must not be already used)
-		\$this->rights[\$r][1] = 'Create/Update objects of ".$module."'; // Permission label
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
+		\$this->rights[\$r][1] = 'Create/Update objects of ".$module."'; 
 		\$this->rights[\$r][4] = '".strtolower($objectname)."';
-		\$this->rights[\$r][5] = 'write'; // In php code, permission will be checked by test if (\$user->rights->toto->myobject->write)
+		\$this->rights[\$r][5] = 'write'; 
 		\$r++;
-		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); // Permission id (must not be already used)
-		\$this->rights[\$r][1] = 'Delete objects of ".$module."'; // Permission label
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
+		\$this->rights[\$r][1] = 'Delete objects of ".$module."'; 
 		\$this->rights[\$r][4] = '".strtolower($objectname)."';
-		\$this->rights[\$r][5] = 'delete'; // In php code, permission will be checked by test if (\$user->rights->toto->myobject->delete)
+		\$this->rights[\$r][5] = 'delete'; 
 		\$r++;
 		";
 
-		$deleteright = dolReplaceInFile($moduledescriptorfile, array($rightToadd => '', '/*'.strtoupper($objectname).'*/' => '', "/*END ".strtoupper($objectname).'*/'."\n\t\t" => ''."\n\t\t"));
-
+		$deleteright = dolReplaceInFile($moduledescriptorfile, array('/*'.strtoupper($objectname).'*/' => '', $rights => '', "/*END ".strtoupper($objectname).'*/'."\n\t\t" => ''."\n\t\t"));
+		if ($deleteright > 0) {
+			if (isModEnabled(strtolower($module))) {
+				$result = unActivateModule(strtolower($module));
+				if ($result) {
+					setEventMessages($result, null, 'errors');
+				}
+				setEventMessages($langs->trans("WarningModuleNeedRefrech", $langs->transnoentities($module)), null, 'warnings');
+				header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?index.php?tab=description&module='.$module);
+			}
+		}
 		$resultko = 0;
 		foreach ($filetodelete as $tmpfiletodelete) {
 			$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete, 0, 0, 1);
