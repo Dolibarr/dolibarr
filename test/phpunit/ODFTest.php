@@ -400,7 +400,7 @@ class ODFTest extends PHPUnit\Framework\TestCase
 			} else {
 				$res = $odf->convertVarToOdf($case['to_convert'], $case['encode']);
 			}
-			if (version_compare(phpversion(), '7.4.0', '>=' )) {
+			if (version_compare(phpversion(), '7.4.0', '>=')) {
 				$this->assertEquals($res, $case['expected7.4']);
 			} else {
 				$this->assertEquals($res, $case['expected7.3']);
