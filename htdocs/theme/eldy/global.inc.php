@@ -6476,6 +6476,7 @@ div.tabsElem a.tab {
 }
 .publicnewticketform {
 	/* margin-top: 25px !important; */
+	height: 100%;
 	width: 100%;
 	display: flex;
 	flex-direction: column;
