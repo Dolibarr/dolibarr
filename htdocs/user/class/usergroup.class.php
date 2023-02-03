@@ -7,6 +7,7 @@
  * Copyright (C) 2014		Alexis Algoud		 <alexis@atm-consulting.fr>
  * Copyright (C) 2018       Nicolas ZABOURI		 <info@inovea-conseil.com>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
+ * Copyright (C) 2023       Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-if (!empty($conf->ldap->enabled)) {
+if (isModEnabled('ldap')) {
 	require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 }
 
@@ -707,6 +708,33 @@ class UserGroup extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $menumanager;
+
+		$option = $params['option'] ?? '';
+
+		$datas = [];
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			$langs->load("users");
+			return ['optimize' => $langs->trans("ShowGroup")];
+		}
+		$datas['divopen'] = '<div class="centpercent">';
+		$datas['picto'] = img_picto('', 'group').' <u>'.$langs->trans("Group").'</u><br>';
+		$datas['name'] = '<b>'.$langs->trans('Name').':</b> '.$this->name;
+		$datas['description'] = '<br><b>'.$langs->trans("Description").':</b> '.$this->note;
+		$datas['divclose'] = '</div>';
+
+		return $datas;
+	}
+
+	/**
 	 *  Return a link to the user card (with optionaly the picto)
 	 *  Use this->id,this->lastname, this->firstname
 	 *
@@ -759,8 +787,18 @@ class UserGroup extends CommonObject
 				$label = $langs->trans("ShowGroup");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+				$params = [
+					'id' => $this->id,
+					'objecttype' => $this->element,
+					'option' => $option,
+				];
+				$linkclose .= ' data-params='.json_encode($params).' title="' . $langs->trans('Loading') . '"';
+				$linkclose .= ' class="classforajaxtooltip'.($morecss ? ' '.$morecss : '').'"';
+			} else {
+				$linkclose .= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
+				$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			}
 		}
 
 		$linkstart = '<a href="'.$url.'"';

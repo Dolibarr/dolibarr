@@ -151,6 +151,10 @@ if ($objecttype == 'facture' || $objecttype == 'invoice') {
 	$classpath = 'product/stock/class';
 	$module = 'stock';
 	$myobject = 'productlot';
+} elseif ($objecttype == 'usergroup') {
+	$classpath = 'user/class';
+	$module = 'user';
+	$myobject = 'usergroup';
 }
 
 // Generic case for $classfile and $classname
