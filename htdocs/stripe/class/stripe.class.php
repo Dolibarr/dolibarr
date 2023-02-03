@@ -804,6 +804,7 @@ class Stripe extends CommonObject
 						dol_syslog($this->error, LOG_WARNING);
 					}
 				} elseif ($createifnotlinkedtostripe) {
+					// Deprecated with new Stripe API and SCA. We should not use anymore this part of code now.
 					$exp_date_month = $obj->exp_date_month;
 					$exp_date_year = $obj->exp_date_year;
 					$number = $obj->number;
@@ -1012,7 +1013,8 @@ class Stripe extends CommonObject
 
 						$s = new \Stripe\StripeClient($stripeacc);
 
-						// TODO Deprecated with the new Stripe API and SCA. Replace ->create() and ->createSource() Replace with getSetupIntent() ?
+						// TODO LMR Deprecated with the new Stripe API and SCA.
+						// TODO LMR Replace ->create() and ->createSource() and replace with ->getSetupIntent() to then, get the Payment mode with $payment_method = \Stripe\PaymentMethod::retrieve($setupintent->payment_method); ?
 						$sepa = $s->sources->create($dataforcard);
 						if (!$sepa) {
 							$this->error = 'Creation of sepa_debit on Stripe has failed';

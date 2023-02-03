@@ -26,6 +26,7 @@ Permission56002=Ändra ärenden
 Permission56003=Radera ärenden
 Permission56004=Hantera ärenden
 Permission56005=Se ärenden till alla tredje parter (inte effektiva för externa användare, alltid begränsad till tredje part som de är beroende av)
+Permission56006=Exportera ärenden
 
 Tickets=Ärenden
 TicketDictType=Ärende - Typer
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Extern bidragsyter
 
 OriginEmail=Reporter E-post
 Notify_TICKET_SENTBYMAIL=Skicka ärrendemeddelande via e-post
+
+ExportDataset_ticket_1=Ärenden
 
 # Status
 Read=Läsa

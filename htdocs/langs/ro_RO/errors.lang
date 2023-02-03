@@ -303,6 +303,7 @@ ErrorValueForTooLow=Valoarea pentru <b>%s</b> este prea mică
 ErrorValueCantBeNull=Valoarea pentru <b>%s</b> nu poate fi nulă
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Data tranzacției bancare nu poate fi anterioară datei de transmitere a fișierului
 ErrorTooMuchFileInForm=Prea multe fișiere în formular, numărul maxim de fișier(e) este %s
+ErrorSessionInvalidatedAfterPasswordChange=Sesiunea a fost invalidată în urma unei modificări a parolei, a stării sau a datelor de valabilitate. Reconectează-te.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Parametrul tău PHP upload_max_filesize (%s) este mai mare decât paramentrul PHP post_max_size (%s). Aceasta nu este o configuraţie consistentă.
@@ -325,6 +326,7 @@ WarningPaymentDateLowerThanInvoiceDate=Data plăţii(%s) este anterioară datei 
 WarningTooManyDataPleaseUseMoreFilters= Prea multe date (mai mult de %s linii). Folosiți mai multe filtre sau setați constanta %s la o limită superioară. 
 WarningSomeLinesWithNullHourlyRate=Unele perioade de timp consumat au fost înregistrate de unii utilizatori care nu aveau tariful orar definit. A fost utilizată valoarea 0 %s pe oră, dar acest lucru poate duce la o evaluare financiară greșită a timpului consumat.
 WarningYourLoginWasModifiedPleaseLogin=Utilizatorul-ul a fost modificat. Din motive de securitate, va trebui să vă conectați cu noul dvs. utilizator înainte de următoarea acțiune.
+WarningYourPasswordWasModifiedPleaseLogin=Parola ta a fost modificată. Din motive de securitate, va trebui să te autentifici acum cu noua parolă.
 WarningAnEntryAlreadyExistForTransKey=Există deja o intrare pe cheia de traducere pentru această limbă
 WarningNumberOfRecipientIsRestrictedInMassAction=Avertisment, numărul de destinatari diferiţi este limitat la <b> %s </b> când se utilizează acțiunile de masă din liste
 WarningDateOfLineMustBeInExpenseReportRange=Atenţie, data liniei nu este în intervalul raportului de cheltuieli

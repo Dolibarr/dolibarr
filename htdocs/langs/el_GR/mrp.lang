@@ -102,6 +102,7 @@ NbOperatorsRequired=Αριθμός απαιτούμενων χειριστών
 THMOperatorEstimated=Εκτιμώμενος χειριστής THM
 THMMachineEstimated=Εκτιμώμενο μηχάνημα THM
 WorkstationType=Τύπος σταθμού εργασίας
+DefaultWorkstation=Προεπιλεγμένος σταθμός εργασίας
 Human=Άνθρωπος
 Machine=Μηχανή
 HumanMachine=Άνθρωπος / Μηχανή

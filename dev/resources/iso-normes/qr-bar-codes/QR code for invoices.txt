@@ -22,8 +22,8 @@ https://www.tecklenborgh.com/post/ksa-zatca-publishes-guide-on-how-to-develop-a-
 Method to encode/decode ZATCA string is available in test/phpunit/BarcodeTest.php 
 
 
-* FOR QR-Bill in switzerland
-----------------------------
+* FOR QR-Bill in switzerland - Facture-QR
+-----------------------------------------
 Syntax of QR Code https://www.swiss-qr-invoice.org/fr/
 Syntax of complentary field named "structured information of invoice S1": https://www.swiss-qr-invoice.org/downloads/qr-bill-s1-syntax-fr.pdf
 To test/validate: https://www.swiss-qr-invoice.org/validator/

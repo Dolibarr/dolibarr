@@ -961,27 +961,6 @@ abstract class CommonObject
 					}
 					$outdone++;
 				}
-			} else {	// Old code to remove
-				if (!empty($this->skype)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
-				}
-				$outdone++;
-				if (!empty($this->jabberid)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
-				}
-				$outdone++;
-				if (!empty($this->twitter)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->twitter, $this->id, $object->id, 'twitter');
-				}
-				$outdone++;
-				if (!empty($this->facebook)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->facebook, $this->id, $object->id, 'facebook');
-				}
-				$outdone++;
-				if (!empty($this->linkedin)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->linkedin, $this->id, $object->id, 'linkedin');
-				}
-				$outdone++;
 			}
 
 			if ($outsocialnetwork) {
@@ -1291,11 +1270,11 @@ abstract class CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Delete all links between an object $this and all its contacts
+	 *    Delete all links between an object $this and all its contacts in llx_element_contact
 	 *
 	 *	  @param	string	$source		'' or 'internal' or 'external'
 	 *	  @param	string	$code		Type of contact (code or id)
-	 *    @return   int					>0 if OK, <0 if KO
+	 *    @return   int					<0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function delete_linked_contact($source = '', $code = '')
 	{
@@ -1311,11 +1290,15 @@ abstract class CommonObject
 			$listId = implode(",", $temp);
 		}
 
+		// If $listId is empty, we have not criteria on fk_c_type_contact so we will delete record on element_id for
+		// any type or record instead of only the ones of the current object. So we do nothing in such a case.
+		if (empty($listId)) {
+			return 0;
+		}
+
 		$sql = "DELETE FROM ".$this->db->prefix()."element_contact";
 		$sql .= " WHERE element_id = ".((int) $this->id);
-		if (!empty($listId)) {
-			$sql .= " AND fk_c_type_contact IN (".$this->db->sanitize($listId).")";
-		}
+		$sql .= " AND fk_c_type_contact IN (".$this->db->sanitize($listId).")";
 
 		dol_syslog(get_class($this)."::delete_linked_contact", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -1397,6 +1380,7 @@ abstract class CommonObject
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
 					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
 					$tab[$i] = array(
+						'parentId' => $this->id,
 						'source' => $obj->source,
 						'socid' => $obj->socid,
 						'id' => $obj->id,
@@ -8651,7 +8635,10 @@ abstract class CommonObject
 						// Find name of thumb file
 						$photo_vignette = basename(getImageFileNameForSize($dir.$file, '_small'));
 						if (!dol_is_file($dirthumb.$photo_vignette)) {
-							$photo_vignette = '';
+							// The thumb does not exists, so we will use the original file
+							$dirthumb = $dir;
+							$pdirthumb = $pdir;
+							$photo_vignette = basename($file);
 						}
 
 						// Get filesize of original file

@@ -24,6 +24,7 @@ BoxFicheInter=Senaste interventioner
 BoxCurrentAccounts=Öppna kontobalanser
 BoxTitleMemberNextBirthdays=Födelsedagar denna månad (medlemmar)
 BoxTitleMembersByType=Medlemmar efter typ och status
+BoxTitleMembersByTags=Medlemmar efter taggar och status
 BoxTitleMembersSubscriptionsByYear=Prenumerationer per år
 BoxTitleLastRssInfos=Senaste %s nyheter från %s
 BoxTitleLastProducts=Produkter/tjänster: senaste %s ändrade

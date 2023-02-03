@@ -229,9 +229,10 @@ if ($action == "view_ticketlist") {
 		$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 		$filter = array();
+
 		$param = '&action=view_ticketlist';
 		if (!empty($entity) && isModEnabled('multicompany')) {
-			$param .= '&entity='.$entity;
+			$param .= '&entity='.((int) $entity);
 		}
 
 		// Definition of fields for list
@@ -407,7 +408,8 @@ if ($action == "view_ticketlist") {
 			$resql = $db->query($sql);
 			if ($resql) {
 				$num = $db->num_rows($resql);
-				print_barre_liste($langs->trans('TicketList'), $page, '/public/ticket/list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket');
+
+				print_barre_liste($langs->trans('TicketList'), $page, 'list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket');
 
 				// Search bar
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" id="searchFormList" >'."\n";

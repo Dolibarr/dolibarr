@@ -139,7 +139,7 @@ class modAccounting extends DolibarrModules
 		$this->const[11] = array(
 				"ACCOUNTING_EXPORT_DATE",
 				"chaine",
-				"%d%m%Y",
+				"%Y-%m-%d",
 				"", 0, 'current', 0
 		);
 		$this->const[12] = array(
@@ -338,7 +338,7 @@ class modAccounting extends DolibarrModules
 			'b.sens'=>'C'	// This field is still used by accounting export. We can remove it once it has been replace into accountancyexport.class.php by a detection using ->debit and ->credit
 		);
 
-		// General ledger - Fichier FEC
+		// General ledger - File FEC
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = 'ImportAccountingEntriesFECFormat';

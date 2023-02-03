@@ -26,6 +26,7 @@ Permission56002=Modifica tiquets
 Permission56003=Esborrar tiquets
 Permission56004=Gestiona els tiquets
 Permission56005=Veure els tiquets de tots els tercers (no efectiu per als usuaris externs, sempre estarà limitat al tercer del qual depenen)
+Permission56006=Export tickets
 
 Tickets=Tiquets
 TicketDictType=Tiquet - Tipus
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Col·laborador extern
 
 OriginEmail=Correu electrònic del reporter
 Notify_TICKET_SENTBYMAIL=Envia el missatge del tiquet per correu electrònic
+
+ExportDataset_ticket_1=Tiquets
 
 # Status
 Read=Llegit

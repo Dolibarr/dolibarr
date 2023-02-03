@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2023		anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,6 +157,8 @@ if ($source == 'proposal') {
 	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source", 400, 1);
 }
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('onlinesign'));
 
 /*
  * Actions
@@ -346,10 +349,21 @@ if ($source == 'proposal') {
 	print '</td></tr>'."\n";
 
 	// Amount
-	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
-	print '</td><td class="CTableRow2">';
-	print '<b>'.price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</b>';
-	print '</td></tr>'."\n";
+	$amount = '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
+	$amount .= '</td><td class="CTableRow2">';
+	$amount .= '<b>'.price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</b>';
+	$amount .= '</td></tr>'."\n";
+
+	// Call Hook amountPropalSign
+	$parameters = array('source' => $source);
+	$reshook = $hookmanager->executeHooks('amountPropalSign', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) {
+		$amount .= $hookmanager->resPrint;
+	} elseif ($reshook > 0) {
+		$amount = $hookmanager->resPrint;
+	}
+
+	print $amount;
 
 	// Object
 	$text = '<b>'.$langs->trans("SignatureProposalRef", $object->ref).'</b>';
@@ -457,6 +471,7 @@ if ($source == 'proposal') {
 	$langs->load("fichinter");
 
 	$result = $object->fetch_thirdparty($object->socid);
+
 	// Proposer
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Proposer");
 	print '</td><td class="CTableRow2">';
@@ -496,13 +511,14 @@ if ($source == 'proposal') {
 			print $langs->trans("DownloadDocument").'</a>';
 		}
 	}
-
-
 	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 	print '</td></tr>'."\n";
 }
 
+// Call Hook addFormSign
+$parameters = array('source' => $source);
+$reshook = $hookmanager->executeHooks('addFormSign', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 if (!$found && !$mesg) {
 	$mesg = $langs->transnoentitiesnoconv("ErrorBadParameters");
