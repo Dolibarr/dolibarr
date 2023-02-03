@@ -1218,6 +1218,53 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				'core/modules/mymodule/doc/pdf_standard_myobject.modules.php'=>'core/modules/'.strtolower($module).'/doc/pdf_standard_'.strtolower($objectname).'.modules.php'
 			);
 		}
+		if (GETPOST('generatepermissions', 'aZ09')) {
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+			dol_include_once($pathtofile);
+			$class = 'mod'.$module;
+			if (class_exists($class)) {
+				try {
+					$moduleobj = new $class($db);
+				} catch (Exception $e) {
+					$error++;
+					dol_print_error($db, $e->getMessage());
+				}
+			}
+			if (empty($firstobjectname)) {
+				$rightToadd = preg_replace('/myobject/', $objectname, $rightToadd);
+			}
+			if ($objectname != $firstobjectname) {
+				$rightToadd = "
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
+		\$this->rights[\$r][1] = 'Read objects of ".$module."'; 
+		\$this->rights[\$r][4] = '".strtolower($objectname)."';
+		\$this->rights[\$r][5] = 'read'; 
+		\$r++;
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
+		\$this->rights[\$r][1] = 'Create/Update objects of ".$module."'; 
+		\$this->rights[\$r][4] = '".strtolower($objectname)."';
+		\$this->rights[\$r][5] = 'write'; 
+		\$r++;
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
+		\$this->rights[\$r][1] = 'Delete objects of ".$module."'; 
+		\$this->rights[\$r][4] = '".strtolower($objectname)."';
+		\$this->rights[\$r][5] = 'delete'; 
+		\$r++;
+		";
+				$rights = $moduleobj->rights;
+				$rightAdd = explode("\$r++", $rightToadd);
+
+				for ($i=0; $i<count($rights);$i++) {
+					for ($j=0;$j<count($rightAdd);$j++) {
+						$permission = explode(";", $rightAdd[$j]);
+						if ($rights[$i][4] == $permission[2]) {
+							setEventMessages($langs->trans('PermissionAlreadyExist'), null, 'errors');
+						}
+					}
+				}
+				dolReplaceInFile($moduledescriptorfile, array('/* END MODULEBUILDER PERMISSIONS */' => '/*'.strtoupper($objectname).'*/'.$rightToadd."/*END ".strtoupper($objectname).'*/'."\n\t\t".'/* END MODULEBUILDER PERMISSIONS */'));
+			}
+		}
 
 
 		if (!$error) {
@@ -2760,6 +2807,7 @@ if ($module == 'initmodule') {
 				print '<br>';
 				print '<input type="checkbox" name="includerefgeneration" id="includerefgeneration" value="includerefgeneration"> <label class="margintoponly" for="includerefgeneration">'.$form->textwithpicto($langs->trans("IncludeRefGeneration"), $langs->trans("IncludeRefGenerationHelp")).'</label><br>';
 				print '<input type="checkbox" name="includedocgeneration" id="includedocgeneration" value="includedocgeneration"> <label for="includedocgeneration">'.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'</label><br>';
+				print '<input type="checkbox" name="generatepermissions" id="generatepermissions" value="generatepermissions"> <label for="generatepermissions">'.$form->textwithpicto($langs->trans("GeneratePermissions"), $langs->trans("GeneratePermissionsHelp")).'</label><br>';
 				print '<br>';
 				print '<input type="submit" class="button small" name="create" value="'.dol_escape_htmltag($langs->trans("GenerateCode")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 				print '<br>';
