@@ -635,7 +635,13 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	$nbko = 0;
 	if ((GETPOST("action", "aZ09") == 'confirm_delete' && GETPOST("confirm", "aZ09") == 'yes') || GETPOST("action", "aZ09") == 'delete') {
 		foreach ($featuresarray as $feature) {
-			if ($feature == 'contact') {
+			if ($feature == 'bookmark') {
+				if (!$user->rights->bookmark->supprimer) {
+					if ($user->id != $object->fk_user || empty($user->rights->bookmark->creer)) {
+						$deleteok = 0;
+					}
+				}
+			} elseif ($feature == 'contact') {
 				if (!$user->rights->societe->contact->supprimer) {
 					$deleteok = 0;
 				}
