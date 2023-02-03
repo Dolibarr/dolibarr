@@ -259,6 +259,7 @@ RecordsClosed=%s projekt (er) lukket
 SendProjectRef=Informationsprojekt %s
 ModuleSalaryToDefineHourlyRateMustBeEnabled=Modul 'lønninger' skal være aktiveret for at definere medarbejderens timepris for at få brugt tid valideret
 NewTaskRefSuggested=Task ref allerede brugt, en ny task ref kræves
+NumberOfTasksCloned=%s opgave(r) klonet
 TimeSpentInvoiced=Faktureret tid
 TimeSpentForIntervention=Tid brugt
 TimeSpentForInvoice=Tid brugt

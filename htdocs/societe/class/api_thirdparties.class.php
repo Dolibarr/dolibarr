@@ -1826,16 +1826,6 @@ class Thirdparties extends DolibarrApi
 
 		unset($object->fk_delivery_address); // deprecated feature
 
-		unset($object->skype);
-		unset($object->twitter);
-		unset($object->facebook);
-		unset($object->linkedin);
-		unset($object->instagram);
-		unset($object->snapchat);
-		unset($object->googleplus);
-		unset($object->youtube);
-		unset($object->whatsapp);
-
 		return $object;
 	}
 

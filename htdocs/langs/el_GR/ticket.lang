@@ -26,6 +26,7 @@ Permission56002=Τροποποίηση tickets
 Permission56003=Διαγραφή tickets
 Permission56004=Διαχείριση tickets
 Permission56005=Δείτε τα tickets όλων των τρίτων (δεν ισχύει για εξωτερικούς χρήστες, πάντα περιορίζονται στο τρίτο μέρος από το οποίο εξαρτώνται)
+Permission56006=Εξαγωγή των tickets
 
 Tickets=Tickets
 TicketDictType=Ticket - Τύποι
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Εξωτερικός συνεργάτη�
 
 OriginEmail=Email πελάτη που άνοιξε το ticket
 Notify_TICKET_SENTBYMAIL=Στείλτε μήνυμα ticket μέσω email
+
+ExportDataset_ticket_1=Tickets
 
 # Status
 Read=Έχει αναγνωστεί
