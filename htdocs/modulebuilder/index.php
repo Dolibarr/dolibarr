@@ -1814,6 +1814,27 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 			dolReplaceInFile($moduledescriptorfile, array('/*'.strtoupper($objectname).'*/' => ''));
 		}
 
+		// regenerate permissions and delete them
+		$rightToadd = "
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); // Permission id (must not be already used)
+		\$this->rights[\$r][1] = 'Read objects of ".$module."'; // Permission label
+		\$this->rights[\$r][4] = '".strtolower($objectname)."';
+		\$this->rights[\$r][5] = 'read'; // In php code, permission will be checked by test if (\$user->rights->toto->myobject->read)
+		\$r++;
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); // Permission id (must not be already used)
+		\$this->rights[\$r][1] = 'Create/Update objects of ".$module."'; // Permission label
+		\$this->rights[\$r][4] = '".strtolower($objectname)."';
+		\$this->rights[\$r][5] = 'write'; // In php code, permission will be checked by test if (\$user->rights->toto->myobject->write)
+		\$r++;
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); // Permission id (must not be already used)
+		\$this->rights[\$r][1] = 'Delete objects of ".$module."'; // Permission label
+		\$this->rights[\$r][4] = '".strtolower($objectname)."';
+		\$this->rights[\$r][5] = 'delete'; // In php code, permission will be checked by test if (\$user->rights->toto->myobject->delete)
+		\$r++;
+		";
+
+		$deleteright = dolReplaceInFile($moduledescriptorfile, array($rightToadd => '', '/*'.strtoupper($objectname).'*/' => '', "/*END ".strtoupper($objectname).'*/'."\n\t\t" => ''."\n\t\t"));
+
 		$resultko = 0;
 		foreach ($filetodelete as $tmpfiletodelete) {
 			$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete, 0, 0, 1);
