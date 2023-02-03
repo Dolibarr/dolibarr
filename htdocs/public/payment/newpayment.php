@@ -292,7 +292,7 @@ $parameters = [
 ];
 $reshook = $hookmanager->executeHooks('doValidatePayment', $parameters, $object, $action);
 if ($reshook < 0) {
-    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 } elseif ($reshook > 0) {
 	print $hookmanager->resPrint;
 }
