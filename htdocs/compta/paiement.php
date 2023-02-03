@@ -534,7 +534,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '<td class="tdtop">';
 		print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('comment', 'restricthtml').'</textarea>';
 		print '</td></tr>';
-		
+
 		// Go Source Invoice (useful when there are many invoices)
 		if ($action != 'add_paiement') {
 			print '<tr><td></td>';
