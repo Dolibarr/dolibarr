@@ -3956,7 +3956,7 @@ if ($module == 'initmodule') {
 				print '<td>';
 				print '<select name="label" >';
 				print '<option value=""></option>';
-				for ($i = 0; $i<count($labels); $i++) {
+				for ($i = 0; $i<3; $i++) {
 					print '<option value="'.dol_escape_htmltag($labels[$i]).'">'.$labels[$i].'</option>';
 				}
 				print '</select></td>';
@@ -3972,7 +3972,7 @@ if ($module == 'initmodule') {
 
 				print '<td><select class="maxwidth"  name="crud">';
 				print '<option value=""></option>';
-				for ($i = 0;$i<count($crud);$i++) {
+				for ($i = 0;$i<3;$i++) {
 					print '<option value="'.$crud[$i].'">'.$langs->trans($crud[$i]).'</option>';
 				}
 				print '</td>';
@@ -4015,7 +4015,7 @@ if ($module == 'initmodule') {
 							print '<td>';
 							print '<select name="crud">';
 							print '<option value="'.dol_escape_htmltag($perm[5]).'">'.$langs->trans($perm[5]).'</option>';
-							for ($i = 0; $i<count($crud); $i++) {
+							for ($i = 0; $i<3; $i++) {
 								if ($perm[5] != $crud[$i]) {
 									print '<option value="'.$crud[$i].'">'.$langs->trans($crud[$i]).'</option>';
 								}
