@@ -244,12 +244,12 @@ $title = $langs->trans('StockAtDate');
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price,';
 $sql .= ' p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
-$sql .= ' p.tms as datem, p.duration, p.tobuy, p.stock, ';
+$sql .= ' p.tms as datem, p.duration, p.tobuy, p.stock, p.pmp, ';
 if ($fk_warehouse > 0) {
-	$sql .= " SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue";
+	$sql .= " SUM(p.pmp * ps.reel) as currentvalue, SUM(p.price * ps.reel) as sellvalue";
 	$sql .= ', SUM(ps.reel) as stock_reel';
 } else {
-	$sql .= " SUM(p.pmp * p.stock) as estimatedvalue, SUM(p.price * p.stock) as sellvalue";
+	$sql .= " SUM(p.pmp * p.stock) as currentvalue, SUM(p.price * p.stock) as sellvalue";
 }
 // Add fields from hooks
 $parameters = array();
@@ -562,8 +562,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 			// PMP value
 			print '<td class="right">';
-			if (price2num($objp->estimatedvalue, 'MT')) {
-				print price(price2num($objp->estimatedvalue, 'MT'), 1);
+			$estimatedvalue = $stock * $objp->pmp;
+			if (price2num($estimatedvalue, 'MT')) {
+				print price(price2num($estimatedvalue, 'MT'), 1);
 			} else {
 				print '';
 			}
