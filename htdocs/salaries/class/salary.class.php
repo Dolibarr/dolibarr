@@ -479,6 +479,25 @@ class Salary extends CommonObject
 		}
 	}
 
+	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+
+		$langs->loadLangs(['salaries']);
+
+		$datas = [];
+		$option = $params['option'] ?? '';
+		$datas['picto'] = '<u>'.$langs->trans("Salary").'</u>';
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+
+		return $datas;
+	}
 
 	/**
 	 *	Send name clicable (with possibly the picto)
@@ -523,29 +542,40 @@ class Salary extends CommonObject
 		}
 
 		$linkclose = '';
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$params = [
+				'id' => $this->id,
+				'objecttype' => $this->element,
+				'option' => $option,
+			];
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			$label = $langs->trans('Loading');
+		}
 		if (empty($notooltip)) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-			 $hookmanager->initHooks(array('myobjectdao'));
-			 $parameters=array('id'=>$this->id);
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			 */
-		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright pictofixedwidth"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip pictofixedwidth"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= $this->ref;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright pictofixedwidth"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.' pictofixedwidth"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 

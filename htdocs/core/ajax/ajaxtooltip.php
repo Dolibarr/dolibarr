@@ -198,6 +198,9 @@ if ($objecttype == 'invoice_supplier') {
 	$classname = 'AdherentType';
 } elseif ($objecttype == 'contact') {
 	$module = 'societe';
+} elseif ($objecttype == 'salary') {
+	$classpath = 'salaries/class';
+	$module = 'salaries';
 }
 // print "objecttype=".$objecttype." module=".$module." subelement=".$subelement." classfile=".$classfile." classname=".$classname." classpath=".$classpath."<br>";
 
