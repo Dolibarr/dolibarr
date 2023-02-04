@@ -1975,6 +1975,8 @@ class ExtraFields
 		if (!empty($extrafield_param) && is_array($extrafield_param)) {
 			$extrafield_param_list = array_keys($extrafield_param['options']);
 		}
+
+		// Set $extrafield_collapse_display_value (do we have to collapse/expand the group after the separator)
 		$extrafield_collapse_display_value = -1;
 		$expand_display = false;
 		if (is_array($extrafield_param_list) && count($extrafield_param_list) > 0) {
@@ -1989,7 +1991,7 @@ class ExtraFields
 		$out .= '<'.$tagtype_dyn.' '.(!empty($colspan)?'colspan="' . $colspan . '"':'').'>';
 		// Some js code will be injected here to manage the collapsing of extrafields
 		// Output the picto
-		$out .= '<span class="cursorpointer '.($extrafield_collapse_display_value == 0 ? 'fas fa-square opacitymedium' : 'far fa-'.(($expand_display ? 'minus' : 'plus').'-square')).'"></span>';
+		$out .= '<span class="'.($extrafield_collapse_display_value ? 'cursorpointer ' : '').($extrafield_collapse_display_value == 0 ? 'fas fa-square opacitymedium' : 'far fa-'.(($expand_display ? 'minus' : 'plus').'-square')).'"></span>';
 		$out .= '&nbsp;';
 		$out .= '<strong>';
 		$out .= $langs->trans($this->attributes[$object->table_element]['label'][$key]);
