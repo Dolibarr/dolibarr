@@ -2366,3 +2366,6 @@ MaxNumberOfAttachementOnForms=Max number of joinded files in a form
 IfDefinedUseAValueBeetween=If defined, use a value between %s and %s
 Reload=Reload
 ConfirmReload=Confirm module reload
+WarningModuleHasChangedLastVersionCheckParameter=Warning module %s has changed last version check parameter
+WarningModuleHasChangedSecurityCsrfParameter=Warning module %s has changed security CSRF parameter
+
