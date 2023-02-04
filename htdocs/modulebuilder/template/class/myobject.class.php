@@ -816,23 +816,25 @@ class MyObject extends CommonObject
 		}
 
 		$linkclose = '';
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$params = [
+				'id' => $this->id,
+				'objecttype' => $this->element,
+				'option' => $option,
+			];
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			$label = $langs->trans('Loading');
+		}
 		if (empty($notooltip)) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-				$params = [
-					'id' => $this->id,
-					'objecttype' => $this->element,
-					'option' => $option,
-				];
-				$linkclose .= ' data-params='.json_encode($params).' title="' . $langs->trans('Loading') . '"';
-				$linkclose .= ' class="classforajaxtooltip'.($morecss ? ' '.$morecss : '').'"';
-			} else {
-				$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-				$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -853,7 +855,7 @@ class MyObject extends CommonObject
 
 		if (empty($this->showphoto_on_popup)) {
 			if ($withpicto) {
-				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 			}
 		} else {
 			if ($withpicto) {

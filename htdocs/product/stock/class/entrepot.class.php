@@ -763,23 +763,25 @@ class Entrepot extends CommonObject
 		}
 
 		$linkclose = '';
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$params = [
+				'id' => $this->id,
+				'objecttype' => $this->element,
+				'option' => $option,
+			];
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			$label = $langs->trans('Loading');
+		}
 		if (empty($notooltip)) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("Warehouse");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-				$params = [
-					'id' => $this->id,
-					'objecttype' => $this->element,
-					'option' => $option,
-				];
-				$linkclose .= '" data-params='.json_encode($params).' title="' . $langs->trans('Loading') . '"';
-				$linkclose .= ' class="classforajaxtooltip"';
-			} else {
-				$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-				$linkclose .= ' class="classfortooltip"';
-			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -788,7 +790,7 @@ class Entrepot extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= (($showfullpath || !empty($conf->global->STOCK_ALWAYS_SHOW_FULL_ARBO)) ? $this->get_full_arbo() : $this->label);
