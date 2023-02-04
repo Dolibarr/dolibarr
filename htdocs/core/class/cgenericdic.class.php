@@ -82,6 +82,8 @@ class CGenericDic
 		$fieldlabel = 'label';
 		if ($this->table_element == 'c_stcomm') {
 			$fieldlabel = 'libelle';
+		} elseif ($this->table_element == 'c_type_fees') {
+			$fieldrowid = 'id';
 		}
 
 		$error = 0;
@@ -162,6 +164,8 @@ class CGenericDic
 		if ($this->table_element == 'c_stcomm') {
 			$fieldrowid = 'id';
 			$fieldlabel = 'libelle';
+		} elseif ($this->table_element == 'c_type_fees') {
+			$fieldrowid = 'id';
 		}
 
 		$sql = "SELECT";
@@ -233,6 +237,8 @@ class CGenericDic
 		if ($this->table_element == 'c_stcomm') {
 			$fieldrowid = 'id';
 			$fieldlabel = 'libelle';
+		} elseif ($this->table_element == 'c_type_fees') {
+			$fieldrowid = 'id';
 		}
 
 		$sql = "SELECT";
@@ -303,6 +309,8 @@ class CGenericDic
 		if ($this->table_element == 'c_stcomm') {
 			$fieldrowid = 'id';
 			$fieldlabel = 'libelle';
+		} elseif ($this->table_element == 'c_type_fees') {
+			$fieldrowid = 'id';
 		}
 
 		// Clean parameters
