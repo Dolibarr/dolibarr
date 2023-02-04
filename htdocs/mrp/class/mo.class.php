@@ -698,6 +698,9 @@ class Mo extends CommonObject
 							$moline->fk_mo = $this->id;
 							$moline->origin_id = $line->id;
 							$moline->origin_type = 'bomline';
+							if ($line->qty == 0) { // This bomline is not needed into the manufacturing order
+								continue;
+							}
 							if ($line->qty_frozen) {
 								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
 							} else {
@@ -706,7 +709,8 @@ class Mo extends CommonObject
 							if ($moline->qty <= 0) {
 								$error++;
 								$this->error = "BadValueForquantityToConsume";
-								continue;
+								dol_print_error(0,$langs->trans("BadValueForquantityToConsume",$moline->qty));
+								break;
 							} else {
 								$moline->fk_product = $line->fk_product;
 								$moline->role = $role;
