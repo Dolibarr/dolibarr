@@ -568,7 +568,7 @@ if ($action == 'create') {
 						$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($object->lines[$i]->description));
 						//print $description;
 						print $form->textwithtooltip($text, $description, 3, '', '', $i);
-						print_date_range($object->lines[$i]->date_start, $object->lines[$i]->date_end);
+						//print_date_range($object->lines[$i]->date_start, $object->lines[$i]->date_end);
 						if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 							print (!empty($object->lines[$i]->description) && $object->lines[$i]->description != $object->lines[$i]->product_label) ? '<br>'.dol_htmlentitiesbr($object->lines[$i]->description) : '';
 						}
@@ -587,7 +587,7 @@ if ($action == 'create') {
 							print $text.' '.nl2br($object->lines[$i]->description);
 						}
 
-						print_date_range($objp->date_start, $objp->date_end);
+						//print_date_range($objp->date_start, $objp->date_end);
 						print "</td>\n";
 					}
 
