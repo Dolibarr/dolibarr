@@ -1941,6 +1941,114 @@ if ($dirins && $action == 'generatepackage') {
 	}
 }
 
+// Add permission
+if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
+	$error = 0;
+
+	// load class and check if right exist
+	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+	dol_include_once($pathtofile);
+		$class = 'mod'.$module;
+	if (class_exists($class)) {
+		try {
+			$moduleobj = new $class($db);
+		} catch (Exception $e) {
+			$error++;
+			dol_print_error($db, $e->getMessage());
+		}
+	}
+
+	// verify informations entred
+	if (!GETPOST('label', 'alpha')) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
+	}
+	if (!GETPOST('permissionObj', 'alpha')) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Rights")), null, 'errors');
+	}
+
+	$label = GETPOST('label', 'alpha');
+	$objectForPerms = strtolower(GETPOST('permissionObj', 'alpha'));
+	$crud = GETPOST('crud', 'alpha');
+
+	// check coherence between crud and label
+	if ($label == "Read objects of $module" && $crud != "read") {
+		$crud = "read";
+		$label == "Read objects of $module";
+	}
+	if ($label == "Create/Update objects of $module" && $crud != "write") {
+		$crud = "write";
+		$label == "Create/Update objects of $module";
+	}
+	if ($label == "Delete objects of $module" && $crud != "delete") {
+		$crud = "delete";
+		$label == "Delete objects of $module";
+	}
+
+	//check existing object permission
+	$counter = 0;
+	$permsForObject =array();
+	$permissions = $moduleobj->rights;
+	$firstRight = 0;
+	$existRight = 0;
+	$allObject = array();
+
+	$nbOfPermissions = count($permissions);
+	for ($i =0; $i<$nbOfPermissions; $i++) {
+		if ($permissions[$i][4] == $objectForPerms) {
+			$counter++;
+			if (count($permsForObject) < 3) {
+				$permsForObject[] = $permissions[$i];
+			}
+		}
+		$allObject[] = $permissions[$i][4];
+	}
+	$nbOfpermsInObj = count($permsForObject);
+	// check if label of object already exists
+	for ($j = 0; $j<$nbOfpermsInObj; $j++) {
+		if (in_array($label, $permsForObject[$j])) {
+			$existRight++;
+			setEventMessages($langs->trans("ErrorExistingPermission", $langs->transnoentities($label), $langs->transnoentities($objectForPerms)), null, 'errors');
+		}
+	}
+	// if not found permission for the object
+	if (!in_array($objectForPerms, array_unique($allObject))) {
+		$firstRight++;
+		$existRight = 0;
+	}
+	if (!$error) {
+		if (isModEnabled(strtolower($module))) {
+			$result = unActivateModule(strtolower($module));
+			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+			if ($result) {
+				setEventMessages($result, null, 'errors');
+			}
+			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+		}
+		//prepare stirng to add
+		$rightToAdd = "
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
+		\$this->rights[\$r][1] = '$label'; 
+		\$this->rights[\$r][4] = '$objectForPerms';
+		\$this->rights[\$r][5] = '$crud'; 
+		\$r++;
+		";
+		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+		if (!$existRight) {
+			dolReplaceInFile($moduledescriptorfile, array('/*END '.strtoupper($objectForPerms).'*/' => $rightToAdd.'/*END '.strtoupper($objectForPerms).'*/'));
+			setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
+		}
+		if ($firstRight) {
+			dolReplaceInFile($moduledescriptorfile, array('/* END MODULEBUILDER PERMISSIONS */' => '/*'.strtoupper($objectForPerms).'*/'.$rightToAdd."/*END ".strtoupper($objectForPerms).'*/'."\n\t\t".'/* END MODULEBUILDER PERMISSIONS */'));
+			setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
+		}
+	}
+	header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+	exit;
+}
+
 
 // Update permission
 if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright')&& empty($cancel)) {
