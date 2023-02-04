@@ -58,7 +58,7 @@ if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel',
 			//but the note is saved, so just add a notification will be enought
 			$resultGenDoc = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($resultGenDoc < 0) {
-				setEventMessages($object->error, $object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'warnings');
 			}
 
 			if ($result < 0) dol_print_error($db, $result);
