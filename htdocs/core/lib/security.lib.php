@@ -811,6 +811,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		$checkproject = array('projet', 'project'); // Test for project object
 		$checktask = array('projet_task'); // Test for task object
 		$checkhierarchy = array('expensereport', 'holiday');	// check permission among the hierarchy of user
+		$checkuser = array('bookmark');	// check permission among the fk_user (must be myself or null)
 		$nocheck = array('barcode', 'stock'); // No test
 
 		//$checkdefault = 'all other not already defined'; // Test on entity + link to third party on field $dbt_keyfield. Not allowed if link is empty (Ex: invoice, orders...).
@@ -1030,6 +1031,15 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 						return false;
 					}
 				}
+			}
+		}
+
+		// For some object, we also have to check it is public or owned by user
+		// Param $object must be the full object and not a simple id to have this test possible.
+		if (in_array($feature, $checkuser) && is_object($object) && $objectid > 0) {
+			$useridtocheck = $object->fk_user;
+			if (!empty($useridtocheck) && $useridtocheck > 0 && $useridtocheck != $user->id && empty($user->admin)) {
+				return false;
 			}
 		}
 
