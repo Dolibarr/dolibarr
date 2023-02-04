@@ -303,6 +303,7 @@ ErrorValueForTooLow=Value for <b>%s</b> is too low
 ErrorValueCantBeNull=Value for <b>%s</b> can't be null
 ErrorDateOfMovementLowerThanDateOfFileTransmission=The date of the bank transaction can't be lower than the date of the file transmission
 ErrorTooMuchFileInForm=Too much files in form, the maximum number is %s file(s)
+ErrorSessionInvalidatedAfterPasswordChange=The session was been invalidated following a change of password, status or dates of validity. Please relogin.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=El paràmetre PHP upload_max_filesize (%s) és superior al paràmetre PHP post_max_size (%s). No es tracta d’una configuració consistent.
@@ -325,6 +326,7 @@ WarningPaymentDateLowerThanInvoiceDate=La data de pagament (%s) és anterior a l
 WarningTooManyDataPleaseUseMoreFilters=Massa dades (més de %s línies). Utilitza més filtres o indica la constant %s amb un límit superior.
 WarningSomeLinesWithNullHourlyRate=Algunes vegades es van registrar per alguns usuaris quan no s'havia definit el seu preu per hora. Es va utilitzar un valor de 0 %s per hora, però això pot resultar una valoració incorrecta del temps dedicat.
 WarningYourLoginWasModifiedPleaseLogin=El vostre nom d'usuari s'ha modificat. Per motius de seguretat, haureu d'iniciar sessió amb el vostre nou nom d'usuari abans de la propera acció.
+WarningYourPasswordWasModifiedPleaseLogin=S'ha modificat la teva contrasenya. Per motius de seguretat, haureu d'iniciar sessió ara amb la vostra nova contrasenya.
 WarningAnEntryAlreadyExistForTransKey=Ja existeix una entrada per la clau de traducció d'aquest idioma
 WarningNumberOfRecipientIsRestrictedInMassAction=Advertència: el nombre de destinataris diferents està limitat a <b> %s </b> quan s'utilitzen les accions massives a les llistes.
 WarningDateOfLineMustBeInExpenseReportRange=Advertència, la data de la línia no està dins del rang de l'informe de despeses

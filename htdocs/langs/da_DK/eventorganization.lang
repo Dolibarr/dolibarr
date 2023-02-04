@@ -172,3 +172,5 @@ ErrorSeveralCompaniesWithEmailContactUs=Flere virksomheder med denne e -mail er 
 ErrorSeveralCompaniesWithNameContactUs=Flere virksomheder med dette navn er fundet, så vi kan ikke automatisk validere din registrering. Kontakt os venligst på %s for en manuel validering
 NoPublicActionsAllowedForThisEvent=Ingen offentlige handlinger er åbne for offentligheden for denne begivenhed
 MaxNbOfAttendees=Max antal deltagere
+DateStartEvent=Begivenhedens startdato
+DateEndEvent=Begivenheds slutdato

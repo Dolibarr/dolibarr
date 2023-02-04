@@ -333,9 +333,8 @@ if (!empty($arrayfields['cpl.date_action']['checked'])) {
 if (!empty($arrayfields['cpl.fk_user_action']['checked'])) {
 	$validator = new UserGroup($db);
 	$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
-	$valideurobjects = $validator->listUsersForGroup($excludefilter);
+	$valideurobjects = $validator->listUsersForGroup($excludefilter, 1);
 	$valideurarray = array();
-
 	foreach ($valideurobjects as $val) {
 		$valideurarray[$val->id] = $val->id;
 	}
