@@ -709,7 +709,7 @@ class Mo extends CommonObject
 							if ($moline->qty <= 0) {
 								$error++;
 								$this->error = "BadValueForquantityToConsume";
-								dol_print_error(0,$langs->trans("BadValueForquantityToConsume",$moline->qty));
+								dol_print_error(0, $langs->trans("BadValueForquantityToConsume", $moline->qty));
 								break;
 							} else {
 								$moline->fk_product = $line->fk_product;
