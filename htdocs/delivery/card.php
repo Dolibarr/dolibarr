@@ -283,7 +283,7 @@ if ($action == 'create') {
 			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update_extras_line">';
-			print '<input type="hidden" name="origin" value="'.$origin.'">';
+			print '<input type="hidden" name="origin" value="'.$object->origin.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 
