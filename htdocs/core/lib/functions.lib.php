@@ -5022,8 +5022,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		$out .= "<br>\n";
 		$syslog .= "url=".dol_escape_htmltag($_SERVER["REQUEST_URI"]);
 		$syslog .= ", query_string=".dol_escape_htmltag($_SERVER["QUERY_STRING"]);
-	} else // Mode CLI
-	{
+	} else { // Mode CLI
 		$out .= '> '.$langs->transnoentities("ErrorInternalErrorDetected").":\n".$argv[0]."\n";
 		$syslog .= "pid=".dol_getmypid();
 	}
@@ -5035,12 +5034,15 @@ function dol_print_error($db = '', $error = '', $errors = null)
 	if (is_object($db)) {
 		if ($_SERVER['DOCUMENT_ROOT']) {  // Mode web
 			$out .= "<b>".$langs->trans("DatabaseTypeManager").":</b> ".$db->type."<br>\n";
-			$out .= "<b>".$langs->trans("RequestLastAccessInError").":</b> ".($db->lastqueryerror() ? dol_escape_htmltag($db->lastqueryerror()) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
+			$lastqueryerror = $db->lastqueryerror();
+			if (!utf8_check($lastqueryerror)) {
+				$lastqueryerror = "SQL error string is not a valid UTF8 string. We can't show it.";
+			}
+			$out .= "<b>".$langs->trans("RequestLastAccessInError").":</b> ".($lastqueryerror ? dol_escape_htmltag($lastqueryerror) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
 			$out .= "<b>".$langs->trans("ReturnCodeLastAccessInError").":</b> ".($db->lasterrno() ? dol_escape_htmltag($db->lasterrno()) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
 			$out .= "<b>".$langs->trans("InformationLastAccessInError").":</b> ".($db->lasterror() ? dol_escape_htmltag($db->lasterror()) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
 			$out .= "<br>\n";
-		} else // Mode CLI
-		{
+		} else { // Mode CLI
 			// No dol_escape_htmltag for output, we are in CLI mode
 			$out .= '> '.$langs->transnoentities("DatabaseTypeManager").":\n".$db->type."\n";
 			$out .= '> '.$langs->transnoentities("RequestLastAccessInError").":\n".($db->lastqueryerror() ? $db->lastqueryerror() : $langs->transnoentities("ErrorNoRequestInError"))."\n";
