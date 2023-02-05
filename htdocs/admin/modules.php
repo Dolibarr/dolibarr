@@ -796,9 +796,9 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		if ($objMod->isCoreOrExternalModule() == 'external'
 			&& (
 				$action == 'checklastversion'
-				// This is a bad practice to activate a synch external access during building of a page. 1 external module can hang the application.
-				// Adding a cron job could be a good idea see DolibarrModules::checkForUpdate()
-				|| 	!empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)
+				// This is a bad practice to activate a check on an external access during the building of the admin page. 1 external module can hang the application.
+				// Adding a cron job could be a good idea: see DolibarrModules::checkForUpdate()
+				|| !empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)
 			)
 		) {
 			$checkRes = $objMod->checkForUpdate();
