@@ -337,7 +337,7 @@ if (empty($reshook)) {
 			// Extrafields
 			$array_options[$i] = $extrafields->getOptionalsFromPost($object->table_element_line, $i);
 			// Unset extrafield
-			if (is_array($extrafields->attributes[$object->table_element_line]['label'])) {
+			if (isset($extrafields->attributes[$object->table_element_line]['label']) && is_array($extrafields->attributes[$object->table_element_line]['label'])) {
 				// Get extra fields
 				foreach ($extrafields->attributes[$object->table_element_line]['label'] as $key => $value) {
 					unset($_POST["options_".$key]);
