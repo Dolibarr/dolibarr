@@ -699,7 +699,7 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire) {
 /*
  * Last suppliers
  */
-if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->societe->lire) {
+if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->lire) {
 	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
