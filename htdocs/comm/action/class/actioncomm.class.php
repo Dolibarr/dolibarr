@@ -1737,7 +1737,7 @@ class ActionComm extends CommonObject
 			];
 			$classfortooltip = 'classforajaxtooltip';
 			$dataparams = ' data-params='.json_encode($params);
-			$label = $langs->trans('Loading');
+			// $label = $langs->trans('Loading');
 		}
 		//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
 		//	$linkclose = ' style="background-color:#'.$this->type_color.'"';

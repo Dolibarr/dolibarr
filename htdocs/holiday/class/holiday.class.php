@@ -1364,7 +1364,7 @@ class Holiday extends CommonObject
 			];
 			$classfortooltip = 'classforajaxtooltip';
 			$dataparams = ' data-params='.json_encode($params);
-			$label = $langs->trans('Loading');
+			// $label = $langs->trans('Loading');
 		}
 		$linkstart = '<a href="'.$url.'"'.$dataparams.' title="'.dol_escape_htmltag($label, 1).'" class="'.$classfortooltip.'">';
 		$linkend = '</a>';

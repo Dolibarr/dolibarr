@@ -1648,7 +1648,7 @@ class Categorie extends CommonObject
 			];
 			$classfortooltip = 'classforajaxtooltip';
 			$dataparams = ' data-params='.json_encode($params);
-			$label = $langs->trans('Loading');
+			// $label = $langs->trans('Loading');
 		}
 		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam ? '?'.$moreparam : ''));
 		$link .= '"'.$dataparams.' title="'.dol_escape_htmltag($label, 1).'" class="'.$classfortooltip.' '.$forced_color.'">';

@@ -3819,7 +3819,7 @@ class Propal extends CommonObject
 			];
 			$classfortooltip = 'classforajaxtooltip';
 			$dataparams = ' data-params='.json_encode($params);
-			$label = $langs->trans('Loading');
+			// $label = $langs->trans('Loading');
 		}
 		if (empty($notooltip) && $user->rights->propal->lire) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {

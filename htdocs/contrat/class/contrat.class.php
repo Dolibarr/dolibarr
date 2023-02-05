@@ -2081,7 +2081,7 @@ class Contrat extends CommonObject
 			];
 			$classfortooltip = 'classforajaxtooltip';
 			$dataparams = ' data-params='.json_encode($params);
-			$label = $langs->trans('Loading');
+			// $label = $langs->trans('Loading');
 		}
 		if (empty($notooltip) && $user->rights->contrat->lire) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
@@ -3162,7 +3162,7 @@ class ContratLigne extends CommonObjectLine
 			];
 			$classfortooltip = 'classforajaxtooltip';
 			$dataparams = ' data-params='.json_encode($params);
-			$label = $langs->trans('Loading');
+			// $label = $langs->trans('Loading');
 		}
 		$link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat;
 		$link = '"'.$dataparams.' title="'.dol_escape_htmltag($label, 1).'" class="'.$classfortooltip.'">';
