@@ -2366,6 +2366,6 @@ MaxNumberOfAttachementOnForms=Max number of joinded files in a form
 IfDefinedUseAValueBeetween=If defined, use a value between %s and %s
 Reload=Reload
 ConfirmReload=Confirm module reload
-WarningModuleHasChangedLastVersionCheckParameter=Warning module %s has changed last version check parameter
-WarningModuleHasChangedSecurityCsrfParameter=Warning module %s has changed security CSRF parameter
+WarningModuleHasChangedLastVersionCheckParameter=Warning: the module %s has set a parameter to check its version at each page access. This is a bad and not allowed practice that may make the page to administer modules instable. Please contact author of module to fix this.
+WarningModuleHasChangedSecurityCsrfParameter=Warning: the module %s has disabled the CSRF security of your instance. This action is suspect and your installation may no more be secured. Please contact the author of the module for explanation.  
 
