@@ -2365,24 +2365,26 @@ class Adherent extends CommonObject
 
 		$linkstart .= '<a href="'.$url.'"';
 		$linkclose = "";
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$params = [
+				'id' => $this->id,
+				'objecttype' => $this->element,
+				'option' => $option,
+			];
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			$label = $langs->trans('Loading');
+		}
 		if (empty($notooltip)) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$langs->load("users");
 				$label = $langs->trans("ShowUser");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-				$params = [
-					'id' => $this->id,
-					'objecttype' => $this->element,
-					'option' => $option,
-				];
-				$linkclose .= ' data-params='.json_encode($params).' title="' . $langs->trans('Loading') . '"';
-				$linkclose .= ' class="classforajaxtooltip'.($morecss ? ' '.$morecss : '').'"';
-			} else {
-				$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-				$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		}
 
 		$linkstart .= $linkclose.'>';
@@ -2400,7 +2402,7 @@ class Adherent extends CommonObject
 			// Only picto
 			if ($withpictoimg > 0) {
 				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">'.
-					img_object('', 'user', $paddafterimage.' '.($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1).'</span>';
+					img_object('', 'user', $paddafterimage.' '.($notooltip ? '' : $dataparams.' class="'.$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1).'</span>';
 			} else {
 				// Picto must be a photo
 				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>';

@@ -735,7 +735,18 @@ class AdherentType extends CommonObject
 		$option = '';
 
 		$url = DOL_URL_ROOT.'/adherents/type.php?rowid='.((int) $this->id);
-
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$params = [
+				'id' => $this->id,
+				'objecttype' => $this->element,
+				'option' => $option,
+			];
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			$label = $langs->trans('Loading');
+		}
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
@@ -746,21 +757,12 @@ class AdherentType extends CommonObject
 				$url .= '&save_lastsearch_values=1';
 			}
 		}
-		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			$params = [
-				'id' => $this->id,
-				'objecttype' => $this->element,
-				'option' => $option,
-			];
-			$linkstart = '<a href="'.$url.'" data-params='.json_encode($params).' title="'.$langs->trans('Loading').'" class="classforajaxtooltip">';
-		} else {
-			$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		}
+		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'"'.$dataparams.' class="'.$classfortooltip.'">';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= ($maxlen ?dol_trunc($this->label, $maxlen) : $this->label);
