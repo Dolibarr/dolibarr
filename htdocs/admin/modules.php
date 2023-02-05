@@ -8,7 +8,7 @@
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
- * Copyright (C) 2021       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -251,7 +251,15 @@ if ($action == 'install') {
 }
 
 if ($action == 'set' && $user->admin) {
+	$checkOldValue = getDolGlobalInt('CHECKLASTVERSION_EXTERNALMODULE');
+	$csrfCheckOldValue = getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN');
 	$resarray = activateModule($value);
+	if ($checkOldValue != getDolGlobalInt('CHECKLASTVERSION_EXTERNALMODULE')) {
+		setEventMessage($langs->trans('WarningModuleHasChangedLastVersionCheckParameter', $value), 'warnings');
+	}
+	if ($csrfCheckOldValue != getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN')) {
+		setEventMessage($langs->trans('WarningModuleHasChangedSecurityCsrfParameter', $value), 'warnings');
+	}
 	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
 	if (!empty($resarray['errors'])) {
 		setEventMessages('', $resarray['errors'], 'errors');
