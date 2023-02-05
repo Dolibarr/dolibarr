@@ -24,6 +24,7 @@ BoxFicheInter=Latest interventions
 BoxCurrentAccounts=Open accounts balance
 BoxTitleMemberNextBirthdays=Birthdays of this month (members)
 BoxTitleMembersByType=Members by type and status
+BoxTitleMembersByTags=Members by tags and status
 BoxTitleMembersSubscriptionsByYear=Members Subscriptions by year
 BoxTitleLastRssInfos=Latest %s news from %s
 BoxTitleLastProducts=Products/Services: last %s modified

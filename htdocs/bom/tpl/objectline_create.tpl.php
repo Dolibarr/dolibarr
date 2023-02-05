@@ -107,7 +107,7 @@ print '<td class="bordertop nobottom linecoldescription minwidth500imp">';
 if (isModEnabled("product") || isModEnabled("service")) {
 	if ($filtertype == 1) {
 		print $langs->trans("Service");
-	} elseif (!empty($conf->global->BOM_SUB_BOM)) {
+	} else {
 		print $langs->trans("Product");
 	}
 	echo '<span class="prod_entry_mode_predef">';

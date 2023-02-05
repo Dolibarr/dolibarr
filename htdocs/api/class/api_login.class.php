@@ -121,6 +121,9 @@ class Login
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 		$login = checkLoginPassEntity($login, $password, $entity, $authmode, 'api');		// Check credentials.
+		if ($login === '--bad-login-validity--') {
+			$login = '';
+		}
 		if (empty($login)) {
 			throw new RestException(403, 'Access denied');
 		}

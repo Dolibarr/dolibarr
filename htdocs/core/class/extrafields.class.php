@@ -1233,7 +1233,7 @@ class ExtraFields
 							$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 						}
 						//We have to join on extrafield table
-						if (strpos($InfoFieldList[4], 'extra') !== false) {
+						if (strpos($InfoFieldList[4], 'extra.') !== false) {
 							$sql .= ' as main, '.$this->db->prefix().$InfoFieldList[0].'_extrafields as extra';
 							$sqlwhere .= " WHERE extra.fk_object=main.".$InfoFieldList[2]." AND ".$InfoFieldList[4];
 						} else {
@@ -1494,15 +1494,15 @@ class ExtraFields
 							$labeltoshow = dol_trunc($labeltoshow, 45);
 
 							if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
+								$labeltoshow = '';
 								foreach ($fields_label as $field_toshow) {
 									$translabel = $langs->trans($obj->$field_toshow);
 									if ($translabel != $obj->$field_toshow) {
-										$labeltoshow = dol_trunc($translabel, 18).' ';
+										$labeltoshow .= ' '.dol_trunc($translabel, 18).' ';
 									} else {
-										$labeltoshow = dol_trunc($obj->$field_toshow, 18).' ';
+										$labeltoshow .= ' '.dol_trunc($obj->$field_toshow, 18).' ';
 									}
 								}
-
 								$data[$obj->rowid] = $labeltoshow;
 							} else {
 								if (!$notrans) {
@@ -1690,7 +1690,7 @@ class ExtraFields
 
 			$sql = "SELECT ".$keyList;
 			$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
-			if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
+			if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
 				$sql .= ' as main';
 			}
 			if ($selectkey == 'rowid' && empty($value)) {
@@ -1806,7 +1806,7 @@ class ExtraFields
 
 			$sql = "SELECT ".$keyList;
 			$sql .= " FROM ".$this->db->prefix().$InfoFieldList[0];
-			if (strpos($InfoFieldList[4], 'extra') !== false) {
+			if (strpos($InfoFieldList[4], 'extra.') !== false) {
 				$sql .= ' as main';
 			}
 			// $sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
@@ -1823,17 +1823,20 @@ class ExtraFields
 						$fields_label = explode('|', $InfoFieldList[1]);
 						if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
 							if (is_array($fields_label) && count($fields_label) > 1) {
+								$label = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">';
 								foreach ($fields_label as $field_toshow) {
 									$translabel = '';
 									if (!empty($obj->$field_toshow)) {
 										$translabel = $langs->trans($obj->$field_toshow);
 									}
 									if ($translabel != $field_toshow) {
-										$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.dol_trunc($translabel, 18).'</li>';
+										$label .= ' '.dol_trunc($translabel, 18);
 									} else {
-										$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$obj->$field_toshow.'</li>';
+										$label .= ' '.$obj->$field_toshow;
 									}
 								}
+								$label .= '</li>';
+								$toprint[] = $label;
 							} else {
 								$translabel = '';
 								if (!empty($obj->{$InfoFieldList[1]})) {

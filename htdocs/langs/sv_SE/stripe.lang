@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook levande nyckel
 ONLINE_PAYMENT_WAREHOUSE=Lager som ska användas för lagerminskning när online betalning görs <br> (TODO När alternativet att minska lagret görs på en fakturahandling och online betalning genererar fakturaen?)
 StripeLiveEnabled=Stripe live enabled (annars test / sandbox-läge)
 StripeImportPayment=Importera Stripe betalningar
-ExampleOfTestCreditCard=Exempel på kreditkort för test: %s => valid, %s => error CVC, %s => expired, %s => debitering misslyckas
+ExampleOfTestCreditCard=Exempel på kreditkort för SEPA-test: %s => giltigt, %s => fel CVC, %s => löpt ut, %s => laddning misslyckas
+ExampleOfTestBankAcountForSEPA=Exempel på bankkonto BAN för autogirotest: %s
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca _...)
@@ -70,5 +71,8 @@ ToOfferALinkForLiveWebhook=Länk till installation Stripe WebHook för att ringa
 PaymentWillBeRecordedForNextPeriod=Betalning kommer att registreras för nästa period.
 ClickHereToTryAgain= <a href="%s"> Klicka här för att försöka igen ... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=På grund av starka regler för kundautentisering måste ett kort skapas från Stripe backoffice. Du kan klicka här för att slå på Stripes kundregister: %s
-TERMINAL_LOCATION=Plats (adress) för terminaler
+STRIPE_CARD_PRESENT=Presentkort för Stripe-terminaler
+TERMINAL_LOCATION=Plats (adress) för Stripe Terminals
 RequestDirectDebitWithStripe=Begär autogiro med Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Aktivera autogirobetalningar genom Stripe
+

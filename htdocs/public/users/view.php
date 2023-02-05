@@ -114,11 +114,11 @@ if (!empty($object->photo)) {
 $urllogo = '';
 $urllogofull = '';
 if (!empty($logosmall) && is_readable($dir.'/'.$logosmall)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&amp;entity='.$conf->entity.'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logosmall);
-	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.'&entity='.$conf->entity.'&securekey='.urlencode($securekey).'&file='.urlencode($logosmall);
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logosmall);
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&entity='.$conf->entity : '').'&securekey='.urlencode($securekey).'&file='.urlencode($logosmall);
 } elseif (!empty($logo) && is_readable($dir.'/'.$logo)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&amp;entity='.$conf->entity.'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logo);
-	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.'&amp;entity='.$conf->entity.'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logo);
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logo);
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&entity='.$conf->entity : '').'&securekey='.urlencode($securekey).'&file='.urlencode($logo);
 }
 
 // Clean data we don't want on public page
@@ -152,6 +152,13 @@ if (getDolUserInt('USER_PUBLIC_HIDE_BIRTH', 0, $object)) {
 if (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object)) {
 	$object->socialnetworks = '';
 }
+if (getDolUserInt('USER_PUBLIC_HIDE_ADDRESS', 0, $object)) {
+	$object->address = '';
+	$object->town = '';
+	$object->zip = '';
+	$object->state = '';
+	$object->country = '';
+}
 if (getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	$company = null;
 }
@@ -159,9 +166,6 @@ if (getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 
 // Output vcard
 if ($mode == 'vcard') {
-	// Reset data no selected for public VCard
-
-
 	// We create VCard
 	$output = $v->buildVCardString($object, $company, $langs, $urllogofull);
 
@@ -169,7 +173,7 @@ if ($mode == 'vcard') {
 	$filenameurlencoded = dol_sanitizeFileName(urlencode($filename));
 	//$filename = dol_sanitizeFileName($filename);
 
-	top_httphead('text/x-vcard; name="'.$filename.'"');
+	top_httphead('text/vcard; name="'.$filename.'"');
 
 	header("Content-Disposition: attachment; filename=\"".$filename."\"");
 	header("Content-Length: ".dol_strlen($output));
@@ -225,6 +229,12 @@ if ($object->job && !getDolUserInt('USER_PUBLIC_HIDE_JOBPOSITION', 0, $object)) 
 	print dol_escape_htmltag($object->job);
 	print '</div>';
 }
+if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
+	print '<div class="bold">';
+	print dol_escape_htmltag($mysoc->name);
+	print '</div>';
+}
+
 
 
 print '</div>';
@@ -236,7 +246,7 @@ print '</div>';
 
 if (!empty($conf->global->USER_IMAGE_PUBLIC_INTERFACE)) {
 	print '<div class="backimagepublicrecruitment">';
-	print '<img id="idUSER_IMAGE_PUBLIC_SUGGEST_BOOTH" src="'.$conf->global->USER_IMAGE_PUBLIC_INTERFACE.'">';
+	print '<img id="idUSER_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->USER_IMAGE_PUBLIC_INTERFACE.'">';
 	print '</div>';
 }
 
@@ -288,19 +298,19 @@ if ($object->office_phone && !getDolUserInt('USER_PUBLIC_HIDE_OFFICE_PHONE', 0, 
 	$usersection .= '<div class="flexitemsmall">';
 	$usersection .= img_picto('', 'phone', 'class="pictofixedwidth"');
 	$usersection .= dol_print_phone($object->office_phone, $object->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
-	$usersection .= '<div>';
+	$usersection .= '</div>';
 }
 if ($object->office_fax && !getDolUserInt('USER_PUBLIC_HIDE_OFFICE_FAX', 0, $object)) {
 	$usersection .= '<div class="flexitemsmall">';
 	$usersection .= img_picto('', 'phoning_fax', 'class="pictofixedwidth"');
 	$usersection .= dol_print_phone($object->office_fax, $object->country_code, 0, $mysoc->id, 'fax', ' ', 0, '');
-	$usersection .= '<div>';
+	$usersection .= '</div>';
 }
 if ($object->user_mobile && !getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object)) {
 	$usersection .= '<div class="flexitemsmall">';
 	$usersection .= img_picto('', 'phone', 'class="pictofixedwidth"');
 	$usersection .= dol_print_phone($object->user_mobile, $object->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
-	$usersection .= '<div>';
+	$usersection .= '</div>';
 }
 
 // Social networks
@@ -320,7 +330,7 @@ if ($usersection) {
 	// Output payment summary form
 	print '<tr><td class="left">';
 
-	print '<div class="nowidthimp" id="tablepublicpayment">';
+	print '<div class="nowidthimp nopaddingtoponsmartphone" id="tablepublicpayment">';
 
 	print $usersection;
 
@@ -340,7 +350,7 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 		$companysection .= '<div class="flexitemsmall">';
 		$companysection .= img_picto('', 'email', 'class="pictofixedwidth"');
 		$companysection .= dol_print_email($mysoc->email, 0, 0, 1);
-		$companysection .= '<div>';
+		$companysection .= '</div>';
 	}
 
 	if ($mysoc->url) {
@@ -354,13 +364,13 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 		$companysection .= '<div class="flexitemsmall">';
 		$companysection .= img_picto('', 'phone', 'class="pictofixedwidth"');
 		$companysection .= dol_print_phone($mysoc->phone, $mysoc->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
-		$companysection .= '<div>';
+		$companysection .= '</div>';
 	}
 	if ($mysoc->fax) {
 		$companysection .= '<div class="flexitemsmall">';
 		$companysection .= img_picto('', 'phoning_fax', 'class="pictofixedwidth"');
 		$companysection .= dol_print_phone($mysoc->fax, $mysoc->country_code, 0, $mysoc->id, 'fax', ' ', 0, '');
-		$companysection .= '<div>';
+		$companysection .= '</div>';
 	}
 
 	// Social networks
@@ -387,11 +397,11 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	$urllogo = '';
 	$urllogofull = '';
 	if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
-		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
-		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany'.($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
+		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany'.($conf->entity > 1 ? '&entity='.$conf->entity : '').'&file='.urlencode('logos/thumbs/'.$logosmall);
 	} elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo)) {
-		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
-		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany'.($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;file='.urlencode('logos/'.$logo);
+		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany'.($conf->entity > 1 ? '&entity='.$conf->entity : '').'&file='.urlencode('logos/'.$logo);
 	}
 	// Output html code for logo
 	if ($urllogo) {
@@ -410,12 +420,12 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	// Output payment summary form
 	print '<tr><td class="left">';
 
-	print '<div class="nowidthimp" id="tablepublicpayment">';
+	print '<div class="nowidthimp nopaddingtoponsmartphone" id="tablepublicpayment">';
 
 	// Add company info
 	if ($mysoc->name) {
 		print '<div class="center bold">';
-		print $mysoc->name;
+		print dol_escape_htmltag($mysoc->name);
 		print '</div>';
 		print '<br>';
 	}
@@ -446,8 +456,9 @@ print '<br>';
 print '<div class="backgreypublicpayment">';
 print '<div class="center">';
 print '<a href="'.$urlforqrcode.'">';
-print img_picto($langs->trans("AddToContacts"), 'add').' ';
-print $langs->trans("AddToContacts");
+// Download / AddToContacts
+print img_picto($langs->trans("Download").' VCF', 'add').' ';
+print $langs->trans("Download").' VCF';
 print '</a>';
 print '</div>';
 //print '<div>';

@@ -26,6 +26,7 @@ Permission56002=Modificar tickets
 Permission56003=Eliminar tickets
 Permission56004=Administrar tickets
 Permission56005=Ver tickets de todos os terceiros (non aplicable para usuarios externos, sempre estará limitado ao terceiro do que dependen)
+Permission56006=Exportar tickets
 
 Tickets=Tickets
 TicketDictType=Tipo de tickets
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Contribuidor externo
 
 OriginEmail=Correo electrónico do redactor
 Notify_TICKET_SENTBYMAIL=Enviar mensaxe de ticket por e-mail
+
+ExportDataset_ticket_1=Tickets
 
 # Status
 Read=Lido

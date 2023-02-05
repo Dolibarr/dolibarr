@@ -1824,6 +1824,7 @@ tr.nobottom td {
 	.minwidth100 { min-width: 100px; }
 	.minwidth150 { min-width: 150px; }
 	.minwidth200 { min-width: 200px; }
+	.minwidth250 { min-width: 250px; }
 	.minwidth300 { min-width: 300px; }
 	.minwidth400 { min-width: 400px; }
 	.minwidth500 { min-width: 500px; }
@@ -1847,6 +1848,7 @@ tr.nobottom td {
 .width125 { width: 125px; }
 .width150 { width: 150px; }
 .width200 { width: 200px; }
+.width250 { width: 250px; }
 .width300 { width: 300px; }
 .width400 { width: 400px; }
 .width500 { width: 500px; }
@@ -1854,7 +1856,7 @@ tr.nobottom td {
 .maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
-.maxwidthdate  { max-width: 80px; }
+.maxwidthdate  { max-width: 85px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
@@ -1979,6 +1981,13 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.smallonsmartphone {
 		font-size: 0.8em;
 	}
+	
+	.nopaddingtoponsmartphone {
+		padding-top: 0 !important;
+	}
+	.nopaddingbottomonsmartphone {
+		padding-bottom: 0 !important;
+	}	
 }
 
 /* Force values for small screen 570 */
@@ -3127,11 +3136,11 @@ div.login_block {
 	<?php } ?>
 }
 div.login_block a {
-	color: var(--colortextbackhmenu);
+	color: var(--colortexthmenu);
 	display: inline-block;
 }
 div.login_block span.aversion {
-	color: var(--colortextbackhmenu);
+	color: var(--colortexthmenu);
 	filter: contrast(0.7);
 }
 div.login_block table {
@@ -3143,10 +3152,10 @@ div.login {
 	float: right;
 }
 div.login a {
-	color: var(--colortextbackvmenu);
+	color: var(--colortextvmenu);
 }
 div.login a:hover {
-	color: var(--colortextbackvmenu);
+	color: var(--colortextvmenu);
 	text-decoration:underline;
 }
 div.login_block_user, div.login_block_other { clear: both; }
@@ -3168,10 +3177,14 @@ div.login_block_other { padding-top: 15px; }
 	max-width: 200px;
 }
 
+.login_block_other .login_block_elem {
+	height: 25px;
+	line-height: 25px;
+}
 .login_block_elem {
 	float: right;
-	vertical-align: top;
-	padding: 0px 0px 0px 2px !important;
+	vertical-align: middle;
+	padding: 0px 3px 0px 3px !important;
 	height: 18px;
 }
 .login_block_elem_name {
@@ -3186,7 +3199,7 @@ a.aversion {
 }
 
 .atoplogin, .atoplogin:hover {
-	color: var(--colortextbackhmenu) !important;
+	color: var(--colortexthmenu) !important;
 }
 .alogin, .alogin:hover {
 	color: #888 !important;
@@ -4406,6 +4419,7 @@ tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_tit
 	/* border-bottom: 1px solid var(--colortopbordertitle1); */
 	border-bottom: none;
 }
+tr.liste_titre_filter th.liste_titre { text-align: unset; }
 
 div.liste_titre {
 	padding-left: 3px;
@@ -4489,10 +4503,10 @@ div .tdtop:not(.tagtdnote) {
 	padding-bottom: 0px !important;
 }
 
-#tablelines tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
+#tablelines tr.liste_titre td, #tablelinesservice tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
 	border-bottom: 1px solid #AAA !important;
 }
-#tablelines tr td {
+#tablelines tr td, #tablelinesservice tr td {
 	height: unset;
 }
 
@@ -4878,6 +4892,7 @@ div.divphotoref > img.photowithmargin, div.divphotoref > a > .photowithmargin {	
 {
 	content:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/logo_setup.svg', 1) ?>);	/* content is used to best fit the container */
 	display: inline-block;
+	opacity: 0.2;
 }
 .nographyet
 {
@@ -7650,7 +7665,7 @@ div.clipboardCPValue.hidewithsize {
 	.lilevel1 span.paddingright {
 		padding-right: 3px;
 	}
-	
+
 	img.userphotopublicvcard {
 		left: unset;
 		top: unset;

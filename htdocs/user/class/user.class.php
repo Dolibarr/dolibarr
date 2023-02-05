@@ -77,6 +77,11 @@ class User extends CommonObject
 	public $civility_code;
 
 	/**
+	 * @var string fullname
+	 */
+	public $fullname;
+
+	/**
 	 * @var string gender
 	 */
 	public $gender;
@@ -94,33 +99,9 @@ class User extends CommonObject
 	public $personal_email;
 
 	/**
-	 * @var array array of socialnetworks
+	 * @var array array of socialnetwo18dprks
 	 */
 	public $socialnetworks;
-
-	/**
-	 * @var string skype account
-	 * @deprecated
-	 */
-	public $skype;
-
-	/**
-	 * @var string twitter account
-	 * @deprecated
-	 */
-	public $twitter;
-
-	/**
-	 * @var string facebook account
-	 * @deprecated
-	 */
-	public $facebook;
-
-	/**
-	 * @var string linkedin account
-	 * @deprecated
-	 */
-	public $linkedin;
 
 	/**
 	 * @var string job position
@@ -276,6 +257,7 @@ class User extends CommonObject
 
 	public $datelastlogin;
 	public $datepreviouslogin;
+	public $flagdelsessionsbefore;
 	public $iplastlogin;
 	public $ippreviouslogin;
 	public $datestartvalidity;
@@ -441,6 +423,7 @@ class User extends CommonObject
 		$sql .= " u.tms as datem,";
 		$sql .= " u.datelastlogin as datel,";
 		$sql .= " u.datepreviouslogin as datep,";
+		$sql .= " u.flagdelsessionsbefore,";
 		$sql .= " u.iplastlogin,";
 		$sql .= " u.ippreviouslogin,";
 		$sql .= " u.datelastpassvalidation,";
@@ -575,6 +558,7 @@ class User extends CommonObject
 				$this->datem				= $this->db->jdate($obj->datem);
 				$this->datelastlogin = $this->db->jdate($obj->datel);
 				$this->datepreviouslogin = $this->db->jdate($obj->datep);
+				$this->flagdelsessionsbefore = $this->db->jdate($obj->flagdelsessionsbefore, 'gmt');
 				$this->iplastlogin = $obj->iplastlogin;
 				$this->ippreviouslogin = $obj->ippreviouslogin;
 				$this->datestartvalidity = $this->db->jdate($obj->datestartvalidity);
@@ -710,6 +694,7 @@ class User extends CommonObject
 		global $conf;
 		// For compatibility with bad naming permissions on module
 		$moduletomoduletouse = array(
+			'compta' => 'comptabilite',
 			'contract' => 'contrat',
 			'member' => 'adherent',
 			'mo' => 'mrp',
@@ -737,7 +722,8 @@ class User extends CommonObject
 
 		$moduleRightsMapping = array(
 			'product' => 'produit',	// We must check $user->rights->produit...
-			'margin' => 'margins'
+			'margin' => 'margins',
+			'comptabilite' => 'compta'
 		);
 
 		$rightsPath = $module;
@@ -759,8 +745,10 @@ class User extends CommonObject
 		// In $conf->modules, we have 'accounting', 'product', 'facture', ...
 		// In $user->rights, we have 'accounting', 'produit', 'facture', ...
 		//var_dump($module);
+		//var_dump($rightsPath);
 		//var_dump($this->rights->$rightsPath);
 		//var_dump($conf->modules);
+		//var_dump($module.' '.isModEnabled($module).' '.$rightsPath.' '.$permlevel1.' '.$permlevel2);
 		if (!isModEnabled($module)) {
 			return 0;
 		}
@@ -777,6 +765,7 @@ class User extends CommonObject
 		}
 
 		//var_dump($this->rights);
+		//var_dump($rightsPath.' '.$permlevel1.' '.$permlevel2);
 		if (empty($rightsPath) || empty($this->rights) || empty($this->rights->$rightsPath) || empty($permlevel1)) {
 			return 0;
 		}
@@ -1201,6 +1190,7 @@ class User extends CommonObject
 		$sql .= " ".$this->db->prefix()."usergroup_user as gu,";
 		$sql .= " ".$this->db->prefix()."rights_def as r";
 		$sql .= " WHERE r.id = gr.fk_id";
+		// A very strange business rules. Must be same than into user->getrights() user/perms.php and user/group/perms.php
 		if (!empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY)) {
 			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				$sql .= " AND gu.entity IN (0,".$conf->entity.")";
@@ -1209,12 +1199,13 @@ class User extends CommonObject
 			}
 		} else {
 			$sql .= " AND gr.entity = ".((int) $conf->entity);	// Only groups created in current entity
-			// The entity on the table usergroup_user should be useless and shoumd never be used because it is alreay into gr and r.
+			// The entity on the table usergroup_user should be useless and should never be used because it is alreay into gr and r.
 			// but when using MULTICOMPANY_TRANSVERSE_MODE, we may insert record that make rubbish result due to duplicate record of
 			// other entities, so we are forced to add a filter here
 			$sql .= " AND gu.entity IN (0,".$conf->entity.")";
 			$sql .= " AND r.entity = ".((int) $conf->entity);	// Only permission of modules enabled in current entity
 		}
+		// End of strange business rule
 		$sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
 		$sql .= " AND gu.fk_user = ".((int) $this->id);
 		$sql .= " AND r.perms IS NOT NULL";
@@ -1877,8 +1868,12 @@ class User extends CommonObject
 		$this->employee						= ($this->employee > 0 ? $this->employee : 0);
 		$this->login						= trim((string) $this->login);
 		$this->gender						= trim((string) $this->gender);
+
 		$this->pass							= trim((string) $this->pass);
 		$this->api_key						= trim((string) $this->api_key);
+		$this->datestartvalidity			= empty($this->datestartvalidity) ? '' : $this->datestartvalidity;
+		$this->dateendvalidity				= empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
+
 		$this->address						= trim((string) $this->address);
 		$this->zip							= trim((string) $this->zip);
 		$this->town							= trim((string) $this->town);
@@ -1903,8 +1898,7 @@ class User extends CommonObject
 		$this->color						= trim((string) $this->color);
 		$this->dateemployment				= empty($this->dateemployment) ? '' : $this->dateemployment;
 		$this->dateemploymentend			= empty($this->dateemploymentend) ? '' : $this->dateemploymentend;
-		$this->datestartvalidity			= empty($this->datestartvalidity) ? '' : $this->datestartvalidity;
-		$this->dateendvalidity				= empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
+
 		$this->birth						= empty($this->birth) ? '' : $this->birth;
 		$this->fk_warehouse					= (int) $this->fk_warehouse;
 
@@ -2031,9 +2025,9 @@ class User extends CommonObject
 
 			// Update password
 			if (!empty($this->pass)) {
-				if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted) {
+				if ($this->pass != $this->pass_indatabase && !dol_verifyHash($this->pass, $this->pass_indatabase_crypted)) {
 					// If a new value for password is set and different than the one crypted into database
-					$result = $this->setPassword($user, $this->pass, 0, $notrigger, $nosyncmemberpass);
+					$result = $this->setPassword($user, $this->pass, 0, $notrigger, $nosyncmemberpass, 0, 1);
 					if ($result < 0) {
 						return -5;
 					}
@@ -2298,7 +2292,7 @@ class User extends CommonObject
 			$sql = "UPDATE ".$this->db->prefix()."user";
 			$sql .= " SET pass_crypted = '".$this->db->escape($password_crypted)."',";
 			$sql .= " pass_temp = null";
-			if (empty($flagdelsessionsbefore)) {
+			if (!empty($flagdelsessionsbefore)) {
 				$sql .= ", flagdelsessionsbefore = '".$this->db->idate(dol_now() - 5, 'gmt')."'";
 			}
 			if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
@@ -2651,7 +2645,11 @@ class User extends CommonObject
 		$sql = "DELETE FROM ".$this->db->prefix()."usergroup_user";
 		$sql .= " WHERE fk_user  = ".((int) $this->id);
 		$sql .= " AND fk_usergroup = ".((int) $group);
-		$sql .= " AND entity = ".((int) $entity);
+		if (empty($entity)) {
+			$sql .= " AND entity IN (0, 1)";	// group may be in entity 0 (so $entity=0) and link with user into entity 1.
+		} else {
+			$sql .= " AND entity = ".((int) $entity);
+		}
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -2680,6 +2678,33 @@ class User extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+
+	/**
+	 *  Return a link with photo
+	 * 	Use this->id,this->photo
+	 *
+	 *	@return	int		0=Valid, >0 if not valid
+	 */
+	public function isNotIntoValidityDateRange()
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+		$now = dol_now();
+
+		//dol_syslog("isNotIntoValidityDateRange ".$this->datestartvalidity);
+
+		// Check date start validity
+		if ($this->datestartvalidity && $this->datestartvalidity > dol_get_last_hour($now)) {
+			return 1;
+		}
+		// Check date end validity
+		if ($this->dateendvalidity && $this->dateendvalidity < dol_get_first_hour($now)) {
+			return 1;
+		}
+
+		return 0;
 	}
 
 
@@ -2989,9 +3014,10 @@ class User extends CommonObject
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
 	 *  @return		string								HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '')
+	public function getKanbanView($option = '', $arraydata = null)
 	{
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';

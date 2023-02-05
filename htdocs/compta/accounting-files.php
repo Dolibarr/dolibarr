@@ -376,6 +376,9 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 							$nofile['country_code'] = $objd->country_code;
 							$nofile['vatnum'] = $objd->vatnum;
 							$nofile['sens'] = $objd->sens;
+							$nofile['currency'] = $objd->currency;
+							$nofile['link'] = '';
+							$nofile['name'] = '';
 
 							$filesarray[$nofile['item'].'_'.$nofile['id']] = $nofile;
 						} else {
@@ -396,6 +399,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 								$file['country_code'] = $objd->country_code;
 								$file['vatnum'] = $objd->vatnum;
 								$file['sens'] = $objd->sens;
+								$file['currency'] = $objd->currency;
 
 								// Save record into array (only the first time it is found)
 								if (empty($filesarray[$file['item'].'_'.$file['id']])) {
@@ -415,6 +419,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 									'relpathnamelang' => $langs->trans($file['item']).'/'.$file['name'],
 									'modulepart' => $modulepart,
 									'subdir' => $subdir,
+									'currency' => $file['currency']
 								);
 								//var_dump($file['item'].'_'.$file['id']);
 								//var_dump($filesarray[$file['item'].'_'.$file['id']]['files']);

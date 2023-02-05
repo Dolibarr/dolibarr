@@ -30,9 +30,9 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
@@ -41,47 +41,51 @@ $langs->loadLangs(array("members", "companies"));
 
 
 // Get parameters
-$action = GETPOST('action', 'aZ09');
+$action 	= GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
-$confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$confirm 	= GETPOST('confirm', 'alpha');
+$cancel     = GETPOST('cancel', 'alpha');
+$toselect 	= GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'memberslist'; // To manage different context of search
-$mode        = GETPOST('mode', 'alpha');
-
+$backtopage = GETPOST('backtopage', 'alpha');
+$optioncss 	= GETPOST('optioncss', 'aZ');
+$mode 		= GETPOST('mode', 'alpha');
 
 // Search fields
-$search = GETPOST("search", 'alpha');
-$search_ref = GETPOST("search_ref", 'alpha');
-$search_lastname = GETPOST("search_lastname", 'alpha');
-$search_firstname = GETPOST("search_firstname", 'alpha');
-$search_gender = GETPOST("search_gender", 'alpha');
-$search_civility = GETPOST("search_civility", 'alpha');
-$search_company = GETPOST('search_company', 'alphanohtml');
-$search_login = GETPOST("search_login", 'alpha');
-$search_address = GETPOST("search_address", 'alpha');
-$search_zip = GETPOST("search_zip", 'alpha');
-$search_town = GETPOST("search_town", 'alpha');
-$search_state = GETPOST("search_state", 'alpha');
-$search_country = GETPOST("search_country", 'alpha');
-$search_phone = GETPOST("search_phone", 'alpha');
+$search 			= GETPOST("search", 'alpha');
+$search_ref 		= GETPOST("search_ref", 'alpha');
+$search_lastname 	= GETPOST("search_lastname", 'alpha');
+$search_firstname 	= GETPOST("search_firstname", 'alpha');
+$search_gender 		= GETPOST("search_gender", 'alpha');
+$search_civility 	= GETPOST("search_civility", 'alpha');
+$search_company 	= GETPOST('search_company', 'alphanohtml');
+$search_login 		= GETPOST("search_login", 'alpha');
+$search_address 	= GETPOST("search_address", 'alpha');
+$search_zip 		= GETPOST("search_zip", 'alpha');
+$search_town 		= GETPOST("search_town", 'alpha');
+$search_state 		= GETPOST("search_state", 'alpha');  // county / departement / federal state
+$search_country 	= GETPOST("search_country", 'alpha');
+$search_phone 		= GETPOST("search_phone", 'alpha');
 $search_phone_perso = GETPOST("search_phone_perso", 'alpha');
 $search_phone_mobile = GETPOST("search_phone_mobile", 'alpha');
-$search_type = GETPOST("search_type", 'alpha');
-$search_email = GETPOST("search_email", 'alpha');
-$search_categ = GETPOST("search_categ", 'int');
-$search_filter = GETPOST("search_filter", 'alpha');
-$search_status = GETPOST("search_status", 'intcomma');
-$search_morphy = GETPOST("search_morphy", 'alpha');
-$search_import_key  = trim(GETPOST("search_import_key", "alpha"));
-$catid        = GETPOST("catid", 'int');
-$optioncss = GETPOST('optioncss', 'alpha');
-$socid = GETPOST('socid', 'int');
+$search_type 		= GETPOST("search_type", 'alpha');
+$search_email 		= GETPOST("search_email", 'alpha');
+$search_categ 		= GETPOST("search_categ", 'int');
+$search_morphy 		= GETPOST("search_morphy", 'alpha');
+$search_import_key  = trim(GETPOST("search_import_key", 'alpha'));
+
+$catid 		= GETPOST("catid", 'int');
+$socid 		= GETPOST('socid', 'int');
+
+$search_filter 		= GETPOST("search_filter", 'alpha');
+$search_status 		= GETPOST("search_status", 'intcomma');  // statut
 
 $filter = GETPOST("filter", 'alpha');
 if ($filter) {
 	$search_filter = $filter; // For backward compatibility
 }
+
 $statut = GETPOST("statut", 'alpha');
 if ($statut != '') {
 	$search_status = $statut; // For backward compatibility
@@ -93,6 +97,7 @@ if ($search_status < -2) {
 	$search_status = '';
 }
 
+// Pagination parameters
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -141,6 +146,7 @@ $fieldstosearchall = array(
 if ($db->type == 'pgsql') {
 	unset($fieldstosearchall['d.rowid']);
 }
+
 $arrayfields = array(
 	'd.ref'=>array('label'=>"Ref", 'checked'=>1),
 	'd.civility'=>array('label'=>"Civility", 'checked'=>0),
@@ -169,6 +175,7 @@ $arrayfields = array(
 	'd.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 	'd.import_key'=>array('label'=>"ImportId", 'checked'=>0, 'position'=>1100),
 );
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -317,7 +324,11 @@ $formother = new FormOther($db);
 $membertypestatic = new AdherentType($db);
 $memberstatic = new Adherent($db);
 
-$title = $langs->trans("Members");
+// Page Header
+$title = $langs->trans("Members")." - ".$langs->trans("List");;
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
+llxHeader('', $title, $help_url);
+
 
 $now = dol_now();
 
@@ -335,12 +346,14 @@ $sql .= " s.nom,";
 $sql .= " ".$db->ifsql("d.societe IS NULL", "s.nom", "d.societe")." as companyname,";
 $sql .= " t.libelle as type, t.subscription,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
+
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key." as options_".$key.', ' : '');
 	}
 }
+
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
@@ -349,13 +362,16 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
+// SQL Aliase adherent
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";  // maybe better to use ad (adh) instead od d
 if (!empty($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = d.country)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = d.state_id)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on (s.rowid = d.fk_soc)";
+
+// SQL Aliase adherent_type
 $sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 $sql .= " WHERE d.fk_adherent_type = t.rowid";
 
@@ -525,8 +541,6 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 	exit;
 }
 
-$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
-llxHeader('', $title, $help_url);
 
 if ($search_type > 0) {
 	$membertype = new AdherentType($db);
@@ -534,6 +548,7 @@ if ($search_type > 0) {
 	$title .= " (".$membertype->label.")";
 }
 
+// $parameters
 $param = '';
 if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
@@ -613,6 +628,7 @@ if ($search_type > 0) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -705,6 +721,7 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 
 // Line for filters fields
 print '<tr class="liste_titre_filter">';
+
 // Action column
 if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 	print '<td class="liste_titre middle">';
@@ -712,6 +729,7 @@ if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 	print $searchpicto;
 	print '</td>';
 }
+
 // Line numbering
 if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -723,32 +741,45 @@ if (!empty($arrayfields['d.ref']['checked'])) {
 	print '<input class="flat maxwidth75imp" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 }
+
+// Civility
 if (!empty($arrayfields['d.civility']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat maxwidth50imp" type="text" name="search_civility" value="'.dol_escape_htmltag($search_civility).'"></td>';
 }
+
+// First Name
 if (!empty($arrayfields['d.firstname']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat maxwidth75imp" type="text" name="search_firstname" value="'.dol_escape_htmltag($search_firstname).'"></td>';
 }
+
+// Last Name
 if (!empty($arrayfields['d.lastname']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat maxwidth75imp" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'"></td>';
 }
+
+// Gender
 if (!empty($arrayfields['d.gender']['checked'])) {
 	print '<td class="liste_titre">';
 	$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
 	print $form->selectarray('search_gender', $arraygender, $search_gender, 1);
 	print '</td>';
 }
+
+// Company
 if (!empty($arrayfields['d.company']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat maxwidth75imp" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"></td>';
 }
+
+// Login
 if (!empty($arrayfields['d.login']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat maxwidth75imp" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'"></td>';
 }
+
 // Nature
 if (!empty($arrayfields['d.morphy']['checked'])) {
 	print '<td class="liste_titre center">';
@@ -756,6 +787,8 @@ if (!empty($arrayfields['d.morphy']['checked'])) {
 	print $form->selectarray('search_morphy', $arraymorphy, $search_morphy, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 	print '</td>';
 }
+
+// Member Type
 if (!empty($arrayfields['t.libelle']['checked'])) {
 	print '</td>';
 }
@@ -766,51 +799,62 @@ if (!empty($arrayfields['t.libelle']['checked'])) {
 	print '</td>';
 }
 
+// Address - Street
 if (!empty($arrayfields['d.address']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat maxwidth75imp" type="text" name="search_address" value="'.dol_escape_htmltag($search_address).'"></td>';
 }
 
+// ZIP
 if (!empty($arrayfields['d.zip']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat maxwidth50imp" type="text" name="search_zip" value="'.dol_escape_htmltag($search_zip).'"></td>';
 }
+
+// Town/City
 if (!empty($arrayfields['d.town']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat maxwidth75imp" type="text" name="search_town" value="'.dol_escape_htmltag($search_town).'"></td>';
 }
-// State
+
+// State / County / Departement
 if (!empty($arrayfields['state.nom']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input class="flat searchstring maxwidth75imp" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
 	print '</td>';
 }
+
 // Country
 if (!empty($arrayfields['country.code_iso']['checked'])) {
 	print '<td class="liste_titre center">';
 	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
 	print '</td>';
 }
+
 // Phone pro
 if (!empty($arrayfields['d.phone']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat maxwidth75imp" type="text" name="search_phone" value="'.dol_escape_htmltag($search_phone).'"></td>';
 }
+
 // Phone perso
 if (!empty($arrayfields['d.phone_perso']['checked'])) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat maxwidth50" type="text" name="search_phone_perso" value="'.dol_escape_htmltag($search_phone_perso).'"></td>';
+	print '<input class="flat maxwidth75imp" type="text" name="search_phone_perso" value="'.dol_escape_htmltag($search_phone_perso).'"></td>';
 }
+
 // Phone mobile
 if (!empty($arrayfields['d.phone_mobile']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat maxwidth75imp" type="text" name="search_phone_mobile" value="'.dol_escape_htmltag($search_phone_mobile).'"></td>';
 }
+
 // Email
 if (!empty($arrayfields['d.email']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat maxwidth75imp" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'"></td>';
 }
+
 // End of subscription date
 if (!empty($arrayfields['d.datefin']['checked'])) {
 	print '<td class="liste_titre center">';
@@ -819,6 +863,7 @@ if (!empty($arrayfields['d.datefin']['checked'])) {
 	print $form->selectarray('search_filter', $selectarray, $search_filter);
 	print '</td>';
 }
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -826,21 +871,25 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 $parameters = array('arrayfields'=>$arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
+
 // Date creation
 if (!empty($arrayfields['d.datec']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+
 // Birthday
 if (!empty($arrayfields['d.birth']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+
 // Date modification
 if (!empty($arrayfields['d.tms']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+
 // Status
 if (!empty($arrayfields['d.statut']['checked'])) {
 	print '<td class="liste_titre right parentonrightofpage">';
@@ -853,11 +902,14 @@ if (!empty($arrayfields['d.statut']['checked'])) {
 	print $form->selectarray('search_status', $liststatus, $search_status, -3, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
+
+// Import Key
 if (!empty($arrayfields['d.import_key']['checked'])) {
 	print '<td class="liste_titre center">';
 	print '<input class="flat searchstring maxwidth50" type="text" name="search_import_key" value="'.dol_escape_htmltag($search_import_key).'">';
 	print '</td>';
 }
+
 if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 	// Action column
 	print '<td class="liste_titre middle">';
@@ -938,6 +990,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
+
 if (!empty($arrayfields['d.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['d.datec']['label'], $_SERVER["PHP_SELF"], "d.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 }
@@ -1025,14 +1078,13 @@ while ($i < min($num, $limit)) {
 			}
 			print '</td>';
 		}
-
+		// Technical ID
 		if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
 			print '<td class="center" data-key="id">'.$obj->rowid.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
-
 		// Ref
 		if (!empty($arrayfields['d.ref']['checked'])) {
 			print "<td>";
@@ -1142,7 +1194,7 @@ while ($i < min($num, $limit)) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// State
+		// State / County / Departement
 		if (!empty($arrayfields['state.nom']['checked'])) {
 			print "<td>".$obj->state_name."</td>\n";
 			if (!$i) {

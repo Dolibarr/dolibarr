@@ -116,7 +116,7 @@ function getDolUserString($key, $default = '', $tmpuser = null)
 	}
 
 	// return $conf->global->$key ?? $default;
-	return (string) (empty($tmpuser->conf->$key) ? $default : $$tmpuser->conf->$key);
+	return (string) (empty($tmpuser->conf->$key) ? $default : $tmpuser->conf->$key);
 }
 
 /**
@@ -515,7 +515,7 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *                               'aZ09'=check it's simple alpha string (recommended for keys)
  *                               'aZ09comma'=check it's a string for a sortfield or sortorder
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
- *                               'nohtml'=check there is no html content and no " and no ../
+ *                               'nohtml'=check there is no html content
  *                               'restricthtml'=check html content is restricted to some tags only
  *                               'custom'= custom filter specify $filter and $options)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
@@ -1433,13 +1433,17 @@ function dol_string_nounprintableascii($str, $removetabcrlf = 1)
 /**
  *  Returns text escaped for inclusion into javascript code
  *
- *  @param      string		$stringtoescape		String to escape
- *  @param		int		$mode				0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
- *  @param		int		$noescapebackslashn	0=Escape also \n. 1=Do not escape \n.
- *  @return     string     		 				Escaped string. Both ' and " are escaped into ' if they are escaped.
+ *  @param      string	$stringtoescape			String to escape
+ *  @param		int		$mode					0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
+ *  @param		int		$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
+ *  @return     string   		 				Escaped string. Both ' and " are escaped into ' if they are escaped.
  */
 function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 {
+	if (is_null($stringtoescape)) {
+		return '';
+	}
+
 	// escape quotes and backslashes, newlines, etc.
 	$substitjs = array("&#039;"=>"\\'", "\r"=>'\\r');
 	//$substitjs['</']='<\/';	// We removed this. Should be useless.
@@ -2122,14 +2126,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$maxvisiblephotos = 1;
 		}
 		if ($showimage) {
-			$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('product', $conf->product->multidir_output[$entity], 'small', $maxvisiblephotos, 0, 0, 0, $width, 0).'</div>';
+			$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('product', $conf->product->multidir_output[$entity], 'small', $maxvisiblephotos, 0, 0, 0, 0, $width, 0, '').'</div>';
 		} else {
 			if (!empty($conf->global->PRODUCT_NODISPLAYIFNOPHOTO)) {
 				$nophoto = '';
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			} else {    // Show no photo link
 				$nophoto = '/public/theme/common/nophoto.png';
-				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="No photo"'.($width ? ' style="width: '.$width.'px"' : '').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" title="'.dol_escape_htmltag($langs->trans("UploadAnImageToSeeAPhotoHere", $langs->transnoentitiesnoconv("Documents"))).'" alt="No photo"'.($width ? ' style="width: '.$width.'px"' : '').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
 			}
 		}
 	} elseif ($object->element == 'ticket') {
@@ -3170,7 +3174,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 	if (!empty($type)) {
 		$htmllink = '<div class="divsocialnetwork inline-block valignmiddle">';
 		// Use dictionary definition for picto $dictsocialnetworks[$type]['icon']
-		$htmllink .= '<span class="fa paddingright pictofixedwidth '.($dictsocialnetworks[$type]['icon'] ? $dictsocialnetworks[$type]['icon'] : 'fa-link').'"></span>';
+		$htmllink .= '<span class="fa pictofixedwidth '.($dictsocialnetworks[$type]['icon'] ? $dictsocialnetworks[$type]['icon'] : 'fa-link').'"></span>';
 		if ($type == 'skype') {
 			$htmllink .= dol_escape_htmltag($value);
 			$htmllink .= '&nbsp; <a href="skype:';
@@ -3885,14 +3889,14 @@ function dol_strlen($string, $stringencoding = 'UTF-8')
 /**
  * Make a substring. Works even if mbstring module is not enabled for better compatibility.
  *
- * @param	string	$string				String to scan
- * @param	string	$start				Start position
- * @param	int		$length				Length (in nb of characters or nb of bytes depending on trunconbytes param)
- * @param   string	$stringencoding		Page code used for input string encoding
- * @param	int		$trunconbytes		1=Length is max of bytes instead of max of characters
- * @return  string						substring
+ * @param	string		$string				String to scan
+ * @param	string		$start				Start position
+ * @param	int|null	$length				Length (in nb of characters or nb of bytes depending on trunconbytes param)
+ * @param   string		$stringencoding		Page code used for input string encoding
+ * @param	int			$trunconbytes		1=Length is max of bytes instead of max of characters
+ * @return  string							substring
  */
-function dol_substr($string, $start, $length, $stringencoding = '', $trunconbytes = 0)
+function dol_substr($string, $start, $length = null, $stringencoding = '', $trunconbytes = 0)
 {
 	global $langs;
 
@@ -4085,7 +4089,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
 				'edit', 'ellipsis-h', 'email', 'entity', 'envelope', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt', 'eye',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus',
-				'generate', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
+				'gears', 'generate', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
 				'help', 'holiday',
 				'id-card', 'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'knowledgemanagement',
 				'label', 'language', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lock', 'lot', 'long-arrow-alt-right',
@@ -5743,9 +5747,9 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 
 	// If force rounding
 	if ((string) $forcerounding != '-1') {
-		if ($forcerounding == 'MU') {
+		if ($forcerounding === 'MU') {
 			$nbdecimal = $conf->global->MAIN_MAX_DECIMALS_UNIT;
-		} elseif ($forcerounding == 'MT') {
+		} elseif ($forcerounding === 'MT') {
 			$nbdecimal = $conf->global->MAIN_MAX_DECIMALS_TOT;
 		} elseif ($forcerounding >= 0) {
 			$nbdecimal = $forcerounding;
@@ -6490,7 +6494,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	if (!empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC)) {
 		if ($seller_in_cee && $buyer_in_cee) {
 			$isacompany = $thirdparty_buyer->isACompany();
-			if ($isacompany && !empty($conf->global->MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL)) {
+			if ($isacompany && getDolGlobalString('MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL')) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 				if (!isValidVATID($thirdparty_buyer)) {
 					$isacompany = 0;
@@ -6539,7 +6543,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	// If (seller and buyer in European Community) and (buyer = company) then VAT by default=0. End of rule
 	if (($seller_in_cee && $buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
-		if ($isacompany && !empty($conf->global->MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL)) {
+		if ($isacompany && getDolGlobalString('MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			if (!isValidVATID($thirdparty_buyer)) {
 				$isacompany = 0;
@@ -6841,6 +6845,22 @@ function dol_mkdir($dir, $dataroot = '', $newmask = '')
 		}
 	}
 	return ($nberr ? -$nberr : $nbcreated);
+}
+
+
+/**
+ *	Change mod of a file
+ *
+ *  @param	string		$filepath		Full file path
+ *	@return void
+ */
+function dolChmod($filepath)
+{
+	global $conf;
+
+	if (!empty($conf->global->MAIN_UMASK)) {
+		@chmod($filepath, octdec($conf->global->MAIN_UMASK));
+	}
 }
 
 
@@ -8926,6 +8946,7 @@ function verifCond($strToEvaluate)
  */
 function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1')
 {
+    try {
 	// Only global variables can be changed by eval function and returned to caller
 	global $db, $langs, $user, $conf, $website, $websitepage;
 	global $action, $mainmenu, $leftmenu;
@@ -9029,6 +9050,13 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			eval($s);
 		}
 	}
+    } catch (Error $e) {
+            $error = 'Caught error : ';
+            $error .= $e->getMessage() . ', ';
+            $error .= 'Trace : ';
+            $error .= json_encode($e->getTrace());
+            error_log($error, 1);
+    }
 }
 
 /**
@@ -9927,7 +9955,7 @@ function showDirectDownloadLink($object)
  * @param   string  $file           Original filename (full or relative path)
  * @param   string  $extName        Extension to differenciate thumb file name ('', '_small', '_mini')
  * @param   string  $extImgTarget   Force image extension for thumbs. Use '' to keep same extension than original image (default).
- * @return  string                  New file name (full or relative path, including the thumbs/)
+ * @return  string                  New file name (full or relative path, including the thumbs/). May be the original path if no thumb can exists.
  */
 function getImageFileNameForSize($file, $extName, $extImgTarget = '')
 {
@@ -11913,8 +11941,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 
 						'contact_id'=>$obj->fk_contact,
 						'socpeopleassigned' => $contactaction->socpeopleassigned,
-						'lastname'=>$obj->lastname,
-						'firstname'=>$obj->firstname,
+						'lastname' => (empty($obj->lastname) ? '' : $obj->lastname),
+						'firstname' => (empty($obj->firstname) ? '' : $obj->firstname),
 						'fk_element'=>$obj->fk_element,
 						'elementtype'=>$obj->elementtype,
 						// Type of event

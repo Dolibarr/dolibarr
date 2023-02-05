@@ -155,3 +155,5 @@ WebpageMustBeDisabled=Nettsiden må ha statusen "%s"
 SetWebsiteOnlineBefore=Når nettstedet er frakoblet, er alle sidene offline. Endre status på nettstedet først.
 Booking=Bestilling
 Reservation=Reservasjon
+PagesViewedPreviousMonth=Sider vist (forrige måned)
+PagesViewedTotal=Viste sider (totalt)

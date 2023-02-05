@@ -129,6 +129,19 @@ class AdherentType extends CommonObject
 	/** @var string string other */
 	public $other = array();
 
+	/**
+	 * @var string description
+	 */
+	public $description;
+
+	/**
+	 * @var string email
+	 */
+	public $email;
+
+	/**
+	 * @var array multilangs
+	 */
 	public $multilangs = array();
 
 
@@ -626,7 +639,7 @@ class AdherentType extends CommonObject
 			$sql .= ' AND ('.$excludefilter.')';
 		}
 
-		dol_syslog(get_class($this)."::listUsersForGroup", LOG_DEBUG);
+		dol_syslog(get_class($this)."::listMembersForMemberType", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -933,9 +946,10 @@ class AdherentType extends CommonObject
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @return 	string				HTML Code for Kanban thumb.
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '')
+	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $langs,$user;
 		$return = '<div class="box-flex-item box-flex-grow-zero">';

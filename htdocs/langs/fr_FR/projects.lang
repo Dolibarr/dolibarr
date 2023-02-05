@@ -259,6 +259,7 @@ RecordsClosed=%s projet(s) fermé(s)
 SendProjectRef=A propos du projet %s
 ModuleSalaryToDefineHourlyRateMustBeEnabled=Le module 'Paiement des salaires des employés' doit être activé pour définir le taux horaire des employés afin de valoriser le temps passé
 NewTaskRefSuggested=Réf de tâche déjà utilisée, une nouvelle référence de tâche est requise
+NumberOfTasksCloned=%s tâche·s clonées
 TimeSpentInvoiced=Temps passé facturé
 TimeSpentForIntervention=Temps consommé
 TimeSpentForInvoice=Temps consommés

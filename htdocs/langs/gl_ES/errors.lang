@@ -303,6 +303,7 @@ ErrorValueForTooLow=O valor de <b> %s </b> é demasiado baixo
 ErrorValueCantBeNull=O valor para <b> %s </b> non pode ser nulo
 ErrorDateOfMovementLowerThanDateOfFileTransmission=A data da transacción bancaria non pode ser inferior á data de transmisión do ficheiro
 ErrorTooMuchFileInForm=Hai demasiados ficheiros no formulario, o número máximo é %s ficheiro(s)
+ErrorSessionInvalidatedAfterPasswordChange=A sesión foi invalidada despois do cambio de contrasinal, estado ou datas de validez. Reinicie sesión.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=O seu parámetro PHP upload_max_filesize (%s) é superior ao parámetro PHP post_max_size (%s). Esta non é unha configuración consistente.
@@ -325,6 +326,7 @@ WarningPaymentDateLowerThanInvoiceDate=A data de pagamento (%s) é anterior á d
 WarningTooManyDataPleaseUseMoreFilters=Datos de mais (máis de %s liñas). Utilice máis filtros ou estableza a constante %s nun límite máis alto.
 WarningSomeLinesWithNullHourlyRate=Algunhas veces algúns usuarios rexistráronse mentres a súa tarifa por hora non estaba definida. Utilizouse un valor do 0 %s por hora, pero isto pode resultar nunha avaliación incorrecta do tempo empregado.
 WarningYourLoginWasModifiedPleaseLogin=Modificouse o seu inicio de sesión. Por motivos de seguridade, terá que iniciar sesión co novo inicio de sesión antes da seguinte acción.
+WarningYourPasswordWasModifiedPleaseLogin=O seu contrasinal foi modificado. Por motivos de seguridade, terá que iniciar sesión agora co seu novo contrasinal.
 WarningAnEntryAlreadyExistForTransKey=Xa existe unha entrada para a clave de tradución para este idioma
 WarningNumberOfRecipientIsRestrictedInMassAction=Aviso, o número de destinatarios diferentes está limitado a <b>%s</b> cando se usan as accións masivas nas listaxes
 WarningDateOfLineMustBeInExpenseReportRange=Aviso, a data da liña non está no rango do informe de gastos

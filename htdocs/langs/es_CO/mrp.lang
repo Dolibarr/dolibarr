@@ -5,7 +5,6 @@ LatestBOMModified=Último %s Listas de materiales modificadas
 LatestMOModified=Últimas órdenes de fabricación %s modificadas
 Bom=Facturas de material
 BOMsSetup=Configuración de la lista de materiales del módulo
-ListOfBOMs=Listas de materiales - BOM
 ListOfManufacturingOrders=Órdenes de Fabricación
 BOMsNumberingModules=Plantillas de numeración de listas de materiales
 BOMsModelModule=Plantillas de documentos BOM

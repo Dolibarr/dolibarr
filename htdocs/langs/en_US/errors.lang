@@ -303,6 +303,8 @@ ErrorValueForTooLow=Value for <b>%s</b> is too low
 ErrorValueCantBeNull=Value for <b>%s</b> can't be null
 ErrorDateOfMovementLowerThanDateOfFileTransmission=The date of the bank transaction can't be lower than the date of the file transmission
 ErrorTooMuchFileInForm=Too much files in form, the maximum number is %s file(s)
+ErrorSessionInvalidatedAfterPasswordChange=The session was been invalidated following a change of password, status or dates of validity. Please relogin.
+ErrorExistingPermission = Permission <b>%s</b> for object <b>%s</b> already exists
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -325,6 +327,7 @@ WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice
 WarningTooManyDataPleaseUseMoreFilters=Too many data (more than %s lines). Please use more filters or set the constant %s to a higher limit.
 WarningSomeLinesWithNullHourlyRate=Some times were recorded by some users while their hourly rate was not defined. A value of 0 %s per hour was used but this may result in wrong valuation of time spent.
 WarningYourLoginWasModifiedPleaseLogin=Your login was modified. For security purpose you will have to login with your new login before next action.
+WarningYourPasswordWasModifiedPleaseLogin=Your password was modified. For security purpose you will have to login now with your new password.
 WarningAnEntryAlreadyExistForTransKey=An entry already exists for the translation key for this language
 WarningNumberOfRecipientIsRestrictedInMassAction=Warning, number of different recipient is limited to <b>%s</b> when using the mass actions on lists
 WarningDateOfLineMustBeInExpenseReportRange=Warning, the date of line is not in the range of the expense report
@@ -340,6 +343,7 @@ WarningPaypalPaymentNotCompatibleWithStrict=The value 'Strict' makes the online 
 WarningThemeForcedTo=Warning, theme has been forced to <b>%s</b> by hidden constant MAIN_FORCETHEME
 WarningPagesWillBeDeleted=Warning, this will also delete all existing pages/containers of the website. You should export your website before, so you have a backup to re-import it later.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatic validation is disabled when option to decrease stock is set on "Invoice validation".
+WarningModuleNeedRefrech = Module <b>%s</b> has been disabled. Don't forget to enable it 
 
 # Validate
 RequireValidValue = Value not valid

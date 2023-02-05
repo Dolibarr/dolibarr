@@ -191,8 +191,8 @@ class ExpenseReport extends CommonObject
 		'fk_user_cancel' =>array('type'=>'integer', 'label'=>'Fk user cancel', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
 		'fk_c_paiement' =>array('type'=>'integer', 'label'=>'Fk c paiement', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
 		'paid' =>array('type'=>'integer', 'label'=>'Paid', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>145),
-		'note_public' =>array('type'=>'text', 'label'=>'Note public', 'enabled'=>1, 'visible'=>0, 'position'=>150),
-		'note_private' =>array('type'=>'text', 'label'=>'Note private', 'enabled'=>1, 'visible'=>0, 'position'=>155),
+		'note_public' =>array('type'=>'html', 'label'=>'Note public', 'enabled'=>1, 'visible'=>0, 'position'=>150),
+		'note_private' =>array('type'=>'html', 'label'=>'Note private', 'enabled'=>1, 'visible'=>0, 'position'=>155),
 		'detail_refuse' =>array('type'=>'varchar(255)', 'label'=>'Detail refuse', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
 		'detail_cancel' =>array('type'=>'varchar(255)', 'label'=>'Detail cancel', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
 		'integration_compta' =>array('type'=>'integer', 'label'=>'Integration compta', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
@@ -462,6 +462,8 @@ class ExpenseReport extends CommonObject
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
+					$this->errors += $hookmanager->errors;
+					$this->error = $hookmanager->error;
 					$error++;
 				}
 			}
@@ -2674,6 +2676,44 @@ class ExpenseReport extends CommonObject
 
 			return -1;
 		}
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs, $selected,$arrayofselected;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		if (in_array($this->id, $arrayofselected)) {
+			$selected = 1;
+		}
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if (property_exists($this, 'fk_user_author') && !empty($this->id)) {
+			$return .= '<br><span class="info-box-label">'.$this->fk_user_author.'</span>';
+		}
+		if (property_exists($this, 'date_debut') && property_exists($this, 'date_fin')) {
+			$return .= '<br><span class="info-box-label">'.dol_print_date($this->date_debut, 'day').'</span>';
+			$return .= ' <span class="opacitymedium">'.$langs->trans("To").'</span> ';
+			$return .= '<span class="info-box-label">'.dol_print_date($this->date_fin, 'day').'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }
 

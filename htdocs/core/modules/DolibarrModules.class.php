@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -181,6 +181,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $error;
 
 	/**
+	 * @var string[] Array of Errors messages
+	 */
+	public $errors;
+
+	/**
 	 * @var string Module version
 	 * @see http://semver.org
 	 *
@@ -219,6 +224,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $descriptionlong;
 
+	/**
+	 * @var array dictionaries description
+	 */
+	public $dictionaries;
+
+	/**
+	 * @var array tabs description
+	 */
+	public $tabs;
 
 	// For exports
 
@@ -792,8 +806,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * For 'experimental' modules, gives 'experimental' translation
 	 * For 'dolibarr' modules, gives Dolibarr version
 	 *
-	 * @param  int $translated 1=Special version keys are translated, 0=Special version keys are not translated
-	 * @return string                  Module version
+	 * @param  int 		$translated 		1=Special version keys are translated, 0=Special version keys are not translated
+	 * @return string               		Module version
 	 */
 	public function getVersion($translated = 1)
 	{
@@ -976,8 +990,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$tmp = json_decode($obj->note, true);
 				}
 				return array(
-					'authorid' => $tmp['authorid'],
-					'ip' => $tmp['ip'],
+					'authorid' => empty($tmp['authorid']) ? '' : $tmp['authorid'],
+					'ip' => empty($tmp['ip']) ? '' : $tmp['ip'],
 					'lastactivationdate' => $this->db->jdate($obj->tms),
 					'lastactivationversion' => (!empty($tmp['lastactivationversion']) ? $tmp['lastactivationversion'] : 'unknown'),
 				);

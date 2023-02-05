@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=Seleziona il tipo di ritorno a capo
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specificare il prefisso per il nome del file
 ThisService=Questo servizio
 ThisProduct=Questo prodotto
-DefaultForService=Predefinito per servizio
-DefaultForProduct=Predefinito per prodotto
+DefaultForService=Default for services
+DefaultForProduct=Default for products
 ProductForThisThirdparty=Prodotto per questa terza parte
 ServiceForThisThirdparty=Servizi per questo soggetto terzo
 CantSuggest=Non posso suggerire
@@ -101,7 +101,8 @@ ShowAccountingAccount=Mostra conti di contabilità
 ShowAccountingJournal=Mostra giornale
 ShowAccountingAccountInLedger=Mostra conto contabile nel libro mastro
 ShowAccountingAccountInJournals=Mostra conto contabile nei giornali di registrazione
-AccountAccountingSuggest=Conto suggerito per contabilità
+DataUsedToSuggestAccount=Data used to suggest account
+AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=Conti predefiniti
 MenuBankAccounts=Conti bancari
 MenuVatAccounts=Conti IVA
@@ -126,6 +127,7 @@ WriteBookKeeping=Registra i movimenti in contabilità
 Bookkeeping=Libro contabile
 BookkeepingSubAccount=Conto secondario
 AccountBalance=Saldo
+AccountBalanceSubAccount=Sub-accounts balance
 ObjectsRef=Sorgente oggetto in riferimento
 CAHTF=Totale acquisto al lordo delle imposte
 TotalExpenseReport=Rapporto spese totale
@@ -189,6 +191,7 @@ ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be us
 UseAuxiliaryAccountOnCustomerDeposit=Memorizzare il conto cliente come conto individuale nel libro mastro sussidiario per le righe di acconto (se disabilitato, il conto individuale per le righe di acconto rimarrà vuoto)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
 UseAuxiliaryAccountOnSupplierDeposit=Memorizzare il conto fornitore come conto individuale nel libro mastro sussidiario per le righe di acconto (se disabilitato, il conto individuale per le righe di acconto rimarrà vuoto)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
@@ -218,6 +221,7 @@ JournalLabel=Etichetta del giornale
 NumPiece=Numero del pezzo
 TransactionNumShort=Num. movimento
 AccountingCategory=Custom group of accounts
+AccountingCategories=Custom groups of accounts
 GroupByAccountAccounting=Raggruppa per conto di contabilità generale
 GroupBySubAccountAccounting=Raggruppa per conto secondario
 AccountingAccountGroupsDesc=Qui puoi definire alcuni gruppi di conti contabili. Saranno utilizzati per rapporti contabili personalizzati.
@@ -265,6 +269,7 @@ ShowSubtotalByGroup=Mostra il totale parziale per livello
 
 Pcgtype=Gruppo di conto
 PcgtypeDesc=Il gruppo di conti viene utilizzato come criterio 'filtro' e 'raggruppamento' predefiniti per alcuni report contabili. Ad esempio, "RICAVO" o "COSTO" sono utilizzati come gruppi per la contabilità dei prodotti per creare il rapporto costi / ricavi.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 
 Reconcilable=riconciliabile
 
@@ -294,6 +299,7 @@ DescValidateMovements=Qualsiasi modifica o cancellazione di scrittura, lettura e
 
 ValidateHistory=Collega automaticamente
 AutomaticBindingDone=Associazioni automatiche eseguite (%s) - Associazioni automatiche non possibili per alcuni record (%s)
+DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=Movimento non correttamente bilanciato. Debito = %s e credito = %s
@@ -337,11 +343,13 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Disabilita vincolante e trasferimento in con
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disabilita vincolante e trasferimento in contabilità sugli acquisti (le fatture fornitore non verranno prese in considerazione in contabilità)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disabilita binding e trasferimento in contabilità sulle note spese (le note spese non verranno prese in considerazione in contabilità)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
 NotifiedExportDate=Contrassegna le righe esportate come Esportate <span class="warning"> (per modificare una riga è necessario eliminare l'intera transazione e ritrasferirla in contabilità) </span>
 NotifiedValidationDate=Convalida e Blocca le voci esportate <span class="warning"> (stesso effetto della funzione "%s", la modifica e la cancellazione delle righe NON sarà SICURAMENTE possibile) </span>
+NotifiedExportFull=Export documents ?
 DateValidationAndLock=Convalida e blocco della data
 ConfirmExportFile=Conferma della generazione del file di esportazione contabile?
 ExportDraftJournal=Esporta giornale in bozza
@@ -398,7 +406,7 @@ SaleLocal=Local sale
 SaleExport=Export sale
 SaleEEC=Vendite intracomunitarie (CEE)
 SaleEECWithVAT=Vendita in CEE con IVA non nulla, quindi supponiamo che questa NON sia una vendita intracomunitaria e l'account suggerito sia l'account standard del prodotto.
-SaleEECWithoutVATNumber=La vendita nella CEE senza IVA ma la partita IVA di terzi non è definita. Eseguiamo il fallback sull'account del prodotto per le vendite standard. È possibile correggere l'ID IVA di terze parti o l'account del prodotto, se necessario.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Vietato: la transazione è stata convalidata e/o esportata.
 ForbiddenTransactionAlreadyValidated=Vietato: il movimento è stato convalidato.
 ## Dictionary
@@ -442,6 +450,7 @@ AccountancyErrorMismatchLetterCode=Mancata corrispondenza nel codice di riconcil
 AccountancyErrorMismatchBalanceAmount=Il saldo (%s) non è uguale a 0
 AccountancyErrorLetteringBookkeeping=Si sono verificati errori relativi alle transazioni: %s
 ErrorAccountNumberAlreadyExists=Il numero contabile %s esiste già
+ErrorArchiveAddFile=Can't put "%s" file in archive
 
 ## Import
 ImportAccountingEntries=Accounting entries
@@ -468,5 +477,7 @@ FECFormatMulticurrencyCode=Codice multivaluta (Idevise)
 DateExport=Data esportazione
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Giornale note spese
+DocsAlreadyExportedAreExcluded=Docs already exported are excluded
+ClickToHideAlreadyExportedLines=Click to hide already exported lines
 
 NAccounts=%s account

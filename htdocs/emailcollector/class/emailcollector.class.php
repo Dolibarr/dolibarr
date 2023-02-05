@@ -128,7 +128,7 @@ class EmailCollector extends CommonObject
 	public $fields = array(
 		'rowid'         => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1),
 		'entity'        => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
-		'ref'           => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'help'=>'Example: MyCollector1', 'csslist'=>'tdoverflowmax150'),
+		'ref'           => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'help'=>'Example: MyCollector1', 'csslist'=>'tdoverflowmax200'),
 		'label'         => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1, 'help'=>'Example: My Email collector', 'csslist'=>'tdoverflowmax150'),
 		'description'   => array('type'=>'text', 'label'=>'Description', 'visible'=>-1, 'enabled'=>1, 'position'=>60, 'notnull'=>-1, 'csslist'=>'small'),
 		'host'          => array('type'=>'varchar(255)', 'label'=>'EMailHost', 'visible'=>1, 'enabled'=>1, 'position'=>90, 'notnull'=>1, 'searchall'=>1, 'comment'=>"IMAP server", 'help'=>'Example: imap.gmail.com', 'csslist'=>'tdoverflowmax125'),
@@ -139,13 +139,11 @@ class EmailCollector extends CommonObject
 		'password'      => array('type'=>'password', 'label'=>'Password', 'visible'=>-1, 'enabled'=>"1", 'position'=>103, 'notnull'=>-1, 'comment'=>"IMAP password", 'help'=>'WithGMailYouCanCreateADedicatedPassword'),
 		'oauth_service' => array('type'=>'varchar(128)', 'label'=>'oauthService', 'visible'=>-1, 'enabled'=>"getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position'=>104, 'notnull'=>0, 'index'=>1, 'comment'=>"IMAP login oauthService", 'arrayofkeyval'=>array(), 'help'=>'TokenMustHaveBeenCreated'),
 		'source_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxSourceDirectory', 'visible'=>-1, 'enabled'=>1, 'position'=>104, 'notnull'=>1, 'default' => 'Inbox', 'help'=>'Example: INBOX'),
-		//'filter' => array('type'=>'text', 'label'=>'Filter', 'visible'=>1, 'enabled'=>1, 'position'=>105),
-		//'actiontodo' => array('type'=>'varchar(255)', 'label'=>'ActionToDo', 'visible'=>1, 'enabled'=>1, 'position'=>106),
 		'target_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxTargetDirectory', 'visible'=>1, 'enabled'=>1, 'position'=>110, 'notnull'=>0, 'help'=>"EmailCollectorTargetDir"),
 		'maxemailpercollect' => array('type'=>'integer', 'label'=>'MaxEmailCollectPerCollect', 'visible'=>-1, 'enabled'=>1, 'position'=>111, 'default'=>100),
 		'datelastresult' => array('type'=>'datetime', 'label'=>'DateLastCollectResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>121, 'notnull'=>-1, 'csslist'=>'nowraponall'),
 		'codelastresult' => array('type'=>'varchar(16)', 'label'=>'CodeLastResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>122, 'notnull'=>-1,),
-		'lastresult' => array('type'=>'varchar(255)', 'label'=>'LastResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>123, 'notnull'=>-1, 'csslist'=>'small'),
+		'lastresult' => array('type'=>'varchar(255)', 'label'=>'LastResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>123, 'notnull'=>-1, 'csslist'=>'small tdoverflowmax200'),
 		'datelastok' => array('type'=>'datetime', 'label'=>'DateLastcollectResultOk', 'visible'=>1, 'enabled'=>'$action != "create"', 'position'=>125, 'notnull'=>-1, 'csslist'=>'nowraponall'),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'visible'=>0, 'enabled'=>1, 'position'=>61, 'notnull'=>-1,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'visible'=>0, 'enabled'=>1, 'position'=>62, 'notnull'=>-1,),
@@ -2158,6 +2156,118 @@ class EmailCollector extends CommonObject
 									}
 								}
 							}
+						} elseif ($operation['type'] == 'loadandcreatecontact') { // Search and create contact
+							if (empty($operation['actionparam'])) {
+								$errorforactions++;
+								$this->error = "Action loadandcreatecontact has empty parameter. Must be 'SET:xxx' or 'EXTRACT:(body|subject):regex' to define how to extract data";
+								$this->errors[] = $this->error;
+							} else {
+								$contact_static = new Contact($this->db);
+								// Overwrite values with values extracted from source email
+								$errorforthisaction = $this->overwritePropertiesOfObject($contact_static, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
+								if ($errorforthisaction) {
+									$errorforactions++;
+								} else {
+									if (!empty($contact_static->email) && $contact_static->email != $from) $from = $contact_static->email;
+
+									$result = $contactstatic->fetch(0, null, '', $from);
+									if ($result < 0) {
+										$errorforactions++;
+										$this->error = 'Error when getting contact with email ' . $from;
+										$this->errors[] = $this->error;
+										break;
+									} elseif ($result == 0) {
+										dol_syslog("Contact with email " . $from . " was not found. We try to create it.");
+										$contactstatic = new Contact($this->db);
+
+										// Create contact
+										$contactstatic->email = $from;
+										$operationslog .= '<br>We set property email='.dol_escape_htmltag($from);
+
+										// Overwrite values with values extracted from source email
+										$errorforthisaction = $this->overwritePropertiesOfObject($contactstatic, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
+
+										if ($errorforthisaction) {
+											$errorforactions++;
+										} else {
+											// Search country by name or code
+											if (!empty($contactstatic->country)) {
+												require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+												$result = getCountry('', 3, $this->db, '', 1, $contactstatic->country);
+												if ($result == 'NotDefined') {
+													$errorforactions++;
+													$this->error = "Error country not found by this name '" . $contactstatic->country . "'";
+												} elseif (!($result > 0)) {
+													$errorforactions++;
+													$this->error = "Error when search country by this name '" . $contactstatic->country . "'";
+													$this->errors[] = $this->db->lasterror();
+												} else {
+													$contactstatic->country_id = $result;
+													$operationslog .= '<br>We set property country_id='.dol_escape_htmltag($result);
+												}
+											} elseif (!empty($contactstatic->country_code)) {
+												require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+												$result = getCountry($contactstatic->country_code, 3, $this->db);
+												if ($result == 'NotDefined') {
+													$errorforactions++;
+													$this->error = "Error country not found by this code '" . $contactstatic->country_code . "'";
+												} elseif (!($result > 0)) {
+													$errorforactions++;
+													$this->error = "Error when search country by this code '" . $contactstatic->country_code . "'";
+													$this->errors[] = $this->db->lasterror();
+												} else {
+													$contactstatic->country_id = $result;
+													$operationslog .= '<br>We set property country_id='.dol_escape_htmltag($result);
+												}
+											}
+
+											if (!$errorforactions) {
+												// Search state by name or code (for country if defined)
+												if (!empty($contactstatic->state)) {
+													require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+													$result = dol_getIdFromCode($this->db, $contactstatic->state, 'c_departements', 'nom', 'rowid');
+													if (empty($result)) {
+														$errorforactions++;
+														$this->error = "Error state not found by this name '" . $contactstatic->state . "'";
+													} elseif (!($result > 0)) {
+														$errorforactions++;
+														$this->error = "Error when search state by this name '" . $contactstatic->state . "'";
+														$this->errors[] = $this->db->lasterror();
+													} else {
+														$contactstatic->state_id = $result;
+														$operationslog .= '<br>We set property state_id='.dol_escape_htmltag($result);
+													}
+												} elseif (!empty($contactstatic->state_code)) {
+													require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+													$result = dol_getIdFromCode($this->db, $contactstatic->state_code, 'c_departements', 'code_departement', 'rowid');
+													if (empty($result)) {
+														$errorforactions++;
+														$this->error = "Error state not found by this code '" . $contactstatic->state_code . "'";
+													} elseif (!($result > 0)) {
+														$errorforactions++;
+														$this->error = "Error when search state by this code '" . $contactstatic->state_code . "'";
+														$this->errors[] = $this->db->lasterror();
+													} else {
+														$contactstatic->state_id = $result;
+														$operationslog .= '<br>We set property state_id='.dol_escape_htmltag($result);
+													}
+												}
+											}
+
+											if (!$errorforactions) {
+												$result = $contactstatic->create($user);
+												if ($result <= 0) {
+													$errorforactions++;
+													$this->error = $contactstatic->error;
+													$this->errors = $contactstatic->errors;
+												} else {
+													$operationslog .= '<br>Contact created -> id = '.dol_escape_htmltag($contactstatic->id);
+												}
+											}
+										}
+									}
+								}
+							}
 						} elseif ($operation['type'] == 'recordevent') {
 							// Create event
 							$actioncomm = new ActionComm($this->db);
@@ -2820,7 +2930,11 @@ class EmailCollector extends CommonObject
 							// TODO Move mail using PHP-IMAP
 						}
 					} else {
-						dol_syslog("EmailCollector::doCollectOneCollector message ".$imapemail." to ".$connectstringtarget." was set to read", LOG_DEBUG);
+						if (empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+							dol_syslog("EmailCollector::doCollectOneCollector message ".((string) $imapemail)." to ".$connectstringtarget." was set to read", LOG_DEBUG);
+						} else {
+							dol_syslog("EmailCollector::doCollectOneCollector message '".($imapemail->getHeader()->get('subject'))."' using this->host=".$this->host.", this->access_type=".$this->acces_type." was set to read", LOG_DEBUG);
+						}
 					}
 				} else {
 					$errorforemail++;

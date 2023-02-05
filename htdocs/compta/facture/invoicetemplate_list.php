@@ -94,6 +94,7 @@ $search_date_when_end = dol_mktime(23, 59, 59, $search_date_when_endmonth, $sear
 $search_recurring = GETPOST('search_recurring', 'int');
 $search_frequency = GETPOST('search_frequency', 'alpha');
 $search_unit_frequency = GETPOST('search_unit_frequency', 'alpha');
+$search_nb_gen_done = GETPOST('search_nb_gen_done', 'aplha');
 $search_status = GETPOST('search_status', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -236,6 +237,7 @@ if (empty($reshook)) {
 		$search_recurring = '';
 		$search_frequency = '';
 		$search_unit_frequency = '';
+		$search_nb_gen_done = '';
 		$search_status = '';
 		$search_array_options = array();
 	}
@@ -334,7 +336,11 @@ if ($search_frequency != '') {
 	$sql .= natural_search('f.frequency', $search_frequency, 1);
 }
 if ($search_unit_frequency != '') {
-	$sql .= ' AND f.frequency > 0'.natural_search('f.unit_frequency', $search_unit_frequency);
+	$sql .= ' AND f.frequency > 0';
+	$sql .= natural_search('f.unit_frequency', $search_unit_frequency);
+}
+if ($search_nb_gen_done != '') {
+	$sql .= natural_search("f.nb_gen_done", $search_nb_gen_done, 1);
 }
 if ($search_status != '' && $search_status >= -1) {
 	if ($search_status == 0) {
@@ -458,6 +464,9 @@ if ($resql) {
 	if ($search_unit_frequency != '') {
 		$param .= '&search_unit_frequency='.urlencode($search_unit_frequency);
 	}
+	if ($search_nb_gen_done != '') {
+		$param .= '&search_nb_gen_done='.urlencode($search_nb_gen_done);
+	}
 	if ($search_status != '') {
 		$param .= '&search_status='.urlencode($search_status);
 	}
@@ -561,6 +570,7 @@ if ($resql) {
 	if (!empty($arrayfields['f.nb_gen_done']['checked'])) {
 		// Nb generation
 		print '<td class="liste_titre" align="center">';
+		print '<input class="flat" type="text" size="1" name="search_nb_gen_done" value="'.dol_escape_htmltag($search_nb_gen_done).'">';
 		print '</td>';
 	}
 	// Date invoice
@@ -728,7 +738,7 @@ if ($resql) {
 				}
 			}
 			if (!empty($arrayfields['s.nom']['checked'])) {
-				print '<td class="tdoverflowmax200">'.$companystatic->getNomUrl(1, 'customer').'</td>';
+				print '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}

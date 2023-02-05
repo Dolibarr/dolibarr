@@ -111,7 +111,7 @@ if (isModEnabled('facture')) {
 }
 
 if (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) {
-	print getNumberInvoicesPieChart('fourn');
+	print getNumberInvoicesPieChart('suppliers');
 	print '<br>';
 }
 
