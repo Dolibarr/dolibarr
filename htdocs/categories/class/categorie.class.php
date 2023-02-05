@@ -1638,26 +1638,27 @@ class Categorie extends CommonObject
 				$forced_color = 'categtextblack';
 			}
 		}
-
-		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam ? '?'.$moreparam : ''));
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$params = [
 				'id' => $this->id,
 				'objecttype' => $this->element,
 				'option' => $option,
 			];
-			$link .= '" data-params='.json_encode($params).' title="' . $langs->trans('Loading') . '"';
-			$link .= ' class="classforajaxtooltip '.$forced_color.'">';
-		} else {
-			$link .= '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color.'">';
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			$label = $langs->trans('Loading');
 		}
+		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam ? '?'.$moreparam : ''));
+		$link .= '"'.$dataparams.' title="'.dol_escape_htmltag($label, 1).'" class="'.$classfortooltip.' '.$forced_color.'">';
 		$linkend = '</a>';
 
 		$picto = 'category';
 
 
 		if ($withpicto) {
-			$result .= ($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+			$result .= ($link.img_object($label, $picto, $dataparams.' class="'.$classfortooltip.'"').$linkend);
 		}
 		if ($withpicto && $withpicto != 2) {
 			$result .= ' ';
