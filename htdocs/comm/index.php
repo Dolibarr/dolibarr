@@ -60,18 +60,10 @@ if (isset($user->socid) && $user->socid > 0) {
 	$socid = $user->socid;
 }
 
+restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
+
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 $now = dol_now();
-
-// Security check
-$socid = GETPOST("socid", 'int');
-if ($user->socid > 0) {
-	$action = '';
-	$id = $user->socid;
-} else {
-	$id = 0;
-}
-restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
 
 $maxofloop = (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
 
