@@ -915,8 +915,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		if ($usergroup > 0)	{
 			$sql .= " AND ug.fk_usergroup = ".((int) $usergroup);
 		}
-		if ($user->socid > 0)
-		{
+		if ($user->socid > 0) {
 			// External users should see only contacts of their company
 			$sql .= " AND fk_soc=" . $socid;
 		}
