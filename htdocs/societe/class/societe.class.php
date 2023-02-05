@@ -2665,14 +2665,15 @@ class Societe extends CommonObject
 		if (isset($this->client) && isset($this->fournisseur)) {
 			$datas['type'] = ' &nbsp; ' . $this->getTypeUrl(1);
 		}
-
 		$datas['name'] = '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag($this->name);
 		if (!empty($this->name_alias)) {
 			$datas['namealias'] = ' ('.dol_escape_htmltag($this->name_alias).')';
 		}
-
-		if ($this->email) {
+		if (!empty($this->email)) {
 			$datas['email'] = '<br>'.img_picto('', 'email', 'class="pictofixedwidth"').$this->email;
+		}
+		if (!empty($this->url)) {
+			$datas['url'] = '<br>'.img_picto('', 'globe', 'class="pictofixedwidth"').$this->url;
 		}
 		if (!empty($this->phone) || !empty($this->fax)) {
 			$phonelist = array();

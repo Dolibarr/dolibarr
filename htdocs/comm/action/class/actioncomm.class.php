@@ -1727,6 +1727,18 @@ class ActionComm extends CommonObject
 			$tooltip .= '</div>';
 		}
 		$linkclose = '';
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$params = [
+				'id' => $this->id,
+				'objecttype' => $this->element,
+				'option' => $option,
+			];
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			$label = $langs->trans('Loading');
+		}
 		//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
 		//	$linkclose = ' style="background-color:#'.$this->type_color.'"';
 
@@ -1735,18 +1747,8 @@ class ActionComm extends CommonObject
 				$label = $langs->trans("ShowAction");
 				$linkclose .= ' alt="'.dol_escape_htmltag($tooltip, 1).'"';
 			}
-			if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-				$params = [
-					'id' => $this->id,
-					'objecttype' => $this->element,
-					'option' => $option,
-				];
-				$linkclose .= '" data-params='.json_encode($params).' title="' . $langs->trans('Loading') . '"';
-				$linkclose .= ' class="'.$classname.' classforajaxtooltip"';
-			} else {
-				$linkclose .= ' title="'.dol_escape_htmltag($tooltip, 1, 0, '', 1).'"';
-				$linkclose .= ' class="'.$classname.' classfortooltip"';
-			}
+			$linkclose .= ' title="'.dol_escape_htmltag($tooltip, 1, 0, '', 1).'"';
+			$linkclose .= $dataparams.' class="'.$classname.' '.$classfortooltip.'"';
 		} else {
 			$linkclose .= ' class="'.$classname.'"';
 		}
@@ -1806,7 +1808,7 @@ class ActionComm extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$label), ($overwritepicto ? $overwritepicto : 'action'), (($this->type_color && $overwritepicto) ? 'style="color: #'.$this->type_color.' !important;" ' : '').($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"' : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$label), ($overwritepicto ? $overwritepicto : 'action'), (($this->type_color && $overwritepicto) ? 'style="color: #'.$this->type_color.' !important;" ' : '').($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"' : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		$result .= dol_escape_htmltag($labelshort);
 		$result .= $linkend;

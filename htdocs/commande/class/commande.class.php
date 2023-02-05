@@ -3832,23 +3832,25 @@ class Commande extends CommonOrder
 		}
 
 		$linkclose = '';
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$params = [
+				'id' => $this->id,
+				'objecttype' => $this->element,
+				'option' => $option,
+			];
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			$label = $langs->trans('Loading');
+		}
 		if (empty($notooltip) && $user->rights->commande->lire) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("Order");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-				$params = [
-					'id' => $this->id,
-					'objecttype' => $this->element,
-					'option' => $option,
-				];
-				$linkclose .= ' data-params='.json_encode($params).' title="' . $langs->trans('Loading') . '"';
-				$linkclose .= ' class="classforajaxtooltip"';
-			} else {
-				$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-				$linkclose .= ' class="classfortooltip"';
-			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 
 			$target_value = array('_self', '_blank', '_parent', '_top');
 			if (in_array($target, $target_value)) {
@@ -3867,7 +3869,7 @@ class Commande extends CommonOrder
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;

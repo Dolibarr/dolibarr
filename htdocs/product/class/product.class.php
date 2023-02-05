@@ -5009,6 +5009,8 @@ class Product extends CommonObject
 	{
 		global $conf, $langs;
 
+		$langs->load('products');
+
 		$datas = [];
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
