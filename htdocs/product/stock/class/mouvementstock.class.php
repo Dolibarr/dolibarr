@@ -48,8 +48,16 @@ class MouvementStock extends CommonObject
 
 	/**
 	 * @var int ID warehouse
+	 * @deprecated
+	 * @see $warehouse_id
+	 */
+	public $entrepot_id;
+
+	/**
+	 * @var int ID warehouse
 	 */
 	public $warehouse_id;
+
 	public $qty;
 
 	/**
@@ -541,7 +549,7 @@ class MouvementStock extends CommonObject
 				} elseif (empty($fk_product_stock)) {
 					$fk_product_stock = $this->db->last_insert_id($this->db->prefix()."product_stock");
 				}
-			}
+			}entrepot_id
 
 			// Update detail of stock for the lot.
 			if (!$error && isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
