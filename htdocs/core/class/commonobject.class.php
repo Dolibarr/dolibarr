@@ -696,7 +696,7 @@ abstract class CommonObject
 				}
 				$labelextra = $langs->trans((string) $extrafields->attributes[$this->table_element]['label'][$key]);
 				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
-					$datas[$key]= '<br><u>'. $labelextra . '</u>';
+					$datas[$key]= '<br><b><u>'. $labelextra . '</u></b>';
 				} else {
 					$value = $this->array_options['options_' . $key];
 					$datas[$key]= '<br><b>'. $labelextra . ':</b> ' . $extrafields->showOutputField($key, $value, '', $this->table_element);

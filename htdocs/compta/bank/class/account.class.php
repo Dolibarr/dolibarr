@@ -1460,17 +1460,19 @@ class Account extends CommonObject
 			$label .= '<br><b>'.$langs->trans('AccountAccounting').':</b> '.length_accountg($this->account_number);
 			$label .= '<br><b>'.$langs->trans('AccountancyJournal').':</b> '.$this->accountancy_journal;
 		}
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$params = [
 				'id' => $this->id,
 				'objecttype' => $this->element,
 				'option' => $option,
 			];
-			$linkclose = '" data-params='.json_encode($params).' title="' . $langs->trans('Loading') . '"';
-			$linkclose .= ' class="classforajaxtooltip"';
-		} else {
-			$linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			$label = $langs->trans('Loading');
 		}
+		$linkclose = '"'.$dataparams.' title="'.dol_escape_htmltag($label, 1).'" class="'.$classfortooltip.'">';
 
 		$url = DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id;
 		if ($mode == 'transactions') {
@@ -1500,7 +1502,7 @@ class Account extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref.($option == 'reflabel' && $this->label ? ' - '.$this->label : '');
