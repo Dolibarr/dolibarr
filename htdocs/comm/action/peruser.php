@@ -917,7 +917,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		}
 		if ($user->socid > 0) {
 			// External users should see only contacts of their company
-			$sql .= " AND fk_soc=" . $socid;
+			$sql .= " AND fk_soc = ".((int) $user->socid);
 		}
 
 		//print $sql;
