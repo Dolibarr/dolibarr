@@ -1328,6 +1328,10 @@ function dol_string_unaccent($str)
 {
 	global $conf;
 
+	if (is_null($str)) {
+		return '';
+	}
+
 	if (utf8_check($str)) {
 		if (extension_loaded('intl') && !empty($conf->global->MAIN_UNACCENT_USE_TRANSLITERATOR)) {
 			$transliterator = \Transliterator::createFromRules(':: Any-Latin; :: Latin-ASCII; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC;', \Transliterator::FORWARD);
@@ -7175,6 +7179,10 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
  */
 function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
 {
+	if (is_null($stringtoencode)) {
+		return '';
+	}
+
 	if (!$nl2brmode) {
 		return nl2br($stringtoencode, $forxml);
 	} else {
@@ -8948,17 +8956,17 @@ function verifCond($strToEvaluate)
  */
 function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1')
 {
+	// Only global variables can be changed by eval function and returned to caller
+	global $db, $langs, $user, $conf, $website, $websitepage;
+	global $action, $mainmenu, $leftmenu;
+	global $rights;
+	global $object;
+	global $mysoc;
+
+	global $obj; // To get $obj used into list when dol_eval is used for computed fields and $obj is not yet $object
+	global $soc; // For backward compatibility
+
 	try {
-		// Only global variables can be changed by eval function and returned to caller
-		global $db, $langs, $user, $conf, $website, $websitepage;
-		global $action, $mainmenu, $leftmenu;
-		global $rights;
-		global $object;
-		global $mysoc;
-
-		global $obj; // To get $obj used into list when dol_eval is used for computed fields and $obj is not yet $object
-		global $soc; // For backward compatibility
-
 		// Test on dangerous char (used for RCE), we allow only characters to make PHP variable testing
 		if ($onlysimplestring == '1') {
 			// We must accept: '1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL'
@@ -9053,11 +9061,11 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			}
 		}
 	} catch (Error $e) {
-			$error = 'Caught error : ';
-			$error .= $e->getMessage() . ', ';
-			$error .= 'Trace : ';
-			$error .= json_encode($e->getTrace());
-			error_log($error, 1);
+		$error = 'Caught error : ';
+		$error .= $e->getMessage() . ', ';
+		$error .= 'Trace : ';
+		$error .= json_encode($e->getTrace());
+		error_log($error, 1);
 	}
 }
 

@@ -102,7 +102,7 @@ function check_events() {
 		var newToken = 'notrequired';
 		const allMeta = document.getElementsByTagName("meta");
 		for (let i = 0; i < allMeta.length; i++) {
-			if (allMeta[i].getAttribute("name") == 'anti-csrf-token') {
+			if (allMeta[i].getAttribute("name") == 'anti-csrf-currenttoken') {
 				newToken = allMeta[i].getAttribute('content');
 				console.log("newToken in page = "+newToken);
 			}
