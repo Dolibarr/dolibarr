@@ -724,29 +724,24 @@ class AdherentType extends CommonObject
 		global $langs;
 
 		$result = '';
-
-		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("MemberType").'</u>';
-		$label .= ' '.$this->getLibStatut(4);
-		$label .= '<br>'.$langs->trans("Label").': '.$this->label;
-		if (isset($this->subscription)) {
-			$label .= '<br>'.$langs->trans("SubscriptionRequired").': '.yn($this->subscription);
-		}
-
 		$option = '';
 
-		$url = DOL_URL_ROOT.'/adherents/type.php?rowid='.((int) $this->id);
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			$params = [
-				'id' => $this->id,
-				'objecttype' => $this->element,
-				'option' => $option,
-			];
 			$classfortooltip = 'classforajaxtooltip';
 			$dataparams = ' data-params='.json_encode($params);
-			$label = $langs->trans('Loading');
+			// $label = $langs->trans('Loading');
 		}
+
+		$label = implode($this->getTooltipContentArray($params));
+
+		$url = DOL_URL_ROOT.'/adherents/type.php?rowid='.((int) $this->id);
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
