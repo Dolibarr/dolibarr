@@ -615,19 +615,6 @@ print "<td>&nbsp;</td>\n";
 print "</tr>";
 
 
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("ModifyMarginRates").'</td>';
-print '<td class="center">';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('PROPALE_MODIFY_MARGIN_RATES');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("PROPALE_MODIFY_MARGIN_RATES", $arrval, $conf->global->PROPALE_MODIFY_MARGIN_RATES);
-}
-print "</td>\n";
-print '<td></td>';
-print "</tr>\n";
-
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"setdefaultduration\">";

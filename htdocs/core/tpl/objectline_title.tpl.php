@@ -140,9 +140,9 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 		}
 	}
 
-	if (!(empty($conf->global->DISPLAY_MARGIN_RATES) && empty($conf->global->PROPALE_MODIFY_MARGIN_RATES)) && $user->rights->margins->liretous) {
+	if (!empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) {
 		print '<th class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarginRate');
-		if (!empty($conf->global->PROPALE_MODIFY_MARGIN_RATES) && $user->hasRight("propal", "creer")) {
+		if ($user->hasRight("propal", "creer")) {
 			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=marginforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickmarginforalllines opacitymedium paddingleft cursorpointer"').'</a>';
 			if (GETPOST('mode', 'aZ09') == 'marginforalllines') {
 				print '<div class="classmarginforalllines inline-block nowraponall">';

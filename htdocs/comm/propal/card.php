@@ -914,7 +914,7 @@ if (empty($reshook)) {
 		foreach ($object->lines as $line) {
 			$result = $object->updateline($line->id, $line->subprice, $line->qty, $remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
 		}
-	} elseif (!empty($conf->global->PROPALE_MODIFY_MARGIN_RATES) && $action == 'addline' && GETPOST('submitforallmargins', 'alpha') && GETPOST('marginforalllines') !== '' && $usercancreate) {
+	} elseif ($action == 'addline' && GETPOST('submitforallmargins', 'alpha') && GETPOST('marginforalllines') !== '' && $usercancreate) {
 		// Define margin
 		$margin_rate = (GETPOST('marginforalllines') ? GETPOST('marginforalllines') : 0);
 		foreach ($object->lines as &$line) {
