@@ -8213,7 +8213,8 @@ abstract class CommonObject
 
 					// Output value of the current field
 					if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
-						$extrafields_collapse_num = '';
+						$extrafields_collapse_num = $key;
+						/*
 						$extrafield_param = $extrafields->attributes[$this->table_element]['param'][$key];
 						if (!empty($extrafield_param) && is_array($extrafield_param)) {
 							$extrafield_param_list = array_keys($extrafield_param['options']);
@@ -8227,6 +8228,7 @@ abstract class CommonObject
 								}
 							}
 						}
+						*/
 
 						// if colspan=0 or 1, the second column is not extended, so the separator must be on 2 columns
 						$out .= $extrafields->showSeparator($key, $this, ($colspan ? $colspan + 1 : 2), $display_type, $mode);
