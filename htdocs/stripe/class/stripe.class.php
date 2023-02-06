@@ -960,6 +960,7 @@ class Stripe extends CommonObject
 						dol_syslog($this->error, LOG_WARNING);
 					}
 				} elseif ($createifnotlinkedtostripe) {
+					// We will create the BAN on Stripe side
 					$iban = $obj->iban_prefix; //prefix ?
 					$ipaddress = getUserRemoteIP();
 

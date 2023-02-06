@@ -254,6 +254,7 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Add bank account
 	if ($action == 'add') {
 		$error = 0;
 
@@ -346,6 +347,7 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Add credit card
 	if ($action == 'addcard') {
 		$error = 0;
 
@@ -1952,7 +1954,7 @@ if ($socid && $action == 'editcard' && $permissiontoaddupdatepaymentinformation)
 	print '<tr><td>'.$langs->trans("CVN").'</td>';
 	print '<td><input size="8" type="text" name="cvn" value="'.$companypaymentmode->cvn.'"></td></tr>';
 
-	print '<tr><td>'.$langs->trans("StripeID")." ('card_....')</td>";
+	print '<tr><td>'.$langs->trans("StripeID")." ('pm_... ir card_....')</td>";
 	print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.$companypaymentmode->stripe_card_ref.'"></td></tr>';
 
 	print '</table>';
