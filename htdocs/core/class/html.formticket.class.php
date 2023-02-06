@@ -49,10 +49,10 @@ class FormTicket
 
 	public $track_id;
 
-    /**
-     * @var string 		Email $trackid. Used also for the $keytoavoidconflict to name session vars to upload files.
-     */
-    public $trackid;
+	/**
+	 * @var string 		Email $trackid. Used also for the $keytoavoidconflict to name session vars to upload files.
+	 */
+	public $trackid;
 
 	/**
 	 * @var int ID
@@ -169,7 +169,7 @@ class FormTicket
 		print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
-        print '<input type="hidden" name="trackid" value="'.$this->trackid.'">';
+		print '<input type="hidden" name="trackid" value="'.$this->trackid.'">';
 		foreach ($this->param as $key => $value) {
 			print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 		}
@@ -288,7 +288,7 @@ class FormTicket
 			$listofnames = array();
 			$listofmimes = array();
 
-            $keytoavoidconflict = empty($this->trackid) ? '' : '-'.$this->trackid; // this->trackid must be defined
+			$keytoavoidconflict = empty($this->trackid) ? '' : '-'.$this->trackid; // this->trackid must be defined
 			if (!empty($_SESSION["listofpaths".$keytoavoidconflict])) {
 				$listofpaths = explode(';', $_SESSION["listofpaths".$keytoavoidconflict]);
 			}
@@ -889,11 +889,11 @@ class FormTicket
 			dol_delete_dir_recursive($upload_dir);
 		}
 
-        if (!empty($this->trackid)) { // TODO Always use trackid (ticXXX) instead of track_id (abcd123)
-            $keytoavoidconflict = '-'.$this->trackid;
-        } else {
-            $keytoavoidconflict = empty($this->track_id) ? '' : '-'.$this->track_id;
-        }
+		if (!empty($this->trackid)) { // TODO Always use trackid (ticXXX) instead of track_id (abcd123)
+			$keytoavoidconflict = '-'.$this->trackid;
+		} else {
+			$keytoavoidconflict = empty($this->track_id) ? '' : '-'.$this->track_id;
+		}
 		unset($_SESSION["listofpaths".$keytoavoidconflict]);
 		unset($_SESSION["listofnames".$keytoavoidconflict]);
 		unset($_SESSION["listofmimes".$keytoavoidconflict]);
@@ -941,7 +941,7 @@ class FormTicket
 		if ($this->param['models'] != 'none') {
 			$model_id = 0;
 			if (array_key_exists('models_id', $this->param)) {
-                $model_id = (int) $this->param["models_id"];
+				$model_id = (int) $this->param["models_id"];
 			}
 
 			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id); // If $model_id is empty, preselect the first one
@@ -952,11 +952,11 @@ class FormTicket
 		$listofnames = array();
 		$listofmimes = array();
 
-        if (!empty($this->trackid)) {
-            $keytoavoidconflict = '-'.$this->trackid;
-        } else {
-            $keytoavoidconflict = empty($this->track_id) ? '' : '-'.$this->track_id; // track_id instead of trackid
-        }
+		if (!empty($this->trackid)) {
+			$keytoavoidconflict = '-'.$this->trackid;
+		} else {
+			$keytoavoidconflict = empty($this->track_id) ? '' : '-'.$this->track_id; // track_id instead of trackid
+		}
 
 		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
 			if (!empty($arraydefaultmessage->joinfiles) && !empty($this->param['fileinit']) && is_array($this->param['fileinit'])) {
@@ -1017,7 +1017,7 @@ class FormTicket
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
 		print '<input type="hidden" name="actionbis" value="add_message">';
-        print '<input type="hidden" name="trackid" value="'.$this->trackid.'">';
+		print '<input type="hidden" name="trackid" value="'.$this->trackid.'">';
 		foreach ($this->param as $key => $value) {
 			print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 		}
