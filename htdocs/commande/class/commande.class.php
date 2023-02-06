@@ -3804,46 +3804,22 @@ class Commande extends CommonOrder
 		if ($short) {
 			return $url;
 		}
-
-		$label = '';
-
-		if ($user->hasRight('commande', 'lire')) {
-			$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Order").'</u>';
-			if (isset($this->statut)) {
-				$label .= ' '.$this->getLibStatut(5);
-			}
-			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-			$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.(empty($this->ref_customer) ? (empty($this->ref_client) ? '' : $this->ref_client) : $this->ref_customer);
-			if (!empty($this->total_ht)) {
-				$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-			}
-			if (!empty($this->total_tva)) {
-				$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-			}
-			if (!empty($this->total_ttc)) {
-				$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
-			}
-			if (!empty($this->date)) {
-				$label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
-			}
-			if (!empty($this->delivery_date)) {
-				$label .= '<br><b>'.$langs->trans('DeliveryDate').':</b> '.dol_print_date($this->delivery_date, 'dayhour');
-			}
-		}
-
-		$linkclose = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			$params = [
-				'id' => $this->id,
-				'objecttype' => $this->element,
-				'option' => $option,
-			];
 			$classfortooltip = 'classforajaxtooltip';
 			$dataparams = ' data-params='.json_encode($params);
 			// $label = $langs->trans('Loading');
 		}
+
+		$label = implode($this->getTooltipContentArray($params));
+
+		$linkclose = '';
 		if (empty($notooltip) && $user->rights->commande->lire) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("Order");
