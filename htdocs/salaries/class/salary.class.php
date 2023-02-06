@@ -80,6 +80,17 @@ class Salary extends CommonObject
 	public $fk_bank;
 
 	/**
+	 * @var int
+	 * @see $accountid
+	 */
+	public $fk_account;
+
+	/**
+	 * @var int
+	 */
+	public $accountid;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_user_author;
@@ -250,7 +261,8 @@ class Salary extends CommonObject
 				$this->fk_bank          = $obj->fk_bank;
 				$this->fk_user_author   = $obj->fk_user_author;
 				$this->fk_user_modif    = $obj->fk_user_modif;
-				$this->fk_account       = $this->accountid = $obj->fk_account;
+				$this->fk_account = $obj->fk_account;
+				$this->accountid = $obj->fk_account;
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -518,42 +530,35 @@ class Salary extends CommonObject
 		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
+		}
 
-		$label = '<u>'.$langs->trans("Salary").'</u>';
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		if ($this->label) {
-			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
-		}
-		if ($this->datesp && $this->dateep) {
-			$label .= '<br><b>'.$langs->trans('Period').':</b> '.dol_print_date($this->datesp, 'day').' - '.dol_print_date($this->dateep, 'day');
-		}
-		if (isset($this->amount)) {
-			$label .= '<br><b>'.$langs->trans('Amount').':</b> '.price($this->amount);
-		}
+		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/salaries/card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkclose = '';
-		$classfortooltip = 'classfortooltip';
-		$dataparams = '';
-		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			$params = [
-				'id' => $this->id,
-				'objecttype' => $this->element,
-				'option' => $option,
-			];
-			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
-		}
 		if (empty($notooltip)) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowMyObject");
