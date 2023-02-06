@@ -2539,7 +2539,7 @@ class User extends CommonObject
 			}
 		}
 	}
-	
+
 	/**
 	 * 		Renvoie la derniere erreur fonctionnelle de manipulation de l'objet
 	 *
