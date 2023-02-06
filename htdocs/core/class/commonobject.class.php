@@ -594,6 +594,11 @@ abstract class CommonObject
 	protected $labelStatusShort;
 
 	/**
+	 * @var int showphoto_on_popup
+	 */
+	public $showphoto_on_popup;
+
+	/**
 	 * @var array nb used in load_stateboard
 	 */
 	public $nb = array();
