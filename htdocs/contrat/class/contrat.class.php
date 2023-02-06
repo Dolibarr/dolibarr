@@ -2047,42 +2047,21 @@ class Contrat extends CommonObject
 			$url .= '&save_lastsearch_values=1';
 		}
 		//}
-
-		$label = '';
-
-		if ($user->hasRight('contrat', 'lire')) {
-			$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Contract").'</u>';
-			/* Status of a contract is status of all services, so disabled
-			if (isset($this->statut)) {
-				$label .= ' '.$this->getLibStatut(5);
-			}*/
-			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.($this->ref ? $this->ref : $this->id);
-			$ref_customer = (!empty($this->ref_customer) ? $this->ref_customer : (empty($this->ref_client) ? '' : $this->ref_client));
-			$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.$ref_customer;
-			$label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
-			if (!empty($this->total_ht)) {
-				$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-			}
-			if (!empty($this->total_tva)) {
-				$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-			}
-			if (!empty($this->total_ttc)) {
-				$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
-			}
-		}
-
-		$linkclose = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			$params = [
-				'id' => $this->id,
-				'objecttype' => $this->element,
-			];
 			$classfortooltip = 'classforajaxtooltip';
 			$dataparams = ' data-params='.json_encode($params);
 			// $label = $langs->trans('Loading');
 		}
+
+		$label = implode($this->getTooltipContentArray($params));
+
+		$linkclose = '';
 		if (empty($notooltip) && $user->rights->contrat->lire) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowContract");
