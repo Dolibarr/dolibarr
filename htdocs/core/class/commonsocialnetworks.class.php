@@ -53,11 +53,11 @@ trait CommonSocialNetworks
 		}
 
 		if ($nbofnetworks > 1) {
-			print '<tr><td><br><a class="paddingtop paddingbottom socialnetworklnk" colspan="'.$colspan.'" id="socialnetworklnk" href="#"></a>';
+			print '<tr><td><br><a class="paddingtop paddingbottom socialnetworklnk onreposition" colspan="'.$colspan.'" id="socialnetworklnk" href="#"></a>';
 			//print '</td>';
 			//print '<td'.($colspan ? ' colspan="'.($colspan-1).'"' : '').'>';
 			//print '<br>';
-			print ' <a class="paddingtop paddingbottom socialnetworklnk" href="#"><span class="badge badge-secondary socialnetworklnk">'.$nbactive.'</span></a>';
+			print ' <a class="paddingtop paddingbottom socialnetworklnk onreposition" href="#"><span class="badge badge-secondary socialnetworklnk">'.$nbactive.'</span></a>';
 			print '</td>';
 			print '</tr>';
 		}
@@ -85,6 +85,7 @@ trait CommonSocialNetworks
 		jQuery(".socialnetworklnk").click(function() {
 			console.log("Click on link");
 			toogleSocialNetwork(true);
+			return false;
 		});
 
 		function toogleSocialNetwork(chgCookieState) {
