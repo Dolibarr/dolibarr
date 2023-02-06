@@ -2849,82 +2849,30 @@ class User extends CommonObject
 			$withpictoimg = 0;
 		}
 
-		$result = ''; $label = ''; $companylink = '';
-
-		if (!empty($this->photo)) {
-			$label .= '<div class="photointooltip floatright">';
-			$label .= Form::showphoto('userphoto', $this, 0, 60, 0, 'photoref photowithmargin photologintooltip', 'small', 0, 1); // Force height to 60 so we total height of tooltip can be calculated and collision can be managed
-			$label .= '</div>';
-			//$label .= '<div style="clear: both;"></div>';
+		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'infologin' => $infologin,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
 		}
-
-		// Info Login
-		$label .= '<div class="centpercent">';
-		$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("User").'</u>';
-		$label .= ' '.$this->getLibStatut(4);
-		$label .= '<br><b>'.$langs->trans('Name').':</b> '.dol_string_nohtmltag($this->getFullName($langs, ''));
-		if (!empty($this->login)) {
-			$label .= '<br><b>'.$langs->trans('Login').':</b> '.dol_string_nohtmltag($this->login);
-		}
-		if (!empty($this->job)) {
-			$label .= '<br><b>'.$langs->trans("Job").':</b> '.dol_string_nohtmltag($this->job);
-		}
-		$label .= '<br><b>'.$langs->trans("Email").':</b> '.dol_string_nohtmltag($this->email);
-		if (!empty($this->office_phone) || !empty($this->office_fax) || !empty($this->fax)) {
-			$phonelist = array();
-			if ($this->office_phone) {
-				$phonelist[] = dol_print_phone($this->office_phone, $this->country_code, $this->id, 0, '', '&nbsp', 'phone');
-			}
-			if ($this->office_fax) {
-				$phonelist[] = dol_print_phone($this->office_fax, $this->country_code, $this->id, 0, '', '&nbsp', 'fax');
-			}
-			if ($this->user_mobile) {
-				$phonelist[] = dol_print_phone($this->user_mobile, $this->country_code, $this->id, 0, '', '&nbsp', 'mobile');
-			}
-			$label .= '<br><b>'.$langs->trans('Phone').':</b> '.implode('&nbsp;', $phonelist);
-		}
-		if (!empty($this->admin)) {
-			$label .= '<br><b>'.$langs->trans("Administrator").'</b>: '.yn($this->admin);
-		}
-		if (!empty($this->accountancy_code) || $option == 'accountancy') {
-			$label .= '<br><b>'.$langs->trans("AccountancyCode").'</b>: '.$this->accountancy_code;
-		}
-		$company = '';
+		$label = implode($this->getTooltipContentArray($params));
+		$companylink = '';
 		if (!empty($this->socid)) {	// Add thirdparty for external users
-			$thirdpartystatic = new Societe($db);
+			$thirdpartystatic = new Societe($this->db);
 			$thirdpartystatic->fetch($this->socid);
 			if (empty($hidethirdpartylogo)) {
 				$companylink = ' '.$thirdpartystatic->getNomUrl(2, (($option == 'nolink') ? 'nolink' : '')); // picto only of company
 			}
-			$company = ' ('.$langs->trans("Company").': '.img_picto('', 'company').' '.dol_string_nohtmltag($thirdpartystatic->name).')';
 		}
-		$type = ($this->socid ? $langs->trans("ExternalUser").$company : $langs->trans("InternalUser"));
-		$label .= '<br><b>'.$langs->trans("Type").':</b> '.$type;
-		$label .= '</div>';
-		if ($infologin > 0) {
-			$label .= '<br>';
-			$label .= '<br><u>'.$langs->trans("Session").'</u>';
-			$label .= '<br><b>'.$langs->trans("IPAddress").'</b>: '.dol_string_nohtmltag(getUserRemoteIP());
-			if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY)) {
-				$label .= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (User entity '.$this->entity.')';
-			}
-			$label .= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.dol_string_nohtmltag($_SESSION["dol_authmode"].(empty($dolibarr_main_demo) ? '' : ' (demo)'));
-			$label .= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($this->datelastlogin, "dayhour", 'tzuser');
-			$label .= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($this->datepreviouslogin, "dayhour", 'tzuser');
-			$label .= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.dol_string_nohtmltag($conf->theme);
-			$label .= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.dol_string_nohtmltag($menumanager->name);
-			$s = picto_from_langcode($langs->getDefaultLang());
-			$label .= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.dol_string_nohtmltag(($s ? $s.' ' : '').$langs->getDefaultLang());
-			$label .= '<br><b>'.$langs->trans("Browser").':</b> '.dol_string_nohtmltag($conf->browser->name.($conf->browser->version ? ' '.$conf->browser->version : '').' ('.$_SERVER['HTTP_USER_AGENT'].')');
-			$label .= '<br><b>'.$langs->trans("Layout").':</b> '.dol_string_nohtmltag($conf->browser->layout);
-			$label .= '<br><b>'.$langs->trans("Screen").':</b> '.dol_string_nohtmltag($_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight']);
-			if ($conf->browser->layout == 'phone') {
-				$label .= '<br><b>'.$langs->trans("Phone").':</b> '.$langs->trans("Yes");
-			}
-			if (!empty($_SESSION["disablemodules"])) {
-				$label .= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.dol_string_nohtmltag(join(', ', explode(',', $_SESSION["disablemodules"])));
-			}
-		}
+
 		if ($infologin < 0) {
 			$label = '';
 		}
@@ -2947,19 +2895,6 @@ class User extends CommonObject
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkclose = "";
-		$classfortooltip = 'classfortooltip';
-		$dataparams = '';
-		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			$params = [
-				'id' => $this->id,
-				'objecttype' => $this->element,
-				'infologin' => $infologin,
-				'option' => $option,
-			];
-			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
-		}
 		if (empty($notooltip)) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$langs->load("users");

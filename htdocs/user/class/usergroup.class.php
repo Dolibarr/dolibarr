@@ -105,6 +105,11 @@ class UserGroup extends CommonObject
 
 	private $_tab_loaded = array(); // Array of cache of already loaded permissions
 
+	/**
+	 * @var int all_permissions_are_loaded
+	 */
+	public $all_permissions_are_loaded;
+
 	public $oldcopy; // To contains a clone of this when we need to save old properties of object
 
 	public $fields = array(
@@ -767,13 +772,20 @@ class UserGroup extends CommonObject
 			$withpicto = 0;
 		}
 
-		$result = ''; $label = '';
-
-		$label .= '<div class="centpercent">';
-		$label .= img_picto('', 'group').' <u>'.$langs->trans("Group").'</u><br>';
-		$label .= '<b>'.$langs->trans('Name').':</b> '.$this->name;
-		$label .= '<br><b>'.$langs->trans("Description").':</b> '.$this->note;
-		$label .= '</div>';
+		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
+		}
+		$label = implode($this->getTooltipContentArray($params));
 
 		if ($option == 'permissions') {
 			$url = DOL_URL_ROOT.'/user/group/perms.php?id='.$this->id;
@@ -793,18 +805,6 @@ class UserGroup extends CommonObject
 		}
 
 		$linkclose = "";
-		$classfortooltip = 'classfortooltip';
-		$dataparams = '';
-		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			$params = [
-				'id' => $this->id,
-				'objecttype' => $this->element,
-				'option' => $option,
-			];
-			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
-		}
 		if (empty($notooltip)) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$langs->load("users");
