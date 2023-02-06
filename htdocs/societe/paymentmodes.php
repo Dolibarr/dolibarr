@@ -1907,7 +1907,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 		print $form->selectarray("frstrecur", $tblArraychoice, dol_escape_htmltag(GETPOST('frstrecur', 'alpha') ?GETPOST('frstrecur', 'alpha') : $companybankaccount->frstrecur), 0);
 		print '</td></tr>';
 
-		print '<tr><td>'.$langs->trans("StripeID")." ('src_....')</td>";
+		print '<tr><td>'.$langs->trans("StripeID")." ('pm_...' or 'src_...')</td>";
 		print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.$companypaymentmode->stripe_card_ref.'"></td></tr>';
 
 		print '</table>';
