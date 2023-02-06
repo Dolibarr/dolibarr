@@ -1605,7 +1605,7 @@ class Categorie extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs, $user;
+		global $langs;
 
 		$datas = [];
 
@@ -1629,7 +1629,19 @@ class Categorie extends CommonObject
 		global $langs, $hookmanager;
 
 		$result = '';
-		$label = $langs->trans("ShowCategory").': '.($this->ref ? $this->ref : $this->label);
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
+		}
+		$label = implode($this->getTooltipContentArray($params));
 
 		// Check contrast with background and correct text color
 		$forced_color = 'categtextwhite';
@@ -1637,18 +1649,6 @@ class Categorie extends CommonObject
 			if (colorIsLight($this->color)) {
 				$forced_color = 'categtextblack';
 			}
-		}
-		$classfortooltip = 'classfortooltip';
-		$dataparams = '';
-		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			$params = [
-				'id' => $this->id,
-				'objecttype' => $this->element,
-				'option' => $option,
-			];
-			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
 		}
 		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam ? '?'.$moreparam : ''));
 		$link .= '"'.$dataparams.' title="'.dol_escape_htmltag($label, 1).'" class="'.$classfortooltip.' '.$forced_color.'">';

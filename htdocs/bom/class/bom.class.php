@@ -1121,24 +1121,20 @@ class BOM extends CommonObject
 		}
 
 		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
+		}
 
-		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("BillOfMaterials").'</u>';
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
-		}
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		if (isset($this->label)) {
-			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
-		}
-		if (!empty($this->fk_product) && $this->fk_product > 0) {
-			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-			$product = new Product($db);
-			$resultFetch = $product->fetch($this->fk_product);
-			if ($resultFetch > 0) {
-				$label .= "<br><b>".$langs->trans("Product").'</b>: '.$product->ref.' - '.$product->label;
-			}
-		}
+		$label = implode($this->getTooltipContentArray($params));
 
 
 		$url = DOL_URL_ROOT.'/bom/bom_card.php?id='.$this->id;
@@ -1155,18 +1151,6 @@ class BOM extends CommonObject
 		}
 
 		$linkclose = '';
-		$classfortooltip = 'classfortooltip';
-		$dataparams = '';
-		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			$params = [
-				'id' => $this->id,
-				'objecttype' => $this->element,
-				'option' => $option,
-			];
-			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
-		}
 		if (empty($notooltip)) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowBillOfMaterials");
