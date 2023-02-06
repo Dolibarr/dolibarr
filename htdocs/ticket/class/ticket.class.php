@@ -214,7 +214,7 @@ class Ticket extends CommonObject
 	public $statuts;
 
 	/**
-	 * @var array statuts short labels 
+	 * @var array statuts short labels
 	 */
 	public $statuts_short;
 
