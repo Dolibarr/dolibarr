@@ -191,6 +191,9 @@ if (empty($reshook)) {
 
 			$object->fk_project = $projectid;
 
+            // File transfer
+            $object->copyFilesForTicket();
+
 			$id = $object->create($user);
 			if ($id <= 0) {
 				$error++;
@@ -262,11 +265,6 @@ if (empty($reshook)) {
 						setEventMessages($fichinter->error, null, 'errors');
 					}
 				}
-			}
-
-			if (!$error) {
-				// File transfer
-				$object->copyFilesForTicket();
 			}
 
 			if (!$error) {
@@ -699,6 +697,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withfile = 2;
 	$formticket->withextrafields = 1;
 	$formticket->param = array('origin' => GETPOST('origin'), 'originid' => GETPOST('originid'));
+    $formticket->trackid = 'tic'.$object->id;
 
 	$formticket->showForm(1, 'create', 0, null, $action);
 	/*} elseif ($action == 'edit' && $user->rights->ticket->write && $object->fk_statut < Ticket::STATUS_CLOSED) {
@@ -1411,6 +1410,7 @@ if ($action == 'create' || $action == 'presend') {
 			$formticket->track_id = $object->track_id;
 			$formticket->ref = $object->ref;
 			$formticket->id = $object->id;
+            $formticket->trackid = 'tic'.$object->id;
 
 			$formticket->withfile = 2;
 			$formticket->withcancel = 1;
