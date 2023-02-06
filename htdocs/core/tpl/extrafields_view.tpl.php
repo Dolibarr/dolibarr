@@ -65,6 +65,8 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 	$extrafields_collapse_num = '';
 	$extrafields_collapse_num_old = '';
 	$i = 0;
+
+	// Loop on each extrafield
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $tmpkeyextra => $tmplabelextra) {
 		$i++;
 
@@ -114,6 +116,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			$lastseparatorkeyfound = $tmpkeyextra;
 		} else {
 			$collapse_group = $extrafields_collapse_num.(!empty($object->id) ? '_'.$object->id : '');
+
 			print '<tr class="trextrafields_collapse'.$collapse_group;
 			/*if ($extrafields_collapse_num && $extrafields_collapse_num_old && $extrafields_collapse_num != $extrafields_collapse_num_old) {
 				print ' trextrafields_collapse_new';

@@ -1735,15 +1735,17 @@ abstract class CommonInvoice extends CommonObject
 			$complementaryinfo .= '/30/'.$this->thirdparty->tva_intra;
 		}
 
+		$bankaccount = new Account($this->db);
+
 		// Header
 		$s = '';
 		$s .= "SPC\n";
 		$s .= "0200\n";
 		$s .= "1\n";
+		// Info seller
 		if ($this->fk_account > 0) {
 			// Bank BAN if country is LI or CH
-			// TODO Add
-			$bankaccount = new Account($this->db);
+			// TODO Add test on bank iban
 			$bankaccount->fetch($this->fk_account);
 			$s .= $bankaccount->iban."\n";
 		} else {

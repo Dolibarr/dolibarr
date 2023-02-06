@@ -576,3 +576,81 @@ DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
 -- DROP TABLE tmp_bank2;
 -- CREATE TABLE tmp_bank2 SELECT b.rowid, b.amount, p.rowid as pid, p.amount as pamount, p.multicurrency_amount as pmulticurrencyamount FROM llx_bank as b INNER JOIN llx_bank_url as bu ON bu.fk_bank=b.rowid AND bu.type = 'payment_supplier' INNER JOIN llx_paiementfourn as p ON bu.url_id = p.rowid WHERE p.multicurrency_amount <> 0 AND p.multicurrency_amount <> p.amount;
 -- UPDATE llx_bank as b SET b.amount_main_currency = (SELECT tb.pamount FROM tmp_bank2 as tb WHERE tb.rowid = b.rowid) WHERE b.amount_main_currency IS NULL;
+
+
+-- Delete duplicate entries into llx_c_transport_mode
+-- VMYSQL4.1 DELETE T1 FROM llx_c_transport_mode as T1, llx_c_transport_mode as T2 where T1.entity = T2.entity AND T1.code = T2.code and T1.rowid > T2.rowid;
+-- VPGSQL8.2 DELETE FROM llx_c_transport_mode as T1 WHERE rowid NOT IN (SELECT min(rowid) FROM llx_c_transport_mode GROUP BY code, entity);
+
+-- Delete department of regions linked to no coutry, then delete region with no country
+DELETE FROM llx_c_departements WHERE fk_region <> 0 AND fk_region IN (select code_region FROM llx_c_regions WHERE fk_pays NOT IN (select rowid from llx_c_country));
+DELETE from llx_c_regions WHERE fk_pays NOT IN (select rowid from llx_c_country);
+
+
+-- Drop duplicate indexes not named correctly and create the only one we should have
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combination;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_2;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_3;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_4;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_5;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_6;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_7;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_8;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_9;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_10;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_11;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_12;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_13;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_14;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_15;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_16;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_17;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_18;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_19;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_20;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_21;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_22;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_23;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_24;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_25;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_26;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_27;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_28;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_29;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_30;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_31;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_32;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_33;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_34;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_35;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_36;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_37;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_38;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_39;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_40;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_41;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_42;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_43;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_44;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_45;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_46;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_47;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_48;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_49;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_50;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_51;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_52;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_53;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_54;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_55;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_56;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_57;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_58;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_59;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_60;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_61;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_62;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_63;
+ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE INDEX uk_prod_att_comb_price_level(fk_product_attribute_combination, fk_price_level);
+
+

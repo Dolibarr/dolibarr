@@ -23,6 +23,8 @@
  *       \brief      Show page to select language. This is done only for a first installation.
  *					 For a reinstall this page redirect to page check.php
  */
+
+define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
 include_once '../core/class/html.form.class.php';
 include_once '../core/class/html.formadmin.class.php';
