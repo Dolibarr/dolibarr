@@ -501,7 +501,7 @@ if ((!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VE
 
 // Creation of a token against CSRF vulnerabilities
 if (!defined('NOTOKENRENEWAL') && !defined('NOSESSION')) {
-	// No token renewal on .css.php, .js.php and .json.php
+	// No token renewal on .css.php, .js.php and .json.php (even if the NOTOKENRENEWAL was not provided)
 	if (!preg_match('/\.(css|js|json)\.php$/', $_SERVER["PHP_SELF"])) {
 		// Rolling token at each call ($_SESSION['token'] contains token of previous page)
 		if (isset($_SESSION['newtoken'])) {
@@ -1589,7 +1589,8 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		print '<meta name="robots" content="'.($disablenoindex ? 'index' : 'noindex').($disablenofollow ? ',follow' : ',nofollow').'">'."\n"; // Do not index
 		print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n"; // Scale for mobile device
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
-		print '<meta name="anti-csrf-token" content="'.newToken().'">'."\n";
+		print '<meta name="anti-csrf-newtoken" content="'.newToken().'">'."\n";
+		print '<meta name="anti-csrf-currenttoken" content="'.currentToken().'">'."\n";
 		if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
 			print '<meta name="MAIN_FEATURES_LEVEL" content="'.getDolGlobalInt('MAIN_FEATURES_LEVEL').'">'."\n";
 		}

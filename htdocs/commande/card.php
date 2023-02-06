@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2022	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2023	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013	Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2012-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador      	<csalvador@gpcsolutions.fr>
@@ -660,6 +660,10 @@ if (empty($reshook)) {
 		$price_ht_devise = '';
 		$price_ttc = '';
 		$price_ttc_devise = '';
+		$pu_ht = '';
+		$pu_ttc = '';
+		$pu_ht_devise = '';
+		$pu_ttc_devise  = '';
 
 		if (GETPOST('price_ht') !== '') {
 			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
