@@ -142,9 +142,6 @@ if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) {
 $TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
 
 $result = restrictedArea($user, 'agenda', $object->id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
-if ($user->socid && $socid) {
-	$result = restrictedArea($user, 'societe', $socid);
-}
 
 
 /*
