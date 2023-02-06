@@ -101,6 +101,7 @@ if (isModEnabled('stripe')) {
 	$stripecu = $stripe->getStripeCustomerAccount($object->id, $servicestatus, $site_account); // Get remote Stripe customer 'cus_...' (no remote access to Stripe here)
 }
 
+$error = 0;
 
 
 /*
@@ -128,7 +129,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update') {
-		// Modification
+		// Update the bank account
 		if (!GETPOST('label', 'alpha') || !GETPOST('bank', 'alpha')) {
 			if (!GETPOST('label', 'alpha')) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
@@ -154,6 +155,8 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			$companybankaccount->old = dol_clone($companybankaccount);
+
 			$companybankaccount->socid           = $object->id;
 
 			$companybankaccount->bank            = GETPOST('bank', 'alpha');
@@ -193,6 +196,12 @@ if (empty($reshook)) {
 					$companybankaccount->setAsDefault($id); // This will make sure there is only one default rib
 				}
 
+				if ($companypaymentmode->old->stripe_card_ref != $companypaymentmode->stripe_card_ref) {
+					if ($companybankaccount->old->iban != $companybankaccount->iban) {
+						// TODO If we modified the iban, we must also update the pm_ on Stripe side, or break the link completely ?
+					}
+				}
+
 				$url = $_SERVER["PHP_SELF"].'?socid='.$object->id;
 				header('Location: '.$url);
 				exit;
@@ -201,7 +210,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'updatecard') {
-		// Modification
+		// Update credit card
 		if (!GETPOST('label', 'alpha') || !GETPOST('proprio', 'alpha') || !GETPOST('exp_date_month', 'alpha') || !GETPOST('exp_date_year', 'alpha')) {
 			if (!GETPOST('label', 'alpha')) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
@@ -220,6 +229,8 @@ if (empty($reshook)) {
 
 		$companypaymentmode->fetch($id);
 		if (!$error) {
+			$companybankaccount->old = dol_clone($companybankaccount);
+
 			$companypaymentmode->fk_soc          = $object->id;
 
 			$companypaymentmode->bank            = GETPOST('bank', 'alpha');
@@ -247,6 +258,12 @@ if (empty($reshook)) {
 					$companypaymentmode->setAsDefault($id); // This will make sure there is only one default rib
 				}
 
+				if ($companypaymentmode->old->stripe_card_ref != $companypaymentmode->stripe_card_ref) {
+					if ($companybankaccount->old->number != $companybankaccount->number) {
+						// TODO If we modified the card, we must also update the pm_ on Stripe side, or break the link completely ?
+					}
+				}
+
 				$url = $_SERVER["PHP_SELF"].'?socid='.$object->id;
 				header('Location: '.$url);
 				exit;
@@ -254,6 +271,7 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Add bank account
 	if ($action == 'add') {
 		$error = 0;
 
@@ -346,6 +364,7 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Add credit card
 	if ($action == 'addcard') {
 		$error = 0;
 
@@ -426,6 +445,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_deletecard' && GETPOST('confirm', 'alpha') == 'yes') {
+		// Delete the credi card
 		$companypaymentmode = new CompanyPaymentMode($db);
 		if ($companypaymentmode->fetch($ribid ? $ribid : $id)) {
 			// TODO This is currently done at bottom of page instead of asking confirm
@@ -452,6 +472,7 @@ if (empty($reshook)) {
 		}
 	}
 	if ($action == 'confirm_delete' && GETPOST('confirm', 'alpha') == 'yes') {
+		// Delete the bank account
 		$companybankaccount = new CompanyBankAccount($db);
 		if ($companybankaccount->fetch($ribid ? $ribid : $id)) {
 			// TODO This is currently done at bottom of page instead of asking confirm
@@ -516,6 +537,7 @@ if (empty($reshook)) {
 			}
 		}
 		if ($action == 'synccardtostripe') {
+			// Create the credit card on Stripe
 			$companypaymentmode = new CompanyPaymentMode($db);
 			$companypaymentmode->fetch($id);
 
@@ -543,6 +565,7 @@ if (empty($reshook)) {
 			}
 		}
 		if ($action == 'syncsepatostripe') {
+			// Create the bank account on Stripe side
 			$companypaymentmode = new CompanyPaymentMode($db);	// Get record in llx_societe_rib
 			$companypaymentmode->fetch($id);
 
@@ -702,6 +725,7 @@ if (empty($reshook)) {
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
 		} elseif ($action == 'deletecard' && $source) {
+			// Delete the credit card on Stripe side
 			try {
 				if (preg_match('/pm_/', $source)) {
 					$payment_method = \Stripe\PaymentMethod::retrieve($source, array("stripe_account" => $stripeacc));
@@ -733,6 +757,7 @@ if (empty($reshook)) {
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
 		} elseif ($action == 'delete' && $source) {
+			// Delete the bank account on Stripe side
 			try {
 				if (preg_match('/pm_/', $source)) {
 					$payment_method = \Stripe\PaymentMethod::retrieve($source, array("stripe_account" => $stripeacc));
@@ -1905,7 +1930,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 		print $form->selectarray("frstrecur", $tblArraychoice, dol_escape_htmltag(GETPOST('frstrecur', 'alpha') ?GETPOST('frstrecur', 'alpha') : $companybankaccount->frstrecur), 0);
 		print '</td></tr>';
 
-		print '<tr><td>'.$langs->trans("StripeID")." ('src_....')</td>";
+		print '<tr><td>'.$langs->trans("StripeID")." ('pm_...' or 'src_...')</td>";
 		print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.$companypaymentmode->stripe_card_ref.'"></td></tr>';
 
 		print '</table>';
@@ -1952,7 +1977,7 @@ if ($socid && $action == 'editcard' && $permissiontoaddupdatepaymentinformation)
 	print '<tr><td>'.$langs->trans("CVN").'</td>';
 	print '<td><input size="8" type="text" name="cvn" value="'.$companypaymentmode->cvn.'"></td></tr>';
 
-	print '<tr><td>'.$langs->trans("StripeID")." ('card_....')</td>";
+	print '<tr><td>'.$langs->trans("StripeID")." ('pm_... ir card_....')</td>";
 	print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.$companypaymentmode->stripe_card_ref.'"></td></tr>';
 
 	print '</table>';

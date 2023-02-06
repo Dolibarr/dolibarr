@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2011-2018 Philippe Grand	     <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2023 Philippe Grand	     <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry	     <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García         <marcosgdf@gmail.com>
  *
@@ -847,7 +847,7 @@ class Delivery extends CommonObject
 				$line->product_type		= $obj->fk_product_type;
 				$line->fk_origin_line = $obj->fk_origin_line;
 
-				$line->price = $obj->price;
+				$line->price = $obj->subprice;
 				$line->total_ht = $obj->total_ht;
 
 				// units
