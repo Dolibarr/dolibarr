@@ -68,7 +68,8 @@ create table llx_propal
   
   model_pdf				varchar(255),					-- last template used to generate main document
   last_main_doc			varchar(255),					-- relative filepath+filename of last main generated document
-  
+  model_pdf_pos_sign				varchar(10),
+
   date_livraison		date DEFAULT NULL,				-- delivery date
   fk_shipping_method    integer,                        -- shipping method id
   fk_warehouse		    integer DEFAULT NULL,           -- warehouse id
