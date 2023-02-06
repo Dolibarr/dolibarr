@@ -15,7 +15,7 @@ Following changes may create regressions for some external modules, but were nec
 * The method "nb_expedition()" has been renamed into "countNbOfShipments()" 
 * Revert default type of hooks. Default is now 'addreplace' hooks (and exception become 'output' hooks, that become deprecated).
 * Deprecated property libelle removed from entrepot class.
-
+* The type 'text' in ->fields property dos not accept html content anymore. Use the type 'html' for that.
 
 
 ***** ChangeLog for 17.0.0 compared to 16.0.0 *****
