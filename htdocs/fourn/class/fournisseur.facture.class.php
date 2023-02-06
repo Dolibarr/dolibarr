@@ -2821,47 +2821,21 @@ class FactureFournisseur extends CommonInvoice
 		if ($this->type == self::TYPE_DEPOSIT) {
 			$picto .= 'd'; // Deposit invoice
 		}
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+			'moretitle' => $moretitle,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
+		}
 
-		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("SupplierInvoice").'</u>';
-		if ($this->type == self::TYPE_REPLACEMENT) {
-			$label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceReplace").'</u>';
-		} elseif ($this->type == self::TYPE_CREDIT_NOTE) {
-			$label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
-		} elseif ($this->type == self::TYPE_DEPOSIT) {
-			$label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
-		}
-		if (isset($this->status)) {
-			$alreadypaid = -1;
-			if (isset($this->alreadypaid)) {
-				$alreadypaid = $this->alreadypaid;
-			}
-
-			$label .= ' '.$this->getLibStatut(5, $alreadypaid);
-		}
-		if (!empty($this->ref)) {
-			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		}
-		if (!empty($this->ref_supplier)) {
-			$label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
-		}
-		if (!empty($this->label)) {
-			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
-		}
-		if (!empty($this->date)) {
-			$label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
-		}
-		if (!empty($this->total_ht)) {
-			$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-		}
-		if (!empty($this->total_tva)) {
-			$label .= '<br><b>'.$langs->trans('AmountVAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-		}
-		if (!empty($this->total_ttc)) {
-			$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
-		}
-		if ($moretitle) {
-			$label .= ' - '.$moretitle;
-		}
+		$label = implode($this->getTooltipContentArray($params));
 
 		$ref = $this->ref;
 		if (empty($ref)) {
@@ -2869,19 +2843,6 @@ class FactureFournisseur extends CommonInvoice
 		}
 
 		$linkclose = '';
-		$classfortooltip = 'classfortooltip';
-		$dataparams = '';
-		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			$params = [
-				'id' => $this->id,
-				'objecttype' => $this->element,
-				'option' => $option,
-				'moretitle' => $moretitle,
-			];
-			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
-		}
 		if (empty($notooltip)) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowSupplierInvoice");

@@ -2607,7 +2607,7 @@ class Societe extends CommonObject
 	{
 		global $conf, $langs, $user;
 
-		$langs->loadLangs(['companies, commercial']);
+		$langs->loadLangs(['companies', 'commercial']);
 
 		$datas = [];
 
@@ -2620,9 +2620,6 @@ class Societe extends CommonObject
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			return ['optimize' => $langs->trans("ShowCompany")];
 		}
-
-		$label = '';
-		$label2 = '';
 
 		if (!empty($this->logo) && class_exists('Form')) {
 			$photo = '<div class="photointooltip floatright">';
@@ -2787,122 +2784,45 @@ class Societe extends CommonObject
 			$name .= ' ('.$this->name_alias.')';
 		}
 
-		$result = ''; $label = ''; $label2 = '';
-		$linkstart = ''; $linkend = '';
-
-		if (!empty($this->logo) && class_exists('Form')) {
-			$label .= '<div class="photointooltip floatright">';
-			$label .= Form::showphoto('societe', $this, 0, 40, 0, 'photoref', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
-			$label .= '</div>';
-			//$label .= '<div style="clear: both;"></div>';
-		} elseif (!empty($this->logo_squarred) && class_exists('Form')) {
-			/*$label.= '<div class="photointooltip">';
-			$label.= Form::showphoto('societe', $this, 0, 40, 0, 'photowithmargin', 'mini', 0);	// Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
-			$label.= '</div><div style="clear: both;"></div>';*/
+		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
 		}
-
-		$label .= '<div class="centpercent">';
+		$label = implode($this->getTooltipContentArray($params));
+		$linkstart = '';
+		$linkend = '';
 
 		if ($option == 'customer' || $option == 'compta' || $option == 'category') {
-			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Customer").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
 		} elseif ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
-			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Prospect").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
 		} elseif ($option == 'supplier' || $option == 'category_supplier') {
-			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Supplier").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
 		} elseif ($option == 'agenda') {
-			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$this->id;
 		} elseif ($option == 'project') {
-			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
 		} elseif ($option == 'margin') {
-			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
 		} elseif ($option == 'contact') {
-			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/contact.php?socid='.$this->id;
 		} elseif ($option == 'ban') {
-			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->id;
 		}
 
 		// By default
 		if (empty($linkstart)) {
-			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$this->id;
 		}
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
-		}
-		if (isset($this->client) && isset($this->fournisseur)) {
-			$label .= ' &nbsp; ';
-			$label .= $this->getTypeUrl(1);
-		}
-
-		$label .= '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag($this->name);
-		if (!empty($this->name_alias)) {
-			$label .= ' ('.dol_escape_htmltag($this->name_alias).')';
-		}
-
-		if ($this->email) {
-			$label .= '<br>'.img_picto('', 'email', 'class="pictofixedwidth"').$this->email;
-		}
-		if (!empty($this->phone) || !empty($this->fax)) {
-			$phonelist = array();
-			if ($this->phone) {
-				$phonelist[] = dol_print_phone($this->phone, $this->country_code, $this->id, 0, '', '&nbsp', 'phone');
-			}
-			if ($this->fax) {
-				$phonelist[] = dol_print_phone($this->fax, $this->country_code, $this->id, 0, '', '&nbsp', 'fax');
-			}
-			$label .= '<br>'.implode('&nbsp;', $phonelist);
-		}
-
-		if (!empty($this->address)) {
-			$label2 .= '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs); // Address + country
-		} elseif (!empty($this->country_code)) {
-			$label2 .= '<br><b>'.$langs->trans('Country').':</b> '.$this->country_code;
-		}
-		if (!empty($this->tva_intra) || (!empty($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP) && strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'vatnumber') !== false)) {
-			$label2 .= '<br><b>'.$langs->trans('VATIntra').':</b> '.dol_escape_htmltag($this->tva_intra);
-		}
-
-		if (!empty($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP)) {
-			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid1') !== false && $langs->trans('ProfId1'.$this->country_code) != '-') {
-				$label2 .= '<br><b>'.$langs->trans('ProfId1'.$this->country_code).':</b> '.$this->idprof1;
-			}
-			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid2') !== false && $langs->trans('ProfId2'.$this->country_code) != '-') {
-				$label2 .= '<br><b>'.$langs->trans('ProfId2'.$this->country_code).':</b> '.$this->idprof2;
-			}
-			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid3') !== false && $langs->trans('ProfId3'.$this->country_code) != '-') {
-				$label2 .= '<br><b>'.$langs->trans('ProfId3'.$this->country_code).':</b> '.$this->idprof3;
-			}
-			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid4') !== false && $langs->trans('ProfId4'.$this->country_code) != '-') {
-				$label2 .= '<br><b>'.$langs->trans('ProfId4'.$this->country_code).':</b> '.$this->idprof4;
-			}
-			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid5') !== false && $langs->trans('ProfId5'.$this->country_code) != '-') {
-				$label2 .= '<br><b>'.$langs->trans('ProfId5'.$this->country_code).':</b> '.$this->idprof5;
-			}
-			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid6') !== false && $langs->trans('ProfId6'.$this->country_code) != '-') {
-				$label2 .= '<br><b>'.$langs->trans('ProfId6'.$this->country_code).':</b> '.$this->idprof6;
-			}
-		}
-		if (!empty($this->code_client) && ($this->client == 1 || $this->client == 3)) {
-			$label2 .= '<br><b>'.$langs->trans('CustomerCode').':</b> '.$this->code_client;
-		}
-		if (!empty($this->code_fournisseur) && $this->fournisseur) {
-			$label2 .= '<br><b>'.$langs->trans('SupplierCode').':</b> '.$this->code_fournisseur;
-		}
-		if (isModEnabled('accounting') && ($this->client == 1 || $this->client == 3)) {
-			$label2 .= '<br><b>'.$langs->trans('CustomerAccountancyCode').':</b> '.($this->code_compta ? $this->code_compta : $this->code_compta_client);
-		}
-		if (isModEnabled('accounting') && $this->fournisseur) {
-			$label2 .= '<br><b>'.$langs->trans('SupplierAccountancyCode').':</b> '.$this->code_compta_fournisseur;
-		}
-		$label .= ($label2 ? '<br>'.$label2 : '').'</div>';
 
 		// Add type of canvas
 		$linkstart .= (!empty($this->canvas) ? '&canvas='.$this->canvas : '');
@@ -2917,18 +2837,6 @@ class Societe extends CommonObject
 		$linkstart .= '"';
 
 		$linkclose = '';
-		$classfortooltip = 'classfortooltip';
-		$dataparams = '';
-		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			$params = [
-				'id' => $this->id,
-				'objecttype' => $this->element,
-				'option' => $option,
-			];
-			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
-		}
 		if (empty($notooltip)) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowCompany");
