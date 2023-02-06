@@ -918,6 +918,18 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->actionmsg .= "\n".$langs->transnoentities("NewUser").': '.$langs->trans("None");
 			}
 			$object->sendtoid = 0;
+		} elseif ($action == 'USER_IBANMODIFY') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "users"));
+			$object->fetch_user($object->userid);
+			$object=$object->user;
+			$object->actiontypecode = 'AC_OTH_AUTO';
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("EventUserIbanModified");
+			}
+			$object->actionmsg = $langs->transnoentities("EventUserIbanModified");
+			$object->sendPersonalEmail($user, $langs->transnoentities("EventUserIbanModifiedSubject"), $langs->transnoentities("EventUserIbanModifiedHTML"));
+			$object->sendtoid = 0;
 		} else {
 			// TODO Merge all previous cases into this generic one
 			// $action = PASSWORD, BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, CONTACT_SENTBYMAIL, RECRUITMENTCANDIDATURE_MODIFY, ...
