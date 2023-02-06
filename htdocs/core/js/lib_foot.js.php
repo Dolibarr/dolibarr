@@ -95,12 +95,7 @@ if (empty($conf->dol_no_mouse_hover)) {
 					elem.tooltip("option","content",response);
 				}
 			});
-			console.log(event);
 		}
-	});
-	jQuery(".classforajaxtooltip").mouseout(function(){
-		console.log("hide ajax tooltip");
-		$(this).tooltip("close");
 	});
 	';
 }
