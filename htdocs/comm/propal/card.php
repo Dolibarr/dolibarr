@@ -132,7 +132,6 @@ $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown
 // Security check
 if (!empty($user->socid)) {
 	$socid = $user->socid;
-	$object->id = $user->socid;
 }
 restrictedArea($user, 'propal', $object->id);
 
