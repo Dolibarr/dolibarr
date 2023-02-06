@@ -99,12 +99,12 @@ function first_execution() {
 function check_events() {
 	if (Notification.permission === "granted")
 	{
-		var newToken = 'notrequired';
+		var currentToken = 'notrequired';
 		const allMeta = document.getElementsByTagName("meta");
 		for (let i = 0; i < allMeta.length; i++) {
 			if (allMeta[i].getAttribute("name") == 'anti-csrf-currenttoken') {
-				newToken = allMeta[i].getAttribute('content');
-				console.log("newToken in page = "+newToken);
+				currentToken = allMeta[i].getAttribute('content');
+				console.log("currentToken in page = "+currentToken);
 			}
 		}
 		time_js_next_test += time_auto_update;
@@ -113,7 +113,7 @@ function check_events() {
 		$.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php'; ?>", {
 			type: "post",   // Usually post or get
 			async: true,
-			data: { time_js_next_test: time_js_next_test, forcechecknow: 1, token: newToken },
+			data: { time_js_next_test: time_js_next_test, forcechecknow: 1, token: currentToken },
 			dataType: "json",
 			success: function (result) {
 				//console.log(result);
@@ -181,7 +181,7 @@ function check_events() {
 					$.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php?action=stopreminder&listofreminderids='; ?>"+listofreminderids, {
 						type: "POST",   // Usually post or get
 						async: true,
-						data: { time_js_next_test: time_js_next_test, token: newToken }
+						data: { time_js_next_test: time_js_next_test, token: currentToken }
 					});
 				} else {
 					console.log("No reminder to do found, next search at "+time_js_next_test);

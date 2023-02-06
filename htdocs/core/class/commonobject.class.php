@@ -831,7 +831,7 @@ abstract class CommonObject
 		}
 		if ($this->element == 'contact') {
 			$contactid = $this->id;
-			$thirdpartyid = empty($object->fk_soc) ? 0 : $object->fk_soc;
+			$thirdpartyid = empty($this->fk_soc) ? 0 : $this->fk_soc;
 		}
 		if ($this->element == 'user') {
 			$contactid = $this->contact_id;
