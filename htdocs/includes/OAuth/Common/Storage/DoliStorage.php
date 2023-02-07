@@ -126,6 +126,9 @@ class DoliStorage implements TokenStorageInterface
 			$sql.= " SET token = '".$this->db->escape($serializedToken)."'";
 			$sql.= " WHERE rowid = ".((int) $obj['rowid']);
 			$resql = $this->db->query($sql);
+			if (!$resql) {
+				dol_print_error($this->db);
+			}
 		} else {
 			// save
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, token, entity, datec)";
@@ -133,6 +136,9 @@ class DoliStorage implements TokenStorageInterface
 			$sql .= " '".$this->db->idate(dol_now())."'";
 			$sql .= ")";
 			$resql = $this->db->query($sql);
+			if (!$resql) {
+				dol_print_error($this->db);
+			}
 		}
 		//print $sql;
 

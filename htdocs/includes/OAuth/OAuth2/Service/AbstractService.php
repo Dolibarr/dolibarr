@@ -56,8 +56,8 @@ abstract class AbstractService extends BaseAbstractService implements ServiceInt
         $this->stateParameterInAuthUrl = $stateParameterInAutUrl;
 
         foreach ($scopes as $scope) {
-            if (!$this->isValidScope($scope)) {
-                throw new InvalidScopeException('Scope ' . $scope . ' is not valid for service ' . get_class($this));
+        	if (!$this->isValidScope($scope)) {
+        		throw new InvalidScopeException('Scope ' . $scope . ' is not valid for service ' . get_class($this));
             }
         }
 

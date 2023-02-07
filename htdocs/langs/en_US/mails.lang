@@ -179,4 +179,3 @@ RecordCreatedByEmailCollector=Record created by the Email Collector %s from emai
 DefaultBlacklistMailingStatus=Default value for field '%s' when creating a new contact 
 DefaultStatusEmptyMandatory=Empty but mandatory
 WarningLimitSendByDay=WARNING: The setup or contract of your instance limits your number of emails per day to <b>%s</b>. Trying to send more may result in having your instance slow down or suspended. Please contact your support if you need a higher quota.
-EMailsInGoingDesc=Incoming emails are managed by the module %s. You must enable and configure it if you need to support ingoing emails.
