@@ -239,7 +239,7 @@ class Ticket extends CommonObject
 	public $oldcopy;
 
 	/**
-	 * @var array array of TicketsLine
+	 * @var TicketsLine[] array of TicketsLine
 	 */
 	public $lines;
 
