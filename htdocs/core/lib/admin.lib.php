@@ -2054,6 +2054,11 @@ function email_admin_prepare_head()
 	$head[$h][2] = 'templates';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/admin/mails_ingoing.php";
+	$head[$h][1] = $langs->trans("InGoingEmailSetup", $langs->transnoentitiesnoconv("EMailing"));
+	$head[$h][2] = 'common_ingoing';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'email_admin', 'remove');
 
 	return $head;
