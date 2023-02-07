@@ -889,11 +889,7 @@ class FormTicket
 			dol_delete_dir_recursive($upload_dir);
 		}
 
-		if (!empty($this->trackid)) { // TODO Always use trackid (ticXXX) instead of track_id (abcd123)
-			$keytoavoidconflict = '-'.$this->trackid;
-		} else {
-			$keytoavoidconflict = empty($this->track_id) ? '' : '-'.$this->track_id;
-		}
+		$keytoavoidconflict = empty($this->trackid) ? '' : '-'.$this->trackid; // this->trackid must be defined
 		unset($_SESSION["listofpaths".$keytoavoidconflict]);
 		unset($_SESSION["listofnames".$keytoavoidconflict]);
 		unset($_SESSION["listofmimes".$keytoavoidconflict]);
@@ -952,11 +948,7 @@ class FormTicket
 		$listofnames = array();
 		$listofmimes = array();
 
-		if (!empty($this->trackid)) {
-			$keytoavoidconflict = '-'.$this->trackid;
-		} else {
-			$keytoavoidconflict = empty($this->track_id) ? '' : '-'.$this->track_id; // track_id instead of trackid
-		}
+		$keytoavoidconflict = empty($this->trackid) ? '' : '-'.$this->trackid; // this->trackid must be defined
 
 		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
 			if (!empty($arraydefaultmessage->joinfiles) && !empty($this->param['fileinit']) && is_array($this->param['fileinit'])) {
