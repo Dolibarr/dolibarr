@@ -2348,3 +2348,4 @@ AllowExternalDownload=Allow external download (without login, using a shared lin
 DeadlineDayVATSubmission=Deadline day for vat submission on the next month
 MaxNumberOfAttachementOnForms=Max number of joinded files in a form
 IfDefinedUseAValueBeetween=If defined, use a value between %s and %s
+MAIN_IMAP_USE_PHPIMAP=Use the PHP-IMAP library for IMAP instead of native PHP IMAP. This also allow the use of OAuth2 connection for IMAP.
