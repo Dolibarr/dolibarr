@@ -289,6 +289,9 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 		print '<tr class="liste_titre">';
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<th>&nbsp;</th>';
+		}
 		print '<th>'.$langs->trans("Ref").'</th>';
 		print '<th>'.$langs->trans("Label").'</th>';
 		print '<th class="center">'.$langs->trans("MembersNature").'</th>';
@@ -297,7 +300,9 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<th class="center">'.$langs->trans("CanEditAmountShort").'</th>';
 		print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
 		print '<th class="center">'.$langs->trans("Status").'</th>';
-		print '<th>&nbsp;</th>';
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<th>&nbsp;</th>';
+		}
 		print "</tr>\n";
 
 		$membertype = new AdherentType($db);
@@ -333,6 +338,13 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				}
 			} else {
 				print '<tr class="oddeven">';
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					if ($user->rights->adherent->configurer) {
+						print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+					} else {
+						print '<td class="right">&nbsp;</td>';
+					}
+				}
 				print '<td class="nowraponall">';
 				print $membertype->getNomUrl(1);
 				//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
@@ -352,10 +364,12 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				print '<td class="center">'.yn($objp->caneditamount).'</td>';
 				print '<td class="center">'.yn($objp->vote).'</td>';
 				print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
-				if ($user->rights->adherent->configurer) {
-					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
-				} else {
-					print '<td class="right">&nbsp;</td>';
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					if ($user->rights->adherent->configurer) {
+						print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+					} else {
+						print '<td class="right">&nbsp;</td>';
+					}
 				}
 				print "</tr>";
 			}
@@ -708,13 +722,18 @@ if ($rowid > 0) {
 			print "</tr>\n";
 
 			print '<tr class="liste_titre">';
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
+			}
 			print_liste_field_titre("NameSlashCompany", $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "d.login", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("MemberNature", $_SERVER["PHP_SELF"], "d.morphy", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "d.email", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.statut,d.datefin", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", $param, "", 'align="center"', $sortfield, $sortorder);
-			print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
+			}
 			print "</tr>\n";
 
 			$adh = new Adherent($db);
@@ -732,7 +751,17 @@ if ($rowid > 0) {
 				$adh->statut = $objp->status;
 
 				print '<tr class="oddeven">';
-
+				// Actions
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="center">';
+					if ($user->hasRight('adherent', 'creer')) {
+						print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
+					}
+					if ($user->hasRight('adherent', 'supprimer')) {
+						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
+					}
+					print "</td>";
+				}
 				// Lastname
 				if ($objp->company != '') {
 					print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user", 'class="paddingright"').$adh->getFullName($langs, 0, -1, 20).' / '.dol_trunc($objp->company, 12).'</a></td>'."\n";
@@ -785,15 +814,16 @@ if ($rowid > 0) {
 				}
 
 				// Actions
-				print '<td class="center">';
-				if ($user->hasRight('adherent', 'creer')) {
-					print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="center">';
+					if ($user->hasRight('adherent', 'creer')) {
+						print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
+					}
+					if ($user->hasRight('adherent', 'supprimer')) {
+						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
+					}
+					print "</td>";
 				}
-				if ($user->hasRight('adherent', 'supprimer')) {
-					print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
-				}
-				print "</td>";
-
 				print "</tr>\n";
 				$i++;
 			}

@@ -2867,13 +2867,13 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 		// good
 		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.floatval($task->progress).'%" title="'.floatval($task->progress).'%">';
 		if (!empty($task->progress)) {
-			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.floatval($progressCalculated / $task->progress * 100).'%" title="'.floatval($progressCalculated).'%"></div>';
+			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.floatval($progressCalculated / (floatval($task->progress) === 0 ? 1 : $task->progress) * 100).'%" title="'.floatval($progressCalculated).'%"></div>';
 		}
 		$out .= '        </div>';
 	} else {
 		// bad
 		$out .= '        <div class="progress-bar progress-bar-consumed-late" style="width: '.floatval($progressCalculated).'%" title="'.floatval($progressCalculated).'%">';
-		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.($task->progress ? floatval($task->progress / $progressCalculated * 100).'%' : '1px').'" title="'.floatval($task->progress).'%"></div>';
+		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.($task->progress ? floatval($task->progress / (floatval($progressCalculated) === 0 ? 1 : $progressCalculated) * 100).'%' : '1px').'" title="'.floatval($task->progress).'%"></div>';
 		$out .= '        </div>';
 	}
 	$out .= '    </div>';

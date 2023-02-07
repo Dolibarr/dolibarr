@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -64,6 +64,21 @@ abstract class CommonDocGenerator
 	 * @var string	The name of constant to use to scan ODT files (Exemple: 'COMMANDE_ADDON_PDF_ODT_PATH')
 	 */
 	public $scandir;
+
+	/**
+	 * @var string model name
+	 */
+	public $name;
+
+	/**
+	 * @var string model description (short text)
+	 */
+	public $description;
+
+	/**
+	 * @var array
+	 */
+	public $format;
 
 	public $page_hauteur;
 	public $page_largeur;
@@ -1104,7 +1119,7 @@ abstract class CommonDocGenerator
 	public function getColumnContentXStart($colKey)
 	{
 		$colDef = $this->cols[$colKey];
-		return  (isset($colDef['xStartPos']) ? $colDef['xStartPos'] : 0) + $colDef['content']['padding'][3];
+		return (isset($colDef['xStartPos']) ? $colDef['xStartPos'] : 0) + $colDef['content']['padding'][3];
 	}
 
 	/**
