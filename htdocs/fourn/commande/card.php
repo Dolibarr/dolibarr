@@ -1631,7 +1631,6 @@ if ($action == 'create') {
 						console.log("We have changed the company - Reload page");
 						// reload page
 						$("input[name=action]").val("create");
-						$("input[name=socid]").val($("#socid").val());
 						$("form[name=add]").submit();
 					});
 				});
