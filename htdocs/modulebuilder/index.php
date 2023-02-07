@@ -1994,8 +1994,9 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 	$existRight = 0;
 	$allObject = array();
 
-	$nbOfPermissions = count($permissions);
-	for ($i =0; $i<$nbOfPermissions; $i++) {
+	$countPerms = count($permissions);
+
+	for ($i =0; $i<$countPerms; $i++) {
 		if ($permissions[$i][4] == $objectForPerms) {
 			$counter++;
 			if (count($permsForObject) < 3) {
@@ -2004,9 +2005,10 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 		}
 		$allObject[] = $permissions[$i][4];
 	}
-	$nbOfpermsInObj = count($permsForObject);
+
 	// check if label of object already exists
-	for ($j = 0; $j<$nbOfpermsInObj; $j++) {
+	$countPermsObj = count($permsForObject);
+	for ($j = 0; $j<$countPermsObj; $j++) {
 		if (in_array($label, $permsForObject[$j])) {
 			$existRight++;
 			setEventMessages($langs->trans("ErrorExistingPermission", $langs->transnoentities($label), $langs->transnoentities($objectForPerms)), null, 'errors');
@@ -2037,6 +2039,7 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 		";
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 		if (!$existRight) {
+			//var_dump(1);exit;
 			dolReplaceInFile($moduledescriptorfile, array('/*END '.strtoupper($objectForPerms).'*/' => $rightToAdd.'/*END '.strtoupper($objectForPerms).'*/'));
 			setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
 		}
@@ -2099,13 +2102,18 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright')&& e
 	$x1 = $permissions[$r-1][1];
 	$x2 = $permissions[$r-1][4];
 	$x3 = $permissions[$r-1][5];
-	//check existing object permission
-	$permsForObject =array();
+		//check existing object permission
+		$counter = 0;
+		$permsForObject =array();
+		$permissions = $moduleobj->rights;
+		$firstRight = 0;
+		$existRight = 0;
+		$allObject = array();
 
-	$allObject = array();
-	$nbOfPermissions = count($permissions);
-	for ($i =0; $i<$nbOfPermissions; $i++) {
+		$countPerms = count($permissions);
+	for ($i =0; $i<$countPerms; $i++) {
 		if ($permissions[$i][4] == $objectForPerms) {
+			$counter++;
 			if (count($permsForObject) < 3) {
 				$permsForObject[] = $permissions[$i];
 			}
@@ -2114,8 +2122,8 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright')&& e
 	}
 
 	if ($label != $x1 && $crud != $x3) {
-		$x = count($permsForObject);
-		for ($j = 0; $j<$x; $j++) {
+		$countPermsObj = count($permsForObject);
+		for ($j = 0; $j<$countPermsObj; $j++) {
 			if (in_array($label, $permsForObject[$j])) {
 				$error++;
 				setEventMessages($langs->trans("ErrorExistingPermission", $langs->transnoentities($label), $langs->transnoentities($objectForPerms)), null, 'errors');
