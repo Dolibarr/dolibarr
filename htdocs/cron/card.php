@@ -2,7 +2,7 @@
 /* Copyright (C) 2012       Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concpt.pro>
  * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,13 +46,13 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $securitykey = GETPOST('securitykey', 'alpha');
 
-if (!$user->hasRights('cron', 'create')) {
+if (!$user->hasRight('cron', 'create')) {
 	accessforbidden();
 }
 
-$permissiontoadd = $user->hasRights('cron', 'create');
-$permissiontoexecute = $user->hasRights('cron', 'execute');
-$permissiontodelete = $user->hasRights('cron', 'delete');
+$permissiontoadd = $user->hasRight('cron', 'create');
+$permissiontoexecute = $user->hasRight('cron', 'execute');
+$permissiontodelete = $user->hasRight('cron', 'delete');
 
 
 /*
