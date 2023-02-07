@@ -211,7 +211,7 @@ function ClearSearch(clearSearchResults) {
 	<?php if ($conf->browser->layout == 'classic') { ?>
 	setFocusOnSearchField();
 	<?php } ?>
-	if (typeof clearSearchResults != "undefined") $("#search").trigger('keyup');
+	if (clearSearchResults) $("#search").trigger('keyup');
 }
 
 // Set the focus on search field but only on desktop. On tablet or smartphone, we don't to avoid to have the keyboard open automatically
