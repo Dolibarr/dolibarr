@@ -411,10 +411,6 @@ if (!$error && $massaction == 'confirm_presend') {
 				dol_syslog("We have set an array of ".count($looparray)." emails to send. oneemailperrecipient=".$oneemailperrecipient);
 				//var_dump($oneemailperrecipient); var_dump($listofqualifiedobj); var_dump($listofqualifiedref);
 				foreach ($looparray as $objectid => $objecttmp) {		// $objecttmp is a real object or an empty object if we choose to send one email per thirdparty instead of one per object
-					// Make substitution in email content
-					if (!empty($conf->projet->enabled) && method_exists($objecttmp, 'fetch_projet') && is_null($objecttmp->project)) {
-						$objecttmp->fetch_projet();
-					}
 					$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $objecttmp);
 					$substitutionarray['__ID__']    = ($oneemailperrecipient ? join(', ', array_keys($listofqualifiedobj)) : $objecttmp->id);
 					$substitutionarray['__REF__']   = ($oneemailperrecipient ? join(', ', $listofqualifiedref) : $objecttmp->ref);
