@@ -133,6 +133,21 @@ class ExpenseReport extends CommonObject
 	public $statuts_short = array();
 	public $statuts_logo;
 
+	// Multicurrency
+	/**
+	 * @var int Currency ID
+	 */
+	public $fk_multicurrency;
+
+	/**
+	 * @var string multicurrency code
+	 */
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
+
 
 	/**
 	 * Draft status
