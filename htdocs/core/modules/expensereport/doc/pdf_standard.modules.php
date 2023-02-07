@@ -92,6 +92,7 @@ class pdf_standard extends ModeleExpenseReport
 	public $posxtva;
 	public $posxup;
 	public $posxqty;
+	public $posxtype;
 	public $postotalht;
 	public $postotalttc;
 
