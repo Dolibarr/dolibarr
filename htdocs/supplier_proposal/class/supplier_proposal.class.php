@@ -2529,26 +2529,20 @@ class SupplierProposal extends CommonObject
 
 		$url = '';
 		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
+		}
 
-		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("SupplierProposal").'</u>';
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
-		}
-		if (!empty($this->ref)) {
-			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		}
-		if (!empty($this->ref_fourn)) {
-			$label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_fourn;
-		}
-		if (!empty($this->total_ht)) {
-			$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-		}
-		if (!empty($this->total_tva)) {
-			$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-		}
-		if (!empty($this->total_ttc)) {
-			$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
-		}
+		$label = implode($this->getTooltipContentArray($params));
 
 		if ($option == '') {
 			$url = DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$this->id.$get_params;
@@ -2569,18 +2563,6 @@ class SupplierProposal extends CommonObject
 		}
 
 		$linkclose = '';
-		$classfortooltip = 'classfortooltip';
-		$dataparams = '';
-		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			$params = [
-				'id' => $this->id,
-				'objecttype' => $this->element,
-				'option' => $option,
-			];
-			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
-		}
 		if (empty($notooltip) && $user->rights->propal->lire) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowSupplierProposal");
