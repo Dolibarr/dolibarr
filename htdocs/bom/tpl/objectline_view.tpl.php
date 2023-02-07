@@ -172,7 +172,8 @@ print '<td id="costline_'.$line->id.'" class="linecolcost nowrap right">';
 $coldisplay++;
 if (!empty($line->fk_bom_child)) {
 	echo '<span class="amount">'.price($tmpbom->total_cost * $line->qty).'</span>';
-} else {
+}
+else {
 	echo '<span class="amount">'.price($line->total_cost).'</span>';
 }
 print '</td>';
@@ -301,6 +302,16 @@ if ($resql) {
 			$sub_bom->calculateCosts();
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom->total_cost * $sub_bom_line->qty * $line->qty, 'MT')).'</span></td>';
 			$total_cost+= $sub_bom->total_cost * $sub_bom_line->qty * $line->qty;
+		} elseif($sub_bom_product->type == Product::TYPE_SERVICE && isModEnabled('workstation') && !empty($sub_bom_product->fk_default_workstation)) {
+			//Convert qty to hour
+			$unit = measuringUnitString($sub_bom_line->fk_unit, '', '', 1);
+			$qty = convertDurationtoHour($sub_bom_line->qty, $unit);
+			$workstation = new Workstation($this->db);
+			$res = $workstation->fetch($sub_bom_product->fk_default_workstation);
+			if ($res > 0) $sub_bom_line->total_cost = price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_line->total_cost, 'MT')).'</span></td>';
+			$this->total_cost += $line->total_cost;
 		} elseif ($sub_bom_product->cost_price > 0) {
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty, 'MT')).'</span></td>';
 			$total_cost+= $sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty;
