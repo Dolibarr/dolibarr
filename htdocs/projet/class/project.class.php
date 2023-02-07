@@ -1245,6 +1245,50 @@ class Project extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$langs->load('projects');
+		$option = $params['option'] ?? '';
+		$moreinpopup = $params['morinpopup'] ?? '';
+
+		$datas = [];
+		if ($option != 'nolink') {
+			$datas['picto'] = img_picto('', $this->picto, 'class="pictofixedwidth"').' <u class="paddingrightonly">'.$langs->trans("Project").'</u>';
+		}
+		if (isset($this->status)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
+		$datas['ref'] = (isset($datas['picto']) ? '<br>' : '').'<b>'.$langs->trans('Ref').': </b>'.$this->ref; // The space must be after the : to not being explode when showing the title in img_picto
+		$datas['label'] = '<br><b>'.$langs->trans('Label').': </b>'.$this->title; // The space must be after the : to not being explode when showing the title in img_picto
+		if (isset($this->public)) {
+			$datas['visibility'] = '<br><b>'.$langs->trans("Visibility").":</b> ";
+			$datas['visibility'] .= ($this->public ? img_picto($langs->trans('SharedProject'), 'world', 'class="pictofixedwidth"').$langs->trans("SharedProject") : img_picto($langs->trans('PrivateProject'), 'private', 'class="pictofixedwidth"').$langs->trans("PrivateProject"));
+		}
+		if (!empty($this->thirdparty_name)) {
+			$datas['thirdparty'] = '<br><b>'.$langs->trans('ThirdParty').': </b>'.$this->thirdparty_name; // The space must be after the : to not being explode when showing the title in img_picto
+		}
+		if (!empty($this->date_start)) {
+			$datas['datestart'] = '<br><b>'.$langs->trans('DateStart').': </b>'.dol_print_date($this->date_start, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
+		}
+		if (!empty($this->date_end)) {
+			$datas['dateend'] = '<br><b>'.$langs->trans('DateEnd').': </b>'.dol_print_date($this->date_end, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
+		}
+		if ($moreinpopup) {
+			$datas['moreinpopup'] = '<br>'.$moreinpopup;
+		}
+
+		return $datas;
+	}
+
+	/**
 	 * 	Return clickable name (with picto eventually)
 	 *
 	 * 	@param	int		$withpicto		          0=No picto, 1=Include picto into link, 2=Only picto
@@ -1269,32 +1313,20 @@ class Project extends CommonObject
 		if (!empty($conf->global->PROJECT_OPEN_ALWAYS_ON_TAB)) {
 			$option = $conf->global->PROJECT_OPEN_ALWAYS_ON_TAB;
 		}
-
-		$label = '';
-		if ($option != 'nolink') {
-			$label = img_picto('', $this->picto, 'class="pictofixedwidth"').' <u class="paddingrightonly">'.$langs->trans("Project").'</u>';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'moreinpopup' => $moreinpopup,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
 		}
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
-		}
-		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Ref').': </b>'.$this->ref; // The space must be after the : to not being explode when showing the title in img_picto
-		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Label').': </b>'.$this->title; // The space must be after the : to not being explode when showing the title in img_picto
-		if (isset($this->public)) {
-			$label .= '<br><b>'.$langs->trans("Visibility").":</b> ";
-			$label .= ($this->public ? img_picto($langs->trans('SharedProject'), 'world', 'class="pictofixedwidth"').$langs->trans("SharedProject") : img_picto($langs->trans('PrivateProject'), 'private', 'class="pictofixedwidth"').$langs->trans("PrivateProject"));
-		}
-		if (!empty($this->thirdparty_name)) {
-			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('ThirdParty').': </b>'.$this->thirdparty_name; // The space must be after the : to not being explode when showing the title in img_picto
-		}
-		if (!empty($this->date_start)) {
-			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateStart').': </b>'.dol_print_date($this->date_start, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
-		}
-		if (!empty($this->date_end)) {
-			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateEnd').': </b>'.dol_print_date($this->date_end, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
-		}
-		if ($moreinpopup) {
-			$label .= '<br>'.$moreinpopup;
-		}
+		$label = implode($this->getTooltipContentArray($params));
 
 		$url = '';
 		if ($option != 'nolink') {
@@ -1325,8 +1357,8 @@ class Project extends CommonObject
 				$label = $langs->trans("ShowProject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -1342,7 +1374,7 @@ class Project extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $picto, ($notooltip ? (($withpicto != 2) ? 'class="pictofixedwidth"' : '') : 'class="'.(($withpicto != 2) ? 'pictofixedwidth ' : '').'classfortooltip pictofixedwidth em088"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $picto, ($notooltip ? (($withpicto != 2) ? 'class="pictofixedwidth"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'pictofixedwidth ' : '').$classfortooltip.' pictofixedwidth em088"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
