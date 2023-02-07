@@ -130,8 +130,7 @@ if ($objecttype == 'facture' || $objecttype == 'invoice') {
 	$langs->load('projects');
 	$classpath = 'projet/class';
 	$module = 'projet';
-} elseif ($objecttype == 'task') {
-	$langs->load('projects');
+} elseif ($objecttype == 'project_task') {
 	$classpath = 'projet/class';
 	$module = 'projet';
 	$myobject = 'task';
