@@ -3,15 +3,6 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
-***** ChangeLog for 18.0.0 compared to 17.0.0 *****
-
-WARNING:
-
-Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* The deprecated method escapeunderscore() of database handlers has been removed. You must use escapeforlike instead.
-
-
-
 
 ***** ChangeLog for 17.0.0 compared to 16.0.0 *****
 
@@ -218,7 +209,8 @@ Following changes may create regressions for some external modules, but were nec
 * Tables llx_prelevement_facture and llx_prelevement_facture_demande have been renamed into llx_prelevement and llx_prelevement_demande.
 * Rename MAIN_LIST_ALLOW_NOTES into MAIN_LIST_HIDE_NOTES and rename MAIN_LIST_ALLOW_PRIVATE_NOTES into MAIN_LIST_HIDE_PRIVATE_NOTES
 * Rename the substitution for "project label" instead of "project title" in substitution variables
-
+* You must use "$objectoffield" to manipulate the current object inside the formulare of computed custom extrafields instead of $obj/$object.
+ 
 
 ***** ChangeLog for 16.0.4 compared to 16.0.3 *****
 
