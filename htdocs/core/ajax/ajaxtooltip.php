@@ -154,6 +154,10 @@ if ($objecttype == 'facture' || $objecttype == 'invoice') {
 	$classpath = 'user/class';
 	$module = 'user';
 	$myobject = 'usergroup';
+} elseif ($objecttype == 'dolresource') {
+	$classpath = 'resource/class';
+	$module = 'resource';
+	$myobject = 'dolresource';
 }
 
 // Generic case for $classfile and $classname
@@ -189,7 +193,6 @@ if ($objecttype == 'invoice_supplier') {
 	$classfile = 'mailing';
 	$classname = 'Mailing';
 } elseif ($objecttype == 'adherent_type') {
-	$langs->load('members');
 	$classpath = 'adherents/class';
 	$classfile = 'adherent_type';
 	$module = 'adherent';

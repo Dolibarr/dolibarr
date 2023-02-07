@@ -382,11 +382,10 @@ class EmailCollector extends CommonObject
 
 		// Clear fields
 		$object->ref = "copy_of_".$object->ref;
-		$object->title = $langs->trans("CopyOf")." ".$object->title;
+		$object->label = $langs->trans("CopyOf")." ".$object->label;
 		if (empty($object->host)) {
 			$object->host = 'imap.example.com';
 		}
-		// ...
 		// Clear extrafields that are unique
 		if (is_array($object->array_options) && count($object->array_options) > 0) {
 			$extrafields->fetch_name_optionals_label($this->table_element);

@@ -698,8 +698,9 @@ class AdherentType extends CommonObject
 	{
 		global $conf, $langs, $user;
 
-		$datas = [];
+		$langs->load('members');
 
+		$datas = [];
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("MemberType").'</u> '.$this->getLibStatut(4);
 		$datas['label'] = '<br>'.$langs->trans("Label").': '.$this->label;
 		if (isset($this->subscription)) {
