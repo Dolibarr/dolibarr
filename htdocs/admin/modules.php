@@ -8,7 +8,7 @@
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
- * Copyright (C) 2021       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -251,7 +251,15 @@ if ($action == 'install') {
 }
 
 if ($action == 'set' && $user->admin) {
+	$checkOldValue = getDolGlobalInt('CHECKLASTVERSION_EXTERNALMODULE');
+	$csrfCheckOldValue = getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN');
 	$resarray = activateModule($value);
+	if ($checkOldValue != getDolGlobalInt('CHECKLASTVERSION_EXTERNALMODULE')) {
+		setEventMessage($langs->trans('WarningModuleHasChangedLastVersionCheckParameter', $value), 'warnings');
+	}
+	if ($csrfCheckOldValue != getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN')) {
+		setEventMessage($langs->trans('WarningModuleHasChangedSecurityCsrfParameter', $value), 'warnings');
+	}
 	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
 	if (!empty($resarray['errors'])) {
 		setEventMessages('', $resarray['errors'], 'errors');
@@ -796,9 +804,9 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		if ($objMod->isCoreOrExternalModule() == 'external'
 			&& (
 				$action == 'checklastversion'
-				// This is a bad practice to activate a synch external access during building of a page. 1 external module can hang the application.
-				// Adding a cron job could be a good idea see DolibarrModules::checkForUpdate()
-				|| 	!empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)
+				// This is a bad practice to activate a check on an external access during the building of the admin page. 1 external module can hang the application.
+				// Adding a cron job could be a good idea: see DolibarrModules::checkForUpdate()
+				|| !empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)
 			)
 		) {
 			$checkRes = $objMod->checkForUpdate();

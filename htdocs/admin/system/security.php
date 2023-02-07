@@ -565,6 +565,9 @@ if ($execmethod == 2) {
 print '<br>';
 print '<br>';
 
+print '<strong>MAIN_SECURITY_MAXFILESIZE_DOWNLOADED</strong> = '.getDolGlobalString('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 100000000)</span>')."<br>";
+print '<br>';
+
 print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>')."<br>";
 print '<br>';
 

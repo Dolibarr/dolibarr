@@ -15,7 +15,7 @@ Following changes may create regressions for some external modules, but were nec
 * The method "nb_expedition()" has been renamed into "countNbOfShipments()" 
 * Revert default type of hooks. Default is now 'addreplace' hooks (and exception become 'output' hooks, that become deprecated).
 * Deprecated property libelle removed from entrepot class.
-
+* The type 'text' in ->fields property dos not accept html content anymore. Use the type 'html' for that.
 
 
 ***** ChangeLog for 17.0.0 compared to 16.0.0 *****
@@ -238,25 +238,38 @@ Following changes may create regressions for some external modules, but were nec
 * Rename the substitution for project label instead of project title in substitution variables
 
 
-***** ChangeLog for 16.0.4 compared to 16.0.2 *****
+***** ChangeLog for 16.0.4 compared to 16.0.3 *****
 
 FIX: Amount of localtax1 and 2 not correctly save on purchase order (the rate was saved instead)
 FIX: #20415
 FIX: #21280
 FIX: #23008
 FIX: #22271
+FIX: #22524
 FIX: #22837
+FIX: #22964
+FIX: #23012
 FIX: #23019 Impossible to add task times to an existing draft invoice
 FIX: #23072
 FIX: #23087
 FIX: #23115 
 FIX: #23116
 FIX: #23281
+FIX: #23420 : wrong check on $search_categ value causing FATAL ERROR
+FIX: Accountancy - Quadra export
+FIX: add border left on image product when conf activated
+FIX: Add missing token when deleting template inn order_supplier admin menu
+FIX: Amount of localtax1 and 2 not correctly save on purchase order (the
+FIX: API access for deactivated users
 FIX: bad selection of barcode numbering module
 FIX: Can't see all time spent by all user
 FIX: CI
 FIX: CommonObject - showOptionals - Display blank td when MAIN_VIEW_LINE_NUMBER is enabled and action is confirm_valid
 FIX: Documents API inconsistency
+FIX: Empty FormSetup emailTemplate type IF empty fieldvalue
+FIX: Errors Handling for CreateFrom Hooks
+FIX: error with dol_banner_tab, ref is needed
+FIX: ExpenseReport card was not reloaded after addline
 FIX: #23075
 FIX: #23117
 FIX: get multicurrency infos of propal when create order from propal with "WORKFLOW_PROPAL_AUTOCREATE_ORDER" conf
@@ -264,12 +277,16 @@ FIX: Give predictable order to inventory lines
 FIX: include class multicurrency
 FIX: methods declaration (backport fix 67b9a7dc07d708231d12b5e58800334d4a01ef98)
 FIX: multicurrency_tx and not currency_tx
-FIX: PGSQL Integer type does not have a free length
+FIX: on public ticket list, only the page 1 was accessible. Other pages were 404 error.
+FIX: PGSQL Integer type does not have a free lenght
+FIX: PGSQL Int type does not have a free lenght
 FIX: Product list in setup.php in new Module
 FIX: propal and order stats broken on Tag+User(retricted customer list)
 FIX: saving of numbering module for jobs
 FIX: Stickler
 FIX: travis
+FIX: wrong check on $search_categ value causing fatal error
+FIX: wrong stock list with multicompany and without stock sharing
 
 ***** ChangeLog for 16.0.3 compared to 16.0.2 *****
 

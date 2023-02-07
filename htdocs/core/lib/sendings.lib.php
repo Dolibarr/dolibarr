@@ -50,7 +50,7 @@ function shipping_prepare_head($object)
 	if ($conf->delivery_note->enabled && $user->rights->expedition->delivery->lire) {
 		// delivery link
 		$object->fetchObjectLinked($object->id, $object->element);
-		if (is_array($object->linkedObjectsIds['delivery']) && count($object->linkedObjectsIds['delivery']) > 0) {        // If there is a delivery
+		if (isset($object->linkedObjectsIds['delivery']) && is_array($object->linkedObjectsIds['delivery']) && count($object->linkedObjectsIds['delivery']) > 0) {        // If there is a delivery
 			// Take first one element of array
 			$tmp = reset($object->linkedObjectsIds['delivery']);
 

@@ -831,7 +831,7 @@ abstract class CommonObject
 		}
 		if ($this->element == 'contact') {
 			$contactid = $this->id;
-			$thirdpartyid = empty($object->fk_soc) ? 0 : $object->fk_soc;
+			$thirdpartyid = empty($this->fk_soc) ? 0 : $this->fk_soc;
 		}
 		if ($this->element == 'user') {
 			$contactid = $this->contact_id;
@@ -6058,6 +6058,8 @@ abstract class CommonObject
 					if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
 						//var_dump($conf->disable_compute);
 						if (empty($conf->disable_compute)) {
+							global $objectoffield;		// We set a global variable to $objectoffield so
+							$objectoffield = $this;		// we can use it inside computed formula
 							$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
 						}
 					}
@@ -6288,7 +6290,6 @@ abstract class CommonObject
 									$new_array_options[$key] = $object->id;
 								} else {
 									$this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
-									$this->db->rollback();
 									return -1;
 								}
 							}
@@ -8066,10 +8067,16 @@ abstract class CommonObject
 				$out .= "\n";
 
 				$nbofextrafieldsshown = 0;
-				$extrafields_collapse_num = '';
 				$e = 0;	// var to manage the modulo (odd/even)
 
+				$lastseparatorkeyfound = '';
+				$extrafields_collapse_num = '';
+				$extrafields_collapse_num_old = '';
+				$i = 0;
+
 				foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $label) {
+					$i++;
+
 					// Show only the key field in params
 					if (is_array($params) && array_key_exists('onlykey', $params) && $key != $params['onlykey']) {
 						continue;
@@ -8104,6 +8111,7 @@ abstract class CommonObject
 					if (empty($perms)) {
 						continue;
 					}
+
 					// Load language if required
 					if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
 						$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
@@ -8156,7 +8164,8 @@ abstract class CommonObject
 
 					// Output value of the current field
 					if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
-						$extrafields_collapse_num = '';
+						$extrafields_collapse_num = $key;
+						/*
 						$extrafield_param = $extrafields->attributes[$this->table_element]['param'][$key];
 						if (!empty($extrafield_param) && is_array($extrafield_param)) {
 							$extrafield_param_list = array_keys($extrafield_param['options']);
@@ -8165,14 +8174,20 @@ abstract class CommonObject
 								$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
 
 								if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
-									$extrafields_collapse_num = $extrafields->attributes[$this->table_element]['pos'][$key];
+									//$extrafields_collapse_num = $extrafields->attributes[$this->table_element]['pos'][$key];
+									$extrafields_collapse_num = $key;
 								}
 							}
 						}
+						*/
 
 						// if colspan=0 or 1, the second column is not extended, so the separator must be on 2 columns
 						$out .= $extrafields->showSeparator($key, $this, ($colspan ? $colspan + 1 : 2), $display_type, $mode);
+
+						$lastseparatorkeyfound = $key;
 					} else {
+						$collapse_group = $extrafields_collapse_num.(!empty($this->id) ? '_'.$this->id : '');
+
 						$class = (!empty($extrafields->attributes[$this->table_element]['hidden'][$key]) ? 'hideobject ' : '');
 						$csstyle = '';
 						if (is_array($params) && count($params) > 0) {
@@ -8243,13 +8258,13 @@ abstract class CommonObject
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
 						if ($display_type == 'card') {
-							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="field_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
+							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="field_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$collapse_group.'" '.$domData.' >';
 							if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && ($action == 'view' || $action == 'valid' || $action == 'editline' || $action == 'confirm_valid' || $action == 'confirm_cancel')) {
 								$out .= '<td></td>';
 							}
 							$out .= '<td class="titlefieldcreate wordbreak';
 						} elseif ($display_type == 'line') {
-							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="fieldline_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
+							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="fieldline_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$collapse_group.'" '.$domData.' >';
 							$out .= '<div style="display: inline-block; padding-right:4px" class="wordbreak';
 						}
 						//$out .= "titlefield";
