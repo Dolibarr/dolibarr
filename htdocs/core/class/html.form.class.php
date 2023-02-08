@@ -2542,6 +2542,10 @@ class Form
 		global $langs, $conf;
 		global $hookmanager;
 
+        if (empty($hookmanager->hooks)) {
+            $hookmanager->initHooks(array('commonobject'));
+        }
+
 		$out = '';
 		$outarray = array();
 
@@ -2572,7 +2576,10 @@ class Form
 		}
 
 		$sql = "SELECT ";
-		$sql .= $selectFields.$selectFieldsGrouped;
+		// Add select from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('selectProductsListSelect', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $selectFields.$selectFieldsGrouped.$hookmanager->resPrint;
 
 		if (!empty($conf->global->PRODUCT_SORT_BY_CATEGORY)) {
 			//Product category
@@ -2619,6 +2626,10 @@ class Form
 			$selectFields .= ", price_rowid, price_by_qty";
 		}
 		$sql .= " FROM ".$this->db->prefix()."product as p";
+		// Add from (left join) from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('selectProductsListFrom', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		if (count($warehouseStatusArray)) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."product_stock as ps on ps.fk_product = p.rowid";
 			$sql .= " LEFT JOIN ".$this->db->prefix()."entrepot as e on ps.fk_entrepot = e.rowid AND e.entity IN (".getEntity('stock').")";
@@ -2890,6 +2901,11 @@ class Form
 	protected function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected, $hidepriceinlabel = 0, $filterkey = '', $novirtualstock = 0)
 	{
 		global $langs, $conf, $user;
+        global $hookmanager;
+
+        if (empty($hookmanager->hooks)) {
+            $hookmanager->initHooks(array('commonobject'));
+        }
 
 		$outkey = '';
 		$outval = '';
@@ -3174,6 +3190,14 @@ class Form
 				}
 			}
 		}
+
+        $parameters = array('objp'=>$objp);
+        $reshook = $hookmanager->executeHooks('constructProductListOption', $parameters); // Note that $action and $object may have been modified by hook
+        if (!empty($reshook)) {
+            $opt = $hookmanager->resPrint;
+        } else {
+            $opt .= $hookmanager->resPrint;
+        }
 
 		$opt .= "</option>\n";
 		$optJson = array(
