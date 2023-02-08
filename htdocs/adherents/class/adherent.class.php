@@ -440,11 +440,36 @@ class Adherent extends CommonObject
 	 *  @param	int		$msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
 	 *  @param	string	$errors_to			erros to
 	 *  @param	string	$moreinheader		Add more html headers
+	 *  @deprecated since V18
+	 *  @see sendEmail
 	 *  @return	int							<0 if KO, >0 if OK
 	 */
 	public function send_an_email($text, $subject, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = -1, $errors_to = '', $moreinheader = '')
 	{
 		// phpcs:enable
+		dol_syslog('Warning using deprecated Adherent::send_an_email', LOG_WARNING);
+		return $this->sendEmail($text, $subject, $filename_list, $mimetype_list, $mimefilename_list, $addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml, $errors_to, $moreinheader);
+	}
+
+	/**
+	 *  Function sending an email to the current member with the text supplied in parameter.
+	 *
+	 *  @param	string	$text				Content of message (not html entities encoded)
+	 *  @param	string	$subject			Subject of message
+	 *  @param 	array	$filename_list      Array of attached files
+	 *  @param 	array	$mimetype_list      Array of mime types of attached files
+	 *  @param 	array	$mimefilename_list  Array of public names of attached files
+	 *  @param 	string	$addr_cc            Email cc
+	 *  @param 	string	$addr_bcc           Email bcc
+	 *  @param 	int		$deliveryreceipt	Ask a delivery receipt
+	 *  @param	int		$msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
+	 *  @param	string	$errors_to			erros to
+	 *  @param	string	$moreinheader		Add more html headers
+	 * 	@since V18
+	 *  @return	int							<0 if KO, >0 if OK
+	 */
+	public function sendEmail($text, $subject, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = -1, $errors_to = '', $moreinheader = '')
+	{
 		global $conf, $langs;
 
 		// Detect if message is HTML
