@@ -538,6 +538,12 @@ abstract class CommonDocGenerator
 			$resarray[$array_key.'_project_description'] = $object->project->description;
 			$resarray[$array_key.'_project_date_start'] = dol_print_date($object->project->date_start, 'day');
 			$resarray[$array_key.'_project_date_end'] = dol_print_date($object->project->date_end, 'day');
+		} else { // empty replacement
+			$resarray[$array_key.'_project_ref'] ='';
+			$resarray[$array_key.'_project_title'] = '';
+			$resarray[$array_key.'_project_description'] = '';
+			$resarray[$array_key.'_project_date_start'] = '';
+			$resarray[$array_key.'_project_date_end'] = '';
 		}
 
 		// Add vat by rates
@@ -700,6 +706,14 @@ abstract class CommonDocGenerator
 			$result = $tmpproduct->fetch($line->fk_product);
 			foreach ($tmpproduct->array_options as $key => $label) {
 				$resarray["line_product_".$key] = $label;
+			}
+		} else {
+			// Set unused placeholders as blank
+			$extrafields->fetch_name_optionals_label("product");
+			$extralabels = $extrafields->attributes["product"]['label'];
+
+			foreach ($extralabels as $key => $label) {
+				$resarray['line_product_options_'.$key] = '';
 			}
 		}
 
