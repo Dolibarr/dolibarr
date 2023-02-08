@@ -41,7 +41,8 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 top_httphead();
 
-$id = GETPOST('id', 'int');
+// opensurvey as aZ09 id
+$id = GETPOST('id', 'aZ09');
 $objecttype = GETPOST('objecttype', 'aZ09');
 
 $html = '';
@@ -158,6 +159,10 @@ if ($objecttype == 'facture' || $objecttype == 'invoice') {
 	$classpath = 'resource/class';
 	$module = 'resource';
 	$myobject = 'dolresource';
+} elseif ($objecttype == 'opensurvey_sondage') {
+	$classpath = 'opensurvey/class';
+	$module = 'opensurvey';
+	$myobject = 'opensurveysondage';
 }
 
 // Generic case for $classfile and $classname
