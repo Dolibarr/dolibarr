@@ -223,6 +223,8 @@ abstract class AbstractService extends BaseAbstractService implements ServiceInt
             $parameters,
             $this->getExtraOAuthHeaders()
         );
+        //print $responseBody;exit;	// We must have a result "{"token_type":"Bearer","scope...
+
         $token = $this->parseAccessTokenResponse($responseBody);
         $this->storage->storeAccessToken($this->service(), $token);
 

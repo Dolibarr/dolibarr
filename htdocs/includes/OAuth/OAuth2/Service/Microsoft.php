@@ -38,8 +38,9 @@ class Microsoft extends AbstractService
     const SCOPE_APPLICATIONS = 'applications';
     const SCOPE_APPLICATIONS_CREATE = 'applications_create';
     const SCOPE_IMAP = 'imap';
-    const SOCPE_IMAP_ACCESSASUSERALL = 'IMAP.AccessAsUser.All';
-    const SOCPE_SMTPSEND = 'SMTP.Send';
+    const SOCPE_IMAP_ACCESSASUSERALL = 'https://outlook.office365.com/IMAP.AccessAsUser.All';
+    const SOCPE_SMTPSEND = 'https://outlook.office365.com/SMTP.Send';
+    const SOCPE_USERREAD = 'User.Read';
     const SOCPE_MAILREAD = 'Mail.Read';
     const SOCPE_MAILSEND = 'Mail.Send';
 

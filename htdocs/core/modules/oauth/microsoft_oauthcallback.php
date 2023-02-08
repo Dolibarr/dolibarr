@@ -155,10 +155,15 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 		if (GETPOST('error')) {
 			setEventMessages(GETPOST('error').' '.GETPOST('error_description'), null, 'errors');
 		} else {
+			//print GETPOST('code');exit;
+
 			//$token = $apiService->requestAccessToken(GETPOST('code'), $state);
 			$token = $apiService->requestAccessToken(GETPOST('code'));
-			//print $token;
 			// Microsoft is a service that does not need state to be stored as second paramater of requestAccessToken
+
+			//print $token->getAccessToken().'<br><br>';
+			//print $token->getExtraParams()['id_token'].'<br>';
+			//print $token->getRefreshToken().'<br>';exit;
 
 			setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
 		}

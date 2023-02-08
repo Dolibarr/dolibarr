@@ -421,10 +421,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
 				//dol_syslog($debugtext);
 
+				$token = '';
+
 				$storage = new DoliStorage($db, $conf, $keyforprovider);
 
 				try {
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+
 					$expire = true;
 					// Is token expired or will token expire in the next 30 seconds
 					// if (is_object($tokenobj)) {
@@ -439,11 +442,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						);
 						$serviceFactory = new \OAuth\ServiceFactory();
 						$oauthname = explode('-', $OAUTH_SERVICENAME);
+
 						// ex service is Google-Emails we need only the first part Google
 						$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+
 						// We have to save the token because Google give it only once
 						$refreshtoken = $tokenobj->getRefreshToken();
+						//var_dump($tokenobj);
 						$tokenobj = $apiService->refreshAccessToken($tokenobj);
+
 						$tokenobj->setRefreshToken($refreshtoken);
 						$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 					}
@@ -491,6 +498,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 			if (!$error) {
 				try {
+					// To emulate the command connect, you can run
+					// openssl s_client -crlf -connect outlook.office365.com:993
+					// TAG1 AUTHENTICATE XOAUTH2 dXN...
+					// TO Get debug log, you can set protected $debug = true; in Protocol.php file
+					//
+					// A MS bug make this not working !
+					// See https://github.com/MicrosoftDocs/office-developer-exchange-docs/issues/100
+					// See github.com/MicrosoftDocs/office-developer-exchange-docs/issues/87
+					// See github.com/Webklex/php-imap/issues/81
 					$client->connect();
 
 					$f = $client->getFolders(false, $object->source_directory);
