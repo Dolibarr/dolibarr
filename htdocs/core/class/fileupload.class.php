@@ -488,7 +488,6 @@ class FileUpload
 	 */
 	public function post()
 	{
-		var_dump("here");exit;
 		if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
 			echo $this->delete();
 		}
