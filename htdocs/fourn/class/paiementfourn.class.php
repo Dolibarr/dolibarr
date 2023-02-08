@@ -535,7 +535,7 @@ class PaiementFourn extends Paiement
 	 *	Return list of supplier invoices the payment point to
 	 *
 	 *	@param      string	$filter         SQL filter. Warning: This value must not come from a user input.
-	 *	@return     array           		Array of supplier invoice id
+	 *	@return     array|int           		Array of supplier invoice id | <0 si ko
 	 */
 	public function getBillsArray($filter = '')
 	{

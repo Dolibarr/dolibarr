@@ -229,7 +229,7 @@ class Projects extends DolibarrApi
 	 *
 	 * @param int   $id                     Id of project
 	 * @param int   $includetimespent       0=Return only list of tasks. 1=Include a summary of time spent, 2=Include details of time spent lines
-	 * @return int
+	 * @return array
 	 *
 	 * @url	GET {id}/tasks
 	 */

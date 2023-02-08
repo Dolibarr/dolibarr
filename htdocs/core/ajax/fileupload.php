@@ -48,7 +48,6 @@ $element = GETPOST('element', 'alpha');
 
 $upload_handler = new FileUpload(null, $fk_element, $element);
 
-
 /*
  * View
  */

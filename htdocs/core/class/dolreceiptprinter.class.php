@@ -935,7 +935,7 @@ class dolReceiptPrinter extends Printer
 	 *  Function Init Printer
 	 *
 	 *  @param   int       $printerid       Printer id
-	 *  @return  int                        0 if OK; >0 if KO
+	 *  @return  void|int                        0 if OK; >0 if KO
 	 */
 	public function initPrinter($printerid)
 	{

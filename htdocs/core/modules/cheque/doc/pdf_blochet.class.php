@@ -401,7 +401,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *  @param	Object		$object				Object to show
 	 *  @param	Translate	$outputlangs		Object lang for output
 	 *  @param	int			$hidefreetext		1=Hide free text
-	 *  @return	void
+	 *  @return	mixed
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{

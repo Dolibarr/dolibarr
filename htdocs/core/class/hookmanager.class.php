@@ -77,7 +77,7 @@ class HookManager
 	 *  Then when a hook executeHooks('aMethod'...) is called, the method aMethod found into class will be executed.
 	 *
 	 *	@param	string[]	$arraycontext	    Array list of searched hooks tab/features. For example: 'thirdpartycard' (for hook methods into page card thirdparty), 'thirdpartydao' (for hook methods into Societe), ...
-	 *	@return	int							    Always 1
+	 *	@return	int|void							    Always 1
 	 */
 	public function initHooks($arraycontext)
 	{

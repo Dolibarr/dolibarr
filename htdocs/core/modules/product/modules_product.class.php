@@ -191,7 +191,7 @@ abstract class ModeleProductCode
 	 *
 	 *  @param	DoliDB	$dbs     			Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of numbers
+	 *  @return	array|int					List of numbers
 	 */
 	public static function liste_modeles($dbs, $maxfilenamelength = 0)
 	{

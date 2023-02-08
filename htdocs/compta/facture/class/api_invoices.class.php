@@ -778,7 +778,7 @@ class Invoices extends DolibarrApi
 	 *
 	 * @url POST    {id}/contacts
 	 *
-	 * @return  array
+	 * @return  object
 	 *
 	 * @throws RestException 304
 	 * @throws RestException 401

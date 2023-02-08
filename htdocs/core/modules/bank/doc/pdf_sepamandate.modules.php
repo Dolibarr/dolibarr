@@ -478,7 +478,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *   @param		CompanyBankAccount	$object			Object to show
 	 *   @param		int					$posy			Y
 	 *   @param		Translate			$outputlangs	Langs object
-	 *   @return	void
+	 *   @return	float
 	 */
 	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
