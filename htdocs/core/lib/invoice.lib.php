@@ -281,8 +281,8 @@ function getNumberInvoicesPieChart($mode)
 {
 	global $conf, $db, $langs, $user;
 
-	if (($mode == 'customers' && isModEnabled('facture') && !empty($user->rights->facture->lire))
-		|| ($mode == 'suppliers' && (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) && !empty($user->rights->facture->lire))
+	if (($mode == 'customers' && isModEnabled('facture') && $user->hasRight('facture', 'lire'))
+		|| ($mode == 'suppliers' && (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) && $user->hasRight('fournisseur', 'facture', 'lire'))
 		) {
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
