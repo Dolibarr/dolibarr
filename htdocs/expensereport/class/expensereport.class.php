@@ -3,7 +3,7 @@
  * Copyright (C) 2015 		Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 		Alexandre Spangaro  	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (c) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (c) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -60,7 +60,15 @@ class ExpenseReport extends CommonObject
 	 */
 	public $picto = 'trip';
 
+	/**
+	 * @var ExpenseReportLine[] array of expensereport lines
+	 */
 	public $lines = array();
+
+	/**
+	 * @var ExpenseReportLine expensereport lines
+	 */
+	public $line;
 
 	public $date_debut;
 
@@ -93,6 +101,15 @@ class ExpenseReport extends CommonObject
 
 	// Create
 	public $date_create;
+
+	/**
+	 * @var int ID of user creator
+	 */
+	public $fk_user_creat;
+
+	/**
+	 * @var int ID of user who reclaim expense report
+	 */
 	public $fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
 
 	// Update
@@ -107,15 +124,34 @@ class ExpenseReport extends CommonObject
 	// Annulation
 	public $date_cancel;
 	public $detail_cancel;
+
+	/**
+	 * @var int ID of user who cancel expense report
+	 */
 	public $fk_user_cancel;
 
-	public $fk_user_validator; // User that is defined to approve
+	/**
+	 * @var int User that is defined to approve
+	 */
+	public $fk_user_validator;
 
-	// Validation
-	/* @deprecated */
+	/**
+	 * Validation date
+	 * @var int
+	 * @deprecated
+	 * @see $date_valid
+	 */
 	public $datevalid;
 
-	public $date_valid; // User making validation
+	/**
+	 * Validation date
+	 * @var int
+	 */
+	public $date_valid;
+
+	/**
+	 * @var int ID of User making validation
+	 */
 	public $fk_user_valid;
 	public $user_valid_infos;
 
@@ -155,15 +191,14 @@ class ExpenseReport extends CommonObject
 	const STATUS_APPROVED = 5;
 
 	/**
-	 * Classified refused
-	 */
-	const STATUS_REFUSED = 99;
-
-	/**
 	 * Classified paid.
 	 */
 	const STATUS_CLOSED = 6;
 
+	/**
+	 * Classified refused
+	 */
+	const STATUS_REFUSED = 99;
 
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
@@ -434,12 +469,12 @@ class ExpenseReport extends CommonObject
 		$this->fk_statut = 0; // deprecated
 
 		// Clear fields
-		$this->fk_user_creat      = $user->id;
-		$this->fk_user_author     = $fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
-		$this->fk_user_valid      = '';
+		$this->fk_user_creat = $user->id;
+		$this->fk_user_author = $fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
+		$this->fk_user_valid = '';
 		$this->date_create = '';
-		$this->date_creation      = '';
-		$this->date_validation    = '';
+		$this->date_creation = '';
+		$this->date_validation = '';
 
 		// Remove link on lines to a joined file
 		if (is_array($this->lines) && count($this->lines) > 0) {
