@@ -197,7 +197,7 @@ if (!empty($triggers)) {
 				print '<td>'.$trigger['label'].'</td>';
 				print '<td class="right" width="40">';
 				$key = 'MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
-				$value = $conf->global->$key;
+				$value = getDolGlobalInt($key);
 				print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.((($action == 'selectall' || $value) && $action != "selectnone") ? ' checked' : '').'>';
 				print '</td></tr>'."\n";
 			}

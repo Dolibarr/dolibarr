@@ -323,7 +323,7 @@ foreach ($dirmodels as $reldir) {
 							if ($conf->global->FACTURE_ADDON == $file || $conf->global->FACTURE_ADDON.'.php' == $file) {
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
-								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							}
 							print '</td>';
 
@@ -661,12 +661,14 @@ if (!empty($conf->banque->enabled)) {
 }
 print "</td></tr>";
 
+$FACTURE_CHQ_NUMBER = getDolGlobalInt('FACTURE_CHQ_NUMBER');
+
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
 print "<td>";
 print '<select class="flat" name="chq" id="chq">';
 print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
-print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER ? ' selected' : '').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->name ? $mysoc->name : $langs->trans("NotDefined")).')</option>';
+print '<option value="-1"'.($FACTURE_CHQ_NUMBER == -1 ? ' selected' : '').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->name ? $mysoc->name : $langs->trans("NotDefined")).')</option>';
 
 $sql = "SELECT rowid, label";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
@@ -682,7 +684,7 @@ if ($resql) {
 		$row = $db->fetch_row($resql);
 
 		print '<option value="'.$row[0].'"';
-		print $conf->global->FACTURE_CHQ_NUMBER == $row[0] ? ' selected' : '';
+		print $FACTURE_CHQ_NUMBER == $row[0] ? ' selected' : '';
 		print '>'.$langs->trans("OwnerOfBankAccount", $row[1]).'</option>';
 
 		$i++;

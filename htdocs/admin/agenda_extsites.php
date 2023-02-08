@@ -202,7 +202,7 @@ print '<span class="opacitymedium">'.$langs->trans("AgendaExtSitesDesc")."</span
 print "<br>\n";
 
 
-$selectedvalue=$conf->global->AGENDA_DISABLE_EXT;
+$selectedvalue = getDolGlobalInt('AGENDA_DISABLE_EXT');
 if ($selectedvalue==1) $selectedvalue=0; else $selectedvalue=1;
 
 print "<table class=\"noborder\" width=\"100%\">";
