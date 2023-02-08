@@ -217,6 +217,8 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 		//$url .= 'hd=xxx';
 	}
 
+	//var_dump($url);exit;
+
 	// we go on oauth provider authorization page
 	header('Location: '.$url);
 	exit();

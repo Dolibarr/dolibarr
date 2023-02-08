@@ -155,10 +155,9 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 		if (GETPOST('error')) {
 			setEventMessages(GETPOST('error').' '.GETPOST('error_description'), null, 'errors');
 		} else {
-			$apiService->tenant = getDolGlobalString($keyforparamtenant);
-
 			//$token = $apiService->requestAccessToken(GETPOST('code'), $state);
 			$token = $apiService->requestAccessToken(GETPOST('code'));
+			//print $token;
 			// Microsoft is a service that does not need state to be stored as second paramater of requestAccessToken
 
 			setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
@@ -182,7 +181,6 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 	//if (!preg_match('/^forlogin/', $state)) {
 	//	$apiService->setApprouvalPrompt('auto');
 	//}
-	$apiService->tenant = getDolGlobalString($keyforparamtenant);
 
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state in this tables depend on the Provider used (see its constructor).

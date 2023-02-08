@@ -38,9 +38,13 @@ class Microsoft extends AbstractService
     const SCOPE_APPLICATIONS = 'applications';
     const SCOPE_APPLICATIONS_CREATE = 'applications_create';
     const SCOPE_IMAP = 'imap';
-    const SOCPE_IMAP_AccessAsUser_All='IMAP.AccessAsUser.All';
+    const SOCPE_IMAP_ACCESSASUSERALL = 'IMAP.AccessAsUser.All';
+    const SOCPE_SMTPSEND = 'SMTP.Send';
+    const SOCPE_MAILREAD = 'Mail.Read';
+    const SOCPE_MAILSEND = 'Mail.Send';
 
-    public string $tenant;
+    protected $storage;
+
 
     /**
      * MS uses some magical not officialy supported scope to get even moar info like full emailaddresses.
@@ -65,6 +69,8 @@ class Microsoft extends AbstractService
     ) {
         parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri);
 
+        $this->storage = $storage;
+
         if (null === $baseApiUri) {
             $this->baseApiUri = new Uri('https://apis.live.net/v5.0/');
         }
@@ -75,9 +81,11 @@ class Microsoft extends AbstractService
      */
     public function getAuthorizationEndpoint()
     {
-        //return new Uri('https://login.live.com/oauth20_authorize.srf');
+    	$tenant = $this->storage->getTenant();
+
+    	//return new Uri('https://login.live.com/oauth20_authorize.srf');
         //return new Uri('https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize');
-        return new Uri('https://login.microsoftonline.com/'.$this->tenant.'/oauth2/v2.0/authorize');
+        return new Uri('https://login.microsoftonline.com/'.$tenant.'/oauth2/v2.0/authorize');
     }
 
     /**
@@ -85,9 +93,11 @@ class Microsoft extends AbstractService
      */
     public function getAccessTokenEndpoint()
     {
+    	$tenant = $this->storage->getTenant();
+
         //return new Uri('https://login.live.com/oauth20_token.srf');
         //return new Uri('https://login.microsoftonline.com/organizations/oauth2/v2.0/token');
-        return new Uri('https://login.microsoftonline.com/'.$this->tenant.'/oauth2/v2.0/token');
+        return new Uri('https://login.microsoftonline.com/'.$tenant.'/oauth2/v2.0/token');
     }
 
     /**
@@ -110,6 +120,7 @@ class Microsoft extends AbstractService
         } elseif (isset($data['error'])) {
             throw new TokenResponseException('Error in retrieving token: "' . $data['error'] . '"');
         }
+        //print $data['access_token'];exit;
 
         $token = new StdOAuth2Token();
         $token->setAccessToken($data['access_token']);

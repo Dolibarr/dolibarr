@@ -119,6 +119,7 @@ function dolGetRandomBytes($length)
 function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
 {
 	global $dolibarr_main_instance_unique_id;
+	global $dolibarr_disable_dolcrypt_for_debug;
 
 	if ($chain === '' || is_null($chain)) {
 		return '';
@@ -136,7 +137,7 @@ function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
 
 	$newchain = $chain;
 
-	if (function_exists('openssl_encrypt')) {
+	if (function_exists('openssl_encrypt') && empty($dolibarr_disable_dolcrypt_for_debug)) {
 		$ivlen = 16;
 		if (function_exists('openssl_cipher_iv_length')) {
 			$ivlen = openssl_cipher_iv_length($ciphering);

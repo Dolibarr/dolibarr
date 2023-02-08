@@ -221,8 +221,11 @@ if ($mode == 'setup' && $user->admin) {
 		$storage = new DoliStorage($db, $conf, $keyforprovider);
 		try {
 			// $OAUTH_SERVICENAME is for example 'Google-keyforprovider'
-			print $OAUTH_SERVICENAME;
+			print '<!-- '.$OAUTH_SERVICENAME.' -->'."\n";
 			$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+			//print $storage->token.'<br>';
+			//print $tokenobj->getExtraParams()['id_token'].'<br>';
+			//print $tokenobj->getAccessToken().'<br>';
 		} catch (Exception $e) {
 			// Return an error if token not found
 			//print $e->getMessage();
@@ -342,7 +345,6 @@ if ($mode == 'setup' && $user->admin) {
 		print '<td colspan="2">';
 
 		if (is_object($tokenobj)) {
-			//var_dump($tokenobj);
 			$tokentoshow = $tokenobj->getAccessToken();
 			print '<span class="" title="'.dol_escape_htmltag($tokentoshow).'">'.showValueWithClipboardCPButton($tokentoshow, 1, dol_trunc($tokentoshow, 32)).'</span><br>';
 			//print 'Refresh: '.$tokenobj->getRefreshToken().'<br>';
