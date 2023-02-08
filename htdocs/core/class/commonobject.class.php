@@ -849,7 +849,7 @@ abstract class CommonObject
 		}
 		if ($this->element == 'contact') {
 			$contactid = $this->id;
-			$thirdpartyid = empty($object->fk_soc) ? 0 : $object->fk_soc;
+			$thirdpartyid = empty($this->fk_soc) ? 0 : $this->fk_soc;
 		}
 		if ($this->element == 'user') {
 			$contactid = $this->contact_id;
@@ -6084,6 +6084,8 @@ abstract class CommonObject
 					if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
 						//var_dump($conf->disable_compute);
 						if (empty($conf->disable_compute)) {
+							global $objectoffield;		// We set a global variable to $objectoffield so
+							$objectoffield = $this;		// we can use it inside computed formula
 							$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
 						}
 					}
