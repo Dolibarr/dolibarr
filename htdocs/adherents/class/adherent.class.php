@@ -448,6 +448,7 @@ class Adherent extends CommonObject
 	{
 		// phpcs:enable
 		dol_syslog('Warning using deprecated Adherent::send_an_email', LOG_WARNING);
+
 		return $this->sendEmail($text, $subject, $filename_list, $mimetype_list, $mimefilename_list, $addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml, $errors_to, $moreinheader);
 	}
 
