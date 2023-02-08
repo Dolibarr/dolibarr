@@ -2680,6 +2680,11 @@ class ExpenseReportLine extends CommonObjectLine
 	 * @var DoliDB Database handler.
 	 */
 	public $db;
+	
+	/**
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element = 'expensereport_det';
 
 	/**
 	 * @var string Error code (or message)
