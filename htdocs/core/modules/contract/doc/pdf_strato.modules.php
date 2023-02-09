@@ -230,7 +230,7 @@ class pdf_strato extends ModelePDFContract
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
 				$heightforinfotot = 50; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
-				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
+				$heightforfooter = $this->marge_basse + 9; // Height reserved to output the footer (value include bottom margin)
 				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
 					$heightforfooter += 6;
 				}
@@ -383,7 +383,6 @@ class pdf_strato extends ModelePDFContract
 							$pdf->writeHTMLCell(0, 0, $curX, $curY, dol_concatdesc($txtpredefinedservice, dol_concatdesc($txt, $desc)), 0, 1, 0);
 							$pageposafter = $pdf->getPage();
 							$posyafter = $pdf->GetY();
-
 							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
 								if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
 									$pdf->AddPage('', '', true);
@@ -437,6 +436,9 @@ class pdf_strato extends ModelePDFContract
 							$pagenb++;
 							$pdf->setPage($pagenb);
 							$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+								$this->_pagehead($pdf, $object, 0, $outputlangs);
+							}
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
@@ -458,6 +460,7 @@ class pdf_strato extends ModelePDFContract
 						}
 					}
 				}
+
 
 				// Show square
 				if ($pagenb == 1) {
