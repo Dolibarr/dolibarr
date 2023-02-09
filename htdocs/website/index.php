@@ -2803,7 +2803,7 @@ if (!GETPOST('hide_websitemenu')) {
 	$atleastonepage = (is_array($array) && count($array) > 0);
 
 	$websitepage = new WebSitePage($db);
-	if ($pageid > 0 && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')) {
+	if ($pageid > 0) {
 		$websitepage->fetch($pageid);
 	}
 

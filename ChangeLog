@@ -240,7 +240,10 @@ Following changes may create regressions for some external modules, but were nec
 * Deprecated method set_billed() on shipment and reception class has been removed. Use setBilled() instead.
 * Tables llx_prelevement_facture and llx_prelevement_facture_demande have been renamed into llx_prelevement and llx_prelevement_demande.
 * Rename MAIN_LIST_ALLOW_NOTES into MAIN_LIST_HIDE_NOTES and rename MAIN_LIST_ALLOW_PRIVATE_NOTES into MAIN_LIST_HIDE_PRIVATE_NOTES
-* Rename the substitution for project label instead of project title in substitution variables
+* Rename the substitution for "project label" instead of "project title" in substitution variables
+* You must use "$objectoffield" to manipulate the current object inside the formulare of computed custom extrafields instead of $obj/$object.
+* Making a global search is sending the parameter using always the name search_all (instead of sometimes sall and search_all)
+
 
 
 ***** ChangeLog for 16.0.4 compared to 16.0.3 *****

@@ -451,7 +451,7 @@ ExtrafieldCheckBox=Checkboxes
 ExtrafieldCheckBoxFromList=Checkboxes from table
 ExtrafieldLink=Link to an object
 ComputedFormula=Computed field
-ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $object</strong>.<br><strong>WARNING</strong>: Only some properties of $object may be available. If you need a properties not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$object->id < 10 ? round($object->id / 2, 2): ($object->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($obj->id ? $obj->id: ($obj->rowid ? $obj->rowid: $object->id)) > 0)) ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1'<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
+ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $objectoffield</strong>.<br><strong>WARNING</strong>: If you need properties of an object not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$objectoffield->id < 10 ? round($objectoffield->id / 2, 2): ($objectoffield->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0 ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1')<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
 Computedpersistent=Store computed field
 ComputedpersistentDesc=Computed extra fields will be stored in the database, however, the value will only be recalculated when the object of this field is changed. If the computed field depends on other objects or global data this value might be wrong!!
 ExtrafieldParamHelpPassword=Leaving this field blank means this value will be stored without encryption (field must be only hidden with star on screen).<br>Set  'auto' to use the default encryption rule to save password into database (then value read will be the hash only, no way to retrieve original value)
@@ -704,6 +704,8 @@ Module62000Name=Incoterms
 Module62000Desc=Add features to manage Incoterms
 Module63000Name=Resources
 Module63000Desc=Manage resources (printers, cars, rooms, ...) for allocating to events
+Module66000Name=Enable OAuth2 authentication
+Module66000Desc=Provide a tool to generate and manage OAuth2 tokens. The token can then be used by some other modules.
 Module94160Name=Receptions
 Permission11=Read customer invoices (and payments)
 Permission12=Create/modify customer invoices
@@ -2368,4 +2370,5 @@ Reload=Reload
 ConfirmReload=Confirm module reload
 WarningModuleHasChangedLastVersionCheckParameter=Warning: the module %s has set a parameter to check its version at each page access. This is a bad and not allowed practice that may make the page to administer modules instable. Please contact author of module to fix this.
 WarningModuleHasChangedSecurityCsrfParameter=Warning: the module %s has disabled the CSRF security of your instance. This action is suspect and your installation may no more be secured. Please contact the author of the module for explanation.  
-
+EMailsInGoingDesc=Incoming emails are managed by the module %s. You must enable and configure it if you need to support ingoing emails.
+MAIN_IMAP_USE_PHPIMAP=Use the PHP-IMAP library for IMAP instead of native PHP IMAP. This also allows the use of an OAuth2 connection for IMAP (module OAuth must also be activated).
