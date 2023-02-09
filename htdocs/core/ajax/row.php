@@ -46,9 +46,10 @@ if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
-
+$hookmanager->initHooks(array('rowinterface'));
 // Security check
 // This is done later into view.
 
@@ -113,6 +114,8 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		$perm = 1;
 	} elseif ($table_element_line == 'projet_task' && $fk_element == 'fk_projet' && $user->rights->projet->creer) {
 		$perm = 1;
+	} elseif ($table_element_line == 'contratdet' && $fk_element == 'fk_contrat' && $user->hasRight('contrat', 'creer')) {
+		$perm = 1;
 	} else {
 		$tmparray = explode('_', $table_element_line);
 		$tmpmodule = $tmparray[0]; $tmpobject = preg_replace('/line$/', '', $tmparray[1]);
@@ -120,7 +123,15 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 			$perm = 1;
 		}
 	}
-
+	$parameters = array('roworder'=> &$roworder, 'table_element_line' => &$table_element_line, 'fk_element' => &$fk_element, 'element_id' => &$element_id, 'perm' => &$perm);
+	$row = new GenericObject($db);
+	$row->table_element_line = $table_element_line;
+	$row->fk_element = $fk_element;
+	$row->id = $element_id;
+	$reshook = $hookmanager->executeHooks('checkRowPerms', $parameters, $row, $action);
+	if ($reshook > 0) {
+		$perm = $hookmanager->resArray['perm'];
+	}
 	if (! $perm) {
 		// We should not be here. If we are not allowed to reorder rows, feature should not be visible on script.
 		// If we are here, it is a hack attempt, so we report a warning.
@@ -137,16 +148,13 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		}
 	}
 
-	$row = new GenericObject($db);
-	$row->table_element_line = $table_element_line;
-	$row->fk_element = $fk_element;
-	$row->id = $element_id;
+
 
 	$row->line_ajaxorder($newrowordertab); // This update field rank or position in table row->table_element_line
 
 	// Reorder line to have position of children lines sharing same counter than parent lines
 	// This should be useless because there is no need to have children sharing same counter than parent, but well, it's cleaner into database.
-	if (in_array($fk_element, array('fk_facture', 'fk_propal', 'fk_commande'))) {
+	if (in_array($fk_element, array('fk_facture', 'fk_propal', 'fk_commande','fk_contrat'))) {
 		$result = $row->line_order(true);
 	}
 } else {

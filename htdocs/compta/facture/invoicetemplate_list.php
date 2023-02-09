@@ -29,6 +29,7 @@
  *	\brief      Page to show list of template/recurring invoices
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -93,6 +94,7 @@ $search_date_when_end = dol_mktime(23, 59, 59, $search_date_when_endmonth, $sear
 $search_recurring = GETPOST('search_recurring', 'int');
 $search_frequency = GETPOST('search_frequency', 'alpha');
 $search_unit_frequency = GETPOST('search_unit_frequency', 'alpha');
+$search_nb_gen_done = GETPOST('search_nb_gen_done', 'aplha');
 $search_status = GETPOST('search_status', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -235,6 +237,7 @@ if (empty($reshook)) {
 		$search_recurring = '';
 		$search_frequency = '';
 		$search_unit_frequency = '';
+		$search_nb_gen_done = '';
 		$search_status = '';
 		$search_array_options = array();
 	}
@@ -257,7 +260,7 @@ llxHeader('', $langs->trans("RepeatableInvoices"), 'ch-facture.html#s-fac-factur
 
 $form = new Form($db);
 $formother = new FormOther($db);
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 $companystatic = new Societe($db);
@@ -333,7 +336,11 @@ if ($search_frequency != '') {
 	$sql .= natural_search('f.frequency', $search_frequency, 1);
 }
 if ($search_unit_frequency != '') {
-	$sql .= ' AND f.frequency > 0'.natural_search('f.unit_frequency', $search_unit_frequency);
+	$sql .= ' AND f.frequency > 0';
+	$sql .= natural_search('f.unit_frequency', $search_unit_frequency);
+}
+if ($search_nb_gen_done != '') {
+	$sql .= natural_search("f.nb_gen_done", $search_nb_gen_done, 1);
 }
 if ($search_status != '' && $search_status >= -1) {
 	if ($search_status == 0) {
@@ -457,6 +464,9 @@ if ($resql) {
 	if ($search_unit_frequency != '') {
 		$param .= '&search_unit_frequency='.urlencode($search_unit_frequency);
 	}
+	if ($search_nb_gen_done != '') {
+		$param .= '&search_nb_gen_done='.urlencode($search_nb_gen_done);
+	}
 	if ($search_status != '') {
 		$param .= '&search_status='.urlencode($search_status);
 	}
@@ -530,13 +540,13 @@ if ($resql) {
 	if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 		// Payment term
 		print '<td class="liste_titre right">';
-		$form->select_conditions_paiements($search_payment_term, 'search_payment_term', -1, 1, 1, 'maxwidth100');
+		print $form->getSelectConditionsPaiements($search_payment_term, 'search_payment_term', -1, 1, 1, 'maxwidth100');
 		print "</td>";
 	}
 	if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 		// Payment mode
 		print '<td class="liste_titre right">';
-		$form->select_types_paiements($search_payment_mode, 'search_payment_mode', '', 0, 1, 1, 0, 1, 'maxwidth100');
+		print $form->select_types_paiements($search_payment_mode, 'search_payment_mode', '', 0, 1, 1, 0, 1, 'maxwidth100', 1);
 		print '</td>';
 	}
 	if (!empty($arrayfields['recurring']['checked'])) {
@@ -560,6 +570,7 @@ if ($resql) {
 	if (!empty($arrayfields['f.nb_gen_done']['checked'])) {
 		// Nb generation
 		print '<td class="liste_titre" align="center">';
+		print '<input class="flat" type="text" size="1" name="search_nb_gen_done" value="'.dol_escape_htmltag($search_nb_gen_done).'">';
 		print '</td>';
 	}
 	// Date invoice
@@ -619,7 +630,7 @@ if ($resql) {
 			1=>$langs->trans("Active"),
 			-1=>$langs->trans("Disabled"),
 		);
-		print $form->selectarray('search_status', $liststatus, $search_status, -2, 0, 0, '', 0, 0, 0, '', 'width100');
+		print $form->selectarray('search_status', $liststatus, $search_status, -2, 0, 0, '', 0, 0, 0, '', 'width100 onrightofpage');
 		print '</td>';
 	}
 	// Action column
@@ -727,7 +738,7 @@ if ($resql) {
 				}
 			}
 			if (!empty($arrayfields['s.nom']['checked'])) {
-				print '<td class="tdoverflowmax200">'.$companystatic->getNomUrl(1, 'customer').'</td>';
+				print '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -857,7 +868,7 @@ if ($resql) {
 				}
 			}
 			if (!empty($arrayfields['f.datec']['checked'])) {
-				print '<td class="center">';
+				print '<td class="center nowraponall">';
 				print dol_print_date($db->jdate($objp->datec), 'dayhour');
 				print '</td>';
 				if (!$i) {
@@ -865,7 +876,7 @@ if ($resql) {
 				}
 			}
 			if (!empty($arrayfields['f.tms']['checked'])) {
-				print '<td class="center">';
+				print '<td class="center nowraponall">';
 				print dol_print_date($db->jdate($objp->tms), 'dayhour');
 				print '</td>';
 				if (!$i) {

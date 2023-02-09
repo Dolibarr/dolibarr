@@ -23,6 +23,7 @@
  *  \brief      Schedule card
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
@@ -149,7 +150,7 @@ $morehtmlref = '<div class="refidno">';
 $morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, 0, 'string', '', 0, 1);
 $morehtmlref .= $form->editfieldval("Label", 'label', $object->label, $object, 0, 'string', '', null, null, '', 1);
 // Project
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$langs->loadLangs(array("projects"));
 	$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
 	if ($user->rights->loan->write) {
@@ -164,7 +165,7 @@ if (!empty($conf->projet->enabled)) {
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		}
 	} else {
@@ -234,17 +235,16 @@ if (count($echeances->lines) > 0) {
 	print '<input type="hidden" name="action" value="createecheancier">';
 }
 
+//print_fiche_titre($langs->trans("FinancialCommitment"));
+print '<br>';
+
 print '<div class="div-table-responsive-no-min">';
 print '<table class="border centpercent">';
-print '<tr class="liste_titre">';
+
 $colspan = 6;
 if (count($echeances->lines) > 0) {
 	$colspan++;
 }
-print '<th class="center" colspan="'.$colspan.'">';
-print $langs->trans("FinancialCommitment");
-print '</th>';
-print '</tr>';
 
 print '<tr class="liste_titre">';
 print '<th class="center">'.$langs->trans("Term").'</th>';
@@ -276,10 +276,10 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 		print '<tr>';
 		print '<td class="center" id="n'.$i.'">'.$i.'</td>';
 		print '<td class="center" id ="date'.$i.'"><input type="hidden" name="hi_date'.$i.'" id ="hi_date'.$i.'" value="'.dol_time_plus_duree($object->datestart, $i - 1, 'm').'">'.dol_print_date(dol_time_plus_duree($object->datestart, $i - 1, 'm'), 'day').'</td>';
-		print '<td class="center" id="insurance'.$i.'">'.price($insurance + (($i == 1) ? $regulInsurance : 0), 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_insurance'.$i.'" id ="hi_insurance'.$i.'" value="'.($insurance + (($i == 1) ? $regulInsurance : 0)).'">';
-		print '<td class="center" id="interets'.$i.'">'.price($int, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_interets'.$i.'" id ="hi_interets'.$i.'" value="'.$int.'">';
-		print '<td class="center"><input name="mens'.$i.'" id="mens'.$i.'" size="5" value="'.$mens.'" ech="'.$i.'"></td>';
-		print '<td class="center" id="capital'.$i.'">'.price($cap_rest).'</td><input type="hidden" name="hi_capital'.$i.'" id ="hi_capital'.$i.'" value="'.$cap_rest.'">';
+		print '<td class="center amount" id="insurance'.$i.'">'.price($insurance + (($i == 1) ? $regulInsurance : 0), 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_insurance'.$i.'" id ="hi_insurance'.$i.'" value="'.($insurance + (($i == 1) ? $regulInsurance : 0)).'">';
+		print '<td class="center amount" id="interets'.$i.'">'.price($int, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_interets'.$i.'" id ="hi_interets'.$i.'" value="'.$int.'">';
+		print '<td class="center"><input class="width75 right" name="mens'.$i.'" id="mens'.$i.'" value="'.$mens.'" ech="'.$i.'"></td>';
+		print '<td class="center amount" id="capital'.$i.'">'.price($cap_rest).'</td><input type="hidden" name="hi_capital'.$i.'" id ="hi_capital'.$i.'" value="'.$cap_rest.'">';
 		print '</tr>'."\n";
 		$i++;
 		$capital = $cap_rest;
@@ -300,15 +300,15 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 		print '<tr>';
 		print '<td class="center" id="n'.$i.'"><input type="hidden" name="hi_rowid'.$i.'" id ="hi_rowid'.$i.'" value="'.$line->id.'">'.$i.'</td>';
 		print '<td class="center" id ="date'.$i.'"><input type="hidden" name="hi_date'.$i.'" id ="hi_date'.$i.'" value="'.$line->datep.'">'.dol_print_date($line->datep, 'day').'</td>';
-		print '<td class="center" id="insurance'.$i.'">'.price($insu, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_insurance'.$i.'" id ="hi_insurance'.$i.'" value="'.$insu.'">';
-		print '<td class="center" id="interets'.$i.'">'.price($int, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_interets'.$i.'" id ="hi_interets'.$i.'" value="'.$int.'">';
+		print '<td class="center amount" id="insurance'.$i.'">'.price($insu, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_insurance'.$i.'" id ="hi_insurance'.$i.'" value="'.$insu.'">';
+		print '<td class="center amount" id="interets'.$i.'">'.price($int, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_interets'.$i.'" id ="hi_interets'.$i.'" value="'.$int.'">';
 		if (empty($line->fk_bank)) {
-			print '<td class="center"><input name="mens'.$i.'" id="mens'.$i.'" size="5" value="'.$mens.'" ech="'.$i.'"></td>';
+			print '<td class="center"><input class="right width75" name="mens'.$i.'" id="mens'.$i.'" value="'.$mens.'" ech="'.$i.'"></td>';
 		} else {
-			print '<td class="center">'.price($mens, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="mens'.$i.'" id ="mens'.$i.'" value="'.$mens.'">';
+			print '<td class="center amount">'.price($mens, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="mens'.$i.'" id ="mens'.$i.'" value="'.$mens.'">';
 		}
 
-		print '<td class="center" id="capital'.$i.'">'.price($cap_rest, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_capital'.$i.'" id ="hi_capital'.$i.'" value="'.$cap_rest.'">';
+		print '<td class="center amount" id="capital'.$i.'">'.price($cap_rest, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_capital'.$i.'" id ="hi_capital'.$i.'" value="'.$cap_rest.'">';
 		print '<td class="center">';
 		if (!empty($line->fk_bank)) {
 			print $langs->trans('Paid');
@@ -316,7 +316,7 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 				print '&nbsp;<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$line->fk_payment_loan.'">('.img_object($langs->trans("Payment"), "payment").' '.$line->fk_payment_loan.')</a>';
 			}
 		} elseif (!$printed) {
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';
+			print '<a class="butAction smallpaddingimp" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&action=create">'.$langs->trans('DoPayment').'</a>';
 			$printed = true;
 		}
 		print '</td>';

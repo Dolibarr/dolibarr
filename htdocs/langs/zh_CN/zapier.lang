@@ -13,9 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-ModuleZapierForDolibarrName = Zapier for Dolibarr
-ModuleZapierForDolibarrDesc = Zapier for Dolibarr module
-ZapierForDolibarrSetup=Setup of Zapier for Dolibarr
-ZapierDescription=Interface with Zapier
-ZapierAbout=About the module Zapier
-ZapierSetupPage=There is no need for a setup on Dolibarr side to use Zapier. However, you must generate and publish a package on zapier to be able to use Zapier with Dolibarr. See documentation on <a href="https://wiki.dolibarr.org/index.php/Module_Zapier">this wiki page</a>.
+ModuleZapierForDolibarrName = Dolibarr 的 Zapier
+ModuleZapierForDolibarrDesc = Dolibarr 的 Zapier 模块
+ZapierForDolibarrSetup=Dolibarr 的 Zapier 设置
+ZapierDescription=与 Zapier 的接口
+ZapierAbout=关于模块 Zapier
+ZapierSetupPage=使用 Zapier 不需要在 Dolibarr 方面进行设置。然而，你必须在 Zapier 上生成并发布一个包，以便能够在 Dolibarr 上使用 Zapier。请看<a href="https://wiki.dolibarr.org/index.php/Module_Zapier">这个维基页面上的文档。

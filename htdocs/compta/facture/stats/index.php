@@ -26,13 +26,14 @@
  *  \brief      Page des stats factures
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
-if (!empty($conf->category->enabled)) {
+if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -63,7 +64,7 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$nowyear = strftime("%Y", dol_now());
+$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $year = GETPOST('year') > 0 ? GETPOST('year', 'int') : $nowyear;
 $startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
@@ -72,7 +73,7 @@ $endyear = $year;
 /*
  * View
  */
-if (!empty($conf->category->enabled)) {
+if (isModEnabled('categorie')) {
 	$langs->load('categories');
 }
 $form = new Form($db);
@@ -102,7 +103,7 @@ if ($mode == 'customer') {
 		$stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($object_status).')';
 	}
 	if (is_array($custcats) && !empty($custcats)) {
-		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat OmdN (f.fk_soc = cat.fk_soc)';
+		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat ON (f.fk_soc = cat.fk_soc)';
 		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $custcats)).')';
 	}
 }
@@ -299,7 +300,7 @@ if ($user->admin) {
 print '</td></tr>';
 
 // Category
-if (!empty($conf->category->enabled)) {
+if (isModEnabled('categorie')) {
 	if ($mode == 'customer') {
 		$cat_type = Categorie::TYPE_CUSTOMER;
 		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
@@ -377,14 +378,24 @@ foreach ($data as $val) {
 		print '</tr>';
 	}
 
+	if ($mode == 'supplier') {
+		$greennb = (empty($val['nb_diff']) || $val['nb_diff'] <= 0);
+		$greentotal = (empty($val['total_diff']) || $val['total_diff'] <= 0);
+		$greenavg = (empty($val['avg_diff']) || $val['avg_diff'] <= 0);
+	} else {
+		$greennb = (empty($val['nb_diff']) || $val['nb_diff'] >= 0);
+		$greentotal = (empty($val['total_diff']) || $val['total_diff'] >= 0);
+		$greenavg = (empty($val['avg_diff']) || $val['avg_diff'] >= 0);
+	}
+
 	print '<tr class="oddeven" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right opacitylow" style="'.((empty($val['nb_diff']) || $val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(!empty($val['nb_diff']) && $val['nb_diff'] < 0 ? '' : '+').round(!empty($val['nb_diff']) ? $val['nb_diff'] : 0).'%</td>';
+	print '<td class="right opacitylow" style="'.($greennb ? 'color: green;' : 'color: red;').'">'.(!empty($val['nb_diff']) && $val['nb_diff'] < 0 ? '' : '+').round(!empty($val['nb_diff']) ? $val['nb_diff'] : 0).'%</td>';
 	print '<td class="right"><span class="amount">'.price(price2num($val['total'], 'MT'), 1).'</span></td>';
-	print '<td class="right opacitylow" style="'.((empty($val['total_diff']) || $val['total_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.( !empty($val['total_diff']) && $val['total_diff'] < 0 ? '' : '+').round(!empty($val['total_diff']) ? $val['total_diff'] : 0).'%</td>';
+	print '<td class="right opacitylow" style="'.($greentotal ? 'color: green;' : 'color: red;').'">'.( !empty($val['total_diff']) && $val['total_diff'] < 0 ? '' : '+').round(!empty($val['total_diff']) ? $val['total_diff'] : 0).'%</td>';
 	print '<td class="right"><span class="amount">'.price(price2num($val['avg'], 'MT'), 1).'</span></td>';
-	print '<td class="right opacitylow" style="'.((empty($val['avg_diff']) || $val['avg_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(!empty($val['avg_diff']) && $val['avg_diff'] < 0 ? '' : '+').round(!empty($val['avg_diff']) ? $val['avg_diff'] : 0).'%</td>';
+	print '<td class="right opacitylow" style="'.($greenavg ? 'color: green;' : 'color: red;').'">'.(!empty($val['avg_diff']) && $val['avg_diff'] < 0 ? '' : '+').round(!empty($val['avg_diff']) ? $val['avg_diff'] : 0).'%</td>';
 	print '</tr>';
 	$oldyear = $year;
 }

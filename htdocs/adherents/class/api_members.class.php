@@ -2,7 +2,7 @@
 /* Copyright (C) 2016	Xebax Christy	<xebax@wanadoo.fr>
  * Copyright (C) 2017	Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2020	Thibault FOUCART<support@ptibogxiv.net>
- * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020	Frédéric France	<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ class Members extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -99,7 +99,7 @@ class Members extends DolibarrApi
 	 */
 	public function getByThirdparty($thirdparty)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -132,7 +132,7 @@ class Members extends DolibarrApi
 	 */
 	public function getByThirdpartyEmail($email)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -171,7 +171,7 @@ class Members extends DolibarrApi
 	 */
 	public function getByThirdpartyBarcode($barcode)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -217,7 +217,7 @@ class Members extends DolibarrApi
 
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -286,7 +286,7 @@ class Members extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
 			throw new RestException(401);
 		}
 		// Check mandatory fields
@@ -311,7 +311,7 @@ class Members extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
 			throw new RestException(401);
 		}
 
@@ -370,7 +370,7 @@ class Members extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->supprimer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'supprimer')) {
 			throw new RestException(401);
 		}
 		$member = new Adherent($this->db);
@@ -383,14 +383,18 @@ class Members extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$member->delete($member->id, DolibarrApiAccess::$user)) {
-			throw new RestException(401, 'error when deleting member');
+
+		$res = $member->delete($member->id, DolibarrApiAccess::$user);
+		if ($res < 0) {
+			throw new RestException(500, "Can't delete, error occurs");
+		} elseif ($res == 0) {
+			throw new RestException(409, "Can't delete, that product is probably used");
 		}
 
 		return array(
 			'success' => array(
 				'code' => 200,
-				'message' => 'member deleted'
+				'message' => 'Member deleted'
 			)
 		);
 	}
@@ -460,7 +464,7 @@ class Members extends DolibarrApi
 	{
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->adherent->cotisation->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -480,18 +484,18 @@ class Members extends DolibarrApi
 	/**
 	 * Add a subscription for a member
 	 *
-	 * @param int $id               ID of member
-	 * @param int $start_date       Start date {@from body} {@type timestamp}
-	 * @param int $end_date         End date {@from body} {@type timestamp}
-	 * @param float $amount         Amount (may be 0) {@from body}
-	 * @param string $label         Label {@from body}
+	 * @param int 		$id             ID of member
+	 * @param string 	$start_date     Start date {@from body} {@type timestamp}
+	 * @param string 	$end_date       End date {@from body} {@type timestamp}
+	 * @param float 	$amount         Amount (may be 0) {@from body}
+	 * @param string 	$label         	Label {@from body}
 	 * @return int  ID of subscription
 	 *
 	 * @url POST {id}/subscriptions
 	 */
 	public function createSubscription($id, $start_date, $end_date, $amount, $label = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->cotisation->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'creer')) {
 			throw new RestException(401);
 		}
 

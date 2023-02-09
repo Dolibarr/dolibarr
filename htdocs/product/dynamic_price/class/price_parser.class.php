@@ -150,11 +150,12 @@ class PriceParser
 			"length" => $product->length,
 			"surface" => $product->surface,
 			"price_min" => $product->price_min,
+			"cost_price" => $product->cost_price,
+			"pmp" => $product->pmp,
 		));
 
 		//Retrieve all extrafield for product and add it to values
 		$extrafields = new ExtraFields($this->db);
-		$extrafields->fetch_name_optionals_label('product', true);
 		$product->fetch_optionals();
 		if (is_array($extrafields->attributes[$product->table_element]['label'])) {
 			foreach ($extrafields->attributes[$product->table_element]['label'] as $key => $label) {

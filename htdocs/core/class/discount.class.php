@@ -419,7 +419,7 @@ class DiscountAbsolute
 	 *	When discount is from a credit note used to reduce payment of an invoice, we link using rowidinvoice
 	 *
 	 *	@param		int		$rowidline		Invoice line id (To use discount into invoice lines)
-	 *	@param		int		$rowidinvoice	Invoice id (To use discount as a credit note to reduc payment of invoice)
+	 *	@param		int		$rowidinvoice	Invoice id (To use discount as a credit note to reduce payment of invoice)
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
 	public function link_to_invoice($rowidline, $rowidinvoice)
@@ -559,10 +559,10 @@ class DiscountAbsolute
 
 	/**
 	 *  Return amount (with tax) of all deposits invoices used by invoice as a payment.
-	 *  Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on (not recommended).
+	 *  Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS or FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS is on (not recommended).
 	 *
 	 *	@param		CommonInvoice	$invoice		Object invoice (customer of supplier)
-	 *  @param 		int 		    $multicurrency 	1=Return multicurrency_amount instead of amount
+	 *  @param 		int 		    $multicurrency 	1=Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
 	 *	@return		int				     			<0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	public function getSumDepositsUsed($invoice, $multicurrency = 0)
@@ -603,7 +603,7 @@ class DiscountAbsolute
 	 *  Return amount (with tax) of all credit notes invoices + excess received used by invoice as a payment
 	 *
 	 *	@param      CommonInvoice	  $invoice	    	Object invoice
-	 *	@param      int			      $multicurrency	1=Return multicurrency_amount instead of amount
+	 *	@param      int			      $multicurrency	1=Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
 	 *	@return     int					        		<0 if KO, Sum of credit notes and excess received amount otherwise
 	 */
 	public function getSumCreditNotesUsed($invoice, $multicurrency = 0)
@@ -643,7 +643,7 @@ class DiscountAbsolute
 	 *    	Return amount (with tax) of all converted amount for this credit note
 	 *
 	 *	@param		CommonInvoice	  $invoice	    	Object invoice
-	 *	@param		int			      $multicurrency	Return multicurrency_amount instead of amount
+	 *	@param		int			      $multicurrency	Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
 	 *	@return		int					        		<0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	public function getSumFromThisCreditNotesNotUsed($invoice, $multicurrency = 0)

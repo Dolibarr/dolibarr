@@ -24,6 +24,7 @@
  *		\brief      File of main public page for open job position
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/lib/recruitment.lib.php';
@@ -96,6 +97,7 @@ print dol_get_fiche_head($head, 'publicurl', '', -1, '');
 
 print '<span class="opacitymedium">'.$langs->trans("PublicInterfaceRecruitmentDesc").'</span><br><br>';
 
+$param = '';
 
 $enabledisablehtml = $langs->trans("EnablePublicRecruitmentPages").' ';
 if (empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
@@ -138,12 +140,12 @@ print dol_get_fiche_end();
 
 print '</form>';
 
-/*
+
 if (!empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
 	print '<br>';
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
-	print img_picto('', 'globe').' '.$langs->trans('BlankSubscriptionForm').':<br>';
-	if ($conf->multicompany->enabled) {
+	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';
+	if (isModEnabled('multicompany')) {
 		$entity_qr = '?entity='.$conf->entity;
 	} else {
 		$entity_qr = '';
@@ -154,9 +156,12 @@ if (!empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.$urlwithroot.'/public/members/new.php'.$entity_qr.'</a>';
+	print '<div class="urllink">';
+	print '<input type="text" id="publicurlmember" class="quatrevingtpercentminusx" value="'.$urlwithroot.'/public/recruitment/index.php'.$entity_qr.'">';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/recruitment/index.php'.$entity_qr.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
+	print '</div>';
+	print ajax_autoselect('publicurlmember');
 }
-*/
 
 // End of page
 llxFooter();

@@ -131,8 +131,10 @@ class HookManager
 			dol_syslog(get_class($this)."::initHooks Loading hooks: ".join(', ', $arraytolog), LOG_DEBUG);
 		}
 
-		if (!empty($this->hooks[$context])) {
-			ksort($this->hooks[$context], SORT_NATURAL);
+		foreach ($arraycontext as $context) {
+			if (!empty($this->hooks[$context])) {
+				ksort($this->hooks[$context], SORT_NATURAL);
+			}
 		}
 
 		return 1;
@@ -160,81 +162,44 @@ class HookManager
 		//dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
 
 		// Define type of hook ('output' or 'addreplace').
-		// TODO Remove hooks with type 'output' (exemple getNomUrl). All hooks must be converted into 'addreplace' hooks.
-		$hooktype = 'output';
-		if (in_array(
-			$method,
-			array(
-				'addCalendarChoice',
-				'addCalendarView',
-				'addMoreActionsButtons',
-				'addMoreMassActions',
-				'addSearchEntry',
-				'addStatisticLine',
-				'addSectionECMAuto',
-				'checkSecureAccess',
-				'createDictionaryFieldlist',
-				'editDictionaryFieldlist',
-				'getFormMail',
-				'deleteFile',
-				'doActions',
-				'doMassActions',
-				'formatEvent',
-				'formConfirm',
-				'formCreateThirdpartyOptions',
-				'formObjectOptions',
-				'formattachOptions',
-				'formBuilddocLineOptions',
-				'formatNotificationMessage',
-				'formConfirm',
-				'getAccessForbiddenMessage',
-				'getDirList',
-				'hookGetEntity',
-				'getFormMail',
-				'getFormatedCustomerRef',
-				'getFormatedSupplierRef',
-				'getIdProfUrl',
-				'getInputIdProf',
-				'menuLeftMenuItems',
-				'moveUploadedFile',
-				'moreHtmlStatus',
-				'pdf_build_address',
-				'pdf_writelinedesc',
-				'pdf_getlinenum',
-				'pdf_getlineref',
-				'pdf_getlineref_supplier',
-				'pdf_getlinevatrate',
-				'pdf_getlineupexcltax',
-				'pdf_getlineupwithtax',
-				'pdf_getlineqty',
-				'pdf_getlineqty_asked',
-				'pdf_getlineqty_shipped',
-				'pdf_getlineqty_keeptoship',
-				'pdf_getlineunit',
-				'pdf_getlineremisepercent',
-				'pdf_getlineprogress',
-				'pdf_getlinetotalexcltax',
-				'pdf_getlinetotalwithtax',
-				'paymentsupplierinvoices',
-				'printAddress',
-				'printEmail',
-				'printSearchForm',
-				'printTabsHead',
-				'printObjectLine',
-				'printObjectSubLine',
-				'restrictedArea',
-				'sendMail',
-				'sendMailAfter',
-				'showOptionals',
-				'showLinkToObjectBlock',
-				'setContentSecurityPolicy',
-				'setHtmlTitle',
-				'completeTabsHead',
-				'formDolBanner',
-				'displayMarginInfos',
-				)
-		)) {
-			$hooktype = 'addreplace';
+		$hooktype = 'addreplace';
+		// TODO Remove hooks with type 'output' (exemple createFrom). All hooks must be converted into 'addreplace' hooks.
+		if (in_array($method, array(
+			'createFrom',
+			'dashboardMembers',
+			'dashboardEmailings',
+			'dashboardPropals',
+			'dashboardPropals',
+			'dashboardCommercials',
+			'dashboardOrders',
+			'dashboardSpecialBills',
+			'dashboardAccountancy',
+			'dashboardContracts',
+			'dashboardDonation',
+			'dashboardWarehouseSendings',
+			'dashboardExpenseReport',
+			'dashboardInterventions',
+			'dashboardOrdersSuppliers',
+			'dashboardHRM',
+			'dashboardMRP',
+			'dashboardOpensurvey',
+			'dashboardWarehouse',
+			'dashboardProductServices',
+			'dashboardActivities',
+			'dashboardProjects',
+			'dashboardWarehouseReceptions',
+			'dashboardThirdparties',
+			'dashboardSupplierProposal',
+			'dashboardTickets',
+			'dashboardUsersGroups',
+			'insertExtraHeader',
+			'insertExtraFooter',
+			'printLeftBlock',
+			'formAddObjectLine',
+			'formBuilddocOption',
+			'showSocinfoOnPrint'
+		))) {
+			$hooktype = 'output';
 		}
 
 		// Init return properties

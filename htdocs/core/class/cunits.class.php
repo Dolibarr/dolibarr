@@ -420,15 +420,16 @@ class CUnits // extends CommonObject
 	 * Get unit from code
 	 * @param string $code code of unit
 	 * @param string $mode 0= id , short_label=Use short label as value, code=use code
+	 * @param string $unit_type weight,size,surface,volume,qty,time...
 	 * @return int            <0 if KO, Id of code if OK
 	 */
-	public function getUnitFromCode($code, $mode = 'code')
+	public function getUnitFromCode($code, $mode = 'code', $unit_type = '')
 	{
 
 		if ($mode == 'short_label') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid');
+			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid', 0, " AND unit_type = '".$this->db->escape($unit_type)."'");
 		} elseif ($mode == 'code') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'code', 'rowid');
+			return dol_getIdFromCode($this->db, $code, 'c_units', 'code', 'rowid', 0, " AND unit_type = '". $this->db->escape($unit_type) ."'");
 		}
 
 		return $code;
@@ -463,22 +464,30 @@ class CUnits // extends CommonObject
 	}
 
 	/**
-	 * get scale of unit factor
-	 * @param int $id id of unit in dictionary
-	 * @return float|int
+	 * Get scale of unit factor
+	 *
+	 * @param 	int 		$id 	Id of unit in dictionary
+	 * @return 	float|int			Scale of unit
 	 */
 	public function scaleOfUnitPow($id)
 	{
 		$base = 10;
-		// TODO : add base col into unit dictionary table
-		$unit = $this->db->getRow("SELECT scale, unit_type from ".$this->db->prefix()."c_units WHERE rowid = ".intval($id));
-		if ($unit) {
-			// TODO : if base exist in unit dictionary table remove this convertion exception and update convertion infos in database exemple time hour currently scale 3600 will become scale 2 base 60
-			if ($unit->unit_type == 'time') {
-				return floatval($unit->scale);
-			}
 
-			return pow($base, floatval($unit->scale));
+		$sql = "SELECT scale, unit_type FROM ".$this->db->prefix()."c_units WHERE rowid = ".((int) $id);
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			// TODO : add base col into unit dictionary table
+			$unit = $this->db->fetch_object($sql);
+			if ($unit) {
+				// TODO : if base exists in unit dictionary table, remove this convertion exception and update convertion infos in database.
+				// Example time hour currently scale 3600 will become scale 2 base 60
+				if ($unit->unit_type == 'time') {
+					return floatval($unit->scale);
+				}
+
+				return pow($base, floatval($unit->scale));
+			}
 		}
 
 		return 0;

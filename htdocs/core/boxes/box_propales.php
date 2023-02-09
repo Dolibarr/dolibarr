@@ -61,7 +61,7 @@ class box_propales extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->propale->lire);
+		$this->hidden = !($user->hasRight('propal', 'read'));
 	}
 
 	/**
@@ -83,13 +83,12 @@ class box_propales extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLast".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."Propals", $max));
 
-		if ($user->rights->propale->lire) {
+		if ($user->rights->propal->lire) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", p.rowid, p.ref, p.fk_statut as status, p.datep as dp, p.datec, p.fin_validite, p.date_cloture, p.total_ht, p.total_tva, p.total_ttc, p.tms";
-			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			$sql .= ", ".MAIN_DB_PREFIX."propal as p";
+			$sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
 			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
@@ -130,6 +129,7 @@ class box_propales extends ModeleBoxes
 					$propalstatic->total_ttc = $objp->total_ttc;
 					$propalstatic->statut = $objp->status;
 					$propalstatic->status = $objp->status;
+					$propalstatic->date = $date;
 
 					$societestatic->id = $objp->socid;
 					$societestatic->name = $objp->name;
@@ -165,8 +165,8 @@ class box_propales extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center nowraponall"',
-						'text' => dol_print_date($date, 'day', 'tzuserrel'),
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
+						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

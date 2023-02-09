@@ -225,5 +225,5 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 	print '</body></html>'."\n";
 	print "\n";
 
-	return;
+	return 1;
 }

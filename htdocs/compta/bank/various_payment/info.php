@@ -21,6 +21,7 @@
  *  \brief      Page with info about various payment
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
@@ -57,7 +58,7 @@ print dol_get_fiche_head($head, 'info', $langs->trans("VariousPayment"), -1, $ob
 
 $morehtmlref = '<div class="refidno">';
 // Project
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	$langs->load("projects");
 	$morehtmlref .= $langs->trans('Project').' : ';
 	if ($user->rights->banque->modifier && 0) {
@@ -73,7 +74,7 @@ if (!empty($conf->projet->enabled)) {
 			$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			$morehtmlref .= '</form>';
 		} else {
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 		}
 	} else {
 		if (!empty($object->fk_project)) {

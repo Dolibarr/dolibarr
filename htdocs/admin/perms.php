@@ -24,6 +24,7 @@
  *		\brief      Page to setup default permissions of a new user
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -226,7 +227,7 @@ if ($result) {
 		// Tick
 		if ($obj->bydefault == 1) {
 			print '<td class="center">';
-			print '<a class="reposition" href="perms.php?pid='.$obj->id.'&amp;action=remove">';
+			print '<a class="reposition" href="perms.php?pid='.$obj->id.'&action=remove&token='.newToken().'">';
 			//print img_edit_remove();
 			print img_picto('', 'switch_on');
 			print '</a>';

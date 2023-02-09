@@ -40,7 +40,7 @@ if (!is_object($form)) {
 ?>
 <!-- BEGIN PHP TEMPLATE extrafields_view.tpl.php -->
 <?php
-if (!is_array($parameters)) {
+if (!isset($parameters) || !is_array($parameters)) {
 	$parameters = array();
 }
 if (!empty($cols)) {
@@ -65,6 +65,8 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 	$extrafields_collapse_num = '';
 	$extrafields_collapse_num_old = '';
 	$i = 0;
+
+	// Loop on each extrafield
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $tmpkeyextra => $tmplabelextra) {
 		$i++;
 
@@ -99,9 +101,9 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			$langs->load($extrafields->attributes[$object->table_element]['langfile'][$tmpkeyextra]);
 		}
 		if ($action == 'edit_extras') {
-			$value = (GETPOSTISSET("options_".$tmpkeyextra) ? GETPOST("options_".$tmpkeyextra) : $object->array_options["options_".$tmpkeyextra]);
+			$value = (GETPOSTISSET("options_".$tmpkeyextra) ? GETPOST("options_".$tmpkeyextra) : (isset($object->array_options["options_".$tmpkeyextra]) ? $object->array_options["options_".$tmpkeyextra] : ''));
 		} else {
-			$value = (!empty($object->array_options["options_".$tmpkeyextra]) ? $object->array_options["options_".$tmpkeyextra] : '');
+			$value = (isset($object->array_options["options_".$tmpkeyextra]) ? $object->array_options["options_".$tmpkeyextra] : '');
 			//var_dump($tmpkeyextra.' - '.$value);
 		}
 
@@ -114,6 +116,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			$lastseparatorkeyfound = $tmpkeyextra;
 		} else {
 			$collapse_group = $extrafields_collapse_num.(!empty($object->id) ? '_'.$object->id : '');
+
 			print '<tr class="trextrafields_collapse'.$collapse_group;
 			/*if ($extrafields_collapse_num && $extrafields_collapse_num_old && $extrafields_collapse_num != $extrafields_collapse_num_old) {
 				print ' trextrafields_collapse_new';
@@ -149,6 +152,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			//var_dump($user->rights);
 			$permok = false;
 			$keyforperm = $object->element;
+
 			if ($object->element == 'fichinter') {
 				$keyforperm = 'ficheinter';
 			}
@@ -236,7 +240,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 				if ($object->table_element == 'societe') {
 					$fieldid = 'socid';
 				}
-				print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formextra">';
+				print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"] . '?' . $fieldid . '=' . $object->id . '" method="post" name="formextra">';
 				print '<input type="hidden" name="action" value="update_extras">';
 				print '<input type="hidden" name="attribute" value="'.$tmpkeyextra.'">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';

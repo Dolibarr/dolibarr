@@ -23,29 +23,35 @@
  */
 
 /**
- *	\file       htdocs/fourn/paiement/document.php
- *	\ingroup    facture, fournisseur
- *	\brief      Management page of attached documents to a payment
+ *    \file       htdocs/fourn/paiement/document.php
+ *    \ingroup    facture, fournisseur
+ *    \brief      Management page of attached documents to a payment
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
-if (!empty($conf->projet->enabled)) {
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-// Load translation files required by the page
-$langs->loadLangs(array('bills', 'banks', 'companies', 'suppliers', 'other'));
 
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'bills', 'companies', 'suppliers', 'other'));
+
+
+// Get Parameters
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
+
 
 // Security check
 if ($user->socid) {
@@ -117,14 +123,14 @@ if ($object->id > 0) {
 	$morehtmlref .= $object->num_payment ? ' - '.$object->num_payment : '';
 
 	// Thirdparty
-	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
+	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 
 	// Amount
 	$morehtmlref .= '<br>'.$langs->trans('Amount').' : '. price($object->amount, '', $langs, 0, 0, -1, $conf->currency);
 
 	$allow_delete = 1;
 	// Bank account
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		if ($object->fk_account) {
 			$bankline = new AccountLine($db);
 			$bankline->fetch($object->bank_line);

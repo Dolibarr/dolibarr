@@ -429,8 +429,7 @@ class FormOther
 			if (!is_numeric($showempty)) {
 				$textforempty = $showempty;
 			}
-			$moreforfilter .= '<option class="optiongrey" value="'.($showempty < 0 ? $showempty : -1).'"'.($selected == $showempty ? ' selected' : '').'>'.$textforempty.'</option>'."\n";
-			//$moreforfilter .= '<option value="0" '.($moreparamonempty ? $moreparamonempty.' ' : '').' class="optiongrey">'.(is_numeric($showempty) ? '&nbsp;' : $showempty).'</option>'; // Should use -1 to say nothing
+			$moreforfilter .= '<option class="optiongrey" value="'.($showempty < 0 ? $showempty : -1).'"'.($selected == $showempty ? ' selected' : '').' data-html="'.dol_escape_htmltag($textforempty).'">'.dol_escape_htmltag($textforempty).'</option>'."\n";
 		}
 
 		if (is_array($tab_categs)) {
@@ -439,6 +438,7 @@ class FormOther
 				if ($categ['id'] == $selected) {
 					$moreforfilter .= ' selected';
 				}
+				$moreforfilter .= ' data-html="'.dol_escape_htmltag(img_picto('', 'category', 'class="pictofixedwidth" style="color: #'.$categ['color'].'"').dol_trunc($categ['fulllabel'], 50, 'middle')).'"';
 				$moreforfilter .= '>'.dol_trunc($categ['fulllabel'], 50, 'middle').'</option>';
 			}
 		}
@@ -700,11 +700,14 @@ class FormOther
 							print ' selected';
 						}
 
-						$labeltoshow = $langs->trans("Project").' '.$lines[$i]->projectref;
+						$labeltoshow = $lines[$i]->projectref;
+						//$labeltoshow .= ' '.$lines[$i]->projectlabel;
 						if (empty($lines[$i]->public)) {
-							$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
+							//$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
+							$labeltoshow = img_picto($lines[$i]->projectlabel, 'project', 'class="pictofixedwidth"').$labeltoshow;
 						} else {
-							$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
+							//$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
+							$labeltoshow = img_picto($lines[$i]->projectlabel, 'projectpub', 'class="pictofixedwidth"').$labeltoshow;
 						}
 
 						print ' data-html="'.dol_escape_htmltag($labeltoshow).'"';
@@ -738,12 +741,14 @@ class FormOther
 						print ' disabled';
 					}
 
-					$labeltoshow = $langs->trans("Project").' '.$lines[$i]->projectref;
-					$labeltoshow .= ' '.$lines[$i]->projectlabel;
+					$labeltoshow = $lines[$i]->projectref;
+					//$labeltoshow .= ' '.$lines[$i]->projectlabel;
 					if (empty($lines[$i]->public)) {
-						$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
+						//$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
+						$labeltoshow = img_picto($lines[$i]->projectlabel, 'project', 'class="pictofixedwidth"').$labeltoshow;
 					} else {
-						$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
+						//$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
+						$labeltoshow = img_picto($lines[$i]->projectlabel, 'projectpub', 'class="pictofixedwidth"').$labeltoshow;
 					}
 					if ($lines[$i]->id) {
 						$labeltoshow .= ' > ';
@@ -1000,7 +1005,7 @@ class FormOther
 			6=>$langs->trans("Day6")
 		);
 
-		$select_week = '<select class="flat" name="'.$htmlname.'">';
+		$select_week = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
 		if ($useempty) {
 			$select_week .= '<option value="-1">&nbsp;</option>';
 		}
@@ -1014,6 +1019,9 @@ class FormOther
 			$select_week .= '</option>';
 		}
 		$select_week .= '</select>';
+
+		$select_week .= ajax_combobox($htmlname);
+
 		return $select_week;
 	}
 
@@ -1080,12 +1088,14 @@ class FormOther
 	 *  @param	int			$invert			Invert
 	 *  @param	string		$option			Option
 	 *  @param	string		$morecss		More CSS
+	 *  @param  bool		$addjscombo		Add js combo
 	 *  @return	string
+	 *  @deprecated
 	 */
-	public function select_year($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp')
+	public function select_year($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp', $addjscombo = false)
 	{
 		// phpcs:enable
-		print $this->selectyear($selected, $htmlname, $useempty, $min_year, $max_year, $offset, $invert, $option, $morecss);
+		print $this->selectyear($selected, $htmlname, $useempty, $min_year, $max_year, $offset, $invert, $option, $morecss, $addjscombo);
 	}
 
 	/**
@@ -1503,9 +1513,10 @@ class FormOther
 	 * @param	array	$search_xaxis		Array of preselected fields
 	 * @param	array	$arrayofxaxis		Array of groupby to fill
 	 * @param	string  $showempty          '1' or 'text'
+	 * @param	string	$morecss			More css
 	 * @return 	string						HTML string component
 	 */
-	public function selectXAxisField($object, $search_xaxis, &$arrayofxaxis, $showempty = '1')
+	public function selectXAxisField($object, $search_xaxis, &$arrayofxaxis, $showempty = '1', $morecss = 'minwidth250 maxwidth500')
 	{
 		global $form;
 
@@ -1513,7 +1524,7 @@ class FormOther
 		foreach ($arrayofxaxis as $key => $val) {
 			$arrayofxaxislabel[$key] = $val['label'];
 		}
-		$result = $form->selectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth250 maxwidth500', 1);
+		$result = $form->selectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $result;
 	}

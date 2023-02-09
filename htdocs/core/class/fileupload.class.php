@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
+/* Copyright (C) 2011-2022	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -72,7 +72,7 @@ class FileUpload
 		} elseif ($element == 'project_task') {
 			$pathname = 'projet';
 			$filename = 'task';
-			$dir_output = $conf->projet->dir_output;
+			$dir_output = $conf->project->dir_output;
 			$parentForeignKey = 'fk_project';
 			$parentClass = 'Project';
 			$parentElement = 'projet';
@@ -180,6 +180,8 @@ class FileUpload
 				)
 		);
 
+		global $action;
+
 		$hookmanager->executeHooks(
 			'overrideUploadOptions',
 			array(
@@ -187,8 +189,7 @@ class FileUpload
 				'element' => $element
 			),
 			$object,
-			$action,
-			$hookmanager
+			$action
 		);
 
 		if ($options) {
@@ -216,7 +217,7 @@ class FileUpload
 	/**
 	 * Set delete url
 	 *
-	 * @param 	string	$file		Filename
+	 * @param 	object	$file		Filename
 	 * @return	void
 	 */
 	protected function setFileDeleteUrl($file)
@@ -259,7 +260,7 @@ class FileUpload
 	/**
 	 * getFileObjects
 	 *
-	 * @return	void
+	 * @return	array	Array of objects
 	 */
 	protected function getFileObjects()
 	{
@@ -301,7 +302,7 @@ class FileUpload
 	 * Enter description here ...
 	 *
 	 * @param 	string	$uploaded_file		Uploade file
-	 * @param 	string	$file				File
+	 * @param 	object	$file				File
 	 * @param 	string	$error				Error
 	 * @param	string	$index				Index
 	 * @return  boolean                     True if OK, False if KO
@@ -538,7 +539,7 @@ class FileUpload
 	/**
 	 * Delete uploaded file
 	 *
-	 * @return	void
+	 * @return	string
 	 */
 	public function delete()
 	{

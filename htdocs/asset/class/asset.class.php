@@ -144,6 +144,7 @@ class Asset extends CommonObject
 	public $fk_disposal_type;
 	public $disposal_depreciated;
 	public $disposal_subject_to_vat;
+	public $supplier_invoice_id;
 	public $note_public;
 	public $note_private;
 	public $date_creation;
@@ -154,6 +155,7 @@ class Asset extends CommonObject
 	public $import_key;
 	public $model_pdf;
 	public $status;
+	public $user_cloture_id;
 
 	// /**
 	//  * @var string    Field with ID of parent key if this object has a parent
@@ -193,7 +195,7 @@ class Asset extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -408,7 +410,7 @@ class Asset extends CommonObject
 		$sql .= $this->getFieldList('t');
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= " WHERE t.entity IN (".getEntity($this->table_element).")";
+			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
 		}
@@ -650,6 +652,8 @@ class Asset extends CommonObject
 			return -1;
 		}
 
+		// Old request with 'WITH'
+		/*
 		$sql = "WITH in_accounting_bookkeeping(fk_docdet) AS (";
 		$sql .= " SELECT DISTINCT fk_docdet";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
@@ -659,6 +663,14 @@ class Asset extends CommonObject
 		$sql .= ", " . $this->db->ifsql('iab.fk_docdet IS NOT NULL', 1, 0) . " AS bookkeeping";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
 		$sql .= " LEFT JOIN in_accounting_bookkeeping as iab ON iab.fk_docdet = ad.rowid";
+		$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
+		$sql .= " ORDER BY ad.depreciation_date ASC";
+		*/
+
+		$sql = "SELECT ad.rowid, ad.depreciation_mode, ad.ref, ad.depreciation_date, ad.depreciation_ht, ad.cumulative_depreciation_ht";
+		$sql .= ", " . $this->db->ifsql('iab.fk_docdet IS NOT NULL', 1, 0) . " AS bookkeeping";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
+		$sql .= " LEFT JOIN (SELECT DISTINCT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset') AS iab ON iab.fk_docdet = ad.rowid";
 		$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
 		$sql .= " ORDER BY ad.depreciation_date ASC";
 
@@ -706,6 +718,8 @@ class Asset extends CommonObject
 			return -1;
 		}
 
+		// Old request with 'WITH'
+		/*
 		$sql = "WITH in_accounting_bookkeeping(fk_docdet) AS (";
 		$sql .= " SELECT DISTINCT fk_docdet";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
@@ -714,6 +728,13 @@ class Asset extends CommonObject
 		$sql .= "SELECT COUNT(*) AS has_bookkeeping";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
 		$sql .= " LEFT JOIN in_accounting_bookkeeping as iab ON iab.fk_docdet = ad.rowid";
+		$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
+		$sql .= " AND iab.fk_docdet IS NOT NULL";
+		*/
+
+		$sql = "SELECT COUNT(*) AS has_bookkeeping";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
+		$sql .= " LEFT JOIN (SELECT DISTINCT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset') AS iab ON iab.fk_docdet = ad.rowid";
 		$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
 		$sql .= " AND iab.fk_docdet IS NOT NULL";
 
@@ -864,6 +885,9 @@ class Asset extends CommonObject
 			foreach ($options->deprecation_options as $mode_key => $fields) {
 				// Get last depreciation lines save in bookkeeping
 				//-----------------------------------------------------
+
+				// Old request with 'WITH'
+				/*
 				$sql = "WITH in_accounting_bookkeeping(fk_docdet) AS (";
 				$sql .= " SELECT fk_docdet";
 				$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
@@ -877,6 +901,17 @@ class Asset extends CommonObject
 				$sql .= " AND iab.fk_docdet IS NOT NULL";
 				$sql .= " ORDER BY ad.depreciation_date DESC";
 				$sql .= " LIMIT 1";
+				*/
+
+				$sql = "SELECT ad.depreciation_date, ad.cumulative_depreciation_ht";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
+				$sql .= " LEFT JOIN (SELECT DISTINCT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset') AS iab ON iab.fk_docdet = ad.rowid";
+				$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
+				$sql .= " AND ad.depreciation_mode = '" . $this->db->escape($mode_key) . "'";
+				$sql .= " AND iab.fk_docdet IS NOT NULL";
+				$sql .= " ORDER BY ad.depreciation_date DESC";
+				$sql .= " LIMIT 1";
+
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$this->errors[] = $langs->trans('AssetErrorFetchMaxDepreciationDateForMode', $mode_key) . ': ' . $this->db->lasterror();
@@ -1169,10 +1204,10 @@ class Asset extends CommonObject
 				global $hidedetails, $hidedesc, $hideref;
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $this->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -1232,10 +1267,10 @@ class Asset extends CommonObject
 				global $hidedetails, $hidedesc, $hideref;
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $this->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -1440,24 +1475,10 @@ class Asset extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
 
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-
-				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
-				}
-
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_cloture_id = $obj->fk_user_cloture;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
 				$this->date_validation   = $this->db->jdate($obj->datev);

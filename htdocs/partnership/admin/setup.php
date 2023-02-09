@@ -31,16 +31,15 @@ require_once '../lib/partnership.lib.php';
 // Translations
 $langs->loadLangs(array("admin", "partnership"));
 
+$action = GETPOST('action', 'aZ09');
+$value 	= GETPOST('value', 'alpha');
+
+$error = 0;
+
 // Security check
 if (!$user->admin) {
 	accessforbidden();
 }
-
-$action = GETPOST('action', 'aZ09');
-$value 	= GETPOST('value', 'alpha');
-
-
-$error = 0;
 
 
 /*
@@ -124,8 +123,8 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_IS_MANAGED_FOR").'</td>';
 print '<td>';
 print '<select class="flat minwidth100" id="select_PARTNERSHIP_IS_MANAGED_FOR" name="PARTNERSHIP_IS_MANAGED_FOR">';
-print '<option value="thirdparty" '.(($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'thirdparty') ? 'selected' : '').'>'.$langs->trans("ThirdParty").'</option>';
-print '<option value="member" '.(($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') ? 'selected' : '').'>'.$langs->trans("Members").'</option>';
+print '<option value="thirdparty" '.((getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty') == 'thirdparty') ? 'selected' : '').'>'.$langs->trans("ThirdParty").'</option>';
+print '<option value="member" '.((getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty') == 'member') ? 'selected' : '').'>'.$langs->trans("Members").'</option>';
 print '</select>';
 print ajax_combobox('select_PARTNERSHIP_IS_MANAGED_FOR');
 print '</td>';
@@ -133,7 +132,7 @@ print '<td><span class="opacitymedium">'.$langs->trans("partnershipforthirdparty
 print '</tr>';
 
 
-//if (!empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+//if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL").'</td>';
 print '<td>';
 $dnbdays = '30';

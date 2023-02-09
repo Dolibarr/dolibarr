@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2011-2018 Philippe Grand	     <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2023 Philippe Grand	     <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry	     <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García         <marcosgdf@gmail.com>
  *
@@ -31,10 +31,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 
@@ -105,6 +105,8 @@ class Delivery extends CommonObject
 	 * @var string model pdf
 	 */
 	public $model_pdf;
+
+	public $commande_id;
 
 	public $lines = array();
 
@@ -528,6 +530,8 @@ class Delivery extends CommonObject
 	public function create_from_sending($user, $sending_id)
 	{
 		// phpcs:enable
+		global $conf;
+
 		$expedition = new Expedition($this->db);
 		$result = $expedition->fetch($sending_id);
 
@@ -634,7 +638,7 @@ class Delivery extends CommonObject
 			$sql .= " WHERE rowid = ".((int) $lineid);
 
 			if ($this->db->query($sql)) {
-				$this->update_price();
+				$this->update_price(1);
 
 				return 1;
 			} else {
@@ -772,9 +776,9 @@ class Delivery extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Load lines
+	 *	Load lines insto $this->lines.
 	 *
-	 *	@return	void
+	 *	@return		int								<0 if KO, >0 if OK
 	 */
 	public function fetch_lines()
 	{
@@ -815,7 +819,7 @@ class Delivery extends CommonObject
 				$line->product_type		= $obj->fk_product_type;
 				$line->fk_origin_line = $obj->fk_origin_line;
 
-				$line->price = $obj->price;
+				$line->price = $obj->subprice;
 				$line->total_ht = $obj->total_ht;
 
 				// units
@@ -840,9 +844,11 @@ class Delivery extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
-		}
 
-		return $this->lines;
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 
@@ -967,25 +973,25 @@ class Delivery extends CommonObject
 		$sqlSourceLine .= ", p.ref, p.label";
 		$sqlSourceLine .= " FROM ".MAIN_DB_PREFIX.$this->linkedObjectsIds[0]['type']."det as st";
 		$sqlSourceLine .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON st.fk_product = p.rowid";
-		$sqlSourceLine .= " WHERE fk_".$this->linked_object[0]['type']." = ".((int) $this->linked_object[0]['linkid']);
+		$sqlSourceLine .= " WHERE fk_".$this->linked_objects[0]['type']." = ".((int) $this->linked_objects[0]['linkid']);
 
 		$resultSourceLine = $this->db->query($sqlSourceLine);
 		if ($resultSourceLine) {
 			$num_lines = $this->db->num_rows($resultSourceLine);
 			$i = 0;
-			$resultArray = array();
+			$array = array();
 			while ($i < $num_lines) {
 				$objSourceLine = $this->db->fetch_object($resultSourceLine);
 
 				// Get lines of sources alread delivered
 				$sql = "SELECT ld.fk_origin_line, sum(ld.qty) as qty";
 				$sql .= " FROM ".MAIN_DB_PREFIX."deliverydet as ld, ".MAIN_DB_PREFIX."delivery as l,";
-				$sql .= " ".MAIN_DB_PREFIX.$this->linked_object[0]['type']." as c";
-				$sql .= ", ".MAIN_DB_PREFIX.$this->linked_object[0]['type']."det as cd";
+				$sql .= " ".MAIN_DB_PREFIX.$this->linked_objects[0]['type']." as c";
+				$sql .= ", ".MAIN_DB_PREFIX.$this->linked_objects[0]['type']."det as cd";
 				$sql .= " WHERE ld.fk_delivery = l.rowid";
 				$sql .= " AND ld.fk_origin_line = cd.rowid";
-				$sql .= " AND cd.fk_".$this->linked_object[0]['type']." = c.rowid";
-				$sql .= " AND cd.fk_".$this->linked_object[0]['type']." = ".((int) $this->linked_object[0]['linkid']);
+				$sql .= " AND cd.fk_".$this->linked_objects[0]['type']." = c.rowid";
+				$sql .= " AND cd.fk_".$this->linked_objects[0]['type']." = ".((int) $this->linked_objects[0]['linkid']);
 				$sql .= " AND ld.fk_origin_line = ".((int) $objSourceLine->rowid);
 				$sql .= " GROUP BY ld.fk_origin_line";
 
@@ -1079,18 +1085,35 @@ class Delivery extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'delivery'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'deliverydet'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
 	}
 }
 
@@ -1116,14 +1139,6 @@ class DeliveryLine extends CommonObjectLine
 	 */
 	public $table_element = 'deliverydet';
 
-	// From llx_expeditiondet
-	public $qty;
-	public $qty_asked;
-	public $qty_shipped;
-	public $price;
-	public $fk_product;
-	public $origin_id;
-
 	/**
 	 * @var string delivery note lines label
 	 */
@@ -1145,10 +1160,24 @@ class DeliveryLine extends CommonObjectLine
 	 */
 	public $libelle;
 
-	public $origin_line_id;
+	// From llx_expeditiondet
+	public $qty;
+	public $qty_asked;
+	public $qty_shipped;
 
+	public $fk_product;
+	public $product_desc;
+	public $product_type;
 	public $product_ref;
 	public $product_label;
+
+	public $fk_origin_line;
+	public $origin_id;
+
+	public $price;
+
+	public $origin_line_id;
+
 
 	/**
 	 *	Constructor

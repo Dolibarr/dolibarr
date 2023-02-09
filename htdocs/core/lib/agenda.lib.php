@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +20,8 @@
  */
 
 /**
- *  \file		htdocs/core/lib/agenda.lib.php
- *  \brief		Set of function for the agenda module
+ * \file		htdocs/core/lib/agenda.lib.php
+ * \brief		Set of function for the agenda module
  */
 
 
@@ -71,53 +72,52 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 
 	if ($canedit) {
 		print '<div class="divsearchfield">';
-
 		// Type
 		$multiselect = 0;
 		if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE)) {     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
 			$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
 		}
-		print img_picto($langs->trans("ActionType"), 'square', 'class="fawidth30 inline-block" style="color: #ddd;"');
-		print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect, 0, 'maxwidth500');
+		print img_picto($langs->trans("ActionType"), 'square', 'class="pictofixedwidth inline-block" style="color: #ddd;"');
+		print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect, 0, 'maxwidth500 widthcentpercentminusx');
 		print '</div>';
 
 		// Assigned to user
 		print '<div class="divsearchfield">';
-		print img_picto($langs->trans("ActionsToDoBy"), 'user', 'class="fawidth30 inline-block"');
+		print img_picto($langs->trans("ActionsToDoBy"), 'user', 'class="pictofixedwidth inline-block"');
 		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'minwidth150 maxwidth500 widthcentpercentminusxx');
 		print '</div>';
 
 		// Assigned to user group
 		print '<div class="divsearchfield">';
-		print img_picto($langs->trans("ToUserOfGroup"), 'object_group', 'class="fawidth30 inline-block"');
+		print img_picto($langs->trans("ToUserOfGroup"), 'object_group', 'class="pictofixedwidth inline-block"');
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', '', '0', false, 'minwidth100 maxwidth500 widthcentpercentminusxx');
 		print '</div>';
 
-		if ($conf->resource->enabled) {
+		if (isModEnabled('resource')) {
 			include_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 			$formresource = new FormResource($db);
 
 			// Resource
 			print '<div class="divsearchfield">';
-			print img_picto($langs->trans("Resource"), 'object_resource', 'class="fawidth30 inline-block"');
+			print img_picto($langs->trans("Resource"), 'object_resource', 'class="pictofixedwidth inline-block"');
 			print $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, null, '', 2, 0, 'maxwidth500');
 			print '</div>';
 		}
 	}
 
-	if (!empty($conf->societe->enabled) && $user->rights->societe->lire) {
+	if (isModEnabled('societe') && $user->hasRight('societe', 'lire')) {
 		print '<div class="divsearchfield">';
-		print img_picto($langs->trans("ThirdParty"), 'company', 'class="fawidth30 inline-block"');
+		print img_picto($langs->trans("ThirdParty"), 'company', 'class="pictofixedwidth inline-block"');
 		print $form->select_company($socid, 'search_socid', '', '&nbsp;', 0, 0, null, 0, 'minwidth100 maxwidth500');
 		print '</div>';
 	}
 
-	if (!empty($conf->projet->enabled) && $user->rights->projet->lire) {
+	if (isModEnabled('projet') && !empty($user->rights->projet->lire)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 		$formproject = new FormProjets($db);
 
 		print '<div class="divsearchfield">';
-		print img_picto($langs->trans("Project"), 'project', 'class="fawidth30 inline-block"');
+		print img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth inline-block"');
 		print $formproject->select_projects($socid ? $socid : -1, $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth500');
 		print '</div>';
 	}
@@ -125,7 +125,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	if ($canedit && !preg_match('/list/', $_SERVER["PHP_SELF"])) {
 		// Status
 		print '<div class="divsearchfield">';
-		print img_picto($langs->trans("Status"), 'setup', 'class="fawidth30 inline-block"');
+		print img_picto($langs->trans("Status"), 'setup', 'class="pictofixedwidth inline-block"');
 		$formactions->form_select_status_action('formaction', $status, 1, 'search_status', 1, 2, 'minwidth100');
 		print '</div>';
 	}
@@ -314,7 +314,7 @@ function show_array_last_actions_done($max = 5)
 			print '<tr class="oddeven">';
 
 			$staticaction->type_code = $obj->code;
-			$staticaction->libelle = $obj->label;
+			$staticaction->label = $obj->label;
 			$staticaction->id = $obj->id;
 			print '<td>'.$staticaction->getNomUrl(1, 34).'</td>';
 
@@ -363,7 +363,11 @@ function show_array_last_actions_done($max = 5)
  */
 function agenda_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('actioncomm');
+
 	$h = 0;
 	$head = array();
 
@@ -396,6 +400,10 @@ function agenda_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_extrafields.php";
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['actioncomm']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
@@ -424,7 +432,7 @@ function actions_prepare_head($object)
 	$h++;
 
 	// Tab to link resources
-	if ($conf->resource->enabled) {
+	if (isModEnabled('resource')) {
 		include_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 		$resource = new DolResource($db);
 
@@ -499,7 +507,7 @@ function calendars_prepare_head($param)
 	$head[$h][2] = 'cardday';
 	$h++;
 
-	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+	//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	if (!empty($conf->global->AGENDA_SHOW_PERTYPE)) {
 		$head[$h][0] = DOL_URL_ROOT.'/comm/action/pertype.php'.($param ? '?'.$param : '');
 		$head[$h][1] = $langs->trans("ViewPerType");

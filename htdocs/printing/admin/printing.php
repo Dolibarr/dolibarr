@@ -22,6 +22,7 @@
  *      \brief      Page to setup printing module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -70,7 +71,7 @@ if ($action == 'setconst' && $user->admin) {
 	foreach ($_POST['setupdriver'] as $setupconst) {
 		//print '<pre>'.print_r($setupconst, true).'</pre>';
 		$result = dolibarr_set_const($db, $setupconst['varname'], $setupconst['value'], 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!($result > 0)) {
 			$error++;
 		}
 	}
@@ -89,7 +90,7 @@ if ($action == 'setvalue' && $user->admin) {
 	$db->begin();
 
 	$result = dolibarr_set_const($db, $varname, $value, 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 
@@ -135,7 +136,12 @@ if ($mode == 'setup' && $user->admin) {
 	$submit_enabled = 0;
 
 	if (!empty($driver)) {
-		$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		if (!empty($conf->modules_parts['printing'])) {
+			$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		} else {
+			$dirmodels = array('/core/modules/printing/');
+		}
+
 		foreach ($dirmodels as $dir) {
 			if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
 				$classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
@@ -155,7 +161,7 @@ if ($mode == 'setup' && $user->admin) {
 				case "password":
 					print '<tr class="oddeven">';
 					print '<td'.($key['required'] ? ' class=required' : '').'>'.$langs->trans($key['varname']).'</td>';
-					print '<td><input size="32" type="'.(empty($key['type']) ? 'text' : $key['type']).'" name="setupdriver['.$i.'][value]" value="'.$conf->global->{$key['varname']}.'"';
+					print '<td><input class="width100" type="'.(empty($key['type']) ? 'text' : $key['type']).'" name="setupdriver['.$i.'][value]" value="'.$conf->global->{$key['varname']}.'"';
 					print isset($key['moreattributes']) ? ' '.$key['moreattributes'] : '';
 					print '><input type="hidden" name="setupdriver['.$i.'][varname]" value="'.$key['varname'].'"></td>';
 					print '<td>&nbsp;'.($key['example'] != '' ? $langs->trans("Example").' : '.$key['example'] : '').'</td>';
@@ -253,16 +259,22 @@ if ($mode == 'config' && $user->admin) {
 
 	$object = new PrintingDriver($db);
 	$result = $object->listDrivers($db, 10);
-	$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
-	foreach ($result as $driver) {
+
+	if (!empty($conf->modules_parts['printing'])) {
+		$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+	} else {
+		$dirmodels = array('/core/modules/printing/');
+	}
+
+	foreach ($result as $tmpdriver) {
 		foreach ($dirmodels as $dir) {
-			if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
-				$classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
+			if (file_exists(dol_buildpath($dir, 0).$tmpdriver.'.modules.php')) {
+				$classfile = dol_buildpath($dir, 0).$tmpdriver.'.modules.php';
 				break;
 			}
 		}
 		require_once $classfile;
-		$classname = 'printing_'.$driver;
+		$classname = 'printing_'.$tmpdriver;
 		$printer = new $classname($db);
 		$langs->load($printer::LANGFILE);
 		//print '<pre>'.print_r($printer, true).'</pre>';
@@ -296,7 +308,12 @@ if ($mode == 'test' && $user->admin) {
 
 	print '<table class="noborder centpercent">';
 	if (!empty($driver)) {
-		$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		if (!empty($conf->modules_parts['printing'])) {
+			$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		} else {
+			$dirmodels = array('/core/modules/printing/');
+		}
+
 		foreach ($dirmodels as $dir) {
 			if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
 				$classfile = dol_buildpath($dir, 0).$driver.'.modules.php';

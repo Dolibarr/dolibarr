@@ -21,6 +21,7 @@
  *		\brief      List of IRPF payments
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 
@@ -34,7 +35,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 $ltt = GETPOST("localTaxType", 'int');
-
+$mode = GETPOST('mode', 'alpha');
 
 /*
  * View
@@ -48,7 +49,14 @@ $url = DOL_URL_ROOT.'/compta/localtax/card.php?action=create&localTaxType='.$ltt
 if (!empty($socid)) {
 	$url .= '&socid='.$socid;
 }
-$newcardbutton = dolGetButtonTitle($langs->trans('NewLocalTaxPayment', ($ltt + 1)), '', 'fa fa-plus-circle', $url, '', $user->rights->tax->charges->creer);
+$param = '';
+if (!empty($mode)) {
+	$param .= '&mode='.urlencode($mode);
+}
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?localTaxType='.$ltt.'&mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?localTaxType='.$ltt.'&mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewLocalTaxPayment', ($ltt + 1)), '', 'fa fa-plus-circle', $url, '', $user->rights->tax->charges->creer);
 
 print load_fiche_titre($langs->transcountry($ltt == 2 ? "LT2Payments" : "LT1Payments", $mysoc->country_code), $newcardbutton, 'title_accountancy');
 
@@ -63,6 +71,7 @@ if ($result) {
 	$i = 0;
 	$total = 0;
 
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td class="nowrap" align="left">'.$langs->trans("Ref").'</td>';
@@ -75,25 +84,44 @@ if ($result) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 
-		print '<tr class="oddeven">';
-
+		$localtax_static->label = $obj->label;
 		$localtax_static->id = $obj->rowid;
 		$localtax_static->ref = $obj->rowid;
-		print "<td>".$localtax_static->getNomUrl(1)."</td>\n";
-		print "<td>".dol_trunc($obj->label, 40)."</td>\n";
-		print '<td class="left">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
-		print '<td class="left">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+		$localtax_static->datev = $obj->datev;
+		$localtax_static->datep = $obj->datep;
+		$localtax_static->amount = $obj->amount;
+
 		$total = $total + $obj->amount;
 
-		print "<td align=\"right\">".price($obj->amount)."</td>";
-		print "</tr>\n";
+		if ($mode == 'kanban') {
+			if ($i == 0) {
+				print '<tr><td colspan="12">';
+				print '<div class="box-flex-container">';
+			}
+			// Output Kanban
+			print $localtax_static->getKanbanView('');
+			if ($i == ($num - 1)) {
+				print '</div>';
+				print '</td></tr>';
+			}
+		} else {
+			print '<tr class="oddeven">';
+			print "<td>".$localtax_static->getNomUrl(1)."</td>\n";
+			print "<td>".dol_trunc($obj->label, 40)."</td>\n";
+			print '<td class="left">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
+			print '<td class="left">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
 
+			print '<td class="right nowraponall"><span class="amount">'.price($obj->amount).'</span></td>';
+			print "</tr>\n";
+		}
 		$i++;
 	}
 	print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Total").'</td>';
 	print '<td class="right"><span class="amount">'.price($total).'</span></td></tr>';
 
 	print "</table>";
+	print '</div>';
+
 	$db->free($result);
 } else {
 	dol_print_error($db);

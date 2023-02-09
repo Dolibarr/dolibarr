@@ -13,12 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
-use Luracast\Restler\RestException;
-
-require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
 
 /**
  * \file    htdocs/zapier/class/api_zapier.class.php
@@ -26,13 +22,18 @@ require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
  * \brief   File for API management of hook.
  */
 
+use Luracast\Restler\RestException;
+
+require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
+
+
 /**
  * API class for zapier hook
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class ZapierApi extends DolibarrApi
+class Zapier extends DolibarrApi
 {
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
@@ -65,8 +66,8 @@ class ZapierApi extends DolibarrApi
 	 *
 	 * Return an array with hook informations
 	 *
-	 * @param   int             $id ID of hook
-	 * @return  array|mixed     data without useless information
+	 * @param   int             $id 	ID of hook
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @url GET /hooks/{id}
 	 * @throws  RestException

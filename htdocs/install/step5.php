@@ -24,14 +24,26 @@
  *       \file      htdocs/install/step5.php
  *       \ingroup   install
  *       \brief     Last page of upgrade / install process
+ *
+ *       This page is called with parameter action=set by step4.php or action=upgrade by upgrade2.php
+ *       For installation:
+ *         It creates the login admin and set the MAIN_SECURITY_SALT to a random value.
+ *         It set the value for MAIN_VERSION_LAST_INSTALL
+ *         It activates some modules
+ *         It creates the install.lock and shows the final message.
+ *       For upgrade:
+ *         It updates the value for MAIN_VERSION_LAST_UPGRADE.
+ *         It (re)creates the install.lock and shows the final message.
  */
 
+define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
 if (file_exists($conffile)) {
 	include_once $conffile;
 }
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/security.lib.php'; // for dol_hash
+require_once $dolibarr_main_document_root.'/core/lib/functions2.lib.php';
 
 global $langs;
 
@@ -128,9 +140,9 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 	$error = 0;
 
 	// If password is encoded, we decode it
-	if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
+	if ((!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
 		require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
-		if (preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
+		if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
 			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially crypted
@@ -222,13 +234,13 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 				print $langs->trans("AdminLoginCreatedSuccessfuly", $login)."<br>";
 				$success = 1;
 			} else {
-				if ($newuser->error == 'ErrorLoginAlreadyExists') {
+				if ($result == -6) {	//login or email already exists
 					dolibarr_install_syslog('step5: AdminLoginAlreadyExists', LOG_WARNING);
-					print '<br><div class="warning">'.$langs->trans("AdminLoginAlreadyExists", $login)."</div><br>";
+					print '<br><div class="warning">'.$newuser->error."</div><br>";
 					$success = 1;
 				} else {
 					dolibarr_install_syslog('step5: FailedToCreateAdminLogin '.$newuser->error, LOG_ERR);
-					setEventMessage($langs->trans("FailedToCreateAdminLogin").' '.$newuser->error, null, 'errors');
+					setEventMessages($langs->trans("FailedToCreateAdminLogin").' '.$newuser->error, null, 'errors');
 					//header("Location: step4.php?error=3&selectlang=$setuplang".(isset($login) ? '&login='.$login : ''));
 					print '<br><div class="error">'.$langs->trans("FailedToCreateAdminLogin").': '.$newuser->error.'</div><br><br>';
 					print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
@@ -267,12 +279,18 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					if (!$resql) {
 						dol_print_error($db, 'Error in setup program');
 					}
+					// The install.lock file is created few lines later if version is last one or if option MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE is on
+					/* No need to enable this
 					$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_REMOVE_INSTALL_WARNING').", ".$db->encrypt(1).", 'chaine', 1, 'Disable install warnings', 0)");
 					if (!$resql) {
 						dol_print_error($db, 'Error in setup program');
 					}
 					$conf->global->MAIN_REMOVE_INSTALL_WARNING = 1;
+					*/
 				}
+
+				// List of modules to enable
+				$tmparray = array();
 
 				// If we ask to force some modules to be enabled
 				if (!empty($force_install_module)) {
@@ -281,9 +299,53 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					}
 
 					$tmparray = explode(',', $force_install_module);
+				}
+
+				$modNameLoaded = array();
+
+				// Search modules dirs
+				$modulesdir[] = $dolibarr_main_document_root.'/core/modules/';
+
+				foreach ($modulesdir as $dir) {
+					// Load modules attributes in arrays (name, numero, orders) from dir directory
+					//print $dir."\n<br>";
+					dol_syslog("Scan directory ".$dir." for module descriptor files (modXXX.class.php)");
+					$handle = @opendir($dir);
+					if (is_resource($handle)) {
+						while (($file = readdir($handle)) !== false) {
+							if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
+								$modName = substr($file, 0, dol_strlen($file) - 10);
+								if ($modName) {
+									if (!empty($modNameLoaded[$modName])) {   // In cache of already loaded modules ?
+										$mesg = "Error: Module ".$modName." was found twice: Into ".$modNameLoaded[$modName]." and ".$dir.". You probably have an old file on your disk.<br>";
+										setEventMessages($mesg, null, 'warnings');
+										dol_syslog($mesg, LOG_ERR);
+										continue;
+									}
+
+									try {
+										$res = include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
+										if (class_exists($modName)) {
+											$objMod = new $modName($db);
+											$modNameLoaded[$modName] = $dir;
+											if (!empty($objMod->enabled_bydefault) && !in_array($file, $tmparray)) {
+												$tmparray[] = $file;
+											}
+										}
+									} catch (Exception $e) {
+										dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
+									}
+								}
+							}
+						}
+					}
+				}
+
+				// Loop on each modules to activate it
+				if (!empty($tmparray)) {
 					foreach ($tmparray as $modtoactivate) {
 						$modtoactivatenew = preg_replace('/\.class\.php$/i', '', $modtoactivate);
-						print $langs->trans("ActivateModule", $modtoactivatenew).'<br>';
+						//print $langs->trans("ActivateModule", $modtoactivatenew).'<br>';
 
 						$file = $modtoactivatenew.'.class.php';
 						dolibarr_install_syslog('step5: activate module file='.$file);
@@ -294,10 +356,12 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 							print 'ERROR: failed to activateModule() file='.$file;
 						}
 					}
+					//print '<br>';
 				}
 
+				// Now delete the flag to say install is complete
 				dolibarr_install_syslog('step5: remove MAIN_NOT_INSTALLED const');
-				$resql = $db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')."='MAIN_NOT_INSTALLED'");
+				$resql = $db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')." = 'MAIN_NOT_INSTALLED'");
 				if (!$resql) {
 					dol_print_error($db, 'Error in setup program');
 				}
@@ -365,20 +429,23 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 if ($action == "set") {
 	if ($success) {
 		if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION)) {
-			// Install is finished
+			// Install is finished (database is on same version than files)
 			print '<br>'.$langs->trans("SystemIsInstalled")."<br>";
 
+			// Create install.lock file
+			// No need for the moment to create it automatically, creation by web assistant means permissions are given
+			// to the web user, it is better to show a warning to say to create it manually with correct user/permission (not erasable by a web process)
 			$createlock = 0;
-
 			if (!empty($force_install_lockinstall) || !empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE)) {
-				// Install is finished, we create the lock file
+				// Install is finished, we create the "install.lock" file, so install won't be possible anymore.
+				// TODO Upgrade will be still be possible if a file "upgrade.unlock" is present
 				$lockfile = DOL_DATA_ROOT.'/install.lock';
 				$fp = @fopen($lockfile, "w");
 				if ($fp) {
 					if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) {
 						$force_install_lockinstall = 444; // For backward compatibility
 					}
-					fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
+					fwrite($fp, "This is a lock file to prevent use of install or upgrade pages (set with permission ".$force_install_lockinstall.")");
 					fclose($fp);
 					@chmod($lockfile, octdec($force_install_lockinstall));
 					$createlock = 1;
@@ -410,20 +477,22 @@ if ($action == "set") {
 } elseif (empty($action) || preg_match('/upgrade/i', $action)) {
 	// If upgrade
 	if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION)) {
-		// Upgrade is finished
-		print '<img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/checklist.svg" width="20" alt="Configuration"> <span class="valignmiddle">'.$langs->trans("SystemIsUpgraded")."</span><br>";
+		// Upgrade is finished (database is on the same version than files)
+		print '<img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/checklist.svg" width="20" alt="Configuration">';
+		print ' <span class="valignmiddle">'.$langs->trans("SystemIsUpgraded")."</span><br>";
 
+		// Create install.lock file if it does not exists.
+		// Note: it should always exists. A better solution to allow upgrade will be to add an upgrade.unlock file
 		$createlock = 0;
-
 		if (!empty($force_install_lockinstall) || !empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE)) {
-			// Upgrade is finished, we create the lock file
+			// Upgrade is finished, we modify the lock file
 			$lockfile = DOL_DATA_ROOT.'/install.lock';
 			$fp = @fopen($lockfile, "w");
 			if ($fp) {
 				if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) {
 					$force_install_lockinstall = 444; // For backward compatibility
 				}
-				fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
+				fwrite($fp, "This is a lock file to prevent use of install or upgrade pages (set with permission ".$force_install_lockinstall.")");
 				fclose($fp);
 				@chmod($lockfile, octdec($force_install_lockinstall));
 				$createlock = 1;
@@ -432,6 +501,10 @@ if ($action == "set") {
 		if (empty($createlock)) {
 			print '<br><div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
 		}
+
+		// Delete the upgrade.unlock file it it exists
+		$unlockupgradefile = DOL_DATA_ROOT.'/upgrade.unlock';
+		dol_delete_file($unlockupgradefile, 0, 0, 0, null, false, 0);
 
 		print "<br>";
 
@@ -450,7 +523,7 @@ if ($action == "set") {
 		$morehtml .= '</a></div>';
 	}
 } else {
-	dol_print_error('', 'step5.php: unknown choice of action');
+	dol_print_error('', 'step5.php: unknown choice of action='.$action.' in create lock file seaction');
 }
 
 // Clear cache files

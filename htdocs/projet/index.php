@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
@@ -24,6 +24,7 @@
  *       \brief      Main project home page
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
@@ -258,7 +259,7 @@ if ($resql) {
 			$companystatic->status = $obj->thirdpartystatus;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td width="96" class="nobordernopadding nowrap">';
+			print '<td width="96" class="nobordernopadding nowraponall">';
 			print $projectstatic->getNomUrl(1);
 			print '</td>';
 
@@ -288,7 +289,10 @@ if ($resql) {
 			print '</td>';
 
 			// Date
-			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
+			$datem = $db->jdate($obj->datem);
+			print '<td class="center" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';
+			print dol_print_date($datem, 'day', 'tzuserrel');
+			print '</td>';
 
 			// Status
 			print '<td class="right">'.$projectstatic->LibStatut($obj->status, 3).'</td>';
@@ -306,7 +310,7 @@ if ($resql) {
 
 $companystatic = new Societe($db); // We need a clean new object for next loop because current one has some properties set.
 
-
+// List of open projects per thirdparty
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
 $sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 $sql .= ", s.code_client, s.code_compta, s.client";

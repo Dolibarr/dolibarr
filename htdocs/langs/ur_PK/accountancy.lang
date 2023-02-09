@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=گاڑی کی واپسی کی قسم منتخب کری
 ACCOUNTING_EXPORT_PREFIX_SPEC=فائل کے نام کے لیے سابقہ کی وضاحت کریں۔
 ThisService=یہ سروس
 ThisProduct=یہ مصنوعات
-DefaultForService=سروس کے لیے ڈیفالٹ
-DefaultForProduct=پروڈکٹ کے لیے ڈیفالٹ
+DefaultForService=Default for services
+DefaultForProduct=Default for products
 ProductForThisThirdparty=اس تھرڈ پارٹی کے لیے پروڈکٹ
 ServiceForThisThirdparty=اس تھرڈ پارٹی کے لیے سروس
 CantSuggest=تجویز نہیں کر سکتے
@@ -48,8 +48,9 @@ CountriesNotInEEC=وہ ممالک جو EEC میں نہیں ہیں۔
 CountriesInEECExceptMe=ای ای سی میں شامل ممالک سوائے %s کے
 CountriesExceptMe=%s کے علاوہ تمام ممالک
 AccountantFiles=ماخذ کی دستاویزات برآمد کریں۔
-ExportAccountingSourceDocHelp=اس ٹول کے ساتھ، آپ ان سورس ایونٹس کو ایکسپورٹ کر سکتے ہیں (CSV اور PDFs میں فہرست) جو آپ کی اکاؤنٹنسی بنانے کے لیے استعمال ہوتے ہیں۔
+ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=اپنے جریدے برآمد کرنے کے لیے، مینو اندراج %s - %s استعمال کریں۔
+ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 VueByAccountAccounting=حساب کتاب کے حساب سے دیکھیں
 VueBySubAccountAccounting=اکاؤنٹنگ ذیلی اکاؤنٹ کے ذریعہ دیکھیں
 
@@ -58,28 +59,29 @@ MainAccountForSuppliersNotDefined=وینڈرز کے لیے مین اکاؤنٹن
 MainAccountForUsersNotDefined=صارفین کے لیے مرکزی اکاؤنٹنگ اکاؤنٹ سیٹ اپ میں بیان نہیں کیا گیا ہے۔
 MainAccountForVatPaymentNotDefined=VAT ادائیگی کے لیے مرکزی اکاؤنٹنگ اکاؤنٹ سیٹ اپ میں بیان نہیں کیا گیا ہے۔
 MainAccountForSubscriptionPaymentNotDefined=رکنیت کی ادائیگی کے لیے مرکزی اکاؤنٹنگ اکاؤنٹ سیٹ اپ میں بیان نہیں کیا گیا ہے۔
+UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=اکاؤنٹنگ ایریا
 AccountancyAreaDescIntro=اکاؤنٹنسی ماڈیول کا استعمال کئی مراحل میں کیا جاتا ہے:
 AccountancyAreaDescActionOnce=درج ذیل اعمال عام طور پر صرف ایک بار، یا سال میں ایک بار کیے جاتے ہیں...
-AccountancyAreaDescActionOnceBis=جرنلائزیشن کرتے وقت آپ کو صحیح ڈیفالٹ اکاؤنٹنگ اکاؤنٹ تجویز کرکے مستقبل میں آپ کا وقت بچانے کے لیے اگلے اقدامات کیے جائیں (جرائد اور جنرل لیجر میں ریکارڈ لکھنا)
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=درج ذیل کارروائیاں عام طور پر بہت بڑی کمپنیوں کے لیے ہر مہینے، ہفتے یا دن کی جاتی ہیں...
 
-AccountancyAreaDescJournalSetup=STEP %s: مینو %s سے اپنے جریدے کی فہرست کا مواد بنائیں یا چیک کریں۔
+AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=STEP %s: چیک کریں کہ اکاؤنٹ کے چارٹ کا ماڈل موجود ہے یا مینو سے ایک بنائیں %s
 AccountancyAreaDescChart=STEP %s: منتخب کریں اور|یا اپنے اکاؤنٹ کا چارٹ مینو %s سے مکمل کریں
 
 AccountancyAreaDescVat=STEP %s: ہر VAT کی شرح کے لیے اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
 AccountancyAreaDescDefault=STEP %s: پہلے سے طے شدہ اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
-AccountancyAreaDescExpenseReport=STEP %s: ہر قسم کے اخراجات کی رپورٹ کے لیے ڈیفالٹ اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
+AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=STEP %s: تنخواہوں کی ادائیگی کے لیے پہلے سے طے شدہ اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
-AccountancyAreaDescContrib=STEP %s: خصوصی اخراجات (متفرق ٹیکس) کے لیے پہلے سے طے شدہ اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=STEP %s: عطیہ کے لیے ڈیفالٹ اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
 AccountancyAreaDescSubscription=STEP %s: ممبر سبسکرپشن کے لیے ڈیفالٹ اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
 AccountancyAreaDescMisc=STEP %s: متفرق لین دین کے لیے لازمی ڈیفالٹ اکاؤنٹ اور ڈیفالٹ اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
 AccountancyAreaDescLoan=STEP %s: قرضوں کے لیے پہلے سے طے شدہ اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
 AccountancyAreaDescBank=STEP %s: ہر بینک اور مالیاتی کھاتوں کے لیے اکاؤنٹنگ اکاؤنٹس اور جرنل کوڈ کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
-AccountancyAreaDescProd=STEP %s: اپنی مصنوعات/سروسز پر اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
+AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
 
 AccountancyAreaDescBind=STEP %s: موجودہ %s لائنوں کے درمیان بائنڈنگ کو چیک کریں اور اکاؤنٹنگ اکاؤنٹ مکمل ہو گیا ہے، لہذا ایپلیکیشن ایک کلک میں لیجر میں لین دین کو جرنلائز کر سکے گی۔ مکمل گمشدہ پابندیاں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
 AccountancyAreaDescWriteRecords=STEP %s: لیجر میں لین دین لکھیں۔ اس کے لیے، مینو میں جائیں <strong> %s </strong>، اور بٹن پر کلک کریں <strong> %s a0a65d07z.
@@ -99,7 +101,8 @@ ShowAccountingAccount=حساب کتاب دکھائیں۔
 ShowAccountingJournal=اکاؤنٹنگ جرنل دکھائیں۔
 ShowAccountingAccountInLedger=لیجر میں حساب کتاب دکھائیں۔
 ShowAccountingAccountInJournals=جرائد میں حساب کتاب دکھائیں۔
-AccountAccountingSuggest=اکاؤنٹنگ اکاؤنٹ تجویز کیا گیا۔
+DataUsedToSuggestAccount=Data used to suggest account
+AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=ڈیفالٹ اکاؤنٹس
 MenuBankAccounts=بینک اکاؤنٹ
 MenuVatAccounts=واٹ اکاؤنٹس
@@ -112,7 +115,7 @@ MenuAccountancyClosure=بندش
 MenuAccountancyValidationMovements=نقل و حرکت کی توثیق کریں۔
 ProductsBinding=مصنوعات کے اکاؤنٹس
 TransferInAccounting=اکاؤنٹنگ میں منتقلی
-RegistrationInAccounting=اکاؤنٹنگ میں رجسٹریشن
+RegistrationInAccounting=Recording in accounting
 Binding=اکاؤنٹس کا پابند
 CustomersVentilation=کسٹمر انوائس بائنڈنگ
 SuppliersVentilation=وینڈر انوائس بائنڈنگ
@@ -120,10 +123,11 @@ ExpenseReportsVentilation=اخراجات کی رپورٹ کا پابند
 CreateMvts=نیا لین دین بنائیں
 UpdateMvts=لین دین میں ترمیم
 ValidTransaction=لین دین کی توثیق کریں۔
-WriteBookKeeping=اکاؤنٹنگ میں لین دین کو رجسٹر کریں۔
+WriteBookKeeping=Record transactions in accounting
 Bookkeeping=لیجر
 BookkeepingSubAccount=ذیلی
 AccountBalance=اکاؤنٹ بیلنس
+AccountBalanceSubAccount=Sub-accounts balance
 ObjectsRef=ماخذ آبجیکٹ ریف
 CAHTF=ٹیکس سے پہلے کل خرید فروش
 TotalExpenseReport=کل اخراجات کی رپورٹ
@@ -161,41 +165,47 @@ BANK_DISABLE_DIRECT_INPUT=بینک اکاؤنٹ میں لین دین کی برا
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=جرنل پر ڈرافٹ ایکسپورٹ کو فعال کریں۔
 ACCOUNTANCY_COMBO_FOR_AUX=ذیلی اکاؤنٹ کے لیے کومبو لسٹ کو فعال کریں (اگر آپ کے پاس بہت سارے فریق ثالث ہیں تو سست ہو سکتے ہیں، قدر کے کسی حصے پر تلاش کرنے کی صلاحیت کو توڑ دیں)
 ACCOUNTING_DATE_START_BINDING=اکاؤنٹنسی میں بائنڈنگ اور ٹرانسفر شروع کرنے کے لیے تاریخ کی وضاحت کریں۔ اس تاریخ کے نیچے، لین دین کو اکاؤنٹنگ میں منتقل نہیں کیا جائے گا۔
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=اکاؤنٹنسی ٹرانسفر پر، ڈیفالٹ کے مطابق مدت شو کو منتخب کریں۔
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
-ACCOUNTING_SELL_JOURNAL=جریدہ فروخت کریں۔
-ACCOUNTING_PURCHASE_JOURNAL=جریدہ خریدیں۔
-ACCOUNTING_MISCELLANEOUS_JOURNAL=متفرق جریدہ
+ACCOUNTING_SELL_JOURNAL=Sales journal (sales and returns)
+ACCOUNTING_PURCHASE_JOURNAL=Purchase journal (purchase and returns)
+ACCOUNTING_BANK_JOURNAL=Cash journal (receipts and disbursements)
 ACCOUNTING_EXPENSEREPORT_JOURNAL=اخراجات کی رپورٹ جرنل
-ACCOUNTING_SOCIAL_JOURNAL=سماجی جریدہ
+ACCOUNTING_MISCELLANEOUS_JOURNAL=General journal
 ACCOUNTING_HAS_NEW_JOURNAL=نیا جریدہ ہے۔
+ACCOUNTING_INVENTORY_JOURNAL=Inventory journal
+ACCOUNTING_SOCIAL_JOURNAL=سماجی جریدہ
 
 ACCOUNTING_RESULT_PROFIT=نتیجہ اکاؤنٹنگ اکاؤنٹ (منافع)
 ACCOUNTING_RESULT_LOSS=نتیجہ اکاؤنٹنگ اکاؤنٹ (نقصان)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=بندش کا جریدہ
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=عبوری بینک ٹرانسفر کا اکاؤنٹنگ اکاؤنٹ
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account (from the Chart Of Account) to be used as the account for transitional bank transfers
 TransitionalAccount=عبوری بینک ٹرانسفر اکاؤنٹ
 
-ACCOUNTING_ACCOUNT_SUSPENSE=انتظار کا حساب کتاب
-DONATION_ACCOUNTINGACCOUNT=عطیات کو رجسٹر کرنے کے لیے اکاؤنٹنگ اکاؤنٹ
-ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=سبسکرپشنز کو رجسٹر کرنے کے لیے اکاؤنٹنگ اکاؤنٹ
+ACCOUNTING_ACCOUNT_SUSPENSE=Account (from the Chart Of Account) to be used as the account for unallocated funds either received or paid i.e. funds in "wait[ing]"
+DONATION_ACCOUNTINGACCOUNT=Account (from the Chart Of Account) to be used to register donations (Donation module)
+ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Account (from the Chart Of Account) to be used to register memberships subscriptions (Membership module - if membership recorded without invoice)
 
-ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=کسٹمر ڈپازٹ کو رجسٹر کرنے کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register customer deposit
+UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
+UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=خریدی گئی مصنوعات کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ (اگر پروڈکٹ شیٹ میں وضاحت نہ کی گئی ہو تو استعمال کیا جاتا ہے)
-ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=EEC میں خریدی گئی مصنوعات کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ (اگر پروڈکٹ شیٹ میں وضاحت نہ کی گئی ہو تو استعمال کیا جاتا ہے)
-ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=خریدی گئی اور EEC سے درآمد شدہ مصنوعات کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ (اگر پروڈکٹ شیٹ میں وضاحت نہ کی گئی ہو تو استعمال کیا جاتا ہے)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=فروخت شدہ مصنوعات کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ (اگر پروڈکٹ شیٹ میں وضاحت نہ کی گئی ہو تو استعمال کیا جاتا ہے)
-ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=EEC میں فروخت ہونے والی مصنوعات کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ (اگر پروڈکٹ شیٹ میں اس کی وضاحت نہ کی گئی ہو تو استعمال کیا جاتا ہے)
-ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=EEC سے باہر فروخت اور برآمد کی جانے والی مصنوعات کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ (اگر پروڈکٹ شیٹ میں وضاحت نہ کی گئی ہو تو استعمال کیا جاتا ہے)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased and imported from any other foreign country (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the sold products (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products sold from EEC to another EEC country (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products sold and exported to any other foreign country (used if not defined in the product sheet)
 
-ACCOUNTING_SERVICE_BUY_ACCOUNT=خریدی گئی خدمات کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ (اگر سروس شیٹ میں وضاحت نہ کی گئی ہو تو استعمال کیا جاتا ہے)
-ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=EEC میں خریدی گئی خدمات کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ (اگر سروس شیٹ میں وضاحت نہ کی گئی ہو تو استعمال کیا جاتا ہے)
-ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=خریدی گئی اور EEC سے درآمد شدہ خدمات کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ (اگر سروس شیٹ میں وضاحت نہ کی گئی ہو تو استعمال کیا جاتا ہے)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=فروخت شدہ خدمات کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ (اگر سروس شیٹ میں وضاحت نہ کی گئی ہو تو استعمال کیا جاتا ہے)
-ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=EEC میں فروخت کی جانے والی خدمات کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ (اگر سروس شیٹ میں وضاحت نہ کی گئی ہو تو استعمال کیا جاتا ہے)
-ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=EEC سے فروخت اور برآمد کی جانے والی خدمات کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ (اگر سروس شیٹ میں وضاحت نہ کی گئی ہو تو استعمال کیا جاتا ہے)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased within same country (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased from EEC to another EEC country (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased and imported from other foreign country (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the sold services (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services sold from EEC to another EEC country (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services sold and exported to any other foreign country (used if not defined in the service sheet)
 
 Doctype=دستاویز کی قسم
 Docdate=تاریخ
@@ -210,7 +220,8 @@ Codejournal=جرنل
 JournalLabel=جرنل لیبل
 NumPiece=ٹکڑا نمبر
 TransactionNumShort=نمبر لین دین
-AccountingCategory=حسب ضرورت گروپ
+AccountingCategory=Custom group of accounts
+AccountingCategories=Custom groups of accounts
 GroupByAccountAccounting=عام لیجر اکاؤنٹ کے لحاظ سے گروپ کریں۔
 GroupBySubAccountAccounting=سبلیجر اکاؤنٹ کے لحاظ سے گروپ کریں۔
 AccountingAccountGroupsDesc=آپ یہاں اکاؤنٹنگ اکاؤنٹ کے کچھ گروپس کی وضاحت کر سکتے ہیں۔ وہ ذاتی اکاؤنٹنگ رپورٹس کے لیے استعمال کیے جائیں گے۔
@@ -219,12 +230,12 @@ ByPredefinedAccountGroups=پہلے سے طے شدہ گروپوں کے ذریعے
 ByPersonalizedAccountGroups=ذاتی نوعیت کے گروپوں کے ذریعے
 ByYear=سال کے حساب سے
 NotMatch=سیٹ نہیں ہے
-DeleteMvt=اکاؤنٹنگ سے کچھ آپریشن لائنوں کو حذف کریں۔
+DeleteMvt=Delete some lines from accounting
 DelMonth=حذف کرنے کا مہینہ
 DelYear=حذف کرنے کا سال
 DelJournal=حذف کرنے کے لیے جرنل
-ConfirmDeleteMvt=یہ سال/ماہ اور/یا کسی مخصوص جریدے کے لیے اکاؤنٹنگ کی تمام آپریشن لائنوں کو حذف کر دے گا (کم از کم ایک معیار درکار ہے)۔ حذف شدہ ریکارڈ کو لیجر میں واپس لانے کے لیے آپ کو '%s' فیچر کو دوبارہ استعمال کرنا ہوگا۔
-ConfirmDeleteMvtPartial=یہ اکاؤنٹنگ سے لین دین کو حذف کر دے گا (اسی لین دین سے متعلق تمام آپریشن لائنوں کو حذف کر دیا جائے گا)
+ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
 FinanceJournal=فنانس جرنل
 ExpenseReportsJournal=اخراجات کی رپورٹ کا جریدہ
 DescFinanceJournal=فنانس جرنل بشمول بینک اکاؤنٹ کے ذریعے ادائیگیوں کی تمام اقسام
@@ -258,19 +269,20 @@ ShowSubtotalByGroup=سطح کے لحاظ سے ذیلی کل دکھائیں۔
 
 Pcgtype=اکاؤنٹ کا گروپ
 PcgtypeDesc=اکاؤنٹ کے گروپ کو کچھ اکاؤنٹنگ رپورٹس کے لیے پہلے سے طے شدہ 'فلٹر' اور 'گروپنگ' کے معیار کے طور پر استعمال کیا جاتا ہے۔ مثال کے طور پر، 'انکم' یا 'خرچ' کو اخراجات/آمدنی کی رپورٹ بنانے کے لیے مصنوعات کے اکاؤنٹنگ اکاؤنٹس کے لیے بطور گروپ استعمال کیا جاتا ہے۔
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 
 Reconcilable=قابلِ مصالحت
 
 TotalVente=ٹیکس سے پہلے کل کاروبار
 TotalMarge=فروخت کا کل مارجن
 
-DescVentilCustomer=پروڈکٹ اکاؤنٹنگ اکاؤنٹ سے منسلک (یا نہیں) کسٹمر انوائس لائنوں کی فہرست یہاں دیکھیں
-DescVentilMore=زیادہ تر معاملات میں، اگر آپ پہلے سے طے شدہ مصنوعات یا خدمات استعمال کرتے ہیں اور آپ پروڈکٹ/سروس کارڈ پر اکاؤنٹ نمبر سیٹ کرتے ہیں، تو ایپلیکیشن آپ کے انوائس لائنوں اور آپ کے اکاؤنٹس کے چارٹ کے اکاؤنٹنگ اکاؤنٹ کے درمیان تمام پابندیاں لگانے کے قابل ہو جائے گی۔ بٹن کے ساتھ ایک کلک <strong> "%s" </strong> ۔ اگر اکاؤنٹ کو پروڈکٹ/سروس کارڈز پر سیٹ نہیں کیا گیا تھا یا اگر آپ کے پاس اب بھی کچھ لائنیں ہیں جو اکاؤنٹ سے منسلک نہیں ہیں، تو آپ کو مینو "<strong> %s </strong>" مینو سے دستی بائنڈنگ کرنا ہوگی۔
-DescVentilDoneCustomer=یہاں انوائس کے صارفین کی لائنوں کی فہرست اور ان کے پروڈکٹ اکاؤنٹنگ اکاؤنٹ سے مشورہ کریں۔
-DescVentilTodoCustomer=انوائس لائنوں کو باندھیں جو پہلے سے پروڈکٹ اکاؤنٹنگ اکاؤنٹ کے ساتھ پابند نہیں ہیں۔
-ChangeAccount=درج ذیل اکاؤنٹنگ اکاؤنٹ کے ساتھ منتخب لائنوں کے لیے پروڈکٹ/سروس اکاؤنٹنگ اکاؤنٹ تبدیل کریں:
+DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product account from chart of account
+DescVentilMore=In most cases, if you use predefined products or services and you set the account (from chart of account) on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product account from chart of account
+DescVentilTodoCustomer=Bind invoice lines not already bound with a product account from chart of account
+ChangeAccount=Change the product/service account (from chart of account) for the selected lines with the following account:
 Vide=-
-DescVentilSupplier=یہاں وینڈر انوائس لائنوں کی فہرست سے مشورہ کریں جو کسی پروڈکٹ اکاؤنٹنگ اکاؤنٹ سے منسلک ہیں یا ابھی تک پابند نہیں ہیں (صرف اکاؤنٹنسی میں پہلے سے منتقل نہیں کیا گیا ریکارڈ نظر آتا ہے)
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product account from chart of account (only record not already transfered in accountancy are visible)
 DescVentilDoneSupplier=یہاں وینڈر انوائس کی لائنوں کی فہرست اور ان کے اکاؤنٹنگ اکاؤنٹ سے مشورہ کریں۔
 DescVentilTodoExpenseReport=اخراجات کی رپورٹ لائنوں کو باندھیں جو فیس اکاؤنٹنگ اکاؤنٹ کے ساتھ پہلے سے پابند نہیں ہیں۔
 DescVentilExpenseReport=فیس اکاؤنٹنگ اکاؤنٹ سے منسلک (یا نہیں) اخراجات کی رپورٹ لائنوں کی فہرست یہاں دیکھیں
@@ -278,30 +290,32 @@ DescVentilExpenseReportMore=اگر آپ اکاؤنٹنگ اکاؤنٹ کو اخ�
 DescVentilDoneExpenseReport=یہاں اخراجات کی رپورٹوں کی فہرست اور ان کے فیس اکاؤنٹنگ اکاؤنٹ سے مشورہ کریں۔
 
 Closure=سالانہ بندش
-DescClosure=یہاں ماہ کے لحاظ سے نقل و حرکت کی تعداد سے مشورہ کریں جن کی توثیق نہیں ہوئی اور مالی سال پہلے ہی کھلے ہیں۔
-OverviewOfMovementsNotValidated=مرحلہ 1/ نقل و حرکت کا جائزہ درست نہیں ہے۔ (مالی سال بند کرنا ضروری ہے)
-AllMovementsWereRecordedAsValidated=تمام نقل و حرکت کو توثیق کے طور پر ریکارڈ کیا گیا تھا۔
-NotAllMovementsCouldBeRecordedAsValidated=تمام حرکات کو توثیق کے طور پر ریکارڈ نہیں کیا جا سکتا
-ValidateMovements=نقل و حرکت کی توثیق کریں۔
+DescClosure=Consult here the number of movements by month not yet validated & locked
+OverviewOfMovementsNotValidated=Overview of movements not validated and locked
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
+ValidateMovements=Validate and lock movements...
 DescValidateMovements=تحریر، حروف اور حذف میں کسی قسم کی ترمیم یا حذف ممنوع ہو گا۔ مشق کے لیے تمام اندراجات کی توثیق ہونی چاہیے ورنہ بند کرنا ممکن نہیں ہوگا۔
 
 ValidateHistory=خودکار طور پر باندھیں۔
 AutomaticBindingDone=خودکار بائنڈنگ ہو گئی (%s) - کچھ ریکارڈ کے لیے خودکار بائنڈنگ ممکن نہیں ہے (%s)
+DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 
-ErrorAccountancyCodeIsAlreadyUse=خرابی، آپ اس اکاؤنٹنگ اکاؤنٹ کو حذف نہیں کر سکتے کیونکہ یہ استعمال کیا گیا ہے۔
-MvtNotCorrectlyBalanced=نقل و حرکت درست طریقے سے متوازن نہیں ہے۔ ڈیبٹ = %s | کریڈٹ = %s
+ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=توازن
 FicheVentilation=بائنڈنگ کارڈ
 GeneralLedgerIsWritten=لین دین لیجر میں لکھا جاتا ہے۔
 GeneralLedgerSomeRecordWasNotRecorded=کچھ لین دین کو جرنلائز نہیں کیا جا سکا۔ اگر کوئی اور غلطی کا پیغام نہیں ہے، تو شاید اس کی وجہ یہ ہے کہ وہ پہلے ہی جرنلائز ہو چکے تھے۔
-NoNewRecordSaved=جرنلائز کرنے کے لیے مزید کوئی ریکارڈ نہیں۔
-ListOfProductsWithoutAccountingAccount=پروڈکٹس کی فہرست کسی اکاؤنٹنگ اکاؤنٹ کے پابند نہیں ہے۔
+NoNewRecordSaved=No more record to transfer
+ListOfProductsWithoutAccountingAccount=List of products not bound to any account of chart of account
 ChangeBinding=بائنڈنگ کو تبدیل کریں۔
 Accounted=لیجر میں حساب
 NotYetAccounted=ابھی تک اکاؤنٹنگ میں منتقل نہیں ہوا ہے۔
 ShowTutorial=ٹیوٹوریل دکھائیں۔
 NotReconciled=صلح نہیں ہوئی۔
-WarningRecordWithoutSubledgerAreExcluded=انتباہ، سبلیجر اکاؤنٹ کے بغیر تمام آپریشنز کو فلٹر کیا گیا ہے اور اس منظر سے خارج کر دیا گیا ہے۔
+WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
+AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 
 ## Admin
 BindingOptions=بائنڈنگ کے اختیارات
@@ -317,9 +331,10 @@ AccountingJournalType1=متفرق آپریشنز
 AccountingJournalType2=سیلز
 AccountingJournalType3=خریداری
 AccountingJournalType4=بینک
-AccountingJournalType5=اخراجات کی رپورٹ
+AccountingJournalType5=Expense reports
 AccountingJournalType8=انوینٹری
 AccountingJournalType9=نیا ہے۔
+GenerationOfAccountingEntries=Generation of accounting entries
 ErrorAccountingJournalIsAlreadyUse=یہ جریدہ پہلے ہی استعمال میں ہے۔
 AccountingAccountForSalesTaxAreDefinedInto=نوٹ: سیلز ٹیکس کے اکاؤنٹنگ اکاؤنٹ کی وضاحت مینو میں <b> %s </b> - <b> %s a097fz0 a09784a میں کی گئی ہے۔
 NumberOfAccountancyEntries=اندراجات کی تعداد
@@ -327,10 +342,15 @@ NumberOfAccountancyMovements=نقل و حرکت کی تعداد
 ACCOUNTING_DISABLE_BINDING_ON_SALES=سیلز پر اکاؤنٹنسی میں بائنڈنگ اور ٹرانسفر کو غیر فعال کریں (کسٹمر انوائس کو اکاؤنٹنگ میں مدنظر نہیں رکھا جائے گا)
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=خریداری پر اکاؤنٹنسی میں بائنڈنگ اور ٹرانسفر کو غیر فعال کریں (وینڈر انوائس کو اکاؤنٹنگ میں مدنظر نہیں رکھا جائے گا)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=اخراجات کی رپورٹوں پر اکاؤنٹنسی میں بائنڈنگ اور ٹرانسفر کو غیر فعال کریں (اکاؤنٹنگ میں اخراجات کی رپورٹوں کو مدنظر نہیں رکھا جائے گا)
+ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
 
 ## Export
-NotifiedExportDate=برآمد شدہ لائنوں کو ایکسپورٹ کے طور پر جھنڈا لگائیں (لائنوں میں ترمیم ممکن نہیں ہوگی)
-NotifiedValidationDate=برآمد شدہ اندراجات کی توثیق کریں (لائنوں میں ترمیم یا حذف کرنا ممکن نہیں ہوگا)
+NotExportLettering=Do not export the lettering when generating the file
+NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportFull=Export documents ?
+DateValidationAndLock=Date validation and lock
 ConfirmExportFile=اکاؤنٹنگ برآمد فائل کی نسل کی تصدیق؟
 ExportDraftJournal=ڈرافٹ جرنل برآمد کریں۔
 Modelcsv=ایکسپورٹ کا ماڈل
@@ -386,13 +406,33 @@ SaleLocal=مقامی فروخت
 SaleExport=برآمد کی فروخت
 SaleEEC=ای ای سی میں فروخت
 SaleEECWithVAT=VAT کے ساتھ EEC میں فروخت کالعدم نہیں، لہذا ہم سمجھتے ہیں کہ یہ انٹرا کمیونٹری سیل نہیں ہے اور تجویز کردہ اکاؤنٹ معیاری پروڈکٹ اکاؤنٹ ہے۔
-SaleEECWithoutVATNumber=بغیر VAT کے EEC میں فروخت لیکن تیسرے فریق کی VAT ID کی وضاحت نہیں کی گئی ہے۔ ہم معیاری فروخت کے لیے پروڈکٹ اکاؤنٹ پر فال بیک کرتے ہیں۔ اگر ضرورت ہو تو آپ فریق ثالث کی VAT ID یا پروڈکٹ اکاؤنٹ کو ٹھیک کر سکتے ہیں۔
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=ممنوع: لین دین کی توثیق اور/یا برآمد کی گئی ہے۔
 ForbiddenTransactionAlreadyValidated=ممنوع: لین دین کی توثیق کر دی گئی ہے۔
 ## Dictionary
 Range=اکاؤنٹنگ اکاؤنٹ کی حد
 Calculated=حساب لگایا
 Formula=فارمولا
+
+## Reconcile
+LetteringAuto=Reconcile auto
+LetteringManual=Reconcile manual
+Unlettering=Unreconcile
+UnletteringAuto=Unreconcile auto
+UnletteringManual=Unreconcile manual
+AccountancyNoLetteringModified=No reconcile modified
+AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
+AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
+AccountancyNoUnletteringModified=No unreconcile modified
+AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
+AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+
+## Confirm box
+ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
+ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
+ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=سیٹ اپ کے کچھ لازمی اقدامات نہیں کیے گئے، براہ کرم انہیں مکمل کریں۔
@@ -406,6 +446,11 @@ Binded=لکیریں جڑی ہوئی ہیں۔
 ToBind=باندھنے کے لیے لکیریں۔
 UseMenuToSetBindindManualy=لائنیں ابھی تک پابند نہیں ہیں، دستی طور پر بائنڈنگ بنانے کے لیے مینو <a href="%s"> %s </a> استعمال کریں۔
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=معذرت کے ساتھ یہ ماڈیول حالات کی رسیدوں کی تجرباتی خصوصیت سے مطابقت نہیں رکھتا
+AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
+AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
+AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
+ErrorAccountNumberAlreadyExists=The accounting number %s already exists
+ErrorArchiveAddFile=Can't put "%s" file in archive
 
 ## Import
 ImportAccountingEntries=اکاؤنٹنگ اندراجات
@@ -432,6 +477,7 @@ FECFormatMulticurrencyCode=ملٹی کرنسی کوڈ (آئیڈیوائز)
 DateExport=تاریخ برآمد
 WarningReportNotReliable=انتباہ، یہ رپورٹ لیجر پر مبنی نہیں ہے، لہذا اس میں لیجر میں دستی طور پر ترمیم شدہ لین دین شامل نہیں ہے۔ اگر آپ کی جرنلائزیشن اپ ٹو ڈیٹ ہے، تو بک کیپنگ کا نظریہ زیادہ درست ہے۔
 ExpenseReportJournal=اخراجات کی رپورٹ جرنل
-InventoryJournal=انوینٹری جرنل
+DocsAlreadyExportedAreExcluded=Docs already exported are excluded
+ClickToHideAlreadyExportedLines=Click to hide already exported lines
 
 NAccounts=%s اکاؤنٹس

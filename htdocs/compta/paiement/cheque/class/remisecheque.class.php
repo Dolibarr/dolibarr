@@ -190,8 +190,8 @@ class RemiseCheque extends CommonObject
 
 			if ($this->id > 0 && $this->errno == 0) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-				$sql .= " SET ref='(PROV".$this->id.")'";
-				$sql .= " WHERE rowid=".((int) $this->id)."";
+				$sql .= " SET ref = '(PROV".$this->id.")'";
+				$sql .= " WHERE rowid=".((int) $this->id);
 
 				$resql = $this->db->query($sql);
 				if (!$resql) {
@@ -200,8 +200,9 @@ class RemiseCheque extends CommonObject
 				}
 			}
 
+			$lines = array();
+
 			if ($this->id > 0 && $this->errno == 0) {
-				$lines = array();
 				$sql = "SELECT b.rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 				$sql .= " WHERE b.fk_type = 'CHQ'";
@@ -1018,5 +1019,45 @@ class RemiseCheque extends CommonObject
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+	}
+
+		/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs;
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+
+		if (property_exists($this, 'date_bordereau')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateCreation").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->date_bordereau), 'day').'</span>';
+		}
+		if (property_exists($this, 'nbcheque')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Cheque", '', '', '', '', 5).'</span> : <span class="info-box-label">'.$this->nbcheque.'</span>';
+		}
+		if (property_exists($this, 'account_id')) {
+			$return .= ' | <span class="info-box-label">'.$this->account_id.'</span>';
+		}
+		if (method_exists($this, 'LibStatut')) {
+			$return .= '<br><div style="display:inline-block" class="info-box-status margintoponly">'.$this->LibStatut($this->statut, 5).'</div>';
+		}
+		if (property_exists($this, 'amount')) {
+			$return .= ' |   <div style="display:inline-block"><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="amount">'.price($this->amount).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

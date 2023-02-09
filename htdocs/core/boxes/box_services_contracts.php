@@ -124,7 +124,7 @@ class box_services_contracts extends ModeleBoxes
 					$contractlinestatic->label = $objp->label;
 					$contractlinestatic->description = $objp->description;
 					$contractlinestatic->type = $objp->type;
-					$contractlinestatic->product_id = $objp->product_id;
+					$contractlinestatic->fk_product = $objp->product_id;
 					$contractlinestatic->product_ref = $objp->product_ref;
 					$contractlinestatic->product_type = $objp->product_type;
 					$contractlinestatic->statut = $objp->contractline_status;
@@ -169,12 +169,6 @@ class box_services_contracts extends ModeleBoxes
 						}
 						$description = $objp->description;
 
-						// Add description in form
-						if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
-							//$text .= (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
-							$description = ''; // Already added into main visible desc
-						}
-
 						$s = $form->textwithtooltip($text, $description, 3, '', '', '', 0, (!empty($objp->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 					} else {
 						$s = img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description);
@@ -200,7 +194,7 @@ class box_services_contracts extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$i][] = array(
-						'td' => 'class="center nowraponall"',
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 						'text2'=> $late,
 					);

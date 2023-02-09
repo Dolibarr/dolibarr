@@ -49,6 +49,7 @@ UserCP=Usuário
 ErrorAddEventToUserCP=Ocorreu um erro ao adicionar a licença excepcional.
 AddEventToUserOkCP=A adição da licença excepcional foi completada.
 MenuLogCP=Ver logs de alterações
+ActionByCP=Modificado por
 PrevSoldeCP=Saldo anterior
 NewSoldeCP=Novo saldo
 alreadyCPexist=Um pedido de licença já foi feito sobre este período.

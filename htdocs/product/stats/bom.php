@@ -24,6 +24,7 @@
  *       \brief      Page of MO referring product
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
@@ -199,7 +200,7 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."bom_bomline as bl ON bl.fk_bom=b.rowid";
 		$sql .= " WHERE b.entity IN (".getEntity('bom').")";
 		$sql .= " AND bl.fk_product = ".((int) $product->id);
-		$sql .= " GROUP BY b.rowid, b.ref, b.date_valid, b.status";
+		$sql .= " GROUP BY b.rowid, b.ref, b.status, b.date_valid, b.fk_product";
 		$sql .= $db->order($sortfield, $sortorder);
 
 		// Count total nb of records
@@ -258,11 +259,10 @@ if ($id > 0 || !empty($ref)) {
 		}
 		$db->free($result);
 
+		$option .= '&id='.$product->id;
+
 		if ($limit > 0 && $limit != $conf->liste_limit) {
 			$option .= '&limit='.urlencode($limit);
-		}
-		if (!empty($id)) {
-			$option .= '&id='.$product->id;
 		}
 		if (!empty($search_month)) {
 			$option .= '&search_month='.urlencode($search_month);
@@ -272,6 +272,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 
 		print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		if (!empty($sortfield)) {
 			print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
 		}

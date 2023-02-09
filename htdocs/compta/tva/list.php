@@ -26,6 +26,7 @@
  *	\brief		List of VAT payments
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
@@ -43,6 +44,7 @@ $massaction					= GETPOST('massaction', 'alpha');
 $confirm					= GETPOST('confirm', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage				= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'salestaxeslist';
+$mode = GETPOST('mode', 'alpha');
 
 $search_ref					= GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
@@ -54,6 +56,7 @@ $search_type = GETPOST('search_type', 'int');
 $search_account				= GETPOST('search_account', 'int');
 $search_amount 				= GETPOST('search_amount', 'alpha');
 $search_status = GETPOST('search_status', 'int');
+$ltt = GETPOST("ltt", "int");
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield					= GETPOST('sortfield', 'aZ09comma');
@@ -83,7 +86,7 @@ $arrayfields = array(
 	't.status'			=>array('checked'=>1, 'position'=>90, 'label'=>"Status"),
 );
 
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	$arrayfields['t.fk_account'] = array('checked'=>1, 'position'=>60, 'label'=>"DefaultBankAccount");
 }
 
@@ -148,6 +151,9 @@ $sql = 'SELECT t.rowid, t.amount, t.label, t.datev, t.datep, t.paye, t.fk_typepa
 $sql.= ' ba.label as blabel, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,';
 $sql.= ' t.num_payment, pst.code as payment_code,';
 $sql .= ' SUM(ptva.amount) as alreadypayed';
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= ' FROM '.MAIN_DB_PREFIX.'tva as t';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as pst ON (t.fk_typepayment = pst.id)';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON (t.fk_account = ba.rowid)';
@@ -186,33 +192,48 @@ if ($search_status != '' && $search_status >= 0) {
 }
 
 $sql .= " GROUP BY t.rowid, t.amount, t.label, t.datev, t.datep, t.paye, t.fk_typepayment, t.fk_account, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, t.num_payment, pst.code";
-$sql .= $db->order($sortfield, $sortorder);
 
+// Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
 
-	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	if (($page * $limit) > $nbtotalofrecords) {
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
-$result = $db->query($sql);
-if (!$result) {
+$resql = $db->query($sql);
+if (!$resql) {
 	dol_print_error($db);
 	llxFooter();
 	$db->close();
 	exit;
 }
 
-$num = $db->num_rows($result);
+$num = $db->num_rows($resql);
 
 $param = '';
+if (!empty($mode)) {
+	$param .= '&mode='.urlencode($mode);
+}
 if (!empty($contextpage) && $contextpage != $_SERVER['PHP_SELF']) {
 	$param .= '&contextpage='.$contextpage;
 }
@@ -277,6 +298,13 @@ if (!empty($search_amount)) {
 if ($search_status != '' && $search_status != '-1') {
 	$param .= '&search_status='.urlencode($search_status);
 }
+$arrayofmassactions = array(
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+);
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+
+$moreforfilter = '';
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') {
@@ -293,11 +321,14 @@ $url = DOL_URL_ROOT.'/compta/tva/card.php?action=create';
 if (!empty($socid)) {
 	$url .= '&socid='.$socid;
 }
-$newcardbutton = dolGetButtonTitle($langs->trans('NewVATPayment', ($ltt + 1)), '', 'fa fa-plus-circle', $url, '', $user->rights->tax->charges->creer);
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewVATPayment'), '', 'fa fa-plus-circle', $url, '', $user->rights->tax->charges->creer);
 print_barre_liste($langs->trans("VATDeclarations"), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $varpage = empty($contextpage) ? $_SERVER['PHP_SELF'] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -306,6 +337,13 @@ print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : '').'">';
 
 print '<tr class="liste_titre_filter">';
+
+// Filter: Buttons
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre maxwidthsearch">';
+	print $form->showFilterAndCheckAddButtons(0);
+	print '</td>';
+}
 
 // Filters: Lines (placeholder)
 if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
@@ -354,7 +392,7 @@ if (!empty($arrayfields['t.datev']['checked'])) {
 // Filter: Type
 if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
 	print '<td class="liste_titre left">';
-	$form->select_types_paiements($search_type, 'search_type', '', 0, 1, 1, 16);
+	print $form->select_types_paiements($search_type, 'search_type', '', 0, 1, 1, 16, 1, '', 1);
 	print '</td>';
 }
 
@@ -374,9 +412,9 @@ if (!empty($arrayfields['t.amount']['checked'])) {
 
 // Status
 if (!empty($arrayfields['t.status']['checked'])) {
-	print '<td class="liste_titre maxwidthonsmartphone right">';
+	print '<td class="liste_titre right parentonrightofpage">';
 	$liststatus = array('0' => $langs->trans("Unpaid"), '1' => $langs->trans("Paid"));
-	print $form->selectarray('search_status', $liststatus, $search_status, 1);
+	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 
@@ -386,13 +424,17 @@ $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // N
 print $hookmanager->resPrint;
 
 // Filter: Buttons
-print '<td class="liste_titre maxwidthsearch">';
-print $form->showFilterAndCheckAddButtons(0);
-print '</td>';
-
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre maxwidthsearch">';
+	print $form->showFilterAndCheckAddButtons(0);
+	print '</td>';
+}
 print '</tr>';
 
 print '<tr class="liste_titre">';
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre($selectedfields, $_SERVER['PHP_SELF'], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+}
 if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
 	print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 }
@@ -423,122 +465,158 @@ $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
-print_liste_field_titre($selectedfields, $_SERVER['PHP_SELF'], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre($selectedfields, $_SERVER['PHP_SELF'], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+}
 print '</tr>';
 
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
+$total = 0;
+
 while ($i < min($num, $limit)) {
-	$obj = $db->fetch_object($result);
+	$obj = $db->fetch_object($resql);
 
 	$tva_static->id = $obj->rowid;
 	$tva_static->ref = $obj->rowid;
 	$tva_static->label = $obj->label;
+	$tva_static->paiementtype = $obj->paye;
+	$tva_static->type_payment = $obj->payment_code;
+	$tva_static->datev = $obj->datev;
+	$tva_static->amount = $obj->amount;
 
-	print '<tr class="oddeven">';
-
-	// No
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
-		print '<td>'.(($offset * $limit) + $i).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+	if ($mode == 'kanban') {
+		if ($i == 0) {
+			print '<tr><td colspan="12">';
+			print '<div class="box-flex-container">';
 		}
-	}
+		// Output Kanban
 
-	// Ref
-	if (!empty($arrayfields['t.rowid']['checked'])) {
-		print '<td>';
-		print $tva_static->getNomUrl(1);
-		$filename = dol_sanitizeFileName($tva_static->ref);
-		$filedir = $conf->tax->dir_output.'/vat/'.dol_sanitizeFileName($tva_static->ref);
-		$urlsource = $_SERVER['PHP_SELF'].'?id='.$tva_static->id;
-		print $formfile->getDocumentsLink($tva_static->element, $filename, $filedir, '', 'valignmiddle paddingleft2imp');
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+		print $tva_static->getKanbanView('');
+		if ($i == (min($num, $limit) - 1)) {
+			print '</div>';
+			print '</td></tr>';
 		}
-	}
+	} else {
+		print '<tr class="oddeven">';
 
-	// Label
-	if (!empty($arrayfields['t.label']['checked'])) {
-		print '<td>'.dol_trunc($obj->label, 40).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+		// Buttons
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td></td>';
 		}
-	}
 
-	// Date end period
-	if (!empty($arrayfields['t.datev']['checked'])) {
-		print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day').'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+		// No
+		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+			print '<td>'.(($offset * $limit) + $i).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
-	}
 
-	// Date payment
-	/*if (!empty($arrayfields['t.datep']['checked'])) {
-		print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day').'</td>';
-		if (!$i) $totalarray['nbfield']++;
-	}*/
-
-	// Type
-	if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
-		print '<td>';
-		if (!empty($obj->payment_code)) print $langs->trans("PaymentTypeShort".$obj->payment_code);
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+		// Ref
+		if (!empty($arrayfields['t.rowid']['checked'])) {
+			print '<td>';
+			print $tva_static->getNomUrl(1);
+			$filename = dol_sanitizeFileName($tva_static->ref);
+			$filedir = $conf->tax->dir_output.'/vat/'.dol_sanitizeFileName($tva_static->ref);
+			$urlsource = $_SERVER['PHP_SELF'].'?id='.$tva_static->id;
+			print $formfile->getDocumentsLink($tva_static->element, $filename, $filedir, '', 'valignmiddle paddingleft2imp');
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
-	}
 
-	// Account
-	if (!empty($arrayfields['t.fk_account']['checked'])) {
-		print '<td>';
-		if ($obj->fk_account > 0) {
-			$bankstatic->id = $obj->fk_account;
-			$bankstatic->ref = $obj->bref;
-			$bankstatic->number = $obj->bnumber;
-			$bankstatic->iban = $obj->iban;
-			$bankstatic->bic = $obj->bic;
-			$bankstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
-			$bankstatic->account_number = $obj->account_number;
-			$bankstatic->clos = $obj->clos;
-
-			//$accountingjournal->fetch($obj->fk_accountancy_journal);
-			//$bankstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
-
-			$bankstatic->label = $obj->blabel;
-			print $bankstatic->getNomUrl(1);
+		// Label
+		if (!empty($arrayfields['t.label']['checked'])) {
+			print '<td>'.dol_trunc($obj->label, 40).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
-		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
-	}
 
-	// Amount
-	if (!empty($arrayfields['t.amount']['checked'])) {
-		$total = $total + $obj->amount;
-		print '<td class="nowrap right"><span class="amount">' . price($obj->amount) . '</span></td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+		// Date end period
+		if (!empty($arrayfields['t.datev']['checked'])) {
+			print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day').'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
-		$totalarray['pos'][$totalarray['nbfield']] = 'amount';
-		$totalarray['val']['amount'] += $obj->amount;
-	}
 
-	if (!empty($arrayfields['t.status']['checked'])) {
-		print '<td class="nowrap right">' . $tva_static->LibStatut($obj->paye, 5, $obj->alreadypayed) . '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+		// Date payment
+		/*if 		// Buttons
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td></td>';
+		}(!empty($arrayfields['t.datep']['checked'])) {
+			print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day').'</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}*/
+
+		// Type
+		if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
+			print '<td>';
+			if (!empty($obj->payment_code)) print $langs->trans("PaymentTypeShort".$obj->payment_code);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
+
+		// Account
+		if (!empty($arrayfields['t.fk_account']['checked'])) {
+			print '<td>';
+			if ($obj->fk_account > 0) {
+				$bankstatic->id = $obj->fk_account;
+				$bankstatic->ref = $obj->bref;
+				$bankstatic->number = $obj->bnumber;
+				$bankstatic->iban = $obj->iban;
+				$bankstatic->bic = $obj->bic;
+				$bankstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
+				$bankstatic->account_number = $obj->account_number;
+				$bankstatic->clos = $obj->clos;
+
+				//$accountingjournal->fetch($obj->fk_accountancy_journal);
+				//$bankstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+
+				$bankstatic->label = $obj->blabel;
+				print $bankstatic->getNomUrl(1);
+			}
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+
+		// Amount
 		if (!empty($arrayfields['t.amount']['checked'])) {
-			$totalarray['pos'][$totalarray['nbfield']] = '';
+			$total = $total + $obj->amount;
+			print '<td class="nowrap right"><span class="amount">' . price($obj->amount) . '</span></td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+			$totalarray['pos'][$totalarray['nbfield']] = 'amount';
+			if (empty($totalarray['val']['amount'])) {
+				$totalarray['val']['amount'] = $obj->amount;
+			} else {
+				$totalarray['val']['amount'] += $obj->amount;
+			}
 		}
+
+		if (!empty($arrayfields['t.status']['checked'])) {
+			print '<td class="nowrap right">' . $tva_static->LibStatut($obj->paye, 5, $obj->alreadypayed) . '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+			if (!empty($arrayfields['t.amount']['checked'])) {
+				$totalarray['pos'][$totalarray['nbfield']] = '';
+			}
+		}
+
+		// Buttons
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td></td>';
+		}
+		print '</tr>';
 	}
-
-	// Buttons
-	print '<td></td>';
-
-	print '</tr>';
 
 	$i++;
 }
@@ -549,11 +627,27 @@ $totalarray['nbfield']++;
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
-print '</table>';
-print '</div>';
-print '</form>';
+// If no record found
+if ($num == 0) {
+	$colspan = 1;
+	foreach ($arrayfields as $key => $val) {
+		if (!empty($val['checked'])) {
+			$colspan++;
+		}
+	}
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+}
 
-$db->free($result);
+$db->free($resql);
+
+$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
+print '</table>'."\n";
+print '</div>'."\n";
+
+print '</form>'."\n";
 
 // End of page
 llxFooter();

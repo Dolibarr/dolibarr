@@ -37,10 +37,14 @@ dol_include_once('/recruitment/class/recruitmentcandidature.class.php');
 class Recruitment extends DolibarrApi
 {
 	/**
-	 * @var jobposition $jobposition {@type jobposition}
+	 * @var RecruitmentJobPosition $jobposition {@type RecruitmentJobPosition}
 	 */
 	public $jobposition;
+	/**
+	 * @var RecruitmentCandidature $candidature {@type RecruitmentCandidature}
+	 */
 	public $candidature;
+
 
 	/**
 	 * Constructor
@@ -50,19 +54,20 @@ class Recruitment extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 		$this->db = $db;
 		$this->jobposition = new RecruitmentJobPosition($this->db);
 		$this->candidature = new RecruitmentCandidature($this->db);
 	}
+
 
 	/**
 	 * Get properties of a jobposition object
 	 *
 	 * Return an array with jobposition informations
 	 *
-	 * @param 	int 	$id ID of jobposition
-	 * @return 	array|mixed data without useless information
+	 * @param 	int 		$id 	ID of jobposition
+	 * @return  Object             	Object with cleaned properties
 	 *
 	 * @url	GET jobposition/{id}
 	 *
@@ -92,8 +97,8 @@ class Recruitment extends DolibarrApi
 	 *
 	 * Return an array with candidature informations
 	 *
-	 * @param 	int 	$id ID of candidature
-	 * @return 	array|mixed data without useless information
+	 * @param 	int 	$id 	ID of candidature
+	 * @return  Object          Object with cleaned properties
 	 *
 	 * @url	GET candidature/{id}
 	 *
@@ -359,7 +364,7 @@ class Recruitment extends DolibarrApi
 		}
 
 		// Clean data
-		// $this->jobposition->abc = checkVal($this->jobposition->abc, 'alphanohtml');
+		// $this->jobposition->abc = sanitizeVal($this->jobposition->abc, 'alphanohtml');
 
 		if ($this->jobposition->create(DolibarrApiAccess::$user)<0) {
 			throw new RestException(500, "Error creating jobposition", array_merge(array($this->jobposition->error), $this->jobposition->errors));
@@ -391,7 +396,7 @@ class Recruitment extends DolibarrApi
 		}
 
 		// Clean data
-		// $this->jobposition->abc = checkVal($this->jobposition->abc, 'alphanohtml');
+		// $this->jobposition->abc = sanitizeVal($this->jobposition->abc, 'alphanohtml');
 
 		if ($this->candidature->create(DolibarrApiAccess::$user)<0) {
 			throw new RestException(500, "Error creating candidature", array_merge(array($this->candidature->error), $this->candidature->errors));
@@ -433,10 +438,10 @@ class Recruitment extends DolibarrApi
 		}
 
 		// Clean data
-		// $this->jobposition->abc = checkVal($this->jobposition->abc, 'alphanohtml');
+		// $this->jobposition->abc = sanitizeVal($this->jobposition->abc, 'alphanohtml');
 
 		if ($this->jobposition->update(DolibarrApiAccess::$user, false) > 0) {
-			return $this->get($id);
+			return $this->getJobPosition($id);
 		} else {
 			throw new RestException(500, $this->jobposition->error);
 		}
@@ -476,10 +481,10 @@ class Recruitment extends DolibarrApi
 		}
 
 		// Clean data
-		// $this->jobposition->abc = checkVal($this->jobposition->abc, 'alphanohtml');
+		// $this->jobposition->abc = sanitizeVal($this->jobposition->abc, 'alphanohtml');
 
 		if ($this->candidature->update(DolibarrApiAccess::$user, false) > 0) {
-			return $this->get($id);
+			return $this->getCandidature($id);
 		} else {
 			throw new RestException(500, $this->candidature->error);
 		}

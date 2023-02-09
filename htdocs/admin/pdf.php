@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2107 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2019	   Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2021	   Anthony Berton		<bertonanthony@gmail.com>
+ * Copyright (C) 2021-2022 Anthony Berton		<bertonanthony@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  *       \brief      Page to setup PDF options
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -34,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members', 'stocks', 'Trips'));
+$langs->loadLangs(array('admin', 'companies', 'languages', 'members', 'other', 'products', 'stocks', 'trips'));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -108,7 +109,7 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "MAIN_TVAINTRA_NOT_IN_ADDRESS", GETPOST("MAIN_TVAINTRA_NOT_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
 	}
 
-	if (!empty($conf->projet->enabled)) {
+	if (isModEnabled('project')) {
 		if (GETPOST('PDF_SHOW_PROJECT_REF_OR_LABEL') == 'no') {
 			dolibarr_del_const($db, "PDF_SHOW_PROJECT", $conf->entity);
 			dolibarr_del_const($db, "PDF_SHOW_PROJECT_TITLE", $conf->entity);
@@ -166,6 +167,13 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "PDF_SHOW_LINK_TO_ONLINE_PAYMENT", GETPOST('PDF_SHOW_LINK_TO_ONLINE_PAYMENT', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
 
+	if (GETPOSTISSET('DOC_SHOW_FIRST_SALES_REP')) {
+		dolibarr_set_const($db, "DOC_SHOW_FIRST_SALES_REP", GETPOST('DOC_SHOW_FIRST_SALES_REP', 'alpha'), 'chaine', 0, '', $conf->entity);
+	}
+
+	if (GETPOSTISSET('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) {
+		dolibarr_set_const($db, "PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", GETPOST('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME', 'alpha'), 'chaine', 0, '', $conf->entity);
+	}
 	if (GETPOSTISSET('PDF_USE_A')) {
 		dolibarr_set_const($db, "PDF_USE_A", GETPOST('PDF_USE_A', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
@@ -268,7 +276,7 @@ print load_fiche_titre($langs->trans("DictionaryPaperFormat"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 $selected = (isset($conf->global->MAIN_PDF_FORMAT) ? $conf->global->MAIN_PDF_FORMAT : '');
 if (empty($selected)) {
@@ -282,16 +290,16 @@ print $formadmin->select_paper_format($selected, 'MAIN_PDF_FORMAT');
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_MARGIN_LEFT").'</td><td>';
-print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_LEFT" value="'.(empty($conf->global->MAIN_PDF_MARGIN_LEFT) ? 10 : $conf->global->MAIN_PDF_MARGIN_LEFT).'">';
+print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_LEFT" value="'.getDolGlobalInt('MAIN_PDF_MARGIN_LEFT', 10).'">';
 print '</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_MARGIN_RIGHT").'</td><td>';
-print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_RIGHT" value="'.(empty($conf->global->MAIN_PDF_MARGIN_RIGHT) ? 10 : $conf->global->MAIN_PDF_MARGIN_RIGHT).'">';
+print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_RIGHT" value="'.getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10).'">';
 print '</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_MARGIN_TOP").'</td><td>';
-print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_TOP" value="'.(empty($conf->global->MAIN_PDF_MARGIN_TOP) ? 10 : $conf->global->MAIN_PDF_MARGIN_TOP).'">';
+print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_TOP" value="'.getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10).'">';
 print '</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_MARGIN_BOTTOM").'</td><td>';
-print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_BOTTOM" value="'.(empty($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? 10 : $conf->global->MAIN_PDF_MARGIN_BOTTOM).'">';
+print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_BOTTOM" value="'.getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10).'">';
 print '</td></tr>';
 
 print '</table>';
@@ -305,11 +313,11 @@ print load_fiche_titre($langs->trans("PDFAddressForging"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 // Show sender name
 
-/* Set option as hidden because no need of this for 99.99% of users.
+/* Set option as hidden because no need of this for 99.99% of users. Having it as hidden feature is enough.
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_HIDE_SENDER_NAME").'</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_PDF_HIDE_SENDER_NAME');
@@ -321,7 +329,7 @@ print '</td></tr>';
 
 // Hide VAT Intra on address
 
-print '<tr class="oddeven"><td>'.$langs->trans("ShowVATIntaInAddress").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("ShowVATIntaInAddress").' - <span class="opacitymedium">'.$langs->trans("ThirdPartyAddress").'</span></td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_TVAINTRA_NOT_IN_ADDRESS');
 } else {
@@ -340,7 +348,7 @@ for ($i = 1; $i <= 6; $i++) {
 		$pid = img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 	}
 	if ($pid) {
-		print '<tr class="oddeven"><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid.'</td><td>';
+		print '<tr class="oddeven"><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid.' - <span class="opacitymedium">'.$langs->trans("ThirdPartyAddress").'</span></td><td>';
 		$keyforconstant = 'MAIN_PROFID'.$i.'_IN_ADDRESS';
 		if ($conf->use_javascript_ajax) {
 			print ajax_constantonoff($keyforconstant);
@@ -369,6 +377,7 @@ if ($conf->use_javascript_ajax) {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("MAIN_PDF_NO_RECIPENT_FRAME", $arrval, $conf->global->MAIN_PDF_NO_RECIPENT_FRAME);
 }
+print '</td></tr>';
 
 //Invert sender and recipient
 
@@ -389,6 +398,13 @@ if ($conf->use_javascript_ajax) {
 	print $form->selectyesno('MAIN_PDF_USE_ISO_LOCATION', (!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION)) ? $conf->global->MAIN_PDF_USE_ISO_LOCATION : 0, 1);
 }
 print '</td></tr>';
+
+// Show alias in thirdparty name
+print '<tr class="oddeven"><td>'.$langs->trans("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("THIRDPARTY_ALIAS"), '2' => $langs->trans("ALIAS_THIRDPARTY"));
+	print $form->selectarray("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", $arrval, getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME'));
+}
 
 print '</table>';
 print '</div>';
@@ -434,7 +450,7 @@ if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2)) {
 print load_fiche_titre($title, '', '');
 
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 // Hide any information on Sale tax / VAT
 
@@ -454,22 +470,20 @@ print '<br>';
 
 
 // Other
+
 print load_fiche_titre($langs->trans("Other"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 // Use 2 languages into PDF
 
-print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_ALSO_LANGUAGE_CODE").'</td><td>';
-//if (! empty($conf->global->MAIN_MULTILANGS))
-	//{
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("PDFIn2Languages"), $langs->trans("PDF_USE_ALSO_LANGUAGE_CODE"));
+print '</td><td>';
 $selected = GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE') ? GETPOST('PDF_USE_ALSO_LANGUAGE_CODE') : (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) ? $conf->global->PDF_USE_ALSO_LANGUAGE_CODE : 0);
 print $formadmin->select_language($selected, 'PDF_USE_ALSO_LANGUAGE_CODE', 0, null, 1);
-//} else {
-//	print '<span class="opacitymedium">'.$langs->trans("MultiLangNotEnabled").'</span>';
-//}
 print '</td></tr>';
 
 // Height of logo
@@ -478,7 +492,7 @@ print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_LOGO_HEIGHT" v
 print '</td></tr>';
 
 // Show project
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("PDF_SHOW_PROJECT").'</td><td>';
 	$tmparray = array('no' => 'No', 'showprojectref' => 'RefProject', 'showprojectlabel' => 'ShowProjectLabel');
 	$showprojectref = empty($conf->global->PDF_SHOW_PROJECT) ? (empty($conf->global->PDF_SHOW_PROJECT_TITLE) ? 'no' : 'showprojectlabel') : 'showprojectref';
@@ -563,6 +577,18 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td><td>';
 print $form->selectarray('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', $arraydetailsforpdffoot, (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS : 0));
 print '</td></tr>';
+
+// Show the first sales representative
+
+print '<tr class="oddeven"><td>'.$langs->trans("DOC_SHOW_FIRST_SALES_REP");
+print ' <span class="opacitymedium">('.$langs->trans("SalesRepresentativeInfo").')</span>';
+print '</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('DOC_SHOW_FIRST_SALES_REP');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("DOC_SHOW_FIRST_SALES_REP", $arrval, $conf->global->DOC_SHOW_FIRST_SALES_REP);
+}
 
 // Show online payment link on invoices
 

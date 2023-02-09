@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  *	\brief      Third party module setup page
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -51,19 +52,15 @@ $formcompany = new FormCompany($db);
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'setcodeclient') {
-	if (dolibarr_set_const($db, "SOCIETE_CODECLIENT_ADDON", $value, 'chaine', 0, '', $conf->entity) > 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	} else {
+	$result = dolibarr_set_const($db, "SOCIETE_CODECLIENT_ADDON", $value, 'chaine', 0, '', $conf->entity);
+	if ($result <= 0) {
 		dol_print_error($db);
 	}
 }
 
 if ($action == 'setcodecompta') {
-	if (dolibarr_set_const($db, "SOCIETE_CODECOMPTA_ADDON", $value, 'chaine', 0, '', $conf->entity) > 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	} else {
+	$result = dolibarr_set_const($db, "SOCIETE_CODECOMPTA_ADDON", $value, 'chaine', 0, '', $conf->entity);
+	if ($result <= 0) {
 		dol_print_error($db);
 	}
 }
@@ -184,6 +181,20 @@ if ($action == "setaccountancycodecustomerinvoicemandatory") {
 	}
 }
 
+//Activate Set vat id unique
+if ($action == "setvatintraunique") {
+	$setvatintraunique = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "SOCIETE_VAT_INTRA_UNIQUE", $setvatintraunique, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
 //Activate Set ref in list
 if ($action == "setaddrefinlist") {
 	$setaddrefinlist = GETPOST('value', 'int');
@@ -254,7 +265,7 @@ if ($action == "setaskforshippingmet") {
 	}
 }
 
-//Activate "Disable prospect/customer type"
+// Activate "Disable prospect/customer type"
 if ($action == "setdisableprospectcustomer") {
 	$setdisableprospectcustomer = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "SOCIETE_DISABLE_PROSPECTSCUSTOMERS", $setdisableprospectcustomer, 'yesno', 0, '', $conf->entity);
@@ -273,10 +284,8 @@ if ($action == 'setprofid') {
 	$status = GETPOST('status', 'alpha');
 
 	$idprof = "SOCIETE_".$value."_UNIQUE";
-	if (dolibarr_set_const($db, $idprof, $status, 'chaine', 0, '', $conf->entity) > 0) {
-		//header("Location: ".$_SERVER["PHP_SELF"]);
-		//exit;
-	} else {
+	$result = dolibarr_set_const($db, $idprof, $status, 'chaine', 0, '', $conf->entity);
+	if ($result <= 0) {
 		dol_print_error($db);
 	}
 }
@@ -286,10 +295,8 @@ if ($action == 'setprofidmandatory') {
 	$status = GETPOST('status', 'alpha');
 
 	$idprof = "SOCIETE_".$value."_MANDATORY";
-	if (dolibarr_set_const($db, $idprof, $status, 'chaine', 0, '', $conf->entity) > 0) {
-		//header("Location: ".$_SERVER["PHP_SELF"]);
-		//exit;
-	} else {
+	$result = dolibarr_set_const($db, $idprof, $status, 'chaine', 0, '', $conf->entity);
+	if ($result <= 0) {
 		dol_print_error($db);
 	}
 }
@@ -299,10 +306,8 @@ if ($action == 'setprofidinvoicemandatory') {
 	$status = GETPOST('status', 'alpha');
 
 	$idprof = "SOCIETE_".$value."_INVOICE_MANDATORY";
-	if (dolibarr_set_const($db, $idprof, $status, 'chaine', 0, '', $conf->entity) > 0) {
-		//header("Location: ".$_SERVER["PHP_SELF"]);
-		//exit;
-	} else {
+	$result = dolibarr_set_const($db, $idprof, $status, 'chaine', 0, '', $conf->entity);
+	if ($result <= 0) {
 		dol_print_error($db);
 	}
 }
@@ -311,10 +316,8 @@ if ($action == 'setprofidinvoicemandatory') {
 if ($action == 'sethideinactivethirdparty') {
 	$status = GETPOST('status', 'alpha');
 
-	if (dolibarr_set_const($db, "COMPANY_HIDE_INACTIVE_IN_COMBOBOX", $status, 'chaine', 0, '', $conf->entity) > 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	} else {
+	$result = dolibarr_set_const($db, "COMPANY_HIDE_INACTIVE_IN_COMBOBOX", $status, 'chaine', 0, '', $conf->entity);
+	if ($result <= 0) {
 		dol_print_error($db);
 	}
 }
@@ -330,6 +333,7 @@ if ($action == 'setonsearchandlistgooncustomerorsuppliercard') {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
+
 
 /*
  * 	View
@@ -417,7 +421,7 @@ foreach ($arrayofmodules as $file => $modCodeTiers) {
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print "</td>\n";
 	} else {
-		$disabled = (!empty($conf->multicompany->enabled) && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? true : false);
+		$disabled = (isModEnabled('multicompany') && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? true : false);
 		print '<td class="center">';
 		if (!$disabled) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&token='.newToken().'&value='.urlencode($file).'">';
@@ -575,7 +579,7 @@ foreach ($dirsociete as $dirroot) {
 
 				if ($modulequalified) {
 					print '<tr class="oddeven"><td width="100">';
-					print $module->name;
+					print dol_escape_htmltag($module->name);
 					print "</td><td>\n";
 					if (method_exists($module, 'info')) {
 						print $module->info($langs);
@@ -589,7 +593,7 @@ foreach ($dirsociete as $dirroot) {
 						print "<td class=\"center\">\n";
 						//if ($conf->global->COMPANY_ADDON_PDF != "$name")
 						//{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Enabled"), 'switch_on');
 							print '</a>';
 						//}
@@ -605,7 +609,7 @@ foreach ($dirsociete as $dirroot) {
 							print "</td>";
 						} else {
 							print '<td class="center">'."\n";
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.urlencode($name).'&token='.newToken().'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value='.urlencode($name).'&token='.newToken().'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							print "</td>";
 						}
 					}
@@ -626,7 +630,7 @@ foreach ($dirsociete as $dirroot) {
 					// Preview
 					print '<td class="center nowrap">';
 					if ($module->type == 'pdf') {
-						$linkspec = '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&token='.newToken().'&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+						$linkspec = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=specimen&token='.newToken().'&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 					} else {
 						$linkspec = img_object($langs->trans("PreviewNotAvailable"), 'generic');
 					}
@@ -724,7 +728,7 @@ foreach ($profid as $key => $val) {
 	$i++;
 }
 
-if ($conf->accounting->enabled) {
+if (isModEnabled('accounting')) {
 	print '<tr class="oddeven">';
 	print '<td colspan="2">'.$langs->trans('CustomerAccountancyCodeShort')."</td>\n";
 	print '<td colspan="2"></td>';
@@ -740,6 +744,22 @@ if ($conf->accounting->enabled) {
 	}
 	print "</tr>\n";
 }
+
+// VAT ID
+print '<tr class="oddeven">';
+print '<td colspan="2">'.$langs->trans('VATIntra')."</td>\n";
+
+if (!empty($conf->global->SOCIETE_VAT_INTRA_UNIQUE)) {
+	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setvatintraunique&token='.newToken().'&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setvatintraunique&token='.newToken().'&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '<td colspan="2"></td>';
+print "</tr>\n";
 
 print "</table>\n";
 print '</div>';
@@ -864,7 +884,7 @@ if (!empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
 print '</a></td>';
 print '</tr>';
 
-if (!empty($conf->expedition->enabled)) {
+if (isModEnabled("expedition")) {
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 0) {	// Visible on experimental only because seems to not be implemented everywhere (only on proposal)
 		print '<tr class="oddeven">';
 		print '<td width="80%">'.$langs->trans("AskForPreferredShippingMethod").'</td>';

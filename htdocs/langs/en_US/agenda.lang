@@ -45,6 +45,7 @@ CONTRACT_DELETEInDolibarr=Contract %s deleted
 PropalClosedSignedInDolibarr=Proposal %s signed
 PropalClosedRefusedInDolibarr=Proposal %s refused
 PropalValidatedInDolibarr=Proposal %s validated
+PropalBackToDraftInDolibarr=Proposal %s go back to draft status
 PropalClassifiedBilledInDolibarr=Proposal %s classified billed
 InvoiceValidatedInDolibarr=Invoice %s validated
 InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
@@ -56,6 +57,7 @@ MemberValidatedInDolibarr=Member %s validated
 MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Member %s deleted
+MemberExcludedInDolibarr=Member %s excluded
 MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
 MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
 MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
@@ -66,6 +68,8 @@ ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=Shipment %s deleted
 ShipmentCanceledInDolibarr=Shipment %s canceled
 ReceptionValidatedInDolibarr=Reception %s validated
+ReceptionDeletedInDolibarr=Reception %s deleted
+ReceptionClassifyClosedInDolibarr=Reception %s classified closed
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Order %s validated
 OrderDeliveredInDolibarr=Order %s classified delivered
@@ -84,6 +88,7 @@ SupplierInvoiceSentByEMail=Vendor invoice %s sent by email
 ShippingSentByEMail=Shipment %s sent by email
 ShippingValidated= Shipment %s validated
 InterventionSentByEMail=Intervention %s sent by email
+ProjectSentByEMail=Project %s sent by email
 ProposalDeleted=Proposal deleted
 OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted
@@ -133,7 +138,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not own
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
-AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays. 
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
 AgendaShowBirthdayEvents=Birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts
 Busy=Busy
@@ -157,6 +162,7 @@ DateActionBegin=Start event date
 ConfirmCloneEvent=Are you sure you want to clone the event <b>%s</b>?
 RepeatEvent=Repeat event
 OnceOnly=Once only
+EveryDay=Every day
 EveryWeek=Every week
 EveryMonth=Every month
 DayOfMonth=Day of month
@@ -172,3 +178,4 @@ AddReminder=Create an automatic reminder notification for this event
 ErrorReminderActionCommCreation=Error creating the reminder notification for this event
 BrowserPush=Browser Popup Notification
 ActiveByDefault=Enabled by default
+Until=until

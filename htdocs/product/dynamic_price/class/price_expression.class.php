@@ -105,17 +105,6 @@ class PriceExpression
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
-
-			//if (! $notrigger)
-			//{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
-			//}
 		}
 
 		// Commit or rollback
@@ -256,7 +245,7 @@ class PriceExpression
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
 		$sql .= " title = ".(isset($this->title) ? "'".$this->db->escape($this->title)."'" : "''").",";
-		$sql .= " expression = ".(isset($this->expression) ? "'".$this->db->escape($this->expression)."'" : "''")."";
+		$sql .= " expression = ".(isset($this->expression) ? "'".$this->db->escape($this->expression)."'" : "''");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
@@ -266,20 +255,6 @@ class PriceExpression
 		if (!$resql) {
 			$error++; $this->errors[] = "Error ".$this->db->lasterror();
 		}
-
-		// if (! $error)
-		// {
-		//     if (! $notrigger)
-		//     {
-		//         // Uncomment this and change MYOBJECT to your own tag if you
-		//         // want this action calls a trigger.
-
-		//         //// Call triggers
-		//         //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-		//         //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-		//         //// End call triggers
-		//     }
-		// }
 
 		// Commit or rollback
 		if ($error) {
@@ -310,20 +285,6 @@ class PriceExpression
 		$rowid = $this->id;
 
 		$this->db->begin();
-
-		//if (! $error)
-		//{
-		//    if (! $notrigger)
-		//    {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
-		//    }
-		//}
 
 		if (!$error) {
 			$sql = "DELETE FROM ".$this->db->prefix().$this->table_element;

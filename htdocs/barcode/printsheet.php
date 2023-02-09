@@ -29,6 +29,7 @@ if (!empty($_POST['mode']) && $_POST['mode'] === 'label') {	// Page is called to
 	}
 }
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -55,6 +56,17 @@ $action = GETPOST('action', 'aZ09');
 
 $producttmp = new Product($db);
 $thirdpartytmp = new Societe($db);
+
+// Security check (enable the most restrictive one)
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+if (!isModEnabled('barcode')) {
+	accessforbidden('Module not enabled');
+}
+if (!$user->hasRight('barcode', 'read')) {
+	accessforbidden();
+}
+restrictedArea($user, 'barcode');
 
 
 /*
@@ -203,25 +215,30 @@ if ($action == 'builddoc') {
 			$forceimgscalewidth = (empty($conf->global->BARCODE_FORCEIMGSCALEWIDTH) ? 1 : $conf->global->BARCODE_FORCEIMGSCALEWIDTH);
 			$forceimgscaleheight = (empty($conf->global->BARCODE_FORCEIMGSCALEHEIGHT) ? 1 : $conf->global->BARCODE_FORCEIMGSCALEHEIGHT);
 
-			for ($i = 0; $i < $numberofsticker; $i++) {
-				$arrayofrecords[] = array(
-					'textleft'=>$textleft,
-					'textheader'=>$textheader,
-					'textfooter'=>$textfooter,
-					'textright'=>$textright,
-					'code'=>$code,
-					'encoding'=>$encoding,
-					'is2d'=>$is2d,
-					'photo'=>$barcodeimage	// Photo must be a file that exists with format supported by TCPDF
-				);
+			$MAXSTICKERS = 1000;
+			if ($numberofsticker <= $MAXSTICKERS) {
+				for ($i = 0; $i < $numberofsticker; $i++) {
+					$arrayofrecords[] = array(
+						'textleft'=>$textleft,
+						'textheader'=>$textheader,
+						'textfooter'=>$textfooter,
+						'textright'=>$textright,
+						'code'=>$code,
+						'encoding'=>$encoding,
+						'is2d'=>$is2d,
+						'photo'=>!empty($barcodeimage) ? $barcodeimage : ''	// Photo must be a file that exists with format supported by TCPDF
+					);
+				}
+			} else {
+				$mesg = $langs->trans("ErrorQuantityIsLimitedTo", $MAXSTICKERS);
+				$error++;
 			}
 		}
 
 		$i++;
-		$mesg = '';
 
 		// Build and output PDF
-		if ($mode == 'label') {
+		if (!$error && $mode == 'label') {
 			if (!count($arrayofrecords)) {
 				$mesg = $langs->trans("ErrorRecordNotFound");
 			}
@@ -240,7 +257,7 @@ if ($action == 'builddoc') {
 			}
 		}
 
-		if ($result <= 0 || $mesg) {
+		if ($result <= 0 || $mesg || $error) {
 			if (empty($mesg)) {
 				$mesg = 'Error '.$result;
 			}
@@ -258,10 +275,6 @@ if ($action == 'builddoc') {
  * View
  */
 
-if (empty($conf->barcode->enabled)) {
-	accessforbidden();
-}
-
 $form = new Form($db);
 
 llxHeader('', $langs->trans("BarCodePrintsheet"));
@@ -271,8 +284,6 @@ print '<br>';
 
 print '<span class="opacitymedium">'.$langs->trans("PageToGenerateBarCodeSheets", $langs->transnoentitiesnoconv("BuildPageToPrint")).'</span><br>';
 print '<br>';
-
-dol_htmloutput_errors($mesg);
 
 //print img_picto('','puce').' '.$langs->trans("PrintsheetForOneBarCode").'<br>';
 //print '<br>';
@@ -386,7 +397,7 @@ if (!empty($user->rights->produit->lire) || !empty($user->rights->service->lire)
 	print '</div>';
 }
 
-if (!empty($user->rights->societe->lire)) {
+if ($user->hasRight('societe', 'lire')) {
 	print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromthirdparty') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"><label for="fillfromthirdparty"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").'</label>';
 	print '<br>';
 	print '<div class="showforthirdpartyselector">';

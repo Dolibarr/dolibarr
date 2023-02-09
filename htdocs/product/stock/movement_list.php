@@ -26,6 +26,7 @@
  *	\brief      Page to list stock movements
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -38,14 +39,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 }
 
@@ -59,6 +60,7 @@ $confirm    = GETPOST('confirm', 'alpha'); // Result of a confirmation
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'movementlist';
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$backtopage = GETPOST("backtopage", "alpha");
 
 $idproduct = GETPOST('idproduct', 'int');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
@@ -124,10 +126,10 @@ $arrayfields = array(
 	'm.datem'=>array('label'=>"Date", 'checked'=>1, 'position'=>2),
 	'p.ref'=>array('label'=>"ProductRef", 'checked'=>1, 'css'=>'maxwidth100', 'position'=>3),
 	'p.label'=>array('label'=>"ProductLabel", 'checked'=>0, 'position'=>5),
-	'm.batch'=>array('label'=>"BatchNumberShort", 'checked'=>1, 'position'=>8, 'enabled'=>(!empty($conf->productbatch->enabled))),
-	'pl.eatby'=>array('label'=>"EatByDate", 'checked'=>0, 'position'=>9, 'enabled'=>(!empty($conf->productbatch->enabled))),
-	'pl.sellby'=>array('label'=>"SellByDate", 'checked'=>0, 'position'=>10, 'enabled'=>(!empty($conf->productbatch->enabled))),
-	'e.ref'=>array('label'=>"Warehouse", 'checked'=>1, 'position'=>100, 'enabled'=>(!$id > 0)), // If we are on specific warehouse, we hide it
+	'm.batch'=>array('label'=>"BatchNumberShort", 'checked'=>1, 'position'=>8, 'enabled'=>(isModEnabled('productbatch'))),
+	'pl.eatby'=>array('label'=>"EatByDate", 'checked'=>0, 'position'=>9, 'enabled'=>(isModEnabled('productbatch'))),
+	'pl.sellby'=>array('label'=>"SellByDate", 'checked'=>0, 'position'=>10, 'enabled'=>(isModEnabled('productbatch'))),
+	'e.ref'=>array('label'=>"Warehouse", 'checked'=>1, 'position'=>100, 'enabled'=>(!($id > 0))), // If we are on specific warehouse, we hide it
 	'm.fk_user_author'=>array('label'=>"Author", 'checked'=>0, 'position'=>120),
 	'm.inventorycode'=>array('label'=>"InventoryCodeShort", 'checked'=>1, 'position'=>130),
 	'm.label'=>array('label'=>"MovementLabel", 'checked'=>1, 'position'=>140),
@@ -135,7 +137,7 @@ $arrayfields = array(
 	'origin'=>array('label'=>"Origin", 'checked'=>1, 'position'=>155),
 	'm.fk_projet'=>array('label'=>'Project', 'checked'=>0, 'position'=>180),
 	'm.value'=>array('label'=>"Qty", 'checked'=>1, 'position'=>200),
-	'm.price'=>array('label'=>"UnitPurchaseValue", 'checked'=>0, 'position'=>210, 'enabled'=>empty($conf->global->STOCK_MOVEMENT_LIST_HIDE_UNIT_PRICE))
+	'm.price'=>array('label'=>"UnitPurchaseValue", 'checked'=>0, 'position'=>210, 'enabled'=>(!getDolGlobalInt('STOCK_MOVEMENT_LIST_HIDE_UNIT_PRICE')))
 	//'m.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	//'m.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500)
 );
@@ -223,7 +225,7 @@ if (empty($reshook)) {
 		$search_qty = '';
 		$search_fk_projet=0;
 		$sall = "";
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -267,10 +269,10 @@ if (empty($reshook)) {
 		// Define output language (Here it is not used because we do only merging existing PDF)
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		//elseif ($conf->global->MAIN_MULTILANGS && empty($newlang) && is_object($objecttmp->thirdparty)) {		// On massaction, we can have several values for $objecttmp->thirdparty
+		//elseif (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && is_object($objecttmp->thirdparty)) {		// On massaction, we can have several values for $objecttmp->thirdparty
 		//	$newlang = $objecttmp->thirdparty->default_lang;
 		//}
 		if (!empty($newlang)) {
@@ -447,7 +449,7 @@ if ($action == "transfert_stock" && !$cancel) {
 		$action = 'transfert';
 	}
 
-	if (!empty($conf->productbatch->enabled)) {
+	if (isModEnabled('productbatch')) {
 		$product = new Product($db);
 		$result = $product->fetch($product_id);
 
@@ -593,12 +595,11 @@ $movement = new MouvementStock($db);
 $userstatic = new User($db);
 $form = new Form($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
 // Build and execute select
-// --------------------------------------------------------------------
 $sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.tosell, p.tobuy, p.tobatch, p.fk_product_type as type, p.entity,";
 $sql .= " e.ref as warehouse_ref, e.rowid as entrepot_id, e.lieu, e.fk_parent, e.statut,";
 $sql .= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
@@ -618,6 +619,9 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
 $sql .= " ".MAIN_DB_PREFIX."product as p,";
 $sql .= " ".MAIN_DB_PREFIX."stock_mouvement as m";
@@ -690,49 +694,21 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-/* If a group by is required
- $sql .= " GROUP BY ";
- foreach($object->fields as $key => $val) {
- $sql .= "t.".$key.", ";
- }
- // Add fields from extrafields
- if (!empty($extrafields->attributes[$object->table_element]['label'])) {
- foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
- $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
- }
- }
- // Add where from hooks
- $parameters = array();
- $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object);    // Note that $action and $object may have been modified by hook
- $sql .= $hookmanager->resPrint;
- $sql = preg_replace('/,\s*$/', '', $sql);
- */
-
-// Add HAVING from hooks
-/*
- $parameters = array();
- $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
- $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
- */
-
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	/* This old and fast method to get and count full list returns all record so use a high amount of memory.
-	 $resql = $db->query($sql);
-	 $nbtotalofrecords = $db->num_rows($resql);
-	 */
-	/* The slow method does not consume memory on mysql (not tested on pgsql) */
-	/*$resql = $db->query($sql, 0, 'auto', 1);
-	 while ($db->fetch_object($resql)) {
-	 $nbtotalofrecords++;
-	 }*/
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^SELECT[a-z0-9\._\s\(\),]+FROM/i', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
 	$resql = $db->query($sqlforcount);
-	$objforcount = $db->fetch_object($resql);
-	$nbtotalofrecords = $objforcount->nbtotalofrecords;
-	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -777,7 +753,11 @@ if ($msid) {
 } else {
 	$title = $langs->trans("ListOfStockMovements");
 	if ($id) {
-		$title .= ' ('.$langs->trans("ForThisWarehouse").')';
+		if (!empty($object->ref)) {
+			$title .= ' ('.$object->ref.')';
+		} else {
+			$title .= ' ('.$langs->trans("ForThisWarehouse").')';
+		}
 	}
 }
 
@@ -800,7 +780,7 @@ if ($object->id > 0) {
 	$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
 
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
 		if ($usercancreate && 1 == 2) {
@@ -816,7 +796,7 @@ if ($object->id > 0) {
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($object->fk_project)) {
@@ -903,7 +883,7 @@ if ($object->id > 0) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	// Categories
-	if ($conf->categorie->enabled) {
+	if (isModEnabled('categorie')) {
 		print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
 		print $form->showCategories($object->id, Categorie::TYPE_WAREHOUSE, 1);
 		print "</td></tr>";
@@ -937,12 +917,17 @@ if ($action == "transfert") {
 if ((empty($action) || $action == 'list') && $id > 0) {
 	print "<div class=\"tabsAction\">\n";
 
-	if ($user->rights->stock->mouvement->creer) {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("CorrectStock").'</a>';
-	}
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+																								   // modified by hook
+	if (empty($reshook)) {
+		if ($user->rights->stock->mouvement->creer) {
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("CorrectStock").'</a>';
+		}
 
-	if ($user->rights->stock->mouvement->creer) {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
+		if ($user->rights->stock->mouvement->creer) {
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
+		}
 	}
 
 	print '</div><br>';
@@ -1088,7 +1073,7 @@ if (!empty($arrayfields['m.rowid']['checked'])) {
 	print '<input class="flat maxwidth25" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 }
-if (! empty($arrayfields['m.datem']['checked'])) {
+if (!empty($arrayfields['m.datem']['checked'])) {
 	// Date
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
@@ -1308,7 +1293,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	$userstatic->statut = $obj->user_status;
 
 	// Multilangs
-	if (!empty($conf->global->MAIN_MULTILANGS)) {  // If multilang is enabled
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {  // If multilang is enabled
 		// TODO Use a cache
 		$sql = "SELECT label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
@@ -1358,7 +1343,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	print '<tr class="oddeven">';
 	// Id movement
 	if (!empty($arrayfields['m.rowid']['checked'])) {
-		print '<td>';
+		print '<td class="nowraponall">';
 		print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
 		print $obj->mid;
 		print '</td>'; // This is primary not movement id

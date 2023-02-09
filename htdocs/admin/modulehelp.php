@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2022	Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@ if (!defined('NOTOKENRENEWAL')) {
 }
 
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -136,7 +138,7 @@ foreach ($modulesdir as $dir) {
 								}
 
 								// We discard modules according to property disabled
-								//if (! empty($objMod->hidden)) $modulequalified=0;
+								//if (!empty($objMod->hidden)) $modulequalified=0;
 
 								if ($modulequalified > 0) {
 									$publisher = dol_escape_htmltag($objMod->getPublisher());
@@ -170,6 +172,10 @@ foreach ($modulesdir as $dir) {
 									$moduleposition = ($objMod->module_position ? $objMod->module_position : '50');
 									if ($moduleposition == '50' && ($objMod->isCoreOrExternalModule() == 'external')) {
 										$moduleposition = '80'; // External modules at end by default
+									}
+
+									if (empty($familyinfo[$familykey]['position'])) {
+										$familyinfo[$familykey]['position'] = '0';
 									}
 
 									$orders[$i] = $familyinfo[$familykey]['position']."_".$familykey."_".$moduleposition."_".$j; // Sort by family, then by module position then number
@@ -250,19 +256,19 @@ if (!empty($conf->global->$const_name)) {
 	$text .= $langs->trans("Disabled");
 }
 $tmp = $objMod->getLastActivationInfo();
-$authorid = $tmp['authorid'];
+$authorid = (empty($tmp['authorid']) ? '' : $tmp['authorid']);
 if ($authorid > 0) {
 	$tmpuser = new User($db);
 	$tmpuser->fetch($authorid);
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationAuthor").':</span> ';
 	$text .= $tmpuser->getNomUrl(1);
 }
-$ip = $tmp['ip'];
+$ip = (empty($tmp['ip']) ? '' : $tmp['ip']);
 if ($ip) {
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationIP").':</span> ';
 	$text .= $ip;
 }
-$lastactivationversion = $tmp['lastactivationversion'];
+$lastactivationversion = (empty($tmp['lastactivationversion']) ? '' : $tmp['lastactivationversion']);
 if ($lastactivationversion) {
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationVersion").':</span> ';
 	$text .= $lastactivationversion;
@@ -366,29 +372,30 @@ if ($mode == 'feature') {
 	if (count($objMod->depends)) {
 		$text .= join(',', $objMod->depends);
 	} else {
-		$text .= $langs->trans("None");
+		$text .= '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	}
 	$text .= '<br><strong>'.$langs->trans("RequiredBy").':</strong> ';
 	if (count($objMod->requiredby)) {
 		$text .= join(',', $objMod->requiredby);
 	} else {
-		$text .= $langs->trans("None");
+		$text .= '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	}
 
 	$text .= '<br><br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddDataTables").':</strong> ';
-	$sqlfiles = dol_dir_list(dol_buildpath($moduledir.'/sql/'), 'files', 0, 'llx.*\.sql', array('\.key\.sql', '\.sql\.back'));
+	$listofsqlfiles1 = dol_dir_list(DOL_DOCUMENT_ROOT.'/install/mysql/tables/', 'files', 0, 'llx.*-'.$moduledir.'\.sql', array('\.key\.sql', '\.sql\.back'));
+	$listofsqlfiles2 = dol_dir_list(dol_buildpath($moduledir.'/sql/'), 'files', 0, 'llx.*\.sql', array('\.key\.sql', '\.sql\.back'));
+	$sqlfiles = array_merge($listofsqlfiles1, $listofsqlfiles2);
+
 	if (count($sqlfiles) > 0) {
-		$text .= $langs->trans("Yes").' (';
 		$i = 0;
 		foreach ($sqlfiles as $val) {
-			$text .= ($i ? ', ' : '').preg_replace('/\.sql$/', '', preg_replace('/llx_/', '', $val['name']));
+			$text .= ($i ? ', ' : '').preg_replace('/\-'.$moduledir.'$/', '', preg_replace('/\.sql$/', '', preg_replace('/llx_/', '', $val['name'])));
 			$i++;
 		}
-		$text .= ')';
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -401,7 +408,7 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -409,9 +416,9 @@ if ($mode == 'feature') {
 	$text .= '<br><strong>'.$langs->trans("AddData").':</strong> ';
 	$filedata = dol_buildpath($moduledir.'/sql/data.sql');
 	if (dol_is_file($filedata)) {
-		$text .= $langs->trans("Yes").' ('.$moduledir.'/sql/data.sql)';
+		$text .= $langs->trans("Yes").' <span class="opacitymedium">('.$moduledir.'/sql/data.sql)</span>';
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -430,7 +437,7 @@ if ($mode == 'feature') {
 			}
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -439,7 +446,7 @@ if ($mode == 'feature') {
 	if (isset($objMod->module_parts) && isset($objMod->module_parts['models']) && $objMod->module_parts['models']) {
 		$text .= $langs->trans("Yes");
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -448,7 +455,7 @@ if ($mode == 'feature') {
 	if (isset($objMod->module_parts) && isset($objMod->module_parts['substitutions']) && $objMod->module_parts['substitutions']) {
 		$text .= $langs->trans("Yes");
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -461,7 +468,7 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -491,17 +498,20 @@ if ($mode == 'feature') {
 	if (isset($objMod->boxes) && is_array($objMod->boxes) && count($objMod->boxes)) {
 		$i = 0;
 		foreach ($objMod->boxes as $val) {
-			$text .= ($i ? ', ' : '').($val['file'] ? $val['file'] : $val[0]);
+			$boxstring = (empty($val['file']) ? (empty($val[0]) ? '' : $val[0]) : $val['file']);
+			if ($boxstring) {
+				$text .= ($i ? ', ' : '').$boxstring;
+			}
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddHooks").':</strong> ';
-	if (isset($objMod->module_parts) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks'])) {
+	if (isset($objMod->module_parts) && isset($objMod->module_parts['hooks']) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks'])) {
 		$i = 0;
 		foreach ($objMod->module_parts['hooks'] as $key => $val) {
 			if ($key === 'entity') {
@@ -524,7 +534,7 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -537,7 +547,7 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -546,7 +556,7 @@ if ($mode == 'feature') {
 	if (isset($objMod->menu) && !empty($objMod->menu)) { // objMod can be an array or just an int 1
 		$text .= $langs->trans("Yes");
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -559,7 +569,7 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -572,13 +582,13 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddOtherPagesOrServices").':</strong> ';
-	$text .= $langs->trans("DetectionNotPossible");
+	$text .= '<span class="opacitymedium">'.$langs->trans("DetectionNotPossible").'</span>';
 }
 
 
@@ -587,7 +597,7 @@ if ($mode == 'changelog') {
 	if ($changelog) {
 		$text .= '<div class="moduledesclong">'.$changelog.'<div>';
 	} else {
-		$text .= '<div class="moduledesclong">'.$langs->trans("NotAvailable").'</div>';
+		$text .= '<div class="moduledesclong"><span class="opacitymedium">'.$langs->trans("NotAvailable").'</span></div>';
 	}
 }
 

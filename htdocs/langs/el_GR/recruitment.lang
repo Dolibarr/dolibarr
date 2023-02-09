@@ -18,59 +18,62 @@
 #
 
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = Προσλήψεις
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
+ModuleRecruitmentDesc = Διαχειριστείτε και παρακολουθήστε εκστρατείες προσλήψεων για νέες θέσεις εργασίας
 
 #
 # Admin page
 #
-RecruitmentSetup = Recruitment setup
+RecruitmentSetup = Ρύθμιση προσλήψεων
 Settings = Ρυθμίσεις
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetupPage = Εισαγάγετε εδώ τη ρύθμιση των κύριων επιλογών για την ενότητα προσλήψεων
+RecruitmentArea=Περιοχή προσλήψεων
+PublicInterfaceRecruitmentDesc=Οι δημόσιες σελίδες θέσεων εργασίας είναι δημόσιες διευθύνσεις URL για εμφάνιση και απάντηση σε ανοιχτές θέσεις εργασίας. Υπάρχει ένας διαφορετικός σύνδεσμος για κάθε ανοιχτή θέση εργασίας, που βρίσκεται σε κάθε εγγραφή εργασίας.
+EnablePublicRecruitmentPages=Ενεργοποίηση δημόσιων σελίδων ανοιχτών θέσεων εργασίας
 
 #
 # About page
 #
-About = Πληροφορίες
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
+About = Σχετικά με
+RecruitmentAbout = Σχετικά με τις προσλήψεις
+RecruitmentAboutPage = Σελίδα σχετικά με τις Προσλήψεις 
+NbOfEmployeesExpected=Προσδοκώμενο νούμερο εργαζομένων
+JobLabel=Ετικέτα θέσης εργασίας
+WorkPlace=Χώρος Εργασίας
+DateExpected=Αναμενόμενη ημερομηνία
+FutureManager=Μελλοντικός μάνατζερ
+ResponsibleOfRecruitement=Υπεύθυνος προσλήψεων
+IfJobIsLocatedAtAPartner=Εάν η εργασία βρίσκεται σε χώρο συνεργάτη
 PositionToBeFilled=Θέση εργασίας
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
+PositionsToBeFilled=Θέσεις εργασίας
+ListOfPositionsToBeFilled=Κατάλογος θέσεων εργασίας
+NewPositionToBeFilled=Νέες θέσεις εργασίας
 
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
-RequestedRemuneration=Requested remuneration
-ProposedRemuneration=Proposed remuneration
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Interview to do
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsApplication=Complementary attributes (job applications)
-MakeOffer=Make an offer
+JobOfferToBeFilled=Θέση εργασίας προς κάλυψη
+ThisIsInformationOnJobPosition=Πληροφορίες για τη θέση εργασίας προς κάλυψη
+ContactForRecruitment=Επικοινωνία για πρόσληψη
+EmailRecruiter=Εmail υπεύθυνου προσλήψεων
+ToUseAGenericEmail=Για να χρησιμοποιήσετε ένα γενικό email. Εάν δεν έχει οριστεί, θα χρησιμοποιηθεί το email του υπεύθυνου πρόσληψης
+NewCandidature=Νέα αίτηση
+ListOfCandidatures=Λίστα αιτήσεων
+Remuneration=Μισθός
+RequestedRemuneration=Ζητούμενος μισθός
+ProposedRemuneration=Προτεινόμενος μισθός
+ContractProposed=Προτεινόμενη σύμβαση
+ContractSigned=Υπογεγραμμένη σύμβαση
+ContractRefused=Η σύμβαση απορρίφθηκε
+RecruitmentCandidature=Αίτηση
+JobPositions=Θέσεις εργασίας
+RecruitmentCandidatures=Αιτήσεις
+InterviewToDo=Επαφές για παρακολούθηση
+AnswerCandidature=Απάντηση αίτησης
+YourCandidature=Η αίτηση σου
+YourCandidatureAnswerMessage=Σας ευχαριστούμε για την αίτηση σας. <br> ...
+JobClosedTextCandidateFound=Η θέση εργασίας είναι κλειστή. Η θέση έχει καλυφθεί.
+JobClosedTextCanceled=Η θέση εργασίας είναι κλειστή.
+ExtrafieldsJobPosition=Συμπληρωματικά χαρακτηριστικά (θέσεις εργασίας)
+ExtrafieldsApplication=Συμπληρωματικά χαρακτηριστικά (αιτήσεις εργασίας)
+MakeOffer=Κάντε μια προσφορά
+WeAreRecruiting=Προσλαμβάνουμε. Αυτή είναι η λίστα με τις ανοιχτές θέσεις προς κάλυψη...
+NoPositionOpen=Δεν υπάρχουν ανοιχτές θέσεις αυτή τη στιγμή

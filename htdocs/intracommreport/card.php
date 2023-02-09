@@ -23,7 +23,8 @@
  */
 
 
-/** Terms
+/**
+ *  Terms
  *
  *	DEB = Declaration d'Exchanges de Biens (FR)   =  Declaration of Exchange of Goods (EN)
  *  DES = Déclaration Européenne de Services (FR) =  European Declaration of Services (EN)
@@ -32,14 +33,17 @@
  *
  */
 
-
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/intracommreport/class/intracommreport.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("intracommreport"));
 
+// Get Parameters
+$id = GETPOST('id', 'int');
 $action = GETPOST('action');
 $exporttype = GETPOSTISSET('exporttype') ? GETPOST('exporttype', 'alphanohtml') : 'deb'; // DEB or DES
 $year = GETPOSTINT('year');
@@ -47,6 +51,7 @@ $month = GETPOSTINT('month');
 $label = (string) GETPOST('label', 'alphanohtml');
 $type_declaration = (string) GETPOST('type_declaration', 'alphanohtml');
 $backtopage = GETPOST('backtopage', 'alpha');
+
 $declaration = array(
 	"deb" => $langs->trans("DEB"),
 	"des" => $langs->trans("DES"),
@@ -55,6 +60,8 @@ $typeOfDeclaration = array(
 	"introduction" => $langs->trans("Introduction"),
 	"expedition" => $langs->trans("Expedition"),
 );
+
+// Initialize technical objects
 $object = new IntracommReport($db);
 if ($id > 0) {
 	$object->fetch($id);
@@ -65,9 +72,27 @@ $formother = new FormOther($db);
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('intracommcard', 'globalcard'));
 
+$error = 0;
+
+// Permissions
+$permissiontoread = $user->rights->intracommreport->read;
+$permissiontoadd = $user->rights->intracommreport->write;
+$permissiontodelete = $user->rights->intracommreport->delete;
+
+// Security check (enable the most restrictive one)
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+//$isdraft = (isset($object->status) && ($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+//restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
+if (empty($conf->intracommreport->enabled)) accessforbidden();
+if (!$permissiontoread) accessforbidden();
+
+
+
 /*
  * 	Actions
  */
+
 $parameters = array('id' => $id);
 // Note that $action and $object may have been modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -75,7 +100,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-if ($user->rights->intracommreport->delete && $action == 'confirm_delete' && $confirm == 'yes') {
+if ($permissiontodelete && $action == 'confirm_delete' && $confirm == 'yes') {
 	$result = $object->delete($id, $user);
 	if ($result > 0) {
 		if (!empty($backtopage)) {
@@ -90,11 +115,11 @@ if ($user->rights->intracommreport->delete && $action == 'confirm_delete' && $co
 	}
 }
 
-if ($action == 'add' && $user->rights->intracommreport->write) {
+if ($action == 'add' && $permissiontoadd) {
 	$object->label = trim($label);
 	$object->type = trim($exporttype);
 	$object->type_declaration =  $type_declaration;
-	$object->subscription = (int) $subscription;
+	//$object->subscription = (int) $subscription;
 
 	// Fill array 'array_options' with data from add form
 	// $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
@@ -132,14 +157,16 @@ if ($action == 'add' && $user->rights->intracommreport->write) {
 	}
 }
 
+
 /*
  * View
  */
 
+$title = $langs->trans("IntracommReportTitle");
+llxHeader("", $title);
+
 // Creation mode
 if ($action == 'create') {
-	$title = $langs->trans("IntracommReportTitle");
-	llxHeader("", $title);
 	print load_fiche_titre($langs->trans("IntracommReportTitle"));
 
 	print '<form name="charge" method="post" action="'.$_SERVER["PHP_SELF"].'">';
@@ -151,7 +178,7 @@ if ($action == 'create') {
 	print '<table class="border" width="100%">';
 
 	// Label
-	print '<tr><td class="titlefieldcreate">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
 
 	// Declaration
 	print '<tr><td class="fieldrequired">'.$langs->trans("Declaration")."</td><td>\n";
@@ -164,8 +191,8 @@ if ($action == 'create') {
 	print $langs->trans("AnalysisPeriod");
 	print '</td>';
 	print '<td>';
-	print $formother->select_month($month ? date('M') : $month, 'month', 0, 1, 'widthauto valignmiddle ');
-	print $formother->select_year($year ? date('Y') : $year, 'year', 0, 3, 3);
+	print $formother->select_month($month ? date('M') : $month, 'month', 0, 1, 'widthauto valignmiddle ', true);
+	print $formother->selectyear($year ? date('Y') : $year, 'year', 0, 3, 3, 0, 0, '', '', true);
 	print '</td>';
 	print '</tr>';
 
@@ -275,8 +302,6 @@ if ($id > 0 && $action != 'edit') {
 	{
 		global $langs, $formother, $year, $month, $type_declaration;
 
-		$title = $langs->trans("IntracommReportDESTitle");
-		llxHeader("", $title);
 		print load_fiche_titre($langs->trans("IntracommReportDESTitle"));
 
 		print dol_get_fiche_head();

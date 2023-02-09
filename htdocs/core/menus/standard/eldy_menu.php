@@ -198,9 +198,13 @@ class MenuManager
 					$submenu = new Menu();
 					print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $submenu, 1, $tmpmainmenu, $tmpleftmenu, null, $this->type_user); // Fill $submenu (example with tmpmainmenu='home' tmpleftmenu='all', return left menu tree of Home)
 					// Note: $submenu contains menu entry with substitution not yet done
-					//if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') { var_dump($submenu); exit; }
-					//if ($tmpmainmenu=='accountancy') { var_dump($submenu->liste); exit; }
-					$nexturl = dol_buildpath($submenu->liste[0]['url'], 1);
+					//if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') {
+					//var_dump($submenu); exit;
+					//}
+					//if ($tmpmainmenu=='accountancy') {
+					//var_dump($submenu->liste); exit;
+					//}
+					$nexturl = dol_buildpath(empty($submenu->liste[0]['url']) ? '' : $submenu->liste[0]['url'], 1);
 
 					$canonrelurl = preg_replace('/\?.*$/', '', $relurl);
 					$canonnexturl = preg_replace('/\?.*$/', '', $nexturl);
@@ -213,6 +217,11 @@ class MenuManager
 						// We add sub entry
 						print str_pad('', 1).'<li class="lilevel1 ui-btn-icon-right ui-btn">'; // ui-btn to highlight on clic
 						print '<a href="'.$relurl.'">';
+
+						if ($val['level'] == 0) {
+							print '<span class="fa fa-home fa-fw paddingright pictofixedwidth" aria-hidden="true"></span>';
+						}
+
 						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") {  // No translation
 							if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab', 'takepos'))) {
 								print $langs->trans("Access");
@@ -302,6 +311,12 @@ class MenuManager
 									$lastlevel2[$val2['level']] = 'greyed';
 								}
 							}
+
+							// Add font-awesome
+							if ($val2['level'] == 0 && !empty($val2['prefix'])) {
+								print $val2['prefix'];
+							}
+
 							print $val2['titre'];
 							if ($relurl2) {
 								if ($val2['enabled']) {	// Allowed
@@ -318,6 +333,7 @@ class MenuManager
 				}
 				if ($val['enabled'] == 2) {
 					print '<span class="spanlilevel0 vsmenudisabled">';
+
 					// Add font-awesome
 					if ($val['level'] == 0 && !empty($val['prefix'])) {
 						print $val['prefix'];

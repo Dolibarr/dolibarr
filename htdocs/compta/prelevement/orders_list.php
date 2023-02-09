@@ -24,6 +24,7 @@
  * 	\brief      Page to list direct debit orders or credit transfer orders
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -51,6 +52,10 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "p.datec";
 }
+
+$optioncss = GETPOST('optioncss', 'alpha');
+$mode = GETPOST('mode', 'alpha');
+
 
 // Get supervariables
 $statut = GETPOST('statut', 'int');
@@ -94,6 +99,9 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
 $sql = "SELECT p.rowid, p.ref, p.amount, p.statut, p.datec";
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " WHERE p.entity IN (".getEntity('invoice').")";
 if ($type == 'bank-transfer') {
@@ -108,20 +116,32 @@ if ($search_amount) {
 	$sql .= natural_search("p.amount", $search_amount, 1);
 }
 
-$sql .= $db->order($sortfield, $sortorder);
-
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 $result = $db->query($sql);
 if ($result) {
@@ -129,8 +149,14 @@ if ($result) {
 	$i = 0;
 
 	$param = '';
+	if (!empty($mode)) {
+		$param .= '&mode='.urlencode($mode);
+	}
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
+	}
+	if ($type == 'bank-transfer') {
+		$param .= '&amp;type=bank-transfer';
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.urlencode($limit);
@@ -140,6 +166,8 @@ if ($result) {
 	$selectedfields = '';
 
 	$newcardbutton = '';
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
 	if ($usercancreate) {
 		$newcardbutton .= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php?type='.urlencode($type));
 	}
@@ -155,7 +183,11 @@ if ($result) {
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
 
+	if ($type != '') {
+		print '<input type="hidden" name="type" value="'.$type.'">';
+	}
 	$titlekey = "WithdrawalsReceipts";
 	$title = $langs->trans("WithdrawalsReceipts");
 	if ($type == 'bank-transfer') {
@@ -197,27 +229,41 @@ if ($result) {
 
 			$directdebitorder->id = $obj->rowid;
 			$directdebitorder->ref = $obj->ref;
-			$directdebitorder->datec = $obj->datec;
-			$directdebitorder->amount = $obj->amount;
+			$directdebitorder->date_echeance = $obj->datec;
+			$directdebitorder->total = $obj->amount;
 			$directdebitorder->statut = $obj->statut;
 
-			print '<tr class="oddeven">';
+			if ($mode == 'kanban') {
+				if ($i == 0) {
+					print '<tr><td colspan="12">';
+					print '<div class="box-flex-container">';
+				}
+				// Output Kanban
 
-			print '<td>';
-			print $directdebitorder->getNomUrl(1);
-			print "</td>\n";
+				print $directdebitorder->getKanbanView('');
+				if ($i == (min($num, $limit) - 1)) {
+					print '</div>';
+					print '</td></tr>';
+				}
+			} else {
+				print '<tr class="oddeven">';
 
-			print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
+				print '<td>';
+				print $directdebitorder->getNomUrl(1);
+				print "</td>\n";
 
-			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
+				print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
-			print '<td class="right">';
-			print $bon->LibStatut($obj->statut, 5);
-			print '</td>';
+				print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
 
-			print '<td class="right"></td>'."\n";
+				print '<td class="right">';
+				print $bon->LibStatut($obj->statut, 5);
+				print '</td>';
 
-			print "</tr>\n";
+				print '<td class="right"></td>'."\n";
+
+				print "</tr>\n";
+			}
 			$i++;
 		}
 	} else {

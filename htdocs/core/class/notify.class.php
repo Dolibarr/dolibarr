@@ -4,6 +4,7 @@
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2018 	   Philippe Grand		<philippe.grand@atoo-net.com>
  * Copyright (C) 2021 	   Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,6 +71,9 @@ class Notify
 		'ORDER_VALIDATE',
 		'PROPAL_VALIDATE',
 		'PROPAL_CLOSE_SIGNED',
+		'PROPAL_CLOSE_SIGNED_WEB',
+		'PROPAL_CLOSE_REFUSED',
+		'PROPAL_CLOSE_REFUSED_WEB',
 		'FICHINTER_VALIDATE',
 		'FICHINTER_ADD_CONTACT',
 		'ORDER_SUPPLIER_VALIDATE',
@@ -221,7 +225,7 @@ class Notify
 					$sql .= " AND s.rowid = ".((int) $socid);
 				}
 
-				dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
+				dol_syslog(__METHOD__." ".$notifcode.", ".$socid, LOG_DEBUG);
 
 				$resql = $this->db->query($sql);
 				if ($resql) {
@@ -259,7 +263,7 @@ class Notify
 					$sql .= " AND c.rowid = ".((int) $userid);
 				}
 
-				dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
+				dol_syslog(__METHOD__." ".$notifcode.", ".$socid, LOG_DEBUG);
 
 				$resql = $this->db->query($sql);
 				if ($resql) {
@@ -355,16 +359,25 @@ class Notify
 		global $dolibarr_main_url_root;
 		global $action;
 
-		if (!in_array($notifcode, Notify::$arrayofnotifsupported)) {
-			return 0;
-		}
-
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('notification'));
+
+		$parameters = array('notifcode' => $notifcode);
+		$reshook = $hookmanager->executeHooks('notifsupported', $parameters, $object, $action);
+		if (empty($reshook)) {
+			if (!empty($hookmanager->resArray['arrayofnotifsupported'])) {
+				Notify::$arrayofnotifsupported = array_merge(Notify::$arrayofnotifsupported, $hookmanager->resArray['arrayofnotifsupported']);
+			}
+		}
+
+		if (!in_array($notifcode, Notify::$arrayofnotifsupported)) {
+			return 0;
+		}
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		dol_syslog(get_class($this)."::send notifcode=".$notifcode.", object=".$object->id);
 
@@ -446,7 +459,7 @@ class Notify
 					$notifcodedefid = $obj->adid;
 					$trackid = '';
 					if ($obj->type_target == 'tocontactid') {
-						$trackid = 'con'.$obj->cid;
+						$trackid = 'ctc'.$obj->cid;
 					}
 					if ($obj->type_target == 'touserid') {
 						$trackid = 'use'.$obj->cid;
@@ -492,7 +505,28 @@ class Notify
 								$labeltouse = $conf->global->PROPAL_VALIDATE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalValidated", $link);
 								break;
+							case 'PROPAL_CLOSE_REFUSED':
+								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
+								$object_type = 'propal';
+								$labeltouse = $conf->global->PROPAL_CLOSE_REFUSED_TEMPLATE;
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedRefused", $link);
+								break;
+							case 'PROPAL_CLOSE_REFUSED_WEB':
+								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
+								$object_type = 'propal';
+								$labeltouse = $conf->global->PROPAL_CLOSE_REFUSED_TEMPLATE;
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedRefusedWeb", $link);
+								break;
 							case 'PROPAL_CLOSE_SIGNED':
+								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
+								$object_type = 'propal';
+								$labeltouse = $conf->global->PROPAL_CLOSE_SIGNED_TEMPLATE;
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedSigned", $link);
+								break;
+							case 'PROPAL_CLOSE_SIGNED_WEB':
 								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
 								$object_type = 'propal';
@@ -577,6 +611,13 @@ class Notify
 								$labeltouse = $conf->global->ACTION_CREATE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextActionAdded", $link);
 								break;
+							default:
+								$object_type = $object->element;
+								$dir_output = $conf->$object_type->multidir_output[$object->entity ? $object->entity : $conf->entity]."/".get_exdir(0, 0, 0, 1, $object, $object_type);
+								$template = $notifcode.'_TEMPLATE';
+								$labeltouse = $conf->global->$template;
+								$mesg = $outputlangs->transnoentitiesnoconv('Notify_'.$notifcode).' '.$newref.' '.$dir_output;
+							break;
 						}
 
 						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -598,7 +639,7 @@ class Notify
 
 						$ref = dol_sanitizeFileName($newref);
 						$pdf_path = $dir_output."/".$ref.".pdf";
-						if (!dol_is_file($pdf_path)) {
+						if (!dol_is_file($pdf_path)||(is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0 && !$arraydefaultmessage->joinfiles)) {
 							// We can't add PDF as it is not generated yet.
 							$filepdf = '';
 						} else {
@@ -608,6 +649,8 @@ class Notify
 							$mimefilename_list[] = $ref.".pdf";
 						}
 
+						$labeltouse = !empty($labeltouse) ? $labeltouse : '';
+
 						$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list, 'outputlangs'=>$outputlangs, 'labeltouse'=>$labeltouse);
 						if (!isset($action)) {
 							$action = '';
@@ -615,6 +658,11 @@ class Notify
 
 						$reshook = $hookmanager->executeHooks('formatNotificationMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 						if (empty($reshook)) {
+							if (!empty($hookmanager->resArray['files'])) {
+								$filename_list = $hookmanager->resArray['files']['file'];
+								$mimetype_list = $hookmanager->resArray['files']['mimefile'];
+								$mimefilename_list = $hookmanager->resArray['files']['filename'];
+							}
 							if (!empty($hookmanager->resArray['subject'])) {
 								$subject .= $hookmanager->resArray['subject'];
 							}
@@ -812,6 +860,11 @@ class Notify
 						$object_type = 'action';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextActionAdded", $link);
 						break;
+					default:
+						$object_type = $object->element;
+						$dir_output = $conf->$object_type->multidir_output[$object->entity ? $object->entity : $conf->entity]."/".get_exdir(0, 0, 0, 1, $object, $object_type);
+						$mesg = $langs->transnoentitiesnoconv('Notify_'.$notifcode).' '.$newref;
+						break;
 				}
 				$ref = dol_sanitizeFileName($newref);
 				$pdf_path = $dir_output."/".$ref."/".$ref.".pdf";
@@ -825,6 +878,7 @@ class Notify
 					$mimefilename_list[] = $ref.".pdf";
 				}
 
+				$message = '';
 				$message .= $langs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
 				$message .= "\n";
 				$message .= $mesg;
@@ -852,6 +906,11 @@ class Notify
 					$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list);
 					$reshook = $hookmanager->executeHooks('formatNotificationMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 					if (empty($reshook)) {
+						if (!empty($hookmanager->resArray['files'])) {
+							$filename_list = $hookmanager->resArray['files']['file'];
+							$mimetype_list = $hookmanager->resArray['files']['mimefile'];
+							$mimefilename_list = $hookmanager->resArray['files']['filename'];
+						}
 						if (!empty($hookmanager->resArray['subject'])) {
 							$subject .= $hookmanager->resArray['subject'];
 						}

@@ -31,6 +31,7 @@
  *	\brief      Page to list detailed stock of a product
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -39,15 +40,15 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productstockentrepot.class.php';
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-if (!empty($conf->variants->enabled)) {
+if (isModEnabled('variants')) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
@@ -56,7 +57,7 @@ if (!empty($conf->variants->enabled)) {
 
 // Load translation files required by the page
 $langs->loadlangs(array('products', 'suppliers', 'orders', 'bills', 'stocks', 'sendings', 'margins'));
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 }
 
@@ -116,6 +117,12 @@ $error = 0;
 
 $usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
 $usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'lire');
+
+if ($object->isService()) {
+	$label = $langs->trans('Service');
+	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'lire');
+}
 
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
@@ -248,7 +255,7 @@ if ($action == "correct_stock" && !$cancel) {
 		$action = 'correction';
 	}
 
-	if (!empty($conf->productbatch->enabled)) {
+	if (isModEnabled('productbatch')) {
 		$object = new Product($db);
 		$result = $object->fetch($id);
 
@@ -345,7 +352,7 @@ if ($action == "transfert_stock" && !$cancel) {
 		$error++;
 		$action = 'transfert';
 	}
-	if (!empty($conf->productbatch->enabled)) {
+	if (isModEnabled('productbatch')) {
 		$object = new Product($db);
 		$result = $object->fetch($id);
 
@@ -524,7 +531,7 @@ if ($action == 'updateline' && GETPOST('save') == $langs->trans("Save")) {
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -622,7 +629,7 @@ if ($id > 0 || $ref) {
 			print '<table class="border tableforfield centpercent">';
 
 			// Type
-			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="">';
 				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
@@ -631,7 +638,7 @@ if ($id > 0 || $ref) {
 				print '</td></tr>';
 			}
 
-			if ($conf->productbatch->enabled) {
+			if (isModEnabled('productbatch')) {
 				print '<tr><td class="">'.$langs->trans("ManageLotSerial").'</td><td>';
 				print $object->getLibStatut(0, 2);
 				print '</td></tr>';
@@ -642,17 +649,25 @@ if ($id > 0 || $ref) {
 			$textdesc = $langs->trans("CostPriceDescription");
 			$textdesc .= "<br>".$langs->trans("CostPriceUsage");
 			$text = $form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
-			print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
-			print '</td><td>';
-			print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
+			if (!$usercancreadprice) {
+				print $form->editfieldkey($text, 'cost_price', '', $object, 0, 'amount:6');
+				print '</td><td>';
+				print $form->editfieldval($text, 'cost_price', '', $object, 0, 'amount:6');
+			} else {
+				print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
+				print '</td><td>';
+				print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
+			}
 			print '</td></tr>';
+
+
 
 			// AWP
 			print '<tr><td class="titlefield">';
 			print $form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc"));
 			print '</td>';
 			print '<td>';
-			if ($object->pmp > 0) {
+			if ($object->pmp > 0 && $usercancreadprice) {
 				print price($object->pmp).' '.$langs->trans("HT");
 			}
 			print '</td>';
@@ -663,7 +678,7 @@ if ($id > 0 || $ref) {
 			print '<td>';
 			$product_fourn = new ProductFournisseur($db);
 			if ($product_fourn->find_min_price_product_fournisseur($object->id) > 0) {
-				if ($product_fourn->product_fourn_price_id > 0) {
+				if ($product_fourn->product_fourn_price_id > 0 && $usercancreadprice) {
 					print $product_fourn->display_price_product_fournisseur();
 				} else {
 					print $langs->trans("NotDefined");
@@ -674,30 +689,34 @@ if ($id > 0 || $ref) {
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 				// Price
 				print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
-				if ($object->price_base_type == 'TTC') {
-					print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
-				} else {
-					print price($object->price).' '.$langs->trans($object->price_base_type);
+				if ($usercancreadprice) {
+					if ($object->price_base_type == 'TTC') {
+						print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
+					} else {
+						print price($object->price).' '.$langs->trans($object->price_base_type);
+					}
 				}
 				print '</td></tr>';
 
 				// Price minimum
 				print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
-				if ($object->price_base_type == 'TTC') {
-					print price($object->price_min_ttc).' '.$langs->trans($object->price_base_type);
-				} else {
-					print price($object->price_min).' '.$langs->trans($object->price_base_type);
+				if ($usercancreadprice) {
+					if ($object->price_base_type == 'TTC') {
+						print price($object->price_min_ttc).' '.$langs->trans($object->price_base_type);
+					} else {
+						print price($object->price_min).' '.$langs->trans($object->price_base_type);
+					}
 				}
 				print '</td></tr>';
 			} else {
 				// Price
 				print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
-				print $langs->trans("Variable");
+				print '<span class="opacitymedium">'.$langs->trans("Variable").'</span>';
 				print '</td></tr>';
 
 				// Price minimum
 				print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
-				print $langs->trans("Variable");
+				print '<span class="opacitymedium">'.$langs->trans("Variable").'</span>';
 				print '</td></tr>';
 			}
 
@@ -734,6 +753,15 @@ if ($id > 0 || $ref) {
 			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) ? '- '.$langs->trans("ReStockOnValidateOrder").'<br>' : '');
 			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) ? '- '.$langs->trans("ReStockOnDispatchOrder").'<br>' : '');
 			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE) ? '- '.$langs->trans("StockOnReception").'<br>' : '');
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('physicalStockTextStockOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {
+				$text_stock_options = $hookmanager->resPrint;
+			} elseif ($reshook == 0) {
+				$text_stock_options .= $hookmanager->resPrint;
+			} else {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
 
 			print '<tr><td>';
 			print $form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1);
@@ -751,8 +779,8 @@ if ($id > 0 || $ref) {
 
 			$found = 0;
 			$helpondiff = '<strong>'.$langs->trans("StockDiffPhysicTeoric").':</strong><br>';
-			// Number of customer orders running
-			if (!empty($conf->commande->enabled)) {
+			// Number of sales orders running
+			if (isModEnabled('commande')) {
 				if ($found) {
 					$helpondiff .= '<br>';
 				} else {
@@ -766,8 +794,8 @@ if ($id > 0 || $ref) {
 				$helpondiff .= ' <span class="opacitymedium">('.$langs->trans("ProductQtyInDraft").': '.$object->stats_commande['qty'].')</span>';
 			}
 
-			// Number of product from customer order already sent (partial shipping)
-			if (!empty($conf->expedition->enabled)) {
+			// Number of product from sales order already sent (partial shipping)
+			if (isModEnabled("expedition")) {
 				require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 				$filterShipmentStatus = '';
 				if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)) {
@@ -785,7 +813,7 @@ if ($id > 0 || $ref) {
 			}
 
 			// Number of supplier order running
-			if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+			if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 				if ($found) {
 					$helpondiff .= '<br>';
 				} else {
@@ -801,7 +829,7 @@ if ($id > 0 || $ref) {
 			}
 
 			// Number of product from supplier order already received (partial receipt)
-			if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+			if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 				if ($found) {
 					$helpondiff .= '<br>';
 				} else {
@@ -811,7 +839,7 @@ if ($id > 0 || $ref) {
 			}
 
 			// Number of product in production
-			if (!empty($conf->mrp->enabled)) {
+			if (isModEnabled('mrp')) {
 				if ($found) {
 					$helpondiff .= '<br>';
 				} else {
@@ -819,6 +847,15 @@ if ($id > 0 || $ref) {
 				}
 				$helpondiff .= $langs->trans("ProductQtyToConsumeByMO").': '.$object->stats_mrptoconsume['qty'].'<br>';
 				$helpondiff .= $langs->trans("ProductQtyToProduceByMO").': '.$object->stats_mrptoproduce['qty'];
+			}
+			$parameters = array('found' => &$found, 'id' => $object->id, 'includedraftpoforvirtual' => null);
+			$reshook = $hookmanager->executeHooks('virtualStockHelpOnDiff', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {
+				$helpondiff = $hookmanager->resPrint;
+			} elseif ($reshook == 0) {
+				$helpondiff .= $hookmanager->resPrint;
+			} else {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			}
 
 
@@ -941,7 +978,7 @@ if (!$variants) {
 	print '<td></td>';
 	print '</tr>';
 
-	if ((!empty($conf->productbatch->enabled)) && $object->hasbatch()) {
+	if ((isModEnabled('productbatch')) && $object->hasbatch()) {
 		$colspan = 3;
 		print '<tr class="liste_titre"><td class="minwidth200">';
 		if (!empty($conf->use_javascript_ajax)) {
@@ -986,6 +1023,7 @@ if (!$variants) {
 	$num = 0;
 	$total = 0;
 	$totalvalue = $totalvaluesell = 0;
+	$totalwithpmp = 0;
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -1010,7 +1048,7 @@ if (!$variants) {
 			// Warehouse
 			print '<td colspan="4">';
 			print $entrepotstatic->getNomUrl(1);
-			if (!empty($conf->use_javascript_ajax) && !empty($conf->productbatch->enabled) && $object->hasbatch()) {
+			if (!empty($conf->use_javascript_ajax) && isModEnabled('productbatch') && $object->hasbatch()) {
 				print '<a class="collapse_batch marginleftonly" id="ent' . $entrepotstatic->id . '" href="#">';
 				print (empty($conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT) ? '(+)' : '(-)');
 				print '</a>';
@@ -1023,7 +1061,11 @@ if (!$variants) {
 			print '<td class="right nowraponall">'.(price2num($object->pmp) ? price2num($object->pmp, 'MU') : '').'</td>';
 
 			// Value purchase
-			print '<td class="right amount nowraponall">'.(price2num($object->pmp) ? price(price2num($object->pmp * $obj->reel, 'MT')) : '').'</td>';
+			if ($usercancreadprice) {
+				print '<td class="right amount nowraponall">'.(price2num($object->pmp) ? price(price2num($object->pmp * $obj->reel, 'MT')) : '').'</td>';
+			} else {
+				print '<td class="right amount nowraponall"></td>';
+			}
 
 			// Sell price
 			$minsellprice = null; $maxsellprice = null;
@@ -1040,14 +1082,16 @@ if (!$variants) {
 					}
 				}
 				print '<span class="valignmiddle">';
-				if ($minsellprice != $maxsellprice) {
-					print price(price2num($minsellprice, 'MU'), 1).' - '.price(price2num($maxsellprice, 'MU'), 1);
-				} else {
-					print price(price2num($minsellprice, 'MU'), 1);
+				if ($usercancreadprice) {
+					if ($minsellprice != $maxsellprice) {
+						print price(price2num($minsellprice, 'MU'), 1).' - '.price(price2num($maxsellprice, 'MU'), 1);
+					} else {
+						print price(price2num($minsellprice, 'MU'), 1);
+					}
 				}
 				print '</span>';
 				print $form->textwithpicto('', $langs->trans("Variable"));
-			} else {
+			} elseif ($usercancreadprice) {
 				print price(price2num($object->price, 'MU'), 1);
 			}
 			print '</td>';
@@ -1056,15 +1100,19 @@ if (!$variants) {
 			print '<td class="right amount nowraponall">';
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 				print '<span class="valignmiddle">';
-				if ($minsellprice != $maxsellprice) {
-					print price(price2num($minsellprice * $obj->reel, 'MT'), 1).' - '.price(price2num($maxsellprice * $obj->reel, 'MT'), 1);
-				} else {
-					print price(price2num($minsellprice * $obj->reel, 'MT'), 1);
+				if ($usercancreadprice) {
+					if ($minsellprice != $maxsellprice) {
+						print price(price2num($minsellprice * $obj->reel, 'MT'), 1).' - '.price(price2num($maxsellprice * $obj->reel, 'MT'), 1);
+					} else {
+						print price(price2num($minsellprice * $obj->reel, 'MT'), 1);
+					}
 				}
 				print '</span>';
 				print $form->textwithpicto('', $langs->trans("Variable"));
 			} else {
-				print price(price2num($object->price * $obj->reel, 'MT'), 1);
+				if ($usercancreadprice) {
+					print price(price2num($object->price * $obj->reel, 'MT'), 1);
+				}
 			}
 			print '</td>';
 			print '<td></td>';
@@ -1077,7 +1125,7 @@ if (!$variants) {
 			$totalvalue = $totalvalue + ($object->pmp * $obj->reel);
 			$totalvaluesell = $totalvaluesell + ($object->price * $obj->reel);
 			// Batch Detail
-			if ((!empty($conf->productbatch->enabled)) && $object->hasbatch()) {
+			if ((isModEnabled('productbatch')) && $object->hasbatch()) {
 				$details = Productbatch::findAll($db, $obj->product_stock_id, 0, $object->id);
 				if ($details < 0) {
 					dol_print_error($db);
@@ -1169,11 +1217,15 @@ if (!$variants) {
 	print '<tr class="liste_total"><td class="right liste_total" colspan="4">'.$langs->trans("Total").':</td>';
 	print '<td class="liste_total right">'.price2num($total, 'MS').'</td>';
 	print '<td class="liste_total right">';
-	print ($totalwithpmp ? price(price2num($totalvalue / $totalwithpmp, 'MU')) : '&nbsp;'); // This value may have rounding errors
+	if ($usercancreadprice) {
+		print ($totalwithpmp ? price(price2num($totalvalue / $totalwithpmp, 'MU')) : '&nbsp;'); // This value may have rounding errors
+	}
 	print '</td>';
 	// Value purchase
 	print '<td class="liste_total right">';
-	print $totalvalue ? price(price2num($totalvalue, 'MT'), 1) : '&nbsp;';
+	if ($usercancreadprice) {
+		print $totalvalue ? price(price2num($totalvalue, 'MT'), 1) : '&nbsp;';
+	}
 	print '</td>';
 	print '<td class="liste_total right">';
 	if ($num) {
@@ -1181,7 +1233,7 @@ if (!$variants) {
 			print '<span class="valignmiddle">';
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 				print $form->textwithpicto('', $langs->trans("Variable"));
-			} else {
+			} elseif ($usercancreadprice) {
 				print price($totalvaluesell / $total, 1);
 			}
 			print '</span>';
@@ -1192,7 +1244,7 @@ if (!$variants) {
 	print '<td class="liste_total right amount">';
 	if ($num) {
 		print '<span class="valignmiddle">';
-		if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (empty($conf->global->PRODUIT_MULTIPRICES) && $usercancreadprice) {
 			print price(price2num($totalvaluesell, 'MT'), 1);
 		} else {
 			print $form->textwithpicto('', $langs->trans("Variable"));

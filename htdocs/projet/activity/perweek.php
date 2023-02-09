@@ -98,7 +98,7 @@ $next_day   = $next['day'];
 
 // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
 $firstdaytoshow = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year);
-$lastdaytoshow = dol_time_plus_duree($firstdaytoshow, 7, 'd');
+$firstdaytoshowgmt = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year, 'gmt');
 
 if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id) {
 	$usertoprocess = $user;
@@ -135,7 +135,7 @@ $arrayfields['timeconsumed'] = array('label'=>'TimeConsumed', 'checked'=>1, 'ena
 /*foreach($object->fields as $key => $val)
  {
  // If $val['visible']==0, then we never show the field
- if (! empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>$val['enabled'], 'position'=>$val['position']);
+ if (!empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>$val['enabled'], 'position'=>$val['position']);
  }*/
 // Definition of fields for list
 // Extra fields
@@ -152,6 +152,7 @@ $search_array_options = array();
 $search_array_options_project = $extrafields->getOptionalsFromPost('projet', '', 'search_');
 $search_array_options_task = $extrafields->getOptionalsFromPost('projet_task', '', 'search_task_');
 
+$error = 0;
 
 
 /*
@@ -203,11 +204,11 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 			$error++;
 		}
 	} else {
-		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), '', 'errors');
+		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), null, 'errors');
 		$error++;
 	}
 	if (!GETPOST('type')) {
-		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), '', 'errors');
+		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		$error++;
 	}
 
@@ -229,7 +230,8 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 					$listofprojcontact = $project->liste_type_contact('internal');
 
 					if (count($listofprojcontact)) {
-						$typeforprojectcontact = reset(array_keys($listofprojcontact));
+						$tmparray = array_keys($listofprojcontact);
+						$typeforprojectcontact = reset($tmparray);
 						$result = $project->add_contact($idfortaskuser, $typeforprojectcontact, 'internal');
 					}
 				}
@@ -262,10 +264,10 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 	if (empty($timetoadd)) {
 		setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
 	} else {
-		foreach ($timetoadd as $taskid => $value) {     // Loop on each task
+		foreach ($timetoadd as $tmptaskid => $tmpvalue) {     // Loop on each task
 			$updateoftaskdone = 0;
-			foreach ($value as $key => $val) {          // Loop on each day
-				$amountoadd = $timetoadd[$taskid][$key];
+			foreach ($tmpvalue as $key => $val) {          // Loop on each day
+				$amountoadd = $timetoadd[$tmptaskid][$key];
 				if (!empty($amountoadd)) {
 					$tmpduration = explode(':', $amountoadd);
 					$newduration = 0;
@@ -280,10 +282,10 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 					}
 
 					if ($newduration > 0) {
-						$object->fetch($taskid);
+						$object->fetch($tmptaskid);
 
-						if (GETPOSTISSET($taskid.'progress')) {
-							$object->progress = GETPOST($taskid.'progress', 'int');
+						if (GETPOSTISSET($tmptaskid.'progress')) {
+							$object->progress = GETPOST($tmptaskid.'progress', 'int');
 						} else {
 							unset($object->progress);
 						}
@@ -307,10 +309,11 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 			}
 
 			if (!$updateoftaskdone) {  // Check to update progress if no update were done on task.
-				$object->fetch($taskid);
-				//var_dump($object->progress);var_dump(GETPOST($taskid . 'progress', 'int')); exit;
-				if ($object->progress != GETPOST($taskid.'progress', 'int')) {
-					$object->progress = GETPOST($taskid.'progress', 'int');
+				$object->fetch($tmptaskid);
+				//var_dump($object->progress);
+				//var_dump(GETPOST($tmptaskid . 'progress', 'int')); exit;
+				if ($object->progress != GETPOST($tmptaskid.'progress', 'int')) {
+					$object->progress = GETPOST($tmptaskid.'progress', 'int');
 					$result = $object->update($user);
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -413,8 +416,8 @@ $tasksarray = $taskstatic->getTasksArray(0, 0, ($project->id ? $project->id : 0)
 if ($morewherefilter) {	// Get all task without any filter, so we can show total of time spent for not visible tasks
 	$tasksarraywithoutfilter = $taskstatic->getTasksArray(0, 0, ($project->id ? $project->id : 0), $socid, 0, '', $onlyopenedproject, '', ($search_usertoprocessid ? $search_usertoprocessid : 0)); // We want to see all tasks of open project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
 }
-$projectsrole = $taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, 0, ($project->id ? $project->id : 0), 0, $onlyopenedproject);
-$tasksrole = $taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($project->id ? $project->id : 0), 0, $onlyopenedproject);
+$projectsrole = $taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, null, ($project->id ? $project->id : 0), 0, $onlyopenedproject);
+$tasksrole = $taskstatic->getUserRolesForProjectsOrTasks(null, $usertoprocess, ($project->id ? $project->id : 0), 0, $onlyopenedproject);
 //var_dump($tasksarray);
 //var_dump($projectsrole);
 //var_dump($taskrole);
@@ -445,7 +448,7 @@ $nav = '<a class="inline-block valignmiddle" href="?year='.$prev_year."&month=".
 $nav .= ' <span id="month_name">'.dol_print_date(dol_mktime(0, 0, 0, $first_month, $first_day, $first_year), "%Y").", ".$langs->trans("WeekShort")." ".$week." </span>\n";
 $nav .= '<a class="inline-block valignmiddle" href="?year='.$next_year."&month=".$next_month."&day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
 $nav .= ' '.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 1).' ';
-$nav .= ' <button type="submit" name="submitdateselect" value="x" class="bordertransp"><span class="fa fa-search"></span></button>';
+$nav .= ' <button type="submit" name="submitdateselect" value="x" class="nobordertransp button_search_x"><span class="fa fa-search"></span></button>';
 
 $picto = 'clock';
 
@@ -497,7 +500,7 @@ $formproject->selectTasks($socid ? $socid : -1, $taskid, 'taskid', 32, 0, '-- '.
 print '</div>';
 print ' ';
 print $formcompany->selectTypeContact($object, '', 'type', 'internal', 'rowid', 0, 'maxwidth150onsmartphone');
-print '<input type="submit" class="button valignmiddle smallonsmartphone" name="assigntask" value="'.dol_escape_htmltag($titleassigntask).'">';
+print '<input type="submit" class="button valignmiddle smallonsmartphone small" name="assigntask" value="'.dol_escape_htmltag($titleassigntask).'">';
 print '</div>';
 
 print '<div class="clearboth" style="padding-bottom: 20px;"></div>';
@@ -509,6 +512,11 @@ $numendworkingday = 0;
 $numstartworkingday = 0;
 // Get if user is available or not for each day
 $isavailable = array();
+
+// Assume from Monday to Friday if conf empty or badly formed
+$numstartworkingday = 1;
+$numendworkingday = 5;
+
 if (!empty($conf->global->MAIN_DEFAULT_WORKING_DAYS)) {
 	$tmparray = explode('-', $conf->global->MAIN_DEFAULT_WORKING_DAYS);
 	if (count($tmparray) >= 2) {
@@ -519,25 +527,18 @@ if (!empty($conf->global->MAIN_DEFAULT_WORKING_DAYS)) {
 
 for ($idw = 0; $idw < 7; $idw++) {
 	$dayinloopfromfirstdaytoshow = dol_time_plus_duree($firstdaytoshow, $idw, 'd'); // $firstdaytoshow is a date with hours = 0
-
-	// Useless because $dayinloopwithouthours should be same than $dayinloopfromfirstdaytoshow
-	//$tmparray = dol_getdate($dayinloop);
-	//$dayinloopwithouthours=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
-	//print dol_print_date($dayinloop, 'dayhour').' ';
-	//print dol_print_date($dayinloopwithouthours, 'dayhour').' ';
-	//print dol_print_date($dayinloopfromfirstdaytoshow, 'dayhour').'<br>';
+	$dayinloopfromfirstdaytoshowgmt = dol_time_plus_duree($firstdaytoshowgmt, $idw, 'd'); // $firstdaytoshow is a date with hours = 0
 
 	$statusofholidaytocheck = Holiday::STATUS_APPROVED;
 
 	$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $dayinloopfromfirstdaytoshow, $statusofholidaytocheck);
 	$isavailable[$dayinloopfromfirstdaytoshow] = $isavailablefordayanduser; // in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
 
-	$test = num_public_holiday($dayinloopfromfirstdaytoshow, $dayinloopfromfirstdaytoshow + 86400, $mysoc->country_code);
+	$test = num_public_holiday($dayinloopfromfirstdaytoshowgmt, $dayinloopfromfirstdaytoshowgmt + 86400, $mysoc->country_code);
 	if ($test) {
 		$isavailable[$dayinloopfromfirstdaytoshow] = array('morning'=>false, 'afternoon'=>false, 'morning_reason'=>'public_holiday', 'afternoon_reason'=>'public_holiday');
 	}
 }
-//var_dump($isavailable);
 
 
 
@@ -545,7 +546,7 @@ $moreforfilter = '';
 
 // Filter on categories
 /*
- if (! empty($conf->categorie->enabled))
+ if (!empty($conf->categorie->enabled))
  {
  require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
  $moreforfilter.='<div class="divsearchfield">';
@@ -669,13 +670,7 @@ if (!empty($arrayfields['timeconsumed']['checked'])) {
 }
 for ($idw = 0; $idw < 7; $idw++) {
 	$dayinloopfromfirstdaytoshow = dol_time_plus_duree($firstdaytoshow, $idw, 'd'); // $firstdaytoshow is a date with hours = 0
-	$dayinloop = dol_time_plus_duree($startday, $idw, 'd');
-	/*print $dayinloopfromfirstdaytoshow;
-	print dol_print_date($dayinloopfromfirstdaytoshow, 'dayhour', 'gmt');
-	print dol_print_date($dayinloopfromfirstdaytoshow, 'dayhour');
-	print dol_print_date($dayinloopfromfirstdaytoshow, '%a', 'gmt');
-	print dol_print_date($dayinloopfromfirstdaytoshow, '%a');
-	print '<br>';*/
+
 	$cssweekend = '';
 	if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday)) {	// This is a day is not inside the setup of working days, so we use a week-end css.
 		$cssweekend = 'weekend';
@@ -754,7 +749,7 @@ if (count($tasksarray) > 0) {
 
 	// Calculate total for all tasks
 	$listofdistinctprojectid = array(); // List of all distinct projects
-	if (is_array($tasksarraywithoutfilter) && count($tasksarraywithoutfilter)) {
+	if (!empty($tasksarraywithoutfilter) && is_array($tasksarraywithoutfilter) && count($tasksarraywithoutfilter)) {
 		foreach ($tasksarraywithoutfilter as $tmptask) {
 			$listofdistinctprojectid[$tmptask->fk_project] = $tmptask->fk_project;
 		}

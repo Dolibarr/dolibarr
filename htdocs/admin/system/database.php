@@ -23,6 +23,7 @@
  *   \brief      Page with system information of database
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 $langs->load("admin");
@@ -64,7 +65,7 @@ print '<br>';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Tables").'</td></tr>'."\n";
-print '<tr class="oddeven"><td width="300"><a href="'.DOL_URL_ROOT.'/admin/system/database-tables.php?mainmenu=home">'.$langs->trans("List").'</a></td></tr>'."\n";
+print '<tr class="oddeven"><td class=""><a href="'.DOL_URL_ROOT.'/admin/system/database-tables.php?mainmenu=home">'.img_picto('', 'list', 'class="pictofixedwidth"').$langs->trans("List").'</a></td></tr>'."\n";
 print '</table>';
 print '</div>';
 
@@ -112,7 +113,8 @@ if (!count($listofvars) && !count($listofstatus)) {
 				if ($key != $param) {
 					continue;
 				}
-				$val2 = ${$val['var']};
+				$tmpvar = $val['var'];
+				$val2 = ${$tmpvar};
 				$text = 'Should be in line with value of param <b>'.$val['var'].'</b> thas is <b>'.($val2 ? $val2 : "'' (=".$val['valifempty'].")").'</b>';
 				$show = 1;
 			}

@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2018 Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2018  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,7 @@
  *      \brief      Page list of direct debit orders or credit transfers orders
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
@@ -41,6 +43,7 @@ $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlinelist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$mode       = GETPOST('mode', 'alpha');
 
 $type = GETPOST('type', 'aZ09');
 
@@ -108,11 +111,14 @@ llxHeader('', $langs->trans("WithdrawalsLines"));
 
 $sql = "SELECT p.rowid, p.ref, p.statut as status, p.datec";
 $sql .= " , f.rowid as facid, f.ref as invoiceref, f.total_ttc";
-$sql .= " , s.rowid as socid, s.nom as name, s.code_client, s.email";
+$sql .= " , s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur, s.email";
 $sql .= " , pl.amount, pl.statut as statut_ligne, pl.rowid as rowid_ligne";
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";
 if ($type == 'bank-transfer') {
 	$sql .= " , ".MAIN_DB_PREFIX."facture_fourn as f";
 } else {
@@ -139,7 +145,7 @@ if ($search_bon) {
 }
 if ($type == 'bank-transfer') {
 	if ($search_code) {
-		$sql .= natural_search("s.code_fourn", $search_code);
+		$sql .= natural_search("s.code_fournisseur", $search_code);
 	}
 } else {
 	if ($search_code) {
@@ -150,20 +156,31 @@ if ($search_company) {
 	$sql .= natural_search("s.nom", $search_company);
 }
 
-$sql .= $db->order($sortfield, $sortorder);
-
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 $result = $db->query($sql);
 if ($result) {
@@ -172,9 +189,18 @@ if ($result) {
 
 	$param = "&amp;statut=".urlencode($statut);
 	$param .= "&amp;search_bon=".urlencode($search_bon);
+	if (!empty($mode)) {
+		$param .= '&mode='.urlencode($mode);
+	}
+	if ($type == 'bank-transfer') {
+		$param .= '&amp;type=bank-transfer';
+	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.urlencode($limit);
 	}
+	$newcardbutton = '';
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
 
 	print"\n<!-- debut table -->\n";
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -187,12 +213,17 @@ if ($result) {
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
+
+	if ($type != '') {
+		print '<input type="hidden" name="type" value="'.$type.'">';
+	}
 
 	$title = $langs->trans("WithdrawalsLines");
 	if ($type == 'bank-transfer') {
 		$title = $langs->trans("CreditTransferLines");
 	}
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, '', '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$moreforfilter = '';
 
@@ -204,7 +235,7 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_bon" value="'.dol_escape_htmltag($search_bon).'" size="6"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_company" value="'.dol_escape_htmltag($search_company).'" size="6"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_code" value="'.dol_escape_htmltag($search_code).'" size="6"></td>';
+	print '<td class="liste_titre center"><input type="text" class="flat" name="search_code" value="'.dol_escape_htmltag($search_code).'" size="6"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre maxwidthsearch">';
@@ -214,8 +245,12 @@ if ($result) {
 	print '</tr>';
 
 	$columntitle = "WithdrawalsReceipts";
+	$columntitlethirdparty = "CustomerCode";
+	$columncodethirdparty = "s.code_client";
 	if ($type == 'bank-transfer') {
 		$columntitle = "BankTransferReceipts";
+		$columntitlethirdparty = "SupplierCode";
+		$columncodethirdparty = "s.code_fournisseur";
 	}
 
 	print '<tr class="liste_titre">';
@@ -223,7 +258,7 @@ if ($result) {
 	print_liste_field_titre("Line", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Bill", $_SERVER["PHP_SELF"], "f.ref", '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", '', $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($columntitlethirdparty, $_SERVER["PHP_SELF"], $columncodethirdparty, '', $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('');
@@ -236,45 +271,77 @@ if ($result) {
 			$bon->id = $obj->rowid;
 			$bon->ref = $obj->ref;
 			$bon->statut = $obj->status;
+			$bon->date_echeance = $obj->datec;
+			$bon->total = $obj->amount;
 
 			$company->id = $obj->socid;
 			$company->name = $obj->name;
 			$company->email = $obj->email;
 			$company->code_client = $obj->code_client;
 
-			print '<tr class="oddeven">';
+			if ($mode == 'kanban') {
+				if ($i == 0) {
+					print '<tr><td colspan="12">';
+					print '<div class="box-flex-container">';
+				}
+				// Output Kanban
 
-			print '<td>';
-			print $bon->getNomUrl(1);
-			print "</td>\n";
+				print $bon->getKanbanView('');
+				if ($i == (min($num, $limit) - 1)) {
+					print '</div>';
+					print '</td></tr>';
+				}
+			} else {
+				print '<tr class="oddeven">';
 
-			print '<td>';
-			print $line->LibStatut($obj->statut_ligne, 2);
-			print "&nbsp;";
-			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid_ligne.'">';
-			print substr('000000'.$obj->rowid_ligne, -6);
-			print '</a></td>';
+				print '<td>';
+				print $bon->getNomUrl(1);
+				print "</td>\n";
 
-			print '<td>';
-			print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">';
-			print img_object($langs->trans("ShowBill"), "bill");
-			print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->invoiceref."</a></td>\n";
-			print '</a>';
-			print '</td>';
+				print '<td>';
+				print $line->LibStatut($obj->statut_ligne, 2);
+				print "&nbsp;";
+				print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid_ligne.'">';
+				print substr('000000'.$obj->rowid_ligne, -6);
+				print '</a></td>';
 
-			print '<td>';
-			print $company->getNomUrl(1);
-			print "</td>\n";
+				print '<td>';
+				$link_to_bill = '/compta/facture/card.php?facid=';
+				$link_title = 'Invoice';
+				$link_picto = 'bill';
+				if ($type == 'bank-transfer') {
+					$link_to_bill = '/fourn/facture/card.php?facid=';
+					$link_title = 'SupplierInvoice';
+					$link_picto = 'supplier_invoice';
+				}
+				print '<a href="'.DOL_URL_ROOT.$link_to_bill.$obj->facid.'">';
+				print img_object($langs->trans($link_title), $link_picto);
+				print '&nbsp;'.$obj->invoiceref."</td>\n";
+				print '</a>';
+				print '</td>';
 
-			print '<td align="center"><a href="card.php?id='.$obj->rowid.'">'.$obj->code_client."</a></td>\n";
+				print '<td>';
+				print $company->getNomUrl(1);
+				print "</td>\n";
 
-			print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
-			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
+				print '<td class="center">';
+				$link_to_tab = '/comm/card.php?socid=';
+				$link_code = $obj->code_client;
+				if ($type == 'bank-transfer') {
+					$link_to_tab = '/fourn/card.php?socid=';
+					$link_code = $obj->code_fournisseur;
+				}
+				print '<a href="'.DOL_URL_ROOT.$link_to_tab.$company->id.'">'.$link_code."</a></td>\n";
 
-			print '<td>&nbsp;</td>';
+				print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
-			print "</tr>\n";
+				print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
+
+				print '<td>&nbsp;</td>';
+
+				print "</tr>\n";
+			}
 			$i++;
 		}
 	} else {

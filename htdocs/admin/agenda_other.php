@@ -26,6 +26,7 @@
  *      \brief      Autocreate actions for agenda module setup page
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
@@ -52,6 +53,9 @@ $type = 'action';
 /*
  *	Actions
  */
+
+$error = 0;
+$errors = array();
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
@@ -192,9 +196,8 @@ print dol_get_fiche_head($head, 'other', $langs->trans("Agenda"), -1, 'action');
 
 
 /*
- *  Documents models for supplier orders
+ *  Miscellaneous
  */
-
 
 // Define array def of models
 $def = array();
@@ -307,7 +310,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		}
 	}
 	print '</table><br>';
+
+	print load_fiche_titre($langs->trans('MiscellaneousOptions'), '', '');
 }
+
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -367,7 +373,7 @@ if (!is_array($result) && $result < 0) {
 } elseif (count($result) > 0) {
 	$defval = reset($result)->value;
 }
-$formactions->form_select_status_action('agenda', $defval, 1, "AGENDA_EVENT_DEFAULT_STATUS", 0, 1, 'maxwidth200');
+$formactions->form_select_status_action('agenda', $defval, 1, "AGENDA_EVENT_DEFAULT_STATUS", 0, 1, 'maxwidth200 onrightofpage');
 print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_FILTER_TYPE
@@ -394,13 +400,12 @@ print '</td></tr>'."\n";
 
 print '</table>';
 
-print dol_get_fiche_end();
-
 print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 
-print "<br>";
+
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

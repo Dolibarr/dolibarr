@@ -32,6 +32,7 @@
  *	\brief      File of contacts class
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonsocialnetworks.class.php';
 
 
 /**
@@ -39,6 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Contact extends CommonObject
 {
+	use CommonSocialNetworks;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -98,7 +101,7 @@ class Contact extends CommonObject
 		'poste' =>array('type'=>'varchar(80)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>-1, 'position'=>52),
 		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>1, 'position'=>60),
-		'town' =>array('type'=>'text', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+		'town' =>array('type'=>'varchar(50)', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
 		'fk_departement' =>array('type'=>'integer', 'label'=>'Fk departement', 'enabled'=>1, 'visible'=>3, 'position'=>70),
 		'fk_pays' =>array('type'=>'integer', 'label'=>'Fk pays', 'enabled'=>1, 'visible'=>3, 'position'=>75),
 		'fk_soc' =>array('type'=>'integer', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>1, 'position'=>77, 'searchall'=>1),
@@ -114,8 +117,8 @@ class Contact extends CommonObject
 		'fk_stcommcontact' =>array('type'=>'integer', 'label'=>'ProspectStatus', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>220),
 		'fk_prospectlevel' =>array('type'=>'varchar(12)', 'label'=>'ProspectLevel', 'enabled'=>1, 'visible'=>-1, 'position'=>255),
 		'no_email' =>array('type'=>'smallint(6)', 'label'=>'No_Email', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>180),
-		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>3, 'position'=>195, 'searchall'=>1),
-		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>3, 'position'=>200, 'searchall'=>1),
+		'note_private' =>array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>3, 'position'=>195, 'searchall'=>1),
+		'note_public' =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>3, 'position'=>200, 'searchall'=>1),
 		'default_lang' =>array('type'=>'varchar(6)', 'label'=>'Default lang', 'enabled'=>1, 'visible'=>3, 'position'=>205),
 		'canvas' =>array('type'=>'varchar(32)', 'label'=>'Canvas', 'enabled'=>1, 'visible'=>3, 'position'=>210),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>300),
@@ -129,6 +132,28 @@ class Contact extends CommonObject
 	public $civility_id; // In fact we store civility_code
 	public $civility_code;
 	public $civility;
+
+	/**
+	 * @var int egroupware_id
+	 */
+	public $egroupware_id;
+
+	/**
+	 * @var int birthday_alert
+	 */
+	public $birthday_alert;
+
+	/**
+	 * @var string The civilite code, not an integer
+	 * @deprecated
+	 * @see $civility_code
+	 */
+	public $civilite;
+
+	/**
+	 * @var string fullname
+	 */
+	public $fullname;
 
 	/**
 	 * @var string Address
@@ -180,6 +205,12 @@ class Contact extends CommonObject
 	 * @var string
 	 */
 	public $email;
+
+	/**
+	 * URL
+	 * @var string
+	 */
+	public $url;
 
 	/**
 	 * Unsuscribe all : 1 = contact has globaly unsubscribe of all mass emailings
@@ -315,6 +346,7 @@ class Contact extends CommonObject
 	 */
 	public $stcomm_picto;
 
+
 	/**
 	 *	Constructor
 	 *
@@ -330,7 +362,7 @@ class Contact extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->mailing->enabled)) {
+		if (!isModEnabled('mailing')) {
 			$this->fields['no_email']['enabled'] = 0;
 		}
 		// typical ['s.nom'] is used for third-parties
@@ -339,9 +371,9 @@ class Contact extends CommonObject
 			$this->fields['fk_soc']['searchall'] = 0;
 		}
 
-		if (empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {	// Default behaviour
-			$this->field['fk_stcommcontact']['enabled'] = 0;
-			$this->field['fk_prospectcontactlevel']['enabled'] = 0;
+		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {	// Default behaviour
+			$this->fields['fk_stcommcontact']['enabled'] = 0;
+			$this->fields['fk_prospectlevel']['enabled'] = 0;
 		}
 
 		// Unset fields that are disabled
@@ -557,7 +589,6 @@ class Contact extends CommonObject
 		$this->fax = trim($this->fax);
 		$this->zip = (empty($this->zip) ? '' : trim($this->zip));
 		$this->town = (empty($this->town) ? '' : trim($this->town));
-		$this->setUpperOrLowerCase();
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
 		if (empty($this->statut)) {
 			$this->statut = 0;
@@ -565,6 +596,7 @@ class Contact extends CommonObject
 		if (empty($this->civility_code) && !is_numeric($this->civility_id)) {
 			$this->civility_code = $this->civility_id; // For backward compatibility
 		}
+		$this->setUpperOrLowerCase();
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
@@ -594,7 +626,7 @@ class Contact extends CommonObject
 		$sql .= ", phone_perso = ".(isset($this->phone_perso) ? "'".$this->db->escape($this->phone_perso)."'" : "NULL");
 		$sql .= ", phone_mobile = ".(isset($this->phone_mobile) ? "'".$this->db->escape($this->phone_mobile)."'" : "NULL");
 		$sql .= ", priv = '".$this->db->escape($this->priv)."'";
-		$sql .= ", fk_prospectcontactlevel = '".$this->db->escape($this->fk_prospectlevel)."'";
+		$sql .= ", fk_prospectlevel = '".$this->db->escape($this->fk_prospectlevel)."'";
 		if (isset($this->stcomm_id)) {
 			$sql .= ", fk_stcommcontact = ".($this->stcomm_id > 0 || $this->stcomm_id == -1 ? $this->stcomm_id : "0");
 		}
@@ -670,22 +702,6 @@ class Contact extends CommonObject
 					$tmpobj->socialnetworks = $this->socialnetworks;
 					$usermustbemodified++;
 				}
-				// if ($tmpobj->skype != $this->skype) {
-				// 	$tmpobj->skype = $this->skype;
-				// 	$usermustbemodified++;
-				// }
-				// if ($tmpobj->twitter != $this->twitter) {
-				// 	$tmpobj->twitter = $this->twitter;
-				// 	$usermustbemodified++;
-				// }
-				// if ($tmpobj->facebook != $this->facebook) {
-				// 	$tmpobj->facebook = $this->facebook;
-				// 	$usermustbemodified++;
-				// }
-				// if ($tmpobj->linkedin != $this->linkedin) {
-				//     $tmpobj->linkedin = $this->linkedin;
-				//     $usermustbemodified++;
-				// }
 				if ($usermustbemodified) {
 					$result = $tmpobj->update($user, 0, 1, 1, 1);
 					if ($result < 0) {
@@ -817,9 +833,6 @@ class Contact extends CommonObject
 		}
 		if ($this->fax && !empty($conf->global->LDAP_CONTACT_FIELD_FAX)) {
 			$info[$conf->global->LDAP_CONTACT_FIELD_FAX] = $this->fax;
-		}
-		if ($this->skype && !empty($conf->global->LDAP_CONTACT_FIELD_SKYPE)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_SKYPE] = $this->skype;
 		}
 		if ($this->note_private && !empty($conf->global->LDAP_CONTACT_FIELD_DESCRIPTION)) {
 			$info[$conf->global->LDAP_CONTACT_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_private, 2);
@@ -973,7 +986,7 @@ class Contact extends CommonObject
 		$sql .= " c.socialnetworks,";
 		$sql .= " c.photo,";
 		$sql .= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
-		$sql .= " c.fk_prospectcontactlevel, c.fk_stcommcontact, st.libelle as stcomm, st.picto as stcomm_picto,";
+		$sql .= " c.fk_prospectlevel, c.fk_stcommcontact, st.libelle as stcomm, st.picto as stcomm_picto,";
 		$sql .= " c.import_key,";
 		$sql .= " c.datec as date_creation, c.tms as date_modification,";
 		$sql .= " co.label as country, co.code as country_code,";
@@ -1040,7 +1053,7 @@ class Contact extends CommonObject
 				$this->poste			= $obj->poste;
 				$this->statut = $obj->statut;
 
-				$this->fk_prospectlevel = $obj->fk_prospectcontactlevel;
+				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
 				$transcode = $langs->trans('StatusProspect'.$obj->fk_stcommcontact);
 				$libelle = ($transcode != 'StatusProspect'.$obj->fk_stcommcontact ? $transcode : $obj->stcomm);
@@ -1054,7 +1067,7 @@ class Contact extends CommonObject
 				$this->phone_mobile = trim($obj->phone_mobile);
 
 				$this->email			= $obj->email;
-				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
+				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
 				$this->photo			= $obj->photo;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
@@ -1214,6 +1227,15 @@ class Contact extends CommonObject
 
 		$this->db->begin();
 
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('CONTACT_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
 		if (!$error) {
 			// Get all rowid of element_contact linked to a type that is link to llx_socpeople
 			$sql = "SELECT ec.rowid";
@@ -1302,15 +1324,6 @@ class Contact extends CommonObject
 			if ($result < 0) {
 				$error++;
 			}
-		}
-
-		if (!$error && !$notrigger) {
-			// Call trigger
-			$result = $this->call_trigger('CONTACT_DELETE', $user);
-			if ($result < 0) {
-				$error++;
-			}
-			// End call triggers
 		}
 
 		if (!$error) {
@@ -1461,13 +1474,6 @@ class Contact extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-				$hookmanager->initHooks(array('contactdao'));
-				$parameters=array('id'=>$this->id);
-				$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-				*/
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -1693,8 +1699,8 @@ class Contact extends CommonObject
 	 * Adds it to non existing supplied categories.
 	 * Existing categories are left untouch.
 	 *
-	 * @param int[]|int $categories Category or categories IDs
-	 * @return void
+	 * @param 	int[]|int 	$categories 	Category or categories IDs
+	 * @return 	int							<0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -1705,18 +1711,18 @@ class Contact extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'socpeople', 'societe_contacts'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -1782,6 +1788,8 @@ class Contact extends CommonObject
 		$sql = "SELECT sc.fk_socpeople as id, sc.fk_c_type_contact";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
 		$sql .= ", ".MAIN_DB_PREFIX."societe_contacts sc";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."socpeople sp";
+		$sql .= " ON sc.fk_socpeople = sp.rowid AND sp.statut = 1";
 		$sql .= " WHERE sc.fk_soc =".((int) $this->socid);
 		$sql .= " AND sc.fk_c_type_contact=tc.rowid";
 		$sql .= " AND tc.element = '".$this->db->escape($element)."'";
@@ -2107,5 +2115,49 @@ class Contact extends CommonObject
 			}
 		}
 		return 0;
+	}
+
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		//var_dump($this->photo);exit;
+		if (property_exists($this, 'photo') && !is_null($this->photo)) {
+			$return.= Form::showphoto('contact', $this, 0, 60, 0, 'photokanban photoref photowithmargin photologintooltip', 'small', 0, 1);
+		} else {
+			$return .= img_picto('', $this->picto);
+		}
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<div class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</div>';
+
+		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+			$return .= '<div class="info-box-ref opacitymedium tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
+		}
+		/*if (property_exists($this, 'phone_pro') && !empty($this->phone_pro)) {
+			$return .= '<br>'.img_picto($langs->trans("Phone"), 'phone');
+			$return .= ' <span class="info-box-label">'.$this->phone_pro.'</span>';
+		}*/
+		/*if (method_exists($this, 'LibPubPriv')) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Visibility").'</span>';
+			$return .= '<span> : '.$this->LibPubPriv($this->priv).'</span>';
+		}*/
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

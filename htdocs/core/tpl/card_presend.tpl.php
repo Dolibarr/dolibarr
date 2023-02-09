@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C)    2017-2018 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C)    2022	  Charlene Benke <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,37 +40,41 @@ if ($action == 'presend') {
 	$titreform = 'SendMail';
 
 	$object->fetch_projet();
-
-	if (!in_array($object->element, array('societe', 'user', 'member'))) {
-		// TODO get also the main_lastdoc field of $object. If not found, try to guess with following code
-
-		$ref = dol_sanitizeFileName($object->ref);
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		// Special case
-		if ($object->element == 'invoice_supplier') {
-			$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
+	if (!isset($file)) $file = null;
+	$ref = dol_sanitizeFileName($object->ref);
+	if (!in_array($object->element, array('user', 'member'))) {
+		//$fileparams['fullname'] can be filled from the card
+		//Get also the main_lastdoc field of $object. If not found, try to guess with following code
+		if (!empty($object->last_main_doc) && is_readable(DOL_DATA_ROOT.'/'.$object->last_main_doc) && is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
+			$fileparams['fullname'] = DOL_DATA_ROOT.'/'.$object->last_main_doc;
 		} else {
-			$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			// Special case
+			if ($object->element == 'invoice_supplier') {
+				$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
+			} else {
+				$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
+			}
 		}
 
-		$file = $fileparams['fullname'];
+		$file = isset($fileparams['fullname'])?$fileparams['fullname']:null;
 	}
 
 	// Define output language
 	$outputlangs = $langs;
 	$newlang = '';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-		$newlang = GETPOST('lang_id', 'aZ09');
-	}
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+	if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 		$newlang = $object->thirdparty->default_lang;
+		if (GETPOST('lang_id', 'aZ09')) {
+			$newlang = GETPOST('lang_id', 'aZ09');
+		}
 	}
 
 	if (!empty($newlang)) {
 		$outputlangs = new Translate('', $conf);
 		$outputlangs->setDefaultLang($newlang);
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array('commercial', 'bills', 'orders', 'contracts', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions'));
+		$outputlangs->loadLangs(array('commercial', 'bills', 'orders', 'contracts', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions', 'sendings'));
 	}
 
 	$topicmail = '';
@@ -81,10 +86,13 @@ if ($action == 'presend') {
 
 	// Build document if it not exists
 	$forcebuilddoc = true;
-	if (in_array($object->element, array('societe', 'user', 'member'))) {
+	if (in_array($object->element, array('user', 'member'))) {
 		$forcebuilddoc = false;
 	}
 	if ($object->element == 'invoice_supplier' && empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF)) {
+		$forcebuilddoc = false;
+	}
+	if ($object->element == 'societe' && empty($conf->global->COMPANY_ADDON_PDF)) {
 		$forcebuilddoc = false;
 	}
 	if ($forcebuilddoc) {    // If there is no default value for supplier invoice, we do not generate file, even if modelpdf was set by a manual generation
@@ -142,17 +150,39 @@ if ($action == 'presend') {
 		$formmail->fromname = (!empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME) ? $conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
+	if ($object->element === 'recruitmentcandidature' ) {
+		$formmail->frommail = (!empty($conf->global->RECRUITMENT_EMAIL_SENDER) ? $conf->global->RECRUITMENT_EMAIL_SENDER : $recruitermail);
+		$formmail->fromname = (!empty($conf->global->RECRUITMENT_EMAIL_SENDER_NAME) ? $conf->global->RECRUITMENT_EMAIL_SENDER_NAME : (!empty($recruitername) ? $recruitername : ''));
+		$formmail->fromtype = 'special';
+	}
 
-	$formmail->trackid = $trackid;
+	// Set the default "From"
+	$defaultfrom = '';
+	if (GETPOSTISSET('fromtype')) {
+		$defaultfrom = GETPOST('fromtype');
+	} else {
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('getDefaultFromEmail', $parameters, $formmail);
+		if (empty($reshook)) {
+			$defaultfrom = $formmail->fromtype;
+		}
+		if (!empty($hookmanager->resArray['defaultfrom'])) {
+			$defaultfrom = $hookmanager->resArray['defaultfrom'];
+		}
+	}
+	$formmail->fromtype = $defaultfrom;
+
+	$formmail->trackid = empty($trackid) ? '' : $trackid;
+	$formmail->inreplyto = empty($inreplyto) ? '' : $inreplyto;
 	$formmail->withfrom = 1;
 
-	// Fill list of recipient with email inside <>.
+	// Define $liste, a list of recipients with email inside <>.
 	$liste = array();
 	if ($object->element == 'expensereport') {
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user_author);
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
-	} elseif ($object->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+	} elseif ($object->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 		$fadherent = new Adherent($db);
 		$fadherent->fetch($object->fk_member);
 		$liste['member'] = $fadherent->getFullName($outputlangs)." <".$fadherent->email.">";
@@ -192,27 +222,47 @@ if ($action == 'presend') {
 		}
 	}
 
-	$formmail->withto = $liste;
-	$formmail->withtofree = (GETPOSTISSET('sendto') ? (GETPOST('sendto', 'alphawithlgt') ? GETPOST('sendto', 'alphawithlgt') : '1') : '1');
-	$formmail->withtocc = $liste;
-	$formmail->withtoccc = getDolGlobalString('MAIN_EMAIL_USECCC');
-	$formmail->withtopic = $topicmail;
-	$formmail->withfile = 2;
-	$formmail->withbody = 1;
-	$formmail->withdeliveryreceipt = 1;
-	$formmail->withcancel = 1;
-
 	//$arrayoffamiliestoexclude=array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
 	if (!isset($arrayoffamiliestoexclude)) {
 		$arrayoffamiliestoexclude = null;
 	}
 
 	// Make substitution in email content
-	if ($object) {
+	if (!empty($object)) {
+		// First we set ->substit (useless, it will be erased later) and ->substit_lines
 		$formmail->setSubstitFromObject($object, $langs);
 	}
 	$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
-	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.urlencode($object->thirdparty->tag).'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
+
+	// Overwrite __SENDEREMAIL_SIGNATURE__ with value select into form
+	if ($formmail->fromtype) {
+		$reg = array();
+		if (preg_match('/user/', $formmail->fromtype, $reg)) {
+			$emailsendersignature = $user->signature;
+		} elseif (preg_match('/company/', $formmail->fromtype, $reg)) {
+			$emailsendersignature = '';
+		} elseif (preg_match('/senderprofile_(\d+)/', $formmail->fromtype, $reg)) {
+			$sql = "SELECT rowid, label, email, signature FROM ".$db->prefix()."c_email_senderprofile";
+			$sql .= " WHERE rowid = ".((int) $reg[1]);
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					$emailsendersignature = $obj->signature;
+				}
+			}
+		}
+	}
+	$substitutionarray['__SENDEREMAIL_SIGNATURE__'] = $emailsendersignature;
+
+	$substitutionarray['__CHECK_READ__'] = "";
+	if (is_object($object) && is_object($object->thirdparty)) {
+		$checkRead= '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php';
+		$checkRead.='?tag='.(!empty($object->thirdparty->tag)?urlencode($object->thirdparty->tag):"");
+		$checkRead.='&securitykey='.(!empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY)?urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY):"");
+		$checkRead.='" width="1" height="1" style="width:1px;height:1px" border="0"/>';
+		$substitutionarray['__CHECK_READ__'] = $checkRead;
+	}
 	$substitutionarray['__PERSONALIZED__'] = ''; // deprecated
 	$substitutionarray['__CONTACTCIVNAME__'] = '';
 	$parameters = array(
@@ -220,7 +270,7 @@ if ($action == 'presend') {
 	);
 	complete_substitutions_array($substitutionarray, $outputlangs, $object, $parameters);
 
-	// Find the good contact address
+	// Find all external contact addresses
 	$tmpobject = $object;
 	if (($object->element == 'shipping' || $object->element == 'reception')) {
 		$origin = $object->origin;
@@ -272,16 +322,45 @@ if ($action == 'presend') {
 
 	if (is_array($contactarr) && count($contactarr) > 0) {
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		$contactstatic = new Contact($db);
+		$tmpcompany = new Societe($db);
 
 		foreach ($contactarr as $contact) {
 			$contactstatic->fetch($contact['id']);
+			// Complete substitution array
 			$substitutionarray['__CONTACT_NAME_'.$contact['code'].'__'] = $contactstatic->getFullName($outputlangs, 1);
 			$substitutionarray['__CONTACT_LASTNAME_'.$contact['code'].'__'] = $contactstatic->lastname;
 			$substitutionarray['__CONTACT_FIRSTNAME_'.$contact['code'].'__'] = $contactstatic->firstname;
 			$substitutionarray['__CONTACT_TITLE_'.$contact['code'].'__'] = $contactstatic->getCivilityLabel();
+
+			// Complete $liste with the $contact
+			if (empty($liste[$contact['id']])) {	// If this contact id not already into the $liste
+				$contacttoshow = '';
+				if (isset($object->thirdparty) && is_object($object->thirdparty)) {
+					if ($contactstatic->fk_soc != $object->thirdparty->id) {
+						$tmpcompany->fetch($contactstatic->fk_soc);
+						if ($tmpcompany->id > 0) {
+							$contacttoshow .= $tmpcompany->name.': ';
+						}
+					}
+				}
+				$contacttoshow .= $contactstatic->getFullName($outputlangs, 1);
+				$contacttoshow .= " <".($contactstatic->email ? $contactstatic->email : $langs->transnoentitiesnoconv("NoEMail")) .">";
+				$liste[$contact['id']] = $contacttoshow;
+			}
 		}
 	}
+
+	$formmail->withto = $liste;
+	$formmail->withtofree = (GETPOST('sendto', 'alphawithlgt') ? GETPOST('sendto', 'alphawithlgt') : '1');
+	$formmail->withtocc = $liste;
+	$formmail->withtoccc = getDolGlobalString('MAIN_EMAIL_USECCC');
+	$formmail->withtopic = $topicmail;
+	$formmail->withfile = 2;
+	$formmail->withbody = 1;
+	$formmail->withdeliveryreceipt = 1;
+	$formmail->withcancel = 1;
 
 	// Array of substitutions
 	$formmail->substit = $substitutionarray;

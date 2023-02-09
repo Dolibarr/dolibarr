@@ -34,7 +34,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
 if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '16.0.0-alpha'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+	define('DOL_VERSION', '18.0.0-alpha'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 }
 
 if (!defined('EURO')) {
@@ -115,6 +115,13 @@ if (!$result && !empty($_SERVER["GATEWAY_INTERFACE"])) {    // If install not do
 	}
 
 	header("Location: ".$path."install/index.php");
+
+	/*
+	print '<br><center>';
+	print 'The conf/conf.php file was not found or is not readable by the web server. If this is your first access, <a href="'.$path.'install/index.php">click here to start the Dolibarr installation process</a> to create it...';
+	print '</center><br>';
+	*/
+
 	exit;
 }
 
@@ -131,10 +138,10 @@ if (!empty($dolibarr_main_prod)) {
 }
 
 // Clean parameters
-$dolibarr_main_data_root = trim($dolibarr_main_data_root);
-$dolibarr_main_url_root = trim(preg_replace('/\/+$/', '', $dolibarr_main_url_root));
+$dolibarr_main_data_root = (empty($dolibarr_main_data_root) ? '' : trim($dolibarr_main_data_root));
+$dolibarr_main_url_root = trim(preg_replace('/\/+$/', '', empty($dolibarr_main_url_root) ? '' : $dolibarr_main_url_root));
 $dolibarr_main_url_root_alt = (empty($dolibarr_main_url_root_alt) ? '' : trim($dolibarr_main_url_root_alt));
-$dolibarr_main_document_root = trim($dolibarr_main_document_root);
+$dolibarr_main_document_root = (empty($dolibarr_main_document_root) ? '' : trim($dolibarr_main_document_root));
 $dolibarr_main_document_root_alt = (empty($dolibarr_main_document_root_alt) ? '' : trim($dolibarr_main_document_root_alt));
 
 if (empty($dolibarr_main_db_port)) {
@@ -172,6 +179,9 @@ if (empty($dolibarr_mailing_limit_sendbyweb)) {
 if (empty($dolibarr_mailing_limit_sendbycli)) {
 	$dolibarr_mailing_limit_sendbycli = 0;
 }
+if (empty($dolibarr_mailing_limit_sendbyday)) {
+	$dolibarr_mailing_limit_sendbyday = 0;
+}
 if (empty($dolibarr_strict_mode)) {
 	$dolibarr_strict_mode = 0; // For debug in php strict mode
 }
@@ -196,7 +206,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 // when we post forms (we allow GET and HEAD to accept direct link from a particular page).
 // Note about $_SERVER[HTTP_HOST/SERVER_NAME]: http://shiflett.org/blog/2006/mar/server-name-versus-http-host
 // See also CSRF protections done into main.inc.php
-if (!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck)) {
+if (!defined('NOCSRFCHECK') && isset($dolibarr_nocsrfcheck) && $dolibarr_nocsrfcheck == 1) {    // If $dolibarr_nocsrfcheck is 0, there is a strict CSRF test with token in main
 	if (!empty($_SERVER['REQUEST_METHOD']) && !in_array($_SERVER['REQUEST_METHOD'], array('GET', 'HEAD')) && !empty($_SERVER['HTTP_HOST'])) {
 		$csrfattack = false;
 		if (empty($_SERVER['HTTP_REFERER'])) {
@@ -243,7 +253,7 @@ if (empty($dolibarr_main_data_root)) {
 // Define some constants
 define('DOL_CLASS_PATH', 'class/'); // Filesystem path to class dir (defined only for some code that want to be compatible with old versions without this parameter)
 define('DOL_DATA_ROOT', $dolibarr_main_data_root); // Filesystem data (documents)
-// Try to autodetect DOL_MAIN_URL_ROOT and DOL_URL_ROOT.
+// Try to autodetect DOL_MAIN_URL_ROOT and DOL_URL_ROOT when root is not directly the main domain.
 // Note: autodetect works only in case 1, 2, 3 and 4 of phpunit test CoreTest.php. For case 5, 6, only setting value into conf.php will works.
 $tmp = '';
 $found = 0;
@@ -273,7 +283,8 @@ foreach ($paths as $tmppath) {	// We check to find (B+start of C)=A
 }
 //print "found=".$found." dolibarr_main_url_root=".$dolibarr_main_url_root."\n";
 if (!$found) {
-	$tmp = $dolibarr_main_url_root; // If autodetect fails (Ie: when using apache alias that point outside default DOCUMENT_ROOT).
+	// There is no subdir that compose the main url root or autodetect fails (Ie: when using apache alias that point outside default DOCUMENT_ROOT).
+	$tmp = $dolibarr_main_url_root;
 } else {
 	$tmp = 'http'.(((empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on') && (empty($_SERVER["SERVER_PORT"]) || $_SERVER["SERVER_PORT"] != 443)) ? '' : 's').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"]) || $_SERVER["SERVER_PORT"] == 80 || $_SERVER["SERVER_PORT"] == 443) ? '' : ':'.$_SERVER["SERVER_PORT"]).($tmp3 ? (preg_match('/^\//', $tmp3) ? '' : '/').$tmp3 : '');
 }
@@ -287,8 +298,9 @@ $suburi = strstr($uri, '/'); // $suburi contains url without domain:port
 if ($suburi == '/') {
 	$suburi = ''; // If $suburi is /, it is now ''
 }
-define('DOL_URL_ROOT', $suburi); // URL relative root ('', '/dolibarr', ...)
-
+if (!defined('DOL_URL_ROOT')) {
+	define('DOL_URL_ROOT', $suburi); // URL relative root ('', '/dolibarr', ...)
+}
 //print DOL_MAIN_URL_ROOT.'-'.DOL_URL_ROOT."\n";
 
 // Define prefix MAIN_DB_PREFIX
@@ -300,9 +312,6 @@ define('MAIN_DB_PREFIX', $dolibarr_main_db_prefix);
  * To use other version than embeded libraries, define here constant to path. Use '' to use include class path autodetect.
  */
 // Path to root libraries
-if (!defined('ADODB_PATH')) {
-	define('ADODB_PATH', (!isset($dolibarr_lib_ADODB_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/adodbtime/' : (empty($dolibarr_lib_ADODB_PATH) ? '' : $dolibarr_lib_ADODB_PATH.'/'));
-}
 if (!defined('TCPDF_PATH')) {
 	define('TCPDF_PATH', (empty($dolibarr_lib_TCPDF_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/tecnickcom/tcpdf/' : $dolibarr_lib_TCPDF_PATH.'/');
 }
@@ -342,10 +351,6 @@ if (!defined('DOL_DEFAULT_TTF_BOLD')) {
 /*
  * Include functions
  */
-
-if (!defined('ADODB_DATE_VERSION')) {
-	include_once ADODB_PATH.'adodb-time.inc.php';
-}
 
 // If password is encoded, we decode it. Note: When page is called for install, $dolibarr_main_db_pass may not be defined yet.
 if ((!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {

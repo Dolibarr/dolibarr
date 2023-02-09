@@ -111,10 +111,19 @@ class modFournisseur extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
+		// Add ability ODT for Supplier orders
 		$this->const[$r][0] = "SUPPLIER_ORDER_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/supplier_orders";
 		$this->const[$r][3] = '';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		// Add ability ODT for Supplier Invoices
+		$this->const[$r][0] = "SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "";
+		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
 
@@ -133,7 +142,7 @@ class modFournisseur extends DolibarrModules
 		$datestart = dol_mktime(23, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
 		$this->cronjobs = array(
 			0 => array(
-				'label'=>'RecurringSupplierInvoices',
+				'label'=>'RecurringSupplierInvoicesJob',
 				'jobtype'=>'method',
 				'class'=>'fourn/class/fournisseur.facture-rec.class.php',
 				'objectname'=>'FactureFournisseurRec',
@@ -142,7 +151,7 @@ class modFournisseur extends DolibarrModules
 				'comment'=>'Generate recurring supplier invoices',
 				'frequency'=>1,
 				'unitfrequency'=>3600 * 24,
-				'priority'=>50,
+				'priority'=>51,
 				'status'=>1,
 				'datestart'=>$datestart
 			));
@@ -317,7 +326,7 @@ class modFournisseur extends DolibarrModules
 			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', 'p.accountancy_code_buy'=>'ProductAccountancyBuyCode', 'project.rowid'=>'ProjectId',
 			'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
 			$this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -325,7 +334,7 @@ class modFournisseur extends DolibarrModules
 			$this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
 		//$this->export_TypeFields_array[$r]=array(
-		//    's.rowid'=>"List:societe:CompanyName",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text',
+		//    's.rowid'=>"Numeric",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text',
 		//    's.ape'=>'Text','s.idprof4'=>'Text','s.tva_intra'=>'Text','f.ref'=>"Text",'f.datec'=>"Date",'f.datef'=>"Date",'f.total_ht'=>"Numeric",'f.total_ttc'=>"Numeric",'f.total_tva'=>"Numeric",
 		//    'f.paye'=>"Boolean",'f.fk_statut'=>'Status','f.note_public'=>"Text",'fd.description'=>"Text",'fd.tva_tx'=>"Text",'fd.qty'=>"Numeric",'fd.total_ht'=>"Numeric",'fd.total_ttc'=>"Numeric",
 		//     'fd.tva'=>"Numeric",'fd.product_type'=>'Numeric','fd.fk_product'=>'List:product:label','p.ref'=>'Text','p.label'=>'Text'
@@ -391,7 +400,7 @@ class modFournisseur extends DolibarrModules
 			'f.fk_statut'=>'InvoiceStatus', 'f.note_public'=>"InvoiceNote", 'p.rowid'=>'PaymentId', 'pf.amount'=>'AmountPayment',
 			'p.datep'=>'DatePayment', 'p.num_paiement'=>'PaymentNumber', 'p.fk_bank'=>'IdTransaction', 'project.rowid'=>'ProjectId', 'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
 			$this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -399,7 +408,7 @@ class modFournisseur extends DolibarrModules
 			$this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
 		//$this->export_TypeFields_array[$r]=array(
-		//	's.rowid'=>"List:societe:CompanyName",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text',
+		//	's.rowid'=>"Numeric",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text',
 		//	's.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.tva_intra'=>'Text','f.ref'=>"Text",'f.datec'=>"Date",'f.datef'=>"Date",
 		//	'f.total_ht'=>"Numeric",'f.total_ttc'=>"Numeric",'f.total_tva'=>"Numeric",'f.paye'=>"Boolean",'f.fk_statut'=>'Status','f.note_public'=>"Text",
 		//	'pf.amount'=>'Numeric','p.datep'=>'Date','p.num_paiement'=>'Numeric'
@@ -458,7 +467,7 @@ class modFournisseur extends DolibarrModules
 			'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.ref'=>'RefSupplier', 'fd.fk_product'=>'ProductId',
 			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', 'project.rowid'=>'ProjectId', 'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
 			$this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -557,7 +566,7 @@ class modFournisseur extends DolibarrModules
 			'f.model_pdf' => 'Model',
 			'f.date_valid' => 'Validation Date'
 		);
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->import_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->import_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
 			$this->import_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -578,6 +587,9 @@ class modFournisseur extends DolibarrModules
 		}
 		// End add extra fields
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'facture_fourn');
+		if (empty($conf->multicurrency->enabled)) {
+			$this->import_fieldshidden_array[$r]['f.multicurrency_code'] = 'const-'.$conf->currency;
+		}
 		$this->import_regex_array[$r] = array('f.ref' => '(SI\d{4}-\d{4}|PROV.{1,32}$)', 'f.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency');
 		$import_sample = array(
 			'f.ref' => '(PROV001)',
@@ -612,7 +624,13 @@ class modFournisseur extends DolibarrModules
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
 		$this->import_updatekeys_array[$r] = array('f.ref' => 'Ref');
 		$this->import_convertvalue_array[$r] = array(
-			//'c.ref'=>array('rule'=>'getrefifauto'),
+			'f.ref' => array(
+				'rule'=>'getrefifauto',
+				'class'=>(empty($conf->global->INVOICE_SUPPLIER_ADDON_NUMBER) ? 'mod_facture_fournisseur_cactus' : $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER),
+				'path'=>"/core/modules/supplier_invoice/".(empty($conf->global->INVOICE_SUPPLIER_ADDON_NUMBER) ? 'mod_facture_fournisseur_cactus' : $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER).'.php',
+				'classobject'=>'FactureFournisseur',
+				'pathobject'=>'/fourn/class/fournisseur.facture.class.php',
+			),
 			'f.fk_soc' => array('rule' => 'fetchidfromref', 'file' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty'),
 			'f.fk_account' => array('rule' => 'fetchidfromref', 'file' => '/compta/bank/class/account.class.php', 'class' => 'Account', 'method' => 'fetch', 'element' => 'bank_account'),
 		);
@@ -626,9 +644,8 @@ class modFournisseur extends DolibarrModules
 		$this->import_tables_array[$r] = array('fd' => MAIN_DB_PREFIX.'facture_fourn_det', 'extra' => MAIN_DB_PREFIX.'facture_fourn_det_extrafields');
 		$this->import_fields_array[$r] = array(
 			'fd.fk_facture_fourn' => 'InvoiceRef*',
-			'fd.fk_parent_line' => 'FacParentLine',
+			'fd.fk_parent_line' => 'ParentLine',
 			'fd.fk_product' => 'IdProduct',
-			'fd.label' => 'Label',
 			'fd.description' => 'LineDescription',
 			'fd.pu_ht' => 'PriceUHT',
 			'fd.pu_ttc' => 'PriceUTTC',
@@ -644,7 +661,7 @@ class modFournisseur extends DolibarrModules
 			'fd.date_end' => 'End Date',
 			'fd.fk_unit' => 'Unit'
 		);
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->import_fields_array[$r]['fd.multicurrency_code'] = 'Currency';
 			$this->import_fields_array[$r]['fd.multicurrency_subprice'] = 'CurrencyRate';
 			$this->import_fields_array[$r]['fd.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -670,7 +687,6 @@ class modFournisseur extends DolibarrModules
 			'fd.fk_facture_fourn' => '(PROV001)',
 			'fd.fk_parent_line' => '',
 			'fd.fk_product' => '',
-			'fd.label' => '',
 			'fd.description' => 'Test Product',
 			'fd.pu_ht' => '50000',
 			'fd.pu_ttc' => '50000',
@@ -720,7 +736,6 @@ class modFournisseur extends DolibarrModules
 			'c.source'            => 'Source',
 			'c.fk_statut'         => 'Status*',
 			'c.billed'            => 'Billed(0/1)',
-			'c.remise_percent'    => 'GlobalDiscount',
 			'c.total_tva'         => 'TotalTVA',
 			'c.total_ht'          => 'TotalHT',
 			'c.total_ttc'         => 'TotalTTC',
@@ -732,7 +747,7 @@ class modFournisseur extends DolibarrModules
 			'c.model_pdf'         => 'Model'
 		);
 
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->import_fields_array[$r]['c.multicurrency_code']      = 'Currency';
 			$this->import_fields_array[$r]['c.multicurrency_tx']        = 'CurrencyRate';
 			$this->import_fields_array[$r]['c.multicurrency_total_ht']  = 'MulticurrencyAmountHT';
@@ -762,6 +777,13 @@ class modFournisseur extends DolibarrModules
 
 		$this->import_updatekeys_array[$r] = array('c.ref' => 'Ref');
 		$this->import_convertvalue_array[$r] = array(
+			'c.ref' => array(
+				'rule'=>'getrefifauto',
+				'class'=>(empty($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER) ? 'mod_commande_fournisseur_muguet' : $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER),
+				'path'=>"/core/modules/supplier_order/".(empty($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER) ? 'mod_commande_fournisseur_muguet' : $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER).'.php',
+				'classobject'=>'CommandeFournisseur',
+				'pathobject'=>'/fourn/class/fournisseur.commande.class.php',
+			),
 			'c.fk_soc' => array(
 				'rule'    => 'fetchidfromref',
 				'file'    => '/societe/class/societe.class.php',
@@ -788,14 +810,12 @@ class modFournisseur extends DolibarrModules
 		$this->import_tables_array[$r] = array('cd' => MAIN_DB_PREFIX.'commande_fournisseurdet', 'extra' => MAIN_DB_PREFIX.'commande_fournisseurdet_extrafields');
 		$this->import_fields_array[$r] = array(
 			'cd.fk_commande'    => 'PurchaseOrder*',
-			'cd.fk_parent_line' => 'PrParentLine',
+			'cd.fk_parent_line' => 'ParentLine',
 			'cd.fk_product'     => 'IdProduct',
-			'cd.label'          => 'Label',
 			'cd.description'    => 'LineDescription',
 			'cd.tva_tx'         => 'LineVATRate',
 			'cd.qty'            => 'LineQty',
 			'cd.remise_percent' => 'Reduc. Percent',
-			'cd.remise'         => 'Reduc.',
 			'cd.subprice'       => 'Sub Price',
 			'cd.total_ht'       => 'LineTotalHT',
 			'cd.total_tva'      => 'LineTotalVAT',
@@ -809,7 +829,7 @@ class modFournisseur extends DolibarrModules
 			'cd.fk_unit'        => 'Unit'
 		);
 
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->import_fields_array[$r]['cd.multicurrency_code'] = 'Currency';
 			$this->import_fields_array[$r]['cd.multicurrency_subprice'] = 'CurrencyRate';
 			$this->import_fields_array[$r]['cd.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -864,7 +884,7 @@ class modFournisseur extends DolibarrModules
 
 		$this->remove($options);
 
-		//ODT template
+		//ODT template for Supplier Orders
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/supplier_orders/template_supplier_order.odt';
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/supplier_orders';
 		$dest = $dirodt.'/template_supplier_order.odt';
@@ -880,10 +900,37 @@ class modFournisseur extends DolibarrModules
 			}
 		}
 
-		$sql = array(
-			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'order_supplier' AND entity = ".((int) $conf->entity),
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."', 'order_supplier', ".((int) $conf->entity).")",
+		$sql_order = array(
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'order_supplier' AND entity = ".((int) $conf->entity),
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."', 'order_supplier', ".((int) $conf->entity).")",
 		);
+
+		//ODT template for Supplier Invoice
+		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/supplier_invoices/template_supplier_invoices.odt';
+		$dirodt = DOL_DATA_ROOT.'/doctemplates/supplier_invoices';
+		$dest = $dirodt.'/template_supplier_invoices.odt';
+
+		if (file_exists($src) && !file_exists($dest)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_mkdir($dirodt);
+			$result = dol_copy($src, $dest, 0, 0);
+			if ($result < 0) {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
+				return 0;
+			}
+		}
+
+		/*
+		$sql_invoice = array(
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[2][2])."' AND type = 'invoice_supplier' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[2][2])."', 'invoice_supplier', ".((int) $conf->entity).")",
+		);
+
+		$sql = array_merge($sql_order, $sql_invoice);
+		*/
+
+		$sql = $sql_order;
 
 		return $this->_init($sql, $options);
 	}

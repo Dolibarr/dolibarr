@@ -34,11 +34,16 @@
  * $type, $text, $description, $line
  */
 
+require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
+
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
+
+global $filtertype;
+if (empty($filtertype))	$filtertype = 0;
 
 
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax, $langs;
@@ -60,7 +65,9 @@ if (empty($outputalsopricetotalwithtax)) {
 }
 
 // add html5 elements
-$domData  = ' data-element="'.$line->element.'"';
+if ($filtertype == 1) $domData  = ' data-element="'.$line->element.'service"';
+else $domData  = ' data-element="'.$line->element.'"';
+
 $domData .= ' data-id="'.$line->id.'"';
 $domData .= ' data-qty="'.$line->qty.'"';
 $domData .= ' data-product_type="'.$line->product_type.'"';
@@ -93,6 +100,17 @@ if ($tmpbom->id > 0) {
 	print $tmpproduct->getNomUrl(1);
 	print ' - '.$tmpproduct->label;
 }
+
+// Line extrafield
+if (!empty($extrafields)) {
+	$temps = $line->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
+	if (!empty($temps)) {
+		print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
+		print $temps;
+		print '</div>';
+	}
+}
+
 print '</td>';
 
 print '<td class="linecolqty nowrap right">';
@@ -100,33 +118,63 @@ $coldisplay++;
 echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
 print '</td>';
 
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-	print '<td class="linecoluseunit nowrap left">';
-	$label = $tmpproduct->getLabelOfUnit('long');
-	if ($label !== '') {
-		print $langs->trans($label);
+if ($filtertype != 1) {
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
+		print '<td class="linecoluseunit nowrap left">';
+		$label = $tmpproduct->getLabelOfUnit('long');
+		if ($label !== '') {
+			print $langs->trans($label);
+		}
+		print '</td>';
 	}
+
+	print '<td class="linecolqtyfrozen nowrap right">';
+	$coldisplay++;
+	echo $line->qty_frozen ? yn($line->qty_frozen) : '';
 	print '</td>';
+	print '<td class="linecoldisablestockchange nowrap right">';
+	$coldisplay++;
+	echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formating role of function price
+	print '</td>';
+
+	print '<td class="linecolefficiency nowrap right">';
+	$coldisplay++;
+	echo $line->efficiency;
+	print '</td>';
+} else {
+	//Unité
+	print '<td class="linecolunit nowrap right">';
+	$coldisplay++;
+
+	if (!empty($line->fk_unit)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+		$unit = new CUnits($this->db);
+		$unit->fetch($line->fk_unit);
+		print (isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '');
+	}
+
+	print '</td>';
+
+	// Work station
+	if (isModEnabled('workstation')) {
+		$workstation = new Workstation($object->db);
+		$res = $workstation->fetch($tmpproduct->fk_default_workstation);
+
+		print '<td class="linecolunit nowrap right">';
+		$coldisplay++;
+		if ($res > 0) echo $workstation->getNomUrl();
+		print '</td>';
+	}
 }
-
-print '<td class="linecolqtyfrozen nowrap right">';
-$coldisplay++;
-echo $line->qty_frozen ? yn($line->qty_frozen) : '';
-print '</td>';
-print '<td class="linecoldisablestockchange nowrap right">';
-$coldisplay++;
-echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formating role of function price
-print '</td>';
-
-print '<td class="linecolefficiency nowrap right">';
-$coldisplay++;
-echo $line->efficiency;
-print '</td>';
-
 $total_cost = 0;
+$tmpbom->calculateCosts();
 print '<td id="costline_'.$line->id.'" class="linecolcost nowrap right">';
 $coldisplay++;
-echo '<span class="amount">'.price($line->total_cost).'</span>';
+if (!empty($line->fk_bom_child)) {
+	echo '<span class="amount">'.price($tmpbom->total_cost * $line->qty).'</span>';
+} else {
+	echo '<span class="amount">'.price($line->total_cost).'</span>';
+}
 print '</td>';
 
 if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
@@ -218,11 +266,23 @@ if ($resql) {
 		}
 
 		// Qty
+		$label = $sub_bom_product->getLabelOfUnit('long');
 		if ($sub_bom_line->qty_frozen > 0) {
 			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty, 0, '', 0, 0).'</td>';
+			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+				print '<td class="linecoluseunit nowrap left">';
+				if ($label !== '') print $langs->trans($label);
+				print '</td>';
+			}
 			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">'.$langs->trans('Yes').'</td>';
 		} else {
 			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * $line->qty, 0, '', 0, 0).'</td>';
+			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+				print '<td class="linecoluseunit nowrap left">';
+				if ($label !== '') print $langs->trans($label);
+				print '</td>';
+			}
+
 			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">&nbsp;</td>';
 		}
 
@@ -239,13 +299,13 @@ if ($resql) {
 		// Cost
 		if (!empty($sub_bom->id)) {
 			$sub_bom->calculateCosts();
-			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price($sub_bom->total_cost * $sub_bom_line->qty * $line->qty).'</span></td>';
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom->total_cost * $sub_bom_line->qty * $line->qty, 'MT')).'</span></td>';
 			$total_cost+= $sub_bom->total_cost * $sub_bom_line->qty * $line->qty;
 		} elseif ($sub_bom_product->cost_price > 0) {
-			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price($sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty).'</span></td>';
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty, 'MT')).'</span></td>';
 			$total_cost+= $sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty;
 		} elseif ($sub_bom_product->pmp > 0) {	// PMP if cost price isn't defined
-			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price($sub_bom_product->pmp * $sub_bom_line->qty * $line->qty).'</span></td>';
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_product->pmp * $sub_bom_line->qty * $line->qty, 'MT')).'</span></td>';
 			$total_cost.= $sub_bom_product->pmp * $sub_bom_line->qty * $line->qty;
 		} else {	// Minimum purchase price if cost price and PMP aren't defined
 			$sql_supplier_price = 'SELECT MIN(price) AS min_price, quantity AS qty FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
@@ -255,7 +315,7 @@ if ($resql) {
 				$obj = $object->db->fetch_object($resql_supplier_price);
 				$line_cost = $obj->min_price/$obj->qty * $sub_bom_line->qty * $line->qty;
 
-				print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price($line_cost).'</span></td>';
+				print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price2num($line_cost, 'MT').'</span></td>';
 				$total_cost+= $line_cost;
 			}
 		}
@@ -266,21 +326,5 @@ if ($resql) {
 	}
 }
 
-// Replace of the total_cost value by the sum of all sub-BOM lines total_cost
-// TODO Remove this bad practice. We should not replace content of ouput using javascript but value should be good during generation of output.
-if ($total_cost > 0) {
-	$line->total_cost = price($total_cost);
-	?>
-	<script>
-		$('#costline_<?php echo $line->id?>').html('<?php echo "<span class=\"amount\">".price($total_cost)."</span>"; ?>');
-	</script>
-	<?php
-}
-
-
-//Line extrafield
-if (!empty($extrafields)) {
-	print $line->showOptionals($extrafields, 'view', array('style'=>'class="drag drop oddeven"', 'colspan'=>$coldisplay), '', '', 1, 'line');
-}
 
 print "<!-- END PHP TEMPLATE objectline_view.tpl.php -->\n";

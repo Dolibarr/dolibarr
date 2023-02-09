@@ -240,12 +240,9 @@ class EcmFiles extends CommonObject
 		}
 
 		// If ref not defined
-		$ref = '';
-		if (!empty($this->ref)) {
-			$ref = $this->ref;
-		} else {
+		if (empty($this->ref)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
-			$ref = dol_hash($this->filepath.'/'.$this->filename, 3);
+			$this->ref = dol_hash($this->filepath.'/'.$this->filename, 3);
 		}
 
 		$maxposition = 0;
@@ -300,7 +297,7 @@ class EcmFiles extends CommonObject
 		$sql .= 'src_object_type,';
 		$sql .= 'src_object_id';
 		$sql .= ') VALUES (';
-		$sql .= " '".$this->db->escape($ref)."', ";
+		$sql .= " '".$this->db->escape($this->ref)."', ";
 		$sql .= ' '.(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").',';
 		$sql .= ' '.(!isset($this->share) ? 'NULL' : "'".$this->db->escape($this->share)."'").',';
 		$sql .= ' '.((int) $this->entity).',';
@@ -407,7 +404,7 @@ class EcmFiles extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE 1 = 1';
 		/* Fetching this table depends on filepath+filename, it must not depends on entity because filesystem on disk does not know what is Dolibarr entities
-		 if (! empty($conf->multicompany->enabled)) {
+		 if (isModEnabled('multicompany')) {
 		 $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
 		 }*/
 		if ($relativepath) {
@@ -546,7 +543,7 @@ class EcmFiles extends CommonObject
 		}
 		$sql .= ' WHERE 1 = 1';
 		/* Fetching this table depends on filepath+filename, it must not depends on entity
-		 if (! empty($conf->multicompany->enabled)) {
+		 if (isModEnabled('multicompany')) {
 		 $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
 		 }*/
 		if (count($sqlwhere) > 0) {
@@ -569,7 +566,7 @@ class EcmFiles extends CommonObject
 				$line = new EcmfilesLine();
 
 				$line->id = $obj->rowid;
-				$line->ref = $obj->ref;
+				$line->ref = $obj->rowid;
 				$line->label = $obj->label;
 				$line->share = $obj->share;
 				$line->entity = $obj->entity;
@@ -751,7 +748,13 @@ class EcmFiles extends CommonObject
 		}
 
 		// If you need to delete child tables to, you can insert them here
-
+		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if (!$result) {
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
+				$error++;
+			}
+		}
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' WHERE rowid='.((int) $this->id);

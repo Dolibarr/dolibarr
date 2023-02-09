@@ -41,6 +41,7 @@ AddToDraft=Ajouter au projet
 CloseBox=Supprimer le widget de votre tableau de bord
 Resiliate=Mettre fin
 NotValidated=Pas validé
+OpenVerb=Ouverte
 NoteSomeFeaturesAreDisabled=Attention, seules quelques modules/fonctionnalités ont été activés dans cette démo.
 DefaultModel=Modèle de docteur par défaut
 Connection=Identifiant

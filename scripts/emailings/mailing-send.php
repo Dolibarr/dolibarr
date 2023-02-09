@@ -71,6 +71,8 @@ if (empty($conf->global->MAILING_LIMIT_SENDBYCLI)) {
 	$conf->global->MAILING_LIMIT_SENDBYCLI = 0;
 }
 
+$langs->loadLangs(array("main", "mails"));
+
 
 /*
  * Main
@@ -80,7 +82,7 @@ if (empty($conf->global->MAILING_LIMIT_SENDBYCLI)) {
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
 if (!empty($conf->global->MAILING_DELAY)) {
-	print 'A delay of '.((float) $conf->global->MAILING_DELAY * 1000000).' millisecond has been set between each email'."\n";
+	print 'A delay of '.((float) $conf->global->MAILING_DELAY * 1000000).' seconds has been set between each email'."\n";
 }
 
 if ($conf->global->MAILING_LIMIT_SENDBYCLI == '-1') {
@@ -307,7 +309,8 @@ if ($resql) {
 						}
 						// Fabrication du mail
 						$trackid = 'emailing-'.$obj->fk_mailing.'-'.$obj->rowid;
-						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing');
+						$upload_dir_tmp = $upload_dir;
+						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing', '', $upload_dir_tmp);
 
 						if ($mail->error) {
 							$res = 0;

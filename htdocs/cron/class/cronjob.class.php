@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,6 +23,7 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 
 
 /**
@@ -108,64 +109,80 @@ class Cronjob extends CommonObject
 	public $datelastresult = '';
 
 	/**
-	 * @var string Last result from end job execution
+	 * @var string 			Last result from end job execution
 	 */
 	public $lastresult;
 
 	/**
-	 * @var string Last output from end job execution
+	 * @var string 			Last output from end job execution
 	 */
 	public $lastoutput;
 
 	/**
-	 * @var string Unit frequency of job execution
+	 * @var string 			Unit frequency of job execution
 	 */
 	public $unitfrequency;
 
 	/**
-	 * @var int Frequency of job execution
+	 * @var int 			Frequency of job execution
 	 */
 	public $frequency;
 
 	/**
-	 * @var int Status
+	 * @var int 			Status
 	 */
 	public $status;
 
 	/**
-	 * @var int Is job processing
+	 * @var int 			Is job running ?
 	 */
 	public $processing;
 
 	/**
-	 * @var int ID
+	 * @var int 			The job current PID
+	 */
+	public $pid;
+
+	/**
+	 * @var string 			Email when an error occurs
+	 */
+	public $email_alert;
+
+	/**
+	 * @var int 			User ID of creation
 	 */
 	public $fk_user_author;
 
 	/**
-	 * @var int ID
+	 * @var int 			User ID of last modification
 	 */
 	public $fk_user_mod;
 
 	/**
-	 * @var int Number of run job execution
+	 * @var int 			Number of run job execution
 	 */
 	public $nbrun;
 
 	/**
-	 * @var int Maximum run job execution
+	 * @var int 			Maximum run job execution
 	 */
 	public $maxrun;
 
 	/**
-	 * @var string Libname
+	 * @var string 			Libname
 	 */
 	public $libname;
 
 	/**
-	 * @var string A test condition to know if job is visible/qualified
+	 * @var string 			A test condition to know if job is visible/qualified
 	 */
 	public $test;
+
+	/**
+	 * @var string 			Autodelete
+	 */
+	public $autodelete;
+
 
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;
@@ -262,8 +279,8 @@ class Cronjob extends CommonObject
 
 		// Check parameters
 		// Put here code to add a control on parameters values
-		if (dol_strlen($this->datestart) == 0) {
-			$this->errors[] = $langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronDtStart'));
+		if (dol_strlen($this->datenextrun) == 0) {
+			$this->errors[] = $langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronDtNextLaunch'));
 			$error++;
 		}
 		if (empty($this->label)) {
@@ -351,15 +368,15 @@ class Cronjob extends CommonObject
 		$sql .= " ".(!isset($this->datelastresult) || dol_strlen($this->datelastresult) == 0 ? 'NULL' : "'".$this->db->idate($this->datelastresult)."'").",";
 		$sql .= " ".(!isset($this->lastoutput) ? 'NULL' : "'".$this->db->escape($this->lastoutput)."'").",";
 		$sql .= " ".(!isset($this->unitfrequency) ? 'NULL' : "'".$this->db->escape($this->unitfrequency)."'").",";
-		$sql .= " ".(!isset($this->frequency) ? '0' : $this->frequency).",";
-		$sql .= " ".(!isset($this->status) ? '0' : $this->status).",";
-		$sql .= " ".$user->id.",";
-		$sql .= " ".$user->id.",";
+		$sql .= " ".(!isset($this->frequency) ? '0' : ((int) $this->frequency)).",";
+		$sql .= " ".(!isset($this->status) ? '0' : ((int) $this->status)).",";
+		$sql .= " ".((int) $user->id).",";
+		$sql .= " ".((int) $user->id).",";
 		$sql .= " ".(!isset($this->note_private) ? 'NULL' : "'".$this->db->escape($this->note_private)."'").",";
-		$sql .= " ".(!isset($this->nbrun) ? '0' : $this->db->escape($this->nbrun)).",";
-		$sql .= " ".(empty($this->maxrun) ? '0' : $this->db->escape($this->maxrun)).",";
+		$sql .= " ".(!isset($this->nbrun) ? '0' : ((int) $this->nbrun)).",";
+		$sql .= " ".(empty($this->maxrun) ? '0' : ((int) $this->maxrun)).",";
 		$sql .= " ".(!isset($this->libname) ? 'NULL' : "'".$this->db->escape($this->libname)."'").",";
-		$sql .= " ".(!isset($this->test) ? 'NULL' : "'".$this->db->escape($this->test)."'")."";
+		$sql .= " ".(!isset($this->test) ? 'NULL' : "'".$this->db->escape($this->test)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -377,10 +394,6 @@ class Cronjob extends CommonObject
 
 		// Commit or rollback
 		if ($error) {
-			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
 			$this->db->rollback();
 			return -1 * $error;
 		} else {
@@ -426,6 +439,8 @@ class Cronjob extends CommonObject
 		$sql .= " t.frequency,";
 		$sql .= " t.status,";
 		$sql .= " t.processing,";
+		$sql .= " t.pid,";
+		$sql .= " t.email_alert,";
 		$sql .= " t.fk_user_author,";
 		$sql .= " t.fk_user_mod,";
 		$sql .= " t.note as note_private,";
@@ -474,6 +489,8 @@ class Cronjob extends CommonObject
 				$this->frequency = $obj->frequency;
 				$this->status = $obj->status;
 				$this->processing = $obj->processing;
+				$this->pid = $obj->pid;
+				$this->email_alert = $obj->email_alert;
 				$this->fk_user_author = $obj->fk_user_author;
 				$this->fk_user_mod = $obj->fk_user_mod;
 				$this->note_private = $obj->note_private;
@@ -491,9 +508,9 @@ class Cronjob extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Load object in memory from the database
+	 *  Load list of cron jobs in a memory array from the database
+	 *  @TODO Use object CronJob and not CronJobLine.
 	 *
 	 *  @param	string		$sortorder      sort order
 	 *  @param	string		$sortfield      sort field
@@ -504,11 +521,8 @@ class Cronjob extends CommonObject
 	 *  @param  int         $processing     Processing or not
 	 *  @return int          			    <0 if KO, >0 if OK
 	 */
-	public function fetch_all($sortorder = 'DESC', $sortfield = 't.rowid', $limit = 0, $offset = 0, $status = 1, $filter = '', $processing = -1)
+	public function fetchAll($sortorder = 'DESC', $sortfield = 't.rowid', $limit = 0, $offset = 0, $status = 1, $filter = '', $processing = -1)
 	{
-		// phpcs:enable
-		global $langs;
-
 		$this->lines = array();
 
 		$sql = "SELECT";
@@ -537,6 +551,8 @@ class Cronjob extends CommonObject
 		$sql .= " t.frequency,";
 		$sql .= " t.status,";
 		$sql .= " t.processing,";
+		$sql .= " t.pid,";
+		$sql .= " t.email_alert,";
 		$sql .= " t.fk_user_author,";
 		$sql .= " t.fk_user_mod,";
 		$sql .= " t.note as note_private,";
@@ -575,7 +591,7 @@ class Cronjob extends CommonObject
 			$sql .= " WHERE ".implode(' AND ', $sqlwhere);
 		}
 
-		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -613,6 +629,8 @@ class Cronjob extends CommonObject
 					$line->frequency = $obj->frequency;
 					$line->status = $obj->status;
 					$line->processing = $obj->processing;
+					$line->pid = $obj->pid;
+					$line->email_alert = $obj->email_alert;
 					$line->fk_user_author = $obj->fk_user_author;
 					$line->fk_user_mod = $obj->fk_user_mod;
 					$line->note_private = $obj->note_private;
@@ -714,11 +732,17 @@ class Cronjob extends CommonObject
 		if (empty($this->processing)) {
 			$this->processing = 0;
 		}
+		if (empty($this->pid)) {
+			$this->pid = null;
+		}
+		if (empty($this->email_alert)) {
+			$this->email_alert = '';
+		}
 
 		// Check parameters
 		// Put here code to add a control on parameters values
-		if (dol_strlen($this->datestart) == 0) {
-			$this->errors[] = $langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronDtStart'));
+		if (dol_strlen($this->datenextrun) == 0) {
+			$this->errors[] = $langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronDtNextLaunch'));
 			$error++;
 		}
 		if ((dol_strlen($this->datestart) != 0) && (dol_strlen($this->dateend) != 0) && ($this->dateend < $this->datestart)) {
@@ -758,7 +782,7 @@ class Cronjob extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."cronjob SET";
-		$sql .= " entity=".(isset($this->entity) ? $this->db->escape($this->entity) : $conf->entity).",";
+		$sql .= " entity=".(isset($this->entity) ? ((int) $this->entity) : $conf->entity).",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " jobtype=".(isset($this->jobtype) ? "'".$this->db->escape($this->jobtype)."'" : "null").",";
 		$sql .= " command=".(isset($this->command) ? "'".$this->db->escape($this->command)."'" : "null").",";
@@ -768,7 +792,7 @@ class Cronjob extends CommonObject
 		$sql .= " params=".(isset($this->params) ? "'".$this->db->escape($this->params)."'" : "null").",";
 		$sql .= " md5params=".(isset($this->md5params) ? "'".$this->db->escape($this->md5params)."'" : "null").",";
 		$sql .= " module_name=".(isset($this->module_name) ? "'".$this->db->escape($this->module_name)."'" : "null").",";
-		$sql .= " priority=".(isset($this->priority) ? $this->priority : "null").",";
+		$sql .= " priority=".(isset($this->priority) ? ((int) $this->priority) : "null").",";
 		$sql .= " datelastrun=".(dol_strlen($this->datelastrun) != 0 ? "'".$this->db->idate($this->datelastrun)."'" : 'null').",";
 		$sql .= " datenextrun=".(dol_strlen($this->datenextrun) != 0 ? "'".$this->db->idate($this->datenextrun)."'" : 'null').",";
 		$sql .= " dateend=".(dol_strlen($this->dateend) != 0 ? "'".$this->db->idate($this->dateend)."'" : 'null').",";
@@ -780,7 +804,9 @@ class Cronjob extends CommonObject
 		$sql .= " frequency=".(isset($this->frequency) ? $this->frequency : "null").",";
 		$sql .= " status=".(isset($this->status) ? $this->status : "null").",";
 		$sql .= " processing=".((isset($this->processing) && $this->processing > 0) ? $this->processing : "0").",";
-		$sql .= " fk_user_mod=".$user->id.",";
+		$sql .= " pid=".(isset($this->pid) ? ((int) $this->pid) : "null").",";
+		$sql .= " email_alert = ".(isset($this->email_alert) ? "'".$this->db->escape($this->email_alert)."'" : "null").",";
+		$sql .= " fk_user_mod = ".((int) $user->id).",";
 		$sql .= " note=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " nbrun=".((isset($this->nbrun) && $this->nbrun > 0) ? $this->nbrun : "null").",";
 		$sql .= " maxrun=".((isset($this->maxrun) && $this->maxrun > 0) ? $this->maxrun : "0").",";
@@ -873,7 +899,7 @@ class Cronjob extends CommonObject
 
 		// Clear fields
 		$object->status = self::STATUS_DISABLED;
-		$object->label = $langs->trans("CopyOf").' '.$object->label;
+		$object->label = $langs->trans("CopyOf").' '.$langs->trans($object->label);
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -932,6 +958,8 @@ class Cronjob extends CommonObject
 		$this->frequency = '';
 		$this->status = 0;
 		$this->processing = 0;
+		$this->pid = null;
+		$this->email_alert = '';
 		$this->fk_user_author = 0;
 		$this->fk_user_mod = 0;
 		$this->note_private = '';
@@ -968,7 +996,16 @@ class Cronjob extends CommonObject
 			$label .= ' '.$this->getLibStatut(5);
 		}
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		$label .= '<br><b>'.$langs->trans('Title').':</b> '.$this->label;
+		$label .= '<br><b>'.$langs->trans('Title').':</b> '.$langs->trans($this->label);
+		if ($this->label != $langs->trans($this->label)) {
+			$label .= ' <span class="opacitymedium">('.$this->label.')</span>';
+		}
+		if (!empty($this->datestart)) {
+			$label .= '<br><b>'.$langs->trans('CronDtStart').':</b> '.dol_print_date($this->datestart, 'dayhour', 'tzuserrel');
+		}
+		if (!empty($this->dateend)) {
+			$label .= '<br><b>'.$langs->trans('CronDtEnd').':</b> '.dol_print_date($this->dateend, 'dayhour', 'tzuserrel');
+		}
 
 		$url = DOL_URL_ROOT.'/cron/card.php?id='.$this->id;
 
@@ -1032,10 +1069,11 @@ class Cronjob extends CommonObject
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 				$this->id = $obj->rowid;
+
+				$this->user_modification_id = $obj->fk_user_mod;
+				$this->user_creation_id = $obj->fk_user_author;
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->tms);
-				$this->user_modification = $obj->fk_user_mod;
-				$this->user_creation = $obj->fk_user_author;
 			}
 			$this->db->free($resql);
 
@@ -1112,6 +1150,7 @@ class Cronjob extends CommonObject
 			@set_time_limit($ExecTimeLimit); // Need more than 240 on Windows 7/64
 			error_reporting($err);
 		}
+		$MemoryLimit = 0;
 		if (!empty($MemoryLimit)) {
 			@ini_set('memory_limit', $MemoryLimit);
 		}
@@ -1122,6 +1161,7 @@ class Cronjob extends CommonObject
 		$this->lastoutput = '';
 		$this->lastresult = '';
 		$this->processing = 1; // To know job was started
+		$this->pid = function_exists('getmypid') ? getmypid() : null; // Avoid dol_getmypid to get null if the function is not available
 		$this->nbrun = $this->nbrun + 1;
 		$result = $this->update($user); // This include begin/commit
 		if ($result < 0) {
@@ -1188,7 +1228,8 @@ class Cronjob extends CommonObject
 				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params.");", LOG_DEBUG);
 
 				// Create Object for the called module
-				$object = new $this->objectname($this->db);
+				$nameofclass = $this->objectname;
+				$object = new $nameofclass($this->db);
 				if ($this->entity > 0) {
 					$object->entity = $this->entity; // We work on a dedicated entity
 				}
@@ -1221,13 +1262,13 @@ class Cronjob extends CommonObject
 					dol_syslog(get_class($this)."::run_jobs END result=".$result." error=".$errmsg, LOG_ERR);
 
 					$this->error = $errmsg;
-					$this->lastoutput = ($object->output ? $object->output."\n" : "").$errmsg;
+					$this->lastoutput = (!empty($object->output) ? $object->output."\n" : "").$errmsg;
 					$this->lastresult = is_numeric($result) ? $result : -1;
 					$retval = $this->lastresult;
 					$error++;
 				} else {
 					dol_syslog(get_class($this)."::run_jobs END");
-					$this->lastoutput = $object->output;
+					$this->lastoutput = (!empty($object->output) ? $object->output : "");
 					$this->lastresult = var_export($result, true);
 					$retval = $this->lastresult;
 				}
@@ -1313,6 +1354,7 @@ class Cronjob extends CommonObject
 
 		$this->datelastresult = dol_now();
 		$this->processing = 0;
+		$this->pid = null;
 		$result = $this->update($user); // This include begin/commit
 		if ($result < 0) {
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
@@ -1321,6 +1363,16 @@ class Cronjob extends CommonObject
 		}
 
 		$conf->setEntityValues($this->db, $savcurrententity);
+
+		if ($error && !empty($this->email_alert)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+			$subject = $langs->trans("ErrorInBatch", $this->label);
+			$msg = $langs->trans("ErrorInBatch", $this->label);
+			$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+			$cmailfile = new CMailFile($subject, $this->email_alert, $from, $msg);
+			$result = $cmailfile->sendfile();	// Do not test result
+		}
+
 		return $error ?-1 : 1;
 	}
 
@@ -1357,21 +1409,30 @@ class Cronjob extends CommonObject
 
 		if (empty($this->datenextrun)) {
 			if (empty($this->datestart)) {
-				$this->datenextrun = $now + ($this->frequency * $this->unitfrequency);
+				if ($this->unitfrequency == 2678400) {
+					$this->datenextrun = dol_time_plus_duree($now, $this->frequency, 'm');
+				} else {
+					$this->datenextrun = $now + ($this->frequency * $this->unitfrequency);
+				}
 			} else {
-				$this->datenextrun = $this->datestart + ($this->frequency * $this->unitfrequency);
+				if ($this->unitfrequency == 2678400) {
+					$this->datenextrun = dol_time_plus_duree($this->datestart, $this->frequency, 'm');
+				} else {
+					$this->datenextrun = $this->datestart + ($this->frequency * $this->unitfrequency);
+				}
 			}
 		}
 
 		if ($this->datenextrun < $now && $this->frequency > 0 && $this->unitfrequency > 0) {
 			// Loop until date is after future
 			while ($this->datenextrun < $now) {
-				$this->datenextrun += ($this->frequency * $this->unitfrequency);
-
-				// TODO For exact frequency (every month, every year, ...), use instead a dol_time_plus_duree($time, $duration_value, $duration_unit)
+				if ($this->unitfrequency == 2678400) {
+					$this->datenextrun = dol_time_plus_duree($this->datenextrun, $this->frequency, 'm');
+				} else {
+					$this->datenextrun += ($this->frequency * $this->unitfrequency);
+				}
 			}
 		} else {
-			//$this->datenextrun=$this->datenextrun + ($this->frequency * $this->unitfrequency);
 			dol_syslog(get_class($this)."::reprogram_jobs datenextrun is already in future, we do not change it");
 		}
 
@@ -1465,6 +1526,8 @@ class Cronjobline
 	 */
 	public $id;
 
+	public $entity;
+
 	/**
 	 * @var string Ref
 	 */
@@ -1491,10 +1554,12 @@ class Cronjobline
 	public $datenextrun = '';
 	public $dateend = '';
 	public $datestart = '';
+	public $datelastresult = '';
 	public $lastresult = '';
 	public $lastoutput;
 	public $unitfrequency;
 	public $frequency;
+	public $processing;
 
 	/**
 	 * @var int Status
@@ -1512,8 +1577,10 @@ class Cronjobline
 	public $fk_user_mod;
 
 	public $note;
+	public $note_private;
 	public $nbrun;
 	public $libname;
+	public $test;
 
 	/**
 	 *  Constructor

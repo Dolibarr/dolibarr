@@ -30,3 +30,4 @@ NonShippable=غير قابل للشحن
 ShowShippableStatus=إظهار علامة قابل للشحن
 ShowReceiving=عرض إيصال الاستلام
 NonExistentOrder=امر غير موجود
+StockQuantitiesAlreadyAllocatedOnPreviousLines = كميات المخزون المخصصة بالفعل في الأسطر السابقة

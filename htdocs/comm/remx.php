@@ -26,6 +26,7 @@
 
 if (! defined('CSRFCHECK_WITH_TOKEN')) define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -52,6 +53,9 @@ if ($user->socid > 0) {
 }
 $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
 
+$permissiontocreate = ($user->rights->societe->creer || $user->rights->facture->creer);
+
+
 
 /*
  * Actions
@@ -62,7 +66,7 @@ if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
 	 exit;
 }
 
-if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $user->rights->societe->creer) {
+if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permissiontocreate) {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
 
@@ -153,16 +157,17 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $user-
 	}
 }
 
-if ($action == 'setremise' && $user->rights->societe->creer) {
+if ($action == 'setremise' && $permissiontocreate) {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
 
-	$amount_ht = price2num(GETPOST('amount_ht', 'alpha'));
+	$amount = price2num(GETPOST('amount', 'alpha'), '', 2);
 	$desc = GETPOST('desc', 'alpha');
 	$tva_tx = GETPOST('tva_tx', 'alpha');
 	$discount_type = GETPOSTISSET('discount_type') ? GETPOST('discount_type', 'alpha') : 0;
+	$price_base_type = GETPOST('price_base_type', 'alpha');
 
-	if ($amount_ht > 0) {
+	if ($amount > 0) {
 		$error = 0;
 		if (empty($desc)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ReasonDiscount")), null, 'errors');
@@ -172,14 +177,14 @@ if ($action == 'setremise' && $user->rights->societe->creer) {
 		if (!$error) {
 			$soc = new Societe($db);
 			$soc->fetch($id);
-			$discountid = $soc->set_remise_except($amount_ht, $user, $desc, $tva_tx, $discount_type);
+			$discountid = $soc->set_remise_except($amount, $user, $desc, $tva_tx, $discount_type, $price_base_type);
 
 			if ($discountid > 0) {
 				if (!empty($backtopage)) {
-					header("Location: ".$backtopage.'&discountid='.$discountid);
+					header("Location: ".$backtopage.'&discountid='.((int) $discountid));
 					exit;
 				} else {
-					header("Location: remx.php?id=".$id);
+					header("Location: remx.php?id=".((int) $id));
 					exit;
 				}
 			} else {
@@ -192,7 +197,7 @@ if ($action == 'setremise' && $user->rights->societe->creer) {
 	}
 }
 
-if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes' && $user->rights->societe->creer) {
+if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes' && $permissiontocreate) {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
 
@@ -230,9 +235,8 @@ if ($socid > 0) {
 	$isCustomer = $object->client == 1 || $object->client == 3;
 	$isSupplier = $object->fournisseur == 1;
 
-	/*
-	 * Display tabs
-	 */
+	// Display tabs
+
 	$head = societe_prepare_head($object);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
@@ -261,6 +265,7 @@ if ($socid > 0) {
 	}
 
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="border centpercent tableforfield borderbottom">';
 
 	if ($isCustomer) {	// Calcul avoirs client en cours
@@ -284,11 +289,11 @@ if ($socid > 0) {
 		}
 
 		print '<tr><td class="titlefield">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
-		print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
+		print '<td class="amount">'.price($remise_all, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").'</td></tr>';
 
 		if (!empty($user->fk_soc)) {    // No need to show this for external users
 			print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
-			print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
+			print '<td class="amount">'.price($remise_user, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").'</td></tr>';
 		}
 	}
 
@@ -314,17 +319,18 @@ if ($socid > 0) {
 		}
 
 		print '<tr><td class="titlefield">'.$langs->trans("SupplierAbsoluteDiscountAllUsers").'</td>';
-		print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
+		print '<td class="amount">'.price($remise_all, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").'</td></tr>';
 
 		if (!empty($user->fk_soc)) {    // No need to show this for external users
 			print '<tr><td>'.$langs->trans("SupplierAbsoluteDiscountMy").'</td>';
-			print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
+			print '<td class="amount">'.price($remise_user, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").'</td></tr>';
 		}
 	}
 
 	print '</table>';
-
 	print '</div>';
+
+	print '</div>';	// close fichecenter
 
 	print dol_get_fiche_end();
 
@@ -345,6 +351,8 @@ if ($socid > 0) {
 
 		print dol_get_fiche_head();
 
+
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="border centpercent">';
 		if ($isCustomer && $isSupplier) {
 			print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td>';
@@ -352,9 +360,19 @@ if ($socid > 0) {
 			print ' &nbsp; <input type="radio" name="discount_type" id="discount_type_1" value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
 			print '</td></tr>';
 		}
-		print '<tr><td class="titlefield fieldrequired">'.$langs->trans("AmountHT").'</td>';
-		print '<td><input type="text" size="5" name="amount_ht" value="'.price2num(GETPOST("amount_ht")).'">';
+
+		// Amount
+		print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Amount").'</td>';
+		print '<td><input type="text" size="5" name="amount" value="'.price2num(GETPOST("amount")).'" autofocus>';
 		print '<span class="hideonsmartphone">&nbsp;'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
+
+		// Price base (HT / TTC)
+		print '<tr><td class="titlefield">'.$langs->trans("PriceBase").'</td>';
+		print '<td>';
+		print $form->selectPriceBaseType(GETPOST("price_base_type"), "price_base_type");
+		print '</td></tr>';
+
+		// VAT
 		print '<tr><td>'.$langs->trans("VAT").'</td>';
 		print '<td>';
 		print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : 0, $mysoc, $object, 0, 0, '', 0, 1);
@@ -363,6 +381,7 @@ if ($socid > 0) {
 		print '<td><input type="text" class="quatrevingtpercent" name="desc" value="'.GETPOST('desc', 'alphanohtml').'"></td></tr>';
 
 		print "</table>";
+		print '</div>';
 
 		print dol_get_fiche_end();
 	}
@@ -382,7 +401,7 @@ if ($socid > 0) {
 
 	print '<br>';
 
-	if ($_GET['action'] == 'remove') {
+	if ($action == 'remove') {
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.GETPOST('remid'), $langs->trans('RemoveDiscount'), $langs->trans('ConfirmRemoveDiscount'), 'confirm_remove', '', 0, 1);
 	}
 
@@ -424,13 +443,13 @@ if ($socid > 0) {
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
 			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
 			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
-			if (!empty($conf->multicurrency->enabled)) {
-				print '<td class="right">'.$langs->trans("MulticurrencyAmountHT").'</td>';
+			if (isModEnabled('multicompany')) {
+				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountHT")).'">'.$langs->trans("MulticurrencyAmountHT").'</td>';
 			}
 			print '<td class="right">'.$langs->trans("VATRate").'</td>';
 			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
-			if (!empty($conf->multicurrency->enabled)) {
-				print '<td class="right">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
+			if (isModEnabled('multicompany')) {
+				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountTTC")).'">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
 			}
 			print '<td width="100" class="center">'.$langs->trans("DiscountOfferedBy").'</td>';
 			print '<td width="50">&nbsp;</td>';
@@ -445,7 +464,7 @@ if ($socid > 0) {
 					$obj = $db->fetch_object($resql);
 
 					print '<tr class="oddeven">';
-					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour').'</td>';
+					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour', 'tzuserrel').'</td>';
 					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description)) {
 						print '<td class="minwidth100">';
 						$facturestatic->id = $obj->fk_facture_source;
@@ -472,15 +491,15 @@ if ($socid > 0) {
 						print $obj->description;
 						print '</td>';
 					}
-					print '<td class="nowrap">'.$langs->trans("NotConsumed").'</td>';
-					print '<td class="right">'.price($obj->amount_ht).'</td>';
-					if (!empty($conf->multicurrency->enabled)) {
-						print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
+					print '<td class="nowrap"><span class="opacitymedium">'.$langs->trans("NotConsumed").'</span></td>';
+					print '<td class="right amount">'.price($obj->amount_ht).'</td>';
+					if (isModEnabled('multicompany')) {
+						print '<td class="right amount">'.price($obj->multicurrency_amount_ht).'</td>';
 					}
 					print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
-					print '<td class="right">'.price($obj->amount_ttc).'</td>';
-					if (!empty($conf->multicurrency->enabled)) {
-						print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
+					print '<td class="right amount">'.price($obj->amount_ttc).'</td>';
+					if (isModEnabled('multicompany')) {
+						print '<td class="right amount">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
 					print '<td class="center">';
 					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
@@ -503,7 +522,7 @@ if ($socid > 0) {
 				}
 			} else {
 				$colspan = 8;
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled('multicompany')) {
 					$colspan += 2;
 				}
 				print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
@@ -562,13 +581,13 @@ if ($socid > 0) {
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
 			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
 			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
-			if (!empty($conf->multicurrency->enabled)) {
-				print '<td class="right">'.$langs->trans("MulticurrencyAmountHT").'</td>';
+			if (isModEnabled('multicompany')) {
+				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountHT")).'">'.$langs->trans("MulticurrencyAmountHT").'</td>';
 			}
 			print '<td class="right">'.$langs->trans("VATRate").'</td>';
 			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
-			if (!empty($conf->multicurrency->enabled)) {
-				print '<td class="right">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
+			if (isModEnabled('multicompany')) {
+				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountTTC")).'">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
 			}
 			print '<td width="100" class="center">'.$langs->trans("DiscountOfferedBy").'</td>';
 			print '<td width="50">&nbsp;</td>';
@@ -583,7 +602,7 @@ if ($socid > 0) {
 					$obj = $db->fetch_object($resql);
 
 					print '<tr class="oddeven">';
-					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour').'</td>';
+					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour', 'tzuserrel').'</td>';
 					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description)) {
 						print '<td class="minwidth100">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
@@ -610,15 +629,15 @@ if ($socid > 0) {
 						print $obj->description;
 						print '</td>';
 					}
-					print '<td class="nowrap">'.$langs->trans("NotConsumed").'</td>';
-					print '<td class="right">'.price($obj->amount_ht).'</td>';
-					if (!empty($conf->multicurrency->enabled)) {
-						print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
+					print '<td class="nowrap"><span class="opacitymedium">'.$langs->trans("NotConsumed").'</span></td>';
+					print '<td class="right amount">'.price($obj->amount_ht).'</td>';
+					if (isModEnabled('multicompany')) {
+						print '<td class="right amount">'.price($obj->multicurrency_amount_ht).'</td>';
 					}
 					print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
-					print '<td class="right">'.price($obj->amount_ttc).'</td>';
-					if (!empty($conf->multicurrency->enabled)) {
-						print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
+					print '<td class="right amount">'.price($obj->amount_ttc).'</td>';
+					if (isModEnabled('multicompany')) {
+						print '<td class="right amount">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
 					print '<td class="center">';
 					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
@@ -641,7 +660,7 @@ if ($socid > 0) {
 				}
 			} else {
 				$colspan = 8;
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled('multicompany')) {
 					$colspan += 2;
 				}
 				print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
@@ -735,13 +754,13 @@ if ($socid > 0) {
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
 			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
 			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
-			if (!empty($conf->multicurrency->enabled)) {
-				print '<td class="right">'.$langs->trans("MulticurrencyAmountHT").'</td>';
+			if (isModEnabled('multicompany')) {
+				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountHT")).'">'.$langs->trans("MulticurrencyAmountHT").'</td>';
 			}
 			print '<td class="right">'.$langs->trans("VATRate").'</td>';
 			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
-			if (!empty($conf->multicurrency->enabled)) {
-				print '<td class="right">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
+			if (isModEnabled('multicompany')) {
+				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountTTC")).'">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
 			}
 			print '<td width="100" class="center">'.$langs->trans("Author").'</td>';
 			print '<td width="50">&nbsp;</td>';
@@ -766,7 +785,8 @@ if ($socid > 0) {
 				$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
 			}
 			$db->free($resql2);
-			array_multisort($tab_sqlobjOrder, SORT_DESC, $tab_sqlobj);
+			$array1_sort_order = SORT_DESC;
+			array_multisort($tab_sqlobjOrder, $array1_sort_order, $tab_sqlobj);
 
 			$num = count($tab_sqlobj);
 			if ($num > 0) {
@@ -807,12 +827,12 @@ if ($socid > 0) {
 					}
 					print '</td>';
 					print '<td class="right">'.price($obj->amount_ht).'</td>';
-					if (!empty($conf->multicurrency->enabled)) {
+					if (isModEnabled('multicompany')) {
 						print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
 					}
 					print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
 					print '<td class="right">'.price($obj->amount_ttc).'</td>';
-					if (!empty($conf->multicurrency->enabled)) {
+					if (isModEnabled('multicompany')) {
 						print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
 					print '<td class="center">';
@@ -824,7 +844,7 @@ if ($socid > 0) {
 				}
 			} else {
 				$colspan = 8;
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled('multicompany')) {
 					$colspan += 2;
 				}
 				print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
@@ -895,13 +915,13 @@ if ($socid > 0) {
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
 			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
 			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
-			if (!empty($conf->multicurrency->enabled)) {
-				print '<td class="right">'.$langs->trans("MulticurrencyAmountHT").'</td>';
+			if (isModEnabled('multicompany')) {
+				print '<td class="right toverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountHT")).'">'.$langs->trans("MulticurrencyAmountHT").'</td>';
 			}
 			print '<td class="right">'.$langs->trans("VATRate").'</td>';
 			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
-			if (!empty($conf->multicurrency->enabled)) {
-				print '<td class="right">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
+			if (isModEnabled('multicompany')) {
+				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountTTC")).'">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
 			}
 			print '<td width="100" class="center">'.$langs->trans("Author").'</td>';
 			print '<td width="50">&nbsp;</td>';
@@ -926,7 +946,8 @@ if ($socid > 0) {
 				$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
 			}
 			$db->free($resql2);
-			array_multisort($tab_sqlobjOrder, SORT_DESC, $tab_sqlobj);
+			$array1_sort_order = SORT_DESC;
+			array_multisort($tab_sqlobjOrder, $array1_sort_order, $tab_sqlobj);
 
 			$num = count($tab_sqlobj);
 			if ($num > 0) {
@@ -967,12 +988,12 @@ if ($socid > 0) {
 					}
 					print '</td>';
 					print '<td class="right">'.price($obj->amount_ht).'</td>';
-					if (!empty($conf->multicurrency->enabled)) {
+					if (isModEnabled('multicompany')) {
 						print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
 					}
 					print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
 					print '<td class="right">'.price($obj->amount_ttc).'</td>';
-					if (!empty($conf->multicurrency->enabled)) {
+					if (isModEnabled('multicompany')) {
 						print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
 					print '<td class="center">';
@@ -984,7 +1005,7 @@ if ($socid > 0) {
 				}
 			} else {
 				$colspan = 8;
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled('multicompany')) {
 					$colspan += 2;
 				}
 				print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';

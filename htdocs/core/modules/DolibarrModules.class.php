@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -181,6 +181,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $error;
 
 	/**
+	 * @var string[] Array of Errors messages
+	 */
+	public $errors;
+
+	/**
 	 * @var string Module version
 	 * @see http://semver.org
 	 *
@@ -219,6 +224,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $descriptionlong;
 
+	/**
+	 * @var array dictionaries description
+	 */
+	public $dictionaries;
+
+	/**
+	 * @var array tabs description
+	 */
+	public $tabs;
 
 	// For exports
 
@@ -232,10 +246,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $export_label;
 
+	public $export_icon;
+
 	public $export_permission;
 	public $export_fields_array;
 	public $export_TypeFields_array; // Array of key=>type where type can be 'Numeric', 'Date', 'Text', 'Boolean', 'Status', 'List:xxx:login:rowid'
 	public $export_entities_array;
+	public $export_help_array;
 	public $export_special_array; // special or computed field
 	public $export_dependencies_array;
 	public $export_sql_start;
@@ -254,6 +271,17 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * @var string Module import label
 	 */
 	public $import_label;
+
+	public $import_icon;
+
+	public $import_entities_array;
+	public $import_tables_array;
+	public $import_fields_array;
+	public $import_fieldshidden_array;
+	public $import_convertvalue_array;
+	public $import_regex_array;
+	public $import_examplevalues_array;
+	public $import_updatekeys_array;
 
 
 	/**
@@ -285,10 +313,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $picto;
 
 	/**
-	 * @var string[] List of config pages
+	 * @var string[]|string 	List of config pages (Old modules uses a string. New one must use an array)
 	 *
 	 * Name of php pages stored into module/admin directory, used to setup module.
-	 * e.g.: "admin.php@module"
+	 * e.g.: array("setup.php@mymodule")
 	 */
 	public $config_page_url;
 
@@ -333,15 +361,19 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
 	public $phpmin;
+
+	public $phpmax;
 
 	/**
 	 * @var array Minimum version of Dolibarr required by module.
 	 * e.g.: Dolibarr ≥ 3.6 = array(3, 6)
 	 */
 	public $need_dolibarr_version;
+
+	public $enabled_bydefault;
 
 	/**
 	 * @var bool Whether to hide the module.
@@ -447,7 +479,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				// Add current entity id
 				$sql = str_replace('__ENTITY__', $conf->entity, $sql);
 
-				dol_syslog(get_class($this)."::_init ignoreerror=".$ignoreerror."", LOG_DEBUG);
+				dol_syslog(get_class($this)."::_init ignoreerror=".$ignoreerror, LOG_DEBUG);
 				$result = $this->db->query($sql, $ignoreerror);
 				if (!$result) {
 					if (!$ignoreerror) {
@@ -778,8 +810,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * For 'experimental' modules, gives 'experimental' translation
 	 * For 'dolibarr' modules, gives Dolibarr version
 	 *
-	 * @param  int $translated 1=Special version keys are translated, 0=Special version keys are not translated
-	 * @return string                  Module version
+	 * @param  int 		$translated 		1=Special version keys are translated, 0=Special version keys are not translated
+	 * @return string               		Module version
 	 */
 	public function getVersion($translated = 1)
 	{
@@ -826,7 +858,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	}
 
 	/**
-	 * Tells if module is core or external
+	 * Tells if module is core or external.
+	 * 'dolibarr' and 'dolibarr_deprecated' is core
+	 * 'experimental' and 'development' is core
 	 *
 	 * @return string  'core', 'external' or 'unknown'
 	 */
@@ -954,14 +988,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$err++;
 		} else {
 			$obj = $this->db->fetch_object($resql);
-			$tmp = array();
-			if ($obj->note) {
-				$tmp = json_decode($obj->note, true);
-			}
 			if ($obj) {
+				$tmp = array();
+				if ($obj->note) {
+					$tmp = json_decode($obj->note, true);
+				}
 				return array(
-					'authorid' => $tmp['authorid'],
-					'ip' => $tmp['ip'],
+					'authorid' => empty($tmp['authorid']) ? '' : $tmp['authorid'],
+					'ip' => empty($tmp['ip']) ? '' : $tmp['ip'],
 					'lastactivationdate' => $this->db->jdate($obj->tms),
 					'lastactivationversion' => (!empty($tmp['lastactivationversion']) ? $tmp['lastactivationversion'] : 'unknown'),
 				);
@@ -1052,16 +1086,16 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps,PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Create tables and keys required by module:
-	 * - Files module.sql with create table instructions
-	 * - Then modules.key.sql with create keys instructions
+	 * - Files table.sql or table-module.sql with create table instructions
+	 * - Then table.key.sql or table-module.key.sql with create keys instructions
 	 * - Then data_xxx.sql (usualy provided by external modules only)
 	 * - Then update_xxx.sql (usualy provided by external modules only)
-	 * Files must be stored in directory defined by reldir (Example: '/install/mysql/tables' or '/module/sql/')
+	 * Files must be stored in subdirectory 'tables' or 'data' into directory $reldir (Example: '/install/mysql/' or '/module/sql/')
 	 * This function may also be called by :
-	 * - _load_tables('/install/mysql/tables/', 'modulename') into the this->init() of core module descriptors.
+	 * - _load_tables('/install/mysql/', 'modulename') into the this->init() of core module descriptors.
 	 * - _load_tables('/mymodule/sql/') into the this->init() of external module descriptors.
 	 *
-	 * @param  	string 	$reldir 			Relative directory where to scan files. Example: '/install/mysql/tables' or '/module/sql/'
+	 * @param  	string 	$reldir 			Relative directory where to scan files. Example: '/install/mysql/' or '/module/sql/'
 	 * @param	string	$onlywithsuffix		Only with the defined suffix
 	 * @return 	int             			<=0 if KO, >0 if OK
 	 */
@@ -1082,112 +1116,147 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$ok = 1;
 		foreach ($conf->file->dol_document_root as $dirroot) {
 			if ($ok) {
-				$dir = $dirroot.$reldir;
+				$dirsql = $dirroot.$reldir;
 				$ok = 0;
 
-				$handle = @opendir($dir); // Dir may not exists
-				if (is_resource($handle)) {
-					$dirfound++;
+				// We will loop on xxx/, xxx/tables/, xxx/data/
+				$listofsubdir = array('', 'tables/', 'data/');
+				if ($this->db->type == 'pgsql') {
+					$listofsubdir[] = '../pgsql/functions/';
+				}
 
-					// Run llx_mytable.sql files, then llx_mytable_*.sql
-					$files = array();
-					while (($file = readdir($handle)) !== false) {
-						$files[] = $file;
-					}
-					sort($files);
-					foreach ($files as $file) {
-						if ($onlywithsuffix) {
-							if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
-								//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
-								continue;
-							} else {
-								//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+				foreach ($listofsubdir as $subdir) {
+					$dir = $dirsql.$subdir;
+
+					$handle = @opendir($dir); // Dir may not exists
+					if (is_resource($handle)) {
+						$dirfound++;
+
+						// Run llx_mytable.sql files, then llx_mytable_*.sql
+						$files = array();
+						while (($file = readdir($handle)) !== false) {
+							$files[] = $file;
+						}
+						sort($files);
+						foreach ($files as $file) {
+							if ($onlywithsuffix) {
+								if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
+									//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
+									continue;
+								} else {
+									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+								}
+							}
+							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_') {
+								$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
+								if ($result <= 0) {
+									$error++;
+								}
 							}
 						}
-						if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_' && substr($file, 0, 4) != 'data') {
-							$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
-							if ($result <= 0) {
-								$error++;
+
+						rewinddir($handle);
+
+						// Run llx_mytable.key.sql files (Must be done after llx_mytable.sql) then then llx_mytable_*.key.sql
+						$files = array();
+						while (($file = readdir($handle)) !== false) {
+							$files[] = $file;
+						}
+						sort($files);
+						foreach ($files as $file) {
+							if ($onlywithsuffix) {
+								if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
+									//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
+									continue;
+								} else {
+									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+								}
+							}
+							if (preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_') {
+								$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
+								if ($result <= 0) {
+									$error++;
+								}
 							}
 						}
-					}
 
-					rewinddir($handle);
+						rewinddir($handle);
 
-					// Run llx_mytable.key.sql files (Must be done after llx_mytable.sql) then then llx_mytable_*.key.sql
-					$files = array();
-					while (($file = readdir($handle)) !== false) {
-						$files[] = $file;
-					}
-					sort($files);
-					foreach ($files as $file) {
-						if ($onlywithsuffix) {
-							if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
-								//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
-								continue;
-							} else {
-								//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+						// Run functions-xxx.sql files (Must be done after llx_mytable.key.sql)
+						$files = array();
+						while (($file = readdir($handle)) !== false) {
+							$files[] = $file;
+						}
+						sort($files);
+						foreach ($files as $file) {
+							if ($onlywithsuffix) {
+								if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
+									//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
+									continue;
+								} else {
+									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+								}
+							}
+							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 9) == 'functions') {
+								$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
+								if ($result <= 0) {
+									$error++;
+								}
 							}
 						}
-						if (preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_' && substr($file, 0, 4) != 'data') {
-							$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
-							if ($result <= 0) {
-								$error++;
+
+						rewinddir($handle);
+
+						// Run data_xxx.sql files (Must be done after llx_mytable.key.sql)
+						$files = array();
+						while (($file = readdir($handle)) !== false) {
+								   $files[] = $file;
+						}
+						sort($files);
+						foreach ($files as $file) {
+							if ($onlywithsuffix) {
+								if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
+									//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
+									continue;
+								} else {
+									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+								}
+							}
+							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'data') {
+								$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
+								if ($result <= 0) {
+									$error++;
+								}
 							}
 						}
-					}
 
-					rewinddir($handle);
+						rewinddir($handle);
 
-					// Run data_xxx.sql files (Must be done after llx_mytable.key.sql)
-					$files = array();
-					while (($file = readdir($handle)) !== false) {
-							   $files[] = $file;
-					}
-					sort($files);
-					foreach ($files as $file) {
-						if ($onlywithsuffix) {
-							if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
-								//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
-								continue;
-							} else {
-								//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+						// Run update_xxx.sql files
+						$files = array();
+						while (($file = readdir($handle)) !== false) {
+								   $files[] = $file;
+						}
+						sort($files);
+						foreach ($files as $file) {
+							if ($onlywithsuffix) {
+								if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
+									//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
+									continue;
+								} else {
+									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+								}
+							}
+							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 6) == 'update') {
+								$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
+								if ($result <= 0) {
+									$error++;
+								}
 							}
 						}
-						if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'data') {
-							$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
-							if ($result <= 0) {
-								$error++;
-							}
-						}
-					}
 
-					rewinddir($handle);
-
-					// Run update_xxx.sql files
-					$files = array();
-					while (($file = readdir($handle)) !== false) {
-							   $files[] = $file;
+						closedir($handle);
 					}
-					sort($files);
-					foreach ($files as $file) {
-						if ($onlywithsuffix) {
-							if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
-								//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
-								continue;
-							} else {
-								//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
-							}
-						}
-						if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 6) == 'update') {
-							$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
-							if ($result <= 0) {
-								$error++;
-							}
-						}
-					}
-
-					closedir($handle);
 				}
 
 				if ($error == 0) {
@@ -1276,7 +1345,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position, box_order, fk_user, entity)";
 								$sql .= " VALUES (".((int) $lastid).", ".((int) $key2).", '0', 0, ".((int) $conf->entity).")";
 
-								dol_syslog(get_class($this)."::insert_boxes onto page ".$key2."=".$val2."", LOG_DEBUG);
+								dol_syslog(get_class($this)."::insert_boxes onto page ".$key2."=".$val2, LOG_DEBUG);
 								$resql = $this->db->query($sql);
 								if (!$resql) {
 									$err++;
@@ -1331,7 +1400,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				// For the moment, we manage this with hard coded exception
 				//print "Remove box ".$file.'<br>';
 				if ($file == 'box_graph_product_distribution.php') {
-					if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+					if (isModEnabled("product") || isModEnabled("service")) {
 						dol_syslog("We discard deleting module ".$file." because another module still active requires it.");
 						continue;
 					}
@@ -1415,8 +1484,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 				// Search if cron entry already present
 				$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."cronjob";
-				$sql .= " WHERE module_name = '".$this->db->escape(empty($this->rights_class) ?strtolower($this->name) : $this->rights_class)."'";
-				if ($class) {
+				//$sql .= " WHERE module_name = '".$this->db->escape(empty($this->rights_class) ?strtolower($this->name) : $this->rights_class)."'";
+				$sql .= " WHERE label = '".$this->db->escape($label)."'";
+				/*if ($class) {
 					$sql .= " AND classesname = '".$this->db->escape($class)."'";
 				}
 				if ($objectname) {
@@ -1428,6 +1498,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				if ($command) {
 					$sql .= " AND command = '".$this->db->escape($command)."'";
 				}
+				if ($parameters) {
+					$sql .= " AND params = '".$this->db->escape($parameters)."'";
+				}*/
 				$sql .= " AND entity = ".((int) $entity); // Must be exact entity
 
 				$now = dol_now();
@@ -1476,7 +1549,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								$sql .= "'".$this->db->escape($priority)."', ";
 							}
 							if (is_int($status)) {
-								$sql .= "'".$this->db->escape($status)."', ";
+								$sql .= ((int) $status).", ";
 							}
 							$sql .= $entity.",";
 							$sql .= "'".$this->db->escape($test)."'";
@@ -1840,7 +1913,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$i = 0;
 							while ($i < $num) {
 								$obj2 = $this->db->fetch_object($resqlseladmin);
-								dol_syslog(get_class($this)."::insert_permissions Add permission id '.$r_id.' to user id=".$obj2->rowid);
+								dol_syslog(get_class($this)."::insert_permissions Add permission id ".$r_id." to user id=".$obj2->rowid);
 
 								$tmpuser = new User($this->db);
 								$result = $tmpuser->fetch($obj2->rowid);
@@ -1927,13 +2000,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$menu->menu_handler = 'all';
 
 			//$menu->module=strtolower($this->name);    TODO When right_class will be same than module name
-			$menu->module = empty($this->rights_class) ?strtolower($this->name) : $this->rights_class;
+			$menu->module = (empty($this->rights_class) ? strtolower($this->name) : $this->rights_class);
 
 			if (!$this->menu[$key]['fk_menu']) {
 				$menu->fk_menu = 0;
 			} else {
 				$foundparent = 0;
 				$fk_parent = $this->menu[$key]['fk_menu'];
+				$reg = array();
 				if (preg_match('/^r=/', $fk_parent)) {    // old deprecated method
 					$fk_parent = str_replace('r=', '', $fk_parent);
 					if (isset($this->menu[$fk_parent]['rowid'])) {
@@ -2247,6 +2321,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$entity = $conf->entity;
 
 		if (is_array($this->module_parts) && !empty($this->module_parts)) {
+			dol_syslog(get_class($this)."::delete_module_parts", LOG_DEBUG);
+
 			foreach ($this->module_parts as $key => $value) {
 				// If entity is defined
 				if (is_array($value) && isset($value['entity'])) {
@@ -2257,7 +2333,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$sql .= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->db->escape($this->const_name)."_".strtoupper($key)."'";
 				$sql .= " AND entity = ".((int) $entity);
 
-				dol_syslog(get_class($this)."::delete_const_".$key."", LOG_DEBUG);
 				if (!$this->db->query($sql)) {
 					$this->error = $this->db->lasterror();
 					$err++;

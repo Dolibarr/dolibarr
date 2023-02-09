@@ -53,8 +53,6 @@ abstract class ModelePDFSupplierProposal extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'supplier_proposal';
 		$list = array();
 
@@ -87,9 +85,9 @@ abstract class ModeleNumRefSupplierProposal
 	}
 
 	/**
-	 *  Renvoi la description par defaut du modele de numerotation
+	 *  Returns the default description of the numbering pattern
 	 *
-	 * 	@return     string      Texte descripif
+	 * 	@return     string      Descriptive text
 	 */
 	public function info()
 	{
@@ -124,11 +122,11 @@ abstract class ModeleNumRefSupplierProposal
 	/**
 	 * 	Renvoi prochaine valeur attribuee
 	 *
-	 *	@param		Societe		$objsoc     Object third party
-	 *	@param		Propal		$propal		Object commercial proposal
-	 *	@return     string      Valeur
+	 *	@param	Societe				$objsoc     			Object third party
+	 * 	@param	SupplierProposal	$supplier_proposal		Object commercial proposal
+	 *	@return string      								Valeur
 	 */
-	public function getNextValue($objsoc, $propal)
+	public function getNextValue($objsoc, $supplier_proposal)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

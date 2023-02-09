@@ -91,7 +91,7 @@ if (GETPOST('theme', 'aZ09')) {
 if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL
 }
-if (GETPOST('THEME_DARKMODEENABLED', 'int')) {
+if (GETPOSTISSET('THEME_DARKMODEENABLED')) {
 	$conf->global->THEME_DARKMODEENABLED = GETPOST('THEME_DARKMODEENABLED', 'int'); // If darkmode was forced on URL
 }
 
@@ -276,7 +276,7 @@ $heightmenu = 50; /* height of top menu, part with image */
 $heightmenu2 = 49; /* height of top menu, part with login  */
 $disableimages = 0;
 $maxwidthloginblock = 180;
-if (!empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) {
+if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1) {
 	$disableimages = 1; $maxwidthloginblock = $maxwidthloginblock + 50; $minwidthtmenu = 0;
 }
 
@@ -312,8 +312,8 @@ print 'dol_hide_topmenu='.$dol_hide_topmenu."\n";
 print 'dol_hide_leftmenu='.$dol_hide_leftmenu."\n";
 print 'dol_optimize_smallscreen='.$dol_optimize_smallscreen."\n";
 print 'dol_no_mouse_hover='.$dol_no_mouse_hover."\n";
-print 'dol_screenwidth='.$_SESSION['dol_screenwidth']."\n";
-print 'dol_screenheight='.$_SESSION['dol_screenheight']."\n";
+print 'dol_screenwidth='.(empty($_SESSION['dol_screenwidth']) ? '' : $_SESSION['dol_screenwidth'])."\n";
+print 'dol_screenheight='.(empty($_SESSION['dol_screenheight']) ? '' : $_SESSION['dol_screenheight'])."\n";
 print 'fontsize='.$fontsize."\n";
 print 'nbtopmenuentries='.$nbtopmenuentries."\n";
 print 'fontsizesmaller='.$fontsizesmaller."\n";

@@ -18,17 +18,18 @@
  */
 
 /**
- *	\file       htdocs/opensurvey/card.php
- *	\ingroup    opensurvey
- *	\brief      Page to edit survey
+ *    \file       htdocs/opensurvey/card.php
+ *    \ingroup    opensurvey
+ *    \brief      Page to edit survey
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
-require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
-require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
 
 // Security check
@@ -36,7 +37,7 @@ if (empty($user->rights->opensurvey->read)) {
 	accessforbidden();
 }
 
-// Initialisation des variables
+// Initialize Variables
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
@@ -46,6 +47,7 @@ if (GETPOST('id')) {
 	$numsondage = (string) GETPOST('id', 'alpha');
 }
 
+// Initialize objects
 $object = new Opensurveysondage($db);
 
 $result = $object->fetch(0, $numsondage);
@@ -59,6 +61,10 @@ $hookmanager->initHooks(array('surveycard', 'globalcard'));
 
 $expiredate = dol_mktime(0, 0, 0, GETPOST('expiremonth'), GETPOST('expireday'), GETPOST('expireyear'));
 
+$permissiontoread = $user->rights->opensurvey->read;
+$permissiontoadd = $user->rights->opensurvey->write;
+// permission delete doesn't exists
+$permissiontodelete = $user->rights->opensurvey->write;
 
 
 /*
@@ -203,7 +209,7 @@ $toutsujet = explode(",", $object->sujet);
 $listofanswers = array();
 foreach ($toutsujet as $value) {
 	$tmp = explode('@', $value);
-	$listofanswers[] = array('label'=>$tmp[0], 'format'=>($tmp[1] ? $tmp[1] : 'checkbox'));
+	$listofanswers[] = array('label'=>$tmp[0], 'format'=>(!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
 }
 $toutsujet = str_replace("@", "<br>", $toutsujet);
 $toutsujet = str_replace("°", "'", $toutsujet);
@@ -362,26 +368,25 @@ print '</form>'."\n";
 
 
 
-/*
- * Action bar
- */
+// Action bar
+
 print '<div class="tabsAction">';
 
 if ($action != 'edit' && $user->rights->opensurvey->write) {
-	//Modify button
+	// Modify button
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans("Modify").'</a>';
 
 	if ($object->status == Opensurveysondage::STATUS_VALIDATED) {
-		//Close button
+		// Close button
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=close&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans("Close").'</a>';
 	}
 	if ($object->status == Opensurveysondage::STATUS_CLOSED) {
-		//Opened button
+		// Re-Open
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans("ReOpen").'</a>';
 	}
 
-	//Delete button
-	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?suppressionsondage=1&action=delete&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans('Delete').'</a>';
+	// Delete
+	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?suppressionsondage=1&id='.urlencode($numsondage).'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
 }
 
 print '</div>';
@@ -404,7 +409,7 @@ print load_fiche_titre($langs->trans("CommentsOfVoters"), '', '');
 // Comment list
 $comments = $object->getComments();
 
-if ($comments) {
+if (!empty($comments)) {
 	foreach ($comments as $comment) {
 		if ($user->rights->opensurvey->write) {
 			print '<a class="reposition" href="'.DOL_URL_ROOT.'/opensurvey/card.php?action=deletecomment&token='.newToken().'&idcomment='.((int) $comment->id_comment).'&id='.urlencode($numsondage).'"> '.img_picto('', 'delete.png', '', false, 0, 0, '', '', 0).'</a> ';

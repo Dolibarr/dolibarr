@@ -285,7 +285,7 @@ class Establishment extends CommonObject
 	 * Load an object from database
 	 *
 	 * @param	int		$id		Id of record to load
-	 * @return	int				<0 if KO, >0 if OK
+	 * @return	int				<0 if KO, >=0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -299,21 +299,24 @@ class Establishment extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
+			if ($obj) {
+				$this->id = $obj->rowid;
+				$this->ref			= $obj->ref;
+				$this->label		= $obj->label;
+				$this->address = $obj->address;
+				$this->zip			= $obj->zip;
+				$this->town			= $obj->town;
+				$this->status = $obj->status;
+				$this->entity = $obj->entity;
 
-			$this->id = $obj->rowid;
-			$this->ref			= $obj->ref;
-			$this->label		= $obj->label;
-			$this->address = $obj->address;
-			$this->zip			= $obj->zip;
-			$this->town			= $obj->town;
-			$this->status = $obj->status;
-			$this->entity = $obj->entity;
+				$this->country_id   = $obj->country_id;
+				$this->country_code = $obj->country_code;
+				$this->country      = $obj->country;
 
-			$this->country_id   = $obj->country_id;
-			$this->country_code = $obj->country_code;
-			$this->country      = $obj->country;
-
-			return 1;
+				return 1;
+			} else {
+				return 0;
+			}
 		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
@@ -395,7 +398,7 @@ class Establishment extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT e.rowid, e.ref, e.datec, e.fk_user_author, e.tms, e.fk_user_mod, e.entity';
+		$sql = 'SELECT e.rowid, e.ref, e.datec, e.fk_user_author, e.tms as datem, e.fk_user_mod, e.entity';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'establishment as e';
 		$sql .= ' WHERE e.rowid = '.((int) $id);
 
@@ -407,19 +410,10 @@ class Establishment extends CommonObject
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
 
-				$this->date_creation = $this->db->jdate($obj->datec);
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_mod) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_mod);
-					$this->user_modification = $muser;
-
-					$this->date_modification = $this->db->jdate($obj->tms);
-				}
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_mod;
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 			$this->db->free($result);
 		} else {
@@ -453,6 +447,9 @@ class Establishment extends CommonObject
 		}
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+
+		$label .= '<br>';
+		$label .= '<b>'.$langs->trans('Residence').':</b> '.$this->address.', '.$this->zip.' '.$this->town;
 
 		$url = DOL_URL_ROOT.'/hrm/establishment/card.php?id='.$this->id;
 
@@ -498,7 +495,7 @@ class Establishment extends CommonObject
 		}
 
 		if ($withpicto != 2) {
-			$result .= $this->ref;
+			$result .= $this->label;
 		}
 
 		$result .= $linkend;

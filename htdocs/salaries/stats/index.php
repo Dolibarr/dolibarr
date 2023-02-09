@@ -23,6 +23,7 @@
  *  \brief      Page for statistics of module salaries
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salariesstats.class.php';
@@ -50,7 +51,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'salaries', '', '', '');
 
-$nowyear = strftime("%Y", dol_now());
+$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
 $startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
@@ -73,6 +74,10 @@ print load_fiche_titre($title, '', 'salary');
 dol_mkdir($dir);
 
 $useridtofilter = $userid; // Filter from parameters
+
+if (empty($user->rights->salaries->readall) && empty($useridtofilter)) {
+	$useridtofilter = $user->getAllChildIds(1);
+}
 
 $stats = new SalariesStats($db, $socid, $useridtofilter);
 
@@ -204,7 +209,7 @@ print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->tra
 // User
 print '<tr><td>'.$langs->trans("Employee").'</td><td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers(($userid ? $userid : -1), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+print $form->select_dolusers(($userid ? $userid : -1), 'userid', 1, '', 0, empty($user->rights->salaries->readall) ? 'hierarchyme' : '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';

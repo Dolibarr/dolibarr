@@ -38,6 +38,41 @@ abstract class ModelePDFProduct extends CommonDocGenerator
 	 */
 	public $error = '';
 
+	/**
+	 * @var int page_largeur
+	 */
+	public $page_largeur;
+
+	/**
+	 * @var int page_hauteur
+	 */
+	public $page_hauteur;
+
+	/**
+	 * @var array format
+	 */
+	public $format;
+
+	/**
+	 * @var int marge_gauche
+	 */
+	public $marge_gauche;
+
+	/**
+	 * @var int marge_droite
+	 */
+	public $marge_droite;
+
+	/**
+	 * @var int marge_haute
+	 */
+	public $marge_haute;
+
+	/**
+	 * @var int marge_basse
+	 */
+	public $marge_basse;
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -69,10 +104,10 @@ abstract class ModeleProductCode
 	 */
 	public $error = '';
 
-	/**     Renvoi la description par defaut du modele de numerotation
+	/**     Returns the default description of the numbering pattern
 	 *
 	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Texte descripif
+	 *      @return string      			Descriptive text
 	 */
 	public function info($langs)
 	{

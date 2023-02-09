@@ -44,17 +44,19 @@ $permtoadd = 0;
 $permtoupload = 0;
 $showroot = 0;
 if ($module == 'ecm') {
-	$permtoadd = $user->rights->ecm->setup;
-	$permtoupload = $user->rights->ecm->upload;
+	$permtoadd = $user->hasRight("ecm", "setup");
+	$permtoupload = $user->hasRight("ecm", "upload");
 	$showroot = 0;
 }
 if ($module == 'medias') {
-	$permtoadd = ($user->rights->mailing->creer || $user->rights->website->write);
-	$permtoupload = ($user->rights->mailing->creer || $user->rights->website->write);
+	$permtoadd = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
+	$permtoupload = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
 	$showroot = 1;
 }
 
-
+if (!isset($section)) {
+	$section = 0;
+}
 
 // Confirm remove file (for non javascript users)
 if (($action == 'delete' || $action == 'file_manager_delete') && empty($conf->use_javascript_ajax)) {
@@ -90,13 +92,15 @@ if ($module == 'ecm') {
 	print '</a>';
 }
 if ($permtoadd && GETPOSTISSET('website')) {	// If on file manager to manage medias of a web site
-	print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&website='.$website->ref.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+	print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&token='.newToken().'&website='.$website->ref.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
 	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
 	print '</a>';
 } elseif ($permtoadd && $module == 'ecm') {	// If on file manager medias in ecm
-	print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
-	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
-	print '</a>';
+	if (getDolGlobalInt('ECM_SHOW_GENERATE_WEBP_BUTTON')) {
+		print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&token='.newToken().'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+		print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
+		print '</a>';
+	}
 }
 
 print "<script>
@@ -104,12 +108,26 @@ $('#acreatedir').on('click', function() {
 	try{
 		section_dir = $('.directory.expanded')[$('.directory.expanded').length-1].children[0].rel;
 		section = $('.directory.expanded')[$('.directory.expanded').length-1].children[0].id.split('_')[2];
+		catParent = ";
+if ($module == 'ecm') {
+	print "section;";
+} else {
+	print "section_dir.substring(0, section_dir.length - 1);";
+}
+print "
 	} catch{
 		section_dir = '/';
 		section = 0;
+		catParent = ";
+if ($module == 'ecm') {
+	print "section;";
+} else {
+	print "section_dir;";
+}
+print "
 	}
 	console.log('We click to create a new directory, we set current section_dir='+section_dir+' into href url of button acreatedir');
-	$('#acreatedir').attr('href', $('#acreatedir').attr('href')+'&section_dir='+encodeURI(section_dir)+'&section='+encodeURI(section));
+	$('#acreatedir').attr('href', $('#acreatedir').attr('href')+'%26section_dir%3D'+encodeURI(section_dir)+'%26section%3D'+encodeURI(section)+'&section_dir='+encodeURI(section_dir)+'&section='+encodeURI(section)+'&catParent='+encodeURI(catParent));
 	console.log($('#acreatedir').attr('href'));
 });
 $('#agenerateimgwebp').on('click', function() {
@@ -246,12 +264,13 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 	$showonrightsize = '';
 
 	// Manual section
-	$htmltooltip = $langs->trans("ECMAreaDesc2");
+	$htmltooltip = $langs->trans("ECMAreaDesc2a");
+	$htmltooltip .= '<br>'.$langs->trans("ECMAreaDesc2b");
 
 	if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
 		// Show the link to "Root"
 		if ($showroot) {
-			print '<tr><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1'.(!empty($websitekey) ? '&website='.urlencode($websitekey) : '').'&pageid='.urlencode($pageid).'">';
+			print '<tr class="nooddeven"><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1'.(!empty($websitekey) ? '&website='.urlencode($websitekey) : '').'&pageid='.urlencode($pageid).'">';
 			if ($module == 'medias') {
 				print $langs->trans("RootOfMedias");
 			} else {
@@ -260,7 +279,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 			print '</a></div></td></tr>';
 		}
 
-		print '<tr><td>';
+		print '<tr class="nooddeven"><td>';
 
 		// Show filemanager tree (will be filled by a call of ajax /ecm/tpl/enablefiletreeajax.tpl.php, later, that executes ajaxdirtree.php)
 		print '<div id="filetree" class="ecmfiletree"></div>';
@@ -270,7 +289,8 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 		}
 
 		print '</td></tr>';
-	} else { // Show filtree when ajax is disabled (rare)
+	} else {
+		// Show filtree when ajax is disabled (rare)
 		print '<tr><td style="padding-left: 20px">';
 
 		$_POST['modulepart'] = $module;
@@ -307,10 +327,15 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 <?php
 // Start right panel - List of content of a directory
 
-
 $mode = 'noajax';
-if (empty($url)) {
-	$url = DOL_URL_ROOT.'/ecm/index.php';
+if (empty($url)) {	// autoset $url but it is better to have it defined before (for example by ecm/index.php, ecm/index_medias.php, website/index.php)
+	if (!empty($module) && $module == 'medias' && !GETPOST('website')) {
+		$url = DOL_URL_ROOT.'/ecm/index_medias.php';
+	} elseif (GETPOSTISSET('website')) {
+		$url = DOL_URL_ROOT.'/website/index.php';
+	} else {
+		$url = DOL_URL_ROOT.'/ecm/index.php';
+	}
 }
 include DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php'; // Show content of a directory on right side
 

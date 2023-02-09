@@ -31,9 +31,6 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', 1);
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1);
 }
@@ -141,7 +138,9 @@ button.calcbutton2 {
 	margin: 1px;
 	border-radius: 3px;
 }
-
+button.calcbutton2.clicked {
+	background-color: #8855AA;
+}
 button.calcbutton2 .iconwithlabel {
 	padding-bottom: 10px;
 }
@@ -311,7 +310,7 @@ table.postablelines tr td {
 
 .posinvoiceline td {
 	height: 40px !important;
-	background-color: var(--colorbacklineimpair1);
+	background-color: var(--colorbacklineimpair2);
 }
 
 .postablelines td.linecolht {
@@ -338,7 +337,18 @@ div.paymentbordline
 	width: 100%;
 	height: 100%;
 	margin: 0 auto;
-	overflow: visible;
+	<?php
+	if (getDolGlobalString('TAKEPOS_USE_ARROW_ON_NAVBAR')) {
+		?>
+		overflow-x: hidden;
+		overfloy-y: scroll;
+		<?php
+	} else {
+		?>
+		overflow: visible;
+		<?php
+	}
+	?>
 	box-sizing: border-box;
 }
 
@@ -365,6 +375,7 @@ div.paymentbordline
 	margin: 0 auto;
 	width: 100%;
 	height: 55%;
+	overflow: hidden;
 }
 
 .div1{
@@ -436,8 +447,9 @@ tr.selected, tr.selected td {
 	/* font-weight: bold; */
 	background-color: rgb(240,230,210) !important;
 }
-.order {
-	color: limegreen;
+.order td {
+	color: green;
+	/* background-color: #f5f5f5; */
 }
 
 .colorwhite {
@@ -477,7 +489,7 @@ p.description_content{
 div.description_content {
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
-	-webkit-line-clamp: <?php echo $conf->global->TAKEPOS_LINES_TO_SHOW; ?>;
+	-webkit-line-clamp: <?php echo getDolGlobalInt('TAKEPOS_LINES_TO_SHOW', 2); ?>;
 	overflow: hidden;
 	padding-left: 2px;
 	padding-right: 2px;
@@ -554,6 +566,7 @@ div.description_content {
 	padding: 7px 4px 7px 4px;
 	margin: 8px;
 	margin-left: 4px;
+	border-radius: 3px;
 }
 .topnav-left a:hover, .topnav .login_block_other a:hover {
 	background-color: #ddd;
@@ -580,6 +593,14 @@ div#moreinfo, div#infowarehouse {
 	padding: 0 8px 0 8px;
 }
 
+.basketselected {
+	font-weight: bold;
+	/* text-decoration: underline; */
+}
+.basketnotselected {
+	opacity: 0.8;
+}
+
 .productprice {
 	position: absolute;
 	top: 5px;
@@ -587,11 +608,11 @@ div#moreinfo, div#infowarehouse {
 	background: var(--colorbackhmenu1);
 	color: var(--colortextbackhmenu);
 	font-size: 2em;
-	padding: 5px;
+	padding: 4px;
 	border-radius: 2px;
 	opacity: 0.9;
-	padding-left: 8px;
-	padding-right: 8px;
+	padding-left: 6px;
+	padding-right: 6px;
 }
 
 
@@ -705,9 +726,12 @@ div#moreinfo, div#infowarehouse {
 	}
 
 	button.actionbutton {
-		min-height: 60px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 		padding-left: 4px;
 		padding-right: 4px;
+		min-height: 30px;
 	}
 }
 
@@ -825,3 +849,226 @@ div#moreinfo, div#infowarehouse {
   display: table;
   clear: both;
 }
+
+.div5 .imgadd {
+	display: none;
+}
+
+
+@media screen and (max-width: 767px) {
+	.div4 {
+		height: auto;
+		width: 100%;
+		float: left;
+		box-sizing: border-box;
+		font-size: 6px;
+		padding-top: 10px;
+		padding-bottom: 2px;
+		margin-left: 2px;
+	}
+
+	.div4 .wrapper.divempty, .div4 img, .div4 .wrapper:nth-last-child(1), .div4 .wrapper:nth-last-child(2), #prodiv22, #prodiv23, .catwatermark {
+		display: none!important;
+	}
+
+	.tab-category {
+		float: left;
+		position: relative;
+		width: 25%;
+		height: 33%;
+		margin: 0;
+		padding: 1px;
+		border: 2px solid #EEE;
+		text-align: center;
+		box-sizing: border-box;
+		background-color: #fff;
+	}
+
+	.div4 .wrapper, .tab-category {
+		width: auto;
+		height: auto;
+		padding: 6px;
+		text-align: center;
+		cursor: pointer;
+		border: 1px solid #FFF!important;
+		border-top: 3px solid #FFF!important;
+	}
+
+	.div4 .tab-category.active {
+		border-right: 1px solid #CCC !important;
+		border-left: 1px solid #CCC !important;
+		border-top: 3px solid var(--colorbackhmenu1) !important;
+	}
+
+	.div5 {
+		height: 100%;
+		width: 100%;
+		padding-top: 0px;
+	}
+
+	div.description {
+		position: initial;
+		width: auto;
+		background-color: black;
+		opacity: 1;
+		text-align: center;
+		padding-top: 0px;
+		background: -webkit-linear-gradient(top, rgba(250,250,250,0), rgba(250,250,250,0.5), rgba(250,250,250,0.95), rgba(250,250,250,1));
+	}
+
+	.div5 .description .description_content {
+		font-weight: bold;
+		font-size: 14px;
+		padding-left: 10px;
+	}
+
+	.div5 .wrapper2 {
+		width: 100%;
+		display: inline-flex;
+		align-items: center;
+		padding: 10px;
+	}
+
+	.div5 .wrapper2.divempty {
+		display: none;
+	}
+
+	div.wrapper2 {
+		float: none;
+	}
+
+	.div5 .arrow {
+		width: auto;
+		height: auto;
+		display: none!important;
+	}
+
+	.div5 .arrow .centerinmiddle {
+		transform: translate(0, 0);
+	}
+
+	.div5 .imgadd {
+		display: flex;
+	}
+
+	div.wrapper2{
+		height:10%;
+	}
+}
+
+
+<?php
+if (!getDolGlobalString('TAKEPOS_USE_ARROW_ON_NAVBAR')) {
+	?>
+
+.arrows {
+	display: none;
+}
+
+<?php } else { ?>
+.indicator {
+	background: #00000042;
+	padding: 15px 5px;
+	cursor: pointer;
+	position:absolute;
+}
+
+.indicator.left {
+	left:0;
+}
+
+.indicator.right {
+	right:0;
+}
+
+.indicator:hover {
+	background: #000000;
+}
+
+.indicator i {
+	color: white;
+}
+
+.topnav-left {
+	margin-left: 20px;
+}
+
+.topnav-right {
+	margin-right: 20px;
+}
+
+/* For Header Scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+.topnav {
+  scroll-behavior: smooth;
+}
+
+.header {
+	height: unset;
+}
+
+.topnav {
+	width: 100%;
+	white-space: nowrap;
+	overflow-x: scroll;
+	display: inline-flex;
+}
+
+.topnav-left {
+	white-space: nowrap;
+	float: none;
+	margin-right: auto;
+	align-items: center;
+}
+
+.topnav-right {
+	display: flex;
+	white-space: nowrap;
+	float: none;
+	align-items: center;
+}
+
+.topnav-left #shoppingcart {
+	display:inline-flex;
+}
+
+.topnav-right .login_block_other {
+	display: flex;
+	white-space: nowrap;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+.topnav::-webkit-scrollbar-track{
+  background: #eeeeee;
+}
+
+.topnav::-webkit-scrollbar{
+  width: 1px;
+  background: #F5F5F5;
+}
+
+.topnav::-webkit-scrollbar-thumb{
+	background: #f9171700;
+}
+
+.topnav.overflow .arrows {
+	display: flex;
+}
+
+<?php } ?>

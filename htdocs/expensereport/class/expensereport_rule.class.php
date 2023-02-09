@@ -22,12 +22,12 @@
  *	\brief      File of class to manage expense ik
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/coreobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 /**
  *	Class to manage inventories
  */
-class ExpenseReportRule extends CoreObject
+class ExpenseReportRule extends CommonObject
 {
 	/**
 	 * @var string ID to identify managed object
@@ -125,20 +125,90 @@ class ExpenseReportRule extends CoreObject
 		,'entity'=>array('type'=>'integer')
 	);
 
+
 	/**
 	 *  Constructor
 	 *
 	 *  @param      DoliDB		$db      Database handler
 	 */
-	public function __construct(DoliDB &$db)
+	public function __construct(DoliDB $db)
 	{
-		global $conf;
-
-		parent::__construct($db);
-		parent::init();
-
-		$this->errors = array();
+		$this->db = $db;
 	}
+
+
+	/**
+	 * Create object into database
+	 *
+	 * @param  User $user      User that creates
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, Id of created object if OK
+	 */
+	public function create(User $user, $notrigger = false)
+	{
+		$resultcreate = $this->createCommon($user, $notrigger);
+
+		//$resultvalidate = $this->validate($user, $notrigger);
+
+		return $resultcreate;
+	}
+
+
+	/**
+	 * Load object in memory from the database
+	 *
+	 * @param int    $id   Id object
+	 * @param string $ref  Ref
+	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetch($id, $ref = null)
+	{
+		$result = $this->fetchCommon($id, $ref);
+		if ($result > 0 && !empty($this->table_element_line)) {
+			$this->fetchLines();
+		}
+		return $result;
+	}
+
+
+	/**
+	 * Load object lines in memory from the database
+	 *
+	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetchLines()
+	{
+		$this->lines = array();
+
+		$result = $this->fetchLinesCommon();
+		return $result;
+	}
+
+	/**
+	 * Update object into database
+	 *
+	 * @param  User $user      User that modifies
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function update(User $user, $notrigger = false)
+	{
+		return $this->updateCommon($user, $notrigger);
+	}
+
+	/**
+	 * Delete object in database
+	 *
+	 * @param User $user       User that deletes
+	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function delete(User $user, $notrigger = false)
+	{
+		return $this->deleteCommon($user, $notrigger);
+		//return $this->deleteCommon($user, $notrigger, 1);
+	}
+
 
 	/**
 	 * Return all rules or filtered by something

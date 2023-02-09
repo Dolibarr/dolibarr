@@ -135,7 +135,7 @@ class Productcustomerprice extends CommonObject
 			$this->price_base_type = trim($this->price_base_type);
 		}
 		if (isset($this->tva_tx)) {
-			$this->tva_tx = trim($this->tva_tx);
+			$this->tva_tx = (float) $this->tva_tx;
 		}
 		if (isset($this->recuperableonly)) {
 			$this->recuperableonly = trim($this->recuperableonly);
@@ -227,7 +227,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " ".(empty($this->localtax2_type) ? "'0'" : "'".$this->db->escape($this->localtax2_type)."'").",";
 		$sql .= " ".(!isset($this->localtax2_tx) ? 'NULL' : (empty($this->localtax2_tx) ? 0 : $this->localtax2_tx)).",";
 		$sql .= " ".((int) $user->id).",";
-		$sql .= " ".(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'")."";
+		$sql .= " ".(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -354,11 +354,31 @@ class Productcustomerprice extends CommonObject
 	 * @param 	int 	$limit 		page
 	 * @param 	int 	$offset 	offset
 	 * @param 	array 	$filter 	Filter for select
+	 * @deprecated since dolibarr v17 use fetchAll
 	 * @return 	int 				<0 if KO, >0 if OK
 	 */
 	public function fetch_all($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
 	{
 		// phpcs:enable
+
+		dol_syslog(get_class($this)."::fetch_all is deprecated, use fetchAll instead", LOG_NOTICE);
+
+		return $this->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
+	}
+
+	/**
+	 * Load all customer prices in memory from database
+	 *
+	 * @param 	string 	$sortorder 	order
+	 * @param 	string 	$sortfield 	field
+	 * @param 	int 	$limit 		page
+	 * @param 	int 	$offset 	offset
+	 * @param 	array 	$filter 	Filter for select
+	 * @return 	int 				<0 if KO, >0 if OK
+	 * @since dolibarr v17
+	 */
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
+	{
 		global $langs;
 
 		if (empty($sortfield)) {
@@ -421,7 +441,7 @@ class Productcustomerprice extends CommonObject
 			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
-		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->lines = array();
@@ -621,7 +641,7 @@ class Productcustomerprice extends CommonObject
 			$this->price_base_type = trim($this->price_base_type);
 		}
 		if (isset($this->tva_tx)) {
-			$this->tva_tx = trim($this->tva_tx);
+			$this->tva_tx = (float) $this->tva_tx;
 		}
 		if (isset($this->recuperableonly)) {
 			$this->recuperableonly = trim($this->recuperableonly);
@@ -753,7 +773,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " localtax1_type=".(!empty($this->localtax1_type) ? "'".$this->db->escape($this->localtax1_type)."'" : "'0'").",";
 		$sql .= " localtax2_type=".(!empty($this->localtax2_type) ? "'".$this->db->escape($this->localtax2_type)."'" : "'0'").",";
 		$sql .= " fk_user=".$user->id.",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -766,7 +786,7 @@ class Productcustomerprice extends CommonObject
 
 		if (!$error && !$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger('PRODUCT_CUSTOMER_PRICE_UPDATE', $user);
+			$result = $this->call_trigger('PRODUCT_CUSTOMER_PRICE_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -797,9 +817,9 @@ class Productcustomerprice extends CommonObject
 	/**
 	 * Force update price on child companies so child company has same prices than parent.
 	 *
-	 * @param User $user that modifies
-	 * @param int $forceupdateaffiliate update price on each soc child
-	 * @return int <0 if KO, 0 = action disabled, >0 if OK
+	 * @param 	User $user 					User that modifies
+	 * @param 	int $forceupdateaffiliate 	update price on each soc child
+	 * @return 	int 						<0 if KO, 0 = action disabled, >0 if OK
 	 */
 	public function setPriceOnAffiliateThirdparty($user, $forceupdateaffiliate)
 	{
@@ -832,7 +852,7 @@ class Productcustomerprice extends CommonObject
 					't.fk_product' => $this->fk_product, 't.fk_soc' => $obj->rowid
 				);
 
-				$result = $prodsocprice->fetch_all('', '', 0, 0, $filter);
+				$result = $prodsocprice->fetchAll('', '', 0, 0, $filter);
 				if ($result < 0) {
 					$error++;
 					$this->error = $prodsocprice->error;

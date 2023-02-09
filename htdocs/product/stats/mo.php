@@ -23,6 +23,7 @@
  *       \brief      Page of MO referring product
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
@@ -162,11 +163,10 @@ if ($id > 0 || !empty($ref)) {
 		if ($result) {
 			$num = $db->num_rows($result);
 
+			$option = '&id='.$product->id;
+
 			if ($limit > 0 && $limit != $conf->liste_limit) {
 				$option .= '&limit='.urlencode($limit);
-			}
-			if (!empty($id)) {
-				$option .= '&id='.$product->id;
 			}
 			if (!empty($search_month)) {
 				$option .= '&search_month='.urlencode($search_month);
@@ -176,6 +176,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 
 			print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			if (!empty($sortfield)) {
 				print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
 			}

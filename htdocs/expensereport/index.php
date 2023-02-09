@@ -28,6 +28,7 @@
  *  \brief      Page list of expenses
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
@@ -77,7 +78,7 @@ $childids[] = $user->id;
 
 $help_url = "EN:Module_Expense_Reports|FR:Module_Notes_de_frais";
 
-llxHeader('', $langs->trans("ListOfFees"), $help_url);
+llxHeader('', $langs->trans("TripsAndExpenses"), $help_url);
 
 
 $label = $somme = $nb = array();

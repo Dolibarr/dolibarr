@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2023		anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,22 +40,22 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "members", "paybox", "propal"));
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "members", "paybox", "propal", "commercial"));
 
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
@@ -78,16 +79,12 @@ $message = GETPOST('message', 'aZ09');
 $suffix = GETPOST("suffix", 'aZ09');
 $source = GETPOST("source", 'alpha');
 $ref = $REF = GETPOST("ref", 'alpha');
+$urlok = '';
+$urlko = '';
+
 
 if (empty($source)) {
 	$source = 'proposal';
-}
-
-if (!$action) {
-	if ($source && !$ref) {
-		print $langs->trans('ErrorBadParameters')." - ref missing";
-		exit;
-	}
 }
 if (!empty($refusepropal)) {
 	$action = "refusepropal";
@@ -124,27 +121,44 @@ $urlko = preg_replace('/&$/', '', $urlko); // Remove last &
 $creditor = $mysoc->name;
 
 $type = $source;
-if ($source == 'proposal') {
-	$object = new Propal($db);
-	$object->fetch(0, $ref);
-} else {
-	accessforbidden('Bad value for source');
-	exit;
-}
 
+if (!$action) {
+	if ($source && !$ref) {
+		httponly_accessforbidden($langs->trans('ErrorBadParameters')." - ref missing", 400, 1);
+	}
+}
 
 // Check securitykey
 $securekeyseed = '';
 if ($source == 'proposal') {
-	$securekeyseed = $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN;
+	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
+} elseif ($source == 'contract') {
+	$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN');
+} elseif ($source == 'fichinter') {
+	$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN');
+}
+if (!dol_verifyHash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? $entity : ''), $SECUREKEY, '0')) {
+	httponly_accessforbidden('Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref), 403, 1);
 }
 
-if (!dol_verifyHash($securekeyseed.$type.$ref, $SECUREKEY, '0')) {
-	http_response_code(403);
-	print 'Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref);
-	exit(-1);
+if ($source == 'proposal') {
+	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+	$object = new Propal($db);
+	$result= $object->fetch(0, $ref, '', $entity);
+} elseif ($source == 'contract') {
+	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+	$object = new Contrat($db);
+	$result= $object->fetch(0, $ref);
+} elseif ($source == 'fichinter') {
+	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+	$object = new Fichinter($db);
+	$result= $object->fetch(0, $ref);
+} else {
+	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source", 400, 1);
 }
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('onlinesign'));
 
 /*
  * Actions
@@ -168,6 +182,20 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {
 
 		$message = 'refused';
 		setEventMessages("PropalRefused", null, 'warnings');
+		if (method_exists($object, 'call_trigger')) {
+			// Online customer is not a user, so we use the use that validates the documents
+			$user = new User($db);
+			$user->fetch($object->user_valid_id);
+			$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
+			$result = $object->call_trigger('PROPAL_CLOSE_REFUSED', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			$result = $object->call_trigger('PROPAL_CLOSE_REFUSED_WEB', $user);
+			if ($result < 0) {
+				$error++;
+			}
+		}
 	} else {
 		$db->rollback();
 	}
@@ -193,7 +221,7 @@ $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $langs->trans("OnlineSignature"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
 
 if ($action == 'refusepropal') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&securekey='.urlencode($SECUREKEY), $langs->trans('RefusePropal'), $langs->trans('ConfirmRefusePropal', $object->ref), 'confirm_refusepropal', '', '', 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany')?'&entity='.$entity:''), $langs->trans('RefusePropal'), $langs->trans('ConfirmRefusePropal', $object->ref), 'confirm_refusepropal', '', '', 1);
 }
 
 // Check link validity for param 'source' to avoid use of the examples as value
@@ -272,16 +300,29 @@ if (!empty($conf->global->ONLINE_SIGN_NEWFORM_TEXT)) {
 	$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 }
 if (empty($text)) {
-	$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePage", $mysoc->name).'</strong></td></tr>'."\n";
-	$text .= '<tr><td class="textpublicpayment opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFrom", $creditor).'<br><br></td></tr>'."\n";
+	if ($source == 'proposal') {
+		$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePageProposal", $mysoc->name).'</strong></td></tr>'."\n";
+		$text .= '<tr><td class="textpublicpayment opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromProposal", $creditor).'<br><br></td></tr>'."\n";
+	} elseif ($source == 'contract') {
+		$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePageContract", $mysoc->name).'</strong></td></tr>'."\n";
+		$text .= '<tr><td class="textpublicpayment opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromContract", $creditor).'<br><br></td></tr>'."\n";
+	} elseif ($source == 'fichinter') {
+		$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePageFichinter", $mysoc->name).'</strong></td></tr>'."\n";
+		$text .= '<tr><td class="textpublicpayment opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromFichinter", $creditor).'<br><br></td></tr>'."\n";
+	}
 }
 print $text;
 
 // Output payment summary form
 print '<tr><td align="center">';
 print '<table with="100%" id="tablepublicpayment">';
-print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSign").' :</td></tr>'."\n";
-
+if ($source == 'proposal') {
+	print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignProposal").' :</td></tr>'."\n";
+} elseif ($source == 'contract') {
+	print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignContract").' :</td></tr>'."\n";
+} elseif ($source == 'fichinter') {
+	print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignFichinter").' :</td></tr>'."\n";
+}
 $found = false;
 $error = 0;
 
@@ -290,19 +331,9 @@ if ($source == 'proposal') {
 	$found = true;
 	$langs->load("proposal");
 
-	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-
-	$proposal = new Propal($db);
-	$result = $proposal->fetch('', $ref);
-	if ($result <= 0) {
-		$mesg = $proposal->error;
-		$error++;
-	} else {
-		$result = $proposal->fetch_thirdparty($proposal->socid);
-	}
+	$result = $object->fetch_thirdparty($object->socid);
 
 	// Creditor
-
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
 	print '</td><td class="CTableRow2">';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
@@ -311,43 +342,59 @@ if ($source == 'proposal') {
 	print '</td></tr>'."\n";
 
 	// Debitor
-
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow2">';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
-	print '<b>'.$proposal->thirdparty->name.'</b>';
+	print '<b>'.$object->thirdparty->name.'</b>';
 	print '</td></tr>'."\n";
 
 	// Amount
+	$amount = '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
+	$amount .= '</td><td class="CTableRow2">';
+	$amount .= '<b>'.price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</b>';
+	$amount .= '</td></tr>'."\n";
 
-	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
-	print '</td><td class="CTableRow2">';
-	print '<b>'.price($proposal->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</b>';
-	print '</td></tr>'."\n";
+	// Call Hook amountPropalSign
+	$parameters = array('source' => $source);
+	$reshook = $hookmanager->executeHooks('amountPropalSign', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) {
+		$amount .= $hookmanager->resPrint;
+	} elseif ($reshook > 0) {
+		$amount = $hookmanager->resPrint;
+	}
+
+	print $amount;
 
 	// Object
-
-	$text = '<b>'.$langs->trans("SignatureProposalRef", $proposal->ref).'</b>';
-	print '<tr class="CTableRow2"><td class="CTableRow2 tdtop">'.$langs->trans("Designation");
+	$text = '<b>'.$langs->trans("SignatureProposalRef", $object->ref).'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow2">'.$text;
-	if ($proposal->status == $proposal::STATUS_VALIDATED) {
-		$directdownloadlink = $proposal->getLastMainDocLink('proposal');
+
+	$last_main_doc_file = $object->last_main_doc;
+
+	if ($object->status == $object::STATUS_VALIDATED) {
+		if (empty($last_main_doc_file) || !dol_is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
+			// It seems document has never been generated, or was generated and then deleted.
+			// So we try to regenerate it with its default template.
+			$defaulttemplate = '';		// We force the use an empty string instead of $object->model_pdf to be sure to use a "main" default template and not the last one used.
+			$object->generateDocument($defaulttemplate, $langs);
+		}
+
+		$directdownloadlink = $object->getLastMainDocLink('proposal');
 		if ($directdownloadlink) {
 			print '<br><a href="'.$directdownloadlink.'">';
-			print img_mime($proposal->last_main_doc, '');
+			print img_mime($object->last_main_doc, '');
 			print $langs->trans("DownloadDocument").'</a>';
 		}
 	} else {
-		$last_main_doc_file = $proposal->last_main_doc;
-
-		if ($proposal->status == $proposal::STATUS_NOTSIGNED) {
-			$directdownloadlink = $proposal->getLastMainDocLink('proposal');
+		if ($object->status == $object::STATUS_NOTSIGNED) {
+			$directdownloadlink = $object->getLastMainDocLink('proposal');
 			if ($directdownloadlink) {
 				print '<br><a href="'.$directdownloadlink.'">';
-				print img_mime($proposal->last_main_doc, '');
+				print img_mime($last_main_doc_file, '');
 				print $langs->trans("DownloadDocument").'</a>';
 			}
-		} elseif ($proposal->status == $proposal::STATUS_SIGNED || $proposal->status == $proposal::STATUS_BILLED) {
+		} elseif ($object->status == $object::STATUS_SIGNED || $object->status == $object::STATUS_BILLED) {
 			if (preg_match('/_signed-(\d+)/', $last_main_doc_file)) {	// If the last main doc has been signed
 				$last_main_doc_file_not_signed = preg_replace('/_signed-(\d+)/', '', $last_main_doc_file);
 
@@ -355,10 +402,10 @@ if ($source == 'proposal') {
 				$datefilenotsigned = dol_filemtime($last_main_doc_file_not_signed);
 
 				if (empty($datefilenotsigned) || $datefilesigned > $datefilenotsigned) {
-					$directdownloadlink = $proposal->getLastMainDocLink('proposal');
+					$directdownloadlink = $object->getLastMainDocLink('proposal');
 					if ($directdownloadlink) {
 						print '<br><a href="'.$directdownloadlink.'">';
-						print img_mime($proposal->last_main_doc, '');
+						print img_mime($object->last_main_doc, '');
 						print $langs->trans("DownloadDocument").'</a>';
 					}
 				}
@@ -367,13 +414,111 @@ if ($source == 'proposal') {
 	}
 
 	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$proposal->ref.'">';
+	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
+	print '</td></tr>'."\n";
+} elseif ($source == 'contract') { // Signature on contract
+	$found = true;
+	$langs->load("contract");
+
+	$result = $object->fetch_thirdparty($object->socid);
+
+	// Proposer
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Proposer");
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$creditor.'</b>';
+	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
-	// TODO Add link to download PDF (similar code than for invoice)
+	// Target
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$object->thirdparty->name.'</b>';
+	print '</td></tr>'."\n";
+
+	// Object
+	$text = '<b>'.$langs->trans("SignatureContractRef", $object->ref).'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow2">'.$text;
+
+	$last_main_doc_file = $object->last_main_doc;
+
+	if (empty($last_main_doc_file) || !dol_is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
+		// It seems document has never been generated, or was generated and then deleted.
+		// So we try to regenerate it with its default template.
+		$defaulttemplate = '';		// We force the use an empty string instead of $object->model_pdf to be sure to use a "main" default template and not the last one used.
+		$object->generateDocument($defaulttemplate, $langs);
+	}
+
+	$directdownloadlink = $object->getLastMainDocLink('contract');
+	if ($directdownloadlink) {
+		print '<br><a href="'.$directdownloadlink.'">';
+		print img_mime($object->last_main_doc, '');
+		if ($message == "signed") {
+			print $langs->trans("DownloadSignedDocument").'</a>';
+		} else {
+			print $langs->trans("DownloadDocument").'</a>';
+		}
+	}
+
+
+	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
+	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
+	print '</td></tr>'."\n";
+} elseif ($source == 'fichinter') { // Signature on fichinter
+	$found = true;
+	$langs->load("fichinter");
+
+	$result = $object->fetch_thirdparty($object->socid);
+
+	// Proposer
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Proposer");
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$creditor.'</b>';
+	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+	print '</td></tr>'."\n";
+
+	// Target
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$object->thirdparty->name.'</b>';
+	print '</td></tr>'."\n";
+
+	// Object
+	$text = '<b>'.$langs->trans("SignatureFichinterRef", $object->ref).'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow2">'.$text;
+
+	$last_main_doc_file = $object->last_main_doc;
+
+	if (empty($last_main_doc_file) || !dol_is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
+		// It seems document has never been generated, or was generated and then deleted.
+		// So we try to regenerate it with its default template.
+		$defaulttemplate = '';		// We force the use an empty string instead of $object->model_pdf to be sure to use a "main" default template and not the last one used.
+		$object->generateDocument($defaulttemplate, $langs);
+	}
+
+	$directdownloadlink = $object->getLastMainDocLink('fichinter');
+	if ($directdownloadlink) {
+		print '<br><a href="'.$directdownloadlink.'">';
+		print img_mime($object->last_main_doc, '');
+		if ($message == "signed") {
+			print $langs->trans("DownloadSignedDocument").'</a>';
+		} else {
+			print $langs->trans("DownloadDocument").'</a>';
+		}
+	}
+	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
+	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
+	print '</td></tr>'."\n";
 }
 
-
+// Call Hook addFormSign
+$parameters = array('source' => $source);
+$reshook = $hookmanager->executeHooks('addFormSign', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 if (!$found && !$mesg) {
 	$mesg = $langs->transnoentitiesnoconv("ErrorBadParameters");
@@ -420,6 +565,8 @@ if ($action == "dosign" && empty($cancel)) {
 		$("#signbutton").attr("disabled",false);
 		if(!$._data($("#signbutton")[0], "events")){
 			$("#signbutton").on("click",function(){
+				console.log("We click on button sign");
+				$("#signbutton").val(\''.dol_escape_js($langs->transnoentities('PleaseBePatient')).'\');
 				var signature = $("#signature").jSignature("getData", "image");
 				$.ajax({
 					type: "POST",
@@ -427,15 +574,17 @@ if ($action == "dosign" && empty($cancel)) {
 					dataType: "text",
 					data: {
 						"action" : "importSignature",
+						"token" : \''.newToken().'\',
 						"signaturebase64" : signature,
 						"ref" : \''.dol_escape_js($REF).'\',
 						"securekey" : \''.dol_escape_js($SECUREKEY).'\',
 						"mode" : \''.dol_escape_htmltag($source).'\',
+						"entity" : \''.dol_escape_htmltag($entity).'\',
 					},
 					success: function(response) {
 						if(response == "success"){
 							console.log("Success on saving signature");
-							window.location.replace("'.$_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&message=signed&securekey='.urlencode($SECUREKEY).'");
+							window.location.replace("'.$_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&source='.urlencode($source).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany')?'&entity='.$entity:'').'");
 						}else{
 							console.error(response);
 						}
@@ -472,6 +621,18 @@ if ($action == "dosign" && empty($cancel)) {
 		} else {
 			print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignPropal").'">';
 			print '<input name="refusepropal" type="submit" class="butActionDelete small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("RefusePropal").'">';
+		}
+	} elseif ($source == 'contract') {
+		if ($message == 'signed') {
+			print '<span class="ok">'.$langs->trans("ContractSigned").'</span>';
+		} else {
+			print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignContract").'">';
+		}
+	} elseif ($source == 'fichinter') {
+		if ($message == 'signed') {
+			print '<span class="ok">'.$langs->trans("FichinterSigned").'</span>';
+		} else {
+			print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignFichinter").'">';
 		}
 	}
 }

@@ -67,7 +67,7 @@ class box_prospect extends ModeleBoxes
 			$this->enabled = 0; // disabled by this option
 		}
 
-		$this->hidden = !($user->rights->societe->lire && empty($user->socid));
+		$this->hidden = !($user->hasRight('societe', 'read') && empty($user->socid));
 	}
 
 	/**
@@ -86,7 +86,7 @@ class box_prospect extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedProspects", $max));
 
-		if ($user->rights->societe->lire) {
+		if ($user->hasRight('societe', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
@@ -141,7 +141,7 @@ class box_prospect extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center nowraponall"',
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($datem, "day", 'tzuserrel'),
 					);
 

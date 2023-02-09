@@ -116,7 +116,7 @@ exports.handler.addCommands([{
 
 
 [{
-    bindKey: {mac: "Control-G", win: "Ctrl-G"},
+    bindKey: {mac: "Ctrl-G", win: "Ctrl-G"},
     name: "gotoline"
 }, {
     bindKey: {mac: "Command-Shift-L|Command-F2", win: "Ctrl-Shift-L|Ctrl-F2"},
@@ -158,10 +158,10 @@ exports.handler.addCommands([{
     bindKey: {mac: "Command-[", win: "Ctrl-["},
     name: "blockoutdent"
 }, {
-    bindKey: {mac: "Control-PageDown", win: "Alt-PageDown"},
+    bindKey: {mac: "Ctrl-PageDown", win: "Alt-PageDown"},
     name: "pagedown"
 }, {
-    bindKey: {mac: "Control-PageUp", win: "Alt-PageUp"},
+    bindKey: {mac: "Ctrl-PageUp", win: "Alt-PageUp"},
     name: "pageup"
 }, {
     bindKey: {mac: "Shift-Option-A", win: "Shift-Alt-A"},

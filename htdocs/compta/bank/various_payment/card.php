@@ -22,6 +22,7 @@
  *  \brief      Page of various expenses
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -30,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -52,7 +53,7 @@ $amount = price2num(GETPOST("amount", "alpha"));
 $paymenttype = GETPOST("paymenttype", "aZ09");
 $accountancy_code = GETPOST("accountancy_code", "alpha");
 $projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
-if (!empty($conf->accounting->enabled) && !empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+if (isModEnabled('accounting') && !empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
 	$subledger_account = GETPOST("subledger_account", "alpha") > 0 ? GETPOST("subledger_account", "alpha") : '';
 } else {
 	$subledger_account = GETPOST("subledger_account", "alpha");
@@ -139,7 +140,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 			$error++;
 		}
-		if (!empty($conf->banque->enabled) && !$object->accountid > 0) {
+		if (isModEnabled("banque") && !$object->accountid > 0) {
 			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 			$error++;
@@ -149,7 +150,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentMode")), null, 'errors');
 			$error++;
 		}
-		if (!empty($conf->accounting->enabled) && !$object->accountancy_code) {
+		if (isModEnabled('accounting') && !$object->accountancy_code) {
 			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("AccountAccounting")), null, 'errors');
 			$error++;
@@ -179,7 +180,7 @@ if (empty($reshook)) {
 		$action = 'create';
 	}
 
-	if ($action == 'delete') {
+	if ($action == 'confirm_delete' && $confirm == 'yes') {
 		$result = $object->fetch($id);
 
 		if ($object->rappro == 0) {
@@ -304,14 +305,11 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->banque->m
 /*
  *	View
  */
-
-llxHeader("", $langs->trans("VariousPayment"));
-
 $form = new Form($db);
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -323,6 +321,13 @@ if ($id) {
 		exit;
 	}
 }
+
+$title = $object->ref." - ".$langs->trans('Card');
+if ($action == 'create') {
+	$title = $langs->trans("NewVariousPayment");
+}
+$help_url = 'EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores|DE:Modul_Lieferantenrechnungen';
+llxHeader('', $title, $help_url);
 
 $options = array();
 
@@ -405,11 +410,11 @@ if ($action == 'create') {
 	// Amount
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
-	print '<input name="amount" id="amount" class="minwidth100 maxwidth150onsmartphone" value="'.$amount.'">';
+	print '<input name="amount" id="amount" class="minwidth50 maxwidth100" value="'.$amount.'">';
 	print '</td></tr>';
 
 	// Bank
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		print '<tr><td>';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
@@ -424,7 +429,7 @@ if ($action == 'create') {
 	print '</tr>';
 
 	// Number
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		print '<tr><td><label for="num_payment">'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '</label></td>';
@@ -444,7 +449,7 @@ if ($action == 'create') {
 	}
 
 	// Accountancy account
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		// TODO Remove the fieldrequired and allow instead to edit a various payment to enter accounting code
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("AccountAccounting").'</td>';
 		print '<td>';
@@ -457,7 +462,7 @@ if ($action == 'create') {
 	}
 
 	// Subledger account
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
 		print '<td>';
 		if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
@@ -481,7 +486,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (isModEnabled('project')) {
 		$formproject = new FormProjets($db);
 
 		// Associated project
@@ -543,11 +548,17 @@ if ($id) {
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVariousPayment', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 350);
 	}
 
+	// Confirmation of the removal of the Various Payment
+	if ($action == 'delete') {
+		$text = $langs->trans('ConfirmDeleteVariousPayment');
+		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteVariousPayment'), $text, 'confirm_delete', '', '', 2);
+	}
+
 	print dol_get_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);
 
 	$morehtmlref = '<div class="refidno">';
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' ';
 		if ($user->rights->banque->modifier) {
@@ -563,7 +574,7 @@ if ($id) {
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($object->fk_project)) {
@@ -577,6 +588,8 @@ if ($id) {
 	}
 	$morehtmlref .= '</div>';
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+
+	$morehtmlright = '';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
@@ -607,13 +620,13 @@ if ($id) {
 	}
 	print '<tr><td>'.$langs->trans("Sens").'</td><td>'.$sens.'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
 
 	// Accountancy code
 	print '<tr><td class="nowrap">';
 	print $langs->trans("AccountAccounting");
 	print '</td><td>';
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		$accountingaccount = new AccountingAccount($db);
 		$accountingaccount->fetch('', $object->accountancy_code, 1);
 
@@ -630,7 +643,7 @@ if ($id) {
 	print $form->editfieldval('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0);
 	print '</td></tr>';
 
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		if ($object->fk_account > 0) {
 			$bankline = new AccountLine($db);
 			$bankline->fetch($object->fk_bank);

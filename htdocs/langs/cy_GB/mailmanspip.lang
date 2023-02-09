@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Gosod modiwl Mailman a SPIP
+MailmanTitle=System rhestr bostio Mailman
+TestSubscribe=I brofi tanysgrifiad i restrau Mailman
+TestUnSubscribe=I brofi dad-danysgrifio o restrau Mailman
+MailmanCreationSuccess=Cyflawnwyd y prawf tanysgrifio yn llwyddiannus
+MailmanDeletionSuccess=Cyflawnwyd y prawf dad-danysgrifio yn llwyddiannus
+SynchroMailManEnabled=Bydd diweddariad Mailman yn cael ei berfformio
+SynchroSpipEnabled=Bydd diweddariad Spip yn cael ei berfformio
+DescADHERENT_MAILMAN_ADMIN_PASSWORD=Mailman administrator password
+DescADHERENT_MAILMAN_URL=URL ar gyfer tanysgrifiadau Mailman
+DescADHERENT_MAILMAN_UNSUB_URL=URL ar gyfer dad-danysgrifiadau Mailman
+DescADHERENT_MAILMAN_LISTS=Rhestr(au) ar gyfer arysgrif awtomatig o aelodau newydd (wedi'u gwahanu gan goma)
+SPIPTitle=System Rheoli Cynnwys SPIP
+DescADHERENT_SPIP_SERVEUR=Gweinydd SPIP
+DescADHERENT_SPIP_DB=Enw cronfa ddata SPIP
+DescADHERENT_SPIP_USER=Mewngofnod cronfa ddata SPIP
+DescADHERENT_SPIP_PASS=Cyfrinair cronfa ddata SPIP
+AddIntoSpip=Ychwanegu i SPIP
+AddIntoSpipConfirmation=Ydych chi'n siŵr eich bod am ychwanegu'r aelod hwn i SPIP?
+AddIntoSpipError=Wedi methu ag ychwanegu'r defnyddiwr yn SPIP
+DeleteIntoSpip=Dileu o SPIP
+DeleteIntoSpipConfirmation=Ydych chi'n siŵr eich bod am dynnu'r aelod hwn o SPIP?
+DeleteIntoSpipError=Wedi methu ag atal y defnyddiwr rhag SPIP
+SPIPConnectionFailed=Wedi methu cysylltu â SPIP
+SuccessToAddToMailmanList=%s wedi'i ychwanegu'n llwyddiannus at restr postmon %s neu gronfa ddata SPIP
+SuccessToRemoveToMailmanList=%s wedi'i dynnu'n llwyddiannus o restr postmon %s neu gronfa ddata SPIP

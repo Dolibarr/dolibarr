@@ -21,6 +21,7 @@
  *	\brief      Page des informations d'un entrepot
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -35,7 +36,7 @@ $ref = GETPOST('ref', 'alpha');
 // Security check
 //$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
 $result = restrictedArea($user, 'stock');
-
+$usercancreate = $user->rights->stock->creer;
 
 /*
  * View
@@ -59,7 +60,7 @@ $morehtmlref = '<div class="refidno">';
 $morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
 
 // Project
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
 	if ($usercancreate) {
@@ -75,7 +76,7 @@ if (!empty($conf->projet->enabled)) {
 			$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			$morehtmlref .= '</form>';
 		} else {
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!empty($object->socid) ? $object->socid : 0), $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 		}
 	} else {
 		if (!empty($object->fk_project)) {

@@ -66,3 +66,5 @@ RepeatableIntervention=干預模板
 ToCreateAPredefinedIntervention=要創建預定義或定期干預，請創建一個通用乾預並將其轉換為乾預模板
 ConfirmReopenIntervention=您確定要打開干預<b> %s </b>嗎？
 GenerateInter=產生干預
+FichinterNoContractLinked=干預 %s 已在沒有連結合約的情況下建立。
+ErrorFicheinterCompanyDoesNotExist=公司不存在。干預尚未產生。

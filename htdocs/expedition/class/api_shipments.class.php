@@ -279,8 +279,8 @@ class Shipments extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		$updateRes = $this->shipment->addline(
 						$request_data->desc,
@@ -347,8 +347,8 @@ class Shipments extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		$updateRes = $this->shipment->updateline(
 						$lineid,
@@ -502,7 +502,7 @@ class Shipments extends DolibarrApi
 	 *
 	 * @url POST    {id}/validate
 	 *
-	 * @return  array
+	 * @return  object
 	 * \todo An error 403 is returned if the request has an empty body.
 	 * Error message: "Forbidden: Content type `text/plain` is not supported."
 	 * Workaround: send this in the body
@@ -630,7 +630,7 @@ class Shipments extends DolibarrApi
 	*
 	* @url POST    {id}/close
 	*
-	* @return  int
+	* @return  object
 	*/
 	public function close($id, $notrigger = 0)
 	{
@@ -686,6 +686,11 @@ class Shipments extends DolibarrApi
 
 		if (!empty($object->lines) && is_array($object->lines)) {
 			foreach ($object->lines as $line) {
+				if (is_array($line->detail_batch)) {
+					foreach ($line->detail_batch as $keytmp2 => $valtmp2) {
+						unset($line->detail_batch[$keytmp2]->db);
+					}
+				}
 				unset($line->tva_tx);
 				unset($line->vat_src_code);
 				unset($line->total_ht);

@@ -30,6 +30,7 @@
  *  \brief      Payment page for customer invoices
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -104,8 +105,8 @@ $arrayfields = array(
 	'p.datep'			=> array('label'=>"Date", 'checked'=>1, 'position'=>20),
 	's.nom'				=> array('label'=>"ThirdParty", 'checked'=>1, 'position'=>30),
 	'c.libelle'			=> array('label'=>"Type", 'checked'=>1, 'position'=>40),
-	'transaction'		=> array('label'=>"BankTransactionLine", 'checked'=>1, 'position'=>50, 'enabled'=>(!empty($conf->banque->enabled))),
-	'ba.label'			=> array('label'=>"Account", 'checked'=>1, 'position'=>60, 'enabled'=>(!empty($conf->banque->enabled))),
+	'transaction'		=> array('label'=>"BankTransactionLine", 'checked'=>1, 'position'=>50, 'enabled'=>(isModEnabled("banque"))),
+	'ba.label'			=> array('label'=>"Account", 'checked'=>1, 'position'=>60, 'enabled'=>(isModEnabled("banque"))),
 	'p.num_paiement'	=> array('label'=>"Numero", 'checked'=>1, 'position'=>70, 'tooltip'=>"ChequeOrTransferNumber"),
 	'p.amount'			=> array('label'=>"Amount", 'checked'=>1, 'position'=>80),
 	'p.statut'			=> array('label'=>"Status", 'checked'=>1, 'position'=>90, 'enabled'=>(!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))),
@@ -148,7 +149,7 @@ if (empty($reshook)) {
 		$search_company = '';
 		$search_status = '';
 		$option = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 }
@@ -194,6 +195,9 @@ if (GETPOST("orphelins", "alpha")) {
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
+
+	$sqlfields = $sql; // $sql fields to remove for count total
+
 	$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
@@ -254,21 +258,33 @@ if (GETPOST("orphelins", "alpha")) {
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 }
-$sql .= $db->order($sortfield, $sortorder);
 
+// Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
 
-	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	if (($page * $limit) > $nbtotalofrecords) {
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -400,7 +416,7 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 // Filter: Payment type
 if (!empty($arrayfields['c.libelle']['checked'])) {
 	print '<td class="liste_titre">';
-	$form->select_types_paiements($search_paymenttype, 'search_paymenttype', '', 2, 1, 1);
+	print $form->select_types_paiements($search_paymenttype, 'search_paymenttype', '', 2, 1, 1, 1, 1, '', 1);
 	print '</td>';
 }
 
@@ -497,6 +513,7 @@ foreach ($arrayfields as $column) {
 
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
 	$objp = $db->fetch_object($resql);
 
@@ -528,7 +545,7 @@ while ($i < min($num, $limit)) {
 	// Date
 	if (!empty($arrayfields['p.datep']['checked'])) {
 		$dateformatforpayment = 'dayhour';
-		print '<td class="center">'.dol_print_date($db->jdate($objp->datep), $dateformatforpayment).'</td>';
+		print '<td class="center">'.dol_print_date($db->jdate($objp->datep), $dateformatforpayment, 'tzuser').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -564,8 +581,12 @@ while ($i < min($num, $limit)) {
 
 	// Bank transaction
 	if (!empty($arrayfields['transaction']['checked'])) {
-		$bankline->fetch($objp->fk_bank);
-		print '<td>'.$bankline->getNomUrl(1, 0).'</td>';
+		print '<td>';
+		if ($objp->fk_bank > 0) {
+			$bankline->fetch($objp->fk_bank);
+			print $bankline->getNomUrl(1, 0);
+		}
+		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -600,7 +621,11 @@ while ($i < min($num, $limit)) {
 			$totalarray['nbfield']++;
 		}
 		$totalarray['pos'][$checkedCount] = 'amount';
-		$totalarray['val']['amount'] += $objp->amount;
+		if (empty($totalarray['val']['amount'])) {
+			$totalarray['val']['amount'] = $objp->amount;
+		} else {
+			$totalarray['val']['amount'] += $objp->amount;
+		}
 	}
 
 	// Status
