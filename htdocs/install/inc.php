@@ -180,33 +180,27 @@ if (!empty($dolibarr_main_document_root_alt)) {
 }
 
 
-// Security check (old method, when directory is renamed /install.lock)
-if (preg_match('/install\.lock/i', $_SERVER["SCRIPT_FILENAME"])) {
-	if (!is_object($langs)) {
-		$langs = new Translate('..', $conf);
-		$langs->setDefaultLang('auto');
-	}
-	$langs->load("install");
+// Check install.lock (for both install and upgrade)
 
-	header("X-Content-Type-Options: nosniff");
-	header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
-
-	print $langs->trans("YouTryInstallDisabledByDirLock");
-	if (!empty($dolibarr_main_url_root)) {
-		print 'Click on following link, <a href="'.$dolibarr_main_url_root.'/admin/index.php?mainmenu=home&leftmenu=setup'.(GETPOSTISSET("login") ? '&username='.urlencode(GETPOST("login")) : '').'">';
-		print $langs->trans("ClickHereToGoToApp");
-		print '</a>';
-	}
-	exit;
-}
-
-$lockfile = DOL_DATA_ROOT.'/install.lock';
+$lockfile = DOL_DATA_ROOT.'/install.lock';	// To lock all /install pages
+$lockfile2 = DOL_DOCUMENT_ROOT.'/install.lock';	// To lock all /install pages (recommended)
+$upgradeunlockfile = DOL_DATA_ROOT.'/upgrade.unlock';	// To unlock upgrade process
+$upgradeunlockfile2 = DOL_DOCUMENT_ROOT.'/upgrade.unlock';	// To unlock upgrade process
 if (constant('DOL_DATA_ROOT') === null) {
 	// We don't have a configuration file yet
 	// Try to detect any lockfile in the default documents path
 	$lockfile = '../../documents/install.lock';
+	$upgradeunlockfile = '../../documents/upgrade.unlock';
 }
-if (@file_exists($lockfile)) {
+$islocked=false;
+if (@file_exists($lockfile) || @file_exists($lockfile2)) {
+	if (!defined('ALLOWED_IF_UPGRADE_UNLOCK_FOUND') || (! @file_exists($upgradeunlockfile) && ! @file_exists($upgradeunlockfile2))) {
+		// If this is a dangerous install page (ALLOWED_IF_UPGRADE_UNLOCK_FOUND not defined) or
+		// if there is no upgrade unlock files, we lock the pages.
+		$islocked = true;
+	}
+}
+if ($islocked) {	// Pages are locked
 	if (!isset($langs) || !is_object($langs)) {
 		$langs = new Translate('..', $conf);
 		$langs->setDefaultLang('auto');
@@ -216,14 +210,22 @@ if (@file_exists($lockfile)) {
 	header("X-Content-Type-Options: nosniff");
 	header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
 
-	print $langs->trans("YouTryInstallDisabledByFileLock");
+	if (GETPOST('action') != 'upgrade') {
+		print $langs->trans("YouTryInstallDisabledByFileLock").'<br>';
+	} else {
+		print $langs->trans("YouTryUpgradeDisabledByMissingFileUnLock").'<br>';
+	}
 	if (!empty($dolibarr_main_url_root)) {
-		print $langs->trans("ClickOnLinkOrRemoveManualy").'<br>';
+		if (GETPOST('action') != 'upgrade') {
+			print $langs->trans("ClickOnLinkOrRemoveManualy").'<br>';
+		} else {
+			print $langs->trans("ClickOnLinkOrCreateUnlockFileManualy").'<br>';
+		}
 		print '<a href="'.$dolibarr_main_url_root.'/admin/index.php?mainmenu=home&leftmenu=setup'.(GETPOSTISSET("login") ? '&username='.urlencode(GETPOST("login")) : '').'">';
 		print $langs->trans("ClickHereToGoToApp");
 		print '</a>';
 	} else {
-		print 'If you always reach this page, you must remove install.lock file manually.<br>';
+		print 'If you always reach this page, you must remove the install.lock file manually.<br>';
 	}
 	exit;
 }

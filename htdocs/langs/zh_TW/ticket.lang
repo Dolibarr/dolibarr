@@ -26,6 +26,7 @@ Permission56002=修改服務單
 Permission56003=刪除服務單
 Permission56004=管理服務單
 Permission56005=查看所有合作方的服務單（對外部用戶無效，始終僅限於他們所依賴的合作方）
+Permission56006=匯出服務單
 
 Tickets=服務單
 TicketDictType=服務單-類型
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=外部合作者
 
 OriginEmail=填寫人Email
 Notify_TICKET_SENTBYMAIL=以電子郵件發送服務單訊息
+
+ExportDataset_ticket_1=服務單
 
 # Status
 Read=已讀取

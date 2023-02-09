@@ -26,6 +26,7 @@ Permission56002=Tickets ändern
 Permission56003=Tickets löschen
 Permission56004=Tickets bearbeiten
 Permission56005=Tickets aller Geschäftspartner anzeigen (nicht gültig für externe Benutzer, diese sehen immer nur die Tickets des eigenen Geschäftspartners)
+Permission56006=Tickets exportieren
 
 Tickets=Tickets
 TicketDictType=Ticket-Anfragearten
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Externer Mitarbeiter
 
 OriginEmail=Ersteller E-Mail
 Notify_TICKET_SENTBYMAIL=Ticket Nachricht per E-Mail versenden
+
+ExportDataset_ticket_1=Tickets
 
 # Status
 Read=Gelesen

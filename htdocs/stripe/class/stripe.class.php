@@ -465,12 +465,14 @@ class Stripe extends CommonObject
 				"currency" => $currency_code,
 				"payment_method_types" => $paymentmethodtypes,
 				"description" => $description,
-				"statement_descriptor_suffix" => $descriptor, // For card payment, 22 chars that appears on bank receipt (prefix into stripe setup + this suffix)
-				"statement_descriptor" => $descriptor, // For SEPA, it will take only statement_descriptor, not statement_descriptor_suffix
 				//"save_payment_method" => true,
 				"setup_future_usage" => "on_session",
 				"metadata" => $metadata
 			);
+			if ($descriptor) {
+				$dataforintent["statement_descriptor_suffix"] = $descriptor; // For card payment, 22 chars that appears on bank receipt (prefix into stripe setup + this suffix)
+				$dataforintent["statement_descriptor"] = $descriptor; 	// For SEPA, it will take only statement_descriptor, not statement_descriptor_suffix
+			}
 			if (!is_null($customer)) {
 				$dataforintent["customer"] = $customer;
 			}
@@ -920,7 +922,7 @@ class Stripe extends CommonObject
 		global $conf, $user, $langs;
 		$sepa = null;
 
-		$sql = "SELECT sa.stripe_card_ref, sa.proprio, sa.iban_prefix, sa.rum"; // stripe_card_ref is 'src_...' for Stripe SEPA
+		$sql = "SELECT sa.stripe_card_ref, sa.proprio, sa.iban_prefix as iban, sa.rum"; // stripe_card_ref is 'src_...' for Stripe SEPA
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as sa";
 		$sql .= " WHERE sa.rowid = ".((int) $object->id); // We get record from ID, no need for filter on entity
 		$sql .= " AND sa.type = 'ban'"; //type ban to get normal bank account of customer (prelevement)
@@ -958,8 +960,16 @@ class Stripe extends CommonObject
 						dol_syslog($this->error, LOG_WARNING);
 					}
 				} elseif ($createifnotlinkedtostripe) {
-					$iban = $obj->iban_prefix; //prefix ?
+					$iban = $obj->iban;
 					$ipaddress = getUserRemoteIP();
+					$metadata = array('dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress);
+					if (is_object($object)) {
+						$metadata['dol_type'] = $object->element;
+						$metadata['dol_id'] = $object->id;
+						$metadata['dol_thirdparty_id'] = $soc->id;
+					}
+
+					$description = 'SEPA for IBAN '.$iban;
 
 					$dataforcard = array(
 						'type'=>'sepa_debit',
@@ -968,13 +978,7 @@ class Stripe extends CommonObject
 							'name' => $soc->name,
 							'email' => !empty($soc->email) ? $soc->email : "",
 						),
-						"metadata" => array(
-							'dol_type'=>$object->element,
-							'dol_id'=>$object->id,
-							'dol_version'=>DOL_VERSION,
-							'dol_entity'=>$conf->entity,
-							'ipaddress'=>$ipaddress
-						)
+						"metadata" => $metadata
 					);
 					// Complete owner name
 					if (!empty($soc->town)) {
@@ -1012,13 +1016,17 @@ class Stripe extends CommonObject
 
 						$s = new \Stripe\StripeClient($stripeacc);
 
+						//var_dump($dataforcard);exit;
+
 						$sepa = $s->paymentMethods->create($dataforcard);
 						if (!$sepa) {
-							$this->error = 'Creation of sepa_debit on Stripe has failed';
+							$this->error = 'Creation of payment method sepa_debit on Stripe has failed';
 						} else {
 							// link customer and src
-							$cs = $s->setupIntents->create(['payment_method_types' => ['sepa_debit'], 'customer' => $cu->id]);
-							$cs = $s->setupIntents->update($cs->id, ['payment_method' => $sepa->id]);
+							//$cs = $this->getSetupIntent($description, $soc, $cu, '', $status);
+							$dataforintent = array(['description'=> $description, 'payment_method_types' => ['sepa_debit'], 'customer' => $cu->id, 'payment_method' => $sepa->id], 'metadata'=>$metadata);
+							$cs = $s->setupIntents->create($dataforintent);
+							//$cs = $s->setupIntents->update($cs->id, ['payment_method' => $sepa->id]);
 							$cs = $s->setupIntents->confirm($cs->id, ['mandate_data' => ['customer_acceptance' => ['type' => 'offline']]]);
 							if (!$cs) {
 								$this->error = 'Link SEPA <-> Customer failed';

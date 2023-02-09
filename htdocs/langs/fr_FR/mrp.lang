@@ -11,7 +11,7 @@ Bom=Nomenclatures produits (BOM)
 BillOfMaterials=Nomenclature BOM
 BillOfMaterialsLines=Lignes de nomenclature
 BOMsSetup=Configuration du module BOM
-ListOfBOMs=Nomenclatures - Nomenclature
+ListOfBOMs=Nomenclatures - BOM
 ListOfManufacturingOrders=Ordres Fabrication
 NewBOM=Nouveau BOM
 ProductBOMHelp=Produit à créer (ou désassembler) avec cette nomenclature. <br> Remarque: les produits avec la propriété 'Nature de produit' = 'Matière première' ne sont pas visibles dans cette liste.
@@ -102,6 +102,7 @@ NbOperatorsRequired=Nombre d'opérateurs requis
 THMOperatorEstimated=THM estimé de l'opérateur
 THMMachineEstimated=THM machine estimé
 WorkstationType=Type de poste de travail
+DefaultWorkstation=Poste de travail par défaut
 Human=Humain
 Machine=Machine
 HumanMachine=Humain/machine

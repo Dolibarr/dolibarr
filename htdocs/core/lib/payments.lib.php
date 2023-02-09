@@ -170,7 +170,16 @@ function getValidOnlinePaymentMethods($paymentmethod = '')
 		'validpaymentmethod' => &$validpaymentmethod
 	];
 	$tmpobject = new stdClass();
-	$hookmanager->executeHooks('doValidatePayment', $parameters, $tmpobject, $action);
+	$reshook = $hookmanager->executeHooks('getValidPayment', $parameters, $tmpobject, $action);
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	} elseif (!empty($hookmanager->resArray['validpaymentmethod'])) {
+		if ($reshook == 0) {
+			$validpaymentmethod = array_merge($validpaymentmethod, $hookmanager->resArray['validpaymentmethod']);
+		} else {
+			$validpaymentmethod = $hookmanager->resArray['validpaymentmethod'];
+		}
+	}
 
 	return $validpaymentmethod;
 }

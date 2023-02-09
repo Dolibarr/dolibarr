@@ -303,6 +303,7 @@ ErrorValueForTooLow=Wert für <b>%s</b> ist zu niedrig
 ErrorValueCantBeNull=Der Wert für <b>%s</b> darf nicht null sein
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Das Datum der Banküberweisung darf nicht vor dem Datum der Dateiübermittlung liegen
 ErrorTooMuchFileInForm=Zu viele Dateien im Formular, die maximale Anzahl beträgt %s Datei(en)
+ErrorSessionInvalidatedAfterPasswordChange=Die Sitzung wurde nach einer Änderung von Passwort, Status oder Gültigkeitsdaten ungültig. Bitte melden Sie sich erneut an.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Ihr PHP Parameter upload_max_filesize (%s) ist größer als Parameter post_max_size (%s). Dies ist eine inkonsistente Einstellung.
@@ -325,6 +326,7 @@ WarningPaymentDateLowerThanInvoiceDate=Zahlungsdatum (%s) liegt vor dem Rechnung
 WarningTooManyDataPleaseUseMoreFilters=Zu viele Ergebnisse (mehr als %s Zeilen). Bitte benutzen Sie mehr Filter oder erhöhen sie die Konstante %s auf einen höheren Wert.
 WarningSomeLinesWithNullHourlyRate=Einige erfasste Zeiten wurden von Benutzern erfasst bei denen der Stundensatz undefiniert war. Ein Stundenansatz von 0 %s pro Stunde wurde verwendet, was eine fehlerhafte Zeitauswertungen zur Folge haben kann.
 WarningYourLoginWasModifiedPleaseLogin=Ihr Login wurde verändert. Aus Sicherheitsgründen müssen Sie sich vor der nächsten Aktion mit Ihrem neuen Login anmelden.
+WarningYourPasswordWasModifiedPleaseLogin=Ihr Passwort wurde geändert. Aus Sicherheitsgründen müssen Sie sich jetzt mit Ihrem neuen Passwort anmelden.
 WarningAnEntryAlreadyExistForTransKey=Eine Übersetzung für diesen Übersetzungsschlüssel existiert schon für diese Sprache
 WarningNumberOfRecipientIsRestrictedInMassAction=Achtung, die Anzahl der verschiedenen Empfänger ist auf <b> %s </b> beschränkt, wenn Massenaktionen für Listen verwendet werden
 WarningDateOfLineMustBeInExpenseReportRange=Das Datum dieser Positionszeile ist ausserhalb der Datumsspanne dieser Spesenabrechnung
