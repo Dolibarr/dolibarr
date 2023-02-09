@@ -222,6 +222,7 @@ if (empty($reshook) && $action == 'add') {
 			} else {
 				$thirdparty->name = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
 			}
+			$thirdparty->email = GETPOST('email');
 			$thirdparty->address = GETPOST('address');
 			$thirdparty->zip = GETPOST('zip');
 			$thirdparty->town = GETPOST('town');
