@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018 Jean-François Ferry <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2019-2022 Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2023 Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -199,6 +199,26 @@ class Ticket extends CommonObject
 	public $cache_category_tickets;
 
 	/**
+	 * @var array tickets severity
+	 */
+	public $cache_severity_tickets;
+
+	/**
+	 * @var array cache msgs ticket
+	 */
+	public $cache_msgs_ticket;
+
+	/**
+	 * @var array statuts labels
+	 */
+	public $statuts;
+
+	/**
+	 * @var array statuts short labels
+	 */
+	public $statuts_short;
+
+	/**
 	 * @var int Notify thirdparty at create
 	 */
 	public $notify_tiers_at_create;
@@ -219,7 +239,7 @@ class Ticket extends CommonObject
 	public $oldcopy;
 
 	/**
-	 * @var array array of TicketsLine
+	 * @var TicketsLine[] array of TicketsLine
 	 */
 	public $lines;
 
@@ -1251,7 +1271,7 @@ class Ticket extends CommonObject
 	{
 		global $conf, $langs;
 
-		if (!empty($this->cache_category_ticket) && count($this->cache_category_tickets)) {
+		if (!empty($this->cache_category_tickets) && count($this->cache_category_tickets)) {
 			// Cache already loaded
 			return 0;
 		}
