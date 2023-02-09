@@ -2682,6 +2682,11 @@ class ExpenseReportLine extends CommonObjectLine
 	public $db;
 
 	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'expensereport_det';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
