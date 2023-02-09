@@ -2371,7 +2371,7 @@ class Ticket extends CommonObject
 		$maxheightmini = 72;
 
 		$formmail = new FormMail($this->db);
-
+		$formmail->trackid = 'tic'.$this->id;
 		$attachedfiles = $formmail->get_attached_files();
 
 		$filepath = $attachedfiles['paths'];
@@ -2538,24 +2538,24 @@ class Ticket extends CommonObject
 							$assigned_user = new User($this->db);
 							$assigned_user->fetch($this->fk_user_assign);
 							if (!empty($assigned_user->email)) {
-								$sendto[] = $assigned_user->getFullName($langs)." <".$assigned_user->email.">";
+								$sendto[$assigned_user->email] = $assigned_user->getFullName($langs)." <".$assigned_user->email.">";
 							} else {
 								$assigned_user_dont_have_email = $assigned_user->getFullName($langs);
 							}
 						}
 						if (empty($sendto)) {
 							if (!empty($conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL)) {
-								$sendto[] = $conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL;
+								$sendto[$conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL] = $conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL;
 							} elseif (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) {
-								$sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+								$sendto[$conf->global->TICKET_NOTIFICATION_EMAIL_TO] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 							}
 						}
 
 						// Add global email address recipient
 						if (!empty($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS) &&
-							!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)
+							!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && !array_key_exists($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)
 						) {
-							$sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+							$sendto[$conf->global->TICKET_NOTIFICATION_EMAIL_TO] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 						}
 
 						if (!empty($sendto)) {
@@ -2639,7 +2639,7 @@ class Ticket extends CommonObject
 
 								if ($info_sendto['email'] != '') {
 									if (!empty($info_sendto['email'])) {
-										$sendto[] = trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">";
+										$sendto[$info_sendto['email']] = trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">";
 									}
 
 									//Contact type
@@ -2655,9 +2655,9 @@ class Ticket extends CommonObject
 							$message .= '<br>'.$langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$object->track_id.'</a><br>';
 
 							// Add global email address recipient
-							if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
+							if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !array_key_exists($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
 								if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) {
-									$sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+									$sendto[$conf->global->TICKET_NOTIFICATION_EMAIL_TO] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 								}
 							}
 
@@ -2717,7 +2717,7 @@ class Ticket extends CommonObject
 
 									if ($info_sendto['email'] != '' && $info_sendto['email'] != $object->origin_email) {
 										if (!empty($info_sendto['email'])) {
-											$sendto[] = trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">";
+											$sendto[$info_sendto['email']] = trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">";
 										}
 
 										$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], '-1').' ('.strtolower($info_sendto['libelle']).')';
@@ -2737,21 +2737,21 @@ class Ticket extends CommonObject
 								$message .= '<br>'.$message_signature;
 
 								if (!empty($object->origin_email)) {
-									$sendto[] = $object->origin_email;
+									$sendto[$object->origin_email] = $object->origin_email;
 								}
 
-								if ($object->fk_soc > 0 && !in_array($object->origin_email, $sendto)) {
+								if ($object->fk_soc > 0 && !array_key_exists($object->origin_email, $sendto)) {
 									$object->socid = $object->fk_soc;
 									$object->fetch_thirdparty();
 									if (!empty($object->thirdparty->email)) {
-										$sendto[] = $object->thirdparty->email;
+										$sendto[$object->thirdparty->email] = $object->thirdparty->email;
 									}
 								}
 
 								// altairis: Add global email address reciepient
-								if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
+								if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !array_key_exists($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
 									if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) {
-										$sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+										$sendto[$conf->global->TICKET_NOTIFICATION_EMAIL_TO] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 									}
 								}
 
