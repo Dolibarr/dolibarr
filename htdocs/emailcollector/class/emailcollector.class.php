@@ -2289,7 +2289,7 @@ class EmailCollector extends CommonObject
 								'ticket' => array('table' => 'ticket',
 									'fields' => array('ref'),
 									'class' => 'ticket/class/ticket.class.php',
-									'object' => ' Ticket'),
+									'object' => 'Ticket'),
 								'knowledgemanagement' => array('table' => 'knowledgemanagement_knowledgerecord',
 									'fields' => array('ref'),
 									'class' => 'knowledgemanagement/class/knowledgemanagement.class.php',
