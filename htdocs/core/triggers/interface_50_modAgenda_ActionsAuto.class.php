@@ -1059,7 +1059,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$ret = $actioncomm->create($user); // User creating action
 
 		if ($ret > 0 && !empty($conf->global->MAIN_COPY_FILE_IN_EVENT_AUTO)) {
-			if (is_array($object->attachedfiles) && array_key_exists('paths', $object->attachedfiles) && count($object->attachedfiles['paths']) > 0) {
+			if (property_exists($object, 'attachedfiles') && is_array($object->attachedfiles) && array_key_exists('paths', $object->attachedfiles) && count($object->attachedfiles['paths']) > 0) {
 				foreach ($object->attachedfiles['paths'] as $key => $filespath) {
 					$srcfile = $filespath;
 					$destdir = $conf->agenda->dir_output.'/'.$ret;
