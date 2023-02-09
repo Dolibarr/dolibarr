@@ -497,7 +497,7 @@ print load_fiche_titre($langs->trans("NewSuggestionOfConference"), '', '', 0, 0,
 
 print '<div align="center">';
 print '<div id="divsubscribe">';
-print '<div class="center subscriptionformhelptext justify">';
+print '<div class="center subscriptionformhelptext opacitymedium justify">';
 
 dol_htmloutput_errors($errmsg, $errors);
 

@@ -30,7 +30,6 @@
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
- *  MEMBER_NEWFORM_EDITAMOUNT           0 or 1 = Amount can be edited
  *  MEMBER_MIN_AMOUNT                   Minimum amount
  *  MEMBER_NEWFORM_PAYONLINE            Suggest payment with paypal, paybox or stripe
  *  MEMBER_NEWFORM_DOLIBARRTURNOVER     Show field turnover (specific for dolibarr foundation)
@@ -431,7 +430,7 @@ if (empty($reshook) && $action == 'add') {
 				}
 
 				if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1') {
-					if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {			// If edition of amount not allowed
+					if (empty($adht->caneditamount)) {			// If edition of amount not allowed
 						// TODO Check amount is same than the amount required for the type of member or if not defined as the defeault amount into $conf->global->MEMBER_NEWFORM_AMOUNT
 						// It is not so important because a test is done on return of payment validation.
 					}
@@ -505,7 +504,7 @@ print load_fiche_titre($langs->trans("NewSubscription"), '', '', 0, 0, 'center')
 print '<div align="center">';
 print '<div id="divsubscribe">';
 
-print '<div class="center subscriptionformhelptext justify">';
+print '<div class="center subscriptionformhelptext opacitymedium justify">';
 if (!empty($conf->global->MEMBER_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->MEMBER_NEWFORM_TEXT)."<br>\n";
 } else {
@@ -765,7 +764,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 			$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
 		}
 
-		if (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) || $caneditamount) {
+		if ($caneditamount) {
 			print '<input type="text" name="amount" id="amount" class="flat amount width50" value="'.$showedamount.'">';
 			print ' '.$langs->trans("Currency".$conf->currency).'<span class="opacitymedium"> – ';
 			print $amount > 0 ? $langs->trans("AnyAmountWithAdvisedAmount", price($amount, 0, $langs, 1, -1, -1, $conf->currency)): $langs->trans("AnyAmountWithoutAdvisedAmount");
@@ -833,7 +832,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 
 		$i = 0;
 		while ($i < $num) {
-			$objp = $db->fetch_object($result);
+			$objp = $db->fetch_object($result);	// Load the member type and information on it
 
 			print '<tr class="oddeven">';
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
@@ -843,7 +842,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 			print '</td>';
 			print '<td class="center"><span class="amount nowrap">';
 			$displayedamount = max(intval($objp->amount), intval(getDolGlobalInt("MEMBER_MIN_AMOUNT")));
-			$caneditamount = !empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) || $objp->caneditamount;
+			$caneditamount = $objp->caneditamount;
 			if ($objp->subscription) {
 				if ($displayedamount > 0 || !$caneditamount) {
 					print $displayedamount.' '.strtoupper($conf->currency);

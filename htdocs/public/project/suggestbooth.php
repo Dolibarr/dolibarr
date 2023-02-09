@@ -564,7 +564,7 @@ print load_fiche_titre($langs->trans("NewSuggestionOfBooth"), '', '', 0, 0, 'cen
 
 print '<div align="center">';
 print '<div id="divsubscribe">';
-print '<div class="center subscriptionformhelptext justify">';
+print '<div class="center subscriptionformhelptext opacitymedium justify">';
 
 dol_htmloutput_errors($errmsg);
 

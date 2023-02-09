@@ -450,7 +450,7 @@ print load_fiche_titre($langs->trans("NewContact"), '', '', 0, 0, 'center');
 print '<div align="center">';
 print '<div id="divsubscribe">';
 
-print '<div class="center subscriptionformhelptext justify">';
+print '<div class="center subscriptionformhelptext opacitymedium justify">';
 if (!empty($conf->global->PROJECT_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->PROJECT_NEWFORM_TEXT)."<br>\n";
 } else {

@@ -544,7 +544,7 @@ print load_fiche_titre($langs->trans("NewPartnershipRequest"), '', '', 0, 0, 'ce
 print '<div align="center">';
 print '<div id="divsubscribe">';
 
-print '<div class="center subscriptionformhelptext justify">';
+print '<div class="center subscriptionformhelptext opacitymedium justify">';
 if (!empty($conf->global->PARTNERSHIP_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->PARTNERSHIP_NEWFORM_TEXT)."<br>\n";
 } else {
