@@ -2360,6 +2360,91 @@ if ($action == 'reset' && $user->admin) {
 	exit;
 }
 
+// delete menu
+if ($dirins && $action == 'confirm_deletemenu' && GETPOST('menukey', 'int')) {
+	// check if module is enabled
+	if (isModEnabled(strtolower($module))) {
+		$result = unActivateModule(strtolower($module));
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		if ($result) {
+			setEventMessages($result, null, 'errors');
+		}
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+		setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+	}
+	// load class and check if menu exist
+	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+	dol_include_once($pathtofile);
+		$class = 'mod'.$module;
+	if (class_exists($class)) {
+		try {
+			$moduleobj = new $class($db);
+		} catch (Exception $e) {
+			$error++;
+			dol_print_error($db, $e->getMessage());
+		}
+	}
+
+	$menus = $moduleobj->menu;
+
+	$key = (int) GETPOST('menukey', 'int');
+	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+
+
+	if ($menus[$key]['type'] == 'top') {
+			$menuTop = "
+		\$this->menu[\$r++] = array(
+			'fk_menu'=>'".$menus[$key]['fk_menu']."', 
+			'type'=>'".$menus[$key]['type']."', 
+			'titre'=>'".$menus[$key]['titre']."',
+			'prefix' => img_picto('', \$this->picto, 'class=\"paddingright pictofixedwidth valignmiddle\"'),
+			'mainmenu'=>'".$menus[$key]['mainmenu']."',
+			'leftmenu'=> '',
+			'url'=>'".$menus[$key]['url']."',
+			'langs'=>'".$menus[$key]['langs']."', 
+			'position'=>1000 + \$r,
+			'enabled'=>'isModEnabled(\"".strtolower($module)."\")', 
+			'perms' =>'".$menus[$key]['perms']."',
+			'target'=>'".$menus[$key]['target']."',
+			'user'=>".$menus[$key]['user'].", 
+		);";
+		$check = dolReplaceInFile($moduledescriptorfile, array($menuTop => '',"\t\t".'/*TOPMENU '.strtolower($menus[$key]['titre']).'*/'."\n" => '', '/*END TOPMENU '.strtolower($menus[$key]['titre']).'*/'."\n\t\t" => ''));
+	}
+	if ($menus[$key]['type'] == 'left') {
+		$left="\$this->menu[\$r++]=array(
+			'fk_menu'=>'".$menus[$key]['fk_menu']."',
+			'type'=>'".$menus[$key]['type']."',
+			'titre'=>'".$menus[$key]['titre']."',
+			'mainmenu'=>'".$menus[$key]['mainmenu']."',
+			'leftmenu'=>'".$menus[$key]['leftmenu']."',
+			'url'=>'".$menus[$key]['url']."',
+			'langs'=>'".$menus[$key]['langs']."',
+			'position'=>1100+\$r,
+			'enabled'=>'".$menus[$key]['enabled']."',
+			'perms'=>'".$menus[$key]['perms']."',
+			'target'=>'".$menus[$key]['target']."',
+			'user'=>".$menus[$key]['user'].",
+		);";
+		$check = dolReplaceInFile($moduledescriptorfile, array($left => ''));
+
+		// check if still had menu created when initial object
+		// if not we delete the comments from file
+		$menuForObj = 0;
+		foreach ($menus as $menu) {
+			if ($menu['leftmenu'] == $menus[$key]['leftmenu']) {
+				$menuForObj++;
+			}
+		}
+		if ($menuForObj == 1) {
+			$extractObjName = explode("_", $menus[$key]['leftmenu']);
+			dolReplaceInFile($moduledescriptorfile, array('/*LEFTMENU '.strtoupper($extractObjName[1]).'*/'."\n" => '','/*END LEFTMENU '.strtoupper($extractObjName[1]).'*/' => ''));
+		}
+	}
+
+		setEventMessages($langs->trans('MenuDeletedSuccessfuly'), null);
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
+		exit;
+}
 
 
 /*
