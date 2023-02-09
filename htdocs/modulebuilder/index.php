@@ -896,6 +896,17 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 
 // Init an object
 if ($dirins && $action == 'initobject' && $module && $objectname) {
+	// check if module is enabled
+	if (isModEnabled(strtolower($module))) {
+		$result = unActivateModule(strtolower($module));
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		if ($result) {
+			setEventMessages($result, null, 'errors');
+		}
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+		setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+	}
+
 	$objectname = ucfirst($objectname);
 
 	$dirins = $dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
@@ -1341,43 +1352,31 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			// Regenerate left menu entry in descriptor for $objectname
 			$stringtoadd = "
         \$this->menu[\$r++]=array(
-            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
             'fk_menu'=>'fk_mainmenu=mymodule',
-            // This is a Left menu entry
             'type'=>'left',
             'titre'=>'List MyObject',
             'mainmenu'=>'mymodule',
             'leftmenu'=>'mymodule_myobject',
             'url'=>'/mymodule/myobject_list.php',
-            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
             'langs'=>'mymodule@mymodule',
             'position'=>1100+\$r,
-            // Define condition to show or hide menu entry. Use '\$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
             'enabled'=>'\$conf->mymodule->enabled',
-            // Use 'perms'=>'\$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
             'perms'=>'1',
             'target'=>'',
-            // 0=Menu for internal users, 1=external users, 2=both
             'user'=>2,
         );
         \$this->menu[\$r++]=array(
-            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
             'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=mymodule_myobject',
-            // This is a Left menu entry
             'type'=>'left',
             'titre'=>'New MyObject',
             'mainmenu'=>'mymodule',
             'leftmenu'=>'mymodule_myobject',
             'url'=>'/mymodule/myobject_card.php?action=create',
-            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
             'langs'=>'mymodule@mymodule',
             'position'=>1100+\$r,
-            // Define condition to show or hide menu entry. Use '\$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
             'enabled'=>'\$conf->mymodule->enabled',
-            // Use 'perms'=>'\$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
             'perms'=>'1',
             'target'=>'',
-            // 0=Menu for internal users, 1=external users, 2=both
             'user'=>2
         );\n";
 			$stringtoadd = preg_replace('/MyObject/', $objectname, $stringtoadd);
@@ -1389,8 +1388,28 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			// TODO Allow a replace with regex using dolReplaceInFile with param arryreplacementisregex to 1
 			// TODO Avoid duplicate addition
 
-			dolReplaceInFile($moduledescriptorfile, array('END MODULEBUILDER LEFTMENU MYOBJECT */' => '*/'."\n".$stringtoadd."\n\t\t/* END MODULEBUILDER LEFTMENU MYOBJECT */"));
-
+			// load class and check if menu exist with same object name
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+			dol_include_once($pathtofile);
+				$class = 'mod'.$module;
+		if (class_exists($class)) {
+			try {
+				$moduleobj = new $class($db);
+			} catch (Exception $e) {
+				$error++;
+				dol_print_error($db, $e->getMessage());
+			}
+		}
+			$menus = $moduleobj->menu;
+			$counter = 0 ;
+		foreach ($menus as $menu) {
+			if ($menu['leftmenu'] == strtolower($module).'_'.strtolower($objectname)) {
+				$counter++;
+			}
+		}
+		if (!$counter) {
+			dolReplaceInFile($moduledescriptorfile, array('/* END MODULEBUILDER LEFTMENU MYOBJECT */' => '/*LEFTMENU '.strtoupper($objectname).'*/'.$stringtoadd."\n\t\t".'/*END LEFTMENU '.strtoupper($objectname).'*/'."\n\t\t".'/* END MODULEBUILDER LEFTMENU MYOBJECT */'));
+		}
 			// Add module descriptor to list of files to replace "MyObject' string with real name of object.
 			$filetogenerate[] = 'core/modules/mod'.$module.'.class.php';
 	}
@@ -1728,6 +1747,16 @@ if ($dirins && $action == 'confirm_deletemodule') {
 }
 
 if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
+	// check if module is enabled (if it's disabled and send msg event)
+	if (isModEnabled(strtolower($module))) {
+		$result = unActivateModule(strtolower($module));
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		if ($result) {
+			setEventMessages($result, null, 'errors');
+		}
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+		setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+	}
 	if (preg_match('/[^a-z0-9_]/i', $objectname)) {
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
@@ -1766,53 +1795,43 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 		);
 
 		//menu for the object selected
-		$stringtoedit = "\$this->menu[\$r++]=array(
-            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'fk_menu'=>'fk_mainmenu=".strtolower($module)."',
-            // This is a Left menu entry
-            'type'=>'left',
-            'titre'=>'List ".ucfirst($objectname)."',
-            'mainmenu'=>'".strtolower($module)."',
-            'leftmenu'=>'".strtolower($module)."_".strtolower($objectname)."',
-            'url'=>'/".strtolower($module)."/".strtolower($objectname)."_list.php',
-            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'langs'=>'".strtolower($module)."@".strtolower($module)."',
-            'position'=>1100+\$r,
-            // Define condition to show or hide menu entry. Use '\$conf->".strtolower($module)."->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'enabled'=>'\$conf->".strtolower($module)."->enabled',
-            // Use 'perms'=>'\$user->rights->".strtolower($module)."->level1->level2' if you want your menu with a permission rules
-            'perms'=>'1',
-            'target'=>'',
-            // 0=Menu for internal users, 1=external users, 2=both
-            'user'=>2,
-        );
-        \$this->menu[\$r++]=array(
-            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'fk_menu'=>'fk_mainmenu=".strtolower($module).",fk_leftmenu=".strtolower($module)."_".strtolower($objectname)."',
-            // This is a Left menu entry
-            'type'=>'left',
-            'titre'=>'New ".ucfirst($objectname)."',
-            'mainmenu'=>'".strtolower($module)."',
-            'leftmenu'=>'".strtolower($module)."_".strtolower($objectname)."',
-            'url'=>'/".strtolower($module)."/".strtolower($objectname)."_card.php?action=create',
-            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'langs'=>'".strtolower($module)."@".strtolower($module)."',
-            'position'=>1100+\$r,
-            // Define condition to show or hide menu entry. Use '\$conf->".strtolower($module)."->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'enabled'=>'\$conf->".strtolower($module)."->enabled',
-            // Use 'perms'=>'\$user->rights->".strtolower($module)."->level1->level2' if you want your menu with a permission rules
-            'perms'=>'1',
-            'target'=>'',
-            // 0=Menu for internal users, 1=external users, 2=both
-            'user'=>2
-        );";
+		// load class and check if menu exist for this object
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+			dol_include_once($pathtofile);
+				$class = 'mod'.$module;
+		if (class_exists($class)) {
+			try {
+				$moduleobj = new $class($db);
+			} catch (Exception $e) {
+				$error++;
+				dol_print_error($db, $e->getMessage());
+			}
+		}
 
+		$menus = $moduleobj->menu;
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 
-		$check = dolReplaceInFile($moduledescriptorfile, array($stringtoedit => ''));
-		if ($check > 0) {
-			dolReplaceInFile($moduledescriptorfile, array('/*'.strtoupper($objectname).'*/' => ''));
+		foreach ($menus as $menu) {
+			if ($menu['type'] == 'left' && $menu['leftmenu'] == strtolower($module).'_'.strtolower($objectname)) {
+				$left="\$this->menu[\$r++]=array(
+			'fk_menu'=>'".$menu['fk_menu']."',
+			'type'=>'".$menu['type']."',
+			'titre'=>'".$menu['titre']."',
+			'mainmenu'=>'".$menu['mainmenu']."',
+			'leftmenu'=>'".$menu['leftmenu']."',
+			'url'=>'".$menu['url']."',
+			'langs'=>'".$menu['langs']."',
+			'position'=>1100+\$r,
+			'enabled'=>'".$menu['enabled']."',
+			'perms'=>'".$menu['perms']."',
+			'target'=>'".$menu['target']."',
+			'user'=>".$menu['user'].",
+		);";
+				dolReplaceInFile($moduledescriptorfile, array($left => ''));
+			}
 		}
+		// Remarque : "\n" not handling yet
+		$check = dolReplaceInFile($moduledescriptorfile, array('/*LEFTMENU '.strtoupper($objectname).'*/'."\n" => '',"\t\t".'/*END LEFTMENU '.strtoupper($objectname).'*/'."\n" => ''));
 
 		// regenerate permissions and delete them
 		$rights = "
@@ -2341,6 +2360,91 @@ if ($action == 'reset' && $user->admin) {
 	exit;
 }
 
+// delete menu
+if ($dirins && $action == 'confirm_deletemenu' && GETPOST('menukey', 'int')) {
+	// check if module is enabled
+	if (isModEnabled(strtolower($module))) {
+		$result = unActivateModule(strtolower($module));
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		if ($result) {
+			setEventMessages($result, null, 'errors');
+		}
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+		setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+	}
+	// load class and check if menu exist
+	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+	dol_include_once($pathtofile);
+		$class = 'mod'.$module;
+	if (class_exists($class)) {
+		try {
+			$moduleobj = new $class($db);
+		} catch (Exception $e) {
+			$error++;
+			dol_print_error($db, $e->getMessage());
+		}
+	}
+
+	$menus = $moduleobj->menu;
+
+	$key = (int) GETPOST('menukey', 'int');
+	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+
+
+	if ($menus[$key]['type'] == 'top') {
+			$menuTop = "
+		\$this->menu[\$r++] = array(
+			'fk_menu'=>'".$menus[$key]['fk_menu']."', 
+			'type'=>'".$menus[$key]['type']."', 
+			'titre'=>'".$menus[$key]['titre']."',
+			'prefix' => img_picto('', \$this->picto, 'class=\"paddingright pictofixedwidth valignmiddle\"'),
+			'mainmenu'=>'".$menus[$key]['mainmenu']."',
+			'leftmenu'=> '',
+			'url'=>'".$menus[$key]['url']."',
+			'langs'=>'".$menus[$key]['langs']."', 
+			'position'=>1000 + \$r,
+			'enabled'=>'isModEnabled(\"".strtolower($module)."\")', 
+			'perms' =>'".$menus[$key]['perms']."',
+			'target'=>'".$menus[$key]['target']."',
+			'user'=>".$menus[$key]['user'].", 
+		);";
+		$check = dolReplaceInFile($moduledescriptorfile, array($menuTop => '',"\t\t".'/*TOPMENU '.strtolower($menus[$key]['titre']).'*/'."\n" => '', '/*END TOPMENU '.strtolower($menus[$key]['titre']).'*/'."\n\t\t" => ''));
+	}
+	if ($menus[$key]['type'] == 'left') {
+		$left="\$this->menu[\$r++]=array(
+			'fk_menu'=>'".$menus[$key]['fk_menu']."',
+			'type'=>'".$menus[$key]['type']."',
+			'titre'=>'".$menus[$key]['titre']."',
+			'mainmenu'=>'".$menus[$key]['mainmenu']."',
+			'leftmenu'=>'".$menus[$key]['leftmenu']."',
+			'url'=>'".$menus[$key]['url']."',
+			'langs'=>'".$menus[$key]['langs']."',
+			'position'=>1100+\$r,
+			'enabled'=>'".$menus[$key]['enabled']."',
+			'perms'=>'".$menus[$key]['perms']."',
+			'target'=>'".$menus[$key]['target']."',
+			'user'=>".$menus[$key]['user'].",
+		);";
+		$check = dolReplaceInFile($moduledescriptorfile, array($left => ''));
+
+		// check if still had menu created when initial object
+		// if not we delete the comments from file
+		$menuForObj = 0;
+		foreach ($menus as $menu) {
+			if ($menu['leftmenu'] == $menus[$key]['leftmenu']) {
+				$menuForObj++;
+			}
+		}
+		if ($menuForObj == 1) {
+			$extractObjName = explode("_", $menus[$key]['leftmenu']);
+			dolReplaceInFile($moduledescriptorfile, array('/*LEFTMENU '.strtoupper($extractObjName[1]).'*/'."\n" => '','/*END LEFTMENU '.strtoupper($extractObjName[1]).'*/' => ''));
+		}
+	}
+
+		setEventMessages($langs->trans('MenuDeletedSuccessfuly'), null);
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
+		exit;
+}
 
 
 /*
