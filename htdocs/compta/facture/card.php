@@ -2981,7 +2981,9 @@ if ($action == 'create') {
 	}
 
 	// when bank account is empty (means not override by payment mode form a other object, like third-party), try to use default value
-	$fk_account = GETPOSTISSET("fk_account") ? GETPOST("fk_account", 'int') : $fk_account;
+	if (empty($fk_account) && !empty($socid)) {
+		$fk_account = GETPOST("fk_account", 'int');
+	}
 
 	if (!empty($soc->id)) {
 		$absolute_discount = $soc->getAvailableDiscounts();
