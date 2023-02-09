@@ -4320,7 +4320,7 @@ abstract class CommonObject
 	 * @param	string	$field_select			name of field we need to get a list
 	 * @param	string	$field_where			name of field of object we need to get linked items
 	 * @param	string	$table_element			name of association table
-	 * @return 	array							Array of record
+	 * @return 	array|int						Array of record, -1 if empty
 	 */
 	public static function getAllItemsLinkedByObjectID($fk_object_where, $field_select, $field_where, $table_element)
 	{
@@ -6114,6 +6114,8 @@ abstract class CommonObject
 					if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
 						//var_dump($conf->disable_compute);
 						if (empty($conf->disable_compute)) {
+							global $objectoffield;		// We set a global variable to $objectoffield so
+							$objectoffield = $this;		// we can use it inside computed formula
 							$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
 						}
 					}
