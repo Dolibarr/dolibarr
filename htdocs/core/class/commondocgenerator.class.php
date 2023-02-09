@@ -1105,8 +1105,10 @@ abstract class CommonDocGenerator
 	 */
 	public function getColumnContentXStart($colKey)
 	{
-		$colDef = $this->cols[$colKey];
-		return isset($colDef['xStartPos']) ? $colDef['xStartPos'] + $colDef['content']['padding'][3] : null;
+		if (isset($this->cols[$colKey]) && !is_null($this->cols[$colKey])) {
+			$colDef = $this->cols[$colKey];
+			return isset($colDef['xStartPos']) ? $colDef['xStartPos'] + $colDef['content']['padding'][3] : null;
+		}
 	}
 
 	/**
