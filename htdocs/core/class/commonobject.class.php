@@ -4264,7 +4264,7 @@ abstract class CommonObject
 	 * @param	string	$field_select			name of field we need to get a list
 	 * @param	string	$field_where			name of field of object we need to get linked items
 	 * @param	string	$table_element			name of association table
-	 * @return 	array							Array of record
+	 * @return 	array|int						Array of record, -1 if empty
 	 */
 	public static function getAllItemsLinkedByObjectID($fk_object_where, $field_select, $field_where, $table_element)
 	{

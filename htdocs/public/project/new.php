@@ -222,6 +222,7 @@ if (empty($reshook) && $action == 'add') {
 			} else {
 				$thirdparty->name = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
 			}
+			$thirdparty->email = GETPOST('email');
 			$thirdparty->address = GETPOST('address');
 			$thirdparty->zip = GETPOST('zip');
 			$thirdparty->town = GETPOST('town');
@@ -368,11 +369,10 @@ if (empty($reshook) && $action == 'add') {
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
 					$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
-
 					if ($subjecttosend && $texttosend) {
 						$moreinheader = 'X-Dolibarr-Info: send_an_email by public/lead/new.php'."\r\n";
 
-						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+						$result = $object->sendEmail($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 					}
 					/*if ($result < 0) {
 						$error++;
