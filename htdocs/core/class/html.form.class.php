@@ -2542,9 +2542,9 @@ class Form
 		global $langs, $conf;
 		global $hookmanager;
 
-	    if (empty($hookmanager->hooks)) {
-	        $hookmanager->initHooks(array('commonobject'));
-	    }
+		if (empty($hookmanager->hooks)) {
+			$hookmanager->initHooks(array('commonobject'));
+		}
 
 		$out = '';
 		$outarray = array();
@@ -2901,11 +2901,11 @@ class Form
 	protected function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected, $hidepriceinlabel = 0, $filterkey = '', $novirtualstock = 0)
 	{
 		global $langs, $conf, $user;
-	    global $hookmanager;
+		global $hookmanager;
 
-	    if (empty($hookmanager->hooks)) {
-	        $hookmanager->initHooks(array('commonobject'));
-	    }
+		if (empty($hookmanager->hooks)) {
+			$hookmanager->initHooks(array('commonobject'));
+		}
 
 		$outkey = '';
 		$outval = '';
@@ -3191,13 +3191,13 @@ class Form
 			}
 		}
 
-	    $parameters = array('objp'=>$objp);
-	    $reshook = $hookmanager->executeHooks('constructProductListOption', $parameters); // Note that $action and $object may have been modified by hook
-	    if (!empty($reshook)) {
-	        $opt = $hookmanager->resPrint;
-	    } else {
-	        $opt .= $hookmanager->resPrint;
-	    }
+		$parameters = array('objp'=>$objp);
+		$reshook = $hookmanager->executeHooks('constructProductListOption', $parameters); // Note that $action and $object may have been modified by hook
+		if (!empty($reshook)) {
+			$opt = $hookmanager->resPrint;
+		} else {
+			$opt .= $hookmanager->resPrint;
+		}
 
 		$opt .= "</option>\n";
 		$optJson = array(
