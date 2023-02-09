@@ -34,7 +34,7 @@
  *  MEMBER_MIN_AMOUNT                   Minimum amount
  *  MEMBER_NEWFORM_PAYONLINE            Suggest payment with paypal, paybox or stripe
  *  MEMBER_NEWFORM_DOLIBARRTURNOVER     Show field turnover (specific for dolibarr foundation)
- *  MEMBER_URL_REDIRECT_SUBSCRIPTION    Url to redirect once subscribe submitted
+ *  MEMBER_URL_REDIRECT_SUBSCRIPTION    Url to redirect once registration form has been submitted (hidden option, by default we just show a message on same page or redirect to the payment page)
  *  MEMBER_NEWFORM_FORCETYPE            Force type of member
  *  MEMBER_NEWFORM_FORCEMORPHY          Force nature of member (mor/phy)
  *  MEMBER_NEWFORM_FORCECOUNTRYCODE     Force country
@@ -73,11 +73,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Init vars
+$backtopage = GETPOST('backtopage', 'alpha');
+$action = GETPOST('action', 'aZ09');
+
 $errmsg = '';
 $num = 0;
 $error = 0;
-$backtopage = GETPOST('backtopage', 'alpha');
-$action = GETPOST('action', 'aZ09');
 
 // Load translation files
 $langs->loadLangs(array("main", "members", "companies", "install", "other"));
@@ -448,15 +449,6 @@ if (empty($reshook) && $action == 'add') {
 						$urlback .= '&entity='.((int) $entity);
 					}
 				}
-			}
-
-			if (!empty($backtopage)) {
-				$urlback = $backtopage;
-				dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
-			} elseif (!empty($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)) {
-				$urlback = $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
-				// TODO Make replacement of __AMOUNT__, etc...
-				dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
 			} else {
 				$error++;
 				$errmsg .= join('<br>', $adh->errors);
@@ -476,7 +468,7 @@ if (empty($reshook) && $action == 'add') {
 }
 
 // Action called after a submitted was send and member created successfully
-// If MEMBER_URL_REDIRECT_SUBSCRIPTION is set to url we never go here because a redirect was done to this url.
+// If MEMBER_URL_REDIRECT_SUBSCRIPTION is set to an url, we never go here because a redirect was done to this url. Same if we ask to redirect to the payment page.
 // backtopage parameter with an url was set on member submit page, we never go here because a redirect was done to this url.
 
 if (empty($reshook) && $action == 'added') {
