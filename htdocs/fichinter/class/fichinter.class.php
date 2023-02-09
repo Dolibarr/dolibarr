@@ -159,7 +159,7 @@ class Fichinter extends CommonObject
 	public $extraparams = array();
 
 	/**
-	 * @var array lines
+	 * @var FichinterLigne[] lines
 	 */
 	public $lines = array();
 
@@ -771,6 +771,29 @@ class Fichinter extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$langs->load('fichinter');
+
+		$datas = [];
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Intervention").'</u>';
+		if (isset($this->status)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+
+		return $datas;
+	}
+
+	/**
 	 *	Return clicable name (with picto eventually)
 	 *
 	 *	@param		int		$withpicto					0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
@@ -784,12 +807,18 @@ class Fichinter extends CommonObject
 		global $conf, $langs, $hookmanager;
 
 		$result = '';
-
-		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Intervention").'</u>';
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
 		}
-		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id;
 
@@ -810,15 +839,8 @@ class Fichinter extends CommonObject
 				$label = $langs->trans("ShowIntervention");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip"';
-
-			/*
-			$hookmanager->initHooks(array('fichinterdao'));
-			$parameters=array('id'=>$this->id);
-			$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			*/
+			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="'.$classfortooltip.'"';
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -827,7 +849,7 @@ class Fichinter extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;

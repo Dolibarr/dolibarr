@@ -1420,6 +1420,34 @@ class Ticket extends CommonObject
 		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $params);
 	}
 
+	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $langs;
+
+		$langs->load('ticket');
+
+		$datas = [];
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Ticket").'</u>';
+		$datas['picto'] .= ' '.$this->getLibStatut(4);
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$datas['track_id'] = '<br><b>'.$langs->trans('TicketTrackId').':</b> '.$this->track_id;
+		$datas['subject'] = '<br><b>'.$langs->trans('Subject').':</b> '.$this->subject;
+		if ($this->date_creation) {
+			$datas['date_creation'] = '<br><b>'.$langs->trans('DateCreation').':</b> '.$this->date_creation;
+		}
+		if ($this->date_modification) {
+			$datas['date_modification'] = '<br><b>'.$langs->trans('DateModification').':</b> '.$this->date_modification;
+		}
+
+		return $datas;
+	}
 
 	/**
 	 *  Return a link to the object card (with optionaly the picto)
@@ -1443,18 +1471,19 @@ class Ticket extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Ticket").'</u>';
-		$label .= ' '.$this->getLibStatut(4);
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref.'<br>';
-		$label .= '<b>'.$langs->trans('TicketTrackId').':</b> '.$this->track_id.'<br>';
-		$label .= '<b>'.$langs->trans('Subject').':</b> '.$this->subject;
-		if ($this->date_creation) {
-			$label .= '<br><b>'.$langs->trans('DateCreation').':</b> '.$this->date_creation;
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
 		}
-		if ($this->date_modification) {
-			$label .= '<br><b>'.$langs->trans('DateModification').':</b> '.$this->date_modification;
-		}
+		$label = implode($this->getTooltipContentArray($params));
+
 		$url = DOL_URL_ROOT.'/ticket/card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
@@ -1474,8 +1503,8 @@ class Ticket extends CommonObject
 				$label = $langs->trans("ShowTicket");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -1486,7 +1515,7 @@ class Ticket extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
