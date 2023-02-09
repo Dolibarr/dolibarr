@@ -1944,7 +1944,7 @@ class SupplierProposal extends CommonObject
 	 *    @param    int		$offset				For pagination
 	 *    @param    string	$sortfield			Sort criteria
 	 *    @param    string	$sortorder			Sort order
-	 *    @return	int		       				-1 if KO, array with result if OK
+	 *    @return	array|int		       				-1 if KO, array with result if OK
 	 */
 	public function liste_array($shortlist = 0, $draft = 0, $notcurrentuser = 0, $socid = 0, $limit = 0, $offset = 0, $sortfield = 'p.datec', $sortorder = 'DESC')
 	{
@@ -2225,7 +2225,7 @@ class SupplierProposal extends CommonObject
 	 *
 	 *      @param          User	$user   Object user
 	 *      @param          int		$mode   "opened" for askprice to close, "signed" for proposal to invoice
-	 *      @return         int             <0 if KO, >0 if OK
+	 *      @return         WorkboardResponse|int	<0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{
