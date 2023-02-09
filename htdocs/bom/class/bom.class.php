@@ -17,7 +17,7 @@
  */
 
 /**
- * \file        bom/class/bom.class.php
+ * \file        htdocs/bom/class/bom.class.php
  * \ingroup     bom
  * \brief       This file is a CRUD class file for BOM (Create/Read/Update/Delete)
  */
@@ -1065,6 +1065,43 @@ class BOM extends CommonObject
 		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'BOM_REOPEN');
 	}
 
+	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+
+		$langs->loadLangs(['product', 'mrp']);
+
+		$datas = [];
+
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			return ['optimize' => $langs->trans("ShowBillOfMaterials")];
+		}
+		$picto = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("BillOfMaterials").'</u>';
+		if (isset($this->status)) {
+			$picto .= ' '.$this->getLibStatut(5);
+		}
+		$datas['picto'] = $picto;
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (isset($this->label)) {
+			$datas['label'] = '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
+		}
+		if (!empty($this->fk_product) && $this->fk_product > 0) {
+			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+			$product = new Product($this->db);
+			$resultFetch = $product->fetch($this->fk_product);
+			if ($resultFetch > 0) {
+				$datas['product'] = "<br><b>".$langs->trans("Product").'</b>: '.$product->ref.' - '.$product->label;
+			}
+		}
+
+		return $datas;
+	}
 
 	/**
 	 *  Return a link to the object card (with optionaly the picto)
@@ -1085,24 +1122,20 @@ class BOM extends CommonObject
 		}
 
 		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
+		}
 
-		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("BillOfMaterials").'</u>';
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
-		}
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		if (isset($this->label)) {
-			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
-		}
-		if (!empty($this->fk_product) && $this->fk_product > 0) {
-			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-			$product = new Product($db);
-			$resultFetch = $product->fetch($this->fk_product);
-			if ($resultFetch > 0) {
-				$label .= "<br><b>".$langs->trans("Product").'</b>: '.$product->ref.' - '.$product->label;
-			}
-		}
+		$label = implode($this->getTooltipContentArray($params));
 
 
 		$url = DOL_URL_ROOT.'/bom/bom_card.php?id='.$this->id;
@@ -1125,7 +1158,7 @@ class BOM extends CommonObject
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -1136,7 +1169,7 @@ class BOM extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;

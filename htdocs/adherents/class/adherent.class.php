@@ -2277,6 +2277,53 @@ class Adherent extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$datas = [];
+
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			$langs->load("users");
+			return ['optimize' => $langs->trans("ShowUser")];
+		}
+		if (!empty($this->photo)) {
+			$photo = '<div class="photointooltip floatright">';
+			$photo .= Form::showphoto('memberphoto', $this, 80, 0, 0, 'photoref photowithmargin photologintooltip', 'small', 0, 1);
+			$photo .= '</div>';
+			$datas['photo'] = $photo;
+			//$label .= '<div style="clear: both;"></div>';
+		}
+
+		$datas['divopen'] = '<div class="centpercent">';
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Member").'</u> '.$this->getLibStatut(4);
+		if (!empty($this->ref)) {
+			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		}
+		if (!empty($this->login)) {
+			$datas['login'] = '<br><b>'.$langs->trans('Login').':</b> '.$this->login;
+		}
+		if (!empty($this->firstname) || !empty($this->lastname)) {
+			$datas['name'] = '<br><b>'.$langs->trans('Name').':</b> '.$this->getFullName($langs);
+		}
+		if (!empty($this->company)) {
+			$datas['company'] = '<br><b>'.$langs->trans('Company').':</b> '.$this->company;
+		}
+		if (!empty($this->email)) {
+			$datas['email'] = '<br><b>'.$langs->trans("EMail").':</b> '.$this->email;
+		}
+		$datas['address'] = '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs);
+		$datas['divclose'] = '</div>';
+
+		return $datas;
+	}
+
+	/**
 	 *  Return clicable name (with picto eventually)
 	 *
 	 *	@param	int		$withpictoimg				0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
@@ -2298,33 +2345,21 @@ class Adherent extends CommonObject
 		}
 
 		$result = '';
-		$label = '';
 		$linkstart = '';
 		$linkend = '';
-
-		if (!empty($this->photo)) {
-			$label .= '<div class="photointooltip floatright">';
-			$label .= Form::showphoto('memberphoto', $this, 80, 0, 0, 'photoref photowithmargin photologintooltip', 'small', 0, 1);
-			$label .= '</div>';
-			//$label .= '<div style="clear: both;"></div>';
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
 		}
-
-		$label .= '<div class="centpercent">';
-		$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Member").'</u>';
-		$label .= ' '.$this->getLibStatut(4);
-		if (!empty($this->ref)) {
-			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		}
-		if (!empty($this->login)) {
-			$label .= '<br><b>'.$langs->trans('Login').':</b> '.$this->login;
-		}
-		if (!empty($this->firstname) || !empty($this->lastname)) {
-			$label .= '<br><b>'.$langs->trans('Name').':</b> '.$this->getFullName($langs);
-		}
-		if (!empty($this->company)) {
-			$label .= '<br><b>'.$langs->trans('Company').':</b> '.$this->company;
-		}
-		$label .= '</div>';
+		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/adherents/card.php?rowid='.((int) $this->id);
 		if ($option == 'subscription') {
@@ -2351,7 +2386,7 @@ class Adherent extends CommonObject
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		}
 
 		$linkstart .= $linkclose.'>';
@@ -2369,7 +2404,7 @@ class Adherent extends CommonObject
 			// Only picto
 			if ($withpictoimg > 0) {
 				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">'.
-					img_object('', 'user', $paddafterimage.' '.($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1).'</span>';
+					img_object('', 'user', $paddafterimage.' '.($notooltip ? '' : $dataparams.' class="'.$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1).'</span>';
 			} else {
 				// Picto must be a photo
 				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>';
