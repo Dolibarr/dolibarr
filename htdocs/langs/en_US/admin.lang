@@ -1234,7 +1234,7 @@ SetupDescription4=<a href="%s">%s -> %s</a><br><br>This software is a suite of m
 SetupDescription5=Other Setup menu entries manage optional parameters.
 SetupDescriptionLink=<a href="%s">%s - %s</a>
 SetupDescription3b=Basic parameters used to customize the default behavior of your application (e.g for country-related features).
-SetupDescription4b=This software is a suite of many modules/applications. The modules related to your needs must be enabled and configured. Menu entries will appears with the activation of these modules.
+SetupDescription4b=This software is a suite of many modules/applications. The modules related to your needs must be activated. Menu entries will appears with the activation of these modules.
 AuditedSecurityEvents=Security events that are audited
 NoSecurityEventsAreAduited=No security events are audited. You can enable them from menu %s
 Audit=Security events
