@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018 Jean-François Ferry <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2019-2022 Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2023 Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -199,6 +199,26 @@ class Ticket extends CommonObject
 	public $cache_category_tickets;
 
 	/**
+	 * @var array tickets severity
+	 */
+	public $cache_severity_tickets;
+
+	/**
+	 * @var array cache msgs ticket
+	 */
+	public $cache_msgs_ticket;
+
+	/**
+	 * @var array statuts labels
+	 */
+	public $statuts;
+
+	/**
+	 * @var array statuts short labels
+	 */
+	public $statuts_short;
+
+	/**
 	 * @var int Notify thirdparty at create
 	 */
 	public $notify_tiers_at_create;
@@ -219,7 +239,7 @@ class Ticket extends CommonObject
 	public $oldcopy;
 
 	/**
-	 * @var array array of TicketsLine
+	 * @var TicketsLine[] array of TicketsLine
 	 */
 	public $lines;
 
@@ -290,11 +310,11 @@ class Ticket extends CommonObject
 		'fk_user_assign' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'AssignedTo', 'visible'=>1, 'enabled'=>1, 'position'=>505, 'notnull'=>1, 'csslist'=>'tdoverflowmax100 maxwidth150onsmartphone'),
 		'date_close' => array('type'=>'datetime', 'label'=>'TicketCloseOn', 'visible'=>-1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>520, 'notnull'=>1),
-		'message' => array('type'=>'text', 'label'=>'Message', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1,),
+		'message' => array('type'=>'html', 'label'=>'Message', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1,),
 		'email_msgid' => array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'help'=>'EmailMsgIDDesc', 'csslist'=>'tdoverflowmax100'),
 		'email_date' => array('type'=>'datetime', 'label'=>'EmailDate', 'visible'=>-2, 'enabled'=>1, 'position'=>541),
 		'progress' => array('type'=>'integer', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>"", 'isameasure'=>2, 'csslist'=>'width50'),
-		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>'$conf->global->TICKET_ENABLE_RESOLUTION', 'position'=>550, 'notnull'=>1),
+		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>'getDolGlobalString("TICKET_ENABLE_RESOLUTION")', 'position'=>550, 'notnull'=>1),
 		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'SolvedClosed', 9 => 'Deleted')),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
 	);
@@ -1251,7 +1271,7 @@ class Ticket extends CommonObject
 	{
 		global $conf, $langs;
 
-		if (!empty($this->cache_category_ticket) && count($this->cache_category_tickets)) {
+		if (!empty($this->cache_category_tickets) && count($this->cache_category_tickets)) {
 			// Cache already loaded
 			return 0;
 		}
@@ -1400,6 +1420,34 @@ class Ticket extends CommonObject
 		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $params);
 	}
 
+	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $langs;
+
+		$langs->load('ticket');
+
+		$datas = [];
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Ticket").'</u>';
+		$datas['picto'] .= ' '.$this->getLibStatut(4);
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$datas['track_id'] = '<br><b>'.$langs->trans('TicketTrackId').':</b> '.$this->track_id;
+		$datas['subject'] = '<br><b>'.$langs->trans('Subject').':</b> '.$this->subject;
+		if ($this->date_creation) {
+			$datas['date_creation'] = '<br><b>'.$langs->trans('DateCreation').':</b> '.$this->date_creation;
+		}
+		if ($this->date_modification) {
+			$datas['date_modification'] = '<br><b>'.$langs->trans('DateModification').':</b> '.$this->date_modification;
+		}
+
+		return $datas;
+	}
 
 	/**
 	 *  Return a link to the object card (with optionaly the picto)
@@ -1423,18 +1471,19 @@ class Ticket extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Ticket").'</u>';
-		$label .= ' '.$this->getLibStatut(4);
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref.'<br>';
-		$label .= '<b>'.$langs->trans('TicketTrackId').':</b> '.$this->track_id.'<br>';
-		$label .= '<b>'.$langs->trans('Subject').':</b> '.$this->subject;
-		if ($this->date_creation) {
-			$label .= '<br><b>'.$langs->trans('DateCreation').':</b> '.$this->date_creation;
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
 		}
-		if ($this->date_modification) {
-			$label .= '<br><b>'.$langs->trans('DateModification').':</b> '.$this->date_modification;
-		}
+		$label = implode($this->getTooltipContentArray($params));
+
 		$url = DOL_URL_ROOT.'/ticket/card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
@@ -1454,8 +1503,8 @@ class Ticket extends CommonObject
 				$label = $langs->trans("ShowTicket");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -1466,7 +1515,7 @@ class Ticket extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -2275,7 +2324,7 @@ class Ticket extends CommonObject
 		$maxheightmini = 72;
 
 		$formmail = new FormMail($this->db);
-
+		$formmail->trackid = 'tic'.$this->id;
 		$attachedfiles = $formmail->get_attached_files();
 
 		$filepath = $attachedfiles['paths'];
@@ -2449,7 +2498,7 @@ class Ticket extends CommonObject
 							$assigned_user = new User($this->db);
 							$assigned_user->fetch($this->fk_user_assign);
 							if (!empty($assigned_user->email)) {
-								$sendto[] = $assigned_user->getFullName($langs)." <".$assigned_user->email.">";
+								$sendto[$assigned_user->email] = $assigned_user->getFullName($langs)." <".$assigned_user->email.">";
 							} else {
 								$assigned_user_dont_have_email = $assigned_user->getFullName($langs);
 							}
@@ -2471,17 +2520,17 @@ class Ticket extends CommonObject
 
 						if (empty($sendto)) {
 							if (!empty($conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL)) {
-								$sendto[] = $conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL;
+								$sendto[$conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL] = $conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL;
 							} elseif (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) {
-								$sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+								$sendto[$conf->global->TICKET_NOTIFICATION_EMAIL_TO] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 							}
 						}
 
 						// Add global email address recipient
 						if (!empty($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS) &&
-							!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)
+							!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && !array_key_exists($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)
 						) {
-							$sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+							$sendto[$conf->global->TICKET_NOTIFICATION_EMAIL_TO] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 						}
 
 						if (!empty($sendto)) {
@@ -2565,7 +2614,7 @@ class Ticket extends CommonObject
 
 								if ($info_sendto['email'] != '') {
 									if (!empty($info_sendto['email'])) {
-										$sendto[] = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'])." <".$info_sendto['email'].">";
+										$sendto[$info_sendto['email']] = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'])." <".$info_sendto['email'].">";
 									}
 
 									// Contact type
@@ -2581,9 +2630,9 @@ class Ticket extends CommonObject
 							$message .= '<br>'.$langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$object->track_id.'</a><br>';
 
 							// Add global email address recipient
-							if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
+							if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !array_key_exists($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
 								if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) {
-									$sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+									$sendto[$conf->global->TICKET_NOTIFICATION_EMAIL_TO] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 								}
 							}
 
@@ -2644,7 +2693,7 @@ class Ticket extends CommonObject
 
 									if ($info_sendto['email'] != '' && $info_sendto['email'] != $object->origin_email) {
 										if (!empty($info_sendto['email'])) {
-											$sendto[] = trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">";
+											$sendto[$info_sendto['email']] = trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">";
 										}
 
 										$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], '-1').' ('.strtolower($info_sendto['libelle']).')';
@@ -2664,21 +2713,21 @@ class Ticket extends CommonObject
 								$message .= '<br>'.$message_signature;
 
 								if (!empty($object->origin_email)) {
-									$sendto[] = $object->origin_email;
+									$sendto[$object->origin_email] = $object->origin_email;
 								}
 
-								if ($object->fk_soc > 0 && !in_array($object->origin_email, $sendto)) {
+								if ($object->fk_soc > 0 && !array_key_exists($object->origin_email, $sendto)) {
 									$object->socid = $object->fk_soc;
 									$object->fetch_thirdparty();
 									if (!empty($object->thirdparty->email)) {
-										$sendto[] = $object->thirdparty->email;
+										$sendto[$object->thirdparty->email] = $object->thirdparty->email;
 									}
 								}
 
 								// Add global email address recipient
-								if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
+								if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !array_key_exists($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
 									if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) {
-										$sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+										$sendto[$conf->global->TICKET_NOTIFICATION_EMAIL_TO] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 									}
 								}
 

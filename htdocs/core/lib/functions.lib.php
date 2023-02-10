@@ -515,7 +515,7 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *                               'aZ09'=check it's simple alpha string (recommended for keys)
  *                               'aZ09comma'=check it's a string for a sortfield or sortorder
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
- *                               'nohtml'=check there is no html content and no " and no ../
+ *                               'nohtml'=check there is no html content
  *                               'restricthtml'=check html content is restricted to some tags only
  *                               'custom'= custom filter specify $filter and $options)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
@@ -1328,6 +1328,10 @@ function dol_string_unaccent($str)
 {
 	global $conf;
 
+	if (is_null($str)) {
+		return '';
+	}
+
 	if (utf8_check($str)) {
 		if (extension_loaded('intl') && !empty($conf->global->MAIN_UNACCENT_USE_TRANSLITERATOR)) {
 			$transliterator = \Transliterator::createFromRules(':: Any-Latin; :: Latin-ASCII; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC;', \Transliterator::FORWARD);
@@ -1433,13 +1437,17 @@ function dol_string_nounprintableascii($str, $removetabcrlf = 1)
 /**
  *  Returns text escaped for inclusion into javascript code
  *
- *  @param      string		$stringtoescape		String to escape
- *  @param		int		$mode				0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
- *  @param		int		$noescapebackslashn	0=Escape also \n. 1=Do not escape \n.
- *  @return     string     		 				Escaped string. Both ' and " are escaped into ' if they are escaped.
+ *  @param      string	$stringtoescape			String to escape
+ *  @param		int		$mode					0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
+ *  @param		int		$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
+ *  @return     string   		 				Escaped string. Both ' and " are escaped into ' if they are escaped.
  */
 function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 {
+	if (is_null($stringtoescape)) {
+		return '';
+	}
+
 	// escape quotes and backslashes, newlines, etc.
 	$substitjs = array("&#039;"=>"\\'", "\r"=>'\\r');
 	//$substitjs['</']='<\/';	// We removed this. Should be useless.
@@ -3526,7 +3534,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 				$type = 'AC_FAX';
 			}
 			if (!empty($conf->global->AGENDA_ADDACTIONFORPHONE)) {
-				$link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$type.($cid ? '&amp;contactid='.$cid : '').($socid ? '&amp;socid='.$socid : '').'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
+				$link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage='. urlencode($_SERVER['REQUEST_URI']) .'&amp;actioncode='.$type.($cid ? '&amp;contactid='.$cid : '').($socid ? '&amp;socid='.$socid : '').'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
 			}
 			if ($link) {
 				$newphone = '<div>'.$newphone.' '.$link.'</div>';
@@ -4094,7 +4102,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
 				'stock', 'resize', 'service', 'stats', 'trip',
 				'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'user-tie', 'vcard', 'wrench',
-				'github', 'google', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
+				'github', 'google', 'jabber', 'microsoft', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
 				'partnership', 'payment', 'payment_vat', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'region',
@@ -4115,7 +4123,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			if (in_array($pictowithouttext, array('card', 'bell', 'clock', 'establishment', 'generic', 'minus-square', 'object_generic', 'pdf', 'plus-square', 'timespent', 'note', 'off', 'on', 'object_bookmark', 'bookmark', 'vcard'))) {
 				$fa = 'far';
 			}
-			if (in_array($pictowithouttext, array('black-tie', 'github', 'google', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'stripe', 'stripe-s', 'youtube', 'google-plus-g', 'whatsapp'))) {
+			if (in_array($pictowithouttext, array('black-tie', 'github', 'google', 'microsoft', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'stripe', 'stripe-s', 'youtube', 'google-plus-g', 'whatsapp'))) {
 				$fa = 'fab';
 			}
 
@@ -5018,8 +5026,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		$out .= "<br>\n";
 		$syslog .= "url=".dol_escape_htmltag($_SERVER["REQUEST_URI"]);
 		$syslog .= ", query_string=".dol_escape_htmltag($_SERVER["QUERY_STRING"]);
-	} else // Mode CLI
-	{
+	} else { // Mode CLI
 		$out .= '> '.$langs->transnoentities("ErrorInternalErrorDetected").":\n".$argv[0]."\n";
 		$syslog .= "pid=".dol_getmypid();
 	}
@@ -5031,12 +5038,15 @@ function dol_print_error($db = '', $error = '', $errors = null)
 	if (is_object($db)) {
 		if ($_SERVER['DOCUMENT_ROOT']) {  // Mode web
 			$out .= "<b>".$langs->trans("DatabaseTypeManager").":</b> ".$db->type."<br>\n";
-			$out .= "<b>".$langs->trans("RequestLastAccessInError").":</b> ".($db->lastqueryerror() ? dol_escape_htmltag($db->lastqueryerror()) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
+			$lastqueryerror = $db->lastqueryerror();
+			if (!utf8_check($lastqueryerror)) {
+				$lastqueryerror = "SQL error string is not a valid UTF8 string. We can't show it.";
+			}
+			$out .= "<b>".$langs->trans("RequestLastAccessInError").":</b> ".($lastqueryerror ? dol_escape_htmltag($lastqueryerror) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
 			$out .= "<b>".$langs->trans("ReturnCodeLastAccessInError").":</b> ".($db->lasterrno() ? dol_escape_htmltag($db->lasterrno()) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
 			$out .= "<b>".$langs->trans("InformationLastAccessInError").":</b> ".($db->lasterror() ? dol_escape_htmltag($db->lasterror()) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
 			$out .= "<br>\n";
-		} else // Mode CLI
-		{
+		} else { // Mode CLI
 			// No dol_escape_htmltag for output, we are in CLI mode
 			$out .= '> '.$langs->transnoentities("DatabaseTypeManager").":\n".$db->type."\n";
 			$out .= '> '.$langs->transnoentities("RequestLastAccessInError").":\n".($db->lastqueryerror() ? $db->lastqueryerror() : $langs->transnoentities("ErrorNoRequestInError"))."\n";
@@ -7169,6 +7179,10 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
  */
 function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
 {
+	if (is_null($stringtoencode)) {
+		return '';
+	}
+
 	if (!$nl2brmode) {
 		return nl2br($stringtoencode, $forxml);
 	} else {
@@ -8945,105 +8959,115 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 	// Only global variables can be changed by eval function and returned to caller
 	global $db, $langs, $user, $conf, $website, $websitepage;
 	global $action, $mainmenu, $leftmenu;
+	global $mysoc;
+	global $objectoffield;
+
+	// Old variables used
 	global $rights;
 	global $object;
-	global $mysoc;
-
 	global $obj; // To get $obj used into list when dol_eval is used for computed fields and $obj is not yet $object
 	global $soc; // For backward compatibility
 
-	// Test on dangerous char (used for RCE), we allow only characters to make PHP variable testing
-	if ($onlysimplestring == '1') {
-		// We must accept: '1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL'
-		// We must accept: '$conf->barcode->enabled || preg_match(\'/^AAA/\',$leftmenu)'
-		// We must accept: '$user->rights->cabinetmed->read && !$object->canvas=="patient@cabinetmed"'
-		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@', '/').']/i', $s)) {
+	try {
+		// Test on dangerous char (used for RCE), we allow only characters to make PHP variable testing
+		if ($onlysimplestring == '1') {
+			// We must accept: '1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL'
+			// We must accept: '$conf->barcode->enabled || preg_match(\'/^AAA/\',$leftmenu)'
+			// We must accept: '$user->rights->cabinetmed->read && !$object->canvas=="patient@cabinetmed"'
+			if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@', '/').']/i', $s)) {
+				if ($returnvalue) {
+					return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
+				} else {
+					dol_syslog('Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s);
+					return '';
+				}
+				// TODO
+				// We can exclude all parenthesis ( that are not '($db' and 'getDolGlobalInt(' and 'getDolGlobalString(' and 'preg_match(' and 'isModEnabled('
+				// ...
+			}
+		} elseif ($onlysimplestring == '2') {
+			// We must accept: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
+			if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@;[]', '/').']/i', $s)) {
+				if ($returnvalue) {
+					return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
+				} else {
+					dol_syslog('Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s);
+					return '';
+				}
+			}
+		}
+		if (strpos($s, '::') !== false) {
 			if ($returnvalue) {
-				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
+				return 'Bad string syntax to evaluate (double : char is forbidden): '.$s;
 			} else {
-				dol_syslog('Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s);
+				dol_syslog('Bad string syntax to evaluate (double : char is forbidden): '.$s);
 				return '';
 			}
-			// TODO
-			// We can exclude all parenthesis ( that are not '($db' and 'getDolGlobalInt(' and 'getDolGlobalString(' and 'preg_match(' and 'isModEnabled('
-			// ...
 		}
-	} elseif ($onlysimplestring == '2') {
-		// We must accept: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
-		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@;[]', '/').']/i', $s)) {
+		if (strpos($s, '`') !== false) {
 			if ($returnvalue) {
-				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
+				return 'Bad string syntax to evaluate (backtick char is forbidden): '.$s;
 			} else {
-				dol_syslog('Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s);
+				dol_syslog('Bad string syntax to evaluate (backtick char is forbidden): '.$s);
 				return '';
 			}
 		}
-	}
-	if (strpos($s, '::') !== false) {
+		if (preg_match('/[^0-9]+\.[^0-9]+/', $s)) {	// We refuse . if not between 2 numbers
+			if ($returnvalue) {
+				return 'Bad string syntax to evaluate (dot char is forbidden): '.$s;
+			} else {
+				dol_syslog('Bad string syntax to evaluate (dot char is forbidden): '.$s);
+				return '';
+			}
+		}
+
+		// We block use of php exec or php file functions
+		$forbiddenphpstrings = array('$$');
+		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
+
+		$forbiddenphpfunctions = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI", "verifCond", "base64_decode");
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "require", "include", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func"));
+
+		$forbiddenphpregex = 'global\s+\$|\b('.implode('|', $forbiddenphpfunctions).')\b';
+
+		do {
+			$oldstringtoclean = $s;
+			$s = str_ireplace($forbiddenphpstrings, '__forbiddenstring__', $s);
+			$s = preg_replace('/'.$forbiddenphpregex.'/i', '__forbiddenstring__', $s);
+			//$s = preg_replace('/\$[a-zA-Z0-9_\->\$]+\(/i', '', $s);	// Remove $function( call and $mycall->mymethod(
+		} while ($oldstringtoclean != $s);
+
+		if (strpos($s, '__forbiddenstring__') !== false) {
+			dol_syslog('Bad string syntax to evaluate: '.$s, LOG_WARNING);
+			if ($returnvalue) {
+				return 'Bad string syntax to evaluate: '.$s;
+			} else {
+				dol_syslog('Bad string syntax to evaluate: '.$s);
+				return '';
+			}
+		}
+
+		//print $s."<br>\n";
 		if ($returnvalue) {
-			return 'Bad string syntax to evaluate (double : char is forbidden): '.$s;
+			if ($hideerrors) {
+				return @eval('return '.$s.';');
+			} else {
+				return eval('return '.$s.';');
+			}
 		} else {
-			dol_syslog('Bad string syntax to evaluate (double : char is forbidden): '.$s);
-			return '';
+			if ($hideerrors) {
+				@eval($s);
+			} else {
+				eval($s);
+			}
 		}
-	}
-	if (strpos($s, '`') !== false) {
-		if ($returnvalue) {
-			return 'Bad string syntax to evaluate (backtick char is forbidden): '.$s;
-		} else {
-			dol_syslog('Bad string syntax to evaluate (backtick char is forbidden): '.$s);
-			return '';
-		}
-	}
-	if (preg_match('/[^0-9]+\.[^0-9]+/', $s)) {	// We refuse . if not between 2 numbers
-		if ($returnvalue) {
-			return 'Bad string syntax to evaluate (dot char is forbidden): '.$s;
-		} else {
-			dol_syslog('Bad string syntax to evaluate (dot char is forbidden): '.$s);
-			return '';
-		}
-	}
-
-	// We block use of php exec or php file functions
-	$forbiddenphpstrings = array('$$');
-	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
-
-	$forbiddenphpfunctions = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI", "verifCond", "base64_decode");
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "require", "include", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func"));
-
-	$forbiddenphpregex = 'global\s+\$|\b('.implode('|', $forbiddenphpfunctions).')\b';
-
-	do {
-		$oldstringtoclean = $s;
-		$s = str_ireplace($forbiddenphpstrings, '__forbiddenstring__', $s);
-		$s = preg_replace('/'.$forbiddenphpregex.'/i', '__forbiddenstring__', $s);
-		//$s = preg_replace('/\$[a-zA-Z0-9_\->\$]+\(/i', '', $s);	// Remove $function( call and $mycall->mymethod(
-	} while ($oldstringtoclean != $s);
-
-	if (strpos($s, '__forbiddenstring__') !== false) {
-		dol_syslog('Bad string syntax to evaluate: '.$s, LOG_WARNING);
-		if ($returnvalue) {
-			return 'Bad string syntax to evaluate: '.$s;
-		} else {
-			dol_syslog('Bad string syntax to evaluate: '.$s);
-			return '';
-		}
-	}
-
-	//print $s."<br>\n";
-	if ($returnvalue) {
-		if ($hideerrors) {
-			return @eval('return '.$s.';');
-		} else {
-			return eval('return '.$s.';');
-		}
-	} else {
-		if ($hideerrors) {
-			@eval($s);
-		} else {
-			eval($s);
-		}
+	} catch (Error $e) {
+		$error = 'Caught error : ';
+		$error .= $e->getMessage() . ', ';
+		$error .= 'Trace : ';
+		$error .= json_encode($e->getTrace());
+		error_log($error, 1);
 	}
 }
 
@@ -11929,8 +11953,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 
 						'contact_id'=>$obj->fk_contact,
 						'socpeopleassigned' => $contactaction->socpeopleassigned,
-						'lastname'=>$obj->lastname,
-						'firstname'=>$obj->firstname,
+						'lastname' => (empty($obj->lastname) ? '' : $obj->lastname),
+						'firstname' => (empty($obj->firstname) ? '' : $obj->firstname),
 						'fk_element'=>$obj->fk_element,
 						'elementtype'=>$obj->elementtype,
 						// Type of event

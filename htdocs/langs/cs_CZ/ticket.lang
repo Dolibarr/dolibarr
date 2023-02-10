@@ -26,6 +26,7 @@ Permission56002=Změnit vstupenky
 Permission56003=Smazat vstupenky
 Permission56004=Správa vstupenek
 Permission56005=Viz vstupenky všech subjektů (neplatí pro externí uživatele, vždy se omezují na subjekt, na který se vztahují)
+Permission56006=Export tickets
 
 Tickets=Vstupenky
 TicketDictType=Vstupenka - Typy
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Externí přispěvatel
 
 OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Odeslat e-mailem zprávu o lince
+
+ExportDataset_ticket_1=Vstupenky
 
 # Status
 Read=Číst

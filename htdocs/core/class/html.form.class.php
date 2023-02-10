@@ -202,9 +202,10 @@ class Form
 	 * @param	string	$paramid		Key of parameter for id ('id', 'socid')
 	 * @param	string	$gm				'auto' or 'tzuser' or 'tzuserrel' or 'tzserver' (when $typeofdata is a date)
 	 * @param	array	$moreoptions	Array with more options. For example array('addnowlink'=>1), array('valuealreadyhtmlescaped'=>1)
+	 * @param	string	$editaction		[=''] use GETPOST default action or set action to edit mode
 	 * @return  string					HTML edit field
 	 */
-	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 1, $formatfunc = '', $paramid = 'id', $gm = 'auto', $moreoptions = array())
+	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 1, $formatfunc = '', $paramid = 'id', $gm = 'auto', $moreoptions = array(), $editaction = '')
 	{
 		global $conf, $langs;
 
@@ -233,7 +234,10 @@ class Form
 		if (!empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && !preg_match('/^select;|day|datepicker|dayhour|datehourpicker/', $typeofdata)) { // TODO add jquery timepicker and support select
 			$ret .= $this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $editvalue, $extObject, $custommsg);
 		} else {
-			$editmode = (GETPOST('action', 'aZ09') == 'edit'.$htmlname);
+			if ($editaction == '') {
+				$editaction = GETPOST('action', 'aZ09');
+			}
+			$editmode = ($editaction == 'edit'.$htmlname);
 			if ($editmode) {
 				$ret .= "\n";
 				$ret .= '<form method="post" action="'.$_SERVER["PHP_SELF"].($moreparam ? '?'.$moreparam : '').'">';
@@ -5109,7 +5113,7 @@ class Form
 						$more .= '</div></div>'."\n";
 					} elseif ($input['type'] == 'checkbox') {
 						$more .= '<div class="tagtr">';
-						$more .= '<div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].' </div><div class="tagtd">';
+						$more .= '<div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'"><label for="'.dol_escape_htmltag($input['name']).'">'.$input['label'].'</label></div><div class="tagtd">';
 						$more .= '<input type="checkbox" class="flat'.($morecss ? ' '.$morecss : '').'" id="'.dol_escape_htmltag($input['name']).'" name="'.dol_escape_htmltag($input['name']).'"'.$moreattr;
 						if (!is_bool($input['value']) && $input['value'] != 'false' && $input['value'] != '0' && $input['value'] != '') {
 							$more .= ' checked';
@@ -7801,7 +7805,7 @@ class Form
 	}
 
 	/**
-	 * Function to forge a SQL criteria
+	 * Function to forge a SQL criteria from a Dolibarr filter syntax string.
 	 *
 	 * @param  array    $matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.nature:is:NULL"
 	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
@@ -7816,17 +7820,30 @@ class Form
 		}
 		$tmp = explode(':', $matches[1]);
 		if (count($tmp) < 3) {
-			return '';
+			return '1=2';	// An always false request
 		}
 
 		$tmpescaped = $tmp[2];
 		$regbis = array();
+
 		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 			$tmpescaped = "'".$db->escape($regbis[1])."'";
 		} else {
 			$tmpescaped = $db->escape($tmpescaped);
 		}
-		return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;
+
+		if ($tmp[1] == '!=') {
+			$tmp[1] = '<>';
+		}
+
+		if (preg_match('/[\(\)]/', $tmp[0])) {
+			return '1=2';	// An always false request
+		}
+		if (! in_array($tmp[1], array('<', '>', '<>', 'is', 'isnot', '=', 'like'))) {
+			return '1=2';	// An always false request
+		}
+
+		return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1])).' '.$tmpescaped;
 	}
 
 	/**

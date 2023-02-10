@@ -26,6 +26,7 @@ Permission56002=Modifică tichete
 Permission56003=Șterge tichete
 Permission56004=Gestionați tichetele
 Permission56005=Vedeți tichetele tuturor terților (nu este efectiv pentru utilizatorii externi, întotdeauna se limitează la terțul de care depind)
+Permission56006=Export tichete
 
 Tickets=Tichete de suport
 TicketDictType=Tipuri de tichete
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Contributor extern
 
 OriginEmail=Email raportor
 Notify_TICKET_SENTBYMAIL=Trimite mesaj tichet pe email
+
+ExportDataset_ticket_1=Tichete de suport
 
 # Status
 Read=Citit

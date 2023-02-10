@@ -3,7 +3,7 @@
  * Copyright (C) 2015 		Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 		Alexandre Spangaro  	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (c) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (c) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -60,7 +60,15 @@ class ExpenseReport extends CommonObject
 	 */
 	public $picto = 'trip';
 
+	/**
+	 * @var ExpenseReportLine[] array of expensereport lines
+	 */
 	public $lines = array();
+
+	/**
+	 * @var ExpenseReportLine expensereport lines
+	 */
+	public $line;
 
 	public $date_debut;
 
@@ -93,6 +101,15 @@ class ExpenseReport extends CommonObject
 
 	// Create
 	public $date_create;
+
+	/**
+	 * @var int ID of user creator
+	 */
+	public $fk_user_creat;
+
+	/**
+	 * @var int ID of user who reclaim expense report
+	 */
 	public $fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
 
 	// Update
@@ -107,15 +124,34 @@ class ExpenseReport extends CommonObject
 	// Annulation
 	public $date_cancel;
 	public $detail_cancel;
+
+	/**
+	 * @var int ID of user who cancel expense report
+	 */
 	public $fk_user_cancel;
 
-	public $fk_user_validator; // User that is defined to approve
+	/**
+	 * @var int User that is defined to approve
+	 */
+	public $fk_user_validator;
 
-	// Validation
-	/* @deprecated */
+	/**
+	 * Validation date
+	 * @var int
+	 * @deprecated
+	 * @see $date_valid
+	 */
 	public $datevalid;
 
-	public $date_valid; // User making validation
+	/**
+	 * Validation date
+	 * @var int
+	 */
+	public $date_valid;
+
+	/**
+	 * @var int ID of User making validation
+	 */
 	public $fk_user_valid;
 	public $user_valid_infos;
 
@@ -132,6 +168,21 @@ class ExpenseReport extends CommonObject
 	public $statuts = array();
 	public $statuts_short = array();
 	public $statuts_logo;
+
+	// Multicurrency
+	/**
+	 * @var int Currency ID
+	 */
+	public $fk_multicurrency;
+
+	/**
+	 * @var string multicurrency code
+	 */
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 
 
 	/**
@@ -155,15 +206,14 @@ class ExpenseReport extends CommonObject
 	const STATUS_APPROVED = 5;
 
 	/**
-	 * Classified refused
-	 */
-	const STATUS_REFUSED = 99;
-
-	/**
 	 * Classified paid.
 	 */
 	const STATUS_CLOSED = 6;
 
+	/**
+	 * Classified refused
+	 */
+	const STATUS_REFUSED = 99;
 
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
@@ -191,8 +241,8 @@ class ExpenseReport extends CommonObject
 		'fk_user_cancel' =>array('type'=>'integer', 'label'=>'Fk user cancel', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
 		'fk_c_paiement' =>array('type'=>'integer', 'label'=>'Fk c paiement', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
 		'paid' =>array('type'=>'integer', 'label'=>'Paid', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>145),
-		'note_public' =>array('type'=>'text', 'label'=>'Note public', 'enabled'=>1, 'visible'=>0, 'position'=>150),
-		'note_private' =>array('type'=>'text', 'label'=>'Note private', 'enabled'=>1, 'visible'=>0, 'position'=>155),
+		'note_public' =>array('type'=>'html', 'label'=>'Note public', 'enabled'=>1, 'visible'=>0, 'position'=>150),
+		'note_private' =>array('type'=>'html', 'label'=>'Note private', 'enabled'=>1, 'visible'=>0, 'position'=>155),
 		'detail_refuse' =>array('type'=>'varchar(255)', 'label'=>'Detail refuse', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
 		'detail_cancel' =>array('type'=>'varchar(255)', 'label'=>'Detail cancel', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
 		'integration_compta' =>array('type'=>'integer', 'label'=>'Integration compta', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
@@ -434,12 +484,12 @@ class ExpenseReport extends CommonObject
 		$this->fk_statut = 0; // deprecated
 
 		// Clear fields
-		$this->fk_user_creat      = $user->id;
-		$this->fk_user_author     = $fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
-		$this->fk_user_valid      = '';
+		$this->fk_user_creat = $user->id;
+		$this->fk_user_author = $fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
+		$this->fk_user_valid = '';
 		$this->date_create = '';
-		$this->date_creation      = '';
-		$this->date_validation    = '';
+		$this->date_creation = '';
+		$this->date_validation = '';
 
 		// Remove link on lines to a joined file
 		if (is_array($this->lines) && count($this->lines) > 0) {
@@ -2729,6 +2779,11 @@ class ExpenseReportLine extends CommonObjectLine
 	public $db;
 
 	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'expensereport_det';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
@@ -2784,6 +2839,21 @@ class ExpenseReportLine extends CommonObjectLine
 	public $total_ttc;
 	public $total_localtax1;
 	public $total_localtax2;
+
+	// Multicurrency
+	/**
+	 * @var int Currency ID
+	 */
+	public $fk_multicurrency;
+
+	/**
+	 * @var string multicurrency code
+	 */
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 
 	/**
 	 * @var int ID into llx_ecm_files table to link line to attached file

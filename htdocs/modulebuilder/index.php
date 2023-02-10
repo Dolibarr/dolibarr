@@ -896,6 +896,17 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 
 // Init an object
 if ($dirins && $action == 'initobject' && $module && $objectname) {
+	// check if module is enabled
+	if (isModEnabled(strtolower($module))) {
+		$result = unActivateModule(strtolower($module));
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		if ($result) {
+			setEventMessages($result, null, 'errors');
+		}
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+		setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+	}
+
 	$objectname = ucfirst($objectname);
 
 	$dirins = $dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
@@ -1218,6 +1229,42 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				'core/modules/mymodule/doc/pdf_standard_myobject.modules.php'=>'core/modules/'.strtolower($module).'/doc/pdf_standard_'.strtolower($objectname).'.modules.php'
 			);
 		}
+		if (GETPOST('generatepermissions', 'aZ09')) {
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+			dol_include_once($pathtofile);
+			$class = 'mod'.$module;
+			if (class_exists($class)) {
+				try {
+					$moduleobj = new $class($db);
+				} catch (Exception $e) {
+					$error++;
+					dol_print_error($db, $e->getMessage());
+				}
+			}
+			if (empty($firstobjectname)) {
+				$rightToadd = preg_replace('/myobject/', $objectname, $rightToadd);
+			}
+			if ($objectname != $firstobjectname) {
+				$rightToadd = "
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
+		\$this->rights[\$r][1] = 'Read objects of ".$module."'; 
+		\$this->rights[\$r][4] = '".strtolower($objectname)."';
+		\$this->rights[\$r][5] = 'read'; 
+		\$r++;
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
+		\$this->rights[\$r][1] = 'Create/Update objects of ".$module."'; 
+		\$this->rights[\$r][4] = '".strtolower($objectname)."';
+		\$this->rights[\$r][5] = 'write'; 
+		\$r++;
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
+		\$this->rights[\$r][1] = 'Delete objects of ".$module."'; 
+		\$this->rights[\$r][4] = '".strtolower($objectname)."';
+		\$this->rights[\$r][5] = 'delete'; 
+		\$r++;
+		";
+				dolReplaceInFile($moduledescriptorfile, array('/* END MODULEBUILDER PERMISSIONS */' => '/*'.strtoupper($objectname).'*/'.$rightToadd."/*END ".strtoupper($objectname).'*/'."\n\t\t".'/* END MODULEBUILDER PERMISSIONS */'));
+			}
+		}
 
 
 		if (!$error) {
@@ -1305,43 +1352,31 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			// Regenerate left menu entry in descriptor for $objectname
 			$stringtoadd = "
         \$this->menu[\$r++]=array(
-            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
             'fk_menu'=>'fk_mainmenu=mymodule',
-            // This is a Left menu entry
             'type'=>'left',
             'titre'=>'List MyObject',
             'mainmenu'=>'mymodule',
             'leftmenu'=>'mymodule_myobject',
             'url'=>'/mymodule/myobject_list.php',
-            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
             'langs'=>'mymodule@mymodule',
             'position'=>1100+\$r,
-            // Define condition to show or hide menu entry. Use '\$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
             'enabled'=>'\$conf->mymodule->enabled',
-            // Use 'perms'=>'\$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
             'perms'=>'1',
             'target'=>'',
-            // 0=Menu for internal users, 1=external users, 2=both
             'user'=>2,
         );
         \$this->menu[\$r++]=array(
-            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
             'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=mymodule_myobject',
-            // This is a Left menu entry
             'type'=>'left',
             'titre'=>'New MyObject',
             'mainmenu'=>'mymodule',
             'leftmenu'=>'mymodule_myobject',
             'url'=>'/mymodule/myobject_card.php?action=create',
-            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
             'langs'=>'mymodule@mymodule',
             'position'=>1100+\$r,
-            // Define condition to show or hide menu entry. Use '\$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
             'enabled'=>'\$conf->mymodule->enabled',
-            // Use 'perms'=>'\$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
             'perms'=>'1',
             'target'=>'',
-            // 0=Menu for internal users, 1=external users, 2=both
             'user'=>2
         );\n";
 			$stringtoadd = preg_replace('/MyObject/', $objectname, $stringtoadd);
@@ -1353,8 +1388,28 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			// TODO Allow a replace with regex using dolReplaceInFile with param arryreplacementisregex to 1
 			// TODO Avoid duplicate addition
 
-			dolReplaceInFile($moduledescriptorfile, array('END MODULEBUILDER LEFTMENU MYOBJECT */' => '*/'."\n".$stringtoadd."\n\t\t/* END MODULEBUILDER LEFTMENU MYOBJECT */"));
-
+			// load class and check if menu exist with same object name
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+			dol_include_once($pathtofile);
+				$class = 'mod'.$module;
+		if (class_exists($class)) {
+			try {
+				$moduleobj = new $class($db);
+			} catch (Exception $e) {
+				$error++;
+				dol_print_error($db, $e->getMessage());
+			}
+		}
+			$menus = $moduleobj->menu;
+			$counter = 0 ;
+		foreach ($menus as $menu) {
+			if ($menu['leftmenu'] == strtolower($module).'_'.strtolower($objectname)) {
+				$counter++;
+			}
+		}
+		if (!$counter) {
+			dolReplaceInFile($moduledescriptorfile, array('/* END MODULEBUILDER LEFTMENU MYOBJECT */' => '/*LEFTMENU '.strtoupper($objectname).'*/'.$stringtoadd."\n\t\t".'/*END LEFTMENU '.strtoupper($objectname).'*/'."\n\t\t".'/* END MODULEBUILDER LEFTMENU MYOBJECT */'));
+		}
 			// Add module descriptor to list of files to replace "MyObject' string with real name of object.
 			$filetogenerate[] = 'core/modules/mod'.$module.'.class.php';
 	}
@@ -1692,6 +1747,16 @@ if ($dirins && $action == 'confirm_deletemodule') {
 }
 
 if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
+	// check if module is enabled (if it's disabled and send msg event)
+	if (isModEnabled(strtolower($module))) {
+		$result = unActivateModule(strtolower($module));
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		if ($result) {
+			setEventMessages($result, null, 'errors');
+		}
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+		setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+	}
 	if (preg_match('/[^a-z0-9_]/i', $objectname)) {
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
@@ -1730,54 +1795,74 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 		);
 
 		//menu for the object selected
-		$stringtoedit = "\$this->menu[\$r++]=array(
-            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'fk_menu'=>'fk_mainmenu=".strtolower($module)."',
-            // This is a Left menu entry
-            'type'=>'left',
-            'titre'=>'List ".ucfirst($objectname)."',
-            'mainmenu'=>'".strtolower($module)."',
-            'leftmenu'=>'".strtolower($module)."_".strtolower($objectname)."',
-            'url'=>'/".strtolower($module)."/".strtolower($objectname)."_list.php',
-            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'langs'=>'".strtolower($module)."@".strtolower($module)."',
-            'position'=>1100+\$r,
-            // Define condition to show or hide menu entry. Use '\$conf->".strtolower($module)."->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'enabled'=>'\$conf->".strtolower($module)."->enabled',
-            // Use 'perms'=>'\$user->rights->".strtolower($module)."->level1->level2' if you want your menu with a permission rules
-            'perms'=>'1',
-            'target'=>'',
-            // 0=Menu for internal users, 1=external users, 2=both
-            'user'=>2,
-        );
-        \$this->menu[\$r++]=array(
-            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'fk_menu'=>'fk_mainmenu=".strtolower($module).",fk_leftmenu=".strtolower($module)."_".strtolower($objectname)."',
-            // This is a Left menu entry
-            'type'=>'left',
-            'titre'=>'New ".ucfirst($objectname)."',
-            'mainmenu'=>'".strtolower($module)."',
-            'leftmenu'=>'".strtolower($module)."_".strtolower($objectname)."',
-            'url'=>'/".strtolower($module)."/".strtolower($objectname)."_card.php?action=create',
-            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'langs'=>'".strtolower($module)."@".strtolower($module)."',
-            'position'=>1100+\$r,
-            // Define condition to show or hide menu entry. Use '\$conf->".strtolower($module)."->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'enabled'=>'\$conf->".strtolower($module)."->enabled',
-            // Use 'perms'=>'\$user->rights->".strtolower($module)."->level1->level2' if you want your menu with a permission rules
-            'perms'=>'1',
-            'target'=>'',
-            // 0=Menu for internal users, 1=external users, 2=both
-            'user'=>2
-        );";
-
-		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
-
-		$check = dolReplaceInFile($moduledescriptorfile, array($stringtoedit => ''));
-		if ($check > 0) {
-			dolReplaceInFile($moduledescriptorfile, array('/*'.strtoupper($objectname).'*/' => ''));
+		// load class and check if menu exist for this object
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+			dol_include_once($pathtofile);
+				$class = 'mod'.$module;
+		if (class_exists($class)) {
+			try {
+				$moduleobj = new $class($db);
+			} catch (Exception $e) {
+				$error++;
+				dol_print_error($db, $e->getMessage());
+			}
 		}
 
+		$menus = $moduleobj->menu;
+		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+
+		foreach ($menus as $menu) {
+			if ($menu['type'] == 'left' && $menu['leftmenu'] == strtolower($module).'_'.strtolower($objectname)) {
+				$left="\$this->menu[\$r++]=array(
+			'fk_menu'=>'".$menu['fk_menu']."',
+			'type'=>'".$menu['type']."',
+			'titre'=>'".$menu['titre']."',
+			'mainmenu'=>'".$menu['mainmenu']."',
+			'leftmenu'=>'".$menu['leftmenu']."',
+			'url'=>'".$menu['url']."',
+			'langs'=>'".$menu['langs']."',
+			'position'=>1100+\$r,
+			'enabled'=>'".$menu['enabled']."',
+			'perms'=>'".$menu['perms']."',
+			'target'=>'".$menu['target']."',
+			'user'=>".$menu['user'].",
+		);";
+				dolReplaceInFile($moduledescriptorfile, array($left => ''));
+			}
+		}
+		// Remarque : "\n" not handling yet
+		$check = dolReplaceInFile($moduledescriptorfile, array('/*LEFTMENU '.strtoupper($objectname).'*/'."\n" => '',"\t\t".'/*END LEFTMENU '.strtoupper($objectname).'*/'."\n" => ''));
+
+		// regenerate permissions and delete them
+		$rights = "
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
+		\$this->rights[\$r][1] = 'Read objects of ".$module."'; 
+		\$this->rights[\$r][4] = '".strtolower($objectname)."';
+		\$this->rights[\$r][5] = 'read'; 
+		\$r++;
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
+		\$this->rights[\$r][1] = 'Create/Update objects of ".$module."'; 
+		\$this->rights[\$r][4] = '".strtolower($objectname)."';
+		\$this->rights[\$r][5] = 'write'; 
+		\$r++;
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
+		\$this->rights[\$r][1] = 'Delete objects of ".$module."'; 
+		\$this->rights[\$r][4] = '".strtolower($objectname)."';
+		\$this->rights[\$r][5] = 'delete'; 
+		\$r++;
+		";
+
+		$deleteright = dolReplaceInFile($moduledescriptorfile, array('/*'.strtoupper($objectname).'*/' => '', $rights => '', "/*END ".strtoupper($objectname).'*/'."\n\t\t" => ''."\n\t\t"));
+		if ($deleteright > 0) {
+			if (isModEnabled(strtolower($module))) {
+				$result = unActivateModule(strtolower($module));
+				if ($result) {
+					setEventMessages($result, null, 'errors');
+				}
+				setEventMessages($langs->trans("WarningModuleNeedRefrech", $langs->transnoentities($module)), null, 'warnings');
+				header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?index.php?tab=description&module='.$module);
+			}
+		}
 		$resultko = 0;
 		foreach ($filetodelete as $tmpfiletodelete) {
 			$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete, 0, 0, 1);
@@ -1875,7 +1960,295 @@ if ($dirins && $action == 'generatepackage') {
 	}
 }
 
+// Add permission
+if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
+	$error = 0;
 
+	// load class and check if right exist
+	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+	dol_include_once($pathtofile);
+		$class = 'mod'.$module;
+	if (class_exists($class)) {
+		try {
+			$moduleobj = new $class($db);
+		} catch (Exception $e) {
+			$error++;
+			dol_print_error($db, $e->getMessage());
+		}
+	}
+
+	// verify informations entred
+	if (!GETPOST('label', 'alpha')) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
+	}
+	if (!GETPOST('permissionObj', 'alpha')) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Rights")), null, 'errors');
+	}
+
+	$label = GETPOST('label', 'alpha');
+	$objectForPerms = strtolower(GETPOST('permissionObj', 'alpha'));
+	$crud = GETPOST('crud', 'alpha');
+
+	// check coherence between crud and label
+	if ($label == "Read objects of $module" && $crud != "read") {
+		$crud = "read";
+		$label == "Read objects of $module";
+	}
+	if ($label == "Create/Update objects of $module" && $crud != "write") {
+		$crud = "write";
+		$label == "Create/Update objects of $module";
+	}
+	if ($label == "Delete objects of $module" && $crud != "delete") {
+		$crud = "delete";
+		$label == "Delete objects of $module";
+	}
+
+	//check existing object permission
+	$counter = 0;
+	$permsForObject =array();
+	$permissions = $moduleobj->rights;
+	$firstRight = 0;
+	$existRight = 0;
+	$allObject = array();
+
+	$countPerms = count($permissions);
+
+	for ($i =0; $i<$countPerms; $i++) {
+		if ($permissions[$i][4] == $objectForPerms) {
+			$counter++;
+			if (count($permsForObject) < 3) {
+				$permsForObject[] = $permissions[$i];
+			}
+		}
+		$allObject[] = $permissions[$i][4];
+	}
+
+	// check if label of object already exists
+	$countPermsObj = count($permsForObject);
+	for ($j = 0; $j<$countPermsObj; $j++) {
+		if (in_array($label, $permsForObject[$j])) {
+			$existRight++;
+			setEventMessages($langs->trans("ErrorExistingPermission", $langs->transnoentities($label), $langs->transnoentities($objectForPerms)), null, 'errors');
+		}
+	}
+	// if not found permission for the object
+	if (!in_array($objectForPerms, array_unique($allObject))) {
+		$firstRight++;
+		$existRight = 0;
+	}
+	if (!$error) {
+		if (isModEnabled(strtolower($module))) {
+			$result = unActivateModule(strtolower($module));
+			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+			if ($result) {
+				setEventMessages($result, null, 'errors');
+			}
+			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+		}
+		//prepare stirng to add
+		$rightToAdd = "
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
+		\$this->rights[\$r][1] = '$label'; 
+		\$this->rights[\$r][4] = '$objectForPerms';
+		\$this->rights[\$r][5] = '$crud'; 
+		\$r++;
+		";
+		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+		if (!$existRight) {
+			//var_dump(1);exit;
+			dolReplaceInFile($moduledescriptorfile, array('/*END '.strtoupper($objectForPerms).'*/' => $rightToAdd.'/*END '.strtoupper($objectForPerms).'*/'));
+			setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
+		}
+		if ($firstRight) {
+			dolReplaceInFile($moduledescriptorfile, array('/* END MODULEBUILDER PERMISSIONS */' => '/*'.strtoupper($objectForPerms).'*/'.$rightToAdd."/*END ".strtoupper($objectForPerms).'*/'."\n\t\t".'/* END MODULEBUILDER PERMISSIONS */'));
+			setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
+		}
+	}
+	header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+	exit;
+}
+
+
+// Update permission
+if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright')&& empty($cancel)) {
+	$error = 0;
+	// load class and check if right exist
+	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+	dol_include_once($pathtofile);
+		$class = 'mod'.$module;
+	if (class_exists($class)) {
+		try {
+			$moduleobj = new $class($db);
+		} catch (Exception $e) {
+			$error++;
+			dol_print_error($db, $e->getMessage());
+		}
+	}
+	// verify informations entred
+	if (!GETPOST('label', 'alpha')) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
+	}
+	if (!GETPOST('permissionObj', 'alpha')) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Rights")), null, 'errors');
+	}
+
+	$label = GETPOST('label', 'alpha');
+	$objectForPerms = strtolower(GETPOST('permissionObj', 'alpha'));
+	$crud = GETPOST('crud', 'alpha');
+
+
+	if ($label == "Read objects of $module" && $crud != "read") {
+		$crud = "read";
+		$label == "Read objects of $module";
+	}
+	if ($label == "Create/Update objects of $module" && $crud != "write") {
+		$crud = "write";
+		$label == "Create/Update objects of $module";
+	}
+	if ($label == "Delete objects of $module" && $crud != "delete") {
+		$crud = "delete";
+		$label == "Delete objects of $module";
+	}
+
+	$permissions = $moduleobj->rights;
+	$r =(int) GETPOST('counter');
+	//get permission want to delete from permissions array
+	$x1 = $permissions[$r-1][1];
+	$x2 = $permissions[$r-1][4];
+	$x3 = $permissions[$r-1][5];
+		//check existing object permission
+		$counter = 0;
+		$permsForObject =array();
+		$permissions = $moduleobj->rights;
+		$firstRight = 0;
+		$existRight = 0;
+		$allObject = array();
+
+		$countPerms = count($permissions);
+	for ($i =0; $i<$countPerms; $i++) {
+		if ($permissions[$i][4] == $objectForPerms) {
+			$counter++;
+			if (count($permsForObject) < 3) {
+				$permsForObject[] = $permissions[$i];
+			}
+		}
+		$allObject[] = $permissions[$i][4];
+	}
+
+	if ($label != $x1 && $crud != $x3) {
+		$countPermsObj = count($permsForObject);
+		for ($j = 0; $j<$countPermsObj; $j++) {
+			if (in_array($label, $permsForObject[$j])) {
+				$error++;
+				setEventMessages($langs->trans("ErrorExistingPermission", $langs->transnoentities($label), $langs->transnoentities($objectForPerms)), null, 'errors');
+			}
+		}
+	}
+
+		//prepare right want to delete
+		$right = "
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
+		\$this->rights[\$r][1] = '$x1'; 
+		\$this->rights[\$r][4] = '$x2';
+		\$this->rights[\$r][5] = '$x3'; 
+		\$r++;
+		";
+		// right after editing
+		$rightUpdated = "
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
+		\$this->rights[\$r][1] = '$label'; 
+		\$this->rights[\$r][4] = '$objectForPerms';
+		\$this->rights[\$r][5] = '$crud'; 
+		\$r++;
+		";
+	if (!$error) {
+		if (isModEnabled(strtolower($module))) {
+			$result = unActivateModule(strtolower($module));
+			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+			if ($result) {
+				setEventMessages($result, null, 'errors');
+			}
+			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+		}
+
+		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+		$check = dolReplaceInFile($moduledescriptorfile, array($right => $rightUpdated));
+
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+		setEventMessages($langs->trans('PermissionUpdatedSuccesfuly'), null);
+		exit;
+	}
+}
+// Delete permission
+if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOST('permskey', 'int')) {
+	$error = 0;
+	// load class and check if right exist
+	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+	dol_include_once($pathtofile);
+		$class = 'mod'.$module;
+	if (class_exists($class)) {
+		try {
+			$moduleobj = new $class($db);
+		} catch (Exception $e) {
+			$error++;
+			dol_print_error($db, $e->getMessage());
+		}
+	}
+
+		$permissions = $moduleobj->rights;
+		$key = (int) GETPOST('permskey', 'int')-1;
+		//get permission want to delete from permissions array
+		$x1 = $permissions[$key][1];
+		$x2 = $permissions[$key][4];
+		$x3 = $permissions[$key][5];
+		//prepare right want to delete
+		$rightTodelete = "
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
+		\$this->rights[\$r][1] = '$x1'; 
+		\$this->rights[\$r][4] = '$x2';
+		\$this->rights[\$r][5] = '$x3'; 
+		\$r++;
+		";
+
+
+		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+		$check = dolReplaceInFile($moduledescriptorfile, array($rightTodelete => ''."\n\t\t"));
+	if ($check > 0) {
+		//check if all permissions of object was deleted
+		$permsForObj = array();
+		foreach ($permissions as $perms) {
+			$permsForObj[] = $perms[4];
+		}
+		$permsForObj = array_count_values($permsForObj);
+		if ($permsForObj[$permissions[$key][4]] == 1) {
+			$delObjStart = dolReplaceInFile($moduledescriptorfile, array('/*'.strtoupper($permissions[$key][4].'*/') => '','/*END '.strtoupper($permissions[$key][4].'*/') => ''));
+		}
+	}
+	if (!$error) {
+		// check if module is enabled
+		if (isModEnabled(strtolower($module))) {
+			$result = unActivateModule(strtolower($module));
+			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+			if ($result) {
+				setEventMessages($result, null, 'errors');
+			}
+			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+			setEventMessages($langs->trans('PermissionDeletedSuccesfuly'), null);
+			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+			exit;
+		} else {
+			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+			setEventMessages($langs->trans('PermissionDeletedSuccesfuly'), null);
+			exit;
+		}
+	}
+}
 // Save file
 if ($action == 'savefile' && empty($cancel)) {
 	$relofcustom = basename($dirins);
@@ -1987,6 +2360,91 @@ if ($action == 'reset' && $user->admin) {
 	exit;
 }
 
+// delete menu
+if ($dirins && $action == 'confirm_deletemenu' && GETPOST('menukey', 'int')) {
+	// check if module is enabled
+	if (isModEnabled(strtolower($module))) {
+		$result = unActivateModule(strtolower($module));
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		if ($result) {
+			setEventMessages($result, null, 'errors');
+		}
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+		setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+	}
+	// load class and check if menu exist
+	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+	dol_include_once($pathtofile);
+		$class = 'mod'.$module;
+	if (class_exists($class)) {
+		try {
+			$moduleobj = new $class($db);
+		} catch (Exception $e) {
+			$error++;
+			dol_print_error($db, $e->getMessage());
+		}
+	}
+
+	$menus = $moduleobj->menu;
+
+	$key = (int) GETPOST('menukey', 'int');
+	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+
+
+	if ($menus[$key]['type'] == 'top') {
+			$menuTop = "
+		\$this->menu[\$r++] = array(
+			'fk_menu'=>'".$menus[$key]['fk_menu']."', 
+			'type'=>'".$menus[$key]['type']."', 
+			'titre'=>'".$menus[$key]['titre']."',
+			'prefix' => img_picto('', \$this->picto, 'class=\"paddingright pictofixedwidth valignmiddle\"'),
+			'mainmenu'=>'".$menus[$key]['mainmenu']."',
+			'leftmenu'=> '',
+			'url'=>'".$menus[$key]['url']."',
+			'langs'=>'".$menus[$key]['langs']."', 
+			'position'=>1000 + \$r,
+			'enabled'=>'isModEnabled(\"".strtolower($module)."\")', 
+			'perms' =>'".$menus[$key]['perms']."',
+			'target'=>'".$menus[$key]['target']."',
+			'user'=>".$menus[$key]['user'].", 
+		);";
+		$check = dolReplaceInFile($moduledescriptorfile, array($menuTop => '',"\t\t".'/*TOPMENU '.strtolower($menus[$key]['titre']).'*/'."\n" => '', '/*END TOPMENU '.strtolower($menus[$key]['titre']).'*/'."\n\t\t" => ''));
+	}
+	if ($menus[$key]['type'] == 'left') {
+		$left="\$this->menu[\$r++]=array(
+			'fk_menu'=>'".$menus[$key]['fk_menu']."',
+			'type'=>'".$menus[$key]['type']."',
+			'titre'=>'".$menus[$key]['titre']."',
+			'mainmenu'=>'".$menus[$key]['mainmenu']."',
+			'leftmenu'=>'".$menus[$key]['leftmenu']."',
+			'url'=>'".$menus[$key]['url']."',
+			'langs'=>'".$menus[$key]['langs']."',
+			'position'=>1100+\$r,
+			'enabled'=>'".$menus[$key]['enabled']."',
+			'perms'=>'".$menus[$key]['perms']."',
+			'target'=>'".$menus[$key]['target']."',
+			'user'=>".$menus[$key]['user'].",
+		);";
+		$check = dolReplaceInFile($moduledescriptorfile, array($left => ''));
+
+		// check if still had menu created when initial object
+		// if not we delete the comments from file
+		$menuForObj = 0;
+		foreach ($menus as $menu) {
+			if ($menu['leftmenu'] == $menus[$key]['leftmenu']) {
+				$menuForObj++;
+			}
+		}
+		if ($menuForObj == 1) {
+			$extractObjName = explode("_", $menus[$key]['leftmenu']);
+			dolReplaceInFile($moduledescriptorfile, array('/*LEFTMENU '.strtoupper($extractObjName[1]).'*/'."\n" => '','/*END LEFTMENU '.strtoupper($extractObjName[1]).'*/' => ''));
+		}
+	}
+
+		setEventMessages($langs->trans('MenuDeletedSuccessfuly'), null);
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
+		exit;
+}
 
 
 /*
@@ -2760,6 +3218,7 @@ if ($module == 'initmodule') {
 				print '<br>';
 				print '<input type="checkbox" name="includerefgeneration" id="includerefgeneration" value="includerefgeneration"> <label class="margintoponly" for="includerefgeneration">'.$form->textwithpicto($langs->trans("IncludeRefGeneration"), $langs->trans("IncludeRefGenerationHelp")).'</label><br>';
 				print '<input type="checkbox" name="includedocgeneration" id="includedocgeneration" value="includedocgeneration"> <label for="includedocgeneration">'.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'</label><br>';
+				print '<input type="checkbox" name="generatepermissions" id="generatepermissions" value="generatepermissions"> <label for="generatepermissions">'.$form->textwithpicto($langs->trans("GeneratePermissions"), $langs->trans("GeneratePermissionsHelp")).'</label><br>';
 				print '<br>';
 				print '<input type="submit" class="button small" name="create" value="'.dol_escape_htmltag($langs->trans("GenerateCode")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 				print '<br>';
@@ -3820,6 +4279,36 @@ if ($module == 'initmodule') {
 
 			$perms = $moduleobj->rights;
 
+			// Scan for object class files
+			$dir = $dirread.'/'.$modulelowercase.'/class';
+			$listofobject = dol_dir_list($dir, 'files', 0, '\.class\.php$');
+			$objects = array('myobject');
+			$reg =array();
+			foreach ($listofobject as $fileobj) {
+				$tmpcontent = file_get_contents($fileobj['fullname']);
+				if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
+					$objects[] = $reg[1];
+				}
+			}
+			// declared select list for actions and labels permissions
+			$crud = array('Read','Write','Delete');
+			$labels = array("Read objects of $module","Create/Update objects of $module","Delete objects of $module");
+
+			$action = GETPOST('action', 'alpha');
+
+			if ($action == 'deleteright') {
+				$formconfirm = $form->formconfirm(
+					$_SERVER["PHP_SELF"].'?permskey='.urlencode(GETPOST('permskey', 'int')).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj),
+					$langs->trans('Delete'),
+					$langs->trans('Confirm Delete Right', GETPOST('permskey', 'alpha')),
+					'confirm_deleteright',
+					'',
+					0,
+					1
+				);
+				print $formconfirm;
+			}
+
 			if ($action != 'editfile' || empty($file)) {
 				print '<span class="opacitymedium">';
 				$htmlhelp = $langs->trans("PermissionsDefDescTooltip", '{s1}');
@@ -3846,33 +4335,128 @@ if ($module == 'initmodule') {
 				print '<table class="noborder">';
 
 				print '<tr class="liste_titre">';
-				print_liste_field_titre("ID", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("Label", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("Permission", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("ID", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, "center");
+				print_liste_field_titre("Label", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, "center");
+				print_liste_field_titre("Permission", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, "center");
+				print_liste_field_titre("CRUD", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, "center");
+				print_liste_field_titre("", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, "center");
 				print "</tr>\n";
 
+				//form for add new right
+				print '<tr>';
+				print '<td><input type="text" readonly  name="id" value="'.dol_escape_htmltag($moduleobj->numero.sprintf('%02d', $i + count($perms))).'"></td>';
+				print '<td>';
+				print '<select name="label" >';
+				print '<option value=""></option>';
+				for ($i = 0; $i<3; $i++) {
+					print '<option value="'.dol_escape_htmltag($labels[$i]).'">'.$labels[$i].'</option>';
+				}
+				print '</select></td>';
+
+				print '<td ><select  name="permissionObj">';
+				print '<option value=""></option>';
+				foreach ($objects as $obj) {
+					if ($obj != 'myobject') {
+						print '<option value="'.$obj.'">'.$obj.'</option>';
+					}
+				}
+				print '</select></td>';
+
+				print '<td><select class="maxwidth"  name="crud">';
+				print '<option value=""></option>';
+				for ($i = 0;$i<3;$i++) {
+					print '<option value="'.$crud[$i].'">'.$langs->trans($crud[$i]).'</option>';
+				}
+				print '</td>';
+
+				print '<td class="center tdstickyright tdstickyghostwhite">';
+				print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
+				print '</td>';
+				print '</tr>';
+
 				if (count($perms)) {
+					$i = 0;
 					foreach ($perms as $perm) {
-						print '<tr class="oddeven">';
+						$i++;
+						// section for editing right
+						if ($action == 'edit_right' && $perm[0] == (int) GETPOST('permskey', 'int')) {
+							print '<tr class="oddeven">';
+							print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="modifPerms">';
+							print '<input type="hidden" name="token" value="'.newToken().'">';
+							print '<input type="hidden" name="tab" value="permissions">';
+							print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+							print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
+							print '<input type="hidden" name="action" value="update_right">';
+							print '<input type="hidden" name="counter" value="'.$i.'">';
 
-						print '<td>';
-						print $perm[0];
-						print '</td>';
 
-						print '<td>';
-						print $langs->trans($perm[1]);
-						print '</td>';
+							print '<input type="hidden" name="permskey" value="'.$perm[0].'">';
 
-						print '<td>';
-						print $perm[4];
-						print '</td>';
+							print '<td class="tdsticky tdstickygray">';
+							print '<input type="text" readonly  value="'.dol_escape_htmltag($perm[0]).'"/>';
+							print '</td>';
 
-						print '<td>';
-						print $perm[5];
-						print '</td>';
+							print '<td>';
+							print '<select name="label" >';
+							print '<option value="'.dol_escape_htmltag($perm[1]).'">'.dol_escape_htmltag($perm[1]).'</option>';
+							for ($i = 0; $i<3; $i++) {
+								if ($perm[1] != $labels[$i]) {
+									print '<option value="'.GETPOST('label').'">'.$labels[$i].'</option>';
+								}
+							}
+							print '</select></td>';
 
-						print '</tr>';
+							print '<td ><select  name="permissionObj">';
+							print '<option value="'.dol_escape_htmltag($perm[4]).'">'.$perm[4].'</option>';
+							print '</select></td>';
+
+							print '<td>';
+							print '<select name="crud">';
+							print '<option value="'.dol_escape_htmltag($perm[5]).'">'.$langs->trans($perm[5]).'</option>';
+							for ($i = 0; $i<3; $i++) {
+								if ($perm[5] != $crud[$i]) {
+									print '<option value="'.$crud[$i].'">'.$langs->trans($crud[$i]).'</option>';
+								}
+							}
+							print '</select>';
+							print '</td>';
+
+							print '<td class="center tdstickyright tdstickyghostwhite">';
+							print '<input class="reposition button smallpaddingimp" type="submit" name="modifyright" value="'.$langs->trans("Modify").'"/>';
+							print '<br>';
+							print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
+							print '</td>';
+
+							print '</form>';
+							print '</tr>';
+						} else {
+							print '<tr class="oddeven">';
+
+							print '<td>';
+							print $perm[0];
+							print '</td>';
+
+							print '<td>';
+							print $langs->trans($perm[1]);
+							print '</td>';
+
+							print '<td>';
+							print $perm[4];
+							print '</td>';
+
+							print '<td>';
+							print $perm[5];
+							print '</td>';
+
+							print '<td class="center tdstickyright tdstickyghostwhite">';
+							if ($perm[4] != 'myobject') {
+								print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=edit_right&token='.newToken().'&permskey='.urlencode($perm[0]).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_edit().'</a>';
+								print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deleteright&token='.newToken().'&permskey='.urlencode($i).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
+							}
+							print '</td>';
+
+							print '</tr>';
+						}
 					}
 				} else {
 					print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';

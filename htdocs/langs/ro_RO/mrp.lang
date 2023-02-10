@@ -102,6 +102,7 @@ NbOperatorsRequired=Nr. de operatori necesar
 THMOperatorEstimated=Total ore minute estimat per operator
 THMMachineEstimated=Total ore minute estimat per maşină
 WorkstationType=Tip staţie de lucru
+DefaultWorkstation=Stație de lucru implicită
 Human=Personal uman
 Machine=Maşină
 HumanMachine=Personal / Maşină

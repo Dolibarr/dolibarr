@@ -141,6 +141,9 @@ ALTER TABLE llx_societe_rib ADD COLUMN state_id integer AFTER default_rib;
 ALTER TABLE llx_societe_rib ADD COLUMN fk_country integer AFTER state_id;
 ALTER TABLE llx_societe_rib ADD COLUMN currency_code varchar(3) AFTER fk_country;
 
+DELETE FROM llx_societe_rib WHERE fk_soc = 0;
+ALTER TABLE llx_societe_rib ADD CONSTRAINT llx_societe_rib_fk_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);
+
 ALTER TABLE llx_user_rib ADD COLUMN state_id integer AFTER owner_address;
 ALTER TABLE llx_user_rib ADD COLUMN fk_country integer AFTER state_id;
 ALTER TABLE llx_user_rib ADD COLUMN currency_code varchar(3) AFTER fk_country;

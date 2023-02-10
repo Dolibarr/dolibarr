@@ -116,10 +116,12 @@ class printing_printgcp extends PrintingDriver
 				'type'=>'info',
 			);
 		} else {
+			$keyforprovider = '';	// @FIXME
+
 			$this->google_id = getDolGlobalString('OAUTH_GOOGLE_ID');
 			$this->google_secret = getDolGlobalString('OAUTH_GOOGLE_SECRET');
 			// Token storage
-			$storage = new DoliStorage($this->db, $this->conf);
+			$storage = new DoliStorage($this->db, $this->conf, $keyforprovider);
 			//$storage->clearToken($this->OAUTH_SERVICENAME_GOOGLE);
 			// Setup the credentials for the requests
 			$credentials = new Credentials(
@@ -254,8 +256,11 @@ class printing_printgcp extends PrintingDriver
 	public function getlistAvailablePrinters()
 	{
 		$ret = array();
+
+		$keyforprovider = '';	// @FIXME
+
 		// Token storage
-		$storage = new DoliStorage($this->db, $this->conf);
+		$storage = new DoliStorage($this->db, $this->conf, $keyforprovider);
 		// Setup the credentials for the requests
 		$credentials = new Credentials(
 			$this->google_id,
@@ -392,8 +397,11 @@ class printing_printgcp extends PrintingDriver
 			'content' => base64_encode($contents), // encode file content as base64
 			'contentType' => $contenttype,
 		);
+
+		$keyforprovider = '';	// @FIXME
+
 		// Dolibarr Token storage
-		$storage = new DoliStorage($this->db, $this->conf);
+		$storage = new DoliStorage($this->db, $this->conf, $keyforprovider);
 		// Setup the credentials for the requests
 		$credentials = new Credentials(
 			$this->google_id,
@@ -441,8 +449,11 @@ class printing_printgcp extends PrintingDriver
 
 		$error = 0;
 		$html = '';
+
+		$keyforprovider = '';	// @FIXME
+
 		// Token storage
-		$storage = new DoliStorage($this->db, $this->conf);
+		$storage = new DoliStorage($this->db, $this->conf, $keyforprovider);
 		// Setup the credentials for the requests
 		$credentials = new Credentials(
 			$this->google_id,
