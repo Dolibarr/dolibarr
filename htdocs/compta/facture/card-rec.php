@@ -121,7 +121,7 @@ $usercanunvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($
 $usercanproductignorepricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
 $usercancreatemargin = $user->hasRight("margins", "creer");
 $usercanreadallmargin = $user->hasRight("margins", "liretous");
-$usercancreatewithdrarequest = $user->rights->prelevement->bons->creer;
+$usercancreatewithdrarequest = $user->hasRight("prelevement", "bons","creer");
 
 $now = dol_now();
 
