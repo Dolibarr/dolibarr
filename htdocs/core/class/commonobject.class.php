@@ -1360,7 +1360,7 @@ abstract class CommonObject
 	 *    @param	array		$arrayoftcids	Array with ID of type of contacts. If we provide this, we can make a ec.fk_c_type_contact in ($arrayoftcids) to avoid link on tc table. TODO Not implemented.
 	 *    @return	array|int		        	Array of contacts, -1 if error
 	 */
-	public function liste_contact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1, $typecontectids = array())
+	public function liste_contact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1, $arrayoftcids = array())
 	{
 		// phpcs:enable
 		global $langs;
