@@ -93,7 +93,7 @@ if ("Notification" in window) {
 
 
 function first_execution() {
-	console.log("Call first_execution");
+	console.log("Call first_execution of check_events()");
 	result = check_events();	//one check before setting the new time for other checks
 	if (result > 0) {
 		console.log("Program a repeated run with a time_auto_update = MAIN_BROWSER_NOTIFICATION_FREQUENCY = "+time_auto_update+"s");
@@ -190,12 +190,12 @@ function check_events() {
 						data: { time_js_next_test: time_js_next_test, token: currentToken }
 					});
 				} else {
-					console.log("No reminder to do found, next search at "+time_js_next_test);
+					console.log("No remind to do found, next search at "+time_js_next_test);
 				}
 			}
 		});
 
-		if (dolnotif_nb_test_for_page > 10) {
+		if (dolnotif_nb_test_for_page > 5) {
 			console.log("We did "+dolnotif_nb_test_for_page+" consecutive test on this page. We stop checking now from here by clearing dolnotif_idinterval="+dolnotif_idinterval);
 			clearInterval(dolnotif_idinterval);
 		}
