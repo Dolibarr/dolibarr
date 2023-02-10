@@ -69,7 +69,7 @@ if (!empty($inputalsopricewithtax)) {
 if (in_array($object->element, array('propal', 'supplier_proposal', 'facture', 'facturerec', 'invoice', 'commande', 'order', 'order_supplier', 'invoice_supplier'))) {
 	$colspan++; // With this, there is a column move button
 }
-if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
+if (!empty($conf->multicurrency->enabled) && $object->multicurrency_code != $conf->currency) {
 	$colspan += 2;
 }
 
@@ -203,7 +203,7 @@ $coldisplay++;
 	}
 	print '></td>';
 
-	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
+	if (!empty($conf->multicurrency->enabled) && $object->multicurrency_code != $conf->currency) {
 		$coldisplay++;
 		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right" size="5" id="multicurrency_subprice" name="multicurrency_subprice" value="'.price($line->multicurrency_subprice).'" /></td>';
 	}
@@ -267,7 +267,7 @@ $coldisplay++;
 	<?php } ?>
 	</td>
 	<?php
-	if ($this->situation_cycle_ref) {
+	if ($object->situation_cycle_ref) {
 		$coldisplay++;
 		print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$line->situation_percent.'" name="progress">%</td>';
 		$coldisplay++;
