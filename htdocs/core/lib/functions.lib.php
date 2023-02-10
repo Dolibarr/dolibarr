@@ -5371,10 +5371,10 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pict
 	$return .= '<div class="titre inline-block">'.$titre.'</div>';
 	$return .= '</td>';
 	if (dol_strlen($morehtmlcenter)) {
-		$return .= '<td class="nobordernopadding center valignmiddle">'.$morehtmlcenter.'</td>';
+		$return .= '<td class="nobordernopadding center valignmiddle col-center">'.$morehtmlcenter.'</td>';
 	}
 	if (dol_strlen($morehtmlright)) {
-		$return .= '<td class="nobordernopadding titre_right wordbreakimp right valignmiddle">'.$morehtmlright.'</td>';
+		$return .= '<td class="nobordernopadding titre_right wordbreakimp right valignmiddle col-right">'.$morehtmlright.'</td>';
 	}
 	$return .= '</tr></table>'."\n";
 
@@ -5446,11 +5446,11 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	// Center
 	if ($morehtmlcenter) {
-		print '<td class="nobordernopadding center valignmiddle">'.$morehtmlcenter.'</td>';
+		print '<td class="nobordernopadding center valignmiddle col-center">'.$morehtmlcenter.'</td>';
 	}
 
 	// Right
-	print '<td class="nobordernopadding valignmiddle right">';
+	print '<td class="nobordernopadding valignmiddle right col-right">';
 	print '<input type="hidden" name="pageplusoneold" value="'.((int) $page + 1).'">';
 	if ($sortfield) {
 		$options .= "&sortfield=".urlencode($sortfield);

@@ -675,17 +675,27 @@ if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu
 }
 
 
-// Confirmation de la suppression de la ligne
+// Confirm deletion of record
 if ($action == 'delete') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.((int) $rowid).'&code='.urlencode($code).'&id='.((int) $id), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
-
-
 
 
 $fieldlist = explode(',', $tabfield[$id]);
 
 if ($action == 'create') {
+	// If data was already input, we define them in obj to populate input fields.
+	$obj = new stdClass();
+	$obj->label = GETPOST('label');
+	$obj->lang = GETPOST('lang');
+	$obj->type_template = GETPOST('type_template');
+	$obj->fk_user = GETPOST('fk_user', 'int');
+	$obj->private = GETPOST('private', 'int');
+	$obj->position = GETPOST('position');
+	$obj->topic = GETPOST('topic');
+	$obj->joinfiles = GETPOST('joinfiles');
+	$obj->content = GETPOST('content', 'restricthtml');
+
 	// Form to add a new line
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -761,16 +771,6 @@ if ($action == 'create') {
 	print '</th>';
 	print '</tr>';
 
-	$obj = new stdClass();
-	// If data was already input, we define them in obj to populate input fields.
-	if (GETPOST('actionadd')) {
-		foreach ($fieldlist as $key => $val) {
-			if (GETPOST($val) != '') {
-				$obj->$val = GETPOST($val);
-			}
-		}
-	}
-
 	$tmpaction = 'create';
 	$parameters = array(
 		'fieldlist' => $fieldlist,
@@ -828,7 +828,6 @@ if ($action == 'create') {
 			if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 				$okforextended = false;
 			}
-
 			$doleditor = new DolEditor($tmpfieldlist, (!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : ''), '', 180, 'dolibarr_mailings', 'In', false, $acceptlocallinktomedia, $okforextended, ROWS_4, '90%');
 			print $doleditor->Create(1);
 		}
@@ -848,7 +847,7 @@ if ($action == 'create') {
 	print '</div>';
 	print '</form>';
 	print '<br><br>';
-} // END IF not edit
+}
 
 // List of available record in database
 dol_syslog("htdocs/admin/dict", LOG_DEBUG);

@@ -4168,9 +4168,6 @@ table.hidepaginationprevious .paginationprevious {
 table.hidepaginationnext .paginationnext {
 	display: none;
 }
-.paginationafterarrows a.btnTitlePlus {
-	border: 1px solid var(--btncolorborder);
-}
 .paginationafterarrows a.btnTitlePlus:hover span:before {
 	/* text-shadow: 0px 0px 5px #ccc; */
 	/* filter: invert(0.3); */
@@ -4906,7 +4903,7 @@ div.titre {
 table.centpercent.notopnoleftnoright.table-fiche-title {
 	margin-bottom: 10px !important;
 }
-table.table-fiche-title .col-title div.titre{
+table.table-fiche-title .col-title div.titre, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
 
