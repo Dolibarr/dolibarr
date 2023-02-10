@@ -77,7 +77,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 
 		// Setting the prefix
 		$texte .= '<tr><td><span class="opacitymedium">'.$langs->trans("Mask").' ('.$langs->trans("InvoiceStandard").'):</span></td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskinvoice" value="'.getDolGlobalString ("FACTURE_MERCURE_MASK_INVOICE").'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskinvoice" value="'.getDolGlobalString("FACTURE_MERCURE_MASK_INVOICE").'">', $tooltip, 1, 1).'</td>';
 
 		$texte .= '<td class="left" rowspan="3">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
@@ -85,7 +85,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 
 		// Prefix setting of replacement invoices
 		$texte .= '<tr><td><span class="opacitymedium">'.$langs->trans("Mask").' ('.$langs->trans("InvoiceReplacement").'):</span></td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskreplacement" value="'.getDolGlobalString ("FACTURE_MERCURE_MASK_REPLACEMENT").'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskreplacement" value="'.getDolGlobalString("FACTURE_MERCURE_MASK_REPLACEMENT").'">', $tooltip, 1, 1).'</td>';
 		$texte .= '</tr>';
 
 		// Prefix setting of credit note
