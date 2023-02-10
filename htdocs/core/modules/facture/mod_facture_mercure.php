@@ -85,7 +85,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 
 		// Prefix setting of replacement invoices
 		$texte .= '<tr><td><span class="opacitymedium">'.$langs->trans("Mask").' ('.$langs->trans("InvoiceReplacement").'):</span></td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskreplacement" value="'.$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskreplacement" value="FACTURE_MERCURE_MASK_REPLACEMENT">', $tooltip, 1, 1).'</td>';
 		$texte .= '</tr>';
 
 		// Prefix setting of credit note
