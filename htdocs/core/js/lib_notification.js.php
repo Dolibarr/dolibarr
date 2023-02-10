@@ -102,6 +102,9 @@ function first_execution() {
 }
 
 function check_events() {
+	var result = 0;
+	dolnotif_nb_test_for_page += 1;
+
 	if (Notification.permission === "granted") {
 		var currentToken = 'notrequired';
 		const allMeta = document.getElementsByTagName("meta");
@@ -112,7 +115,6 @@ function check_events() {
 			}
 		}
 		time_js_next_test += time_auto_update;
-		dolnotif_nb_test_for_page += 1;
 
 		console.log("Call ajax to check events with time_js_next_test = "+time_js_next_test+" dolnotif_nb_test_for_page="+dolnotif_nb_test_for_page);
 
@@ -195,17 +197,19 @@ function check_events() {
 			}
 		});
 
-		if (dolnotif_nb_test_for_page > 5) {
-			console.log("We did "+dolnotif_nb_test_for_page+" consecutive test on this page. We stop checking now from here by clearing dolnotif_idinterval="+dolnotif_idinterval);
-			clearInterval(dolnotif_idinterval);
-		}
-
-		return 1;
+		result = 1;
 	} else {
-		console.log("Cancel check_events. Check is useless because javascript Notification.permission is "+Notification.permission+" (blocked manualy or web site is not https).");
+		console.log("Cancel check_events() with dolnotif_nb_test_for_page="+dolnotif_nb_test_for_page+". Check is useless because javascript Notification.permission is "+Notification.permission+" (blocked manualy or web site is not https).");
 
-		return 2;	// We return a positive so the repeated check will done even if authroization is not yet allowed may be after this check)
+		result = 2;	// We return a positive so the repeated check will done even if authroization is not yet allowed may be after this check)
 	}
+
+	if (dolnotif_nb_test_for_page > 5) {
+		console.log("We did "+dolnotif_nb_test_for_page+" consecutive test on this page. We stop checking now from here by clearing dolnotif_idinterval="+dolnotif_idinterval);
+		clearInterval(dolnotif_idinterval);
+	}
+
+	return result;
 }
 <?php
 
