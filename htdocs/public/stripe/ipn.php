@@ -400,7 +400,7 @@ if ($event->type == 'payout.created') {
 		}
 	}
 
-	if (!$errorforinvoice && isModEnabled('prelevement')) { //TEST IPN
+	if (!$errorforinvoice && isModEnabled('prelevement')) {
 		$bon = new BonPrelevement($db);
 		$idbon = 0;
 		$sql = "SELECT dp.fk_prelevement_bons as idbon";
@@ -423,13 +423,12 @@ if ($event->type == 'payout.created') {
 
 		if (!empty($idbon)) {
 			$bon->fetch($idbon);
-			$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_bons ";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
 			$sql .= " SET fk_user_credit = ".$user->id;
 			$sql .= ", statut = ".$bon::STATUS_CREDITED;
 			$sql .= ", date_credit = '".$db->idate($now)."'";
 			$sql .= ", credite = 1";
 			$sql .= " WHERE rowid=".((int) $bon->id);
-			$sql .= " AND entity = ".((int) $bon->entity);
 			$sql .= " AND statut = ".$bon::STATUS_TRANSFERED;
 
 			$db->begin();
