@@ -1331,6 +1331,7 @@ while ($i < $imaxinloop) {
 
 	$userAccess = $object->restrictedProjectArea($user); // why this ?
 	if ($userAccess >= 0) {
+		// Thirdparty
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->name;
 		$companystatic->name_alias = $obj->alias;
@@ -1342,6 +1343,21 @@ while ($i < $imaxinloop) {
 		$companystatic->zip = $obj->zip;
 		$companystatic->town = $obj->town;
 		$companystatic->country_code = $obj->country_code;
+
+		// Author
+		$userstatic->id = $obj->fk_user_creat;
+		$userstatic->login = $obj->login;
+		$userstatic->lastname = $obj->lastname;
+		$userstatic->firstname = $obj->firstname;
+		$userstatic->email = $obj->user_email;
+		$userstatic->statut = $obj->user_statut;
+		$userstatic->entity = $obj->entity;
+		$userstatic->photo = $obj->photo;
+		$userstatic->office_phone = $obj->office_phone;
+		$userstatic->office_fax = $obj->office_fax;
+		$userstatic->user_mobile = $obj->user_mobile;
+		$userstatic->job = $obj->job;
+		$userstatic->gender = $obj->gender;
 
 		print '<tr class="oddeven">';
 
@@ -1496,12 +1512,25 @@ while ($i < $imaxinloop) {
 				if (!empty($numcontact)) {
 					foreach ($tab as $contactproject) {
 						//var_dump($contacttask);
+						$cid = $contactproject['id'];
 						if ($source == 'internal') {
-							$c = new User($db);
+							if (empty($conf->cache['user'][$cid])) {
+								$c = new User($db);
+								$c->fetch($cid);
+								$conf->cache['user'][$cid] = $c;
+							} else {
+								$c = $conf->cache['user'][$cid];
+							}
 						} else {
-							$c = new Contact($db);
+							if (empty($conf->cache['contact'][$cid])) {
+								$c = new Contact($db);
+								$c->fetch($cid);
+								$conf->cache['contact'][$cid] = $c;
+							} else {
+								$c = $conf->cache['contact'][$cid];
+							}
 						}
-						$c->fetch($contactproject['id']);
+
 						if (!empty($c->photo)) {
 							if (get_class($c) == 'User') {
 								print $c->getNomUrl(-2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
@@ -1703,20 +1732,6 @@ while ($i < $imaxinloop) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'p.price_booth';
 			}
 		}
-		// Author
-		$userstatic->id = $obj->fk_user_creat;
-		$userstatic->login = $obj->login;
-		$userstatic->lastname = $obj->lastname;
-		$userstatic->firstname = $obj->firstname;
-		$userstatic->email = $obj->user_email;
-		$userstatic->statut = $obj->user_statut;
-		$userstatic->entity = $obj->entity;
-		$userstatic->photo = $obj->photo;
-		$userstatic->office_phone = $obj->office_phone;
-		$userstatic->office_fax = $obj->office_fax;
-		$userstatic->user_mobile = $obj->user_mobile;
-		$userstatic->job = $obj->job;
-		$userstatic->gender = $obj->gender;
 
 		if (!empty($arrayfields['u.login']['checked'])) {
 			print '<td class="center tdoverflowmax150">';
