@@ -1392,8 +1392,8 @@ abstract class CommonObject
 		}
 		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
 		$sql .= ", tc.source, tc.element, tc.code, tc.libelle";
-		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc";
-		$sql .= ", ".$this->db->prefix()."element_contact ec";
+		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc,";
+		$sql .= " ".$this->db->prefix()."element_contact ec";
 		if ($source == 'internal') {	// internal contact (user)
 			$sql .= " LEFT JOIN ".$this->db->prefix()."user t on ec.fk_socpeople = t.rowid";
 		}
