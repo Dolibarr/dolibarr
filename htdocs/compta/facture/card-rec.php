@@ -119,7 +119,7 @@ $usercanreopen = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights
 $usercanunvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->facture->invoice_advance->unvalidate)));
 
 $usercanproductignorepricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
-$usercancreatemargin = $user->rights->margins->creer;
+$usercancreatemargin = $user->hasRight("margins", "creer");
 $usercanreadallmargin = $user->rights->margins->liretous;
 $usercancreatewithdrarequest = $user->rights->prelevement->bons->creer;
 
