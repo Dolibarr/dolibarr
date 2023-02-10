@@ -360,7 +360,7 @@ if (empty($reshook) && $action == 'add') {
 					if ($subjecttosend && $texttosend) {
 						$moreinheader = 'X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
 
-						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+						$result = $object->sendEmail($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 					}
 				}
 
@@ -542,7 +542,7 @@ print load_fiche_titre($langs->trans("NewPartnershipRequest"), '', '', 0, 0, 'ce
 print '<div align="center">';
 print '<div id="divsubscribe">';
 
-print '<div class="center subscriptionformhelptext justify">';
+print '<div class="center subscriptionformhelptext opacitymedium justify">';
 if (!empty($conf->global->PARTNERSHIP_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->PARTNERSHIP_NEWFORM_TEXT)."<br>\n";
 } else {

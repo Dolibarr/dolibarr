@@ -594,6 +594,11 @@ abstract class CommonObject
 	protected $labelStatusShort;
 
 	/**
+	 * @var int showphoto_on_popup
+	 */
+	public $showphoto_on_popup;
+
+	/**
 	 * @var array nb used in load_stateboard
 	 */
 	public $nb = array();
@@ -663,6 +668,57 @@ abstract class CommonObject
 			}
 		}
 		return -1;
+	}
+	/**
+	 * getTooltipContentArray
+	 *
+	 * @since v18
+	 * @param array $params params to construct tooltip data
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		return [];
+	}
+
+	/**
+	 * getTooltipContent
+	 *
+	 * @param array $params params
+	 * @since v18
+	 * @return string
+	 */
+	public function getTooltipContent($params)
+	{
+		global $action, $extrafields, $langs, $hookmanager;
+
+		$datas = $this->getTooltipContentArray($params);
+
+		if (!empty($extrafields->attributes[$this->table_element]['label'])) {
+			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+				if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
+					$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
+				}
+				$labelextra = $langs->trans((string) $extrafields->attributes[$this->table_element]['label'][$key]);
+				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
+					$datas[$key]= '<br><b><u>'. $labelextra . '</u></b>';
+				} else {
+					$value = $this->array_options['options_' . $key];
+					$datas[$key]= '<br><b>'. $labelextra . ':</b> ' . $extrafields->showOutputField($key, $value, '', $this->table_element);
+				}
+			}
+		}
+
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array(
+			'tooltipcontentarray' => &$datas
+		);
+		// Note that $action and $object may have been modified by some hooks
+		$hookmanager->executeHooks('getTooltipContent', $parameters, $this, $action);
+
+		$label = implode($datas);
+
+		return $label;
 	}
 
 

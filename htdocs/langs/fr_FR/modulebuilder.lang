@@ -170,3 +170,6 @@ GeneratePermissionsHelp=générer les droits par défault pour cet objet
 PermissionDeletedSuccesfuly=La permission a été supprimée avec succès
 PermissionUpdatedSuccesfuly=La permission a été mise à jour avec succès 
 PermissionAddedSuccesfuly= La permission a été ajoutée avec succès
+MenuDeletedSuccessfuly=Menu a été supprimé avec succès
+MenuAddedSuccessfuly=Menu a été ajouté avec succès
+MenuUpdatedSuccessfuly=Menu a été mise à jour avec succès

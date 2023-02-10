@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       htdocs/core/modules/oauth/stripetest_oauthcallback.php
+ *      \file       htdocs/core/modules/oauth/microsoft_oauthcallback.php
  *      \ingroup    oauth
  *      \brief      Page to get oauth callback
  */
@@ -41,6 +41,7 @@ $keyforprovider = GETPOST('keyforprovider', 'aZ09');
 if (empty($keyforprovider) && !empty($_SESSION["oauthkeyforproviderbeforeoauthjump"]) && (GETPOST('code') || $action == 'delete')) {
 	$keyforprovider = $_SESSION["oauthkeyforproviderbeforeoauthjump"];
 }
+$genericstring = 'MICROSOFT';
 
 
 /**
@@ -49,7 +50,7 @@ if (empty($keyforprovider) && !empty($_SESSION["oauthkeyforproviderbeforeoauthju
 $uriFactory = new \OAuth\Common\Http\Uri\UriFactory();
 //$currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);
 //$currentUri->setQuery('');
-$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/stripetest_oauthcallback.php');
+$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/microsoft_oauthcallback.php');
 
 
 /**
@@ -68,31 +69,48 @@ $serviceFactory->setHttpClient($httpClient);
 $storage = new DoliStorage($db, $conf, $keyforprovider);
 
 // Setup the credentials for the requests
-$keyforparamid = 'OAUTH_STRIPE_TEST'.($keyforprovider ? '-'.$keyforprovider : '').'_ID';
-$keyforparamsecret = 'OAUTH_STRIPE_TEST'.($keyforprovider ? '-'.$keyforprovider : '').'_SECRET';
+$keyforparamid = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_ID';
+$keyforparamsecret = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_SECRET';
+$keyforparamtenant = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT';
 $credentials = new Credentials(
 	getDolGlobalString($keyforparamid),
 	getDolGlobalString($keyforparamsecret),
 	$currentUri->getAbsoluteUri()
 );
 
+$state = GETPOST('state');
+
 $requestedpermissionsarray = array();
-if (GETPOST('state')) {
-	$requestedpermissionsarray = explode(',', GETPOST('state')); // Example: 'userinfo_email,userinfo_profile,cloud_print'. 'state' parameter is standard to retrieve some parameters back
+if ($state) {
+	$requestedpermissionsarray = explode(',', $state); // Example: 'user'. 'state' parameter is standard to retrieve some parameters back
 }
-/*if ($action != 'delete' && empty($requestedpermissionsarray))
-{
+if ($action != 'delete' && empty($requestedpermissionsarray)) {
 	print 'Error, parameter state is not defined';
 	exit;
-}*/
+}
 //var_dump($requestedpermissionsarray);exit;
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
-//$apiService = $serviceFactory->createService('StripeTest', $credentials, $storage, $requestedpermissionsarray);
+// ucfirst(strtolower($genericstring)) must be the name of a class into OAuth/OAuth2/Services/Xxxx
+// $requestedpermissionsarray contains list of scopes.
+// Conversion into URL is done by Reflection on constant with name SCOPE_scope_in_uppercase
+try {
+	$apiService = $serviceFactory->createService(ucfirst(strtolower($genericstring)), $credentials, $storage, $requestedpermissionsarray);
+} catch (Exception $e) {
+	print $e->getMessage();
+	exit;
+}
+/*
+var_dump($genericstring.($keyforprovider ? '-'.$keyforprovider : ''));
+var_dump($credentials);
+var_dump($storage);
+var_dump($requestedpermissionsarray);
+*/
 
-$servicesuffix = ($keyforprovider ? '-'.$keyforprovider : '');
-$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token SET service = 'StripeTest".$db->escape($servicesuffix)."', entity = ".((int) $conf->entity);
-$db->query($sql);
+if (empty($apiService)) {
+	print 'Error, failed to create serviceFactory';
+	exit;
+}
 
 // access type needed to have oauth provider refreshing token
 //$apiService->setAccessType('offline');
@@ -111,9 +129,8 @@ if (!getDolGlobalString($keyforparamsecret)) {
  * Actions
  */
 
-
 if ($action == 'delete') {
-	$storage->clearToken('StripeTest');
+	$storage->clearToken($genericstring);
 
 	setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
 
@@ -121,22 +138,35 @@ if ($action == 'delete') {
 	exit();
 }
 
-if (GETPOST('code')) {     // We are coming from oauth provider page
+//dol_syslog("GET=".join(',', $_GET));
+
+
+if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provider page
 	// We should have
 	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
 
-	dol_syslog("We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5));
+	dol_syslog("We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5)." error=".GETPOST('error'));
 
 	// This was a callback request from service, get the token
 	try {
 		//var_dump($state);
-		//var_dump($apiService);      // OAuth\OAuth2\Service\Stripe
+		//var_dump($apiService);      // OAuth\OAuth2\Service\Microsoft
 
-		//$token = $apiService->requestAccessToken(GETPOST('code'), $state);
-		$token = $apiService->requestAccessToken(GETPOST('code'));
-		// Stripe is a service that does not need state to be stored as second paramater of requestAccessToken
+		if (GETPOST('error')) {
+			setEventMessages(GETPOST('error').' '.GETPOST('error_description'), null, 'errors');
+		} else {
+			//print GETPOST('code');exit;
 
-		setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
+			//$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+			$token = $apiService->requestAccessToken(GETPOST('code'));
+			// Microsoft is a service that does not need state to be stored as second paramater of requestAccessToken
+
+			//print $token->getAccessToken().'<br><br>';
+			//print $token->getExtraParams()['id_token'].'<br>';
+			//print $token->getRefreshToken().'<br>';exit;
+
+			setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
+		}
 
 		$backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
 		unset($_SESSION["backtourlsavedbeforeoauthjump"]);
@@ -146,21 +176,28 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 	} catch (Exception $e) {
 		print $e->getMessage();
 	}
-} else // If entry on page with no parameter, we arrive here
-{
+} else {
+	// If we enter this page without 'code' parameter, we arrive here. This is the case when we want to get the redirect
+	// to the OAuth provider login page.
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
 	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
 	$_SESSION['oauthstateanticsrf'] = $state;
 
+	//if (!preg_match('/^forlogin/', $state)) {
+	//	$apiService->setApprouvalPrompt('auto');
+	//}
+
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state in this tables depend on the Provider used (see its constructor).
-	if (GETPOST('state')) {
-		$url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
+	if ($state) {
+		$url = $apiService->getAuthorizationUri(array('state' => $state));
 	} else {
-		//$url = $apiService->getAuthorizationUri();      // Parameter state will be randomly generated
-		//https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_AX27ut70tJ1j6eyFCV3ObEXhNOo2jY6V&scope=read_write
-		$url = 'https://connect.stripe.com/oauth/authorize?response_type=code&client_id='.$conf->global->$keyforparamid.'&scope=read_write';
+		$url = $apiService->getAuthorizationUri(); // Parameter state will be randomly generated
 	}
+
+	// Show url to get authorization
+	//var_dump((string) $url);exit;
+	dol_syslog("Redirect to url=".$url);
 
 	// we go on oauth provider authorization page
 	header('Location: '.$url);
