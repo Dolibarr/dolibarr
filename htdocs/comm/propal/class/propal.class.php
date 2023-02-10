@@ -1439,6 +1439,11 @@ class Propal extends CommonObject
 					}
 				}
 			}
+		} elseif ($objsoc->socid != $object->socid) { // TODO : A mettre en V18 standard de Dolibarr
+			// we have a different thirdparty selected and we checked $targetThirdPartyVat
+			foreach ($object->lines as $line) {
+				$line->tva_tx = get_default_tva($mysoc, $objsoc, $line->fk_product);
+			}
 		}
 
 		$object->id = 0;
@@ -1459,6 +1464,7 @@ class Propal extends CommonObject
 			$object->note_private = '';
 			$object->note_public = '';
 		}
+
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
