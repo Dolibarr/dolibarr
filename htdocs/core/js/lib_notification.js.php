@@ -202,7 +202,7 @@ function check_events() {
 
 		return 1;
 	} else {
-		console.log("Cancel check_events and timer. Useless because javascript Notification.permission is "+Notification.permission+" (blocked manualy or web site is not https).");
+		console.log("Cancel check_events. Check is useless because javascript Notification.permission is "+Notification.permission+" (blocked manualy or web site is not https).");
 
 		return 2;	// We return a positive so the repeated check will done even if authroization is not yet allowed may be after this check)
 	}
