@@ -152,7 +152,9 @@ $search_date_end_endmonth = GETPOST('search_date_end_endmonth', 'int');
 $search_date_end_endyear = GETPOST('search_date_end_endyear', 'int');
 $search_date_end_endday = GETPOST('search_date_end_endday', 'int');
 $search_date_end_end = dol_mktime(23, 59, 59, $search_date_end_endmonth, $search_date_end_endday, $search_date_end_endyear);	// Use tzserver
-$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
+if (isModEnabled('categorie')) {
+	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
+}
 
 if ($search_status == '') {
 	$search_status = -1; // -1 or 1
