@@ -6424,6 +6424,7 @@ ul.select2-results__options li {
 select.multiselectononeline {
 	padding: 0;
 	vertical-align: middle;
+	min-height: unset;
 	height: 28px !important;
 	opacity: 0;
 	/* width: 1px !important; */
