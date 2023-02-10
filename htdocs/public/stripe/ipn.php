@@ -425,11 +425,11 @@ if ($event->type == 'payout.created') {
 			$bon->fetch($idbon);
 			$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
 			$sql .= " SET fk_user_credit = ".$user->id;
-			$sql .= ", statut = ".$bon::STATUS_CREDITED;
+			$sql .= ", statut = '".$db->escape($bon::STATUS_CREDITED)."'";
 			$sql .= ", date_credit = '".$db->idate($now)."'";
 			$sql .= ", credite = 1";
 			$sql .= " WHERE rowid=".((int) $bon->id);
-			$sql .= " AND statut = ".$bon::STATUS_TRANSFERED;
+			$sql .= " AND statut = '".$db->escape($bon::STATUS_TRANSFERED)."'";
 
 			$db->begin();
 			$result = $db->query($sql);
