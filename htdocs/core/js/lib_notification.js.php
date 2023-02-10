@@ -96,7 +96,7 @@ function first_execution() {
 	console.log("Call first_execution of check_events()");
 	result = check_events();	//one check before setting the new time for other checks
 	if (result > 0) {
-		console.log("Program a repeated run with a time_auto_update = MAIN_BROWSER_NOTIFICATION_FREQUENCY = "+time_auto_update+"s");
+		console.log("check_events() is scheduled as a repeated task with a time_auto_update = MAIN_BROWSER_NOTIFICATION_FREQUENCY = "+time_auto_update+"s");
 		dolnotif_idinterval = setInterval(check_events, time_auto_update * 1000); // Set new time to run next check events. time_auto_update=nb of seconds
 	}
 }
@@ -204,7 +204,7 @@ function check_events() {
 	} else {
 		console.log("Cancel check_events and timer. Useless because javascript Notification.permission is "+Notification.permission+" (blocked manualy or web site is not https).");
 
-		return 0;
+		return 2;	// We return a positive so the repeated check will done even if authroization is not yet allowed may be after this check)
 	}
 }
 <?php
