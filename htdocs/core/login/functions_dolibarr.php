@@ -74,24 +74,6 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
-				$now = dol_now();
-				// Check date start validity
-				if ($obj->datestartvalidity && $db->jdate($obj->datestartvalidity) > $now) {
-					// Load translation files required by the page
-					$langs->loadLangs(array('main', 'errors'));
-					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
-					dol_syslog("functions_dolibarr::check_user_password_dolibarr bad datestart validity", LOG_WARNING);
-					return '--bad-login-validity--';
-				}
-				// Check date end validity
-				if ($obj->dateendvalidity && $db->jdate($obj->dateendvalidity) < dol_get_first_hour($now)) {
-					// Load translation files required by the page
-					$langs->loadLangs(array('main', 'errors'));
-					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
-					dol_syslog("functions_dolibarr::check_user_password_dolibarr bad date end validity", LOG_WARNING);
-					return '--bad-login-validity--';
-				}
-
 				$passclear = $obj->pass;
 				$passcrypted = $obj->pass_crypted;
 				$passtyped = $passwordtotest;
@@ -121,7 +103,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 					if ((!$passcrypted || $passtyped)
 						&& ($passclear && ($passtyped == $passclear))) {
 						$passok = true;
-						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - found pass in database");
+						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - found old pass in database", LOG_WARNING);
 					}
 				}
 

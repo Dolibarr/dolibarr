@@ -345,7 +345,7 @@ if ($mode == 'replacesite') {
 
 $usercanedit = $user->rights->website->write;
 $permissiontoadd = $user->rights->website->write;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
-$permissiontodelete = $user->rights->website->delete;
+$permissiontodelete = $user->hasRight('website', 'delete');
 
 
 /*
@@ -2803,7 +2803,7 @@ if (!GETPOST('hide_websitemenu')) {
 	$atleastonepage = (is_array($array) && count($array) > 0);
 
 	$websitepage = new WebSitePage($db);
-	if ($pageid > 0 && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')) {
+	if ($pageid > 0) {
 		$websitepage->fetch($pageid);
 	}
 
@@ -2930,14 +2930,20 @@ if (!GETPOST('hide_websitemenu')) {
 			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
 
 			// Delete website
-			if ($website->status == $website::STATUS_VALIDATED) {
+			if (!$permissiontodelete) {
 				$disabled = ' disabled="disabled"';
-				$title = $langs->trans("WebsiteMustBeDisabled", $langs->transnoentitiesnoconv($website->LibStatut(0, 0)));
+				$title = $langs->trans("NotEnoughPermissions");
 				$url = '#';
 			} else {
-				$disabled = '';
-				$title = $langs->trans("Delete");
-				$url = $_SERVER["PHP_SELF"].'?action=deletesite&token='.newToken().'&website='.urlencode($website->ref);
+				if ($website->status == $website::STATUS_VALIDATED) {
+					$disabled = ' disabled="disabled"';
+					$title = $langs->trans("WebsiteMustBeDisabled", $langs->transnoentitiesnoconv($website->LibStatut(0, 0)));
+					$url = '#';
+				} else {
+					$disabled = '';
+					$title = $langs->trans("Delete");
+					$url = $_SERVER["PHP_SELF"].'?action=deletesite&token='.newToken().'&website='.urlencode($website->ref);
+				}
 			}
 			print '<a href="'.$url.'" class="buttonDelete bordertransp'.($disabled ? ' disabled' : '').'"'.$disabled.' title="'.dol_escape_htmltag($title).'">'.img_picto('', 'delete', 'class=""').'<span class="hideonsmartphone paddingleft">'.$langs->trans("Delete").'</span></a>';
 

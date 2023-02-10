@@ -43,10 +43,6 @@ $rowid = GETPOST('rowid', 'alpha');
 
 $id = 1;
 
-if (!$user->admin) {
-	accessforbidden();
-}
-
 $acts[0] = "activate";
 $acts[1] = "disable";
 $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"');
@@ -124,6 +120,10 @@ $tabfieldcheck[1] = array();
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
 $elementList = array();
 $sourceList = array();
+
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
@@ -596,7 +596,9 @@ if ($id) {
 
 					print '<td colspan="7" class="right"><a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a>';
 					print '<input type="submit" class="button button-edit small" name="actionmodify" value="'.$langs->trans("Modify").'">';
-					print '&nbsp;<input type="submit" class="button button-cancel small" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
+					print '&nbsp;';
+					print '<input type="submit" class="button button-cancel small" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+					print '</td>';
 				} else {
 					$tmpaction = 'view';
 					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);

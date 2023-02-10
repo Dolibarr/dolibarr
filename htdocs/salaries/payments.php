@@ -97,6 +97,7 @@ $search_chq_number = GETPOST('search_chq_number', 'int');
 
 $filtre = GETPOST("filtre", 'restricthtml');
 
+$search_type_id = '';
 if (!GETPOST('search_type_id', 'int')) {
 	$newfiltre = str_replace('filtre=', '', $filtre);
 	$filterarray = explode('-', $newfiltre);
@@ -532,6 +533,7 @@ if (isset($extrafields->attributes[$object->table_element]['computed']) && is_ar
 $i = 0;
 $total = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < ($limit ? min($num, $limit) : $num)) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -697,7 +699,12 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		if (!$i) {
 			$totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
 		}
-		$totalarray['val']['totalttcfield'] += $obj->amount;
+		if (!$i) {
+			$totalarray['val']['totalttcfield'] = $obj->amount;
+		} else {
+			$totalarray['val']['totalttcfield'] += $obj->amount;
+		}
+
 
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';

@@ -313,10 +313,6 @@ if (empty($reshook)) {
 					$object->socialnetworks[$key] = trim(GETPOST($key, 'alphanohtml'));
 				}
 			}
-			//$object->skype = trim(GETPOST("skype", 'alpha'));
-			//$object->twitter = trim(GETPOST("twitter", 'alpha'));
-			//$object->facebook = trim(GETPOST("facebook", 'alpha'));
-			//$object->linkedin = trim(GETPOST("linkedin", 'alpha'));
 			$object->birth = $birthdate;
 			$object->default_lang = GETPOST('default_lang', 'alpha');
 			$object->typeid = GETPOST("typeid", 'int');
@@ -487,11 +483,6 @@ if (empty($reshook)) {
 				}
 			}
 		}
-
-		// $object->skype       = $skype;
-		// $object->twitter     = $twitter;
-		// $object->facebook    = $facebook;
-		// $object->linkedin    = $linkedin;
 
 		$object->email       = $email;
 		$object->url       	 = $url;
@@ -683,7 +674,7 @@ if (empty($reshook)) {
 
 					$moreinheader = 'X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
 
-					$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+					$result = $object->sendEmail($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 					if ($result < 0) {
 						$error++;
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -754,7 +745,7 @@ if (empty($reshook)) {
 
 						$moreinheader = 'X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
 
-						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+						$result = $object->sendEmail($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 						if ($result < 0) {
 							$error++;
 							setEventMessages($object->error, $object->errors, 'errors');
@@ -825,7 +816,7 @@ if (empty($reshook)) {
 
 						$moreinheader = 'X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
 
-						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+						$result = $object->sendEmail($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 						if ($result < 0) {
 							$error++;
 							setEventMessages($object->error, $object->errors, 'errors');

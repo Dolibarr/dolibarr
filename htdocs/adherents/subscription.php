@@ -405,7 +405,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 
 					$moreinheader = 'X-Dolibarr-Info: send_an_email by adherents/subscription.php'."\r\n";
 
-					$result = $object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofmimes, $listofnames, "", "", 0, -1, '', $moreinheader);
+					$result = $object->sendEmail($texttosend, $subjecttosend, $listofpaths, $listofmimes, $listofnames, "", "", 0, -1, '', $moreinheader);
 					if ($result < 0) {
 						$errmsg = $object->error;
 						setEventMessages($object->error, $object->errors, 'errors');

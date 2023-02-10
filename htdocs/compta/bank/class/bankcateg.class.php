@@ -45,6 +45,26 @@ class BankCateg // extends CommonObject
 	 */
 	public $label;
 
+	/**
+	 * @var DoliDB
+	 */
+	protected $db;
+
+	/**
+	 * @var string error
+	 */
+	public $error;
+
+	/**
+	 * @var array errors
+	 */
+	public $errors;
+
+	/**
+	 * @var array context
+	 */
+	public $context;
+
 
 	/**
 	 * Constructor
@@ -278,7 +298,7 @@ class BankCateg // extends CommonObject
 		// Load source object
 		$object->fetch($fromid);
 		$object->id = 0;
-		$object->statut = 0;
+		// $object->statut = 0;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';

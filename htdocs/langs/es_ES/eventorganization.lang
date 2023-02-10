@@ -54,7 +54,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = En el formulario para crear/agregar un 
 # Object
 #
 EventOrganizationConfOrBooth= Conferencia o cabina
-EventOrganizationConfOrBoothes=Conferences or Boothes
+EventOrganizationConfOrBoothes=Conferencias o Stands
 ManageOrganizeEvent = Gestionar la organización de eventos
 ConferenceOrBooth = Conferencia o cabina
 ConferenceOrBoothTab = Conferencia o cabina
@@ -115,8 +115,8 @@ EvntOrgRegistrationHelpMessage = Aquí puede votar por una conferencia o sugerir
 EvntOrgRegistrationConfHelpMessage = Aquí, puede sugerir una nueva conferencia para animar durante el evento.
 EvntOrgRegistrationBoothHelpMessage = Aquí, puede postularse para tener un stand durante el evento.
 ListOfSuggestedConferences = Lista de conferencias sugeridas
-ListOfSuggestedBooths=Suggested booths
-ListOfConferencesOrBooths=Conferences or booths of event project
+ListOfSuggestedBooths=Stands sugeridos
+ListOfConferencesOrBooths=Proyecto de conferencias o stands de evento
 SuggestConference = Sugerir una nueva conferencia
 SuggestBooth = Sugerir un stand
 ViewAndVote = Ver y votar eventos sugeridos
@@ -172,3 +172,5 @@ ErrorSeveralCompaniesWithEmailContactUs=Se han encontrado varias empresas con es
 ErrorSeveralCompaniesWithNameContactUs=Se han encontrado varias empresas con este nombre por lo que no podemos validar automáticamente su registro. Póngase en contacto con nosotros en %s para una validación manual
 NoPublicActionsAllowedForThisEvent=No hay acciones públicas abiertas al público para este evento.
 MaxNbOfAttendees=Número máximo de asistentes
+DateStartEvent=Fecha de inicio del evento
+DateEndEvent=Fecha de finalización del evento

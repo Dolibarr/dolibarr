@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2016-2022  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2016-2023  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Francis Appels          <francis.appels@z-application.com>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
@@ -92,6 +92,8 @@ class pdf_standard extends ModeleExpenseReport
 	public $posxtva;
 	public $posxup;
 	public $posxqty;
+	public $posxtype;
+	public $posxprojet;
 	public $postotalht;
 	public $postotalttc;
 

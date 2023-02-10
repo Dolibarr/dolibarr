@@ -48,8 +48,16 @@ class MouvementStock extends CommonObject
 
 	/**
 	 * @var int ID warehouse
+	 * @deprecated
+	 * @see $warehouse_id
+	 */
+	public $entrepot_id;
+
+	/**
+	 * @var int ID warehouse
 	 */
 	public $warehouse_id;
+
 	public $qty;
 
 	/**

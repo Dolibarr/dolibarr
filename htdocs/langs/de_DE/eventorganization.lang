@@ -172,3 +172,5 @@ ErrorSeveralCompaniesWithEmailContactUs=Es wurden mehrere Unternehmen mit dieser
 ErrorSeveralCompaniesWithNameContactUs=Es wurden mehrere Unternehmen mit diesem Namen gefunden, so dass wir Ihre Registrierung nicht automatisch freigeben können. Bitte kontaktieren Sie uns unter %s für eine manuelle Freigabe
 NoPublicActionsAllowedForThisEvent=Für diese Veranstaltung sind keine Aktionen für die Öffentlichkeit zugänglich
 MaxNbOfAttendees=Maximale Teilnehmerzahl
+DateStartEvent=Startdatum der Veranstaltung
+DateEndEvent=Enddatum der Veranstaltung

@@ -607,7 +607,7 @@ if ($resql) {
 		}
 
 		print '<td class="liste_titre maxwidthonsmartphone left">';
-		print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, $include, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth150');
+		print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, $include, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth125');
 		print '</td>';
 	}
 
@@ -617,12 +617,12 @@ if ($resql) {
 			print '<td class="liste_titre maxwidthonsmartphone left">';
 			$validator = new UserGroup($db);
 			$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
-			$valideurobjects = $validator->listUsersForGroup($excludefilter);
+			$valideurobjects = $validator->listUsersForGroup($excludefilter, 1);
 			$valideurarray = array();
 			foreach ($valideurobjects as $val) {
 				$valideurarray[$val->id] = $val->id;
 			}
-			print $form->select_dolusers($search_valideur, "search_valideur", 1, "", 0, $valideurarray, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth150');
+			print $form->select_dolusers($search_valideur, "search_valideur", 1, "", 0, $valideurarray, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth125');
 			print '</td>';
 		} else {
 			print '<td class="liste_titre">&nbsp;</td>';
@@ -642,7 +642,7 @@ if ($resql) {
 				//$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
 				$arraytypeleaves[$val['rowid']] = $labeltoshow;
 			}
-			print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1, 0, 0, '', 0, 0, 0, '', '', 1);
+			print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100', 1);
 		}
 		print '</td>';
 	}

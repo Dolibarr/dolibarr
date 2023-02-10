@@ -303,6 +303,7 @@ ErrorValueForTooLow=El valor para <b> %s </b> es demasiado bajo
 ErrorValueCantBeNull=El valor para <b> %s </b> no puede ser nulo
 ErrorDateOfMovementLowerThanDateOfFileTransmission=La fecha de la transacción bancaria no puede ser anterior a la fecha de transmisión del archivo
 ErrorTooMuchFileInForm=Demasiados archivos en el formulario, el número máximo es %s archivo(s)
+ErrorSessionInvalidatedAfterPasswordChange=La sesión ha sido invalidada tras un cambio de contraseña, estado o fechas de validez. Vuelva a iniciar sesión.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=El parámetro PHP upload_max_filesize (%s) es más alto que el parámetro PHP post_max_size (%s). Esta no es una configuración consistente.
@@ -325,6 +326,7 @@ WarningPaymentDateLowerThanInvoiceDate=La fecha de pago (%s) es anterior a la fe
 WarningTooManyDataPleaseUseMoreFilters=Demasiados datos (más de %s líneas). Utilice más filtros o establezca la constante %s a un límite más alto.
 WarningSomeLinesWithNullHourlyRate=Algunas veces se realizaron registrod a usuarios, con su precio por hora sin definir. Se utilizó un valor de 0 %s por hora, esto puede dar lugar a la valoración incorrecta del tiempo invertido.
 WarningYourLoginWasModifiedPleaseLogin=Su cuenta de acceso ha sido modificada. Por razones de seguridad, tendrá que iniciar sesión con su nuevo acceso antes de la próxima acción.
+WarningYourPasswordWasModifiedPleaseLogin=Su contraseña fue modificada. Por motivos de seguridad, tendrá que iniciar sesión ahora con su nueva contraseña.
 WarningAnEntryAlreadyExistForTransKey=Ya existe una entrada para la clave de traducción para este idioma
 WarningNumberOfRecipientIsRestrictedInMassAction=Atención, el número de destinatarios diferentes está limitado a <b>%s</b>cuando se usan las acciones masivas en las listas
 WarningDateOfLineMustBeInExpenseReportRange=Advertencia, la fecha de la línea no está en el rango del informe de gastos

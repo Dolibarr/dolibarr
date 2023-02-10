@@ -144,6 +144,7 @@ class DolibarrApiAccess implements iAuthenticate
 				throw new RestException(503, 'Error when searching login user from api key');
 			}
 
+
 			$genericmessageerroruser = 'Error user not valid (not found or bad status or bad validity dates) (conf->entity='.$conf->entity.')';
 
 			$fuser = new User($this->db);
@@ -151,21 +152,27 @@ class DolibarrApiAccess implements iAuthenticate
 			if ($result <= 0) {
 				throw new RestException(503, $genericmessageerroruser);
 			}
-			if ($fuser->statut == 0) {
-				throw new RestException(503, 'Error when fetching user. This user has been locked or disabled');
-			}
 
-			$now = dol_now();
-
-			// Check date start validity
-			if ($fuser->datestartvalidity && $this->db->jdate($fuser->datestartvalidity) > $now) {
-				throw new RestException(503, $genericmessageerroruser);
-			}
-			// Check date end validity
-			if ($fuser->dateendvalidity && $this->db->jdate($fuser->dateendvalidity) < dol_get_first_hour($now)) {
+			// Check if user status is enabled
+			if ($fuser->statut != $fuser::STATUS_ENABLED) {
+				// Status is disabled
+				dol_syslog("The user has been disabled");
 				throw new RestException(503, $genericmessageerroruser);
 			}
 
+			// Check if session was unvalidated by a password change
+			if (($fuser->flagdelsessionsbefore && !empty($_SESSION["dol_logindate"]) && $fuser->flagdelsessionsbefore > $_SESSION["dol_logindate"])) {
+				// Session is no more valid
+				dol_syslog("The user has a date for session invalidation = ".$fuser->flagdelsessionsbefore." and a session date = ".$_SESSION["dol_logindate"].". We must invalidate its sessions.");
+				throw new RestException(503, $genericmessageerroruser);
+			}
+
+			// Check date validity
+			if ($fuser->isNotIntoValidityDateRange()) {
+				// User validity dates are no more valid
+				dol_syslog("The user login has a validity between [".$fuser->datestartvalidity." and ".$fuser->dateendvalidity."], curren date is ".dol_now());
+				throw new RestException(503, $genericmessageerroruser);
+			}
 
 			// User seems valid
 			$fuser->getrights();

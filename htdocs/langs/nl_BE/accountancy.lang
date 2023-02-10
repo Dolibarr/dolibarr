@@ -12,7 +12,6 @@ Selectchartofaccounts=Selecteer actieve grafieken van accounts
 Addanaccount=Voeg een boekhoudkundige rekening toe
 AccountAccounting=Boekhoudkundige rekening
 AccountAccountingShort=Rekening
-AccountAccountingSuggest=Voorgesteld boekhoudkundige rekening
 CreateMvts=Nieuwe transactie maken
 UpdateMvts=Wijzigen van een transactie
 Processing=Verwerken

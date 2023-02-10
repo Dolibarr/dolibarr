@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Cheie live Webhook
 ONLINE_PAYMENT_WAREHOUSE=Stoc de utilizat pentru scădere atunci când se efectuează plata online <br> (TODO Când opțiunea de a reduce stocul se face printr-o acțiune pe factură, iar plata online generează factura?)
 StripeLiveEnabled=Stripe live activat (altfel test/modul sandbox)
 StripeImportPayment=Import plată Stripe
-ExampleOfTestCreditCard=Exemplu de card de credit pentru test: %s=> valid,%s => eroare CVC, %s=> expirat, %s=> retragere eşuată
+ExampleOfTestCreditCard=Exemplu de card de credit pentru testul SEPA: %s => valid, %s => eroare CVC, %s => expirat, %s => taxare eșuată
+ExampleOfTestBankAcountForSEPA=Exemplu de cont bancar BAN pentru testul de debit direct: %s
 StripeGateways=Gateway-uri Stripe
 OAUTH_STRIPE_TEST_ID=ID-ul de conectare Stripe a clientului (ca _...)
 OAUTH_STRIPE_LIVE_ID=ID-ul de conectare Stripe a clientului (ca _...)
@@ -61,6 +62,7 @@ DeleteACard=Șterge cardul
 ConfirmDeleteCard=Sigur doriți să ștergeți acest card de credit sau de debit?
 CreateCustomerOnStripe=Creați un client pe Stripe
 CreateCardOnStripe=Creați un card pe Stripe
+CreateBANOnStripe=Creare cont bancar în Stripe
 ShowInStripe=Arată în Stripe
 StripeUserAccountForActions=Cont utilizator pe care să îl utilizați pentru notificarea prin email a anumitor evenimente Stripe (plăți Stripe)
 StripePayoutList=Listă de plăți Stripe
@@ -69,4 +71,8 @@ ToOfferALinkForLiveWebhook=Link de configurare Stripe WebHook pentru a apel IPN 
 PaymentWillBeRecordedForNextPeriod=Plata va fi înregistrată pentru perioada următoare.
 ClickHereToTryAgain=<a href="%s">Clic aici pentru a încerca din nou...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Datorită regulilor de autentificare securizată a clienților, crearea unui card trebuie făcută din backoffice-ul Stripe. Puteți face clic aici pentru a activa înregistrarea clienților Stripe: %s 
-TERMINAL_LOCATION=Locație (adresă) pentru terminale
+STRIPE_CARD_PRESENT=Card prezent pentru terminalele Stripe
+TERMINAL_LOCATION=Locația (adresa) pentru Stripe Terminals
+RequestDirectDebitWithStripe=Ordin de debitare directă cu Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Activare plăți prin debit direct prin Stripe
+

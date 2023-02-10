@@ -285,7 +285,7 @@ if ($search_all) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 		$setupstring .= $key."=".$val.";";
 	}
-	print '<!-- Search done like if PRODUCT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
+	print '<!-- Search done like if USER_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>'."\n";
 }
 
@@ -380,8 +380,8 @@ while ($i < $imaxinloop) {
 
 	$object->name = $obj->name;
 	$object->note = $obj->note;
-	$object->members = $obj->nb;
 	$object->nb_rights = $obj->nbpermissions;
+	$object->nb_users = $obj->nb;
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
