@@ -66,6 +66,8 @@ print "jQuery(document).ready(function () {\n";
 print '	var nowtime = Date.now();';
 print '	var time_auto_update = '.max(1, getDolGlobalInt('MAIN_BROWSER_NOTIFICATION_FREQUENCY')).';'."\n"; // Always defined
 print '	var time_js_next_test;'."\n";
+print '	var dolnotif_nb_test_for_page = 0;'."\n";
+print ' var dolnotif_idinterval = null;'."\n";
 ?>
 
 /* Check if Notification is supported */
@@ -82,7 +84,7 @@ if ("Notification" in window) {
 	//var time_first_execution = (time_auto_update + (time_js_next_test - nowtime)) * 1000;	//need milliseconds
 	var time_first_execution = <?php echo max(3, empty($conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION) ? 0 : $conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION); ?>;
 
-	setTimeout(first_execution, time_first_execution * 1000);
+	setTimeout(first_execution, time_first_execution * 1000);	// Launch a first execution after a time_first_execution delay
 	time_js_next_test = nowtime + time_first_execution;
 	console.log("Launch browser notif check: setTimeout is set to launch 'first_execution' function after a wait of time_first_execution="+time_first_execution+". nowtime (time php page generation) = "+nowtime+" time_js_next_check = "+time_js_next_test);
 } else {
@@ -91,14 +93,16 @@ if ("Notification" in window) {
 
 
 function first_execution() {
-	console.log("Call first_execution then set repeat time to time_auto_update = MAIN_BROWSER_NOTIFICATION_FREQUENCY = "+time_auto_update);
-	check_events();	//one check before setting the new time for other checks
-	setInterval(check_events, time_auto_update * 1000); // Set new time to run next check events
+	console.log("Call first_execution");
+	result = check_events();	//one check before setting the new time for other checks
+	if (result > 0) {
+		console.log("Program a repeated run with a time_auto_update = MAIN_BROWSER_NOTIFICATION_FREQUENCY = "+time_auto_update+"s");
+		dolnotif_idinterval = setInterval(check_events, time_auto_update * 1000); // Set new time to run next check events. time_auto_update=nb of seconds
+	}
 }
 
 function check_events() {
-	if (Notification.permission === "granted")
-	{
+	if (Notification.permission === "granted") {
 		var currentToken = 'notrequired';
 		const allMeta = document.getElementsByTagName("meta");
 		for (let i = 0; i < allMeta.length; i++) {
@@ -108,7 +112,9 @@ function check_events() {
 			}
 		}
 		time_js_next_test += time_auto_update;
-		console.log("Call ajax to check events with time_js_next_test = "+time_js_next_test);
+		dolnotif_nb_test_for_page += 1;
+
+		console.log("Call ajax to check events with time_js_next_test = "+time_js_next_test+" dolnotif_nb_test_for_page="+dolnotif_nb_test_for_page);
 
 		$.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php'; ?>", {
 			type: "post",   // Usually post or get
@@ -188,10 +194,17 @@ function check_events() {
 				}
 			}
 		});
-	}
-	else
-	{
-		console.log("Cancel check_events. Useless because javascript Notification.permission is "+Notification.permission+" (blocked manualy or web site is not https).");
+
+		if (dolnotif_nb_test_for_page > 10) {
+			console.log("We did "+dolnotif_nb_test_for_page+" consecutive test on this page. We stop checking now from here by clearing dolnotif_idinterval="+dolnotif_idinterval);
+			clearInterval(dolnotif_idinterval);
+		}
+
+		return 1;
+	} else {
+		console.log("Cancel check_events and timer. Useless because javascript Notification.permission is "+Notification.permission+" (blocked manualy or web site is not https).");
+
+		return 0;
 	}
 }
 <?php
