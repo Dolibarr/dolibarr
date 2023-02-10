@@ -204,7 +204,7 @@ function check_events() {
 		result = 2;	// We return a positive so the repeated check will done even if authroization is not yet allowed may be after this check)
 	}
 
-	if (dolnotif_nb_test_for_page > 5) {
+	if (dolnotif_nb_test_for_page >= 5) {
 		console.log("We did "+dolnotif_nb_test_for_page+" consecutive test on this page. We stop checking now from here by clearing dolnotif_idinterval="+dolnotif_idinterval);
 		clearInterval(dolnotif_idinterval);
 	}
