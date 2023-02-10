@@ -2633,6 +2633,104 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 	}
 }
 
+// modify a menu
+if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int') && empty(GETPOST('cancel'))) {
+	$error = 0;
+	$counter = 0;
+	// for loading class and the menu wants to modify
+	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+	dol_include_once($pathtofile);
+	$class = 'mod'.$module;
+	if (class_exists($class)) {
+		try {
+			$moduleobj = new $class($db);
+		} catch (Exception $e) {
+			$error++;
+			dol_print_error($db, $e->getMessage());
+		}
+	}
+	$menus = $moduleobj->menu;
+	$key = (int) GETPOST('menukey', 'int');
+	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+		//get menus info
+		$menuTomodify = "
+		\$this->menu[\$r++] = array(
+			'fk_menu' =>'".$menus[$key]['fk_menu']."',
+			'type' =>'".$menus[$key]['type']."',
+			'titre' =>'".$menus[$key]['titre']."',
+			'prefix' => img_picto('', \$this->picto, 'class=\"paddingright pictofixedwidth valignmiddle\"'),
+			'mainmenu'=>'".$menus[$key]['mainmenu']."',
+			'leftmenu' =>'".$menus[$key]['leftmenu']."',
+			'url' =>'".$menus[$key]['url']."',
+			'langs'=>'".$menus[$key]['langs']."', 
+			'position'=>1000 + \$r,
+			'enabled'=>'isModEnabled(\"".strtolower($module)."\")', 
+			'perms' =>'".$menus[$key]['perms']."',
+			'target'=>'".$menus[$key]['target']."',
+			'user'=>".$menus[$key]['user'].", 
+		);";
+
+		$fk_menu = GETPOST('fk_type', 'alpha');
+		$type = GETPOST('type', 'alpha');
+		$titre = GETPOST('titre', 'alpha');
+		$mainmenu = GETPOST('mainmenu', 'alpha');
+		$leftmenu = GETPOST('leftmenu', 'alpha');
+		$url = GETPOST('url', 'alpha');
+		$perms = GETPOST('perms', 'alpha');
+		$target = GETPOST('target', 'alpha');
+		$user = GETPOST('user', 'alpha');
+
+	if (!$error) {
+		if ($type == 'top') {
+			$modifiedMenu = "
+		\$this->menu[\$r++] = array(
+			'fk_menu' =>'".$fk_menu."',
+			'type' =>'".$type."',
+			'titre' =>'".$titre."',
+			'prefix' => img_picto('', \$this->picto, 'class=\"paddingright pictofixedwidth valignmiddle\"'),
+			'mainmenu'=>'".$menus[$key]['mainmenu']."',
+			'leftmenu' =>'".$menus[$key]['leftmenu']."',
+			'url' =>'".$url."',
+			'langs'=>'".$menus[$key]['langs']."', 
+			'position'=>1000 + \$r,
+			'enabled'=>'".$menus[$key]['enabled']."', 
+			'perms' =>'".$perms."',
+			'target'=>'".$target."',
+			'user'=>".$user.", 
+		);";
+
+
+			dolReplaceInFile($moduledescriptorfile, array($menuTomodify => ''));
+			if (strtolower($titre) != strtolower($menus[$key]['titre'])) {
+				dolReplaceInFile($moduledescriptorfile, array('/*TOPMENU '.strtolower($menus[$key]['titre']).'*/' => '/*TOPMENU '.strtolower($titre).'*/', '/*END TOPMENU '.strtolower($menus[$key]['titre']).'*/' => '/*END TOPMENU '.strtolower($titre).'*/'));
+			}
+			setEventMessages($langs->trans('MenuUpdatedSuccessfuly'), null);
+		}
+
+		if ($type == 'left') {
+			$modifiedMenu = "
+		\$this->menu[\$r++] = array(
+			'fk_menu' =>'".$fk_menu."',
+			'type' =>'".$type."',
+			'titre' =>'".$titre."',
+			'mainmenu'=>'".$menus[$key]['mainmenu']."',
+			'leftmenu' =>'".$menus[$key]['leftmenu']."',
+			'url' =>'".$url."',
+			'langs'=>'".$menus[$key]['langs']."', 
+			'position'=>1000 + \$r,
+			'enabled'=>'isModEnabled(\"".strtolower($module)."\")', 
+			'perms' =>'".$perms."',
+			'target'=>'".$target."',
+			'user'=>'".$user."', 
+		);";
+
+			dolReplaceInFile($moduledescriptorfile, array($menuTomodify => $modifiedMenu));
+			setEventMessages($langs->trans('MenuUpdatedSuccessfuly'), null);
+		}
+	}
+	header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
+	//exit;
+}
 
 /*
  * View
