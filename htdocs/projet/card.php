@@ -1060,7 +1060,8 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			if (!empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) {
 				$filteronlist = $conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
 			}
-			$text = $form->select_company($object->thirdparty->id, 'socid', $filteronlist, 'None', 1, 0, array(), 0, 'minwidth300');
+			$text = img_picto('', 'company', 'class="pictofixedwidth"');
+			$text .= $form->select_company($object->thirdparty->id, 'socid', $filteronlist, 'None', 1, 0, array(), 0, 'minwidth300');
 			if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile)) {
 				$texthelp = $langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 				print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
