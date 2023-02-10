@@ -3245,7 +3245,7 @@ class Facture extends CommonInvoice
 											$sortorder = 'ASC,ASC,ASC,ASC';
 										}
 
-										$resBatchList = $productbatch->findAllForProduct($productStatic->id, $idwarehouse, (!empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER) ? null : 0), $sortfield, $sortorder);
+										$resBatchList = $productbatch->findAllForProduct($productStatic->id, $idwarehouse, (getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER') ? null : 0), $sortfield, $sortorder);
 										if (!is_array($resBatchList)) {
 											$error++;
 											$this->error = $this->db->lasterror();
@@ -3288,7 +3288,7 @@ class Facture extends CommonInvoice
 											}
 
 											if (!$error && $product_qty_remain > 0) {
-												if ($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER) {
+												if (getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
 													// take in the first batch
 													$batch = $batchList[0];
 													$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_qty_remain, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);

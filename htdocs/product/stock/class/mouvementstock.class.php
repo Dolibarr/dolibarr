@@ -391,7 +391,7 @@ class MouvementStock extends CommonObject
 
 		// Check if stock is enough when qty is < 0
 		// Note that qty should be > 0 with type 0 or 3, < 0 with type 1 or 2.
-		if ($movestock && $qty < 0 && empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) {
+		if ($movestock && $qty < 0 && !getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
 			if (isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				$foundforbatch = 0;
 				$qtyisnotenough = 0;
