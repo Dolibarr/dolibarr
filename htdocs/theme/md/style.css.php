@@ -1803,14 +1803,13 @@ tr.nobottom td {
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
 /* ============================================================================== */
-
 .clearboth  { clear:both; }
 .hideobject { display: none; }
 .minwidth25  { min-width: 25px; }
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
 /* rule for not too small screen only */
-@media only screen and (min-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 7; ?>px)
+@media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)
 {
 	.width20  { width: 20px; }
 	.width25  { width: 25px; }
@@ -3192,7 +3191,7 @@ a.aversion {
 .alogin, .alogin:hover {
 	color: #888 !important;
 	font-weight: normal !important;
-	font-size: <?php echo $fontsizesmaller; ?>px !important;
+	font-size: <?php echo is_numeric($fontsizesmaller) ? $fontsizesmaller.'px' : $fontsizesmaller; ?> !important;
 }
 .alogin:hover, .atoplogin:hover {
 	text-decoration:underline !important;
@@ -3282,16 +3281,16 @@ div.vmenu, td.vmenu {
 .searchform .bordertransp { border: 0; }
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu {
-	white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold;
+	white-space: nowrap; font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold;
 }
-span.vmenudisabled, font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }
+span.vmenudisabled, font.vmenudisabled  { font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }
 a.vmenu:link, a.vmenu:visited {
 	color: var(--colortextbackvmenu);
 }
 
-a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
+a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
 span.vsmenudisabled:not(.spanlilevel0), font.vsmenudisabled:not(.spanlilevel0) {
-	font-size:<?php print $fontsize ?>px;
+	font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
 }
 span.vsmenudisabled, font.vsmenudisabled {
 	font-family: <?php print $fontlist ?>;
@@ -5002,7 +5001,7 @@ div#card-errors {
 .ui-dialog-titlebar {
 }
 .ui-dialog-content {
-	font-size: <?php print $fontsize; ?>px !important;
+	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize; ?> !important;
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
 	z-index: 1002 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
@@ -7466,13 +7465,12 @@ div.clipboardCPValue.hidewithsize {
 	width: <?php echo $disableimages ? 'auto' : '44'; ?>px;
 }
 
-/* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
-/* disableimages = <?php echo $disableimages; ?> */
-/* rule to reduce top menu - 1st reduction */
-@media only screen and (max-width:  <?php echo round($nbtopmenuentries * $fontsize * 7, 0) + 300; ?>px)
+/* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?> */
+/* rule to reduce top menu - 1st reduction: Reduce width of top menu icons */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1) ? round($nbtopmenuentries * 90, 0) + 340 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1; ?>px)	/* reduction 1 */
 {
 	div.tmenucenter {
-		max-width: <?php echo round($fontsize * 4); ?>px;	/* size of viewport */
+		max-width: 56px;	/* size of viewport */
 		white-space: nowrap;
 		  overflow: hidden;
 		  text-overflow: ellipsis;
@@ -7496,16 +7494,16 @@ div.clipboardCPValue.hidewithsize {
 		display: none;
 	}
 }
-/* rule to reduce top menu - 2nd reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.5, 0) + 300; ?>px)
+/* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
 {
 	li.tmenucompanylogo {
 		display: none;
 	}
 
 	div.tmenucenter {
-		max-width: <?php echo round($fontsize * 2); ?>px;	/* size of viewport */
-		  text-overflow: clip;
+		max-width: 24px;	/* size of viewport */
+		text-overflow: clip;
 	}
 	.mainmenuaspan {
 		  font-size: 10px;
