@@ -6421,6 +6421,14 @@ ul.select2-results__options li {
 	font-size: 0.95em;
 }
 
+select.multiselectononeline {
+	padding: 0;
+	vertical-align: middle;
+	height: 28px !important;
+	opacity: 0;
+	/* width: 1px !important; */
+}
+
 @media only screen and (min-width: 767px)
 {
 	/* CSS to have the dropdown boxes larger that the input search area */

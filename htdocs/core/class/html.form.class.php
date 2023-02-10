@@ -8408,8 +8408,13 @@ class Form
 			}
 		}
 
-		// Try also magic suggest
-		$out .= '<select id="'.$htmlname.'" class="multiselect'.($morecss ? ' '.$morecss : '').'" multiple name="'.$htmlname.'[]"'.($moreattrib ? ' '.$moreattrib : '').($width ? ' style="width: '.(preg_match('/%/', $width) ? $width : $width.'px').'"' : '').'>'."\n";
+		$useenhancedmultiselect = 0;
+		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')) {
+			$useenhancedmultiselect = 1;
+		}
+
+		// Output select component
+		$out .= '<select id="'.$htmlname.'" class="multiselect'.($useenhancedmultiselect ? ' multiselectononeline' : '').($morecss ? ' '.$morecss : '').'" multiple name="'.$htmlname.'[]"'.($moreattrib ? ' '.$moreattrib : '').($width ? ' style="width: '.(preg_match('/%/', $width) ? $width : $width.'px').'"' : '').'>'."\n";
 		if (is_array($array) && !empty($array)) {
 			if ($value_as_key) {
 				$array = array_combine($array, $array);
