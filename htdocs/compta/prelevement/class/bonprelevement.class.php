@@ -106,7 +106,7 @@ class BonPrelevement extends CommonObject
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $db;
 
 		$this->db = $db;
 

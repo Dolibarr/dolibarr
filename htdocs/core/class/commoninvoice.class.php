@@ -92,10 +92,6 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	const STATUS_ABANDONED = 3;
 
-	/**
-	 * Classified processing because payment requested
-	 */
-	const STATUS_PROCESSING = 4;
 
 	public $totalpaid;			// duplicate with sumpayed
 	public $totaldeposits;		// duplicate with sumdeposit
@@ -618,10 +614,6 @@ abstract class CommonInvoice extends CommonObject
 				$labelStatus = $langs->transnoentitiesnoconv('BillStatusClosedPaidPartially');
 				$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusClosedPaidPartially');
 				$statusType = 'status9';
-			} elseif ($status == 4) {
-				$labelStatus = $langs->transnoentitiesnoconv('BillStatusRequestProcessing');
-				$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusRequestProcessing');
-				$statusType = 'status3';
 			} elseif ($alreadypaid == 0) {
 				$labelStatus = $langs->transnoentitiesnoconv('BillStatusNotPaid');
 				$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusNotPaid');
@@ -1197,13 +1189,6 @@ abstract class CommonInvoice extends CommonObject
 
 											// Default description used for label of event. Will be overwrite by another value later.
 											$description = 'Stripe payment request OK (' . $charge->id . ') from makeStripeSepaRequest: ' . $FULLTAG;
-
-											$result =$this->setStatut($this::STATUS_PROCESSING);
-											if ($result < 0) {
-												$error++;
-												$errorforinvoice++;
-												$this->errors[] = 'Error on invoice status change to processing';
-											}
 										}
 
 										$object = $this;
@@ -1457,24 +1442,42 @@ abstract class CommonInvoice extends CommonObject
 					}
 
 					// TODO Create a prelevement_bon and set its status to sent instead of this
-					$idtransferfile = 0;
-
-					// Update the direct debit payment request of the processed invoice to save the id of the prelevement_bon
-					$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_demande SET";
-					$sql .= " traite = 1,";	// TODO Remove this
-					$sql .= " date_traite = '".$this->db->idate(dol_now())."'";	// TODO Remove this
-					if ($idtransferfile > 0) {
-						$sql .= " fk_prelevement_bons = ".((int) $idtransferfile);
-					}
-					$sql .= " WHERE rowid = ".((int) $did);
-
-
-					dol_syslog(get_class($this)."::makeStripeSepaRequest", LOG_DEBUG);
-					$resql = $this->db->query($sql);
-					if (!$resql) {
-						$this->error = $this->db->lasterror();
-						dol_syslog(get_class($this).'::makeStripeSepaRequest Erreur');
+					$bon = new BonPrelevement($db);
+					$nbinvoices = $bon->create();
+					if ($nbinvoices <= 0) {
 						$error++;
+						$errorforinvoice++;
+						dol_syslog("Error on BonPrelevement creation", LOG_ERR);
+						$this->errors[] = "Error on BonPrelevement creation";
+					}
+
+					$result = $bon->set_infotrans($user, $now, 'internet');
+					if ($result < 0) {
+						$error++;
+						$errorforinvoice++;
+						dol_syslog("Error on BonPrelevement creation", LOG_ERR);
+						$this->errors[] = "Error on BonPrelevement creation";
+					}
+
+					if (!$errorforinvoice) {
+						$idtransferfile = $bon->id;
+						// Update the direct debit payment request of the processed invoice to save the id of the prelevement_bon
+						$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_demande SET";
+						$sql .= " traite = 1,";	// TODO Remove this
+						$sql .= " date_traite = '".$this->db->idate(dol_now())."',";	// TODO Remove this
+						if ($idtransferfile > 0) {
+							$sql .= " fk_prelevement_bons = ".((int) $idtransferfile);
+						}
+						$sql .= " WHERE rowid = ".((int) $did);
+
+
+						dol_syslog(get_class($this)."::makeStripeSepaRequest", LOG_DEBUG);
+						$resql = $this->db->query($sql);
+						if (!$resql) {
+							$this->error = $this->db->lasterror();
+							dol_syslog(get_class($this).'::makeStripeSepaRequest Erreur');
+							$error++;
+						}
 					}
 				} else {
 					$this->error = 'WithdrawRequestErrorNilAmount';

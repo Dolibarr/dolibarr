@@ -43,9 +43,9 @@ require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/stripe-php/init.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
@@ -397,6 +397,52 @@ if ($event->type == 'payout.created') {
 			$ispostactionok = -1;
 			$error++;
 			$errorforinvoice++;
+		}
+	}
+
+	if (!$errorforinvoice && isModEnabled('prelevement')) { //TEST IPN
+		$bon = new BonPrelevement($db);
+		$idbon = 0;
+		$sql = "SELECT dp.fk_prelevement_bons as idbon";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as dp";
+		$sql .= " WHERE dp.fk_facture = '".$db->escape($invoice_id)."'";
+		$sql .= " AND dp.sourcetype = 'facture'";
+		$sql .= " AND dp.traite = 1";
+		$result = $db->query($sql);
+		if ($result) {
+			if ($db->num_rows($result)) {
+				$obj = $db->fetch_object($result);
+				$idbon = $obj->idbon;
+			}
+		} else {
+			$postactionmessages[] = $db->lasterror();
+			$ispostactionok = -1;
+			$error++;
+			$errorforinvoice++;
+		}
+
+		if (!empty($idbon)) {
+			$bon->fetch($idbon);
+			$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_bons ";
+			$sql .= " SET fk_user_credit = ".$user->id;
+			$sql .= ", statut = ".$bon::STATUS_CREDITED;
+			$sql .= ", date_credit = '".$db->idate($now)."'";
+			$sql .= ", credite = 1";
+			$sql .= " WHERE rowid=".((int) $bon->id);
+			$sql .= " AND entity = ".((int) $bon->entity);
+			$sql .= " AND statut = ".$bon::STATUS_TRANSFERED;
+
+			$db->begin();
+			$result = $db->query($sql);
+			if (!$result) {
+				$db->rollback();
+				$postactionmessages[] = $db->lasterror();
+				$ispostactionok = -1;
+				$error++;
+				$errorforinvoice++;
+			} else {
+				$db->commit();
+			}
 		}
 	}
 } elseif ($event->type == 'payment_intent.payment_failed') {
