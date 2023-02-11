@@ -730,7 +730,7 @@ function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 		if (!$error) {
 			$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 			$allowimportsite = true;
-			include DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
 				$allowimportsite = false;
 			}
