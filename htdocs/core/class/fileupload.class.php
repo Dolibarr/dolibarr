@@ -484,12 +484,12 @@ class FileUpload
 	/**
 	 * Output data
 	 *
-	 * @return	void
+	 * @return	string|void
 	 */
 	public function post()
 	{
 		if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
-			echo $this->delete();
+			return $this->delete();
 		}
 		$upload = isset($_FILES[$this->options['param_name']]) ?
 		$_FILES[$this->options['param_name']] : null;
@@ -556,7 +556,6 @@ class FileUpload
 			}
 		}
 		header('Content-type: application/json');
-		$response = json_encode($success);
-		return $response;
+		echo json_encode($success);
 	}
 }
