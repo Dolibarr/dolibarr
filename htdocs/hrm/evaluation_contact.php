@@ -145,7 +145,7 @@ if ($object->id) {
 	$morehtmlref .= '<br>'.$langs->trans('Employee').' : '.$u_position->getNomUrl(1);
 	$job = new Job($db);
 	$job->fetch($object->fk_job);
-	$morehtmlref .= '<br>'.$langs->trans('JobPosition').' : '.$job->getNomUrl(1);
+	$morehtmlref .= '<br>'.$langs->trans('JobProfile').' : '.$job->getNomUrl(1);
 	$morehtmlref .= '</div>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);

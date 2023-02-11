@@ -113,7 +113,7 @@ if ($id > 0 || !empty($ref)) {
 	$morehtmlref .= '<br>'.$langs->trans('Employee').' : '.$u_position->getNomUrl(1);
 	$job = new Job($db);
 	$job->fetch($object->fk_job);
-	$morehtmlref .= '<br>'.$langs->trans('JobPosition').' : '.$job->getNomUrl(1);
+	$morehtmlref .= '<br>'.$langs->trans('JobProfile').' : '.$job->getNomUrl(1);
 	$morehtmlref .= '</div>';
 
 
