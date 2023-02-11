@@ -2028,8 +2028,8 @@ td.showDragHandle {
 
 .side-nav {
 	position: sticky;
-    top: 50px;
-    display: block;
+	top: 50px;
+	display: block;
 	border-<?php echo $right; ?>: 1px solid #E0E0E0;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: var(--colorbackvmenu1);
