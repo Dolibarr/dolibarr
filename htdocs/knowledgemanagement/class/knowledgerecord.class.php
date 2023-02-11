@@ -728,6 +728,7 @@ class KnowledgeRecord extends CommonObject
 		$langs->loadLangs(['knowledgemanagement', 'languages']);
 
 		$datas = [];
+		$nofetch = empty($params['nofetch']) ? false : true;
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("KnowledgeRecord").'</u>';
 		if (isset($this->statut)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
@@ -736,8 +737,8 @@ class KnowledgeRecord extends CommonObject
 		$datas['question'] = '<br><b>'.$langs->trans('Question').':</b> '.$this->question;
 		$labellang = ($this->lang ? $langs->trans('Language_'.$this->lang) : '');
 		$datas['lang'] = '<br><b>'.$langs->trans('Language').':</b> ' . picto_from_langcode($this->lang, 'class="paddingrightonly saturatemedium opacitylow"') . $labellang;
-		// show categories for this record
-		if (isModEnabled('categorie')) {
+		// show categories for this record only in ajax to not overload lists
+		if (isModEnabled('categorie') && !$nofetch) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
 			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_KNOWLEDGEMANAGEMENT, 1);
@@ -769,6 +770,8 @@ class KnowledgeRecord extends CommonObject
 		$params = [
 			'id' => $this->id,
 			'objecttype' => $this->element,
+			'option' => $option,
+			'nofetch' => 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
