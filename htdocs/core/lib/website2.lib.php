@@ -718,7 +718,12 @@ function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 			break;
 		}
 	}
-	// Check dynamic functions $xxx(
+	// Deny dynamic functions '${a}('  or  '$a[b]('  - So we refuse '}('  and  ']('
+	if (preg_match('/[}\]]\(/ims', $phpfullcodestring)) {
+		$error++;
+		setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", ']('), null, 'errors');
+	}
+	// Deny dynamic functions $xxx(
 	if (preg_match('/\$[a-z0-9_]+\(/ims', $phpfullcodestring)) {
 		$error++;
 		setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", '$...('), null, 'errors');
@@ -732,6 +737,7 @@ function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 		if (!$error) {
 			$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 			$allowimportsite = true;
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
 				$allowimportsite = false;
 			}
