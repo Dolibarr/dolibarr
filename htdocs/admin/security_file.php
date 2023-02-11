@@ -67,7 +67,7 @@ if ($action == 'updateform') {
 	$antivircommand = dol_string_nospecial($antivircommand, '', array("|", ";", "<", ">", "&")); // Sanitize command
 	$antivirparam = dol_string_nospecial($antivirparam, '', array("|", ";", "<", ">", "&")); // Sanitize params
 
-	if (!empty($dolibarr_main_restrict_os_commands)) {
+	if ($antivircommand && !empty($dolibarr_main_restrict_os_commands)) {
 		$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
 		$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
 		dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$antivircommand);
