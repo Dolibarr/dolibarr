@@ -2154,7 +2154,7 @@ if (empty($reshook)) {
 				$pu_ht = $datapriceofproduct['pu_ht'];
 				$pu_ttc = $datapriceofproduct['pu_ttc'];
 				$price_min = $datapriceofproduct['price_min'];
-				$price_min_ttc = $datapriceofproduct['price_min_ttc'];
+				$price_min_ttc = (isset($datapriceofproduct['price_min_ttc'])) ? $datapriceofproduct['price_min_ttc'] : null;
 				$price_base_type = $datapriceofproduct['price_base_type'];
 
 				$tva_tx = $datapriceofproduct['tva_tx'];
