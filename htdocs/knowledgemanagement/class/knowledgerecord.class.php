@@ -200,7 +200,7 @@ class KnowledgeRecord extends CommonObject
 		}
 
 		// Example to show how to set values of fields definition dynamically
-		/*if ($user->rights->knowledgemanagement->knowledgerecord->read) {
+		/*if ($user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 			$this->fields['myfield']['visible'] = 1;
 			$this->fields['myfield']['noteditable'] = 0;
 		}*/
@@ -538,7 +538,7 @@ class KnowledgeRecord extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->knowledgemanagement->knowledgerecord->write))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write'))
 		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->knowledgemanagement->knowledgerecord->knowledgerecord_advance->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
