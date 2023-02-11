@@ -129,7 +129,15 @@ class KnowledgeRecord extends CommonObject
 	public $fk_user_valid;
 	public $import_key;
 	public $model_pdf;
+
+	/**
+	 * @var string question asked
+	 */
 	public $question;
+
+	/**
+	 * @var string answer to question
+	 */
 	public $answer;
 	public $url;
 	public $status;
@@ -265,8 +273,8 @@ class KnowledgeRecord extends CommonObject
 		if (property_exists($object, 'ref')) {
 			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
 		}
-		if (property_exists($object, 'label')) {
-			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
+		if (property_exists($object, 'question')) {
+			$object->question = empty($this->fields['question']['default']) ? $langs->trans("CopyOf")." ".$object->question : $this->fields['question']['default'];
 		}
 		if (property_exists($object, 'status')) {
 			$object->status = self::STATUS_DRAFT;
@@ -707,6 +715,32 @@ class KnowledgeRecord extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$langs->loadLangs(['knowledgemanagement', 'languages']);
+
+		$datas = [];
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("KnowledgeRecord").'</u>';
+		if (isset($this->statut)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
+		$datas['label'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$datas['question'] = '<br><b>'.$langs->trans('Question').':</b> '.$this->question;
+		$labellang = ($this->lang ? $langs->trans('Language_'.$this->lang) : '');
+		$datas['lang'] =  '<br><b>'.$langs->trans('Language').':</b> ' . picto_from_langcode($this->lang, 'class="paddingrightonly saturatemedium opacitylow"') . $labellang;
+
+		return $datas;
+	}
+
+	/**
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -726,12 +760,17 @@ class KnowledgeRecord extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("KnowledgeRecord").'</u>';
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
 		}
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label = implode($this->getTooltipContentArray($params));
 
 		$url = dol_buildpath('/knowledgemanagement/knowledgerecord_card.php', 1).'?id='.$this->id;
 
@@ -752,8 +791,8 @@ class KnowledgeRecord extends CommonObject
 				$label = $langs->trans("ShowKnowledgeRecord");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -774,7 +813,7 @@ class KnowledgeRecord extends CommonObject
 
 		if (empty($this->showphoto_on_popup)) {
 			if ($withpicto) {
-				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 			}
 		} else {
 			if ($withpicto) {
