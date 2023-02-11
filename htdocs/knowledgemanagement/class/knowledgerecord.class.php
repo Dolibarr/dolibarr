@@ -735,7 +735,13 @@ class KnowledgeRecord extends CommonObject
 		$datas['label'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		$datas['question'] = '<br><b>'.$langs->trans('Question').':</b> '.$this->question;
 		$labellang = ($this->lang ? $langs->trans('Language_'.$this->lang) : '');
-		$datas['lang'] =  '<br><b>'.$langs->trans('Language').':</b> ' . picto_from_langcode($this->lang, 'class="paddingrightonly saturatemedium opacitylow"') . $labellang;
+		$datas['lang'] = '<br><b>'.$langs->trans('Language').':</b> ' . picto_from_langcode($this->lang, 'class="paddingrightonly saturatemedium opacitylow"') . $labellang;
+		// show categories for this record
+		if (isModEnabled('categorie')) {
+			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+			$form = new Form($this->db);
+			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_KNOWLEDGEMANAGEMENT, 1);
+		}
 
 		return $datas;
 	}
