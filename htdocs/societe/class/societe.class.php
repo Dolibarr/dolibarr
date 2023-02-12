@@ -2729,7 +2729,12 @@ class Societe extends CommonObject
 		if (isModEnabled('categorie') && !$nofetch) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
-			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_CUSTOMER, 1);
+			if ($this->client) {
+				$datas['categories_customer'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_CUSTOMER, 1);
+			}
+			if ($this->fournisseur) {
+				$datas['categories_supplier'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_SUPPLIER, 1);
+			}
 		}
 
 		$datas['divclose'] = '</div>';
