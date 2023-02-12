@@ -201,12 +201,14 @@ class modKnowledgeManagement extends DolibarrModules
 		// Boxes/Widgets
 		// Add here list of php file(s) stored in knowledgemanagement/core/boxes that contains a class to show a widget.
 		$this->boxes = array(
-			//  0 => array(
-			//      'file' => 'knowledgemanagementwidget1.php@knowledgemanagement',
-			//      'note' => 'Widget provided by KnowledgeManagement',
-			//      'enabledbydefaulton' => 'Home',
-			//  ),
-			//  ...
+			0 => array(
+				'file' => 'box_last_knowledgerecord.php',
+				'enabledbydefaulton' => 'ticketindex',
+			),
+			1 => array(
+				'file' => 'box_last_modified_knowledgerecord.php',
+				'enabledbydefaulton' => 'ticketindex',
+			),
 		);
 
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
