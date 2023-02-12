@@ -89,6 +89,7 @@ if (empty($conf->dol_no_mouse_hover)) {
 			$.ajax({
 				url:"' . dol_buildpath('/core/ajax/ajaxtooltip.php', 1) . '",
 				type: "post",
+				async: false,
 				data: JSON.parse(params),
 				success: function(response){
 					// Setting content option
