@@ -183,7 +183,6 @@ class HookManager
 			'dashboardProductServices',
 			'dashboardProjects',
 			'dashboardPropals',
-			'dashboardPropals',
 			'dashboardSpecialBills',
 			'dashboardSupplierProposal',
 			'dashboardThirdparties',
