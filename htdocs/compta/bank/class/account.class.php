@@ -1417,6 +1417,7 @@ class Account extends CommonObject
 
 		$datas = [];
 
+		$nofetch = empty($params['nofetch']) ? false : true;
 		$pictos = img_picto('', $this->picto).' <u class="paddingrightnow">'.$langs->trans("BankAccount").'</u>';
 		if (isset($this->status)) {
 			$pictos .= ' '.$this->getLibStatut(5);
@@ -1433,6 +1434,12 @@ class Account extends CommonObject
 			$langs->load("accountancy");
 			$datas['accountaccounting'] = '<br><b>'.$langs->trans('AccountAccounting').':</b> '.length_accountg($this->account_number);
 			$datas['accountancyjournal'] = '<br><b>'.$langs->trans('AccountancyJournal').':</b> '.$this->accountancy_journal;
+		}
+		// show categories for this record only in ajax to not overload lists
+		if (isModEnabled('categorie') && !$nofetch) {
+			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+			$form = new Form($this->db);
+			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_ACCOUNT, 1);
 		}
 
 		return $datas;
@@ -1454,38 +1461,20 @@ class Account extends CommonObject
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
 		$result = '';
-		$label = img_picto('', $this->picto).' <u class="paddingrightnow">'.$langs->trans("BankAccount").'</u>';
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
-		}
-		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
-		$label .= '<br><b>'.$langs->trans('AccountNumber').':</b> '.$this->number;
-		$label .= '<br><b>'.$langs->trans('IBAN').':</b> '.getIbanHumanReadable($this);
-		$label .= '<br><b>'.$langs->trans('BIC').':</b> '.$this->bic;
-		$label .= '<br><b>'.$langs->trans("AccountCurrency").':</b> '.$this->currency_code;
-
-		if (empty($user->rights->banque->lire) || !empty($user->socid)) {
-			$option = 'nolink';
-		}
-
-		if (isModEnabled('accounting')) {
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-			$langs->load("accountancy");
-			$label .= '<br><b>'.$langs->trans('AccountAccounting').':</b> '.length_accountg($this->account_number);
-			$label .= '<br><b>'.$langs->trans('AccountancyJournal').':</b> '.$this->accountancy_journal;
-		}
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+			'nofetch' => 1,
+		];
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			$params = [
-				'id' => $this->id,
-				'objecttype' => $this->element,
-				'option' => $option,
-			];
 			$classfortooltip = 'classforajaxtooltip';
 			$dataparams = ' data-params='.json_encode($params);
-			$label = $langs->trans('Loading');
 		}
+		$label = implode($this->getTooltipContentArray($params));
+
 		$linkclose = '"'.$dataparams.' title="'.dol_escape_htmltag($label, 1).'" class="'.$classfortooltip.'">';
 
 		$url = DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id;
@@ -1871,7 +1860,7 @@ class Account extends CommonObject
 /**
  *	Class to manage bank transaction lines
  */
-class AccountLine extends CommonObject
+class AccountLine extends CommonObjectLine
 {
 	/**
 	 * @var string Error code (or message)
