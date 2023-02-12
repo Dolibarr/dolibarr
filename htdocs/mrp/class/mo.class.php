@@ -93,7 +93,6 @@ class Mo extends CommonObject
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 
-	// BEGIN MODULEBUILDER PROPERTIES
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
@@ -126,6 +125,10 @@ class Mo extends CommonObject
 	public $rowid;
 	public $entity;
 	public $ref;
+
+	/**
+	 * @var int mrptype
+	 */
 	public $mrptype;
 	public $label;
 	public $qty;
@@ -154,7 +157,16 @@ class Mo extends CommonObject
 	public $fk_user_modif;
 	public $import_key;
 	public $status;
+
+	/**
+	 * @var int ID of product
+	 */
 	public $fk_product;
+
+	/**
+	 * @var Product product object
+	 */
+	public $product;
 
 	/**
 	 * @var integer|string date_start_planned
@@ -167,10 +179,20 @@ class Mo extends CommonObject
 	public $date_end_planned;
 
 
+	/**
+	 * @var int ID bom
+	 */
 	public $fk_bom;
-	public $fk_project;
-	// END MODULEBUILDER PROPERTIES
 
+	/**
+	 * @var Bom bom
+	 */
+	public $bom;
+
+	/**
+	 * @var int ID project
+	 */
+	public $fk_project;
 
 	// If this object has a subtable with lines
 
@@ -205,11 +227,23 @@ class Mo extends CommonObject
 	public $lines = array();
 
 	/**
+	 * @var MoLine     MO line
+	 */
+	public $line = array();
+
+	/**
 	 * @var integer	Mo parent line
 	 * */
 
+	/**
+	 * @var int ID of parent line
+	 */
 	public $fk_parent_line;
 
+	/**
+	 * @var array tpl
+	 */
+	public $tpl = array();
 
 	/**
 	 * Constructor
@@ -1100,6 +1134,9 @@ class Mo extends CommonObject
 		if (isset($this->label)) {
 			$datas['label'] = '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		}
+		if (isset($this->mrptype)) {
+			$datas['type'] = '<br><b>'.$langs->trans('Type').':</b> '.$this->fields['mrptype']['arrayofkeyval'][$this->mrptype];
+		}
 
 		return $datas;
 	}
@@ -1458,7 +1495,7 @@ class Mo extends CommonObject
 	 *  If lines are into a template, title must also be into a template
 	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
-	 * 	@param	CommonObjectLine	$line				Line
+	 * 	@param	MoLine	$line				Line
 	 * 	@param	string				$var				Var
 	 *	@param	string				$restrictlist		''=All lines, 'services'=Restrict to services only (strike line if not)
 	 *  @param	string				$defaulttpldir		Directory where to find the template
@@ -1519,7 +1556,7 @@ class Mo extends CommonObject
 	/**
 	 * Function used to return childs of Mo
 	 *
-	 * @return array|int 			array if OK, -1 if KO
+	 * @return Mo[]|int 			array if OK, -1 if KO
 	 */
 	public function getMoChilds()
 	{
@@ -1557,7 +1594,7 @@ class Mo extends CommonObject
 	/**
 	 * Function used to return childs of Mo
 	 *
-	 * @return Object|int			MO object if OK, -1 if KO, 0 if not exist
+	 * @return Mo|int			MO object if OK, -1 if KO, 0 if not exist
 	 */
 	public function getMoParent()
 	{
@@ -1680,6 +1717,7 @@ class MoLine extends CommonObjectLine
 	public $qty;
 	public $qty_frozen;
 	public $disable_stock_change;
+	public $efficiency;
 	public $batch;
 	public $role;
 	public $fk_mrp_production;
@@ -1689,6 +1727,7 @@ class MoLine extends CommonObjectLine
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
+	public $fk_parent_line;
 
 	/**
 	 * Constructor
