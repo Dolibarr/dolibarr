@@ -30,10 +30,24 @@ require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
  */
 class box_last_knowledgerecord extends ModeleBoxes
 {
-
+	/**
+	 * @var string boxcode
+	 */
 	public $boxcode = "box_last_knowledgerecord";
+
+	/**
+	 * @var string box img
+	 */
 	public $boximg = "knowledgemanagement";
+
+	/**
+	 * @var string boc label
+	 */
 	public $boxlabel;
+
+	/**
+	 * @var array box dependancies
+	 */
 	public $depends = array("knowledgemanagement");
 
 	/**
@@ -41,8 +55,19 @@ class box_last_knowledgerecord extends ModeleBoxes
 	 */
 	public $db;
 
+	/**
+	 * @var string param
+	 */
 	public $param;
+
+	/**
+	 * @var array box info heads
+	 */
 	public $info_box_head = array();
+
+	/**
+	 * @var array box info content
+	 */
 	public $info_box_contents = array();
 
 	/**
@@ -67,7 +92,7 @@ class box_last_knowledgerecord extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs;
+		global $user, $langs;
 
 		$this->max = $max;
 
@@ -161,14 +186,19 @@ class box_last_knowledgerecord extends ModeleBoxes
 				}
 
 				if ($num == 0) {
-					$this->info_box_contents[$i][0] = array('td' => '', 'text' => '<span class="opacitymedium">'.$langs->trans("BoxLastTicketNoRecordedTickets").'</span>');
+					$this->info_box_contents[$i][0] = array(
+						'td' => '',
+						'text' => '<span class="opacitymedium">'.$langs->trans("BoxLastTicketNoRecordedTickets").'</span>',
+					);
 				}
 			} else {
 				dol_print_error($this->db);
 			}
 		} else {
-			$this->info_box_contents[0][0] = array('td' => '',
-				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>');
+			$this->info_box_contents[0][0] = array(
+				'td' => '',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>',
+			);
 		}
 	}
 
