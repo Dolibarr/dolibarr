@@ -1440,10 +1440,10 @@ class Ticket extends CommonObject
 		$datas['track_id'] = '<br><b>'.$langs->trans('TicketTrackId').':</b> '.$this->track_id;
 		$datas['subject'] = '<br><b>'.$langs->trans('Subject').':</b> '.$this->subject;
 		if ($this->date_creation) {
-			$datas['date_creation'] = '<br><b>'.$langs->trans('DateCreation').':</b> '.$this->date_creation;
+			$datas['date_creation'] = '<br><b>'.$langs->trans('DateCreation').':</b> '.dol_print_date($this->date_creation, 'dayhour');
 		}
 		if ($this->date_modification) {
-			$datas['date_modification'] = '<br><b>'.$langs->trans('DateModification').':</b> '.$this->date_modification;
+			$datas['date_modification'] = '<br><b>'.$langs->trans('DateModification').':</b> '.dol_print_date($this->date_modification, 'dayhour');
 		}
 
 		return $datas;
