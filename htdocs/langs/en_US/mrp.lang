@@ -119,3 +119,5 @@ BomCantAddChildBom=The nomenclature %s is already present in the tree leading to
 BOMNetNeeds = BOM Net Needs
 BOMProductsList=BOM's products
 BOMServicesList=BOM's services
+Manufacturing=Manufacturing
+Disassemble=Disassemble
