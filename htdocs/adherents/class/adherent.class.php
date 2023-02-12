@@ -2288,6 +2288,7 @@ class Adherent extends CommonObject
 
 		$datas = [];
 
+		$nofetch = empty($params['nofetch']) ? false : true;
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			$langs->load("users");
 			return ['optimize' => $langs->trans("ShowUser")];
@@ -2318,6 +2319,12 @@ class Adherent extends CommonObject
 			$datas['email'] = '<br><b>'.$langs->trans("EMail").':</b> '.$this->email;
 		}
 		$datas['address'] = '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs);
+		// show categories for this record only in ajax to not overload lists
+		if (isModEnabled('categorie') && !$nofetch) {
+			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+			$form = new Form($this->db);
+			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_MEMBER, 1);
+		}
 		$datas['divclose'] = '</div>';
 
 		return $datas;
@@ -2353,6 +2360,7 @@ class Adherent extends CommonObject
 			'id' => $this->id,
 			'objecttype' => $this->element,
 			'option' => $option,
+			'nofetch' => 1,
 		];
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
