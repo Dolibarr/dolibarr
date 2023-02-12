@@ -5012,6 +5012,7 @@ class Product extends CommonObject
 		$langs->load('products');
 
 		$datas = [];
+		$nofetch = empty($params['nofetch']) ? false : true;
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			return ['optimize' => $langs->trans("ShowProduct")];
@@ -5103,6 +5104,12 @@ class Product extends CommonObject
 				$datas['accountancybuy'] = $buylabel;
 			}
 		}
+		// show categories for this record only in ajax to not overload lists
+		if (isModEnabled('categorie') && !$nofetch) {
+			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+			$form = new Form($this->db);
+			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_PRODUCT, 1);
+		}
 
 		return $datas;
 	}
@@ -5135,6 +5142,7 @@ class Product extends CommonObject
 			'id' => $this->id,
 			'objecttype' => $this->element,
 			'option' => $option,
+			'nofetch' => 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
