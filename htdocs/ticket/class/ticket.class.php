@@ -1433,6 +1433,7 @@ class Ticket extends CommonObject
 
 		$langs->load('ticket');
 
+		$nofetch = empty($params['nofetch']) ? false : true;
 		$datas = [];
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Ticket").'</u>';
 		$datas['picto'] .= ' '.$this->getLibStatut(4);
@@ -1444,6 +1445,12 @@ class Ticket extends CommonObject
 		}
 		if ($this->date_modification) {
 			$datas['date_modification'] = '<br><b>'.$langs->trans('DateModification').':</b> '.dol_print_date($this->date_modification, 'dayhour');
+		}
+		// show categories for this record only in ajax to not overload lists
+		if (isModEnabled('categorie') && !$nofetch) {
+			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+			$form = new Form($this->db);
+			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_TICKET, 1);
 		}
 
 		return $datas;
@@ -1474,6 +1481,8 @@ class Ticket extends CommonObject
 		$params = [
 			'id' => $this->id,
 			'objecttype' => $this->element,
+			'option' => $option,
+			'nofetch' => 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
