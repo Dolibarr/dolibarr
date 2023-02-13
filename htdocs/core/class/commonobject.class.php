@@ -1392,8 +1392,8 @@ abstract class CommonObject
 		}
 		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
 		$sql .= ", tc.source, tc.element, tc.code, tc.libelle";
-		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc";
-		$sql .= ", ".$this->db->prefix()."element_contact ec";
+		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc,";
+		$sql .= " ".$this->db->prefix()."element_contact ec";
 		if ($source == 'internal') {	// internal contact (user)
 			$sql .= " LEFT JOIN ".$this->db->prefix()."user t on ec.fk_socpeople = t.rowid";
 		}
@@ -2037,7 +2037,7 @@ abstract class CommonObject
 	 *	@param	mixed		$value			New value
 	 *	@param	string		$table			To force other table element or element line (should not be used)
 	 *	@param	int			$id				To force other object id (should not be used)
-	 *	@param	string		$format			Data format ('text', 'date'). 'text' is used if not defined
+	 *	@param	string		$format			Data format ('text', 'int', 'date'). 'text' is used if not defined
 	 *	@param	string		$id_field		To force rowid field name. 'rowid' is used if not defined
 	 *	@param	User|string	$fuser			Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
 	 *  @param  string      $trigkey    	Trigger key to run (in most cases something like 'XXX_MODIFY')
@@ -2082,6 +2082,8 @@ abstract class CommonObject
 			$sql .= $field." = ".((int) $value);
 		} elseif ($format == 'date') {
 			$sql .= $field." = ".($value ? "'".$this->db->idate($value)."'" : "null");
+		} elseif ($format == 'dategmt') {
+			$sql .= $field." = ".($value ? "'".$this->db->idate($value, 'gmt')."'" : "null");
 		}
 
 		if ($fk_user_field) {
@@ -5340,7 +5342,7 @@ abstract class CommonObject
 		$sql .= ", busy";
 		$sql .= ", mandatory";
 		$sql .= ") VALUES (";
-		$sql .= $resource_id;
+		$sql .= ((int) $resource_id);
 		$sql .= ", '".$this->db->escape($resource_type)."'";
 		$sql .= ", '".$this->db->escape($this->id)."'";
 		$sql .= ", '".$this->db->escape($this->element)."'";
@@ -6325,6 +6327,13 @@ abstract class CommonObject
 						}
 						$new_array_options[$key] = $this->db->idate($this->array_options[$key]);
 						break;
+					case 'datetimegmt':
+						// If data is a string instead of a timestamp, we convert it
+						if (!is_numeric($this->array_options[$key]) || $this->array_options[$key] != intval($this->array_options[$key])) {
+							$this->array_options[$key] = strtotime($this->array_options[$key]);
+						}
+						$new_array_options[$key] = $this->db->idate($this->array_options[$key], 'gmt');
+						break;
 					case 'link':
 						$param_list = array_keys($attributeParam['options']);
 						// 0 : ObjectName
@@ -6663,6 +6672,13 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = null;
 					} else {
 						$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
+					}
+					break;
+				case 'datetimegmt':
+					if (empty($this->array_options["options_".$key])) {
+						$this->array_options["options_".$key] = null;
+					} else {
+						$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key], 'gmt');
 					}
 					break;
 				case 'boolean':

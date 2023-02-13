@@ -1268,7 +1268,7 @@ if ($action == 'create') {
 										print '<!-- Show warehouse selection -->';
 
 										$stockMin = false;
-										if (empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) {
+										if (!getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
 											$stockMin = 0;
 										}
 										print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', '', 1, $stockMin, 'stock DESC, e.ref');
