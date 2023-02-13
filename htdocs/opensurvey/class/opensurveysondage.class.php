@@ -115,6 +115,11 @@ class Opensurveysondage extends CommonObject
 	 */
 	public $allow_spy;
 
+	/**
+	 * @var array fields
+	 */
+	public $fields = array();
+
 
 	/**
 	 * Draft status (not used)
