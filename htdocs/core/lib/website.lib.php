@@ -69,7 +69,7 @@ function dolStripPhpCode($str, $replacewith = '')
  *
  * @param 	string	$str			String to clean
  * @return 	string					Result string with php code only
- * @see dolStripPhpCode()
+ * @see dolStripPhpCode(), checkPHPCode()
  */
 function dolKeepOnlyPhpCode($str)
 {
