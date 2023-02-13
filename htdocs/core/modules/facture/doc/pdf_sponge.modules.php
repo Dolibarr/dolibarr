@@ -1618,7 +1618,7 @@ class pdf_sponge extends ModelePDFFactures
 
 
 		// Get Total HT
-		$total_ht = (isModEnabled("multicurrency") && $object->mylticurrency_tx != 1 ? $object->multicurrency_total_ht : $object->total_ht);
+		$total_ht = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->multicurrency_total_ht : $object->total_ht);
 
 		// Total remise
 		$total_line_remise = 0;

@@ -4907,7 +4907,7 @@ div.titre {
 	color: var(--colortexttitlenotab2);
 }
 
-table.table-fiche-title .col-title div.titre{
+table.table-fiche-title .col-title div.titre, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
 table.table-fiche-title {
@@ -6548,6 +6548,15 @@ ul.select2-results__options li {
 
 .parentonrightofpage {
   direction: rtl;
+}
+
+select.multiselectononeline {
+	padding: 0;
+	vertical-align: middle;
+	min-height: unset;
+	height: 28px !important;
+	opacity: 0;
+	/* width: 1px !important; */
 }
 
 @media only screen and (min-width: 767px)
