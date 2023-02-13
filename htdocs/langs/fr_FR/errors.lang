@@ -305,7 +305,10 @@ ErrorDateOfMovementLowerThanDateOfFileTransmission=La date de l'opération banca
 ErrorTooMuchFileInForm=Trop de fichiers dans le formulaire, le nombre maximum est de %s fichier(s)
 ErrorExistingPermission = La permission <b>%s</b> pour l'objet <b>%s</b> est dejà existante
 ErrorSessionInvalidatedAfterPasswordChange=La session a été invalidée suite à un changement de mot de passe, d'état ou de dates de validité. Veuillez vous reconnecter.
-
+ErrorFieldExist=La valeur pour <b>%s</b> existe déja 
+ErrorEqualModule=Module invalide pour le champ <b>%s</b>
+ErrorFieldValue=La valeur du champ <b>%s</b> est incorrecte
+ErrorCoherenceMenu = Le champ <b>%s</b> est requis si le champ <b>%s</b> = LEFT
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.

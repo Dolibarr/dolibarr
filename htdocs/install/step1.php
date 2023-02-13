@@ -908,7 +908,7 @@ function write_conf_file($conffile)
 		fputs($fp, '$dolibarr_main_force_https=\''.$main_force_https.'\';');
 		fputs($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_restrict_os_commands=\'mysqldump, mysql, pg_dump, pgrestore\';');
+		fputs($fp, '$dolibarr_main_restrict_os_commands=\'mysqldump, mysql, pg_dump, pgrestore, clamdscan, clamscan.exe\';');
 		fputs($fp, "\n");
 
 		fputs($fp, '$dolibarr_nocsrfcheck=\'0\';');
