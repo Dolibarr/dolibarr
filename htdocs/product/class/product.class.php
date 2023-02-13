@@ -5094,8 +5094,9 @@ class Product extends CommonObject
 			}
 			if ($this->status_buy && isset($this->accountancy_code_buy)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+				$buylabel = '';
 				if (empty($this->status)) {
-					$buylabel = '<br>';
+					$buylabel .= '<br>';
 				}
 				$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyCode').':</b> '.length_accountg($this->accountancy_code_buy);
 				$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyIntraCode').':</b> '.length_accountg($this->accountancy_code_buy_intra);
