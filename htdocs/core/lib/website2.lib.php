@@ -678,6 +678,7 @@ function showWebsiteTemplates(Website $website)
  * @param	string		$phpfullcodestringold		PHP old string
  * @param	string		$phpfullcodestring			PHP new string
  * @return	int										Error or not
+ * @see dolKeepOnlyPhpCode()
  */
 function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 {
