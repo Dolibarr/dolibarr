@@ -2114,7 +2114,7 @@ class ExtraFields
 				) {
 					continue;
 				}
-				if (empty($visibility)) {
+				if (empty($visibility) || $visibility == 5) {
 					continue;
 				}
 				if (empty($perms)) {
