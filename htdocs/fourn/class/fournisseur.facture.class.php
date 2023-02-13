@@ -244,6 +244,12 @@ class FactureFournisseur extends CommonInvoice
 	public $lines = array();
 
 	/**
+	 * Invoice line
+	 * @var SupplierInvoiceLine
+	 */
+	public $line;
+
+	/**
 	 * @deprecated
 	 */
 	public $fournisseur;
