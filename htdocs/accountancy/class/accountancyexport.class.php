@@ -1913,14 +1913,16 @@ class AccountancyExport
 			//Calcul de la longueur des numéros de comptes
 			$taille_numero = strlen(length_accountg($line->numero_compte));
 
-			//Création du numéro de client générique
+			//Création du numéro de client et fournisseur générique
 			$numero_cpt_client = '411';
+			$numero_cpt_fourn = '401';
 			for ($i = 1; $i <= ($taille_numero - 3); $i++) {
 				$numero_cpt_client .= '0';
+				$numero_cpt_fourn .= '0';
 			}
 
-			//Création des comptes auxiliaire des clients
-			if (length_accountg($line->numero_compte) == $numero_cpt_client) {
+			//Création des comptes auxiliaire des clients et fournisseur
+			if (length_accountg($line->numero_compte) == $numero_cpt_client || length_accountg($line->numero_compte) == $numero_cpt_fourn) {
 				$tab[] = rtrim(length_accounta($line->subledger_account), "0");
 			} else {
 				$tab[] = length_accountg($line->numero_compte);
