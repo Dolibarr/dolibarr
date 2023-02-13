@@ -304,6 +304,11 @@ ErrorValueCantBeNull=Value for <b>%s</b> can't be null
 ErrorDateOfMovementLowerThanDateOfFileTransmission=The date of the bank transaction can't be lower than the date of the file transmission
 ErrorTooMuchFileInForm=Too much files in form, the maximum number is %s file(s)
 ErrorSessionInvalidatedAfterPasswordChange=The session was been invalidated following a change of password, status or dates of validity. Please relogin.
+ErrorExistingPermission = Permission <b>%s</b> for object <b>%s</b> already exists
+ErrorFieldExist=The value for <b>%s</b> already exist 
+ErrorEqualModule=Module invalid in <b>%s</b>
+ErrorFieldValue=Value for <b>%s</b> is incorrect
+ErrorCoherenceMenu=<b>%s</b> is required when <b>%</b> equal LEFT
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -342,6 +347,7 @@ WarningPaypalPaymentNotCompatibleWithStrict=The value 'Strict' makes the online 
 WarningThemeForcedTo=Warning, theme has been forced to <b>%s</b> by hidden constant MAIN_FORCETHEME
 WarningPagesWillBeDeleted=Warning, this will also delete all existing pages/containers of the website. You should export your website before, so you have a backup to re-import it later.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatic validation is disabled when option to decrease stock is set on "Invoice validation".
+WarningModuleNeedRefrech = Module <b>%s</b> has been disabled. Don't forget to enable it 
 
 # Validate
 RequireValidValue = Value not valid

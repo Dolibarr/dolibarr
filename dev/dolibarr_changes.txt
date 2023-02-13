@@ -212,7 +212,7 @@ with
 * Fix by replacing 
 	if ($res[0] == PDF_TYPE_OBJECT)
 with
-	if ($res && $res[0] == PDF_TYPE_OBJECT)
+	if (isset($res[0]) && $res[0] == PDF_TYPE_OBJECT)
 
 
 

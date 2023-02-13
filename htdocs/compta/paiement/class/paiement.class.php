@@ -643,6 +643,8 @@ class Paiement extends CommonObject
 			$acc = new Account($this->db);
 			$result = $acc->fetch($this->fk_account);
 			if ($result < 0) {
+				$this->error = $acc->error;
+				$this->errors = $acc->errors;
 				$error++;
 				return -1;
 			}
@@ -768,7 +770,7 @@ class Paiement extends CommonObject
 				}
 
 				// Add link 'InvoiceRefused' in bank_url
-				if (! $error && $label == '(InvoiceRefused)') {
+				if (!$error && $label == '(InvoiceRefused)') {
 					$result=$acc->add_url_line(
 						$bank_line_id,
 						$this->id_prelevement,
@@ -788,6 +790,7 @@ class Paiement extends CommonObject
 				}
 			} else {
 				$this->error = $acc->error;
+				$this->errors = $acc->errors;
 				$error++;
 			}
 

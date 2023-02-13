@@ -107,6 +107,7 @@ $permissiondellink = $user->admin; // Used by the include of actions_dellink.inc
 $permissiontoadd = $user->admin; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 $debuginfo = '';
+$error = 0;
 
 
 /*
@@ -121,8 +122,6 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	$error = 0;
-
 	$permissiontoadd = 1;
 	$permissiontodelete = 1;
 	if (empty($backtopage)) {
@@ -184,8 +183,8 @@ if (GETPOST('addoperation', 'alpha')) {
 
 	if (in_array($emailcollectoroperation->type, array('loadthirdparty', 'loadandcreatethirdparty'))
 		&& empty($emailcollectoroperation->actionparam)) {
-		$error++;
-		setEventMessages($langs->trans("ErrorAParameterIsRequiredForThisOperation"), null, 'errors');
+			$error++;
+			setEventMessages($langs->trans("ErrorAParameterIsRequiredForThisOperation"), null, 'errors');
 	}
 
 	if (!$error) {
@@ -208,8 +207,8 @@ if ($action == 'updateoperation') {
 
 	if (in_array($emailcollectoroperation->type, array('loadthirdparty', 'loadandcreatethirdparty'))
 		&& empty($emailcollectoroperation->actionparam)) {
-		$error++;
-		setEventMessages($langs->trans("ErrorAParameterIsRequiredForThisOperation"), null, 'errors');
+			$error++;
+			setEventMessages($langs->trans("ErrorAParameterIsRequiredForThisOperation"), null, 'errors');
 	}
 
 	if (!$error) {
@@ -387,7 +386,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref = '<div class="refidno">';
 	$morehtmlref .= '</div>';
 
-	$morehtml = $langs->trans("NbOfEmailsInInbox").' : ';
+	$morehtml = '';
 
 	$sourcedir = $object->source_directory;
 	$targetdir = ($object->target_directory ? $object->target_directory : ''); // Can be '[Gmail]/Trash' or 'mytag'
@@ -397,104 +396,128 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$connectstringsource = '';
 	$connectstringtarget = '';
 
-	if (function_exists('imap_open')) {
-		// Note: $object->host has been loaded by the fetch
-		$usessl = 1;
+	// Note: $object->host has been loaded by the fetch
+	$usessl = 1;
 
-		$connectstringserver = $object->getConnectStringIMAP($usessl);
+	$connectstringserver = $object->getConnectStringIMAP($usessl);
 
-		if ($action == 'scan') {
-			if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
-				if ($object->acces_type == 1) {
-					// Mode OAUth2 with PHP-IMAP
-					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
-					$keyforsupportedoauth2array = $object->oauth_service;
-					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
-						$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
-					} else {
-						$keyforprovider = '';
-					}
-					$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
-					$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
-
-					$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
-
-					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
-					//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
-					//dol_syslog($debugtext);
-
-					$storage = new DoliStorage($db, $conf);
-
-					try {
-						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
-						$expire = true;
-						// Is token expired or will token expire in the next 30 seconds
-						// if (is_object($tokenobj)) {
-						// 	$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
-						// }
-						// Token expired so we refresh it
-						if (is_object($tokenobj) && $expire) {
-							$credentials = new Credentials(
-								getDolGlobalString('OAUTH_'.$object->oauth_service.'_ID'),
-								getDolGlobalString('OAUTH_'.$object->oauth_service.'_SECRET'),
-								getDolGlobalString('OAUTH_'.$object->oauth_service.'_URLAUTHORIZE')
-							);
-							$serviceFactory = new \OAuth\ServiceFactory();
-							$oauthname = explode('-', $OAUTH_SERVICENAME);
-							// ex service is Google-Emails we need only the first part Google
-							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
-							// We have to save the token because Google give it only once
-							$refreshtoken = $tokenobj->getRefreshToken();
-							$tokenobj = $apiService->refreshAccessToken($tokenobj);
-							$tokenobj->setRefreshToken($refreshtoken);
-							$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
-						}
-						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
-						if (is_object($tokenobj)) {
-							$token = $tokenobj->getAccessToken();
-						} else {
-							$object->error = "Token not found";
-							return -1;
-						}
-					} catch (Exception $e) {
-						print $e->getMessage();
-					}
-
-					$cm = new ClientManager();
-					$client = $cm->make([
-						'host'           => $object->host,
-						'port'           => $object->port,
-						'encryption'     => 'ssl',
-						'validate_cert'  => true,
-						'protocol'       => 'imap',
-						'username'       => $object->login,
-						'password'       => $token,
-						'authentication' => "oauth",
-					]);
+	if ($action == 'scan') {
+		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+			if ($object->acces_type == 1) {
+				// Mode OAUth2 with PHP-IMAP
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+				$keyforsupportedoauth2array = $object->oauth_service;
+				if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
+					$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
 				} else {
-					// Mode login/pass with PHP-IMAP
-					$cm = new ClientManager();
-					$client = $cm->make([
-						'host'           => $object->host,
-						'port'           => $object->port,
-						'encryption'     => 'ssl',
-						'validate_cert'  => true,
-						'protocol'       => 'imap',
-						'username'       => $object->login,
-						'password'       => $object->password,
-						'authentication' => "login",
-					]);
+					$keyforprovider = '';
 				}
+				$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
+				$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
+
+				$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
+
+				require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+				//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
+				//dol_syslog($debugtext);
+
+				$token = '';
+
+				$storage = new DoliStorage($db, $conf, $keyforprovider);
+
 				try {
-					$client->connect();
-				} catch (ConnectionFailedException $e) {
-					print $e->getMessage();
+					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+
+					$expire = true;
+					// Is token expired or will token expire in the next 30 seconds
+					// if (is_object($tokenobj)) {
+					// 	$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
+					// }
+					// Token expired so we refresh it
+					if (is_object($tokenobj) && $expire) {
+						$credentials = new Credentials(
+							getDolGlobalString('OAUTH_'.$object->oauth_service.'_ID'),
+							getDolGlobalString('OAUTH_'.$object->oauth_service.'_SECRET'),
+							getDolGlobalString('OAUTH_'.$object->oauth_service.'_URLAUTHORIZE')
+							);
+						$serviceFactory = new \OAuth\ServiceFactory();
+						$oauthname = explode('-', $OAUTH_SERVICENAME);
+
+						// ex service is Google-Emails we need only the first part Google
+						$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+
+						// We have to save the token because Google give it only once
+						$refreshtoken = $tokenobj->getRefreshToken();
+						//var_dump($tokenobj);
+						$tokenobj = $apiService->refreshAccessToken($tokenobj);
+
+						$tokenobj->setRefreshToken($refreshtoken);
+						$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
+					}
+					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+					if (is_object($tokenobj)) {
+						$token = $tokenobj->getAccessToken();
+					} else {
+						$error++;
+						$morehtml .= "Token not found";
+					}
+				} catch (Exception $e) {
+					$error++;
+					$morehtml .= $e->getMessage();
 				}
 
-				$f = $client->getFolders(false, $object->source_directory);
-				$nbemail = $f[0]->examine()["exists"];
-				$morehtml .= $nbemail;
+				if (empty($object->login)) {
+					$error++;
+					$morehtml .= 'Error: Login is empty. Must be email owner when using MAIN_IMAP_USE_PHPIMAP and OAuth.';
+				}
+
+				$cm = new ClientManager();
+				$client = $cm->make([
+					'host'           => $object->host,
+					'port'           => $object->port,
+					'encryption'     => 'ssl',
+					'validate_cert'  => true,
+					'protocol'       => 'imap',
+					'username'       => $object->login,
+					'password'       => $token,
+					'authentication' => "oauth",
+				]);
 			} else {
+				// Mode login/pass with PHP-IMAP
+				$cm = new ClientManager();
+				$client = $cm->make([
+					'host'           => $object->host,
+					'port'           => $object->port,
+					'encryption'     => 'ssl',
+					'validate_cert'  => true,
+					'protocol'       => 'imap',
+					'username'       => $object->login,
+					'password'       => $object->password,
+					'authentication' => "login",
+				]);
+			}
+			if (!$error) {
+				try {
+					// To emulate the command connect, you can run
+					// openssl s_client -crlf -connect outlook.office365.com:993
+					// TAG1 AUTHENTICATE XOAUTH2 dXN...
+					// TO Get debug log, you can set protected $debug = true; in Protocol.php file
+					//
+					// A MS bug make this not working !
+					// See https://github.com/MicrosoftDocs/office-developer-exchange-docs/issues/100
+					// See github.com/MicrosoftDocs/office-developer-exchange-docs/issues/87
+					// See github.com/Webklex/php-imap/issues/81
+					$client->connect();
+
+					$f = $client->getFolders(false, $object->source_directory);
+					$nbemail = $f[0]->examine()["exists"];
+					$morehtml .= $nbemail;
+				} catch (ConnectionFailedException $e) {
+					$morehtml .= 'ConnectionFailedException '.$e->getMessage();
+				}
+			}
+		} else {
+			if (function_exists('imap_open')) {
 				try {
 					if ($sourcedir) {
 						//$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
@@ -521,7 +544,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 					//dol_syslog("end imap_open connection=".var_export($connection, true));
 				} catch (Exception $e) {
-					print $e->getMessage();
+					$morehtml .= $e->getMessage();
 				}
 
 				if (!$connection) {
@@ -540,15 +563,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					dol_syslog("Imap close");
 					imap_close($connection);
 				}
+			} else {
+				$morehtml .= 'IMAP functions not available on your PHP. ';
 			}
-		} else {
-			$morehtml .= '<a class="flat" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=scan&token='.newToken().'">'.img_picto('', 'refresh', 'class="paddingrightonly"').$langs->trans("Refresh").'</a>';
 		}
-
-		$morehtml .= $form->textwithpicto('', 'connect string '.$connectstringserver);
-	} else {
-		$morehtml .= 'IMAP functions not available on your PHP. ';
 	}
+
+	$morehtml = $form->textwithpicto($langs->trans("NbOfEmailsInInbox"), 'connect string '.$connectstringserver).': '.($morehtml ? $morehtml : '?');
+	$morehtml .= '<a class="flat paddingleft marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=scan&token='.newToken().'">'.img_picto('', 'refresh', 'class="paddingrightonly"').$langs->trans("Refresh").'</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref.'<div class="refidno">'.$morehtml.'</div>', '', 0, '', '', 0, '');
 
@@ -624,10 +646,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
         jQuery("#rulevalue").attr("placeholder", (jQuery("#filtertype option:selected").attr("data-placeholder")));
     ';
 	/*$noparam = array();
-	foreach ($arrayoftypes as $key => $value)
-	{
-		if ($value['noparam']) $noparam[] = $key;
-	}*/
+	 foreach ($arrayoftypes as $key => $value)
+	 {
+	 if ($value['noparam']) $noparam[] = $key;
+	 }*/
 	print '})';
 	print '</script>'."\n";
 
@@ -668,7 +690,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$arrayoftypes = array(
 		'loadthirdparty' => $langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName")),
 		'loadandcreatethirdparty' => $langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName")),
-		'loadandcreatecontact' => $langs->trans('LoadContactFromEmailOrCreate', $langs->transnoentities("Email")),
 		'recordjoinpiece' => 'AttachJoinedDocumentsToObject',
 		'recordevent' => 'RecordEvent'
 	);

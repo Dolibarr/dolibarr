@@ -24,6 +24,7 @@ BoxFicheInter=最新の介入
 BoxCurrentAccounts=口座残高
 BoxTitleMemberNextBirthdays=今月の誕生日(構成員)
 BoxTitleMembersByType=タイプと状態別の構成員
+BoxTitleMembersByTags=タグとステータス別のメンバー
 BoxTitleMembersSubscriptionsByYear=年ごとの構成員サブスクリプション
 BoxTitleLastRssInfos=%sからの最新の%sニュース
 BoxTitleLastProducts=製品/サービス：最後に変更された%s

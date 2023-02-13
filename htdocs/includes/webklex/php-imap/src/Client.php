@@ -353,6 +353,7 @@ class Client {
         } catch (Exceptions\RuntimeException $e) {
             throw new ConnectionFailedException("connection setup failed - run exception", 0, $e);
         }
+
         $this->authenticate();
 
         return $this;

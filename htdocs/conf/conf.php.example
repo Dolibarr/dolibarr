@@ -302,7 +302,7 @@ $dolibarr_main_restrict_ip='';
 // This might be required if you access Dolibarr behind a proxy that make bad URL rewriting, to avoid false alarms.
 // In most cases, you should always keep this to 0.
 // Default value: 0
-// Possible values: 0 or 1
+// Possible values: 0 or 1 (no strict CSRF test, only test on referer) or 2 (no CSRF test at all)
 // Examples:
 // $dolibarr_nocsrfcheck='0';
 //

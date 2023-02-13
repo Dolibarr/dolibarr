@@ -13,4 +13,4 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
-ALTER TABLE llx_takepos_floor_tables ADD UNIQUE(entity,label); 
+ALTER TABLE llx_takepos_floor_tables ADD UNIQUE INDEX uk_takepos_floor_tables(entity,label); 

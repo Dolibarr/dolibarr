@@ -924,6 +924,10 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		if ($usergroup > 0)	{
 			$sql .= " AND ug.fk_usergroup = ".((int) $usergroup);
 		}
+		if ($user->socid > 0) {
+			// External users should see only contacts of their company
+			$sql .= " AND u.fk_soc = ".((int) $user->socid);
+		}
 
 		//print $sql;
 		$resql = $db->query($sql);
@@ -947,26 +951,6 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		$result = $tmpuser->fetch($id);
 		$usernames[] = $tmpuser;
 	}
-
-	/*
-	if ($filtert > 0)
-	{
-		$tmpuser = new User($db);
-		$tmpuser->fetch($filtert);
-		$usernames[] = $tmpuser;
-	}
-	else if ($usergroup)
-	{
-		$tmpgroup = new UserGroup($db);
-		$tmpgroup->fetch($usergroup);
-		$usernames = $tmpgroup->listUsersForGroup();
-	}
-	else
-	{
-		$tmpgroup = new UserGroup($db);
-		//$tmpgroup->fetch($usergroup); No fetch, we want all users for all groups
-		$usernames = $tmpgroup->listUsersForGroup();
-	}*/
 
 	// Load array of colors by type
 	$colorsbytype = array();

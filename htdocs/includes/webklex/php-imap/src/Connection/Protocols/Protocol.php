@@ -190,7 +190,7 @@ abstract class Protocol implements ProtocolInterface {
             STREAM_CLIENT_CONNECT,
             stream_context_create($this->defaultSocketOptions($transport))
         );
-        stream_set_timeout($stream, $timeout);
+        //stream_set_timeout($stream, $timeout);	// Hang id $strem empty and already done line 199
 
         if (!$stream) {
             throw new ConnectionFailedException($errstr, $errno);

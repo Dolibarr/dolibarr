@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live key
 ONLINE_PAYMENT_WAREHOUSE=Stock para usar para la disminución de stock cuando se realiza el pago en línea <br> (TODO Cuando la opción para disminuir stock se realiza en una acción en la factura y el pago en línea se genera la factura?)
 StripeLiveEnabled=Stripe live activado (de lo contrario en modo test/sandbox)
 StripeImportPayment=Importar pagos Stripe
-ExampleOfTestCreditCard=Ejemplo de tarjeta de crédito para pruebas: %s=> válida,%s => error CVC, %s => caducada, %s => la carga falla
+ExampleOfTestCreditCard=Ejemplo de tarjeta de crédito para prueba SEPA: %s => válida, %s => error CVC, %s => caducada, %s => fallo en el cargo
+ExampleOfTestBankAcountForSEPA=Ejemplo de cuenta bancaria IBAN para prueba de débito directo: %s
 StripeGateways=Pasarelas de Stripe
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca _...)
@@ -61,6 +62,7 @@ DeleteACard=Eliminar tarjeta
 ConfirmDeleteCard=¿Está seguro de querer eliminar esta tarjeta de crédito o débito?
 CreateCustomerOnStripe=Crear cliente en Stripe
 CreateCardOnStripe=Crea una tarjeta en Stripe
+CreateBANOnStripe=Crear banco en Stripe
 ShowInStripe=Mostrar en Stripe
 StripeUserAccountForActions=Cuenta de usuario para usar en algunos e-mails de notificación de eventos Stripe (pagos de Stripe)
 StripePayoutList=Lista de pagos de Stripe
@@ -69,4 +71,8 @@ ToOfferALinkForLiveWebhook=Enlace para configurar Stripe WebHook para llamar a l
 PaymentWillBeRecordedForNextPeriod=El pago se registrará para el próximo período.
 ClickHereToTryAgain=<a href="%s">Haga clic aquí para volver a intentarlo ...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Debido a las fuertes reglas de autenticación del cliente, la creación de una tarjeta debe hacerse desde la oficina administrativa de Stripe. Puede hacer clic aquí para activar el registro de cliente de Stripe: %s
-TERMINAL_LOCATION=Ubicación (dirección) para terminales
+STRIPE_CARD_PRESENT=Tarjeta Presente para Terminales Stripe
+TERMINAL_LOCATION=Ubicación (dirección) para terminales Stripe
+RequestDirectDebitWithStripe=Solicitar Débito Directo con Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Habilitar los pagos de Débito Directo a través de Stripe
+

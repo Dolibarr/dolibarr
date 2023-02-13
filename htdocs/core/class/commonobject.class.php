@@ -601,6 +601,11 @@ abstract class CommonObject
 	protected $labelStatusShort;
 
 	/**
+	 * @var int showphoto_on_popup
+	 */
+	public $showphoto_on_popup;
+
+	/**
 	 * @var array nb used in load_stateboard
 	 */
 	public $nb = array();
@@ -670,6 +675,57 @@ abstract class CommonObject
 			}
 		}
 		return -1;
+	}
+	/**
+	 * getTooltipContentArray
+	 *
+	 * @since v18
+	 * @param array $params params to construct tooltip data
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		return [];
+	}
+
+	/**
+	 * getTooltipContent
+	 *
+	 * @param array $params params
+	 * @since v18
+	 * @return string
+	 */
+	public function getTooltipContent($params)
+	{
+		global $action, $extrafields, $langs, $hookmanager;
+
+		$datas = $this->getTooltipContentArray($params);
+
+		if (!empty($extrafields->attributes[$this->table_element]['label'])) {
+			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+				if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
+					$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
+				}
+				$labelextra = $langs->trans((string) $extrafields->attributes[$this->table_element]['label'][$key]);
+				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
+					$datas[$key]= '<br><b><u>'. $labelextra . '</u></b>';
+				} else {
+					$value = $this->array_options['options_' . $key];
+					$datas[$key]= '<br><b>'. $labelextra . ':</b> ' . $extrafields->showOutputField($key, $value, '', $this->table_element);
+				}
+			}
+		}
+
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array(
+			'tooltipcontentarray' => &$datas
+		);
+		// Note that $action and $object may have been modified by some hooks
+		$hookmanager->executeHooks('getTooltipContent', $parameters, $this, $action);
+
+		$label = implode($datas);
+
+		return $label;
 	}
 
 
@@ -838,7 +894,7 @@ abstract class CommonObject
 		}
 		if ($this->element == 'contact') {
 			$contactid = $this->id;
-			$thirdpartyid = empty($object->fk_soc) ? 0 : $object->fk_soc;
+			$thirdpartyid = empty($this->fk_soc) ? 0 : $this->fk_soc;
 		}
 		if ($this->element == 'user') {
 			$contactid = $this->contact_id;
@@ -1343,8 +1399,8 @@ abstract class CommonObject
 		}
 		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
 		$sql .= ", tc.source, tc.element, tc.code, tc.libelle";
-		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc";
-		$sql .= ", ".$this->db->prefix()."element_contact ec";
+		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc,";
+		$sql .= " ".$this->db->prefix()."element_contact ec";
 		if ($source == 'internal') {	// internal contact (user)
 			$sql .= " LEFT JOIN ".$this->db->prefix()."user t on ec.fk_socpeople = t.rowid";
 		}
@@ -1988,7 +2044,7 @@ abstract class CommonObject
 	 *	@param	mixed		$value			New value
 	 *	@param	string		$table			To force other table element or element line (should not be used)
 	 *	@param	int			$id				To force other object id (should not be used)
-	 *	@param	string		$format			Data format ('text', 'date'). 'text' is used if not defined
+	 *	@param	string		$format			Data format ('text', 'int', 'date'). 'text' is used if not defined
 	 *	@param	string		$id_field		To force rowid field name. 'rowid' is used if not defined
 	 *	@param	User|string	$fuser			Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
 	 *  @param  string      $trigkey    	Trigger key to run (in most cases something like 'XXX_MODIFY')
@@ -2033,6 +2089,8 @@ abstract class CommonObject
 			$sql .= $field." = ".((int) $value);
 		} elseif ($format == 'date') {
 			$sql .= $field." = ".($value ? "'".$this->db->idate($value)."'" : "null");
+		} elseif ($format == 'dategmt') {
+			$sql .= $field." = ".($value ? "'".$this->db->idate($value, 'gmt')."'" : "null");
 		}
 
 		if ($fk_user_field) {
@@ -4271,7 +4329,7 @@ abstract class CommonObject
 	 * @param	string	$field_select			name of field we need to get a list
 	 * @param	string	$field_where			name of field of object we need to get linked items
 	 * @param	string	$table_element			name of association table
-	 * @return 	array							Array of record
+	 * @return 	array|int						Array of record, -1 if empty
 	 */
 	public static function getAllItemsLinkedByObjectID($fk_object_where, $field_select, $field_where, $table_element)
 	{
@@ -5291,7 +5349,7 @@ abstract class CommonObject
 		$sql .= ", busy";
 		$sql .= ", mandatory";
 		$sql .= ") VALUES (";
-		$sql .= $resource_id;
+		$sql .= ((int) $resource_id);
 		$sql .= ", '".$this->db->escape($resource_type)."'";
 		$sql .= ", '".$this->db->escape($this->id)."'";
 		$sql .= ", '".$this->db->escape($this->element)."'";
@@ -6065,6 +6123,8 @@ abstract class CommonObject
 					if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
 						//var_dump($conf->disable_compute);
 						if (empty($conf->disable_compute)) {
+							global $objectoffield;		// We set a global variable to $objectoffield so
+							$objectoffield = $this;		// we can use it inside computed formula
 							$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
 						}
 					}
@@ -6274,6 +6334,13 @@ abstract class CommonObject
 						}
 						$new_array_options[$key] = $this->db->idate($this->array_options[$key]);
 						break;
+					case 'datetimegmt':
+						// If data is a string instead of a timestamp, we convert it
+						if (!is_numeric($this->array_options[$key]) || $this->array_options[$key] != intval($this->array_options[$key])) {
+							$this->array_options[$key] = strtotime($this->array_options[$key]);
+						}
+						$new_array_options[$key] = $this->db->idate($this->array_options[$key], 'gmt');
+						break;
 					case 'link':
 						$param_list = array_keys($attributeParam['options']);
 						// 0 : ObjectName
@@ -6295,7 +6362,6 @@ abstract class CommonObject
 									$new_array_options[$key] = $object->id;
 								} else {
 									$this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
-									$this->db->rollback();
 									return -1;
 								}
 							}
@@ -6613,6 +6679,13 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = null;
 					} else {
 						$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
+					}
+					break;
+				case 'datetimegmt':
+					if (empty($this->array_options["options_".$key])) {
+						$this->array_options["options_".$key] = null;
+					} else {
+						$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key], 'gmt');
 					}
 					break;
 				case 'boolean':
@@ -8073,10 +8146,16 @@ abstract class CommonObject
 				$out .= "\n";
 
 				$nbofextrafieldsshown = 0;
-				$extrafields_collapse_num = '';
 				$e = 0;	// var to manage the modulo (odd/even)
 
+				$lastseparatorkeyfound = '';
+				$extrafields_collapse_num = '';
+				$extrafields_collapse_num_old = '';
+				$i = 0;
+
 				foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $label) {
+					$i++;
+
 					// Show only the key field in params
 					if (is_array($params) && array_key_exists('onlykey', $params) && $key != $params['onlykey']) {
 						continue;
@@ -8111,6 +8190,7 @@ abstract class CommonObject
 					if (empty($perms)) {
 						continue;
 					}
+
 					// Load language if required
 					if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
 						$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
@@ -8163,7 +8243,8 @@ abstract class CommonObject
 
 					// Output value of the current field
 					if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
-						$extrafields_collapse_num = '';
+						$extrafields_collapse_num = $key;
+						/*
 						$extrafield_param = $extrafields->attributes[$this->table_element]['param'][$key];
 						if (!empty($extrafield_param) && is_array($extrafield_param)) {
 							$extrafield_param_list = array_keys($extrafield_param['options']);
@@ -8172,14 +8253,20 @@ abstract class CommonObject
 								$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
 
 								if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
-									$extrafields_collapse_num = $extrafields->attributes[$this->table_element]['pos'][$key];
+									//$extrafields_collapse_num = $extrafields->attributes[$this->table_element]['pos'][$key];
+									$extrafields_collapse_num = $key;
 								}
 							}
 						}
+						*/
 
 						// if colspan=0 or 1, the second column is not extended, so the separator must be on 2 columns
 						$out .= $extrafields->showSeparator($key, $this, ($colspan ? $colspan + 1 : 2), $display_type, $mode);
+
+						$lastseparatorkeyfound = $key;
 					} else {
+						$collapse_group = $extrafields_collapse_num.(!empty($this->id) ? '_'.$this->id : '');
+
 						$class = (!empty($extrafields->attributes[$this->table_element]['hidden'][$key]) ? 'hideobject ' : '');
 						$csstyle = '';
 						if (is_array($params) && count($params) > 0) {
@@ -8250,13 +8337,13 @@ abstract class CommonObject
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
 						if ($display_type == 'card') {
-							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="field_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
+							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="field_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$collapse_group.'" '.$domData.' >';
 							if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && ($action == 'view' || $action == 'valid' || $action == 'editline' || $action == 'confirm_valid' || $action == 'confirm_cancel')) {
 								$out .= '<td></td>';
 							}
 							$out .= '<td class="titlefieldcreate wordbreak';
 						} elseif ($display_type == 'line') {
-							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="fieldline_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
+							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="fieldline_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$collapse_group.'" '.$domData.' >';
 							$out .= '<div style="display: inline-block; padding-right:4px" class="wordbreak';
 						}
 						//$out .= "titlefield";

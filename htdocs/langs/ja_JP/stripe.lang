@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhookライブキー
 ONLINE_PAYMENT_WAREHOUSE=オンライン支払が行われるときに在庫減少に使用する在庫<br>(TODO請求書のアクションで在庫を減らすオプションが実行され、オンライン支払がそれ自体で請求書を生成する場合？)
 StripeLiveEnabled=Stripe ライブが有効(それ以外の場合はテスト/サンドボックスモード)
 StripeImportPayment=Stripe 支払のインポート
-ExampleOfTestCreditCard=テスト用のクレジットカードの例：%s =>有効、%s =>エラーCVC、%s =>期限切れ、%s =>充電に失敗
+ExampleOfTestCreditCard=SEPA テストのクレジット カードの例: %s => 有効、%s => エラー CVC、%s => 有効期限切れ、%s => 請求失敗
+ExampleOfTestBankAcountForSEPA=口座振替テストの銀行口座 BAN の例: %s
 StripeGateways=Stripe ゲートウェイ
 OAUTH_STRIPE_TEST_ID=Stripe ConnectクライアントID(ca _...)
 OAUTH_STRIPE_LIVE_ID=Stripe ConnectクライアントID(ca _...)
@@ -61,6 +62,7 @@ DeleteACard=カードを削除
 ConfirmDeleteCard=このクレジットカードまたはデビットカードを削除してもよいか？
 CreateCustomerOnStripe=Stripeで顧客を作成する
 CreateCardOnStripe=Stripeでカードを作成する
+CreateBANOnStripe=Stripe で銀行を作成する
 ShowInStripe=Stripe で表示
 StripeUserAccountForActions=一部のStripeイベントの電子メール通知に使用するユーザアカウント(Stripeペイアウト)
 StripePayoutList=Stripe ペイアウトのリスト
@@ -69,4 +71,8 @@ ToOfferALinkForLiveWebhook=IPNを呼び出すためのStripeWebHookの設定へ�
 PaymentWillBeRecordedForNextPeriod=支払は次の期間に記録される。
 ClickHereToTryAgain= <a href="%s">ここをクリックして再試行すること... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=強力な顧客認証ルールにより、カードの作成はStripeバックオフィスから行う必要がある。 Stripeの顧客レコードをオンにするには、ここをクリックすること：%s
-TERMINAL_LOCATION=端末の場所（住所）
+STRIPE_CARD_PRESENT=ストライプ端末のカードプレゼント
+TERMINAL_LOCATION=Stripe 端末の場所 (アドレス)
+RequestDirectDebitWithStripe=Stripe で口座振替をリクエストする
+STRIPE_SEPA_DIRECT_DEBIT=Stripe による口座振替の支払いを有効にする
+
