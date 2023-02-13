@@ -90,6 +90,15 @@ class Expedition extends CommonObject
 	 */
 	public $fields = array();
 
+	/**
+	 * @var int ID of user author
+	 */
+	public $user_author_id;
+
+	/**
+	 * @var int ID of user author
+	 */
+	public $fk_user_author;
 
 	public $socid;
 
@@ -175,8 +184,35 @@ class Expedition extends CommonObject
 	public $meths;
 	public $listmeths; // List of carriers
 
+	/**
+	 * @var int ID of order
+	 */
+	public $commande_id;
+
+	/**
+	 * @var Commande order
+	 */
+	public $commande;
+
+	/**
+	 * @var ExpeditionLigne[] array of shipping lines
+	 */
 	public $lines = array();
 
+	// Multicurrency
+	/**
+	 * @var int Currency ID
+	 */
+	public $fk_multicurrency;
+
+	/**
+	 * @var string multicurrency code
+	 */
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 
 	/**
 	 * Draft status
@@ -565,6 +601,7 @@ class Expedition extends CommonObject
 				$this->ref_ext		    = $obj->ref_ext;
 				$this->statut               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
+				$this->fk_user_author       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
 				$this->date_valid = $this->db->jdate($obj->date_valid);
 				$this->date                 = $this->db->jdate($obj->date_expedition); // TODO deprecated
