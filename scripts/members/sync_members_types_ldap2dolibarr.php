@@ -21,9 +21,9 @@
  */
 
 /**
- * \file scripts/members/sync_members_types_ldap2dolibarr.php
+ * \file 	scripts/members/sync_members_types_ldap2dolibarr.php
  * \ingroup ldap member
- * \brief Script to update members types into Dolibarr from LDAP
+ * \brief 	Script to update members types into Dolibarr from LDAP
  */
 
 if (!defined('NOSESSION')) {
@@ -139,7 +139,7 @@ if ($result >= 0) {
 		// Warning $ldapuser has a key in lowercase
 		foreach ($ldaprecords as $key => $ldapgroup) {
 			$membertype = new AdherentType($db);
-			$membertype->fetch('', $ldapgroup[$conf->global->LDAP_KEY_MEMBERS_TYPES]);
+			$membertype->fetch($ldapgroup[$conf->global->LDAP_KEY_MEMBERS_TYPES]);
 			$membertype->label = $ldapgroup[$conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME];
 			$membertype->description = $ldapgroup[$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION];
 			$membertype->entity = $conf->entity;

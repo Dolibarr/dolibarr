@@ -20,3 +20,4 @@ ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Scegli se la pagina collegata de
 BookmarksManagement=Gestione segnalibri
 BookmarksMenuShortCut=Ctrl + Maiusc + m
 NoBookmarks=Nessun segnalibro definito
+NoBookmarkFound=Nessun segnalibro trovato

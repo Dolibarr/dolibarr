@@ -107,8 +107,8 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 $permissionnote = $user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer;; // Used by the include of actions_dellink.inc.php
-$permissiontoedit = $user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer;; // Used by the include of actions_lineupdonw.inc.php
+$permissiondellink = $user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer; // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer; // Used by the include of actions_lineupdonw.inc.php
 
 $usercanread = $user->rights->fournisseur->facture->lire || $user->rights->supplier_invoice->lire;
 $usercancreate = $user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer;
@@ -1151,7 +1151,7 @@ if ($action == 'create') {
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="' . $langs->trans("Modify") . '">';
 					$morehtmlref .= '</form>';
 				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 				}
 			} else {
 				if (!empty($object->fk_project)) {

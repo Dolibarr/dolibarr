@@ -24,11 +24,11 @@ FinancialCommitment=Finansiell forpliktelse
 InterestAmount=Rente
 CapitalRemain=Gjenstående kapital
 TermPaidAllreadyPaid = Denne terminen er allerede betalt
-CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+CantUseScheduleWithLoanStartedToPaid = Kan ikke generere en tidslinje for et lån med en påbegynt betaling
 CantModifyInterestIfScheduleIsUsed = Du kan ikke endre rente hvis du bruker tidsplan
 # Admin
 ConfigLoan=Oppset av lån-modulen
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Standard regnskapskonto kapital
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Standard regnskapskonto  rente
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Standard regnskapskonto forsikring
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Konto (fra kontoplanen) som skal brukes som standard for kapital (Lånmodul)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Konto (fra kontoplanen) som skal brukes som standard for renter (Lånmodul)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Konto (fra kontoplanen) brukes som standard for forsikring (Lånmodul)
 CreateCalcSchedule=Rediger økonomisk forpliktelse

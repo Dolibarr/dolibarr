@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=Dewiswch y math dychwelyd cerbyd
 ACCOUNTING_EXPORT_PREFIX_SPEC=Nodwch y rhagddodiad ar gyfer enw'r ffeil
 ThisService=Y gwasanaeth hwn
 ThisProduct=Mae'r cynnyrch hwn
-DefaultForService=Diofyn ar gyfer gwasanaeth
-DefaultForProduct=Diofyn ar gyfer cynnyrch
+DefaultForService=Default for services
+DefaultForProduct=Default for products
 ProductForThisThirdparty=Cynnyrch ar gyfer y trydydd parti hwn
 ServiceForThisThirdparty=Gwasanaeth ar gyfer y trydydd parti hwn
 CantSuggest=Methu awgrymu
@@ -59,6 +59,7 @@ MainAccountForSuppliersNotDefined=Prif gyfrif cyfrifo ar gyfer gwerthwyr heb ei 
 MainAccountForUsersNotDefined=Prif gyfrif cyfrifo ar gyfer defnyddwyr heb ei ddiffinio yn y gosodiad
 MainAccountForVatPaymentNotDefined=Prif gyfrif cyfrifo ar gyfer taliad TAW heb ei ddiffinio yn y gosodiad
 MainAccountForSubscriptionPaymentNotDefined=Prif gyfrif cyfrifo ar gyfer taliad tanysgrifiad heb ei ddiffinio yn y gosodiad
+UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=Maes cyfrifo
 AccountancyAreaDescIntro=Gwneir defnydd o'r modiwl cyfrifeg mewn sawl cam:
@@ -100,7 +101,8 @@ ShowAccountingAccount=Dangos cyfrif cyfrifeg
 ShowAccountingJournal=Dangos dyddlyfr cyfrifo
 ShowAccountingAccountInLedger=Dangos cyfrif cyfrifeg yn y cyfriflyfr
 ShowAccountingAccountInJournals=Dangos cyfrif cyfrifeg mewn cyfnodolion
-AccountAccountingSuggest=Awgrymu cyfrif cyfrifo
+DataUsedToSuggestAccount=Data used to suggest account
+AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=Cyfrifon rhagosodedig
 MenuBankAccounts=Cyfrifon banc
 MenuVatAccounts=Cyfrifon TAW
@@ -125,6 +127,7 @@ WriteBookKeeping=Cofnodi trafodion mewn cyfrifeg
 Bookkeeping=Cyfriflyfr
 BookkeepingSubAccount=Subledger
 AccountBalance=Balans cyfrif
+AccountBalanceSubAccount=Sub-accounts balance
 ObjectsRef=Ffynhonnell gwrthrych cyf
 CAHTF=Cyfanswm y gwerthwr pryniant cyn treth
 TotalExpenseReport=Adroddiad cyfanswm gwariant
@@ -164,40 +167,45 @@ ACCOUNTANCY_COMBO_FOR_AUX=Galluogi rhestr combo ar gyfer cyfrif atodol (gall fod
 ACCOUNTING_DATE_START_BINDING=Diffinio dyddiad i ddechrau rhwymo a throsglwyddo mewn cyfrifyddiaeth. O dan y dyddiad hwn, ni fydd y trafodion yn cael eu trosglwyddo i gyfrifeg.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
-ACCOUNTING_SELL_JOURNAL=Gwerthu dyddlyfr
-ACCOUNTING_PURCHASE_JOURNAL=Dyddiadur prynu
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Dyddlyfr amrywiol
+ACCOUNTING_SELL_JOURNAL=Sales journal (sales and returns)
+ACCOUNTING_PURCHASE_JOURNAL=Purchase journal (purchase and returns)
+ACCOUNTING_BANK_JOURNAL=Cash journal (receipts and disbursements)
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Cyfnodolyn adroddiad treuliau
-ACCOUNTING_SOCIAL_JOURNAL=Cylchgrawn cymdeithasol
+ACCOUNTING_MISCELLANEOUS_JOURNAL=General journal
 ACCOUNTING_HAS_NEW_JOURNAL=Mae ganddo Newyddiadur newydd
+ACCOUNTING_INVENTORY_JOURNAL=Inventory journal
+ACCOUNTING_SOCIAL_JOURNAL=Cylchgrawn cymdeithasol
 
 ACCOUNTING_RESULT_PROFIT=Cyfrif cyfrifo canlyniad (Elw)
 ACCOUNTING_RESULT_LOSS=Cyfrif cyfrifo canlyniad (Colled)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Dyddiadur cau
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Cyfrif cyfrifo trosglwyddiad banc trosiannol
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account (from the Chart Of Account) to be used as the account for transitional bank transfers
 TransitionalAccount=Cyfrif trosglwyddo banc trosiannol
 
-ACCOUNTING_ACCOUNT_SUSPENSE=Cyfrif cyfrif o aros
-DONATION_ACCOUNTINGACCOUNT=Cyfrif cyfrifo i gofrestru rhoddion
-ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Cyfrif cyfrif i gofrestru tanysgrifiadau
+ACCOUNTING_ACCOUNT_SUSPENSE=Account (from the Chart Of Account) to be used as the account for unallocated funds either received or paid i.e. funds in "wait[ing]"
+DONATION_ACCOUNTINGACCOUNT=Account (from the Chart Of Account) to be used to register donations (Donation module)
+ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Account (from the Chart Of Account) to be used to register memberships subscriptions (Membership module - if membership recorded without invoice)
 
-ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Cyfrif cyfrifo yn ddiofyn i gofrestru blaendal cwsmer
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register customer deposit
 UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
+UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cyfrif cyfrifo yn ddiofyn ar gyfer y cynhyrchion a brynwyd (a ddefnyddir os nad yw wedi'i ddiffinio yn y daflen cynnyrch)
-ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Cyfrif cyfrifo yn ddiofyn ar gyfer y cynhyrchion a brynwyd yn EEC (a ddefnyddir os nad yw wedi'i ddiffinio yn y daflen cynnyrch)
-ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Cyfrif cyfrifo yn ddiofyn ar gyfer y cynhyrchion a brynwyd ac a fewnforiwyd allan o EEC (a ddefnyddir os nad yw wedi'i ddiffinio yn y daflen cynnyrch)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Cyfrif cyfrifo yn ddiofyn ar gyfer y cynhyrchion a werthwyd (a ddefnyddir os nad yw wedi'i ddiffinio yn y daflen cynnyrch)
-ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Cyfrif cyfrifo yn ddiofyn ar gyfer y cynhyrchion a werthir yn EEC (a ddefnyddir os nad yw wedi'i ddiffinio yn y daflen cynnyrch)
-ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Cyfrif cyfrifo yn ddiofyn ar gyfer y cynhyrchion a werthir ac a allforiwyd allan o EEC (a ddefnyddir os nad yw wedi'i ddiffinio yn y daflen cynnyrch)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased and imported from any other foreign country (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the sold products (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products sold from EEC to another EEC country (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products sold and exported to any other foreign country (used if not defined in the product sheet)
 
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Cyfrif cyfrifo yn ddiofyn ar gyfer y gwasanaethau a brynwyd (a ddefnyddir os nad yw wedi'i ddiffinio yn y daflen gwasanaeth)
-ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Cyfrif cyfrifo yn ddiofyn ar gyfer y gwasanaethau a brynwyd yn EEC (a ddefnyddir os nad yw wedi'i ddiffinio yn y daflen gwasanaeth)
-ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Cyfrif cyfrifo yn ddiofyn ar gyfer y gwasanaethau a brynwyd ac a fewnforiwyd allan o EEC (a ddefnyddir os nad yw wedi'i ddiffinio yn y daflen gwasanaeth)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Cyfrif cyfrifo yn ddiofyn ar gyfer y gwasanaethau a werthwyd (a ddefnyddir os nad yw wedi'i ddiffinio yn y daflen gwasanaeth)
-ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Cyfrif cyfrifo yn ddiofyn ar gyfer y gwasanaethau a werthir yn EEC (a ddefnyddir os nad yw wedi'i ddiffinio yn y daflen gwasanaeth)
-ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Cyfrif cyfrifo yn ddiofyn ar gyfer y gwasanaethau a werthwyd ac a allforiwyd allan o EEC (a ddefnyddir os nad yw wedi'i ddiffinio yn y daflen gwasanaeth)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased within same country (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased from EEC to another EEC country (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased and imported from other foreign country (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the sold services (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services sold from EEC to another EEC country (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services sold and exported to any other foreign country (used if not defined in the service sheet)
 
 Doctype=Math o ddogfen
 Docdate=Dyddiad
@@ -212,7 +220,8 @@ Codejournal=Dyddlyfr
 JournalLabel=Label cyfnodolyn
 NumPiece=Rhif y darn
 TransactionNumShort=Rhif. trafodiad
-AccountingCategory=Grŵp personol
+AccountingCategory=Custom group of accounts
+AccountingCategories=Custom groups of accounts
 GroupByAccountAccounting=Grwpio yn ôl cyfrif cyfriflyfr cyffredinol
 GroupBySubAccountAccounting=Grwpio yn ôl cyfrif subledger
 AccountingAccountGroupsDesc=Gallwch ddiffinio yma rai grwpiau o gyfrifon cyfrifeg. Cânt eu defnyddio ar gyfer adroddiadau cyfrifyddu personol.
@@ -260,19 +269,20 @@ ShowSubtotalByGroup=Dangos is-gyfanswm yn ôl lefel
 
 Pcgtype=Grŵp o gyfrifon
 PcgtypeDesc=Defnyddir grŵp cyfrifon fel meini prawf 'hidlo' a 'grwpio' rhagnodedig ar gyfer rhai adroddiadau cyfrifyddu. Er enghraifft, defnyddir 'INCOME' neu 'GREUL' fel grwpiau ar gyfer cyfrifon cyfrifon cynhyrchion i adeiladu'r adroddiad treuliau/incwm.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 
 Reconcilable=Cymodi
 
 TotalVente=Cyfanswm trosiant cyn treth
 TotalMarge=Cyfanswm yr elw gwerthiant
 
-DescVentilCustomer=Ymgynghorwch yma â'r rhestr o linellau anfonebau cwsmeriaid sydd wedi'u rhwymo (neu beidio) i gyfrif cyfrifyddu cynnyrch
-DescVentilMore=Yn y rhan fwyaf o achosion, os ydych chi'n defnyddio cynhyrchion neu wasanaethau wedi'u diffinio ymlaen llaw a'ch bod chi'n gosod rhif y cyfrif ar y cerdyn cynnyrch/gwasanaeth, bydd y cais yn gallu gwneud yr holl rwymiad rhwng llinellau eich anfoneb a chyfrif cyfrifo eich siart o gyfrifon, dim ond yn un clic gyda'r botwm <strong> "%s" </strong> . Os na osodwyd cyfrif ar gardiau cynnyrch/gwasanaeth neu os oes gennych rai llinellau heb eu rhwymo i gyfrif o hyd, bydd yn rhaid i chi wneud rhwymiad â llaw o'r ddewislen " <strong> %s </strong> ".
-DescVentilDoneCustomer=Ymgynghorwch yma â'r rhestr o'r llinellau anfonebau cwsmeriaid a'u cyfrif cyfrifo cynnyrch
-DescVentilTodoCustomer=Rhwymo llinellau anfoneb nad ydynt eisoes wedi'u rhwymo â chyfrif cyfrifyddu cynnyrch
-ChangeAccount=Newidiwch y cyfrif cyfrifo cynnyrch/gwasanaeth ar gyfer llinellau dethol gyda'r cyfrif cyfrifo canlynol:
+DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product account from chart of account
+DescVentilMore=In most cases, if you use predefined products or services and you set the account (from chart of account) on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product account from chart of account
+DescVentilTodoCustomer=Bind invoice lines not already bound with a product account from chart of account
+ChangeAccount=Change the product/service account (from chart of account) for the selected lines with the following account:
 Vide=-
-DescVentilSupplier=Ymgynghorwch yma â'r rhestr o linellau anfonebau gwerthwr sydd wedi'u rhwymo neu heb eu rhwymo eto i gyfrif cyfrifyddu cynnyrch (dim ond cofnod nad yw eisoes wedi'i drosglwyddo mewn cyfrifyddiaeth sydd i'w weld)
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product account from chart of account (only record not already transfered in accountancy are visible)
 DescVentilDoneSupplier=Ymgynghorwch yma â'r rhestr o linellau anfonebau gwerthwyr a'u cyfrif cyfrifyddu
 DescVentilTodoExpenseReport=Rhwymo llinellau adroddiad treuliau nad ydynt eisoes wedi'u rhwymo â chyfrif cyfrifo ffioedd
 DescVentilExpenseReport=Ymgynghorwch yma â'r rhestr o linellau adrodd ar dreuliau sydd wedi'u rhwymo (neu ddim) i gyfrif cyfrifyddu ffioedd
@@ -280,24 +290,25 @@ DescVentilExpenseReportMore=Os ydych chi'n gosod cyfrif cyfrifyddu ar y math o l
 DescVentilDoneExpenseReport=Ymgynghorwch yma â'r rhestr o linellau adroddiadau treuliau a'u cyfrif cyfrifo ffioedd
 
 Closure=Cau blynyddol
-DescClosure=Consult here the number of movements by month who are not yet validated & locked
+DescClosure=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
-ValidateMovements=Dilysu a chloi cofnod...
+ValidateMovements=Validate and lock movements...
 DescValidateMovements=Gwaherddir unrhyw newid neu ddileu ysgrifen, llythrennau a dileadau. Rhaid dilysu pob cynnig ar gyfer ymarfer neu ni fydd cau yn bosibl
 
 ValidateHistory=Rhwymo'n Awtomatig
 AutomaticBindingDone=Cwblhawyd rhwymiadau awtomatig (%s) - Nid yw rhwymo awtomatig yn bosibl ar gyfer rhywfaint o gofnod (%s)
+DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 
-ErrorAccountancyCodeIsAlreadyUse=Gwall, ni allwch ddileu'r cyfrif cyfrifo hwn oherwydd ei fod yn cael ei ddefnyddio
+ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=Cydbwyso
 FicheVentilation=Cerdyn rhwymo
 GeneralLedgerIsWritten=Ysgrifennir trafodion yn y Cyfriflyfr
 GeneralLedgerSomeRecordWasNotRecorded=Ni ellid newyddiadura rhai o'r trafodion. Os nad oes unrhyw neges gwall arall, mae'n debyg mai'r rheswm am hyn yw eu bod eisoes wedi'u newyddiaduron.
 NoNewRecordSaved=Dim mwy o gofnod i'w drosglwyddo
-ListOfProductsWithoutAccountingAccount=Rhestr o gynhyrchion nad ydynt wedi'u rhwymo i unrhyw gyfrif cyfrifyddu
+ListOfProductsWithoutAccountingAccount=List of products not bound to any account of chart of account
 ChangeBinding=Newid y rhwymiad
 Accounted=Cyfrifir yn y cyfriflyfr
 NotYetAccounted=Heb ei drosglwyddo eto i gyfrifeg
@@ -320,9 +331,10 @@ AccountingJournalType1=Gweithrediadau amrywiol
 AccountingJournalType2=Gwerthiant
 AccountingJournalType3=Pryniannau
 AccountingJournalType4=Banc
-AccountingJournalType5=Adroddiad treuliau
+AccountingJournalType5=Expense reports
 AccountingJournalType8=Stocrestr
 AccountingJournalType9=Wedi-newydd
+GenerationOfAccountingEntries=Generation of accounting entries
 ErrorAccountingJournalIsAlreadyUse=Mae'r cyfnodolyn hwn eisoes yn cael ei ddefnyddio
 AccountingAccountForSalesTaxAreDefinedInto=Nodyn: Diffinnir cyfrif cyfrifo ar gyfer treth Gwerthiant yn y ddewislen <b> %s </b> - <b> %s a09a4b73zf
 NumberOfAccountancyEntries=Nifer y cofnodion
@@ -330,10 +342,14 @@ NumberOfAccountancyMovements=Nifer y symudiadau
 ACCOUNTING_DISABLE_BINDING_ON_SALES=Analluogi rhwymo a throsglwyddo cyfrifyddiaeth ar werthiannau (ni fydd anfonebau cwsmeriaid yn cael eu hystyried wrth gyfrifo)
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Analluogi rhwymo a throsglwyddo cyfrifyddiaeth ar bryniannau (ni fydd anfonebau gwerthwr yn cael eu hystyried wrth gyfrifo)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Analluogi rhwymo a throsglwyddo cyfrifon ar adroddiadau treuliau (ni fydd adroddiadau gwariant yn cael eu hystyried wrth gyfrifo)
+ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
 
 ## Export
+NotExportLettering=Do not export the lettering when generating the file
 NotifiedExportDate=Baner llinellau wedi'u hallforio fel Allforiwyd <span class="warning"> (i addasu llinell, bydd angen i chi ddileu'r trafodiad cyfan a'i ail-drosglwyddo i gyfrifeg) </span>
 NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportFull=Export documents ?
 DateValidationAndLock=Dyddiad dilysu a chlo
 ConfirmExportFile=Cadarnhad o gynhyrchu'r ffeil allforio cyfrifo ?
 ExportDraftJournal=Allforio cyfnodolyn drafft
@@ -390,7 +406,7 @@ SaleLocal=Gwerthiant lleol
 SaleExport=Gwerthu allforio
 SaleEEC=Gwerthu yn EEC
 SaleEECWithVAT=Gwerthiant mewn EEC gyda TAW nid nwl, felly mae'n debyg NID yw hwn yn werthiant mewngymunedol a'r cyfrif a awgrymir yw'r cyfrif cynnyrch safonol.
-SaleEECWithoutVATNumber=Gwerthu mewn EEC heb TAW ond nid yw ID TAW trydydd parti wedi'i ddiffinio. Rydym wrth gefn ar y cyfrif cynnyrch ar gyfer gwerthiannau safonol. Gallwch drwsio ID TAW trydydd parti neu gyfrif y cynnyrch os oes angen.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Wedi'i wahardd: Mae'r trafodiad wedi'i ddilysu a/neu ei allforio.
 ForbiddenTransactionAlreadyValidated=Wedi'i wahardd: Mae'r trafodiad wedi'i ddilysu.
 ## Dictionary
@@ -399,7 +415,11 @@ Calculated=Wedi'i gyfrifo
 Formula=Fformiwla
 
 ## Reconcile
+LetteringAuto=Reconcile auto
+LetteringManual=Reconcile manual
 Unlettering=Unreconcile
+UnletteringAuto=Unreconcile auto
+UnletteringManual=Unreconcile manual
 AccountancyNoLetteringModified=No reconcile modified
 AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
 AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
@@ -408,8 +428,9 @@ AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modif
 AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
 
 ## Confirm box
-ConfirmMassUnlettering=Bulk Unreconcile confirmation
-ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
+ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
+ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
 ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
 ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
 
@@ -429,6 +450,7 @@ AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
+ErrorArchiveAddFile=Can't put "%s" file in archive
 
 ## Import
 ImportAccountingEntries=Cofnodion cyfrifeg
@@ -455,6 +477,7 @@ FECFormatMulticurrencyCode=Cod aml-arian (Dyfeisio)
 DateExport=Dyddiad allforio
 WarningReportNotReliable=Rhybudd, nid yw'r adroddiad hwn yn seiliedig ar y Cyfriflyfr, felly nid yw'n cynnwys trafodiad a addaswyd â llaw yn y Cyfriflyfr. Os yw eich cyfnodolyn yn gyfredol, mae'r olwg cadw cyfrifon yn fwy cywir.
 ExpenseReportJournal=Cyfnodolyn Adroddiad Treuliau
-InventoryJournal=Cylchgrawn Stocrestr
+DocsAlreadyExportedAreExcluded=Docs already exported are excluded
+ClickToHideAlreadyExportedLines=Click to hide already exported lines
 
 NAccounts=%s cyfrifon

@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=全Postアクションでロールバック�
 ValidationOfPaymentFailed=支払の検証に失敗した
 CardOwner=カードホルダー
 PayPalBalance=ペイパルクレジット
+OnlineSubscriptionPaymentLine=%s に記録されたオンライン サブスクリプションは、 <br> %s 経由で支払われた <br>送信元IPアドレス: %s<br>トランサクションID: %s

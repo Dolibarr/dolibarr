@@ -9,7 +9,7 @@
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
  * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2021      Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2023 Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ if (isModEnabled('facture')) {
 }
 
 if (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) {
-	print getNumberInvoicesPieChart('fourn');
+	print getNumberInvoicesPieChart('suppliers');
 	print '<br>';
 }
 
@@ -459,7 +459,7 @@ if (isModEnabled('don') && !empty($user->rights->don->lire)) {
 				$donationstatic->ref = $obj->rowid;
 				$donationstatic->lastname = $obj->lastname;
 				$donationstatic->firstname = $obj->firstname;
-				$donationstatic->date = $obj->date;
+				$donationstatic->date = $db->jdate($obj->date);
 				$donationstatic->statut = $obj->status;
 				$donationstatic->status = $obj->status;
 
@@ -487,7 +487,7 @@ if (isModEnabled('don') && !empty($user->rights->don->lire)) {
 				print "</tr>\n";
 			}
 		} else {
-			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table></div><br>';
 	} else {
@@ -742,21 +742,25 @@ if (isModEnabled('facture') && isModEnabled('commande') && $user->hasRight("comm
 
 
 // TODO Mettre ici recup des actions en rapport avec la compta
-$resql = '';
-if ($resql) {
+$sql = '';
+if ($sql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><thcolspan="2">'.$langs->trans("TasksToDo").'</th>';
 	print "</tr>\n";
 	$i = 0;
-	while ($i < $db->num_rows($resql)) {
-		$obj = $db->fetch_object($resql);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num_rows = $db->num_rows($resql);
+		while ($i < $num_rows) {
+			$obj = $db->fetch_object($resql);
 
-		print '<tr class="oddeven"><td>'.dol_print_date($db->jdate($obj->da), "day").'</td>';
-		print '<td><a href="action/card.php">'.$obj->label.'</a></td></tr>';
-		$i++;
+			print '<tr class="oddeven"><td>'.dol_print_date($db->jdate($obj->da), "day").'</td>';
+			print '<td><a href="action/card.php">'.$obj->label.'</a></td></tr>';
+			$i++;
+		}
+		$db->free($resql);
 	}
-	$db->free($resql);
 	print "</table></div><br>";
 }
 

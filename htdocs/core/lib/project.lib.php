@@ -569,9 +569,10 @@ function project_admin_prepare_head()
  * @param   string      $filterprogresscalc     filter text
  * @param   string      $showbilltime           Add the column 'TimeToBill' and 'TimeBilled'
  * @param   array       $arrayfields            Array with displayed coloumn information
+ * @param   array       $arrayofselected        Array with selected fields
  * @return	int									Nb of tasks shown
  */
-function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId = '', $addordertick = 0, $projectidfortotallink = 0, $filterprogresscalc = '', $showbilltime = 0, $arrayfields = array())
+function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId = '', $addordertick = 0, $projectidfortotallink = 0, $filterprogresscalc = '', $showbilltime = 0, $arrayfields = array(), $arrayofselected = array())
 {
 	global $user, $langs, $conf, $db, $hookmanager;
 	global $projectstatic, $taskstatic, $extrafields;
@@ -909,6 +910,16 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Tick to drag and drop
 				print '<td class="tdlineupdown center"></td>';
+
+				// Action column
+				print '<td class="nowrap" align="center">';
+				$selected = 0;
+				if (in_array($lines[$i]->id, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb' . $lines[$i]->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $lines[$i]->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
+
+				print '</td>';
 
 				print "</tr>\n";
 
@@ -1624,8 +1635,10 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 				// Duration
 				print '<td class="center duration'.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">';
-				$dayWorkLoad = !empty($projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id]) ? $projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id] : 0;
-				if (!isset($totalforeachday[$preselectedday])) $totalforeachday[$preselectedday] = 0;
+				$dayWorkLoad = empty($projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id]) ? 0 : $projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id];
+				if (!isset($totalforeachday[$preselectedday])) {
+					$totalforeachday[$preselectedday] = 0;
+				}
 				$totalforeachday[$preselectedday] += $dayWorkLoad;
 
 				$alreadyspent = '';
@@ -2854,13 +2867,13 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 		// good
 		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.floatval($task->progress).'%" title="'.floatval($task->progress).'%">';
 		if (!empty($task->progress)) {
-			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.floatval($progressCalculated / $task->progress * 100).'%" title="'.floatval($progressCalculated).'%"></div>';
+			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.floatval($progressCalculated / (floatval($task->progress) === 0 ? 1 : $task->progress) * 100).'%" title="'.floatval($progressCalculated).'%"></div>';
 		}
 		$out .= '        </div>';
 	} else {
 		// bad
 		$out .= '        <div class="progress-bar progress-bar-consumed-late" style="width: '.floatval($progressCalculated).'%" title="'.floatval($progressCalculated).'%">';
-		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.($task->progress ? floatval($task->progress / $progressCalculated * 100).'%' : '1px').'" title="'.floatval($task->progress).'%"></div>';
+		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.($task->progress ? floatval($task->progress / (floatval($progressCalculated) === 0 ? 1 : $progressCalculated) * 100).'%' : '1px').'" title="'.floatval($task->progress).'%"></div>';
 		$out .= '        </div>';
 	}
 	$out .= '    </div>';

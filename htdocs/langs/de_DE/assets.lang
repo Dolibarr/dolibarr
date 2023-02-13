@@ -16,7 +16,7 @@
 #
 # Generic
 #
-NewAsset=neue Anlage
+NewAsset=Neues Anlagegut
 AccountancyCodeAsset=Buchungskonto (Anlagegut)
 AccountancyCodeDepreciationAsset=Buchungskonto (Abschreibung auf Anlagegut)
 AccountancyCodeDepreciationExpense=Buchungskonto (Aufwendungen für Abschreibungen)
@@ -48,7 +48,7 @@ ASSET_ACCOUNTANCY_CATEGORY=Kontengruppe für Anlagevermögen
 # Menu
 #
 MenuAssets=Anlagen
-MenuNewAsset=neue Anlage
+MenuNewAsset=Neues Anlagegut
 MenuAssetModels=Modell für Vermögenswerte
 MenuListAssets=Liste
 MenuNewAssetModel=Neues Modell für Vermögenswerte
@@ -63,14 +63,14 @@ ConfirmDeleteAsset=Möchten Sie diesen Vermögenswert wirklich entfernen?
 # Tab
 #
 AssetDepreciationOptions=Abschreibungsmöglichkeiten
-AssetAccountancyCodes=Buchhaltungskonten
+AssetAccountancyCodes=Buchungskonten
 AssetDepreciation=Abschreibung
 
 #
 # Asset
 #
 Asset=Anlagegut
-Assets=Ressourcen / Anlagen
+Assets=Anlagen/Vermögenswerten
 AssetReversalAmountHT=Stornobetrag (ohne Steuern)
 AssetAcquisitionValueHT=Anschaffungsbetrag (ohne Steuern)
 AssetRecoveredVAT=Zurückerstattete USt.
@@ -80,7 +80,7 @@ AssetDateStart=Datum der Inbetriebnahme
 AssetAcquisitionType=Art des Erwerbs
 AssetAcquisitionTypeNew=Neu
 AssetAcquisitionTypeOccasion=Gebraucht
-AssetType=Art des Vermögenswertes
+AssetType=Art des Anlageguts
 AssetTypeIntangible=Immateriell
 AssetTypeTangible=Materiell
 AssetTypeInProgress=in Bearbeitung
@@ -109,8 +109,8 @@ AssetDisposalSubjectToVat=Abgang USt.-pflichtig
 #
 # Asset model
 #
-AssetModel=Modell des Vermögenswerts
-AssetModels=Modelle des Vermögenswerts
+AssetModel=Modell des Anlageguts
+AssetModels=Modelle der Anlagegüter
 
 #
 # Asset depreciation options
@@ -140,7 +140,7 @@ AssetAccountancyCodeDepreciationEconomic=Wirtschaftliche Abschreibung
 AssetAccountancyCodeAsset=Anlagegut
 AssetAccountancyCodeDepreciationAsset=Abschreibung
 AssetAccountancyCodeDepreciationExpense=Abschreibungsaufwand
-AssetAccountancyCodeValueAssetSold=Wert des abgegangenen Vermögenswerts
+AssetAccountancyCodeValueAssetSold=Wert des abgegangenen Anlageguts
 AssetAccountancyCodeReceivableOnAssignment=Forderung bei Abgang
 AssetAccountancyCodeProceedsFromSales=Erlös aus Abgang
 AssetAccountancyCodeVatCollected=Eingenommene USt.
@@ -168,10 +168,10 @@ AssetDepreciationReversal=Umkehrung
 #
 # Errors
 #
-AssetErrorAssetOrAssetModelIDNotProvide=Die ID des Vermögenswertes oder das Modell wurde nicht bereitgestellt
-AssetErrorFetchAccountancyCodesForMode=Fehler beim Abrufen der Buchhaltungskonten für den Abschreibungsmodus '%s'
-AssetErrorDeleteAccountancyCodesForMode=Fehler beim Löschen von Buchhaltungskonten aus dem Abschreibungsmodus '%s'
-AssetErrorInsertAccountancyCodesForMode=Fehler beim Einfügen der Buchhaltungskonten des Abschreibungsmodus '%s'
+AssetErrorAssetOrAssetModelIDNotProvide=Die ID des Anlageguts oder das Modell wurde nicht bereitgestellt
+AssetErrorFetchAccountancyCodesForMode=Fehler beim Abrufen der Buchungskonten für den Abschreibungsmodus '%s'
+AssetErrorDeleteAccountancyCodesForMode=Fehler beim Löschen von Buchungskonten aus dem Abschreibungsmodus '%s'
+AssetErrorInsertAccountancyCodesForMode=Fehler beim Einfügen der Buchungskonten des Abschreibungsmodus '%s'
 AssetErrorFetchDepreciationOptionsForMode=Fehler beim Abrufen von Optionen für den Abschreibungsmodus „%s“.
 AssetErrorDeleteDepreciationOptionsForMode=Fehler beim Löschen der Optionen des Abschreibungsmodus '%s'
 AssetErrorInsertDepreciationOptionsForMode=Fehler beim Einfügen der Optionen des Abschreibungsmodus '%s'

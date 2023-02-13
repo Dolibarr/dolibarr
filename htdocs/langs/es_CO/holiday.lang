@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - holiday
-Holidays=Salir
+Holidays=Sale de
 CPTitreMenu=Salir
 MenuAddCP=Nueva solicitud de licencia
 NotActiveModCP=Debe habilitar el módulo Salir para ver esta página.

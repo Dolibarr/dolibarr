@@ -235,7 +235,7 @@ class Conf
 
 		// Common arrays
 		$this->cache = array();
-		$this->modules = array();;
+		$this->modules = array();
 		$this->modules_parts = array(
 			'css' => array(),
 			'js' => array(),
@@ -499,9 +499,9 @@ class Conf
 			// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
 
 			// Sous module bons d'expedition
-			$this->expedition_bon->enabled = (!empty($this->global->MAIN_SUBMODULE_EXPEDITION) ? $this->global->MAIN_SUBMODULE_EXPEDITION : 0);
+			$this->expedition_bon->enabled = (empty($this->global->MAIN_SUBMODULE_EXPEDITION) ? 0 : $this->global->MAIN_SUBMODULE_EXPEDITION);
 			// Sub module delivery note  Sous module bons de livraison
-			$this->delivery_note->enabled = (!empty($this->global->MAIN_SUBMODULE_DELIVERY) ? $this->global->MAIN_SUBMODULE_DELIVERY : 0);
+			$this->delivery_note->enabled = (empty($this->global->MAIN_SUBMODULE_DELIVERY) ? 0 : $this->global->MAIN_SUBMODULE_DELIVERY);
 
 			// Module fournisseur
 			if (!empty($this->fournisseur)) {
@@ -783,6 +783,11 @@ class Conf
 			// By default, use an enclosure " for field with CRL or LF into content, + we also remove also CRL/LF chars.
 			if (!isset($this->global->USE_STRICT_CSV_RULES)) {
 				$this->global->USE_STRICT_CSV_RULES = 2;
+			}
+
+			// By default, option is on. Once set by user, this code is useless
+			if (!isset($this->global->ACCOUNTING_REEXPORT)) {
+				$this->global->ACCOUNTING_REEXPORT = 1;
 			}
 
 			// Use a SCA ready workflow with Stripe module (STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION by default if nothing defined)

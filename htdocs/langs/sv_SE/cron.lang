@@ -26,7 +26,7 @@ CronCommand=Kommando
 CronList=Schemalagda jobb
 CronDelete=Radera schemalagda jobb
 CronConfirmDelete=Är du säker på att du vill ta bort dessa schemalagda jobb?
-CronExecute=Starta planerat jobb
+CronExecute=Kör nu
 CronConfirmExecute=Är du säker på att du vill utföra dessa schemalagda jobb nu?
 CronInfo=Schemalagd arbetsmodul gör det möjligt att schemalägga jobb för att utföra dem automatiskt. Jobb kan också startas manuellt.
 CronTask=Jobb
@@ -58,7 +58,7 @@ CronNote=Kommentar
 CronFieldMandatory=Fält %s är obligatoriskt
 CronErrEndDateStartDt=Slutdatum kan inte vara före startdatum
 StatusAtInstall=Status vid modulinstallation
-CronStatusActiveBtn=Schemalägg
+CronStatusActiveBtn=Aktivera schemaläggning
 CronStatusInactiveBtn=Inaktivera
 CronTaskInactive=Detta arbete är inaktiverat (ej schemalagt)
 CronId=Id
@@ -82,10 +82,19 @@ UseMenuModuleToolsToAddCronJobs=Gå till menyn "<a href="%s">Hem - Adminverktyg 
 JobDisabled=Jobb inaktiverat
 MakeLocalDatabaseDumpShort=Lokal databas säkerhetskopia
 MakeLocalDatabaseDump=Skapa en lokal databasdump. Parametrarna är: komprimering ('gz' eller 'bz' eller 'none'), säkerhetskopieringstyp ('mysql', 'pgsql', 'auto'), 1, 'auto' eller filnamn att bygga, antal backupfiler för att hålla
+MakeSendLocalDatabaseDumpShort=Skicka säkerhetskopiering av lokal databas
+MakeSendLocalDatabaseDump=Skicka säkerhetskopiering av lokal databas via e-post. Parametrarna är: till, från, ämne, meddelande, filnamn (namn på fil som skickades), filter ('sql' endast för säkerhetskopiering av databas)
+BackupIsTooLargeSend=Tyvärr, den senaste säkerhetskopian är för stor för att skickas med e-post
+CleanUnfinishedCronjobShort=Städa oavslutat cronjob
+CleanUnfinishedCronjob=Rensa cronjob som har fastnat i bearbetningen när processen inte längre körs
 WarningCronDelayed=Uppmärksamhet, för prestationsändamål, vad som än är nästa datum för utförande av aktiverade jobb, kan dina jobb försenas till högst %s timmar innan de körs.
 DATAPOLICYJob=Resning och anonymisering av data
 JobXMustBeEnabled=Jobb %s måste vara aktiverat
+EmailIfError=E-post för varning vid fel
+ErrorInBatch=Fel vid körning av jobbet %s
+
 # Cron Boxes
 LastExecutedScheduledJob=Senast utfört schemalagda arbete
 NextScheduledJobExecute=Nästa schemalagda arbete att köra
 NumberScheduledJobError=Antal schemalagda arbete med fel
+NumberScheduledJobNeverFinished=Antal schemalagda jobb aldrig avslutade

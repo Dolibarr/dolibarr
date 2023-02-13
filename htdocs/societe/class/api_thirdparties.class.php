@@ -524,7 +524,7 @@ class Thirdparties extends DolibarrApi
 	 * Delete thirdparty
 	 *
 	 * @param int $id   Thirdparty ID
-	 * @return integer
+	 * @return array
 	 */
 	public function delete($id)
 	{
@@ -1354,7 +1354,7 @@ class Thirdparties extends DolibarrApi
 	 * @param int 		$id 			Thirdparty id
 	 * @param int 		$companybankid 	Companybank id
 	 * @param string 	$model 			Model of document to generate
-	 * @return void
+	 * @return array
 	 *
 	 * @url GET {id}/generateBankAccountDocument/{companybankid}/{model}
 	 */
@@ -1375,6 +1375,7 @@ class Thirdparties extends DolibarrApi
 		$this->company->setDocModel(DolibarrApiAccess::$user, $model);
 
 		$this->company->fk_bank = $this->company->fk_account;
+		$this->company->fk_account = $this->company->fk_account;
 
 		$outputlangs = $langs;
 		$newlang = '';
@@ -1824,16 +1825,6 @@ class Thirdparties extends DolibarrApi
 		unset($object->thirdparty);
 
 		unset($object->fk_delivery_address); // deprecated feature
-
-		unset($object->skype);
-		unset($object->twitter);
-		unset($object->facebook);
-		unset($object->linkedin);
-		unset($object->instagram);
-		unset($object->snapchat);
-		unset($object->googleplus);
-		unset($object->youtube);
-		unset($object->whatsapp);
 
 		return $object;
 	}

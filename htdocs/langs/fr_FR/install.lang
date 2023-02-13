@@ -214,3 +214,4 @@ Loaded=Chargé
 FunctionTest=Fonction test
 NodoUpgradeAfterDB=Aucune action demandée par les modules externes après la mise à jour de la base de données
 NodoUpgradeAfterFiles=Aucune action demandée par les modules externes après la mise à jour des fichiers ou des répertoires
+MigrationContractLineRank=Migrer la ligne de contrat pour utiliser le classement (et activer la réorganisation)

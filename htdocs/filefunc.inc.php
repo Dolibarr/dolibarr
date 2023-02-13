@@ -138,10 +138,10 @@ if (!empty($dolibarr_main_prod)) {
 }
 
 // Clean parameters
-$dolibarr_main_data_root = trim($dolibarr_main_data_root);
-$dolibarr_main_url_root = trim(preg_replace('/\/+$/', '', $dolibarr_main_url_root));
+$dolibarr_main_data_root = (empty($dolibarr_main_data_root) ? '' : trim($dolibarr_main_data_root));
+$dolibarr_main_url_root = trim(preg_replace('/\/+$/', '', empty($dolibarr_main_url_root) ? '' : $dolibarr_main_url_root));
 $dolibarr_main_url_root_alt = (empty($dolibarr_main_url_root_alt) ? '' : trim($dolibarr_main_url_root_alt));
-$dolibarr_main_document_root = trim($dolibarr_main_document_root);
+$dolibarr_main_document_root = (empty($dolibarr_main_document_root) ? '' : trim($dolibarr_main_document_root));
 $dolibarr_main_document_root_alt = (empty($dolibarr_main_document_root_alt) ? '' : trim($dolibarr_main_document_root_alt));
 
 if (empty($dolibarr_main_db_port)) {
@@ -206,7 +206,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 // when we post forms (we allow GET and HEAD to accept direct link from a particular page).
 // Note about $_SERVER[HTTP_HOST/SERVER_NAME]: http://shiflett.org/blog/2006/mar/server-name-versus-http-host
 // See also CSRF protections done into main.inc.php
-if (!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck)) {
+if (!defined('NOCSRFCHECK') && isset($dolibarr_nocsrfcheck) && $dolibarr_nocsrfcheck == 1) {    // If $dolibarr_nocsrfcheck is 0, there is a strict CSRF test with token in main
 	if (!empty($_SERVER['REQUEST_METHOD']) && !in_array($_SERVER['REQUEST_METHOD'], array('GET', 'HEAD')) && !empty($_SERVER['HTTP_HOST'])) {
 		$csrfattack = false;
 		if (empty($_SERVER['HTTP_REFERER'])) {

@@ -58,7 +58,7 @@ if ($action == 'setMEMBER_ENABLE_PUBLIC') {
 if ($action == 'update') {
 	$public = GETPOST('MEMBER_ENABLE_PUBLIC');
 	$amount = price2num(GETPOST('MEMBER_NEWFORM_AMOUNT'), 'MT', 2);
-	$editamount = GETPOST('MEMBER_NEWFORM_EDITAMOUNT');
+	$minamount = GETPOST('MEMBER_MIN_AMOUNT');
 	$publiccounters = GETPOST('MEMBER_COUNTERS_ARE_PUBLIC');
 	$payonline = GETPOST('MEMBER_NEWFORM_PAYONLINE');
 	$forcetype = GETPOST('MEMBER_NEWFORM_FORCETYPE', 'int');
@@ -66,7 +66,7 @@ if ($action == 'update') {
 
 	$res = dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT", $amount, 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_EDITAMOUNT", $editamount, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "MEMBER_MIN_AMOUNT", $minamount, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_COUNTERS_ARE_PUBLIC", $publiccounters, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE", $payonline, 'chaine', 0, '', $conf->entity);
 	if ($forcetype < 0) {
@@ -178,7 +178,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';
 	if (isModEnabled('multicompany')) {
-		$entity_qr = '?entity='.$conf->entity;
+		$entity_qr = '?entity='.((int) $conf->entity);
 	} else {
 		$entity_qr = '';
 	}
@@ -232,11 +232,11 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print '<input type="text" class="right width50" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" value="'.(!empty($conf->global->MEMBER_NEWFORM_AMOUNT) ? $conf->global->MEMBER_NEWFORM_AMOUNT : '').'">';
 	print "</td></tr>\n";
 
-	// Can edit
+	// Min amount
 	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("CanEditAmountDetail");
+	print $langs->trans("MinimumAmount");
 	print '</td><td>';
-	print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT", (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) ? $conf->global->MEMBER_NEWFORM_EDITAMOUNT : 0), 1);
+	print '<input type="text" class="right width50" id="MEMBER_MIN_AMOUNT" name="MEMBER_MIN_AMOUNT" value="'.(!empty($conf->global->MEMBER_MIN_AMOUNT) ? $conf->global->MEMBER_MIN_AMOUNT : '').'">';
 	print "</td></tr>\n";
 
 	// SHow counter of validated members publicly

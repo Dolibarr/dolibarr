@@ -93,6 +93,10 @@ if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL
 }
 
+if (GETPOSTISSET('THEME_DARKMODEENABLED')) {
+	$conf->global->THEME_DARKMODEENABLED = GETPOST('THEME_DARKMODEENABLED', 'int'); // If darkmode was forced on URL
+}
+
 $langs->load("main", 0, 1);
 $right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
 $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
@@ -320,7 +324,9 @@ print '*/'."\n";
 	--colorbacklinebreak: rgb(<?php print $colorbacklinebreak; ?>);
 	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
 	--colorbackmobilemenu: #f8f8f8;
+	--colorbackgrey: #f0f0f0;
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
+	--colortexttitlenotab2: rgb(<?php print $colortexttitlenotab2; ?>);
 	--colortexttitle: rgb(<?php print $colortexttitle; ?>);
 	--colortexttitlelink: rgba(<?php print $colortexttitlelink; ?>, 0.9);
 	--colortext: rgb(<?php print $colortext; ?>);
@@ -330,6 +336,8 @@ print '*/'."\n";
 	--colortopbordertitle1: rgb(<?php print $colortopbordertitle1; ?>);
 	--listetotal: #551188;
 	--inputbackgroundcolor: #FFF;
+	--inputbackgroundcolordisabled: #eee;
+	--inputcolordisabled: rgb(80, 80, 80);
 	--inputbordercolor: rgba(0,0,0,.2);
 	--tooltipbgcolor: <?php print $toolTipBgColor; ?>;
 	--tooltipfontcolor : <?php print $toolTipFontColor; ?>;
@@ -347,17 +355,79 @@ print '*/'."\n";
 	--productlinestockod: #002200;
 	--productlinestocktoolow: #884400;
 	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
+	--tablevalidbgcolor: rgb(252, 248, 227);
 	--butactionbg : #<?php print $butactionbg; ?>;
 	--textbutaction : #<?php print $textbutaction; ?>;
+	--colorblack: #000;
+	--colorwhite: #fff;
 }
+
+<?php
+if (!empty($conf->global->THEME_DARKMODEENABLED)) {
+	print "/* For dark mode */\n";
+	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
+	} else {
+		print "@media not print {";
+	}
+	print ":root {
+	            --colorbackhmenu1: #3d3e40;
+	            --colorbackvmenu1: #2b2c2e;
+	            --colorbacktitle1: #2b2d2f;
+	            --colorbacktabcard1: #1d1e20;				/* Must be same than colorbackbody */
+	            --colorbacktabactive: rgb(220,220,220);
+	            --colorbacklineimpair1: #38393d;
+	            --colorbacklineimpair2: #2b2d2f;
+	            --colorbacklinepair1: #38393d;
+	            --colorbacklinepair2: #2b2d2f;
+	            --colorbacklinepairhover: #2b2d2f;
+	            --colorbacklinepairchecked: #0e5ccd;
+	            --colorbackbody: #1d1e20;
+				--colorbackmobilemenu: #080808;
+				--colorbackgrey: #0f0f0f;
+	            --tooltipbgcolor: #2b2d2f;
+	            --colortexttitlenotab: rgb(220,220,220);
+	            --colortexttitlenotab2: rgb(220,220,220);
+	            --colortexttitle: rgb(220,220,220);
+	            --colortext: rgb(220,220,220);
+	            --colortextlink: #4390dc;
+	            --colortexttitlelink: #4390dc;
+	            --colortextbackhmenu: rgb(220,220,220);
+	            --colortextbackvmenu: rgb(220,220,220);
+				--tooltipfontcolor : rgb(220,220,220);
+	            --listetotal: rgb(245, 83, 158);
+	            --inputbackgroundcolor: rgb(70, 70, 70);
+				--inputbackgroundcolordisabled: rgb(60, 60, 60);
+				--inputcolordisabled: rgb(140, 140, 140);
+	            --inputbordercolor: rgb(220,220,220);
+	            --oddevencolor: rgb(220,220,220);
+	            --colorboxstatsborder: rgb(65,100,138);
+	            --dolgraphbg: #1d1e20;
+	            --fieldrequiredcolor: rgb(250,183,59);
+	            --colortextbacktab: rgb(220,220,220);
+	            --colorboxiconbg: rgb(36,38,39);
+	            --refidnocolor: rgb(220,220,220);
+	            --tableforfieldcolor:rgb(220,220,220);
+	            --amountremaintopaycolor:rgb(252,84,91);
+	            --amountpaymentcomplete:rgb(101,184,77);
+	            --amountremaintopaybackcolor:rbg(245,130,46);
+				--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #000, #000, #000, #274231);
+				--tablevalidbgcolor: rgb(80, 64, 33);
+				--colorblack: #fff;
+				--colorwhite: #000;
+	      }
+
+		body, button {
+			color: #bbb;
+		}\n
+	}\n";
+}
+?>
 
 body {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 	background-color: #FFFFFF;
-<?php } else { ?>
-	background: var(--colorbackbody);
 <?php } ?>
-	color: rgb(<?php echo $colortext; ?>);
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize; ?>;
 	line-height: 1.4;
 	font-family: <?php print $fontlist ?>;
@@ -365,9 +435,12 @@ body {
 	margin-bottom: 0;
 	margin-right: 0;
 	margin-left: 0;
+	font-weight: 400;
+	background-color: var(--colorbackbody);
 	<?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
+/* Style used to protect html content in output to avoid attack by replacing full page with js content */
 .sensiblehtmlcontent * {
 	position: static !important;
 }
@@ -376,16 +449,18 @@ body {
 th a { font-weight: <?php echo ($useboldtitle ? 'bold' : 'normal'); ?> !important; }
 a.tab { font-weight: 500 !important; }
 
-a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: normal; color: rgb(<?php print $colortextlink; ?>); text-decoration: none;  }
-a:hover { text-decoration: underline; color: rgb(<?php print $colortextlink; ?>); }
-a.commonlink { color: rgb(<?php print $colortextlink; ?>) !important; text-decoration: none; }
+a:link, a:visited, a:hover, a:active, .classlink { font-family: <?php print $fontlist ?>; font-weight: normal; color: var(--colortextlink); text-decoration: none;  }
+a:hover { text-decoration: underline; color: var(--colortextlink); }
+a.commonlink { color: var(--colortextlink) !important; text-decoration: none; }
 
 input {
 	font-size: unset;
 }
+/*
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	background-color: #FDFDFD;
 }
+*/
 select.vmenusearchselectcombo {
 	background-color: unset;
 }
@@ -410,6 +485,11 @@ th.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch), td.wrapcolumntitle.list
 	max-width: 120px;
 	text-overflow: ellipsis;
 }
+th.wrapcolumntitle dl dt a span.fas.fa-list {
+	padding-bottom: 1px;
+	vertical-align: bottom;
+}
+
 .liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
 .liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month],
 .liste_titre input[name=month_lim], .liste_titre input[name=month_start], .liste_titre input[name=month_end], .liste_titre input[name=month_create],
@@ -427,11 +507,16 @@ select#date_startday, select#date_startmonth, select#date_endday, select#date_en
 	margin-right: 4px;
 }
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
-	font-family: <?php print $fontlist ?>;
+	color: var(--colortext);
 	border: none;
 	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	font-family: <?php print $fontlist ?>;
 	outline: none;
 	margin: 0px 0px 0px 0px;
+	background-color: var(--inputbackgroundcolor);
+	<?php if (empty($conf->global->THEME_ADD_BACKGROUND_ON_INPUT)) { ?>
+		border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	<?php } ?>
 }
 
 input {
@@ -452,7 +537,7 @@ input, select {
 }
 #mainbody input.button:not(.buttongen):not(.bordertransp), #mainbody a.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
-	color: var(--textbutaction)!important;
+	color: var(--textbutaction) !important;
 	border-radius: 3px;
 	border-collapse: collapse;
 	border: none;
@@ -564,11 +649,6 @@ input.buttonpaymentcb {
 	background-repeat: no-repeat;
 	background-position: 5px 4px;
 }
-input.buttonpaymentcheque {
-	background-image: url(<?php echo dol_buildpath($path.'/paypal/img/object_paypal.png', 1) ?>);
-	background-repeat: no-repeat;
-	background-position: 5px 4px;
-}
 input.buttonpaymentpaypal {
 	background-image: url(<?php echo dol_buildpath($path.'/paypal/img/object_paypal.png', 1) ?>);
 	background-repeat: no-repeat;
@@ -616,6 +696,12 @@ td.onholidayallday {
 td.onholidayallday:not(.weekend) input {
 	background-color: #f8f7f0;
 }
+td.weekend {	/* must be after td.onholidayallday */
+	background-color: #eee;
+}
+td.weekend input {
+	background-color: #f8f8f8;
+}
 td.leftborder, td.hide0 {
 	border-left: 1px solid #ccc;
 }
@@ -624,12 +710,6 @@ td.leftborder, td.hide6 {
 }
 td.rightborder {
 	border-right: 1px solid #ccc;
-}
-td.weekend {	/* must be after td.onholidayallday */
-	background-color: #eee;
-}
-td.weekend input {
-	background-color: #f8f8f8;
 }
 
 
@@ -672,10 +752,13 @@ input.pageplusone, .divadvancedsearchfieldcompinput, {
 	opacity: 0;
 }
 .colorwhite {
-	color: #fff;
+	color: var(--colorwhite);
+}
+.colorgrey {
+	color: #888 !important;
 }
 .colorblack {
-	color: #000;
+	color: var(--colorblack);
 }
 .fontsizeunset {
 	font-size: unset !important;
@@ -688,12 +771,13 @@ input.pageplusone, .divadvancedsearchfieldcompinput, {
 	transform: scale(-1, 1);
 }
 
-select:invalid {
+select:invalid, select.--error {
 	color: gray;
 }
 input:disabled, textarea:disabled, select[disabled='disabled']
 {
-	background:#eee;
+	background: var(--inputbackgroundcolordisabled);
+	color: var(--inputcolordisabled);
 }
 
 input.liste_titre {
@@ -708,7 +792,7 @@ input.removedfile {
 	vertical-align: text-bottom;
 }
 
-input[type=file ]    { background-color: transparent; border-top: none; border-left: none; border-right: none; box-shadow: none; }
+input[type=file]     { background-color: transparent; border-top: none; border-left: none; border-right: none; box-shadow: none; }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; vertical-align: middle; }
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; vertical-align: middle; }
 input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
@@ -740,6 +824,12 @@ fieldset {
 .legendforfieldsetstep { padding-bottom: 10px; }
 input#onlinepaymenturl, input#directdownloadlink {
 	opacity: 0.7;
+}
+
+.formconsumeproduce {
+	background: #f3f3f3;
+	padding: 20px 0px 0px 0px;
+	border-radius: 8px;
 }
 
 div#moretabsList, div#moretabsListaction {
@@ -789,7 +879,7 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
-.button:hover, .buttonDelete:hover   {
+.button:hover:not(.nohover), .buttonDelete:hover:not(.nohover)   {
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
@@ -808,7 +898,7 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 }
 .button_search, .button_removefilter {
 	border: unset;
-	background: unset;
+	background-color: unset;
 }
 .button_search:hover, .button_removefilter:hover {
 	cursor: pointer;
@@ -816,6 +906,9 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 form {
 	padding:0px;
 	margin:0px;
+}
+form#addproduct {
+	padding-top: 10px;
 }
 div.float, span.floatleft
 {
@@ -838,6 +931,9 @@ div.floatright
 }
 button:focus {
 	outline: none;
+}
+.fa-info-circle {
+	padding-<?php echo $left; ?>: 3px;
 }
 .line-height-large {
 	line-height: 1.8em;
@@ -869,6 +965,9 @@ th .button {
 .centpercent {
 	width: 100%;
 }
+.centpercentwithoutmenu {
+	width: calc(100% - 200px);
+}
 .quatrevingtpercent, .inputsearch {
 	width: 80%;
 }
@@ -881,17 +980,20 @@ th .button {
 .quatrevingtquinzepercent {
 	width: 95%;
 }
-textarea.centpercent {
-	width: 96%;
-}
 .quatrevingtpercentminusx {
 	width: calc(80% - 52px);
+}
+textarea.centpercent {
+	width: 96%;
 }
 .small, small {
 	font-size: 85%;
 }
 .large {
 	font-size: 125%;
+}
+.double {
+	font-size: 2em;
 }
 
 .h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small {
@@ -973,6 +1075,9 @@ textarea.centpercent {
 .nobold {
 	font-weight: normal !important;
 }
+.uppercase {
+	text-transform: uppercase;
+}
 .nounderline {
 	text-decoration: none;
 }
@@ -1018,6 +1123,18 @@ textarea.centpercent {
 .paddingright2imp {
 	padding-<?php print $right; ?>: 2px !important;
 }
+.paddingtop {
+	padding-top: 4px;
+}
+.paddingtop2 {
+	padding-top: 2px;
+}
+.paddingbottom {
+	padding-bottom: 4px;
+}
+.paddingbottom2 {
+	padding-bottom: 2px;
+}
 .marginleft2 {
 	margin-<?php print $left; ?>: 2px;
 }
@@ -1030,17 +1147,8 @@ textarea.centpercent {
 .nomarginright {
 	margin-<?php print $right; ?>: unset;
 }
-.paddingtop {
-	padding-top: 4px;
-}
-.paddingtop2 {
-	padding-top: 2px;
-}
-.paddingbottom {
-	padding-bottom: 4px;
-}
-.paddingbottom2 {
-	padding-bottom: 2px;
+.nowidthimp {
+	width: unset !important;
 }
 
 .cursordefault {
@@ -1055,11 +1163,11 @@ textarea.centpercent {
 .cursormove {
 	cursor: move;
 }
-.cursorwait {
-	cursor: wait;
-}
 .cursornotallowed {
 	cursor: not-allowed;
+}
+.cursorwait {
+	cursor: wait;
 }
 .backgroundblank {
 	background-color: #fff;
@@ -1070,6 +1178,12 @@ textarea.centpercent {
 .checkboxattachfilelabel {
 	font-size: 0.85em;
 	opacity: 0.7;
+}
+.borderimp {
+	border: 1px solid #888 !important;
+}
+.text-warning{
+	color : <?php print $textWarning; ?>
 }
 .longmessagecut {
 	max-height: 250px;
@@ -1090,9 +1204,6 @@ div.urllink, div.urllink a {
 	color: #339 !important;
 }
 
-.fa-info-circle {
-	padding-<?php echo $left; ?>: 3px;
-}
 i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender::before  {
 	color: #888 !important;
 	opacity: 0.4;
@@ -1129,21 +1240,16 @@ body[class*="colorblind-"] .text-success{
 	color : <?php print $textDanger; ?>
 }
 
-.editfielda span.fa-pencil-alt, .editfielda span.fa-trash {
+.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop,
+.editfieldlang {
 	color: #ccc !important;
 }
-.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-trash:hover {
+.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-pencil-ruler:hover, .editfielda span.fa-trash:hover, .editfielda span.fa-crop:hover,
+.editfieldlang:hover {
 	color: var(--colortexttitle) !important;
 }
 a.editfielda.nohover *:hover:before {
 	color: #ccc !important;
-}
-
-.size15x { font-size: 1.5em !important; }
-.fa-toggle-on, .fa-toggle-off, .size2x { font-size: 2em; }
-.websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
-.asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off {
-	font-size: 1.5em; vertical-align: text-bottom;
 }
 
 .fawidth30 {
@@ -1151,6 +1257,27 @@ a.editfielda.nohover *:hover:before {
 }
 .floatnone {
 	float: none !important;
+}
+
+span.fa.fa-plus-circle.paddingleft {
+	padding-right: 4px;
+	padding-top: 3px;
+	padding-bottom: 2px;
+}
+
+.size15x { font-size: 1.5em !important; }
+.fa-toggle-on, .fa-toggle-off, .size2x { font-size: 2em; }
+.websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
+.asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off,
+.tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off {
+	font-size: 1.5em; vertical-align: text-bottom;
+}
+
+.divoverflow {
+	overflow: hidden;
+	white-space: nowrap;
+	vertical-align: middle;
+	text-overflow: ellipsis;
 }
 
 
@@ -1388,8 +1515,14 @@ select.flat.selectlimit {
 .margintoponly {
 	margin-top: 10px !important;
 }
+.margintoponlyshort {
+	margin-top: 3px !important;
+}
 .marginbottomonly {
 	margin-bottom: 10px !important;
+}
+.marginbottomonlyshort {
+	margin-bottom: 3px !important;
 }
 .nomargintop {
 	margin-top: 0 !important;
@@ -1506,7 +1639,7 @@ select.flat.selectlimit {
 	max-width: 0;
 	overflow: auto;
 }
-.divintodwithtwolinesmax {
+.divintowithtwolinesmax {
 	width: 75px;
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
@@ -1533,20 +1666,29 @@ select.flat.selectlimit {
 .amountalreadypaid {
 }
 .amountpaymentcomplete {
-	color: #008800;
+	color: var(--amountpaymentcomplete);
 	font-weight: bold;
 }
 .amountremaintopay {
-	color: #880000;
+	color: var(--amountremaintopaycolor);
 	font-weight: bold;
 }
 .amountremaintopayback {
 	font-weight: bold;
 }
 .amountpaymentneutral {
+	color: var(--amountremaintopaybackcolor);
 	font-weight: bold;
 	font-size: 1.4em;
 }
+
+.onlinepaymentbody .amountpaymentcomplete {
+	background-color: var(--amountpaymentcomplete);
+	color: #fff;
+	padding: 5px;
+	border-radius: 5px;
+}
+
 .savingdocmask {
 	margin-top: 6px;
 	margin-bottom: 12px;
@@ -1602,7 +1744,7 @@ div.fiche>form>div.div-table-responsive {
 
 .flexcontainer {
 	<?php if (in_array($conf->browser->name, array('chrome', 'firefox'))) {
-		echo 'display: inline-flex;';
+		echo 'display: inline-flex;'."\n";
 	} ?>
 	flex-flow: row wrap;
 	justify-content: flex-start;
@@ -1637,7 +1779,9 @@ table[summary="list_of_modules"] .fa-cog {
 .linkedcol-element {
 	min-width: 100px;
 }
-
+.linkedcol-amount {
+	white-space: nowrap;
+}
 .linkedcol-date {
 	text-align: center;
 }
@@ -1645,6 +1789,13 @@ table[summary="list_of_modules"] .fa-cog {
 .img-skinthumb {
 	width: 160px;
 	height: 100px;
+}
+
+.maxscreenheightless200 {
+	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(500, $_SESSION['dol_screenheight'] - 200) : 700; ?>px;	/* we guarantee height of 500 */
+}
+.maxscreenheightless300 {
+	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(400, $_SESSION['dol_screenheight'] - 300) : 700; ?>px;	/* we guarantee height of 500 */
 }
 
 tr.nobottom td {
@@ -1673,6 +1824,7 @@ tr.nobottom td {
 	.minwidth100 { min-width: 100px; }
 	.minwidth150 { min-width: 150px; }
 	.minwidth200 { min-width: 200px; }
+	.minwidth250 { min-width: 250px; }
 	.minwidth300 { min-width: 300px; }
 	.minwidth400 { min-width: 400px; }
 	.minwidth500 { min-width: 500px; }
@@ -1696,6 +1848,7 @@ tr.nobottom td {
 .width125 { width: 125px; }
 .width150 { width: 150px; }
 .width200 { width: 200px; }
+.width250 { width: 250px; }
 .width300 { width: 300px; }
 .width400 { width: 400px; }
 .width500 { width: 500px; }
@@ -1703,6 +1856,7 @@ tr.nobottom td {
 .maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
+.maxwidthdate  { max-width: 85px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
@@ -1711,6 +1865,8 @@ tr.nobottom td {
 .maxwidth300 { max-width: 300px; }
 .maxwidth400 { max-width: 400px; }
 .maxwidth500 { max-width: 500px; }
+.maxwidth750 { max-width: 750px; }
+.maxwidth1000 { max-width: 1000px; }
 .maxwidth50imp  { max-width: 50px !important; }
 .maxwidth75imp  { max-width: 75px !important; }
 
@@ -1793,6 +1949,10 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	div.refidno {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize).'px' : $fontsize; ?> !important;
 	}
+	.divadvancedsearchfield {
+		padding-left: 5px;
+		padding-right: 5px;
+	}
 
 	div.divphotoref {
 		padding-right: 10px !important;
@@ -1821,6 +1981,13 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.smallonsmartphone {
 		font-size: 0.8em;
 	}
+	
+	.nopaddingtoponsmartphone {
+		padding-top: 0 !important;
+	}
+	.nopaddingbottomonsmartphone {
+		padding-bottom: 0 !important;
+	}	
 }
 
 /* Force values for small screen 570 */
@@ -1871,14 +2038,10 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	}
 
 	div.fiche {
-			margin-top: <?php print ($dol_hide_topmenu ? '12' : '6'); ?>px !important;
+		margin-top: <?php print ($dol_hide_topmenu ? '12' : '6'); ?>px !important;
 	}
 	.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
 		height: 40px !important;
-	}
-
-	.quatrevingtpercent, .inputsearch {
-		width: 95%;
 	}
 
 	div.tabs div.tab a.tab  {
@@ -1886,6 +2049,10 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+	}
+
+	.quatrevingtpercent, .inputsearch {
+		width: 95%;
 	}
 
 	select {
@@ -1970,7 +2137,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 .linkobject { cursor: pointer; }
 
 table.tableforfield tr:not(.liste_titre)>td:first-of-type, tr.trforfield:not(.liste_titre)>td:first-of-type, div.tableforfield div.tagtr:not(.liste_titre)>div.tagtd:first-of-type {
-	color: #666;
+	color: var(--tableforfieldcolor);
 }
 
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
@@ -2457,11 +2624,6 @@ img.photoref, div.photoref {
 	width: 80px;
 	object-fit: contain;
 }
-.difforspanimgright {
-	display: table-cell;
-	padding-right: 10px;
-}
-
 img.photokanban, div.photokanban {
 	padding: 0;
 	border: none;
@@ -2480,6 +2642,10 @@ div.photoref {
 	display:table-cell;
 	vertical-align:middle;
 	text-align:center;
+}
+.difforspanimgright {
+	display: table-cell;
+	padding-right: 10px;
 }
 img.photorefnoborder {
 	padding: 2px;
@@ -2590,7 +2756,7 @@ a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudis
 	font-weight: normal;
 	padding: 0px 5px 0px 5px;
 	white-space: nowrap;
-	color: #<?php echo $colortextbackhmenu; ?>;
+	color: var(--colortextbackhmenu);
 	text-decoration: none;
 	cursor: not-allowed;
 }
@@ -2611,7 +2777,7 @@ a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
 	padding: 0px 5px 0px 5px;
 	white-space: nowrap;
 	/*	text-shadow: 1px 1px 1px #000000; */
-	color: #<?php echo $colortextbackhmenu; ?>;
+	color: var(--colortextbackhmenu);
 	text-decoration: none;
 }
 a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
@@ -2619,7 +2785,7 @@ a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
 	padding: 0px 5px 0px 5px;
 	margin: 0px 0px 0px 0px;
 	white-space: nowrap;
-	color: #<?php echo $colortextbackhmenu; ?>;
+	color: var(--colortextbackhmenu);
 	text-decoration: none !important;
 }
 
@@ -2700,6 +2866,8 @@ div.menu_titre {
 {
 	padding-<?php print $left; ?>: 2px;
 	padding-<?php print $right; ?>: 2px;
+	font-family: Roboto,<?php echo $fontlist; ?>;
+	font-weight: 400;
 }
 
 div.mainmenu {
@@ -2773,13 +2941,13 @@ div.mainmenu.menu {
 		// Img file not found
 		if (!$found) {
 			if (!defined('DISABLE_FONT_AWSOME')) {
-				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
+				print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
 				print 'div.mainmenu.'.$val.'::before {
 	                    content: "\f249";
 	                }'."\n";
 			} else {
-				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
-				print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
+				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
 				$url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
 				print "div.mainmenu.".$val." {\n";
 				print "	background-image: url(".$url.");\n";
@@ -2967,6 +3135,14 @@ div.login_block {
 	display: none;
 	<?php } ?>
 }
+div.login_block a {
+	color: var(--colortexthmenu);
+	display: inline-block;
+}
+div.login_block span.aversion {
+	color: var(--colortexthmenu);
+	filter: contrast(0.7);
+}
 div.login_block table {
 	display: inline;
 }
@@ -2976,10 +3152,10 @@ div.login {
 	float: right;
 }
 div.login a {
-	color: #<?php echo $colortextbackvmenu; ?>;
+	color: var(--colortextvmenu);
 }
 div.login a:hover {
-	color: #<?php echo $colortextbackvmenu; ?>;
+	color: var(--colortextvmenu);
 	text-decoration:underline;
 }
 div.login_block_user, div.login_block_other { clear: both; }
@@ -3001,10 +3177,14 @@ div.login_block_other { padding-top: 15px; }
 	max-width: 200px;
 }
 
+.login_block_other .login_block_elem {
+	height: 25px;
+	line-height: 25px;
+}
 .login_block_elem {
 	float: right;
-	vertical-align: top;
-	padding: 0px 0px 0px 2px !important;
+	vertical-align: middle;
+	padding: 0px 3px 0px 3px !important;
 	height: 18px;
 }
 .login_block_elem_name {
@@ -3019,7 +3199,7 @@ a.aversion {
 }
 
 .atoplogin, .atoplogin:hover {
-	color: #<?php echo $colortextbackvmenu; ?> !important;
+	color: var(--colortexthmenu) !important;
 }
 .alogin, .alogin:hover {
 	color: #888 !important;
@@ -3062,8 +3242,19 @@ img.userphotosmall {			/* size for user photo in lists */
 	background-size: contain;
 	vertical-align: middle;
 }
-img.userphoto[alt="Gravatar avatar"] {
+img.userphoto[alt="Gravatar avatar"], img.photouserphoto.dropdown-user-image[alt="Gravatar avatar"] {
 	background: #fff;
+}
+img.userphotopublicvcard {
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	background-size: contain;
+	border: 1px solid;
+	border-color: rgba(128, 128, 128, 0.5);
+	position: relative;
+	top: 25px;
+	left: -110px;
 }
 form[name="addtime"] img.userphoto {
 	border: 1px solid #444;
@@ -3129,7 +3320,7 @@ span.vsmenudisabled, font.vsmenudisabled {
 	font-family: <?php print $fontlist ?>;
 	text-align: <?php print $left; ?>;
 	font-weight: normal;
-	color: #aaa;
+	color: var(--colortextbackvmenu);
 	white-space: nowrap;
 }
 a.vsmenu:link, a.vsmenu:visited {
@@ -3201,7 +3392,6 @@ li#mainmenutd_companylogo {
 div.blockvmenupair, div.blockvmenuimpair
 {
 	font-family: <?php print $fontlist ?>;
-	color: #000000;
 	text-align: <?php print $left; ?>;
 	text-decoration: none;
 	padding-left: 5px;
@@ -3209,6 +3399,9 @@ div.blockvmenupair, div.blockvmenuimpair
 	padding-top: 3px;
 	padding-bottom: 3px;
 	margin: 1px 0px 8px 0px;
+
+	color: var(--colortext);
+	background: var(--colorbackvmenu1);
 
 	padding-bottom: 10px;
 	border-bottom: 1px solid #e0e0e0;
@@ -3239,6 +3432,7 @@ div.blockvmenusearch, div.blockvmenubookmarks
 	padding-top: 3px;
 	padding-bottom: 3px;
 	margin: 1px 0px 2px 0px;
+	background: var(--colorbackvmenu1);
 
 	padding-bottom: 10px;
 	/* border-bottom: 1px solid #f4f4f4; */
@@ -3338,6 +3532,10 @@ li.expanded > a.fmdirlia.jqft.ecmjqft {
 	font-weight: bold !important;
 }
 
+.divfmdirlia {
+	width: calc(100% - 100px);
+}
+
 a.fmdirlia {
 	white-space: break-spaces;
 	word-break: break-all;
@@ -3361,7 +3559,7 @@ div.tabsElem a {
 	font-weight: normal !important;
 }
 div.tabBar {
-	color: #<?php echo $colortextbacktab; ?>;
+	color: var(--colortextbacktab);
 	padding-top: 23px;
 	padding-left: 24px;
 	padding-right: 24px;
@@ -3376,8 +3574,10 @@ div.tabBar {
 	width: auto;
 	background: var(--colorbacktabcard1);
 }
-
 div.tabBar tr.titre td {
+	padding-top: 20px;
+}
+div.fiche table:not(.table-fiche-title) tr.titre td {
 	padding-top: 10px;
 }
 
@@ -3456,6 +3656,9 @@ div.tabs div.tabsElem:first-of-type a.tab {
 	margin-left: 0px !important;
 }
 
+a.tabunactive {
+	color: var(--colortextlink) !important;
+}
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
 	padding: 12px 13px 12px;
@@ -3719,8 +3922,8 @@ div.colorback
 table.liste, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact), table.formdoc, div.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) {
 	<?php
 	if ($userborderontable) { ?>
-	border-left: 1px solid #BBB;
-	border-right: 1px solid #BBB;
+	border-left: 1px solid var(--colortopbordertitle1);
+	border-right: 1px solid var(--colortopbordertitle1);
 	<?php } ?>
 }
 table.liste, table.noborder.paymenttable, table.noborder.margintable, table.noborder.tableforcontact, table.formdoc, div.noborder.paymenttable, div.noborder.margintable, div.noborder.tableforcontact {
@@ -3776,6 +3979,9 @@ tr.liste_titre_filter td.liste_titre {
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 }
+tr#trlinefordates td {
+	border-bottom: 0px !important;
+}
 .liste_titre_add td, .liste_titre_add th, .liste_titre_add .tagtd
 {
 	border-top-width: 2px;
@@ -3789,7 +3995,7 @@ tr.liste_titre_filter td.liste_titre {
 	border-top-style: solid;
 }
 
-table.liste th, table.noborder th, table.noborder tr.liste_titre td {
+table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
 	padding: 8px 6px 8px 6px;			/* t r b l */
 }
 
@@ -3847,6 +4053,7 @@ table.listwithfilterbefore {
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 .confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
+.confirmquestions { margin-top: 5px; }
 
 
 /* Pagination */
@@ -3864,8 +4071,8 @@ a.refid {
 div.refidno  {
 	padding-top: 8px;
 	font-weight: normal;
-	color: #444;
-	font-size: <?php print $fontsize ?>px;
+	color: var(--refidnocolor);
+	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
 	line-height: 21px;
 }
 div.refidno form {
@@ -3904,7 +4111,7 @@ div.pagination li.pagination span {
   padding: 6px 12px;
   padding-top: 8px;
   line-height: 1.42857143;
-  color: #000;
+  color: var(--color-black);
   text-decoration: none;
 }
 div.pagination li.pagination span.inactive {
@@ -4062,7 +4269,7 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 	font-family: <?php print $fontlist ?>;
 	border: 0px;
 	margin-bottom: 1px;
-	color: #202020;
+	color: var(--oddeven);
 }
 .impair, .nohover .impair:hover, tr.impair td.nohover
 {
@@ -4075,7 +4282,7 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 .oddeven, .evenodd, .pair, .nohover .pair:hover, tr.pair td.nohover, .tagtr.oddeven {
 	font-family: <?php print $fontlist ?>;
 	margin-bottom: 1px;
-	color: #202020;
+	color: var(--oddevencolor);
 }
 .pair, .nohover .pair:hover, tr.pair td.nohover {
 	background-color: var(--colorbacklinepair1);
@@ -4099,6 +4306,9 @@ td.evenodd, tr.nohoverpair td, #trlinefordates td {
 	border-bottom: 1pt solid black !important;
 	background-color: var(--colorbacklinebreak) !important;
 }
+.trforbreak.nobold td a, .trforbreak.nobold span.secondary {
+	font-weight: normal !important;
+}
 
 table.dataTable td {
 	padding: 5px 2px 5px 3px !important;
@@ -4118,7 +4328,7 @@ tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td {
 }
 /*
 table.nobottomiftotal tr.liste_total td {
-	background-color: #fff;
+	background-color: var(--inputbackgroundcolor);
 	<?php if (!$userborderontable) { ?>
 	border-bottom: 0px !important;
 	<?php } ?>
@@ -4209,6 +4419,7 @@ tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_tit
 	/* border-bottom: 1px solid var(--colortopbordertitle1); */
 	border-bottom: none;
 }
+tr.liste_titre_filter th.liste_titre { text-align: unset; }
 
 div.liste_titre {
 	padding-left: 3px;
@@ -4292,10 +4503,10 @@ div .tdtop:not(.tagtdnote) {
 	padding-bottom: 0px !important;
 }
 
-#tablelines tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
+#tablelines tr.liste_titre td, #tablelinesservice tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
 	border-bottom: 1px solid #AAA !important;
 }
-#tablelines tr td {
+#tablelines tr td, #tablelinesservice tr td {
 	height: unset;
 }
 
@@ -4467,6 +4678,9 @@ span.dashboardlineko {
 .boxtablenobottom {
 	/* border-bottom-width: 0 !important; */
 }
+.boxtablenomarginbottom {
+	margin-bottom: 0 !important;
+}
 .boxtable .fichehalfright, .boxtable .fichehalfleft {
 	min-width: 275px;
 }
@@ -4492,10 +4706,8 @@ tr.box_titre {
 	color: #000 !important; */
 
 	/* TO MATCH ELDY */
-	background: rgb(<?php echo $colorbacktitle1; ?>);
-
-	background-repeat: repeat-x;
-	color: rgb(<?php echo $colortexttitle; ?>);
+	background: var(--colorbacktitle1);
+	color: var(--colortexttitle);
 	font-family: <?php print $fontlist ?>, sans-serif;
 	font-weight: <?php echo $useboldtitle ? 'bold' : 'normal'; ?>;
 	border-bottom: 1px solid #FDFFFF;
@@ -4680,6 +4892,7 @@ div.divphotoref > img.photowithmargin, div.divphotoref > a > .photowithmargin {	
 {
 	content:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/logo_setup.svg', 1) ?>);	/* content is used to best fit the container */
 	display: inline-block;
+	opacity: 0.2;
 }
 .nographyet
 {
@@ -6242,10 +6455,12 @@ ul.select2-results__options li {
 	.select2-container.select2-container--open .select2-dropdown.ui-dialog {
 		min-width: 220px !important;
 	}
-	.select2-container.select2-container--open .select2-dropdown--below {
+	.select2-container.select2-container--open .select2-dropdown--below,
+	.select2-container.select2-container--open .select2-dropdown--above {
 		min-width: 220px !important;
 	}
-	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below {
+	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
+	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--above {
 		min-width: 140px !important;
 	}
 
@@ -6253,6 +6468,10 @@ ul.select2-results__options li {
 		border-top: 1px solid var(--inputbordercolor);
 		/* border-top: 1px solid #aaaaaa; */
 	}
+}
+
+.parentonrightofpage {
+  direction: rtl;
 }
 
 
@@ -6423,7 +6642,7 @@ dl.dropdown {
 	z-index: 1;
 }
 .dropdown dd ul.selectedfieldsleft {
-	right: auto;
+	<?php echo $right; ?>: auto;
 }
 .dropdown dd ul li {
 	white-space: nowrap;
@@ -7242,6 +7461,8 @@ div.clipboardCPValue.hidewithsize {
 		border-left: none;
 	}
 
+	td.widthpictotitle { width: 30px; }
+
 	.box-flex-container {
 		margin: 0 0 0 -8px !important;
 	}
@@ -7443,6 +7664,12 @@ div.clipboardCPValue.hidewithsize {
 
 	.lilevel1 span.paddingright {
 		padding-right: 3px;
+	}
+
+	img.userphotopublicvcard {
+		left: unset;
+		top: unset;
+		margin-top: 30px;
 	}
 }
 

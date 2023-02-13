@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2019  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2019	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2023	Benjamin Falière	<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
  */
 
 /**
- * \file        bom/class/bom.class.php
+ * \file        htdocs/bom/class/bom.class.php
  * \ingroup     bom
  * \brief       This file is a CRUD class file for BOM (Create/Read/Update/Delete)
  */
@@ -102,9 +103,9 @@ class BOM extends CommonObject
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>1, 'searchall'=>1, 'showoncombobox'=>'2', 'autofocusoncreate'=>1, 'css'=>'minwidth300 maxwidth400', 'csslist'=>'tdoverflowmax200'),
 		'bomtype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>1, 'position'=>33, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing', 1=>'Disassemble'), 'css'=>'minwidth175', 'csslist'=>'minwidth175 center'),
 		//'bomtype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>-1, 'position'=>32, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing')),
-		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:1:(finished IS NULL or finished <> 0)', 'label'=>'Product', 'picto'=>'product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax100'),
+		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:1:((finished:is:null) or (finished:!=:0))', 'label'=>'Product', 'picto'=>'product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax100'),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
-		'qty' => array('type'=>'real', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>55, 'notnull'=>1, 'isameasure'=>'1', 'css'=>'maxwidth75imp'),
+		'qty' => array('type'=>'real', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>55, 'notnull'=>1, 'isameasure'=>'1', 'css'=>'maxwidth50imp right'),
 		//'efficiency' => array('type'=>'real', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>-1, 'default'=>1, 'position'=>100, 'notnull'=>0, 'css'=>'maxwidth50imp', 'help'=>'ValueOfMeansLossForProductProduced'),
 		'duration' => array('type'=>'duration', 'label'=>'EstimatedDuration', 'enabled'=>1, 'visible'=>-1, 'position'=>101, 'notnull'=>-1, 'css'=>'maxwidth50imp', 'help'=>'EstimatedDurationDesc'),
 		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'picto'=>'stock', 'enabled'=>1, 'visible'=>-1, 'position'=>102, 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax100'),
@@ -476,7 +477,7 @@ class BOM extends CommonObject
 		$sql .= $this->getFieldList();
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if ($this->ismultientitymanaged) {
-			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
@@ -1064,6 +1065,43 @@ class BOM extends CommonObject
 		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'BOM_REOPEN');
 	}
 
+	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+
+		$langs->loadLangs(['product', 'mrp']);
+
+		$datas = [];
+
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			return ['optimize' => $langs->trans("ShowBillOfMaterials")];
+		}
+		$picto = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("BillOfMaterials").'</u>';
+		if (isset($this->status)) {
+			$picto .= ' '.$this->getLibStatut(5);
+		}
+		$datas['picto'] = $picto;
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (isset($this->label)) {
+			$datas['label'] = '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
+		}
+		if (!empty($this->fk_product) && $this->fk_product > 0) {
+			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+			$product = new Product($this->db);
+			$resultFetch = $product->fetch($this->fk_product);
+			if ($resultFetch > 0) {
+				$datas['product'] = "<br><b>".$langs->trans("Product").'</b>: '.$product->ref.' - '.$product->label;
+			}
+		}
+
+		return $datas;
+	}
 
 	/**
 	 *  Return a link to the object card (with optionaly the picto)
@@ -1084,24 +1122,20 @@ class BOM extends CommonObject
 		}
 
 		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
+		}
 
-		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("BillOfMaterials").'</u>';
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
-		}
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		if (isset($this->label)) {
-			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
-		}
-		if (!empty($this->fk_product) && $this->fk_product > 0) {
-			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-			$product = new Product($db);
-			$resultFetch = $product->fetch($this->fk_product);
-			if ($resultFetch > 0) {
-				$label .= "<br><b>".$langs->trans("Product").'</b>: '.$product->ref.' - '.$product->label;
-			}
-		}
+		$label = implode($this->getTooltipContentArray($params));
 
 
 		$url = DOL_URL_ROOT.'/bom/bom_card.php?id='.$this->id;
@@ -1124,7 +1158,7 @@ class BOM extends CommonObject
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -1135,7 +1169,7 @@ class BOM extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -1329,7 +1363,7 @@ class BOM extends CommonObject
 	 * BOM costs calculation based on cost_price or pmp of each BOM line.
 	 * Set the property ->total_cost and ->unit_cost of BOM.
 	 *
-	 * @return void
+	 * @return int			<0 if KO, >0 if OK
 	 */
 	public function calculateCosts()
 	{
@@ -1365,7 +1399,11 @@ class BOM extends CommonObject
 						$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
 						if (empty($line->unit_cost)) {
 							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
-								$line->unit_cost = $productFournisseur->fourn_unitprice;
+								if ($productFournisseur->fourn_remise_percent != "0") {
+									$line->unit_cost = $productFournisseur->fourn_unitprice_with_discount;
+								} else {
+									$line->unit_cost = $productFournisseur->fourn_unitprice;
+								}
 							}
 						}
 
@@ -1378,7 +1416,8 @@ class BOM extends CommonObject
 						if ($res > 0) {
 							$bom_child->calculateCosts();
 							$line->childBom[] = $bom_child;
-							$this->total_cost += $bom_child->total_cost * $line->qty;
+							$this->total_cost += price2num($bom_child->total_cost * $line->qty, 'MT');
+							$this->total_cost += $line->total_cost;
 						} else {
 							$this->error = $bom_child->error;
 							return -2;
@@ -1414,6 +1453,8 @@ class BOM extends CommonObject
 				$this->unit_cost = price2num($this->total_cost * $this->qty, 'MU');
 			}
 		}
+
+		return 1;
 	}
 
 	/**
@@ -1520,9 +1561,10 @@ class BOM extends CommonObject
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @return		string		HTML Code for Kanban thumb.
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '')
+	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $db,$langs;
 		$prod = new Product($db);
@@ -1776,7 +1818,7 @@ class BOMLine extends CommonObjectLine
 		$sql .= $this->getFieldList();
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if ($this->ismultientitymanaged) {
-			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}

@@ -74,12 +74,6 @@ class modECM extends DolibarrModules
 		$this->const = array(); // List of parameters
 		$r = 0;
 
-		$this->const[$r][0] = "ECM_AUTO_TREE_ENABLED";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "1";
-		$this->const[$r][3] = 'Auto tree is enabled by default';
-		$this->const[$r][4] = 0;
-
 		// Boxes
 		$this->boxes = array(); // List of boxes
 		$r = 0;
@@ -182,7 +176,7 @@ class modECM extends DolibarrModules
 			'langs'=>'ecm',
 			'position'=>103,
 			'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
-			'enabled'=>'($user->rights->ecm->read || $user->rights->ecm->upload) && getDolGlobalInt("ECM_AUTO_TREE_ENABLED")',
+			'enabled'=>'($user->rights->ecm->read || $user->rights->ecm->upload) && !getDolGlobalInt("ECM_AUTO_TREE_HIDEN")',
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);

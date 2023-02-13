@@ -119,6 +119,7 @@ function dolGetRandomBytes($length)
 function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
 {
 	global $dolibarr_main_instance_unique_id;
+	global $dolibarr_disable_dolcrypt_for_debug;
 
 	if ($chain === '' || is_null($chain)) {
 		return '';
@@ -136,7 +137,7 @@ function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
 
 	$newchain = $chain;
 
-	if (function_exists('openssl_encrypt')) {
+	if (function_exists('openssl_encrypt') && empty($dolibarr_disable_dolcrypt_for_debug)) {
 		$ivlen = 16;
 		if (function_exists('openssl_cipher_iv_length')) {
 			$ivlen = openssl_cipher_iv_length($ciphering);
@@ -344,7 +345,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	} else {
 		$objectid = $object;		// $objectid can be X or 'X,Y,Z'
 	}
-	$objectid = preg_replace('/[^0-9\.\,]/', '', $objectid);	// For the case value is coming from a non sanitized user input
+	if ($objectid) {
+		$objectid = preg_replace('/[^0-9\.\,]/', '', $objectid);	// For the case value is coming from a non sanitized user input
+	}
 
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
 	//print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
@@ -367,7 +370,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	if ($features == 'subscription') {
 		$features = 'adherent';
 		$feature2 = 'cotisation';
-	};
+	}
 	if ($features == 'websitepage') {
 		$features = 'website';
 		$tableandshare = 'website_page';
@@ -463,6 +466,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 			}
 		} elseif ($feature == 'payment_supplier') {
 			if (empty($user->rights->fournisseur->facture->lire)) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'payment_sc') {
+			if (empty($user->rights->tax->charges->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -628,7 +636,13 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	$nbko = 0;
 	if ((GETPOST("action", "aZ09") == 'confirm_delete' && GETPOST("confirm", "aZ09") == 'yes') || GETPOST("action", "aZ09") == 'delete') {
 		foreach ($featuresarray as $feature) {
-			if ($feature == 'contact') {
+			if ($feature == 'bookmark') {
+				if (!$user->rights->bookmark->supprimer) {
+					if ($user->id != $object->fk_user || empty($user->rights->bookmark->creer)) {
+						$deleteok = 0;
+					}
+				}
+			} elseif ($feature == 'contact') {
 				if (!$user->rights->societe->contact->supprimer) {
 					$deleteok = 0;
 				}
@@ -647,6 +661,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 			} elseif ($feature == 'payment') {
 				if (!$user->rights->facture->paiement) {
 						$deleteok = 0;
+				}
+			} elseif ($feature == 'payment_sc') {
+				if (!$user->rights->tax->charges->creer) {
+					$deleteok = 0;
 				}
 			} elseif ($feature == 'banque') {
 				if (empty($user->rights->banque->modifier)) {
@@ -723,7 +741,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		if ($mode) {
 			return $ok ? 1 : 0;
 		} else {
-			return $ok ? 1 : accessforbidden('', 1, 1, 0, $params);
+			if ($ok) {
+				return 1;
+			} else {
+				accessforbidden('', 1, 1, 0, $params);
+			}
 		}
 	}
 
@@ -790,6 +812,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		$checkproject = array('projet', 'project'); // Test for project object
 		$checktask = array('projet_task'); // Test for task object
 		$checkhierarchy = array('expensereport', 'holiday');	// check permission among the hierarchy of user
+		$checkuser = array('bookmark');	// check permission among the fk_user (must be myself or null)
 		$nocheck = array('barcode', 'stock'); // No test
 
 		//$checkdefault = 'all other not already defined'; // Test on entity + link to third party on field $dbt_keyfield. Not allowed if link is empty (Ex: invoice, orders...).
@@ -1009,6 +1032,15 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 						return false;
 					}
 				}
+			}
+		}
+
+		// For some object, we also have to check it is public or owned by user
+		// Param $object must be the full object and not a simple id to have this test possible.
+		if (in_array($feature, $checkuser) && is_object($object) && $objectid > 0) {
+			$useridtocheck = $object->fk_user;
+			if (!empty($useridtocheck) && $useridtocheck > 0 && $useridtocheck != $user->id && empty($user->admin)) {
+				return false;
 			}
 		}
 

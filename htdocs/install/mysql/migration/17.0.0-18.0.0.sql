@@ -31,9 +31,55 @@
 -- To rebuild sequence for postgresql after insert by forcing id autoincrement fields:
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
+
+-- v17
+
+-- VMYSQL4.3 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN `rank` rankorder integer;
+-- VPGSQL8.2 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN rank rankorder integer;
+
+ALTER TABLE llx_accounting_system CHANGE COLUMN fk_pays fk_country integer; 
+
+ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN ref varchar(128);
+ALTER TABLE llx_facture_fourn_det MODIFY COLUMN ref varchar(128);
+
+
 -- v18
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_CLOSE','Project closed','Executed when a project is closed','project',145);
 
 -- amount was removed in v12
 ALTER TABLE llx_facture DROP COLUMN amount;
+
+-- Rename prospect level on contact
+ALTER TABLE llx_socpeople CHANGE fk_prospectcontactlevel fk_prospectlevel varchar(12);
+
+ALTER TABLE llx_facture ADD COLUMN prorata_discount	real DEFAULT NULL;
+
+ALTER TABLE llx_payment_salary MODIFY COLUMN datep datetime;
+
+INSERT INTO llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1179, 117, 'I-28'  , 28,   0, '0',   0, '0', 0, 'IGST',      1);
+INSERT INTO llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1176, 117, 'C+S-18',  0,   9, '1',   9, '1', 0, 'CGST+SGST - Same state sales', 1);
+
+
+ALTER TABLE llx_user ADD COLUMN flagdelsessionsbefore datetime DEFAULT NULL;
+
+ALTER TABLE llx_website ADD COLUMN pageviews_previous_month BIGINT UNSIGNED DEFAULT 0;
+
+ALTER TABLE llx_product_stock ADD CONSTRAINT fk_product_product_rowid FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
+ALTER TABLE llx_product_stock ADD CONSTRAINT fk_entrepot_entrepot_rowid FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
+
+
+ALTER TABLE llx_bank_account ADD COLUMN owner_zip varchar(25);
+ALTER TABLE llx_bank_account ADD COLUMN owner_town varchar(50);
+ALTER TABLE llx_bank_account ADD COLUMN owner_country_id integer DEFAULT NULL;
+
+
+ALTER TABLE llx_supplier_proposal ADD UNIQUE INDEX uk_supplier_proposal_ref (ref, entity);
+
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_soc (fk_soc);
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_user_author (fk_user_author);
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_projet (fk_projet);
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_account(fk_account);
+
+

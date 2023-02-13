@@ -34,6 +34,9 @@ class Utils
 	 */
 	public $db;
 
+	public $error;
+	public $errors;
+
 	public $output; // Used by Cron method to return message
 	public $result; // Used by Cron method to return data
 
@@ -414,13 +417,16 @@ class Utils
 				}
 
 
-				// TODO Replace with Utils->executeCLI() function but
-				// we must first introduce the variant with $lowmemorydump into this method.
 				if ($execmethod == 1) {
 					$output_arr = array();
 					$retval = null;
 
 					exec($fullcommandclear, $output_arr, $retval);
+					// TODO Replace this exec with Utils->executeCLI() function.
+					// We must check that the case for $lowmemorydump works too...
+					//$utils = new Utils($db);
+					//$outputfile = $conf->admin->dir_temp.'/dump.tmp';
+					//$utils->executeCLI($fullcommandclear, $outputfile, 0);
 
 					if ($retval != 0) {
 						$langs->load("errors");
@@ -435,6 +441,8 @@ class Utils
 								if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) {
 									continue;
 								}
+								// Now check into the result file, that the file end with "-- Dump completed"
+								// This is possible only if $output_arr is the clear dump file, so not possible with $lowmemorydump set because file is already compressed.
 								if (!$lowmemorydump) {
 									fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
 									if (preg_match('/'.preg_quote('-- Dump completed', '/').'/i', $read)) {
@@ -646,12 +654,14 @@ class Utils
 		if (!$errormsg && $keeplastnfiles > 0) {
 			$tmpfiles = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '(\.err|\.old|\.sav)$', 'date', SORT_DESC);
 			$i = 0;
-			foreach ($tmpfiles as $key => $val) {
-				$i++;
-				if ($i <= $keeplastnfiles) {
-					continue;
+			if (is_array($tmpfiles)) {
+				foreach ($tmpfiles as $key => $val) {
+					$i++;
+					if ($i <= $keeplastnfiles) {
+						continue;
+					}
+					dol_delete_file($val['fullname'], 0, 0, 0, null, false, 0);
 				}
-				dol_delete_file($val['fullname'], 0, 0, 0, null, false, 0);
 			}
 		}
 
@@ -1290,6 +1300,7 @@ class Utils
 			$message = dol_escape_htmltag($langs->trans('MakeSendLocalDatabaseDumpShort'));
 		}
 
+		$tmpfiles = array();
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		if ($filename) {
 			if (dol_is_file($conf->admin->dir_output.'/backup/'.$filename)) {
@@ -1298,7 +1309,7 @@ class Utils
 		} else {
 			$tmpfiles = dol_most_recent_file($conf->admin->dir_output.'/backup', $filter);
 		}
-		if ($tmpfiles) {
+		if ($tmpfiles && is_array($tmpfiles)) {
 			foreach ($tmpfiles as $key => $val) {
 				if ($key  == 'fullname') {
 					$filepath = array($val);

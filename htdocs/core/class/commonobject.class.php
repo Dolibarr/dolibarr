@@ -16,6 +16,7 @@
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -592,6 +593,20 @@ abstract class CommonObject
 	protected $labelStatus;
 	protected $labelStatusShort;
 
+	/**
+	 * @var int showphoto_on_popup
+	 */
+	public $showphoto_on_popup;
+
+	/**
+	 * @var array nb used in load_stateboard
+	 */
+	public $nb = array();
+
+	/**
+	 * @var string output
+	 */
+	public $output;
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
@@ -653,6 +668,57 @@ abstract class CommonObject
 			}
 		}
 		return -1;
+	}
+	/**
+	 * getTooltipContentArray
+	 *
+	 * @since v18
+	 * @param array $params params to construct tooltip data
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		return [];
+	}
+
+	/**
+	 * getTooltipContent
+	 *
+	 * @param array $params params
+	 * @since v18
+	 * @return string
+	 */
+	public function getTooltipContent($params)
+	{
+		global $action, $extrafields, $langs, $hookmanager;
+
+		$datas = $this->getTooltipContentArray($params);
+
+		if (!empty($extrafields->attributes[$this->table_element]['label'])) {
+			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+				if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
+					$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
+				}
+				$labelextra = $langs->trans((string) $extrafields->attributes[$this->table_element]['label'][$key]);
+				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
+					$datas[$key]= '<br><b><u>'. $labelextra . '</u></b>';
+				} else {
+					$value = $this->array_options['options_' . $key];
+					$datas[$key]= '<br><b>'. $labelextra . ':</b> ' . $extrafields->showOutputField($key, $value, '', $this->table_element);
+				}
+			}
+		}
+
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array(
+			'tooltipcontentarray' => &$datas
+		);
+		// Note that $action and $object may have been modified by some hooks
+		$hookmanager->executeHooks('getTooltipContent', $parameters, $this, $action);
+
+		$label = implode($datas);
+
+		return $label;
 	}
 
 
@@ -770,34 +836,6 @@ abstract class CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
-	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @return		string								HTML Code for Kanban thumb.
-	 */
-	public function getKanbanView($option = '')
-	{
-		$return = '<div class="box-flex-item box-flex-grow-zero">';
-		$return .= '<div class="info-box info-box-sm">';
-		$return .= '<span class="info-box-icon bg-infobox-action">';
-		$return .= img_picto('', $this->picto);
-		$return .= '</span>';
-		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		if (property_exists($this, 'label')) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
-		}
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
-		}
-		$return .= '</div>';
-		$return .= '</div>';
-		$return .= '</div>';
-
-		return $return;
-	}
-
-	/**
 	 * 	Return full address of contact
 	 *
 	 * 	@param		int			$withcountry		1=Add country into address string
@@ -849,7 +887,7 @@ abstract class CommonObject
 		}
 		if ($this->element == 'contact') {
 			$contactid = $this->id;
-			$thirdpartyid = empty($object->fk_soc) ? 0 : $object->fk_soc;
+			$thirdpartyid = empty($this->fk_soc) ? 0 : $this->fk_soc;
 		}
 		if ($this->element == 'user') {
 			$contactid = $this->contact_id;
@@ -979,27 +1017,6 @@ abstract class CommonObject
 					}
 					$outdone++;
 				}
-			} else {	// Old code to remove
-				if (!empty($this->skype)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
-				}
-				$outdone++;
-				if (!empty($this->jabberid)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
-				}
-				$outdone++;
-				if (!empty($this->twitter)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->twitter, $this->id, $object->id, 'twitter');
-				}
-				$outdone++;
-				if (!empty($this->facebook)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->facebook, $this->id, $object->id, 'facebook');
-				}
-				$outdone++;
-				if (!empty($this->linkedin)) {
-					$outsocialnetwork .= dol_print_socialnetworks($this->linkedin, $this->id, $object->id, 'linkedin');
-				}
-				$outdone++;
 			}
 
 			if ($outsocialnetwork) {
@@ -1309,11 +1326,11 @@ abstract class CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Delete all links between an object $this and all its contacts
+	 *    Delete all links between an object $this and all its contacts in llx_element_contact
 	 *
 	 *	  @param	string	$source		'' or 'internal' or 'external'
 	 *	  @param	string	$code		Type of contact (code or id)
-	 *    @return   int					>0 if OK, <0 if KO
+	 *    @return   int					<0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function delete_linked_contact($source = '', $code = '')
 	{
@@ -1329,11 +1346,15 @@ abstract class CommonObject
 			$listId = implode(",", $temp);
 		}
 
+		// If $listId is empty, we have not criteria on fk_c_type_contact so we will delete record on element_id for
+		// any type or record instead of only the ones of the current object. So we do nothing in such a case.
+		if (empty($listId)) {
+			return 0;
+		}
+
 		$sql = "DELETE FROM ".$this->db->prefix()."element_contact";
 		$sql .= " WHERE element_id = ".((int) $this->id);
-		if (!empty($listId)) {
-			$sql .= " AND fk_c_type_contact IN (".$this->db->sanitize($listId).")";
-		}
+		$sql .= " AND fk_c_type_contact IN (".$this->db->sanitize($listId).")";
 
 		dol_syslog(get_class($this)."::delete_linked_contact", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -1371,8 +1392,8 @@ abstract class CommonObject
 		}
 		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
 		$sql .= ", tc.source, tc.element, tc.code, tc.libelle";
-		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc";
-		$sql .= ", ".$this->db->prefix()."element_contact ec";
+		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc,";
+		$sql .= " ".$this->db->prefix()."element_contact ec";
 		if ($source == 'internal') {	// internal contact (user)
 			$sql .= " LEFT JOIN ".$this->db->prefix()."user t on ec.fk_socpeople = t.rowid";
 		}
@@ -1415,6 +1436,7 @@ abstract class CommonObject
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
 					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
 					$tab[$i] = array(
+						'parentId' => $this->id,
 						'source' => $obj->source,
 						'socid' => $obj->socid,
 						'id' => $obj->id,
@@ -2015,7 +2037,7 @@ abstract class CommonObject
 	 *	@param	mixed		$value			New value
 	 *	@param	string		$table			To force other table element or element line (should not be used)
 	 *	@param	int			$id				To force other object id (should not be used)
-	 *	@param	string		$format			Data format ('text', 'date'). 'text' is used if not defined
+	 *	@param	string		$format			Data format ('text', 'int', 'date'). 'text' is used if not defined
 	 *	@param	string		$id_field		To force rowid field name. 'rowid' is used if not defined
 	 *	@param	User|string	$fuser			Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
 	 *  @param  string      $trigkey    	Trigger key to run (in most cases something like 'XXX_MODIFY')
@@ -2060,6 +2082,8 @@ abstract class CommonObject
 			$sql .= $field." = ".((int) $value);
 		} elseif ($format == 'date') {
 			$sql .= $field." = ".($value ? "'".$this->db->idate($value)."'" : "null");
+		} elseif ($format == 'dategmt') {
+			$sql .= $field." = ".($value ? "'".$this->db->idate($value, 'gmt')."'" : "null");
 		}
 
 		if ($fk_user_field) {
@@ -2072,7 +2096,7 @@ abstract class CommonObject
 
 		$sql .= " WHERE ".$id_field." = ".((int) $id);
 
-		dol_syslog(__METHOD__."", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($trigkey) {
@@ -3338,6 +3362,8 @@ abstract class CommonObject
 			$row = $this->db->fetch_row($resql);
 			return $row[0];
 		}
+
+		return 0;
 	}
 
 	/**
@@ -3361,6 +3387,8 @@ abstract class CommonObject
 			$row = $this->db->fetch_row($resql);
 			return $row[0];
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3406,6 +3434,8 @@ abstract class CommonObject
 				return $row[0];
 			}
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3796,7 +3826,7 @@ abstract class CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Add objects linked in llx_element_element.
+	 *	Add an object link into llx_element_element.
 	 *
 	 *	@param		string	$origin		Linked element type
 	 *	@param		int		$origin_id	Linked element id
@@ -4119,6 +4149,21 @@ abstract class CommonObject
 	}
 
 	/**
+	 *	Clear the cache saying that all linked object were already loaded. So next fetchObjectLinked will reload all links.
+	 *
+	 *	@return int						<0 if KO, >0 if OK
+	 *  @see	fetchObjectLinked()
+	 */
+	public function clearObjectLinkedCache()
+	{
+		if ($this->id > 0 && !empty($this->linkedObjectsFullLoaded[$this->id])) {
+			unset($this->linkedObjectsFullLoaded[$this->id]);
+		}
+
+		return 1;
+	}
+
+	/**
 	 *	Update object linked of a current object
 	 *
 	 *	@param	int		$sourceid		Object source id
@@ -4277,7 +4322,7 @@ abstract class CommonObject
 	 * @param	string	$field_select			name of field we need to get a list
 	 * @param	string	$field_where			name of field of object we need to get linked items
 	 * @param	string	$table_element			name of association table
-	 * @return 	array							Array of record
+	 * @return 	array|int						Array of record, -1 if empty
 	 */
 	public static function getAllItemsLinkedByObjectID($fk_object_where, $field_select, $field_where, $table_element)
 	{
@@ -4518,6 +4563,8 @@ abstract class CommonObject
 			$row = $this->db->fetch_row($resql);
 			return $row[0];
 		}
+
+		return 0;
 	}
 
 	/**
@@ -5100,7 +5147,7 @@ abstract class CommonObject
 			print '<td class="linecoluht_currency right">'.$langs->trans('PriceUHTCurrency').'</td>';
 		}
 		print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
 		}
 		print '<td class="linecoldiscount right">'.$langs->trans('ReductionShort').'</td>';
@@ -5238,7 +5285,7 @@ abstract class CommonObject
 		$this->tpl['total_ht'] = price($line->total_ht);
 		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
 		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->tpl['unit'] = $langs->transnoentities($line->getLabelOfUnit('long'));
 		}
 		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
@@ -5295,7 +5342,7 @@ abstract class CommonObject
 		$sql .= ", busy";
 		$sql .= ", mandatory";
 		$sql .= ") VALUES (";
-		$sql .= $resource_id;
+		$sql .= ((int) $resource_id);
 		$sql .= ", '".$this->db->escape($resource_type)."'";
 		$sql .= ", '".$this->db->escape($this->id)."'";
 		$sql .= ", '".$this->db->escape($this->element)."'";
@@ -5717,15 +5764,16 @@ abstract class CommonObject
 	 *
 	 * @param   string              $fieldname          Name of field
 	 * @param   string              $alternatevalue     Alternate value to use
+	 * @param   string              $type    			Type of data
 	 * @return  string|string[]                         Default value (can be an array if the GETPOST return an array)
 	 **/
-	public function getDefaultCreateValueFor($fieldname, $alternatevalue = null)
+	public function getDefaultCreateValueFor($fieldname, $alternatevalue = null, $type = 'alphanohtml')
 	{
 		global $conf, $_POST;
 
 		// If param here has been posted, we use this value first.
 		if (GETPOSTISSET($fieldname)) {
-			return GETPOST($fieldname, 'alphanohtml', 3);
+			return GETPOST($fieldname, $type, 3);
 		}
 
 		if (isset($alternatevalue)) {
@@ -5751,6 +5799,9 @@ abstract class CommonObject
 		}
 
 		// TODO Ad here a scan into table llx_overwrite_default with a filter on $this->element and $fieldname
+		// store content into $conf->cache['overwrite_default']
+
+		return '';
 	}
 
 
@@ -6065,6 +6116,8 @@ abstract class CommonObject
 					if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
 						//var_dump($conf->disable_compute);
 						if (empty($conf->disable_compute)) {
+							global $objectoffield;		// We set a global variable to $objectoffield so
+							$objectoffield = $this;		// we can use it inside computed formula
 							$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
 						}
 					}
@@ -6274,6 +6327,13 @@ abstract class CommonObject
 						}
 						$new_array_options[$key] = $this->db->idate($this->array_options[$key]);
 						break;
+					case 'datetimegmt':
+						// If data is a string instead of a timestamp, we convert it
+						if (!is_numeric($this->array_options[$key]) || $this->array_options[$key] != intval($this->array_options[$key])) {
+							$this->array_options[$key] = strtotime($this->array_options[$key]);
+						}
+						$new_array_options[$key] = $this->db->idate($this->array_options[$key], 'gmt');
+						break;
 					case 'link':
 						$param_list = array_keys($attributeParam['options']);
 						// 0 : ObjectName
@@ -6295,7 +6355,6 @@ abstract class CommonObject
 									$new_array_options[$key] = $object->id;
 								} else {
 									$this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
-									$this->db->rollback();
 									return -1;
 								}
 							}
@@ -6442,9 +6501,9 @@ abstract class CommonObject
 							return -1;
 						} elseif ($value == '') {
 							$new_array_languages[$key] = null;
+						} else {
+							$new_array_languages[$key] = $value;
 						}
-						//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
-						$new_array_languages[$key] = $value;
 						break;
 						/*case 'select':	// Not required, we chosed value='0' for undefined values
 						 if ($value=='-1')
@@ -6613,6 +6672,13 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = null;
 					} else {
 						$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
+					}
+					break;
+				case 'datetimegmt':
+					if (empty($this->array_options["options_".$key])) {
+						$this->array_options["options_".$key] = null;
+					} else {
+						$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key], 'gmt');
 					}
 					break;
 				case 'boolean':
@@ -7807,7 +7873,7 @@ abstract class CommonObject
 	 * clear validation message result for a field
 	 *
 	 * @param string $fieldKey Key of attribute to clear
-	 * @return null
+	 * @return void
 	 */
 	public function clearFieldError($fieldKey)
 	{
@@ -7820,12 +7886,14 @@ abstract class CommonObject
 	 *
 	 * @param string $fieldKey Key of attribute
 	 * @param string $msg the field error message
-	 * @return null
+	 * @return void
 	 */
 	public function setFieldError($fieldKey, $msg = '')
 	{
 		global $langs;
-		if (empty($msg)) { $msg = $langs->trans("UnknowError"); }
+		if (empty($msg)) {
+			$msg = $langs->trans("UnknowError");
+		}
 
 		$this->error = $this->validateFieldsErrors[$fieldKey] = $msg;
 	}
@@ -7847,30 +7915,34 @@ abstract class CommonObject
 	/**
 	 * Return validation test result for a field
 	 *
-	 * @param  array   $val		       		Array of properties of field to show
+	 * @param  array   $fields	       		Array of properties of field to show
 	 * @param  string  $fieldKey            Key of attribute
 	 * @param  string  $fieldValue          value of attribute
 	 * @return bool return false if fail true on success, see $this->error for error message
 	 */
-	public function validateField($val, $fieldKey, $fieldValue)
+	public function validateField($fields, $fieldKey, $fieldValue)
 	{
 		global $langs;
 
-		if (!class_exists('Validate')) { require_once DOL_DOCUMENT_ROOT . '/core/class/validate.class.php'; }
+		if (!class_exists('Validate')) {
+			require_once DOL_DOCUMENT_ROOT . '/core/class/validate.class.php';
+		}
 
 		$this->clearFieldError($fieldKey);
 
-		if (!isset($val[$fieldKey])) {
+		if (!isset($fields[$fieldKey])) {
 			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
 			return false;
 		}
 
+		$val = $fields[$fieldKey];
+
 		$param = array();
 		$param['options'] = array();
-		$type  = $val[$fieldKey]['type'];
+		$type  = $val['type'];
 
 		$required = false;
-		if (isset($val[$fieldKey]['notnull']) && $val[$fieldKey]['notnull'] === 1) {
+		if (isset($val['notnull']) && $val['notnull'] === 1) {
 			// 'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 			$required = true;
 		}
@@ -7881,6 +7953,7 @@ abstract class CommonObject
 		//
 		// PREPARE Elements
 		//
+		$reg = array();
 
 		// Convert var to be able to share same code than showOutputField of extrafields
 		if (preg_match('/varchar\((\d+)\)/', $type, $reg)) {
@@ -7894,7 +7967,7 @@ abstract class CommonObject
 			$type = 'select';
 		}
 
-		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
+		if (!empty($val['type']) && preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
 			$type = 'link';
 		}
 
@@ -8066,10 +8139,16 @@ abstract class CommonObject
 				$out .= "\n";
 
 				$nbofextrafieldsshown = 0;
-				$extrafields_collapse_num = '';
 				$e = 0;	// var to manage the modulo (odd/even)
 
+				$lastseparatorkeyfound = '';
+				$extrafields_collapse_num = '';
+				$extrafields_collapse_num_old = '';
+				$i = 0;
+
 				foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $label) {
+					$i++;
+
 					// Show only the key field in params
 					if (is_array($params) && array_key_exists('onlykey', $params) && $key != $params['onlykey']) {
 						continue;
@@ -8104,6 +8183,7 @@ abstract class CommonObject
 					if (empty($perms)) {
 						continue;
 					}
+
 					// Load language if required
 					if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
 						$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
@@ -8156,7 +8236,8 @@ abstract class CommonObject
 
 					// Output value of the current field
 					if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
-						$extrafields_collapse_num = '';
+						$extrafields_collapse_num = $key;
+						/*
 						$extrafield_param = $extrafields->attributes[$this->table_element]['param'][$key];
 						if (!empty($extrafield_param) && is_array($extrafield_param)) {
 							$extrafield_param_list = array_keys($extrafield_param['options']);
@@ -8165,14 +8246,20 @@ abstract class CommonObject
 								$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
 
 								if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
-									$extrafields_collapse_num = $extrafields->attributes[$this->table_element]['pos'][$key];
+									//$extrafields_collapse_num = $extrafields->attributes[$this->table_element]['pos'][$key];
+									$extrafields_collapse_num = $key;
 								}
 							}
 						}
+						*/
 
 						// if colspan=0 or 1, the second column is not extended, so the separator must be on 2 columns
 						$out .= $extrafields->showSeparator($key, $this, ($colspan ? $colspan + 1 : 2), $display_type, $mode);
+
+						$lastseparatorkeyfound = $key;
 					} else {
+						$collapse_group = $extrafields_collapse_num.(!empty($this->id) ? '_'.$this->id : '');
+
 						$class = (!empty($extrafields->attributes[$this->table_element]['hidden'][$key]) ? 'hideobject ' : '');
 						$csstyle = '';
 						if (is_array($params) && count($params) > 0) {
@@ -8243,13 +8330,13 @@ abstract class CommonObject
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
 						if ($display_type == 'card') {
-							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="field_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
+							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="field_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$collapse_group.'" '.$domData.' >';
 							if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && ($action == 'view' || $action == 'valid' || $action == 'editline' || $action == 'confirm_valid' || $action == 'confirm_cancel')) {
 								$out .= '<td></td>';
 							}
 							$out .= '<td class="titlefieldcreate wordbreak';
 						} elseif ($display_type == 'line') {
-							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="fieldline_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
+							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="fieldline_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$collapse_group.'" '.$domData.' >';
 							$out .= '<div style="display: inline-block; padding-right:4px" class="wordbreak';
 						}
 						//$out .= "titlefield";
@@ -8431,19 +8518,19 @@ abstract class CommonObject
 	 * This function is meant to be called from replaceThirdparty with the appropriate tables
 	 * Column name fk_soc MUST be used to identify thirdparties
 	 *
-	 * @param  DoliDB 	   $db 			  Database handler
+	 * @param  DoliDB 	   $dbs			  Database handler
 	 * @param  int 		   $origin_id     Old thirdparty id (the thirdparty to delete)
 	 * @param  int 		   $dest_id       New thirdparty id (the thirdparty that will received element of the other)
 	 * @param  string[]    $tables        Tables that need to be changed
 	 * @param  int         $ignoreerrors  Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old thirdparty may already exists on new one)
 	 * @return bool						  True if success, False if error
 	 */
-	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
+	public static function commonReplaceThirdparty(DoliDB $dbs, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
 	{
 		foreach ($tables as $table) {
-			$sql = 'UPDATE '.$db->prefix().$table.' SET fk_soc = '.((int) $dest_id).' WHERE fk_soc = '.((int) $origin_id);
+			$sql = 'UPDATE '.$dbs->prefix().$table.' SET fk_soc = '.((int) $dest_id).' WHERE fk_soc = '.((int) $origin_id);
 
-			if (!$db->query($sql)) {
+			if (!$dbs->query($sql)) {
 				if ($ignoreerrors) {
 					return true; // TODO Not enough. If there is A-B on kept thirdparty and B-C on old one, we must get A-B-C after merge. Not A-B.
 				}
@@ -8460,19 +8547,19 @@ abstract class CommonObject
 	 * This function is meant to be called from replaceProduct with the appropriate tables
 	 * Column name fk_product MUST be used to identify products
 	 *
-	 * @param  DoliDB 	   $db 			  Database handler
+	 * @param  DoliDB 	   $dbs			  Database handler
 	 * @param  int 		   $origin_id     Old product id (the product to delete)
 	 * @param  int 		   $dest_id       New product id (the product that will received element of the other)
 	 * @param  string[]    $tables        Tables that need to be changed
 	 * @param  int         $ignoreerrors  Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old product may already exists on new one)
 	 * @return bool						  True if success, False if error
 	 */
-	public static function commonReplaceProduct(DoliDB $db, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
+	public static function commonReplaceProduct(DoliDB $dbs, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
 	{
 		foreach ($tables as $table) {
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_product = '.((int) $dest_id).' WHERE fk_product = '.((int) $origin_id);
 
-			if (!$db->query($sql)) {
+			if (!$dbs->query($sql)) {
 				if ($ignoreerrors) {
 					return true; // TODO Not enough. If there is A-B on kept product and B-C on old one, we must get A-B-C after merge. Not A-B.
 				}
@@ -8553,21 +8640,21 @@ abstract class CommonObject
 	/**
 	 *  Show photos of an object (nbmax maximum), into several columns
 	 *
-	 *  @param		string	$modulepart		'product', 'ticket', ...
-	 *  @param      string	$sdir        	Directory to scan (full absolute path)
-	 *  @param      int		$size        	0=original size, 1='small' use thumbnail if possible
-	 *  @param      int		$nbmax       	Nombre maximum de photos (0=pas de max)
-	 *  @param      int		$nbbyrow     	Number of image per line or -1 to use div separator or 0 to use no separator. Used only if size=1 or 'small'.
-	 * 	@param		int		$showfilename	1=Show filename
-	 * 	@param		int		$showaction		1=Show icon with action links (resize, delete)
-	 * 	@param		int		$maxHeight		Max height of original image when size='small' (so we can use original even if small requested). If 0, always use 'small' thumb image.
-	 * 	@param		int		$maxWidth		Max width of original image when size='small'
-	 *  @param      int     $nolink         Do not add a href link to view enlarged imaged into a new tab
-	 *  @param      int     $notitle        Do not add title tag on image
-	 *  @param		int		$usesharelink	Use the public shared link of image (if not available, the 'nophoto' image will be shown instead)
-	 *  @return     string					Html code to show photo. Number of photos shown is saved in this->nbphoto
+	 *  @param		string		$modulepart		'product', 'ticket', ...
+	 *  @param      string		$sdir        	Directory to scan (full absolute path)
+	 *  @param      int			$size        	0=original size, 1='small' use thumbnail if possible
+	 *  @param      int			$nbmax       	Nombre maximum de photos (0=pas de max)
+	 *  @param      int			$nbbyrow     	Number of image per line or -1 to use div separator or 0 to use no separator. Used only if size=1 or 'small'.
+	 * 	@param		int			$showfilename	1=Show filename
+	 * 	@param		int			$showaction		1=Show icon with action links (resize, delete)
+	 * 	@param		int			$maxHeight		Max height of original image when size='small' (so we can use original even if small requested). If 0, always use 'small' thumb image.
+	 * 	@param		int			$maxWidth		Max width of original image when size='small'
+	 *  @param      int     	$nolink         Do not add a href link to view enlarged imaged into a new tab
+	 *  @param      int|string  $overwritetitle Do not add title tag on image
+	 *  @param		int			$usesharelink	Use the public shared link of image (if not available, the 'nophoto' image will be shown instead)
+	 *  @return     string						Html code to show photo. Number of photos shown is saved in this->nbphoto
 	 */
-	public function show_photos($modulepart, $sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0, $notitle = 0, $usesharelink = 0)
+	public function show_photos($modulepart, $sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0, $overwritetitle = 0, $usesharelink = 0)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -8635,7 +8722,10 @@ abstract class CommonObject
 						// Find name of thumb file
 						$photo_vignette = basename(getImageFileNameForSize($dir.$file, '_small'));
 						if (!dol_is_file($dirthumb.$photo_vignette)) {
-							$photo_vignette = '';
+							// The thumb does not exists, so we will use the original file
+							$dirthumb = $dir;
+							$pdirthumb = $pdir;
+							$photo_vignette = basename($file);
 						}
 
 						// Get filesize of original file
@@ -8670,8 +8760,12 @@ abstract class CommonObject
 						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
 						$alt = $langs->transnoentitiesnoconv('File').': '.$relativefile;
 						$alt .= ' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
-						if ($notitle) {
-							$alt = '';
+						if ($overwritetitle) {
+							if (is_numeric($overwritetitle)) {
+								$alt = '';
+							} else {
+								$alt = $overwritetitle;
+							}
 						}
 
 						$addphotorefcss = 1;
@@ -9316,7 +9410,7 @@ abstract class CommonObject
 			$sql .= ' WHERE 1 = 1'; // usage with empty id and empty ref is very rare
 		}
 		if (empty($id) && isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= ' AND t.entity IN ('.getEntity($this->table_element).')';
+			$sql .= ' AND t.entity IN ('.getEntity($this->element).')';
 		}
 		if ($morewhere) {
 			$sql .= $morewhere;
@@ -9942,7 +10036,7 @@ abstract class CommonObject
 	 * @param 	int[]|int 	$categories 		Category ID or array of Categories IDs
 	 * @param 	string 		$type_categ 		Category type ('customer', 'supplier', 'website_page', ...) definied into const class Categorie type
 	 * @param 	boolean		$remove_existing 	True: Remove existings categories from Object if not supplies by $categories, False: let them
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int								<0 if KO, >0 if OK
 	 */
 	public function setCategoriesCommon($categories, $type_categ = '', $remove_existing = true)
 	{

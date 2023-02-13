@@ -763,7 +763,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$productlot = new Productlot($db);
 				if ($productlot->fetch(0, $line->fk_product, $line->batch) > 0) {
 					print $productlot->getNomUrl(1);
-				} elseif (!empty($line->batch)) print $line->batch.'&nbsp;'.img_warning($langs->trans('BatchNotFound'));;
+				} elseif (!empty($line->batch)) print $line->batch.'&nbsp;'.img_warning($langs->trans('BatchNotFound'));
 			}
 			print '</td>';
 		}

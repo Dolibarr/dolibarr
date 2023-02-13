@@ -52,6 +52,7 @@ function printDropdownBookmarksList()
 			}
 		}
 	}
+
 	$tmpurl = '';
 	// No urlencode, all param $url will be urlencoded later
 	if ($sortfield) {
@@ -65,7 +66,13 @@ function printDropdownBookmarksList()
 			if ((preg_match('/^search_/', $key) || in_array($key, $authorized_var))
 				&& $val != ''
 				&& !array_key_exists($key, $url_param)) {
-				$url_param[$key] = http_build_query(array(dol_escape_htmltag($key) => dol_escape_htmltag($val)));
+				if (is_array($val)) {
+					foreach ($val as $tmpsubval) {
+						$url_param[] = http_build_query(array(dol_escape_htmltag($key).'[]' => dol_escape_htmltag($tmpsubval)));
+					}
+				} elseif ($val != '') {
+					$url_param[$key] = http_build_query(array(dol_escape_htmltag($key) => dol_escape_htmltag($val)));
+				}
 			}
 		}
 	}
@@ -203,11 +210,11 @@ function printDropdownBookmarksList()
 
 		$html .= '<!-- script to open/close the popup -->
 				<script>
-				$( document ).on("keyup", "#top-bookmark-search-input", function () {
+				jQuery(document).on("keyup", "#top-bookmark-search-input", function () {
 					console.log("keyup in bookmark search input");
 
 					var filter = $(this).val(), count = 0;
-					$("#dropdown-bookmarks-list .bookmark-item").each(function () {
+					jQuery("#dropdown-bookmarks-list .bookmark-item").each(function () {
 						if ($(this).text().search(new RegExp(filter, "i")) < 0) {
 							$(this).addClass("hidden-search-result");
 						} else {
@@ -215,7 +222,7 @@ function printDropdownBookmarksList()
 							count++;
 						}
 					});
-					$("#top-bookmark-search-filter-count").text(count);
+					jQuery("#top-bookmark-search-filter-count").text(count);
 					if (count == 0) {
 						jQuery("#top-bookmark-search-nothing-found").removeClass("hidden-search-result");
 					} else {

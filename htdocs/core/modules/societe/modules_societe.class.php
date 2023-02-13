@@ -48,7 +48,6 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 	public static function liste_modeles($dbs, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-
 		$type = 'company';
 		$list = array();
 

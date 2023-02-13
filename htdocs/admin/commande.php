@@ -61,10 +61,10 @@ $type = 'order';
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstorder = GETPOST('maskconstorder', 'alpha');
+	$maskconstorder = GETPOST('maskconstorder', 'aZ09');
 	$maskorder = GETPOST('maskorder', 'alpha');
 
-	if ($maskconstorder) {
+	if ($maskconstorder && preg_match('/_MASK$/', $maskconstorder)) {
 		$res = dolibarr_set_const($db, $maskconstorder, $maskorder, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -117,7 +117,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->COMMANDE_ADDON_PDF == "$value") {
+		if (getDolGlobalString('COMMANDE_ADDON_PDF') == $value) {
 			dolibarr_del_const($db, 'COMMANDE_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -461,7 +461,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Default
 								print '<td class="center">';
-								if ($conf->global->COMMANDE_ADDON_PDF == $name) {
+								if (getDolGlobalString('COMMANDE_ADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';

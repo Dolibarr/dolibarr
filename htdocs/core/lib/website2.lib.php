@@ -271,7 +271,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 	$tplcontent .= '</html>'."\n";
 
 	$tplcontent .= '<?php // BEGIN PHP'."\n";
-	$tplcontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "html", '.$objectpage->id.');'."\n";
+	$tplcontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "html", '.$objectpage->id.'); dolWebsiteIncrementCounter('.$object->id.', "'.$objectpage->type_container.'", '.$objectpage->id.');'."\n";
 	$tplcontent .= "// END PHP ?>\n";
 
 	//var_dump($filetpl);exit;
@@ -673,10 +673,12 @@ function showWebsiteTemplates(Website $website)
 
 
 /**
- * checkPHPCode
+ * Check a new string containing only php code (including <php tag)
+ * - Block if bad code in the new string.
+ * - Block also if user has no permission to change PHP code.
  *
- * @param	string		$phpfullcodestringold		PHP old string
- * @param	string		$phpfullcodestring			PHP new string
+ * @param	string		$phpfullcodestringold		PHP old string. For exemple "<?php echo 'a' ?><php echo 'b' ?>"
+ * @param	string		$phpfullcodestring			PHP new string. For exemple "<?php echo 'a' ?><php echo 'c' ?>"
  * @return	int										Error or not
  */
 function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
@@ -716,7 +718,12 @@ function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 			break;
 		}
 	}
-	// Check dynamic functions $xxx(
+	// Deny dynamic functions '${a}('  or  '$a[b]('  - So we refuse '}('  and  ']('
+	if (preg_match('/[}\]]\(/ims', $phpfullcodestring)) {
+		$error++;
+		setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", ']('), null, 'errors');
+	}
+	// Deny dynamic functions $xxx(
 	if (preg_match('/\$[a-z0-9_]+\(/ims', $phpfullcodestring)) {
 		$error++;
 		setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", '$...('), null, 'errors');
@@ -730,6 +737,7 @@ function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 		if (!$error) {
 			$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 			$allowimportsite = true;
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
 				$allowimportsite = false;
 			}

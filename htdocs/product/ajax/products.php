@@ -103,26 +103,36 @@ if ($action == 'fetch' && !empty($id)) {
 
 		$price_level = 1;
 		if ($socid > 0) {
-			$thirdpartytemp = new Societe($db);
-			$thirdpartytemp->fetch($socid);
-
-			//Load translation description and label
-			if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
-				$newlang = $thirdpartytemp->default_lang;
-
-				if (!empty($newlang)) {
-					$outputlangs = new Translate("", $conf);
-					$outputlangs->setDefaultLang($newlang);
-					$outdesc_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["description"])) ? $object->multilangs[$outputlangs->defaultlang]["description"] : $object->description;
-					$outlabel_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["label"])) ? $object->multilangs[$outputlangs->defaultlang]["label"] : $object->label;
-				} else {
-					$outdesc_trans = $object->description;
-					$outlabel_trans = $object->label;
-				}
+			$needchangeaccordingtothirdparty = 0;
+			if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
+				$needchangeaccordingtothirdparty = 1;
 			}
+			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+				$needchangeaccordingtothirdparty = 1;
+			}
+			if ($needchangeaccordingtothirdparty) {
+				$thirdpartytemp = new Societe($db);
+				$thirdpartytemp->fetch($socid);
 
-			if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
-				$price_level = $thirdpartytemp->price_level;
+				//Load translation description and label according to thirdparty language
+				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
+					$newlang = $thirdpartytemp->default_lang;
+
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+						$outdesc_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["description"])) ? $object->multilangs[$outputlangs->defaultlang]["description"] : $object->description;
+						$outlabel_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["label"])) ? $object->multilangs[$outputlangs->defaultlang]["label"] : $object->label;
+					} else {
+						$outdesc_trans = $object->description;
+						$outlabel_trans = $object->label;
+					}
+				}
+
+				//Set price level according to thirdparty
+				if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+					$price_level = $thirdpartytemp->price_level;
+				}
 			}
 		}
 
@@ -185,7 +195,7 @@ if ($action == 'fetch' && !empty($id)) {
 		}
 
 		// Price by customer
-		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
+		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') && !empty($socid)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
 			$prodcustprice = new Productcustomerprice($db);

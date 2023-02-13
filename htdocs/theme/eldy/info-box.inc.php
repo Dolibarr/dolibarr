@@ -189,6 +189,31 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	bottom: 0;
 }
 
+/* customize section img box on list of products */
+.info-box-img {
+	height: 105px !important;
+	width: 88px;
+	border-top-left-radius: 2px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 2px;
+	display: block;
+	overflow: hidden;
+	float: left;
+	text-align: center;
+	font-size: 2.8em;
+	line-height: 90px;
+	margin-right: 5px;
+	background: var(--colorbacktitle1) !important;
+}
+.info-box-img > img {
+	width: 90%;
+	position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
 <?php if (empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)) { ?>
 .info-box-icon-text{
 	opacity: 1;
@@ -434,7 +459,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 
 /* USING FONTAWESOME FOR WEATHER */
 .info-box-weather .info-box-icon{
-	background: rgba(0, 0, 0, 0.08) !important;
+	background: var(--colorbacktitle1) !important;
 }
 .fa-weather-level0:before{
 	content: "\f185";
@@ -491,7 +516,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	min-width: 350px;
 	max-width: 350px;
 }
-
+.fright {
+	float:right;
+}
 @media only screen and (max-width: 1740px) {
 	.info-box-module {
 		min-width: 315px;

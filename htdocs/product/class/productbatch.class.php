@@ -100,7 +100,7 @@ class Productbatch extends CommonObject
 		$sql .= " ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").",";			// no more used
 		$sql .= " ".(!isset($this->batch) ? 'NULL' : "'".$this->db->escape($this->batch)."'").",";
 		$sql .= " ".(!isset($this->qty) ? 'NULL' : $this->qty).",";
-		$sql .= " ".(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'")."";
+		$sql .= " ".(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -204,7 +204,7 @@ class Productbatch extends CommonObject
 		$sql .= " eatby=".(dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
 		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
 		$sql .= " qty=".(isset($this->qty) ? $this->qty : "null").",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -244,7 +244,7 @@ class Productbatch extends CommonObject
 		$this->db->begin();
 
 		if (!$error) {
-			$sql = "DELETE FROM ".$this->db->prefix().self::$_table_element."";
+			$sql = "DELETE FROM ".$this->db->prefix().self::$_table_element;
 			$sql .= " WHERE rowid=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);

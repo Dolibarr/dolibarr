@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -181,6 +181,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $error;
 
 	/**
+	 * @var string[] Array of Errors messages
+	 */
+	public $errors;
+
+	/**
 	 * @var string Module version
 	 * @see http://semver.org
 	 *
@@ -219,6 +224,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $descriptionlong;
 
+	/**
+	 * @var array dictionaries description
+	 */
+	public $dictionaries;
+
+	/**
+	 * @var array tabs description
+	 */
+	public $tabs;
 
 	// For exports
 
@@ -232,10 +246,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $export_label;
 
+	public $export_icon;
+
 	public $export_permission;
 	public $export_fields_array;
 	public $export_TypeFields_array; // Array of key=>type where type can be 'Numeric', 'Date', 'Text', 'Boolean', 'Status', 'List:xxx:login:rowid'
 	public $export_entities_array;
+	public $export_help_array;
 	public $export_special_array; // special or computed field
 	public $export_dependencies_array;
 	public $export_sql_start;
@@ -254,6 +271,17 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * @var string Module import label
 	 */
 	public $import_label;
+
+	public $import_icon;
+
+	public $import_entities_array;
+	public $import_tables_array;
+	public $import_fields_array;
+	public $import_fieldshidden_array;
+	public $import_convertvalue_array;
+	public $import_regex_array;
+	public $import_examplevalues_array;
+	public $import_updatekeys_array;
 
 
 	/**
@@ -285,10 +313,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $picto;
 
 	/**
-	 * @var string[] List of config pages
+	 * @var string[]|string 	List of config pages (Old modules uses a string. New one must use an array)
 	 *
 	 * Name of php pages stored into module/admin directory, used to setup module.
-	 * e.g.: "admin.php@module"
+	 * e.g.: array("setup.php@mymodule")
 	 */
 	public $config_page_url;
 
@@ -337,11 +365,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $phpmin;
 
+	public $phpmax;
+
 	/**
 	 * @var array Minimum version of Dolibarr required by module.
 	 * e.g.: Dolibarr ≥ 3.6 = array(3, 6)
 	 */
 	public $need_dolibarr_version;
+
+	public $enabled_bydefault;
 
 	/**
 	 * @var bool Whether to hide the module.
@@ -447,7 +479,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				// Add current entity id
 				$sql = str_replace('__ENTITY__', $conf->entity, $sql);
 
-				dol_syslog(get_class($this)."::_init ignoreerror=".$ignoreerror."", LOG_DEBUG);
+				dol_syslog(get_class($this)."::_init ignoreerror=".$ignoreerror, LOG_DEBUG);
 				$result = $this->db->query($sql, $ignoreerror);
 				if (!$result) {
 					if (!$ignoreerror) {
@@ -778,8 +810,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * For 'experimental' modules, gives 'experimental' translation
 	 * For 'dolibarr' modules, gives Dolibarr version
 	 *
-	 * @param  int $translated 1=Special version keys are translated, 0=Special version keys are not translated
-	 * @return string                  Module version
+	 * @param  int 		$translated 		1=Special version keys are translated, 0=Special version keys are not translated
+	 * @return string               		Module version
 	 */
 	public function getVersion($translated = 1)
 	{
@@ -962,8 +994,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$tmp = json_decode($obj->note, true);
 				}
 				return array(
-					'authorid' => $tmp['authorid'],
-					'ip' => $tmp['ip'],
+					'authorid' => empty($tmp['authorid']) ? '' : $tmp['authorid'],
+					'ip' => empty($tmp['ip']) ? '' : $tmp['ip'],
 					'lastactivationdate' => $this->db->jdate($obj->tms),
 					'lastactivationversion' => (!empty($tmp['lastactivationversion']) ? $tmp['lastactivationversion'] : 'unknown'),
 				);
@@ -1313,7 +1345,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position, box_order, fk_user, entity)";
 								$sql .= " VALUES (".((int) $lastid).", ".((int) $key2).", '0', 0, ".((int) $conf->entity).")";
 
-								dol_syslog(get_class($this)."::insert_boxes onto page ".$key2."=".$val2."", LOG_DEBUG);
+								dol_syslog(get_class($this)."::insert_boxes onto page ".$key2."=".$val2, LOG_DEBUG);
 								$resql = $this->db->query($sql);
 								if (!$resql) {
 									$err++;

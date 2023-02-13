@@ -824,7 +824,7 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5317,'PCG14-DEV','STOCK','3312',5315,'Produits en cours P 2','1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5318,'PCG14-DEV','STOCK','335',5314,'Travaux en cours','1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5319,'PCG14-DEV','STOCK','3351',5318,'Travaux en cours T 1','1');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5320,'PCG14-DEV','STOCK','3552',5318,'Travaux en cours T 2','1');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5320,'PCG14-DEV','STOCK','3352',5318,'Travaux en cours T 2','1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5321,'PCG14-DEV','STOCK','34',5969,'En-cours de production de services','1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5322,'PCG14-DEV','STOCK','341',5321,'Etudes en cours','1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 5323,'PCG14-DEV','STOCK','3411',5322,'Etudes en cours E 1','1');

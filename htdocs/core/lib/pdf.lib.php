@@ -1178,7 +1178,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			$mycustomfooterheight = pdfGetHeightForHtmlContent($pdf, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
 
 			$marginwithfooter = $marge_basse + $freetextheight + $mycustomfooterheight;
-			$posy = $marginwithfooter + 0;
+			$posy = (float) $marginwithfooter;
 
 			// Option for footer background color (without freetext zone)
 			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
@@ -1222,7 +1222,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		} else {
 			// Else default footer
 			$marginwithfooter = $marge_basse + $freetextheight + (!empty($line1) ? 3 : 0) + (!empty($line2) ? 3 : 0) + (!empty($line3) ? 3 : 0) + (!empty($line4) ? 3 : 0);
-			$posy = $marginwithfooter + 0;
+			$posy = (float) $marginwithfooter;
 
 			// Option for footer background color (without freetext zone)
 			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
@@ -1652,7 +1652,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	}
 
 	// Show information for lot
-	if ($dbatch) {
+	if (!empty($dbatch)) {
 		// $object is a shipment.
 		//var_dump($object->lines[$i]->details_entrepot);		// array from llx_expeditiondet (we can have seral lines for one fk_origin_line)
 		//var_dump($object->lines[$i]->detail_batch);			// array from llx_expeditiondet_batch (each line with a lot is linked to llx_expeditiondet)
@@ -2392,10 +2392,10 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 			$outputlangs->load('orders');
 
 			if (count($objects) > 1 && count($objects) <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
-				$object->note_public = dol_concatdesc($object->note_public, '<br>'.$outputlangs->transnoentities("RefOrder").' : <br>');
+				$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' :');
 				foreach ($objects as $elementobject) {
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).(!empty($elementobject->ref_client) ? ' ('.$elementobject->ref_client.')' : '').(!empty($elementobject->ref_supplier) ? ' ('.$elementobject->ref_supplier.')' : '').' ');
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("OrderDate").' : '.dol_print_date($elementobject->date, 'day', '', $outputlangs).'<br>');
+					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).(empty($elementobject->ref_client) ?'' : ' ('.$elementobject->ref_client.')').(empty($elementobject->ref_supplier) ? '' : ' ('.$elementobject->ref_supplier.')').' ');
+					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("OrderDate").' : '.dol_print_date($elementobject->date, 'day', '', $outputlangs));
 				}
 			} elseif (count($objects) == 1) {
 				$elementobject = array_shift($objects);
@@ -2426,9 +2426,9 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 			if (count($objects) > 1) {
 				$order = null;
 				if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {
-					$object->note_public = dol_concatdesc($object->note_public, '<br>'.$outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' : <br>');
+					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' :');
 				} else {
-					$object->note_public = dol_concatdesc($object->note_public, '<br>'.$outputlangs->transnoentities("RefSending").' : <br>');
+					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefSending").' :');
 				}
 				// We concat this record info into fields xxx_value. title is overwrote.
 				foreach ($objects as $elementobject) {
@@ -2446,11 +2446,9 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 
 					if (! is_object($order)) {
 						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref));
-						$object->note_public = dol_concatdesc($object->note_public, '<br>');
 					} else {
 						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : ''));
 						$object->note_public = dol_concatdesc($object->note_public, ' / '.$outputlangs->transnoentities($elementobject->ref));
-						$object->note_public = dol_concatdesc($object->note_public, '<br>');
 					}
 				}
 			} elseif (count($objects) == 1) {

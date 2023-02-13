@@ -313,10 +313,6 @@ if (empty($reshook)) {
 					$object->socialnetworks[$key] = trim(GETPOST($key, 'alphanohtml'));
 				}
 			}
-			//$object->skype = trim(GETPOST("skype", 'alpha'));
-			//$object->twitter = trim(GETPOST("twitter", 'alpha'));
-			//$object->facebook = trim(GETPOST("facebook", 'alpha'));
-			//$object->linkedin = trim(GETPOST("linkedin", 'alpha'));
 			$object->birth = $birthdate;
 			$object->default_lang = GETPOST('default_lang', 'alpha');
 			$object->typeid = GETPOST("typeid", 'int');
@@ -488,11 +484,6 @@ if (empty($reshook)) {
 			}
 		}
 
-		// $object->skype       = $skype;
-		// $object->twitter     = $twitter;
-		// $object->facebook    = $facebook;
-		// $object->linkedin    = $linkedin;
-
 		$object->email       = $email;
 		$object->url       	 = $url;
 		$object->login       = $login;
@@ -565,7 +556,7 @@ if (empty($reshook)) {
 		}
 		if (!empty($object->url) && !isValidUrl($object->url)) {
 			$langs->load("errors");
-			setEventMessages('', $langs->trans("ErrorBadUrl", $object->url), 'errors');
+			setEventMessages($langs->trans("ErrorBadUrl", $object->url), null, 'errors');
 		}
 		$public = 0;
 		if (isset($public)) {
@@ -683,7 +674,7 @@ if (empty($reshook)) {
 
 					$moreinheader = 'X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
 
-					$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+					$result = $object->sendEmail($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 					if ($result < 0) {
 						$error++;
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -754,7 +745,7 @@ if (empty($reshook)) {
 
 						$moreinheader = 'X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
 
-						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+						$result = $object->sendEmail($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 						if ($result < 0) {
 							$error++;
 							setEventMessages($object->error, $object->errors, 'errors');
@@ -825,7 +816,7 @@ if (empty($reshook)) {
 
 						$moreinheader = 'X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
 
-						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+						$result = $object->sendEmail($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 						if ($result < 0) {
 							$error++;
 							setEventMessages($object->error, $object->errors, 'errors');
@@ -1046,7 +1037,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Website
 		print '<tr><td>'.$form->editfieldkey('Web', 'member_url', GETPOST('member_url', 'alpha'), $object, 0).'</td>';
-		print '<td>'.img_picto('', 'globe').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="member_url" id="member_url" value="'.(GETPOSTISSET('member_url', 'alpha') ? GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
+		print '<td>'.img_picto('', 'globe').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="member_url" id="member_url" value="'.(GETPOSTISSET('member_url') ? GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
 
 		// Address
 		print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>';

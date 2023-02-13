@@ -296,7 +296,7 @@ if ($id > 0 || !empty($ref)) {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 					$proj = new Project($db);
@@ -329,7 +329,7 @@ if ($id > 0 || !empty($ref)) {
 			$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
 		}
 
-		print '<tr><td class="titlefield">'.$langs->trans('Discounts').'</td><td colspan="3">';
+		print '<tr><td class="titlefield">'.$langs->trans('Discounts').'</td><td colspan="2">';
 
 		$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount);
 		$absolute_creditnote = $soc->getAvailableDiscounts('', $filtercreditnote);
@@ -393,7 +393,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editavailability&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetAvailability'), 1).'</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td colspan="3">';
+		print '</td><td colspan="2">';
 		if ($action == 'editavailability') {
 			$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'availability_id', 1);
 		} else {
@@ -450,7 +450,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDemandReason'), 1).'</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td colspan="3">';
+		print '</td><td colspan="2">';
 		if ($action == 'editdemandreason') {
 			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'demand_reason_id', 1);
 		} else {
@@ -500,11 +500,11 @@ if ($id > 0 || !empty($ref)) {
 		$totalVolume = $tmparray['volume'];
 		if ($totalWeight || $totalVolume) {
 			print '<tr><td>'.$langs->trans("CalculatedWeight").'</td>';
-			print '<td>';
+			print '<td colspan="2">';
 			print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
 			print '</td></tr>';
 			print '<tr><td>'.$langs->trans("CalculatedVolume").'</td>';
-			print '<td>';
+			print '<td colspan="2">';
 			print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
 			print '</td></tr>';
 		}
@@ -524,7 +524,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 			print '</td></tr></table>';
 			print '</td>';
-			print '<td colspan="3">';
+			print '<td colspan="2">';
 			if ($action != 'editincoterm') {
 				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 			} else {
