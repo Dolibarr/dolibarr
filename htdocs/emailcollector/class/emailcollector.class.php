@@ -1082,10 +1082,13 @@ class EmailCollector extends CommonObject
 				//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
 				//dol_syslog($debugtext);
 
-				$storage = new DoliStorage($db, $conf);
+				$token = '';
+
+				$storage = new DoliStorage($db, $conf, $keyforprovider);
 
 				try {
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+
 					$expire = true;
 					// Is token expired or will token expire in the next 30 seconds
 					// if (is_object($tokenobj)) {
@@ -1121,7 +1124,6 @@ class EmailCollector extends CommonObject
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					return -1;
 				}
-
 
 				$cm = new ClientManager();
 				$client = $cm->make([
@@ -2287,7 +2289,7 @@ class EmailCollector extends CommonObject
 								'ticket' => array('table' => 'ticket',
 									'fields' => array('ref'),
 									'class' => 'ticket/class/ticket.class.php',
-									'object' => ' Ticket'),
+									'object' => 'Ticket'),
 								'knowledgemanagement' => array('table' => 'knowledgemanagement_knowledgerecord',
 									'fields' => array('ref'),
 									'class' => 'knowledgemanagement/class/knowledgemanagement.class.php',

@@ -849,7 +849,7 @@ abstract class CommonObject
 		}
 		if ($this->element == 'contact') {
 			$contactid = $this->id;
-			$thirdpartyid = empty($object->fk_soc) ? 0 : $object->fk_soc;
+			$thirdpartyid = empty($this->fk_soc) ? 0 : $this->fk_soc;
 		}
 		if ($this->element == 'user') {
 			$contactid = $this->contact_id;
@@ -1354,12 +1354,13 @@ abstract class CommonObject
 	 *
 	 *    @param	int			$statusoflink	Status of links to get (-1=all). Not used.
 	 *    @param	string		$source			Source of contact: 'external' or 'thirdparty' (llx_socpeople) or 'internal' (llx_user)
-	 *    @param	int         $list       	0:Return array contains all properties, 1:Return array contains just id
+	 *    @param	int         $list       	0:Returned array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       	Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @param	int			$status			Status of user or company
+	 *    @param	array		$arrayoftcids	Array with ID of type of contacts. If we provide this, we can make a ec.fk_c_type_contact in ($arrayoftcids) to avoid link on tc table. TODO Not implemented.
 	 *    @return	array|int		        	Array of contacts, -1 if error
 	 */
-	public function liste_contact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1)
+	public function liste_contact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1, $arrayoftcids = array())
 	{
 		// phpcs:enable
 		global $langs;
@@ -1401,7 +1402,7 @@ abstract class CommonObject
 				$sql .= " AND t.statut = ".((int) $status);	// t is llx_socpeople
 			}
 		}
-		$sql .= " AND tc.active=1";
+		$sql .= " AND tc.active = 1";
 		if ($statusoflink >= 0) {
 			$sql .= " AND ec.statut = ".((int) $statusoflink);
 		}
@@ -6084,6 +6085,8 @@ abstract class CommonObject
 					if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
 						//var_dump($conf->disable_compute);
 						if (empty($conf->disable_compute)) {
+							global $objectoffield;		// We set a global variable to $objectoffield so
+							$objectoffield = $this;		// we can use it inside computed formula
 							$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
 						}
 					}
@@ -6314,7 +6317,6 @@ abstract class CommonObject
 									$new_array_options[$key] = $object->id;
 								} else {
 									$this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
-									$this->db->rollback();
 									return -1;
 								}
 							}

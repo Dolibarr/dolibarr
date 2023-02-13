@@ -173,16 +173,20 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)\s*=/i', $val);
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)\s*=/i', $val);
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)\s*=/i', $val);
+	// More not into the previous list
+	$inj += preg_match('/on(repeat|begin|finish|beforeinput)\s*=/i', $val);
 
 	// We refuse html into html because some hacks try to obfuscate evil strings by inserting HTML into HTML. Example: <img on<a>error=alert(1) to bypass test on onerror
 	$tmpval = preg_replace('/<[^<]+>/', '', $val);
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers
-	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)([a-z]*)\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
+	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)([a-z]*)\s*=/i', $tmpval); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
 	$inj += preg_match('/on(abort|afterprint|animation|auxclick|beforecopy|beforecut|beforeprint|beforeunload|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)\s*=/i', $tmpval);
 	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)\s*=/i', $tmpval);
 	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)\s*=/i', $tmpval);
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)\s*=/i', $tmpval);
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)\s*=/i', $tmpval);
+	// More not into the previous list
+	$inj += preg_match('/on(repeat|begin|finish|beforeinput)\s*=/i', $tmpval);
 
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val); // refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
@@ -501,7 +505,7 @@ if ((!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VE
 
 // Creation of a token against CSRF vulnerabilities
 if (!defined('NOTOKENRENEWAL') && !defined('NOSESSION')) {
-	// No token renewal on .css.php, .js.php and .json.php
+	// No token renewal on .css.php, .js.php and .json.php (even if the NOTOKENRENEWAL was not provided)
 	if (!preg_match('/\.(css|js|json)\.php$/', $_SERVER["PHP_SELF"])) {
 		// Rolling token at each call ($_SESSION['token'] contains token of previous page)
 		if (isset($_SESSION['newtoken'])) {
@@ -1561,7 +1565,8 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		print '<meta name="robots" content="'.($disablenoindex ? 'index' : 'noindex').($disablenofollow ? ',follow' : ',nofollow').'">'."\n"; // Do not index
 		print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n"; // Scale for mobile device
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
-		print '<meta name="anti-csrf-token" content="'.newToken().'">'."\n";
+		print '<meta name="anti-csrf-newtoken" content="'.newToken().'">'."\n";
+		print '<meta name="anti-csrf-currenttoken" content="'.currentToken().'">'."\n";
 		if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
 			print '<meta name="MAIN_FEATURES_LEVEL" content="'.getDolGlobalInt('MAIN_FEATURES_LEVEL').'">'."\n";
 		}
@@ -2731,7 +2736,7 @@ function top_menu_search()
 	$buttonList .= '</div>';
 
 
-	$searchInput = '<input name="sall" id="top-global-search-input" class="dropdown-search-input" placeholder="'.$langs->trans('Search').'" autocomplete="off" >';
+	$searchInput = '<input name="search_all" id="top-global-search-input" class="dropdown-search-input" placeholder="'.$langs->trans('Search').'" autocomplete="off" >';
 
 	$dropDownHtml = '<form id="top-menu-action-search" name="actionsearch" method="GET" action="'.$defaultAction.'" >';
 
@@ -2869,14 +2874,9 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 
 	if (empty($conf->dol_hide_leftmenu) && (!defined('NOREQUIREMENU') || !constant('NOREQUIREMENU'))) {
 		// Instantiate hooks for external modules
-		$hookmanager->initHooks(array('searchform', 'leftblock'));
+		$hookmanager->initHooks(array('leftblock'));
 
 		print "\n".'<!-- Begin side-nav id-left -->'."\n".'<div class="side-nav"><div id="id-left">'."\n";
-
-		if ($conf->browser->layout == 'phone') {
-			$conf->global->MAIN_USE_OLD_SEARCH_FORM = 1; // Select into select2 is awfull on smartphone. TODO Is this still true with select2 v4 ?
-		}
-
 		print "\n";
 
 		if (!is_object($form)) {
@@ -2884,9 +2884,14 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		}
 		$selected = -1;
 		if (empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) {
+			// Select into select2 is awfull on smartphone. TODO Is this still true with select2 v4 ?
+			if ($conf->browser->layout == 'phone') {
+				$conf->global->MAIN_USE_OLD_SEARCH_FORM = 1;
+			}
+
 			$usedbyinclude = 1;
 			$arrayresult = null;
-			include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php'; // This set $arrayresult
+			include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php'; // This make initHooks('searchform') then set $arrayresult
 
 			if ($conf->use_javascript_ajax && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM)) {
 				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, '', 1, 0, (empty($conf->global->MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY) ? 1 : 0), 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);

@@ -2199,7 +2199,7 @@ if ($action == 'create') {
 	// Standard invoice
 	print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 	$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOST('type', 'int')? '' : 'checked').'> ';
-	$desc = $form->textwithpicto($tmp.$langs->trans("InvoiceStandardAsk"), $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3);
+	$desc = $form->textwithpicto($tmp.'<label for="radio_standard">'.$langs->trans("InvoiceStandardAsk").'</label>', $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3);
 	print $desc;
 	print '</div></div>';
 
@@ -2377,7 +2377,7 @@ if ($action == 'create') {
    					});
    				});
    				</script>';
-				$text = $tmp.$langs->transnoentities("InvoiceAvoirAsk").' ';
+				$text = $tmp.'<label for="radio_creditnote">'.$langs->transnoentities("InvoiceAvoirAsk").'</label> ';
 				// $text.='<input type="text" value="">';
 				$text .= '<select class="flat valignmiddle" name="fac_avoir" id="fac_avoir"';
 				if (!$optionsav) {
@@ -2442,14 +2442,14 @@ if ($action == 'create') {
 	print $form->selectDate($dateinvoice, '', '', '', '', "add", 1, 1);
 	print '</td></tr>';
 
-	// Due date
-	print '<tr><td>'.$langs->trans('DateMaxPayment').'</td><td>';
-	print $form->selectDate($datedue, 'ech', '', '', '', "add", 1, 1);
-	print '</td></tr>';
-
 	// Payment term
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print $form->getSelectConditionsPaiements(GETPOSTISSET('cond_reglement_id') ?GETPOST('cond_reglement_id', 'int') : $cond_reglement_id, 'cond_reglement_id');
+	print '</td></tr>';
+
+	// Due date
+	print '<tr><td>'.$langs->trans('DateMaxPayment').'</td><td>';
+	print $form->selectDate($datedue, 'ech', '', '', '', "add", 1, 1);
 	print '</td></tr>';
 
 	// Payment mode

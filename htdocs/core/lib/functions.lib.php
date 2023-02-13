@@ -411,6 +411,9 @@ function dol_shutdown()
 
 /**
  * Return true if we are in a context of submitting the parameter $paramname from a POST of a form.
+ * Warning:
+ * For action=add, use:     $var = GETPOST('var');		// No GETPOSTISSET, so GETPOST always called and default value is retreived if not a form POST, and value of form is retreived if it is a form POST.
+ * For action=update, use:  $var = GETPOSTISSET('var') ? GETPOST('var') : $object->var;
  *
  * @param 	string	$paramname		Name or parameter to test
  * @return 	boolean					True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
@@ -3534,7 +3537,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 				$type = 'AC_FAX';
 			}
 			if (!empty($conf->global->AGENDA_ADDACTIONFORPHONE)) {
-				$link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$type.($cid ? '&amp;contactid='.$cid : '').($socid ? '&amp;socid='.$socid : '').'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
+				$link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage='. urlencode($_SERVER['REQUEST_URI']) .'&amp;actioncode='.$type.($cid ? '&amp;contactid='.$cid : '').($socid ? '&amp;socid='.$socid : '').'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
 			}
 			if ($link) {
 				$newphone = '<div>'.$newphone.' '.$link.'</div>';
@@ -4095,14 +4098,15 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus',
 				'gears', 'generate', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
 				'help', 'holiday',
-				'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'knowledgemanagement',
+				'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'jobprofile',
+				'knowledgemanagement',
 				'label', 'language', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lock', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'off', 'on', 'order',
 				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
 				'stock', 'resize', 'service', 'stats', 'trip',
 				'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'user-tie', 'vcard', 'wrench',
-				'github', 'google', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
+				'github', 'google', 'jabber', 'microsoft', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
 				'partnership', 'payment', 'payment_vat', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'region',
@@ -4110,7 +4114,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'technic', 'ticket',
 				'error', 'warning',
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring','rss',
-				'shapes', 'square', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
+				'shapes', 'skill', 'square', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'uncheck', 'url', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
 				'conferenceorbooth', 'eventorganization',
@@ -4123,7 +4127,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			if (in_array($pictowithouttext, array('card', 'bell', 'clock', 'establishment', 'generic', 'minus-square', 'object_generic', 'pdf', 'plus-square', 'timespent', 'note', 'off', 'on', 'object_bookmark', 'bookmark', 'vcard'))) {
 				$fa = 'far';
 			}
-			if (in_array($pictowithouttext, array('black-tie', 'github', 'google', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'stripe', 'stripe-s', 'youtube', 'google-plus-g', 'whatsapp'))) {
+			if (in_array($pictowithouttext, array('black-tie', 'github', 'google', 'microsoft', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'stripe', 'stripe-s', 'youtube', 'google-plus-g', 'whatsapp'))) {
 				$fa = 'fab';
 			}
 
@@ -4142,7 +4146,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'email'=>'at', 'establishment'=>'building', 'edit'=>'pencil-alt', 'entity'=>'globe',
 				'graph'=>'chart-line', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'question-circle',
 				'generic'=>'file', 'holiday'=>'umbrella-beach',
-				'info'=>'info-circle', 'inventory'=>'boxes', 'intracommreport'=>'globe-europe', 'knowledgemanagement'=>'ticket-alt', 'label'=>'layer-group', 'line'=>'bars', 'loan'=>'money-bill-alt',
+				'info'=>'info-circle', 'inventory'=>'boxes', 'intracommreport'=>'globe-europe', 'jobprofile'=>'cogs',
+				'knowledgemanagement'=>'ticket-alt', 'label'=>'layer-group', 'line'=>'bars', 'loan'=>'money-bill-alt',
 				'member'=>'user-alt', 'meeting'=>'chalkboard-teacher', 'mrp'=>'cubes', 'next'=>'arrow-alt-circle-right',
 				'trip'=>'wallet', 'expensereport'=>'wallet', 'group'=>'users', 'movement'=>'people-carry',
 				'sign-out'=>'sign-out-alt',
@@ -4158,7 +4163,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
 				'refresh'=>'redo', 'region'=>'map-marked', 'replacement'=>'exchange-alt', 'resource'=>'laptop-house', 'recurring'=>'history',
 				'service'=>'concierge-bell',
-				'state'=>'map-marked-alt', 'security'=>'key', 'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s',
+				'skill'=>'shapes', 'state'=>'map-marked-alt', 'security'=>'key', 'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s',
 				'supplier'=>'building', 'technic'=>'cogs',
 				'timespent'=>'clock', 'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
 				'title_agenda'=>'calendar-alt',
@@ -5368,10 +5373,10 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pict
 	$return .= '<div class="titre inline-block">'.$titre.'</div>';
 	$return .= '</td>';
 	if (dol_strlen($morehtmlcenter)) {
-		$return .= '<td class="nobordernopadding center valignmiddle">'.$morehtmlcenter.'</td>';
+		$return .= '<td class="nobordernopadding center valignmiddle col-center">'.$morehtmlcenter.'</td>';
 	}
 	if (dol_strlen($morehtmlright)) {
-		$return .= '<td class="nobordernopadding titre_right wordbreakimp right valignmiddle">'.$morehtmlright.'</td>';
+		$return .= '<td class="nobordernopadding titre_right wordbreakimp right valignmiddle col-right">'.$morehtmlright.'</td>';
 	}
 	$return .= '</tr></table>'."\n";
 
@@ -5443,11 +5448,11 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	// Center
 	if ($morehtmlcenter) {
-		print '<td class="nobordernopadding center valignmiddle">'.$morehtmlcenter.'</td>';
+		print '<td class="nobordernopadding center valignmiddle col-center">'.$morehtmlcenter.'</td>';
 	}
 
 	// Right
-	print '<td class="nobordernopadding valignmiddle right">';
+	print '<td class="nobordernopadding valignmiddle right col-right">';
 	print '<input type="hidden" name="pageplusoneold" value="'.((int) $page + 1).'">';
 	if ($sortfield) {
 		$options .= "&sortfield=".urlencode($sortfield);
@@ -8917,105 +8922,118 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 	// Only global variables can be changed by eval function and returned to caller
 	global $db, $langs, $user, $conf, $website, $websitepage;
 	global $action, $mainmenu, $leftmenu;
+	global $mysoc;
+	global $objectoffield;
+
+	// Old variables used
 	global $rights;
 	global $object;
-	global $mysoc;
-
 	global $obj; // To get $obj used into list when dol_eval is used for computed fields and $obj is not yet $object
 	global $soc; // For backward compatibility
 
-	// Test on dangerous char (used for RCE), we allow only characters to make PHP variable testing
-	if ($onlysimplestring == '1') {
-		// We must accept: '1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL'
-		// We must accept: '$conf->barcode->enabled || preg_match(\'/^AAA/\',$leftmenu)'
-		// We must accept: '$user->rights->cabinetmed->read && !$object->canvas=="patient@cabinetmed"'
-		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@', '/').']/i', $s)) {
+	try {
+		// Test on dangerous char (used for RCE), we allow only characters to make PHP variable testing
+		if ($onlysimplestring == '1') {
+			// We must accept: '1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL'
+			// We must accept: '$conf->barcode->enabled || preg_match(\'/^AAA/\',$leftmenu)'
+			// We must accept: '$user->rights->cabinetmed->read && !$object->canvas=="patient@cabinetmed"'
+			if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@', '/').']/i', $s)) {
+				if ($returnvalue) {
+					return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
+				} else {
+					dol_syslog('Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s);
+					return '';
+				}
+				// TODO
+				// We can exclude all parenthesis ( that are not '($db' and 'getDolGlobalInt(' and 'getDolGlobalString(' and 'preg_match(' and 'isModEnabled('
+				// ...
+			}
+		} elseif ($onlysimplestring == '2') {
+			// We must accept: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
+			if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@;[]', '/').']/i', $s)) {
+				if ($returnvalue) {
+					return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
+				} else {
+					dol_syslog('Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s);
+					return '';
+				}
+			}
+		}
+		if (strpos($s, '::') !== false) {
 			if ($returnvalue) {
-				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
+				return 'Bad string syntax to evaluate (double : char is forbidden): '.$s;
 			} else {
-				dol_syslog('Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s);
+				dol_syslog('Bad string syntax to evaluate (double : char is forbidden): '.$s);
 				return '';
 			}
-			// TODO
-			// We can exclude all parenthesis ( that are not '($db' and 'getDolGlobalInt(' and 'getDolGlobalString(' and 'preg_match(' and 'isModEnabled('
-			// ...
 		}
-	} elseif ($onlysimplestring == '2') {
-		// We must accept: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
-		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@;[]', '/').']/i', $s)) {
+		if (strpos($s, '`') !== false) {
 			if ($returnvalue) {
-				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
+				return 'Bad string syntax to evaluate (backtick char is forbidden): '.$s;
 			} else {
-				dol_syslog('Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s);
+				dol_syslog('Bad string syntax to evaluate (backtick char is forbidden): '.$s);
 				return '';
 			}
 		}
-	}
-	if (strpos($s, '::') !== false) {
-		if ($returnvalue) {
-			return 'Bad string syntax to evaluate (double : char is forbidden): '.$s;
-		} else {
-			dol_syslog('Bad string syntax to evaluate (double : char is forbidden): '.$s);
-			return '';
+		if (preg_match('/[^0-9]+\.[^0-9]+/', $s)) {	// We refuse . if not between 2 numbers
+			if ($returnvalue) {
+				return 'Bad string syntax to evaluate (dot char is forbidden): '.$s;
+			} else {
+				dol_syslog('Bad string syntax to evaluate (dot char is forbidden): '.$s);
+				return '';
+			}
 		}
-	}
-	if (strpos($s, '`') !== false) {
-		if ($returnvalue) {
-			return 'Bad string syntax to evaluate (backtick char is forbidden): '.$s;
-		} else {
-			dol_syslog('Bad string syntax to evaluate (backtick char is forbidden): '.$s);
-			return '';
+
+		// We block use of php exec or php file functions
+		$forbiddenphpstrings = array('$$');
+		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
+
+		$forbiddenphpfunctions = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI", "verifCond", "base64_decode");
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "require", "include", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func"));
+
+		$forbiddenphpregex = 'global\s+\$|\b('.implode('|', $forbiddenphpfunctions).')\b';
+
+		do {
+			$oldstringtoclean = $s;
+			$s = str_ireplace($forbiddenphpstrings, '__forbiddenstring__', $s);
+			$s = preg_replace('/'.$forbiddenphpregex.'/i', '__forbiddenstring__', $s);
+			//$s = preg_replace('/\$[a-zA-Z0-9_\->\$]+\(/i', '', $s);	// Remove $function( call and $mycall->mymethod(
+		} while ($oldstringtoclean != $s);
+
+		if (strpos($s, '__forbiddenstring__') !== false) {
+			dol_syslog('Bad string syntax to evaluate: '.$s, LOG_WARNING);
+			if ($returnvalue) {
+				return 'Bad string syntax to evaluate: '.$s;
+			} else {
+				dol_syslog('Bad string syntax to evaluate: '.$s);
+				return '';
+			}
 		}
-	}
-	if (preg_match('/[^0-9]+\.[^0-9]+/', $s)) {	// We refuse . if not between 2 numbers
+
+		//print $s."<br>\n";
 		if ($returnvalue) {
-			return 'Bad string syntax to evaluate (dot char is forbidden): '.$s;
+			if ($hideerrors) {
+				return @eval('return '.$s.';');
+			} else {
+				return eval('return '.$s.';');
+			}
 		} else {
-			dol_syslog('Bad string syntax to evaluate (dot char is forbidden): '.$s);
-			return '';
+			if ($hideerrors) {
+				@eval($s);
+			} else {
+				eval($s);
+			}
 		}
+	} catch (Error $e) {
+		$error = 'Caught error : ';
+		$error .= $e->getMessage();
+		//$error .= ', Trace : ';
+		//$error .= json_encode($e->getTrace());
+		error_log($error, 1);
 	}
-
-	// We block use of php exec or php file functions
-	$forbiddenphpstrings = array('$$');
-	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
-
-	$forbiddenphpfunctions = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI", "verifCond", "base64_decode");
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "require", "include", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func"));
-
-	$forbiddenphpregex = 'global\s+\$|\b('.implode('|', $forbiddenphpfunctions).')\b';
-
-	do {
-		$oldstringtoclean = $s;
-		$s = str_ireplace($forbiddenphpstrings, '__forbiddenstring__', $s);
-		$s = preg_replace('/'.$forbiddenphpregex.'/i', '__forbiddenstring__', $s);
-		//$s = preg_replace('/\$[a-zA-Z0-9_\->\$]+\(/i', '', $s);	// Remove $function( call and $mycall->mymethod(
-	} while ($oldstringtoclean != $s);
-
-	if (strpos($s, '__forbiddenstring__') !== false) {
-		dol_syslog('Bad string syntax to evaluate: '.$s, LOG_WARNING);
-		if ($returnvalue) {
-			return 'Bad string syntax to evaluate: '.$s;
-		} else {
-			dol_syslog('Bad string syntax to evaluate: '.$s);
-			return '';
-		}
-	}
-
-	//print $s."<br>\n";
 	if ($returnvalue) {
-		if ($hideerrors) {
-			return @eval('return '.$s.';');
-		} else {
-			return eval('return '.$s.';');
-		}
-	} else {
-		if ($hideerrors) {
-			@eval($s);
-		} else {
-			eval($s);
-		}
+		return '';
 	}
 }
 
@@ -9752,7 +9770,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 		$value = preg_replace('/\*/', '%', $value); // Replace * with %
 	}
 	if ($mode == 1) {
-		$value = preg_replace('/([<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"), '/').'\-])/', '\1\2', $value); // Clean string '< 10' into '<10' so we can the explode on space to get all tests to do
+		$value = preg_replace('/([!<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"), '/').'\-])/', '\1\2', $value); // Clean string '< 10' into '<10' so we can the explode on space to get all tests to do
 	}
 
 	$value = preg_replace('/\s*\|\s*/', '|', $value);
@@ -9772,10 +9790,10 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 		foreach ($fields as $field) {
 			if ($mode == 1) {
 				$operator = '=';
-				$newcrit = preg_replace('/([<>=]+)/', '', $crit);
+				$newcrit = preg_replace('/([!<>=]+)/', '', $crit);
 
 				$reg = array();
-				preg_match('/([<>=]+)/', $crit, $reg);
+				preg_match('/([!<>=]+)/', $crit, $reg);
 				if (!empty($reg[1])) {
 					$operator = $reg[1];
 				}

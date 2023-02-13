@@ -304,9 +304,8 @@ section.setupsection {
 div.tabBar textarea:focus {
 	border: 1px solid #aaa !important;
 }
-input:focus:not(.button):not(.buttonwebsite):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-search-takepos),
+input:focus:not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-search-takepos),
  select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single {
-/* div.tabBar input:focus, div.tabBar select:focus { */
 	border-bottom: 1px solid #666 !important;
 	border-bottom-left-radius: 0 !important;
 	border-bottom-right-radius: 0 !important;
@@ -4880,7 +4879,7 @@ div.titre {
 	color: var(--colortexttitlenotab2);
 }
 
-table.table-fiche-title .col-title div.titre{
+table.table-fiche-title .col-title div.titre, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
 table.table-fiche-title {
@@ -6513,6 +6512,15 @@ span#select2-boxbookmark-container {
 
 ul.select2-results__options li {
 	font-size: 0.95em;
+}
+
+select.multiselectononeline {
+	padding: 0;
+	vertical-align: middle;
+	min-height: unset;
+	height: 28px !important;
+	opacity: 0;
+	/* width: 1px !important; */
 }
 
 @media only screen and (min-width: 767px)

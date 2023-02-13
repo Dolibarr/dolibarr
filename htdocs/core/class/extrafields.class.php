@@ -1233,7 +1233,7 @@ class ExtraFields
 							$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 						}
 						//We have to join on extrafield table
-						if (strpos($InfoFieldList[4], 'extra') !== false) {
+						if (strpos($InfoFieldList[4], 'extra.') !== false) {
 							$sql .= ' as main, '.$this->db->prefix().$InfoFieldList[0].'_extrafields as extra';
 							$sqlwhere .= " WHERE extra.fk_object=main.".$InfoFieldList[2]." AND ".$InfoFieldList[4];
 						} else {
@@ -1690,7 +1690,7 @@ class ExtraFields
 
 			$sql = "SELECT ".$keyList;
 			$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
-			if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
+			if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
 				$sql .= ' as main';
 			}
 			if ($selectkey == 'rowid' && empty($value)) {
@@ -1806,7 +1806,7 @@ class ExtraFields
 
 			$sql = "SELECT ".$keyList;
 			$sql .= " FROM ".$this->db->prefix().$InfoFieldList[0];
-			if (strpos($InfoFieldList[4], 'extra') !== false) {
+			if (strpos($InfoFieldList[4], 'extra.') !== false) {
 				$sql .= ' as main';
 			}
 			// $sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
@@ -1975,6 +1975,8 @@ class ExtraFields
 		if (!empty($extrafield_param) && is_array($extrafield_param)) {
 			$extrafield_param_list = array_keys($extrafield_param['options']);
 		}
+
+		// Set $extrafield_collapse_display_value (do we have to collapse/expand the group after the separator)
 		$extrafield_collapse_display_value = -1;
 		$expand_display = false;
 		if (is_array($extrafield_param_list) && count($extrafield_param_list) > 0) {
@@ -1989,7 +1991,7 @@ class ExtraFields
 		$out .= '<'.$tagtype_dyn.' '.(!empty($colspan)?'colspan="' . $colspan . '"':'').'>';
 		// Some js code will be injected here to manage the collapsing of extrafields
 		// Output the picto
-		$out .= '<span class="cursorpointer '.($extrafield_collapse_display_value == 0 ? 'fas fa-square opacitymedium' : 'far fa-'.(($expand_display ? 'minus' : 'plus').'-square')).'"></span>';
+		$out .= '<span class="'.($extrafield_collapse_display_value ? 'cursorpointer ' : '').($extrafield_collapse_display_value == 0 ? 'fas fa-square opacitymedium' : 'far fa-'.(($expand_display ? 'minus' : 'plus').'-square')).'"></span>';
 		$out .= '&nbsp;';
 		$out .= '<strong>';
 		$out .= $langs->trans($this->attributes[$object->table_element]['label'][$key]);

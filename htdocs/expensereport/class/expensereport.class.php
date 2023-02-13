@@ -133,6 +133,21 @@ class ExpenseReport extends CommonObject
 	public $statuts_short = array();
 	public $statuts_logo;
 
+	// Multicurrency
+	/**
+	 * @var int Currency ID
+	 */
+	public $fk_multicurrency;
+
+	/**
+	 * @var string multicurrency code
+	 */
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
+
 
 	/**
 	 * Draft status
@@ -2683,6 +2698,11 @@ class ExpenseReportLine extends CommonObjectLine
 	public $db;
 
 	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'expensereport_det';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
@@ -2738,6 +2758,21 @@ class ExpenseReportLine extends CommonObjectLine
 	public $total_ttc;
 	public $total_localtax1;
 	public $total_localtax2;
+
+	// Multicurrency
+	/**
+	 * @var int Currency ID
+	 */
+	public $fk_multicurrency;
+
+	/**
+	 * @var string multicurrency code
+	 */
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 
 	/**
 	 * @var int ID into llx_ecm_files table to link line to attached file

@@ -806,6 +806,16 @@ if ($action == 'addcontainer' && $usercanedit) {
 				// Remove comments
 				$tmp['content'] = removeHtmlComment($tmp['content']);
 
+				// Check there is no PHP content into the imported file (must be only HTML + JS)
+				$phpcontent = dolKeepOnlyPhpCode($tmp['content']);
+				if ($phpcontent) {
+					$error++;
+					setEventMessages('Error getting '.$urltograb.': file that include PHP content is not allowed', null, 'errors');
+					$action = 'createcontainer';
+				}
+			}
+
+			if (!$error) {
 				$regs = array();
 
 				preg_match('/<head>(.*)<\/head>/ims', $tmp['content'], $regs);
@@ -2807,7 +2817,7 @@ if (!GETPOST('hide_websitemenu')) {
 	$atleastonepage = (is_array($array) && count($array) > 0);
 
 	$websitepage = new WebSitePage($db);
-	if ($pageid > 0 && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')) {
+	if ($pageid > 0) {
 		$websitepage->fetch($pageid);
 	}
 
