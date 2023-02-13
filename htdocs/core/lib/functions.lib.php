@@ -1385,7 +1385,7 @@ function dol_string_unaccent($str)
 
 /**
  *	Clean a string from all punctuation characters to use it as a ref or login.
- *  This is a more complete function than dol_sanitizeFileName.
+ *  This is a more complete function than dol_sanitizeFileName().
  *
  *	@param	string			$str            	String to clean
  * 	@param	string			$newstr				String to replace forbidden chars with
@@ -1397,7 +1397,7 @@ function dol_string_unaccent($str)
  */
 function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '', $badcharstoremove = '')
 {
-	$forbidden_chars_to_replace = array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=", '°'); // more complete than dol_sanitizeFileName
+	$forbidden_chars_to_replace = array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=", '°', '$', ';'); // more complete than dol_sanitizeFileName
 	$forbidden_chars_to_remove = array();
 	//$forbidden_chars_to_remove=array("(",")");
 
