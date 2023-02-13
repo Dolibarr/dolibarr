@@ -138,7 +138,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " ORDER BY sp.poste";
 		$resql = $this->db->query($sql);
 
-		$s .= '<select id="filter_jobposition_contact" name="filter_jobposition" class="flat" placeholder="'.dol_escape_htmltag($langs->trans("PostOrFunction")).'">';
+		$s .= '<select id="filter_jobposition_contact" name="filter_jobposition" class="flat maxwidth200" placeholder="'.dol_escape_htmltag($langs->trans("PostOrFunction")).'">';
 		$s .= '<option value="-1">'.$langs->trans("PostOrFunction").'</option>';
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -174,7 +174,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " ORDER BY c.label";
 		$resql = $this->db->query($sql);
 
-		$s .= '<select id="filter_category_contact" name="filter_category" class="flat">';
+		$s .= '<select id="filter_category_contact" name="filter_category" class="flat maxwidth200">';
 		$s .= '<option value="-1">'.$langs->trans("ContactCategoriesShort").'</option>';
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -196,7 +196,7 @@ class mailing_contacts1 extends MailingTargets
 		$s .= '<br>';
 
 		// Add prospect of a particular level
-		$s .= '<select id="filter_contact" name="filter" class="flat">';
+		$s .= '<select id="filter_contact" name="filter" class="flat maxwidth200">';
 		$sql = "SELECT code, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 		$sql .= " WHERE active > 0";
