@@ -1863,11 +1863,14 @@ if ($resql) {
 			$paiement = $facturestatic->getSommePaiement();
 			$totalcreditnotes = $facturestatic->getSumCreditNotesUsed();
 			$totaldeposits = $facturestatic->getSumDepositsUsed();
-			$totalpay = $paiement + $totalcreditnotes + $totaldeposits;
-			$remaintopay = price2num($facturestatic->total_ttc - $totalpay);
+
 			$multicurrency_paiement = $facturestatic->getSommePaiement(1);
 			$multicurrency_totalcreditnotes = $facturestatic->getSumCreditNotesUsed(1);
 			$multicurrency_totaldeposits = $facturestatic->getSumDepositsUsed(1);
+
+			$totalpay = $paiement + $totalcreditnotes + $totaldeposits;
+			$remaintopay = price2num($facturestatic->total_ttc - $totalpay);
+
 			$multicurrency_totalpay = $multicurrency_paiement + $multicurrency_totalcreditnotes + $multicurrency_totaldeposits;
 			$multicurrency_remaintopay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_totalpay);
 
