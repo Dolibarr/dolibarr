@@ -706,6 +706,9 @@ class AdherentType extends CommonObject
 		if (isset($this->subscription)) {
 			$datas['subscription'] = '<br>'.$langs->trans("SubscriptionRequired").': '.yn($this->subscription);
 		}
+		if (isset($this->vote)) {
+			$datas['vote'] = '<br>'.$langs->trans("VoteAllowed").': '.yn($this->vote);
+		}
 
 		return $datas;
 	}
