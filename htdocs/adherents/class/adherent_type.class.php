@@ -709,6 +709,15 @@ class AdherentType extends CommonObject
 		if (isset($this->vote)) {
 			$datas['vote'] = '<br>'.$langs->trans("VoteAllowed").': '.yn($this->vote);
 		}
+		if (isset($this->duration)) {
+			$datas['duration'] = '<br>'.$langs->trans("Duration").': '.$this->duration_value;
+			if ($this->duration_value > 1) {
+				$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
+			} elseif ($this->duration_value > 0) {
+				$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
+			}
+			$datas['duration'] .= "&nbsp;" . (!empty($this->duration_unit) && isset($dur[$this->duration_unit]) ? $langs->trans($dur[$this->duration_unit]) : '');
+		}
 
 		return $datas;
 	}
@@ -736,6 +745,7 @@ class AdherentType extends CommonObject
 			'id' => $this->id,
 			'objecttype' => $this->element,
 			'option' => $option,
+			'nofetch' => 1,
 		];
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
