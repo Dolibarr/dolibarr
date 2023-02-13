@@ -431,7 +431,7 @@ $tmpwarehouse = new Entrepot($db);
 $tmpbatch = new Productlot($db);
 $tmpstockmovement = new MouvementStock($db);
 
-$help_url = 'EN:Module_Manufacturing_Orders|FR:Module_Ordres_de_Fabrication';
+$help_url = 'EN:Module_Manufacturing_Orders|FR:Module_Ordres_de_Fabrication|DE:Modul_Fertigungsauftrag';
 llxHeader('', $langs->trans('Mo'), $help_url, '', 0, 0, array('/mrp/js/lib_dispatch.js.php'));
 
 $newToken = newToken();

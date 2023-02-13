@@ -77,7 +77,7 @@ class HookManager
 	 *  Then when a hook executeHooks('aMethod'...) is called, the method aMethod found into class will be executed.
 	 *
 	 *	@param	string[]	$arraycontext	    Array list of searched hooks tab/features. For example: 'thirdpartycard' (for hook methods into page card thirdparty), 'thirdpartydao' (for hook methods into Societe), ...
-	 *	@return	int							    Always 1
+	 *	@return	int|void							    Always 1
 	 */
 	public function initHooks($arraycontext)
 	{
@@ -167,32 +167,31 @@ class HookManager
 		// TODO Remove hooks with type 'output' (exemple createFrom). All hooks must be converted into 'addreplace' hooks.
 		if (in_array($method, array(
 			'createFrom',
-			'dashboardMembers',
-			'dashboardEmailings',
-			'dashboardPropals',
-			'dashboardPropals',
-			'dashboardCommercials',
-			'dashboardOrders',
-			'dashboardSpecialBills',
 			'dashboardAccountancy',
+			'dashboardActivities',
+			'dashboardCommercials',
 			'dashboardContracts',
 			'dashboardDonation',
-			'dashboardWarehouseSendings',
+			'dashboardEmailings',
 			'dashboardExpenseReport',
-			'dashboardInterventions',
-			'dashboardOrdersSuppliers',
 			'dashboardHRM',
+			'dashboardInterventions',
 			'dashboardMRP',
+			'dashboardMembers',
 			'dashboardOpensurvey',
-			'dashboardWarehouse',
+			'dashboardOrders',
+			'dashboardOrdersSuppliers',
 			'dashboardProductServices',
-			'dashboardActivities',
 			'dashboardProjects',
-			'dashboardWarehouseReceptions',
-			'dashboardThirdparties',
+			'dashboardPropals',
+			'dashboardSpecialBills',
 			'dashboardSupplierProposal',
+			'dashboardThirdparties',
 			'dashboardTickets',
 			'dashboardUsersGroups',
+			'dashboardWarehouse',
+			'dashboardWarehouseReceptions',
+			'dashboardWarehouseSendings',
 			'insertExtraHeader',
 			'insertExtraFooter',
 			'printLeftBlock',

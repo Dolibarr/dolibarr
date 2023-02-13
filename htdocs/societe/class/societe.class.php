@@ -2612,6 +2612,7 @@ class Societe extends CommonObject
 		$datas = [];
 
 		$option = $params['option'] ?? '';
+		$nofetch = empty($params['nofetch']) ? false : true;
 		$name = $this->name;
 
 		if (!empty($this->name_alias) && empty($noaliasinname)) {
@@ -2724,6 +2725,17 @@ class Societe extends CommonObject
 		if (isModEnabled('accounting') && $this->fournisseur) {
 			$datas['accountancysuppliercode'] = '<br><b>'.$langs->trans('SupplierAccountancyCode').':</b> '.$this->code_compta_fournisseur;
 		}
+		// show categories for this record only in ajax to not overload lists
+		if (isModEnabled('categorie') && !$nofetch) {
+			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+			$form = new Form($this->db);
+			if ($this->client) {
+				$datas['categories_customer'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_CUSTOMER, 1);
+			}
+			if ($this->fournisseur) {
+				$datas['categories_supplier'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_SUPPLIER, 1);
+			}
+		}
 
 		$datas['divclose'] = '</div>';
 
@@ -2789,6 +2801,7 @@ class Societe extends CommonObject
 			'id' => $this->id,
 			'objecttype' => $this->element,
 			'option' => $option,
+			'nofetch' => 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';

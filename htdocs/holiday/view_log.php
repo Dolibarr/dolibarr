@@ -336,7 +336,7 @@ if (!empty($arrayfields['cpl.fk_user_action']['checked'])) {
 	$valideurobjects = $validator->listUsersForGroup($excludefilter, 1);
 	$valideurarray = array();
 	foreach ($valideurobjects as $val) {
-		$valideurarray[$val->id] = $val->id;
+		$valideurarray[$val] = $val;
 	}
 
 	print '<td class="liste_titre">';
