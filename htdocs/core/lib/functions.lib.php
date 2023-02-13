@@ -952,6 +952,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			}
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
+		case 'restricthtmlnolink':
 		case 'restricthtmlallowunvalid':
 			$out = dol_htmlwithnojs($out, 1, $check);
 			break;
@@ -7201,7 +7202,7 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
  *
  * @param	string	$stringtoencode				String to encode
  * @param	int     $nouseofiframesandbox		Allow use of option MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS for html sanitizing
- * @param	string	$check						'restricthtml' or 'restricthtmlallowunvalid'
+ * @param	string	$check						'restricthtmlnolink' or  'restricthtml' or 'restricthtmlallowunvalid'
  * @return	string								HTML sanitized
  */
 function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = 'restricthtml')
@@ -7274,8 +7275,15 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 		// Check the limit of external links in a Rich text content. We count '<img' and 'url('
 		$reg = array();
 		preg_match_all('/(<img|url\()/i', $out, $reg);
-		if (count($reg[0]) > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
+		$nbextlink = count($reg[0]);
+		if ($nbextlink > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
 			$out = 'TooManyLinksIntoHTMLString';
+		}
+		//
+		if (!empty($conf->global->MAIN_DISALLOW_EXT_URL_INTO_DESCRIPTIONS) || $check == 'restricthtmlnolink') {
+			if ($nbextlink > 0) {
+				$out = 'ExternalLinksNotAllowed';
+			}
 		}
 
 		return $out;
