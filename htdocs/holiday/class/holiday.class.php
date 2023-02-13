@@ -1317,7 +1317,7 @@ class Holiday extends CommonObject
 		if (isset($this->statut)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
-		$datas['label'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
 		return $datas;
 	}

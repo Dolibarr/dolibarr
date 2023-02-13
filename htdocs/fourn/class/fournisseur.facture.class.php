@@ -2740,7 +2740,7 @@ class FactureFournisseur extends CommonInvoice
 				$alreadypaid = $this->alreadypaid;
 			}
 
-			$datas['picto'] .= ' '.$this->getLibStatut(5, $alreadypaid);
+			$$datas['picto'] .= ' '.$this->getLibStatut(5, $alreadypaid);
 		}
 		if ($moretitle) {
 			$datas['picto'] .= ' - '.$moretitle;
