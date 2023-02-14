@@ -305,10 +305,11 @@ ErrorDateOfMovementLowerThanDateOfFileTransmission=La date de l'opération banca
 ErrorTooMuchFileInForm=Trop de fichiers dans le formulaire, le nombre maximum est de %s fichier(s)
 ErrorExistingPermission = La permission <b>%s</b> pour l'objet <b>%s</b> est dejà existante
 ErrorSessionInvalidatedAfterPasswordChange=La session a été invalidée suite à un changement de mot de passe, d'état ou de dates de validité. Veuillez vous reconnecter.
-ErrorFieldExist=La valeur pour <b>%s</b> existe déja 
-ErrorEqualModule=Module invalide pour le champ <b>%s</b>
-ErrorFieldValue=La valeur du champ <b>%s</b> est incorrecte
-ErrorCoherenceMenu = Le champ <b>%s</b> est requis si le champ <b>%s</b> = LEFT
+ErrorExistingPermission = La permission <b>%s</b> pour l'objet <b>%s</b> existe déjà.
+ErrorFieldExist=La valeur pour <b>%s</b> existe déjà
+ErrorEqualModule=Module invalide dans <b>%s</b>.
+ErrorFieldValue=La valeur pour <b>%s</b> est incorrecte
+ErrorCoherenceMenu=Le champ <b>%s</b> est requis lorsque <b>%s</b> vaut LEFT
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.
@@ -347,7 +348,11 @@ WarningPaypalPaymentNotCompatibleWithStrict=La valeur 'Strict' fait que les fonc
 WarningThemeForcedTo=Attention, le choix du thème a été forcé à <b> %s </b> par la constante cachée MAIN_FORCETHEME
 WarningPagesWillBeDeleted=Attention, cela supprimera également toutes les pages/conteneurs existants du site. Vous devriez exporter votre site Web avant, afin d'avoir une sauvegarde pour le réimporter plus tard.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=La validation automatique est désactivée lorsque l'option de diminution du stock est définie sur "Validation de la facture".
+<<<<<<< HEAD
 WarningModuleNeedRefrech = Module <b>%s</b> desactivé. N'oublier pas de le réactivé 
+=======
+WarningModuleNeedRefrech = Le module <b>%s</b> a été désactivé. N'oubliez pas de le réactiver
+>>>>>>> branch '17.0' of git@github.com:Dolibarr/dolibarr.git
 
 # Validate
 RequireValidValue = Valeur non valide

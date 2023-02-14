@@ -177,5 +177,6 @@ ReminderType=Erinnerungstyp
 AddReminder=Erstellt eine automatische Erinnerungsbenachrichtigung für dieses Ereignis
 ErrorReminderActionCommCreation=Fehler beim Erstellen der Erinnerungsbenachrichtigung für dieses Ereignis
 BrowserPush=Browser-Popup-Benachrichtigung
+Reminders=Erinnerungen
 ActiveByDefault=Standardmäßig aktiviert
 Until=bis

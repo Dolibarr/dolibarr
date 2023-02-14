@@ -293,8 +293,8 @@ class Project extends CommonObject
 		'usage_task' =>array('type'=>'integer', 'label'=>'UsageTasks', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
 		'usage_organize_event' =>array('type'=>'integer', 'label'=>'UsageOrganizeEvent', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
 		// Properties for event organization
-		'date_start_event' =>array('type'=>'date', 'label'=>'DateStartEvent', 'enabled'=>1, 'visible'=>1, 'position'=>200),
-		'date_end_event' =>array('type'=>'date', 'label'=>'DateEndEvent', 'enabled'=>1, 'visible'=>1, 'position'=>201),
+		'date_start_event' =>array('type'=>'date', 'label'=>'DateStartEvent', 'enabled'=>"isModEnabled('eventorganization')", 'visible'=>1, 'position'=>200),
+		'date_end_event' =>array('type'=>'date', 'label'=>'DateEndEvent', 'enabled'=>"isModEnabled('eventorganization')", 'visible'=>1, 'position'=>201),
 		'location' =>array('type'=>'text', 'label'=>'Location', 'enabled'=>1, 'visible'=>3, 'position'=>55, 'searchall'=>202),
 		'accept_conference_suggestions' =>array('type'=>'integer', 'label'=>'AllowUnknownPeopleSuggestConf', 'enabled'=>1, 'visible'=>-1, 'position'=>210),
 		'accept_booth_suggestions' =>array('type'=>'integer', 'label'=>'AllowUnknownPeopleSuggestBooth', 'enabled'=>1, 'visible'=>-1, 'position'=>211),

@@ -140,9 +140,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->knowledgemanagement->knowledgerecord->read;
-$permissiontoadd = $user->rights->knowledgemanagement->knowledgerecord->write;
-$permissiontodelete = $user->rights->knowledgemanagement->knowledgerecord->delete;
+$permissiontoread = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read');
+$permissiontoadd = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write');
+$permissiontodelete = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'delete');
 
 // Security check
 if (empty($conf->knowledgemanagement->enabled)) {
@@ -428,7 +428,7 @@ if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 
-if (isModEnabled('category') && $user->rights->knowledgemanagement->knowledgerecord->write) {
+if (isModEnabled('category') && $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write')) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 

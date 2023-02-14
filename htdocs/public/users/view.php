@@ -205,7 +205,7 @@ $arrayofjs = array();
 $arrayofcss = array();
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
-llxHeader($head, $langs->trans("UserProfile").' '.$object->getFullName($langs), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1, 1);
+llxHeader($head, $object->getFullName($langs).' - '.$langs->trans("PublicVirtualCard"), '', '', 0, 0, '', '', '', 'onlinepaymentbody'.(GETPOST('mode')=='preview' ? ' scalepreview nopointervent' : ''), $replacemainarea, 1, 1);
 
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";

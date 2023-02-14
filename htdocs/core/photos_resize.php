@@ -453,7 +453,6 @@ if ($action == 'confirm_crop') {
 			if ($result < 0) {
 				setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
 			}
-			$result = $ecmfile->create($user);
 		}
 
 		if ($backtourl) {

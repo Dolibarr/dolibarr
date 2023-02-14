@@ -32,6 +32,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('agenda', 'bills', 'companies', 'orders', 'propal'));
@@ -47,13 +49,6 @@ if (GETPOST('actioncode', 'array')) {
 }
 
 $search_agenda_label = GETPOST('search_agenda_label');
-
-// Security check
-$socid = GETPOST('socid', 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'societe', $socid, '&societe');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -72,8 +67,18 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
+// Initialize technical objects
+$object = new Societe($db);
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agendathirdparty'));
+
+// Security check
+$socid = GETPOST('socid', 'int');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'societe', $socid, '&societe');
 
 
 /*
@@ -109,28 +114,28 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 if ($socid > 0) {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-
-	$object = new Societe($db);
 	$result = $object->fetch($socid);
 
 	$title = $langs->trans("Agenda");
 	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
-	llxHeader('', $title);
+	$help_url = '';
+	llxHeader('', $title, $help_url);
 
 	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = societe_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'agenda', $langs->trans("ThirdParty"), -1, 'company');
+
+	print dol_get_fiche_head($head, 'agenda', $langs->trans("ThirdParty"), -1, $object->picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
+	$morehtmlref = '';
+
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom', $morehtmlref);
 
 	print '<div class="fichecenter">';
 
@@ -202,7 +207,7 @@ if ($socid > 0) {
 		$filters['search_agenda_label'] = $search_agenda_label;
 
 		// TODO Replace this with same code than into list.php
-		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);
 	}
 }
 
