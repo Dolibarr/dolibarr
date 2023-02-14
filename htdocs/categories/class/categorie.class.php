@@ -1464,7 +1464,7 @@ class Categorie extends CommonObject
 		$ways = array();
 
 		$parents = $this->get_meres();
-		if (is_array($parents)) {
+		if ((is_array($parents)) && ($parents['id'] > 0)) {
 			foreach ($parents as $parent) {
 				$allways = $parent->get_all_ways();
 				foreach ($allways as $way) {
