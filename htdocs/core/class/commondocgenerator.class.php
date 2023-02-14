@@ -41,11 +41,6 @@ abstract class CommonDocGenerator
 	public $name = '';
 
 	/**
-	 * @var string Name of constant that is used to save list of directories to scan
-	 */
-	public $scandir = '';
-
-	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
