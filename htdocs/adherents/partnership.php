@@ -85,11 +85,18 @@ $usercanclose 			= $user->rights->partnership->write; // Used by the include of 
 $upload_dir 			= $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 
-if ($conf->global->PARTNERSHIP_IS_MANAGED_FOR != 'member') accessforbidden();
-if (empty($conf->partnership->enabled)) accessforbidden();
-if (empty($permissiontoread)) accessforbidden();
-if ($action == 'edit' && empty($permissiontoadd)) accessforbidden();
-
+if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') != 'member') {
+	accessforbidden('Partnership module is not activated for members');
+}
+if (!isModEnabled('partnership')) {
+	accessforbidden();
+}
+if (empty($permissiontoread)) {
+	accessforbidden();
+}
+if ($action == 'edit' && empty($permissiontoadd)) {
+	accessforbidden();
+}
 if (($action == 'update' || $action == 'edit') && $object->status != $object::STATUS_DRAFT) {
 	accessforbidden();
 }
@@ -144,7 +151,7 @@ if ($id > 0) {
 	$object = new Adherent($db);
 	$result = $object->fetch($id);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 

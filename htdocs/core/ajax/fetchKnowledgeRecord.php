@@ -31,9 +31,6 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 // Do not check anti CSRF attack test
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
@@ -65,6 +62,8 @@ $lang = GETPOST('lang', 'aZ09');
 /*
  * View
  */
+
+top_httphead('application/json');
 
 if ($action == "getKnowledgeRecord") {
 	$response = '';

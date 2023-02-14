@@ -25,7 +25,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 
-print "<!-- BEGIN PHP TEMPLATE fourn/facture/tpl/linkedopjectblock.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE fourn/facture/tpl/linkedobjectblock.tpl.php -->\n";
 
 
 global $user;

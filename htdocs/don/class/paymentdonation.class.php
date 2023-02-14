@@ -64,7 +64,8 @@ class PaymentDonation extends CommonObject
 
 	public $amounts = array(); // Array of amounts
 
-	public $typepayment;
+	public $fk_typepayment;	// Payment mode ID
+	public $paymenttype;	// Payment mode ID or Code. TODO Use only the code in this field.
 
 	public $num_payment;
 
@@ -187,12 +188,12 @@ class PaymentDonation extends CommonObject
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_donation (fk_donation, datec, datep, amount,";
 			$sql .= " fk_typepayment, num_payment, note, ext_payment_id, ext_payment_site,";
 			$sql .= " fk_user_creat, fk_bank)";
-			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
+			$sql .= " VALUES (".((int) $this->chid).", '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaid)."',";
-			$sql .= " ".price2num($totalamount).",";
+			$sql .= " ".((float) price2num($totalamount)).",";
 			$sql .= " ".((int) $this->paymenttype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ";
 			$sql .= " ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").",";
-			$sql .= " ".$user->id.", 0)";
+			$sql .= " ".((int) $user->id).", 0)";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -268,7 +269,8 @@ class PaymentDonation extends CommonObject
 				$this->tms            = $this->db->jdate($obj->tms);
 				$this->datep		  = $this->db->jdate($obj->datep);
 				$this->amount         = $obj->amount;
-				$this->fk_typepayment = $obj->fk_typepayment;
+				$this->fk_typepayment = $obj->fk_typepayment;	// Id on type of payent
+				$this->paymenttype    = $obj->fk_typepayment;	// Id on type of payment. We should store the code into paymenttype.
 				$this->num_payment    = $obj->num_payment;
 				$this->note_public    = $obj->note_public;
 				$this->fk_bank        = $obj->fk_bank;
@@ -545,6 +547,7 @@ class PaymentDonation extends CommonObject
 		$this->datep = '';
 		$this->amount = '';
 		$this->fk_typepayment = '';
+		$this->paymenttype = '';
 		$this->num_payment = '';
 		$this->note_public = '';
 		$this->fk_bank = '';
@@ -571,7 +574,7 @@ class PaymentDonation extends CommonObject
 
 		$error = 0;
 
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);
@@ -661,7 +664,7 @@ class PaymentDonation extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0)
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$result = '';
 
@@ -684,6 +687,15 @@ class PaymentDonation extends CommonObject
 			}
 		}
 
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 }

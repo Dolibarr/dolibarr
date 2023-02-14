@@ -29,6 +29,7 @@ if (!defined('CSRFCHECK_WITH_TOKEN')) {
 	define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
@@ -50,15 +51,15 @@ if (!isset($id) || empty($id)) {
 }
 
 // Define if user can read permissions
-$canreadperms = ($user->admin || $user->rights->user->user->lire);
+$canreadperms = ($user->admin || $user->hasRight("user", "user", "read"));
 // Define if user can modify group permissions
-$caneditperms = ($user->admin || $user->rights->user->user->creer);
+$caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
 // Advanced permissions
 $advancedpermsactive = false;
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$advancedpermsactive = true;
-	$canreadperms = ($user->admin || ($user->rights->user->group_advance->read && $user->rights->user->group_advance->readperms));
-	$caneditperms = ($user->admin || $user->rights->user->group_advance->write);
+	$canreadperms = ($user->admin || ($user->hasRight("user", "group_advance", "read") && $user->hasRight("user", "group_advance", "readperms")));
+	$caneditperms = ($user->admin || $user->hasRight("user", "group_advance", "write"));
 }
 
 // Security check
@@ -128,7 +129,9 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Permissions"));
+$title = $object->name." - ".$langs->trans('Permissions');
+$help_url = '';
+llxHeader('', $title, $help_url);
 
 if ($object->id > 0) {
 	$head = group_prepare_head($object);
@@ -204,7 +207,7 @@ if ($object->id > 0) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
@@ -328,7 +331,7 @@ if ($object->id > 0) {
 			//print img_object('', $picto, 'class="inline-block pictoobjectwidth"').' '.$objMod->getName();
 			print '</td>';
 
-			if (is_array($permsgroupbyentity[$entity])) {
+			if (!empty($permsgroupbyentity[$entity]) && is_array($permsgroupbyentity[$entity])) {
 				if (in_array($obj->id, $permsgroupbyentity[$entity])) {
 					// Own permission by group
 					if ($caneditperms) {

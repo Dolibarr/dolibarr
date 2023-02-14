@@ -25,7 +25,7 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 					'type'     => $extrafields->attributes[$extrafieldsobjectkey]['type'][$key],
 					'checked'  => ((dol_eval($extrafields->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1') <= 0) ? 0 : 1),
 					'position' => $extrafields->attributes[$extrafieldsobjectkey]['pos'][$key],
-					'enabled'  => (abs((int) $extrafields->attributes[$extrafieldsobjectkey]['list'][$key]) != 3 && dol_eval($extrafields->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1')),
+					'enabled'  => (abs((int) dol_eval($extrafields->attributes[$extrafieldsobjectkey]['list'][$key], 1)) != 3 && dol_eval($extrafields->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1')),
 					'langfile' => $extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key],
 					'help'     => $extrafields->attributes[$extrafieldsobjectkey]['help'][$key],
 				);

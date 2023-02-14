@@ -1,8 +1,0 @@
-VAT Rates
----------
-
-http://www.taxrates.cc/index.html
-https://en.wikipedia.org/wiki/List_of_countries_by_tax_rates
-
-For India: VAT=IGST/CGST=Localtax1/SGST=Localtax2:  https://cleartax.in/s/what-is-sgst-cgst-igst
-

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2018  Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2015-2022  Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Charlie Benke		<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// $formatexportset ùust be defined
+// $formatexportset must be defined
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -24,11 +24,11 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
-$code = $conf->global->MAIN_INFO_ACCOUNTANT_CODE;
-$prefix = $conf->global->ACCOUNTING_EXPORT_PREFIX_SPEC;
-$format = $conf->global->ACCOUNTING_EXPORT_FORMAT;
-$nodateexport = $conf->global->ACCOUNTING_EXPORT_NO_DATE_IN_FILENAME;
-$siren = $conf->global->MAIN_INFO_SIREN;
+$code = getDolGlobalString('MAIN_INFO_ACCOUNTANT_CODE');
+$prefix = getDolGlobalString('ACCOUNTING_EXPORT_PREFIX_SPEC');
+$format = getDolGlobalString('ACCOUNTING_EXPORT_FORMAT');
+$nodateexport = getDolGlobalInt('ACCOUNTING_EXPORT_NO_DATE_IN_FILENAME');
+$siren = getDolGlobalString('MAIN_INFO_SIREN');
 
 $date_export = "_".dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 $endaccountingperiod = dol_print_date(dol_now(), '%Y%m%d');

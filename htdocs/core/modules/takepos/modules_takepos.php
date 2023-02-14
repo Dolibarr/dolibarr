@@ -16,14 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
  *  \file       htdocs/core/modules/takepos/modules_takepos.php
  *  \ingroup    takepos
- *  \brief      Fichier contenant la classe mere de numerotation des tickets de caisse
+ *  \brief      File containing the parent class for the numbering of cash register receipts
  */
 
 
@@ -89,9 +89,12 @@ abstract class ModeleNumRefTakepos
 	/**
 	 * Renvoi prochaine valeur attribuee
 	 *
-	 * @return     string      Valeur
+	 * @param   Societe     $objsoc     Object thirdparty
+	 * @param   Facture		$invoice	Object invoice
+	 * @param   string		$mode       'next' for next value or 'last' for last value
+	 * @return  string      Value if KO, <0 if KO
 	 */
-	public function getNextValue()
+	public function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
 	{
 		global $langs;
 		return $langs->trans('NotAvailable');

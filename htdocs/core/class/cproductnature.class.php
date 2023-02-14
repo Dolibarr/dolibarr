@@ -102,7 +102,7 @@ class CProductNature // extends CommonObject
 		global $conf, $langs;
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
+		$sql = "INSERT INTO ".$this->db->prefix().$this->table_element."(";
 		$sql .= "rowid,";
 		$sql .= "code,";
 		$sql .= "label,";
@@ -125,7 +125,7 @@ class CProductNature // extends CommonObject
 			$this->db->rollback();
 			return -1;
 		} else {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
+			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 			$this->db->commit();
 			return $this->id;
 		}
@@ -148,7 +148,7 @@ class CProductNature // extends CommonObject
 		$sql .= " t.code,";
 		$sql .= " t.label,";
 		$sql .= " t.active";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		$sql_where = array();
 		if ($id) {
 			$sql_where[] = " t.rowid = ".((int) $id);
@@ -197,12 +197,12 @@ class CProductNature // extends CommonObject
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
+		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.code,";
 		$sql .= " t.label,";
 		$sql .= " t.active";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -267,7 +267,7 @@ class CProductNature // extends CommonObject
 		global $conf, $langs;
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
 		$sql .= " code=".(isset($this->code) ? ((int) $this->code) : "null").",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape(trim($this->label))."'" : "null").",";
 		$sql .= " active=".(isset($this->active) ? ((int) $this->active) : "null");
@@ -302,7 +302,7 @@ class CProductNature // extends CommonObject
 		global $conf, $langs;
 		$error = 0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql = "DELETE FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE rowid=".(int) $this->id;
 
 		$this->db->begin();

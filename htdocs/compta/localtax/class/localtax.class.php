@@ -467,11 +467,11 @@ class Localtax extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -4;
 		}
-		if (!empty($conf->banque->enabled) && (empty($this->accountid) || $this->accountid <= 0)) {
+		if (isModEnabled("banque") && (empty($this->accountid) || $this->accountid <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
 			return -5;
 		}
-		if (!empty($conf->banque->enabled) && (empty($this->paymenttype) || $this->paymenttype <= 0)) {
+		if (isModEnabled("banque") && (empty($this->paymenttype) || $this->paymenttype <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -5;
 		}
@@ -503,7 +503,7 @@ class Localtax extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."localtax"); // TODO devrait s'appeler paiementlocaltax
 			if ($this->id > 0) {
 				$ok = 1;
-				if (!empty($conf->banque->enabled)) {
+				if (isModEnabled("banque")) {
 					// Insertion dans llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 

@@ -42,6 +42,7 @@ PARTNERSHIP_BACKLINKS_TO_CHECK=Обратные ссылки для провер
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Кол-во дней до отмены статуса партнерства по истечении срока подписки
 ReferingWebsiteCheck=Проверка ссылки на сайт
 ReferingWebsiteCheckDesc=Вы можете включить функцию проверки того, что ваши партнеры добавили обратную ссылку на домены вашего веб-сайта на своем собственном веб-сайте.
+PublicFormRegistrationPartnerDesc=Dolibarr может предоставить вам общедоступный URL-адрес/веб-сайт, чтобы внешние посетители могли запросить участие в партнерской программе.
 
 #
 # Object
@@ -58,7 +59,13 @@ ManagePartnership=Управление партнерством
 BacklinkNotFoundOnPartnerWebsite=Обратная ссылка не найдена на партнерском сайте
 ConfirmClosePartnershipAsk=Вы уверены, что хотите отменить это партнерство?
 PartnershipType=Тип партнерства
-PartnershipRefApproved=Partnership %s approved
+PartnershipRefApproved=Партнерство %s одобрено
+KeywordToCheckInWebsite=Если вы хотите проверить, присутствует ли данное ключевое слово на веб-сайте каждого партнера, определите это ключевое слово здесь.
+PartnershipDraft=Проект
+PartnershipAccepted=Принято
+PartnershipRefused=Отклонено
+PartnershipCanceled=Отменена
+PartnershipManagedFor=Партнеры
 
 #
 # Template Mail
@@ -82,11 +89,6 @@ CountLastUrlCheckError=Количество ошибок при последне
 LastCheckBacklink=Дата последней проверки URL
 ReasonDeclineOrCancel=Причина отклонения
 
-#
-# Status
-#
-PartnershipDraft=Проект
-PartnershipAccepted=Принято
-PartnershipRefused=Отклонено
-PartnershipCanceled=Отменена
-PartnershipManagedFor=Партнеры
+NewPartnershipRequest=Новый запрос на партнерство
+NewPartnershipRequestDesc=Эта форма позволяет вам подать заявку на участие в одной из наших партнерских программ. Если вам нужна помощь в заполнении этой формы, свяжитесь с нами по электронной почте <b> %s </b> .
+

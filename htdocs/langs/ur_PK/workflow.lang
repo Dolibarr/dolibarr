@@ -7,6 +7,7 @@ descWORKFLOW_PROPAL_AUTOCREATE_ORDER=تجارتی تجویز پر دستخط ہ�
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=تجارتی تجویز پر دستخط ہونے کے بعد خودکار طور پر ایک کسٹمر انوائس بنائیں (نئے انوائس میں پروپوزل کے برابر رقم ہوگی)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=معاہدے کی توثیق کے بعد خودکار طور پر ایک کسٹمر انوائس بنائیں
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=سیلز آرڈر بند ہونے کے بعد خودکار طور پر کسٹمر انوائس بنائیں (نئے انوائس میں آرڈر کے برابر رقم ہوگی)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=On ticket creation, automatically create an intervention.
 # Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=جب سیلز آرڈر کو بل پر سیٹ کیا جاتا ہے تو لنکڈ سورس پروپوزل کو بطور بل کی درجہ بندی کریں (اور اگر آرڈر کی رقم دستخط شدہ لنکڈ پروپوزل کی کل رقم کے برابر ہے)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=جب گاہک کی انوائس کی توثیق کی جاتی ہے تو لنک شدہ سورس پروپوزل کو بل کے طور پر درجہ بندی کریں (اور اگر انوائس کی رقم دستخط شدہ لنکڈ پروپوزل کی کل رقم کے برابر ہے)
@@ -21,10 +22,15 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=جب وینڈر ان�
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=جب کسی استقبالیہ کی توثیق ہو جاتی ہے تو منسلک ذریعہ خریداری کے آرڈر کو موصول ہونے کے مطابق درجہ بندی کریں (اور اگر تمام استقبالیوں کو موصول ہونے والی مقدار وہی ہے جو اپ ڈیٹ کرنے کے لیے خریداری آرڈر میں ہے)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=ریسیپشن بند ہونے پر موصول ہونے والے لنکڈ سورس پرچیز آرڈر کی درجہ بندی کریں (اور اگر تمام ریسپشنز کو موصول ہونے والی مقدار وہی ہے جو اپ ڈیٹ کرنے کے لیے خریداری آرڈر میں ہے)
 # Autoclassify purchase invoice
-descWORKFLOW_BILL_ON_RECEPTION=جب کسی منسلک سپلائر آرڈر کی توثیق ہو جاتی ہے تو استقبالیہ کو "بل شدہ" میں درجہ بندی کریں۔
+descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=When creating a ticket, link available contracts of matching thirdparty
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking contracts, search among those of parents companies
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=ٹکٹ بند ہونے پر ٹکٹ سے منسلک تمام مداخلتوں کو بند کر دیں۔
 AutomaticCreation=خودکار تخلیق
 AutomaticClassification=خودکار درجہ بندی
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=جب کسٹمر انوائس کی توثیق ہو جائے تو لنک شدہ سورس شپمنٹ کو بند کے طور پر درجہ بندی کریں۔
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
+AutomaticClosing=Automatic closing
+AutomaticLinking=Automatic linking

@@ -77,7 +77,7 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$ecmdir = new EcmDirectory($db);
 	if ($section > 0) {
 		$result = $ecmdir->fetch($section);
-		if (!$result > 0) {
+		if (!($result > 0)) {
 			//dol_print_error($db,$ecmdir->error);
 			//exit;
 		}
@@ -90,7 +90,7 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$relativepath = '';
 	if ($section > 0) {
 		$result = $ecmdir->fetch($section);
-		if (!$result > 0) {
+		if (!($result > 0)) {
 			dol_print_error($db, $ecmdir->error);
 			exit;
 		}
@@ -104,8 +104,10 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$upload_dir = $rootdirfordoc.'/'.$relativepath;
 }
 
-if (empty($url)) {
-	if (GETPOSTISSET('website')) {
+if (empty($url)) {	// autoset $url but it is better to have it defined before into filemanager.tpl.php (not possible when in auto tree)
+	if (!empty($module) && $module == 'medias' && !GETPOST('website')) {
+		$url = DOL_URL_ROOT.'/ecm/index_medias.php';
+	} elseif (GETPOSTISSET('website')) {
 		$url = DOL_URL_ROOT.'/website/index.php';
 	} else {
 		$url = DOL_URL_ROOT.'/ecm/index.php';
@@ -131,14 +133,19 @@ if (preg_match('/\.\./', $upload_dir) || preg_match('/[<>|]/', $upload_dir)) {
 	exit;
 }
 
+if (empty($modulepart)) {
+	$modulepart = $module;
+}
+
 // Check permissions
 if ($modulepart == 'ecm') {
-	if (!$user->rights->ecm->read) {
+	if (!$user->hasRight('ecm', 'read')) {
 		accessforbidden();
 	}
-}
-if ($modulepart == 'medias') {
+} elseif ($modulepart == 'medias' || $modulepart == 'website') {
 	// Always allowed
+} else {
+	accessforbidden();
 }
 
 
@@ -172,7 +179,7 @@ if (!dol_is_dir($upload_dir)) {
 	exit;*/
 }
 
-print '<!-- ajaxdirpreview type='.$type.' -->'."\n";
+print '<!-- ajaxdirpreview type='.$type.' module='.$module.' modulepart='.$modulepart.'-->'."\n";
 //print '<!-- Page called with mode='.dol_escape_htmltag(isset($mode)?$mode:'').' type='.dol_escape_htmltag($type).' module='.dol_escape_htmltag($module).' url='.dol_escape_htmltag($url).' '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 $param = ($sortfield ? '&sortfield='.urlencode($sortfield) : '').($sortorder ? '&sortorder='.urlencode($sortorder) : '');
@@ -252,9 +259,9 @@ if ($type == 'directory') {
 	} elseif ($module == 'salaries') {
 		$upload_dir = $conf->salaries->dir_output;
 	} elseif ($module == 'project') {
-		$upload_dir = $conf->projet->dir_output;
+		$upload_dir = $conf->project->dir_output;
 	} elseif ($module == 'project_task') {
-		$upload_dir = $conf->projet->dir_output;
+		$upload_dir = $conf->project->dir_output;
 	} elseif ($module == 'fichinter') {
 		$upload_dir = $conf->ficheinter->dir_output;
 	} elseif ($module == 'user') {
@@ -315,7 +322,7 @@ if ($type == 'directory') {
 			$upload_dir = $dolibarr_main_data_root.'/'.$module.'/'.$relativepath;
 			if (GETPOSTISSET('website') || GETPOSTISSET('file_manager')) {
 				$param .= '&file_manager=1';
-				if (!preg_match('/website=/', $param)) {
+				if (!preg_match('/website=/', $param) && GETPOST('website', 'alpha')) {
 					$param .= '&website='.urlencode(GETPOST('website', 'alpha'));
 				}
 				if (!preg_match('/pageid=/', $param)) {
@@ -355,31 +362,31 @@ if ($type == 'directory') {
 		if ($module == 'medias') {
 			$useinecm = 6;
 			$modulepart = 'medias';
-			$perm = ($user->rights->website->write || $user->rights->emailing->creer);
+			$perm = ($user->hasRight("website", "write") || $user->hasRight("emailing", "creer"));
 			$title = 'none';
 		} elseif ($module == 'ecm') { // DMS/ECM -> manual structure
-			if ($user->rights->ecm->read) {
+			if ($user->hasRight("ecm", "read")) {
 				// Buttons: Preview
 				$useinecm = 2;
 			}
 
-			if ($user->rights->ecm->upload) {
+			if ($user->hasRight("ecm", "upload")) {
 				// Buttons: Preview + Delete
 				$useinecm = 4;
 			}
 
-			if ($user->rights->ecm->setup) {
+			if ($user->hasRight("ecm", "setup")) {
 				// Buttons: Preview + Delete + Edit
 				$useinecm = 5;
 			}
 
-			$perm = $user->rights->ecm->upload;
+			$perm = $user->hasRight("ecm", "upload");
 			$modulepart = 'ecm';
 			$title = ''; // Use default
 		} else {
 			$useinecm = 5;
 			$modulepart = 'ecm';
-			$perm = $user->rights->ecm->upload;
+			$perm = $user->hasRight("ecm", "upload");
 			$title = ''; // Use default
 		}
 

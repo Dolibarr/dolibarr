@@ -30,7 +30,7 @@ dol_include_once('/mymodule/core/modules/mymodule/modules_myobject.php');
 
 
 /**
- *	Class to manage customer Bom numbering rules advanced
+ *	Class to manage the Advanced numbering rule for MyObject
  */
 class mod_myobject_advanced extends ModeleNumRefMyObject
 {
@@ -79,7 +79,7 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.$conf->global->MYMODULE_MYOBJECT_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.getDolGlobalString('MYMODULE_MYOBJECT_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" name="Button"></td>';
 		$texte .= '</tr>';
 
@@ -130,7 +130,7 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = $conf->global->MYMODULE_MYOBJECT_ADVANCED_MASK;
+		$mask = getDolGlobalString('MYMODULE_MYOBJECT_ADVANCED_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/core/lib/propal.lib.php
- *	\brief      Ensemble de fonctions de base pour le module propal
- *	\ingroup    propal
+ * \file       htdocs/core/lib/propal.lib.php
+ * \brief      Ensemble de fonctions de base pour le module propal
+ * \ingroup    propal
  */
 
 /**
@@ -42,8 +42,8 @@ function propal_prepare_head($object)
 	$head[$h][2] = 'comm';
 	$h++;
 
-	if ((empty($conf->commande->enabled) && ((!empty($conf->expedition->enabled) && !empty($conf->expedition_bon->enabled) && $user->rights->expedition->lire)
-		|| (!empty($conf->expedition->enabled) && !empty($conf->delivery_note->enabled) && $user->rights->expedition->delivery->lire)))) {
+	if ((empty($conf->commande->enabled) && ((isModEnabled("expedition") && !empty($conf->expedition_bon->enabled) && $user->rights->expedition->lire)
+		|| (isModEnabled("expedition") && !empty($conf->delivery_note->enabled) && $user->rights->expedition->delivery->lire)))) {
 		$langs->load("sendings");
 		$text = '';
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$object->id;
@@ -73,7 +73,7 @@ function propal_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'propal');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'propal', 'add', 'core');
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
@@ -110,6 +110,8 @@ function propal_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'propal', 'add', 'external');
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'propal', 'remove');
 
 	return $head;
@@ -122,7 +124,11 @@ function propal_prepare_head($object)
  */
 function propal_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('propal');
+	$extrafields->fetch_name_optionals_label('propaldet');
 
 	$h = 0;
 	$head = array();
@@ -140,11 +146,19 @@ function propal_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/admin/propal_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['propal']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/admin/propaldet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$nbExtrafields = $extrafields->attributes['propaldet']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributeslines';
 	$h++;
 
@@ -167,7 +181,7 @@ function getCustomerProposalPieChart($socid = 0)
 
 	$result= '';
 
-	if (empty($conf->propal->enabled) || empty($user->rights->propal->lire)) {
+	if (!isModEnabled('propal') || empty($user->rights->propal->lire)) {
 		return '';
 	}
 

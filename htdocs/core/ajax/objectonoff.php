@@ -1,5 +1,6 @@
 <?php
-/*
+/* Copyright (C) 2015-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -39,6 +40,7 @@ if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
@@ -65,13 +67,15 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
+//$user->hasRight('societe', 'lire') = 0;$user->rights->fournisseur->lire = 0;
+//restrictedArea($user, 'societe', $id);
+
 if (in_array($field, array('status'))) {
 	restrictedArea($user, $element, $id);
 } elseif ($element == 'product' && in_array($field, array('tosell', 'tobuy', 'tobatch'))) {	// Special case for products
 	restrictedArea($user, 'produit|service', $id, 'product&product', '', '', 'rowid');
 } else {
-	accessforbidden("Bad value for combination of parameters element/field.", 0, 0, 1);
-	exit;
+	httponly_accessforbidden("Bad value for combination of parameters element/field.");
 }
 
 
@@ -88,7 +92,10 @@ if (($action == 'set') && !empty($id)) {
 	$triggerkey = strtoupper($element).'_UPDATE';
 	// Special case
 	if ($triggerkey == 'SOCIETE_UPDATE') {
-		$triggerkey = 'COMPANY_UPDATE';
+		$triggerkey = 'COMPANY_MODIFY';
+	}
+	if ($triggerkey == 'PRODUCT_UPDATE') {
+		$triggerkey = 'PRODUCT_MODIFY';
 	}
 
 	$object->setValueFrom($field, $value, $tablename, $id, $format, '', $user, $triggerkey);

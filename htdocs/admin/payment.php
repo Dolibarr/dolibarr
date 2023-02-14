@@ -22,6 +22,7 @@
  *		\brief      Page to setup invoices payments
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
@@ -50,9 +51,9 @@ if (empty($conf->global->PAYMENT_ADDON)) {
  */
 
 if ($action == 'updateMask') {
-	$maskconstpayment = GETPOST('maskconstpayment', 'alpha');
+	$maskconstpayment = GETPOST('maskconstpayment', 'aZ09');
 	$maskpayment = GETPOST('maskpayment', 'alpha');
-	if ($maskconstpayment) {
+	if ($maskconstpayment && preg_match('/_MASK$/', $maskconstpayment)) {
 		$res = dolibarr_set_const($db, $maskconstpayment, $maskpayment, 'chaine', 0, '', $conf->entity);
 	}
 

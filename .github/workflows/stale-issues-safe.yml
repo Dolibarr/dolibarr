@@ -6,9 +6,13 @@ on:
   - cron: "0 21 * * *"
   issue_comment:
     types: [created]
+    
+permissions: {} # none
 
 jobs:
   stale:
+    permissions:
+      issues: write
     runs-on: ubuntu-latest
     steps:
     - uses: Dolibarr/stale@staleunstale

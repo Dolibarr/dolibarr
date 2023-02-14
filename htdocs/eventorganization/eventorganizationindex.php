@@ -71,7 +71,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 /* BEGIN MODULEBUILDER DRAFT MYOBJECT
 // Draft MyObject
-if (! empty($conf->eventorganization->enabled) && $user->rights->eventorganization->read)
+if (isModEnabled('eventorganization') && $user->rights->eventorganization->read)
 {
 	$langs->load("orders");
 
@@ -152,7 +152,7 @@ $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT
 // Last modified myobject
-if (! empty($conf->eventorganization->enabled) && $user->rights->eventorganization->read)
+if (isModEnabled('eventorganization') && $user->rights->eventorganization->read)
 {
 	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms";
 	$sql.= " FROM ".MAIN_DB_PREFIX."eventorganization_myobject as s";

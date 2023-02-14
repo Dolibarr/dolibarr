@@ -38,14 +38,25 @@ $langs->load("modulebuilder");
 <!-- BEGIN PHP TEMPLATE admin_extrafields_view.tpl.php -->
 <?php
 
-print '<span class="opacitymedium">'.$langs->trans("DefineHereComplementaryAttributes", $textobject).'</span><br>'."\n";
-print '<br>';
+$title = '<span class="opacitymedium">'.$langs->trans("DefineHereComplementaryAttributes", empty($textobject) ? '': $textobject).'</span><br>'."\n";
+//if ($action != 'create' && $action != 'edit') {
+$newcardbutton = dolGetButtonTitle($langs->trans('NewAttribute'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create', '', (($action != 'create' && $action != 'edit') ? 1 : 1));
+/*} else {
+	$newcardbutton = '';
+}*/
+
+print '<div class="centpercent tagtable marginbottomonly">';
+print '<div class="tagtr">';
+print '<div class="tagtd inline-block valignmiddle hideonsmartphoneimp">'.$title.'</div>';
+print '<div class="tagtd right inline-block valignmiddle"">'.$newcardbutton.'</div>';
+print '</div>';
+print '</div>';
 
 // Load $extrafields->attributes
 $extrafields->fetch_name_optionals_label($elementtype);
 
 print '<div class="div-table-responsive">';
-print '<table summary="listofattributes" class="noborder centpercent">';
+print '<table summary="listofattributes" class="noborder centpercent small">';
 
 print '<tr class="liste_titre">';
 print '<td class="left">'.$langs->trans("Position");
@@ -60,12 +71,15 @@ print '<td>'.$langs->trans("Type").'</td>';
 print '<td class="right">'.$langs->trans("Size").'</td>';
 print '<td>'.$langs->trans("ComputedFormula").'</td>';
 print '<td class="center">'.$langs->trans("Unique").'</td>';
-print '<td class="center">'.$langs->trans("Required").'</td>';
-print '<td class="center">'.$langs->trans("AlwaysEditable").'</td>';
-print '<td class="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</td>';
+print '<td class="center">'.$langs->trans("Mandatory").'</td>';
+print '<td class="center">'.$form->textwithpicto($langs->trans("AlwaysEditable"), $langs->trans("EditableWhenDraftOnly")).'</td>';
+print '<td class="center">'.$form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc")).'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")).'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")).'</td>';
-if (!empty($conf->multicompany->enabled)) {
+print '<td class="center">'.$form->textwithpicto($langs->trans("CssOnEdit"), $langs->trans("HelpCssOnEditDesc")).'</td>';
+print '<td class="center">'.$form->textwithpicto($langs->trans("CssOnView"), $langs->trans("HelpCssOnViewDesc")).'</td>';
+print '<td class="center">'.$form->textwithpicto($langs->trans("CssOnList"), $langs->trans("HelpCssOnListDesc")).'</td>';
+if (isModEnabled('multicompany')) {
 	print '<td class="center">'.$langs->trans("Entity").'</td>';
 }
 print '<td width="80">&nbsp;</td>';
@@ -87,14 +101,14 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		// Position
 		print "<td>".dol_escape_htmltag($extrafields->attributes[$elementtype]['pos'][$key])."</td>\n";
 		// Label
-		print "<td>".dol_escape_htmltag($extrafields->attributes[$elementtype]['label'][$key])."</td>\n"; // We don't translate here, we want admin to know what is the key not translated value
+		print '<td title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['label'][$key]).'" class="tdoverflowmax150">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['label'][$key])."</td>\n"; // We don't translate here, we want admin to know what is the key not translated value
 		// Label translated
 		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key])).'">'.dol_escape_htmltag($langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key]))."</td>\n";
 		// Key
-		print "<td>".dol_escape_htmltag($key)."</td>\n";
+		print '<td title="'.dol_escape_htmltag($key).'" class="tdoverflowmax100">'.dol_escape_htmltag($key)."</td>\n";
 		// Type
 		$typetoshow = $type2label[$extrafields->attributes[$elementtype]['type'][$key]];
-		print '<td title="'.dol_escape_htmltag($typetoshow).'" class="tdoverflowmax150">';
+		print '<td title="'.dol_escape_htmltag($typetoshow).'" class="tdoverflowmax100">';
 		print dol_escape_htmltag($typetoshow);
 		print "</td>\n";
 		// Size
@@ -113,7 +127,14 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['printable'][$key]).'">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['printable'][$key])."</td>\n";
 		// Summable
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['totalizable'][$key])."</td>\n";
-		if (!empty($conf->multicompany->enabled)) {
+		// CSS
+		print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['css'][$key]).'">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['css'][$key])."</td>\n";
+		// CSS view
+		print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['cssview'][$key]).'">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['cssview'][$key])."</td>\n";
+		// CSS list
+		print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['csslist'][$key]).'">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['csslist'][$key])."</td>\n";
+		// Multicompany
+		if (isModEnabled('multicompany')) {
 			print '<td class="center">';
 			if (empty($extrafields->attributes[$elementtype]['entityid'][$key])) {
 				print $langs->trans("All");
@@ -131,6 +152,7 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 			}
 			print '</td>';
 		}
+		// Actions
 		print '<td class="right nowraponall">';
 		print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.urlencode($key).'#formeditextrafield">'.img_edit().'</a>';
 		print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.urlencode($key).'">'.img_delete().'</a>';
@@ -138,8 +160,8 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		print "</tr>";
 	}
 } else {
-	$colspan = 14;
-	if (!empty($conf->multicompany->enabled)) {
+	$colspan = 17;
+	if (isModEnabled('multicompany')) {
 		$colspan++;
 	}
 

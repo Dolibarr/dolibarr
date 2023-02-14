@@ -106,9 +106,7 @@ class PropaleStats extends Stats
 		}
 
 		if ($categid) {
-			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cs ON cs.fk_soc = p.fk_soc';
-			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as c ON c.rowid = cs.fk_categorie';
-			$this->where .= ' AND c.rowid = '.((int) $categid);
+			$this->where .= ' AND EXISTS (SELECT rowid FROM '.MAIN_DB_PREFIX.'categorie_societe as cats WHERE cats.fk_soc = p.fk_soc AND cats.fk_categorie = '.((int) $categid).')';
 		}
 	}
 
@@ -169,7 +167,7 @@ class PropaleStats extends Stats
 	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 * @return	array				Array with amount by month
 	 */
-	public function getAmountByMonth($year, $format)
+	public function getAmountByMonth($year, $format = 0)
 	{
 		global $user;
 

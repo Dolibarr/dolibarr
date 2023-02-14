@@ -18,11 +18,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 /**
  *      \file       htdocs/compta/localtax/index.php
  *      \ingroup    tax
  *      \brief      Index page of IRPF reports
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
@@ -38,7 +40,7 @@ $localTaxType = GETPOST('localTaxType', 'int');
 // Date range
 $year = GETPOST("year", "int");
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
+	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
@@ -244,7 +246,7 @@ $description .= $langs->trans($LT);
 $calcmode = $langs->trans("LTReportBuildWithOptionDefinedInModule").' ';
 $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
 
-//if (! empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description.='<br>'.$langs->trans("ThisIsAnEstimatedValue");
+//if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description.='<br>'.$langs->trans("ThisIsAnEstimatedValue");
 
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 
@@ -293,7 +295,7 @@ $mend = $tmp['mon'];
 
 $total = 0;
 $subtotalcoll = 0;
-$subtotalpaye = 0;
+$subtotalpaid = 0;
 $subtotal = 0;
 $i = 0;
 $mcursor = 0;
@@ -441,16 +443,6 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 	$hookmanager->initHooks(array('externalbalance'));
 	$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
-	if (!is_array($x_coll) && $coll_listbuy == -1) {
-		$langs->load("errors");
-		print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
-		break;
-	}
-	if (!is_array($x_paye) && $coll_listbuy == -2) {
-		print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
-		break;
-	}
-
 
 	print '<tr class="oddeven">';
 	print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/compta/localtax/quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'">'.dol_print_date(dol_mktime(0, 0, 0, $m, 1, $y), "%b %Y").'</a></td>';
@@ -536,7 +528,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 	print '<td class="nowrap right">'.price(price2num($x_paye_sum, 'MT')).'</td>';
 
 	$subtotalcoll = $subtotalcoll + $x_coll_sum;
-	$subtotalpaye = $subtotalpaye + $x_paye_sum;
+	$subtotalpaid = $subtotalpaid + $x_paye_sum;
 
 	$diff = $x_coll_sum - $x_paye_sum;
 	$total = $total + $diff;
@@ -552,12 +544,12 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 		print '<tr class="liste_total">';
 		print '<td class="right"><a href="quadri_detail.php?leftmenu=tax_vat&q='.round($m / 3).'&year='.$y.'">'.$langs->trans("SubTotal").'</a>:</td>';
 		print '<td class="nowrap right">'.price(price2num($subtotalcoll, 'MT')).'</td>';
-		print '<td class="nowrap right">'.price(price2num($subtotalpaye, 'MT')).'</td>';
+		print '<td class="nowrap right">'.price(price2num($subtotalpaid, 'MT')).'</td>';
 		print '<td class="nowrap right">'.price(price2num($subtotal, 'MT')).'</td>';
 		print '<td>&nbsp;</td></tr>';
 		$i = 0;
 		$subtotalcoll = 0;
-		$subtotalpaye = 0;
+		$subtotalpaid = 0;
 		$subtotal = 0;
 	}
 }

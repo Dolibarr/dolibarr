@@ -7,7 +7,7 @@
 # To run the fix manually: cd ~/git/dolibarr; phpcbf -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true "fileordir"
 
 PROJECT=`php -r "echo dirname(dirname(dirname(realpath('$0'))));"`
-STAGED_FILES_CMD=`git diff --cached --name-only --diff-filter=ACMR HEAD | grep \\\\.php`
+STAGED_FILES_CMD=`git diff --cached --name-only --diff-filter=ACMR HEAD | grep -v '/includes/'| grep \\\\.php`
 DIRPHPCS=""
 AUTOFIX=1
 

@@ -111,7 +111,7 @@ class Ccountry // extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_country(";
+		$sql = "INSERT INTO ".$this->db->prefix()."c_country(";
 		$sql .= "rowid,";
 		$sql .= "code,";
 		$sql .= "code_iso,";
@@ -135,7 +135,7 @@ class Ccountry // extends CommonObject
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_country");
+			$this->id = $this->db->last_insert_id($this->db->prefix()."c_country");
 		}
 
 		// Commit or rollback
@@ -169,7 +169,7 @@ class Ccountry // extends CommonObject
 		$sql .= " t.code_iso,";
 		$sql .= " t.label,";
 		$sql .= " t.active";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_country as t";
+		$sql .= " FROM ".$this->db->prefix()."c_country as t";
 		if ($id) {
 			$sql .= " WHERE t.rowid = ".((int) $id);
 		} elseif ($code) {
@@ -235,7 +235,7 @@ class Ccountry // extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."c_country SET";
+		$sql = "UPDATE ".$this->db->prefix()."c_country SET";
 		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").",";
 		$sql .= " code_iso=".(isset($this->code_iso) ? "'".$this->db->escape($this->code_iso)."'" : "null").",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
@@ -278,7 +278,7 @@ class Ccountry // extends CommonObject
 		global $conf, $langs;
 		$error = 0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_country";
+		$sql = "DELETE FROM ".$this->db->prefix()."c_country";
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();

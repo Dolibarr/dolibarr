@@ -30,6 +30,7 @@
  *		\brief      Page to setup the module Foundation
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
@@ -64,7 +65,7 @@ if ($action == 'set_default') {
 } elseif ($action == 'del_default') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->MEMBER_ADDON_PDF_ODT == "$value") {
+		if (getDolGlobalString('MEMBER_ADDON_PDF_ODT') == "$value") {
 			dolibarr_del_const($db, 'MEMBER_ADDON_PDF_ODT', $conf->entity);
 		}
 	}
@@ -99,7 +100,7 @@ if ($action == 'set_default') {
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($action == 'updateall') {
+} elseif ($action == 'updatemainoptions') {
 	$db->begin();
 	$res1 = $res2 = $res3 = $res4 = $res5 = $res6 = $res7 = 0;
 	$res1 = dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha') ? 0 : 1, 'chaine', 0, '', $conf->entity);
@@ -108,14 +109,43 @@ if ($action == 'set_default') {
 	$res3 = dolibarr_set_const($db, 'ADHERENT_CREATE_EXTERNAL_USER_LOGIN', GETPOST('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res4 = dolibarr_set_const($db, 'ADHERENT_BANK_USE', GETPOST('ADHERENT_BANK_USE', 'alpha'), 'chaine', 0, '', $conf->entity);
 	// Use vat for invoice creation
-	if ($conf->facture->enabled) {
+	if (isModEnabled('facture')) {
 		$res4 = dolibarr_set_const($db, 'ADHERENT_VAT_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_VAT_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
 		$res5 = dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+		if (isModEnabled("product") || isModEnabled("service")) {
 			$res6 = dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
 		}
 	}
 	if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0) {
+		setEventMessages('ErrorFailedToSaveDate', null, 'errors');
+		$db->rollback();
+	} else {
+		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
+		$db->commit();
+	}
+} elseif ($action == 'updatememberscards') {
+	$db->begin();
+	$res1 = $res2 = $res3 = $res4 = 0;
+	$res1 = dolibarr_set_const($db, 'ADHERENT_CARD_TYPE', GETPOST('ADHERENT_CARD_TYPE'), 'chaine', 0, '', $conf->entity);
+	$res2 = dolibarr_set_const($db, 'ADHERENT_CARD_HEADER_TEXT', GETPOST('ADHERENT_CARD_HEADER_TEXT', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res3 = dolibarr_set_const($db, 'ADHERENT_CARD_TEXT', GETPOST('ADHERENT_CARD_TEXT', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res3 = dolibarr_set_const($db, 'ADHERENT_CARD_TEXT_RIGHT', GETPOST('ADHERENT_CARD_TEXT_RIGHT', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res4 = dolibarr_set_const($db, 'ADHERENT_CARD_FOOTER_TEXT', GETPOST('ADHERENT_CARD_FOOTER_TEXT', 'alpha'), 'chaine', 0, '', $conf->entity);
+
+	if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0) {
+		setEventMessages('ErrorFailedToSaveDate', null, 'errors');
+		$db->rollback();
+	} else {
+		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
+		$db->commit();
+	}
+} elseif ($action == 'updatememberstickets') {
+	$db->begin();
+	$res1 = $res2 = 0;
+	$res1 = dolibarr_set_const($db, 'ADHERENT_ETIQUETTE_TYPE', GETPOST('ADHERENT_ETIQUETTE_TYPE'), 'chaine', 0, '', $conf->entity);
+	$res2 = dolibarr_set_const($db, 'ADHERENT_ETIQUETTE_TEXT', GETPOST('ADHERENT_ETIQUETTE_TEXT', 'alpha'), 'chaine', 0, '', $conf->entity);
+
+	if ($res1 < 0 || $res2 < 0) {
 		setEventMessages('ErrorFailedToSaveDate', null, 'errors');
 		$db->rollback();
 	} else {
@@ -128,6 +158,7 @@ if ($action == 'set_default') {
 if ($action == 'update' || $action == 'add') {
 	$constname = GETPOST('constname', 'alpha');
 	$constvalue = (GETPOST('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname) : GETPOST('constvalue'));
+
 
 	if (($constname == 'ADHERENT_CARD_TYPE' || $constname == 'ADHERENT_ETIQUETTE_TYPE' || $constname == 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && $constvalue == -1) {
 		$constvalue = '';
@@ -194,10 +225,10 @@ print dol_get_fiche_head($head, 'general', $langs->trans("Members"), -1, 'user')
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="updateall">';
+print '<input type="hidden" name="action" value="updatemainoptions">';
 
 
-// Mains options
+// Main options
 
 print load_fiche_titre($langs->trans("MemberMainOptions"), '', '');
 
@@ -238,27 +269,27 @@ print "</td></tr>\n";
 // Insert subscription into bank account
 print '<tr class="oddeven"><td>'.$langs->trans("MoreActionsOnSubscription").'</td>';
 $arraychoices = array('0'=>$langs->trans("None"));
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	$arraychoices['bankdirect'] = $langs->trans("MoreActionBankDirect");
 }
-if (!empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+if (isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
 	$arraychoices['invoiceonly'] = $langs->trans("MoreActionInvoiceOnly");
 }
-if (!empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+if (isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
 	$arraychoices['bankviainvoice'] = $langs->trans("MoreActionBankViaInvoice");
 }
 print '<td>';
-print $form->selectarray('ADHERENT_BANK_USE', $arraychoices, $conf->global->ADHERENT_BANK_USE, 0);
-if ($conf->global->ADHERENT_BANK_USE == 'bankdirect' || $conf->global->ADHERENT_BANK_USE == 'bankviainvoice') {
+print $form->selectarray('ADHERENT_BANK_USE', $arraychoices, getDolGlobalString('ADHERENT_BANK_USE'), 0);
+if (getDolGlobalString('ADHERENT_BANK_USE') == 'bankdirect' || getDolGlobalString('ADHERENT_BANK_USE') == 'bankviainvoice') {
 	print '<br><div style="padding-top: 5px;"><span class="opacitymedium">'.$langs->trans("ABankAccountMustBeDefinedOnPaymentModeSetup").'</span></div>';
 }
 print '</td>';
 print "</tr>\n";
 
 // Use vat for invoice creation
-if ($conf->facture->enabled) {
+if (isModEnabled('facture')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		print '<td>';
 		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0'=>$langs->trans("NoVatOnSubscription"), 'defaultforfoundationcountry'=>$langs->trans("Default")), (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) ? '0' : $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
 		print '</td>';
@@ -269,7 +300,7 @@ if ($conf->facture->enabled) {
 	}
 	print "</tr>\n";
 
-	if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+	if (isModEnabled("product") || isModEnabled("service")) {
 		print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
 		print '<td>';
 		$selected = (empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) ? '' : $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
@@ -292,6 +323,8 @@ print '</form>';
 
 print '<br>';
 
+
+// Document templates for documents generated from member record
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
@@ -378,16 +411,16 @@ foreach ($dirmodels as $reldir) {
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&token='.newToken().'&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&token='.newToken().'&value='.$name.'&scandir='.(!empty($module->scandir) ? $module->scandir : '').'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
 								// Defaut
 								print '<td class="center">';
-								if ($conf->global->MEMBER_ADDON_PDF == $name) {
+								if (getDolGlobalString('MEMBER_ADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scandir='.(!empty($module->scandir) ? $module->scandir : '').'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -398,8 +431,8 @@ foreach ($dirmodels as $reldir) {
 									$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 								}
 								$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-								$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-								$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
+								$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn(!empty($module->option_logo) ? $module->option_logo : 0, 1, 1);
+								$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn(!empty($module->option_multilang) ? $module->option_multilang : 0, 1, 1);
 
 
 								print '<td class="center">';
@@ -430,24 +463,12 @@ print '</div>';
 
 
 
-/*
-TODO Use a global form instead of embeded form into table
+
+// Generation of cards for members
+
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="updateall">';
-*/
-
-/*
- * Edit info of model document
- */
-$constantes = array(
-		'ADHERENT_CARD_TYPE',
-		//'ADHERENT_CARD_BACKGROUND',
-		'ADHERENT_CARD_HEADER_TEXT',
-		'ADHERENT_CARD_TEXT',
-		'ADHERENT_CARD_TEXT_RIGHT',
-		'ADHERENT_CARD_FOOTER_TEXT'
-);
+print '<input type="hidden" name="action" value="updatememberscards">';
 
 print load_fiche_titre($langs->trans("MembersCards"), '', '');
 
@@ -456,15 +477,65 @@ $helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULL
 $helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
 $helptext .= '__YEAR__, __MONTH__, __DAY__';
 
-form_constantes($constantes, 0, $helptext);
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$form->textwithpicto($langs->trans("Value"), $helptext, 1, 'help', '', 0, 2, 'idhelptext').'</td>';
+print "</tr>\n";
+
+// Format of cards page
+print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_CARD_TYPE").'</td><td>';
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php'; // List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
+$arrayoflabels = array();
+foreach (array_keys($_Avery_Labels) as $codecards) {
+	$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
+}
+print $form->selectarray('ADHERENT_CARD_TYPE', $arrayoflabels, getDolGlobalString('ADHERENT_CARD_TYPE') ? getDolGlobalString('ADHERENT_CARD_TYPE') : 'CARD', 1, 0, 0);
+
+print "</td></tr>\n";
+
+// Text printed on top of member cards
+print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_CARD_HEADER_TEXT").'</td><td>';
+print '<input type="text" class="flat minwidth300" name="ADHERENT_CARD_HEADER_TEXT" value="'.dol_escape_htmltag(getDolGlobalString('ADHERENT_CARD_HEADER_TEXT')).'">';
+print "</td></tr>\n";
+
+// Text printed on member cards (align on left)
+print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_CARD_TEXT").'</td><td>';
+print '<textarea class="flat" name="ADHERENT_CARD_TEXT" cols="50" rows="5" wrap="soft">'."\n";
+print getDolGlobalString('ADHERENT_CARD_TEXT');
+print '</textarea>';
+print "</td></tr>\n";
+
+// Text printed on member cards (align on right)
+print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_CARD_TEXT_RIGHT").'</td><td>';
+print '<textarea class="flat" name="ADHERENT_CARD_TEXT_RIGHT" cols="50" rows="5" wrap="soft">'."\n";
+print getDolGlobalString('ADHERENT_CARD_TEXT_RIGHT');
+print '</textarea>';
+print "</td></tr>\n";
+
+// Text printed on bottom of member cards
+print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_CARD_FOOTER_TEXT").'</td><td>';
+print '<input type="text" class="flat minwidth300" name="ADHERENT_CARD_FOOTER_TEXT" value="'.dol_escape_htmltag(getDolGlobalString('ADHERENT_CARD_FOOTER_TEXT')).'">';
+print "</td></tr>\n";
+
+print '</table>';
+print '</div>';
+
+print '<div class="center">';
+print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+print '</div>';
+
+print '</form>';
 
 print '<br>';
 
+// Membership address sheet
 
-/*
- * Edit info of model document
- */
-$constantes = array('ADHERENT_ETIQUETTE_TYPE', 'ADHERENT_ETIQUETTE_TEXT');
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="updatememberstickets">';
 
 print load_fiche_titre($langs->trans("MembersTickets"), '', '');
 
@@ -473,9 +544,42 @@ $helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULL
 $helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
 $helptext .= '__YEAR__, __MONTH__, __DAY__';
 
-form_constantes($constantes, 0, $helptext);
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$form->textwithpicto($langs->trans("Value"), $helptext, 1, 'help', '', 0, 2, 'idhelptext').'</td>';
+print "</tr>\n";
 
-//print '</form>';
+// Format of labels page
+print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_ETIQUETTE_TYPE").'</td><td>';
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php'; // List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
+$arrayoflabels = array();
+foreach (array_keys($_Avery_Labels) as $codecards) {
+	$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
+}
+print $form->selectarray('ADHERENT_ETIQUETTE_TYPE', $arrayoflabels, getDolGlobalString('ADHERENT_ETIQUETTE_TYPE') ? getDolGlobalString('ADHERENT_ETIQUETTE_TYPE') : 'CARD', 1, 0, 0);
+
+print "</td></tr>\n";
+
+// Text printed on member address sheets
+print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_ETIQUETTE_TEXT").'</td><td>';
+print '<textarea class="flat" name="ADHERENT_ETIQUETTE_TEXT" cols="50" rows="5" wrap="soft">'."\n";
+print getDolGlobalString('ADHERENT_ETIQUETTE_TEXT');
+print '</textarea>';
+print "</td></tr>\n";
+
+print '</table>';
+print '</div>';
+
+print '<div class="center">';
+print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+print '</div>';
+
+print '</form>';
+
+print '<br>';
 
 print "<br>";
 

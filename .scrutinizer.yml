@@ -6,8 +6,9 @@ build:
         analysis:
             tests:
                 override:
-                    - php-scrutinizer-run
-          
+                    - command: php-scrutinizer-run
+                      idle_timeout: 8000
+
 imports:
     - javascript
     - php
@@ -18,9 +19,10 @@ filter:
         - dev/*
         - doc/*
         - documents/*
-        - htdocs/includes/*
         - node_modules/*
         - test/*
+    dependency_paths:
+        - htdocs/includes/*
     paths: 
         - htdocs/*
         - scripts/*
@@ -38,9 +40,11 @@ tools:
                 - build/*
                 - dev/*
                 - doc/*
-                - test/*
+                - documents/*
                 - htdocs/includes/*
                 - htdocs/core/class/lessc.class.php
+                - node_modules/*
+                - test/*
             paths:
                 - htdocs/
                 - scripts/
@@ -180,8 +184,10 @@ tools:
                 - 'build/*'
                 - 'dev/*'
                 - 'doc/*'
-                - 'test/*'
+                - 'documents/*'
                 - 'htdocs/includes/*'
+                - 'node_modules/*'
+                - 'test/*'
             paths: {  }
 
     # Similar code detection
@@ -193,8 +199,10 @@ tools:
                 - 'build/*'
                 - 'dev/*'
                 - 'doc/*'
-                - 'test/*'
+                - 'documents/*'
                 - 'htdocs/includes/*'
+                - 'node_modules/*'
+                - 'test/*'
             paths: {  }
             
     # Coding-Style / Bug Detection
@@ -208,8 +216,10 @@ tools:
                 - 'build/*'
                 - 'dev/*'
                 - 'doc/*'
-                - 'test/*'
+                - 'documents/*'
                 - 'htdocs/includes/*'
+                - 'node_modules/*'
+                - 'test/*'
             paths: {  }
         config: {  }
         path_configs: {  }

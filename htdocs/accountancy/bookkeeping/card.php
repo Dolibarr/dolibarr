@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2017  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2017  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -25,6 +25,7 @@
  * \brief		Page to show book-entry
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
@@ -79,13 +80,13 @@ if (!empty($update)) {
 $object = new BookKeeping($db);
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -332,7 +333,9 @@ if ($action == 'valid') {
 $html = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-llxHeader('', $langs->trans("CreateMvts"));
+$title = $langs->trans("CreateMvts");
+
+llxHeader('', $title);
 
 // Confirmation to delete the command
 if ($action == 'delete') {
@@ -341,7 +344,7 @@ if ($action == 'delete') {
 }
 
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans("CreateMvts"));
+	print load_fiche_titre($title);
 
 	$object = new BookKeeping($db);
 	$next_num_mvt = $object->getNextNumMvt('_tmp');
@@ -540,21 +543,24 @@ if ($action == 'create') {
 		print '</td>';
 		print '</tr>';
 
-		// Date document export
-		print '<tr>';
-		print '<td class="titlefield">'.$langs->trans("DateExport").'</td>';
-		print '<td>';
-		print $object->date_export ? dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
-		print '</td>';
-		print '</tr>';
+		// Don't show in tmp mode, inevitably empty
+		if ($mode != "_tmp") {
+			// Date document export
+			print '<tr>';
+			print '<td class="titlefield">' . $langs->trans("DateExport") . '</td>';
+			print '<td>';
+			print $object->date_export ? dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
+			print '</td>';
+			print '</tr>';
 
-		// Date document validation
-		print '<tr>';
-		print '<td class="titlefield">'.$langs->trans("DateValidation").'</td>';
-		print '<td>';
-		print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
-		print '</td>';
-		print '</tr>';
+			// Date document validation
+			print '<tr>';
+			print '<td class="titlefield">' . $langs->trans("DateValidation") . '</td>';
+			print '<td>';
+			print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
+			print '</td>';
+			print '</tr>';
+		}
 
 		// Validate
 		/*
@@ -611,6 +617,7 @@ if ($action == 'create') {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
+			// List of movements
 			print load_fiche_titre($langs->trans("ListeMvts"), '', '');
 
 			print '<form action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
@@ -638,8 +645,8 @@ if ($action == 'create') {
 				print_liste_field_titre("AccountAccountingShort");
 				print_liste_field_titre("SubledgerAccount");
 				print_liste_field_titre("LabelOperation");
-				print_liste_field_titre("Debit", "", "", "", "", 'class="right"');
-				print_liste_field_titre("Credit", "", "", "", "", 'class="right"');
+				print_liste_field_titre("AccountingDebit", "", "", "", "", 'class="right"');
+				print_liste_field_titre("AccountingCredit", "", "", "", "", 'class="right"');
 				if (empty($object->date_validation)) {
 					print_liste_field_titre("Action", "", "", "", "", 'width="60"', "", "", 'center ');
 				} else {
@@ -658,14 +665,14 @@ if ($action == 'create') {
 				}
 
 				foreach ($object->linesmvt as $line) {
-					print '<tr class="oddeven">';
+					print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 					$total_debit += $line->debit;
 					$total_credit += $line->credit;
 
 					if ($action == 'update' && $line->id == $id) {
 						print '<!-- td columns in edit mode -->';
 						print '<td>';
-						print $formaccounting->select_account((GETPOSTISSET("accountingaccount_number") ? GETPOST("accountingaccount_number", "alpha") : $line->numero_compte), 'accountingaccount_number', 1, array(), 1, 1, '');
+						print $formaccounting->select_account((GETPOSTISSET("accountingaccount_number") ? GETPOST("accountingaccount_number", "alpha") : $line->numero_compte), 'accountingaccount_number', 1, array(), 1, 1, 'minwidth200 maxwidth500');
 						print '</td>';
 						print '<td>';
 						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
@@ -673,7 +680,7 @@ if ($action == 'create') {
 						// Also, it is not possible to use a value that is not in the list.
 						// Also, the label is not automatically filled when a value is selected.
 						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1);
+							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
 						} else {
 							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
 						}
@@ -691,7 +698,7 @@ if ($action == 'create') {
 						if ($action == "" || $action == 'add') {
 							print '<!-- td columns in add mode -->';
 							print '<td>';
-							print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, '');
+							print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, 'minwidth200 maxwidth500');
 							print '</td>';
 							print '<td>';
 							// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
@@ -708,7 +715,7 @@ if ($action == 'create') {
 							print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $label_operation . '"/></td>';
 							print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
 							print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
-							print '<td class="center"><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';
+							print '<td class="center"><input type="submit" class="button small" name="save" value="' . $langs->trans("Add") . '"></td>';
 						}
 					} else {
 						print '<!-- td columns in display mode -->';
@@ -726,8 +733,8 @@ if ($action == 'create') {
 						}
 						print '</td>';
 						print '<td>'.$line->label_operation.'</td>';
-						print '<td class="right nowraponall amount">'.price($line->debit).'</td>';
-						print '<td class="right nowraponall amount">'.price($line->credit).'</td>';
+						print '<td class="right nowraponall amount">'.($line->debit != 0 ? price($line->debit) : '').'</td>';
+						print '<td class="right nowraponall amount">'.($line->credit != 0 ? price($line->credit) : '').'</td>';
 
 						print '<td class="center nowraponall">';
 						if (empty($line->date_export) && empty($line->date_validation)) {

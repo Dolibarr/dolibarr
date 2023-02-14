@@ -21,6 +21,7 @@
  *      \brief      Page to setup agenda reminder options
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
@@ -36,6 +37,8 @@ $langs->loadLangs(array("admin", "other", "agenda"));
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $param = GETPOST('param', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $scandir = GETPOST('scandir', 'alpha');
@@ -204,7 +207,7 @@ $job->fetch(0, 'ActionComm', 'sendEmailsReminder');
 // AGENDA REMINDER EMAIL
 print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans('AGENDA_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"));
-if (!empty($conf->cron->enabled)) {
+if (isModEnabled('cron')) {
 	if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) {
 		if ($job->id > 0) {
 			if ($job->status == $job::STATUS_ENABLED) {
@@ -217,7 +220,7 @@ print '</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right nowraponall">'."\n";
 
-if (empty($conf->cron->enabled)) {
+if (!isModEnabled('cron')) {
 	print '<span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module2300Name")).'</span>';
 } else {
 	if (empty($conf->global->AGENDA_REMINDER_EMAIL)) {

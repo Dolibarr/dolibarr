@@ -4,7 +4,7 @@
  * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2017 Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2022 Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +26,17 @@
  *	\brief      Add a tab on thirdparty view to list all products/services bought or sells by thirdparty
  */
 
+// Load Dolibarr environment
 require "../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+
+
+// Load translation files required by the page
+$langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "interventions", "contracts", "products"));
+
 
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'thirdpartylist';
 
@@ -46,11 +52,11 @@ if ($socid > 0) {
 }
 
 // Sort & Order fields
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-$optioncss = GETPOST('optioncss', 'alpha');
+$limit 		= GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield 	= GETPOST('sortfield', 'aZ09comma');
+$sortorder 	= GETPOST('sortorder', 'aZ09comma');
+$page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$optioncss 	= GETPOST('optioncss', 'alpha');
 
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -78,15 +84,14 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$year = '';
 	$month = '';
 }
+
 // Customer or supplier selected in drop box
 $thirdTypeSelect = GETPOST("third_select_id", 'az09');
 $type_element = GETPOST('type_element') ? GETPOST('type_element') : '';
 
-// Load translation files required by the page
-$langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "interventions", "contracts", "products"));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('consumptionthirdparty'));
+$hookmanager->initHooks(array('consumptionthirdparty', 'globalcard'));
 
 
 /*
@@ -162,21 +167,21 @@ if ($object->client) {
 	$obj = $db->fetch_object($resql);
 	$nbFactsClient = $obj->nb;
 	$thirdTypeArray['customer'] = $langs->trans("customer");
-	if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
+	if (isModEnabled("propal") && $user->rights->propal->lire) {
 		$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
 	}
-	if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
+	if (isModEnabled('commande') && $user->rights->commande->lire) {
 		$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
 	}
-	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && $user->rights->facture->lire) {
 		$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
 	}
-	if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
+	if (isModEnabled('contrat') && $user->rights->contrat->lire) {
 		$elementTypeArray['contract'] = $langs->transnoentitiesnoconv('Contracts');
 	}
 }
 
-if (!empty($conf->ficheinter->enabled) && !empty($user->rights->ficheinter->lire)) {
+if (isModEnabled('ficheinter') && !empty($user->rights->ficheinter->lire)) {
 	$elementTypeArray['fichinter'] = $langs->transnoentitiesnoconv('Interventions');
 }
 
@@ -199,13 +204,13 @@ if ($object->fournisseur) {
 	$obj = $db->fetch_object($resql);
 	$nbCmdsFourn = $obj->nb;
 	$thirdTypeArray['supplier'] = $langs->trans("supplier");
-	if (($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) {
+	if ((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'facture', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 		$elementTypeArray['supplier_invoice'] = $langs->transnoentitiesnoconv('SuppliersInvoices');
 	}
-	if (($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->lire)) {
+	if ((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'commande', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire'))) {
 		$elementTypeArray['supplier_order'] = $langs->transnoentitiesnoconv('SuppliersOrders');
 	}
-	if ($conf->supplier_proposal->enabled && $user->rights->supplier_proposal->lire) {
+	if (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire')) {
 		$elementTypeArray['supplier_proposal'] = $langs->transnoentitiesnoconv('SupplierProposals');
 	}
 }
@@ -269,8 +274,9 @@ if ($type_element == 'propal') {
 }
 if ($type_element == 'order') {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+	$langs->load('sendings'); // delivery planned date
 	$documentstatic = new Commande($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_commande as dateprint, c.fk_statut as status, NULL as paid, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_commande as dateprint, c.fk_statut as status, NULL as paid, c.date_livraison as delivery_planned_date,';
 	$tables_from = MAIN_DB_PREFIX."commande as c,".MAIN_DB_PREFIX."commandedet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_commande = c.rowid";
@@ -305,8 +311,9 @@ if ($type_element == 'supplier_proposal') {
 }
 if ($type_element == 'supplier_order') { 	// Supplier : Show products from orders.
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+	$langs->load('sendings'); // delivery planned date
 	$documentstatic = new CommandeFournisseur($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as dateprint, c.fk_statut as status, NULL as paid, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as dateprint, c.fk_statut as status, NULL as paid, c.date_livraison as delivery_planned_date, ';
 	$tables_from = MAIN_DB_PREFIX."commande_fournisseur as c,".MAIN_DB_PREFIX."commande_fournisseurdet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_commande = c.rowid";
@@ -361,7 +368,8 @@ if (!empty($sql_select)) {
 		$sql .= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
 	}
 	if ($sprod_fulldescr) {
-		$sql .= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%' OR d.description LIKE '%".$db->escape(dol_htmlentities($sprod_fulldescr))."%'";
+		// We test both case description is correctly saved of was save after dol_escape_htmltag().
+		$sql .= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%' OR d.description LIKE '%".$db->escape(dol_escape_htmltag($sprod_fulldescr))."%'";
 		if (GETPOST('type_element') != 'fichinter') {
 			$sql .= " OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%'";
 		}
@@ -390,15 +398,8 @@ if (empty($elementTypeArray) && !$object->client && !$object->fournisseur) {
 $typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPOST('type_element'), $showempty, 0, 0, '', 0, 0, $disabled, '', 'maxwidth150onsmartphone');
 $button = '<input type="submit" class="button buttonform small" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 
-$param = '';
-$param .= "&sref=".urlencode($sref);
-$param .= "&month=".urlencode($month);
-$param .= "&year=".urlencode($year);
-$param .= "&sprod_fulldescr=".urlencode($sprod_fulldescr);
-$param .= "&socid=".urlencode($socid);
-$param .= "&type_element=".urlencode($type_element);
-
 $total_qty = 0;
+$param = '';
 
 if ($sql_select) {
 	$resql = $db->query($sql);
@@ -443,8 +444,12 @@ if ($sql_select) {
 	print '</td>';
 	print '<td class="liste_titre nowrap center valignmiddle">'; // date
 	print $formother->select_month($month ? $month : -1, 'month', 1, 0, 'valignmiddle');
-	$formother->select_year($year ? $year : -1, 'year', 1, 20, 1, 0, 0, '', 'valignmiddle maxwidth75imp marginleftonly');
+	print $formother->selectyear($year ? $year : -1, 'year', 1, 20, 1, 0, 0, '', 'valignmiddle maxwidth75imp marginleftonly');
 	print '</td>';
+	// delivery planned date
+	if ($type_element == 'order' || $type_element == 'supplier_order') {
+		print '<td class="liste_titre center"></td>';
+	}
 	print '<td class="liste_titre center">';
 	print '</td>';
 	print '<td class="liste_titre left">';
@@ -464,6 +469,10 @@ if ($sql_select) {
 	print '<tr class="liste_titre">';
 	print_liste_field_titre('Ref', $_SERVER['PHP_SELF'], 'doc_number', '', $param, '', $sortfield, $sortorder, 'left ');
 	print_liste_field_titre('Date', $_SERVER['PHP_SELF'], 'dateprint', '', $param, '', $sortfield, $sortorder, 'center ');
+	// delivery planned date
+	if ($type_element == 'order' || $type_element == 'supplier_order') {
+		print_liste_field_titre('DateDeliveryPlanned', $_SERVER['PHP_SELF'], 'delivery_planned_date', '', $param, '', $sortfield, $sortorder, 'center ');
+	}
 	print_liste_field_titre('Status', $_SERVER['PHP_SELF'], 'fk_statut', '', $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre('Product', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'left ');
 	print_liste_field_titre('Quantity', $_SERVER['PHP_SELF'], 'prod_qty', '', $param, '', $sortfield, $sortorder, 'right ');
@@ -493,6 +502,10 @@ if ($sql_select) {
 		print $documentstatic->getNomUrl(1);
 		print '</td>';
 		print '<td class="center" width="80">'.dol_print_date($db->jdate($objp->dateprint), 'day').'</td>';
+		// delivery planned date
+		if ($type_element == 'order' || $type_element == 'supplier_order') {
+			print '<td class="center">'.dol_print_date($db->jdate($objp->delivery_planned_date), 'day').'</td>';
+		}
 
 		// Status
 		print '<td class="center">';
@@ -529,7 +542,7 @@ if ($sql_select) {
 		// Product
 		if ($objp->fk_product > 0) {
 			// Define output language
-			if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 				$prod = new Product($db);
 				$prod->fetch($objp->fk_product);
 
@@ -552,7 +565,7 @@ if ($sql_select) {
 			}
 
 			$text .= ' - '.(!empty($objp->label) ? $objp->label : $label);
-			$description = (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($objp->description));
+			$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description));
 		}
 
 		if (($objp->info_bits & 2) == 2) { ?>
@@ -607,7 +620,7 @@ if ($sql_select) {
 				echo get_date_range($objp->date_start, $objp->date_end);
 
 				// Add description in form
-				if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+				if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 					print (!empty($objp->description) && $objp->description != $objp->product_label) ? '<br>'.dol_htmlentitiesbr($objp->description) : '';
 				}
 			} else {
@@ -644,9 +657,9 @@ if ($sql_select) {
 		// Show range
 		$prodreftxt .= get_date_range($objp->date_start, $objp->date_end);
 		// Add description in form
-		if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
+		if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE'))
 		{
-			$prodreftxt .= (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+			$prodreftxt .= (!empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 		}
 		*/
 		print '</td>';
@@ -673,6 +686,10 @@ if ($sql_select) {
 	print '<tr class="liste_total">';
 	print '<td>'.$langs->trans('Total').'</td>';
 	print '<td colspan="3"></td>';
+	// delivery planned date
+	if ($type_element == 'order' || $type_element == 'supplier_order') {
+		print '<td></td>';
+	}
 	print '<td class="right">'.$total_qty.'</td>';
 	print '<td class="right">'.price($total_ht).'</td>';
 	print '<td class="right">'.price(price2num($total_ht / (empty($total_qty) ? 1 : $total_qty), 'MU')).'</td>';

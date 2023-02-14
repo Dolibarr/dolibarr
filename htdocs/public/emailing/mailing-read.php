@@ -68,6 +68,7 @@ function llxFooter()
 }
 
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 $mtid = GETPOST('mtid');

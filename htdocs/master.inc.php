@@ -58,10 +58,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
 $conf = new Conf();
 
 // Set properties specific to database
-$conf->db->host = $dolibarr_main_db_host;
-$conf->db->port = $dolibarr_main_db_port;
-$conf->db->name = $dolibarr_main_db_name;
-$conf->db->user = $dolibarr_main_db_user;
+$conf->db->host = empty($dolibarr_main_db_host) ? '' : $dolibarr_main_db_host;
+$conf->db->port = empty($dolibarr_main_db_port) ? '' : $dolibarr_main_db_port;
+$conf->db->name = empty($dolibarr_main_db_name) ? '' : $dolibarr_main_db_name;
+$conf->db->user = empty($dolibarr_main_db_user) ? '' : $dolibarr_main_db_user;
 $conf->db->pass = empty($dolibarr_main_db_pass) ? '' : $dolibarr_main_db_pass;
 $conf->db->type = $dolibarr_main_db_type;
 $conf->db->prefix = $dolibarr_main_db_prefix;
@@ -75,8 +75,9 @@ if (defined('TEST_DB_FORCE_TYPE')) {
 
 // Set properties specific to conf file
 $conf->file->main_limit_users = $dolibarr_main_limit_users;
-$conf->file->mailing_limit_sendbyweb = $dolibarr_mailing_limit_sendbyweb;
-$conf->file->mailing_limit_sendbycli = $dolibarr_mailing_limit_sendbycli;
+$conf->file->mailing_limit_sendbyweb = empty($dolibarr_mailing_limit_sendbyweb) ? 0 : $dolibarr_mailing_limit_sendbyweb;
+$conf->file->mailing_limit_sendbycli = empty($dolibarr_mailing_limit_sendbycli) ? 0 : $dolibarr_mailing_limit_sendbycli;
+$conf->file->mailing_limit_sendbyday = empty($dolibarr_mailing_limit_sendbyday) ? 0 : $dolibarr_mailing_limit_sendbyday;
 $conf->file->main_authentication = empty($dolibarr_main_authentication) ? '' : $dolibarr_main_authentication; // Identification mode
 $conf->file->main_force_https = empty($dolibarr_main_force_https) ? '' : $dolibarr_main_force_https; // Force https
 $conf->file->strict_mode = empty($dolibarr_strict_mode) ? '' : $dolibarr_strict_mode; // Force php strict mode (for debug)
@@ -207,9 +208,15 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
 	$mysoc = new Societe($db);
 	$mysoc->setMysoc($conf);
 
-	// For some countries, we need to invert our address with customer address
+	// We set some specific default values according to country
+
 	if ($mysoc->country_code == 'DE' && !isset($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+		// For DE, we need to invert our address with customer address
 		$conf->global->MAIN_INVERT_SENDER_RECIPIENT = 1;
+	}
+	if ($mysoc->country_code == 'FR' && !isset($conf->global->MAIN_PROFID1_IN_ADDRESS)) {
+		// For FR, default value of option to show profid SIRET is on by default
+		$conf->global->MAIN_PROFID1_IN_ADDRESS = 1;
 	}
 }
 

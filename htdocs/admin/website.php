@@ -21,6 +21,7 @@
  *		\brief      Page to administer web sites
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -41,10 +42,6 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $rowid = GETPOST('rowid', 'alpha');
 
 $id = 1;
-
-if (!$user->admin) {
-	accessforbidden();
-}
 
 $acts[0] = "activate";
 $acts[1] = "disable";
@@ -95,7 +92,7 @@ $tabfield[1] = "ref,description,virtualhost,position,date_creation";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue = array();
-$tabfieldvalue[1] = "ref,description,virtualhost,position";
+$tabfieldvalue[1] = "ref,description,virtualhost,position,entity";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert = array();
@@ -109,11 +106,11 @@ $tabrowid[1] = "";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
-$tabcond[1] = (!empty($conf->website->enabled));
+$tabcond[1] = (isModEnabled('website'));
 
 // List of help for fields
 $tabhelp = array();
-$tabhelp[1] = array('ref'=>$langs->trans("EnterAnyCode"), 'virtualhost'=>$langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/website/<i>websiteref</i>'));
+$tabhelp[1] = array('ref'=>$langs->trans("EnterAnyCode"), 'virtualhost'=>$langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/<i>websiteref</i>'));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck = array();
@@ -123,6 +120,10 @@ $tabfieldcheck[1] = array();
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
 $elementList = array();
 $sourceList = array();
+
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
@@ -198,15 +199,15 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
 			if ($value == 'ref') {
-				$_POST[$listfieldvalue[$i]] = strtolower($_POST[$listfieldvalue[$i]]);
+				$_POST[$listfieldvalue[$i]] = strtolower(GETPOST($listfieldvalue[$i]));
 			}
 			if ($i) {
 				$sql .= ",";
 			}
-			if ($_POST[$listfieldvalue[$i]] == '') {
+			if (GETPOST($listfieldvalue[$i]) == '') {
 				$sql .= "null";
 			} else {
-				$sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
 			}
 			$i++;
 		}
@@ -259,7 +260,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			if ($_POST[$listfieldvalue[$i]] == '') {
 				$sql .= "null";
 			} else {
-				$sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
 			}
 			$i++;
 		}
@@ -271,8 +272,8 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		if ($resql) {
 			$newname = dol_sanitizeFileName(GETPOST('ref', 'aZ09'));
 			if ($newname != $website->ref) {
-				$srcfile = DOL_DATA_ROOT.'/website/'.$website->ref;
-				$destfile = DOL_DATA_ROOT.'/website/'.$newname;
+				$srcfile = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$website->ref;
+				$destfile = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$newname;
 
 				if (dol_is_dir($destfile)) {
 					$error++;
@@ -580,8 +581,8 @@ if ($id) {
 						fieldListWebsites($fieldlist, $obj, $tabname[$id], 'edit');
 					}
 
-					print '<td colspan="3" class="right"><a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
-					print '&nbsp;<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
+					print '<td colspan="4" class="right"><a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button button-edit small" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '&nbsp;<input type="submit" class="button button-cancel small" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
 				} else {
 					$tmpaction = 'view';
 					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
@@ -613,7 +614,7 @@ if ($id) {
 
 					// Active
 					print '<td align="center" class="nowrap">';
-					print '<a class="reposition" href="'.$url.'action='.$acts[($obj->status ? 1 : 0)].'">'.$actl[($obj->status ? 1 : 0)].'</a>';
+					print '<a class="reposition" href="'.$url.'action='.$acts[($obj->status ? 1 : 0)].'&token='.newToken().'">'.$actl[($obj->status ? 1 : 0)].'</a>';
 					print "</td>";
 
 					// Modify link

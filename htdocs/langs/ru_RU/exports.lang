@@ -53,8 +53,8 @@ TypeOfLineServiceOrProduct=Тип линии (0= продукт, 1=услуга)
 FileWithDataToImport=Файл с данными для импорта
 FileToImport=Исходный файл для импорта
 FileMustHaveOneOfFollowingFormat=Файл для импорта должен иметь один из следующих форматов
-DownloadEmptyExample=Скачать файл шаблона с информацией о содержимом поля
-StarAreMandatory=* обязательные поля
+DownloadEmptyExample=Download a template file with examples and information on fields you can import
+StarAreMandatory=Into the template file, all fields with a * are mandatory fields
 ChooseFormatOfFileToImport=Выберите формат файла для использования в качестве формата файла импорта, щелкнув значок %s, чтобы выбрать его ...
 ChooseFileToImport=Загрузите файл, затем щелкните значок %s, чтобы выбрать файл в качестве исходного файла импорта ...
 SourceFileFormat=Формат исходного файла
@@ -135,3 +135,6 @@ NbInsert=Количество вставленных строк: %s
 NbUpdate=Количество обновленных строк: %s
 MultipleRecordFoundWithTheseFilters=С этими фильтрами было найдено несколько записей: %s
 StocksWithBatch=Запасы и местонахождение (склад) продукции с указанием партии/серийного номера
+WarningFirstImportedLine=Первые строки не будут импортированы с текущим выбором
+NotUsedFields=Неиспользуемые поля базы данных
+SelectImportFieldsSource = Выберите поля исходного файла, которые вы хотите импортировать, и их целевое поле в базе данных, выбрав поля в каждом поле выбора, или выберите предопределенный профиль импорта:

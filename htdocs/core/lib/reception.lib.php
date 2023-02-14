@@ -66,7 +66,7 @@ function reception_prepare_head(Reception $object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'reception');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'reception', 'add', 'core');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
@@ -96,6 +96,8 @@ function reception_prepare_head(Reception $object)
 	$head[$h][2] = 'note';
 	$h++;
 
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'reception', 'add', 'external');
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'reception', 'remove');
 
 	return $head;
@@ -108,8 +110,12 @@ function reception_prepare_head(Reception $object)
  */
 function reception_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
 	$langs->load("receptions");
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('reception');
+	$extrafields->fetch_name_optionals_label('commande_fournisseur_dispatch');
 
 	$h = 0;
 	$head = array();
@@ -124,6 +130,10 @@ function reception_admin_prepare_head()
 	if (!empty($conf->global->MAIN_SUBMODULE_RECEPTION)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/reception_extrafields.php';
 		$head[$h][1] = $langs->trans("ExtraFields");
+		$nbExtrafields = $extrafields->attributes['reception']['count'];
+		if ($nbExtrafields > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+		}
 		$head[$h][2] = 'attributes_reception';
 		$h++;
 	}
@@ -131,6 +141,10 @@ function reception_admin_prepare_head()
 	if (!empty($conf->global->MAIN_SUBMODULE_RECEPTION)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/commande_fournisseur_dispatch_extrafields.php';
 		$head[$h][1] = $langs->trans("ExtraFieldsLines");
+		$nbExtrafields = $extrafields->attributes['commande_fournisseur_dispatch']['count'];
+		if ($nbExtrafields > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+		}
 		$head[$h][2] = 'attributeslines_reception';
 		$h++;
 	}

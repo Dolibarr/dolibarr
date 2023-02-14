@@ -47,12 +47,12 @@ function conferenceorboothPrepareHead($object, $with_project = 0)
 	$head[$h][2] = 'card';
 	$h++;
 
-	/*
-	$head[$h][0] = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_contact.php?id='.$object->id.$withProjectUrl;
-	$head[$h][1] = $langs->trans("ContactsAddresses");
-	$head[$h][2] = 'contact';
-	$h++;
-	*/
+	if (!empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
+		$head[$h][0] = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_contact.php?id='.$object->id.$withProjectUrl;
+		$head[$h][1] = $langs->trans("ContactsAddresses");
+		$head[$h][2] = 'contact';
+		$h++;
+	}
 
 	/*
 	$head[$h][0] = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php?conforboothid='.$object->id.$withProjectUrl;

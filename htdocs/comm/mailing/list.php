@@ -22,6 +22,7 @@
  *       \brief      Liste des mailings
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 
@@ -32,6 +33,7 @@ $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $optioncss = GETPOST('optioncss', 'alpha');
+$massaction = GETPOST('massaction', 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
@@ -103,7 +105,7 @@ if (empty($reshook)) {
 		}*/
 		$search_ref = '';
 		$search_all = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -186,7 +188,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
-	$title = $langs->trans("ListOfEMailings");
+	$title = $langs->trans("EMailings");
 	if ($filteremail) {
 		$title .= ' ('.$langs->trans("SentTo", $filteremail).')';
 	}
@@ -277,7 +279,7 @@ if ($resql) {
 		print '</td>';
 
 		// Title
-		print '<td>'.$obj->title.'</td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->title).'">'.dol_escape_htmltag($obj->title).'</td>';
 
 		// Date creation
 		print '<td class="center">';
@@ -286,7 +288,7 @@ if ($resql) {
 
 		// Nb of email
 		if (!$filteremail) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			$nbemail = $obj->nbemail;
 			/*if ($obj->statut != 3 && !empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
 			{

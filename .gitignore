@@ -42,6 +42,8 @@ htdocs/includes/sebastian/
 htdocs/includes/squizlabs/
 htdocs/includes/webmozart/
 htdocs/.well-known/apple-developer-merchantid-domain-association
+/factory/
+/output/
 
 # Node Modules
 build/yarn-error.log
@@ -55,4 +57,3 @@ yarn.lock
 package-lock.json
 
 doc/install.lock
-/factory/

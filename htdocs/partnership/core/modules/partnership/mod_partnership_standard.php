@@ -26,7 +26,7 @@ dol_include_once('/partnership/core/modules/partnership/modules_partnership.php'
 
 
 /**
- *	Class to manage customer order numbering rules standard
+ *	Class to manage the Standard numbering rule for Partnership
  */
 class mod_partnership_standard extends ModeleNumRefPartnership
 {

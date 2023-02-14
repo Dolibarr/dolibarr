@@ -28,6 +28,7 @@
  *      \brief      Page reporting result
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -110,7 +111,7 @@ $nbofyear = ($year_end - $year_start) + 1;
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
 $modecompta = $conf->global->ACCOUNTING_MODE;
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$modecompta = 'BOOKKEEPING';
 }
 if (GETPOST("modecompta", 'alpha')) {
@@ -122,10 +123,10 @@ $socid = GETPOST('socid', 'int');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-if (!empty($conf->comptabilite->enabled)) {
+if (isModEnabled('comptabilite')) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
 
@@ -151,7 +152,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$calcmode = $langs->trans("CalcModeDebt");
 	$calcmode .= '<br>('.$langs->trans("SeeReportInInputOutputMode", '{s1}', '{s2}').')';
 	$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">', '</a>'), $calcmode);
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '{s1}', '{s2}').')';
 		$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">', '</a>'), $calcmode);
 	}
@@ -164,6 +165,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	} else {
 		$description .= "<br>".$langs->trans("DepositsAreIncluded");
 	}
+	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$description .= $langs->trans("SupplierDepositsAreNotIncluded");
+	}
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "RECETTES-DEPENSES") {
@@ -171,7 +175,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$calcmode = $langs->trans("CalcModeEngagement");
 	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '{s1}', '{s2}').')';
 	$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">', '</a>'), $calcmode);
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '{s1}', '{s2}').')';
 		$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">', '</a>'), $calcmode);
 	}
@@ -200,7 +204,7 @@ $hselected = 'report';
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta'=>$modecompta), $calcmode);
 
-if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
+if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
@@ -212,7 +216,7 @@ if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
 
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
-if (!empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+if (isModEnabled('facture') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	if ($modecompta == 'CREANCES-DETTES') {
 		$sql = "SELECT sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -269,7 +273,7 @@ if (!empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $mod
 	// Nothing from this table
 }
 
-if (!empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+if (isModEnabled('facture') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	// On ajoute les paiements clients anciennes version, non lies par paiement_facture
 	if ($modecompta != 'CREANCES-DETTES') {
 		$sql = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
@@ -324,12 +328,12 @@ if (!empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $mod
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
 
-if (!empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+if (isModEnabled('facture') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	if ($modecompta == 'CREANCES-DETTES') {
 		$sql = "SELECT sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql .= " WHERE f.fk_statut IN (1,2)";
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 			$sql .= " AND f.type IN (0,1,2)";
 		} else {
 			$sql .= " AND f.type IN (0,1,2,3)";
@@ -391,7 +395,7 @@ if (!empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $mod
 
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
-if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+if (isModEnabled('tax') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	if ($modecompta == 'CREANCES-DETTES') {
 		// TVA collected to pay
 		$sql = "SELECT sum(f.total_tva) as amount, date_format(f.datef,'%Y-%m') as dm";
@@ -437,7 +441,7 @@ if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
 		$sql = "SELECT sum(f.total_tva) as amount, date_format(f.datef,'%Y-%m') as dm";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql .= " WHERE f.fk_statut IN (1,2)";
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 			$sql .= " AND f.type IN (0,1,2)";
 		} else {
 			$sql .= " AND f.type IN (0,1,2,3)";
@@ -555,7 +559,7 @@ if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
 
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
-if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+if (isModEnabled('tax') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	if ($modecompta == 'CREANCES-DETTES') {
 		$sql = "SELECT c.libelle as nom, date_format(cs.date_ech,'%Y-%m') as dm, sum(cs.amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
@@ -613,7 +617,7 @@ if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
  * Salaries
  */
 
-if (!empty($conf->salaries->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+if (isModEnabled('salaries') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	if ($modecompta == 'CREANCES-DETTES') {
 		$column = 's.dateep';		// we use the date of end of period of salary
 
@@ -675,7 +679,7 @@ if (!empty($conf->salaries->enabled) && ($modecompta == 'CREANCES-DETTES' || $mo
  * Expense reports
  */
 
-if (!empty($conf->expensereport->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+if (!isModEnabled('expensereport') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	$langs->load('trips');
 
 	if ($modecompta == 'CREANCES-DETTES') {
@@ -737,7 +741,7 @@ if (!empty($conf->expensereport->enabled) && ($modecompta == 'CREANCES-DETTES' |
  * Donation get dunning payments
  */
 
-if (!empty($conf->don->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+if (isModEnabled('don') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	$subtotal_ht = 0;
 	$subtotal_ttc = 0;
 
@@ -796,7 +800,7 @@ if (!empty($conf->don->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
  * Various Payments
  */
 
-if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY) && !empty($conf->banque->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY) && isModEnabled("banque") && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	// decaiss
 
 	$sql = "SELECT date_format(p.datep, '%Y-%m') AS dm, SUM(p.amount) AS amount FROM ".MAIN_DB_PREFIX."payment_various as p";
@@ -867,7 +871,7 @@ if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY) && !empty($conf->ba
  * Payement Loan
  */
 
-if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN) && !empty($conf->loan->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN) && isModEnabled('loan') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	$sql = "SELECT date_format(p.datep, '%Y-%m') AS dm, SUM(p.amount_capital + p.amount_insurance + p.amount_interest) AS amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_loan AS p, ".MAIN_DB_PREFIX."loan as l";
 	$sql .= " WHERE l.entity IN (".getEntity('variouspayment').")";
@@ -907,7 +911,7 @@ if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN) && !empty($conf->loan
  * Request in mode BOOKKEEPING
  */
 
-if (!empty($conf->accounting->enabled) && ($modecompta == 'BOOKKEEPING')) {
+if (isModEnabled('accounting') && ($modecompta == 'BOOKKEEPING')) {
 	$predefinedgroupwhere = "(";
 	$predefinedgroupwhere .= " (aa.pcg_type = 'EXPENSE')";
 	$predefinedgroupwhere .= " OR ";

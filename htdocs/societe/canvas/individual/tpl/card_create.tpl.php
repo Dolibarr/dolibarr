@@ -113,7 +113,7 @@ if (empty($conf) || !is_object($conf)) {
 	<?php }
 }
 
-if (!empty($conf->barcode->enabled)) { ?>
+if (isModEnabled('barcode')) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
 	<td colspan="3"><input type="text" name="barcode" value="<?php echo $this->control->tpl['barcode']; ?>"></td>
@@ -156,7 +156,7 @@ if (!empty($conf->barcode->enabled)) { ?>
 	<td><input type="text" name="url" size="32" value="<?php echo $this->control->tpl['url']; ?>"></td>
 </tr>
 
-<?php if (!empty($conf->global->MAIN_MULTILANGS)) { ?>
+<?php if (getDolGlobalInt('MAIN_MULTILANGS')) { ?>
 <tr>
 	<td><?php echo $langs->trans("DefaultLang"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_lang']; ?></td>

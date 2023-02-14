@@ -1,0 +1,129 @@
+Barcode EAN 13
+
+FR
+==
+Signification des chiffres.
+
+- 2 chiffres pour le code pays ou code systeme
+- 5 chiffres pour l'identificateur de societe
+- 5 chiffres pour l'identificateur d'article
+- 1 chiffre pour la somme de controle
+
+Cette regle subit de nombreuses entorses pour ameliorer l'usage des chiffres disponibles.
+Voici la liste des codes pays ou systeme :
+
+
+
+EN
+==
+Meaning of the numbers:
+
+- first 2-3 digits for the country code or system code
+- 5 digits for the company identifier
+- 5 digits for item identifier
+- 1 digit for checksum
+
+This rule has been twisted many times to improve the use of the available numbers.
+
+Here is the list of country codes or system:
+
+
+List
+====
+
+00 - 13  UCC  (U.S.A / États-Unis & Canada)
+20 - 29  Flag for internal numbering / Codification interne en magasin
+30 - 37  GENCOD-EAN  France
+380      BCCI  (Bulgaria)
+383      SANA  (Slovenia)
+385      CRO-EAN  (Croatia)
+387      EAN-BIH  (Bosnia-Herzegovina)
+400-440  CCG  (DE/Germany/Allemagne)
+45 + 49  Distribution Code Center - DCC  (Japan)
+460-469  UNISCAN - EAN Russia  (Federation de Russie)
+471      CAN  Taiwan
+474      EAN  Estonia
+475      EAN  Latvia
+476      EAN  Azerbaijan
+477      EAN  Lithuania
+478      EAN  Uzbekistan
+479      EAN  Sri Lanka
+480      PANC Philippines
+481      EAN  Belarus
+482      EAN  Ukraine
+484      EAN  Moldova 
+485      EAN  Armenia
+486      EAN  Georgia
+487      EAN  Kazakhstan
+489      HKANA Hong Kong
+50       E Centre UK - United Kingdom 
+520      HELLCAN-EAN HELLAS - Greece
+528      EAN  Lebanon
+529      EAN  Cyprus
+531      EAN-MAC (FYR Macedonia)
+535      EAN  Malta
+539      EAN  Ireland
+54       ICODIF/EAN  Belgium & Luxembourg
+560      CODIPOR (Portugal)
+569      EAN  Iceland/Islande
+57       EAN  Denmark
+590      EAN  Poland
+594      EAN  Romania
+599      H.A.P.M.H. (Hungary)
+600-601  EAN  South Africa
+609      EAN  Mauritius Island
+611      EAN  Morocco
+613      EAN  Algeria
+619      Tunicode (Tunisia)
+621      EAN  Syria
+622      EAN  Egypt
+625      EAN  Jordan/Jordanie
+626      EAN  Iran
+628      EAN  Saudi Arabia
+64       EAN  Finland
+690-693  ANCC - Article Numbering Centre of China
+70  EAN Norge (Norvege)
+729 Israeli Bar Code Association - EAN Israel
+73  EAN Suede
+740 EAN Guatemala
+741 EAN El Salvador
+742 ICCC (Honduras)
+743 EAN Nicaragua
+744 EAN Costa Rica Panama
+746 746 EAN Republique Dominicaine
+750 AMECE (Mexique)
+759 EAN Venezuela
+76  EAN (Schweiz, Suisse, Svizzera)
+770 IAC (Colombie)
+773 EAN Uruguay
+775 APC - EAN Peru (Perou)
+777 EAN Bolivie
+779 CODIGO - EAN Argentine
+780 EAN Chili
+784 EAN Paraguay
+786 ECOP (Equateur)
+789 EAN Bresil
+80 - 83 INDICOD (Italy)
+84  AECOC (Espagne)
+850 Camera de Comercio de la Republica de Cuba (Cuba)
+858 EAN Slovaquie
+859 EAN Republique Tcheque
+860 EAN YU (Yougoslavie)
+867 EAN DPR Korea (Coree du Nord)
+869 Union of Chambers of Commerce of Turkey (Turquie)
+87  EAN Nederland (Hollande)
+880 EAN Korea (Coree du Sud)
+885 EAN Thailande
+888 SANC (Singapour)
+890 EAN Inde
+893 EAN Vietnam
+899 EAN Indonesie
+90 - 91 EAN Autriche
+93  EAN Australie
+94  EAN Nouvelle Zelande
+955 Malaysian Article Numbering Council (MANC) - Malaisie
+977 Publications sirielles (ISSN)
+978 - 979 Livres (ISBN)
+980 Refus de remboursement
+981 - 982 Coupons (monnaie courante)
+99  Coupons

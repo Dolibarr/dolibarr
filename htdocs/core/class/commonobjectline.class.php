@@ -46,6 +46,11 @@ abstract class CommonObjectLine extends CommonObject
 	public $rowid;
 
 	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'line';
+
+	/**
 	 * Product/service unit code ('km', 'm', 'p', ...)
 	 * @var string
 	 */
@@ -55,6 +60,40 @@ abstract class CommonObjectLine extends CommonObject
 	public $date_debut_reel;
 	public $date_fin_prevue;
 	public $date_fin_reel;
+
+	public $weight;
+	public $weight_units;
+	public $width;
+	public $width_units;
+	public $height;
+	public $height_units;
+	public $length;
+	public $length_units;
+	public $surface;
+	public $surface_units;
+	public $volume;
+	public $volume_units;
+
+	public $multilangs;
+
+	public $product_type;		// type in line
+	public $fk_product;			// product id in line (when line is linked to a product)
+
+	public $desc;
+
+	public $product;			// To store full product object after a fetch_product() on a line
+	public $product_ref;		// ref in product table
+	public $product_label;		// label in product table
+	public $product_barcode;	// barcode in product table
+	public $product_desc;		// desc in product table
+	public $fk_product_type;	// type in product table
+
+	public $qty;
+	public $duree;
+	public $remise_percent;
+	public $info_bits;
+	public $special_code;
+
 
 
 	/**
@@ -93,7 +132,7 @@ abstract class CommonObjectLine extends CommonObject
 			$label_type = 'code';
 		}
 
-		$sql = "SELECT ".$label_type.", code from ".MAIN_DB_PREFIX."c_units where rowid = ".((int) $this->fk_unit);
+		$sql = "SELECT ".$label_type.", code from ".$this->db->prefix()."c_units where rowid = ".((int) $this->fk_unit);
 
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {

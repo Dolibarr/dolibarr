@@ -116,7 +116,7 @@ class AntiVir
 
 			fclose($handle);
 
-			if (! empty($conf->global->MAIN_UMASK))
+			if (!empty($conf->global->MAIN_UMASK))
 				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 		}
 		else

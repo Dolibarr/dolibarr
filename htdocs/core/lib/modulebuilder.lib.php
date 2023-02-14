@@ -30,7 +30,7 @@
  *  @param	string      $objectname		Name of object
  * 	@param	string		$newmask		New mask
  *  @param	string      $readdir		Directory source (use $destdir when not defined)
- *  @param	string		$addfieldentry	Array of the field entry to add array('key'=>,'type'=>,''label'=>,'visible'=>,'enabled'=>,'position'=>,'notnull'=>','index'=>,'searchall'=>,'comment'=>,'help'=>,'isameasure')
+ *  @param	string		$addfieldentry	Array of 1 field entry to add array('key'=>,'type'=>,''label'=>,'visible'=>,'enabled'=>,'position'=>,'notnull'=>','index'=>,'searchall'=>,'comment'=>,'help'=>,'isameasure')
  *  @param	string		$delfieldentry	Id of field to remove
  * 	@return	int|object					<=0 if KO, Object if OK
  *  @see rebuildObjectSql()
@@ -40,7 +40,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 	global $db, $langs;
 
 	if (empty($objectname)) {
-		return -1;
+		return -6;
 	}
 	if (empty($readdir)) {
 		$readdir = $destdir;
@@ -48,8 +48,10 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 
 	if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
 		dol_print_error('', 'Bad parameter addfieldentry with a property arrayofkeyval defined but that is not an array.');
-		return -1;
+		return -7;
 	}
+
+	$error = 0;
 
 	// Check parameters
 	if (is_array($addfieldentry) && count($addfieldentry) > 0) {
@@ -62,8 +64,8 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 			return -2;
 		}
 		if (!preg_match('/^(integer|price|sellist|varchar|double|text|html|duration)/', $addfieldentry['type'])
-			&& !preg_match('/^(boolean|real|date|datetime|timestamp)$/', $addfieldentry['type'])) {
-			setEventMessages($langs->trans('BadValueForType', $objectname), null, 'errors');
+			&& !preg_match('/^(boolean|smallint|real|date|datetime|timestamp|phone|mail|url|ip|password)$/', $addfieldentry['type'])) {
+			setEventMessages($langs->trans('BadValueForType', $addfieldentry['type']), null, 'errors');
 			return -2;
 		}
 	}
@@ -93,7 +95,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		// Edit class files
 		$contentclass = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
 
-		// Update ->fields (add or remove entries)
+		// Update ->fields (to add or remove entries defined into $addfieldentry)
 		if (count($object->fields)) {
 			if (is_array($addfieldentry) && count($addfieldentry)) {
 				$name = $addfieldentry['name'];
@@ -121,50 +123,56 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				$i++;
 				$texttoinsert .= "\t\t'".$key."' => array('type'=>'".$val['type']."',";
 				$texttoinsert .= " 'label'=>'".$val['label']."',";
+				if (!empty($val['picto'])) {
+					$texttoinsert .= " 'picto'=>'".$val['picto']."',";
+				}
 				$texttoinsert .= " 'enabled'=>'".($val['enabled'] !== '' ? $val['enabled'] : 1)."',";
 				$texttoinsert .= " 'position'=>".($val['position'] !== '' ? $val['position'] : 50).",";
 				$texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 : $val['notnull']).",";
 				$texttoinsert .= " 'visible'=>".($val['visible'] !== '' ? $val['visible'] : -1).",";
-				if ($val['noteditable']) {
+				if (!empty($val['noteditable'])) {
 					$texttoinsert .= " 'noteditable'=>'".$val['noteditable']."',";
 				}
-				if ($val['default'] || $val['default'] === '0') {
+				if (!empty($val['alwayseditable'])) {
+					$texttoinsert .= " 'alwayseditable'=>'".$val['alwayseditable']."',";
+				}
+				if (!empty($val['default']) || (isset($val['default']) && $val['default'] === '0')) {
 					$texttoinsert .= " 'default'=>'".$val['default']."',";
 				}
-				if ($val['index']) {
+				if (!empty($val['index'])) {
 					$texttoinsert .= " 'index'=>".$val['index'].",";
 				}
-				if ($val['foreignkey']) {
+				if (!empty($val['foreignkey'])) {
 					$texttoinsert .= " 'foreignkey'=>'".$val['foreignkey']."',";
 				}
-				if ($val['searchall']) {
+				if (!empty($val['searchall'])) {
 					$texttoinsert .= " 'searchall'=>".$val['searchall'].",";
 				}
-				if ($val['isameasure']) {
+				if (!empty($val['isameasure'])) {
 					$texttoinsert .= " 'isameasure'=>'".$val['isameasure']."',";
 				}
-				if ($val['css']) {
+				if (!empty($val['css'])) {
 					$texttoinsert .= " 'css'=>'".$val['css']."',";
 				}
-				if ($val['cssview']) {
+				if (!empty($val['cssview'])) {
 					$texttoinsert .= " 'cssview'=>'".$val['cssview']."',";
 				}
-				if ($val['csslist']) {
+				if (!empty($val['csslist'])) {
 					$texttoinsert .= " 'csslist'=>'".$val['csslist']."',";
 				}
-				if ($val['help']) {
+				if (!empty($val['help'])) {
 					$texttoinsert .= " 'help'=>\"".preg_replace('/"/', '', $val['help'])."\",";
 				}
-				if ($val['showoncombobox']) {
+				if (!empty($val['showoncombobox'])) {
 					$texttoinsert .= " 'showoncombobox'=>'".$val['showoncombobox']."',";
 				}
-				if ($val['disabled']) {
+				if (!empty($val['disabled'])) {
 					$texttoinsert .= " 'disabled'=>'".$val['disabled']."',";
 				}
-				if ($val['autofocusoncreate']) {
+				if (!empty($val['autofocusoncreate'])) {
 					$texttoinsert .= " 'autofocusoncreate'=>'".$val['autofocusoncreate']."',";
 				}
-				if ($val['arrayofkeyval']) {
+				if (!empty($val['arrayofkeyval'])) {
 					$texttoinsert .= " 'arrayofkeyval'=>array(";
 					$i = 0;
 					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
@@ -176,14 +184,15 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 					}
 					$texttoinsert .= "),";
 				}
-				if ($val['validate']) {
+				if (!empty($val['validate'])) {
 					$texttoinsert .= " 'validate'=>'".$val['validate']."',";
 				}
-				if ($val['comment']) {
+				if (!empty($val['comment'])) {
 					$texttoinsert .= " 'comment'=>\"".preg_replace('/"/', '', $val['comment'])."\"";
 				}
 
 				$texttoinsert .= "),\n";
+				//print $texttoinsert;
 			}
 		}
 
@@ -207,17 +216,23 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 
 		$texttoinsert .= "\t".'// END MODULEBUILDER PROPERTIES';
 
-		//print($texttoinsert);exit;
+		//print($texttoinsert);
 
 		$contentclass = preg_replace('/\/\/ BEGIN MODULEBUILDER PROPERTIES.*END MODULEBUILDER PROPERTIES/ims', $texttoinsert, $contentclass);
+		//print $contentclass;
 
 		dol_mkdir(dirname($pathoffiletoedittarget));
 
 		//file_put_contents($pathoffiletoedittmp, $contentclass);
-		file_put_contents(dol_osencode($pathoffiletoedittarget), $contentclass);
-		@chmod($pathoffiletoedittarget, octdec($newmask));
+		$result = file_put_contents(dol_osencode($pathoffiletoedittarget), $contentclass);
 
-		return $object;
+		if ($result) {
+			@chmod($pathoffiletoedittarget, octdec($newmask));
+		} else {
+			$error++;
+		}
+
+		return $error ? -1 : $object;
 	} catch (Exception $e) {
 		print $e->getMessage();
 		return -5;
@@ -254,12 +269,32 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 
 	// Edit .sql file
 	if ($moduletype == 'internal') {
-		$pathoffiletoeditsrc = $readdir.'/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql';
-		$pathoffiletoedittarget = $destdir.'/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql'.($readdir != $destdir ? '.new' : '');
+		$pathoffiletoeditsrc = '/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql';
+		if (! dol_is_file($readdir.$pathoffiletoeditsrc)) {
+			$pathoffiletoeditsrc = '/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'-'.strtolower($module).'.sql';
+			if (! dol_is_file($readdir.$pathoffiletoeditsrc)) {
+				$pathoffiletoeditsrc = '/../install/mysql/tables/llx_'.strtolower($module).'-'.strtolower($module).'.sql';
+				if (! dol_is_file($readdir.$pathoffiletoeditsrc)) {
+					$pathoffiletoeditsrc = '/../install/mysql/tables/llx_'.strtolower($module).'.sql';
+				}
+			}
+		}
 	} else {
-		$pathoffiletoeditsrc = $readdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql';
-		$pathoffiletoedittarget = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql'.($readdir != $destdir ? '.new' : '');
+		$pathoffiletoeditsrc = '/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql';
+		if (! dol_is_file($readdir.$pathoffiletoeditsrc)) {
+			$pathoffiletoeditsrc = '/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'-'.strtolower($module).'.sql';
+			if (! dol_is_file($readdir.$pathoffiletoeditsrc)) {
+				$pathoffiletoeditsrc = '/sql/llx_'.strtolower($module).'-'.strtolower($module).'.sql';
+				if (! dol_is_file($readdir.$pathoffiletoeditsrc)) {
+					$pathoffiletoeditsrc = '/sql/llx_'.strtolower($module).'.sql';
+				}
+			}
+		}
 	}
+
+	// Complete path to be full path
+	$pathoffiletoedittarget = $destdir.$pathoffiletoeditsrc.($readdir != $destdir ? '.new' : '');
+	$pathoffiletoeditsrc = $readdir.$pathoffiletoeditsrc;
 
 	if (!dol_is_file($pathoffiletoeditsrc)) {
 		$langs->load("errors");
@@ -311,7 +346,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 			if ($key == 'entity') {
 				$texttoinsert .= ' DEFAULT 1';
 			} else {
-				if ($val['default'] != '') {
+				if (!empty($val['default'])) {
 					if (preg_match('/^null$/i', $val['default'])) {
 						$texttoinsert .= " DEFAULT NULL";
 					} elseif (preg_match('/varchar/', $type)) {
@@ -321,7 +356,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 					}
 				}
 			}
-			$texttoinsert .= (($val['notnull'] > 0) ? ' NOT NULL' : '');
+			$texttoinsert .= ((!empty($val['notnull']) && $val['notnull'] > 0) ? ' NOT NULL' : '');
 			if ($i < count($object->fields)) {
 				$texttoinsert .= ", ";
 			}
@@ -337,16 +372,13 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 		@chmod($pathoffiletoedittarget, octdec($newmask));
 	} else {
 		$error++;
+		setEventMessages($langs->trans("ErrorFailToCreateFile", $pathoffiletoedittarget), null, 'errors');
 	}
 
 	// Edit .key.sql file
-	if ($moduletype == 'internal') {
-		$pathoffiletoeditsrc = $readdir.'/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql';
-		$pathoffiletoedittarget = $destdir.'/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql'.($readdir != $destdir ? '.new' : '');
-	} else {
-		$pathoffiletoeditsrc = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql';
-		$pathoffiletoedittarget = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql'.($readdir != $destdir ? '.new' : '');
-	}
+	$pathoffiletoeditsrc = preg_replace('/\.sql$/', '.key.sql', $pathoffiletoeditsrc);
+	$pathoffiletoedittarget = preg_replace('/\.sql$/', '.key.sql', $pathoffiletoedittarget);
+	$pathoffiletoedittarget = preg_replace('/\.sql.new$/', '.key.sql.new', $pathoffiletoedittarget);
 
 	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
 
@@ -375,10 +407,11 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	dol_mkdir(dirname($pathoffiletoedittarget));
 
 	$result2 = file_put_contents($pathoffiletoedittarget, $contentsql);
-	if ($result) {
+	if ($result2) {
 		@chmod($pathoffiletoedittarget, octdec($newmask));
 	} else {
 		$error++;
+		setEventMessages($langs->trans("ErrorFailToCreateFile", $pathoffiletoedittarget), null, 'errors');
 	}
 
 	return $error ? -1 : 1;

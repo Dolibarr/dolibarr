@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017		 Oscss-Shop              <support@oscss-shop.fr>.
  * Copyright (C) 2008-2011   Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020        Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modifyion 2.0 (the "License");
  * it under the terms of the GNU General Public License as published bypliance with the License.
@@ -17,9 +17,6 @@
  * or see https://www.gnu.org/
  */
 
-if (!defined('REQUIRE_JQUERY_BLOCKUI')) {
-	define('REQUIRE_JQUERY_BLOCKUI', 1);
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1);
 }
@@ -30,14 +27,17 @@ if (!defined('NOTOKENRENEWAL')) {
  *      \ingroup    admin
  *      \brief      Page des informations dolistore
  */
+
 require "../../../main.inc.php";
-
-// CORE
-
-global $lang, $user, $conf;
-
-
 require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
+
+
+/*
+ * View
+ */
+
+top_httphead('image');
+
 $dolistore = new Dolistore();
 
 $id_product = GETPOST('id_product', 'int');
@@ -54,7 +54,7 @@ try {
 	);
 	//echo $url;
 	$request = $api->executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'GET'));
-	header('Content-type:image');
+
 	print $request['response'];
 } catch (PrestaShopWebserviceException $e) {
 	// Here we are dealing with errors

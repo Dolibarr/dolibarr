@@ -80,8 +80,8 @@ class FormBarCode
 		}
 
 		// We check if barcode is already selected by default
-		if (((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE == $code_id) ||
-		(!empty($conf->societe->enabled) && $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY == $code_id)) {
+		if (((isModEnabled("product") || isModEnabled("service")) && $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE == $code_id) ||
+		(isModEnabled("societe") && $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY == $code_id)) {
 			$disable = 'disabled';
 		}
 
@@ -139,7 +139,7 @@ class FormBarCode
 		$out = '';
 
 		$sql = "SELECT rowid, code, libelle";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
+		$sql .= " FROM ".$this->db->prefix()."c_barcode_type";
 		$sql .= " WHERE coder <> '0'";
 		$sql .= " AND entity = ".$conf->entity;
 		$sql .= " ORDER BY code";

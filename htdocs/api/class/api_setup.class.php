@@ -209,7 +209,7 @@ class Setup extends DolibarrApi
 			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			  $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -239,7 +239,6 @@ class Setup extends DolibarrApi
 
 		return $list;
 	}
-
 	/**
 	 * Get the list of states/provinces.
 	 *
@@ -252,27 +251,34 @@ class Setup extends DolibarrApi
 	 * @param string    $sortorder  Sort order
 	 * @param int       $limit      Number of items per page
 	 * @param int       $page       Page number (starting from zero)
-	 * @param string    $filter     To filter the countries by name
+	 * @param int    	$country    To filter on country
+	 * @param string    $filter     To filter the states by name
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-	 * @return array                List of countries
+	 * @return array                List of states
 	 *
 	 * @url     GET dictionary/states
 	 *
 	 * @throws RestException
 	 */
-	public function getListOfStates($sortfield = "code_departement", $sortorder = 'ASC', $limit = 100, $page = 0, $filter = '', $sqlfilters = '')
+	public function getListOfStates($sortfield = "code_departement", $sortorder = 'ASC', $limit = 100, $page = 0, $country = 0, $filter = '', $sqlfilters = '')
 	{
 		$list = array();
 
 		// Note: The filter is not applied in the SQL request because it must
 		// be applied to the translated names, not to the names in database.
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."c_departements as t";
+		$sql = "SELECT t.rowid FROM ".MAIN_DB_PREFIX."c_departements as t";
+		if ($country) {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as d ON t.fk_region = d.code_region";
+		}
 		$sql .= " WHERE 1 = 1";
+		if ($country) {
+			$sql .= " AND d.fk_pays = ".((int) $country);
+		}
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
 			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -373,7 +379,7 @@ class Setup extends DolibarrApi
 		if ($sqlfilters) {
 			$errormessage = '';
 			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -606,10 +612,10 @@ class Setup extends DolibarrApi
 	 * @param object   $object    Object with label to translate
 	 * @param string   $lang      Code of the language the name of the object must be translated to
 	 * @param string   $prefix 	  Prefix for translation key
-	 *
+	 * @param array    $dict      Array of dictionnary for translation
 	 * @return void
 	 */
-	private function translateLabel($object, $lang, $prefix = 'Country')
+	private function translateLabel($object, $lang, $prefix = 'Country', $dict = array('dict'))
 	{
 		if (!empty($lang)) {
 			// Load the translations if this is a new language.
@@ -617,7 +623,7 @@ class Setup extends DolibarrApi
 				global $conf;
 				$this->translations = new Translate('', $conf);
 				$this->translations->setDefaultLang($lang);
-				$this->translations->load('dict');
+				$this->translations->loadLangs($dict);
 			}
 			if ($object->code) {
 				$key = $prefix.$object->code;
@@ -629,7 +635,6 @@ class Setup extends DolibarrApi
 			}
 		}
 	}
-
 
 	/**
 	 * Get the list of events types.
@@ -665,7 +670,7 @@ class Setup extends DolibarrApi
 		if ($sqlfilters) {
 			$errormessage = '';
 			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -729,7 +734,7 @@ class Setup extends DolibarrApi
 		if ($sqlfilters) {
 			$errormessage = '';
 			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -773,6 +778,7 @@ class Setup extends DolibarrApi
 	 * @param string    $type       To filter on type of contact
 	 * @param string    $module     To filter on module contacts
 	 * @param int       $active     Contact's type is active or not {@min 0} {@max 1}
+	 * @param string    $lang       Code of the language the label of the civility must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array	  List of Contacts types
 	 *
@@ -780,7 +786,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	public function getListOfContactTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $module = '', $active = 1, $sqlfilters = '')
+	public function getListOfContactTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $module = '', $active = 1, $lang = '', $sqlfilters = '')
 	{
 		$list = array();
 
@@ -797,7 +803,7 @@ class Setup extends DolibarrApi
 		if ($sqlfilters) {
 			$errormessage = '';
 			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -821,7 +827,9 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$list[] = $this->db->fetch_object($result);
+				$contact_type = $this->db->fetch_object($result);
+				$this->translateLabel($contact_type, $lang, 'TypeContact_'.$contact_type->type.'_'.$contact_type->source.'_', array("eventorganization", "resource", "projects", "contracts", "bills", "orders", "agenda", "propal", "stocks", "supplier_proposal", "interventions", "sendings", "ticket"));
+				$list[] = $contact_type;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving list of contacts types : '.$this->db->lasterror());
@@ -839,6 +847,7 @@ class Setup extends DolibarrApi
 	 * @param int       $page       Page number (starting from zero)
 	 * @param string    $module     To filter on module events
 	 * @param int       $active     Civility is active or not {@min 0} {@max 1}
+	 * @param string    $lang       Code of the language the label of the civility must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array		List of civility types
 	 *
@@ -846,7 +855,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	public function getListOfCivilities($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $module = '', $active = 1, $sqlfilters = '')
+	public function getListOfCivilities($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $module = '', $active = 1, $lang = '', $sqlfilters = '')
 	{
 		$list = array();
 
@@ -860,7 +869,7 @@ class Setup extends DolibarrApi
 		if ($sqlfilters) {
 			$errormessage = '';
 			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -884,7 +893,9 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$list[] = $this->db->fetch_object($result);
+				$civility = $this->db->fetch_object($result);
+				$this->translateLabel($civility, $lang, 'Civility', array('dict'));
+				$list[] = $civility;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving list of civility : '.$this->db->lasterror());
@@ -933,7 +944,7 @@ class Setup extends DolibarrApi
 		if ($sqlfilters) {
 			$errormessage = '';
 			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -1004,7 +1015,7 @@ class Setup extends DolibarrApi
 		if ($sqlfilters) {
 			$errormessage = '';
 			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -1078,7 +1089,7 @@ class Setup extends DolibarrApi
 		if ($sqlfilters) {
 			$errormessage = '';
 			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -1143,9 +1154,9 @@ class Setup extends DolibarrApi
 		if ($sqlfilters) {
 			$errormessage = '';
 			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(400, 'error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -1182,6 +1193,7 @@ class Setup extends DolibarrApi
 	 * @param int       $limit      Number of items per page
 	 * @param int       $page       Page number {@min 0}
 	 * @param int       $active     Shipping methodsm is active or not {@min 0} {@max 1}
+	 * @param string    $lang       Code of the language the label of the method must be translated to
 	 * @param string    $sqlfilters SQL criteria to filter. Syntax example "(t.code:=:'CHQ')"
 	 *
 	 * @url     GET dictionary/shipping_methods
@@ -1190,7 +1202,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @throws RestException 400
 	 */
-	public function getShippingModes($limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+	public function getShippingModes($limit = 100, $page = 0, $active = 1, $lang = '', $sqlfilters = '')
 	{
 		$list = array();
 
@@ -1202,9 +1214,9 @@ class Setup extends DolibarrApi
 		if ($sqlfilters) {
 			$errormessage = '';
 			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(400, 'error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -1226,7 +1238,9 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$list[] = $this->db->fetch_object($result);
+				$method = $this->db->fetch_object($result);
+				$this->translateLabel($method, $lang, '', array('dict'));
+				$list[] = $method;
 			}
 		} else {
 			throw new RestException(400, $this->db->lasterror());
@@ -1261,7 +1275,7 @@ class Setup extends DolibarrApi
 		if ($sqlfilters) {
 			$errormessage = '';
 			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -1301,7 +1315,7 @@ class Setup extends DolibarrApi
 	 * @param string    $sortorder  Sort order
 	 * @param int       $limit      Number of items per page
 	 * @param int       $page       Page number (starting from zero)
-	 * @param string    $country    To filter on country
+	 * @param int   	$country    To filter on country
 	 * @param int       $active     Lega form is active or not {@min 0} {@max 1}
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of legal form
@@ -1310,7 +1324,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	public function getListOfLegalForm($sortfield = "rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $country = '', $active = 1, $sqlfilters = '')
+	public function getListOfLegalForm($sortfield = "rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $country = 0, $active = 1, $sqlfilters = '')
 	{
 		$list = array();
 
@@ -1318,13 +1332,13 @@ class Setup extends DolibarrApi
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_forme_juridique as t";
 		$sql .= " WHERE t.active = ".((int) $active);
 		if ($country) {
-			$sql .= " AND t.fk_pays = '".$this->db->escape($country)."'";
+			$sql .= " AND t.fk_pays = ".((int) $country);
 		}
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
 			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -1383,7 +1397,7 @@ class Setup extends DolibarrApi
 		if ($sqlfilters) {
 			$errormessage = '';
 			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -1435,7 +1449,7 @@ class Setup extends DolibarrApi
 	{
 		global $conf;
 
-		if (empty($conf->socialnetworks->enabled)) {
+		if (!isModEnabled('socialnetworks')) {
 			throw new RestException(400, 'API not available: this dictionary is not enabled by setup');
 		}
 
@@ -1449,7 +1463,7 @@ class Setup extends DolibarrApi
 		if ($sqlfilters) {
 			$errormessage = '';
 			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -1490,6 +1504,7 @@ class Setup extends DolibarrApi
 	  * @param int       $limit      Number of items per page
 	  * @param int       $page       Page number (starting from zero)
 	  * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+	  * @param string    $lang       Code of the language the label of the category must be translated to
 	  * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	  * @return array				List of ticket categories
 	  *
@@ -1497,18 +1512,19 @@ class Setup extends DolibarrApi
 	  *
 	  * @throws RestException
 	  */
-	public function getTicketsCategories($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+	public function getTicketsCategories($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $lang = '', $sqlfilters = '')
 	{
 		$list = array();
 
 		$sql = "SELECT rowid, code, pos,  label, use_default, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as t";
-		$sql .= " WHERE t.active = ".((int) $active);
+		$sql .= " WHERE t.entity IN (".getEntity('c_ticket_category').")";
+		$sql .= " AND t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
 			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -1532,7 +1548,9 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$list[] = $this->db->fetch_object($result);
+				$category = $this->db->fetch_object($result);
+				$this->translateLabel($category, $lang, 'TicketCategoryShort', array('ticket'));
+				$list[] = $category;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving list of ticket categories : '.$this->db->lasterror());
@@ -1549,6 +1567,7 @@ class Setup extends DolibarrApi
 	 * @param int       $limit      Number of items per page
 	 * @param int       $page       Page number (starting from zero)
 	 * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+	 * @param string    $lang       Code of the language the label of the severity must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of ticket severities
 	 *
@@ -1556,18 +1575,19 @@ class Setup extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	public function getTicketsSeverities($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+	public function getTicketsSeverities($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $lang = '', $sqlfilters = '')
 	{
 		$list = array();
 
 		$sql = "SELECT rowid, code, pos,  label, use_default, color, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_severity as t";
-		$sql .= " WHERE t.active = ".((int) $active);
+		$sql .= " WHERE t.entity IN (".getEntity('c_ticket_severity').")";
+		$sql .= " AND t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
 			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -1591,7 +1611,9 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$list[] = $this->db->fetch_object($result);
+				$severity = $this->db->fetch_object($result);
+				$this->translateLabel($severity, $lang, 'TicketSeverityShort', array('ticket'));
+				$list[] = $severity;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving list of ticket severities : '.$this->db->lasterror());
@@ -1608,6 +1630,7 @@ class Setup extends DolibarrApi
 	 * @param int       $limit      Number of items per page
 	 * @param int       $page       Page number (starting from zero)
 	 * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+	 * @param string    $lang       Code of the language the label of the type must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of ticket types
 	 *
@@ -1615,20 +1638,20 @@ class Setup extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	public function getTicketsTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+	public function getTicketsTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $lang = '', $sqlfilters = '')
 	{
 		$list = array();
 
 		$sql = "SELECT rowid, code, pos,  label, use_default, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_type as t";
-		$sql .= " WHERE t.active = ".(int) $active;
-		// if ($type) $sql .= " AND t.type LIKE '%".$this->db->escape($type)."%'";
-		// if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
+		$sql .= " WHERE t.entity IN (".getEntity('c_ticket_type').")";
+		$sql .= " AND t.active = ".((int) $active);
+
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
 			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -1652,7 +1675,9 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$list[] = $this->db->fetch_object($result);
+				$type =$this->db->fetch_object($result);
+				$this->translateLabel($type, $lang, 'TicketTypeShort', array('ticket'));
+				$list[] = $type;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving list of ticket types : '.$this->db->lasterror());

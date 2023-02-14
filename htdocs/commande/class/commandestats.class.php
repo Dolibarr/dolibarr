@@ -106,9 +106,7 @@ class CommandeStats extends Stats
 		}
 
 		if ($categid) {
-			$this->join .= ' LEFT JOIN '.$this->categ_link.' as cats ON cats.fk_soc = c.fk_soc';
-			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as cat ON cat.rowid = cats.fk_categorie';
-			$this->where .= ' AND cat.rowid = '.((int) $categid);
+			$this->where .= ' AND EXISTS (SELECT rowid FROM '.$this->categ_link.' as cats WHERE cats.fk_soc = c.fk_soc AND cats.fk_categorie = '.((int) $categid).')';
 		}
 	}
 

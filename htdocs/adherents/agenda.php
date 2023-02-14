@@ -21,23 +21,26 @@
  */
 
 /**
- *  \file       htdocs/adherents/agenda.php
- *  \ingroup    member
- *  \brief      Page of members events
+ *    \file       htdocs/adherents/agenda.php
+ *    \ingroup    member
+ *    \brief      Page of members events
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "members"));
+$langs->loadLangs(array('companies', 'members'));
 
+// Get Parameters
 $id = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('rowid', 'int');
 
+// Pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -65,9 +68,13 @@ if (GETPOST('actioncode', 'array')) {
 }
 $search_agenda_label = GETPOST('search_agenda_label');
 
+// Get object canvas (By default, this is not defined, so standard usage of dolibarr)
+$objcanvas = null;
+
 // Security check
 $result = restrictedArea($user, 'adherent', $id);
 
+// Initialize technical objects
 $object = new Adherent($db);
 $result = $object->fetch($id);
 if ($result > 0) {
@@ -112,9 +119,7 @@ $contactstatic = new Contact($db);
 
 $form = new Form($db);
 
-/*
- * Customer and/or supplier category sheet
- */
+
 if ($object->id > 0) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -127,7 +132,7 @@ if ($object->id > 0) {
 
 	llxHeader("", $title, $help_url);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = member_prepare_head($object);
@@ -159,11 +164,11 @@ if ($object->id > 0) {
 
 
 	$newcardbutton = '';
-	if (!empty($conf->agenda->enabled)) {
-		$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id);
+	if (isModEnabled('agenda')) {
+		$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).($object->id > 0 ? '?id='.$object->id : '').'&origin=member&originid='.$id);
 	}
 
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		print '<br>';
 
 		$param = '&id='.$id;

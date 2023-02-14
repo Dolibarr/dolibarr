@@ -88,7 +88,7 @@ class Login
 		global $conf, $dolibarr_main_authentication, $dolibarr_auto_user;
 
 		// Is the login API disabled ? The token must be generated from backoffice only.
-		if (! empty($conf->global->API_DISABLE_LOGIN_API)) {
+		if (!empty($conf->global->API_DISABLE_LOGIN_API)) {
 			dol_syslog("Warning: A try to use the login API has been done while the login API is disabled. You must generate or get the token from the backoffice.", LOG_WARNING);
 			throw new RestException(403, "Error, the login API has been disabled for security purpose. You must generate or get the token from the backoffice.");
 		}

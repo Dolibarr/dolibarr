@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -41,6 +41,8 @@ class PartnershipUtils
 	public $error; //!< To return error code (or message)
 	public $errors = array(); //!< To return several error codes (or messages)
 
+	public $output;	// To store output of some cron methods
+
 
 	/**
 	 *  Constructor
@@ -64,7 +66,7 @@ class PartnershipUtils
 	{
 		global $conf, $langs, $user;
 
-		$managedfor	= empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) ? 'thirdparty' : $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
+		$managedfor	= getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 
 		if ($managedfor != 'member') {
 			return 0; // If option 'PARTNERSHIP_IS_MANAGED_FOR' = 'thirdparty', this cron job does nothing.
@@ -157,7 +159,7 @@ class PartnershipUtils
 							// Define output language
 							$outputlangs = $langs;
 							$newlang = '';
-							if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
 							if (!empty($newlang)) {
 								$outputlangs = new Translate("", $conf);
 								$outputlangs->setDefaultLang($newlang);
@@ -219,7 +221,7 @@ class PartnershipUtils
 	{
 		global $conf, $langs, $user;
 
-		$managedfor = $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
+		$managedfor = getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR');
 
 		$partnership = new Partnership($this->db);
 		$MAXPERCALL = (empty($conf->global->PARTNERSHIP_MAX_WARNING_BACKLINK_PER_CALL) ? 10 : $conf->global->PARTNERSHIP_MAX_WARNING_BACKLINK_PER_CALL); // Limit to 10 per call
@@ -323,7 +325,7 @@ class PartnershipUtils
 								// Define output language
 								$outputlangs = $langs;
 								$newlang = '';
-								if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+								if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
 								if (!empty($newlang)) {
 									$outputlangs = new Translate("", $conf);
 									$outputlangs->setDefaultLang($newlang);

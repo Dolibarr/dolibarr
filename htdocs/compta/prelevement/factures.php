@@ -24,6 +24,7 @@
  *     \brief      Page liste des factures prelevees
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
@@ -102,7 +103,7 @@ if ($id > 0 || $ref) {
 
 		//print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
-		print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
+		print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount).'</span></td></tr>';
 
 		if ($object->date_trans <> 0) {
 			$muser = new User($db);
@@ -110,7 +111,7 @@ if ($id > 0 || $ref) {
 
 			print '<tr><td>'.$langs->trans("TransData").'</td><td>';
 			print dol_print_date($object->date_trans, 'day');
-			print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getFullName($langs).'</td></tr>';
+			print ' &nbsp; <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getNomUrl(-1).'</td></tr>';
 			print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 			print $object->methodes_trans[$object->method_trans];
 			print '</td></tr>';
@@ -156,7 +157,9 @@ if ($id > 0 || $ref) {
 		if ($object->type == 'bank-transfer') {
 			$modulepart = 'paymentbybanktransfer';
 		}
-		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
+		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath;
+		print img_picto('', 'download', 'class="paddingleft"');
+		print '</a>';
 		print '</td></tr></table>';
 
 		print '</div>';
@@ -174,7 +177,7 @@ $sql .= " f.rowid as facid, f.ref as ref, f.total_ttc,";
 $sql .= " s.rowid as socid, s.nom as name, pl.statut, pl.amount as amount_requested";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= ", ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql .= ", ".MAIN_DB_PREFIX."prelevement_facture as pf";
+$sql .= ", ".MAIN_DB_PREFIX."prelevement as pf";
 if ($object->type != 'bank-transfer') {
 	$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 } else {

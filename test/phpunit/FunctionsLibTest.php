@@ -29,6 +29,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -107,7 +108,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		//$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -132,7 +133,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		//$db->rollback();
@@ -145,7 +146,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -161,9 +162,56 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
+	}
+
+	/**
+	 * testDolClone
+	 *
+	 * @return void
+	 */
+	public function testDolClone()
+	{
+		$newproduct1 = new Product($this->savdb);
+
+		print __METHOD__." this->savdb has type ".(is_resource($this->savdb->db) ? get_resource_type($this->savdb->db) : (is_object($this->savdb->db) ? 'object' : 'unknown'))."\n";
+		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
+		$this->assertEquals($this->savdb->connected, 1, 'Savdb is connected');
+		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
+
+		$newproductcloned1 = dol_clone($newproduct1);
+
+		print __METHOD__." this->savdb has type ".(is_resource($this->savdb->db) ? get_resource_type($this->savdb->db) : (is_object($this->savdb->db) ? 'object' : 'unknown'))."\n";
+		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
+		$this->assertEquals($this->savdb->connected, 1, 'Savdb is connected');
+		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
+
+		$newproductcloned2 = dol_clone($newproduct1, 2);
+		var_dump($newproductcloned2);
+		//print __METHOD__." newproductcloned1->db must be null\n";
+		//$this->assertNull($newproductcloned1->db, 'newproductcloned1->db is null');
+	}
+
+	/**
+	 * testNum2Alpha
+	 *
+	 * @return void
+	 */
+	public function testNum2Alpha()
+	{
+		$result = num2Alpha(0);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, 'A', 'Check num2Alpha 0');
+
+		$result = num2Alpha(5);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, 'F', 'Check num2Alpha 5');
+
+		$result = num2Alpha(26);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, 'AA', 'Check num2Alpha 26');
 	}
 
 	/**
@@ -513,6 +561,10 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$after=dol_textishtml($input);
 		$this->assertFalse($after);
 		$input='This is a text with html comments <!-- comment -->';	// we suppose this is not enough to be html content
+		$after=dol_textishtml($input);
+		$this->assertFalse($after);
+
+		$input="A text\nwith a link https://aaa?param=abc&amp;param2=def";
 		$after=dol_textishtml($input);
 		$this->assertFalse($after);
 	}

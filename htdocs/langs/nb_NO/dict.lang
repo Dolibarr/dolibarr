@@ -250,7 +250,9 @@ CountryMF=Saint Martin
 
 ##### Civilities #####
 CivilityMME=Fru
+CivilityMMEShort=Fru
 CivilityMR=Herr
+CivilityMRShort=Herr
 CivilityMLE=Frk.
 CivilityMTRE=Master
 CivilityDR=Doktor

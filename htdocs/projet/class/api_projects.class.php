@@ -123,6 +123,7 @@ class Projects extends DolibarrApi
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_extrafields AS ef ON ef.fk_object = t.rowid";	// So we will be able to filter on extrafields
 		if ($category > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."categorie_project as c";
 		}
@@ -228,7 +229,7 @@ class Projects extends DolibarrApi
 	 * See also API /tasks
 	 *
 	 * @param int   $id                     Id of project
-	 * @param int   $includetimespent       0=Return only list of tasks. 1=Include a summary of time spent, 2=Include details of time spent lines (2 is no implemented yet)
+	 * @param int   $includetimespent       0=Return only list of tasks. 1=Include a summary of time spent, 2=Include details of time spent lines
 	 * @return int
 	 *
 	 * @url	GET {id}/tasks
@@ -253,9 +254,8 @@ class Projects extends DolibarrApi
 			if ($includetimespent == 1) {
 				$timespent = $line->getSummaryOfTimeSpent(0);
 			}
-			if ($includetimespent == 1) {
-				// TODO
-				// Add class for timespent records and loop and fill $line->lines with records of timespent
+			if ($includetimespent == 2) {
+				$timespent = $line->fetchTimeSpentOnTask();
 			}
 			array_push($result, $this->_cleanObjectDatas($line));
 		}
@@ -334,7 +334,7 @@ class Projects extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
 
 		$updateRes = $this->project->addline(
 						$request_data->desc,
@@ -401,7 +401,7 @@ class Projects extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
 
 		$updateRes = $this->project->updateline(
 						$lineid,

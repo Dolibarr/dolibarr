@@ -173,7 +173,7 @@ class Subscriptions extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
 			throw new RestException(401);
 		}
 

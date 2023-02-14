@@ -34,6 +34,7 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -47,10 +48,22 @@ $langs->loadLangs(array("companies", "other", "recruitment"));
 // Get parameters
 $action   = GETPOST('action', 'aZ09');
 $cancel   = GETPOST('cancel', 'alpha');
-$email    = GETPOST('email', 'alpha');
+$SECUREKEY = GETPOST("securekey");
+$entity = GETPOST('entity', 'int') ? GETPOST('entity', 'int') : $conf->entity;
 $backtopage = '';
+$suffix = "";
 
-$ref = GETPOST('ref', 'alpha');
+// Load variable for pagination
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1 or if we click on clear filters
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 
 if (GETPOST('btn_view')) {
 	unset($_SESSION['email_customer']);
@@ -61,15 +74,6 @@ if (isset($_SESSION['email_customer'])) {
 
 $object = new RecruitmentJobPosition($db);
 
-if (!$action) {
-	if (!$ref) {
-		print $langs->trans('ErrorBadParameters')." - ref missing";
-		exit;
-	} else {
-		$object->fetch('', $ref);
-	}
-}
-
 // Define $urlwithroot
 //$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 //$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
@@ -77,7 +81,7 @@ $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than curren
 
 // Security check
 if (empty($conf->recruitment->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Recruitment not enabled');
 }
 
 
@@ -111,7 +115,7 @@ $arrayofjs = array();
 $arrayofcss = array();
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
-llxHeader($head, $langs->trans("PositionToBeFilled"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
+llxHeader($head, $langs->trans("PositionToBeFilled"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1, 1);
 
 
 print '<span id="dolpaymentspan"></span>'."\n";
@@ -151,8 +155,7 @@ if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumb
 if ($urllogo) {
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
-	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-	print '>';
+	print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
 	print '</div>';
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
 		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
@@ -167,10 +170,132 @@ if (!empty($conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE)) {
 }
 
 
-// TODO List of jobs
-print '<br>';
-print $langs->trans("FeatureNotYetAvailable");
+$results = $object->fetchAll($sortfield, $sortorder, 0, 0, array('status' => 1));
+$now = dol_now();
 
+if (is_array($results)) {
+	if (empty($results)) {
+		print '<br>';
+		print $langs->trans("NoPositionOpen");
+	} else {
+		print '<br><br><br>';
+		print '<span class="opacitymedium">'.$langs->trans("WeAreRecruiting").'</span>';
+		print '<br><br><br>';
+		print '<br class="hideonsmartphone">';
+
+		foreach ($results as $job) {
+			$object = $job;
+
+			print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
+
+			// Output introduction text
+			$text = '';
+			if (!empty($conf->global->RECRUITMENT_NEWFORM_TEXT)) {
+				$reg = array();
+				if (preg_match('/^\((.*)\)$/', $conf->global->RECRUITMENT_NEWFORM_TEXT, $reg)) {
+					$text .= $langs->trans($reg[1])."<br>\n";
+				} else {
+					$text .= $conf->global->RECRUITMENT_NEWFORM_TEXT."<br>\n";
+				}
+				$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
+			}
+			if (empty($text)) {
+				$text .= '<tr><td class="textpublicpayment"><br>'.$langs->trans("JobOfferToBeFilled", $mysoc->name);
+				$text .= ' &nbsp; - &nbsp; <strong>'.$mysoc->name.'</strong>';
+				$text .= ' &nbsp; - &nbsp; <span class="nowraponall"><span class="fa fa-calendar secondary"></span> '.dol_print_date($object->date_creation).'</span>';
+				$text .= '</td></tr>'."\n";
+				$text .= '<tr><td class="textpublicpayment"><h1 class="paddingleft paddingright">'.$object->label.'</h1></td></tr>'."\n";
+			}
+			print $text;
+
+			// Output payment summary form
+			print '<tr><td class="left">';
+
+			print '<div with="100%" id="tablepublicpayment">';
+			print '<div class="opacitymedium">'.$langs->trans("ThisIsInformationOnJobPosition").' :</div>'."\n";
+
+			$error = 0;
+			$found = true;
+
+			print '<br>';
+
+			// Label
+			print $langs->trans("Label").' : ';
+			print '<b>'.dol_escape_htmltag($object->label).'</b><br>';
+
+			// Date
+			print  $langs->trans("DateExpected").' : ';
+			print '<b>';
+			if ($object->date_planned > $now) {
+				print dol_print_date($object->date_planned, 'day');
+			} else {
+				print $langs->trans("ASAP");
+			}
+			print '</b><br>';
+
+			// Remuneration
+			print  $langs->trans("Remuneration").' : ';
+			print '<b>';
+			print dol_escape_htmltag($object->remuneration_suggested);
+			print '</b><br>';
+
+			// Contact
+			$tmpuser = new User($db);
+			$tmpuser->fetch($object->fk_user_recruiter);
+
+			print  $langs->trans("ContactForRecruitment").' : ';
+			$emailforcontact = $object->email_recruiter;
+			if (empty($emailforcontact)) {
+				$emailforcontact = $tmpuser->email;
+				if (empty($emailforcontact)) {
+					$emailforcontact = $mysoc->email;
+				}
+			}
+			print '<b class="wordbreak">';
+			print $tmpuser->getFullName($langs);
+			print ' &nbsp; '.dol_print_email($emailforcontact, 0, 0, 1, 0, 0, 'envelope');
+			print '</b>';
+			print '</b><br>';
+
+			if ($object->status == RecruitmentJobPosition::STATUS_RECRUITED) {
+				print info_admin($langs->trans("JobClosedTextCandidateFound"), 0, 0, 0, 'warning');
+			}
+			if ($object->status == RecruitmentJobPosition::STATUS_CANCELED) {
+				print info_admin($langs->trans("JobClosedTextCanceled"), 0, 0, 0, 'warning');
+			}
+
+			print '<br>';
+
+			// Description
+
+			$text = $object->description;
+			print $text;
+			print '<input type="hidden" name="ref" value="'.$object->ref.'">';
+
+			print '</div>'."\n";
+			print "\n";
+
+
+			if ($action != 'dosubmit') {
+				if ($found && !$error) {
+					// We are in a management option and no error
+				} else {
+					dol_print_error_email('ERRORSUBMITAPPLICATION');
+				}
+			} else {
+				// Print
+			}
+
+			print '</td></tr>'."\n";
+
+			print '</table>'."\n";
+
+			print '<br><br class="hideonsmartphone"><br class="hideonsmartphone"><br class="hideonsmartphone">'."\n";
+		}
+	}
+} else {
+	dol_print_error($db, $object->error, $object->errors);
+}
 
 print '</form>'."\n";
 print '</div>'."\n";

@@ -64,9 +64,10 @@ interface Database
 	/**
 	 * Start transaction
 	 *
-	 * @return  int         1 if transaction successfuly opened or already opened, 0 if error
+	 * @param	string	$textinlog		Add a small text into log. '' by default.
+	 * @return  int      				1 if transaction successfuly opened or already opened, 0 if error
 	 */
-	public function begin();
+	public function begin($textinlog = '');
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -182,8 +183,17 @@ interface Database
 	 *
 	 * @param   string $stringtoencode String to escape
 	 * @return  string                        String escaped
+	 * @deprecated
 	 */
 	public function escapeunderscore($stringtoencode);
+
+	/**
+	 *	Escape a string to insert data into a like
+	 *
+	 *	@param	string	$stringtoencode		String to escape
+	 *	@return	string						String escaped
+	 */
+	public function escapeforlike($stringtoencode);
 
 	/**
 	 * Sanitize a string for SQL forging
@@ -502,8 +512,8 @@ interface Database
 	/**
 	 * Returns the current line (as an object) for the resultset cursor
 	 *
-	 * @param   resource $resultset 	Cursor of the desired request
-	 * @return  Object                  Object result line or false if KO or end of cursor
+	 * @param   resource|Connection		$resultset 		Handler of the desired request
+	 * @return  Object                  				Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset);
 	// phpcs:enable

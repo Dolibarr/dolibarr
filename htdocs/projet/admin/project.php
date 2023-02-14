@@ -27,6 +27,7 @@
  *  \brief      Page to setup project module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -54,10 +55,10 @@ $type = 'project';
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstproject = GETPOST('maskconstproject', 'alpha');
+	$maskconstproject = GETPOST('maskconstproject', 'aZ09');
 	$maskproject = GETPOST('maskproject', 'alpha');
 
-	if ($maskconstproject) {
+	if ($maskconstproject && preg_match('/_MASK$/', $maskconstproject)) {
 		$res = dolibarr_set_const($db, $maskconstproject, $maskproject, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -73,10 +74,10 @@ if ($action == 'updateMask') {
 }
 
 if ($action == 'updateMaskTask') {
-	$maskconstmasktask = GETPOST('maskconsttask', 'alpha');
+	$maskconstmasktask = GETPOST('maskconsttask', 'aZ09');
 	$masktaskt = GETPOST('masktask', 'alpha');
 
-	if ($maskconstmasktask) {
+	if ($maskconstmasktask && preg_match('/_MASK$/', $maskconstmasktask)) {
 		$res = dolibarr_set_const($db, $maskconstmasktask, $masktaskt, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -265,7 +266,7 @@ print '<td width="80">&nbsp;</td></tr>'."\n";
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("ManageOpportunitiesStatus").'</td>';
 print '<td width="60" class="right">';
-print ajax_constantonoff("PROJECT_USE_OPPORTUNITIES");
+print ajax_constantonoff("PROJECT_USE_OPPORTUNITIES", null, null, 0, 0, 1);
 print '</td><td class="right">';
 print "</td>";
 print '</tr>';
@@ -766,6 +767,7 @@ $form = new Form($db);
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateoptions">';
+print '<input type="hidden" name="page_y" value="">';
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -788,7 +790,7 @@ if (!$conf->use_javascript_ajax) {
 	);
 	print $form->selectarray("activate_PROJECT_USE_SEARCH_TO_SELECT", $arrval, $conf->global->PROJECT_USE_SEARCH_TO_SELECT);
 	print '</td><td class="right">';
-	print '<input type="submit" class="button" name="PROJECT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button small reposition" name="PROJECT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
 print '</tr>';
@@ -799,7 +801,7 @@ print '<td>'.$langs->trans("AllowToSelectProjectFromOtherCompany").'</td>';
 print '<td class="right" width="60" colspan="2">';
 print '<input type="text" id="projectToSelect" name="projectToSelect" value="'.$conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.'"/>&nbsp;';
 print $form->textwithpicto('', $langs->trans('AllowToLinkFromOtherCompany'));
-print '<input type="submit" class="button" name="PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button small reposition" name="PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY" value="'.$langs->trans("Modify").'">';
 print '</td>';
 print '</tr>';
 
@@ -817,8 +819,8 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("TimesheetPreventAfterFollowingMonths").'</td>';
 
 print '<td class="right" width="60" colspan="2">';
-print '<input type="number" id="timesheetFreezeDuration" name="timesheetFreezeDuration" min="0" step="1" value="'.$conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS.'"/>&nbsp;';
-print '<input type="submit" class="button" name="PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS" value="'.$langs->trans("Modify").'">';
+print '<input type="number" class="width50" id="timesheetFreezeDuration" name="timesheetFreezeDuration" min="0" step="1" value="'.$conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS.'"/>&nbsp;';
+print '<input type="submit" class="button small reposition" name="PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS" value="'.$langs->trans("Modify").'">';
 print '</td>';
 print '</tr>';
 print '</table>';

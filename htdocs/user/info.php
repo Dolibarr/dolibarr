@@ -22,6 +22,7 @@
  *		\brief      Page des informations d'un utilisateur
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
@@ -62,7 +63,10 @@ if (($object->id != $user->id) && (!$user->rights->user->user->lire)) {
 
 $form = new Form($db);
 
-llxHeader();
+$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+$title = $person_name." - ".$langs->trans('Info');
+$help_url = '';
+llxHeader('', $title, $help_url);
 
 $head = user_prepare_head($object);
 
@@ -76,7 +80,11 @@ if ($user->rights->user->user->lire || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+$morehtmlref .= '</a>';
+
+dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 
 $object->info($id); // This overwrite ->ref with login instead of id

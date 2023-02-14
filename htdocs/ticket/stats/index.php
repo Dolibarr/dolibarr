@@ -21,6 +21,7 @@
  *		\brief      Page with tickets statistics
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticketstats.class.php';
@@ -44,7 +45,7 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$nowyear = strftime("%Y", dol_now());
+$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $year = GETPOST('year') > 0 ? GETPOST('year', 'int') : $nowyear;
 $startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
@@ -284,7 +285,7 @@ foreach ($data as $val) {
 	print '<tr class="oddeven" height="24">';
 	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.round($val['nb_diff']).'</td>';
+	print '<td class="right" style="'.((isset($val['nb_diff']) && $val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.round(isset($val['nb_diff']) ? $val['nb_diff'] : 0).'</td>';
 	//print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
 	//print '<td class="right" style="'.(($val['total_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['total_diff']).'</td>';
 	//print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';

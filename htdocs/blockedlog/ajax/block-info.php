@@ -37,6 +37,7 @@ if (!defined('NOREQUIREHTML')) {
 }
 
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 
@@ -53,6 +54,8 @@ $langs->loadLangs(array("admin"));
 /*
  * View
  */
+
+top_httphead();
 
 print '<div id="pop-info"><table width="100%" height="80%" class="border"><thead><th width="50%" class="left">'.$langs->trans('Field').'</th><th class="left">'.$langs->trans('Value').'</th></thead>';
 print '<tbody>';
@@ -92,11 +95,11 @@ function formatObject($objtoshow, $prefix)
 				$s .= '<tr><td>'.($prefix ? $prefix.' > ' : '').$key.'</td>';
 				$s .= '<td>';
 				if (in_array($key, array('date', 'datef', 'dateh', 'datec', 'datem', 'datep'))) {
-					/*var_dump(is_object($val));
-					var_dump(is_array($val));
-					var_dump(is_array($val));
-					var_dump(@get_class($val));
-					var_dump($val);*/
+					//var_dump(is_object($val));
+					//var_dump(is_array($val));
+					//var_dump(is_array($val));
+					//var_dump(@get_class($val));
+					//var_dump($val);
 					$s .= dol_print_date($val, 'dayhour');
 				} else {
 					$s .= $val;

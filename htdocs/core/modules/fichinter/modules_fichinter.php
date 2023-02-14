@@ -122,9 +122,11 @@ abstract class ModeleNumRefFicheinter
 	/**
 	 * 	Return the next assigned value
 	 *
-	 * 	@return     string      Value
+	 *  @param	Societe		$objsoc     Object thirdparty
+	 *  @param  Object		$object		Object we need next value for
+	 *  @return string      			Value if KO, <0 if KO
 	 */
-	public function getNextValue()
+	public function getNextValue($objsoc = 0, $object = '')
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

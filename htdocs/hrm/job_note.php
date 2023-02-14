@@ -20,9 +20,9 @@
  */
 
 /**
- *  \file       job_note.php
- *  \ingroup    hrm
- *  \brief      Tab for notes on Job
+ *    \file       htdocs/hrm/job_note.php
+ *    \ingroup    hrm
+ *    \brief      Tab for notes on Job
  */
 
 
@@ -33,12 +33,13 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_job.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("hrm", "companies"));
+$langs->loadLangs(array('hrm', 'companies'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$id     = GETPOST('id', 'int');
+$ref    = GETPOST('ref', 'alpha');
+
+$action     = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -47,15 +48,17 @@ $object = new Job($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->hrm->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('jobnote', 'globalcard')); // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->hrm->multidir_output[$object->entity]."/".$object->id;
+	$upload_dir = $conf->hrm->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
 
+// Permissions
 $permissiontoread = $user->rights->hrm->all->read;
 $permissionnote = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php
 

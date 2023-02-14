@@ -29,6 +29,8 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
 	public $require_module = array('contrat');
 
+	public $enabled = 'isModEnabled("societe")';
+
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
@@ -106,7 +108,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		$now = dol_now();
 
 		// La requete doit retourner: id, email, name
-		$sql = "SELECT s.rowid as id, s.email, s.nom as name, cd.rowid as cdid, cd.date_ouverture, cd.date_fin_validite, cd.fk_contrat";
+		$sql = "SELECT s.rowid as id, s.email, s.nom as name, cd.rowid as cdid, cd.date_ouverture as date_start_real, cd.date_fin_validite as date_end, cd.fk_contrat";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
 		$sql .= " WHERE s.entity IN (".getEntity('societe').")";
@@ -133,8 +135,8 @@ class mailing_thirdparties_services_expired extends MailingTargets
 					'lastname' => $obj->name, // For thirdparties, lastname must be name
 					'firstname' => '', // For thirdparties, firstname is ''
 					'other' =>
-					('DateStart='.dol_print_date($this->db->jdate($obj->date_ouverture), 'day')).';'.
-					('DateEnd='.dol_print_date($this->db->jdate($obj->date_fin_validite), 'day')).';'.
+					('DateStart='.dol_print_date($this->db->jdate($obj->date_start_real), 'day')).';'.	// date start real
+					('DateEnd='.dol_print_date($this->db->jdate($obj->date_end), 'day')).';'.			// date end planned
 					('Contract='.$obj->fk_contrat).';'.
 					('ContactLine='.$obj->cdid),
 					'source_url' => $this->url($obj->id),
@@ -182,8 +184,8 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 *	For example if this selector is used to extract 500 different
 	 *	emails from a text file, this function must return 500.
 	 *
-	 *	@param	string	$sql		SQL request to use to count
-	 *	@return	int					Number of recipients
+	 *	@param		string			$sql		SQL request to use to count
+	 *  @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
@@ -215,8 +217,9 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	{
 		global $langs;
 
-		$s .= '<select id="filter_services_expired" name="filter" class="flat">';
+		$s = '<select id="filter_services_expired" name="filter" class="flat">';
 		if (count($this->arrayofproducts)) {
+			$langs->loadLangs(array("products"));
 			$s .= '<option value="-1">'.$langs->trans("ProductOrService").'</option>';
 		} else {
 			$s .= '<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
@@ -226,6 +229,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		}
 		$s .= '</select>';
 		$s .= ajax_combobox("filter_services_expired");
+
 		return $s;
 	}
 

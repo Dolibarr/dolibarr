@@ -25,6 +25,7 @@
  *	\brief      card of withdraw line
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
@@ -261,7 +262,7 @@ if ($id) {
 	$sql .= " , s.rowid as socid, s.nom as name";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-	$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
+	$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";
 	if ($type == 'bank-transfer') {
 		$sql .= " , ".MAIN_DB_PREFIX."facture_fourn as f";
 	} else {
@@ -311,7 +312,11 @@ if ($id) {
 			print img_object($langs->trans("ShowBill"), "bill");
 			print '</a>&nbsp;';
 
-			print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
+			if ($type == 'bank-transfer') {
+				print '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
+			} else {
+				print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
+			}
 
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
 			print img_object($langs->trans("ShowCompany"), "company").' '.$obj->name."</a></td>\n";

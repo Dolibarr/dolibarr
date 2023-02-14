@@ -4,13 +4,14 @@
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
--- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
+-- Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2010-2016 Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2012      Sebastian Neuwert    <sebastian.neuwert@modula71.de>
--- Copyright (C) 2012	   Ricardo Schluter     <info@ripasch.nl>
--- Copyright (C) 2015	   Ferran Marcet        <fmarcet@2byte.es>
--- Copyright (C) 2019~	   Lao Tian        <281388879@qq.com>
+-- Copyright (C) 2012      Ricardo Schluter     <info@ripasch.nl>
+-- Copyright (C) 2015      Ferran Marcet        <fmarcet@2byte.es>
+-- Copyright (C) 2019~     Lao Tian             <281388879@qq.com>
 -- Copyright (C) 2020-2021 Udo Tamm             <dev@dolibit.de>
+-- Copyright (C) 2022      Miro Sertić          <miro.sertic0606@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -51,10 +52,12 @@
 -- Belgium
 -- Bolivia
 -- Brazil -> for Departmements
+-- Burundi
 -- Canada -> for Departmements
 -- Chile
 -- China
 -- Colombie -> for Departmements
+-- Croatia
 -- Denmark
 -- France
 -- Germany -> for Departmements
@@ -64,6 +67,7 @@
 -- India -> for Departmements
 -- Indonesia -> for Departmements
 -- Italy
+-- Japan -> only for Departmements
 -- Luxembourg
 -- Mauritius
 -- Mexique -> for Departmements
@@ -144,6 +148,27 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 5
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 56, 5601, '', 0, 'Brasil');
 
 
+-- Burundi Regions (id country=61) -- https://fr.wikipedia.org/wiki/Provinces_du_Burundi
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6101, '', 0, 'Bubanza');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6102, '', 0, 'Bujumbura Mairie');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6103, '', 0, 'Bujumbura Rural');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6104, '', 0, 'Bururi');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6105, '', 0, 'Cankuzo');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6106, '', 0, 'Cibitoke');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6107, '', 0, 'Gitega');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6108, '', 0, 'Karuzi');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6109, '', 0, 'Kayanza');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6110, '', 0, 'Kirundo');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6111, '', 0, 'Makamba');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6112, '', 0, 'Muramvya');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6113, '', 0, 'Muyinga');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6114, '', 0, 'Mwaro');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6115, '', 0, 'Ngozi');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6116, '', 0, 'Rumonge');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6117, '', 0, 'Rutana');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6118, '', 0, 'Ruyigi');
+
+
 -- Canada Region (id country=14)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 14, 1401, '', 0, 'Canada');
 
@@ -205,6 +230,13 @@ insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 9
 
 -- Colombie Regions (id country=70)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 70, 7001, '', 0, 'Colombie');
+
+
+-- Croatia Regions (id country=76)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 76, 7601, '', 0, 'Središnja');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 76, 7602, '', 0, 'Dalmacija');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 76, 7603, '', 0, 'Slavonija');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 76, 7604, '', 0, 'Istra');
 
 
 -- Denmark Regions (id country=80)
@@ -300,6 +332,10 @@ insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 3
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 3, 318, NULL, 1, 'Umbria');
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 3, 319, NULL, 1, 'Valle d Aosta');
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 3, 320, NULL, 1, 'Veneto');
+
+
+-- Japan Region (id country=123)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 123, 12301, '', 0,'日本');
 
 
 -- Luxembourg Regions (districts) (id country=140)

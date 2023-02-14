@@ -39,17 +39,17 @@ function jobPrepareHead($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/hrm/job_card.php", 1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("JobCard");
+	$head[$h][0] = DOL_URL_ROOT."/hrm/job_card.php?id=".$object->id;
+	$head[$h][1] = $langs->trans("JobProfile");
 	$head[$h][2] = 'job_card';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/hrm/skill_tab.php", 1).'?id='.$object->id.'&objecttype=job';
+	$head[$h][0] = DOL_URL_ROOT."/hrm/skill_tab.php?id=".$object->id.'&objecttype=job';
 	$head[$h][1] = $langs->trans("RequiredSkills");
 	$head[$h][2] = 'skill_tab';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/hrm/position.php", 1).'?fk_job='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT."/hrm/position.php?fk_job=".$object->id;
 	$head[$h][1] = $langs->trans("EmployeesInThisPosition");
 	$head[$h][2] = 'position';
 	$h++;
