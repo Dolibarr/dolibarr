@@ -147,9 +147,9 @@ abstract class CommonDocGenerator
 			'myuser_job'=>$user->job,
 			'myuser_web'=>''	// url not exist in $user object,
 			'myuser_birth'=>dol_print_date($user->birth, 'day', 'tzuser'),
-            'myuser_dateemployment'=>dol_print_date($user->dateemployment, 'day', 'tzuser'),
-            'myuser_dateemploymentend'=>dol_print_date($user->dateemploymentend, 'day', 'tzuser'),
-            'myuser_gender'=>$user->gender,
+			'myuser_dateemployment'=>dol_print_date($user->dateemployment, 'day', 'tzuser'),
+			'myuser_dateemploymentend'=>dol_print_date($user->dateemploymentend, 'day', 'tzuser'),
+			'myuser_gender'=>$user->gender,
 		);
 		// Retrieve extrafields
 		if (is_array($user->array_options) && count($user->array_options)) {
