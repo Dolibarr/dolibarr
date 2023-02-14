@@ -7441,6 +7441,33 @@ div.clipboardCPValue.hidewithsize {
 
 
 /* ============================================================================== */
+/* Virtual business card                                                          */
+/* ============================================================================== */
+
+.virtualcard-div {
+	overflow: hidden;
+	vertical-align: top;
+	/* background: #aaa; */
+}
+
+#virtualcard-iframe {
+	border: 40px solid #aaa;
+	vertical-align: top;
+	width: 10%;
+	min-width: 100px;
+	border-radius: 10px;
+	aspect-ratio: 0.6;
+}
+.nopointervent {
+	pointer-events: none;
+}
+.scalepreview {
+	/* transform: scale(0.5); */
+	zoom: 0.20;
+}
+
+
+/* ============================================================================== */
 /* CSS style used for small screen                                                */
 /* ============================================================================== */
 

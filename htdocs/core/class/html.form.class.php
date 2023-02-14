@@ -9784,7 +9784,7 @@ class Form
 	/**
 	 *	Return HTML to show the search and clear seach button
 	 *
-	 *  @param	string	$pos       position colon on liste value left or right
+	 *  @param	string	$pos       Position of colon on the list. Value 'left' or 'right'
 	 *  @return	string
 	 */
 	public function showFilterButtons($pos = '')
