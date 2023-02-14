@@ -177,5 +177,6 @@ ReminderType=Type de rappel
 AddReminder=Créer une notification de rappel automatique pour cet événement
 ErrorReminderActionCommCreation=Erreur lors de la création de la notification de rappel pour cet événement
 BrowserPush=Notification par Popup navigateur
+Reminders=Rappels
 ActiveByDefault=Activé par défaut
 Until=jusqu'à

@@ -139,7 +139,6 @@ SubscriptionsStatistics=Estadísticas de contribuciones
 NbOfSubscriptions=Numero de contribuciones
 AmountOfSubscriptions=Monto recaudado de las contribuciones
 TurnoverOrBudget=Facturación (para una empresa) o Presupuesto (para una fundación)
-DefaultAmount=Importe predeterminado de la contribución
 CanEditAmountDetail=El visitante puede elegir/editar el monto de su contribución independientemente del tipo de miembro
 MembersStatisticsByProperties=Estadísticas de miembros por naturaleza
 VATToUseForSubscriptions=Tasa de IVA a utilizar para las contribuciones
