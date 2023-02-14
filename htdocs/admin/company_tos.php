@@ -66,7 +66,7 @@ if ($action == 'uploadtos') {
 				$extensions_allowed = array('pdf');
 				if (in_array($extension_upload, $extensions_allowed)) {
 					$upload_dir = $conf->mycompany->dir_output . '/'.getDolGlobalString('COMPANY_TOS_UPLOAD_DIR', 'tos').'/';
-					if ($conf->global->MAIN_MULTILANGS && !empty($search_lang)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($search_lang)) {
 						$finaldirectory = $upload_dir . "/" . $search_lang . "/";
 					} else {
 						$finaldirectory = $upload_dir;
@@ -103,7 +103,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 // Configuration header
 $head = company_admin_prepare_head();
-print dol_get_fiche_head($head, 'tosadmin', '', -1, "");
+print dol_get_fiche_head($head, 'tosadmin', $langs->trans("TOSSetupPage"), -1, 'company');
 
 // Setup page goes here
 print '<span class="opacitymedium">' . $langs->trans("TOSSetupPage") . '</span><br><br>';
@@ -119,7 +119,7 @@ $option = $formadmin->select_language($search_lang, 'search_lang', 0, null, 1, 0
 $formfile->form_attach_new_file($_SERVER["PHP_SELF"] . '?action=uploadtos', '', 0, 0, 1, 50, '', $option, 1, '', 0, 'formuserfile', '', '', 0);
 print '</td></tr>';
 print '<tr>';
-print '<td>' . $langs->trans('TOSFileNameByDefault') . ':</td><td> ' . getDolGlobalString('COMPANY_TOS_FILE') . '</td>';
+print '<td>' . $langs->trans('TOSFileNameByDefault') . ':</td><td> ' . getDolGlobalString('é_TOS_FILE') . '</td>';
 print '</tr>';
 foreach ($langs_available as $key => $value) {
 	if (!empty(getDolGlobalString('COMPANY_TOS_FILE_' . $key))) {
@@ -128,7 +128,7 @@ foreach ($langs_available as $key => $value) {
 		print '</tr>';
 	}
 }
-print "</table>";
+print '</table>';
 print '<br>';
 
 // Page end
