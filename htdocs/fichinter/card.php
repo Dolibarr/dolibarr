@@ -456,7 +456,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
-	} elseif ($action == 'setcontract' && $user->rights->contrat->creer) {
+	} elseif ($action == 'setcontract' && $user->hasRight('contrat', 'creer')) {
 		// Set into a contract
 		$result = $object->set_contrat($user, GETPOST('contratid', 'int'));
 		if ($result < 0) {

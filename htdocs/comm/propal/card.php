@@ -789,7 +789,7 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'import_lines_from_object'
-		&& $user->rights->propal->creer
+		&& $user->hasRight('propal', 'creer')
 		&& $object->statut == Propal::STATUS_DRAFT
 		) {
 		// add lines from objectlinked

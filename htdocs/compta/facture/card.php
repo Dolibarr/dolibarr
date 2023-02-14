@@ -391,7 +391,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
-	} elseif ($action == 'setretainedwarrantyconditions' && $user->rights->facture->creer) {
+	} elseif ($action == 'setretainedwarrantyconditions' && $user->hasRight('facture', 'creer')) {
 		$object->fetch($id);
 		$object->retained_warranty_fk_cond_reglement = 0; // To clean property
 		$result = $object->setRetainedWarrantyPaymentTerms(GETPOST('retained_warranty_fk_cond_reglement', 'int'));
@@ -411,13 +411,13 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
-	} elseif ($action == 'setretainedwarranty' && $user->rights->facture->creer) {
+	} elseif ($action == 'setretainedwarranty' && $user->hasRight('facture', 'creer')) {
 		$object->fetch($id);
 		$result = $object->setRetainedWarranty(GETPOST('retained_warranty', 'float'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
-	} elseif ($action == 'setretainedwarrantydatelimit' && $user->rights->facture->creer) {
+	} elseif ($action == 'setretainedwarrantydatelimit' && $user->hasRight('facture', 'creer')) {
 		$object->fetch($id);
 		$result = $object->setRetainedWarrantyDateLimit(GETPOST('retained_warranty_date_limit', 'float'));
 		if ($result < 0) {
@@ -4684,7 +4684,7 @@ if ($action == 'create') {
 			print '<table id="retained-warranty-table" class="nobordernopadding centpercent"><tr><td>';
 			print $langs->trans('RetainedWarranty');
 			print '</td>';
-			if ($action != 'editretainedwarranty' && $user->rights->facture->creer && $object->statut == Facture::STATUS_DRAFT) {
+			if ($action != 'editretainedwarranty' && $user->hasRight('facture', 'creer') && $object->statut == Facture::STATUS_DRAFT) {
 				print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarranty&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('setretainedwarranty'), 1).'</a></td>';
 			}
 
@@ -4707,7 +4707,7 @@ if ($action == 'create') {
 			print '<table id="retained-warranty-cond-reglement-table"  class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditionsShortRetainedWarranty');
 			print '</td>';
-			if ($action != 'editretainedwarrantypaymentterms' && $user->rights->facture->creer && $object->statut == Facture::STATUS_DRAFT) {
+			if ($action != 'editretainedwarrantypaymentterms' && $user->hasRight('facture', 'creer') && $object->statut == Facture::STATUS_DRAFT) {
 				print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarrantypaymentterms&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('setPaymentConditionsShortRetainedWarranty'), 1).'</a></td>';
 			}
 
@@ -4742,7 +4742,7 @@ if ($action == 'create') {
 			print '<table id="retained-warranty-date-limit-table"  class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('RetainedWarrantyDateLimit');
 			print '</td>';
-			if ($action != 'editretainedwarrantydatelimit' && $user->rights->facture->creer && $object->statut == Facture::STATUS_DRAFT) {
+			if ($action != 'editretainedwarrantydatelimit' && $user->hasRight('facture', 'creer') && $object->statut == Facture::STATUS_DRAFT) {
 				print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarrantydatelimit&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('setretainedwarrantyDateLimit'), 1).'</a></td>';
 			}
 

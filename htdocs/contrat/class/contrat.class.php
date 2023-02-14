@@ -2062,7 +2062,7 @@ class Contrat extends CommonObject
 		$label = implode($this->getTooltipContentArray($params));
 
 		$linkclose = '';
-		if (empty($notooltip) && $user->rights->contrat->lire) {
+		if (empty($notooltip) && $user->hasRight('contrat', 'lire')) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowContract");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';

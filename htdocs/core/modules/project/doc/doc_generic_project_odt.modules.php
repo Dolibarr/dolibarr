@@ -945,25 +945,25 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListProposalsAssociatedProject",
 						'class' => 'Propal',
 						'table' => 'propal',
-						'test' => $conf->propal->enabled && $user->rights->propal->lire
+						'test' => $conf->propal->enabled && $user->hasRight('propal', 'lire')
 					),
 					'order' => array(
 						'title' => "ListOrdersAssociatedProject",
 						'class' => 'Commande',
 						'table' => 'commande',
-						'test' => $conf->commande->enabled && $user->rights->commande->lire
+						'test' => $conf->commande->enabled && $user->hasRight('commande', 'lire')
 					),
 					'invoice' => array(
 						'title' => "ListInvoicesAssociatedProject",
 						'class' => 'Facture',
 						'table' => 'facture',
-						'test' => $conf->facture->enabled && $user->rights->facture->lire
+						'test' => $conf->facture->enabled && $user->hasRight('facture', 'lire')
 					),
 					'invoice_predefined' => array(
 						'title' => "ListPredefinedInvoicesAssociatedProject",
 						'class' => 'FactureRec',
 						'table' => 'facture_rec',
-						'test' => $conf->facture->enabled && $user->rights->facture->lire
+						'test' => $conf->facture->enabled && $user->hasRight('facture', 'lire')
 					),
 					'proposal_supplier' => array(
 						'title' => "ListSupplierProposalsAssociatedProject",
@@ -987,7 +987,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListContractAssociatedProject",
 						'class' => 'Contrat',
 						'table' => 'contrat',
-						'test' => $conf->contrat->enabled && $user->rights->contrat->lire
+						'test' => $conf->contrat->enabled && $user->hasRight('contrat', 'lire')
 					),
 					'intervention' => array(
 						'title' => "ListFichinterAssociatedProject",
