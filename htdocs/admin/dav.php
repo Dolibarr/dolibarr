@@ -43,7 +43,7 @@ $arrayofparameters = array(
 	'DAV_RESTICT_ON_IP'=>array('css'=>'minwidth200', 'enabled'=>1),
 	'DAV_ALLOW_PRIVATE_DIR'=>array('css'=>'minwidth200', 'enabled'=>2),
 	'DAV_ALLOW_PUBLIC_DIR'=>array('css'=>'minwidth200', 'enabled'=>1),
-	'DAV_ALLOW_ECM_DIR'=>array('css'=>'minwidth200', 'enabled'=>! empty($conf->ecm->enabled))
+	'DAV_ALLOW_ECM_DIR'=>array('css'=>'minwidth200', 'enabled'=>isModEnabled('ecm'))
 );
 
 // To fix when dire does not exists
