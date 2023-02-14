@@ -1868,7 +1868,7 @@ class Contact extends CommonObject
 	 * Updates all roles (default contact for companies) according to values inside the ->roles array.
 	 * This is called by update of contact.
 	 *
-	 * @return float|int
+	 * @return void|int
 	 * @see fetchRoles()
 	 */
 	public function updateRoles()

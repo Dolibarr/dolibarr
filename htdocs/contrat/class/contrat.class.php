@@ -758,7 +758,7 @@ class Contrat extends CommonObject
 	 *
 	 *	@param		int				$only_services			0=Default, 1=Force only services (depending on setup, we may also have physical products in a contract)
 	 *	@param		int				$loadalsotranslation	0=Default, 1=Load also translations of product descriptions
-	 *  @return 	ContratLigne[]  						Return array of contract lines
+	 *  @return 	array|int  						Return array of contract lines
 	 */
 	public function fetch_lines($only_services = 0, $loadalsotranslation = 0)
 	{

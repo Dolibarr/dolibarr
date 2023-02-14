@@ -272,7 +272,7 @@ class Tasks extends DolibarrApi
 	 *
 	 * @url	GET {id}/roles
 	 *
-	 * @return int
+	 * @return array
 	 */
 	public function getRoles($id, $userid = 0)
 	{

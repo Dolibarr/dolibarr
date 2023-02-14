@@ -138,7 +138,7 @@ class DolLogsCollector extends MessagesCollector
 	 * Get logs
 	 *
 	 * @param string $path     Path
-	 * @return array
+	 * @return void
 	 */
 	public function getStorageLogs($path)
 	{

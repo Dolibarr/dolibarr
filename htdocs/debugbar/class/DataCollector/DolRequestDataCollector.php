@@ -62,7 +62,7 @@ class DolRequestDataCollector extends RequestDataCollector
 	/**
 	 *	Return widget settings
 	 *
-	 *  @return void
+	 *  @return array
 	 */
 	public function getWidgets()
 	{

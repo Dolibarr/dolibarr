@@ -654,7 +654,7 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
  *
  * @param	array		$authentication		Array of authentication information
  * @param	array		$order				Order info
- * @return	int								Id of new order
+ * @return	array							array of new order
  */
 function createOrder($authentication, $order)
 {

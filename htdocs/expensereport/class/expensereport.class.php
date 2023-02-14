@@ -2340,7 +2340,7 @@ class ExpenseReport extends CommonObject
 	 * Return list of people with permission to validate expense reports.
 	 * Search for permission "approve expense report"
 	 *
-	 * @return  array       Array of user ids
+	 * @return  array|int       Array of user ids, <0 if KO
 	 */
 	public function fetch_users_approver_expensereport()
 	{

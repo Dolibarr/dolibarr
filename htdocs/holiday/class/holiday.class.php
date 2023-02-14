@@ -1996,7 +1996,7 @@ class Holiday extends CommonObject
 	 * Return list of people with permission to validate leave requests.
 	 * Search for permission "approve leave requests"
 	 *
-	 * @return  array       Array of user ids
+	 * @return  array|int       Array of user ids, <0 if ko
 	 */
 	public function fetch_users_approver_holiday()
 	{
