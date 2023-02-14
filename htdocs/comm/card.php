@@ -1232,7 +1232,7 @@ if ($object->id > 0) {
 	/*
 	 * Latest interventions
 	 */
-	if (isModEnabled('ficheinter') && $user->rights->ficheinter->lire) {
+	if (isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire')) {
 		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_statut, f.duree as duration, f.datei as startdate, f.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
@@ -1572,7 +1572,7 @@ if ($object->id > 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddContract").'</a></div>';
 		}
 
-		if (isModEnabled('ficheinter') && $user->rights->ficheinter->creer && $object->status == 1) {
+		if (isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'creer') && $object->status == 1) {
 			$langs->load("fichinter");
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a></div>';
 		}

@@ -433,7 +433,7 @@ class pdf_beluga extends ModelePDFProjects
 						'table'=>'fichinter',
 						'datefieldname'=>'date_valid',
 						'disableamount'=>1,
-						'test'=>$conf->ficheinter->enabled && $user->rights->ficheinter->lire,
+						'test'=>$conf->ficheinter->enabled && $user->hasRight('ficheinter', 'lire'),
 						'lang'=>'interventions'),
 					'trip'=>array(
 						'name'=>"TripsAndExpenses",

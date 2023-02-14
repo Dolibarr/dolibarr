@@ -170,7 +170,7 @@ if ($object->thirdparty->client) {
 	}
 }
 
-if (isModEnabled('ficheinter') && $user->rights->ficheinter->lire) {
+if (isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire')) {
 	$elementTypeArray['fichinter'] = $langs->transnoentitiesnoconv('Interventions');
 }
 

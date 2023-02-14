@@ -1554,7 +1554,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					$langs->load("suppliers");
 					print dolGetButtonAction('', $langs->trans('AddSupplierInvoice'), 'default', DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
-				if (isModEnabled('ficheinter') && $user->rights->ficheinter->creer) {
+				if (isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'creer')) {
 					$langs->load("interventions");
 					print dolGetButtonAction('', $langs->trans('AddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}

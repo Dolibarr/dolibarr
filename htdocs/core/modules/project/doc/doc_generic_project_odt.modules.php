@@ -994,7 +994,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'class' => 'Fichinter',
 						'table' => 'fichinter',
 						'disableamount' => 1,
-						'test' => $conf->ficheinter->enabled && $user->rights->ficheinter->lire
+						'test' => $conf->ficheinter->enabled && $user->hasRight('ficheinter', 'lire')
 					),
 					'shipping' => array(
 						'title' => "ListShippingAssociatedProject",
