@@ -71,7 +71,7 @@ if (!empty($upload_dir)) {
 	$upload_dir = $temp_dir;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET'){
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 	$chunk_file = $temp_dir.'/'.$flowFilename.'.part'.$flowChunkNumber;
 	if (file_exists($chunk_file)) {
 		 header("HTTP/1.0 200 Ok");
