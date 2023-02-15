@@ -68,3 +68,5 @@ ConfirmReopenIntervention=Estás certo de que queres abrir de novo a intervenci�
 GenerateInter=Xerar intervención
 FichinterNoContractLinked=A intervención %s creouse sen un contrato ligado.
 ErrorFicheinterCompanyDoesNotExist=O terceiro non existe. Non se creou a intervención.
+NextDateToIntervention=Data para a próxima xeración de intervención
+NoIntervention=Sen intervención

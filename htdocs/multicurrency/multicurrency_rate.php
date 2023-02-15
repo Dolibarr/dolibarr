@@ -271,7 +271,7 @@ if (!in_array($action, array("updateRate", "deleteRate"))) {
 
 	print ' <td>'.$langs->trans('Date').'</td>';
 	print ' <td>';
-	print $form->selectDate($dateinput, 'dateinput', 0, 0, 1);
+	print $form->selectDate($dateinput, 'dateinput', 0, 0, 1, '', 1, 1);
 	print '</td>';
 
 	print '<td> '.$langs->trans('Currency').'</td>';

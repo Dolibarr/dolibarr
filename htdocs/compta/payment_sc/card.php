@@ -46,8 +46,6 @@ $confirm = GETPOST('confirm', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-// TODO ajouter regle pour restreindre acces paiement
-//$result = restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentSocialContribution($db);
 if ($id > 0) {
@@ -57,13 +55,15 @@ if ($id > 0) {
 	}
 }
 
+$result = restrictedArea($user, 'payment_sc', $id, '');
+
 
 /*
  * Actions
  */
 
 // Delete payment
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->charges->supprimer) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('tax', 'charges', 'supprimer')) {
 	$db->begin();
 
 	$result = $object->delete($user);
@@ -76,6 +76,16 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->char
 		$db->rollback();
 	}
 }
+
+/*if ($action == 'setdatep' && GETPOST('datepday') && $user->hasRight('tax', 'charges', 'creer')) {
+	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
+	$res = $object->update_date($datepaye);
+	if ($res === 0) {
+		setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans('PaymentDateUpdateFailed'), null, 'errors');
+	}
+}*/
 
 
 /*

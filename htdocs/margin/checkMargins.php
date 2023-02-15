@@ -176,7 +176,8 @@ if ($optioncss != '') {
 }
 
 // Show tabs
-$head = marges_prepare_head($user);
+$head = marges_prepare_head();
+
 $picto = 'margin';
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';

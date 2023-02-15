@@ -68,9 +68,9 @@ $somme = array();
 $input = $langs->trans("Name").";";
 for ($i = 0; $toutsujet[$i]; $i++) {
 	if ($object->format == "D") {
-		$input .= ''.dol_print_date($toutsujet[$i], 'dayhour').';';
+		$input .= dol_print_date($toutsujet[$i], 'dayhour').';';
 	} else {
-		$input .= ''.$toutsujet[$i].';';
+		$input .= $toutsujet[$i].';';
 	}
 }
 
@@ -80,7 +80,7 @@ if (strpos($object->sujet, '@') !== false) {
 	$input .= ";";
 	for ($i = 0; $toutsujet[$i]; $i++) {
 		$heures = explode("@", $toutsujet[$i]);
-		$input .= ''.$heures[1].';';
+		$input .= $heures[1].';';
 	}
 
 	$input .= "\r\n";

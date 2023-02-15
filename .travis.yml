@@ -95,19 +95,20 @@ notifications:
 
 install:
 - |
-  echo "Updating Composer"
-  rm $TRAVIS_BUILD_DIR/composer.json
-  rm $TRAVIS_BUILD_DIR/composer.lock
+  echo "Updating Composer config"
   composer -V
-  composer self-update
-  composer -n init
-  composer -n config vendor-dir htdocs/includes
+  #rm $TRAVIS_BUILD_DIR/composer.json
+  #rm $TRAVIS_BUILD_DIR/composer.lock
+  #composer -n init
+  #composer -n config vendor-dir htdocs/includes
   composer -n config -g vendor-dir htdocs/includes
   echo
 
 - |
-  echo "Installing Composer dependencies - PHP Unit, Parallel Lint, PHP CodeSniffer, PHP Vardump check - for $TRAVIS_PHP_VERSION"
+  echo "Update Composer version and Install tools - PHP Unit, Parallel Lint, PHP CodeSniffer, PHP Vardump check - for $TRAVIS_PHP_VERSION"
+  echo "(version 2.5 is bugged and generate phpunit error Exception: Serialization of 'Closure' is not allowed)"
   if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ]; then
+    composer self-update 2.2.18
     composer -n require phpunit/phpunit ^6 \
                         php-parallel-lint/php-parallel-lint ^1 \
                         php-parallel-lint/php-console-highlighter ^0 \
@@ -115,6 +116,7 @@ install:
                         squizlabs/php_codesniffer ^3
   fi
   if [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ]; then
+    composer self-update 2.2.18
     composer -n require phpunit/phpunit ^7 \
                         php-parallel-lint/php-parallel-lint ^1.2 \
                         php-parallel-lint/php-console-highlighter ^0 \
@@ -123,12 +125,15 @@ install:
   fi
   # phpunit 9 is required for php 8
   if [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+      composer self-update 2.4.4
       composer -n require --ignore-platform-reqs phpunit/phpunit ^8 \
                                                  php-parallel-lint/php-parallel-lint ^1.2 \
                                                  php-parallel-lint/php-console-highlighter ^0 \
                                                  php-parallel-lint/php-var-dump-check ~0.4 \
                                                  squizlabs/php_codesniffer ^3
   fi
+  # Remove non expected files
+  rm -fr /home/travis/build/Dolibarr/dolibarr/htdocs/includes/phpunit/php-code-coverage/src/Report/Html/Renderer/Template/js
   echo
 
 - |
@@ -450,6 +455,9 @@ script:
   php upgrade.php 16.0.0 17.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade16001700.log
   php upgrade2.php 16.0.0 17.0.0 > $TRAVIS_BUILD_DIR/upgrade16001700-2.log
   php step5.php 16.0.0 17.0.0 > $TRAVIS_BUILD_DIR/upgrade16001700-3.log
+  php upgrade.php 17.0.0 18.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade17001800.log
+  php upgrade2.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-2.log
+  php step5.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-3.log
   ls -alrt $TRAVIS_BUILD_DIR/
 
 - |

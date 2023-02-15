@@ -142,7 +142,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 				$px2->SetData($data2);
 				unset($data2);
 				$i = $startyear;
-				$legend = array();
+				/*$legend = array();
 				while ($i <= $endyear) {
 					if ($startmonth != 1) {
 						$legend[] = sprintf("%d/%d", $i - 2001, $i - 2000);
@@ -150,7 +150,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 						$legend[] = $i;
 					}
 					$i++;
-				}
+				}*/
 				$px2->SetLegend([$langs->trans("AmountOfBillsHT")]);
 				$px2->SetMaxValue($px2->GetCeilMaxValue());
 				$px2->SetWidth($WIDTH);

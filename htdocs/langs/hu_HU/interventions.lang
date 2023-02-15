@@ -68,3 +68,5 @@ ConfirmReopenIntervention=Biztosan vissza akarja nyitni a(z) <b>%s</b> beavatkoz
 GenerateInter=Beavatkozás generálása
 FichinterNoContractLinked=Az %s beavatkozás csatolt szerződés nélkül jött létre.
 ErrorFicheinterCompanyDoesNotExist=Társaság nem létezik. Beavatkozás nem jött létre.
+NextDateToIntervention=A következő beavatkozás dátumának generálása
+NoIntervention=No intervention

@@ -58,9 +58,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 $error = 0;
 if ($action == 'updateMask') {
-	$maskconstpropal = GETPOST('maskconstpropal', 'alpha');
+	$maskconstpropal = GETPOST('maskconstpropal', 'aZ09');
 	$maskpropal = GETPOST('maskpropal', 'alpha');
-	if ($maskconstpropal) {
+	if ($maskconstpropal && preg_match('/_MASK$/', $maskconstpropal)) {
 		$res = dolibarr_set_const($db, $maskconstpropal, $maskpropal, 'chaine', 0, '', $conf->entity);
 	}
 

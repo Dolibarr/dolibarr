@@ -32,18 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
-// Security check
-$socid = GETPOST('socid', 'int');
-$TSelectedProducts = GETPOST('products', 'array');
-$TSelectedCats = GETPOST('categories', 'array');
-
-if (!empty($user->socid)) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'societe', '', '');
-$result = restrictedArea($user, 'margins');
-
-
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -74,6 +62,17 @@ if (GETPOST('enddatemonth')) {
 $object = new Societe($db);
 $hookmanager->initHooks(array('margincustomerlist'));
 
+// Security check
+$socid = GETPOST('socid', 'int');
+$TSelectedProducts = GETPOST('products', 'array');
+$TSelectedCats = GETPOST('categories', 'array');
+
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'societe', '', '');
+$result = restrictedArea($user, 'margins');
+
 
 /*
  * View
@@ -90,7 +89,8 @@ $text = $langs->trans("Margins");
 //print load_fiche_titre($text);
 
 // Show tabs
-$head = marges_prepare_head($user);
+$head = marges_prepare_head();
+
 $titre = $langs->trans("Margins");
 $picto = 'margin';
 
@@ -157,7 +157,7 @@ print img_picto('', 'product').$form->multiselectarray('products', $TProducts, $
 print '</td></tr>';
 
 // Categories
-$TCats = $form->select_all_categories(0, array(), '', 64, 0, 1);
+$TCats = $form->select_all_categories('product', array(), '', 64, 0, 1);
 
 print '<tr>';
 print '<td class="titlefield">'.$langs->trans('Category').'</td>';

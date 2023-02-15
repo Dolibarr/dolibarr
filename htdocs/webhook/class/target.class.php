@@ -228,9 +228,12 @@ class Target extends CommonObject
 		if ($resultcreate <= 0) {
 			return $resultcreate;
 		}
-		$resultvalidate = $this->validate($user, $notrigger);
 
-		return $resultvalidate;
+		$resultvalidate = $this->validate($user, $notrigger);
+		if ($resultvalidate <= 0) {
+			return $resultvalidate;
+		}
+		return $this->id;
 	}
 
 	/**
@@ -385,7 +388,7 @@ class Target extends CommonObject
 		$sql .= $this->getFieldList('t');
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= " WHERE t.entity IN (".getEntity($this->table_element).")";
+			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
 		}
@@ -891,10 +894,8 @@ class Target extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		// Set here init that are not commonf fields
-		// $this->property1 = ...
-		// $this->property2 = ...
-
+		$this->url = "https://thisisunurl";
+		$this->trigger_codes = "ThisIsATestCode";
 		$this->initAsSpecimenCommon();
 	}
 
@@ -911,8 +912,8 @@ class Target extends CommonObject
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_target = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
-			$this->error = $this->error;
-			$this->errors = $this->errors;
+			$this->error = $objectline->error;
+			$this->errors = $objectline->errors;
 			return $result;
 		} else {
 			$this->lines = $result;

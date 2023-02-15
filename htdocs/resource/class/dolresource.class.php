@@ -52,6 +52,9 @@ class Dolresource extends CommonObject
 
 	public $type_label;
 
+	/**
+	 * @var string description
+	 */
 	public $description;
 
 	public $fk_country;
@@ -292,7 +295,7 @@ class Dolresource extends CommonObject
 		$sql .= " description=".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").",";
 		$sql .= " fk_country=".($this->country_id > 0 ? $this->country_id : "null").",";
 		$sql .= " fk_code_type_resource=".(isset($this->fk_code_type_resource) ? "'".$this->db->escape($this->fk_code_type_resource)."'" : "null").",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null')."";
+		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null');
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -619,7 +622,7 @@ class Dolresource extends CommonObject
 		$sql .= " element_type=".(isset($this->element_type) ? "'".$this->db->escape($this->element_type)."'" : "null").",";
 		$sql .= " busy=".(isset($this->busy) ? $this->busy : "null").",";
 		$sql .= " mandatory=".(isset($this->mandatory) ? $this->mandatory : "null").",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null')."";
+		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null');
 
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -762,6 +765,33 @@ class Dolresource extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$langs->load('resource');
+
+		$datas = [];
+
+		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("Resource").'</u>';
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		/*if (isset($this->status)) {
+			$datas['status'] = '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5);
+		}*/
+		if (isset($this->type_label)) {
+			$datas['label'] = '<br><b>'.$langs->trans("ResourceType").":</b> ".$this->type_label;
+		}
+
+		return $datas;
+	}
+
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      int		$withpicto					Add picto into link
@@ -777,15 +807,18 @@ class Dolresource extends CommonObject
 		global $conf, $langs, $hookmanager;
 
 		$result = '';
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Resource").'</u>';
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		/*if (isset($this->status)) {
-			$label.= '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5);
-		}*/
-		if (isset($this->type_label)) {
-			$label .= '<br><b>'.$langs->trans("ResourceType").":</b> ".$this->type_label;
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
 		}
+		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/resource/card.php?id='.$this->id;
 
@@ -806,8 +839,8 @@ class Dolresource extends CommonObject
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -820,7 +853,7 @@ class Dolresource extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;

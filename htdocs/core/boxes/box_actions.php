@@ -220,7 +220,9 @@ class box_actions extends ModeleBoxes
 		if (!empty($conf->global->SHOW_DIALOG_HOMEPAGE)) {
 			$actioncejour = false;
 			$contents = $this->info_box_contents;
-			$nblines = count($contents);
+			if (is_countable($contents) && count($contents) > 0) {
+				$nblines = count($contents);
+			}
 			if ($contents[0][0]['text'] != $langs->trans("NoActionsToDo")) {
 				$out .= '<div id="dialogboxaction" title="'.$nblines." ".$langs->trans("ActionsToDo").'">';
 				$out .= '<table width=100%>';

@@ -66,3 +66,7 @@ RepeatableIntervention=Sjabloon voor interventie
 ToCreateAPredefinedIntervention=Als u een vooraf gedefinieerde of terugkerende interventie wilt maken, maakt u een gemeenschappelijke interventie en converteert u deze naar een interventiesjabloon
 ConfirmReopenIntervention=Weet u zeker dat u de interventie <b>%s</b> weer wilt openen?
 GenerateInter=Genereer interventie
+FichinterNoContractLinked=Interventie %s is gemaakt zonder een gekoppeld contract.
+ErrorFicheinterCompanyDoesNotExist=Bedrijf bestaat niet. Interventie is niet gemaakt.
+NextDateToIntervention=Date for next intervention generation
+NoIntervention=No intervention

@@ -640,7 +640,8 @@ if ($id) {
 						foreach ($fieldlist as $field => $value) {
 							$showfield = 1;
 							$class = "left";
-							$valuetoshow = $obj->{$fieldlist[$field]};
+							$tmpvar = $fieldlist[$field];
+							$valuetoshow = $obj->$tmpvar;
 							if ($value == 'type_template') {
 								$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
 							}

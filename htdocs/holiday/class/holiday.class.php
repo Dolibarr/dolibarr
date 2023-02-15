@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1299,6 +1299,28 @@ class Holiday extends CommonObject
 		return $result;
 	}
 
+	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$langs->load('holiday');
+
+		$datas = [];
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Holiday").'</u>';
+		if (isset($this->statut)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
+		$datas['label'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+
+		return $datas;
+	}
 
 	/**
 	 *	Return clicable name (with picto eventually)
@@ -1314,11 +1336,18 @@ class Holiday extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Holiday").'</u>';
-		if (isset($this->statut)) {
-			$label .= ' '.$this->getLibStatut(5);
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
 		}
-		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/holiday/card.php?id='.$this->id;
 
@@ -1333,13 +1362,12 @@ class Holiday extends CommonObject
 			$url .= '&save_lastsearch_values=1';
 		}
 		//}
-
-		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.$url.'"'.$dataparams.' title="'.dol_escape_htmltag($label, 1).'" class="'.$classfortooltip.'">';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -1470,7 +1498,7 @@ class Holiday extends CommonObject
 		$sql .= " value = '".$this->db->escape($value)."'";
 		$sql .= " WHERE name = '".$this->db->escape($name)."'";
 
-		dol_syslog(get_class($this).'::updateConfCP name='.$name.'', LOG_DEBUG);
+		dol_syslog(get_class($this).'::updateConfCP name='.$name, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			return true;
@@ -1580,7 +1608,7 @@ class Holiday extends CommonObject
 					// We add a log for each user
 					$this->addLogCP($user->id, $userCounter['rowid'], $langs->trans('HolidaysMonthlyUpdate'), $newSolde, $userCounter['type']);
 
-					$result = $this->updateSoldeCP($userCounter['rowid'], $newSolde, $userCounter['type'], $langs->trans('HolidaysMonthlyUpdate'));
+					$result = $this->updateSoldeCP($userCounter['rowid'], $newSolde, $userCounter['type']);
 
 					if ($result < 0) {
 						$error++;
@@ -2418,5 +2446,40 @@ class Holiday extends CommonObject
 			$this->error = $this->db->error();
 			return -1;
 		}
+	}
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Label of holiday type (if known)
+	 *  @return		string		HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs;
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.$arraydata['user']->getNomUrl(-1).'</span>';
+		if (property_exists($this, 'fk_type')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Type").'</span> : ';
+			$return .= '<span class="info_box-label maxwidth100">'.arraydata['labeltype'].'</span>';
+		}
+		if (property_exists($this, 'date_debut') && property_exists($this, 'date_fin')) {
+			$return .= '<br><span class="info-box-label">'.dol_print_date($this->date_debut, 'day').'</span>';
+			$return .= ' <span class="opacitymedium">'.$langs->trans("To").'</span> ';
+			$return .= '<span class="info-box-label">'.dol_print_date($this->date_fin, 'day').'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

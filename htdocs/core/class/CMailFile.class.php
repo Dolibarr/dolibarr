@@ -908,7 +908,7 @@ class CMailFile
 
 					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 
-					$storage = new DoliStorage($db, $conf);
+					$storage = new DoliStorage($db, $conf, $keyforprovider);
 					try {
 						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 						$expire = false;
@@ -1030,7 +1030,7 @@ class CMailFile
 
 					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 
-					$storage = new DoliStorage($db, $conf);
+					$storage = new DoliStorage($db, $conf, $keyforprovider);
 
 					try {
 						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
@@ -1123,7 +1123,7 @@ class CMailFile
 				return 'Bad value for sendmode';
 			}
 
-			$parameters = array();
+			$parameters = array('sent' => $res);
 			$action = '';
 			$reshook = $hookmanager->executeHooks('sendMailAfter', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 			if ($reshook < 0) {

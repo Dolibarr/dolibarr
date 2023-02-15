@@ -146,7 +146,7 @@ function payment_supplier_prepare_head(Paiement $object)
  */
 function getValidOnlinePaymentMethods($paymentmethod = '')
 {
-	global $conf, $langs;
+	global $conf, $langs, $hookmanager, $action;
 
 	$validpaymentmethod = array();
 
@@ -162,8 +162,24 @@ function getValidOnlinePaymentMethods($paymentmethod = '')
 		$langs->load("stripe");
 		$validpaymentmethod['stripe'] = 'valid';
 	}
-	// TODO Add trigger
 
+	// This hook is used to complete the $validpaymentmethod array so an external payment modules
+	// can add its own key (ie 'payzen' for Payzen, ...)
+	$parameters = [
+		'paymentmethod' => $paymentmethod,
+		'validpaymentmethod' => &$validpaymentmethod
+	];
+	$tmpobject = new stdClass();
+	$reshook = $hookmanager->executeHooks('getValidPayment', $parameters, $tmpobject, $action);
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	} elseif (!empty($hookmanager->resArray['validpaymentmethod'])) {
+		if ($reshook == 0) {
+			$validpaymentmethod = array_merge($validpaymentmethod, $hookmanager->resArray['validpaymentmethod']);
+		} else {
+			$validpaymentmethod = $hookmanager->resArray['validpaymentmethod'];
+		}
+	}
 
 	return $validpaymentmethod;
 }

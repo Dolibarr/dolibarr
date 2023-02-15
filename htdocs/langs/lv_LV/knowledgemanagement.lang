@@ -46,8 +46,8 @@ KnowledgeRecords = Raksti
 KnowledgeRecord = Raksts
 KnowledgeRecordExtraFields = Raksta paplašinājumi
 GroupOfTicket=Biļešu grupa
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Ieteicams biļetēm, kad grupa ir
+YouCanLinkArticleToATicketCategory=Varat saistīt rakstu ar biļešu grupu (tāpēc raksts tiks izcelts uz visām šīs grupas biļetēm)
+SuggestedForTicketsInGroup=Ieteikts biļešu izveidē
 
 SetObsolete=Iestatīt kā novecojušu
 ConfirmCloseKM=Vai apstiprināt, ka šī raksta slēgšana ir novecojusi?

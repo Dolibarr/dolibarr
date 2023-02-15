@@ -59,7 +59,7 @@ class Receptions extends DolibarrApi
 	 * Return an array with reception informations
 	 *
 	 * @param       int         $id         ID of reception
-	 * @return 	array|mixed data without useless information
+	 * @return  	Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */
@@ -497,12 +497,12 @@ class Receptions extends DolibarrApi
 	 * This may record stock movements if module stock is enabled and option to
 	 * decrease stock on reception is on.
 	 *
-	 * @param   int $id             Reception ID
-	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
+	 * @param   int 	$id             Reception ID
+	 * @param   int 	$notrigger      1=Does not execute triggers, 0= execute triggers
 	 *
 	 * @url POST    {id}/validate
 	 *
-	 * @return  array
+	 * @return  Object
 	 * \todo An error 403 is returned if the request has an empty body.
 	 * Error message: "Forbidden: Content type `text/plain` is not supported."
 	 * Workaround: send this in the body
@@ -625,12 +625,12 @@ class Receptions extends DolibarrApi
 	/**
 	* Close a reception (Classify it as "Delivered")
 	*
-	* @param   int     $id             Reception ID
-	* @param   int     $notrigger      Disabled triggers
+	* @param   	int     $id             Reception ID
+	* @param   	int     $notrigger      Disabled triggers
 	*
 	* @url POST    {id}/close
 	*
-	* @return  int
+	* @return  Object
 	*/
 	public function close($id, $notrigger = 0)
 	{

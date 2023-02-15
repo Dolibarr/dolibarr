@@ -39,9 +39,7 @@ if (!defined('NOIPCHECK')) {
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
-if (!defined('NOIPCHECK')) {
-	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-}
+
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -224,6 +222,7 @@ if (empty($reshook) && $action == 'add') {
 			} else {
 				$thirdparty->name = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
 			}
+			$thirdparty->email = GETPOST('email');
 			$thirdparty->address = GETPOST('address');
 			$thirdparty->zip = GETPOST('zip');
 			$thirdparty->town = GETPOST('town');
@@ -289,7 +288,6 @@ if (empty($reshook) && $action == 'add') {
 		$proj->ref         = $defaultref;
 		$proj->statut      = $proj::STATUS_DRAFT;
 		$proj->status      = $proj::STATUS_DRAFT;
-		$proj->email       = GETPOST("email");
 		$proj->public      = 1;
 		$proj->usage_opportunity = 1;
 		$proj->title       = $langs->trans("LeadFromPublicForm");
@@ -371,11 +369,10 @@ if (empty($reshook) && $action == 'add') {
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
 					$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
-
 					if ($subjecttosend && $texttosend) {
 						$moreinheader = 'X-Dolibarr-Info: send_an_email by public/lead/new.php'."\r\n";
 
-						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+						$result = $object->sendEmail($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 					}
 					/*if ($result < 0) {
 						$error++;
@@ -417,7 +414,6 @@ if (empty($reshook) && $action == 'add') {
 }
 
 // Action called after a submitted was send and member created successfully
-// If MEMBER_URL_REDIRECT_SUBSCRIPTION is set to url we never go here because a redirect was done to this url.
 // backtopage parameter with an url was set on member submit page, we never go here because a redirect was done to this url.
 if (empty($reshook) && $action == 'added') {
 	llxHeaderVierge($langs->trans("NewLeadForm"));
@@ -452,7 +448,7 @@ print load_fiche_titre($langs->trans("NewContact"), '', '', 0, 0, 'center');
 print '<div align="center">';
 print '<div id="divsubscribe">';
 
-print '<div class="center subscriptionformhelptext justify">';
+print '<div class="center subscriptionformhelptext opacitymedium justify">';
 if (!empty($conf->global->PROJECT_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->PROJECT_NEWFORM_TEXT)."<br>\n";
 } else {

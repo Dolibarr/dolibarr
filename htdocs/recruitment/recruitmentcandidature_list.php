@@ -438,7 +438,7 @@ if ($jobposition->id > 0 && (empty($action) || ($action != 'edit' && $action != 
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, !empty($object->socid) ? $object->socid : 0, $object->fk_project, 'none', 0, 0, 0, 1);
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, !empty($object->socid) ? $object->socid : 0, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($object->fk_project)) {
@@ -571,7 +571,7 @@ if ($search_all) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 		$setupstring .= $key."=".$val.";";
 	}
-	print '<!-- Search done like if PRODUCT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
+	print '<!-- Search done like if RECRUITMENT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>'."\n";
 }
 
@@ -735,8 +735,18 @@ while ($i < $imaxinloop) {
 			print '<tr><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container">';
 		}
+		$recuitment = new RecruitmentJobPosition($db);
+		$recuitment->fetch($obj->fk_recruitmentjobposition);
+		$object->fk_recruitmentjobposition = $recuitment->getNomUrl();
+		$object->phone = $obj->phone;
 		// Output Kanban
-		print $object->getKanbanView('');
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($massactionbutton || $massaction) {
+				$selected = 0;
+			}
+			// Output Kanban
+			print $object->getKanbanView('');
+		}
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

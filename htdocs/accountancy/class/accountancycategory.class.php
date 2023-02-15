@@ -353,7 +353,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " formula=".(isset($this->formula) ? "'".$this->db->escape($this->formula)."'" : "null").",";
 		$sql .= " position=".(isset($this->position) ? $this->position : "null").",";
 		$sql .= " fk_country=".(isset($this->fk_country) ? $this->fk_country : "null").",";
-		$sql .= " active=".(isset($this->active) ? $this->active : "null")."";
+		$sql .= " active=".(isset($this->active) ? $this->active : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -446,7 +446,7 @@ class AccountancyCategory // extends CommonObject
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			$this->errors[] = $this->error;
-			dol_syslog(__METHOD__." ".implode(','.$this->errors), LOG_ERR);
+			dol_syslog(__METHOD__." ".implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -488,7 +488,7 @@ class AccountancyCategory // extends CommonObject
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			$this->errors[] = $this->error;
-			dol_syslog(__METHOD__." ".implode(','.$this->errors), LOG_ERR);
+			dol_syslog(__METHOD__." ".implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -606,60 +606,6 @@ class AccountancyCategory // extends CommonObject
 	}
 
 	/**
-	 * Function to know all custom groupd from an accounting account
-	 *
-	 * @return array|integer       Result in table (array), -1 if KO
-	 */
-	public function getCatsCpts()
-	{
-		global $mysoc, $conf;
-
-		if (empty($mysoc->country_id)) {
-			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
-			exit();
-		}
-
-		$sql = "SELECT t.rowid, t.account_number, t.label as account_label, cat.code, cat.position, cat.label as name_cat, cat.sens ";
-		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as t, ".MAIN_DB_PREFIX."c_accounting_category as cat";
-		$sql .= " WHERE t.fk_accounting_category IN ( SELECT c.rowid ";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c";
-		$sql .= " WHERE c.active = 1";
-		$sql .= " AND c.entity = ".$conf->entity;
-		$sql .= " AND (c.fk_country = ".((int) $mysoc->country_id)." OR c.fk_country = 0)";
-		$sql .= " AND cat.rowid = t.fk_accounting_category";
-		$sql .= " AND t.entity = ".$conf->entity;
-		$sql .= " ORDER BY cat.position ASC";
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$i = 0;
-			$obj = '';
-			$num = $this->db->num_rows($resql);
-			$data = array();
-			if ($num) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$name_cat = $obj->name_cat;
-					$data[$name_cat][$i] = array(
-							'id' => $obj->rowid,
-							'code' => $obj->code,
-							'position' => $obj->position,
-							'account_number' => $obj->account_number,
-							'account_label' => $obj->account_label,
-							'sens' => $obj->sens
-					);
-					$i++;
-				}
-			}
-			return $data;
-		} else {
-			$this->error = "Error ".$this->db->lasterror();
-			dol_syslog(__METHOD__." ".$this->error, LOG_ERR);
-
-			return -1;
-		}
-	}
-
-	/**
 	 * Function to show result of an accounting account from the ledger with a direction and a period
 	 *
 	 * @param int|array	$cpt 				Accounting account or array of accounting account
@@ -678,6 +624,22 @@ class AccountancyCategory // extends CommonObject
 		$this->sdc = 0;
 		$this->sdcpermonth = array();
 
+		if (is_array($cpt)) {
+			$listofaccount = '';
+			foreach ($cpt as $cptcursor) {
+				if (! is_null($cptcursor)) {
+					if ($listofaccount) {
+						$listofaccount .= ",";
+					}
+					$listofaccount .= "'".$cptcursor."'";
+				}
+			}
+			if (empty($listofaccount)) {
+				// List of account is empty, so we do no try sql request, we can say result is empty.
+				return 0;
+			}
+		}
+
 		$sql = "SELECT SUM(t.debit) as debit, SUM(t.credit) as credit";
 		if (is_array($cpt)) {
 			$sql .= ", t.numero_compte as accountancy_account";
@@ -686,13 +648,6 @@ class AccountancyCategory // extends CommonObject
 		//if (in_array($this->db->type, array('mysql', 'mysqli'))) $sql.=' USE INDEX idx_accounting_bookkeeping_doc_date';
 		$sql .= " WHERE t.entity = ".$conf->entity;
 		if (is_array($cpt)) {
-			$listofaccount = '';
-			foreach ($cpt as $cptcursor) {
-				if ($listofaccount) {
-					$listofaccount .= ",";
-				}
-				$listofaccount .= "'".$cptcursor."'";
-			}
 			$sql .= " AND t.numero_compte IN (".$this->db->sanitize($listofaccount, 1).")";
 		} else {
 			$sql .= " AND t.numero_compte = '".$this->db->escape($cpt)."'";
@@ -709,22 +664,28 @@ class AccountancyCategory // extends CommonObject
 		if (is_array($cpt)) {
 			$sql .= " GROUP BY t.numero_compte";
 		}
-		//print $sql;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			if ($num) {
-				$obj = $this->db->fetch_object($resql);
-				if ($sens == 1) {
-					$this->sdc = $obj->debit - $obj->credit;
-				} else {
-					$this->sdc = $obj->credit - $obj->debit;
-				}
-				if (is_array($cpt)) {
-					$this->sdcperaccount[$obj->accountancy_account] = $this->sdc;
+				$i = 0;
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
+					if ($obj) {
+						if ($sens == 1) {
+							$this->sdc = $obj->debit - $obj->credit;
+						} else {
+							$this->sdc = $obj->credit - $obj->debit;
+						}
+						if (is_array($cpt)) {
+							$this->sdcperaccount[$obj->accountancy_account] = $this->sdc;
+						}
+					}
+					$i++;
 				}
 			}
+
 			return $num;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
@@ -735,11 +696,74 @@ class AccountancyCategory // extends CommonObject
 	}
 
 	/**
+	 * Function to get an array of all active custom groups (llx_c_accunting_categories) with their accounts from the chart of account (ll_accounting_acount)
+	 *
+	 * @param	int				$catid		Custom group ID
+	 * @return 	array|integer   		    Result in table (array), -1 if KO
+	 * @see getCats(), getCptsCat()
+	 */
+	public function getCatsCpts($catid = 0)
+	{
+		global $mysoc, $conf;
+
+		if (empty($mysoc->country_id)) {
+			$this->error = "Error ".$this->db->lasterror();
+			dol_syslog(__METHOD__." ".$this->error, LOG_ERR);
+			return -1;
+		}
+
+		$sql = "SELECT t.rowid, t.account_number, t.label as account_label,";
+		$sql .= " cat.code, cat.position, cat.label as name_cat, cat.sens, cat.category_type, cat.formula";
+		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as t, ".MAIN_DB_PREFIX."c_accounting_category as cat";
+		$sql .= " WHERE t.fk_accounting_category IN (SELECT c.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c";
+		$sql .= " WHERE c.active = 1";
+		$sql .= " AND c.entity = ".$conf->entity;
+		$sql .= " AND (c.fk_country = ".((int) $mysoc->country_id)." OR c.fk_country = 0)";
+		$sql .= " AND cat.rowid = t.fk_accounting_category";
+		$sql .= " AND t.entity = ".$conf->entity;
+		if ($catid > 0) {
+			$sql .= " AND cat.rowid = ".((int) $catid);
+		}
+		$sql .= " ORDER BY cat.position ASC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = '';
+			$num = $this->db->num_rows($resql);
+			$data = array();
+			if ($num) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$name_cat = $obj->name_cat;
+					$data[$name_cat][$obj->rowid] = array(
+						'id' => $obj->rowid,
+						'code' => $obj->code,
+						'label' => $obj->label,
+						'position' => $obj->position,
+						'category_type' => $obj->category_type,
+						'formula' => $obj->formula,
+						'sens' => $obj->sens,
+						'account_number' => $obj->account_number,
+						'account_label' => $obj->account_label
+					);
+				}
+			}
+			return $data;
+		} else {
+			$this->error = "Error ".$this->db->lasterror();
+			dol_syslog(__METHOD__." ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
+
+	/**
 	 * Return list of custom groups.
+	 * For list + detail of accounting account, see getCatsCpt()
 	 *
 	 * @param	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
 	 * @param	int			$active				1= active, 0=not active
 	 * @return	array|int						Array of groups or -1 if error
+	 * @see getCatsCpts(), getCptsCat()
 	 */
 	public function getCats($categorytype = -1, $active = 1)
 	{
@@ -774,9 +798,10 @@ class AccountancyCategory // extends CommonObject
 							'rowid' => $obj->rowid,
 							'code' => $obj->code,
 							'label' => $obj->label,
-							'formula' => $obj->formula,
 							'position' => $obj->position,
 							'category_type' => $obj->category_type,
+							'formula' => $obj->formula,
+							'sens' => $obj->sens,
 							'bc' => $obj->sens
 					);
 					$i++;
@@ -794,12 +819,15 @@ class AccountancyCategory // extends CommonObject
 
 
 	/**
-	 * Get all accounting account of a custom group (or a list of custom groups).
+	 * Get all accounting account of a given custom group (or a list of custom groups).
 	 * You must choose between first parameter (personalized group) or the second (free criteria filter)
 	 *
 	 * @param 	int 		$cat_id 				Id if personalized accounting group/category
-	 * @param 	string 		$predefinedgroupwhere 	Sql criteria filter to select accounting accounts. This value must not come from an input of a user.
+	 * @param 	string 		$predefinedgroupwhere 	Sql criteria filter to select accounting accounts. This value must be sanitized and not come from an input of a user.
+	 * 												Example: "pcg_type = 'EXPENSE' AND fk_pcg_version = 'xx'"
+	 * 												Example: "fk_accounting_category = 99"
 	 * @return 	array|int							Array of accounting accounts or -1 if error
+	 * @see getCats(), getCatsCpts()
 	 */
 	public function getCptsCat($cat_id, $predefinedgroupwhere = '')
 	{

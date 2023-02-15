@@ -458,7 +458,7 @@ if ($result < 0) {
 			if ($day > ($max + 86400)) {
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
 			} else {
-				$datas[$i] = 0 + $solde + $subtotal;
+				$datas[$i] = $solde + $subtotal;
 			}
 			$datamin[$i] = $object->min_desired;
 			$dataall[$i] = $object->min_allowed;

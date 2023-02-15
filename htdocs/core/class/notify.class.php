@@ -71,6 +71,9 @@ class Notify
 		'ORDER_VALIDATE',
 		'PROPAL_VALIDATE',
 		'PROPAL_CLOSE_SIGNED',
+		'PROPAL_CLOSE_SIGNED_WEB',
+		'PROPAL_CLOSE_REFUSED',
+		'PROPAL_CLOSE_REFUSED_WEB',
 		'FICHINTER_VALIDATE',
 		'FICHINTER_ADD_CONTACT',
 		'ORDER_SUPPLIER_VALIDATE',
@@ -222,7 +225,7 @@ class Notify
 					$sql .= " AND s.rowid = ".((int) $socid);
 				}
 
-				dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
+				dol_syslog(__METHOD__." ".$notifcode.", ".$socid, LOG_DEBUG);
 
 				$resql = $this->db->query($sql);
 				if ($resql) {
@@ -260,7 +263,7 @@ class Notify
 					$sql .= " AND c.rowid = ".((int) $userid);
 				}
 
-				dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
+				dol_syslog(__METHOD__." ".$notifcode.", ".$socid, LOG_DEBUG);
 
 				$resql = $this->db->query($sql);
 				if ($resql) {
@@ -502,7 +505,28 @@ class Notify
 								$labeltouse = $conf->global->PROPAL_VALIDATE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalValidated", $link);
 								break;
+							case 'PROPAL_CLOSE_REFUSED':
+								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
+								$object_type = 'propal';
+								$labeltouse = $conf->global->PROPAL_CLOSE_REFUSED_TEMPLATE;
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedRefused", $link);
+								break;
+							case 'PROPAL_CLOSE_REFUSED_WEB':
+								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
+								$object_type = 'propal';
+								$labeltouse = $conf->global->PROPAL_CLOSE_REFUSED_TEMPLATE;
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedRefusedWeb", $link);
+								break;
 							case 'PROPAL_CLOSE_SIGNED':
+								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
+								$object_type = 'propal';
+								$labeltouse = $conf->global->PROPAL_CLOSE_SIGNED_TEMPLATE;
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedSigned", $link);
+								break;
+							case 'PROPAL_CLOSE_SIGNED_WEB':
 								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
 								$object_type = 'propal';
@@ -634,6 +658,11 @@ class Notify
 
 						$reshook = $hookmanager->executeHooks('formatNotificationMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 						if (empty($reshook)) {
+							if (!empty($hookmanager->resArray['files'])) {
+								$filename_list = $hookmanager->resArray['files']['file'];
+								$mimetype_list = $hookmanager->resArray['files']['mimefile'];
+								$mimefilename_list = $hookmanager->resArray['files']['filename'];
+							}
 							if (!empty($hookmanager->resArray['subject'])) {
 								$subject .= $hookmanager->resArray['subject'];
 							}
@@ -877,6 +906,11 @@ class Notify
 					$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list);
 					$reshook = $hookmanager->executeHooks('formatNotificationMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 					if (empty($reshook)) {
+						if (!empty($hookmanager->resArray['files'])) {
+							$filename_list = $hookmanager->resArray['files']['file'];
+							$mimetype_list = $hookmanager->resArray['files']['mimefile'];
+							$mimefilename_list = $hookmanager->resArray['files']['filename'];
+						}
 						if (!empty($hookmanager->resArray['subject'])) {
 							$subject .= $hookmanager->resArray['subject'];
 						}

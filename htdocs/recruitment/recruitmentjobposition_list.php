@@ -585,14 +585,21 @@ while ($i < $imaxinloop) {
 
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
+	$object->date_planned = $obj->date_planned;
+
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container">';
 		}
-		// Output Kanban
-		print $object->getKanbanView('');
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($massactionbutton || $massaction) {
+				$selected = 0;
+			}
+			// Output Kanban
+			print $object->getKanbanView('');
+		}
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

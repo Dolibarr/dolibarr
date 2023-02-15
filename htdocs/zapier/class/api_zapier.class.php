@@ -66,8 +66,8 @@ class Zapier extends DolibarrApi
 	 *
 	 * Return an array with hook informations
 	 *
-	 * @param   int             $id ID of hook
-	 * @return  array|mixed     data without useless information
+	 * @param   int             $id 	ID of hook
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @url GET /hooks/{id}
 	 * @throws  RestException

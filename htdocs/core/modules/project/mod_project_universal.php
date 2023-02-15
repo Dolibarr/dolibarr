@@ -62,7 +62,7 @@ class mod_project_universal extends ModeleNumRefProjects
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{

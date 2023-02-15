@@ -62,7 +62,7 @@ class Members extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -99,7 +99,7 @@ class Members extends DolibarrApi
 	 */
 	public function getByThirdparty($thirdparty)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -132,7 +132,7 @@ class Members extends DolibarrApi
 	 */
 	public function getByThirdpartyEmail($email)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -171,7 +171,7 @@ class Members extends DolibarrApi
 	 */
 	public function getByThirdpartyBarcode($barcode)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -217,7 +217,7 @@ class Members extends DolibarrApi
 
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -370,7 +370,7 @@ class Members extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->supprimer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'supprimer')) {
 			throw new RestException(401);
 		}
 		$member = new Adherent($this->db);
@@ -464,7 +464,7 @@ class Members extends DolibarrApi
 	{
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->adherent->cotisation->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -495,7 +495,7 @@ class Members extends DolibarrApi
 	 */
 	public function createSubscription($id, $start_date, $end_date, $amount, $label = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->cotisation->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'creer')) {
 			throw new RestException(401);
 		}
 

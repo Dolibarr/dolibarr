@@ -956,7 +956,7 @@ $( document ).ready(function() {
 		return {
 			vertical:container.scrollHeight > container.clientHeight,
 			horizontal:container.scrollWidth > container.clientWidth
-		};
+		}
 	}
 
 	$(window).resize(function(){

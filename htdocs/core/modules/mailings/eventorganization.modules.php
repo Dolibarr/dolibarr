@@ -188,7 +188,7 @@ class mailing_eventorganization extends MailingTargets
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 		$formproject = new FormProjets($this->db);
-		$s .= $formproject->select_projects(-1, 0, "filter_eventorganization", 0, 0, 1, 1, 0, 0, 0, '', 1, 0, '', '', 'usage_organize_event=1');
+		$s = $formproject->select_projects(-1, 0, "filter_eventorganization", 0, 0, 1, 1, 0, 0, 0, '', 1, 0, '', '', 'usage_organize_event=1');
 
 		return $s;
 	}

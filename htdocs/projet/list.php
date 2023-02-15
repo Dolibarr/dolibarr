@@ -152,7 +152,9 @@ $search_date_end_endmonth = GETPOST('search_date_end_endmonth', 'int');
 $search_date_end_endyear = GETPOST('search_date_end_endyear', 'int');
 $search_date_end_endday = GETPOST('search_date_end_endday', 'int');
 $search_date_end_end = dol_mktime(23, 59, 59, $search_date_end_endmonth, $search_date_end_endday, $search_date_end_endyear);	// Use tzserver
-$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
+if (isModEnabled('categorie')) {
+	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
+}
 
 if ($search_status == '') {
 	$search_status = -1; // -1 or 1
@@ -209,9 +211,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $arrayfields['s.nom'] = array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>21, 'enabled'=>(!isModEnabled('societe') ? 0 : 1));
 $arrayfields['s.name_alias'] = array('label'=>"AliasNameShort", 'checked'=>0, 'position'=>22);
 $arrayfields['commercial'] = array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>0, 'position'=>23);
-$arrayfields['c.assigned'] = array('label'=>$langs->trans("AssignedTo"), 'checked'=>-1, 'position'=>120);
-$arrayfields['opp_weighted_amount'] = array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'position'=> 116, 'enabled'=>(empty($conf->global->PROJECT_USE_OPPORTUNITIES) ? 0 : 1), 'position'=>106);
-$arrayfields['u.login'] = array('label'=>"Author", 'checked'=>1, 'position'=>165);
+$arrayfields['c.assigned'] = array('label'=>$langs->trans("AssignedTo"), 'checked'=>1, 'position'=>120);
+$arrayfields['opp_weighted_amount'] = array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'enabled'=>(empty($conf->global->PROJECT_USE_OPPORTUNITIES) ? 0 : 1), 'position'=>106);
+$arrayfields['u.login'] = array('label'=>"Author", 'checked'=>-1, 'position'=>165);
 // Force some fields according to search_usage filter...
 if (GETPOST('search_usage_opportunity')) {
 	//$arrayfields['p.usage_opportunity']['visible'] = 1;	// Not require, filter on search_opp_status is enough
@@ -1187,14 +1189,13 @@ if (!empty($arrayfields['p.import_key']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
-	print '<td class="liste_titre nowrap right">';
+	print '<td class="liste_titre center parentonrightofpage">';
 	$arrayofstatus = array();
 	foreach ($object->statuts_short as $key => $val) {
 		$arrayofstatus[$key] = $langs->trans($val);
 	}
 	$arrayofstatus['99'] = $langs->trans("NotClosed").' ('.$langs->trans('Draft').' + '.$langs->trans('Opened').')';
-	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'minwidth75imp maxwidth125 selectarrowonleft onrightofpage');
-	print ajax_combobox('search_status');
+	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage', 1);
 	print '</td>';
 }
 // Action column
@@ -1298,7 +1299,7 @@ if (!empty($arrayfields['p.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['p.import_key']['label'], $_SERVER["PHP_SELF"], "p.import_key", "", $param, '', $sortfield, $sortorder, '');
 }
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
-	print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
@@ -1332,6 +1333,7 @@ while ($i < $imaxinloop) {
 
 	$userAccess = $object->restrictedProjectArea($user); // why this ?
 	if ($userAccess >= 0) {
+		// Thirdparty
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->name;
 		$companystatic->name_alias = $obj->alias;
@@ -1343,6 +1345,21 @@ while ($i < $imaxinloop) {
 		$companystatic->zip = $obj->zip;
 		$companystatic->town = $obj->town;
 		$companystatic->country_code = $obj->country_code;
+
+		// Author
+		$userstatic->id = $obj->fk_user_creat;
+		$userstatic->login = $obj->login;
+		$userstatic->lastname = $obj->lastname;
+		$userstatic->firstname = $obj->firstname;
+		$userstatic->email = $obj->user_email;
+		$userstatic->statut = $obj->user_statut;
+		$userstatic->entity = $obj->entity;
+		$userstatic->photo = $obj->photo;
+		$userstatic->office_phone = $obj->office_phone;
+		$userstatic->office_fax = $obj->office_fax;
+		$userstatic->user_mobile = $obj->user_mobile;
+		$userstatic->job = $obj->job;
+		$userstatic->gender = $obj->gender;
 
 		print '<tr class="oddeven">';
 
@@ -1497,12 +1514,25 @@ while ($i < $imaxinloop) {
 				if (!empty($numcontact)) {
 					foreach ($tab as $contactproject) {
 						//var_dump($contacttask);
+						$cid = $contactproject['id'];
 						if ($source == 'internal') {
-							$c = new User($db);
+							if (empty($conf->cache['user'][$cid])) {
+								$c = new User($db);
+								$c->fetch($cid);
+								$conf->cache['user'][$cid] = $c;
+							} else {
+								$c = $conf->cache['user'][$cid];
+							}
 						} else {
-							$c = new Contact($db);
+							if (empty($conf->cache['contact'][$cid])) {
+								$c = new Contact($db);
+								$c->fetch($cid);
+								$conf->cache['contact'][$cid] = $c;
+							} else {
+								$c = $conf->cache['contact'][$cid];
+							}
 						}
-						$c->fetch($contactproject['id']);
+
 						if (!empty($c->photo)) {
 							if (get_class($c) == 'User') {
 								print $c->getNomUrl(-2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
@@ -1542,7 +1572,11 @@ while ($i < $imaxinloop) {
 			//if ($obj->opp_status_code)
 			if (strcmp($obj->opp_amount, '')) {
 				print '<span class="amount">'.price($obj->opp_amount, 1, $langs, 1, -1, -1, '').'</span>';
-				$totalarray['val']['p.opp_amount'] += $obj->opp_amount;
+				if (empty($totalarray['val']['p.opp_amount'])) {
+					$totalarray['val']['p.opp_amount'] = $obj->opp_amount;
+				} else {
+					$totalarray['val']['p.opp_amount'] += $obj->opp_amount;
+				}
 			}
 			print '</td>';
 			if (!$i) {
@@ -1571,7 +1605,11 @@ while ($i < $imaxinloop) {
 			print '<td align="right">';
 			if ($obj->opp_weighted_amount) {
 				print '<span class="amount">'.price($obj->opp_weighted_amount, 1, $langs, 1, -1, -1, '').'</span>';
-				$totalarray['val']['opp_weighted_amount'] += $obj->opp_weighted_amount;
+				if (empty($totalarray['val']['opp_weighted_amount'])) {
+					$totalarray['val']['opp_weighted_amount'] = $obj->opp_weighted_amount;
+				} else {
+					$totalarray['val']['opp_weighted_amount'] += $obj->opp_weighted_amount;
+				}
 			}
 			print '</td>';
 			if (!$i) {
@@ -1586,7 +1624,11 @@ while ($i < $imaxinloop) {
 			print '<td class="right">';
 			if ($obj->budget_amount != '') {
 				print '<span class="amount">'.price($obj->budget_amount, 1, $langs, 1, -1, -1).'</span>';
-				$totalarray['val']['p.budget_amount'] += $obj->budget_amount;
+				if (empty($totalarray['val']['p.budget_amount'])) {
+					$totalarray['val']['p.budget_amount'] = $obj->budget_amount;
+				} else {
+					$totalarray['val']['p.budget_amount'] += $obj->budget_amount;
+				}
 			}
 			print '</td>';
 			if (!$i) {
@@ -1692,20 +1734,6 @@ while ($i < $imaxinloop) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'p.price_booth';
 			}
 		}
-		// Author
-		$userstatic->id = $obj->fk_user_creat;
-		$userstatic->login = $obj->login;
-		$userstatic->lastname = $obj->lastname;
-		$userstatic->firstname = $obj->firstname;
-		$userstatic->email = $obj->user_email;
-		$userstatic->statut = $obj->user_statut;
-		$userstatic->entity = $obj->entity;
-		$userstatic->photo = $obj->photo;
-		$userstatic->office_phone = $obj->office_phone;
-		$userstatic->office_fax = $obj->office_fax;
-		$userstatic->user_mobile = $obj->user_mobile;
-		$userstatic->job = $obj->job;
-		$userstatic->gender = $obj->gender;
 
 		if (!empty($arrayfields['u.login']['checked'])) {
 			print '<td class="center tdoverflowmax150">';
@@ -1759,7 +1787,7 @@ while ($i < $imaxinloop) {
 		}
 		// Status
 		if (!empty($arrayfields['p.fk_statut']['checked'])) {
-			print '<td class="right">'.$object->getLibStatut(5).'</td>';
+			print '<td class="center">'.$object->getLibStatut(5).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

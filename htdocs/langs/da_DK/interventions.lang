@@ -68,3 +68,5 @@ ConfirmReopenIntervention=Er du sikker på, at du vil åbne interventionen <b> %
 GenerateInter=Generer intervention
 FichinterNoContractLinked=Intervention %s er blevet oprettet uden en tilknyttet kontrakt.
 ErrorFicheinterCompanyDoesNotExist=Virksomheden eksisterer ikke. Intervention er ikke blevet oprettet.
+NextDateToIntervention=Dato for næste interventionsgeneration
+NoIntervention=Ingen indgriben

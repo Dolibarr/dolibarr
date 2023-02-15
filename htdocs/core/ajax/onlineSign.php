@@ -219,6 +219,10 @@ if ($action == "importSignature") {
 						if ($result < 0) {
 							$error++;
 						}
+						$result = $object->call_trigger('PROPAL_CLOSE_SIGNED_WEB', $user);
+						if ($result < 0) {
+							$error++;
+						}
 					}
 				} else {
 					$db->rollback();

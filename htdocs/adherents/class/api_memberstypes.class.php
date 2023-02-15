@@ -55,7 +55,7 @@ class MembersTypes extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -92,7 +92,7 @@ class MembersTypes extends DolibarrApi
 
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -151,7 +151,7 @@ class MembersTypes extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->configurer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'configurer')) {
 			throw new RestException(401);
 		}
 		// Check mandatory fields
@@ -176,7 +176,7 @@ class MembersTypes extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->configurer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'configurer')) {
 			throw new RestException(401);
 		}
 
@@ -216,7 +216,7 @@ class MembersTypes extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->configurer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'configurer')) {
 			throw new RestException(401);
 		}
 		$membertype = new AdherentType($this->db);

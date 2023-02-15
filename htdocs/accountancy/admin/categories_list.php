@@ -190,7 +190,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
 		}
 	}
-	if (!is_numeric(GETPOST('position', 'alpha'))) {
+	if (GETPOST('position') && !is_numeric(GETPOST('position', 'alpha'))) {
 		$langs->loadLangs(array("errors"));
 		$ok = 0;
 		setEventMessages($langs->transnoentities('ErrorFieldMustBeANumeric', $langs->transnoentities("Position")), null, 'errors');
@@ -444,15 +444,37 @@ if ($search_country_id > 0) {
 if ($sortfield == 'country') {
 	$sortfield = 'country_code';
 }
+if (empty($sortfield)) {
+	$sortfield = 'position';
+}
+
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($listlimit + 1, $offset);
 //print $sql;
 
 $fieldlist = explode(',', $tabfield[$id]);
 
+$param = '&id='.$id;
+if ($search_country_id > 0) {
+	$param .= '&search_country_id='.urlencode($search_country_id);
+}
+$paramwithsearch = $param;
+if ($sortorder) {
+	$paramwithsearch .= '&sortorder='.urlencode($sortorder);
+}
+if ($sortfield) {
+	$paramwithsearch .= '&sortfield='.urlencode($sortfield);
+}
+if (GETPOST('from', 'alpha')) {
+	$paramwithsearch .= '&from='.urlencode(GETPOST('from', 'alpha'));
+}
+
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
+print '<input type="hidden" name="sortfield" value="'.dol_escape_htmltag($sortfield).'">';
+print '<input type="hidden" name="sortorder" value="'.dol_escape_htmltag($sortorder).'">';
+
 
 print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
@@ -571,20 +593,6 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	$param = '&id='.$id;
-	if ($search_country_id > 0) {
-		$param .= '&search_country_id='.urlencode($search_country_id);
-	}
-	$paramwithsearch = $param;
-	if ($sortorder) {
-		$paramwithsearch .= '&sortorder='.$sortorder;
-	}
-	if ($sortfield) {
-		$paramwithsearch .= '&sortfield='.$sortfield;
-	}
-	if (GETPOST('from', 'alpha')) {
-		$paramwithsearch .= '&from='.GETPOST('from', 'alpha');
-	}
 	// There is several pages
 	if ($num > $listlimit) {
 		print '<tr class="none"><td class="right" colspan="'.(3 + count($fieldlist)).'">';
@@ -605,7 +613,7 @@ if ($resql) {
 		if ($showfield) {
 			if ($value == 'country') {
 				print '<td class="liste_titre">';
-				print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth200 maxwidthonsmartphone');
+				print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth150 maxwidthonsmartphone');
 				print '</td>';
 				$filterfound++;
 			} else {
@@ -725,11 +733,11 @@ if ($resql) {
 				print '<td></td>';
 				print '<td></td>';
 				print '<td class="center">';
+				print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
 				print '<input type="hidden" name="page" value="'.$page.'">';
 				print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-				print '<input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
-				print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
-				print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+				print '<input type="submit" class="button button-edit smallpaddingimp" name="actionmodify" value="'.$langs->trans("Modify").'">';
+				print '<input type="submit" class="button button-cancel smallpaddingimp" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 				print '</td>';
 				print '<td></td>';
 			} else {
@@ -743,7 +751,8 @@ if ($resql) {
 					foreach ($fieldlist as $field => $value) {
 						$showfield = 1;
 						$class = "left";
-						$valuetoshow = $obj->{$fieldlist[$field]};
+						$tmpvar = $fieldlist[$field];
+						$valuetoshow = $obj->$tmpvar;
 						if ($value == 'category_type') {
 							$valuetoshow = yn($valuetoshow);
 						} elseif ($valuetoshow == 'all') {
@@ -822,7 +831,7 @@ if ($resql) {
 				}
 
 				// Link to setup the group
-				print '<td class="center">';
+				print '<td>';
 				if (empty($obj->formula)) {
 					print '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories.php?action=display&save_lastsearch_values=1&account_category='.$obj->rowid.'">';
 					print $langs->trans("ListOfAccounts");
@@ -887,10 +896,10 @@ function fieldListAccountingCategories($fieldlist, $obj = '', $tabname = '', $co
 			if ($context == 'add') {
 				$fieldname = 'country_id';
 				$preselectcountrycode = GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : $mysoc->country_code;
-				print $form->select_country($preselectcountrycode, $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
+				print $form->select_country($preselectcountrycode, $fieldname, '', 28, 'maxwidth150 maxwidthonsmartphone');
 			} else {
 				$preselectcountrycode = (empty($obj->country_code) ? (empty($obj->country) ? $mysoc->country_code : $obj->country) : $obj->country_code);
-				print $form->select_country($preselectcountrycode, $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
+				print $form->select_country($preselectcountrycode, $fieldname, '', 28, 'maxwidth150 maxwidthonsmartphone');
 			}
 			print '</td>';
 		} elseif ($fieldlist[$field] == 'country_id') {

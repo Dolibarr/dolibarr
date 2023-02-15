@@ -44,6 +44,7 @@ $result = restrictedArea($user, 'banque', '', '');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_account = GETPOST('search_account', 'int');
 $search_amount = GETPOST('search_amount', 'alpha');
+$mode = GETPOST('mode', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -149,6 +150,9 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 	$param = '';
+	if (!empty($mode)) {
+		$param .= '&mode='.urlencode($mode);
+	}
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.$contextpage;
 	}
@@ -160,7 +164,10 @@ if ($resql) {
 	if (!empty($socid)) {
 		$url .= '&socid='.$socid;
 	}
-	$newcardbutton = dolGetButtonTitle($langs->trans('NewCheckDeposit'), '', 'fa fa-plus-circle', $url, '', $user->rights->banque->cheque);
+	$newcardbutton  = '';
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCheckDeposit'), '', 'fa fa-plus-circle', $url, '', $user->rights->banque->cheque);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') {
@@ -172,6 +179,8 @@ if ($resql) {
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
+
 
 	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit);
 
@@ -220,42 +229,64 @@ if ($resql) {
 		while ($i < min($num, $limit)) {
 			$objp = $db->fetch_object($resql);
 
-			print '<tr class="oddeven">';
-
-			// Num ref cheque
-			print '<td>';
 			$checkdepositstatic->id = $objp->rowid;
 			$checkdepositstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
 			$checkdepositstatic->statut = $objp->statut;
-			print $checkdepositstatic->getNomUrl(1);
-			print '</td>';
+			$checkdepositstatic->nbcheque = $objp->nbcheque;
+			$checkdepositstatic->amount = $objp->amount;
+			$checkdepositstatic->date_bordereau = $objp->date_bordereau;
 
-			// Date
-			print '<td class="center">'.dol_print_date($db->jdate($objp->date_bordereau), 'day').'</td>'; // TODO Use date hour
+			$account = new Account($db);
+			$account->fetch($objp->bid);
+			$checkdepositstatic->account_id = $account->getNomUrl(1);
 
-			// Bank
-			print '<td>';
-			if ($objp->bid) {
-				print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"), 'account').' '.$objp->label.'</a>';
+			if ($mode == 'kanban') {
+				if ($i == 0) {
+					print '<tr><td colspan="12">';
+					print '<div class="box-flex-container">';
+				}
+				// Output Kanban
+				print $checkdepositstatic->getKanbanView('');
+				if ($i == (min($num, $limit) - 1)) {
+					print '</div>';
+					print '</td></tr>';
+				}
 			} else {
-				print '&nbsp;';
+				print '<tr class="oddeven">';
+
+				// Num ref cheque
+				print '<td>';
+
+				print $checkdepositstatic->getNomUrl(1);
+				print '</td>';
+
+				// Date
+				print '<td class="center">'.dol_print_date($db->jdate($objp->date_bordereau), 'day').'</td>'; // TODO Use date hour
+
+				// Bank
+				print '<td>';
+				if ($objp->bid) {
+					print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"), 'account').' '.$objp->label.'</a>';
+				} else {
+					print '&nbsp;';
+				}
+				print '</td>';
+
+				// Number of cheques
+				print '<td class="right">'.$objp->nbcheque.'</td>';
+
+				// Amount
+				print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
+
+				// Statut
+				print '<td class="right">';
+				print $checkdepositstatic->LibStatut($objp->statut, 5);
+				print '</td>';
+
+				print '<td></td>';
+
+				print "</tr>\n";
 			}
-			print '</td>';
-
-			// Number of cheques
-			print '<td class="right">'.$objp->nbcheque.'</td>';
-
-			// Amount
-			print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
-
-			// Statut
-			print '<td class="right">';
-			print $checkdepositstatic->LibStatut($objp->statut, 5);
-			print '</td>';
-
-			print '<td></td>';
-
-			print "</tr>\n";
 			$i++;
 		}
 	} else {

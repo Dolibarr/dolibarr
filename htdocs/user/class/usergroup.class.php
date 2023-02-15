@@ -7,6 +7,7 @@
  * Copyright (C) 2014		Alexis Algoud		 <alexis@atm-consulting.fr>
  * Copyright (C) 2018       Nicolas ZABOURI		 <info@inovea-conseil.com>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
+ * Copyright (C) 2023       Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-if (!empty($conf->ldap->enabled)) {
+if (isModEnabled('ldap')) {
 	require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 }
 
@@ -100,8 +101,14 @@ class UserGroup extends CommonObject
 	public $members = array(); // Array of users
 
 	public $nb_rights; // Number of rights granted to the user
+	public $nb_users;  // Number of users in the group
 
 	private $_tab_loaded = array(); // Array of cache of already loaded permissions
+
+	/**
+	 * @var int all_permissions_are_loaded
+	 */
+	public $all_permissions_are_loaded;
 
 	public $oldcopy; // To contains a clone of this when we need to save old properties of object
 
@@ -151,7 +158,7 @@ class UserGroup extends CommonObject
 	 *  @param		boolean	$load_members	Load all members of the group
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	public function fetch($id = '', $groupname = '', $load_members = true)
+	public function fetch($id = '', $groupname = '', $load_members = false)
 	{
 		global $conf;
 
@@ -166,7 +173,7 @@ class UserGroup extends CommonObject
 
 		if ($result) {
 			if ($load_members) {
-				$this->members = $this->listUsersForGroup();
+				$this->members = $this->listUsersForGroup();	// This make a lot of subrequests
 			}
 
 			return 1;
@@ -180,9 +187,9 @@ class UserGroup extends CommonObject
 	/**
 	 *  Return array of groups objects for a particular user
 	 *
-	 *  @param		int		$userid 		User id to search
-	 *  @param		boolean	$load_members	Load all members of the group
-	 *  @return		array     				Array of groups objects
+	 *  @param		int			$userid 		User id to search
+	 *  @param		boolean		$load_members	Load all members of the group
+	 *  @return		array|int     				Array of groups objects
 	 */
 	public function listGroupsForUser($userid, $load_members = true)
 	{
@@ -237,7 +244,7 @@ class UserGroup extends CommonObject
 
 		$ret = array();
 
-		$sql = "SELECT u.rowid";
+		$sql = "SELECT u.rowid, u.login, u.lastname, u.firstname, u.photo, u.fk_soc, u.entity, u.employee, u.email";
 		if (!empty($this->id)) {
 			$sql .= ", ug.entity as usergroup_entity";
 		}
@@ -263,12 +270,23 @@ class UserGroup extends CommonObject
 
 		dol_syslog(get_class($this)."::listUsersForGroup", LOG_DEBUG);
 		$resql = $this->db->query($sql);
+
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				if (!array_key_exists($obj->rowid, $ret)) {
 					if ($mode != 1) {
 						$newuser = new User($this->db);
-						$newuser->fetch($obj->rowid);
+						//$newuser->fetch($obj->rowid);		// We are inside a loop, no subrequests inside a loop
+						$newuser->id = $obj->rowid;
+						$newuser->login = $obj->login;
+						$newuser->photo = $obj->photo;
+						$newuser->lastname = $obj->lastname;
+						$newuser->firstname = $obj->firstname;
+						$newuser->email = $obj->email;
+						$newuser->socid = $obj->fk_soc;
+						$newuser->entity = $obj->entity;
+						$newuser->employee = $obj->employee;
+
 						$ret[$obj->rowid] = $newuser;
 					} else {
 						$ret[$obj->rowid] = $obj->rowid;
@@ -544,7 +562,7 @@ class UserGroup extends CommonObject
 	 *  Charge dans l'objet group, la liste des permissions auquels le groupe a droit
 	 *
 	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
-	 *	@return     int						<0 if KO, >0 if OK
+	 *	@return     int						<0 if KO, >=0 if OK
 	 */
 	public function getrights($moduletag = '')
 	{
@@ -552,12 +570,12 @@ class UserGroup extends CommonObject
 
 		if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag]) {
 			// Rights for this module are already loaded, so we leave
-			return;
+			return 0;
 		}
 
 		if (!empty($this->all_permissions_are_loaded)) {
 			// We already loaded all rights for this group, so we leave
-			return;
+			return 0;
 		}
 
 		/*
@@ -707,6 +725,33 @@ class UserGroup extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $menumanager;
+
+		$option = $params['option'] ?? '';
+
+		$datas = [];
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			$langs->load("users");
+			return ['optimize' => $langs->trans("ShowGroup")];
+		}
+		$datas['divopen'] = '<div class="centpercent">';
+		$datas['picto'] = img_picto('', 'group').' <u>'.$langs->trans("Group").'</u><br>';
+		$datas['name'] = '<b>'.$langs->trans('Name').':</b> '.$this->name;
+		$datas['description'] = '<br><b>'.$langs->trans("Description").':</b> '.$this->note;
+		$datas['divclose'] = '</div>';
+
+		return $datas;
+	}
+
+	/**
 	 *  Return a link to the user card (with optionaly the picto)
 	 *  Use this->id,this->lastname, this->firstname
 	 *
@@ -727,13 +772,20 @@ class UserGroup extends CommonObject
 			$withpicto = 0;
 		}
 
-		$result = ''; $label = '';
-
-		$label .= '<div class="centpercent">';
-		$label .= img_picto('', 'group').' <u>'.$langs->trans("Group").'</u><br>';
-		$label .= '<b>'.$langs->trans('Name').':</b> '.$this->name;
-		$label .= '<br><b>'.$langs->trans("Description").':</b> '.$this->note;
-		$label .= '</div>';
+		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
+		}
+		$label = implode($this->getTooltipContentArray($params));
 
 		if ($option == 'permissions') {
 			$url = DOL_URL_ROOT.'/user/group/perms.php?id='.$this->id;
@@ -760,7 +812,7 @@ class UserGroup extends CommonObject
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -769,7 +821,7 @@ class UserGroup extends CommonObject
 
 		$result = $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.'class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->name;
@@ -916,5 +968,34 @@ class UserGroup extends CommonObject
 		$modelpath = "core/modules/usergroup/doc/";
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+	}
+
+		/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if (property_exists($this, 'members')) {
+			$return .= '<br><span class="info-box-status opacitymedium">'.(empty($this->nb_users) ? 0 : $this->nb_users).' '.$langs->trans('Users').'</span>';
+		}
+		if (property_exists($this, 'nb_rights')) {
+			$return .= '<br><div class="info-box-status margintoponly opacitymedium">'.$langs->trans('NbOfPermissions').' : '.(empty($this->nb_rights) ? 0 : $this->nb_rights).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

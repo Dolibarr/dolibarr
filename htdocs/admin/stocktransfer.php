@@ -64,10 +64,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 
 if ($action == 'updateMask') {
-	$maskconststocktransfer = GETPOST('maskconststocktransfer', 'alpha');
+	$maskconststocktransfer = GETPOST('maskconststocktransfer', 'aZ09');
 	$maskstocktransfer = GETPOST('maskStockTransfer', 'alpha');
 
-	if ($maskconststocktransfer) {
+	if ($maskconststocktransfer && preg_match('/_MASK$/', $maskconststocktransfer)) {
 		$res = dolibarr_set_const($db, $maskconststocktransfer, $maskstocktransfer, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) $error++;
 	}

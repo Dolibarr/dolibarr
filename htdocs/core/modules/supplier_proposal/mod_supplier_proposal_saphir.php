@@ -60,7 +60,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	/**
 	 *  Return description of module
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{

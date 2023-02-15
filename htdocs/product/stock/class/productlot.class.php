@@ -3,7 +3,7 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -586,6 +586,34 @@ class Productlot extends CommonObject
 
 
 	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+
+		$langs->loadLangs(['stocks', 'productbatch']);
+
+		$datas = [];
+		$option = $params['option'] ?? '';
+		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("Batch").'</u>';
+		$datas['divopen'] = '<div width="100%">';
+		$datas['batch'] = '<b>'.$langs->trans('Batch').':</b> '.$this->batch;
+		if ($this->eatby && empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+			$datas['eatby'] = '<br><b>'.$langs->trans('EatByDate').':</b> '.dol_print_date($this->eatby, 'day');
+		}
+		if ($this->sellby && empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+			$datas['sellby'] = '<br><b>'.$langs->trans('SellByDate').':</b> '.dol_print_date($this->sellby, 'day');
+		}
+		$datas['divclose'] = '</div>';
+
+		return $datas;
+	}
+
+	/**
 	 *  Return a link to the a lot card (with optionaly the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
@@ -599,21 +627,25 @@ class Productlot extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $langs, $conf, $db;
+		global $langs, $conf, $hookmanager, $db;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
 		global $menumanager;
 
 		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
+		}
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Batch").'</u>';
-		$label .= '<div width="100%">';
-		$label .= '<b>'.$langs->trans('Batch').':</b> '.$this->batch;
-		if ($this->eatby && empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-			$label .= '<br><b>'.$langs->trans('EatByDate').':</b> '.dol_print_date($this->eatby, 'day');
-		}
-		if ($this->sellby && empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
-			$label .= '<br><b>'.$langs->trans('SellByDate').':</b> '.dol_print_date($this->sellby, 'day');
-		}
+		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/product/stock/productlot_card.php?id='.$this->id;
 
@@ -635,7 +667,7 @@ class Productlot extends CommonObject
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -654,12 +686,22 @@ class Productlot extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->batch;
 		}
 		$result .= $linkend;
+
+		global $action;
+		$hookmanager->initHooks(array('productlotdao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => $result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 
 		return $result;
 	}

@@ -129,6 +129,19 @@ class AdherentType extends CommonObject
 	/** @var string string other */
 	public $other = array();
 
+	/**
+	 * @var string description
+	 */
+	public $description;
+
+	/**
+	 * @var string email
+	 */
+	public $email;
+
+	/**
+	 * @var array multilangs
+	 */
 	public $multilangs = array();
 
 
@@ -472,7 +485,7 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-	 *  Function that retrieves the status of the member
+	 *  Function that retrieves the properties of a membership type
 	 *
 	 *  @param 		int		$rowid			Id of member type to load
 	 *  @return		int						<0 if KO, >0 if OK
@@ -626,7 +639,7 @@ class AdherentType extends CommonObject
 			$sql .= ' AND ('.$excludefilter.')';
 		}
 
-		dol_syslog(get_class($this)."::listUsersForGroup", LOG_DEBUG);
+		dol_syslog(get_class($this)."::listMembersForMemberType", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -676,6 +689,28 @@ class AdherentType extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+
+		$langs->load('members');
+
+		$datas = [];
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("MemberType").'</u> '.$this->getLibStatut(4);
+		$datas['label'] = '<br>'.$langs->trans("Label").': '.$this->label;
+		if (isset($this->subscription)) {
+			$datas['subscription'] = '<br>'.$langs->trans("SubscriptionRequired").': '.yn($this->subscription);
+		}
+
+		return $datas;
+	}
+
+	/**
 	 *  Return clicable name (with picto eventually)
 	 *
 	 *  @param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
@@ -690,18 +725,24 @@ class AdherentType extends CommonObject
 		global $langs;
 
 		$result = '';
-
-		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("MemberType").'</u>';
-		$label .= ' '.$this->getLibStatut(4);
-		$label .= '<br>'.$langs->trans("Label").': '.$this->label;
-		if (isset($this->subscription)) {
-			$label .= '<br>'.$langs->trans("SubscriptionRequired").': '.yn($this->subscription);
-		}
-
 		$option = '';
 
-		$url = DOL_URL_ROOT.'/adherents/type.php?rowid='.((int) $this->id);
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
+		}
 
+		$label = implode($this->getTooltipContentArray($params));
+
+		$url = DOL_URL_ROOT.'/adherents/type.php?rowid='.((int) $this->id);
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
@@ -712,13 +753,12 @@ class AdherentType extends CommonObject
 				$url .= '&save_lastsearch_values=1';
 			}
 		}
-
-		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'"'.$dataparams.' class="'.$classfortooltip.'">';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= ($maxlen ?dol_trunc($this->label, $maxlen) : $this->label);
@@ -728,7 +768,6 @@ class AdherentType extends CommonObject
 		return $result;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Return label of status (activity, closed)
 	 *
@@ -740,6 +779,7 @@ class AdherentType extends CommonObject
 		return $this->LibStatut($this->status, $mode);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the label of a given status
 	 *
@@ -926,5 +966,48 @@ class AdherentType extends CommonObject
 		}
 
 		return '';
+	}
+
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs,$user;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if ($user->rights->adherent->configurer) {
+			$return .= '<span class="right paddingleft"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$this->ref.'">'.img_edit().'</a></span>';
+		} else {
+			$return .= '<span class="right">&nbsp;</span>';
+		}
+		if (property_exists($this, 'vote')) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("VoteAllowed").' : '.yn($this->vote).'</span>';
+		}
+		if (property_exists($this, 'amount')) {
+			if (is_null($this->amount) || $this->amount === '') {
+				$return .= '<br>';
+			} else {
+				$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Amount").'</span>';
+				$return .= '<span class="amount"> : '.price($this->amount).'</span>';
+			}
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

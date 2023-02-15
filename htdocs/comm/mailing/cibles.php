@@ -675,7 +675,7 @@ if ($object->fetch($id) >= 0) {
 
 				// Date last update
 				print '<td class="center nowraponall">';
-				print dol_print_date($obj->tms, 'dayhour');
+				print dol_print_date(dol_stringtotime($obj->tms), 'dayhour');
 				print '</td>';
 
 				// Status of recipient sending email (Warning != status of emailing)

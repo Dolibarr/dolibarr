@@ -25,7 +25,7 @@
 /**
  *	    \file       htdocs/user/bank.php
  *      \ingroup    HRM
- *		\brief      Tab for HRM
+ *		\brief      Tab for HR and bank
  */
 
 // Load Dolibarr environment
@@ -79,11 +79,12 @@ if (empty($account->userid)) {
 	$account->userid = $object->id;
 }
 
-
 // Define value to know what current user can do on users
 $canadduser = (!empty($user->admin) || $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);
 $canreaduser = (!empty($user->admin) || $user->rights->user->user->lire || $user->rights->hrm->read_personal_information->read);
 $permissiontoaddbankaccount = (!empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write) || !empty($user->rights->user->creer));
+$permissiontoreadhr = $user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write');
+$permissiontowritehr = $user->hasRight('hrm', 'write_personal_information', 'write');
 
 // Ok if user->rights->salaries->read or user->rights->hrm->read
 //$result = restrictedArea($user, 'salaries|hrm', $object->id, 'user&user', $feature2);
@@ -143,49 +144,6 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 	$account->userid = $object->id;
 
-	/*
-	if ($action == 'update' && !$cancel)
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-		if ($canedituser)    // Case we can edit all field
-		{
-			$error = 0;
-
-			if (!$error)
-			{
-				$objectuser->fetch($id);
-
-				$objectuser->oldcopy = dol_clone($objectuser);
-
-				$db->begin();
-
-				$objectuser->default_range = GETPOST('default_range');
-				$objectuser->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat');
-
-				if (!$error) {
-					$ret = $objectuser->update($user);
-					if ($ret < 0) {
-						$error++;
-						if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-							$langs->load("errors");
-							setEventMessages($langs->trans("ErrorLoginAlreadyExists", $objectuser->login), null, 'errors');
-						} else {
-							setEventMessages($objectuser->error, $objectuser->errors, 'errors');
-						}
-					}
-				}
-
-				if (!$error && !count($objectuser->errors)) {
-					setEventMessages($langs->trans("UserModified"), null, 'mesgs');
-					$db->commit();
-				} else {
-					$db->rollback();
-				}
-			}
-		}
-	}*/
-
 	$account->bank            = GETPOST('bank', 'alpha');
 	$account->label           = GETPOST('label', 'alpha');
 	$account->courant         = GETPOST('courant', 'alpha');
@@ -212,6 +170,18 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 		$action = '';
 	}
+}
+
+if ($action == 'delete_confirmed' && !$cancel && $permissiontoaddbankaccount) {
+	$result = $account->delete($user);
+	if ($result < 0) {
+		setEventMessages($account->error, $account->errors, 'errors');
+	} else {
+		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+		header("Location: ".DOL_URL_ROOT.'/user/bank.php?id='.$object->id);
+		exit;
+	}
+	$action = '';
 }
 
 // update birth
@@ -350,9 +320,12 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
 	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
+
+	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
+	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
 	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
 
@@ -580,23 +553,23 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Employee Number
-	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write')) {
+	if ($permissiontoreadhr) {
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("RefEmployee", 'ref_employee', $object->ref_employee, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);
+		print $form->editfieldkey("RefEmployee", 'ref_employee', $object->ref_employee, $object, $permissiontowritehr);
 		print '</td><td>';
-		print $form->editfieldval("RefEmployee", 'ref_employee', $object->ref_employee, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write, 'string', $object->ref_employee);
+		print $form->editfieldval("RefEmployee", 'ref_employee', $object->ref_employee, $object, $permissiontowritehr, 'string', $object->ref_employee);
 		print '</td>';
 		print '</tr>';
 	}
 
 	// National registration number
-	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write')) {
+	if ($permissiontoreadhr) {
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("NationalRegistrationNumber", 'national_registration_number', $object->national_registration_number, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);
+		print $form->editfieldkey("NationalRegistrationNumber", 'national_registration_number', $object->national_registration_number, $object, $permissiontowritehr);
 		print '</td><td>';
-		print $form->editfieldval("NationalRegistrationNumber", 'national_registration_number', $object->national_registration_number, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write, 'string', $object->national_registration_number);
+		print $form->editfieldval("NationalRegistrationNumber", 'national_registration_number', $object->national_registration_number, $object, $permissiontowritehr, 'string', $object->national_registration_number);
 		print '</td>';
 		print '</tr>';
 	}
@@ -819,32 +792,32 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	if ($account->id > 0) {
 		print '<tr class="oddeven">';
 		// Label
-		print '<td>'.$account->label.'</td>';
+		print '<td>'.dol_escape_htmltag($account->label).'</td>';
 		// Bank name
-		print '<td>'.$account->bank.'</td>';
+		print '<td>'.dol_escape_htmltag($account->bank).'</td>';
 		// Account number
 		print '<td>';
-		$string = '';
+		$stringescaped = '';
 		foreach ($account->getFieldsToShow() as $val) {
 			if ($val == 'BankCode') {
-				$string .= $account->code_banque.' ';
+				$stringescaped .= dol_escape_htmltag($account->code_banque).' ';
 			} elseif ($val == 'BankAccountNumber') {
-				$string .= $account->number.' ';
+				$stringescaped .= dol_escape_htmltag($account->number).' ';
 			} elseif ($val == 'DeskCode') {
-				$string .= $account->code_guichet.' ';
+				$stringescaped .= dol_escape_htmltag($account->code_guichet).' ';
 			} elseif ($val == 'BankAccountNumberKey') {
-				$string .= $account->cle_rib.' ';
+				$stringescaped .= dol_escape_htmltag($account->cle_rib).' ';
 			}
 		}
 		if (!empty($account->label) && $account->number) {
 			if (!checkBanForAccount($account)) {
-				$string .= ' '.img_picto($langs->trans("ValueIsNotValid"), 'warning');
+				$stringescaped .= ' '.img_picto($langs->trans("ValueIsNotValid"), 'warning');
 			} else {
-				$string .= ' '.img_picto($langs->trans("ValueIsValid"), 'info');
+				$stringescaped .= ' '.img_picto($langs->trans("ValueIsValid"), 'info');
 			}
 		}
 
-		print $string;
+		print $stringescaped;
 		print '</td>';
 		// IBAN
 		print '<td>'.getIbanHumanReadable($account);
@@ -855,7 +828,8 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		}
 		print '</td>';
 		// BIC
-		print '<td>'.$account->bic;
+		print '<td>';
+		print dol_escape_htmltag($account->bic);
 		if (!empty($account->bic)) {
 			if (!checkSwiftForAccount($account)) {
 				print ' '.img_picto($langs->trans("SwiftNotValid"), 'warning');
@@ -869,8 +843,12 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		// Edit/Delete
 		print '<td class="right nowraponall">';
 		if ($permissiontoaddbankaccount) {
-			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=edit&token='.newToken().'">';
+			print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=edit&token='.newToken().'">';
 			print img_picto($langs->trans("Modify"), 'edit');
+			print '</a>';
+
+			print '<a class="editfielda marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=delete_confirmed&token='.newToken().'">';
+			print img_picto($langs->trans("Delete"), 'delete');
 			print '</a>';
 		}
 		print '</td>';
@@ -880,7 +858,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 
 	if ($account->id == 0) {
-		$colspan = 6;
+		$colspan = 7;
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoBANRecord").'</span></td></tr>';
 	}
 

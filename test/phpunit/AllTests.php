@@ -41,7 +41,7 @@ if (empty($conf->adherent->enabled)) {
 	print "Error: Module member must be enabled to have significant results.\n";
 	exit(1);
 }
-if (!empty($conf->ldap->enabled)) {
+if (isModEnabled('ldap')) {
 	print "Error: LDAP module should not be enabled.\n";
 	exit(1);
 }
@@ -104,6 +104,8 @@ class AllTests
 		$suite->addTestSuite('XCalLibTest');
 
 		// Rules into source files content
+		require_once dirname(__FILE__).'/RepositoryTest.php';
+		$suite->addTestSuite('RepositoryTest');
 		require_once dirname(__FILE__).'/LangTest.php';
 		$suite->addTestSuite('LangTest');
 		require_once dirname(__FILE__).'/CodingSqlTest.php';

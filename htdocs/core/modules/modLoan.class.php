@@ -82,7 +82,7 @@ class modLoan extends DolibarrModules
 				"chaine",
 				"6611"
 		);
-		$this->const[1] = array(
+		$this->const[2] = array(
 				"LOAN_ACCOUNTING_ACCOUNT_INSURANCE",
 				"chaine",
 				"6162"

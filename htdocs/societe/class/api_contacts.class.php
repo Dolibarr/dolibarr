@@ -335,7 +335,7 @@ class Contacts extends DolibarrApi
 			$this->contact->setNoEmail($this->contact->no_email);
 		}
 
-		if ($this->contact->update($id, DolibarrApiAccess::$user, 1, '', '', 'update')) {
+		if ($this->contact->update($id, DolibarrApiAccess::$user, 1, 'update')) {
 			return $this->get($id);
 		}
 

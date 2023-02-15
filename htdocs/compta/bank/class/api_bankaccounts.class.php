@@ -122,8 +122,8 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Get account by ID.
 	 *
-	 * @param int    $id    ID of account
-	 * @return array Account object
+	 * @param 	int	$id    						ID of account
+	 * @return  	Object              		Object with cleaned properties
 	 *
 	 * @throws RestException
 	 */
@@ -313,9 +313,9 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Update account
 	 *
-	 * @param int    $id              ID of account
-	 * @param array  $request_data    data
-	 * @return int
+	 * @param 	int    $id              ID of account
+	 * @param 	array  $request_data    data
+	 * @return	Object              	Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
 	{

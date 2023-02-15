@@ -30,11 +30,10 @@
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
- *  MEMBER_NEWFORM_EDITAMOUNT           0 or 1 = Amount can be edited
  *  MEMBER_MIN_AMOUNT                   Minimum amount
  *  MEMBER_NEWFORM_PAYONLINE            Suggest payment with paypal, paybox or stripe
  *  MEMBER_NEWFORM_DOLIBARRTURNOVER     Show field turnover (specific for dolibarr foundation)
- *  MEMBER_URL_REDIRECT_SUBSCRIPTION    Url to redirect once subscribe submitted
+ *  MEMBER_URL_REDIRECT_SUBSCRIPTION    Url to redirect once registration form has been submitted (hidden option, by default we just show a message on same page or redirect to the payment page)
  *  MEMBER_NEWFORM_FORCETYPE            Force type of member
  *  MEMBER_NEWFORM_FORCEMORPHY          Force nature of member (mor/phy)
  *  MEMBER_NEWFORM_FORCECOUNTRYCODE     Force country
@@ -46,15 +45,10 @@ if (!defined('NOLOGIN')) {
 if (!defined('NOCSRFCHECK')) {
 	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
 }
-if (!defined('NOIPCHECK')) {
-	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-}
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
-if (!defined('NOIPCHECK')) {
-	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-}
+
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -76,14 +70,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Init vars
-$errmsg = '';
-$num = 0;
-$error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
+$errmsg = '';
+$num = 0;
+$error = 0;
+
 // Load translation files
-$langs->loadLangs(array("main", "members", "companies", "install", "other"));
+$langs->loadLangs(array("main", "members", "companies", "install", "other", "errors"));
 
 // Security check
 if (empty($conf->adherent->enabled)) {
@@ -257,6 +252,17 @@ if (empty($reshook) && $action == 'add') {
 		}
 	}
 
+	// Check Captcha code if is enabled
+	if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+		$sessionkey = 'dol_antispam_value';
+		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+		if (!$ok) {
+			$error++;
+			$errmsg .= $langs->trans("ErrorBadValueForCode")."<br>\n";
+			$action = '';
+		}
+	}
+
 	$public = GETPOSTISSET('public') ? 1 : 0;
 
 	if (!$error) {
@@ -366,7 +372,7 @@ if (empty($reshook) && $action == 'add') {
 					if ($subjecttosend && $texttosend) {
 						$moreinheader = 'X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
 
-						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+						$result = $object->sendEmail($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 					}
 					/*if ($result < 0) {
 						$error++;
@@ -393,7 +399,7 @@ if (empty($reshook) && $action == 'add') {
 					}
 
 					$to = $adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
-					$from = $conf->global->ADHERENT_MAIL_FROM;
+					$from = getDolGlobalString('ADHERENT_MAIL_FROM');
 					$mailfile = new CMailFile(
 						'['.$appli.'] '.$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
 						$to,
@@ -433,7 +439,7 @@ if (empty($reshook) && $action == 'add') {
 				}
 
 				if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1') {
-					if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {			// If edition of amount not allowed
+					if (empty($adht->caneditamount)) {			// If edition of amount not allowed
 						// TODO Check amount is same than the amount required for the type of member or if not defined as the defeault amount into $conf->global->MEMBER_NEWFORM_AMOUNT
 						// It is not so important because a test is done on return of payment validation.
 					}
@@ -451,15 +457,6 @@ if (empty($reshook) && $action == 'add') {
 						$urlback .= '&entity='.((int) $entity);
 					}
 				}
-			}
-
-			if (!empty($backtopage)) {
-				$urlback = $backtopage;
-				dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
-			} elseif (!empty($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)) {
-				$urlback = $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
-				// TODO Make replacement of __AMOUNT__, etc...
-				dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
 			} else {
 				$error++;
 				$errmsg .= join('<br>', $adh->errors);
@@ -479,7 +476,7 @@ if (empty($reshook) && $action == 'add') {
 }
 
 // Action called after a submitted was send and member created successfully
-// If MEMBER_URL_REDIRECT_SUBSCRIPTION is set to url we never go here because a redirect was done to this url.
+// If MEMBER_URL_REDIRECT_SUBSCRIPTION is set to an url, we never go here because a redirect was done to this url. Same if we ask to redirect to the payment page.
 // backtopage parameter with an url was set on member submit page, we never go here because a redirect was done to this url.
 
 if (empty($reshook) && $action == 'added') {
@@ -516,7 +513,7 @@ print load_fiche_titre($langs->trans("NewSubscription"), '', '', 0, 0, 'center')
 print '<div align="center">';
 print '<div id="divsubscribe">';
 
-print '<div class="center subscriptionformhelptext justify">';
+print '<div class="center subscriptionformhelptext opacitymedium justify">';
 if (!empty($conf->global->MEMBER_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->MEMBER_NEWFORM_TEXT)."<br>\n";
 } else {
@@ -552,7 +549,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 				if (jQuery("#morphy").val() == \'mor\') {
 					jQuery("#trcompany").show();
 				}
-			};
+			}
 			initmorphy();
 			jQuery("#morphy").change(function() {
 				initmorphy();
@@ -776,7 +773,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 			$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
 		}
 
-		if (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) || $caneditamount) {
+		if ($caneditamount) {
 			print '<input type="text" name="amount" id="amount" class="flat amount width50" value="'.$showedamount.'">';
 			print ' '.$langs->trans("Currency".$conf->currency).'<span class="opacitymedium"> – ';
 			print $amount > 0 ? $langs->trans("AnyAmountWithAdvisedAmount", price($amount, 0, $langs, 1, -1, -1, $conf->currency)): $langs->trans("AnyAmountWithoutAdvisedAmount");
@@ -786,6 +783,20 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 			print '<input type="text" name="amount" id="amounthidden" class="flat amount width50" disabled value="'.$showedamount.'">';
 			print ' '.$langs->trans("Currency".$conf->currency);
 		}
+		print '</td></tr>';
+	}
+
+	// Display Captcha code if is enabled
+	if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+		print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
+		print '<span class="span-icon-security inline-block">';
+		print '<input id="securitycode" placeholder="'.$langs->trans("SecurityCode").'" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" />';
+		print '</span>';
+		print '<span class="nowrap inline-block">';
+		print '<img class="inline-block valignmiddle" src="'.DOL_URL_ROOT.'/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />';
+		print '<a class="inline-block valignmiddle" href="'.$php_self.'" tabindex="4" data-role="button">'.img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"').'</a>';
+		print '</span>';
 		print '</td></tr>';
 	}
 
@@ -844,7 +855,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 
 		$i = 0;
 		while ($i < $num) {
-			$objp = $db->fetch_object($result);
+			$objp = $db->fetch_object($result);	// Load the member type and information on it
 
 			print '<tr class="oddeven">';
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
@@ -854,7 +865,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 			print '</td>';
 			print '<td class="center"><span class="amount nowrap">';
 			$displayedamount = max(intval($objp->amount), intval(getDolGlobalInt("MEMBER_MIN_AMOUNT")));
-			$caneditamount = !empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) || $objp->caneditamount;
+			$caneditamount = $objp->caneditamount;
 			if ($objp->subscription) {
 				if ($displayedamount > 0 || !$caneditamount) {
 					print $displayedamount.' '.strtoupper($conf->currency);

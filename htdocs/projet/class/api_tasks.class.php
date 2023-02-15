@@ -296,7 +296,7 @@ class Tasks extends DolibarrApi
 			$usert = new User($this->db);
 			$usert->fetch($userid);
 		}
-		$this->task->roles = $this->task->getUserRolesForProjectsOrTasks(0, $usert, 0, $id);
+		$this->task->roles = $this->task->getUserRolesForProjectsOrTasks(null, $usert, 0, $id);
 		$result = array();
 		foreach ($this->task->roles as $line) {
 			array_push($result, $this->_cleanObjectDatas($line));

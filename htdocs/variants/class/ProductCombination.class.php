@@ -506,7 +506,7 @@ class ProductCombination
 		if ($child->label == $parent->label) {
 			// This will trigger only at variant creation time
 			$varlabel               = $this->getCombinationLabel($this->fk_product_child);
-			$child->label           = $parent->label.$varlabel; ;
+			$child->label           = $parent->label.$varlabel;
 		}
 
 

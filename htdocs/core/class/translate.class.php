@@ -834,7 +834,6 @@ class Translate
 						'ja'=>'ja_JP',
 						'lo'=>'lo_LA',
 						'nb'=>'nb_NO',
-						'fa'=>'fa_IR',
 						'sq'=>'sq_AL',
 						'sr'=>'sr_RS',
 						'sv'=>'sv_SE',
@@ -933,8 +932,10 @@ class Translate
 			$fonc = 'numberwords';
 			if (file_exists($newdir.'/functions_'.$fonc.'.lib.php')) {
 				include_once $newdir.'/functions_'.$fonc.'.lib.php';
-				$newnumber = numberwords_getLabelFromNumber($this, $number, $isamount);
-				break;
+				if (function_exists('numberwords_getLabelFromNumber')) {
+					$newnumber = numberwords_getLabelFromNumber($this, $number, $isamount);
+					break;
+				}
 			}
 		}
 

@@ -40,7 +40,7 @@ if ($action == 'presend') {
 	$titreform = 'SendMail';
 
 	$object->fetch_projet();
-
+	if (!isset($file)) $file = null;
 	$ref = dol_sanitizeFileName($object->ref);
 	if (!in_array($object->element, array('user', 'member'))) {
 		//$fileparams['fullname'] can be filled from the card
@@ -57,7 +57,7 @@ if ($action == 'presend') {
 			}
 		}
 
-		$file = $fileparams['fullname'];
+		$file = isset($fileparams['fullname'])?$fileparams['fullname']:null;
 	}
 
 	// Define output language
@@ -74,7 +74,7 @@ if ($action == 'presend') {
 		$outputlangs = new Translate('', $conf);
 		$outputlangs->setDefaultLang($newlang);
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array('commercial', 'bills', 'orders', 'contracts', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions'));
+		$outputlangs->loadLangs(array('commercial', 'bills', 'orders', 'contracts', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions', 'sendings'));
 	}
 
 	$topicmail = '';

@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/db/Database.interface.php';
  */
 abstract class DoliDB implements Database
 {
-	/** @var bool|resource|SQLite3|PgSql\connection Database handler */
+	/** @var bool|resource|mysqli|SQLite3|PgSql\connection Database handler */
 	public $db;
 	/** @var string Database type */
 	public $type;
@@ -37,8 +37,10 @@ abstract class DoliDB implements Database
 	public $forcecharset = 'utf8';
 	/** @var string Collate used to force collate when creating database */
 	public $forcecollate = 'utf8_unicode_ci';
+
 	/** @var resource Resultset of last query */
 	private $_results;
+
 	/** @var bool true if connected, else false */
 	public $connected;
 	/** @var bool true if database selected, else false */
@@ -73,7 +75,8 @@ abstract class DoliDB implements Database
 
 
 	/**
-	 *	Return the DB prefix
+	 *	Return the DB prefix found into prefix_db (if it was set manually by doing $dbhandler->prefix_db=...).
+	 *  Otherwise return MAIN_DB_PREFIX (common use).
 	 *
 	 *	@return string		The DB prefix
 	 */

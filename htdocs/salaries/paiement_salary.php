@@ -57,7 +57,7 @@ restrictedArea($user, 'salaries', $object->id, 'salary', '');
  * Actions
  */
 
-if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
+if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) && $user->hasRight('salaries', 'write')) {
 	$error = 0;
 
 	if ($cancel) {
@@ -66,7 +66,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		exit;
 	}
 
-	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
+	$datepaye = dol_mktime(GETPOST("rehour", 'int'), GETPOST("remin", 'int'), GETPOST("resec", 'int'), GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'), 'tzuserrel');
 
 	if (!(GETPOST("paiementtype", 'int') > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
@@ -210,9 +210,9 @@ if ($action == 'create') {
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
+	$datepaye = dol_mktime(GETPOST("rehour", 'int'), GETPOST("remin", 'int'), GETPOST("resec", 'int'), GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
 	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (GETPOST("remonth") ? $datepaye : -1) : '';
-	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
+	print $form->selectDate($datepayment, '', 1, 1, 0, "add_payment", 1, 1, 0, '', '', $salary->dateep, '', 1, $langs->trans("DateEnd"));
 	print "</td>";
 	print '</tr>';
 

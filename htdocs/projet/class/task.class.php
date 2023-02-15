@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022       Charlene Benke		<charlene@patas-monkey.com>
  *
@@ -697,6 +697,34 @@ class Task extends CommonObjectLine
 
 
 	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $langs;
+
+		$langs->load('projects');
+
+		$datas = [];
+		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("Task").'</u>';
+		if (!empty($this->ref)) {
+			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		}
+		if (!empty($this->label)) {
+			$datas['label'] = '<br><b>'.$langs->trans('LabelTask').':</b> '.$this->label;
+		}
+		if ($this->date_start || $this->date_end) {
+			$datas['range'] = "<br>".get_date_range($this->date_start, $this->date_end, '', $langs, 0);
+		}
+
+		return $datas;
+	}
+
+	/**
 	 *	Return clicable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
@@ -717,16 +745,18 @@ class Task extends CommonObjectLine
 		}
 
 		$result = '';
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Task").'</u>';
-		if (!empty($this->ref)) {
-			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
 		}
-		if (!empty($this->label)) {
-			$label .= '<br><b>'.$langs->trans('LabelTask').':</b> '.$this->label;
-		}
-		if ($this->date_start || $this->date_end) {
-			$label .= "<br>".get_date_range($this->date_start, $this->date_end, '', $langs, 0);
-		}
+		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option == 'withproject' ? '&withproject=1' : '');
 		// Add param to save lastsearch_values or not
@@ -744,8 +774,8 @@ class Task extends CommonObjectLine
 				$label = $langs->trans("ShowTask");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip nowraponall"';
+			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="'.$classfortooltip.' nowraponall"';
 		} else {
 			$linkclose .= ' class="nowraponall"';
 		}
@@ -758,7 +788,7 @@ class Task extends CommonObjectLine
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -812,7 +842,7 @@ class Task extends CommonObjectLine
 	 * @param   array   $search_array_options Array of search
 	 * @param   int     $loadextras         Fetch all Extrafields on each task
 	 * @param	int		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
-	 * @return 	array						Array of tasks
+	 * @return 	array|string				Array of tasks
 	 */
 	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1)
 	{
@@ -971,12 +1001,12 @@ class Task extends CommonObjectLine
 
 				if ($loadRoleMode) {
 					if ((!$obj->public) && (is_object($userp))) {    // If not public project and we ask a filter on project owned by a user
-						if (!$this->getUserRolesForProjectsOrTasks($userp, 0, $obj->projectid, 0)) {
+						if (!$this->getUserRolesForProjectsOrTasks($userp, null, $obj->projectid, 0)) {
 							$error++;
 						}
 					}
 					if (is_object($usert)) {                            // If we ask a filter on a user affected to a task
-						if (!$this->getUserRolesForProjectsOrTasks(0, $usert, $obj->projectid, $obj->taskid)) {
+						if (!$this->getUserRolesForProjectsOrTasks(null, $usert, $obj->projectid, $obj->taskid)) {
 							$error++;
 						}
 					}
@@ -1025,7 +1055,8 @@ class Task extends CommonObjectLine
 					if (!empty($extrafields->attributes['projet']['label'])) {
 						foreach ($extrafields->attributes['projet']['label'] as $key => $val) {
 							if ($extrafields->attributes['projet']['type'][$key] != 'separate') {
-								$tasks[$i]->{'options_'.$key} = $obj->{'options_'.$key};
+								$tmpvar = 'options_'.$key;
+								$tasks[$i]->{'options_'.$key} = $obj->$tmpvar;
 							}
 						}
 					}
@@ -1033,7 +1064,8 @@ class Task extends CommonObjectLine
 					if (!empty($extrafields->attributes['projet_task']['label'])) {
 						foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
 							if ($extrafields->attributes['projet_task']['type'][$key] != 'separate') {
-								$tasks[$i]->{'options_'.$key} = $obj->{'options_'.$key};
+								$tmpvar = 'options_'.$key;
+								$tasks[$i]->{'options_'.$key} = $obj->$tmpvar;
 							}
 						}
 					}
@@ -1056,12 +1088,12 @@ class Task extends CommonObjectLine
 	/**
 	 * Return list of roles for a user for each projects or each tasks (or a particular project or a particular task).
 	 *
-	 * @param	User	$userp			      Return roles on project for this internal user. If set, usert and taskid must not be defined.
-	 * @param	User	$usert			      Return roles on task for this internal user. If set userp must NOT be defined. -1 means no filter.
-	 * @param 	int		$projectid		      Project id list separated with , to filter on project
-	 * @param 	int		$taskid			      Task id to filter on a task
-	 * @param	integer	$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
-	 * @return 	array					      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
+	 * @param	User|null	$userp			      Return roles on project for this internal user. If set, usert and taskid must not be defined.
+	 * @param	User|null	$usert			      Return roles on task for this internal user. If set userp must NOT be defined. -1 means no filter.
+	 * @param 	int			$projectid		      Project id list separated with , to filter on project
+	 * @param 	int			$taskid			      Task id to filter on a task
+	 * @param	integer		$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
+	 * @return 	array|int					      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
 	 */
 	public function getUserRolesForProjectsOrTasks($userp, $usert, $projectid = '', $taskid = 0, $filteronprojstatus = -1)
 	{
@@ -1396,12 +1428,10 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param  User|int	$userobj			Filter on user. null or 0=No filter
 	 *  @param	string		$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
-	 *  @return array		 					Array of info for task array('min_date', 'max_date', 'total_duration', 'total_amount', 'nblines', 'nblinesnull')
+	 *  @return array|int	 					Array of info for task array('min_date', 'max_date', 'total_duration', 'total_amount', 'nblines', 'nblinesnull')
 	 */
 	public function getSummaryOfTimeSpent($userobj = null, $morewherefilter = '')
 	{
-		global $langs;
-
 		if (is_object($userobj)) {
 			$userid = $userobj->id;
 		} else {
@@ -1565,14 +1595,12 @@ class Task extends CommonObjectLine
 	/**
 	 *  Load all records of time spent
 	 *
-	 *  @param	User	$userobj			User object
-	 *  @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
-	 *  @return int							<0 if KO, array of time spent if OK
+	 *  @param	User		$userobj			User object
+	 *  @param	string		$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
+	 *  @return array|int						<0 if KO, array of time spent if OK
 	 */
 	public function fetchAllTimeSpent(User $userobj, $morewherefilter = '')
 	{
-		global $langs;
-
 		$arrayres = array();
 
 		$sql = "SELECT";
@@ -2326,5 +2354,41 @@ class Task extends CommonObjectLine
 		$datetouse = ($this->date_end > 0) ? $this->date_end : ((isset($this->datee) && $this->datee > 0) ? $this->datee : 0);
 
 		return ($datetouse > 0 && ($datetouse < ($now - $conf->project->task->warning_delay)));
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs, $conf;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		if (property_exists($this, 'fk_project') ) {
+			$return .= '<br><span class="info-box-status ">'.$this->fk_project.'</span>';
+		}
+		if (property_exists($this, 'budget_amount')) {
+			$return .= '<br><span class="info-box-label amount">'.$langs->trans("Budget").' : '.price($this->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
+		}
+		if (property_exists($this, 'fk_statut')) {
+			$return .= '<br><span class="info-box-status ">'.$this->fk_statut.'</span>';
+		}
+		if (property_exists($this, 'duration_effective')) {
+			$return .= '<div class="info-box-label opacitymedium">'.getTaskProgressView($this, false, false).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

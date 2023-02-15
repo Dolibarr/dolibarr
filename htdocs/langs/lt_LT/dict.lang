@@ -21,7 +21,7 @@ CountryNL=Nyderlandai
 CountryHU=Vengrija
 CountryRU=Rusija
 CountrySE=Švedija
-CountryCI=Dramblio kaulo krantas
+CountryCI=Ivory Coast
 CountrySN=Senegalas
 CountryAR=Argentina
 CountryCM=Kamerūnas
@@ -250,7 +250,9 @@ CountryMF=Saint Martin
 
 ##### Civilities #####
 CivilityMME=p.
+CivilityMMEShort=p.
 CivilityMR=p.
+CivilityMRShort=p.
 CivilityMLE=p.
 CivilityMTRE=Magistras
 CivilityDR=Daktaras

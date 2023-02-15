@@ -577,7 +577,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 		// Montant total HT
 		if ($total_ht[$annee] || ($annee >= $minyear && $annee <= max($nowyear, $maxyear))) {
 			print '<td class="nowrap right">';
-			print ($total_ht[$annee] ?price($total_ht[$annee]) : "0");
+			print (empty($total_ht[$annee]) ? '0' : price($total_ht[$annee]));
 			print "</td>";
 		} else {
 			print '<td>&nbsp;</td>';
@@ -587,7 +587,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 	// Total amount
 	if (!empty($total[$annee]) || ($annee >= $minyear && $annee <= max($nowyear, $maxyear))) {
 		print '<td class="nowrap right">';
-		print ($total[$annee] ?price($total[$annee]) : "0");
+		print (empty($total[$annee]) ? '0' : price($total[$annee]));
 		print "</td>";
 	} else {
 		print '<td>&nbsp;</td>';
@@ -595,19 +595,19 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 
 	// Pourcentage total
 	if ($annee > $minyear && $annee <= max($nowyear, $maxyear)) {
-		if ($total[$annee - 1] && $total[$annee]) {
+		if (!empty($total[$annee - 1]) && !empty($total[$annee])) {
 			$percent = (round(($total[$annee] - $total[$annee - 1]) / $total[$annee - 1], 4) * 100);
 			print '<td class="nowrap borderrightlight right">';
 			print ($percent >= 0 ? "+$percent" : "$percent").'%';
 			print '</td>';
 		}
-		if ($total[$annee - 1] && !$total[$annee]) {
+		if (!empty($total[$annee - 1]) && empty($total[$annee])) {
 			print '<td class="borderrightlight right">-100%</td>';
 		}
-		if (!$total[$annee - 1] && $total[$annee]) {
+		if (empty($total[$annee - 1]) && !empty($total[$annee])) {
 			print '<td class="borderrightlight right">+'.$langs->trans('Inf').'%</td>';
 		}
-		if (!$total[$annee - 1] && !$total[$annee]) {
+		if (empty($total[$annee - 1]) && empty($total[$annee])) {
 			print '<td class="borderrightlight right">+0%</td>';
 		}
 	} else {

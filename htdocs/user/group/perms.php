@@ -218,7 +218,7 @@ if ($object->id > 0) {
 	// Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
 	if (!empty($conf->mutlicompany->enabled)) {
 		print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
-		print '<td colspan="2">'.$object->name.'';
+		print '<td colspan="2">'.$object->name;
 		if (!$object->entity) {
 			print img_picto($langs->trans("GlobalGroup"), 'redstar');
 		}

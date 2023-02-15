@@ -48,6 +48,7 @@ $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'vendorpaymentlist';
+$mode = GETPOST('mode', 'alpha');
 
 $socid = GETPOST('socid', 'int');
 
@@ -254,6 +255,9 @@ $num = $db->num_rows($resql);
 $i = 0;
 
 $param = '';
+if (!empty($mode)) {
+	$param .= '&mode='.urlencode($mode);
+}
 if (!empty($contextpage) && $contextpage != $_SERVER['PHP_SELF']) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
@@ -315,8 +319,13 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-print_barre_liste($langs->trans('ExpenseReportPayments'), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'expensereport', 0, '', '', $limit, 0, 0, 1);
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+
+print_barre_liste($langs->trans('ExpenseReportPayments'), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'expensereport', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
@@ -473,116 +482,138 @@ while ($i < min($num, $limit)) {
 
 	$paymentexpensereportstatic->id = $objp->rowid;
 	$paymentexpensereportstatic->ref = $objp->ref;
-	$paymentexpensereportstatic->datepaye = $objp->datep;
+	$paymentexpensereportstatic->datep = $objp->datep;
+	$paymentexpensereportstatic->amount = $objp->pamount;
+	$paymentexpensereportstatic->fk_typepayment = $objp->paiement_type;
+
+	if ($objp->bid) {
+		$accountstatic->fetch($objp->bid);
+		$paymentexpensereportstatic->fk_bank = $accountstatic->getNomUrl(1);
+	} else {
+		$paymentexpensereportstatic->fk_bank = null;
+	}
 
 	$userstatic->id = $objp->userid;
 	$userstatic->lastname = $objp->lastname;
 	$userstatic->firstname = $objp->firstname;
 
-	print '<tr class="oddeven">';
+	if ($mode == 'kanban') {
+		if ($i == 0) {
+			print '<tr><td colspan="12">';
+			print '<div class="box-flex-container">';
+		}
+		// Output Kanban
+		print $paymentexpensereportstatic->getKanbanView('');
+		if ($i == (min($num, $limit) - 1)) {
+			print '</div>';
+			print '</td></tr>';
+		}
+	} else {
+		print '<tr class="oddeven">';
 
-	// No
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
-		print '<td>'.(($offset * $limit) + $i).'</td>';
+		// No
+		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+			print '<td>'.(($offset * $limit) + $i).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Ref
+		if (!empty($arrayfields['pndf.rowid']['checked'])) {
+			print '<td class="nowrap">'.$paymentexpensereportstatic->getNomUrl(1).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Date
+		if (!empty($arrayfields['pndf.datep']['checked'])) {
+			$dateformatforpayment = 'dayhour';
+			print '<td class="nowrap center">'.dol_print_date($db->jdate($objp->datep), $dateformatforpayment).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Thirdparty
+		if (!empty($arrayfields['u.login']['checked'])) {
+			print '<td>';
+			if ($userstatic->id > 0) {
+				print $userstatic->getNomUrl(1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Pyament type
+		if (!empty($arrayfields['c.libelle']['checked'])) {
+			$payment_type = $langs->trans("PaymentType".$objp->paiement_type) != ("PaymentType".$objp->paiement_type) ? $langs->trans("PaymentType".$objp->paiement_type) : $objp->paiement_libelle;
+			print '<td>'.$payment_type.' '.dol_trunc($objp->num_payment, 32).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Cheque number (fund transfer)
+		if (!empty($arrayfields['pndf.num_payment']['checked'])) {
+			print '<td>'.$objp->num_payment.'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Bank account
+		if (!empty($arrayfields['ba.label']['checked'])) {
+			print '<td>';
+			if ($objp->bid) {
+				$accountstatic->id = $objp->bid;
+				$accountstatic->ref = $objp->bref;
+				$accountstatic->label = $objp->blabel;
+				$accountstatic->number = $objp->number;
+				$accountstatic->iban = $objp->iban_prefix;
+				$accountstatic->bic = $objp->bic;
+				$accountstatic->currency_code = $objp->currency_code;
+				$accountstatic->account_number = $objp->account_number;
+
+				$accountingjournal = new AccountingJournal($db);
+				$accountingjournal->fetch($objp->accountancy_journal);
+				$accountstatic->accountancy_journal = $accountingjournal->code;
+
+				print $accountstatic->getNomUrl(1);
+			} else {
+				print '&nbsp;';
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Amount
+		if (!empty($arrayfields['pndf.amount']['checked'])) {
+			print '<td class="right"><span class="amount">'.price($objp->pamount).'</span></td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+			$totalarray['pos'][$checkedCount] = 'amount';
+			if (empty($totalarray['val']['amount'])) {
+				$totalarray['val']['amount'] = $objp->pamount;
+			} else {
+				$totalarray['val']['amount'] += $objp->pamount;
+			}
+		}
+
+		// Buttons
+		print '<td></td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
+
+		print '</tr>';
 	}
-
-	// Ref
-	if (!empty($arrayfields['pndf.rowid']['checked'])) {
-		print '<td class="nowrap">'.$paymentexpensereportstatic->getNomUrl(1).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Date
-	if (!empty($arrayfields['pndf.datep']['checked'])) {
-		$dateformatforpayment = 'dayhour';
-		print '<td class="nowrap center">'.dol_print_date($db->jdate($objp->datep), $dateformatforpayment).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Thirdparty
-	if (!empty($arrayfields['u.login']['checked'])) {
-		print '<td>';
-		if ($userstatic->id > 0) {
-			print $userstatic->getNomUrl(1);
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Pyament type
-	if (!empty($arrayfields['c.libelle']['checked'])) {
-		$payment_type = $langs->trans("PaymentType".$objp->paiement_type) != ("PaymentType".$objp->paiement_type) ? $langs->trans("PaymentType".$objp->paiement_type) : $objp->paiement_libelle;
-		print '<td>'.$payment_type.' '.dol_trunc($objp->num_payment, 32).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Cheque number (fund transfer)
-	if (!empty($arrayfields['pndf.num_payment']['checked'])) {
-		print '<td>'.$objp->num_payment.'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Bank account
-	if (!empty($arrayfields['ba.label']['checked'])) {
-		print '<td>';
-		if ($objp->bid) {
-			$accountstatic->id = $objp->bid;
-			$accountstatic->ref = $objp->bref;
-			$accountstatic->label = $objp->blabel;
-			$accountstatic->number = $objp->number;
-			$accountstatic->iban = $objp->iban_prefix;
-			$accountstatic->bic = $objp->bic;
-			$accountstatic->currency_code = $objp->currency_code;
-			$accountstatic->account_number = $objp->account_number;
-
-			$accountingjournal = new AccountingJournal($db);
-			$accountingjournal->fetch($objp->accountancy_journal);
-			$accountstatic->accountancy_journal = $accountingjournal->code;
-
-			print $accountstatic->getNomUrl(1);
-		} else {
-			print '&nbsp;';
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Amount
-	if (!empty($arrayfields['pndf.amount']['checked'])) {
-		print '<td class="right"><span class="amount">'.price($objp->pamount).'</span></td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-		$totalarray['pos'][$checkedCount] = 'amount';
-		if (empty($totalarray['val']['amount'])) {
-			$totalarray['val']['amount'] = $objp->pamount;
-		} else {
-			$totalarray['val']['amount'] += $objp->pamount;
-		}
-	}
-
-	// Buttons
-	print '<td></td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
-
-	print '</tr>';
 	$i++;
 }
 

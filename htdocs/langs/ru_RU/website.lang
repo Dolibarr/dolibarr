@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Код
+WebsiteName=Name of the website
 WebsiteSetupDesc=Создайте здесь веб-сайты, которые вы хотите использовать. Затем перейдите в меню «Сайты», чтобы отредактировать их.
 DeleteWebsite=Удалить сайт
 ConfirmDeleteWebsite=Вы уверены, что хотите удалить этот веб-сайт? Все его страницы и контент также будут удалены. Загруженные файлы (например, в каталог medias, модуль ECM, ...) останутся.
@@ -15,9 +16,9 @@ WEBSITE_HTML_HEADER=Добавление внизу заголовка HTML (о�
 WEBSITE_ROBOT=Файл робота (robots.txt)
 WEBSITE_HTACCESS=Файл .htaccess веб-сайта
 WEBSITE_MANIFEST_JSON=Файл manifest.json веб-сайта
-WEBSITE_README=README.md файл
 WEBSITE_KEYWORDSDesc=Используйте запятую для разделения значений
-EnterHereLicenseInformation=Введите здесь метаданные или информацию о лицензии, чтобы заполнить файл README.md. если вы распространяете свой сайт в виде шаблона, файл будет включен в пакет temptate.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included into the temptate package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included into the temptate package.
 HtmlHeaderPage=Заголовок HTML (только для этой страницы)
 PageNameAliasHelp=Имя или псевдоним страницы.<br> Этот псевдоним также используется для подделки URL-адреса SEO, когда веб-сайт запускается с виртуального хоста веб-сервера (например, Apacke, Nginx, ...). Используйте кнопку «<strong>%s</strong>», чтобы изменить этот псевдоним.
 EditTheWebSiteForACommonHeader=Примечание. Если вы хотите определить персонализированный заголовок для всех страниц, отредактируйте заголовок на уровне сайта, а не на странице / контейнере.
@@ -42,10 +43,12 @@ ViewPageInNewTab=Просмотреть страницу в новой вкла�
 SetAsHomePage=Установить в качестве домашней страницы
 RealURL=Реальный URL
 ViewWebsiteInProduction=Просмотр веб-сайта с использованием домашних URL-адресов
+Virtualhost=Virtual host or domain name
+VirtualhostDesc=The name of the Virtual host or domain (For example: www.mywebsite.com, mybigcompany.net, ...)
 SetHereVirtualHost=<u>Использовать с Apache/NGinx/...</u><br>Создайте на своем веб-сервере (Apache, Nginx, ...) выделенный виртуальный хост с включенным PHP и корневым каталогом в<br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Пример использования в настройке виртуального хоста Apache:
 YouCanAlsoTestWithPHPS=<u>Использование со встроенным сервером PHP</u><br>В среде разработки вы можете предпочесть протестировать сайт с помощью встроенного веб-сервера PHP (требуется PHP 5.5), запустив<br><strong>php -S 0.0.0.0:8080 -t %s</strong>
-YouCanAlsoDeployToAnotherWHP=<u>Запустите свой веб-сайт с другим провайдером хостинга Dolibarr</u><br>Если у вас нет веб-сервера, такого как Apache или NGinx, доступного в Интернете, вы можете экспортировать и импортировать свой веб-сайт на другой экземпляр Dolibarr, предоставленный другим провайдером хостинга Dolibarr, который предоставляет полную интеграция с модулем Веб-сайт. Вы можете найти список некоторых хостинг-провайдеров Dolibarr на <a href="https://saas.dolibarr.org" target="_blank"> https://saas.dolibarr.org </a>
+YouCanAlsoDeployToAnotherWHP= <u> Запустите свой веб-сайт с помощью другого хостинг-провайдера Dolibarr. интеграция с модулем Сайт. Вы можете найти список некоторых хостинг-провайдеров Dolibarr на <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external"> https://saas.dolibarr.org </a>
 CheckVirtualHostPerms=Также проверьте, что у пользователя виртуального хоста (например, www-data) есть<strong>%s</strong> разрешения на файлы в<br><strong>%s</strong>
 ReadPerm=Читать
 WritePerm=Писать
@@ -60,7 +63,7 @@ YouCanEditHtmlSourceckeditor=Вы можете редактировать исх
 YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> Вы можете включить PHP-код в этот источник, используя теги <strong>&lt;?php ?&gt;</strong>. Доступны следующие глобальные переменные: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> Вы также можете включить содержимое другой страницы/контейнера со следующим синтаксисом:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> Вы можете выполнить перенаправление на другую страницу/контейнер со следующим синтаксисом (Примечание: не выводите какой-либо контент перед перенаправлением):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> Чтобы добавить ссылку на другую страницу, используйте следующий синтаксис:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> Чтобы включить <strong>ссылку для загрузки</strong> файла, хранящегося в каталоге <strong>documents</strong>, используйте оболочку <strong>document.php</strong>:<br>Пример для файла в  documents/ecm (необходимо зарегистрировать), синтаксис:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Для файла в documents/medias (открытый каталог для общего доступа) синтаксис: <br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>Для файла, к которому предоставлен общий доступ по ссылке общего доступа (открытый доступ с использованием хеш-ключа общего доступа к файлу), синтаксис следующий:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> Чтобы включить <strong>изображение</strong>, хранящееся в каталоге <strong>documents</strong>, используйте оболочку <strong>viewimage.php</strong>:<br>Например, для изображения в documents/medias (открытый каталог для общего доступа) синтаксис:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource2=Для изображения, к которому предоставлен общий доступ по ссылке общего доступа (открытый доступ с использованием хеш-ключа общего доступа к файлу), синтаксис следующий:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSourceMore=<br>Дополнительные примеры HTML или динамического кода доступны на <a href="%s" target="_blank">в вики-документации</a><br>.
+YouCanEditHtmlSourceMore= <br> Дополнительные примеры HTML или динамического кода доступны в <a href="%s" target="_blank" rel="noopener noreferrer external"> в вики-документации </a> <br> .
 ClonePage=Клонировать страницу/контейнер
 CloneSite=Клонировать сайт
 SiteAdded=Сайт добавлен
@@ -137,7 +140,7 @@ PagesRegenerated=%s страниц/контейнер(ов) восстановл
 RegenerateWebsiteContent=Восстановить файлы кеша веб-сайта
 AllowedInFrames=Разрешено в кадрах
 DefineListOfAltLanguagesInWebsiteProperties=Определите список всех доступных языков в свойствах веб-сайта.
-GenerateSitemaps=Создать файл карты сайта
+GenerateSitemaps=Generate website sitemap.xml file
 ConfirmGenerateSitemaps=Если вы подтвердите, вы удалите существующий файл карты сайта ...
 ConfirmSitemapsCreation=Подтвердите создание карты сайта
 SitemapGenerated=Создан файл Sitemap <b>%s</b>
@@ -145,3 +148,10 @@ ImportFavicon=Фавикон
 ErrorFaviconType=Фавикон должен быть в формате png.
 ErrorFaviconSize=Размер Favicon должен быть 16x16, 32x32 или 64x64.
 FaviconTooltip=Загрузите изображение в формате png (16x16, 32x32 или 64x64).
+NextContainer=Next page/container
+PreviousContainer=Previous page/container
+WebsiteMustBeDisabled=The website must have the status "%s"
+WebpageMustBeDisabled=The web page must have the status "%s"
+SetWebsiteOnlineBefore=When website is offline, all pages are offline. Change status of website first.
+Booking=Booking
+Reservation=Reservation

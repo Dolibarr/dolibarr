@@ -119,9 +119,9 @@ $usercanreopen = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights
 $usercanunvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->facture->invoice_advance->unvalidate)));
 
 $usercanproductignorepricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
-$usercancreatemargin = $user->rights->margins->creer;
-$usercanreadallmargin = $user->rights->margins->liretous;
-$usercancreatewithdrarequest = $user->rights->prelevement->bons->creer;
+$usercancreatemargin = $user->hasRight("margins", "creer");
+$usercanreadallmargin = $user->hasRight("margins", "liretous");
+$usercancreatewithdrarequest = $user->hasRight("prelevement", "bons", "creer");
 
 $now = dol_now();
 
@@ -271,7 +271,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete
-	if ($action == 'confirm_deleteinvoice' && $confirm == 'yes' && $user->rights->facture->supprimer) {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->supprimer) {
 		$object->delete($user);
 
 		header("Location: ".DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php');
@@ -1175,8 +1175,8 @@ if ($action == 'create') {
 		}
 
 		// Confirm delete of repeatable invoice
-		if ($action == 'ask_deleteinvoice') {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteRepeatableInvoice'), $langs->trans('ConfirmDeleteRepeatableInvoice'), 'confirm_deleteinvoice', '', 'no', 1);
+		if ($action == 'delete') {
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteRepeatableInvoice'), $langs->trans('ConfirmDeleteRepeatableInvoice'), 'confirm_delete', '', 'no', 1);
 		}
 
 		// Call Hook formConfirm
@@ -1231,7 +1231,7 @@ if ($action == 'create') {
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
 				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 				}
 			} else {
 				if (!empty($object->fk_project)) {
@@ -1635,7 +1635,7 @@ if ($action == 'create') {
 		// Show object lines
 		if (!empty($object->lines)) {
 			$canchangeproduct = 1;
-			$ret = $object->printObjectLines($action, $mysoc, $object->thirdparty, $lineid, 0); // No date selector for template invoice
+			$object->printObjectLines($action, $mysoc, $object->thirdparty, $lineid, 0); // No date selector for template invoice
 		}
 
 		// Form to add new line

@@ -107,7 +107,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			);
 
 			return call_user_func($callback, $action, $object, $user, $langs, $conf);
-		};
+		}
 
 		// Or you can execute some code here
 		switch ($action) {

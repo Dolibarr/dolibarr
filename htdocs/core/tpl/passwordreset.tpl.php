@@ -77,7 +77,7 @@ if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	$disablenofollow = 0;
 }
 
-print top_htmlhead('', $titleofpage, 0, 0, $arrayofjs, array(), 1, $disablenofollow);
+top_htmlhead('', $titleofpage, 0, 0, $arrayofjs, array(), 1, $disablenofollow);
 
 
 $colorbackhmenu1 = '60,70,100'; // topmenu
@@ -292,7 +292,7 @@ if ($mode == 'dolibarr' || !$disabled) {
 
 <?php if (!empty($message)) { ?>
 	<div class="center login_main_message">
-	<?php echo dol_htmloutput_mesg($message, '', '', 1); ?>
+	<?php dol_htmloutput_mesg($message, '', '', 1); ?>
 	</div>
 <?php } ?>
 

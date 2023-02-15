@@ -175,7 +175,7 @@ class RssParser
 	/**
 	 * getItems
 	 *
-	 * @return string
+	 * @return array
 	 */
 	public function getItems()
 	{
@@ -801,8 +801,8 @@ class RssParser
 /**
  * Function to convert an XML object into an array
  *
- * @param	SimpleXMLElement	$xml		Xml
- * @return	void
+ * @param	SimpleXMLElement			$xml		Xml
+ * @return	array|string
  */
 function xml2php($xml)
 {

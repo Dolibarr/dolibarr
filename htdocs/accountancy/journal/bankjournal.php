@@ -349,7 +349,11 @@ if ($result) {
 					$societestatic->email = $tabcompany[$obj->rowid]['email'];
 					$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
 					if ($compta_soc) {
-						$tabtp[$obj->rowid][$compta_soc] += $amounttouse;
+						if (empty($tabtp[$obj->rowid][$compta_soc])) {
+							$tabtp[$obj->rowid][$compta_soc] = $amounttouse;
+						} else {
+							$tabtp[$obj->rowid][$compta_soc] += $amounttouse;
+						}
 					}
 				} elseif ($links[$key]['type'] == 'user') {
 					$userstatic->id = $links[$key]['url_id'];
@@ -510,7 +514,11 @@ if ($result) {
 			}
 		}
 
-		$tabbq[$obj->rowid][$compta_bank] += $amounttouse;
+		if (empty($tabbq[$obj->rowid][$compta_bank])) {
+			$tabbq[$obj->rowid][$compta_bank] = $amounttouse;
+		} else {
+			$tabbq[$obj->rowid][$compta_bank] += $amounttouse;
+		}
 
 		// If no links were found to know the amount on thirdparty, we try to guess it.
 		// This may happens on bank entries without the links lines to 'company'.
@@ -793,7 +801,7 @@ if (!$error && $action == 'writebookkeeping') {
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 							}
 						} else {
-							if ($lettering && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
+							if ($lettering && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && getDolGlobalInt('ACCOUNTING_ENABLE_AUTOLETTERING')) {
 								require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
 								$lettering_static = new Lettering($db);
 								$nb_lettering = $lettering_static->bookkeepingLetteringAll(array($bookkeeping->id));
@@ -1227,22 +1235,22 @@ if (empty($action) || $action == 'view') {
 					$account_ledger = $k;
 					// Try to force general ledger account depending on type
 					if ($tabtype[$key] == 'payment') {
-						$account_ledger = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
+						$account_ledger = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER');
 					}
 					if ($tabtype[$key] == 'payment_supplier') {
-						$account_ledger = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
+						$account_ledger = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER');
 					}
 					if ($tabtype[$key] == 'payment_expensereport') {
-						$account_ledger = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+						$account_ledger = getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT');
 					}
 					if ($tabtype[$key] == 'payment_salary') {
-						$account_ledger = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+						$account_ledger = getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT');
 					}
 					if ($tabtype[$key] == 'payment_vat') {
-						$account_ledger = $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT;
+						$account_ledger = getDolGlobalString('ACCOUNTING_VAT_PAY_ACCOUNT');
 					}
 					if ($tabtype[$key] == 'member') {
-						$account_ledger = $conf->global->ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT;
+						$account_ledger = getDolGlobalString('ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT');
 					}
 					if ($tabtype[$key] == 'payment_various') {
 						$account_ledger = $tabpay[$key]["account_various"];
@@ -1281,7 +1289,7 @@ if (empty($action) || $action == 'view') {
 						}
 					}
 					print '<td class="maxwidth300" title="'.dol_escape_htmltag(dol_string_nohtmltag($accounttoshow)).'">';
-					print $accounttoshow;
+					print $accounttoshow;	// This is a HTML string
 					print "</td>";
 
 					// Subledger account
@@ -1310,7 +1318,7 @@ if (empty($action) || $action == 'view') {
 						}
 					}
 					print '<td class="maxwidth300">';
-					print $accounttoshowsubledger;
+					print $accounttoshowsubledger;	// This is a html string
 					print "</td>";
 
 					print "<td>".$reflabel."</td>";

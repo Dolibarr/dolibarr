@@ -69,7 +69,7 @@ function dolStripPhpCode($str, $replacewith = '')
  *
  * @param 	string	$str			String to clean
  * @return 	string					Result string with php code only
- * @see dolStripPhpCode()
+ * @see dolStripPhpCode(), checkPHPCode()
  */
 function dolKeepOnlyPhpCode($str)
 {
@@ -421,6 +421,40 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 	dol_syslog("dolWebsiteOutput end");
 
 	print $content;
+}
+
+/**
+ * Increase the website counter of page access.
+ *
+ * @param   int		$websiteid			ID of website
+ * @param	string	$websitepagetype	Type of page ('blogpost', 'page', ...)
+ * @param	int		$websitepageid		ID of page
+ * @return  int							<0 if KO, >0 if OK
+ */
+function dolWebsiteIncrementCounter($websiteid, $websitepagetype, $websitepageid)
+{
+	if (!getDolGlobalInt('WEBSITE_PERF_DISABLE_COUNTERS')) {
+		//dol_syslog("dolWebsiteIncrementCounter websiteid=".$websiteid." websitepagetype=".$websitepagetype." websitepageid=".$websitepageid);
+		if (in_array($websitepagetype, array('blogpost', 'page'))) {
+			global $db;
+
+			$tmpnow = dol_getdate(dol_now('gmt'), true, 'gmt');
+
+			$sql = "UPDATE ".$db->prefix()."website SET ";
+			$sql .= " pageviews_total = pageviews_total + 1,";
+			$sql .= " pageviews_month = pageviews_month + 1,";
+			// if last access was done during previous month, we save pageview_month into pageviews_previous_month
+			$sql .= " pageviews_previous_month = ".$db->ifsql("lastaccess < '".$db->idate(dol_mktime(0, 0, 0, $tmpnow['month'], 1, $tmpnow['year'], 'gmt', 0), 'gmt')."'", 'pageviews_month', 'pageviews_previous_month').",";
+			$sql .= " lastaccess = '".$db->idate(dol_now('gmt'), 'gmt')."'";
+			$sql .= " WHERE rowid = ".((int) $websiteid);
+			$resql = $db->query($sql);
+			if (! $resql) {
+				return -1;
+			}
+		}
+	}
+
+	return 1;
 }
 
 

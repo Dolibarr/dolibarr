@@ -250,7 +250,9 @@ CountryMF=聖馬丁
 
 ##### Civilities #####
 CivilityMME=夫人
+CivilityMMEShort=夫人
 CivilityMR=先生
+CivilityMRShort=先生
 CivilityMLE=女士
 CivilityMTRE=主人
 CivilityDR=醫生

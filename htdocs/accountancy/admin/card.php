@@ -42,7 +42,7 @@ $ref = GETPOST('ref', 'alpha');
 $rowid = GETPOST('rowid', 'int');
 $cancel = GETPOST('cancel', 'alpha');
 
-$account_number = GETPOST('account_number', 'string');
+$account_number = GETPOST('account_number', 'alphanohtml');
 $label = GETPOST('label', 'alpha');
 
 // Security check
@@ -282,7 +282,7 @@ if ($action == 'create') {
 	print $form->textwithpicto($langs->trans("AccountingCategory"), $langs->transnoentitiesnoconv("AccountingAccountGroupsDesc"));
 	print '</td>';
 	print '<td>';
-	$formaccounting->select_accounting_category($object->account_category, 'account_category', 1, 0, 1);
+	print $formaccounting->select_accounting_category($object->account_category, 'account_category', 1, 0, 1);
 	print '</td></tr>';
 
 	print '</table>';
@@ -329,7 +329,8 @@ if ($action == 'create') {
 			// Account parent
 			print '<tr><td>'.$langs->trans("Accountparent").'</td>';
 			print '<td>';
-			print $formaccounting->select_account($object->account_parent, 'account_parent', 1);
+			// Note: We accept disabled account as parent account so we can build a hierarchy and use only childs
+			print $formaccounting->select_account($object->account_parent, 'account_parent', 1, array(), 0, 0, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1, '');
 			print '</td></tr>';
 
 			// Chart of accounts type
@@ -358,7 +359,7 @@ if ($action == 'create') {
 			print $form->textwithpicto($langs->trans("AccountingCategory"), $langs->transnoentitiesnoconv("AccountingAccountGroupsDesc"));
 			print '</td>';
 			print '<td>';
-			$formaccounting->select_accounting_category($object->account_category, 'account_category', 1);
+			print $formaccounting->select_accounting_category($object->account_category, 'account_category', 1);
 			print '</td></tr>';
 
 			print '</table>';

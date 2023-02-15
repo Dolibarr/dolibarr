@@ -247,6 +247,7 @@ if (empty($reshook)) {
 /*
  * View
  */
+
 $title = $object->name.' - '.$langs->trans("Card");
 if ($action == 'create') {
 	$title = $langs->trans("NewGroup");
@@ -309,8 +310,6 @@ if ($action == 'create') {
 	/*                                                                            */
 	/* ************************************************************************** */
 	if ($id) {
-		$res = $object->fetch_optionals();
-
 		$head = group_prepare_head($object);
 		$title = $langs->trans("Group");
 
@@ -446,6 +445,8 @@ if ($action == 'create') {
 				print '<td class="liste_titre center" width="5">'.$langs->trans("Status").'</td>';
 				print '<td class="liste_titre right" width="5">&nbsp;</td>';
 				print "</tr>\n";
+
+				$object->fetch($object->id, '', true);	// true to force load of all users, member of the group
 
 				if (!empty($object->members)) {
 					foreach ($object->members as $useringroup) {

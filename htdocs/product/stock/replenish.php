@@ -78,12 +78,12 @@ while ($tmpobj = $db->fetch_object($resWar)) {
 	$listofqualifiedwarehousesid .= $tmpobj->rowid;
 	$lastWarehouseID = $tmpobj->rowid;
 	$count++;
-};
+}
 
 //MultiCompany : If only 1 Warehouse is visible, filter will automatically be set to it.
 if ($count == 1 && (empty($fk_entrepot) || $fk_entrepot <= 0) && !empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED)) {
 	$fk_entrepot = $lastWarehouseID;
-};
+}
 
 $texte = '';
 

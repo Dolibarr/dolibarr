@@ -587,7 +587,8 @@ if ($id) {
 						foreach ($fieldlist as $field => $value) {
 							$showfield = 1;
 							$class = "left";
-							$valuetoshow = $obj->{$fieldlist[$field]};
+							$tmpvar = $fieldlist[$field];
+							$valuetoshow = $obj->$tmpvar;
 							if ($valuetoshow == 'all') {
 								$valuetoshow = $langs->trans('All');
 							} elseif ($fieldlist[$field] == 'nature' && $tabname[$id] == MAIN_DB_PREFIX.'accounting_journal') {

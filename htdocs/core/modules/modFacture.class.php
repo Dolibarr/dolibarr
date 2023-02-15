@@ -88,7 +88,7 @@ class modFacture extends DolibarrModules
 
 		$this->const[$r][0] = "FACTURE_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "crabe";
+		$this->const[$r][2] = "sponge";
 		$this->const[$r][3] = 'Name of PDF model of invoice';
 		$this->const[$r][4] = 0;
 		$r++;

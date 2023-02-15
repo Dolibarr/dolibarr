@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook Produktivschlüssel
 ONLINE_PAYMENT_WAREHOUSE=Warenlager für die Bestandsminderung bei Onlinezahlung<br>(TODO When option to decrease stock is done on an action on invoice and the online payment generate itself the invoice?)
 StripeLiveEnabled=Stripe live aktiviert (Nicht im Test/Sandbox Modus)
 StripeImportPayment=Stripe Zahlungen importieren
-ExampleOfTestCreditCard=Beispiel für eine zu testende Kreditkarte: %s => gültig, %s => Fehler CVC, %s => abgelaufen, %s => Belastung fehlgeschlagen
+ExampleOfTestCreditCard=Beispiel Kreditkarte für SEPA-Test: %s => gültig, %s => Fehler CVC, %s => abgelaufen, %s => Belastung fehlgeschlagen
+ExampleOfTestBankAcountForSEPA=Beispiel Bankkonto IBAN für Lastschrifttest: %s
 StripeGateways=Stripe Gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca_...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca_...)
@@ -61,6 +62,7 @@ DeleteACard=Karte löschen
 ConfirmDeleteCard=Wollen Sie diese Debit- oder Kreditkarte wirklich löschen?
 CreateCustomerOnStripe=Kunden auf Stripe erstellen
 CreateCardOnStripe=Karte auf Stripe erstellen
+CreateBANOnStripe=Bank auf Stripe erstellen
 ShowInStripe=In Stripe anzeigen
 StripeUserAccountForActions=Benutzerkonto zur E-Mail-Benachrichtigung über einige Stripe-Ereignisse (Stripe-Auszahlungen)
 StripePayoutList=Liste der Auszahlungen
@@ -69,4 +71,8 @@ ToOfferALinkForLiveWebhook=Link zum Einrichten von Stripe WebHook zum Aufruf von
 PaymentWillBeRecordedForNextPeriod=Die Zahlung wird für den folgenden Zeitraum erfasst.
 ClickHereToTryAgain=<a href="%s">Hier klicken und nochmal versuchen...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Aufgrund strenger Kundenauthentifizierungs-Regeln muss die Erstellung einer Karte im Stripe-Backoffice erfolgen. Sie können hier klicken, um zum Stripe-Kundendatensatz zu wechseln: %s
-TERMINAL_LOCATION=Standort (Adresse) für Terminals
+STRIPE_CARD_PRESENT='Card present' für Stripe-Terminals
+TERMINAL_LOCATION=Standort (Adresse) für Stripe-Terminals
+RequestDirectDebitWithStripe=Lastschrift über Stripe anfordern
+STRIPE_SEPA_DIRECT_DEBIT=Aktivieren Sie die Lastschriftzahlungen über Stripe
+

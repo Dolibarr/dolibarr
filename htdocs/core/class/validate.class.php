@@ -191,7 +191,7 @@ class Validate
 	 */
 	public function isMinLength($string, $length)
 	{
-		if (!strlen($string) < $length) {
+		if (strlen($string) < $length) {
 			$this->error = $this->outputLang->trans('RequireMinLength', $length);
 			return false;
 		}

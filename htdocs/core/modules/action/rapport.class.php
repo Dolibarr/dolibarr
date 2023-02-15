@@ -40,6 +40,11 @@ class CommActionRapport
 	 */
 	public $db;
 
+	public $error;
+
+	public $errors;
+
+
 	/**
 	 * @var string description
 	 */

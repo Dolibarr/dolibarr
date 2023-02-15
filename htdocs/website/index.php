@@ -345,7 +345,7 @@ if ($mode == 'replacesite') {
 
 $usercanedit = $user->rights->website->write;
 $permissiontoadd = $user->rights->website->write;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
-$permissiontodelete = $user->rights->website->delete;
+$permissiontodelete = $user->hasRight('website', 'delete');
 
 
 /*
@@ -806,6 +806,16 @@ if ($action == 'addcontainer' && $usercanedit) {
 				// Remove comments
 				$tmp['content'] = removeHtmlComment($tmp['content']);
 
+				// Check there is no PHP content into the imported file (must be only HTML + JS)
+				$phpcontent = dolKeepOnlyPhpCode($tmp['content']);
+				if ($phpcontent) {
+					$error++;
+					setEventMessages('Error getting '.$urltograb.': file that include PHP content is not allowed', null, 'errors');
+					$action = 'createcontainer';
+				}
+			}
+
+			if (!$error) {
 				$regs = array();
 
 				preg_match('/<head>(.*)<\/head>/ims', $tmp['content'], $regs);
@@ -2661,12 +2671,8 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 		dol_print_error($db);
 	}
 
-	// Add the entry Sitemap: into the robot file.
+	// Add the entry Sitemap: into the robot.txt file.
 	$robotcontent = @file_get_contents($filerobot);
-	$result = preg_replace('/<?php // BEGIN PHP[^?]END PHP ?>\n/ims', '', $robotcontent);
-	if ($result) {
-		$robotcontent = $result;
-	}
 	$robotsitemap = "Sitemap: ".$domainname."/".$xmlname;
 	$result = strpos($robotcontent, 'Sitemap: ');
 	if ($result) {
@@ -2807,7 +2813,7 @@ if (!GETPOST('hide_websitemenu')) {
 	$atleastonepage = (is_array($array) && count($array) > 0);
 
 	$websitepage = new WebSitePage($db);
-	if ($pageid > 0 && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')) {
+	if ($pageid > 0) {
 		$websitepage->fetch($pageid);
 	}
 
@@ -2934,14 +2940,20 @@ if (!GETPOST('hide_websitemenu')) {
 			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
 
 			// Delete website
-			if ($website->status == $website::STATUS_VALIDATED) {
+			if (!$permissiontodelete) {
 				$disabled = ' disabled="disabled"';
-				$title = $langs->trans("WebsiteMustBeDisabled", $langs->transnoentitiesnoconv($website->LibStatut(0, 0)));
+				$title = $langs->trans("NotEnoughPermissions");
 				$url = '#';
 			} else {
-				$disabled = '';
-				$title = $langs->trans("Delete");
-				$url = $_SERVER["PHP_SELF"].'?action=deletesite&token='.newToken().'&website='.urlencode($website->ref);
+				if ($website->status == $website::STATUS_VALIDATED) {
+					$disabled = ' disabled="disabled"';
+					$title = $langs->trans("WebsiteMustBeDisabled", $langs->transnoentitiesnoconv($website->LibStatut(0, 0)));
+					$url = '#';
+				} else {
+					$disabled = '';
+					$title = $langs->trans("Delete");
+					$url = $_SERVER["PHP_SELF"].'?action=deletesite&token='.newToken().'&website='.urlencode($website->ref);
+				}
 			}
 			print '<a href="'.$url.'" class="buttonDelete bordertransp'.($disabled ? ' disabled' : '').'"'.$disabled.' title="'.dol_escape_htmltag($title).'">'.img_picto('', 'delete', 'class=""').'<span class="hideonsmartphone paddingleft">'.$langs->trans("Delete").'</span></a>';
 
@@ -3298,7 +3310,7 @@ if (!GETPOST('hide_websitemenu')) {
 									}
 									isEditingEnabled = false;
 								}
-							};
+							}
 						});
 						</script>';
 				print $langs->trans("EditInLine");
@@ -3336,15 +3348,14 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
 
 				// Delete
-				//print '<input type="submit" class="buttonDelete bordertransp" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage ? '' : ' disabled="disabled"').'>';
-				if ($websitepage->status == $websitepage::STATUS_DRAFT || !$atleastonepage) {
+				if ($websitepage->status != $websitepage::STATUS_DRAFT) {
 					$disabled = ' disabled="disabled"';
 					$title = $langs->trans("WebpageMustBeDisabled", $langs->transnoentitiesnoconv($websitepage->LibStatut(0, 0)));
 					$url = '#';
 				} else {
 					$disabled = '';
 					$title = '';
-					$url = $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&website='.urlencode($website->ref);
+					$url = $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&pageid='.((int) $websitepage->id).'&website='.urlencode($website->ref);	// action=delete for webpage, deletesite for website
 				}
 				print '<a href="'.$url.'" class="buttonDelete bordertransp'.($disabled ? ' disabled' : '').'"'.$disabled.' title="'.dol_escape_htmltag($title).'">'.img_picto('', 'delete', 'class=""').'<span class="hideonsmartphone paddingleft">'.$langs->trans("Delete").'</span></a>';
 			}

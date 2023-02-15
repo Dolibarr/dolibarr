@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->load("categories");
+$langs->loadLangs(array("categories", "compta"));
 
 $id         = GETPOST('id', 'int');
 $label      = GETPOST('label', 'alpha');
@@ -384,7 +384,7 @@ if ($cats < 0) {
 	dol_print_error($db, $object->error, $object->errors);
 } elseif (count($cats) < 1) {
 	print '<tr class="oddeven">';
-	print '<td colspan="3" class="opacitymedium">'.$langs->trans("NoSubCat").'</td>';
+	print '<td colspan="3"><span class="opacitymedium">'.$langs->trans("NoSubCat").'</span></td>';
 	print '</tr>';
 } else {
 	$categstatic = new Categorie($db);
@@ -471,7 +471,7 @@ if ($cats < 0) {
 
 		print '<tr class="nobordernopadding">';
 		print '<td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
-		print '<td valign="middle">'.$langs->trans("NoCategoryYet").'</td>';
+		print '<td class="valignmiddle">'.$langs->trans("NoCategoryYet").'</td>';
 		print '<td>&nbsp;</td>';
 		print '</tr>';
 
@@ -1015,7 +1015,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 				print '<input type="hidden" name="action" value="addintocategory">';
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
-				print $langs->trans("AddProjectIntoCategory").' &nbsp;';
+				print $langs->trans("AddObjectIntoCategory").' &nbsp;';
 				$form->selectProjects('', 'elemid');
 				print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';
@@ -1155,7 +1155,7 @@ if ($type == Categorie::TYPE_USER) {
 
 // List of warehouses
 if ($type == Categorie::TYPE_WAREHOUSE) {
-	if ($user->hasRight("warehouse", "read")) {
+	if ($user->hasRight("stock", "read")) {
 		$permission = $user->rights->stock->creer;
 
 		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
