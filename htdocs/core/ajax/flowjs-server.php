@@ -43,10 +43,11 @@ if (!defined("NOLOGIN")) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
+require '../../core/lib/files.lib.php';
 
 $action = GETPOST('action', 'aZ09');
 $module = GETPOST('module', 'aZ09');
+$upload_dir = GETPOST('upload_dir', 'alpha');
 $flowFilename = GETPOST('flowFilename', 'alpha');
 $flowIdentifier = GETPOST('flowIdentifier', 'alpha');
 $flowChunkNumber = GETPOST('flowChunkNumber', 'alpha');
@@ -61,43 +62,53 @@ $flowTotalSize = GETPOST('flowTotalSize', 'alpha');
 top_httphead();
 dol_syslog(join(',', $_GET));
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET' ) {
+$result = true;
+
+if (!empty($upload_dir)) {
+	$temp_dir = $upload_dir.'/'.$flowIdentifier;
+} else {
 	$temp_dir = DOL_DATA_ROOT.'/'.$module.'/temp/'.$flowIdentifier;
+	$upload_dir = $temp_dir;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET'){
 	$chunk_file = $temp_dir.'/'.$flowFilename.'.part'.$flowChunkNumber;
 	if (file_exists($chunk_file)) {
 		 header("HTTP/1.0 200 Ok");
 	} else {
 		header("HTTP/1.0 404 Not Found");
 	}
+} else {
+	// loop through files and move the chunks to a temporarily created directory
+	if (!empty($_FILES)) foreach ($_FILES as $file) {
+		// check the error status
+		if ($file['error'] != 0) {
+			dol_syslog('error '.$file['error'].' in file '.$flowFilename);
+			continue;
+		}
+
+		// init the destination file (format <filename.ext>.part<#chunk>
+		// the file is stored in a temporary directory
+		$dest_file = $temp_dir.'/'.$flowFilename.'.part'.$flowChunkNumber;
+
+		// create the temporary directory
+		if (!dol_is_dir($temp_dir)) {
+			dol_mkdir($temp_dir);
+		}
+
+		// move the temporary file
+		if (!dol_move_uploaded_file($file['tmp_name'], $dest_file, 0)) {
+			dol_syslog('Error saving (move_uploaded_file) chunk '.$flowChunkNumber.' for file '.$flowFilename);
+		} else {
+			// check if all the parts present, and create the final destination file
+			$result = createFileFromChunks($temp_dir, $upload_dir, $flowFilename, $flowChunkSize, $flowTotalSize);
+		}
+	}
 }
-
-
-
-// loop through files and move the chunks to a temporarily created directory
-if (!empty($_FILES)) foreach ($_FILES as $file) {
-	// check the error status
-	if ($file['error'] != 0) {
-		dol_syslog('error '.$file['error'].' in file '.$flowFilename);
-		continue;
-	}
-
-	// init the destination file (format <filename.ext>.part<#chunk>
-	// the file is stored in a temporary directory
-	$temp_dir = DOL_DATA_ROOT.'/'.$module.'/temp/'.$flowIdentifier;
-	$dest_file = $temp_dir.'/'.$flowFilename.'.part'.$flowChunkNumber;
-
-	// create the temporary directory
-	if (!dol_is_dir($temp_dir)) {
-		dol_mkdir($temp_dir, '', 0777);
-	}
-
-	// move the temporary file
-	if (!move_uploaded_file($file['tmp_name'], $dest_file)) {
-		dol_syslog('Error saving (move_uploaded_file) chunk '.$flowChunkNumber.' for file '.$flowFilename);
-	} else {
-		// check if all the parts present, and create the final destination file
-		createFileFromChunks($temp_dir, $flowFilename, $flowChunkSize, $flowTotalSize);
-	}
+if ($result) {
+	echo json_encode('File '.$flowIdentifier.' uploaded');
+} else {
+	echo json_encode('Error while uploading file '.$flowIdentifier);
 }
 
 
@@ -105,12 +116,13 @@ if (!empty($_FILES)) foreach ($_FILES as $file) {
  * Check if all the parts exist, and
  * gather all the parts of the file together
  * @param string    $temp_dir - the temporary directory holding all the parts of the file
+ * @param string    $upload_dir - the temporary directory to create file
  * @param string    $fileName - the original file name
  * @param string    $chunkSize - each chunk size (in bytes)
  * @param string    $totalSize - original file size (in bytes)
  * @return bool     true if Ok false else
  */
-function createFileFromChunks($temp_dir, $fileName, $chunkSize, $totalSize)
+function createFileFromChunks($temp_dir, $upload_dir, $fileName, $chunkSize, $totalSize)
 {
 
 	dol_syslog(__METHOD__, LOG_DEBUG);
@@ -127,7 +139,7 @@ function createFileFromChunks($temp_dir, $fileName, $chunkSize, $totalSize)
 	// the size of the last part is between chunkSize and 2*$chunkSize
 	if ($total_files * $chunkSize >=  ($totalSize - $chunkSize + 1)) {
 		// create the final destination file
-		if (($fp = fopen($temp_dir.$fileName, 'w')) !== false) {
+		if (($fp = fopen($upload_dir.'/'.$fileName, 'w')) !== false) {
 			for ($i=1; $i<=$total_files; $i++) {
 				fwrite($fp, file_get_contents($temp_dir.'/'.$fileName.'.part'.$i));
 				dol_syslog('writing chunk '.$i);
@@ -138,13 +150,9 @@ function createFileFromChunks($temp_dir, $fileName, $chunkSize, $totalSize)
 			return false;
 		}
 
-		/*// rename the temporary directory (to avoid access from other
-		// concurrent chunks uploads) and than delete it
-		if (rename($temp_dir, $temp_dir.'_UNUSED')) {
-			rrmdir($temp_dir.'_UNUSED');
-		} else {
-			rrmdir($temp_dir);
-		}*/
+		// rename the temporary directory (to avoid access from other
+		// concurrent chunks uploads)
+		@rename($temp_dir, $temp_dir.'_UNUSED');
 	}
 	return true;
 }
