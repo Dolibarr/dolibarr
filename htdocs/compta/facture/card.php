@@ -80,8 +80,6 @@ if (isModEnabled('margin')) {
 }
 
 // General $Variables
-$projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : 0);
-
 $id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int'));    // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
@@ -100,6 +98,7 @@ $fac_rec = GETPOST('fac_rec', 'int');
 $facid = GETPOST('facid', 'int');
 $ref_client = GETPOST('ref_client', 'int');
 $rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
+$projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : 0);
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -3149,7 +3148,7 @@ if ($action == 'create') {
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST" id="formtocreate" name="formtocreate">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="action" id="formtocreateaction" value="add">';
 	if ($soc->id > 0) {
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	}
@@ -3215,11 +3214,10 @@ if ($action == 'create') {
 					$(\'input[name="force_fk_account"]\').val(\'1\');
 					$("#formtocreate").submit(); */
 
-   					// For company change, we must reuse data of comany, not input already done, so we call a GET with action=create, not a POST submit.
-					console.log("We have changed the company - Reload page");
-					var socid = $(this).val();
-			        var fac_rec = $(\'#fac_rec\').val();
-        			window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
+   					// For company change, we must submit page with action=create instead of action=add
+					console.log("We have changed the company - Resubmit page");
+					jQuery("#formtocreateaction").val("create");
+					jQuery("#formtocreate").submit();
 				});
 			});
 			</script>';
