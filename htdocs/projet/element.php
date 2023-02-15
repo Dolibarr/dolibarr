@@ -469,7 +469,7 @@ $listofreferent = array(
 	'table'=>'fichinter',
 	'datefieldname'=>'date_valid',
 	'disableamount'=>0,
-	'margin'=>'minus',
+	'margin'=>'',
 	'urlnew'=>DOL_URL_ROOT.'/fichinter/card.php?action=create&origin=project&originid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'lang'=>'interventions',
 	'buttonnew'=>'AddIntervention',
@@ -912,7 +912,7 @@ foreach ($listofreferent as $key => $value) {
 			print '<td class="right">'.$i.'</td>';
 			// Amount HT
 			print '<td class="right">';
-			if ($key == 'intervention' && !$qualifiedforfinalprofit) {
+			if ($key == 'intervention' && !$margin) {
 				print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
 			} else {
 				if ($key == 'propal') {
@@ -923,7 +923,7 @@ foreach ($listofreferent as $key => $value) {
 			print '</td>';
 			// Amount TTC
 			print '<td class="right">';
-			if ($key == 'intervention' && !$qualifiedforfinalprofit) {
+			if ($key == 'intervention' && !$margin) {
 				print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
 			} else {
 				if ($key == 'propal') {
