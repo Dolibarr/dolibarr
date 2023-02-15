@@ -1268,7 +1268,7 @@ if (!empty($arrayfields['p.stock']['checked'])) {
 	print_liste_field_titre($arrayfields['p.stock']['label'], $_SERVER["PHP_SELF"], "p.stock", "", $param, '', $sortfield, $sortorder, 'right ');
 }
 if (!empty($arrayfields['stock_virtual']['checked'])) {
-	print_liste_field_titre($arrayfields['stock_virtual']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['stock_virtual']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ', 'VirtualStockDesc');
 }
 if (!empty($arrayfields['p.tobatch']['checked'])) {
 	print_liste_field_titre($arrayfields['p.tobatch']['label'], $_SERVER["PHP_SELF"], "p.tobatch", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -1828,7 +1828,7 @@ while ($i < min($num, $limit)) {
 				print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 			}
 			if ($usercancreadprice) {
-				print price(price2num($product_static->stock_reel, 'MS'));
+				print price(price2num($product_static->stock_reel, 'MS'), 0, $langs, 1, 0);
 			}
 		}
 		print '</td>';
@@ -1844,7 +1844,7 @@ while ($i < min($num, $limit)) {
 				print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 			}
 			if ($usercancreadprice) {
-				print price(price2num($product_static->stock_theorique, 'MS'));
+				print price(price2num($product_static->stock_theorique, 'MS'), 0, $langs, 1, 0);
 			}
 		}
 		print '</td>';

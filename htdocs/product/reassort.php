@@ -487,7 +487,7 @@ if ($resql) {
 		if ($objp->seuil_stock_alerte != '' && ($objp->stock_physique < $objp->seuil_stock_alerte)) {
 			print img_warning($langs->trans("StockTooLow")).' ';
 		}
-		print price2num($objp->stock_physique, 'MS');
+		print price(price2num($objp->stock_physique, 'MS'), 0, $langs, 1, 0);
 		print '</td>';
 
 		// Details per warehouse
@@ -495,7 +495,7 @@ if ($resql) {
 			if ($nb_warehouse > 1) {
 				foreach ($warehouses_list as &$wh) {
 					print '<td class="right">';
-					print empty($product->stock_warehouse[$wh['id']]->real) ? '0' : $product->stock_warehouse[$wh['id']]->real;
+					print price(empty($product->stock_warehouse[$wh['id']]->real) ? 0 : $product->stock_warehouse[$wh['id']]->real, 0, $langs, 1, 0);
 					print '</td>';
 				}
 			}
@@ -504,10 +504,10 @@ if ($resql) {
 		// Virtual stock
 		if ($virtualdiffersfromphysical) {
 			print '<td class="right">';
-			if ($objp->seuil_stock_alerte != '' && ($product->stock_theorique < $objp->seuil_stock_alerte)) {
+			if ($objp->seuil_stock_alerte != '' && ($product->stock_theorique < (float) $objp->seuil_stock_alerte)) {
 				print img_warning($langs->trans("StockTooLow")).' ';
 			}
-			print price2num($product->stock_theorique, 'MS');
+			print price(price2num($product->stock_theorique, 'MS'), 0, $langs, 1, 0);
 			print '</td>';
 		}
 		// Units
