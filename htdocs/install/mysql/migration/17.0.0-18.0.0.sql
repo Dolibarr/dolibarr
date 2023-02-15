@@ -37,7 +37,7 @@
 -- VMYSQL4.3 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN `rank` rankorder integer;
 -- VPGSQL8.2 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN rank rankorder integer;
 
-ALTER TABLE llx_accounting_system CHANGE COLUMN fk_pays fk_country integer; 
+ALTER TABLE llx_accounting_system CHANGE COLUMN fk_pays fk_country integer;
 
 ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN ref varchar(128);
 ALTER TABLE llx_facture_fourn_det MODIFY COLUMN ref varchar(128);
@@ -82,4 +82,16 @@ ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_user_valid 
 ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_projet (fk_projet);
 ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_account(fk_account);
 
+CREATE TABLE llx_categorie_order
+(
+    fk_categorie integer NOT NULL,
+    fk_order     integer NOT NULL,
+    import_key   varchar(14)
+) ENGINE=innodb;
 
+ALTER TABLE llx_categorie_order ADD PRIMARY KEY pk_categorie_order (fk_categorie, fk_order);
+ALTER TABLE llx_categorie_order ADD INDEX idx_categorie_order_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_order ADD INDEX idx_categorie_order_fk_order (fk_order);
+
+ALTER TABLE llx_categorie_order ADD CONSTRAINT fk_categorie_order_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_order ADD CONSTRAINT fk_categorie_order_fk_order_rowid FOREIGN KEY (fk_order) REFERENCES llx_commande (rowid);
