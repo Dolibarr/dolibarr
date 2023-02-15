@@ -348,11 +348,7 @@ WarningPaypalPaymentNotCompatibleWithStrict=La valeur 'Strict' fait que les fonc
 WarningThemeForcedTo=Attention, le choix du thème a été forcé à <b> %s </b> par la constante cachée MAIN_FORCETHEME
 WarningPagesWillBeDeleted=Attention, cela supprimera également toutes les pages/conteneurs existants du site. Vous devriez exporter votre site Web avant, afin d'avoir une sauvegarde pour le réimporter plus tard.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=La validation automatique est désactivée lorsque l'option de diminution du stock est définie sur "Validation de la facture".
-<<<<<<< HEAD
-WarningModuleNeedRefrech = Module <b>%s</b> desactivé. N'oublier pas de le réactivé 
-=======
 WarningModuleNeedRefrech = Le module <b>%s</b> a été désactivé. N'oubliez pas de le réactiver
->>>>>>> branch '17.0' of git@github.com:Dolibarr/dolibarr.git
 
 # Validate
 RequireValidValue = Valeur non valide
