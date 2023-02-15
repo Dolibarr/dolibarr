@@ -1,4 +1,4 @@
-htdocs/core/menus/standard/eldy.lib.php<?php
+<?php
 /* Copyright (C) 2010-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2015 Juanjo Menent        <jmenent@2byte.es>

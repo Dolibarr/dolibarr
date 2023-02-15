@@ -148,7 +148,7 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
 		$tmpobject = new Ticket($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'ticket';
-	} elseif ($type == Categorie::TYPE_ORDER && $user->rights->commande->creer) {
+	} elseif ($type == Categorie::TYPE_ORDER && $user->hasRight('commande', 'creer')) {
 		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 		$tmpobject = new Commande($db);
 		$result = $tmpobject->fetch($removeelem);
@@ -1299,7 +1299,7 @@ if ($type == Categorie::TYPE_TICKET) {
 if ($type == Categorie::TYPE_ORDER) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-	$permission = $user->rights->commande->creer;
+	$permission = $user->hasRight('commande', 'creer');
 
 	$objects = $object->getObjectsInCateg($type, 0, $limit, $offset);
 	if ($objects < 0) {

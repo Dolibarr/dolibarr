@@ -46,21 +46,21 @@ require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class
 class Categorie extends CommonObject
 {
 	// Categories types (we use string because we want to accept any modules/types in a future)
-	const TYPE_PRODUCT             = 'product';
-	const TYPE_SUPPLIER            = 'supplier';
-	const TYPE_CUSTOMER            = 'customer';
-	const TYPE_MEMBER              = 'member';
-	const TYPE_CONTACT             = 'contact';
-	const TYPE_USER                = 'user';
-	const TYPE_PROJECT             = 'project';
-	const TYPE_ACCOUNT             = 'bank_account';
-	const TYPE_BANK_LINE           = 'bank_line';
-	const TYPE_WAREHOUSE           = 'warehouse';
-	const TYPE_ACTIONCOMM          = 'actioncomm';
-	const TYPE_WEBSITE_PAGE        = 'website_page';
-	const TYPE_TICKET              = 'ticket';
+	const TYPE_PRODUCT   = 'product';
+	const TYPE_SUPPLIER  = 'supplier';
+	const TYPE_CUSTOMER  = 'customer';
+	const TYPE_MEMBER    = 'member';
+	const TYPE_CONTACT   = 'contact';
+	const TYPE_USER      = 'user';
+	const TYPE_PROJECT   = 'project';
+	const TYPE_ACCOUNT   = 'bank_account';
+	const TYPE_BANK_LINE = 'bank_line';
+	const TYPE_WAREHOUSE = 'warehouse';
+	const TYPE_ACTIONCOMM = 'actioncomm';
+	const TYPE_WEBSITE_PAGE = 'website_page';
+	const TYPE_TICKET = 'ticket';
 	const TYPE_KNOWLEDGEMANAGEMENT = 'knowledgemanagement';
-	const TYPE_ORDER               = 'order';
+	const TYPE_ORDER = 'order';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png

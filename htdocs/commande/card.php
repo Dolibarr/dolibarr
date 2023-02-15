@@ -1936,7 +1936,7 @@ if ($action == 'create' && $usercancreate) {
 	}
 
 	// Categories
-	if (!empty($conf->categorie->enabled)) {
+	if (isModEnabled('categorie')) {
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ORDER, '', 'parent', 64, 0, 1);
 		$arrayselected = GETPOST('categories', 'array');
