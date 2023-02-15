@@ -443,7 +443,7 @@ class modCategorie extends DolibarrModules
 		// 11 Website Pages, TODO ?
 
 		// 16 Order
-		++$r;
+		$r++;
 		$this->exportTagLinks(
 			$r,
 			16,
@@ -743,7 +743,7 @@ class modCategorie extends DolibarrModules
 		int $cat_id,
 		string $class_file,
 		string $class,
-		string $element,
+		string $element
 	) {
 		$cat_type = Categorie::$MAP_ID_TO_CODE[$cat_id];
 
