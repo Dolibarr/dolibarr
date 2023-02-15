@@ -2546,10 +2546,6 @@ class Form
 		global $langs, $conf;
 		global $hookmanager;
 
-		if (empty($hookmanager->hooks)) {
-			$hookmanager->initHooks(array('commonobject'));
-		}
-
 		$out = '';
 		$outarray = array();
 
@@ -2906,10 +2902,6 @@ class Form
 	{
 		global $langs, $conf, $user;
 		global $hookmanager;
-
-		if (empty($hookmanager->hooks)) {
-			$hookmanager->initHooks(array('commonobject'));
-		}
 
 		$outkey = '';
 		$outval = '';
