@@ -1793,11 +1793,11 @@ if ($resql) {
 
 		$with_margin_info = false;
 		if (isModEnabled('margin') && (
-				!empty($arrayfields['total_pa']['checked'])
-				|| !empty($arrayfields['total_margin']['checked'])
-				|| !empty($arrayfields['total_margin_rate']['checked'])
-				|| !empty($arrayfields['total_mark_rate']['checked'])
-			)
+			!empty($arrayfields['total_pa']['checked'])
+			|| !empty($arrayfields['total_margin']['checked'])
+			|| !empty($arrayfields['total_margin_rate']['checked'])
+			|| !empty($arrayfields['total_mark_rate']['checked'])
+		)
 		) {
 			$with_margin_info = true;
 		}
