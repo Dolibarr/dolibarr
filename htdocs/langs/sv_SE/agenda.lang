@@ -177,5 +177,6 @@ ReminderType=Återanropstyp
 AddReminder=Skapa en automatisk påminnelse för händelsen
 ErrorReminderActionCommCreation=Fel vid skapande av påminnelse
 BrowserPush=Popup i webbläsare
+Reminders=Påminnelser
 ActiveByDefault=Aktiverad som standard
 Until=tills

@@ -42,7 +42,7 @@ $ref = GETPOST('ref', 'alpha');
 $rowid = GETPOST('rowid', 'int');
 $cancel = GETPOST('cancel', 'alpha');
 
-$account_number = GETPOST('account_number', 'string');
+$account_number = GETPOST('account_number', 'alphanohtml');
 $label = GETPOST('label', 'alpha');
 
 // Security check

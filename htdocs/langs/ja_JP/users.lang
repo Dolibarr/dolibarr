@@ -132,4 +132,3 @@ ShowAllPerms=すべての権限行を表示
 HideAllPerms=すべての許可行を非表示
 UserPublicPageDesc=このユーザーの仮想カードを有効化可能。ユーザー プロファイルとバーコードを含む URL が利用可能になり、スマートフォンを持っている人なら誰でもそれをスキャンしてアドレス帳に連絡先を追加できる。
 EnablePublicVirtualCard=パブリック仮想ユーザー カードを有効化
-PublicVirtualCardUrl=パブリック仮想ユーザー カード
