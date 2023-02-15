@@ -680,6 +680,7 @@ function showWebsiteTemplates(Website $website)
  * @param	string		$phpfullcodestringold		PHP old string. For exemple "<?php echo 'a' ?><php echo 'b' ?>"
  * @param	string		$phpfullcodestring			PHP new string. For exemple "<?php echo 'a' ?><php echo 'c' ?>"
  * @return	int										Error or not
+ * @see dolKeepOnlyPhpCode()
  */
 function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 {

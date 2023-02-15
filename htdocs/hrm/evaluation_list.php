@@ -134,13 +134,13 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Permissions
-$permissiontoread    = $user->rights->hrm->evaluation->read;
-$permissiontoreadall = $user->rights->hrm->evaluation->readall;
-$permissiontoadd     = $user->rights->hrm->evaluation->write;
-$permissiontodelete  = $user->rights->hrm->evaluation->delete;
+$permissiontoread = $user->hasRight('hrm', 'evaluation', 'read');
+$permissiontoreadall = $user->hasRight('hrm', 'evaluation', 'readall');
+$permissiontoadd = $user->hasRight('hrm', 'evaluation', 'write');
+$permissiontodelete = $user->hasRight('hrm', 'evaluation', 'delete');
 
 // Security check
-if (empty($conf->hrm->enabled)) {
+if (!isModEnabled('hrm')) {
 	accessforbidden('Module not enabled');
 }
 
