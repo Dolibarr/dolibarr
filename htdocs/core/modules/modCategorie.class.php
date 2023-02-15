@@ -778,7 +778,7 @@ class modCategorie extends DolibarrModules
 		];
 		$this->import_examplevalues_array[$r] = [
 			'ci.fk_categorie' => 'rowid or label',
-			'ci.fk_'.$cat_type   => 'rowid or ref'
+			'ci.fk_'.$cat_type => 'rowid or ref'
 		];
 	}
 
