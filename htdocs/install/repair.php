@@ -922,7 +922,7 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 						// If product is not a product that support batches, we can clean stock by deleting the product batch lines
 						print ' -> Delete qty '.$obj->reelbatch.' for any lot linked to fk_product_stock='.$obj->psrowid;
 						$sql2 = "DELETE FROM ".MAIN_DB_PREFIX."product_batch";
-						$sql2 .= " WHERE fk_product_stock = ".$obj->psrowid;
+						$sql2 .= " WHERE fk_product_stock = ".((int) $obj->psrowid);
 						print '<br>'.$sql2;
 
 						if (GETPOST('clean_product_stock_batch') == 'confirmed') {
@@ -937,7 +937,7 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 							// Method 1
 							print ' -> Insert qty '.($obj->reel - $obj->reelbatch).' with lot 000000 linked to fk_product_stock='.$obj->psrowid;
 							$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_batch(fk_product_stock, batch, qty)";
-							$sql2 .= "VALUES(".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
+							$sql2 .= "VALUES(".((int) $obj->psrowid).", '000000', ".((float) ($obj->reel - $obj->reelbatch)).")";
 							print '<br>'.$sql2;
 
 							if (GETPOST('clean_product_stock_batch') == 'confirmed') {
