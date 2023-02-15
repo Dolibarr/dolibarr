@@ -72,21 +72,21 @@ class Categorie extends CommonObject
 	 * @var array Table of mapping between type string and ID used for field 'type' in table llx_categories
 	 */
 	protected $MAP_ID = array(
-		'product'             => 0,
-		'supplier'            => 1,
-		'customer'            => 2,
-		'member'              => 3,
-		'contact'             => 4,
-		'bank_account'        => 5,
-		'project'             => 6,
-		'user'                => 7,
-		'bank_line'           => 8,
-		'warehouse'           => 9,
-		'actioncomm'          => 10,
-		'website_page'        => 11,
-		'ticket'              => 12,
+		'product'      => 0,
+		'supplier'     => 1,
+		'customer'     => 2,
+		'member'       => 3,
+		'contact'      => 4,
+		'bank_account' => 5,
+		'project'      => 6,
+		'user'         => 7,
+		'bank_line'    => 8,
+		'warehouse'    => 9,
+		'actioncomm'   => 10,
+		'website_page' => 11,
+		'ticket'       => 12,
 		'knowledgemanagement' => 13,
-		'order'               => 16
+		'order' => 16,
 	);
 
 	/**
@@ -95,21 +95,21 @@ class Categorie extends CommonObject
 	 * @note This array should be removed in future, once previous constants are moved to the string value. Deprecated
 	 */
 	public static $MAP_ID_TO_CODE = array(
-		0  => 'product',
-		1  => 'supplier',
-		2  => 'customer',
-		3  => 'member',
-		4  => 'contact',
-		5  => 'bank_account',
-		6  => 'project',
-		7  => 'user',
-		8  => 'bank_line',
-		9  => 'warehouse',
+		0 => 'product',
+		1 => 'supplier',
+		2 => 'customer',
+		3 => 'member',
+		4 => 'contact',
+		5 => 'bank_account',
+		6 => 'project',
+		7 => 'user',
+		8 => 'bank_line',
+		9 => 'warehouse',
 		10 => 'actioncomm',
 		11 => 'website_page',
 		12 => 'ticket',
 		13 => 'knowledgemanagement',
-		16 => 'order'
+		16 => 'order',
 	);
 
 	/**
@@ -118,9 +118,9 @@ class Categorie extends CommonObject
 	 * @todo Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public $MAP_CAT_FK = array(
-		'customer'     => 'soc',
-		'supplier'     => 'soc',
-		'contact'      => 'socpeople',
+		'customer' => 'soc',
+		'supplier' => 'soc',
+		'contact'  => 'socpeople',
 		'bank_account' => 'account',
 	);
 
@@ -130,8 +130,8 @@ class Categorie extends CommonObject
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public $MAP_CAT_TABLE = array(
-		'customer'    => 'societe',
-		'supplier'    => 'fournisseur',
+		'customer' => 'societe',
+		'supplier' => 'fournisseur',
 		'bank_account'=> 'account',
 	);
 
@@ -141,21 +141,21 @@ class Categorie extends CommonObject
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public $MAP_OBJ_CLASS = array(
-		'product'             => 'Product',
-		'customer'            => 'Societe',
-		'supplier'            => 'Fournisseur',
-		'member'              => 'Adherent',
-		'contact'             => 'Contact',
-		'user'                => 'User',
-		'account'             => 'Account', // old for bank account
-		'bank_account'        => 'Account',
-		'project'             => 'Project',
-		'warehouse'           => 'Entrepot',
-		'actioncomm'          => 'ActionComm',
-		'website_page'        => 'WebsitePage',
-		'ticket'              => 'Ticket',
+		'product'  => 'Product',
+		'customer' => 'Societe',
+		'supplier' => 'Fournisseur',
+		'member'   => 'Adherent',
+		'contact'  => 'Contact',
+		'user'     => 'User',
+		'account'  => 'Account', // old for bank account
+		'bank_account'  => 'Account',
+		'project'  => 'Project',
+		'warehouse' => 'Entrepot',
+		'actioncomm' => 'ActionComm',
+		'website_page' => 'WebsitePage',
+		'ticket' => 'Ticket',
 		'knowledgemanagement' => 'KnowledgeRecord',
-		'order'               => 'Commande'
+		'order' => 'Commande',
 	);
 
 	/**
@@ -164,19 +164,19 @@ class Categorie extends CommonObject
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public static $MAP_TYPE_TITLE_AREA = array(
-		'product'        => 'ProductsCategoriesArea',
-		'customer'       => 'CustomersCategoriesArea',
-		'supplier'       => 'SuppliersCategoriesArea',
-		'member'         => 'MembersCategoriesArea',
-		'contact'        => 'ContactsCategoriesArea',
-		'user'           => 'UsersCategoriesArea',
-		'account'        => 'AccountsCategoriesArea', // old for bank account
-		'bank_account'   => 'AccountsCategoriesArea',
-		'project'        => 'ProjectsCategoriesArea',
-		'warehouse'      => 'StocksCategoriesArea',
-		'actioncomm'     => 'ActioncommCategoriesArea',
-		'website_page'   => 'WebsitePageCategoriesArea',
-		'order'          => 'OrderCategoriesArea'
+		'product' => 'ProductsCategoriesArea',
+		'customer' => 'CustomersCategoriesArea',
+		'supplier' => 'SuppliersCategoriesArea',
+		'member' => 'MembersCategoriesArea',
+		'contact' => 'ContactsCategoriesArea',
+		'user' => 'UsersCategoriesArea',
+		'account' => 'AccountsCategoriesArea', // old for bank account
+		'bank_account' => 'AccountsCategoriesArea',
+		'project' => 'ProjectsCategoriesArea',
+		'warehouse' => 'StocksCategoriesArea',
+		'actioncomm' => 'ActioncommCategoriesArea',
+		'website_page' => 'WebsitePageCategoriesArea',
+		'order' => 'OrderCategoriesArea',
 	);
 
 	/**
@@ -184,15 +184,15 @@ class Categorie extends CommonObject
 	 * 				This array may be completed by external modules with hook "constructCategory"
 	 */
 	public $MAP_OBJ_TABLE = array(
-		'customer'            => 'societe',
-		'supplier'            => 'societe',
-		'member'              => 'adherent',
-		'contact'             => 'socpeople',
-		'account'             => 'bank_account', // old for bank account
-		'project'             => 'projet',
-		'warehouse'           => 'entrepot',
+		'customer' => 'societe',
+		'supplier' => 'societe',
+		'member'   => 'adherent',
+		'contact'  => 'socpeople',
+		'account'  => 'bank_account', // old for bank account
+		'project'  => 'projet',
+		'warehouse' => 'entrepot',
 		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord',
-		'order'               => 'commande'
+		'order' => 'commande',
 	);
 
 	/**
