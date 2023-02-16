@@ -911,8 +911,11 @@ abstract class CommonObject
 				$out .= img_picto($langs->trans("Address"), 'map-marker-alt');
 				$out .= '</a> ';
 			}
-			$out .= dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', ');
-			$outdone++;
+			$address = dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', ');
+			if ($address) {
+				$out .= $address;
+				$outdone++;
+			}
 			$outdone++;
 
 			// List of extra languages
@@ -938,6 +941,7 @@ abstract class CommonObject
 					// If there is extra languages
 					foreach ($arrayoflangcode as $extralangcode) {
 						$s = picto_from_langcode($extralangcode, 'class="pictoforlang paddingright"');
+						// This also call dol_format_address()
 						$coords = $this->getFullAddress(1, ', ', $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT, $extralangcode);
 						$htmltext .= $s.dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', ');
 					}
@@ -946,7 +950,8 @@ abstract class CommonObject
 			}
 		}
 
-		if (!in_array($this->country_code, $countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)   // If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
+		// If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
+		if (!in_array($this->country_code, $countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)
 				&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) {
 			if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 && $this->region) {
 				$out .= ($outdone ? ' - ' : '').$this->region.' - '.$this->state;
@@ -954,6 +959,10 @@ abstract class CommonObject
 				$out .= ($outdone ? ' - ' : '').$this->state;
 			}
 			$outdone++;
+		}
+
+		if ($outdone) {
+			$out = '<div class="address inline-block">'.$out.'</div>';
 		}
 
 		if (!empty($this->phone) || !empty($this->phone_pro) || !empty($this->phone_mobile) || !empty($this->phone_perso) || !empty($this->fax) || !empty($this->office_phone) || !empty($this->user_mobile) || !empty($this->office_fax)) {
@@ -1371,12 +1380,13 @@ abstract class CommonObject
 	 *
 	 *    @param	int			$statusoflink	Status of links to get (-1=all). Not used.
 	 *    @param	string		$source			Source of contact: 'external' or 'thirdparty' (llx_socpeople) or 'internal' (llx_user)
-	 *    @param	int         $list       	0:Return array contains all properties, 1:Return array contains just id
+	 *    @param	int         $list       	0:Returned array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       	Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @param	int			$status			Status of user or company
+	 *    @param	array		$arrayoftcids	Array with ID of type of contacts. If we provide this, we can make a ec.fk_c_type_contact in ($arrayoftcids) to avoid link on tc table. TODO Not implemented.
 	 *    @return	array|int		        	Array of contacts, -1 if error
 	 */
-	public function liste_contact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1)
+	public function liste_contact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1, $arrayoftcids = array())
 	{
 		// phpcs:enable
 		global $langs;
@@ -1418,7 +1428,7 @@ abstract class CommonObject
 				$sql .= " AND t.statut = ".((int) $status);	// t is llx_socpeople
 			}
 		}
-		$sql .= " AND tc.active=1";
+		$sql .= " AND tc.active = 1";
 		if ($statusoflink >= 0) {
 			$sql .= " AND ec.statut = ".((int) $statusoflink);
 		}

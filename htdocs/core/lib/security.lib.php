@@ -179,6 +179,9 @@ function dolDecrypt($chain, $key = '')
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
 		$ciphering = $reg[1];
 		if (function_exists('openssl_decrypt')) {
+			if (empty($key)) {
+				return 'Error dolDecrypt decrypt key is empty';
+			}
 			$tmpexplode = explode(':', $reg[2]);
 			if (!empty($tmpexplode[1]) && is_string($tmpexplode[0])) {
 				$newchain = openssl_decrypt($tmpexplode[1], $ciphering, $key, 0, $tmpexplode[0]);
@@ -186,7 +189,7 @@ function dolDecrypt($chain, $key = '')
 				$newchain = openssl_decrypt($tmpexplode[0], $ciphering, $key, 0, null);
 			}
 		} else {
-			$newchain = 'Error function openssl_decrypt() not available';
+			$newchain = 'Error dolDecrypt function openssl_decrypt() not available';
 		}
 		return $newchain;
 	} else {
