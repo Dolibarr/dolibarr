@@ -72,7 +72,7 @@ if (!$sortorder) {
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('agendathirdparty'));
+$hookmanager->initHooks(array('productagenda'));
 
 $object = new Product($db);
 if ($id > 0 || !empty($ref)) {
