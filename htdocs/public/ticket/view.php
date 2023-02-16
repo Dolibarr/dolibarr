@@ -206,7 +206,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 $triggersendname = 'TICKET_SENTBYMAIL';
 $paramname = 'id';
 $autocopy = 'MAIN_MAIL_AUTOCOPY_TICKET_TO'; // used to know the automatic BCC to add
-if (!empty($object->id)) $trackid = 'tic'.$object->dao->id;
+if (!empty($object->dao->id)) $trackid = 'tic'.$object->dao->id;
 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
