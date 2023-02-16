@@ -60,6 +60,7 @@ class CMailFile
 
 	public $atleastonefile;
 
+	public $msg;
 	public $eol;
 	public $eol2;
 
