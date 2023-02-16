@@ -911,8 +911,11 @@ abstract class CommonObject
 				$out .= img_picto($langs->trans("Address"), 'map-marker-alt');
 				$out .= '</a> ';
 			}
-			$out .= dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', ');
-			$outdone++;
+			$address = dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', ');
+			if ($address) {
+				$out .= $address;
+				$outdone++;
+			}
 			$outdone++;
 
 			// List of extra languages
@@ -938,6 +941,7 @@ abstract class CommonObject
 					// If there is extra languages
 					foreach ($arrayoflangcode as $extralangcode) {
 						$s = picto_from_langcode($extralangcode, 'class="pictoforlang paddingright"');
+						// This also call dol_format_address()
 						$coords = $this->getFullAddress(1, ', ', $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT, $extralangcode);
 						$htmltext .= $s.dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', ');
 					}
@@ -946,7 +950,8 @@ abstract class CommonObject
 			}
 		}
 
-		if (!in_array($this->country_code, $countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)   // If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
+		// If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
+		if (!in_array($this->country_code, $countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)
 				&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) {
 			if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 && $this->region) {
 				$out .= ($outdone ? ' - ' : '').$this->region.' - '.$this->state;
@@ -954,6 +959,10 @@ abstract class CommonObject
 				$out .= ($outdone ? ' - ' : '').$this->state;
 			}
 			$outdone++;
+		}
+
+		if ($outdone) {
+			$out = '<div class="address inline-block">'.$out.'</div>';
 		}
 
 		if (!empty($this->phone) || !empty($this->phone_pro) || !empty($this->phone_mobile) || !empty($this->phone_perso) || !empty($this->fax) || !empty($this->office_phone) || !empty($this->user_mobile) || !empty($this->office_fax)) {

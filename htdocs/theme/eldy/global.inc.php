@@ -3983,6 +3983,10 @@ div.refidno  {
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
 	line-height: 1.4em;
 }
+div.refaddress div.address {
+	line-height: 1.2em;
+	font-size: 0.95em;
+}
 div.refidno form {
 	display: inline-block;
 }
