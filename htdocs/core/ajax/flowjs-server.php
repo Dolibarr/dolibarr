@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 	if (file_exists($upload_dir.'/'.$flowFilename)) {
 		echo json_encode('File '.$flowIdentifier.' was already uploaded');
 		header("HTTP/1.0 200 Ok");
-	} else if (!empty($_FILES)) foreach ($_FILES as $file) {
+	} elseif (!empty($_FILES)) foreach ($_FILES as $file) {
 		// check the error status
 		if ($file['error'] != 0) {
 			dol_syslog('error '.$file['error'].' in file '.$flowFilename);
