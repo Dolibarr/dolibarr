@@ -137,7 +137,7 @@ $title = $langs->trans("Ticket").' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/ticketnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
 }
-$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|DE:Modul_Terminplanung';
 
 llxHeader('', $title, $help_url);
 
