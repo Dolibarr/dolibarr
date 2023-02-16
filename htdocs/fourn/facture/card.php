@@ -2247,10 +2247,9 @@ if ($action == 'create') {
         			$(document).ready(function() {
         				$("#fac_rec").change(function() {
 							console.log("We have changed the template invoice - Reload page");
-        					var fac_rec = $(this).val();
-        			        var socid = $(\'#socid\').val();
-        					// For template invoice change, we must reuse data of template, not input already done, so we call a GET with action=create, not a POST submit.
-        					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
+							// reload page
+							$("input[name=action]").val("create");
+							$("form[name=add]").submit();
         				});
         			});
         			</script>';
