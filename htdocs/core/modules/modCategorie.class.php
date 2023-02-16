@@ -142,16 +142,16 @@ class modCategorie extends DolibarrModules
 		if (isModEnabled("societe")) {
 			$typeexample .= ($typeexample ? " / " : "")."4=Contact";
 		}
-		if (!empty($conf->bank->enabled)) {
+		if (isModEnabled('bank')) {
 			$typeexample .= ($typeexample ? " / " : "")."5=Bank account";
 		}
 		if (isModEnabled('project')) {
 			$typeexample .= ($typeexample ? " / " : "")."6=Project";
 		}
-		if (!empty($conf->user->enabled)) {
+		if (isModEnabled('user')) {
 			$typeexample .= ($typeexample ? " / " : "")."7=User";
 		}
-		if (!empty($conf->bank->enabled)) {
+		if (isModEnabled('bank')) {
 			$typeexample .= ($typeexample ? " / " : "")."8=Bank line";
 		}
 		if (isModEnabled('stock')) {
@@ -163,7 +163,7 @@ class modCategorie extends DolibarrModules
 		if (isModEnabled('website')) {
 			$typeexample .= ($typeexample ? " / " : "")."11=Website page";
 		}
-		if (!empty($conf->commande->enabled)) {
+		if (isModEnabled('commande')) {
 			$typeexample .= ($typeexample ? " / " : "")."16=Order";
 		}
 
@@ -612,7 +612,7 @@ class modCategorie extends DolibarrModules
 		}
 
 		// 7 Users
-		if (!empty($conf->user->enabled)) {
+		if (isModEnabled('user')) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_7_'.Categorie::$MAP_ID_TO_CODE[7];
 			$this->import_label[$r] = "CatUsersLinks"; // Translation key
@@ -638,7 +638,7 @@ class modCategorie extends DolibarrModules
 		// 11 Website Pages, TODO ?
 
 		// 16 Order
-		if (!empty($conf->commande->enabled)) {
+		if (isModEnabled('commande')) {
 			++$r;
 			$this->importTagLinks(
 				$r,
