@@ -231,7 +231,7 @@ class SMTPs
 	private $_errorsTo = '';
 	private $_deliveryReceipt = 0;
 	private $_trackId = '';
-	private $_moreInHeader = '';
+	private $_moreinheader = '';
 
 	/**
 	 * An array of options for stream_context_create()
@@ -1267,7 +1267,7 @@ class SMTPs
 				$_RCPT_list = array();
 				// walk down Recipients array and pull just email addresses
 				foreach ($this->_msgRecipients as $_host => $_list) {
-					if ($this->_msgRecipients[$_host][$_which]) {
+					if (!empty($this->_msgRecipients[$_host][$_which])) {
 						foreach ($this->_msgRecipients[$_host][$_which] as $_addr => $_realName) {
 							if ($_realName) {	// @CHANGE LDR
 								$_realName = '"'.$_realName.'"';
