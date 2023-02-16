@@ -16,6 +16,7 @@
  * Copyright (C) 2021       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
+ * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1784,6 +1785,10 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print '">'."\n";
 			}
 		}
+
+		//customcss
+		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/custom.css.php">'."\n";
+
 
 		// Output standard javascript links
 		if (!defined('DISABLE_JQUERY') && !$disablejs && !empty($conf->use_javascript_ajax)) {
