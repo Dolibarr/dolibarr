@@ -202,9 +202,10 @@ class Form
 	 * @param	string	$paramid		Key of parameter for id ('id', 'socid')
 	 * @param	string	$gm				'auto' or 'tzuser' or 'tzuserrel' or 'tzserver' (when $typeofdata is a date)
 	 * @param	array	$moreoptions	Array with more options. For example array('addnowlink'=>1), array('valuealreadyhtmlescaped'=>1)
+	 * @param	string	$editaction		[=''] use GETPOST default action or set action to edit mode
 	 * @return  string					HTML edit field
 	 */
-	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 1, $formatfunc = '', $paramid = 'id', $gm = 'auto', $moreoptions = array())
+	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 1, $formatfunc = '', $paramid = 'id', $gm = 'auto', $moreoptions = array(), $editaction = '')
 	{
 		global $conf, $langs;
 
@@ -233,7 +234,10 @@ class Form
 		if (!empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && !preg_match('/^select;|day|datepicker|dayhour|datehourpicker/', $typeofdata)) { // TODO add jquery timepicker and support select
 			$ret .= $this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $editvalue, $extObject, $custommsg);
 		} else {
-			$editmode = (GETPOST('action', 'aZ09') == 'edit'.$htmlname);
+			if ($editaction == '') {
+				$editaction = GETPOST('action', 'aZ09');
+			}
+			$editmode = ($editaction == 'edit'.$htmlname);
 			if ($editmode) {
 				$ret .= "\n";
 				$ret .= '<form method="post" action="'.$_SERVER["PHP_SELF"].($moreparam ? '?'.$moreparam : '').'">';
@@ -5126,10 +5130,12 @@ class Form
 						$i = 0;
 						foreach ($input['values'] as $selkey => $selval) {
 							$more .= '<div class="tagtr">';
-							if ($i == 0) {
-								$more .= '<div class="tagtd'.(empty($input['tdclass']) ? ' tdtop' : (' tdtop '.$input['tdclass'])).'">'.$input['label'].'</div>';
-							} else {
-								$more .= '<div clas="tagtd'.(empty($input['tdclass']) ? '' : (' "'.$input['tdclass'])).'">&nbsp;</div>';
+							if (isset($input['label'])) {
+								if ($i == 0) {
+									$more .= '<div class="tagtd'.(empty($input['tdclass']) ? ' tdtop' : (' tdtop '.$input['tdclass'])).'">'.$input['label'].'</div>';
+								} else {
+									$more .= '<div clas="tagtd'.(empty($input['tdclass']) ? '' : (' "'.$input['tdclass'])).'">&nbsp;</div>';
+								}
 							}
 							$more .= '<div class="tagtd'.($i == 0 ? ' tdtop' : '').'"><input type="radio" class="flat'.$morecss.'" id="'.dol_escape_htmltag($input['name'].$selkey).'" name="'.dol_escape_htmltag($input['name']).'" value="'.$selkey.'"'.$moreattr;
 							if (!empty($input['disabled'])) {
@@ -8452,8 +8458,13 @@ class Form
 			}
 		}
 
-		// Try also magic suggest
-		$out .= '<select id="'.$htmlname.'" class="multiselect'.($morecss ? ' '.$morecss : '').'" multiple name="'.$htmlname.'[]"'.($moreattrib ? ' '.$moreattrib : '').($width ? ' style="width: '.(preg_match('/%/', $width) ? $width : $width.'px').'"' : '').'>'."\n";
+		$useenhancedmultiselect = 0;
+		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')) {
+			$useenhancedmultiselect = 1;
+		}
+
+		// Output select component
+		$out .= '<select id="'.$htmlname.'" class="multiselect'.($useenhancedmultiselect ? ' multiselectononeline' : '').($morecss ? ' '.$morecss : '').'" multiple name="'.$htmlname.'[]"'.($moreattrib ? ' '.$moreattrib : '').($width ? ' style="width: '.(preg_match('/%/', $width) ? $width : $width.'px').'"' : '').'>'."\n";
 		if (is_array($array) && !empty($array)) {
 			if ($value_as_key) {
 				$array = array_combine($array, $array);
@@ -9773,7 +9784,7 @@ class Form
 	/**
 	 *	Return HTML to show the search and clear seach button
 	 *
-	 *  @param	string	$pos       position colon on liste value left or right
+	 *  @param	string	$pos       Position of colon on the list. Value 'left' or 'right'
 	 *  @return	string
 	 */
 	public function showFilterButtons($pos = '')

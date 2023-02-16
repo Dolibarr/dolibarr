@@ -412,7 +412,7 @@ $moreforfilter = '';
 $massactionbutton = '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -421,6 +421,13 @@ print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : '').'">'."\n";
 
 print '<tr class="liste_titre_filter">';
+
+// Filter: Buttons
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre maxwidthsearch">';
+	print $form->showFilterAndCheckAddButtons(0);
+	print '</td>';
+}
 
 // Filters: Line number (placeholder)
 if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
@@ -522,13 +529,20 @@ $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // N
 print $hookmanager->resPrint;
 
 // Filter: Buttons
-print '<td class="liste_titre maxwidthsearch">';
-print $form->showFilterAndCheckAddButtons(0);
-print '</td>';
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre maxwidthsearch">';
+	print $form->showFilterAndCheckAddButtons(0);
+	print '</td>';
+}
 
 print '</tr>';
 
 print '<tr class="liste_titre">';
+
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+}
+
 if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
 	print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 }
@@ -571,7 +585,9 @@ $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+}
 print '</tr>';
 
 $i = 0;
@@ -610,6 +626,12 @@ while ($i < min($num, $limit)) {
 		}
 	} else {
 		print '<tr class="oddeven">';
+
+
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td></td>';
+		}
 
 		// Line number
 		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
@@ -750,8 +772,10 @@ while ($i < min($num, $limit)) {
 			}
 		}
 
-		// Buttons
-		print '<td></td>';
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td></td>';
+		}
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

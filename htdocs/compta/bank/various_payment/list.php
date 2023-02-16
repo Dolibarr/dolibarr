@@ -396,13 +396,20 @@ if ($resql) {
 	}
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 	$moreforfilter= '';
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">';
 
 	print '<tr class="liste_titre">';
+
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch">';
+		$searchpicto = $form->showFilterAndCheckAddButtons(0);
+		print $searchpicto;
+		print '</td>';
+	}
 
 	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
 		print '<td class="liste_titre">';
@@ -507,15 +514,21 @@ if ($resql) {
 		print '</td>';
 	}
 
-	print '<td class="liste_titre maxwidthsearch">';
-	$searchpicto = $form->showFilterAndCheckAddButtons(0);
-	print $searchpicto;
-	print '</td>';
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch">';
+		$searchpicto = $form->showFilterAndCheckAddButtons(0);
+		print $searchpicto;
+		print '</td>';
+	}
 
 	print '</tr>';
 
 
 	print '<tr class="liste_titre">';
+
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	}
 
 	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
 		print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
@@ -563,7 +576,9 @@ if ($resql) {
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	}
 	print '</tr>';
 
 
@@ -601,6 +616,10 @@ if ($resql) {
 			}
 		} else {
 			print '<tr class="oddeven">';
+
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td></td>';
+			}
 
 			// No
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
@@ -751,8 +770,9 @@ if ($resql) {
 				print '</td>';
 			}
 
-			print '<td></td>';
-
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td></td>';
+			}
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

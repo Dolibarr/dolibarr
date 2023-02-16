@@ -2077,7 +2077,11 @@ if ($resql) {
 			// Third party
 			if (!empty($arrayfields['s.nom']['checked'])) {
 				print '<td class="tdoverflowmax150">';
-				print $getNomUrl_cache[$obj->socid];
+				if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+					print $companystatic->getNomUrl(1, 'customer', 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+				} else {
+					print $getNomUrl_cache[$obj->socid];
+				}
 
 				// If module invoices enabled and user with invoice creation permissions
 				if (isModEnabled('facture') && !empty($conf->global->ORDER_BILLING_ALL_CUSTOMER)) {

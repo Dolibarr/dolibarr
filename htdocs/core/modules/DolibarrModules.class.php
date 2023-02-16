@@ -365,11 +365,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $phpmin;
 
+	public $phpmax;
+
 	/**
 	 * @var array Minimum version of Dolibarr required by module.
 	 * e.g.: Dolibarr ≥ 3.6 = array(3, 6)
 	 */
 	public $need_dolibarr_version;
+
+	public $enabled_bydefault;
 
 	/**
 	 * @var bool Whether to hide the module.

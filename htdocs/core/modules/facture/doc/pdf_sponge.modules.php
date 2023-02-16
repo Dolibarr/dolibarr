@@ -1618,7 +1618,7 @@ class pdf_sponge extends ModelePDFFactures
 
 
 		// Get Total HT
-		$total_ht = (isModEnabled("multicurrency") && $object->mylticurrency_tx != 1 ? $object->multicurrency_total_ht : $object->total_ht);
+		$total_ht = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->multicurrency_total_ht : $object->total_ht);
 
 		// Total remise
 		$total_line_remise = 0;
@@ -2057,7 +2057,7 @@ class pdf_sponge extends ModelePDFFactures
 	 *  @param  int	    	$showaddress    0=no, 1=yes (usually set to 1 for first page, and 0 for next pages)
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	int							top shift of linked object lines
+	 *  @return	array							top shift of linked object lines
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{

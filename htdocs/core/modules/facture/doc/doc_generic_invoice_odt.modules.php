@@ -336,15 +336,19 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$object->fetchObjectLinked('', '', '', '');
 				//print_r($object->linkedObjects['propal']); exit;
 
-				$propal_object = $object->linkedObjects['propal'][0];
+				if (isset($object->linkedObjects['propal'][0])) {
+					$propal_object = $object->linkedObjects['propal'][0];
+				} else {
+					$propal_object = null;
+				}
 
 				// Make substitution
 				$substitutionarray = array(
-				'__FROM_NAME__' => $this->emetteur->name,
-				'__FROM_EMAIL__' => $this->emetteur->email,
-				'__TOTAL_TTC__' => $object->total_ttc,
-				'__TOTAL_HT__' => $object->total_ht,
-				'__TOTAL_VAT__' => $object->total_tva
+					'__FROM_NAME__' => $this->emetteur->name,
+					'__FROM_EMAIL__' => $this->emetteur->email,
+					'__TOTAL_TTC__' => $object->total_ttc,
+					'__TOTAL_HT__' => $object->total_ht,
+					'__TOTAL_VAT__' => $object->total_tva
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);
 				// Call the ODTSubstitution hook
@@ -435,8 +439,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
-						} else // Text
-						{
+						} else {
+							// Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {

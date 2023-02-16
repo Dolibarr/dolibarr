@@ -7,6 +7,7 @@
  * Copyright (C) 2014		Alexis Algoud		 <alexis@atm-consulting.fr>
  * Copyright (C) 2018       Nicolas ZABOURI		 <info@inovea-conseil.com>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
+ * Copyright (C) 2023       Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-if (!empty($conf->ldap->enabled)) {
+if (isModEnabled('ldap')) {
 	require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 }
 
@@ -103,6 +104,11 @@ class UserGroup extends CommonObject
 	public $nb_users;  // Number of users in the group
 
 	private $_tab_loaded = array(); // Array of cache of already loaded permissions
+
+	/**
+	 * @var int all_permissions_are_loaded
+	 */
+	public $all_permissions_are_loaded;
 
 	public $oldcopy; // To contains a clone of this when we need to save old properties of object
 
@@ -719,6 +725,33 @@ class UserGroup extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $menumanager;
+
+		$option = $params['option'] ?? '';
+
+		$datas = [];
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			$langs->load("users");
+			return ['optimize' => $langs->trans("ShowGroup")];
+		}
+		$datas['divopen'] = '<div class="centpercent">';
+		$datas['picto'] = img_picto('', 'group').' <u>'.$langs->trans("Group").'</u><br>';
+		$datas['name'] = '<b>'.$langs->trans('Name').':</b> '.$this->name;
+		$datas['description'] = '<br><b>'.$langs->trans("Description").':</b> '.$this->note;
+		$datas['divclose'] = '</div>';
+
+		return $datas;
+	}
+
+	/**
 	 *  Return a link to the user card (with optionaly the picto)
 	 *  Use this->id,this->lastname, this->firstname
 	 *
@@ -739,13 +772,20 @@ class UserGroup extends CommonObject
 			$withpicto = 0;
 		}
 
-		$result = ''; $label = '';
-
-		$label .= '<div class="centpercent">';
-		$label .= img_picto('', 'group').' <u>'.$langs->trans("Group").'</u><br>';
-		$label .= '<b>'.$langs->trans('Name').':</b> '.$this->name;
-		$label .= '<br><b>'.$langs->trans("Description").':</b> '.$this->note;
-		$label .= '</div>';
+		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
+		}
+		$label = implode($this->getTooltipContentArray($params));
 
 		if ($option == 'permissions') {
 			$url = DOL_URL_ROOT.'/user/group/perms.php?id='.$this->id;
@@ -772,7 +812,7 @@ class UserGroup extends CommonObject
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -781,7 +821,7 @@ class UserGroup extends CommonObject
 
 		$result = $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.'class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->name;

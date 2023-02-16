@@ -74,12 +74,12 @@ if (empty($action) && empty($id) && empty($ref)) {
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 
-$permissiontoread = $user->rights->knowledgemanagement->knowledgerecord->read;
-$permissiontovalidate = $user->rights->knowledgemanagement->knowledgerecord->write;
-$permissiontoadd = $user->rights->knowledgemanagement->knowledgerecord->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->knowledgemanagement->knowledgerecord->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote = $user->rights->knowledgemanagement->knowledgerecord->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->knowledgemanagement->knowledgerecord->write; // Used by the include of actions_dellink.inc.php
+$permissiontoread = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read');
+$permissiontovalidate = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write');
+$permissiontoadd = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissionnote = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write'); // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->knowledgemanagement->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check - Protection if external user
@@ -538,8 +538,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$relativepath = $objref.'/'.$objref.'.pdf';
 			$filedir = $conf->knowledgemanagement->dir_output.'/'.$object->element.'/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->rights->knowledgemanagement->knowledgerecord->read; // If you can read, you can build the PDF to read content
-			$delallowed = $user->rights->knowledgemanagement->knowledgerecord->write; // If you can create/edit, you can remove a file on card
+			$genallowed = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read'); // If you can read, you can build the PDF to read content
+			$delallowed = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write'); // If you can create/edit, you can remove a file on card
 			print $formfile->showdocuments('knowledgemanagement:KnowledgeRecord', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 

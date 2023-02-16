@@ -684,7 +684,7 @@ print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, 0, 'center')
 
 print '<div align="center">';
 print '<div id="divsubscribe">';
-print '<div class="center subscriptionformhelptext">';
+print '<div class="center subscriptionformhelptext opacitymedium justify">';
 
 // Welcome message
 

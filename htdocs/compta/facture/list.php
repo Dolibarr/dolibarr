@@ -1793,11 +1793,11 @@ if ($resql) {
 
 		$with_margin_info = false;
 		if (isModEnabled('margin') && (
-				!empty($arrayfields['total_pa']['checked'])
-				|| !empty($arrayfields['total_margin']['checked'])
-				|| !empty($arrayfields['total_margin_rate']['checked'])
-				|| !empty($arrayfields['total_mark_rate']['checked'])
-			)
+			!empty($arrayfields['total_pa']['checked'])
+			|| !empty($arrayfields['total_margin']['checked'])
+			|| !empty($arrayfields['total_margin_rate']['checked'])
+			|| !empty($arrayfields['total_mark_rate']['checked'])
+		)
 		) {
 			$with_margin_info = true;
 		}
@@ -1871,11 +1871,14 @@ if ($resql) {
 			$paiement = $facturestatic->getSommePaiement();
 			$totalcreditnotes = $facturestatic->getSumCreditNotesUsed();
 			$totaldeposits = $facturestatic->getSumDepositsUsed();
-			$totalpay = $paiement + $totalcreditnotes + $totaldeposits;
-			$remaintopay = price2num($facturestatic->total_ttc - $totalpay);
+
 			$multicurrency_paiement = $facturestatic->getSommePaiement(1);
 			$multicurrency_totalcreditnotes = $facturestatic->getSumCreditNotesUsed(1);
 			$multicurrency_totaldeposits = $facturestatic->getSumDepositsUsed(1);
+
+			$totalpay = $paiement + $totalcreditnotes + $totaldeposits;
+			$remaintopay = price2num($facturestatic->total_ttc - $totalpay);
+
 			$multicurrency_totalpay = $multicurrency_paiement + $multicurrency_totalcreditnotes + $multicurrency_totaldeposits;
 			$multicurrency_remaintopay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_totalpay);
 
@@ -1928,7 +1931,6 @@ if ($resql) {
 					print '});"';
 				}
 				print '>';
-
 
 				// Action column
 				if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
@@ -2550,12 +2552,14 @@ if ($resql) {
 						print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
 					}
 					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
 				}
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
+
 				print "</tr>\n";
 			}
+
 			$i++;
 		}
 
