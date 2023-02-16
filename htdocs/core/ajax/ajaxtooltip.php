@@ -118,7 +118,6 @@ if ($objecttype == 'facture' || $objecttype == 'invoice') {
 	$module = 'contrat';
 	$myobject = 'contrat';
 } elseif ($objecttype == 'member') {
-	$langs->load('members');
 	$classpath = 'adherents/class';
 	$module = 'adherent';
 	$myobject = 'adherent';

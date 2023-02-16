@@ -2287,6 +2287,7 @@ class Adherent extends CommonObject
 		global $conf, $langs;
 
 		$datas = [];
+		$langs->loadLangs(['members', 'companies']);
 
 		$nofetch = empty($params['nofetch']) ? false : true;
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
@@ -2303,6 +2304,9 @@ class Adherent extends CommonObject
 
 		$datas['divopen'] = '<div class="centpercent">';
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Member").'</u> '.$this->getLibStatut(4);
+		if (!empty($this->morphy)) {
+			$datas['picto'] .= '&nbsp;' . $this->getmorphylib('', 1);
+		}
 		if (!empty($this->ref)) {
 			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}
