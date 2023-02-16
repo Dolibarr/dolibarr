@@ -142,6 +142,9 @@ class CMailFile
 	{
 		global $conf, $dolibarr_main_data_root, $user;
 
+		dol_syslog("CMailFile::CMailfile: charset=".$conf->file->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, errors_to=$errors_to, replyto=$replyto trackid=$trackid sendcontext=$sendcontext", LOG_DEBUG);
+		dol_syslog("CMailFile::CMailfile: subject=".$subject.", deliveryreceipt=".$deliveryreceipt.", msgishtml=".$msgishtml, LOG_DEBUG);
+
 		// Clean values of $mimefilename_list
 		if (is_array($mimefilename_list)) {
 			foreach ($mimefilename_list as $key => $val) {
@@ -311,8 +314,7 @@ class CMailFile
 			}
 		}
 
-		dol_syslog("CMailFile::CMailfile: sendmode=".$this->sendmode." charset=".$conf->file->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to, replyto=$replyto trackid=$trackid sendcontext=$sendcontext", LOG_DEBUG);
-		dol_syslog("CMailFile::CMailfile: subject=".$subject.", deliveryreceipt=".$deliveryreceipt.", msgishtml=".$msgishtml, LOG_DEBUG);
+		dol_syslog("CMailFile::CMailfile: sendmode=".$this->sendmode." addr_bcc=$addr_bcc, replyto=$replyto", LOG_DEBUG);
 
 		// We set all data according to choosed sending method.
 		// We also set a value for ->msgid
