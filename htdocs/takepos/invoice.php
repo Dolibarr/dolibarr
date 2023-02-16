@@ -166,7 +166,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook)) {
 	// Action to record a payment on a TakePOS invoice
-	if ($action == 'valid' && $user->rights->facture->creer) {
+	if ($action == 'valid' && $user->hasRight('facture', 'creer')) {
 		$bankaccount = 0;
 		$error = 0;
 
@@ -305,7 +305,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'creditnote' && $user->rights->facture->creer) {
+	if ($action == 'creditnote' && $user->hasRight('facture', 'creer')) {
 		$creditnote = new Facture($db);
 		$creditnote->socid = $invoice->socid;
 		$creditnote->date = dol_now();
@@ -1692,4 +1692,3 @@ print '</div>';
 if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	print '</body></html>';
 }
-
