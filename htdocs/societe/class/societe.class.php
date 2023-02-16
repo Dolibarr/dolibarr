@@ -615,9 +615,10 @@ class Societe extends CommonObject
 	/**
 	 * Duplicate of code_compta_client (for backward compatibility)
 	 * @var string
+	 * @deprecated
+	 * @see $code_compta_client
 	 */
 	public $code_compta;
-
 
 	/**
 	 * Accounting code for customer
@@ -637,13 +638,11 @@ class Societe extends CommonObject
 	 */
 	public $accountancy_code_supplier;
 
-
 	/**
 	 * Accounting code for product (for level 3 of suggestion of prouct accounting account)
 	 * @var string
 	 */
 	public $code_compta_product;
-
 
 	/**
 	 * @var string

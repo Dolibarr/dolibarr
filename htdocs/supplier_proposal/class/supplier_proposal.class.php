@@ -2563,7 +2563,7 @@ class SupplierProposal extends CommonObject
 		}
 
 		$linkclose = '';
-		if (empty($notooltip) && $user->rights->propal->lire) {
+		if (empty($notooltip) && $user->hasRight('propal', 'lire')) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowSupplierProposal");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';

@@ -321,7 +321,7 @@ if (isModEnabled('supplier_proposal') && $user->hasRight("supplier_proposal", "l
  * Draft sales orders
  */
 
-if (isModEnabled('commande') && $user->rights->commande->lire) {
+if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
 	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.total_tva, c.total_ttc, c.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
@@ -1008,7 +1008,7 @@ if (isModEnabled("propal") && $user->hasRight("propal", "lire")) {
 /*
  * Opened (validated) order
  */
-if (isModEnabled('commande') && $user->rights->commande->lire) {
+if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
 	$sql = "SELECT c.rowid as commandeid, c.total_ttc, c.total_ht, c.total_tva, c.ref, c.ref_client, c.fk_statut, c.date_valid as dv, c.facture as billed";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";

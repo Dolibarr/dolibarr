@@ -72,7 +72,7 @@ if (!$sortorder) {
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('agendathirdparty'));
+$hookmanager->initHooks(array('productagenda'));
 
 $object = new Product($db);
 if ($id > 0 || !empty($ref)) {
@@ -137,7 +137,7 @@ if ($id > 0 || $ref) {
 
 	$title = $langs->trans("Agenda");
 
-	$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda';
+	$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|DE:Modul_Terminplanung';
 
 	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/productnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 		$title = $object->name." - ".$title;

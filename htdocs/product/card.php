@@ -2846,7 +2846,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 	//print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	// Propals
-	if (isModEnabled("propal") && $user->rights->propal->creer) {
+	if (isModEnabled("propal") && $user->hasRight('propal', 'creer')) {
 		$propal = new Propal($db);
 
 		$langs->load("propal");
@@ -2867,7 +2867,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 	}
 
 	// Commande
-	if (isModEnabled('commande') && $user->rights->commande->creer) {
+	if (isModEnabled('commande') && $user->hasRight('commande', 'creer')) {
 		$commande = new Commande($db);
 
 		$langs->load("orders");
@@ -2887,7 +2887,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 	}
 
 	// Factures
-	if (isModEnabled('facture') && $user->rights->facture->creer) {
+	if (isModEnabled('facture') && $user->hasRight('facture', 'creer')) {
 		$invoice = new Facture($db);
 
 		$langs->load("bills");
