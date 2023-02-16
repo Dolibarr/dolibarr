@@ -1386,6 +1386,9 @@ class ExtraFields
 					$sqlwhere = '';
 					$sql = "SELECT ".$keyList;
 					$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
+					if (strpos($InfoFieldList[4], 'extra.') !== false) {
+						$sql .= ' as main';
+					}
 					if (!empty($InfoFieldList[4])) {
 						// can use current entity filter
 						if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
