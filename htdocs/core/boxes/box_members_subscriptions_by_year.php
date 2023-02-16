@@ -191,7 +191,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
+						'td' => 'class="left" colspan="4"',
 						'text' => $langs->trans("NoRecordedMembers"),
 					);
 				} else {

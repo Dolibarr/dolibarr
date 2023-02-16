@@ -633,7 +633,7 @@ class EcmDirectory extends CommonObject
 	 * 				level		        Level of line (Added by buildPathFromId call)
 	 *
 	 *  @param	int		$force	        Force reload of full arbo even if already loaded in cache $this->cats
-	 *	@return	array			        Tableau de array
+	 *	@return	array|int			        Tableau de array if OK, -1 if KO
 	 */
 	public function get_full_arbo($force = 0)
 	{

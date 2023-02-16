@@ -405,7 +405,7 @@ PL_UNKNOWN=Descoñecido
 PL_LOW=Baixo
 PL_MEDIUM=Medio
 PL_HIGH=Alto
-TE_UNKNOWN=-
+TE_UNKNOWN=Descoñecido
 TE_STARTUP=Startup
 TE_GROUP=Gran empresa
 TE_MEDIUM=PYME
@@ -503,3 +503,4 @@ TwoRecordsOfCompanyName=existe máis dun rexistro para esta empresa, póñase en
 CompanySection=Sección empresa
 ShowSocialNetworks=Amosar redes sociais
 HideSocialNetworks=Ocultar redes sociais
+

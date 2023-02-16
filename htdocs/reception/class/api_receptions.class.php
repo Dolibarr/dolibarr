@@ -499,10 +499,10 @@ class Receptions extends DolibarrApi
 	 *
 	 * @param   int 	$id             Reception ID
 	 * @param   int 	$notrigger      1=Does not execute triggers, 0= execute triggers
-	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @url POST    {id}/validate
 	 *
+	 * @return  Object
 	 * \todo An error 403 is returned if the request has an empty body.
 	 * Error message: "Forbidden: Content type `text/plain` is not supported."
 	 * Workaround: send this in the body
@@ -627,9 +627,10 @@ class Receptions extends DolibarrApi
 	*
 	* @param   	int     $id             Reception ID
 	* @param   	int     $notrigger      Disabled triggers
-	* @return  	Object              	Object with cleaned properties
 	*
 	* @url POST    {id}/close
+	*
+	* @return  Object
 	*/
 	public function close($id, $notrigger = 0)
 	{

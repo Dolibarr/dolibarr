@@ -63,14 +63,17 @@ if (!$sortorder) {
 
 // Initialize Objects
 $object = new Bookmark($db);
+if ($id > 0) {
+	$object->fetch($id);
+}
 
 // Security check
-restrictedArea($user, 'bookmark');
+restrictedArea($user, 'bookmark', $object);
 
 // Permissions
-$permissiontoread = !empty($user->rights->bookmark->lire);
-$permissiontoadd = !empty($user->rights->bookmark->creer);
-$permissiontodelete = !empty($user->rights->bookmark->supprimer);
+$permissiontoread = $user->hasRight('bookmark', 'lire');
+$permissiontoadd = $user->hasRight('bookmark', 'creer');
+$permissiontodelete = ($user->hasRight('bookmark', 'supprimer') || ($permissiontoadd && $object->fk_user == $user->id));
 
 
 /*
@@ -85,13 +88,15 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-if ($action == 'delete') {
-	$res = $object->remove($id);
+if ($action == 'delete' && $permissiontodelete) {
+	$object->fetch($id);
+	$res = $object->delete($user);
 	if ($res > 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
+		$action = '';
 	}
 }
 
@@ -196,7 +201,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/bookmarks/list.php'), '', !empty($user->rights->bookmark->creer));
+$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/bookmarks/list.php'), '', $permissiontoadd);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bookmark', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -235,8 +240,8 @@ while ($i < min($num, $limit)) {
 	}
 	$title      = $obj->title;
 	$link       = $obj->url;
-	$canedit    = $user->rights->bookmark->supprimer;
-	$candelete  = $user->rights->bookmark->creer;
+	$canedit    = $permissiontoadd;
+	$candelete  = $permissiontodelete;
 
 	// Title
 	print '<td class="tdoverflowmax200" alt="'.dol_escape_htmltag($title).'">';
@@ -268,7 +273,7 @@ while ($i < min($num, $limit)) {
 
 	// Author
 	print '<td class="center">';
-	if ($obj->fk_user) {
+	if ($obj->fk_user > 0) {
 		if (empty($conf->cache['users'][$obj->fk_user])) {
 			$tmpuser = new User($db);
 			$tmpuser->fetch($obj->fk_user);
@@ -294,10 +299,10 @@ while ($i < min($num, $limit)) {
 	// Actions
 	print '<td class="nowraponall right">';
 	if ($canedit) {
-		print '<a class="editfielda marginleftonly" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
+		print '<a class="editfielda marginleftonly marginrightonly" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
 	}
 	if ($candelete) {
-		print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$obj->rowid.'">'.img_delete().'</a>';
+		print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$obj->rowid.'">'.img_delete().'</a>';
 	}
 	print "</td>";
 	print "</tr>\n";

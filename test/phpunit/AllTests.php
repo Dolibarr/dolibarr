@@ -41,7 +41,7 @@ if (empty($conf->adherent->enabled)) {
 	print "Error: Module member must be enabled to have significant results.\n";
 	exit(1);
 }
-if (!empty($conf->ldap->enabled)) {
+if (isModEnabled('ldap')) {
 	print "Error: LDAP module should not be enabled.\n";
 	exit(1);
 }

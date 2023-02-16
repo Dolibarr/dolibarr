@@ -696,11 +696,12 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 /**
  * Prepare array with list of tabs
  *
- * @param	int		$nbofactivatedmodules	Number if activated modules
- * @param	int		$nboftotalmodules		Nb of total modules
- * @return  array							Array of tabs to show
+ * @param	int		$nbofactivatedmodules		Number if activated modules
+ * @param	int		$nboftotalmodules			Nb of total modules
+ * @param	int		$nbmodulesnotautoenabled	Nb of modules not auto enabled that are activated
+ * @return  array								Array of tabs to show
  */
-function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules)
+function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules, $nbmodulesnotautoenabled)
 {
 	global $langs, $conf, $user, $form;
 
@@ -711,7 +712,7 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules)
 	$head = array();
 	$mode = empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT;
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$mode;
-	if ($nbofactivatedmodules <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled)
+	if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled)
 		//$head[$h][1] = $form->textwithpicto($langs->trans("AvailableModules"), $desc);
 		$head[$h][1] = $langs->trans("AvailableModules");
 		$head[$h][1] .= $form->textwithpicto('', $langs->trans("YouMustEnableOneModule").'.<br><br><span class="opacitymedium">'.$desc.'</span>', 1, 'warning');
@@ -2055,6 +2056,11 @@ function email_admin_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
 	$head[$h][1] = $langs->trans("EMailTemplates");
 	$head[$h][2] = 'templates';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/mails_ingoing.php";
+	$head[$h][1] = $langs->trans("InGoingEmailSetup", $langs->transnoentitiesnoconv("EMailing"));
+	$head[$h][2] = 'common_ingoing';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'email_admin', 'remove');
