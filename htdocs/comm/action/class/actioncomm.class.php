@@ -1580,6 +1580,7 @@ class ActionComm extends CommonObject
 		$langs->load('agenda');
 		$datas = [];
 
+		$nofetch = empty($params['nofetch']) ? false : true;
 		// Set label of type
 		$labeltype = '';
 		if ($this->type_code) {
@@ -1630,6 +1631,12 @@ class ActionComm extends CommonObject
 			$datas['note'] = '<div class="tenlinesmax">';
 			$datas['note'] .= (dol_textishtml($texttoshow) ? str_replace(array("\r", "\n"), "", $texttoshow) : str_replace(array("\r", "\n"), '<br>', $texttoshow));
 			$datas['note'] .= '</div>';
+		}
+		// show categories for this record only in ajax to not overload lists
+		if (isModEnabled('categorie') && !$nofetch) {
+			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+			$form = new Form($this->db);
+			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_ACTIONCOMM, 1);
 		}
 
 		return $datas;
@@ -1734,6 +1741,7 @@ class ActionComm extends CommonObject
 				'id' => $this->id,
 				'objecttype' => $this->element,
 				'option' => $option,
+				'nofetch' => 1,
 			];
 			$classfortooltip = 'classforajaxtooltip';
 			$dataparams = ' data-params='.json_encode($params);

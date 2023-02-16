@@ -1005,7 +1005,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 				print '<input type="hidden" name="action" value="addintocategory">';
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
-				print $langs->trans("AddProjectIntoCategory").' &nbsp;';
+				print $langs->trans("AddObjectIntoCategory").' &nbsp;';
 				$form->selectProjects('', 'elemid');
 				print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';

@@ -722,7 +722,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Add operation
 	print '<tr class="oddeven nodrag nodrop">';
 	print '<td>';
-	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth300', 1);
+	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'minwidth150 maxwidth300', 1);
 	print '</td><td>';
 	//print '<input type="text" name="operationparam">';
 	$htmltext = $langs->transnoentitiesnoconv("OperationParamDesc");

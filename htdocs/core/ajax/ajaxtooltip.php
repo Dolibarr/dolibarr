@@ -163,6 +163,10 @@ if ($objecttype == 'facture' || $objecttype == 'invoice') {
 	$classpath = 'opensurvey/class';
 	$module = 'opensurvey';
 	$myobject = 'opensurveysondage';
+} elseif ($objecttype == 'knowledgerecord') {
+	$classpath = 'knowledgemanagement/class';
+	$module = 'knowledgemanagement';
+	$myobject = 'knowledgerecord';
 }
 
 // Generic case for $classfile and $classname

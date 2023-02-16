@@ -65,7 +65,7 @@ $object = new Ticket($db);
 
 // Security check
 //$result = restrictedArea($user, 'ticket|knowledgemanagement', 0, '', '', '', '');
-if (empty($user->rights->ticket->read) && empty($user->rights->knowledgemanagement->knowledgerecord->read)) {
+if (empty($user->rights->ticket->read) && !$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 	accessforbidden('Not enought permissions');
 }
 
