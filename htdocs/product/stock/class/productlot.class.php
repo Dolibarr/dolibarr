@@ -4,6 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2022  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2023	   	Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -552,6 +553,289 @@ class Productlot extends CommonObject
 
 			return -1;
 		}
+	}
+
+	/**
+	 *  Charge tableau des stats expedition pour le lot/numéro de série
+	 *
+	 * @param  int $socid Id societe
+	 * @return int                     Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
+	 */
+	public function loadStatsExpedition($socid = 0)
+	{
+		// phpcs:enable
+		global $db, $conf, $user, $hookmanager, $action;
+
+		$sql = "SELECT COUNT(DISTINCT exp.fk_soc) as nb_customers, COUNT(DISTINCT exp.rowid) as nb,";
+		$sql .= " COUNT(ed.rowid) as nb_rows, SUM(edb.qty) as qty";
+		$sql .= " FROM ".$this->db->prefix()."expeditiondet_batch as edb";
+		$sql .= " INNER JOIN ".$this->db->prefix()."expeditiondet as ed ON (ed.rowid = edb.fk_expeditiondet)";
+		$sql .= " INNER JOIN ".$this->db->prefix()."expedition as exp ON (exp.rowid = ed.fk_expedition)";
+		//      $sql .= ", ".$this->db->prefix()."societe as s";
+		if (empty($user->rights->societe->client->voir) && !$socid) {
+			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
+		}
+		$sql .= " WHERE exp.entity IN (".getEntity('expedition').")";
+		$sql .= " AND edb.batch = '".($this->db->escape($this->batch))."'";
+		if (empty($user->rights->societe->client->voir) && !$socid) {
+			$sql .= " AND exp.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+		}
+		//$sql.= " AND exp.fk_statut != 0";
+		if ($socid > 0) {
+			$sql .= " AND exp.fk_soc = ".((int) $socid);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$obj = $this->db->fetch_object($result);
+			$this->stats_expedition['customers'] = $obj->nb_customers;
+			$this->stats_expedition['nb'] = $obj->nb;
+			$this->stats_expedition['rows'] = $obj->nb_rows;
+			$this->stats_expedition['qty'] = $obj->qty ? $obj->qty : 0;
+
+
+			// Virtual products can't be used with kits (see langs with key ErrorNoteAlsoThatSubProductCantBeFollowedByLot)
+
+			// if it's a virtual product, maybe it is in invoice by extension
+			//          if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
+			//              $TFather = $this->getFather();
+			//              if (is_array($TFather) && !empty($TFather)) {
+			//                  foreach ($TFather as &$fatherData) {
+			//                      $pFather = new Product($this->db);
+			//                      $pFather->id = $fatherData['id'];
+			//                      $qtyCoef = $fatherData['qty'];
+			//
+			//                      if ($fatherData['incdec']) {
+			//                          $pFather->loadStatsExpedition($socid);
+			//
+			//                          $this->stats_expedition['customers'] += $pFather->stats_expedition['customers'];
+			//                          $this->stats_expedition['nb'] += $pFather->stats_expedition['nb'];
+			//                          $this->stats_expedition['rows'] += $pFather->stats_expedition['rows'];
+			//                          $this->stats_expedition['qty'] += $pFather->stats_expedition['qty'] * $qtyCoef;
+			//                      }
+			//                  }
+			//              }
+			//          }
+
+			$parameters = array('socid' => $socid);
+			$reshook = $hookmanager->executeHooks('loadStatsLotExpedition', $parameters, $this, $action);
+			if ($reshook > 0) {
+				$this->stats_expedition = $hookmanager->resArray['stats_expedition'];
+			}
+
+			return 1;
+		} else {
+			$this->error = $this->db->error();
+			return -1;
+		}
+	}
+
+	/**
+	 *  Charge tableau des stats commande fournisseur pour le lot/numéro de série
+	 *
+	 * @param  int $socid Id societe
+	 * @return int                     Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
+	 */
+	public function loadStatsSupplierOrder($socid = 0)
+	{
+		// phpcs:enable
+		global $db, $conf, $user, $hookmanager, $action;
+
+		$sql = "SELECT COUNT(DISTINCT cf.fk_soc) as nb_customers, COUNT(DISTINCT cf.rowid) as nb,";
+		$sql .= " COUNT(cfd.rowid) as nb_rows, SUM(cfdi.qty) as qty";
+		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur_dispatch as cfdi";
+		$sql .= " INNER JOIN ".$this->db->prefix()."commande_fournisseurdet as cfd ON (cfd.rowid = cfdi.fk_commandefourndet)";
+		$sql .= " INNER JOIN ".$this->db->prefix()."commande_fournisseur as cf ON (cf.rowid = cfd.fk_commande)";
+		//      $sql .= ", ".$this->db->prefix()."societe as s";
+		if (empty($user->rights->societe->client->voir) && !$socid) {
+			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
+		}
+		$sql .= " WHERE cf.entity IN (".getEntity('expedition').")";
+		$sql .= " AND cfdi.batch = '".($this->db->escape($this->batch))."'";
+		if (empty($user->rights->societe->client->voir) && !$socid) {
+			$sql .= " AND cf.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+		}
+		//$sql.= " AND cf.fk_statut != 0";
+		if ($socid > 0) {
+			$sql .= " AND cf.fk_soc = ".((int) $socid);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$obj = $this->db->fetch_object($result);
+			$this->stats_supplier_order['customers'] = $obj->nb_customers;
+			$this->stats_supplier_order['nb'] = $obj->nb;
+			$this->stats_supplier_order['rows'] = $obj->nb_rows;
+			$this->stats_supplier_order['qty'] = $obj->qty ? $obj->qty : 0;
+
+
+			// Virtual products can't be used with kits (see langs with key ErrorNoteAlsoThatSubProductCantBeFollowedByLot)
+
+			// if it's a virtual product, maybe it is in invoice by extension
+			//          if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
+			//              $TFather = $this->getFather();
+			//              if (is_array($TFather) && !empty($TFather)) {
+			//                  foreach ($TFather as &$fatherData) {
+			//                      $pFather = new Product($this->db);
+			//                      $pFather->id = $fatherData['id'];
+			//                      $qtyCoef = $fatherData['qty'];
+			//
+			//                      if ($fatherData['incdec']) {
+			//                          $pFather->stats_supplier_order($socid);
+			//
+			//                          $this->stats_supplier_order['customers'] += $pFather->stats_supplier_order['customers'];
+			//                          $this->stats_supplier_order['nb'] += $pFather->stats_supplier_order['nb'];
+			//                          $this->stats_supplier_order['rows'] += $pFather->stats_supplier_order['rows'];
+			//                          $this->stats_supplier_order['qty'] += $pFather->stats_supplier_order['qty'] * $qtyCoef;
+			//                      }
+			//                  }
+			//              }
+			//          }
+
+			$parameters = array('socid' => $socid);
+			$reshook = $hookmanager->executeHooks('loadStatsLotSupplierOrder', $parameters, $this, $action);
+			if ($reshook > 0) {
+				$this->stats_supplier_order = $hookmanager->resArray['stats_supplier_order'];
+			}
+
+			return 1;
+		} else {
+			$this->error = $this->db->error();
+			return -1;
+		}
+	}
+
+	/**
+	 *  Charge tableau des stats expedition pour le lot/numéro de série
+	 *
+	 * @param  int $socid Id societe
+	 * @return int                     Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
+	 */
+	public function loadStatsReception($socid = 0)
+	{
+		// phpcs:enable
+		global $db, $conf, $user, $hookmanager, $action;
+
+		$sql = "SELECT COUNT(DISTINCT recep.fk_soc) as nb_customers, COUNT(DISTINCT recep.rowid) as nb,";
+		$sql .= " COUNT(cfdi.rowid) as nb_rows, SUM(cfdi.qty) as qty";
+		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur_dispatch as cfdi";
+		$sql .= " INNER JOIN ".$this->db->prefix()."reception as recep ON (recep.rowid = cfdi.fk_reception)";
+		//      $sql .= ", ".$this->db->prefix()."societe as s";
+		if (empty($user->rights->societe->client->voir) && !$socid) {
+			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
+		}
+		$sql .= " WHERE recep.entity IN (".getEntity('reception').")";
+		$sql .= " AND cfdi.batch = '".($this->db->escape($this->batch))."'";
+		if (empty($user->rights->societe->client->voir) && !$socid) {
+			$sql .= " AND recep.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+		}
+		//$sql.= " AND exp.fk_statut != 0";
+		if ($socid > 0) {
+			$sql .= " AND recep.fk_soc = ".((int) $socid);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$obj = $this->db->fetch_object($result);
+			$this->stats_reception['customers'] = $obj->nb_customers;
+			$this->stats_reception['nb'] = $obj->nb;
+			$this->stats_reception['rows'] = $obj->nb_rows;
+			$this->stats_reception['qty'] = $obj->qty ? $obj->qty : 0;
+
+
+			// Virtual products can't be used with kits (see langs with key ErrorNoteAlsoThatSubProductCantBeFollowedByLot)
+
+			// if it's a virtual product, maybe it is in invoice by extension
+			//          if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
+			//              $TFather = $this->getFather();
+			//              if (is_array($TFather) && !empty($TFather)) {
+			//                  foreach ($TFather as &$fatherData) {
+			//                      $pFather = new Product($this->db);
+			//                      $pFather->id = $fatherData['id'];
+			//                      $qtyCoef = $fatherData['qty'];
+			//
+			//                      if ($fatherData['incdec']) {
+			//                          $pFather->loadStatsReception($socid);
+			//
+			//                          $this->stats_expedition['customers'] += $pFather->stats_expedition['customers'];
+			//                          $this->stats_expedition['nb'] += $pFather->stats_expedition['nb'];
+			//                          $this->stats_expedition['rows'] += $pFather->stats_expedition['rows'];
+			//                          $this->stats_expedition['qty'] += $pFather->stats_expedition['qty'] * $qtyCoef;
+			//                      }
+			//                  }
+			//              }
+			//          }
+
+			$parameters = array('socid' => $socid);
+			$reshook = $hookmanager->executeHooks('loadStatsLotReception', $parameters, $this, $action);
+			if ($reshook > 0) {
+				$this->stats_expedition = $hookmanager->resArray['stats_expedition'];
+			}
+
+			return 1;
+		} else {
+			$this->error = $this->db->error();
+			return -1;
+		}
+	}
+
+	/**
+	 *  Charge tableau des stats expedition pour le lot/numéro de série
+	 *
+	 * @param  int $socid Id societe
+	 * @return int                     Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
+	 */
+	public function loadStatsMo($socid = 0)
+	{
+		// phpcs:enable
+		global $user, $hookmanager, $action;
+
+		$error = 0;
+
+		foreach (array('toconsume', 'consumed', 'toproduce', 'produced') as $role) {
+			$this->stats_mo['customers_'.$role] = 0;
+			$this->stats_mo['nb_'.$role] = 0;
+			$this->stats_mo['qty_'.$role] = 0;
+
+			$sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
+			$sql .= " SUM(mp.qty) as qty";
+			$sql .= " FROM ".$this->db->prefix()."mrp_mo as c";
+			$sql .= " INNER JOIN ".$this->db->prefix()."mrp_production as mp ON mp.fk_mo=c.rowid";
+			if (empty($user->rights->societe->client->voir) && !$socid) {
+				$sql .= "INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc=c.fk_soc AND sc.fk_user = ".((int) $user->id);
+			}
+			$sql .= " WHERE ";
+			$sql .= " c.entity IN (".getEntity('mo').")";
+
+			$sql .= " AND mp.batch = '".($this->db->escape($this->batch))."'";
+			$sql .= " AND mp.role ='".$this->db->escape($role)."'";
+			if ($socid > 0) {
+				$sql .= " AND c.fk_soc = ".((int) $socid);
+			}
+
+			$result = $this->db->query($sql);
+			if ($result) {
+				$obj = $this->db->fetch_object($result);
+				$this->stats_mo['customers_'.$role] = $obj->nb_customers ? $obj->nb_customers : 0;
+				$this->stats_mo['nb_'.$role] = $obj->nb ? $obj->nb : 0;
+				$this->stats_mo['qty_'.$role] = $obj->qty ? price2num($obj->qty, 'MS') : 0;		// qty may be a float due to the SUM()
+			} else {
+				$this->error = $this->db->error();
+				$error++;
+			}
+		}
+
+		if (!empty($error)) {
+			return -1;
+		}
+
+		$parameters = array('socid' => $socid);
+		$reshook = $hookmanager->executeHooks('loadStatsCustomerMO', $parameters, $this, $action);
+		if ($reshook > 0) {
+			$this->stats_mo = $hookmanager->resArray['stats_mo'];
+		}
+
+		return 1;
 	}
 
 
