@@ -2109,15 +2109,15 @@ if ($resql) {
 					}
 				}
 				// Customer Code
-			if (!empty($arrayfields['s.code_client']['checked'])) {
-				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->code_client).'">';
-				print dol_escape_htmltag($companystatic->code_client);
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
+				if (!empty($arrayfields['s.code_client']['checked'])) {
+					print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->code_client).'">';
+					print dol_escape_htmltag($companystatic->code_client);
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
 				}
-			}
-			// Town
+				// Town
 				if (!empty($arrayfields['s.town']['checked'])) {
 					print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->town).'">';
 					print dol_escape_htmltag($obj->town);
