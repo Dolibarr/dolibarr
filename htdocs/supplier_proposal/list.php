@@ -344,7 +344,7 @@ if ($search_login) {
 	$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_login);
 }
 if ($search_montant_ht) {
-	$sql .= natural_search('sp.total_ht=', $search_montant_ht, 1);
+	$sql .= natural_search('sp.total_ht', $search_montant_ht, 1);
 }
 if ($search_montant_vat != '') {
 	$sql .= natural_search("sp.total_tva", $search_montant_vat, 1);
