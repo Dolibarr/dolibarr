@@ -258,6 +258,8 @@ if ($id > 0 || !empty($ref)) {
 
 			$motmp = new Mo($db);
 
+			$total_consumed=$total_produced=0;
+
 			if ($num > 0) {
 				while ($i < min($num, $limit)) {
 					$objp = $db->fetch_object($result);
@@ -265,6 +267,9 @@ if ($id > 0 || !empty($ref)) {
 					$motmp->id = $objp->rowid;
 					$motmp->ref = $objp->ref;
 					$motmp->status = $objp->status;
+
+					$total_consumed+=$objp->nb_consumed;
+					$total_produced+=$objp->nb_produced;
 
 					print '<tr class="oddeven">';
 					print '<td>';
@@ -284,6 +289,19 @@ if ($id > 0 || !empty($ref)) {
 					$i++;
 				}
 			}
+			print '<tr class="liste_total">';
+			if ($num < $limit) {
+				print '<td class="left">'.$langs->trans("Total").'</td>';
+			} else {
+				print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+			}
+			print '<td></td>';
+			print '<td class="center">'.$total_consumed.'</td>';
+			print '<td class="center">'.$total_produced.'</td>';
+			print '<td></td>';
+			print "</table>";
+			print '</div>';
+			print '</form>';
 
 			print '</table>';
 			print '</div>';
