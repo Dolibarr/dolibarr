@@ -743,9 +743,7 @@ class Ldap
 		if ($fp) {
 			fputs($fp, $content);
 			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($outputfile);
 			return 1;
 		} else {
 			return -1;

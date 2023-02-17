@@ -45,9 +45,7 @@ function dolSaveMasterFile($filemaster)
 	$mastercontent .= "}\n";
 	$mastercontent .= '?>'."\n";
 	$result = file_put_contents($filemaster, $mastercontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($filemaster, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($filemaster);
 
 	return $result;
 }
@@ -79,9 +77,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 	if ($result === false) {
 		dol_syslog("Failed to write file ".$filealias, LOG_WARNING);
 	}
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($filealias, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($filealias);
 
 	// Save also alias into language subdirectory if it is not a main language
 	if ($objectpage->lang && in_array($objectpage->lang, explode(',', $object->otherlang))) {
@@ -99,9 +95,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		if ($result === false) {
 			dol_syslog("Failed to write file ".$filealiassub, LOG_WARNING);
 		}
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($filealiassub, octdec($conf->global->MAIN_UMASK));
-		}
+		dolChmod($filealiassub);
 	} elseif (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
 		// Save also alias into all language subdirectories if it is a main language
 		if (empty($conf->global->WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR) && !empty($object->otherlang)) {
@@ -122,9 +116,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 				if ($result === false) {
 					dol_syslog("Failed to write file ".$filealiassub, LOG_WARNING);
 				}
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($filealiassub, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($filealiassub);
 			}
 		}
 	}
@@ -276,9 +268,8 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 
 	//var_dump($filetpl);exit;
 	$result = file_put_contents($filetpl, $tplcontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($filetpl, octdec($conf->global->MAIN_UMASK));
-	}
+
+	dolChmod($filetpl);
 
 	return $result;
 }
@@ -318,9 +309,8 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $o
 		$indexcontent .= '// END PHP ?>'."\n";
 
 		$result1 = file_put_contents($fileindex, $indexcontent);
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
-		}
+
+		dolChmod($fileindex);
 
 		if (is_object($object) && $object->fk_default_home > 0) {
 			$objectpage = new WebsitePage($db);
@@ -352,9 +342,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $o
 						if ($result === false) {
 							dol_syslog("Failed to write file ".$fileindexsub, LOG_WARNING);
 						}
-						if (!empty($conf->global->MAIN_UMASK)) {
-							@chmod($fileindexsub, octdec($conf->global->MAIN_UMASK));
-						}
+						dolChmod($fileindexsub);
 					}
 				}
 			}
@@ -368,9 +356,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $o
 		$wrappercontent = file_get_contents(DOL_DOCUMENT_ROOT.'/website/samples/wrapper.php');
 
 		$result2 = file_put_contents($filewrapper, $wrappercontent);
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($filewrapper, octdec($conf->global->MAIN_UMASK));
-		}
+		dolChmod($filewrapper);
 	} else {
 		$result2 = true;
 	}
@@ -394,9 +380,7 @@ function dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($filehtmlheader, $htmlheadercontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($filehtmlheader, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($filehtmlheader);
 
 	return $result;
 }
@@ -416,9 +400,7 @@ function dolSaveCssFile($filecss, $csscontent)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($filecss, $csscontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($filecss, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($filecss);
 
 	return $result;
 }
@@ -438,9 +420,7 @@ function dolSaveJsFile($filejs, $jscontent)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($filejs, $jscontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($filejs, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($filejs);
 
 	return $result;
 }
@@ -460,9 +440,7 @@ function dolSaveRobotFile($filerobot, $robotcontent)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($filerobot, $robotcontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($filerobot, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($filerobot);
 
 	return $result;
 }
@@ -482,9 +460,7 @@ function dolSaveHtaccessFile($filehtaccess, $htaccess)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($filehtaccess, $htaccess);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($filehtaccess, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($filehtaccess);
 
 	return $result;
 }
@@ -504,9 +480,7 @@ function dolSaveManifestJson($file, $content)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($file, $content);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($file, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($file);
 
 	return $result;
 }
@@ -526,9 +500,7 @@ function dolSaveReadme($file, $content)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($file, $content);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($file, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($file);
 
 	return $result;
 }
@@ -548,9 +520,7 @@ function dolSaveLicense($file, $content)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($file, $content);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($file, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($file);
 
 	return $result;
 }

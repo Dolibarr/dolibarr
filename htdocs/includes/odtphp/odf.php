@@ -880,7 +880,7 @@ IMG;
 				pclose($handlein);
 				fclose($handle);
 			}
-			if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+			dolChmod($outputfile);
 		}
 
 		if ($retval == 0) {

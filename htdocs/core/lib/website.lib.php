@@ -1210,9 +1210,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					$fp = fopen($filetosave, "w");
 					fputs($fp, $tmpgeturl['content']);
 					fclose($fp);
-					if (!empty($conf->global->MAIN_UMASK)) {
-						@chmod($filetosave, octdec($conf->global->MAIN_UMASK));
-					}
+					dolChmod($filetosave);
 				}
 			}
 		}
@@ -1281,9 +1279,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					$fp = fopen($filetosave, "w");
 					fputs($fp, $tmpgeturl['content']);
 					fclose($fp);
-					if (!empty($conf->global->MAIN_UMASK)) {
-						@chmod($filetosave, octdec($conf->global->MAIN_UMASK));
-					}
+					dolChmod($filetosave);
 				}
 			}
 		}

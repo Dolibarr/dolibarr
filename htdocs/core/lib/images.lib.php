@@ -362,9 +362,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	}
 
 	// Set permissions on file
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($imgTargetName, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($imgTargetName);
 
 	// Free memory. This does not delete image.
 	imagedestroy($img);
@@ -761,9 +759,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	}
 
 	// Set permissions on file
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($imgThumbName, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($imgThumbName);
 
 	// Free memory. This does not delete image.
 	imagedestroy($img);

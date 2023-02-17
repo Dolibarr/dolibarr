@@ -746,7 +746,7 @@ class Documents extends DolibarrApi
 		if ($fhandle) {
 			$nbofbyteswrote = fwrite($fhandle, $newfilecontent);
 			fclose($fhandle);
-			@chmod($destfiletmp, octdec($conf->global->MAIN_UMASK));
+			dolChmod($destfiletmp);
 		} else {
 			throw new RestException(500, "Failed to open file '".$destfiletmp."' for write");
 		}

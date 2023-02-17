@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be
 ErrorLoginDateValidity=Error, this login is outside the validity date range
 ErrorValueLength=Length of field '<b>%s</b>' must be higher than '<b>%s</b>'
 ErrorReservedKeyword=The word '<b>%s</b>' is a reserved keyword
+ErrorFilenameReserved=The filename <b>%s</b> can't be used as it is a reserved and protected command. 
 ErrorNotAvailableWithThisDistribution=Not available with this distribution
 ErrorPublicInterfaceNotEnabled=Public interface was not enabled
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=The language of new page must be defined if it is set as a translation of another page

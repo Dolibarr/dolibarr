@@ -1132,9 +1132,7 @@ class Website extends CommonObject
 		fputs($fp, $line);
 
 		fclose($fp);
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($filesql, octdec($conf->global->MAIN_UMASK));
-		}
+		dolChmod($filesql);
 
 		// Build zip file
 		$filedir  = $conf->website->dir_temp.'/'.$website->ref.'/.';

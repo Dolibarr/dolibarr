@@ -6864,13 +6864,16 @@ function dol_mkdir($dir, $dataroot = '', $newmask = '')
  *	Change mod of a file
  *
  *  @param	string		$filepath		Full file path
+ *  @param	string		$newmask		Force new mask. For example '0644'
  *	@return void
  */
-function dolChmod($filepath)
+function dolChmod($filepath, $newmask = '')
 {
 	global $conf;
 
-	if (!empty($conf->global->MAIN_UMASK)) {
+	if (!empty($newmask)) {
+		@chmod($filepath, octdec($newmask));
+	} elseif (!empty($conf->global->MAIN_UMASK)) {
 		@chmod($filepath, octdec($conf->global->MAIN_UMASK));
 	}
 }
