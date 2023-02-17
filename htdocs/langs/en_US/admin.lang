@@ -2373,3 +2373,5 @@ WarningModuleHasChangedSecurityCsrfParameter=Warning: the module %s has disabled
 EMailsInGoingDesc=Incoming emails are managed by the module %s. You must enable and configure it if you need to support ingoing emails.
 MAIN_IMAP_USE_PHPIMAP=Use the PHP-IMAP library for IMAP instead of native PHP IMAP. This also allows the use of an OAuth2 connection for IMAP (module OAuth must also be activated).
 MAIN_CHECKBOX_LEFT_COLUMN=Show the column for field and line selection on the left (on the right by default)
+
+CSSPage=CSS Style

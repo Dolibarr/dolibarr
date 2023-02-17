@@ -6,6 +6,7 @@
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Anthony Berton          <bertonanthony@gmail.com>
+ * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -298,6 +299,11 @@ if ($action == 'update') {
 		}
 	}
 
+	if ($mode == 'css') {
+		$data = GETPOST('CUSTOM_CSS', 'none');
+		file_put_contents(DOL_DATA_ROOT.'/admin/customcss.css', $data);
+	}
+
 	$_SESSION["mainmenu"] = ""; // The menu manager may have changed
 
 	if (GETPOST('dol_resetcache')) {
@@ -314,7 +320,13 @@ if ($action == 'update') {
  */
 
 $wikihelp = 'EN:First_setup|FR:Premiers_param&eacute;trages|ES:Primeras_configuraciones';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0,
+	array(
+	'/includes/ace/src/ace.js',
+	'/includes/ace/src/ext-statusbar.js',
+	'/includes/ace/src/ext-language_tools.js',
+	), array());
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -679,8 +691,26 @@ if ($mode == 'login') {
 	print '</div>';
 }
 
+if ($mode == 'css') {
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="edit" class="noborder centpercent editmode tableforfield">';
+
+	print '<tr class="liste_titre">';
+	print '<td colspan="2">';
+
+	$customcssValue = file_get_contents(DOL_DATA_ROOT.'/admin/customcss.css');
+
+	$doleditor = new DolEditor('CUSTOM_CSS', $customcssValue, '', 400, 'Basic', 'In', false, true, 'ace', 80, 80, 0);
+	$doleditor->Create(0, '', true, 'css', 'css');
+	print '</td></tr>'."\n";
+
+	print '</table>'."\n";
+	print '</div>';
+}
+
+
 print '<div class="center">';
-print '<input class="button button-save reposition" type="submit" name="submit" value="' . $langs->trans("Save") . '">';
+print '<input class="button button-save reposition buttonforacesave" type="submit" name="submit" value="' . $langs->trans("Save") . '">';
 print '<input class="button button-cancel reposition" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
 print '</div>';
 
