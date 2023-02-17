@@ -570,7 +570,7 @@ class Productlot extends CommonObject
 		$sql .= " FROM ".$this->db->prefix()."expeditiondet_batch as edb";
 		$sql .= " INNER JOIN ".$this->db->prefix()."expeditiondet as ed ON (ed.rowid = edb.fk_expeditiondet)";
 		$sql .= " INNER JOIN ".$this->db->prefix()."expedition as exp ON (exp.rowid = ed.fk_expedition)";
-//		$sql .= ", ".$this->db->prefix()."societe as s";
+		//      $sql .= ", ".$this->db->prefix()."societe as s";
 		if (empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
@@ -596,25 +596,25 @@ class Productlot extends CommonObject
 			// Virtual products can't be used with kits (see langs with key ErrorNoteAlsoThatSubProductCantBeFollowedByLot)
 
 			// if it's a virtual product, maybe it is in invoice by extension
-//			if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
-//				$TFather = $this->getFather();
-//				if (is_array($TFather) && !empty($TFather)) {
-//					foreach ($TFather as &$fatherData) {
-//						$pFather = new Product($this->db);
-//						$pFather->id = $fatherData['id'];
-//						$qtyCoef = $fatherData['qty'];
-//
-//						if ($fatherData['incdec']) {
-//							$pFather->load_stats_expedition($socid);
-//
-//							$this->stats_expedition['customers'] += $pFather->stats_expedition['customers'];
-//							$this->stats_expedition['nb'] += $pFather->stats_expedition['nb'];
-//							$this->stats_expedition['rows'] += $pFather->stats_expedition['rows'];
-//							$this->stats_expedition['qty'] += $pFather->stats_expedition['qty'] * $qtyCoef;
-//						}
-//					}
-//				}
-//			}
+			//          if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
+			//              $TFather = $this->getFather();
+			//              if (is_array($TFather) && !empty($TFather)) {
+			//                  foreach ($TFather as &$fatherData) {
+			//                      $pFather = new Product($this->db);
+			//                      $pFather->id = $fatherData['id'];
+			//                      $qtyCoef = $fatherData['qty'];
+			//
+			//                      if ($fatherData['incdec']) {
+			//                          $pFather->load_stats_expedition($socid);
+			//
+			//                          $this->stats_expedition['customers'] += $pFather->stats_expedition['customers'];
+			//                          $this->stats_expedition['nb'] += $pFather->stats_expedition['nb'];
+			//                          $this->stats_expedition['rows'] += $pFather->stats_expedition['rows'];
+			//                          $this->stats_expedition['qty'] += $pFather->stats_expedition['qty'] * $qtyCoef;
+			//                      }
+			//                  }
+			//              }
+			//          }
 
 			$parameters = array('socid' => $socid);
 			$reshook = $hookmanager->executeHooks('loadStatsLotExpedition', $parameters, $this, $action);
@@ -645,7 +645,7 @@ class Productlot extends CommonObject
 		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur_dispatch as cfdi";
 		$sql .= " INNER JOIN ".$this->db->prefix()."commande_fournisseurdet as cfd ON (cfd.rowid = cfdi.fk_commandefourndet)";
 		$sql .= " INNER JOIN ".$this->db->prefix()."commande_fournisseur as cf ON (cf.rowid = cfd.fk_commande)";
-//		$sql .= ", ".$this->db->prefix()."societe as s";
+		//      $sql .= ", ".$this->db->prefix()."societe as s";
 		if (empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
@@ -671,25 +671,25 @@ class Productlot extends CommonObject
 			// Virtual products can't be used with kits (see langs with key ErrorNoteAlsoThatSubProductCantBeFollowedByLot)
 
 			// if it's a virtual product, maybe it is in invoice by extension
-//			if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
-//				$TFather = $this->getFather();
-//				if (is_array($TFather) && !empty($TFather)) {
-//					foreach ($TFather as &$fatherData) {
-//						$pFather = new Product($this->db);
-//						$pFather->id = $fatherData['id'];
-//						$qtyCoef = $fatherData['qty'];
-//
-//						if ($fatherData['incdec']) {
-//							$pFather->stats_supplier_order($socid);
-//
-//							$this->stats_supplier_order['customers'] += $pFather->stats_supplier_order['customers'];
-//							$this->stats_supplier_order['nb'] += $pFather->stats_supplier_order['nb'];
-//							$this->stats_supplier_order['rows'] += $pFather->stats_supplier_order['rows'];
-//							$this->stats_supplier_order['qty'] += $pFather->stats_supplier_order['qty'] * $qtyCoef;
-//						}
-//					}
-//				}
-//			}
+			//          if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
+			//              $TFather = $this->getFather();
+			//              if (is_array($TFather) && !empty($TFather)) {
+			//                  foreach ($TFather as &$fatherData) {
+			//                      $pFather = new Product($this->db);
+			//                      $pFather->id = $fatherData['id'];
+			//                      $qtyCoef = $fatherData['qty'];
+			//
+			//                      if ($fatherData['incdec']) {
+			//                          $pFather->stats_supplier_order($socid);
+			//
+			//                          $this->stats_supplier_order['customers'] += $pFather->stats_supplier_order['customers'];
+			//                          $this->stats_supplier_order['nb'] += $pFather->stats_supplier_order['nb'];
+			//                          $this->stats_supplier_order['rows'] += $pFather->stats_supplier_order['rows'];
+			//                          $this->stats_supplier_order['qty'] += $pFather->stats_supplier_order['qty'] * $qtyCoef;
+			//                      }
+			//                  }
+			//              }
+			//          }
 
 			$parameters = array('socid' => $socid);
 			$reshook = $hookmanager->executeHooks('loadStatsLotSupplierOrder', $parameters, $this, $action);
@@ -719,7 +719,7 @@ class Productlot extends CommonObject
 		$sql .= " COUNT(cfdi.rowid) as nb_rows, SUM(cfdi.qty) as qty";
 		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur_dispatch as cfdi";
 		$sql .= " INNER JOIN ".$this->db->prefix()."reception as recep ON (recep.rowid = cfdi.fk_reception)";
-//		$sql .= ", ".$this->db->prefix()."societe as s";
+		//      $sql .= ", ".$this->db->prefix()."societe as s";
 		if (empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
@@ -745,25 +745,25 @@ class Productlot extends CommonObject
 			// Virtual products can't be used with kits (see langs with key ErrorNoteAlsoThatSubProductCantBeFollowedByLot)
 
 			// if it's a virtual product, maybe it is in invoice by extension
-//			if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
-//				$TFather = $this->getFather();
-//				if (is_array($TFather) && !empty($TFather)) {
-//					foreach ($TFather as &$fatherData) {
-//						$pFather = new Product($this->db);
-//						$pFather->id = $fatherData['id'];
-//						$qtyCoef = $fatherData['qty'];
-//
-//						if ($fatherData['incdec']) {
-//							$pFather->load_stats_expedition($socid);
-//
-//							$this->stats_expedition['customers'] += $pFather->stats_expedition['customers'];
-//							$this->stats_expedition['nb'] += $pFather->stats_expedition['nb'];
-//							$this->stats_expedition['rows'] += $pFather->stats_expedition['rows'];
-//							$this->stats_expedition['qty'] += $pFather->stats_expedition['qty'] * $qtyCoef;
-//						}
-//					}
-//				}
-//			}
+			//          if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
+			//              $TFather = $this->getFather();
+			//              if (is_array($TFather) && !empty($TFather)) {
+			//                  foreach ($TFather as &$fatherData) {
+			//                      $pFather = new Product($this->db);
+			//                      $pFather->id = $fatherData['id'];
+			//                      $qtyCoef = $fatherData['qty'];
+			//
+			//                      if ($fatherData['incdec']) {
+			//                          $pFather->load_stats_expedition($socid);
+			//
+			//                          $this->stats_expedition['customers'] += $pFather->stats_expedition['customers'];
+			//                          $this->stats_expedition['nb'] += $pFather->stats_expedition['nb'];
+			//                          $this->stats_expedition['rows'] += $pFather->stats_expedition['rows'];
+			//                          $this->stats_expedition['qty'] += $pFather->stats_expedition['qty'] * $qtyCoef;
+			//                      }
+			//                  }
+			//              }
+			//          }
 
 			$parameters = array('socid' => $socid);
 			$reshook = $hookmanager->executeHooks('loadStatsLotReception', $parameters, $this, $action);
