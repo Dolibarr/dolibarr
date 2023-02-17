@@ -25,14 +25,15 @@
  */
 
 // Load Dolibarr environment
-require '../../main.inc.php';
+require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('mrp', 'products', 'companies'));
+$langs->loadLangs(array('mrp', 'products', 'companies', 'productbatch'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -45,7 +46,7 @@ if ($user->socid) {
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('productstatsmo'));
+$hookmanager->initHooks(array('batchproductstatsmo'));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -73,7 +74,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_year = '';
 }
 
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+if (!$user->rights->produit->lire) accessforbidden();
 
 
 /*
@@ -87,10 +88,13 @@ $form = new Form($db);
 $formother = new FormOther($db);
 
 if ($id > 0 || !empty($ref)) {
-	$product = new Product($db);
-	$result = $product->fetch($id, $ref);
-
-	$object = $product;
+	$object = new ProductLot($db);
+	if ($ref) {
+		$tmp = explode('_', $ref);
+		$objectid = $tmp[0];
+		$batch = $tmp[1];
+	}
+	$result = $object->fetch($id, $objectid, $batch);
 
 	$parameters = array('id'=>$id);
 	$reshook = $hookmanager->executeHooks('doActions', $parameters, $product, $action); // Note that $action and $object may have been modified by some hooks
@@ -98,13 +102,18 @@ if ($id > 0 || !empty($ref)) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 
-	llxHeader("", "", $langs->trans("CardProduct".$product->type));
+	$helpurl = '';
+	$shortlabel = dol_trunc($object->batch, 16);
+	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('Referers');
+	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+
+	llxHeader('', $title, $helpurl);
 
 	if ($result > 0) {
-		$head = product_prepare_head($product);
-		$titre = $langs->trans("CardProduct".$product->type);
-		$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
-		print dol_get_fiche_head($head, 'referers', $titre, -1, $picto);
+		$head = productlot_prepare_head($object);
+		$titre = $langs->trans("CardProduct".$object->type);
+		$picto = 'lot';
+		print dol_get_fiche_head($head, 'referers', $langs->trans("Batch"), -1, $object->picto);
 
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $product, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
@@ -112,21 +121,33 @@ if ($id > 0 || !empty($ref)) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		}
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/productlot_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
 		if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
 			$shownav = 0;
 		}
 
-		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
+		dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'batch', $morehtmlref);
 
 		print '<div class="fichecenter">';
 
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border tableforfield" width="100%">';
 
-		$nboflines = show_stats_for_company($product, $socid);
+		// Product
+		print '<tr><td class="titlefield">'.$langs->trans("Product").'</td><td>';
+		$producttmp = new Product($db);
+		$producttmp->fetch($object->fk_product);
+		print $producttmp->getNomUrl(1, 'stock')." - ".$producttmp->label;
+		print '</td></tr>';
+		print "</table>";
+
+		echo '<br>';
+
+		print '<table class="border centpercent tableforfield" width="100%">';
+
+		$nboflines = show_stats_for_batch($object, $socid);
 
 		print "</table>";
 
@@ -139,9 +160,9 @@ if ($id > 0 || !empty($ref)) {
 		$now = dol_now();
 
 		$sql = "SELECT";
-		$sql .= " sum(".$db->ifsql("cd.role='toconsume'", "cd.qty", 0).') as nb_toconsume,';
+		//      $sql .= " sum(".$db->ifsql("cd.role='toconsume'", "cd.qty", 0).') as nb_toconsume,';
 		$sql .= " sum(".$db->ifsql("cd.role='consumed'", "cd.qty", 0).') as nb_consumed,';
-		$sql .= " sum(".$db->ifsql("cd.role='toproduce'", "cd.qty", 0).') as nb_toproduce,';
+		//      $sql .= " sum(".$db->ifsql("cd.role='toproduce'", "cd.qty", 0).') as nb_toproduce,';
 		$sql .= " sum(".$db->ifsql("cd.role='produced'", "cd.qty", 0).') as nb_produced,';
 		$sql .= " c.rowid as rowid, c.ref, c.date_valid, c.status";
 		//$sql .= " s.nom as name, s.rowid as socid, s.code_client";
@@ -149,7 +170,7 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= ", ".MAIN_DB_PREFIX."mrp_production as cd";
 		$sql .= " WHERE c.rowid = cd.fk_mo";
 		$sql .= " AND c.entity IN (".getEntity('mo').")";
-		$sql .= " AND cd.fk_product = ".((int) $product->id);
+		$sql .= " AND cd.batch = '".($db->escape($object->batch))."'";
 		if (!empty($search_month)) {
 			$sql .= ' AND MONTH(c.date_valid) IN ('.$db->sanitize($search_month).')';
 		}
@@ -180,7 +201,7 @@ if ($id > 0 || !empty($ref)) {
 		if ($result) {
 			$num = $db->num_rows($result);
 
-			$option = '&id='.$product->id;
+			$option = '&id='.$object->id;
 
 			if ($limit > 0 && $limit != $conf->liste_limit) {
 				$option .= '&limit='.urlencode($limit);
@@ -192,7 +213,7 @@ if ($id > 0 || !empty($ref)) {
 				$option .= '&search_year='.urlencode($search_year);
 			}
 
-			print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
+			print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" name="search_form">'."\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			if (!empty($sortfield)) {
 				print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
@@ -224,18 +245,21 @@ if ($id > 0 || !empty($ref)) {
 			print '<table class="tagtable liste listwithfilterbefore" width="100%">';
 
 			print '<tr class="liste_titre">';
-			print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "c.rowid", "", "&amp;id=".$product->id, '', $sortfield, $sortorder);
-			//print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "&amp;id=".$product->id, '', $sortfield, $sortorder);
-			print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "c.date_valid", "", "&amp;id=".$product->id, 'align="center"', $sortfield, $sortorder);
-			//print_liste_field_titre("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre("ToConsume", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'center ');
-			print_liste_field_titre("QtyAlreadyConsumed", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'center ');
-			print_liste_field_titre("QtyToProduce", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'center ');
-			print_liste_field_titre("QtyAlreadyProduced", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'center ');
-			print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "b.status", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'right ');
+
+			print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "c.rowid", "", $option."&amp;id=".$object->id, '', $sortfield, $sortorder);
+			//print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "&amp;id=".$object->id, '', $sortfield, $sortorder);
+			print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "c.date_valid", "", $option."&amp;id=".$object->id, 'align="center"', $sortfield, $sortorder);
+			//print_liste_field_titre("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
+			//          print_liste_field_titre("ToConsume", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'center ');
+			print_liste_field_titre("QtyAlreadyConsumed", $_SERVER["PHP_SELF"], "", "", $option."&amp;id=".$object->id, '', $sortfield, $sortorder, 'center ');
+			//          print_liste_field_titre("QtyToProduce", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'center ');
+			print_liste_field_titre("QtyAlreadyProduced", $_SERVER["PHP_SELF"], "", "", $option."&amp;id=".$object->id, '', $sortfield, $sortorder, 'center ');
+			print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "c.status", "", $option."&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
 			print "</tr>\n";
 
 			$motmp = new Mo($db);
+
+			$total_consumed=$total_produced=0;
 
 			if ($num > 0) {
 				while ($i < min($num, $limit)) {
@@ -245,6 +269,9 @@ if ($id > 0 || !empty($ref)) {
 					$motmp->ref = $objp->ref;
 					$motmp->status = $objp->status;
 
+					$total_consumed+=$objp->nb_consumed;
+					$total_produced+=$objp->nb_produced;
+
 					print '<tr class="oddeven">';
 					print '<td>';
 					print $motmp->getNomUrl(1, 'production');
@@ -253,9 +280,9 @@ if ($id > 0 || !empty($ref)) {
 					print dol_print_date($db->jdate($objp->date_valid), 'dayhour')."</td>";
 					//print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
 					//print '<td align="right">';
-					print '<td class="center">'.($objp->nb_toconsume > 0 ? $objp->nb_toconsume : '').'</td>';
+					//                  print '<td class="center">'.($objp->nb_toconsume > 0 ? $objp->nb_toconsume : '').'</td>';
 					print '<td class="center">'.($objp->nb_consumed > 0 ? $objp->nb_consumed : '').'</td>';
-					print '<td class="center">'.($objp->nb_toproduce > 0 ? $objp->nb_toproduce : '').'</td>';
+					//                  print '<td class="center">'.($objp->nb_toproduce > 0 ? $objp->nb_toproduce : '').'</td>';
 					print '<td class="center">'.($objp->nb_produced > 0 ? $objp->nb_produced : '').'</td>';
 					//$mostatic->LibStatut($objp->statut,5).'</td>';
 					print '<td class="right">'.$motmp->getLibStatut(2).'</td>';
@@ -263,6 +290,19 @@ if ($id > 0 || !empty($ref)) {
 					$i++;
 				}
 			}
+			print '<tr class="liste_total">';
+			if ($num < $limit) {
+				print '<td class="left">'.$langs->trans("Total").'</td>';
+			} else {
+				print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+			}
+			print '<td></td>';
+			print '<td class="center">'.$total_consumed.'</td>';
+			print '<td class="center">'.$total_produced.'</td>';
+			print '<td></td>';
+			print "</table>";
+			print '</div>';
+			print '</form>';
 
 			print '</table>';
 			print '</div>';

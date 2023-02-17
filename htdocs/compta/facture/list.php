@@ -200,6 +200,7 @@ $fieldstosearchall = array(
 	'f.ref_client'=>'RefCustomer',
 	'f.note_public'=>'NotePublic',
 	's.nom'=>"ThirdParty",
+	's.code_client'=>"CustomerCodeShort",
 	's.name_alias'=>"AliasNameShort",
 	's.zip'=>"Zip",
 	's.town'=>"Town",
@@ -222,6 +223,7 @@ $arrayfields = array(
 	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(!isModEnabled('project') ? 0 : 1), 'position'=>41),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>50),
 	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>1, 'position'=>51),
+	's.code_client'=>array('label'=>"CustomerCodeShort", 'checked'=>-1, 'position'=>52),
 	's2.nom'=>array('label'=>'ParentCompany', 'position'=>32, 'checked'=>0),
 	's.town'=>array('label'=>"Town", 'checked'=>-1, 'position'=>55),
 	's.zip'=>array('label'=>"Zip", 'checked'=>1, 'position'=>60),
@@ -574,7 +576,7 @@ $sql .= ' f.datef, f.date_valid, f.date_lim_reglement as datelimite, f.module_so
 $sql .= ' f.paye as paye, f.fk_statut, f.close_code,';
 $sql .= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.code_client as code_client, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
 $sql .= " s.parent as fk_parent,";
 $sql .= " s2.nom as name2,";
 $sql .= ' typent.code as typent_code,';
@@ -686,6 +688,9 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
 }
 if ($search_parent_name) {
 	$sql .= natural_search('s2.nom', $search_parent_name);
+}
+if ($search_company_code_client) {
+	$sql .= natural_search('s.code_client', $search_company_code_client);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -1382,25 +1387,29 @@ if ($resql) {
 	}
 	// Project ref
 	if (!empty($arrayfields['p.ref']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_project_ref" value="'.$search_project_ref.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
 	}
 	// Project label
 	if (!empty($arrayfields['p.title']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_project" value="'.$search_project.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_project" value="'.dol_escape_htmltag($search_project).'"></td>';
 	}
 	// Thirdparty
 	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company" value="'.$search_company.'"'.($socid > 0 ? " disabled" : "").'></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"'.($socid > 0 ? " disabled" : "").'></td>';
 	}
 	// Alias
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company_alias" value="'.$search_company_alias.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company_alias" value="'.dol_escape_htmltag($search_company_alias).'"></td>';
 	}
 	// Parent company
 	if (!empty($arrayfields['s2.nom']['checked'])) {
 		print '<td class="liste_titre">';
 		print '<input class="flat maxwidth100" type="text" name="search_parent_name" value="'.dol_escape_htmltag($search_parent_name).'">';
 		print '</td>';
+	}
+	// Customer Code
+	if (!empty($arrayfields['s.code_client']['checked'])) {
+		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company_code_client" value="'.dol_escape_htmltag($search_company_code_client).'"></td>';
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
@@ -1467,13 +1476,13 @@ if ($resql) {
 	if (!empty($arrayfields['f.total_localtax1']['checked'])) {
 		// Localtax1
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="4" name="search_montant_localtax1" value="'.$search_montant_localtax1.'">';
+		print '<input class="flat" type="text" size="4" name="search_montant_localtax1" value="'.dol_escape_htmltag($search_montant_localtax1).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['f.total_localtax2']['checked'])) {
 		// Localtax2
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="4" name="search_montant_localtax2" value="'.$search_montant_localtax2.'">';
+		print '<input class="flat" type="text" size="4" name="search_montant_localtax2" value="'.dol_escape_htmltag($search_montant_localtax2).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['f.total_ttc']['checked'])) {
@@ -1653,6 +1662,9 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['s2.nom']['checked'])) {
 		print_liste_field_titre($arrayfields['s2.nom']['label'], $_SERVER['PHP_SELF'], 's2.nom', '', $param, '', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['s.code_client']['checked'])) {
+		print_liste_field_titre($arrayfields['s.code_client']['label'], $_SERVER['PHP_SELF'], 's.code_client', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['s.town']['checked'])) {
 		print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
@@ -1850,6 +1862,7 @@ if ($resql) {
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
 			$companystatic->name_alias = $obj->alias;
+			$companystatic->code_client = $obj->code_client;
 			$companystatic->client = $obj->client;
 			$companystatic->fournisseur = $obj->fournisseur;
 			$companystatic->code_client = $obj->code_client;
@@ -2091,6 +2104,15 @@ if ($resql) {
 						}
 					}
 					print "</td>";
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Customer Code
+				if (!empty($arrayfields['s.code_client']['checked'])) {
+					print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->code_client).'">';
+					print dol_escape_htmltag($companystatic->code_client);
+					print '</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
 					}
