@@ -30,6 +30,6 @@ if (empty($dolibarr_nocache)) {
 	header('Cache-Control: no-cache');
 }
 
-if(file_exists(DOL_DATA_ROOT.'/admin/customcss.css')) {
+if (file_exists(DOL_DATA_ROOT.'/admin/customcss.css')) {
 	readfile(DOL_DATA_ROOT.'/admin/customcss.css');
 }

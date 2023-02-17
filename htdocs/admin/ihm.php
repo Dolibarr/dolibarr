@@ -300,8 +300,8 @@ if ($action == 'update') {
 	}
 
 	if ($mode == 'css') {
-		$data = GETPOST('CUSTOM_CSS','none');
-		file_put_contents(DOL_DATA_ROOT.'/admin/customcss.css',$data);
+		$data = GETPOST('CUSTOM_CSS', 'none');
+		file_put_contents(DOL_DATA_ROOT.'/admin/customcss.css', $data);
 	}
 
 	$_SESSION["mainmenu"] = ""; // The menu manager may have changed
@@ -700,13 +700,12 @@ if ($mode == 'css') {
 
 	$customcssValue = file_get_contents(DOL_DATA_ROOT.'/admin/customcss.css');
 
-	$doleditor = new DolEditor('CUSTOM_CSS', $customcssValue, '', 400, 'Basic', 'In', false, true, 'ace',80,80,0);
-	$doleditor->Create(0,'',true,'css','css');
+	$doleditor = new DolEditor('CUSTOM_CSS', $customcssValue, '', 400, 'Basic', 'In', false, true, 'ace', 80, 80, 0);
+	$doleditor->Create(0, '', true, 'css', 'css');
 	print '</td></tr>'."\n";
 
 	print '</table>'."\n";
 	print '</div>';
-
 }
 
 
