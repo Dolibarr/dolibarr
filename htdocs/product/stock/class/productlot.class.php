@@ -4,6 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2022  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2023	   	Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -560,7 +561,7 @@ class Productlot extends CommonObject
 	 * @param  int $socid Id societe
 	 * @return int                     Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
 	 */
-	public function load_stats_expedition($socid = 0)
+	public function loadStatsExpedition($socid = 0)
 	{
 		// phpcs:enable
 		global $db, $conf, $user, $hookmanager, $action;
@@ -605,7 +606,7 @@ class Productlot extends CommonObject
 //						$qtyCoef = $fatherData['qty'];
 //
 //						if ($fatherData['incdec']) {
-//							$pFather->load_stats_expedition($socid);
+//							$pFather->loadStatsExpedition($socid);
 //
 //							$this->stats_expedition['customers'] += $pFather->stats_expedition['customers'];
 //							$this->stats_expedition['nb'] += $pFather->stats_expedition['nb'];
@@ -635,7 +636,7 @@ class Productlot extends CommonObject
 	 * @param  int $socid Id societe
 	 * @return int                     Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
 	 */
-	public function load_stats_supplier_order($socid = 0)
+	public function loadStatsSupplierOrder($socid = 0)
 	{
 		// phpcs:enable
 		global $db, $conf, $user, $hookmanager, $action;
@@ -710,7 +711,7 @@ class Productlot extends CommonObject
 	 * @param  int $socid Id societe
 	 * @return int                     Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
 	 */
-	public function load_stats_reception($socid = 0)
+	public function loadStatsReception($socid = 0)
 	{
 		// phpcs:enable
 		global $db, $conf, $user, $hookmanager, $action;
@@ -754,7 +755,7 @@ class Productlot extends CommonObject
 //						$qtyCoef = $fatherData['qty'];
 //
 //						if ($fatherData['incdec']) {
-//							$pFather->load_stats_expedition($socid);
+//							$pFather->loadStatsReception($socid);
 //
 //							$this->stats_expedition['customers'] += $pFather->stats_expedition['customers'];
 //							$this->stats_expedition['nb'] += $pFather->stats_expedition['nb'];
@@ -784,7 +785,7 @@ class Productlot extends CommonObject
 	 * @param  int $socid Id societe
 	 * @return int                     Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
 	 */
-	public function load_stats_mo($socid = 0)
+	public function loadStatsMo($socid = 0)
 	{
 		// phpcs:enable
 		global $user, $hookmanager, $action;

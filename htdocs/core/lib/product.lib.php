@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2010  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2023	   	Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -654,11 +655,11 @@ function show_stats_for_company($product, $socid)
 }
 
 /**
- * Show stats for company
+ * Show stats for product batch
  *
- * @param	Product		$product	Product object
- * @param 	int			$socid		Thirdparty id
- * @return	integer					NB of lines shown into array
+ * @param	Productlot	$batch	Product batch object
+ * @param 	int			$socid	Thirdparty id
+ * @return	integer				NB of lines shown into array
  */
 function show_stats_for_batch($batch, $socid)
 {
@@ -680,7 +681,7 @@ function show_stats_for_batch($batch, $socid)
 	// Expeditions
 	if (isModEnabled('expedition') && !empty($user->rights->expedition->lire)) {
 		$nblines++;
-		$ret = $batch->load_stats_expedition($socid);
+		$ret = $batch->loadStatsExpedition($socid);
 		if ($ret < 0) {
 			dol_print_error($db);
 		}
@@ -700,7 +701,7 @@ function show_stats_for_batch($batch, $socid)
 	if(isModEnabled("reception") && !empty($user->rights->reception->lire)) {
 
 		$nblines++;
-		$ret = $batch->load_stats_reception($socid);
+		$ret = $batch->loadStatsReception($socid);
 		if ($ret < 0) {
 			dol_print_error($db);
 		}
@@ -719,7 +720,7 @@ function show_stats_for_batch($batch, $socid)
 	} elseif(isModEnabled('supplier_order') && !empty($user->rights->fournisseur->commande->lire)) {
 
 		$nblines++;
-		$ret = $batch->load_stats_supplier_order($socid);
+		$ret = $batch->loadStatsSupplierOrder($socid);
 		if ($ret < 0) {
 			dol_print_error($db);
 		}
@@ -739,7 +740,7 @@ function show_stats_for_batch($batch, $socid)
 
 	if (isModEnabled('mrp') && !empty($user->rights->mrp->read)) {
 		$nblines++;
-		$ret = $batch->load_stats_mo($socid);
+		$ret = $batch->loadStatsMo($socid);
 		if ($ret < 0) {
 			dol_print_error($db);
 		}
