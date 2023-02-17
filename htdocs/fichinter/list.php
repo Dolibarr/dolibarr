@@ -66,7 +66,7 @@ $search_desc = GETPOST('search_desc', 'alpha');
 $search_projet_ref = GETPOST('search_projet_ref', 'alpha');
 $search_contrat_ref = GETPOST('search_contrat_ref', 'alpha');
 $search_status = GETPOST('search_status', 'alpha');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $optioncss = GETPOST('optioncss', 'alpha');
 $socid = GETPOST('socid', 'int');
 
@@ -311,8 +311,8 @@ if (empty($user->rights->societe->client->voir) && empty($socid)) {
 if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
-if ($sall) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
+if ($search_all) {
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -321,7 +321,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 // Add GroupBy from hooks
-$parameters = array('search_all' => $sall, 'fieldstosearchall' => $fieldstosearchall);
+$parameters = array('search_all' => $search_all, 'fieldstosearchall' => $fieldstosearchall);
 $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
@@ -396,8 +396,8 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
-if ($sall) {
-	$param .= "&sall=".urlencode($sall);
+if ($search_all) {
+	$param .= "&search_all=".urlencode($search_all);
 }
 if ($socid) {
 	$param .= "&socid=".urlencode($socid);
@@ -474,11 +474,11 @@ $objecttmp = new Fichinter($db);
 $trackid = 'int'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-if ($sall) {
+if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
