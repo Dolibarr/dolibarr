@@ -160,9 +160,9 @@ if ($id > 0 || !empty($ref)) {
 		$now = dol_now();
 
 		$sql = "SELECT";
-//		$sql .= " sum(".$db->ifsql("cd.role='toconsume'", "cd.qty", 0).') as nb_toconsume,';
+		//      $sql .= " sum(".$db->ifsql("cd.role='toconsume'", "cd.qty", 0).') as nb_toconsume,';
 		$sql .= " sum(".$db->ifsql("cd.role='consumed'", "cd.qty", 0).') as nb_consumed,';
-//		$sql .= " sum(".$db->ifsql("cd.role='toproduce'", "cd.qty", 0).') as nb_toproduce,';
+		//      $sql .= " sum(".$db->ifsql("cd.role='toproduce'", "cd.qty", 0).') as nb_toproduce,';
 		$sql .= " sum(".$db->ifsql("cd.role='produced'", "cd.qty", 0).') as nb_produced,';
 		$sql .= " c.rowid as rowid, c.ref, c.date_valid, c.status";
 		//$sql .= " s.nom as name, s.rowid as socid, s.code_client";
@@ -250,9 +250,9 @@ if ($id > 0 || !empty($ref)) {
 			//print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "&amp;id=".$object->id, '', $sortfield, $sortorder);
 			print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "c.date_valid", "", $option."&amp;id=".$object->id, 'align="center"', $sortfield, $sortorder);
 			//print_liste_field_titre("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
-//			print_liste_field_titre("ToConsume", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'center ');
+			//          print_liste_field_titre("ToConsume", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'center ');
 			print_liste_field_titre("QtyAlreadyConsumed", $_SERVER["PHP_SELF"], "", "", $option."&amp;id=".$object->id, '', $sortfield, $sortorder, 'center ');
-//			print_liste_field_titre("QtyToProduce", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'center ');
+			//          print_liste_field_titre("QtyToProduce", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'center ');
 			print_liste_field_titre("QtyAlreadyProduced", $_SERVER["PHP_SELF"], "", "", $option."&amp;id=".$object->id, '', $sortfield, $sortorder, 'center ');
 			print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "c.status", "", $option."&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
 			print "</tr>\n";
@@ -280,9 +280,9 @@ if ($id > 0 || !empty($ref)) {
 					print dol_print_date($db->jdate($objp->date_valid), 'dayhour')."</td>";
 					//print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
 					//print '<td align="right">';
-//					print '<td class="center">'.($objp->nb_toconsume > 0 ? $objp->nb_toconsume : '').'</td>';
+					//                  print '<td class="center">'.($objp->nb_toconsume > 0 ? $objp->nb_toconsume : '').'</td>';
 					print '<td class="center">'.($objp->nb_consumed > 0 ? $objp->nb_consumed : '').'</td>';
-//					print '<td class="center">'.($objp->nb_toproduce > 0 ? $objp->nb_toproduce : '').'</td>';
+					//                  print '<td class="center">'.($objp->nb_toproduce > 0 ? $objp->nb_toproduce : '').'</td>';
 					print '<td class="center">'.($objp->nb_produced > 0 ? $objp->nb_produced : '').'</td>';
 					//$mostatic->LibStatut($objp->statut,5).'</td>';
 					print '<td class="right">'.$motmp->getLibStatut(2).'</td>';

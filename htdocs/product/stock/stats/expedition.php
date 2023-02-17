@@ -153,50 +153,50 @@ if ($id > 0 || !empty($ref)) {
 
 		echo '<br>';
 
-//		// Sell by
-//		if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
-//			print '<tr><td>';
-//			print $form->editfieldkey($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
-//			print '</td><td>';
-//			print $form->editfieldval($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
-//			print '</td>';
-//			print '</tr>';
-//		}
-//
-//		// Eat by
-//		if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-//			print '<tr><td>';
-//			print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
-//			print '</td><td>';
-//			print $form->editfieldval($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
-//			print '</td>';
-//			print '</tr>';
-//		}
-//
-//		if (!empty($conf->global->PRODUCT_LOT_ENABLE_TRACEABOLITY)) {
-//			print '<tr><td>'.$form->editfieldkey($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer).'</td>';
-//			print '<td>'.$form->editfieldval($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
-//			print '</tr>';
-//			// print '<tr><td>'.$form->editfieldkey($langs->trans('FirstUseDate'), 'commissionning_date', $object->commissionning_date, $object, $user->rights->stock->creer).'</td>';
-//			// print '<td>'.$form->editfieldval($langs->trans('FirstUseDate'), 'commissionning_date', $object->commissionning_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
-//			// print '</tr>';
-//			print '<tr><td>'.$form->editfieldkey($langs->trans('DestructionDate'), 'scrapping_date', $object->scrapping_date, $object, $user->rights->stock->creer).'</td>';
-//			print '<td>'.$form->editfieldval($langs->trans('DestructionDate'), 'scrapping_date', $object->scrapping_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
-//			print '</tr>';
-//		}
-//
-//		// Quality control
-//		if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
-//			print '<tr><td>'.$form->editfieldkey($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer).'</td>';
-//			print '<td>'.$form->editfieldval($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
-//			print '</tr>';
-//			print '<tr><td>'.$form->editfieldkey($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer).'</td>';
-//			print '<td>'.$form->editfieldval($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer, 'numeric').'</td>';
-//			print '</tr>';
-//		}
-//
-//		// Other attributes
-//		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+		//      // Sell by
+		//      if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+		//          print '<tr><td>';
+		//          print $form->editfieldkey($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
+		//          print '</td><td>';
+		//          print $form->editfieldval($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
+		//          print '</td>';
+		//          print '</tr>';
+		//      }
+		//
+		//      // Eat by
+		//      if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+		//          print '<tr><td>';
+		//          print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
+		//          print '</td><td>';
+		//          print $form->editfieldval($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
+		//          print '</td>';
+		//          print '</tr>';
+		//      }
+		//
+		//      if (!empty($conf->global->PRODUCT_LOT_ENABLE_TRACEABOLITY)) {
+		//          print '<tr><td>'.$form->editfieldkey($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer).'</td>';
+		//          print '<td>'.$form->editfieldval($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
+		//          print '</tr>';
+		//          // print '<tr><td>'.$form->editfieldkey($langs->trans('FirstUseDate'), 'commissionning_date', $object->commissionning_date, $object, $user->rights->stock->creer).'</td>';
+		//          // print '<td>'.$form->editfieldval($langs->trans('FirstUseDate'), 'commissionning_date', $object->commissionning_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
+		//          // print '</tr>';
+		//          print '<tr><td>'.$form->editfieldkey($langs->trans('DestructionDate'), 'scrapping_date', $object->scrapping_date, $object, $user->rights->stock->creer).'</td>';
+		//          print '<td>'.$form->editfieldval($langs->trans('DestructionDate'), 'scrapping_date', $object->scrapping_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
+		//          print '</tr>';
+		//      }
+		//
+		//      // Quality control
+		//      if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
+		//          print '<tr><td>'.$form->editfieldkey($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer).'</td>';
+		//          print '<td>'.$form->editfieldval($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
+		//          print '</tr>';
+		//          print '<tr><td>'.$form->editfieldkey($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer).'</td>';
+		//          print '<td>'.$form->editfieldval($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer, 'numeric').'</td>';
+		//          print '</tr>';
+		//      }
+		//
+		//      // Other attributes
+		//      include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		print '<table class="border centpercent tableforfield" width="100%">';
 
@@ -307,7 +307,7 @@ if ($id > 0 || !empty($ref)) {
 				print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "exp.date_creation", "", $option, 'align="center"', $sortfield, $sortorder);
 				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
-//				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "d.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
+				//              print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "d.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
 				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "exp.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
 				print "</tr>\n";
 
@@ -325,7 +325,7 @@ if ($id > 0 || !empty($ref)) {
 						$expeditionstatic->id = $objp->facid;
 						$expeditionstatic->ref = $objp->ref;
 						$societestatic->fetch($objp->socid);
-//						$paiement = $expeditionstatic->getSommePaiement();
+						//                      $paiement = $expeditionstatic->getSommePaiement();
 
 						print '<tr class="oddeven">';
 						print '<td>';
@@ -336,7 +336,7 @@ if ($id > 0 || !empty($ref)) {
 						print '<td class="center">';
 						print dol_print_date($db->jdate($objp->date_creation), 'dayhour')."</td>";
 						print '<td class="center">'.$objp->qty."</td>\n";
-//						print '<td align="right">'.price($objp->total_ht)."</td>\n";
+						//                      print '<td align="right">'.price($objp->total_ht)."</td>\n";
 						print '<td align="right">'.$expeditionstatic->LibStatut($objp->statut, 5).'</td>';
 						print "</tr>\n";
 						$i++;
