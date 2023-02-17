@@ -300,8 +300,9 @@ if ($action == 'update') {
 	}
 
 	if ($mode == 'css') {
-		$data = GETPOST('CUSTOM_CSS', 'none');
-		file_put_contents(DOL_DATA_ROOT.'/admin/customcss.css', $data);
+		//file_put_contents(DOL_DATA_ROOT.'/admin/customcss.css', $data);
+		//dol_chmod(DOL_DATA_ROOT.'/admin/customcss.css');
+		dolibarr_set_const($db, "MAIN_IHM_CUSTOM_CSS", GETPOST('MAIN_IHM_CUSTOM_CSS', 'restricthtml'), 'chaine', 0, '', $conf->entity);
 	}
 
 	$_SESSION["mainmenu"] = ""; // The menu manager may have changed
@@ -310,7 +311,7 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", ((int) $conf->global->MAIN_IHM_PARAMS_REV) + 1, 'chaine', 0, '', $conf->entity);
 	}
 
-	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup".'&mode='.$mode.(GETPOSTISSET('page_y') ? '&page_y='.GETPOST('page_y', 'int') : ''));
+	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup&mode=".$mode.(GETPOSTISSET('page_y') ? '&page_y='.GETPOST('page_y', 'int') : ''));
 	exit;
 }
 
@@ -698,9 +699,10 @@ if ($mode == 'css') {
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">';
 
-	$customcssValue = file_get_contents(DOL_DATA_ROOT.'/admin/customcss.css');
+	//$customcssValue = file_get_contents(DOL_DATA_ROOT.'/admin/customcss.css');
+	$customcssValue = getDolGlobalString('MAIN_IHM_CUSTOM_CSS');
 
-	$doleditor = new DolEditor('CUSTOM_CSS', $customcssValue, '', 400, 'Basic', 'In', false, true, 'ace', 80, 80, 0);
+	$doleditor = new DolEditor('MAIN_IHM_CUSTOM_CSS', $customcssValue, '80%', 400, 'Basic', 'In', true, false, 'ace', 10, '90%');
 	$doleditor->Create(0, '', true, 'css', 'css');
 	print '</td></tr>'."\n";
 
