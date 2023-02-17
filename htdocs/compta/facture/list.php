@@ -1387,19 +1387,19 @@ if ($resql) {
 	}
 	// Project ref
 	if (!empty($arrayfields['p.ref']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_project_ref" value="'.$search_project_ref.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
 	}
 	// Project label
 	if (!empty($arrayfields['p.title']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_project" value="'.$search_project.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_project" value="'.dol_escape_htmltag($search_project).'"></td>';
 	}
 	// Thirdparty
 	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company" value="'.$search_company.'"'.($socid > 0 ? " disabled" : "").'></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"'.($socid > 0 ? " disabled" : "").'></td>';
 	}
 	// Alias
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company_alias" value="'.$search_company_alias.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company_alias" value="'.dol_escape_htmltag($search_company_alias).'"></td>';
 	}
 	// Parent company
 	if (!empty($arrayfields['s2.nom']['checked'])) {
@@ -1409,7 +1409,7 @@ if ($resql) {
 	}
 	// Customer Code
 	if (!empty($arrayfields['s.code_client']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company_code_client" value="'.$search_company_code_client.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company_code_client" value="'.dol_escape_htmltag($search_company_code_client).'"></td>';
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
@@ -1476,13 +1476,13 @@ if ($resql) {
 	if (!empty($arrayfields['f.total_localtax1']['checked'])) {
 		// Localtax1
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="4" name="search_montant_localtax1" value="'.$search_montant_localtax1.'">';
+		print '<input class="flat" type="text" size="4" name="search_montant_localtax1" value="'.dol_escape_htmltag($search_montant_localtax1).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['f.total_localtax2']['checked'])) {
 		// Localtax2
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="4" name="search_montant_localtax2" value="'.$search_montant_localtax2.'">';
+		print '<input class="flat" type="text" size="4" name="search_montant_localtax2" value="'.dol_escape_htmltag($search_montant_localtax2).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['f.total_ttc']['checked'])) {
