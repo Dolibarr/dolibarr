@@ -451,7 +451,7 @@ ExtrafieldCheckBox=Cases à cocher
 ExtrafieldCheckBoxFromList=Cases à cocher issues d'une table
 ExtrafieldLink=Lien vers un objet
 ComputedFormula=Champ calculé
-ComputedFormulaDesc=Vous pouvez entrer ici une formule utilisant les propriétés objet ou tout code PHP pour obtenir des valeurs dynamiques. Vous pouvez utiliser toute formule compatible PHP, incluant l'opérateur conditionnel "?", et les objets globaux suivants : <strong>$db, $conf, $langs, $mysoc, $user, $object</strong>.<br><strong>ATTENTION</strong> : Seulement quelques propriétés de l'objet $object pourraient être disponibles. Si vous avez besoin de propriétés non chargées, créez vous même une instance de l'objet dans votre formule, comme dans le deuxième exemple.<br>Utiliser un champs calculé signifie que vous ne pouvez pas entrer vous même toute valeur à partir de l'interface. Aussi, s'il y a une erreur de syntaxe, la formule pourrait ne rien retourner.<br><br>Exemple de formule:<br> $object->id < 10 ? round($object->id / 2, 2) : ($object->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Exemple pour recharger l'objet: <br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($obj->id ? $obj->id : ($obj->rowid ? $obj->rowid : $object->id)) > 0)) ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5 : '-1'<br><br>Un autre exemple de formule pour forcer le rechargement d'un objet et de son objet parent:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetch($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : 'Objet parent projet non trouvé'
+ComputedFormulaDesc=Vous pouvez entrer ici une formule en utilisant d’autres propriétés de l'objet ou tout autre code PHP pour obtenir une valeur calculée dynamique. Vous pouvez utiliser toutes les formules compatibles PHP, y compris l'opérateur conditionnel "?", ainsi que les objets globaux suvants : <strong>$db, $conf, $langs, $mysoc, $user, $objectoffield</strong>.<br><strong>ATTENTION</strong> : Si vous avez besoin des propriétés d’un objet non disponible, il vous suffit de le charger même dans votre formule comme dans le deuxième exemple.<br>L'utilisation d'un champ calculé signifie que vous ne pouvez pas entrer vous-même une valeur depuis l’interface. De même, en cas d'erreur de syntaxe, la formule peut ne rien retourner.<br><br>Exemple de formule :<br>$objectoffield->id < 10 ? round($objectoffield->id / 2, 2) : ($objectoffield->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Exemple pour recharger l’object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0 ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5 : '-1')<br><br>Autre exemple de formule pour forcer le chargement d'un objet et de ses objets parents :<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : 'Projet parent introuvable’
 Computedpersistent=Stocker le champ calculé
 ComputedpersistentDesc=Les champs supplémentaires calculés seront stockés dans la base de données. Toutefois, la valeur ne sera recalculée que lorsque l'objet de ce champ sera modifié. Si le champ calculé dépend d'autres objets ou de données globales, cette valeur peut être fausse !!
 ExtrafieldParamHelpPassword=Laissez ce champ vide signifie que la valeur sera stockée sans cryptage (le champ doit juste être caché avec des étoiles sur l'écran).<br> Définissez la valeur 'auto' pour utiliser la règle de cryptage par défaut pour enregistrer le mot de passe dans la base de données (ensuite la valeur utilisée sera le hash uniquement, sans moyen de retrouver la valeur d'origine)
@@ -704,8 +704,10 @@ Module62000Name=Incoterms
 Module62000Desc=Ajouts de fonctionnalités pour gérer les incoterms
 Module63000Name=Ressources
 Module63000Desc=Gère les ressources (imprimantes, voitures, salles...). les ressources peuvent être affectées à des événements.
+Module66000Name=Activer l'authentification OAuth2
+Module66000Desc=Fournit un outil pour générer et gérer les jetons OAuth2
 Module94160Name=Réceptions
-Permission11=Consulter les factures clients
+Permission11=Lire les factures (et paiements) clients
 Permission12=Créer/modifier les factures clients
 Permission13=Dé-valider les factures clients
 Permission14=Valider les factures clients
@@ -947,7 +949,7 @@ Permission1190=Approuver les commandes fournisseur (second niveau)
 Permission1191=Exporter les commandes fournisseurs et leurs attributs
 Permission1201=Récupérer le résultat d'un export
 Permission1202=Créer/modifier un export
-Permission1231=Consulter les factures fournisseur
+Permission1231=Lire les factures (et paiements) fournisseurs
 Permission1232=Créer les factures fournisseur
 Permission1233=Valider les factures fournisseur
 Permission1234=Supprimer les factures fournisseur
@@ -1234,7 +1236,7 @@ SetupDescription4=<a href="%s"> %s -> %s </a><br> <br>Ce logiciel est un ensembl
 SetupDescription5=Les autres entrées de configuration gèrent des paramètres facultatifs.
 SetupDescriptionLink= <a href="%s"> %s - %s </a>
 SetupDescription3b=Paramètres de base utilisés pour personnaliser le comportement par défaut de votre application (par exemple pour les fonctionnalités liées au pays).
-SetupDescription4b=Ce logiciel est une suite de nombreux modules/applications. Les modules liés à vos besoins doivent être activés et configurés. Les entrées de menu apparaîtront avec l'activation de ces modules.
+SetupDescription4b=Ce logiciel est une suite de nombreux modules/applications. Les modules correspondants à vos besoins doivent être activés et configurés. Les entrées de menu apparaîtront avec l'activation de ces modules.
 AuditedSecurityEvents=Événements de sécurité audités
 NoSecurityEventsAreAduited=Aucun événement de sécurité n'est audité. Vous pouvez les activer à partir du menu %s
 Audit=Événements de sécurité
@@ -2366,3 +2368,7 @@ MaxNumberOfAttachementOnForms=Nombre maximum de fichiers joints dans un formulai
 IfDefinedUseAValueBeetween=Si défini, utilisez une valeur entre %s et %s
 Reload=Recharger
 ConfirmReload=Confirmer le rechargement du module
+WarningModuleHasChangedLastVersionCheckParameter=Attention :  le module %sa configuré un paramètre de vérification de sa version à chaque chargement de page. Cette mauvaise pratique, non autorisée, pourrait rendre instable la page d'administration des modules. Veuillez contacter l'auteur du module pour qu'il régle ce problème.
+WarningModuleHasChangedSecurityCsrfParameter=Attention : le module %sa désactivé la sécurisation CSRF de votre instance. Cette action est suspecte et votre installation pourrait ne plus être sécurisée. Veuillez contacter l'auteur du module pour obtenir des explications.
+EMailsInGoingDesc=La réception des e-mails est gérée par le module %s. Vous devez l'activer et le configurer si vous avez besoin de prendre en charge messages entrants.
+MAIN_IMAP_USE_PHPIMAP=Utiliser la librairie PHP-IMAP pour la prise en charge IMAP, à la place du support IMAP natif de PHP. Ceci permet également l'utilisation d'une connexion OAuth2 pour IMAP (le module OAuth doit aussi être activé).

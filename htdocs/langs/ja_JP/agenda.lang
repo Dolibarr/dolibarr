@@ -177,5 +177,6 @@ ReminderType=コールバック種別
 AddReminder=このイベントの自動リマインダー通知を作成する
 ErrorReminderActionCommCreation=このイベントのリマインダー通知の作成中にエラーが発生した
 BrowserPush=ブラウザのポップアップ通知
+Reminders=リマインダー
 ActiveByDefault=デフォルトで有効
 Until=それまで

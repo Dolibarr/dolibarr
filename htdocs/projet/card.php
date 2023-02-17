@@ -1065,7 +1065,8 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			if (!empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) {
 				$filteronlist = $conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
 			}
-			$text = $form->select_company($object->thirdparty->id, 'socid', $filteronlist, 'None', 1, 0, array(), 0, 'minwidth300');
+			$text = img_picto('', 'company', 'class="pictofixedwidth"');
+			$text .= $form->select_company($object->thirdparty->id, 'socid', $filteronlist, 'None', 1, 0, array(), 0, 'minwidth300');
 			if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile)) {
 				$texthelp = $langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 				print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
@@ -1529,15 +1530,15 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				print'<a style="margin-right: auto;"class="dropdown-toggle butAction" data-toggle="dropdown">'.$langs->trans("Create").'</a>';
 				print '<div class="dropdown-menu">';
 				print '<div class="dropdown-global-search-button-list" >';
-				if (isModEnabled("propal") && $user->rights->propal->creer) {
+				if (isModEnabled("propal") && $user->hasRight('propal', 'creer')) {
 					$langs->load("propal");
 					print dolGetButtonAction('', $langs->trans('AddProp'), 'default', DOL_URL_ROOT.'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
-				if (isModEnabled('commande') && $user->rights->commande->creer) {
+				if (isModEnabled('commande') && $user->hasRight('commande', 'creer')) {
 					$langs->load("orders");
 					print dolGetButtonAction('', $langs->trans('CreateOrder'), 'default', DOL_URL_ROOT.'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
-				if (isModEnabled('facture') && $user->rights->facture->creer) {
+				if (isModEnabled('facture') && $user->hasRight('facture', 'creer')) {
 					$langs->load("bills");
 					print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
@@ -1553,11 +1554,11 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					$langs->load("suppliers");
 					print dolGetButtonAction('', $langs->trans('AddSupplierInvoice'), 'default', DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
-				if (isModEnabled('ficheinter') && $user->rights->ficheinter->creer) {
+				if (isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'creer')) {
 					$langs->load("interventions");
 					print dolGetButtonAction('', $langs->trans('AddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
-				if (isModEnabled('contrat') && $user->rights->contrat->creer) {
+				if (isModEnabled('contrat') && $user->hasRight('contrat', 'creer')) {
 					$langs->load("contracts");
 					print dolGetButtonAction('', $langs->trans('AddContract'), 'default', DOL_URL_ROOT.'/contrat/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
@@ -1618,7 +1619,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 		$MAXEVENT = 10;
 
-		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/projet/info.php?id='.$object->id);
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/projet/messaging.php?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

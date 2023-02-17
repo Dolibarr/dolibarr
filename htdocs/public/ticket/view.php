@@ -206,7 +206,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 $triggersendname = 'TICKET_SENTBYMAIL';
 $paramname = 'id';
 $autocopy = 'MAIN_MAIL_AUTOCOPY_TICKET_TO'; // used to know the automatic BCC to add
-if (!empty($object->id)) $trackid = 'tic'.$object->id;
+if (!empty($object->dao->id)) $trackid = 'tic'.$object->dao->id;
 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
@@ -345,7 +345,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 			$formticket->action = "add_message";
 			$formticket->track_id = $object->dao->track_id;
-			$formticket->id = $object->dao->id;
+			$formticket->trackid = 'tic'.$object->dao->id;
 
 			$formticket->param = array('track_id' => $object->dao->track_id, 'fk_user_create' => '-1',
 									   'returnurl' => DOL_URL_ROOT.'/public/ticket/view.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:''));

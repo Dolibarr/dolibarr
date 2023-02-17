@@ -301,7 +301,7 @@ ProfId4DZ=Kundenidentifikationsnummer
 VATIntra=Umsatzsteuer-ID
 VATIntraShort=USt-IdNr.
 VATIntraSyntaxIsValid=Die Syntax ist gültig
-VATReturn=Mehrwertsteuererstattung
+VATReturn=Umsatzsteuervorauszahlung
 ProspectCustomer=Interessent/Kunde
 Prospect=Interessent
 CustomerCard=Kunde – Übersicht
@@ -503,3 +503,4 @@ TwoRecordsOfCompanyName=Für dieses Unternehmen existiert mehr als ein Datensatz
 CompanySection=Unternehmensbereich
 ShowSocialNetworks=Soziale Netzwerke anzeigen
 HideSocialNetworks=Soziale Netzwerke ausblenden
+

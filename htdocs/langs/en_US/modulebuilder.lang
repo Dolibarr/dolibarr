@@ -170,3 +170,6 @@ GeneratePermissionsHelp=generate default rights for this object
 PermissionDeletedSuccesfuly=Permission has been successfully removed
 PermissionUpdatedSuccesfuly=Permission has been successfully updated
 PermissionAddedSuccesfuly=Permission has been successfully added
+MenuDeletedSuccessfuly=Menu has been successfully deleted
+MenuAddedSuccessfuly=Menu has been successfully added
+MenuUpdatedSuccessfuly=Menu has been successfully updated
