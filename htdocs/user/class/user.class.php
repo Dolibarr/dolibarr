@@ -2425,6 +2425,9 @@ class User extends CommonObject
 			//print $password.'-'.$this->id.'-'.$dolibarr_main_instance_unique_id;
 			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword';
 			$url .= '&username='.urlencode($this->login)."&passworduidhash=".urlencode(dol_hash($password.'-'.$this->id.'-'.$dolibarr_main_instance_unique_id));
+			if (!empty($conf->multicompany->enabled)) {
+				$url .= '&entity='.(!empty($user->entity) ? $user->entity : 1);
+			}
 
 			$msgishtml = 1;
 
