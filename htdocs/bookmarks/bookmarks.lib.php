@@ -196,7 +196,7 @@ function printDropdownBookmarksList()
 			<!-- Menu bookmark tools-->
 			<div class="bookmark-footer">
 					'.$newbtn.$listbtn.'
-				<div style="clear:both;"></div>
+				<div class="clearboth"></div>
 			</div>
 		';
 

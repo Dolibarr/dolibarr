@@ -757,7 +757,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	print '</div></div>';
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
 

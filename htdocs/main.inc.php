@@ -2390,7 +2390,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	                <div class="pull-right">
 	                    '.$logoutLink.'
 	                </div>
-	                <div style="clear:both;"></div>
+	                <div class="clearboth"></div>
 	            </div>
 
 	        </div>

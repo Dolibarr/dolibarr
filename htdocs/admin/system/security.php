@@ -580,14 +580,14 @@ print '<br>';
 print '<strong>MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED</strong> = '.getDolGlobalString('MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
 print '<br>';
 
-print '<strong>MAIN_SECURITY_FORCECSP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCECSP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"frame-ancestors 'self'; default-src 'self'; img-src *;\")</span><br>";
+print '<strong>MAIN_SECURITY_FORCECSP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCECSP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"frame-ancestors 'self'; default-src 'self' 'unsafe-inline'; img-src *;\")</span><br>";
 print '<br>';
 
 print '<strong>MAIN_SECURITY_FORCERP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or")." \"same-origin\" so browser doesn't send any referrer when going into another web site domain)</span><br>";
 print '<br>';
 
 print '<strong>WEBSITE_MAIN_SECURITY_FORCECSP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
-print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"frame-ancestors 'self'; default-src 'self'; style-src https://cdnjs.cloudflare.com https://fonts.googleapis.com; script-src https://cdn.transifex.com https://www.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src *;\")</span><br>";
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"frame-ancestors 'self'; default-src 'self' 'unsafe-inline'; style-src https://cdnjs.cloudflare.com https://fonts.googleapis.com; script-src https://cdn.transifex.com https://www.googletagmanager.com 'unsafe-inline'; object-src https://youtube.com; frame-src https://youtube.com; img-src *;\")</span><br>";
 print '<br>';
 
 print '<strong>WEBSITE_MAIN_SECURITY_FORCERP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or")." \"strict-origin-when-cross-origin\")</span><br>";

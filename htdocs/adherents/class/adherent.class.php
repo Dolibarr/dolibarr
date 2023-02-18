@@ -2299,7 +2299,6 @@ class Adherent extends CommonObject
 			$photo .= Form::showphoto('memberphoto', $this, 80, 0, 0, 'photoref photowithmargin photologintooltip', 'small', 0, 1);
 			$photo .= '</div>';
 			$datas['photo'] = $photo;
-			//$label .= '<div style="clear: both;"></div>';
 		}
 
 		$datas['divopen'] = '<div class="centpercent">';
@@ -2411,7 +2410,7 @@ class Adherent extends CommonObject
 		if ($withpictoimg) {
 			$paddafterimage = '';
 			if (abs($withpictoimg) == 1) {
-				$paddafterimage = 'style="margin-right: 3px;"';
+				$morecss .= ' paddingrightonly';
 			}
 			// Only picto
 			if ($withpictoimg > 0) {
