@@ -5,6 +5,8 @@
  * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023       Maxime Nicolas          <maxime@oarces.com>
+ * Copyright (C) 2023       Benjamin GREMBI         <benjamin@oarces.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,6 +150,13 @@ if (empty($reshook)) {
 		}
 		$action = '';
 	}
+		// Actions to send emails
+		$triggersendname = 'COMPANY_SENTBYMAIL';
+		$paramname = 'id';
+		$mode = 'emailfromthirdparty';
+		$trackid = 'thi'.$object->id;
+		include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+
 }
 
 // Link to a project
@@ -382,7 +391,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries-
 		$object->id = $object->ref = null;
 
 		if (GETPOST('amount', 'alphanohtml')) {
-				$object->amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT', 2);
+			$object->amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT', 2);
 		}
 
 		if (GETPOST('clone_label', 'alphanohtml')) {
@@ -451,7 +460,6 @@ if (isModEnabled('project')) $formproject = new FormProjets($db);
 
 $title = $langs->trans('Salary')." - ".$object->ref;
 $help_url = "";
-
 llxHeader('', $title, $help_url);
 
 
@@ -662,9 +670,9 @@ if ($action == 'create' && $permissiontoadd) {
 	print '<script>';
 	print '$( document ).ready(function() {';
 		print '$("#updateAmountWithLastSalary").on("click", function updateAmountWithLastSalary() {
+					console.log("We click on link to autofill salary amount url="+url);
 					var fk_user = $("#fk_user").val()
 					var url = "'.DOL_URL_ROOT.'/salaries/ajax/ajaxsalaries.php?fk_user="+fk_user;
-					console.log("We click on link to autofill salary amount url="+url);
 					if (fk_user != -1) {
 						$.get(
 							url,
@@ -703,7 +711,6 @@ if ($action == 'create' && $permissiontoadd) {
 	})';
 	print '</script>';
 }
-
 
 // View mode
 if ($id > 0) {
@@ -803,7 +810,7 @@ if ($id > 0) {
 		$morehtmlref .= '</form>';
 	}
 
-	$usercancreate = $permissiontoadd;
+    $usercancreate = $permissiontoadd;
 
 	// Project
 	if (isModEnabled('project')) {
@@ -969,11 +976,8 @@ if ($id > 0) {
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
-				print '<tr class="oddeven">';
-				// Date
-				print '<td>';
+				print '<tr class="oddeven"><td>';
 				print '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
-				// Date
 				print '<td>'.dol_print_date($db->jdate($objp->dp), 'dayhour', 'tzuserrel')."</td>\n";
 				$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 				print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
@@ -1046,6 +1050,17 @@ if ($id > 0) {
 
 	print '<div class="tabsAction">'."\n";
 	if ($action != 'edit') {
+		// Dynamic send mail button
+		$parameters = array();
+			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if (empty($user->socid)) {
+					$canSendMail = true;
+
+					print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=presend'.'&token='.newToken().'&mode=init#formmailbeforetitle', '', $canSendMail, $params);
+				}
+			}
+
 		// Reopen
 		if ($object->paye && $user->rights->salaries->write) {
 			print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
@@ -1137,6 +1152,10 @@ if ($id > 0) {
 	$trackid = 'salary'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+
+	// Hook to add more things on page
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('salaryCardTabAddMore', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 }
 
 // End of page
