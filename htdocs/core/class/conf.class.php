@@ -600,7 +600,18 @@ class Conf
 				$this->global->USER_PASSWORD_GENERATED = 'standard'; // Default password generator
 			}
 			if (empty($this->global->MAIN_UMASK)) {
-				$this->global->MAIN_UMASK = '0664'; // Default mask
+				$this->global->MAIN_UMASK = '0660'; // Default mask
+			} else {
+				// We remove the execute bits on the file umask
+				$tmpumask = (octdec($this->global->MAIN_UMASK) & 0666);
+				$tmpumask = decoct($tmpumask);
+				if (!preg_match('/^0/', $tmpumask)) {
+					$tmpumask = '0'.$tmpumask;
+				}
+				if (empty($tmpumask) || $tmpumask === '0') {
+					$tmpumask = '0664';
+				}
+				$this->global->MAIN_UMASK = $tmpumask;
 			}
 
 			// conf->use_javascript_ajax
