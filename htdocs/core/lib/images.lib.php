@@ -130,8 +130,12 @@ function dol_getImageSize($file, $url = false)
 
 	if ($filetoread) {
 		$infoImg = getimagesize($filetoread); // Recuperation des infos de l'image
-		$ret['width'] = $infoImg[0]; // Largeur de l'image
-		$ret['height'] = $infoImg[1]; // Hauteur de l'image
+		if ($infoImg) {
+			$ret['width'] = $infoImg[0]; // Largeur de l'image
+			$ret['height'] = $infoImg[1]; // Hauteur de l'image
+		} else {
+			$ret['width'] = $ret['height'] = '';
+		}
 	}
 
 	return $ret;

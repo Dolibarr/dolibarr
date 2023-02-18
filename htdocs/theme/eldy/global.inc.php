@@ -7678,7 +7678,7 @@ div.clipboardCPValue.hidewithsize {
 	}
 
 	.dropdown dd ul {
-		max-width: 350px;
+		max-width: 370px;
 	}
 }
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
