@@ -119,10 +119,11 @@ $morehtml = '';
 $morehtml .= '<form name="projectform" method="POST">';
 $morehtml .= '<input type="hidden" name="token" value="'.newToken().'">';
 $morehtml .= '<input type="hidden" name="action" value="refresh_search_project_user">';
-$morehtml .= '<SELECT name="search_project_user">';
+$morehtml .= '<SELECT name="search_project_user" id="search_project_user">';
 $morehtml .= '<option name="all" value="0"'.($mine ? '' : ' selected').'>'.$titleall.'</option>';
 $morehtml .= '<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id) ? ' selected' : '').'>'.$langs->trans("ProjectsImContactFor").'</option>';
 $morehtml .= '</SELECT>';
+$morehtml .= ajax_combobox("search_project_user", array(), 0, 0, 'resolve', '-1', 'small');
 $morehtml .= '<input type="submit" class="button smallpaddingimp" name="refresh" value="'.$langs->trans("Refresh").'">';
 $morehtml .= '</form>';
 
@@ -188,9 +189,8 @@ if ($resql) {
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-/*
- * Statistics
- */
+
+// Statistics
 include DOL_DOCUMENT_ROOT.'/projet/graph_opportunities.inc.php';
 
 
