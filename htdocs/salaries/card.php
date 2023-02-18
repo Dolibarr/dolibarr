@@ -156,7 +156,6 @@ if (empty($reshook)) {
 		$mode = 'emailfromthirdparty';
 		$trackid = 'thi'.$object->id;
 		include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-
 }
 
 // Link to a project
@@ -810,7 +809,7 @@ if ($id > 0) {
 		$morehtmlref .= '</form>';
 	}
 
-    $usercancreate = $permissiontoadd;
+	$usercancreate = $permissiontoadd;
 
 	// Project
 	if (isModEnabled('project')) {
@@ -1053,13 +1052,13 @@ if ($id > 0) {
 		// Dynamic send mail button
 		$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			if (empty($reshook)) {
-				if (empty($user->socid)) {
-					$canSendMail = true;
+		if (empty($reshook)) {
+			if (empty($user->socid)) {
+				$canSendMail = true;
 
-					print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=presend'.'&token='.newToken().'&mode=init#formmailbeforetitle', '', $canSendMail, $params);
-				}
+				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=presend'.'&token='.newToken().'&mode=init#formmailbeforetitle', '', $canSendMail, $params);
 			}
+		}
 
 		// Reopen
 		if ($object->paye && $user->rights->salaries->write) {
