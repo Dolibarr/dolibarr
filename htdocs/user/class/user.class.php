@@ -2359,7 +2359,7 @@ class User extends CommonObject
 	/**
 	 *  Send new password by email
 	 *
-	 *  @param	User	$user           Object user that send the email (not the user we send too)
+	 *  @param	User	$user           Object user that send the email (not the user we send too) @todo object $user is not used !
 	 *  @param	string	$password       New password
 	 *	@param	int		$changelater	0=Send clear passwod into email, 1=Change password only after clicking on confirm email. @todo Add method 2 = Send link to reset password
 	 *  @return int 		            < 0 si erreur, > 0 si ok
