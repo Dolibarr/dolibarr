@@ -7443,7 +7443,7 @@ abstract class CommonObject
 
 			if (!empty($conf->use_javascript_ajax)) {
 				$out .= '
-					<script>
+					<script nonce="'.getNonce().'">
 					$(document).ready(function() {
 						$("a#'.dol_escape_js($keyprefix.$key.$keysuffix).'_add").click(function() {
 							$("'.dol_escape_js($newInput).'").insertBefore(this);
@@ -8450,7 +8450,7 @@ abstract class CommonObject
 	public function getJSListDependancies($type = '_extra')
 	{
 		$out = '
-					<script>
+					<script nonce="'.getNonce().'">
 					jQuery(document).ready(function() {
 						function showOptions'.$type.'(child_list, parent_list, orig_select)
 						{

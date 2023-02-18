@@ -448,7 +448,7 @@ if ($useajax || $action == 'deletefile') {
 
 if ($useajax) {
 	print '<!-- ajaxdirpreview.php: js to manage preview of doc -->'."\n";
-	print '<script type="text/javascript">';
+	print '<script nonce="'.getNonce().'" type="text/javascript">';
 
 	// Enable jquery handlers on new generated HTML objects (same code than into lib_footer.js.php)
 	// Because the content is reloaded by ajax call, we must also reenable some jquery hooks

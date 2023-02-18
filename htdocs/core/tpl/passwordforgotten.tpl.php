@@ -278,7 +278,7 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 }
 
 // Google Analytics
-// TODO Add a hook here
+// TODO Remove this, and add content into hook getPasswordForgottenPageExtraOptions() instead
 if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
 	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
 	foreach ($tmptagarray as $tmptag) {

@@ -570,7 +570,8 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 	global $conf;
 
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<!-- Js code to suggest a security key --><script type="text/javascript">';
+		print "\n".'<!-- Js code to suggest a security key -->';
+		print '<script nonce="'.getNonce().'" type="text/javascript">';
 		print '$(document).ready(function () {
             $("#'.dol_escape_js($htmlnameofbutton).'").click(function() {
 				console.log("We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. We will fill '.dol_escape_js($htmlname).'");
