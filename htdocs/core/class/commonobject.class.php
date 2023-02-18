@@ -5743,12 +5743,12 @@ abstract class CommonObject
 	 */
 	public function addThumbs($file)
 	{
-		global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
-
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php'; // This define also $maxwidthsmall, $quality, ...
-
 		$file_osencoded = dol_osencode($file);
 		if (file_exists($file_osencoded)) {
+			global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
+
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php'; // This define also $maxwidthsmall, $quality, ...
+
 			// Create small thumbs for company (Ratio is near 16/9)
 			// Used on logon for example
 			vignette($file_osencoded, $maxwidthsmall, $maxheightsmall, '_small', $quality);
@@ -5757,6 +5757,21 @@ abstract class CommonObject
 			// Used on menu or for setup page for example
 			vignette($file_osencoded, $maxwidthmini, $maxheightmini, '_mini', $quality);
 		}
+	}
+
+	/**
+	 *  Delete thumbs
+	 *  @todo Move this into files.lib.php
+	 *
+	 *  @param      string	$file           Path file in UTF8 to original file to delete thumbs.
+	 *	@return		void
+	 */
+	public function delThumbs($file)
+	{
+		$imgThumbName = getImageFileNameForSize($file, '_small'); // Full path of thumb file
+		dol_delete_file($imgThumbName);
+		$imgThumbName = getImageFileNameForSize($file, '_mini'); // Full path of thumb file
+		dol_delete_file($imgThumbName);
 	}
 
 

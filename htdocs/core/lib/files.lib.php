@@ -1714,7 +1714,6 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 				$info = pathinfo($destfull);
 				$destfull = $info['dirname'].'/'.dol_sanitizeFileName($info['filename'].($info['extension'] != '' ? ('.'.strtolower($info['extension'])) : ''));
 				$info = pathinfo($destfile);
-
 				$destfile = dol_sanitizeFileName($info['filename'].($info['extension'] != '' ? ('.'.strtolower($info['extension'])) : ''));
 
 				// We apply dol_string_nohtmltag also to clean file names (this remove duplicate spaces) because
@@ -1722,13 +1721,14 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 				$destfile = dol_string_nohtmltag($destfile);
 				$destfull = dol_string_nohtmltag($destfull);
 
+				// Check that filename is not the one of a reserved allowed CLI command
 				global $dolibarr_main_restrict_os_commands;
 				if (!empty($dolibarr_main_restrict_os_commands)) {
 					$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
 					$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
-					if (in_array(basename($destfull), $arrayofallowedcommand)) {
+					if (in_array($destfile, $arrayofallowedcommand)) {
 						$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
-						setEventMessages($langs->trans("ErrorFilenameReserved", basename($destfull)), null, 'errors');
+						setEventMessages($langs->trans("ErrorFilenameReserved", $destfile), null, 'errors');
 						return -1;
 					}
 				}
