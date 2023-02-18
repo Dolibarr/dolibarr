@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C)    2017-2018 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C)    2022	  Charlene Benke <charlene@patas-monkey.com>
+/* Copyright (C) 2017-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2022	    Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2023       Maxime Nicolas          <maxime@oarces.com>
+ * Copyright (C) 2023       Benjamin GREMBI         <benjamin@oarces.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +131,11 @@ if ($action == 'presend') {
 	if ($formmail->fromtype === 'user') {
 		$formmail->fromid = $user->id;
 	}
-
+	if ($object->element == 'salary' && !empty($conf->global->INVOICE_EMAIL_SENDER)) {
+		$formmail->frommail = $conf->global->SINVOICE_EMAIL_SENDER;
+		$formmail->fromname = (!empty($conf->global->INVOICE_EMAIL_SENDER_NAME) ? $conf->global->INVOICE_EMAIL_SENDER_NAME : '');
+		$formmail->fromtype = 'special';
+	}
 	if ($object->element === 'facture' && !empty($conf->global->INVOICE_EMAIL_SENDER)) {
 		$formmail->frommail = $conf->global->INVOICE_EMAIL_SENDER;
 		$formmail->fromname = (!empty($conf->global->INVOICE_EMAIL_SENDER_NAME) ? $conf->global->INVOICE_EMAIL_SENDER_NAME : '');
@@ -194,6 +200,10 @@ if ($action == 'presend') {
 		$liste['contact'] = $object->getFullName($outputlangs)." <".$object->email.">";
 	} elseif ($object->element == 'user' || $object->element == 'member') {
 		$liste['thirdparty'] = $object->getFullName($outputlangs)." <".$object->email.">";
+	} elseif ($object->element == 'salary') {
+		$fuser = new User($db);
+		$fuser->fetch($object->fk_user);
+		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
 	} else {
 		if (!empty($object->socid) && $object->socid > 0 && !is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
 			$object->fetch_thirdparty();
