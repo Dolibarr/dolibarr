@@ -986,7 +986,7 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 						}
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && property_exists($objecttmp, 'thirdparty')) {
 							if ((property_exists($objecttmp, 'socid') || property_exists($objecttmp, 'fk_soc')) && empty($objecttmp->thirdparty)) {
-								$objecttmp->fetch_thirparty();
+								$objecttmp->fetch_thirdparty();
 							}
 							if (!empty($objecttmp->thirdparty)) {
 								$newlang = $objecttmp->thirdparty->default_lang;
