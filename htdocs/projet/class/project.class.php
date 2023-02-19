@@ -1123,7 +1123,7 @@ class Project extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
 		$sql .= " SET fk_statut = ".self::STATUS_VALIDATED;
 		$sql .= " WHERE rowid = ".((int) $this->id);
-		$sql .= " AND entity = ".((int) $conf->entity);
+		//$sql .= " AND entity = ".((int) $conf->entity);	// Disabled, when we use the ID for the where, we must not add any other search condition
 
 		dol_syslog(get_class($this)."::setValid", LOG_DEBUG);
 		$resql = $this->db->query($sql);
