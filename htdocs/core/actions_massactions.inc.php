@@ -684,7 +684,6 @@ if (!$error && $massaction == 'cancelorders') {
 
 	$nbok = 0;
 
-
 	$orders = GETPOST('toselect', 'array');
 	foreach ($orders as $id_order) {
 		$cmd = new Commande($db);
