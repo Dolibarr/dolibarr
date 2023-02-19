@@ -42,6 +42,7 @@ $langs->load("members");
 
 $rowid  = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'aZ09');
+$massaction = GETPOST('massaction', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
