@@ -215,9 +215,8 @@ if (isModEnabled('ticket')) {
 	$tmparray['ticket/list.php?mainmenu=ticket&leftmenu='] = 'Tickets';
 }
 // add bookmarks to available landing pages
-if (!empty($conf->global->MAIN_USE_BOOKMARKS_FOR_LANDING_PAGES)) {
-	$sql = "SELECT b.rowid, b.fk_user, b.url, b.title,";
-
+if (empty($conf->global->MAIN_NO_BOOKMARKS_FOR_LANDING_PAGES)) {
+	$sql = "SELECT b.rowid, b.fk_user, b.url, b.title";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b";
 	$sql .= " WHERE b.entity IN (".getEntity('bookmark').")";
 	$sql .= " AND b.url NOT LIKE 'http%'";
