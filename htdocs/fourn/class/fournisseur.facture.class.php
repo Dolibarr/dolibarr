@@ -5,7 +5,7 @@
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2020	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013-2019	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2023	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes			<bafbes@gmail.com>
@@ -229,6 +229,7 @@ class FactureFournisseur extends CommonInvoice
 
 	public $mode_reglement_id;
 	public $mode_reglement_code;
+	public $special_code;
 
 	/**
 	 * @var int transport mode id
