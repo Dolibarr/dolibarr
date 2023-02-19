@@ -5354,7 +5354,7 @@ class Form
 
 			// Line title
 			$formconfirm .= '<tr class="validtitre"><td class="validtitre" colspan="2">';
-			$formconfirm .= img_picto('', 'recent').' '.$title;
+			$formconfirm .= img_picto('', 'pictoconfirm').' '.$title;
 			$formconfirm .= '</td></tr>'."\n";
 
 			// Line text
