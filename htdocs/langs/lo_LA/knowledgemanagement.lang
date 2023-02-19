@@ -46,5 +46,9 @@ KnowledgeRecords = ບົດຄວາມ
 KnowledgeRecord = ມາດຕາ
 KnowledgeRecordExtraFields = Extrafields ສໍາລັບບົດຄວາມ
 GroupOfTicket=ກຸ່ມຂອງປີ້
-YouCanLinkArticleToATicketCategory=ເຈົ້າສາມາດເຊື່ອມຕໍ່ບົດຄວາມ ໜຶ່ງ ກັບກຸ່ມປີ້ (ສະນັ້ນບົດຄວາມຈະຖືກແນະນໍາໃນລະຫວ່າງຄຸນສົມບັດຂອງປີ້ໃ)່)
+YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
 SuggestedForTicketsInGroup=Suggested for tickets when group is
+
+SetObsolete=Set as obsolete
+ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
+ConfirmReopenKM=Do you want to restore this article to status "Validated" ?

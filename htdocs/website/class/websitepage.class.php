@@ -50,11 +50,23 @@ class WebsitePage extends CommonObject
 	 */
 	public $picto = 'file-code';
 
+	/**
+	 * @var string 	Field with ID of parent key if this field has a parent or for child tables
+	 */
+	public $fk_element = 'fk_website_page';
+
+	/**
+	 * @var array	List of child tables. To know object to delete on cascade.
+	 */
+	protected $childtablesoncascade = array('categorie_website_page');
+
 
 	/**
 	 * @var int ID
 	 */
 	public $fk_website;
+
+	public $fk_page;		// If translation of another page
 
 	public $pageurl;
 	public $aliasalt;
@@ -116,8 +128,8 @@ class WebsitePage extends CommonObject
 	 */
 	public $fk_object;
 
-	const STATUS_DRAFT = 0;
-	const STATUS_VALIDATED = 1;
+	const STATUS_DRAFT = 0;			// offline
+	const STATUS_VALIDATED = 1;		// online
 
 
 	/**
@@ -162,7 +174,7 @@ class WebsitePage extends CommonObject
 		'fk_website'     =>array('type'=>'integer', 'label'=>'WebsiteId', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>40, 'searchall'=>0, 'foreignkey'=>'websitepage.rowid'),
 		'fk_page'        =>array('type'=>'integer', 'label'=>'ParentPageId', 'enabled'=>1, 'visible'=>1, 'notnull'=>-1, 'position'=>45, 'searchall'=>0, 'foreignkey'=>'website.rowid'),
 		'allowed_in_frames'   =>array('type'=>'integer', 'label'=>'AllowedInFrames', 'enabled'=>1, 'visible'=>-1, 'position'=>48, 'searchall'=>0, 'default'=>0),
-		'htmlheader'     =>array('type'=>'text', 'label'=>'HtmlHeader', 'enabled'=>1, 'visible'=>0, 'position'=>50, 'searchall'=>0),
+		'htmlheader'     =>array('type'=>'html', 'label'=>'HtmlHeader', 'enabled'=>1, 'visible'=>0, 'position'=>50, 'searchall'=>0),
 		'content'        =>array('type'=>'mediumtext', 'label'=>'Content', 'enabled'=>1, 'visible'=>0, 'position'=>51, 'searchall'=>0),
 		'grabbed_from'   =>array('type'=>'varchar(255)', 'label'=>'GrabbedFrom', 'enabled'=>1, 'visible'=>1, 'index'=>1, 'position'=>400, 'comment'=>'URL page content was grabbed from'),
 		'date_creation'  =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
@@ -177,35 +189,6 @@ class WebsitePage extends CommonObject
 		'fk_object' => array('type' => 'varchar(255)', 'label' => 'ObjectId', 'enabled'=>1, 'visible'=>0, 'position'=>47, 'searchall'=>0, 'help'=>'')
 	);
 	// END MODULEBUILDER PROPERTIES
-
-
-	// If this object has a subtable with lines
-
-	// /**
-	//  * @var string    Name of subtable line
-	//  */
-	//public $table_element_line = 'mymodule_myobjectline';
-
-	/**
-	 * @var string 	Field with ID of parent key if this field has a parent or for child tables
-	 */
-	public $fk_element = 'fk_website_page';
-
-	// /**
-	//  * @var string    Name of subtable class that manage subtable lines
-	//  */
-	//public $class_element_line = 'MyObjectline';
-
-	/**
-	 * @var array	List of child tables. To test if we can delete object.
-	 */
-	//protected $childtables=array();
-
-	/**
-	 * @var array	List of child tables. To know object to delete on cascade.
-	 */
-	protected $childtablesoncascade = array('categorie_website_page');
-
 
 
 	/**
@@ -417,7 +400,7 @@ class WebsitePage extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid' || $key == 'rowid' || $key == 't.fk_website' || $key == 'fk_website' || $key == 'status' || $key == 't.status') {
-					$sqlwhere[] = $key.' = '.((int) $value);
+					$sqlwhere[] = $key." = ".((int) $value);
 				} elseif ($key == 'type_container' || $key == 't.type_container') {
 					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'lang' || $key == 't.lang') {
@@ -432,7 +415,7 @@ class WebsitePage extends CommonObject
 					}
 					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang), 1).")";
 					if ($foundnull) {
-						$stringtouse = '('.$stringtouse.' OR '.$key.' IS NULL)';
+						$stringtouse = "(".$stringtouse." OR ".$key." IS NULL)";
 					}
 					$sqlwhere[] = $stringtouse;
 				} else {
@@ -441,14 +424,14 @@ class WebsitePage extends CommonObject
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit, $offset);
+			$sql .= $this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);
@@ -519,7 +502,7 @@ class WebsitePage extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid' || $key == 't.fk_website' || $key == 'status') {
-					$sqlwhere[] = $key.' = '.((int) $value);
+					$sqlwhere[] = $key." = ".((int) $value);
 				} elseif ($key == 'type_container') {
 					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'lang' || $key == 't.lang') {
@@ -534,16 +517,16 @@ class WebsitePage extends CommonObject
 					}
 					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang), 1).")";
 					if ($foundnull) {
-						$stringtouse = '('.$stringtouse.' OR '.$key.' IS NULL)';
+						$stringtouse = "(".$stringtouse." OR ".$key." IS NULL)";
 					}
 					$sqlwhere[] = $stringtouse;
 				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 		}
 
 		$resql = $this->db->query($sql);
@@ -612,6 +595,8 @@ class WebsitePage extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
+		global $conf;
+
 		$error = 0;
 
 		// Delete all child tables
@@ -630,7 +615,7 @@ class WebsitePage extends CommonObject
 		}
 
 		if (!$error) {
-			$result = $this->deleteCommon($user, $trigger);
+			$result = $this->deleteCommon($user, $notrigger);
 			if ($result <= 0) {
 				$error++;
 			}
@@ -642,7 +627,7 @@ class WebsitePage extends CommonObject
 
 			if ($result > 0) {
 				global $dolibarr_main_data_root;
-				$pathofwebsite = $dolibarr_main_data_root.'/website/'.$websiteobj->ref;
+				$pathofwebsite = $dolibarr_main_data_root.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$websiteobj->ref;
 
 				$filealias = $pathofwebsite.'/'.$this->pageurl.'.php';
 				$filetpl = $pathofwebsite.'/page'.$this->id.'.tpl.php';
@@ -725,6 +710,7 @@ class WebsitePage extends CommonObject
 			$object->fk_website = $newwebsite;
 		}
 		$object->import_key = '';
+		$object->status = self::STATUS_DRAFT;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -835,10 +821,10 @@ class WebsitePage extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Disabled');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Disabled');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Offline');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Online');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Offline');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Online');
 		}
 
 		$statusType = 'status5';

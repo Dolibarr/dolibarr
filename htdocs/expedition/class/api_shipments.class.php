@@ -144,8 +144,9 @@ class Shipments extends DolibarrApi
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -278,8 +279,8 @@ class Shipments extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		$updateRes = $this->shipment->addline(
 						$request_data->desc,
@@ -346,8 +347,8 @@ class Shipments extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		$updateRes = $this->shipment->updateline(
 						$lineid,
@@ -501,7 +502,7 @@ class Shipments extends DolibarrApi
 	 *
 	 * @url POST    {id}/validate
 	 *
-	 * @return  array
+	 * @return  object
 	 * \todo An error 403 is returned if the request has an empty body.
 	 * Error message: "Forbidden: Content type `text/plain` is not supported."
 	 * Workaround: send this in the body
@@ -530,14 +531,9 @@ class Shipments extends DolibarrApi
 		if ($result < 0) {
 			throw new RestException(500, 'Error when validating Shipment: '.$this->shipment->error);
 		}
-		$result = $this->shipment->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'Shipment not found');
-		}
 
-		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+		// Reload shipment
+		$result = $this->shipment->fetch($id);
 
 		$this->shipment->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->shipment);
@@ -626,6 +622,47 @@ class Shipments extends DolibarrApi
 	}
 	*/
 
+	/**
+	* Close a shipment (Classify it as "Delivered")
+	*
+	* @param   int     $id             Expedition ID
+	* @param   int     $notrigger      Disabled triggers
+	*
+	* @url POST    {id}/close
+	*
+	* @return  object
+	*/
+	public function close($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->rights->expedition->creer) {
+			throw new RestException(401);
+		}
+
+		$result = $this->shipment->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Shipment not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expedition', $this->commande->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->shipment->setClosed();
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already closed');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when closing Order: '.$this->commande->error);
+		}
+
+		// Reload shipment
+		$result = $this->shipment->fetch($id);
+
+		$this->shipment->fetchObjectLinked();
+
+		return $this->_cleanObjectDatas($this->shipment);
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
@@ -649,6 +686,11 @@ class Shipments extends DolibarrApi
 
 		if (!empty($object->lines) && is_array($object->lines)) {
 			foreach ($object->lines as $line) {
+				if (is_array($line->detail_batch)) {
+					foreach ($line->detail_batch as $keytmp2 => $valtmp2) {
+						unset($line->detail_batch[$keytmp2]->db);
+					}
+				}
 				unset($line->tva_tx);
 				unset($line->vat_src_code);
 				unset($line->total_ht);

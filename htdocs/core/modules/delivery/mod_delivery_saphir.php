@@ -58,7 +58,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{
@@ -85,7 +85,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskdelivery" value="'.$conf->global->DELIVERY_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -162,7 +162,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 *
 	 *  @param	Societe		$objsoc      	Object thirdparty
 	 *  @param  Object		$object			Objet livraison
-	 *  @return string      				Texte descripif
+	 *  @return string      				Descriptive text
 	 */
 	public function delivery_get_num($objsoc = 0, $object = '')
 	{

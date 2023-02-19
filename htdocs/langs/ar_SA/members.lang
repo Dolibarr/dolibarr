@@ -6,8 +6,8 @@ Member=عضو
 Members=أعضاء
 ShowMember=وتظهر بطاقة عضو
 UserNotLinkedToMember=المستخدم لا ترتبط عضو
-ThirdpartyNotLinkedToMember=Third party not linked to a member
-MembersTickets=Membership address sheet
+ThirdpartyNotLinkedToMember=طرف ثالث غير مرتبط بعضو
+MembersTickets=ورقة عنوان العضوية
 FundationMembers=أعضاء المؤسسة
 ListOfValidatedPublicMembers=قائمة الأعضاء العامة المصادق
 ErrorThisMemberIsNotPublic=ليست عضوا في هذا العام
@@ -15,27 +15,30 @@ ErrorMemberIsAlreadyLinkedToThisThirdParty=عضو آخر (الاسم : <b>٪ ق<
 ErrorUserPermissionAllowsToLinksToItselfOnly=لأسباب أمنية ، يجب أن تمنح أذونات لتحرير جميع المستخدمين لتكون قادرة على ربط عضو لمستخدم هذا ليس لك.
 SetLinkToUser=وصلة إلى مستخدم Dolibarr
 SetLinkToThirdParty=وصلة إلى طرف ثالث Dolibarr
-MembersCards=Business cards for members
+MemberCountersArePublic=Counters of valid members are public
+MembersCards=توليد بطاقات للاعضاء
 MembersList=قائمة الأعضاء
 MembersListToValid=قائمة مشاريع أعضاء (ينبغي التأكد من صحة)
 MembersListValid=قائمة أعضاء صالحة
-MembersListUpToDate=List of valid members with up-to-date contribution
-MembersListNotUpToDate=List of valid members with out-of-date contribution
-MembersListExcluded=List of excluded members
-MembersListResiliated=List of terminated members
+MembersListUpToDate=قائمة الأعضاء الصالحة مع مساهمات محدثة
+MembersListNotUpToDate=قائمة الأعضاء الصالحين مع مساهمة منتهية الصلاحية
+MembersListExcluded=قائمة الأعضاء المستبعدين
+MembersListResiliated=قائمة الأعضاء المنتهية
 MembersListQualified=قائمة الأعضاء المؤهلين
 MenuMembersToValidate=أعضاء مشروع
 MenuMembersValidated=صادق أعضاء
-MenuMembersExcluded=Excluded members
-MenuMembersResiliated=Terminated members
-MembersWithSubscriptionToReceive=Members with contribution to receive
-MembersWithSubscriptionToReceiveShort=Contributions to receive
-DateSubscription=Date of membership
-DateEndSubscription=End date of membership
-EndSubscription=End of membership
-SubscriptionId=Contribution ID
-WithoutSubscription=Without contribution
-MemberId=عضو المعرف
+MenuMembersExcluded=الأعضاء المستبعدين
+MenuMembersResiliated=الأعضاء المنتهية
+MembersWithSubscriptionToReceive=الأعضاء مع المساهمة لتلقي
+MembersWithSubscriptionToReceiveShort=المساهمات لتلقي
+DateSubscription=تاريخ العضوية
+DateEndSubscription=تاريخ انتهاء العضوية
+EndSubscription=انتهاء العضوية
+SubscriptionId=معرف المساهمة
+WithoutSubscription=Without membership
+WaitingSubscription=Membership pending
+MemberId=معرف العضو
+MemberRef=عضو المرجع
 NewMember=عضو جديد
 MemberType=عضو نوع
 MemberTypeId=عضو نوع معرف
@@ -43,110 +46,116 @@ MemberTypeLabel=عضو نوع العلامة
 MembersTypes=أعضاء أنواع
 MemberStatusDraft=مشروع (يجب التحقق من صحة)
 MemberStatusDraftShort=مسودة
-MemberStatusActive=Validated (waiting contribution)
+MemberStatusActive=التحقق من صحتها (في انتظار المساهمة)
 MemberStatusActiveShort=التحقق من صحة
-MemberStatusActiveLate=Contribution expired
+MemberStatusActiveLate=انتهت المساهمة
 MemberStatusActiveLateShort=انتهى
 MemberStatusPaid=الاكتتاب حتى الآن
 MemberStatusPaidShort=حتى الآن
-MemberStatusExcluded=Excluded member
-MemberStatusExcludedShort=Excluded
-MemberStatusResiliated=Terminated member
-MemberStatusResiliatedShort=Terminated
+MemberStatusExcluded=عضو مستبعد
+MemberStatusExcludedShort=مستبعد
+MemberStatusResiliated=عضو منتهي
+MemberStatusResiliatedShort=تم إنهاؤه
 MembersStatusToValid=أعضاء مشروع
-MembersStatusExcluded=Excluded members
-MembersStatusResiliated=Terminated members
-MemberStatusNoSubscription=Validated (no contribution required)
+MembersStatusExcluded=الأعضاء المستبعدين
+MembersStatusResiliated=الأعضاء المنتهية
+MemberStatusNoSubscription=مصدق عليه (لا توجد مساهمة مطلوبة)
 MemberStatusNoSubscriptionShort=التحقق من صحة
-SubscriptionNotNeeded=No contribution required
+SubscriptionNotNeeded=لا توجد مساهمة مطلوبة
 NewCotisation=مساهمة جديدة
 PaymentSubscription=دفع مساهمة جديدة
 SubscriptionEndDate=تاريخ انتهاء الاكتتاب
 MembersTypeSetup=أعضاء نوع الإعداد
-MemberTypeModified=Member type modified
-DeleteAMemberType=Delete a member type
-ConfirmDeleteMemberType=Are you sure you want to delete this member type?
-MemberTypeDeleted=Member type deleted
-MemberTypeCanNotBeDeleted=Member type can not be deleted
+MemberTypeModified=تم تعديل نوع العضو
+DeleteAMemberType=احذف نوع العضو
+ConfirmDeleteMemberType=هل أنت متأكد أنك تريد حذف هذا النوع من الأعضاء؟
+MemberTypeDeleted=تم حذف نوع العضو
+MemberTypeCanNotBeDeleted=لا يمكن حذف نوع العضو
 NewSubscription=مساهمة جديدة
 NewSubscriptionDesc=هذا النموذج يسمح لك لتسجيل الاشتراك الخاص بك كعضو جديد من الأساس. إذا كنت ترغب في تجديد الاشتراك (إذا كان بالفعل عضوا)، يرجى الاتصال مؤسسة المجلس بدلا من %s البريد الإلكتروني.
-Subscription=Contribution
-Subscriptions=Contributions
+Subscription=إسهام
+AnyAmountWithAdvisedAmount=Any amount of your choice, recommended %s
+AnyAmountWithoutAdvisedAmount=Any amount of your choice
+CanEditAmountShort=Any amount
+CanEditAmountShortForValues=recommended, any amount
+MembershipDuration=مدة
+GetMembershipButtonLabel=Join
+Subscriptions=مساهمات
 SubscriptionLate=متأخر
-SubscriptionNotReceived=Contribution never received
-ListOfSubscriptions=List of contributions
-SendCardByMail=Send card by email
+SubscriptionNotReceived=المساهمة لم يتم استلامها
+ListOfSubscriptions=قائمة المساهمات
+SendCardByMail=أرسل البطاقة عبر البريد الإلكتروني
 AddMember=إنشاء عضو
 NoTypeDefinedGoToSetup=لا يجوز لأي عضو في أنواع محددة. الذهاب إلى الإعداد -- أنواع الأعضاء
 NewMemberType=عضو جديد من نوع
-WelcomeEMail=Welcome email
-SubscriptionRequired=Contribution required
+WelcomeEMail=ترحيب البريد الإلكتروني
+SubscriptionRequired=المساهمة المطلوبة
 DeleteType=حذف
 VoteAllowed=يسمح التصويت
-Physical=Individual
-Moral=Corporation
-MorAndPhy=Corporation and Individual
-Reenable=Re-Enable
-ExcludeMember=Exclude a member
-Exclude=Exclude
-ConfirmExcludeMember=Are you sure you want to exclude this member ?
-ResiliateMember=Terminate a member
-ConfirmResiliateMember=Are you sure you want to terminate this member?
+Physical=الفرد
+Moral=مؤسَّسة
+MorAndPhy=شركة وفرد
+Reenable=إعادة التمكين
+ExcludeMember=استبعاد عضو
+Exclude=استبعاد
+ConfirmExcludeMember=هل أنت متأكد أنك تريد استبعاد هذا العضو؟
+ResiliateMember=إنهاء عضو
+ConfirmResiliateMember=هل أنت متأكد أنك تريد إنهاء هذا العضو؟
 DeleteMember=حذف عضو
-ConfirmDeleteMember=Are you sure you want to delete this member (Deleting a member will delete all his contributions)?
+ConfirmDeleteMember=هل أنت متأكد أنك تريد حذف هذا العضو (حذف العضو سيؤدي إلى حذف جميع مساهماته)؟
 DeleteSubscription=الغاء الاشتراك
-ConfirmDeleteSubscription=Are you sure you want to delete this contribution?
+ConfirmDeleteSubscription=هل أنت متأكد أنك تريد حذف هذه المساهمة؟
 Filehtpasswd=htpasswd الملف
 ValidateMember=صحة عضوا
-ConfirmValidateMember=Are you sure you want to validate this member?
-FollowingLinksArePublic=The following links are open pages not protected by any Dolibarr permission. They are not formatted pages, provided as example to show how to list members database.
+ConfirmValidateMember=هل أنت متأكد أنك تريد التحقق من صحة هذا العضو؟
+FollowingLinksArePublic=الروابط التالية هي صفحات مفتوحة غير محمية بأي إذن Dolibarr. وهي ليست صفحات منسقة ، وتقدم كمثال لإظهار كيفية سرد أعضاء قاعدة البيانات.
 PublicMemberList=عضو في لائحة عامة
-BlankSubscriptionForm=Public self-registration form
-BlankSubscriptionFormDesc=Dolibarr can provide you a public URL/website to allow external visitors to ask to subscribe to the foundation. If an online payment module is enabled, a payment form may also be automatically provided.
-EnablePublicSubscriptionForm=Enable the public website with self-subscription form
-ForceMemberType=Force the member type
-ExportDataset_member_1=Members and contributions
+BlankSubscriptionForm=استمارة التسجيل الذاتي العامة
+BlankSubscriptionFormDesc=يمكن أن يوفر لك Dolibarr عنوان URL / موقع ويب عام للسماح للزوار الخارجيين بطلب الاشتراك في المؤسسة. إذا تم تمكين وحدة دفع عبر الإنترنت ، فقد يتم أيضًا تقديم نموذج دفع تلقائيًا.
+EnablePublicSubscriptionForm=تمكين الموقع العام من خلال نموذج الاشتراك الذاتي
+ForceMemberType=فرض نوع العضو
+ExportDataset_member_1=الأعضاء والمساهمات
 ImportDataset_member_1=أعضاء
-LastMembersModified=Latest %s modified members
-LastSubscriptionsModified=Latest %s modified contributions
+LastMembersModified=آخر %s الأعضاء المعدلة
+LastSubscriptionsModified=أحدث مساهمات %s المعدلة
 String=سلسلة
 Text=النص
 Int=Int
 DateAndTime=التاريخ والوقت
 PublicMemberCard=عضو بطاقة العامة
-SubscriptionNotRecorded=Contribution not recorded
-AddSubscription=Create contribution
-ShowSubscription=Show contribution
+SubscriptionNotRecorded=المساهمة غير مسجلة
+AddSubscription=إنشاء مساهمة
+ShowSubscription=عرض المساهمة
 # Label of email templates
-SendingAnEMailToMember=Sending information email to member
-SendingEmailOnAutoSubscription=Sending email on auto registration
-SendingEmailOnMemberValidation=Sending email on new member validation
-SendingEmailOnNewSubscription=Sending email on new contribution
-SendingReminderForExpiredSubscription=Sending reminder for expired contributions
-SendingEmailOnCancelation=Sending email on cancelation
-SendingReminderActionComm=Sending reminder for agenda event
+SendingAnEMailToMember=إرسال معلومات البريد الإلكتروني إلى العضو
+SendingEmailOnAutoSubscription=إرسال بريد إلكتروني عند التسجيل التلقائي
+SendingEmailOnMemberValidation=إرسال بريد إلكتروني عند التحقق من العضو الجديد
+SendingEmailOnNewSubscription=إرسال بريد إلكتروني على مساهمة جديدة
+SendingReminderForExpiredSubscription=إرسال تذكير للمساهمات منتهية الصلاحية
+SendingEmailOnCancelation=إرسال بريد إلكتروني عند الإلغاء
+SendingReminderActionComm=إرسال تذكير لحدث جدول الأعمال
 # Topic of email templates
-YourMembershipRequestWasReceived=Your membership was received.
-YourMembershipWasValidated=Your membership was validated
-YourSubscriptionWasRecorded=Your new contribution was recorded
-SubscriptionReminderEmail=contribution reminder
-YourMembershipWasCanceled=Your membership was canceled
+YourMembershipRequestWasReceived=تم استلام عضويتك.
+YourMembershipWasValidated=تم التحقق من صحة عضويتك
+YourSubscriptionWasRecorded=تم تسجيل مساهمتك الجديدة
+SubscriptionReminderEmail=تذكير بالمساهمة
+YourMembershipWasCanceled=تم إلغاء عضويتك
 CardContent=مضمون البطاقة الخاصة بك عضوا
 # Text of email templates
-ThisIsContentOfYourMembershipRequestWasReceived=We want to let you know that your membership request was received.<br><br>
-ThisIsContentOfYourMembershipWasValidated=We want to let you know that your membership was validated with the following information:<br><br>
-ThisIsContentOfYourSubscriptionWasRecorded=We want to let you know that your new subscription was recorded.<br><br>
-ThisIsContentOfSubscriptionReminderEmail=We want to let you know that your subscription is about to expire or has already expired (__MEMBER_LAST_SUBSCRIPTION_DATE_END__). We hope you will renew it.<br><br>
-ThisIsContentOfYourCard=This is a summary of the information we have about you. Please contact us if anything is incorrect.<br><br>
-DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the notification email received in case of auto-inscription of a guest
-DescADHERENT_AUTOREGISTER_NOTIF_MAIL=Content of the notification email received in case of auto-inscription of a guest
-DescADHERENT_EMAIL_TEMPLATE_AUTOREGISTER=Email template to use to send email to a member on member auto-registration
-DescADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION=Email template to use to send email to a member on member validation
-DescADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION=Email template to use to send email to a member on new contribution recording
-DescADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION=Email template to use to send email reminder when contribution is about to expire
-DescADHERENT_EMAIL_TEMPLATE_CANCELATION=Email template to use to send email to a member on member cancelation
-DescADHERENT_EMAIL_TEMPLATE_EXCLUSION=Email template to use to send email to a member on member exclusion
-DescADHERENT_MAIL_FROM=Sender Email for automatic emails
+ThisIsContentOfYourMembershipRequestWasReceived=نريد إخبارك بأنه قد تم استلام طلب العضوية الخاص بك. <br> <br>
+ThisIsContentOfYourMembershipWasValidated=نود إعلامك بأنه تم التحقق من عضويتك بالمعلومات التالية: <br> <br>
+ThisIsContentOfYourSubscriptionWasRecorded=We want to let you know that your new subscription was recorded. Please find your invoice here enclosed.<br><br>
+ThisIsContentOfSubscriptionReminderEmail=نريد إخبارك بأن اشتراكك على وشك الانتهاء أو انتهى بالفعل (__MEMBER_LAST_SUBSCRIPTION_DATE_END__). نأمل أن تقوم بتجديده. <br> <br>
+ThisIsContentOfYourCard=هذا ملخص للمعلومات التي لدينا عنك. يرجى الاتصال بنا إذا كان أي شيء غير صحيح. <br> <br>
+DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=موضوع إشعار البريد الإلكتروني المستلم في حالة التسجيل التلقائي للضيف
+DescADHERENT_AUTOREGISTER_NOTIF_MAIL=محتوى إشعار البريد الإلكتروني المستلم في حالة التسجيل التلقائي للضيف
+DescADHERENT_EMAIL_TEMPLATE_AUTOREGISTER=قالب بريد إلكتروني لاستخدامه لإرسال بريد إلكتروني إلى عضو في التسجيل التلقائي للعضو
+DescADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION=قالب بريد إلكتروني لاستخدامه لإرسال بريد إلكتروني إلى عضو عند التحقق من صحة العضو
+DescADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION=نموذج بريد إلكتروني لاستخدامه لإرسال بريد إلكتروني إلى عضو في تسجيل مساهمة جديدة
+DescADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION=نموذج بريد إلكتروني لاستخدامه لإرسال تذكير بالبريد الإلكتروني عندما توشك المساهمة على الانتهاء
+DescADHERENT_EMAIL_TEMPLATE_CANCELATION=قالب بريد إلكتروني لاستخدامه لإرسال بريد إلكتروني إلى عضو عند إلغاء العضو
+DescADHERENT_EMAIL_TEMPLATE_EXCLUSION=قالب بريد إلكتروني لاستخدامه لإرسال بريد إلكتروني إلى عضو عند استبعاد الأعضاء
+DescADHERENT_MAIL_FROM=البريد الإلكتروني المرسل لرسائل البريد الإلكتروني التلقائية
 DescADHERENT_ETIQUETTE_TYPE=علامات الشكل
 DescADHERENT_ETIQUETTE_TEXT=النص المطبوع على أوراق عنوان الأعضاء
 DescADHERENT_CARD_TYPE=شكل بطاقات صفحة
@@ -156,65 +165,71 @@ DescADHERENT_CARD_TEXT_RIGHT=النص المطبوع على بطاقات الأ�
 DescADHERENT_CARD_FOOTER_TEXT=نص مطبوع على أسفل بطاقات الأعضاء
 ShowTypeCard=وتبين من نوع '٪ ق'
 HTPasswordExport=الملف htpassword جيل
-NoThirdPartyAssociatedToMember=No third party associated with this member
-MembersAndSubscriptions=Members and Contributions
+NoThirdPartyAssociatedToMember=لا يوجد طرف ثالث مرتبط بهذا العضو
+MembersAndSubscriptions=الأعضاء والمساهمات
 MoreActions=تكميلية العمل على تسجيل
-MoreActionsOnSubscription=Complementary action, suggested by default when recording a contribution
-MoreActionBankDirect=Create a direct entry on bank account
-MoreActionBankViaInvoice=Create an invoice, and a payment on bank account
+MoreActionsOnSubscription=يُقترح إجراء تكميلي بشكل افتراضي عند تسجيل مساهمة ، ويتم إجراؤه تلقائيًا عند الدفع عبر الإنترنت للمساهمة
+MoreActionBankDirect=إنشاء قيد مباشر في الحساب المصرفي
+MoreActionBankViaInvoice=قم بإنشاء فاتورة ودفع على حساب بنكي
 MoreActionInvoiceOnly=إنشاء فاتورة مع دفع أي مبلغ
-LinkToGeneratedPages=بطاقات زيارة انتج
+LinkToGeneratedPages=توليد بطاقات العمل أو أوراق العناوين
 LinkToGeneratedPagesDesc=هذه الشاشة تسمح لك لإنشاء ملفات الشعبي مع بطاقات العمل لجميع أعضاء أو عضو معين.
 DocForAllMembersCards=إنشاء بطاقات العمل لجميع أعضاء (تنسيق الإعداد للإخراج في الواقع : <b>%s)</b>
 DocForOneMemberCards=إنشاء بطاقات العمل لعضو معين (تنسيق الإعداد للإخراج في الواقع : <b>%s)</b>
 DocForLabels=أوراق عنوان انتج (تنسيق الإعداد للإخراج فعلا : <b>%s)</b>
-SubscriptionPayment=Contribution payment
-LastSubscriptionDate=Date of latest contribution payment
-LastSubscriptionAmount=Amount of latest contribution
-LastMemberType=Last Member type
+SubscriptionPayment=دفع الاشتراكات
+LastSubscriptionDate=تاريخ آخر دفعة مساهمة
+LastSubscriptionAmount=مقدار أحدث مساهمة
+LastMemberType=نوع العضو الأخير
 MembersStatisticsByCountries=أعضاء إحصاءات حسب البلد
 MembersStatisticsByState=أعضاء إحصاءات الولاية / المقاطعة
 MembersStatisticsByTown=أعضاء إحصاءات بلدة
 MembersStatisticsByRegion=إحصائيات الأعضاء حسب المنطقة
-NbOfMembers=Total number of members
-NbOfActiveMembers=Total number of current active members
+NbOfMembers=إجمالي عدد الأعضاء
+NbOfActiveMembers=العدد الإجمالي للأعضاء النشطين الحاليين
 NoValidatedMemberYet=العثور على أي أعضاء التحقق من صحة
-MembersByCountryDesc=This screen shows you the statistics of members by countries. Graphs and charts depend on the availability of the Google online graph service as well as on the availability of a working internet connection.
-MembersByStateDesc=This screen show you statistics of members by state/provinces/canton.
-MembersByTownDesc=This screen show you statistics of members by town.
-MembersByNature=This screen show you statistics of members by nature.
-MembersByRegion=This screen show you statistics of members by region.
+MembersByCountryDesc=تظهر لك هذه الشاشة إحصائيات الأعضاء حسب الدول. تعتمد الرسوم البيانية والمخططات على مدى توفر خدمة الرسم البياني عبر الإنترنت من Google بالإضافة إلى توفر اتصال إنترنت فعال.
+MembersByStateDesc=تظهر لك هذه الشاشة إحصائيات الأعضاء حسب الولاية / المقاطعات / الكانتون.
+MembersByTownDesc=تظهر لك هذه الشاشة إحصائيات الأعضاء حسب المدينة.
+MembersByNature=تظهر لك هذه الشاشة إحصائيات الأعضاء حسب الطبيعة.
+MembersByRegion=تظهر لك هذه الشاشة إحصائيات الأعضاء حسب المنطقة.
 MembersStatisticsDesc=اختيار الإحصاءات التي ترغب في قراءتها ...
 MenuMembersStats=إحصائيات
-LastMemberDate=Latest membership date
-LatestSubscriptionDate=Latest contribution date
-MemberNature=Nature of the member
-MembersNature=Nature of the members
-Public=Information is public
+LastMemberDate=آخر تاريخ للعضوية
+LatestSubscriptionDate=تاريخ آخر مساهمة
+MemberNature=طبيعة العضو
+MembersNature=طبيعة الأعضاء
+Public=المعلومات عامة
 NewMemberbyWeb=وأضاف عضو جديد. تنتظر الموافقة
 NewMemberForm=الأعضاء الجدد في شكل
-SubscriptionsStatistics=Contributions statistics
-NbOfSubscriptions=Number of contributions
-AmountOfSubscriptions=Amount collected from contributions
+SubscriptionsStatistics=إحصاءات المساهمات
+NbOfSubscriptions=عدد المساهمات
+AmountOfSubscriptions=المبلغ المحصل من المساهمات
 TurnoverOrBudget=دوران (لشركة) أو الميزانية (على أساس)
-DefaultAmount=Default amount of contribution
-CanEditAmount=Visitor can choose/edit amount of its contribution
-MEMBER_NEWFORM_PAYONLINE=القفز على صفحة الدفع عبر الانترنت المتكاملة
-ByProperties=By nature
-MembersStatisticsByProperties=Members statistics by nature
-VATToUseForSubscriptions=VAT rate to use for contributionss
-NoVatOnSubscription=No VAT for contributions
-ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Product used for contribution line into invoice: %s
-NameOrCompany=Name or company
-SubscriptionRecorded=Contribution recorded
-NoEmailSentToMember=No email sent to member
-EmailSentToMember=Email sent to member at %s
-SendReminderForExpiredSubscriptionTitle=Send reminder by email for expired contributions
-SendReminderForExpiredSubscription=Send reminder by email to members when contribution is about to expire (parameter is number of days before end of membership to send the remind. It can be a list of days separated by a semicolon, for example '10;5;0;-5')
-MembershipPaid=Membership paid for current period (until %s)
-YouMayFindYourInvoiceInThisEmail=You may find your invoice attached to this email
-XMembersClosed=%s member(s) closed
-XExternalUserCreated=%s external user(s) created
-ForceMemberNature=Force member nature (Individual or Corporation)
-CreateDolibarrLoginDesc=The creation of a user login for members allows them to connect to the application. Depending on the authorizations granted, they will be able, for example, to consult or modify their file themselves.
-CreateDolibarrThirdPartyDesc=A thirdparty is the legal entity that will be used on the invoice if you decide to generate invoice for each contribution. You will be able to create it later during the process of recording the contribution.
+DefaultAmount=Default amount of contribution (used only if no amount is defined at member type level)
+MinimumAmount=Minimum amount (used only when contribution amount is free)
+CanEditAmount=Subscription amount is free
+CanEditAmountDetail=Visitor can choose/edit amount of its contribution regardless of the member type
+AmountIsLowerToMinimumNotice=sur un dû total de %s
+MEMBER_NEWFORM_PAYONLINE=After the online registration, switch automatically on the online payment page
+ByProperties=بالطبيعة
+MembersStatisticsByProperties=إحصائيات الأعضاء حسب الطبيعة
+VATToUseForSubscriptions=معدل ضريبة القيمة المضافة لاستخدامه في المساهمات
+NoVatOnSubscription=لا ضريبة القيمة المضافة للمساهمات
+ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=المنتج المستخدم لبند المساهمة في الفاتورة: %s
+NameOrCompany=الإسم أو الشركة
+SubscriptionRecorded=تم تسجيل المساهمة
+NoEmailSentToMember=لم يتم إرسال بريد إلكتروني للعضو
+EmailSentToMember=تم إرسال البريد الإلكتروني إلى العضو على %s
+SendReminderForExpiredSubscriptionTitle=إرسال تذكير عبر البريد الإلكتروني للمساهمات منتهية الصلاحية
+SendReminderForExpiredSubscription=أرسل تذكيرًا عبر البريد الإلكتروني إلى الأعضاء عندما توشك المساهمة على الانتهاء (المعلمة هي عدد الأيام قبل نهاية العضوية لإرسال التذكير. يمكن أن تكون قائمة بالأيام مفصولة بفاصلة منقوطة ، على سبيل المثال '10 ؛ 5 ؛ 0 ؛ -5 ")
+MembershipPaid=العضوية مدفوعة للفترة الحالية (حتى %s)
+YouMayFindYourInvoiceInThisEmail=قد تجد فاتورتك مرفقة بهذا البريد الإلكتروني
+XMembersClosed=%s من الأعضاء مغلقين
+XExternalUserCreated=تم إنشاء مستخدم (مستخدمين) خارجيين %s
+ForceMemberNature=طبيعة عضو القوة (فرد أو شركة)
+CreateDolibarrLoginDesc=يسمح إنشاء تسجيل دخول مستخدم للأعضاء بالاتصال بالتطبيق. اعتمادًا على التراخيص الممنوحة ، سيكونون قادرين ، على سبيل المثال ، على الرجوع إلى ملفهم أو تعديله بأنفسهم.
+CreateDolibarrThirdPartyDesc=الطرف الثالث هو الكيان القانوني الذي سيتم استخدامه في الفاتورة إذا قررت إنشاء فاتورة لكل مساهمة. ستتمكن من إنشائه لاحقًا أثناء عملية تسجيل المساهمة.
+MemberFirstname=الاسم الأول للعضو
+MemberLastname=اسم العائلة للعضو
+MemberCodeDesc=Member Code, unique for all members

@@ -1,36 +1,39 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=資源
-MenuResourceAdd=New resource
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceIndex=リソース
+MenuResourceAdd=新規リソース
+DeleteResource=リソースを削除する
+ConfirmDeleteResourceElement=この要素のリソースを削除することを確定する
+NoResourceInDatabase=データベースにリソースがない。
+NoResourceLinked=リンクされたリソースはない
+ActionsOnResource=このリソースに関するイベント
+ResourcePageIndex=リソースリスト
+ResourceSingular=リソース
+ResourceCard=リソースカード
+AddResource=リソースを作成する
+ResourceFormLabel_ref=リソース名
+ResourceType=リソースタイプ
+ResourceFormLabel_description=リソースの説明
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcesLinkedToElement=要素にリンクされているリソース
 
-ResourcesLinkedToElement=Resources linked to element
+ShowResource=リソースを表示
 
-ShowResource=Show resource
+ResourceElementPage=要素リソース
+ResourceCreatedWithSuccess=リソースが正常に作成された
+RessourceLineSuccessfullyDeleted=リソース行が正常に削除された
+RessourceLineSuccessfullyUpdated=リソース行が正常に更新された
+ResourceLinkedWithSuccess=成功につながるリソース
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ConfirmDeleteResource=このリソースを削除することを確定すること
+RessourceSuccessfullyDeleted=リソースが正常に削除された
+DictionaryResourceType=リソースの種類
 
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+SelectResource=リソースを選択
 
-SelectResource=Select resource
+IdResource=IDリソース
+AssetNumber=シリアルナンバー
+ResourceTypeCode=リソースタイプコード
+ImportDataset_resource_1=リソース
 
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
-ImportDataset_resource_1=資源
+ErrorResourcesAlreadyInUse=一部のリソースが使用されている
+ErrorResourceUseInEvent=%sイベントで使用される%s

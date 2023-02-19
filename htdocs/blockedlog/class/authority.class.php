@@ -304,8 +304,8 @@ class BlockedLogAuthority
 				$url = $conf->global->BLOCKEDLOG_AUTHORITY_URL.'/blockedlog/ajax/authority.php?s='.$signature.'&b='.$block->signature;
 
 				$res = getURLContent($url);
-				echo $block->signature.' '.$url.' '.$res.'<br>';
-				if ($res === 'blockalreadyadded' || $res === 'blockadded') {
+				echo $block->signature.' '.$url.' '.$res['content'].'<br>';
+				if ($res['content'] === 'blockalreadyadded' || $res['content'] === 'blockadded') {
 					$block->setCertified();
 				} else {
 					$this->error = $langs->trans('ImpossibleToContactAuthority ', $url);

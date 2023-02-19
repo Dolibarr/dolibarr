@@ -52,3 +52,6 @@ BlockedLogDisableNotAllowedForCountry=To valstu saraksts, kurās šī moduļa iz
 OnlyNonValid=Nederīgs
 TooManyRecordToScanRestrictFilters=Pārāk daudz ierakstu, lai skenētu / analizētu. Lūdzu, ierobežojiet sarakstu ar vairāk ierobežojošiem filtriem.
 RestrictYearToExport=Ierobežot mēnesi / gads eksportam
+BlockedLogEnabled=Ir iespējota sistēma notikumu izsekošanai nemainīgos žurnālos
+BlockedLogDisabled=Sistēma notikumu izsekošanai nemainīgos žurnālos ir atspējota pēc ierakstīšanas. Mēs saglabājām īpašu pirkstu nospiedumu, lai izsekotu ķēdei kā pārrautai
+BlockedLogDisabledBis=Sistēma notikumu izsekošanai nemainīgos žurnālos ir atspējota. Tas ir iespējams, jo neviens ieraksts vēl nav veikts.

@@ -24,6 +24,7 @@
  *      \brief      Reject page
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
@@ -144,7 +145,7 @@ if ($result) {
 			$i++;
 		}
 	} else {
-		print '<tr><td class="opacitymedium" colspan="3">'.$langs->trans("None").'</td></tr>';
+		print '<tr><td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 
 	print "</table>";

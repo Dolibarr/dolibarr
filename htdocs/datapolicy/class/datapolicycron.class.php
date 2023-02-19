@@ -56,7 +56,7 @@ class DataPolicyCron
 
 		// FIXME Exclude data from the selection if there is at least 1 invoice.
 		$arrayofparameters = array(
-			'DATAPOLICIES_TIERS_CLIENT' => array(
+			'DATAPOLICY_TIERS_CLIENT' => array(
 				'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
                     WHERE s.entity = %d
@@ -90,7 +90,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_TIERS_PROSPECT' => array(
+			'DATAPOLICY_TIERS_PROSPECT' => array(
 				'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
                     WHERE s.entity = %d
@@ -124,7 +124,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_TIERS_PROSPECT_CLIENT' => array(
+			'DATAPOLICY_TIERS_PROSPECT_CLIENT' => array(
 				'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
                     WHERE s.entity = %d
@@ -158,7 +158,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_TIERS_NIPROSPECT_NICLIENT' => array(
+			'DATAPOLICY_TIERS_NIPROSPECT_NICLIENT' => array(
 				'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
                     WHERE s.entity = %d
@@ -192,7 +192,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_TIERS_FOURNISSEUR' => array(
+			'DATAPOLICY_TIERS_FOURNISSEUR' => array(
 				'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
                     WHERE s.entity = %d
@@ -225,7 +225,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_CONTACT_CLIENT' => array(
+			'DATAPOLICY_CONTACT_CLIENT' => array(
 				'sql' => "
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
@@ -263,7 +263,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_CONTACT_PROSPECT' => array(
+			'DATAPOLICY_CONTACT_PROSPECT' => array(
 				'sql' => "
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
@@ -301,7 +301,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_CONTACT_PROSPECT_CLIENT' => array(
+			'DATAPOLICY_CONTACT_PROSPECT_CLIENT' => array(
 				'sql' => "
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
@@ -339,7 +339,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_CONTACT_NIPROSPECT_NICLIENT' => array(
+			'DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT' => array(
 				'sql' => "
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
@@ -377,7 +377,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_CONTACT_FOURNISSEUR' => array(
+			'DATAPOLICY_CONTACT_FOURNISSEUR' => array(
 				'sql' => "
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
@@ -414,7 +414,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_ADHERENT' => array(
+			'DATAPOLICY_ADHERENT' => array(
 				'sql' => "
                     SELECT a.rowid FROM ".MAIN_DB_PREFIX."adherent as a
                     WHERE a.entity = %d
@@ -451,8 +451,8 @@ class DataPolicyCron
 		$this->db->begin();
 
 		foreach ($arrayofparameters as $key => $params) {
-			if ($conf->global->$key != '' && is_numeric($conf->global->$key) && (int) $conf->global->$key > 0) {
-				$sql = sprintf($params['sql'], (int) $conf->entity, (int) $conf->global->$key, (int) $conf->global->$key);
+			if (getDolGlobalInt($key) > 0) {
+				$sql = sprintf($params['sql'], (int) $conf->entity, (int) getDolGlobalInt($key), (int) getDolGlobalInt($key));
 
 				$resql = $this->db->query($sql);
 

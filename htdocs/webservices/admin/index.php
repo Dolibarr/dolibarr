@@ -24,6 +24,7 @@
  *		\brief      Page to setup webservices module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -91,9 +92,7 @@ print '</tr>';
 
 print '</table>';
 
-print '<br><div class="center">';
-print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
-print '</div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 
@@ -102,15 +101,15 @@ print '<br><br>';
 // Webservices list
 $webservices = array(
 		'user'				=> '',
-		'thirdparty'		=> '!empty($conf->societe->enabled)',
-		'contact'			=> '!empty($conf->societe->enabled)',
-		'productorservice'	=> '(!empty($conf->product->enabled) || !empty($conf->service->enabled))',
-		'order'				=> '!empty($conf->commande->enabled)',
-		'invoice'			=> '!empty($conf->facture->enabled)',
-		'supplier_invoice'	=> '!empty($conf->fournisseur->enabled)',
-		'actioncomm'		=> '!empty($conf->agenda->enabled)',
-		'category'			=> '!empty($conf->categorie->enabled)',
-		'project'			=> '!empty($conf->projet->enabled)',
+		'thirdparty'		=> 'isModEnabled("societe")',
+		'contact'			=> 'isModEnabled("societe")',
+		'productorservice'	=> '(isModEnabled("product") || isModEnabled("service"))',
+		'order'				=> 'isModEnabled("commande")',
+		'invoice'			=> 'isModEnabled("facture")',
+		'supplier_invoice'	=> 'isModEnabled("fournisseur")',
+		'actioncomm'		=> 'isModEnabled("agenda")',
+		'category'			=> 'isModEnabled("categorie")',
+		'project'			=> 'isModEnabled("project")',
 		'other'				=> ''
 );
 
@@ -122,7 +121,7 @@ foreach ($webservices as $name => $right) {
 		continue;
 	}
 	$url = DOL_MAIN_URL_ROOT.'/webservices/server_'.$name.'.php?wsdl';
-	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.$url."</a><br>\n";
 }
 print '<br>';
 
@@ -134,7 +133,7 @@ foreach ($webservices as $name => $right) {
 		continue;
 	}
 	$url = DOL_MAIN_URL_ROOT.'/webservices/server_'.$name.'.php';
-	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.$url."</a><br>\n";
 }
 print '<br>';
 
@@ -142,21 +141,10 @@ print '<br>';
 print '<br>';
 print $langs->trans("OnlyActiveElementsAreShown", DOL_URL_ROOT.'/admin/modules.php');
 
-if (!empty($conf->use_javascript_ajax)) {
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
-            $("#generate_token").click(function() {
-            	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-            		action: \'getrandompassword\',
-            		generic: true
-				},
-				function(token) {
-					$("#WEBSERVICES_KEY").val(token);
-				});
-            });
-    });';
-	print '</script>';
-}
+$constname = 'WEBSERVICES_KEY';
+
+print dolJSToSetRandomPassword($constname);
+
 
 // End of page
 llxFooter();

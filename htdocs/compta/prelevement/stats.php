@@ -24,6 +24,7 @@
  *      \brief      Page with statistics on withdrawals
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -143,7 +144,8 @@ if ($resql) {
 	print price($total);
 	print '</td><td class="right">&nbsp;</td>';
 	print "</tr></table>";
-	$db->free();
+
+	$db->free($resql);
 } else {
 	dol_print_error($db);
 }

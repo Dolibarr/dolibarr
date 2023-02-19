@@ -67,7 +67,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !($user->rights->adherent->lire);
+		$this->hidden = !(isModEnabled('adherent') && $user->rights->adherent->lire);
 	}
 
 	/**
@@ -179,23 +179,24 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 						'text' => $Number[$key],
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => '<span class="amount">'.price($value).'</span>',
+						'td' => 'class="nowraponall right amount"',
+						'text' => price($value),
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => '<span class="amount">'.price(price2num($value / $Number[$key], 'MT')).'</span>',
+						'td' => 'class="nowraponall right amount"',
+						'text' => price(price2num($value / $Number[$key], 'MT')),
 					);
 					$line++;
 				}
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
+						'td' => 'class="left" colspan="4"',
 						'text' => $langs->trans("NoRecordedMembers"),
 					);
 				} else {
 					$this->info_box_contents[$line][] = array(
+						'tr' => 'class="liste_total"',
 						'td' => 'class="liste_total"',
 						'text' => $langs->trans("Total"),
 					);
@@ -204,12 +205,12 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 						'text' => $numb,
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="liste_total right"',
-						'text' => '<span class="amount">'.price($tot).'</span>',
+						'td' => 'class="liste_total nowraponall right amount"',
+						'text' => price($tot),
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="liste_total right"',
-						'text' => '<span class="amount">'.price(price2num($numb > 0 ? ($tot / $numb) : 0, 'MT')).'</span>',
+						'td' => 'class="liste_total nowraponall right amount"',
+						'text' => price(price2num($numb > 0 ? ($tot / $numb) : 0, 'MT')),
 					);
 				}
 			} else {

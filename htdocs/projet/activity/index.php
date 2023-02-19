@@ -66,7 +66,6 @@ $month = $tmp['mon'];
 $year = $tmp['year'];
 
 $projectstatic = new Project($db);
-$taskstatic = new Task($db);
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1); // Return all projects I have permission on because I want my tasks and some of my task may be on a public projet that is not my project
 $taskstatic = new Task($db);
 $tasktmp = new Task($db);
@@ -159,7 +158,7 @@ print "</table>";
 print '</div>';
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 /* Affichage de la liste des projets d'hier */
@@ -557,7 +556,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardActivities', $parameters, $object); // Note that $action and $object may have been modified by hook

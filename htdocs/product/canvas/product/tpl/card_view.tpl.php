@@ -25,7 +25,7 @@ if (empty($conf) || !is_object($conf)) {
 $object = $GLOBALS['object'];
 ?>
 
-<!-- BEGIN PHP TEMPLATE -->
+<!-- BEGIN PHP TEMPLATE product/canvas/product/tpl/card_view.tpl.php -->
 <?php
 $head = product_prepare_head($object);
 $titre = $langs->trans("CardProduct".$object->type);

@@ -23,6 +23,7 @@
  *		\brief      Third parties localtax report
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
@@ -38,7 +39,7 @@ $local = GETPOST('localTaxType', 'int');
 // Date range
 $year = GETPOST("year", "int");
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
+	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 	$year_start = $year_current;
 } else {
 	$year_current = $year;

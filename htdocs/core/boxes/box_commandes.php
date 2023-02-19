@@ -60,7 +60,7 @@ class box_commandes extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->commande->lire);
+		$this->hidden = empty($user->rights->commande->lire);
 	}
 
 	/**
@@ -99,9 +99,8 @@ class box_commandes extends ModeleBoxes
 			$sql .= ", c.total_ht";
 			$sql .= ", c.total_tva";
 			$sql .= ", c.total_ttc";
-			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			$sql .= ", ".MAIN_DB_PREFIX."commande as c";
-			if (!$user->rights->societe->client->voir && !$user->socid) {
+			$sql .= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE c.fk_soc = s.rowid";
@@ -109,7 +108,7 @@ class box_commandes extends ModeleBoxes
 			if (!empty($conf->global->ORDER_BOX_LAST_ORDERS_VALIDATED_ONLY)) {
 				$sql .= " AND c.fk_statut = 1";
 			}
-			if (!$user->rights->societe->client->voir && !$user->socid) {
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -139,6 +138,8 @@ class box_commandes extends ModeleBoxes
 					$commandestatic->total_ht = $objp->total_ht;
 					$commandestatic->total_tva = $objp->total_tva;
 					$commandestatic->total_ttc = $objp->total_ttc;
+					$commandestatic->date = $date;
+					$commandestatic->date_modification = $datem;
 
 					$societestatic->id = $objp->socid;
 					$societestatic->name = $objp->name;
@@ -163,7 +164,7 @@ class box_commandes extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="nowraponall right"',
+						'td' => 'class="nowraponall right amount"',
 						'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
 					);
 
@@ -179,8 +180,8 @@ class box_commandes extends ModeleBoxes
 					}
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => dol_print_date($date, 'day', 'tzuserrel'),
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
+						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

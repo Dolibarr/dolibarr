@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2017	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2021	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,21 +57,21 @@ function ldap_prepare_head()
 		$h++;
 	}
 
-	if (!empty($conf->societe->enabled) && !empty($conf->global->LDAP_CONTACT_ACTIVE)) {
+	if (isModEnabled("societe") && !empty($conf->global->LDAP_CONTACT_ACTIVE)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_contacts.php";
 		$head[$h][1] = $langs->trans("LDAPContactsSynchro");
 		$head[$h][2] = 'contacts';
 		$h++;
 	}
 
-	if (!empty($conf->adherent->enabled) && !empty($conf->global->LDAP_MEMBER_ACTIVE)) {
+	if (isModEnabled('adherent') && !empty($conf->global->LDAP_MEMBER_ACTIVE)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members.php";
 		$head[$h][1] = $langs->trans("LDAPMembersSynchro");
 		$head[$h][2] = 'members';
 		$h++;
 	}
 
-	if (!empty($conf->adherent->enabled) && !empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE)) {
+	if (isModEnabled('adherent') && !empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members_types.php";
 		$head[$h][1] = $langs->trans("LDAPMembersTypesSynchro");
 		$head[$h][2] = 'memberstypes';
@@ -88,7 +88,6 @@ function ldap_prepare_head()
 
 	return $head;
 }
-
 
 /**
  *  Show button test LDAP synchro
@@ -118,7 +117,6 @@ function show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass)
 	}
 	print '<br><br>';
 }
-
 
 /**
  * Show a LDAP array into an HTML output array.
@@ -153,7 +151,7 @@ function show_ldap_content($result, $level, $count, $var, $hide = 0, $subcount =
 		if ("$key" == "dn") {
 			continue;
 		}
-		if ("$val" == "objectclass") {
+		if (!is_array($val) && "$val" == "objectclass") {
 			continue;
 		}
 
@@ -181,7 +179,7 @@ function show_ldap_content($result, $level, $count, $var, $hide = 0, $subcount =
 			}
 			print '<br>';
 		}
-		if ("$val" != $lastkey[$level] && !$subcount) {
+		if (!is_array($val) && "$val" != $lastkey[$level] && !$subcount) {
 			print '</td></tr>';
 		}
 	}

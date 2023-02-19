@@ -70,7 +70,9 @@ function addDispatchLine(index, type, mode)
 	mode = mode || 'qtymissing'
 
 	console.log("fourn/js/lib_dispatch.js.php Split line type="+type+" index="+index+" mode="+mode);
-	var $row = $("tr[name='"+type+'_0_'+index+"']").clone(true); 		// clone first batch line to jQuery object
+	var $row0 = $("tr[name='"+type+'_0_'+index+"']");
+	var $dpopt = $row0.find('.hasDatepicker').first().datepicker('option', 'all'); // get current datepicker options to apply the same to the cloned datepickers
+	var $row = $row0.clone(true); 		// clone first batch line to jQuery object
 	var nbrTrs = $("tr[name^='"+type+"_'][name$='_"+index+"']").length; // position of line for batch
 	var qtyOrdered = parseFloat($("#qty_ordered_0_"+index).val()); 		// Qty ordered is same for all rows
 	var qty = parseFloat($("#qty_"+(nbrTrs - 1)+"_"+index).val());
@@ -96,6 +98,18 @@ function addDispatchLine(index, type, mode)
 	} else if (qtyDispatched < qtyOrdered) {
 		//replace tr suffix nbr
 		$row.html($row.html().replace(/_0_/g,"_"+nbrTrs+"_"));
+
+		// jquery's deep clone is incompatible with date pickers (the clone shares data with the original)
+		// so we destroy and rebuild the new date pickers
+		setTimeout(() => {
+			$row.find('.hasDatepicker').each((i, dp) => {
+				$(dp).removeData()
+					.removeClass('hasDatepicker');
+				$(dp).next('img.ui-datepicker-trigger').remove();
+				$(dp).datepicker($dpopt);
+			});
+		}, 0);
+
 		//create new select2 to avoid duplicate id of cloned one
 		$row.find("select[name='"+'entrepot_'+nbrTrs+'_'+index+"']").select2();
 		// TODO find solution to copy selected option to new select

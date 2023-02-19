@@ -52,3 +52,6 @@ BlockedLogDisableNotAllowedForCountry=List of countries where usage of this modu
 OnlyNonValid=Nem érvényes
 TooManyRecordToScanRestrictFilters=Too many records to scan/analyze. Please restrict list with more restrictive filters.
 RestrictYearToExport=Restrict month / year to export
+BlockedLogEnabled=System to track events into unalterable logs has been enabled
+BlockedLogDisabled=System to track events into unalterable logs has been disabled after some recording were done. We saved a special Fingerprint to track the chain as broken
+BlockedLogDisabledBis=System to track events into unalterable logs has been disabled. This is possible because no record were done yet.

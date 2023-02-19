@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2019		Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2019-2022		Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,8 @@
 
 /**
  *       \file       htdocs/core/ajax/pingresult.php
- *       \brief      File to save result of an anonymous ping into database (1 ping is done per installation)
+ *       \brief      Page called after a ping was done in js to the official dolibarr ping service.
+ *                   This ajax URL is called with parameter 'firstpingok' or 'firstpingko' depending on the result of the ping.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -39,6 +40,7 @@ if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 

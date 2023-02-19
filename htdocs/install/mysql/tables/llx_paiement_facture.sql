@@ -23,7 +23,7 @@ create table llx_paiement_facture
   fk_facture      integer,
   amount          double(24,8)     DEFAULT 0,
   
-  multicurrency_code		varchar(255),
+  multicurrency_code		varchar(3),
   multicurrency_tx		double(24,8) DEFAULT 1,
   multicurrency_amount	double(24,8) DEFAULT 0
 )ENGINE=innodb;

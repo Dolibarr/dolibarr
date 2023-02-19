@@ -22,6 +22,7 @@
  *	\brief      Home page of users and groups management
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -75,8 +76,9 @@ if (GETPOST('addbox')) {
 /*
  * View
  */
-
-llxHeader();
+$title = $langs->trans("MenuUsersAndGroups");
+$help_url = '';
+llxHeader('', $title, $help_url);
 
 
 print load_fiche_titre($langs->trans("MenuUsersAndGroups"), $resultboxes['selectboxlist'], 'user');
@@ -137,11 +139,11 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
-	$lastcreatedbox .='<div class="div-table-responsive-no-min">';
-	$lastcreatedbox .='<table class="noborder centpercent">';
-	$lastcreatedbox .='<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastUsersCreated", min($num, $max)).'</td>';
-	$lastcreatedbox .='<td class="right" colspan="2"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
-	$lastcreatedbox .='</tr>'."\n";
+	$lastcreatedbox .= '<div class="div-table-responsive-no-min">';
+	$lastcreatedbox .= '<table class="noborder centpercent">';
+	$lastcreatedbox .= '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastUsersCreated", min($num, $max)).'</td>';
+	$lastcreatedbox .= '<td class="right" colspan="2"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+	$lastcreatedbox .= '</tr>'."\n";
 	$i = 0;
 
 	while ($i < $num && $i < $max) {
@@ -162,30 +164,29 @@ if ($resql) {
 		$companystatic->code_client = $obj->code_client;
 		$companystatic->canvas = $obj->canvas;
 
-		$lastcreatedbox .='<tr class="oddeven">';
-		$lastcreatedbox .='<td class="nowraponall">';
-		$lastcreatedbox .=$fuserstatic->getNomUrl(-1);
-		if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity) {
-			$lastcreatedbox .=img_picto($langs->trans("SuperAdministrator"), 'redstar');
+		$lastcreatedbox .= '<tr class="oddeven">';
+		$lastcreatedbox .= '<td class="nowraponall tdoverflowmax150">';
+		$lastcreatedbox .= $fuserstatic->getNomUrl(-1);
+		if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
+			$lastcreatedbox .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
 		} elseif ($obj->admin) {
-			$lastcreatedbox .=img_picto($langs->trans("Administrator"), 'star');
+			$lastcreatedbox .= img_picto($langs->trans("Administrator"), 'star');
 		}
-		$lastcreatedbox .="</td>";
-		$lastcreatedbox .='<td>'.$obj->login.'</td>';
-		$lastcreatedbox .="<td>";
+		$lastcreatedbox .= "</td>";
+		$lastcreatedbox .= '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->login).'">'.dol_escape_htmltag($obj->login).'</td>';
+		$texttoshow = '';
 		if ($obj->fk_soc) {
-			$lastcreatedbox .=$companystatic->getNomUrl(1);
+			$texttoshow .= $companystatic->getNomUrl(1);
 		} else {
-			$lastcreatedbox .=$langs->trans("InternalUser");
+			$texttoshow .= '<span class="opacitymedium">'.$langs->trans("InternalUser").'</span>';
 		}
 		if ($obj->ldap_sid) {
-			$lastcreatedbox .=' ('.$langs->trans("DomainUser").')';
+			$texttoshow .= ' <span class="opacitymedium">('.$langs->trans("DomainUser").')</span>';
 		}
-
 		$entity = $obj->entity;
 		$entitystring = '';
 		// TODO Set of entitystring should be done with a hook
-		if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+		if (isModEnabled('multicompany') && is_object($mc)) {
 			if (empty($entity)) {
 				$entitystring = $langs->trans("AllEntities");
 			} else {
@@ -193,19 +194,20 @@ if ($resql) {
 				$entitystring = $mc->label;
 			}
 		}
-		$lastcreatedbox .=($entitystring ? ' ('.$entitystring.')' : '');
+		$texttoshow .= ($entitystring ? ' <span class="opacitymedium">('.$entitystring.')</span>' : '');
+		$lastcreatedbox .= '<td class="tdoverflowmax150" title="'.dol_escape_htmltag(dol_string_nohtmltag($texttoshow)).'">';
+		$lastcreatedbox .= $texttoshow;
+		$lastcreatedbox .= '</td>';
+		$lastcreatedbox .= '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
+		$lastcreatedbox .= '<td class="right">';
+		$lastcreatedbox .= $fuserstatic->getLibStatut(3);
+		$lastcreatedbox .= '</td>';
 
-		$lastcreatedbox .='</td>';
-		$lastcreatedbox .='<td class="center nowrap">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
-		$lastcreatedbox .='<td class="right">';
-		$lastcreatedbox .=$fuserstatic->getLibStatut(3);
-		$lastcreatedbox .='</td>';
-
-		$lastcreatedbox .='</tr>';
+		$lastcreatedbox .= '</tr>';
 		$i++;
 	}
-	$lastcreatedbox .="</table>";
-	$lastcreatedbox .="</div><br>";
+	$lastcreatedbox .= "</table>";
+	$lastcreatedbox .= "</div><br>";
 
 	$db->free($resql);
 } else {
@@ -222,10 +224,10 @@ if ($canreadperms) {
 
 	$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec";
 	$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-	if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && !$user->entity))) {
+	if (isModEnabled('multicompany') && $conf->entity == 1 && (getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') || ($user->admin && !$user->entity))) {
 		$sql .= " WHERE g.entity IS NOT NULL";
 	} else {
-		$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
+		$sql .= " WHERE g.entity IN (0, ".$conf->entity.")";
 	}
 	$sql .= $db->order("g.datec", "DESC");
 	$sql .= $db->plimit($max);
@@ -233,16 +235,16 @@ if ($canreadperms) {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$colspan = 1;
-		if (!empty($conf->multicompany->enabled)) {
+		if (isModEnabled('multicompany')) {
 			$colspan++;
 		}
 		$num = $db->num_rows($resql);
 
-		$lastgroupbox .='<div class="div-table-responsive-no-min">';
-		$lastgroupbox .='<table class="noborder centpercent">';
-		$lastgroupbox .='<tr class="liste_titre"><td colspan="'.$colspan.'">'.$langs->trans("LastGroupsCreated", ($num ? $num : $max)).'</td>';
-		$lastgroupbox .='<td class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/group/list.php?sortfield=g.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
-		$lastgroupbox .='</tr>';
+		$lastgroupbox .= '<div class="div-table-responsive-no-min">';
+		$lastgroupbox .= '<table class="noborder centpercent">';
+		$lastgroupbox .= '<tr class="liste_titre"><td colspan="'.$colspan.'">'.$langs->trans("LastGroupsCreated", ($num ? $num : $max)).'</td>';
+		$lastgroupbox .= '<td class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/group/list.php?sortfield=g.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+		$lastgroupbox .= '</tr>';
 		$i = 0;
 
 		$grouptemp = new UserGroup($db);
@@ -254,21 +256,21 @@ if ($canreadperms) {
 			$grouptemp->name = $obj->name;
 			$grouptemp->note = $obj->note;
 
-			$lastgroupbox .='<tr class="oddeven">';
-			$lastgroupbox .='<td>';
-			$lastgroupbox .=$grouptemp->getNomUrl(1);
+			$lastgroupbox .= '<tr class="oddeven">';
+			$lastgroupbox .= '<td>';
+			$lastgroupbox .= $grouptemp->getNomUrl(1);
 			if (!$obj->entity) {
-				$lastgroupbox .=img_picto($langs->trans("GlobalGroup"), 'redstar');
+				$lastgroupbox .= img_picto($langs->trans("GlobalGroup"), 'redstar');
 			}
-			$lastgroupbox .="</td>";
-			if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+			$lastgroupbox .= "</td>";
+			if (isModEnabled('multicompany') && is_object($mc)) {
 				$mc->getInfo($obj->entity);
-				$lastgroupbox .='<td>';
-				$lastgroupbox .=$mc->label;
-				$lastgroupbox .='</td>';
+				$lastgroupbox .= '<td>';
+				$lastgroupbox .= $mc->label;
+				$lastgroupbox .= '</td>';
 			}
-			$lastgroupbox .='<td class="nowrap right">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
-			$lastgroupbox .="</tr>";
+			$lastgroupbox .= '<td class="nowrap right">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
+			$lastgroupbox .= "</tr>";
 			$i++;
 		}
 		$lastgroupbox .= "</table>";

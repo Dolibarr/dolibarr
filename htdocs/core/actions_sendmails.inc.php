@@ -49,7 +49,7 @@ if (GETPOST('addfile', 'alpha')) {
 /*
  * Remove file in email form
  */
-if (!empty($_POST['removedfile']) && empty($_POST['removAll'])) {
+if (GETPOST('removedfile') && !GETPOST('removAll')) {
 	$trackid = GETPOST('trackid', 'aZ09');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -103,13 +103,17 @@ if (GETPOST('removAll', 'alpha')) {
 /*
  * Send mail
  */
-if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST['removAll'] && !$_POST['removedfile'] && !$_POST['cancel'] && !$_POST['modelselected']) {
+if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPOST('removAll') && !GETPOST('removedfile') && !GETPOST('cancel') && !GETPOST('modelselected')) {
 	if (empty($trackid)) {
 		$trackid = GETPOST('trackid', 'aZ09');
 	}
 
+	// Set tmp user directory (used to convert images embedded as img src=data:image)
+	$vardir = $conf->user->dir_output."/".$user->id;
+	$upload_dir_tmp = $vardir.'/temp'; // TODO Add $keytoavoidconflict in upload_dir path
+
 	$subject = '';
-	$actionmsg = '';
+	//$actionmsg = '';
 	$actionmsg2 = '';
 
 	$langs->load('mails');
@@ -171,7 +175,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		$sendtoccuserid = array();
 
 		// Define $sendto
-		$receiver = $_POST['receiver'];
+		$receiver = GETPOST('receiver', 'alphawithlgt');
 		if (!is_array($receiver)) {
 			if ($receiver == '-1') {
 				$receiver = array();
@@ -183,12 +187,12 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		$tmparray = array();
 		if (trim($_POST['sendto'])) {
 			// Recipients are provided into free text field
-			$tmparray[] = trim($_POST['sendto']);
+			$tmparray[] = trim(GETPOST('sendto', 'alphawithlgt'));
 		}
 
 		if (trim($_POST['tomail'])) {
 			// Recipients are provided into free hidden text field
-			$tmparray[] = trim($_POST['tomail']);
+			$tmparray[] = trim(GETPOST('tomail', 'alphawithlgt'));
 		}
 
 		if (count($receiver) > 0) {
@@ -207,7 +211,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		}
 
 		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
-			$receiveruser = $_POST['receiveruser'];
+			$receiveruser = GETPOST('receiveruser', 'alphawithlgt');
 			if (is_array($receiveruser) && count($receiveruser) > 0) {
 				$fuserdest = new User($db);
 				foreach ($receiveruser as $key => $val) {
@@ -220,7 +224,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		$sendto = implode(',', $tmparray);
 
 		// Define $sendtocc
-		$receivercc = $_POST['receivercc'];
+		$receivercc = GETPOST('receivercc', 'alphawithlgt');
 		if (!is_array($receivercc)) {
 			if ($receivercc == '-1') {
 				$receivercc = array();
@@ -230,7 +234,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		}
 		$tmparray = array();
 		if (trim($_POST['sendtocc'])) {
-			$tmparray[] = trim($_POST['sendtocc']);
+			$tmparray[] = trim(GETPOST('sendtocc', 'alphawithlgt'));
 		}
 		if (count($receivercc) > 0) {
 			foreach ($receivercc as $key => $val) {
@@ -248,7 +252,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			}
 		}
 		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
-			$receiverccuser = $_POST['receiverccuser'];
+			$receiverccuser = GETPOST('receiverccuser', 'alphawithlgt');
 
 			if (is_array($receiverccuser) && count($receiverccuser) > 0) {
 				$fuserdest = new User($db);
@@ -293,10 +297,10 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 					$from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
 				}
 			} else {
-				$from = dol_string_nospecial($_POST['fromname'], ' ', array(",")).' <'.$_POST['frommail'].'>';
+				$from = dol_string_nospecial(GETPOST('fromname'), ' ', array(",")).' <'.GETPOST('frommail').'>';
 			}
 
-			$replyto = dol_string_nospecial($_POST['replytoname'], ' ', array(",")).' <'.$_POST['replytomail'].'>';
+			$replyto = dol_string_nospecial(GETPOST('replytoname'), ' ', array(",")).' <'.GETPOST('replytomail').'>';
 			$message = GETPOST('message', 'restricthtml');
 			$subject = GETPOST('subject', 'restricthtml');
 
@@ -313,11 +317,11 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 				$sendtobcc .= (empty($conf->global->$autocopy) ? '' : (($sendtobcc ? ", " : "").$conf->global->$autocopy));
 			}
 
-			$deliveryreceipt = $_POST['deliveryreceipt'];
+			$deliveryreceipt = GETPOST('deliveryreceipt');
 
 			if ($action == 'send' || $action == 'relance') {
 				$actionmsg2 = $langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from, 4, 0, 1).' '.$langs->transnoentities('To').' '.CMailFile::getValidAddress($sendto, 4, 0, 1);
-				if ($message) {
+				/*if ($message) {
 					$actionmsg = $langs->transnoentities('MailFrom').': '.dol_escape_htmltag($from);
 					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTo').': '.dol_escape_htmltag($sendto));
 					if ($sendtocc) {
@@ -326,7 +330,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic').": ".$subject);
 					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody').":");
 					$actionmsg = dol_concatdesc($actionmsg, $message);
-				}
+				}*/
 			}
 
 			// Create form object
@@ -359,9 +363,9 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			if (empty($sendcontext)) {
 				$sendcontext = 'standard';
 			}
-			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext);
+			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, '', $upload_dir_tmp);
 
-			if ($mailfile->error) {
+			if (!empty($mailfile->error) || !empty($mailfile->errors)) {
 				setEventMessages($mailfile->error, $mailfile->errors, 'errors');
 				$action = 'presend';
 			} else {
@@ -376,8 +380,11 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 						$object->socid = $sendtosocid; // To link to a company
 						$object->sendtoid = $sendtoid; // To link to contact-addresses. This is an array.
 						$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
-						$object->actionmsg = $actionmsg; // Long text (@todo Replace this with $message, we already have details of email in dedicated properties)
+						$object->actionmsg = $message; // Long text
 						$object->actionmsg2 = $actionmsg2; // Short text ($langs->transnoentities('MailSentBy')...);
+						if (!empty($conf->global->MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT)) {
+							$object->actionmsg2		= $subject; // Short text
+						}
 
 						$object->trackid = $trackid;
 						$object->fk_element = $object->id;
@@ -427,9 +434,14 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 				} else {
 					$langs->load("other");
 					$mesg = '<div class="error">';
-					if ($mailfile->error) {
+					if (!empty($mailfile->error) || !empty($mailfile->errors)) {
 						$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($from), dol_escape_htmltag($sendto));
-						$mesg .= '<br>'.$mailfile->error;
+						if (!empty($mailfile->error)) {
+							$mesg .= '<br>'.$mailfile->error;
+						}
+						if (!empty($mailfile->errors) && is_array($mailfile->errors)) {
+							$mesg .= '<br>'.implode('<br>', $mailfile->errors);
+						}
 					} else {
 						$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($from), dol_escape_htmltag($sendto));
 						if (!empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {

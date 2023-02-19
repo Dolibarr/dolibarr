@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - orders
 OrderLine=Bestellposition
 OrderToProcess=Zu bearbeitende Bestellung
-SaleOrderLines=Sales order lines
 StatusOrderValidatedShort=Bestätigt
 StatusOrderValidated=Bestätigt
 StatusOrderOnProcess=In Arbeit

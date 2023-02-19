@@ -3,4 +3,3 @@ Sendings=Sendungen
 Shipments=Sendungen
 StatusSendingValidatedShort=Bestätigt
 DateReceived=Datum des Warenerhalts
-ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.

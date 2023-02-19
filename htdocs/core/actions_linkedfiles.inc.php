@@ -36,8 +36,19 @@ if (GETPOST('uploadform', 'int') && empty($_POST) && empty($_FILES)) {
 	die;
 }
 
+if ((GETPOST('sendit', 'alpha')
+	|| GETPOST('linkit', 'restricthtml')
+	|| ($action == 'confirm_deletefile' && $confirm == 'yes')
+	|| ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('link', 'alpha'))
+	|| ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha'))) && empty($permissiontoadd)) {
+	dol_syslog('The file actions_linkedfiles.inc.php was included but parameter $permissiontoadd was not set before.');
+	print 'The file actions_linkedfiles.inc.php was included but parameter $permissiontoadd was not set before.';
+	die;
+}
+
+
 // Submit file/link
-if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC) && (!isset($permissiontoadd) || $permissiontoadd)) {
+if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC) && !empty($permissiontoadd)) {
 	if (!empty($_FILES)) {
 		if (is_array($_FILES['userfile']['tmp_name'])) {
 			$userfiles = $_FILES['userfile']['tmp_name'];
@@ -68,14 +79,14 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC) && (!is
 			}
 			$allowoverwrite = (GETPOST('overwritefile', 'int') ? 1 : 0);
 
-			if (!empty($upload_dirold) && !empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+			if (!empty($upload_dirold) && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 				$result = dol_add_file_process($upload_dirold, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object);
 			} elseif (!empty($upload_dir)) {
 				$result = dol_add_file_process($upload_dir, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object);
 			}
 		}
 	}
-} elseif (GETPOST('linkit', 'restricthtml') && !empty($conf->global->MAIN_UPLOAD_DOC) && (!isset($permissiontoadd) || $permissiontoadd)) {
+} elseif (GETPOST('linkit', 'restricthtml') && !empty($conf->global->MAIN_UPLOAD_DOC) && !empty($permissiontoadd)) {
 	$link = GETPOST('link', 'alpha');
 	if ($link) {
 		if (substr($link, 0, 7) != 'http://' && substr($link, 0, 8) != 'https://' && substr($link, 0, 7) != 'file://' && substr($link, 0, 7) != 'davs://') {
@@ -87,7 +98,7 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC) && (!is
 
 
 // Delete file/link
-if ($action == 'confirm_deletefile' && $confirm == 'yes' && (!isset($permissiontoadd) || $permissiontoadd)) {
+if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissiontoadd)) {
 	$urlfile = GETPOST('urlfile', 'alpha', 0, null, null, 1); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 	if (GETPOST('section', 'alpha')) {
 		// For a delete from the ECM module, upload_dir is ECM root dir and urlfile contains relative path from upload_dir
@@ -112,21 +123,20 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && (!isset($permissiont
 			dol_delete_file($fileold, 0, 0, 0, (is_object($object) ? $object : null)); // Delete file using old path
 		}
 
-		// If it exists, remove thumb.
-		$regs = array();
-		if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff)$/i', $file, $regs)) {
-			$photo_vignette = basename(preg_replace('/'.$regs[0].'/i', '', $file).'_small'.$regs[0]);
-			if (file_exists(dol_osencode($dirthumb.$photo_vignette))) {
-				dol_delete_file($dirthumb.$photo_vignette);
-			}
-
-			$photo_vignette = basename(preg_replace('/'.$regs[0].'/i', '', $file).'_mini'.$regs[0]);
-			if (file_exists(dol_osencode($dirthumb.$photo_vignette))) {
-				dol_delete_file($dirthumb.$photo_vignette);
-			}
-		}
-
 		if ($ret) {
+			// If it exists, remove thumb.
+			$regs = array();
+			if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff)$/i', $file, $regs)) {
+				$photo_vignette = basename(preg_replace('/'.$regs[0].'/i', '', $file).'_small'.$regs[0]);
+				if (file_exists(dol_osencode($dirthumb.$photo_vignette))) {
+					dol_delete_file($dirthumb.$photo_vignette);
+				}
+
+				$photo_vignette = basename(preg_replace('/'.$regs[0].'/i', '', $file).'_mini'.$regs[0]);
+				if (file_exists(dol_osencode($dirthumb.$photo_vignette))) {
+					dol_delete_file($dirthumb.$photo_vignette);
+				}
+			}
 			setEventMessages($langs->trans("FileWasRemoved", $urlfile), null, 'mesgs');
 		} else {
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", $urlfile), null, 'errors');
@@ -150,7 +160,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && (!isset($permissiont
 	}
 
 	if (is_object($object) && $object->id > 0) {
-		if ($backtopage) {
+		if (!empty($backtopage)) {
 			header('Location: '.$backtopage);
 			exit;
 		} else {
@@ -159,7 +169,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && (!isset($permissiont
 			exit;
 		}
 	}
-} elseif ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('link', 'alpha') && (!isset($permissiontoadd) || $permissiontoadd)) {
+} elseif ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('link', 'alpha') && !empty($permissiontoadd)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$langs->load('link');
 	$link = new Link($db);
@@ -177,8 +187,8 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && (!isset($permissiont
 	} else {
 		//error fetching
 	}
-} elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha') && (!isset($permissiontoadd) || $permissiontoadd)) {
-	// For documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
+} elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha') && !empty($permissiontoadd)) {
+	// For documents pages, upload_dir contains already the path to the file from module dir
 	if (!empty($upload_dir)) {
 		$filenamefrom = dol_sanitizeFileName(GETPOST('renamefilefrom', 'alpha'), '_', 0); // Do not remove accents
 		$filenameto = dol_sanitizeFileName(GETPOST('renamefileto', 'alpha'), '_', 0); // Do not remove accents
@@ -190,7 +200,22 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && (!isset($permissiont
 			$error++;
 			setEventMessages($langs->trans('ErrorWrongFileName'), null, 'errors');
 		}
-		if (!$error && $filenamefrom != $filenameto) {
+
+		// Check that filename is not the one of a reserved allowed CLI command
+		if (empty($error)) {
+			global $dolibarr_main_restrict_os_commands;
+			if (!empty($dolibarr_main_restrict_os_commands)) {
+				$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
+				$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
+				if (in_array(basename($filenameto), $arrayofallowedcommand)) {
+					$error++;
+					$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+					setEventMessages($langs->trans("ErrorFilenameReserved", basename($filenameto)), null, 'errors');
+				}
+			}
+		}
+
+		if (empty($error) && $filenamefrom != $filenameto) {
 			// Security:
 			// Disallow file with some extensions. We rename them.
 			// Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
@@ -226,17 +251,18 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && (!isset($permissiont
 							// When we rename a file from the file manager in ecm, we must not regenerate thumbs (not a problem, we do pass here)
 							// When we rename a file from the website module, we must not regenerate thumbs (module = medias in such a case)
 							// but when we rename from a tab "Documents", we must regenerate thumbs
-							if (GETPOST('modulepart') == 'medias') {
+							if (GETPOST('modulepart', 'aZ09') == 'medias') {
 								$generatethumbs = 0;
 							}
 
 							if ($generatethumbs) {
-								if ($object->id) {
+								if ($object->id > 0) {
+									// Create thumbs for the new file
 									$object->addThumbs($destpath);
-								}
 
-								// TODO Add revert function of addThumbs to remove thumbs with old name
-								//$object->delThumbs($srcpath);
+									// Delete thumb files with old name
+									$object->delThumbs($srcpath);
+								}
 							}
 
 							setEventMessages($langs->trans("FileRenamed"), null);

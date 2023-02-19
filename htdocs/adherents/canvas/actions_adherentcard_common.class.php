@@ -65,7 +65,7 @@ abstract class ActionsAdherentCardCommon
 
 		/*if (is_object($this->object) && method_exists($this->object,'fetch'))
 		{
-			if (! empty($id)) $this->object->fetch($id);
+			if (!empty($id)) $this->object->fetch($id);
 		}
 		else
 		{*/
@@ -104,7 +104,7 @@ abstract class ActionsAdherentCardCommon
 
 		if ($action == 'create' || $action == 'edit') {
 			if ($conf->use_javascript_ajax) {
-				$this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript" language="javascript">
+				$this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript">
 				jQuery(document).ready(function () {
 						jQuery("#selectcountry_id").change(function() {
 							document.formsoc.action.value="'.$action.'";
@@ -179,7 +179,7 @@ abstract class ActionsAdherentCardCommon
 
 		if ($action == 'view' || $action == 'edit' || $action == 'delete') {
 			// Emailing
-			if (!empty($conf->mailing->enabled)) {
+			if (isModEnabled('mailing')) {
 				$langs->load("mails");
 				$this->tpl['nb_emailing'] = $this->object->getNbOfEMailings();
 			}

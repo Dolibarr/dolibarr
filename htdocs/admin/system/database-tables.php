@@ -28,6 +28,7 @@ if (! defined('CSRFCHECK_WITH_TOKEN')) {
 	define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -106,6 +107,14 @@ if (!$base) {
 		print '<td class="right">Collation</td>';
 		print "</tr>\n";
 
+		$arrayoffilesrich = dol_dir_list(DOL_DOCUMENT_ROOT.'/install/mysql/tables/', 'files', 0, '\.sql$');
+		$arrayoffiles = array();
+		foreach ($arrayoffilesrich as $value) {
+			//print $shortsqlfilename.' ';
+			$shortsqlfilename = preg_replace('/\-[a-z]+\./', '.', $value['name']);
+			$arrayoffiles[] = $shortsqlfilename;
+		}
+
 		$sql = "SHOW TABLE STATUS";
 
 		$resql = $db->query($sql);
@@ -119,7 +128,8 @@ if (!$base) {
 				print '<td>'.($i+1).'</td>';
 				print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a>';
 				$tablename = preg_replace('/^'.MAIN_DB_PREFIX.'/', 'llx_', $obj->Name);
-				if (dol_is_file(DOL_DOCUMENT_ROOT.'/install/mysql/tables/'.$tablename.'.sql')) {
+
+				if (in_array($tablename.'.sql', $arrayoffiles)) {
 					$img = "info";
 					//print img_picto($langs->trans("ExternalModule"), $img);
 				} else {
@@ -149,7 +159,7 @@ if (!$base) {
 				print '<td align="right">'.$obj->Check_time.'</td>';
 				print '<td align="right">'.$obj->Collation;
 				if (isset($obj->Collation) && (in_array($obj->Collation, array("utf8mb4_general_ci", "utf8mb4_unicode_ci", "latin1_swedish_ci")))) {
-					print '<br><a class="reposition" href="database-tables.php?action=convertutf8&table='.urlencode($obj->Name).'&token='.newtoken().'">'.$langs->trans("Convert").' UTF8</a>';
+					print '<br><a class="reposition" href="database-tables.php?action=convertutf8&table='.urlencode($obj->Name).'&token='.newToken().'">'.$langs->trans("Convert").' UTF8</a>';
 				}
 				print '</td>';
 				print '</tr>';

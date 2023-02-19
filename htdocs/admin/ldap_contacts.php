@@ -26,6 +26,7 @@
  *  \brief      Page d'administration/configuration du module Ldap
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
@@ -139,13 +140,13 @@ if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
-print dol_get_fiche_head($head, 'contacts', $langs->trans("LDAPSetup"), -1);
+print dol_get_fiche_head($head, 'contacts', '', -1);
 
 
-print $langs->trans("LDAPDescContact").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("LDAPDescContact").'</span><br>';
 print '<br>';
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';
@@ -284,7 +285,7 @@ print info_admin($langs->trans("LDAPDescValues"));
 
 print dol_get_fiche_end();
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 
@@ -321,12 +322,12 @@ if (function_exists("ldap_connect")) {
 
 			if ($result2 > 0) {
 				print img_picto('', 'info').' ';
-				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
+				print '<span class="ok">'.$langs->trans("LDAPSynchroOK").'</span><br>';
 			} else {
 				print img_picto('', 'error').' ';
-				print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
+				print '<span class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
 				print ': '.$ldap->error;
-				print '</font><br>';
+				print '</span><br>';
 				print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 			}
 
@@ -336,9 +337,9 @@ if (function_exists("ldap_connect")) {
 			print "\n<br>";
 		} else {
 			print img_picto('', 'error').' ';
-			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+			print '<span class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;
-			print '</font><br>';
+			print '</span><br>';
 			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 		}
 	}

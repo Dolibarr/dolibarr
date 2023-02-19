@@ -19,16 +19,18 @@
 
 /**
  * \file 		htdocs/accountancy/admin/subaccount.php
- * \ingroup     Accountancy (Double entries)
- * \brief		List of accounting sub-account (auxiliary accounts)
+ * \ingroup 	Accountancy (Double entries)
+ * \brief 		List of accounting sub-account (auxiliary accounts)
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "bills", "admin", "accountancy", "salaries", "hrm", "errors"));
+$langs->loadLangs(array("accountancy", "admin", "bills", "compta", "errors", "hrm", "salaries"));
 
 $mesg = '';
 $action = GETPOST('action', 'aZ09');
@@ -36,6 +38,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 $massaction = GETPOST('massaction', 'aZ09');
+$optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'accountingsubaccountlist'; // To manage different context of search
 
 $search_subaccount = GETPOST('search_subaccount', 'alpha');
@@ -46,7 +49,7 @@ $search_type = GETPOST('search_type', 'int');
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->rights->accounting->chartofaccount) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 
@@ -78,6 +81,7 @@ $arrayfields = array(
 if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
 	unset($arrayfields['reconcilable']);
 }
+
 
 /*
  * Actions
@@ -118,10 +122,12 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$help_url = '';
-$title = $langs->trans('ChartOfIndividualAccountsOfSubsidiaryLedger');
 
+// Page Header
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup';
+$title = $langs->trans('ChartOfIndividualAccountsOfSubsidiaryLedger');
 llxHeader('', $title, $help_url);
+
 
 // Customer
 $sql = "SELECT sa.rowid, sa.nom as label, sa.code_compta as subaccount, '1' as type, sa.entity";
@@ -217,7 +223,7 @@ if (!empty($search_type) && $search_type >= 0) {
 	$sql .= " HAVING type LIKE '".$db->escape($search_type)."'";
 }
 
-// User
+// User - Employee
 $sql .= " UNION ";
 $sql .= " SELECT u.rowid, u.lastname as label, u.accountancy_code as subaccount, '3' as type, u.entity FROM ".MAIN_DB_PREFIX."user u";
 $sql .= " WHERE u.entity IN (".getEntity('user').")";
@@ -367,6 +373,7 @@ if ($resql) {
 	print "</tr>\n";
 
 	$totalarray = array();
+	$totalarray['nbfield'] = 0;
 	$i = 0;
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
@@ -397,6 +404,7 @@ if ($resql) {
 		if (!empty($arrayfields['type']['checked'])) {
 			print '<td class="center">';
 			$s = '';
+
 			// Customer
 			if ($obj->type == 1) {
 				$s .= '<a class="customer-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->rowid.'">'.$langs->trans("Customer").'</a>';
@@ -404,8 +412,8 @@ if ($resql) {
 				// Supplier
 				$s .= '<a class="vendor-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->rowid.'">'.$langs->trans("Supplier").'</a>';
 			} elseif ($obj->type == 3) {
-				// User
-				$s .= '<a class="user-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Employee").'" href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->id.'">'.$langs->trans("Employee").'</a>';
+				// User - Employee
+				$s .= '<a class="user-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Employee").'" href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">'.$langs->trans("Employee").'</a>';
 			}
 			print $s;
 			print '</td>';
@@ -437,15 +445,16 @@ if ($resql) {
 		// Action
 		print '<td class="center">';
 		$e = '';
+
 		// Customer
 		if ($obj->type == 1) {
-			$e .= '<a class="editfielda" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/societe/card.php?action=edit&socid='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
+			$e .= '<a class="editfielda" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/societe/card.php?action=edit&token='.newToken().'&socid='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
 		} elseif ($obj->type == 2) {
 			// Supplier
-			$e .= '<a class="editfielda" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/societe/card.php?action=edit&socid='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
+			$e .= '<a class="editfielda" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/societe/card.php?action=edit&token='.newToken().'&socid='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
 		} elseif ($obj->type == 3) {
-			// User
-			$e .= '<a class="editfielda" title="'.$langs->trans("Employee").'" href="'.DOL_URL_ROOT.'/user/card.php?action=edit&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
+			// User - Employee
+			$e .= '<a class="editfielda" title="'.$langs->trans("Employee").'" href="'.DOL_URL_ROOT.'/user/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
 		}
 		print $e;
 		print '</td>'."\n";

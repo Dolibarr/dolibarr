@@ -16,11 +16,12 @@
  */
 
 /**
- *	\file		htdocs/compat/facture/index.php
+ *	\file		htdocs/compta/facture/index.php
 *	\ingroup	facture
  *	\brief		Home page of customer invoices area
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -43,9 +44,8 @@ if (isset($user->socid) && $user->socid > 0) {
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 // Maximum elements of the tables
-$maxDraftCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
-$maxLatestEditCount = 5;
-$maxOpenCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$maxDraftCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? $max : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$maxOpenCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? $max : $conf->global->MAIN_MAXLIST_OVERLOAD;
 
 
 /*
@@ -64,7 +64,7 @@ if ($tmp) {
 	print $tmp;
 	print '<br>';
 }
-$tmp = getCustomerInvoiceDraftTable($max, $socid);
+$tmp = getCustomerInvoiceDraftTable($maxDraftCount, $socid);
 if ($tmp) {
 	print $tmp;
 	print '<br>';
@@ -73,21 +73,19 @@ if ($tmp) {
 print '</div>';
 
 print '<div class="fichetwothirdright">';
-print '<div class="ficheaddleft">';
 
-$tmp = getCustomerInvoiceLatestEditTable($maxLatestEditCount, $socid);
+$tmp = getCustomerInvoiceLatestEditTable($max, $socid);
 if ($tmp) {
 	print $tmp;
 	print '<br>';
 }
 
-$tmp = getCustomerInvoiceUnpaidOpenTable($max, $socid);
+$tmp = getCustomerInvoiceUnpaidOpenTable($maxOpenCount, $socid);
 if ($tmp) {
 	print $tmp;
 	print '<br>';
 }
 
-print '</div>';
 print '</div>';
 
 print '</div>';

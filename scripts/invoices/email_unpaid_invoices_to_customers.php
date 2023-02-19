@@ -80,6 +80,11 @@ if ($mode != 'confirm') {
 	$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 }
 
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-onyl mode\n";
+	exit(-1);
+}
+
 $sql = "SELECT f.ref, f.total_ttc, f.date_lim_reglement as due_date,";
 $sql .= " s.rowid as sid, s.nom as name, s.email, s.default_lang";
 if ($targettype == 'contacts') {

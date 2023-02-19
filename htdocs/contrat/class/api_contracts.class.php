@@ -147,8 +147,9 @@ class Contracts extends DolibarrApi
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -277,8 +278,8 @@ class Contracts extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->price_base_type = checkVal($request_data->price_base_type);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->price_base_type = sanitizeVal($request_data->price_base_type);
 
 		$updateRes = $this->contract->addline(
 			$request_data->desc,
@@ -289,8 +290,8 @@ class Contracts extends DolibarrApi
 			$request_data->localtax2_tx,
 			$request_data->fk_product,
 			$request_data->remise_percent,
-			$request_data->date_start, // date_start = date planned start, date ouverture = date_start_real
-			$request_data->date_end, // date_end = date planned end, date_cloture = date_end_real
+			$request_data->date_start,
+			$request_data->date_end,
 			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->subprice_excl_tax,
 			$request_data->info_bits,
@@ -335,8 +336,8 @@ class Contracts extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->price_base_type = checkVal($request_data->price_base_type);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->price_base_type = sanitizeVal($request_data->price_base_type);
 
 		$updateRes = $this->contract->updateline(
 			$lineid,
@@ -344,13 +345,13 @@ class Contracts extends DolibarrApi
 			$request_data->subprice,
 			$request_data->qty,
 			$request_data->remise_percent,
-			$request_data->date_ouveture_prevue,
-			$request_data->date_fin_validite,
+			$request_data->date_start,
+			$request_data->date_end,
 			$request_data->tva_tx,
 			$request_data->localtax1_tx,
 			$request_data->localtax2_tx,
-			$request_data->date_ouverture,
-			$request_data->date_cloture,
+			$request_data->date_start_real,
+			$request_data->date_end_real,
 			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->info_bits,
 			$request_data->fk_fourn_price,
@@ -661,14 +662,10 @@ class Contracts extends DolibarrApi
 
 		unset($object->address);
 
-		unset($object->date_ouverture_prevue);
-		unset($object->date_ouverture);
-		unset($object->date_fin_validite);
-		unset($object->date_cloture);
-		unset($object->date_debut_prevue);
-		unset($object->date_debut_reel);
-		unset($object->date_fin_prevue);
-		unset($object->date_fin_reel);
+		unset($object->date_start);
+		unset($object->date_start_real);
+		unset($object->date_end);
+		unset($object->date_end_real);
 		unset($object->civility_id);
 
 		return $object;

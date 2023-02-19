@@ -8,11 +8,12 @@
 enabled = true
 port    = http,https
 filter  = web-dolibarr-rulespassforgotten
-logpath = >> /mypath/documents/documents/dolibarr.log
+logpath = /mypath/documents/documents/dolibarr.log
 action  = %(action_mw)s
 bantime  = 4320000   ; 50 days
 findtime = 86400     ; 1 day
 maxretry = 10
+
 
 [web-dol-bruteforce]
 
@@ -20,9 +21,22 @@ maxretry = 10
 enabled = true
 port    = http,https
 filter  = web-dolibarr-rulesbruteforce
-logpath = >> /mypath/documents/documents/dolibarr.log
+logpath = /mypath/documents/documents/dolibarr.log
 action  = %(action_mw)s
 bantime  = 86400     ; 1 day
 findtime = 3600      ; 1 hour
 maxretry = 10
+
+
+[web-dol-limitpublic]
+
+; rule to add rate limit on some public pages
+enabled = true
+port    = http,https
+filter  = web-dolibarr-limitpublic
+logpath = /mypath/documents/documents/dolibarr.log
+action  = %(action_mw)s
+bantime  = 86400     ; 1 day
+findtime = 86400     ; 1 day
+maxretry = 500
 

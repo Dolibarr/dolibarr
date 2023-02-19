@@ -194,11 +194,13 @@ delete from llx_delivery    where rowid not in (select fk_target from llx_elemen
 
 -- Fix delete element_element orphelins (right side)
 delete from llx_element_element where targettype='shipping' and fk_target not in (select rowid from llx_expedition);
+delete from llx_element_element where targettype='delivery' and fk_target not in (select rowid from llx_delivery);
 delete from llx_element_element where targettype='propal' and fk_target not in (select rowid from llx_propal);
 delete from llx_element_element where targettype='facture' and fk_target not in (select rowid from llx_facture);
 delete from llx_element_element where targettype='commande' and fk_target not in (select rowid from llx_commande);
 -- Fix delete element_element orphelins (left side)
 delete from llx_element_element where sourcetype='shipping' and fk_source not in (select rowid from llx_expedition);
+delete from llx_element_element where sourcetype='delivery' and fk_source not in (select rowid from llx_delivery);
 delete from llx_element_element where sourcetype='propal' and fk_source not in (select rowid from llx_propal);
 delete from llx_element_element where sourcetype='facture' and fk_source not in (select rowid from llx_facture);
 delete from llx_element_element where sourcetype='commande' and fk_source not in (select rowid from llx_commande);
@@ -270,7 +272,7 @@ update llx_product set barcode = null where barcode in ('', '-1', '0');
 update llx_societe set barcode = null where barcode in ('', '-1', '0');
 
 
--- Sequence to removed duplicated values of llx_links. Use several times if you still have duplicate.
+-- Sequence to removed duplicated values of llx_links. Run several times if you still have duplicate.
 drop table tmp_links_double;
 --select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2;
 create table tmp_links_double as (select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2);
@@ -279,7 +281,7 @@ delete from llx_links where (rowid, label) in (select max_rowid, label from tmp_
 drop table tmp_links_double;
 
 
--- Sequence to removed duplicated values of barcode in llx_product. Use several times if you still have duplicate.
+-- Sequence to removed duplicated values of barcode in llx_product. Run several times if you still have duplicate.
 drop table tmp_product_double;
 --select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2;
 create table tmp_product_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2);
@@ -288,7 +290,7 @@ update llx_product set barcode = null where (rowid, barcode) in (select max_rowi
 drop table tmp_product_double;
 
 
--- Sequence to removed duplicated values of barcode in llx_societe. Use several times if you still have duplicate.
+-- Sequence to removed duplicated values of barcode in llx_societe. Run several times if you still have duplicate.
 drop table tmp_societe_double;
 --select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2;
 create table tmp_societe_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2);
@@ -297,7 +299,7 @@ update llx_societe set barcode = null where (rowid, barcode) in (select max_rowi
 drop table tmp_societe_double;
 
 
--- Sequence to removed duplicated values of llx_accounting_account. Use several times if you still have duplicate.
+-- Sequence to removed duplicated values of llx_accounting_account. Run several times if you still have duplicate.
 drop table tmp_accounting_account_double;
 --select account_number, fk_pcg_version, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version having count(rowid) >= 2;
 create table tmp_accounting_account_double as (select account_number, fk_pcg_version, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version having count(rowid) >= 2);
@@ -413,6 +415,11 @@ DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_acc
 
 ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
+
+
+UPDATE llx_facturedet SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
+UPDATE llx_facture_fourn_det SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
+UPDATE llx_expensereport_det SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
 
 
 -- VMYSQL4.1 update llx_projet_task_time set task_datehour = task_date where task_datehour < task_date or task_datehour > DATE_ADD(task_date, interval 1 day);
@@ -556,4 +563,94 @@ UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NUL
 
 
 DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
+
+
+-- Sequence to fix the content of llx_bank.amount_main_currency
+-- Note: amount is amount in currency of bank account
+-- Note: pamount is always amount into the main currency
+-- Note: pmulticurrencyamount is in currency of invoice 
+-- Note: amount_main_currency must be amount in main currency
+-- DROP TABLE tmp_bank;
+-- CREATE TABLE tmp_bank SELECT b.rowid, b.amount, p.rowid as pid, p.amount as pamount, p.multicurrency_amount as pmulticurrencyamount FROM llx_bank as b INNER JOIN llx_bank_url as bu ON bu.fk_bank=b.rowid AND bu.type = 'payment' INNER JOIN llx_paiement as p ON bu.url_id = p.rowid WHERE p.multicurrency_amount <> 0 AND p.multicurrency_amount <> p.amount;
+-- UPDATE llx_bank as b SET b.amount_main_currency = (SELECT tb.pamount FROM tmp_bank as tb WHERE tb.rowid = b.rowid) WHERE b.amount_main_currency IS NULL;
+-- DROP TABLE tmp_bank2;
+-- CREATE TABLE tmp_bank2 SELECT b.rowid, b.amount, p.rowid as pid, p.amount as pamount, p.multicurrency_amount as pmulticurrencyamount FROM llx_bank as b INNER JOIN llx_bank_url as bu ON bu.fk_bank=b.rowid AND bu.type = 'payment_supplier' INNER JOIN llx_paiementfourn as p ON bu.url_id = p.rowid WHERE p.multicurrency_amount <> 0 AND p.multicurrency_amount <> p.amount;
+-- UPDATE llx_bank as b SET b.amount_main_currency = (SELECT tb.pamount FROM tmp_bank2 as tb WHERE tb.rowid = b.rowid) WHERE b.amount_main_currency IS NULL;
+
+
+-- Delete duplicate entries into llx_c_transport_mode
+-- VMYSQL4.1 DELETE T1 FROM llx_c_transport_mode as T1, llx_c_transport_mode as T2 where T1.entity = T2.entity AND T1.code = T2.code and T1.rowid > T2.rowid;
+-- VPGSQL8.2 DELETE FROM llx_c_transport_mode as T1 WHERE rowid NOT IN (SELECT min(rowid) FROM llx_c_transport_mode GROUP BY code, entity);
+
+-- Delete department of regions linked to no coutry, then delete region with no country
+DELETE FROM llx_c_departements WHERE fk_region <> 0 AND fk_region IN (select code_region FROM llx_c_regions WHERE fk_pays NOT IN (select rowid from llx_c_country));
+DELETE from llx_c_regions WHERE fk_pays NOT IN (select rowid from llx_c_country);
+
+
+-- Drop duplicate indexes not named correctly and create the only one we should have
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combination;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_2;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_3;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_4;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_5;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_6;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_7;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_8;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_9;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_10;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_11;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_12;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_13;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_14;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_15;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_16;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_17;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_18;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_19;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_20;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_21;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_22;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_23;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_24;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_25;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_26;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_27;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_28;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_29;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_30;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_31;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_32;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_33;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_34;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_35;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_36;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_37;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_38;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_39;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_40;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_41;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_42;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_43;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_44;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_45;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_46;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_47;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_48;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_49;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_50;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_51;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_52;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_53;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_54;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_55;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_56;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_57;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_58;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_59;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_60;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_61;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_62;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_63;
+ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE INDEX uk_prod_att_comb_price_level(fk_product_attribute_combination, fk_price_level);
+
 

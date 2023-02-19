@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - stocks
 Location=Ubicaciòn
-WarehouseAskWarehouseDuringOrder=Set a warehouse on Sales Orders
 inventoryEdit=Editar
 inventoryDraft=Activos
 SelectCategory=Filtro por Categoría

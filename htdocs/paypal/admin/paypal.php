@@ -24,6 +24,7 @@
  * \brief      Page to setup paypal module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -45,65 +46,65 @@ if ($action == 'setvalue' && $user->admin) {
 	$db->begin();
 
 	$result = dolibarr_set_const($db, "PAYPAL_API_USER", GETPOST('PAYPAL_API_USER', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "PAYPAL_API_PASSWORD", GETPOST('PAYPAL_API_PASSWORD', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "PAYPAL_API_SIGNATURE", GETPOST('PAYPAL_API_SIGNATURE', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "PAYPAL_SSLVERSION", GETPOST('PAYPAL_SSLVERSION', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CREDITOR", GETPOST('ONLINE_PAYMENT_CREDITOR', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS", GETPOST('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 'int'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "PAYPAL_API_INTEGRAL_OR_PAYPALONLY", GETPOST('PAYPAL_API_INTEGRAL_OR_PAYPALONLY', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL", GETPOST('ONLINE_PAYMENT_CSS_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "PAYPAL_ADD_PAYMENT_URL", GETPOST('PAYPAL_ADD_PAYMENT_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_FORM", GETPOST('ONLINE_PAYMENT_MESSAGE_FORM', 'restricthtml'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_OK", GETPOST('ONLINE_PAYMENT_MESSAGE_OK', 'restricthtml'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_KO", GETPOST('ONLINE_PAYMENT_MESSAGE_KO', 'restricthtml'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_SENDEMAIL", GETPOST('ONLINE_PAYMENT_SENDEMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	// Payment token for URL
 	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN", GETPOST('PAYMENT_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	if (empty($conf->use_javascript_ajax)) {
 		$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!($result > 0)) {
 			$error++;
 		}
 	}
@@ -244,7 +245,7 @@ print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$con
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': '.$mysoc->name.'</span>';
 print '</td></tr>';
 
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccount").'</td><td>';
 	print img_picto('', 'bank_account').' ';
@@ -333,7 +334,7 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 
@@ -350,7 +351,7 @@ $sandboxpaypalurl = 'developer.paypal.com';
 
 print '<div id="apidoc">';
 print 'Your API authentication information can be found with following steps. We recommend that you open a separate Web browser session when carrying out this procedure.<br>
-1. Log in to your PayPal account (on real paypal <a href="https://'.$realpaypalurl.'" target="_blank">'.$realpaypalurl.'</a> (or sandbox <a href="https://'.$sandboxpaypalurl.'" target="_blank">'.$sandboxpaypalurl.'</a>).<br>
+1. Log in to your PayPal account (on real paypal <a href="https://'.$realpaypalurl.'" target="_blank" rel="noopener noreferrer external">'.$realpaypalurl.'</a> (or sandbox <a href="https://'.$sandboxpaypalurl.'" target="_blank" rel="noopener noreferrer external">'.$sandboxpaypalurl.'</a>).<br>
 2. Click the "Profile" or "Preferencies" subtab located under the My Account heading.<br>
 3. Click the link "API Access".<br>
 4. Click the View API Certificate link in the right column.<br>

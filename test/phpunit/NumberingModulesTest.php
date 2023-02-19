@@ -77,7 +77,7 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 
@@ -91,7 +91,7 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -104,7 +104,7 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -120,7 +120,7 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -144,13 +144,15 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 		// First we try with a simple mask, with no reset
 		// and we test counter is still increase second year.
 		$conf->global->FACTURE_ADDON='mercure';
-		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}-{0000}';
 		$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}-{0000}';
+		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}-{0000}';
+		$conf->global->FACTURE_MERCURE_MASK_DEPOSIT='{yyyy}-{0000}';
+		$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT='{yyyy}-{0000}';
 		$conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED=0;
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
-		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1915);	// we use year 1915 to be sure to not have existing invoice for this year
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1915);	// we use year 1915 to be sure to not have existing invoice for this year (usefull only if numbering is {0000@1}
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
 		print __METHOD__." result=".$result."\n";
