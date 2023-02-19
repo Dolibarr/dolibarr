@@ -219,16 +219,16 @@ if (!empty($conf->global->MAIN_USE_BOOKMARKS_FOR_LANDING_PAGES)) {
 	$sql = "SELECT b.rowid, b.fk_user, b.url, b.title,";
 
 	$sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b";
-	$sql .= " WHERE 1=1";
-	$sql .= " AND b.entity IN (".getEntity('bookmark').")";
+	$sql .= " WHERE b.entity IN (".getEntity('bookmark').")";
 	$sql .= " AND b.url NOT LIKE 'http%'";
 	if (!$object->admin) {
 		$sql .= " AND (b.fk_user = ".((int) $object->id)." OR b.fk_user is NULL OR b.fk_user = 0)";
 	}
-	$resql = $object->db->query($sql);
+	$resql = $db->query($sql);
 	if ($resql) {
 		$i = 0;
-		while ($i < $object->db->num_rows($resql)) {
+		$num_rows = $db->num_rows($resql);
+		while ($i < $num_rows) {
 			$obj = $db->fetch_object($resql);
 			$landing_url = str_replace(DOL_URL_ROOT, '', $obj->url);
 			$tmparray[$landing_url] = $obj->title;
