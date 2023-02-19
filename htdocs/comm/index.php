@@ -163,7 +163,7 @@ if (isModEnabled("propal") && $user->hasRight("propal", "lire")) {
 				$obj = $db->fetch_object($resql);
 
 				if ($i >= $max) {
-					$othernb += 1;
+					$othernb++;
 					$i++;
 					$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 					continue;
