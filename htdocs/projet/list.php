@@ -789,8 +789,10 @@ if ($search_date_end_end) {
 if ($socid) {
 	$param .= '&socid='.urlencode($socid);
 }
-if (!empty($search_categ)) {
-	$param .= '&search_categ='.urlencode($search_categ);
+if (!empty($search_category_array)) {
+	foreach ($search_category_array as $tmpval) {
+		$param .= '&search_categegory_project_list[]='.urlencode($tmpval);
+	}
 }
 if ($search_ref != '') {
 	$param .= '&search_ref='.urlencode($search_ref);
@@ -819,8 +821,8 @@ if ($search_public != '') {
 if ($search_project_user > 0) {
 	$param .= '&search_project_user='.urlencode($search_project_user);
 }
-if ($search_project_contact != '') {
-	$param .= '&search_project_user='.urlencode($search_project_contact);
+if ($search_project_contact > 0) {
+	$param .= '&search_project_contact='.urlencode($search_project_contact);
 }
 if ($search_sale > 0) {
 	$param .= '&search_sale='.urlencode($search_sale);
