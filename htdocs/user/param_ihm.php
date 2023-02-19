@@ -230,7 +230,7 @@ if (!empty($conf->global->MAIN_USE_BOOKMARKS_FOR_LANDING_PAGES)) {
 		$i = 0;
 		while ($i < $object->db->num_rows($resql)) {
 			$obj = $db->fetch_object($resql);
-			$landing_url = str_replace(DOL_URL_ROOT,'',$obj->url);
+			$landing_url = str_replace(DOL_URL_ROOT, '', $obj->url);
 			$tmparray[$landing_url] = $obj->title;
 			$i++;
 		}
