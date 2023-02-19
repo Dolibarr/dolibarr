@@ -203,15 +203,12 @@ function printDropdownBookmarksList()
 			</div>
 		';
 
-		if ($bookmarkNb) {
-			$html .= '
+		$html .= '
 				<!-- Menu Body -->
-				<div class="bookmark-body dropdown-body">
-				'.$bookmarkList.'
-				<span id="top-bookmark-search-nothing-found" class="hidden-search-result opacitymedium">'.dol_escape_htmltag($langs->trans("NoBookmarkFound")).'</span>
+				<div class="bookmark-body dropdown-body">'.$bookmarkList.'
+				<span id="top-bookmark-search-nothing-found" class="'.($bookmarkNb ? 'hidden-search-result ' : '').'opacitymedium">'.dol_escape_htmltag($langs->trans("NoBookmarkFound")).'</span>
 				</div>
 				';
-		}
 
 		$html .= '<!-- script to open/close the popup -->
 				<script>
