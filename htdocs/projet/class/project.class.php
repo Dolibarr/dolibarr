@@ -498,7 +498,7 @@ class Project extends CommonObject
 			}
 		}
 
-		if (!$error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS)) {
+		if (!$error && (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_PROJECT'))) {
 			$res = $this->setValid($user);
 			if ($res < 0) {
 				$error++;

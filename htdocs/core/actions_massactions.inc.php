@@ -984,8 +984,13 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
-						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-							$newlang = $objecttmp->thirdparty->default_lang;
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && property_exists($objecttmp, 'thirdparty')) {
+							if ((property_exists($objecttmp, 'socid') || property_exists($objecttmp, 'fk_soc')) && empty($objecttmp->thirdparty)) {
+								$objecttmp->fetch_thirparty();
+							}
+							if (!empty($objecttmp->thirdparty)) {
+								$newlang = $objecttmp->thirdparty->default_lang;
+							}
 						}
 						if (!empty($newlang)) {
 							$outputlangs = new Translate("", $conf);
