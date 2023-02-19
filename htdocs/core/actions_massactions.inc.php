@@ -958,7 +958,14 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 		foreach ($toselect as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
-				$result = $objecttmp->validate($user);
+				if (method_exists($objecttmp, 'validate')) {
+					$result = $objecttmp->validate($user);
+				} elseif (method_exists($objecttmp, 'setValid')) {
+					$result = $objecttmp->setValid($user);
+				} else {
+					$objecttmp->error = 'No method validate or setValid on this object';
+					$result = -1;
+				}
 				if ($result == 0) {
 					$langs->load("errors");
 					setEventMessages($langs->trans("ErrorObjectMustHaveStatusDraftToBeValidated", $objecttmp->ref), null, 'errors');

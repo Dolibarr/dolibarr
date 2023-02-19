@@ -1098,7 +1098,7 @@ class Project extends CommonObject
 	 *
 	 * 		@param		User	$user		   User that validate
 	 *      @param      int     $notrigger     1=Disable triggers
-	 * 		@return		int					   <0 if KO, >0 if OK
+	 * 		@return		int					   <0 if KO, 0=Nothing done, >0 if KO
 	 */
 	public function setValid($user, $notrigger = 0)
 	{
@@ -1106,47 +1106,51 @@ class Project extends CommonObject
 
 		$error = 0;
 
-		if ($this->statut != 1) {
-			// Check parameters
-			if (preg_match('/^'.preg_quote($langs->trans("CopyOf").' ').'/', $this->title)) {
-				$this->error = $langs->trans("ErrorFieldFormat", $langs->transnoentities("Label")).'. '.$langs->trans('RemoveString', $langs->transnoentitiesnoconv("CopyOf"));
-				return -1;
+		// Protection
+		if ($this->status == self::STATUS_VALIDATED) {
+			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
+			return 0;
+		}
+
+		// Check parameters
+		if (preg_match('/^'.preg_quote($langs->trans("CopyOf").' ').'/', $this->title)) {
+			$this->error = $langs->trans("ErrorFieldFormat", $langs->transnoentities("Label")).'. '.$langs->trans('RemoveString', $langs->transnoentitiesnoconv("CopyOf"));
+			return -1;
+		}
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
+		$sql .= " SET fk_statut = ".self::STATUS_VALIDATED;
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		$sql .= " AND entity = ".((int) $conf->entity);
+
+		dol_syslog(get_class($this)."::setValid", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			// Call trigger
+			if (empty($notrigger)) {
+				$result = $this->call_trigger('PROJECT_VALIDATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
 			}
 
-			$this->db->begin();
-
-			$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
-			$sql .= " SET fk_statut = 1";
-			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= " AND entity = ".((int) $conf->entity);
-
-			dol_syslog(get_class($this)."::setValid", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				// Call trigger
-				if (empty($notrigger)) {
-					$result = $this->call_trigger('PROJECT_VALIDATE', $user);
-					if ($result < 0) {
-						$error++;
-					}
-					// End call triggers
-				}
-
-				if (!$error) {
-					$this->statut = 1;
-					$this->db->commit();
-					return 1;
-				} else {
-					$this->db->rollback();
-					$this->error = join(',', $this->errors);
-					dol_syslog(get_class($this)."::setValid ".$this->error, LOG_ERR);
-					return -1;
-				}
+			if (!$error) {
+				$this->statut = 1;
+				$this->db->commit();
+				return 1;
 			} else {
 				$this->db->rollback();
-				$this->error = $this->db->lasterror();
+				$this->error = join(',', $this->errors);
+				dol_syslog(get_class($this)."::setValid ".$this->error, LOG_ERR);
 				return -1;
 			}
+		} else {
+			$this->db->rollback();
+			$this->error = $this->db->lasterror();
+			return -1;
 		}
 	}
 
