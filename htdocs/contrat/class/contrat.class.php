@@ -2840,7 +2840,7 @@ class Contrat extends CommonObject
 			$return .= '<br><span class="info-box-label ">'.$this->societe.'</span>';
 		}
 		if (property_exists($this, 'date_contrat')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateContract").' : </span><span class="info-box-label">'.dol_print_date($this->date_contrat).'</span>';
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateContract").' : </span><span class="info-box-label">'.dol_print_date($this->date_contrat, 'day').'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
