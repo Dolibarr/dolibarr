@@ -709,7 +709,7 @@ class Form
 	 *  @param  string	$extracss           Add a CSS style to td, div or span tag
 	 *  @param  int		$noencodehtmltext   Do not encode into html entity the htmltext
 	 *  @param	int		$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
-	 *  @param  string  $tooltiptrigger     ''=Tooltip on hover, 'abc'=Tooltip on click (abc is a unique key, clickable link is on image or on link if param $type='none' or on both if $type='xxxclickable')
+	 *  @param  string  $tooltiptrigger     ''=Tooltip on hover and hidden on smartphone, 'abconsmartphone'=Tooltip on hover and on click on smartphone, 'abc'=Tooltip on click (abc is a unique key, clickable link is on image or on link if param $type='none' or on both if $type='xxxclickable')
 	 *  @param	int		$forcenowrap		Force no wrap between text and picto (works with notabs=2 only)
 	 * 	@return	string						HTML code of text, picto, tooltip
 	 */
@@ -717,16 +717,20 @@ class Form
 	{
 		global $conf, $langs;
 
-		$alt = '';
-		if ($tooltiptrigger) {
-			$alt = $langs->transnoentitiesnoconv("ClickToShowHelp");
-		}
-
 		//For backwards compatibility
 		if ($type == '0') {
 			$type = 'info';
 		} elseif ($type == '1') {
 			$type = 'help';
+		}
+
+		if (preg_match('/onsmartphone$/', $tooltiptrigger) && empty($conf->dol_no_mouse_hover)) {
+			$tooltiptrigger = preg_replace('/^.*onsmartphone$/', '', $tooltiptrigger);
+		}
+
+		$alt = '';
+		if ($tooltiptrigger) {
+			$alt = $langs->transnoentitiesnoconv("ClickToShowHelp");
 		}
 
 		// If info or help with no javascript, show only text
