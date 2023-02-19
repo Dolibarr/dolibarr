@@ -759,7 +759,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print load_fiche_titre($familytext, '', '', 0, '', 'modulefamilygroup');
 
 			if ($mode == 'commonkanban') {
-				print '<div class="box-flex-container">';
+				print '<div class="box-flex-container kanban">';
 			} else {
 				print '<div class="div-table-responsive">';
 				print '<table class="tagtable liste" summary="list_of_modules">'."\n";
