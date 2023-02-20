@@ -214,6 +214,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>&nbsp;';
 	}
 	print '</td>';
+    if($action == 'treeview') print '<td class="left">'.$langs->trans('ProducedBy').'</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Quantity').'</td>';
 	print '<td class="linecolstock right">'.$form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1).'</td>';
 	print '<td class="linecoltheoricalstock right">'.$form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc")).'</td>';
@@ -226,13 +227,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			foreach ($TChildBom as $fk_bom => $TProduct) {
 				$repeatChar = '&emsp;';
 				if (!empty($TProduct['bom'])) {
+					$prod = new Product($db);
+					$prod->fetch($TProduct['bom']->fk_product);
 					if ($TProduct['parentid'] != $object->id) print '<tr class="sub_bom_lines oddeven" parentid="'.$TProduct['parentid'].'">';
 					else print '<tr class="oddeven">';
-					print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$TProduct['bom']->getNomUrl(1);
+					if($action == 'treeview') print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$prod->getNomUrl(1);
+                    else print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$TProduct['bom']->getNomUrl(1);
 					print ' <a class="collapse_bom" id="collapse-'.$fk_bom.'" href="#">';
 					print img_picto('', 'folder-open');
 					print '</a>';
 					print  '</td>';
+					if($action == 'treeview') print '<td class="left">'.$TProduct['bom']->getNomUrl(1).'</td>';
 					print '<td class="linecolqty right">'.$TProduct['qty'].'</td>';
 					print '<td class="linecolstock right"></td>';
 					print '<td class="linecoltheoricalstock right"></td>';
@@ -247,6 +252,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						if ($fk_bom != $object->id) print '<tr class="sub_bom_lines oddeven" parentid="'.$fk_bom.'">';
 						else print '<tr class="oddeven">';
 						print '<td class="linecoldescription">'.str_repeat($repeatChar, $TInfos['level']).$prod->getNomUrl(1).'</td>';
+						if($action == 'treeview') print '<td></td>';
 						print '<td class="linecolqty right">'.$TInfos['qty'].'</td>';
 						print '<td class="linecolstock right">'.price2num($prod->stock_reel, 'MS').'</td>';
 						print '<td class="linecoltheoricalstock right">'.$prod->stock_theorique.'</td>';
