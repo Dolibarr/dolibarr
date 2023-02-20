@@ -99,6 +99,32 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	$error = 0;
+
+	$backurlforlist = DOL_URL_ROOT.'/comm/mailing/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/comm/mailing/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
+	if ($cancel) {
+		/*var_dump($cancel);var_dump($backtopage);var_dump($backtopageforcancel);exit;*/
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action = '';
+	}
+
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes') {
 		if (!GETPOST("clone_content", 'alpha') && !GETPOST("clone_receivers", 'alpha')) {
