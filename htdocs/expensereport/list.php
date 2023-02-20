@@ -750,7 +750,7 @@ if ($resql) {
 			if ($mode == 'kanban') {
 				if ($i == 0) {
 					print '<tr><td colspan="12">';
-					print '<div class="box-flex-container">';
+					print '<div class="box-flex-container kanban">';
 				}
 				$usertmp->fetch($obj->id_user);
 				$expensereportstatic->fk_user_author = $usertmp->getNomUrl(1);

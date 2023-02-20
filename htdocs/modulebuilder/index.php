@@ -1246,20 +1246,20 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			}
 			if ($objectname != $firstobjectname) {
 				$rightToadd = "
-		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
-		\$this->rights[\$r][1] = 'Read objects of ".$module."'; 
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1);
+		\$this->rights[\$r][1] = 'Read objects of ".$module."';
 		\$this->rights[\$r][4] = '".strtolower($objectname)."';
-		\$this->rights[\$r][5] = 'read'; 
+		\$this->rights[\$r][5] = 'read';
 		\$r++;
-		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
-		\$this->rights[\$r][1] = 'Create/Update objects of ".$module."'; 
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1);
+		\$this->rights[\$r][1] = 'Create/Update objects of ".$module."';
 		\$this->rights[\$r][4] = '".strtolower($objectname)."';
-		\$this->rights[\$r][5] = 'write'; 
+		\$this->rights[\$r][5] = 'write';
 		\$r++;
-		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
-		\$this->rights[\$r][1] = 'Delete objects of ".$module."'; 
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1);
+		\$this->rights[\$r][1] = 'Delete objects of ".$module."';
 		\$this->rights[\$r][4] = '".strtolower($objectname)."';
-		\$this->rights[\$r][5] = 'delete'; 
+		\$this->rights[\$r][5] = 'delete';
 		\$r++;
 		";
 				dolReplaceInFile($moduledescriptorfile, array('/* END MODULEBUILDER PERMISSIONS */' => '/*'.strtoupper($objectname).'*/'.$rightToadd."/*END ".strtoupper($objectname).'*/'."\n\t\t".'/* END MODULEBUILDER PERMISSIONS */'));
@@ -1835,20 +1835,20 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 
 		// regenerate permissions and delete them
 		$rights = "
-		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
-		\$this->rights[\$r][1] = 'Read objects of ".$module."'; 
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1);
+		\$this->rights[\$r][1] = 'Read objects of ".$module."';
 		\$this->rights[\$r][4] = '".strtolower($objectname)."';
-		\$this->rights[\$r][5] = 'read'; 
+		\$this->rights[\$r][5] = 'read';
 		\$r++;
-		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
-		\$this->rights[\$r][1] = 'Create/Update objects of ".$module."'; 
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1);
+		\$this->rights[\$r][1] = 'Create/Update objects of ".$module."';
 		\$this->rights[\$r][4] = '".strtolower($objectname)."';
-		\$this->rights[\$r][5] = 'write'; 
+		\$this->rights[\$r][5] = 'write';
 		\$r++;
-		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
-		\$this->rights[\$r][1] = 'Delete objects of ".$module."'; 
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1);
+		\$this->rights[\$r][1] = 'Delete objects of ".$module."';
 		\$this->rights[\$r][4] = '".strtolower($objectname)."';
-		\$this->rights[\$r][5] = 'delete'; 
+		\$this->rights[\$r][5] = 'delete';
 		\$r++;
 		";
 
@@ -2050,10 +2050,10 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 		}
 		//prepare stirng to add
 		$rightToAdd = "
-		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
-		\$this->rights[\$r][1] = '$label'; 
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1);
+		\$this->rights[\$r][1] = '$label';
 		\$this->rights[\$r][4] = '$objectForPerms';
-		\$this->rights[\$r][5] = '$crud'; 
+		\$this->rights[\$r][5] = '$crud';
 		\$r++;
 		";
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
@@ -2152,18 +2152,18 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright')&& e
 
 		//prepare right want to delete
 		$right = "
-		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
-		\$this->rights[\$r][1] = '$x1'; 
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1);
+		\$this->rights[\$r][1] = '$x1';
 		\$this->rights[\$r][4] = '$x2';
-		\$this->rights[\$r][5] = '$x3'; 
+		\$this->rights[\$r][5] = '$x3';
 		\$r++;
 		";
 		// right after editing
 		$rightUpdated = "
-		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
-		\$this->rights[\$r][1] = '$label'; 
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1);
+		\$this->rights[\$r][1] = '$label';
 		\$this->rights[\$r][4] = '$objectForPerms';
-		\$this->rights[\$r][5] = '$crud'; 
+		\$this->rights[\$r][5] = '$crud';
 		\$r++;
 		";
 	if (!$error) {
@@ -2209,10 +2209,10 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOST('p
 		$x3 = $permissions[$key][5];
 		//prepare right want to delete
 		$rightTodelete = "
-		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1); 
-		\$this->rights[\$r][1] = '$x1'; 
+		\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1);
+		\$this->rights[\$r][1] = '$x1';
 		\$this->rights[\$r][4] = '$x2';
-		\$this->rights[\$r][5] = '$x3'; 
+		\$this->rights[\$r][5] = '$x3';
 		\$r++;
 		";
 
@@ -2286,7 +2286,7 @@ if ($action == 'savefile' && empty($cancel)) {
 			dol_delete_file($pathoffile);
 			$result = file_put_contents($pathoffile, $content);
 			if ($result) {
-				@chmod($pathoffile, octdec($newmask));
+				dolChmod($pathoffile, $newmask);
 
 				setEventMessages($langs->trans("FileSaved"), null);
 			} else {
@@ -2394,19 +2394,19 @@ if ($dirins && $action == 'confirm_deletemenu' && GETPOST('menukey', 'int')) {
 	if ($menus[$key]['type'] == 'top') {
 			$menuTop = "
 		\$this->menu[\$r++] = array(
-			'fk_menu'=>'".$menus[$key]['fk_menu']."', 
-			'type'=>'".$menus[$key]['type']."', 
+			'fk_menu'=>'".$menus[$key]['fk_menu']."',
+			'type'=>'".$menus[$key]['type']."',
 			'titre'=>'".$menus[$key]['titre']."',
 			'prefix' => img_picto('', \$this->picto, 'class=\"paddingright pictofixedwidth valignmiddle\"'),
 			'mainmenu'=>'".$menus[$key]['mainmenu']."',
 			'leftmenu'=> '',
 			'url'=>'".$menus[$key]['url']."',
-			'langs'=>'".$menus[$key]['langs']."', 
+			'langs'=>'".$menus[$key]['langs']."',
 			'position'=>1000 + \$r,
-			'enabled'=>'isModEnabled(\"".strtolower($module)."\")', 
+			'enabled'=>'isModEnabled(\"".strtolower($module)."\")',
 			'perms' =>'".$menus[$key]['perms']."',
 			'target'=>'".$menus[$key]['target']."',
-			'user'=>".$menus[$key]['user'].", 
+			'user'=>".$menus[$key]['user'].",
 		);";
 		$check = dolReplaceInFile($moduledescriptorfile, array($menuTop => '',"\t\t".'/*TOPMENU '.strtolower($menus[$key]['titre']).'*/'."\n" => '', '/*END TOPMENU '.strtolower($menus[$key]['titre']).'*/'."\n\t\t" => ''));
 	}
@@ -2579,19 +2579,19 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 		if ($type == 'top') {
 			$menuTop = "
 		\$this->menu[\$r++] = array(
-			'fk_menu'=>'".$fk_menu."', 
-			'type'=>'".strtolower($type)."', 
+			'fk_menu'=>'".$fk_menu."',
+			'type'=>'".strtolower($type)."',
 			'titre'=>'".ucfirst($titre)."',
 			'prefix' => img_picto('', \$this->picto, 'class=\"paddingright pictofixedwidth valignmiddle\"'),
 			'mainmenu'=>'".$mainmenu."',
 			'leftmenu'=> '".$leftmenu."',
 			'url'=>'".$url."',
-			'langs'=>'".strtolower($module)."@".strtolower($module)."', 
+			'langs'=>'".strtolower($module)."@".strtolower($module)."',
 			'position'=>1000 + \$r,
-			'enabled'=>'isModEnabled(\"".strtolower($module)."\")', 
+			'enabled'=>'isModEnabled(\"".strtolower($module)."\")',
 			'perms' =>'".$perms."',
 			'target'=>'".$target."',
-			'user'=>".$user.", 
+			'user'=>".$user.",
 		);";
 			$addTopMenu = dolReplaceInFile($moduledescriptorfile, array('/* END MODULEBUILDER TOPMENU */' => '/*TOPMENU '.strtolower($titre).'*/'.$menuTop."\n\t\t".'/*END TOPMENU '.strtolower($titre).'*/'."\n\t\t/* END MODULEBUILDER TOPMENU */"));
 		}
@@ -2605,7 +2605,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 			'mainmenu'=>'".strtolower($module)."',
 			'leftmenu'=>'".strtolower($leftmenu)."',
 			'url'=>'".$url."',
-			'langs'=>'".strtolower($module)."@".strtolower($module)."', 
+			'langs'=>'".strtolower($module)."@".strtolower($module)."',
 			'position'=>1100+\$r,
 			'enabled'=>'\$conf->".strtolower($module)."->enabled',
 			'perms'=>'".$perms."',
@@ -2662,12 +2662,12 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int') && empty(GE
 			'mainmenu'=>'".$menus[$key]['mainmenu']."',
 			'leftmenu' =>'".$menus[$key]['leftmenu']."',
 			'url' =>'".$menus[$key]['url']."',
-			'langs'=>'".$menus[$key]['langs']."', 
+			'langs'=>'".$menus[$key]['langs']."',
 			'position'=>1000 + \$r,
-			'enabled'=>'isModEnabled(\"".strtolower($module)."\")', 
+			'enabled'=>'isModEnabled(\"".strtolower($module)."\")',
 			'perms' =>'".$menus[$key]['perms']."',
 			'target'=>'".$menus[$key]['target']."',
-			'user'=>".$menus[$key]['user'].", 
+			'user'=>".$menus[$key]['user'].",
 		);";
 
 		$fk_menu = GETPOST('fk_type', 'alpha');
@@ -2691,12 +2691,12 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int') && empty(GE
 			'mainmenu'=>'".$menus[$key]['mainmenu']."',
 			'leftmenu' =>'".$menus[$key]['leftmenu']."',
 			'url' =>'".$url."',
-			'langs'=>'".$menus[$key]['langs']."', 
+			'langs'=>'".$menus[$key]['langs']."',
 			'position'=>1000 + \$r,
-			'enabled'=>'".$menus[$key]['enabled']."', 
+			'enabled'=>'".$menus[$key]['enabled']."',
 			'perms' =>'".$perms."',
 			'target'=>'".$target."',
-			'user'=>".$user.", 
+			'user'=>".$user.",
 		);";
 
 
@@ -2716,12 +2716,12 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int') && empty(GE
 			'mainmenu'=>'".$menus[$key]['mainmenu']."',
 			'leftmenu' =>'".$menus[$key]['leftmenu']."',
 			'url' =>'".$url."',
-			'langs'=>'".$menus[$key]['langs']."', 
+			'langs'=>'".$menus[$key]['langs']."',
 			'position'=>1000 + \$r,
-			'enabled'=>'isModEnabled(\"".strtolower($module)."\")', 
+			'enabled'=>'isModEnabled(\"".strtolower($module)."\")',
 			'perms' =>'".$perms."',
 			'target'=>'".$target."',
-			'user'=>'".$user."', 
+			'user'=>'".$user."',
 		);";
 
 			dolReplaceInFile($moduledescriptorfile, array($menuTomodify => $modifiedMenu));

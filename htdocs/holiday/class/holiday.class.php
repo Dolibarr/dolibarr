@@ -1317,7 +1317,7 @@ class Holiday extends CommonObject
 		if (isset($this->statut)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
-		$datas['label'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
 		return $datas;
 	}
@@ -1344,8 +1344,7 @@ class Holiday extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
+			$dataparams = " data-params='".json_encode($params)."'";
 		}
 		$label = implode($this->getTooltipContentArray($params));
 
@@ -1996,7 +1995,7 @@ class Holiday extends CommonObject
 	 * Return list of people with permission to validate leave requests.
 	 * Search for permission "approve leave requests"
 	 *
-	 * @return  array       Array of user ids
+	 * @return  array|int       Array of user ids or -1 if error
 	 */
 	public function fetch_users_approver_holiday()
 	{

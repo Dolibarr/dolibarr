@@ -407,9 +407,9 @@ class Recruitment extends DolibarrApi
 	/**
 	 * Update jobposition
 	 *
-	 * @param int   $id             Id of jobposition to update
-	 * @param array $request_data   Datas
-	 * @return int
+	 * @param int   $id             		Id of jobposition to update
+	 * @param array $request_data   		Datas
+	 * @return  	Object              	Object with cleaned properties
 	 *
 	 * @throws RestException
 	 *
@@ -450,9 +450,9 @@ class Recruitment extends DolibarrApi
 	/**
 	 * Update candidature
 	 *
-	 * @param int   $id             Id of candidature to update
-	 * @param array $request_data   Datas
-	 * @return int
+	 * @param 	int   	$id             Id of candidature to update
+	 * @param 	array 	$request_data   Datas
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @throws RestException
 	 *

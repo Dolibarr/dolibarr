@@ -227,7 +227,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		$result = file_put_contents(dol_osencode($pathoffiletoedittarget), $contentclass);
 
 		if ($result) {
-			@chmod($pathoffiletoedittarget, octdec($newmask));
+			dolChmod($pathoffiletoedittarget, $newmask);
 		} else {
 			$error++;
 		}
@@ -369,7 +369,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 
 	$result = file_put_contents($pathoffiletoedittarget, $contentsql);
 	if ($result) {
-		@chmod($pathoffiletoedittarget, octdec($newmask));
+		dolChmod($pathoffiletoedittarget, $newmask);
 	} else {
 		$error++;
 		setEventMessages($langs->trans("ErrorFailToCreateFile", $pathoffiletoedittarget), null, 'errors');
@@ -408,7 +408,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 
 	$result2 = file_put_contents($pathoffiletoedittarget, $contentsql);
 	if ($result2) {
-		@chmod($pathoffiletoedittarget, octdec($newmask));
+		dolChmod($pathoffiletoedittarget, $newmask);
 	} else {
 		$error++;
 		setEventMessages($langs->trans("ErrorFailToCreateFile", $pathoffiletoedittarget), null, 'errors');

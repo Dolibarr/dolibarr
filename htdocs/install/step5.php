@@ -443,11 +443,12 @@ if ($action == "set") {
 				$fp = @fopen($lockfile, "w");
 				if ($fp) {
 					if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) {
-						$force_install_lockinstall = 444; // For backward compatibility
+						$force_install_lockinstall = '444'; // For backward compatibility
 					}
 					fwrite($fp, "This is a lock file to prevent use of install or upgrade pages (set with permission ".$force_install_lockinstall.")");
 					fclose($fp);
-					@chmod($lockfile, octdec($force_install_lockinstall));
+					dolChmod($lockfile, $force_install_lockinstall);
+
 					$createlock = 1;
 				}
 			}
@@ -490,11 +491,12 @@ if ($action == "set") {
 			$fp = @fopen($lockfile, "w");
 			if ($fp) {
 				if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) {
-					$force_install_lockinstall = 444; // For backward compatibility
+					$force_install_lockinstall = '444'; // For backward compatibility
 				}
 				fwrite($fp, "This is a lock file to prevent use of install or upgrade pages (set with permission ".$force_install_lockinstall.")");
 				fclose($fp);
-				@chmod($lockfile, octdec($force_install_lockinstall));
+				dolChmod($lockfile, $force_install_lockinstall);
+
 				$createlock = 1;
 			}
 		}

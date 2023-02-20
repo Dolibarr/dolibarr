@@ -79,7 +79,7 @@ trait CommonSocialNetworks
 		print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
 
 		if ($nbofnetworks > 1) {
-			print '<script type="text/javascript">
+			print '<script nonce="'.getNonce().'" type="text/javascript">
 		$("document").ready(function() { toogleSocialNetwork(false); });
 
 		jQuery(".socialnetworklnk").click(function() {

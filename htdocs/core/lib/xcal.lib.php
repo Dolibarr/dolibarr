@@ -284,10 +284,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 		fwrite($calfileh, "END:VCALENDAR");
 
 		fclose($calfileh);
-
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-		}
+		dolChmod($outputfile);
 	} else {
 		dol_syslog("xcal.lib.php::build_calfile Failed to open file ".$outputfile." for writing");
 		return -2;
@@ -429,10 +426,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 		fwrite($fichier, "</rss>");
 
 		fclose($fichier);
-
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-		}
+		dolChmod($outputfile);
 	}
 }
 

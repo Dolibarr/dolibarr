@@ -261,7 +261,7 @@ class RemiseCheque extends CommonObject
 			$this->errno = $this->db->lasterrno();
 		}
 
-		if (!$this->errno && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS)) {
+		if (!$this->errno && (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_CHEQUE'))) {
 			$res = $this->validate($user);
 			//if ($res < 0) $error++;
 		}

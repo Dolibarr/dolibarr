@@ -132,4 +132,3 @@ ShowAllPerms=Mostrar todas las filas de permisos
 HideAllPerms=Ocultar todas las filas de permisos
 UserPublicPageDesc=Puede habilitar una tarjeta virtual para este usuario. Una URL con el perfil de usuario y un código de barras estará disponible para permitir que cualquier persona con un teléfono inteligente lo escanee y agregue su contacto a su libreta de direcciones.
 EnablePublicVirtualCard=Habilitar la tarjeta de usuario virtual pública
-PublicVirtualCardUrl=Tarjeta de usuario virtual pública

@@ -600,7 +600,18 @@ class Conf
 				$this->global->USER_PASSWORD_GENERATED = 'standard'; // Default password generator
 			}
 			if (empty($this->global->MAIN_UMASK)) {
-				$this->global->MAIN_UMASK = '0664'; // Default mask
+				$this->global->MAIN_UMASK = '0660'; // Default mask
+			} else {
+				// We remove the execute bits on the file umask
+				$tmpumask = (octdec($this->global->MAIN_UMASK) & 0666);
+				$tmpumask = decoct($tmpumask);
+				if (!preg_match('/^0/', $tmpumask)) {
+					$tmpumask = '0'.$tmpumask;
+				}
+				if (empty($tmpumask) || $tmpumask === '0') {
+					$tmpumask = '0664';
+				}
+				$this->global->MAIN_UMASK = $tmpumask;
 			}
 
 			// conf->use_javascript_ajax
@@ -836,57 +847,57 @@ class Conf
 			// Avoid strict errors. TODO: Replace xxx->warning_delay with a property ->warning_delay_xxx
 			if (isset($this->agenda)) {
 				$this->adherent->subscription = new stdClass();
-				$this->adherent->subscription->warning_delay = (isset($this->global->MAIN_DELAY_MEMBERS) ? $this->global->MAIN_DELAY_MEMBERS : 0) * 86400;
+				$this->adherent->subscription->warning_delay = (isset($this->global->MAIN_DELAY_MEMBERS) ? (int) $this->global->MAIN_DELAY_MEMBERS : 0) * 86400;
 			}
 			if (isset($this->agenda)) {
-				$this->agenda->warning_delay = (isset($this->global->MAIN_DELAY_ACTIONS_TODO) ? $this->global->MAIN_DELAY_ACTIONS_TODO : 7) * 86400;
+				$this->agenda->warning_delay = (isset($this->global->MAIN_DELAY_ACTIONS_TODO) ? (int) $this->global->MAIN_DELAY_ACTIONS_TODO : 7) * 86400;
 			}
 			if (isset($this->projet)) {
-				$this->projet->warning_delay = (isset($this->global->MAIN_DELAY_PROJECT_TO_CLOSE) ? $this->global->MAIN_DELAY_PROJECT_TO_CLOSE : 7) * 86400;
+				$this->projet->warning_delay = (isset($this->global->MAIN_DELAY_PROJECT_TO_CLOSE) ? (int) $this->global->MAIN_DELAY_PROJECT_TO_CLOSE : 7) * 86400;
 				$this->projet->task = new StdClass();
-				$this->projet->task->warning_delay = (isset($this->global->MAIN_DELAY_TASKS_TODO) ? $this->global->MAIN_DELAY_TASKS_TODO : 7) * 86400;
+				$this->projet->task->warning_delay = (isset($this->global->MAIN_DELAY_TASKS_TODO) ? (int) $this->global->MAIN_DELAY_TASKS_TODO : 7) * 86400;
 			}
 
 			if (isset($this->commande)) {
 				$this->commande->client = new stdClass();
 				$this->commande->fournisseur = new stdClass();
-				$this->commande->client->warning_delay = (isset($this->global->MAIN_DELAY_ORDERS_TO_PROCESS) ? $this->global->MAIN_DELAY_ORDERS_TO_PROCESS : 2) * 86400;
-				$this->commande->fournisseur->warning_delay = (isset($this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS) ? $this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS : 7) * 86400;
+				$this->commande->client->warning_delay = (isset($this->global->MAIN_DELAY_ORDERS_TO_PROCESS) ? (int) $this->global->MAIN_DELAY_ORDERS_TO_PROCESS : 2) * 86400;
+				$this->commande->fournisseur->warning_delay = (isset($this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS) ? (int) $this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS : 7) * 86400;
 			}
 			if (isset($this->propal)) {
 				$this->propal->cloture = new stdClass();
 				$this->propal->facturation = new stdClass();
-				$this->propal->cloture->warning_delay = (isset($this->global->MAIN_DELAY_PROPALS_TO_CLOSE) ? $this->global->MAIN_DELAY_PROPALS_TO_CLOSE : 0) * 86400;
-				$this->propal->facturation->warning_delay = (isset($this->global->MAIN_DELAY_PROPALS_TO_BILL) ? $this->global->MAIN_DELAY_PROPALS_TO_BILL : 0) * 86400;
+				$this->propal->cloture->warning_delay = (isset($this->global->MAIN_DELAY_PROPALS_TO_CLOSE) ? (int) $this->global->MAIN_DELAY_PROPALS_TO_CLOSE : 0) * 86400;
+				$this->propal->facturation->warning_delay = (isset($this->global->MAIN_DELAY_PROPALS_TO_BILL) ? (int) $this->global->MAIN_DELAY_PROPALS_TO_BILL : 0) * 86400;
 			}
 			if (isset($this->facture)) {
 				$this->facture->client = new stdClass();
 				$this->facture->fournisseur = new stdClass();
-				$this->facture->client->warning_delay = (isset($this->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED) ? $this->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED : 0) * 86400;
-				$this->facture->fournisseur->warning_delay = (isset($this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY) ? $this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY : 0) * 86400;
+				$this->facture->client->warning_delay = (isset($this->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED) ? (int) $this->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED : 0) * 86400;
+				$this->facture->fournisseur->warning_delay = (isset($this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY) ? (int) $this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY : 0) * 86400;
 			}
 			if (isset($this->contrat)) {
 				$this->contrat->services = new stdClass();
 				$this->contrat->services->inactifs = new stdClass();
 				$this->contrat->services->expires = new stdClass();
-				$this->contrat->services->inactifs->warning_delay = (isset($this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES) ? $this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES : 0) * 86400;
-				$this->contrat->services->expires->warning_delay = (isset($this->global->MAIN_DELAY_RUNNING_SERVICES) ? $this->global->MAIN_DELAY_RUNNING_SERVICES : 0) * 86400;
+				$this->contrat->services->inactifs->warning_delay = (isset($this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES) ? (int) $this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES : 0) * 86400;
+				$this->contrat->services->expires->warning_delay = (isset($this->global->MAIN_DELAY_RUNNING_SERVICES) ? (int) $this->global->MAIN_DELAY_RUNNING_SERVICES : 0) * 86400;
 			}
 			if (isset($this->commande)) {
 				$this->bank->rappro	= new stdClass();
 				$this->bank->cheque	= new stdClass();
-				$this->bank->rappro->warning_delay = (isset($this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE) ? $this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE : 0) * 86400;
-				$this->bank->cheque->warning_delay = (isset($this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT) ? $this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT : 0) * 86400;
+				$this->bank->rappro->warning_delay = (isset($this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE) ? (int) $this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE : 0) * 86400;
+				$this->bank->cheque->warning_delay = (isset($this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT) ? (int) $this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT : 0) * 86400;
 			}
 			if (isset($this->expensereport)) {
 				$this->expensereport->approve = new stdClass();
-				$this->expensereport->approve->warning_delay = (isset($this->global->MAIN_DELAY_EXPENSEREPORTS) ? $this->global->MAIN_DELAY_EXPENSEREPORTS : 0) * 86400;
+				$this->expensereport->approve->warning_delay = (isset($this->global->MAIN_DELAY_EXPENSEREPORTS) ? (int) $this->global->MAIN_DELAY_EXPENSEREPORTS : 0) * 86400;
 				$this->expensereport->payment = new stdClass();
-				$this->expensereport->payment->warning_delay = (isset($this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY) ? $this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY : 0) * 86400;
+				$this->expensereport->payment->warning_delay = (isset($this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY) ? (int) $this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY : 0) * 86400;
 			}
 			if (isset($this->holiday)) {
 				$this->holiday->approve = new stdClass();
-				$this->holiday->approve->warning_delay = (isset($this->global->MAIN_DELAY_HOLIDAYS) ? $this->global->MAIN_DELAY_HOLIDAYS : 0) * 86400;
+				$this->holiday->approve->warning_delay = (isset($this->global->MAIN_DELAY_HOLIDAYS) ? (int) $this->global->MAIN_DELAY_HOLIDAYS : 0) * 86400;
 			}
 
 			if (!empty($this->global->PRODUIT_MULTIPRICES) && empty($this->global->PRODUIT_MULTIPRICES_LIMIT)) {

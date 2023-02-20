@@ -615,9 +615,10 @@ class Societe extends CommonObject
 	/**
 	 * Duplicate of code_compta_client (for backward compatibility)
 	 * @var string
+	 * @deprecated
+	 * @see $code_compta_client
 	 */
 	public $code_compta;
-
 
 	/**
 	 * Accounting code for customer
@@ -637,13 +638,11 @@ class Societe extends CommonObject
 	 */
 	public $accountancy_code_supplier;
 
-
 	/**
 	 * Accounting code for product (for level 3 of suggestion of prouct accounting account)
 	 * @var string
 	 */
 	public $code_compta_product;
-
 
 	/**
 	 * @var string
@@ -2716,25 +2715,28 @@ class Societe extends CommonObject
 		if (!empty($this->code_client) && ($this->client == 1 || $this->client == 3)) {
 			$datas['customercode'] = '<br><b>'.$langs->trans('CustomerCode').':</b> '.$this->code_client;
 		}
+		if (isModEnabled('accounting') && ($this->client == 1 || $this->client == 3)) {
+			$langs->load('compta');
+			$datas['accountancycustomercode'] = '<br><b>'.$langs->trans('CustomerAccountancyCode').':</b> '.($this->code_compta ? $this->code_compta : $this->code_compta_client);
+		}
+		// show categories for this record only in ajax to not overload lists
+		if (!$nofetch && isModEnabled('categorie') && $this->client) {
+			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+			$form = new Form($this->db);
+			$datas['categories_customer'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_CUSTOMER, 1, 1);
+		}
 		if (!empty($this->code_fournisseur) && $this->fournisseur) {
 			$datas['suppliercode'] = '<br><b>'.$langs->trans('SupplierCode').':</b> '.$this->code_fournisseur;
 		}
-		if (isModEnabled('accounting') && ($this->client == 1 || $this->client == 3)) {
-			$datas['accountancycustomercode'] = '<br><b>'.$langs->trans('CustomerAccountancyCode').':</b> '.($this->code_compta ? $this->code_compta : $this->code_compta_client);
-		}
 		if (isModEnabled('accounting') && $this->fournisseur) {
+			$langs->load('compta');
 			$datas['accountancysuppliercode'] = '<br><b>'.$langs->trans('SupplierAccountancyCode').':</b> '.$this->code_compta_fournisseur;
 		}
 		// show categories for this record only in ajax to not overload lists
-		if (isModEnabled('categorie') && !$nofetch) {
+		if (!$nofetch && isModEnabled('categorie') && $this->fournisseur) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
-			if ($this->client) {
-				$datas['categories_customer'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_CUSTOMER, 1);
-			}
-			if ($this->fournisseur) {
-				$datas['categories_supplier'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_SUPPLIER, 1);
-			}
+			$datas['categories_supplier'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_SUPPLIER, 1, 1);
 		}
 
 		$datas['divclose'] = '</div>';
@@ -2807,7 +2809,7 @@ class Societe extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
+			$dataparams = " data-params='".json_encode($params)."'";
 			// $label = $langs->trans('Loading');
 		}
 		$label = implode($this->getTooltipContentArray($params));
@@ -5193,5 +5195,35 @@ class Societe extends CommonObject
 		$this->partnerships[] = array();
 
 		return 1;
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if (property_exists($this, 'code_client')) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$this->code_client.'</span>';
+		}
+
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

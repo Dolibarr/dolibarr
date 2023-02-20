@@ -295,10 +295,7 @@ class RssParser
 				if ($fp) {
 					fwrite($fp, $str);
 					fclose($fp);
-					if (!empty($conf->global->MAIN_UMASK)) {
-						$newmask = $conf->global->MAIN_UMASK;
-					}
-					@chmod($newpathofdestfile, octdec($newmask));
+					dolChmod($newpathofdestfile);
 
 					$this->_lastfetchdate = $nowgmt;
 				} else {

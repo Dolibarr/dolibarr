@@ -3820,7 +3820,7 @@ class Commande extends CommonOrder
 		$label = implode($this->getTooltipContentArray($params));
 
 		$linkclose = '';
-		if (empty($notooltip) && $user->rights->commande->lire) {
+		if (empty($notooltip) && $user->hasRight('commande', 'lire')) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("Order");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';

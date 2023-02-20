@@ -60,6 +60,7 @@ $colorbacklinepairchecked = '230,237,244'; // line checked
 $colorbacklinebreak = '250,246,251';
 $colorbackbody = '248,248,248';
 $colortexttitlenotab = '80,71,5';
+$colortexttitlenotab2 = '100,0,100';
 $colortexttitle = '20,20,20';
 $colortexttitlelink = '0,0,120';
 $colortext = '0,0,0';

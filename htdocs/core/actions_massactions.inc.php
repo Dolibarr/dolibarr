@@ -820,9 +820,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 
 			// check if pdftk is installed
 			if (file_exists($file)) {
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$langs->load("exports");
 				setEventMessages($langs->trans('FileSuccessfullyBuilt', $filename.'_'.dol_print_date($now, 'dayhourlog')), null, 'mesgs');
@@ -888,9 +886,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 			$now = dol_now();
 			$file = $diroutputmassaction.'/'.$filename.'_'.dol_print_date($now, 'dayhourlog').'.pdf';
 			$pdf->Output($file, 'F');
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($file, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($file);
 
 			$langs->load("exports");
 			setEventMessages($langs->trans('FileSuccessfullyBuilt', $filename.'_'.dol_print_date($now, 'dayhourlog')), null, 'mesgs');
@@ -958,7 +954,14 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 		foreach ($toselect as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
-				$result = $objecttmp->validate($user);
+				if (method_exists($objecttmp, 'validate')) {
+					$result = $objecttmp->validate($user);
+				} elseif (method_exists($objecttmp, 'setValid')) {
+					$result = $objecttmp->setValid($user);
+				} else {
+					$objecttmp->error = 'No method validate or setValid on this object';
+					$result = -1;
+				}
 				if ($result == 0) {
 					$langs->load("errors");
 					setEventMessages($langs->trans("ErrorObjectMustHaveStatusDraftToBeValidated", $objecttmp->ref), null, 'errors');
@@ -977,8 +980,13 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
-						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-							$newlang = $objecttmp->thirdparty->default_lang;
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && property_exists($objecttmp, 'thirdparty')) {
+							if ((property_exists($objecttmp, 'socid') || property_exists($objecttmp, 'fk_soc')) && empty($objecttmp->thirdparty)) {
+								$objecttmp->fetch_thirdparty();
+							}
+							if (!empty($objecttmp->thirdparty)) {
+								$newlang = $objecttmp->thirdparty->default_lang;
+							}
 						}
 						if (!empty($newlang)) {
 							$outputlangs = new Translate("", $conf);

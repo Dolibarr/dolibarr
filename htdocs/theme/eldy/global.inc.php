@@ -3983,6 +3983,10 @@ div.refidno  {
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
 	line-height: 1.4em;
 }
+div.refaddress div.address {
+	line-height: 1.2em;
+	font-size: 0.95em;
+}
 div.refidno form {
 	display: inline-block;
 }
@@ -7538,6 +7542,33 @@ div.clipboardCPValue.hidewithsize {
 }
 
 
+/* ============================================================================== */
+/* Virtual business card                                                          */
+/* ============================================================================== */
+
+.virtualcard-div {
+	overflow: hidden;
+	vertical-align: top;
+	/* background: #aaa; */
+}
+
+#virtualcard-iframe {
+	border: 40px solid #aaa;
+	vertical-align: top;
+	width: 10%;
+	min-width: 100px;
+	border-radius: 10px;
+	aspect-ratio: 0.6;
+}
+.nopointervent {
+	pointer-events: none;
+}
+.scalepreview {
+	/* transform: scale(0.5); */
+	zoom: 0.20;
+	/* filter: blur(4px); */
+}
+
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
@@ -7647,7 +7678,7 @@ div.clipboardCPValue.hidewithsize {
 	}
 
 	.dropdown dd ul {
-		max-width: 350px;
+		max-width: 370px;
 	}
 }
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */

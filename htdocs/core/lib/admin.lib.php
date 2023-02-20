@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2016  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -770,6 +771,11 @@ function ihm_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=login";
 	$head[$h][1] = $langs->trans("LoginPage");
 	$head[$h][2] = 'login';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=css";
+	$head[$h][1] = $langs->trans("CSSPage");
+	$head[$h][2] = 'css';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin');

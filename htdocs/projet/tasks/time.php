@@ -1109,7 +1109,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				//'builddoc'=>$langs->trans("PDFMerge"),
 			);
 		}
-		if ( isModEnabled('ficheinter') && $user->rights->ficheinter->creer) {
+		if ( isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'creer')) {
 			$langs->load("interventions");
 			$arrayofmassactions['generateinter'] = $langs->trans("GenerateInter");
 		}
@@ -1388,9 +1388,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print '<input type="hidden" name="action" value="updatesplitline">';
 		} elseif ($action == 'createtime' && $user->rights->projet->time) {
 			print '<input type="hidden" name="action" value="addtimespent">';
-		} elseif ($massaction == 'generateinvoice' && $user->rights->facture->creer) {
+		} elseif ($massaction == 'generateinvoice' && $user->hasRight('facture', 'creer')) {
 			print '<input type="hidden" name="action" value="confirm_generateinvoice">';
-		} elseif ($massaction == 'generateinter' && $user->rights->ficheinter->creer) {
+		} elseif ($massaction == 'generateinter' && $user->hasRight('ficheinter', 'creer')) {
 			print '<input type="hidden" name="action" value="confirm_generateinter">';
 		} else {
 			print '<input type="hidden" name="action" value="list">';

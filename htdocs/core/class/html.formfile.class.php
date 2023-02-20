@@ -423,7 +423,7 @@ class FormFile
 		if (preg_match('/massfilesarea_/', $modulepart)) {
 			$out .= '<div id="show_files"><br></div>'."\n";
 			$title = $langs->trans("MassFilesArea").' <a href="" id="togglemassfilesarea" ref="shown">('.$langs->trans("Hide").')</a>';
-			$title .= '<script>
+			$title .= '<script nonce="'.getNonce().'">
 				jQuery(document).ready(function() {
 					jQuery(\'#togglemassfilesarea\').click(function() {
 						if (jQuery(\'#togglemassfilesarea\').attr(\'ref\') == "shown")

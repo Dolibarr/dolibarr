@@ -1386,7 +1386,7 @@ if ($action == 'create' || $action == 'presend') {
 		}
 
 		print '</div></div>';
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 
@@ -1416,7 +1416,7 @@ if ($action == 'create' || $action == 'presend') {
 				if (!$object->fk_soc && $user->hasRight("ficheinter", "creer")) {
 					print dolGetButtonAction($langs->trans('UnableToCreateInterIfNoSocid'), $langs->trans('TicketAddIntervention'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 				}
-				if ($object->fk_soc > 0 && isset($object->status) && $object->status < Ticket::STATUS_CLOSED && $user->rights->ficheinter->creer) {
+				if ($object->fk_soc > 0 && isset($object->status) && $object->status < Ticket::STATUS_CLOSED && $user->hasRight('ficheinter', 'creer')) {
 					print dolGetButtonAction('', $langs->trans('TicketAddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&token='.newToken().'&socid='. $object->fk_soc.'&origin=ticket_ticket&originid='. $object->id, '');
 				}
 
