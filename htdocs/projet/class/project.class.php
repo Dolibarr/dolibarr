@@ -2381,7 +2381,7 @@ class Project extends CommonObject
 	 */
 	public function getKanbanView($option = '')
 	{
-		global $langs,$db,$user;
+		global $langs,$user;
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -2392,7 +2392,7 @@ class Project extends CommonObject
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		if (property_exists($this, 'date_start_event')) {
 			$return .= '<br><span class="info-bo-label opacitymedium">'.$langs->trans("DateStart").'</span>';
-			$return .= '<span class="info-box-label "> : '.dol_print_date($db->jdate($this->date_start_event), 'day').'</>';
+			$return .= '<span class="info-box-label "> : '.dol_print_date($this->db->jdate($this->date_start_event), 'day').'</>';
 		}
 		if (property_exists($this, 'user_author_id')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Author").'</span>';
