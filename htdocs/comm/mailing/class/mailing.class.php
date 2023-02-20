@@ -556,15 +556,14 @@ class Mailing extends CommonObject
 	/**
 	 *  Delete emailing
 	 *
-	 *  @param	int		$rowid      Id if emailing to delete
+	 *  @param	User	$user		User that delete
 	 *  @param	int		$notrigger	Disable triggers
 	 *  @return int         		>0 if OK, <0 if KO
 	 */
-	public function delete($rowid, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
-		global $user;
-
 		$error = 0;
+
 		$this->db->begin();
 
 		if (!$notrigger) {
@@ -576,7 +575,7 @@ class Mailing extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "mailing";
-			$sql .= " WHERE rowid = " . ((int) $rowid);
+			$sql .= " WHERE rowid = " . ((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);

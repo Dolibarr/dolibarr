@@ -49,8 +49,9 @@ $confirm = GETPOST('confirm', 'alpha');
 $urlfrom = GETPOST('urlfrom');
 
 $object = new Mailing($db);
-
-$result = $object->fetch($id);
+if ($id > 0) {
+	$result = $object->fetch($id);
+}
 
 $extrafields = new ExtraFields($db);
 
@@ -673,7 +674,7 @@ if (empty($reshook)) {
 
 	// Action of delete confirmation
 	if ($action == 'confirm_delete' && $confirm == 'yes') {
-		if ($object->delete($object->id)) {
+		if ($object->delete($user)) {
 			$url = (!empty($urlfrom) ? $urlfrom : 'list.php');
 			header("Location: ".$url);
 			exit;
