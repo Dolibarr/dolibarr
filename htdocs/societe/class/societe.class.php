@@ -51,6 +51,11 @@ class Societe extends CommonObject
 	use CommonIncoterm;
 
 	/**
+	 * @var string ID of module.
+	 */
+	public $module = 'societe';
+
+	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'societe';

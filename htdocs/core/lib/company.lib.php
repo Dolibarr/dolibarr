@@ -377,7 +377,7 @@ function societe_prepare_head(Societe $object)
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda')&& (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$nbEvent = 0;
-		// Enable caching of thirdrparty count actioncomm
+		// Enable caching of thirdparty count actioncomm
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 		$cachekey = 'count_events_thirdparty_'.$object->id;
 		$dataretrieved = dol_getcache($cachekey);
@@ -1687,7 +1687,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 	//TODO Add limit in nb of results
 	if ($sql) {
 		$sql .= $db->order($sortfield_new, $sortorder);
+
 		dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$i = 0;
@@ -1935,7 +1937,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$out .= '</td>';
 
 			// Date
-			$out .= '<td class="center nowrap">';
+			$out .= '<td class="center nowraponall">';
 			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour', 'tzuserrel');
 			if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart']) {
 				$tmpa = dol_getdate($histo[$key]['datestart'], true);
