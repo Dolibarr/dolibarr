@@ -26,6 +26,7 @@ Permission56002=Ændre sager
 Permission56003=Slet sager
 Permission56004=Administrer sager
 Permission56005=Se sager fra alle tredjepart (ikke effektiv for eksterne brugere, vær altid begrænset til den tredjepart, de er afhængige af)
+Permission56006=Eksportér billetter
 
 Tickets=Sager
 TicketDictType=Sag - Typer
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Ekstern bidragyder
 
 OriginEmail=Sagsopretter e-mail
 Notify_TICKET_SENTBYMAIL=Send sagsbesked via e-mail
+
+ExportDataset_ticket_1=Sager
 
 # Status
 Read=Læs

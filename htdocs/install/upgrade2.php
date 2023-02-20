@@ -38,6 +38,7 @@
  *	\brief      Upgrade some data
  */
 
+define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
 if (!file_exists($conffile)) {
 	print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';
@@ -4196,7 +4197,7 @@ function migrate_delete_old_dir($db, $langs, $conf)
 	}
 
 	foreach ($filetodeletearray as $filetodelete) {
-		//print '<b>'.$filetodelete."</b><br>\n";
+		$result = 1;
 		if (file_exists($filetodelete)) {
 			$result = dol_delete_dir_recursive($filetodelete);
 		}

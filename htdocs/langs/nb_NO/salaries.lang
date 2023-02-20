@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Konto (fra kontoplanen) brukes som standard for "bruker" tredjeparter
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Den dedikerte kontoen som er definert på brukerkortet, vil kun brukes til underreskontro. Denne vil bli brukt for hovedbok og som standardverdi for underreskontro hvis dedikert brukerkonto for bruker ikke er definert.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Regnskapskonto som standard for lønnsutbetalinger
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=La som standard alternativet "Opprett automatisk en total betaling" være tomt når du oppretter lønn
 Salary=Lønn

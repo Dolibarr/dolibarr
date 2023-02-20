@@ -842,7 +842,7 @@ class Booking extends CommonObject
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("bookcal@bookcal");
+			//$langs->load("agenda");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
@@ -944,7 +944,7 @@ class Booking extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("bookcal@bookcal");
+		$langs->load("agenda");
 
 		if (empty($conf->global->BOOKCAL_BOOKING_ADDON)) {
 			$conf->global->BOOKCAL_BOOKING_ADDON = 'mod_booking_standard';
@@ -1009,7 +1009,7 @@ class Booking extends CommonObject
 		$result = 0;
 		$includedocgeneration = 0;
 
-		$langs->load("bookcal@bookcal");
+		$langs->load("agenda");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_booking';

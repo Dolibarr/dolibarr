@@ -30,7 +30,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (!empty($conf->ldap->enabled)) {
+if (isModEnabled('ldap')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 }
 
@@ -90,7 +90,7 @@ if (empty($reshook)) {
 	// Validate new password
 	if ($action == 'validatenewpassword' && $username && $passworduidhash) {
 		$edituser = new User($db);
-		$result = $edituser->fetch('', $username);
+		$result = $edituser->fetch('', $username, '', 0, $conf->entity);
 		if ($result < 0) {
 			$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorTechnicalError")).'</div>';
 		} else {
@@ -126,9 +126,9 @@ if (empty($reshook)) {
 			$isanemail = preg_match('/@/', $username);
 
 			$edituser = new User($db);
-			$result = $edituser->fetch('', $username, '', 1);
+			$result = $edituser->fetch('', $username, '', 1, $conf->entity);
 			if ($result == 0 && $isanemail) {
-				$result = $edituser->fetch('', '', '', 1, -1, $username);
+				$result = $edituser->fetch('', '', '', 1, $conf->entity, $username);
 			}
 
 			// Set the message to show (must be the same if login/email exists or not

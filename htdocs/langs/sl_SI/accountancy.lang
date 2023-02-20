@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=Izberite vrsto vrnitve v začetek
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 ThisService=Ta storitev
 ThisProduct=Ta izdelek
-DefaultForService=Privzeto za storitev
-DefaultForProduct=Privzeto za izdelek
+DefaultForService=Default for services
+DefaultForProduct=Default for products
 ProductForThisThirdparty=Izdelek za tega partnerja
 ServiceForThisThirdparty=Storitev za tega partnerja
 CantSuggest=Ne morem predlagati
@@ -101,7 +101,8 @@ ShowAccountingAccount=Pokaži računovodski račun
 ShowAccountingJournal=Prikaži knjigovodski dnevnik
 ShowAccountingAccountInLedger=Pokaži računovodski račun v knjigi
 ShowAccountingAccountInJournals=Pokaži računovodski račun v dnevnikih
-AccountAccountingSuggest=Priporočen računovodski račun
+DataUsedToSuggestAccount=Data used to suggest account
+AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=Privzeti računi
 MenuBankAccounts=Bančni računi
 MenuVatAccounts=DDV računi
@@ -126,6 +127,7 @@ WriteBookKeeping=Evidentirajte transakcije v računovodstvu
 Bookkeeping=Ledger
 BookkeepingSubAccount=Podknjiga
 AccountBalance=Stanje na računu
+AccountBalanceSubAccount=Sub-accounts balance
 ObjectsRef=Izvorni objekt ref
 CAHTF=Skupni nakup pred obdavčitvijo
 TotalExpenseReport=Poročilo o skupnih stroških
@@ -189,6 +191,7 @@ ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be us
 UseAuxiliaryAccountOnCustomerDeposit=Shranjevanje računa stranke kot posameznega računa v pomožni knjigi za vrstice predplačil (če je onemogočeno, bo posamezni račun za vrstice predplačil ostal prazen)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
 UseAuxiliaryAccountOnSupplierDeposit=Shranite račun dobavitelja kot posamezni račun v pomožni knjigi za vrstice predplačil (če je onemogočeno, bo posamezni račun za vrstice predplačil ostal prazen)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
@@ -218,6 +221,7 @@ JournalLabel=Oznaka dnevnika
 NumPiece=Številka kosa
 TransactionNumShort=št. transakcija
 AccountingCategory=Custom group of accounts
+AccountingCategories=Custom groups of accounts
 GroupByAccountAccounting=Združi po kontu glavne knjige
 GroupBySubAccountAccounting=Združi po kontu podknjižbe
 AccountingAccountGroupsDesc=Tu lahko določite nekaj skupin računovodskih kontov. Uporabljali se bodo za personalizirana računovodska poročila.
@@ -265,6 +269,7 @@ ShowSubtotalByGroup=Prikaži vmesni seštevek po stopnjah
 
 Pcgtype=Skupina računov
 PcgtypeDesc=Skupine kontov se uporabljajo kot vnaprej določena merila 'filtra' in 'združevanja' za nekatera računovodska poročila. Na primer, 'PRIHODEK' ali 'STROŠEK' se uporabljata kot skupini za računovodske račune izdelkov za izdelavo poročila o stroških/prihodkih.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 
 Reconcilable=Spravljivo
 
@@ -294,6 +299,7 @@ DescValidateMovements=Prepovedano je kakršno koli spreminjanje ali brisanje zap
 
 ValidateHistory=Samodejno vezanje
 AutomaticBindingDone=Samodejne vezave opravljene (%s) - Samodejna vezava ni mogoča za nekatere zapise (%s)
+DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=Gibanje ni pravilno uravnoteženo. Debet = %s & kredit = %s
@@ -337,11 +343,13 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Onemogočanje vezave in prenosa v računovod
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Onemogočanje vezave in prenosa v računovodstvu pri nakupih (računi dobaviteljev se ne bodo upoštevali v računovodstvu)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Onemogoči vezavo in prenos v računovodstvu na poročilih o stroških (poročila o stroških ne bodo upoštevana v računovodstvu)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
 NotifiedExportDate=Označi izvožene vrstice kot izvožene <span class="warning"> (če želite spremeniti vrstico, boste morali izbrisati celotno transakcijo in jo znova prenesti v računovodstvo) </span>
 NotifiedValidationDate=Potrdi in zakleni izvožene vnose <span class="warning"> (isti učinek kot funkcija "%s", spreminjanje in brisanje vrstic DEFINITIVNO ne bo mogoče) </span>
+NotifiedExportFull=Export documents ?
 DateValidationAndLock=Preverjanje datuma in zaklepanje
 ConfirmExportFile=Potrditev generiranja računovodske izvozne datoteke?
 ExportDraftJournal=Izvozi osnutek dnevnika
@@ -398,7 +406,7 @@ SaleLocal=Lokalna prodaja
 SaleExport=Izvozna prodaja
 SaleEEC=Prodaja v EGS
 SaleEECWithVAT=Prodaja v EGS z DDV ni ničelna, zato predpostavljamo, da to NI prodaja znotraj skupnosti in da je predlagani račun standardni račun izdelka.
-SaleEECWithoutVATNumber=Prodaja v EGS brez DDV, vendar ID za DDV partnerja ni opredeljen. Za standardno prodajo uporabljamo nadomestni račun izdelka. Po potrebi lahko popravite ID za DDV partnerja ali račun izdelka.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Prepovedano: transakcija je bila potrjena in/ali izvožena.
 ForbiddenTransactionAlreadyValidated=Prepovedano: transakcija je bila potrjena.
 ## Dictionary
@@ -442,6 +450,7 @@ AccountancyErrorMismatchLetterCode=Neujemanje v kodi za usklajevanje
 AccountancyErrorMismatchBalanceAmount=Stanje (%s) ni enako 0
 AccountancyErrorLetteringBookkeeping=Prišlo je do napak v zvezi s transakcijami: %s
 ErrorAccountNumberAlreadyExists=Knjigovodska številka %s že obstaja
+ErrorArchiveAddFile=Can't put "%s" file in archive
 
 ## Import
 ImportAccountingEntries=Računovodske knjižbe
@@ -468,5 +477,7 @@ FECFormatMulticurrencyCode=Koda za več valut (Idevise)
 DateExport=Izvoz datuma
 WarningReportNotReliable=Opozorilo, to poročilo ne temelji na knjigi, zato ne vsebuje transakcij, ki so bile ročno spremenjene v knjigi. Če je vaša dnevnika ažurna, je knjigovodski pogled natančnejši.
 ExpenseReportJournal=Dnevnik poročil o stroških
+DocsAlreadyExportedAreExcluded=Docs already exported are excluded
+ClickToHideAlreadyExportedLines=Click to hide already exported lines
 
 NAccounts=računi %s

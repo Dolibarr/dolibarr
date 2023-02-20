@@ -214,6 +214,37 @@ if (isModEnabled('agenda')) {
 if (isModEnabled('ticket')) {
 	$tmparray['ticket/list.php?mainmenu=ticket&leftmenu='] = 'Tickets';
 }
+// add bookmarks to available landing pages
+if (empty($conf->global->MAIN_NO_BOOKMARKS_FOR_LANDING_PAGES)) {
+	$sql = "SELECT b.rowid, b.fk_user, b.url, b.title";
+	$sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b";
+	$sql .= " WHERE b.entity IN (".getEntity('bookmark').")";
+	$sql .= " AND b.url NOT LIKE 'http%'";
+	if (!$object->admin) {
+		$sql .= " AND (b.fk_user = ".((int) $object->id)." OR b.fk_user is NULL OR b.fk_user = 0)";
+	}
+	$resql = $db->query($sql);
+	if ($resql) {
+		$i = 0;
+		$num_rows = $db->num_rows($resql);
+		while ($i < $num_rows) {
+			$obj = $db->fetch_object($resql);
+			$landing_url = str_replace(DOL_URL_ROOT, '', $obj->url);
+			$tmparray[$landing_url] = $obj->title;
+			$i++;
+		}
+	}
+}
+
+// Hook for insertion new items in the List of possible landing pages
+$reshook = $hookmanager->executeHooks('addToLandingPageList', $tmparray, $object);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+} elseif ($reshook > 0) {
+	$tmparray=$hookmanager->resArray;
+} elseif ($reshook == 0) {
+	$tmparray=array_merge($tmparray, $hookmanager->resArray);
+}
 
 $head = user_prepare_head($object);
 
@@ -343,9 +374,12 @@ if ($action == 'edit') {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
 	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
+
+	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
+	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
 	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 

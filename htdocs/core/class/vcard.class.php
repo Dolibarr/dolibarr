@@ -31,7 +31,7 @@
  */
 function encode($string)
 {
-	return str_replace(";", "\;", (dol_quoted_printable_encode(utf8_decode($string))));
+	return str_replace(";", "\;", (dol_quoted_printable_encode($string)));
 }
 
 
@@ -183,7 +183,7 @@ class vCard
 	}
 
 	/**
-	 *	mise en forme de l'adresse
+	 *	Address
 	 *
 	 *	@param	string	$postoffice		Postoffice
 	 *	@param	string	$extended		Extended
@@ -196,7 +196,7 @@ class vCard
 	 *  @param	string	$label			Label
 	 *	@return	void
 	 */
-	public function setAddress($postoffice = "", $extended = "", $street = "", $city = "", $region = "", $zip = "", $country = "", $type = "HOME", $label = '')
+	public function setAddress($postoffice = "", $extended = "", $street = "", $city = "", $region = "", $zip = "", $country = "", $type = "", $label = "")
 	{
 		// $type may be DOM | INTL | POSTAL | PARCEL | HOME | WORK or any combination of these: e.g. "WORK;PARCEL;POSTAL"
 		$key = "ADR";
@@ -207,7 +207,7 @@ class vCard
 			$key .= ';LABEL="'.encode($label).'"';
 		}
 		$key .= ";".$this->encoding;
-		$this->properties[$key] = ";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
+		$this->properties[$key] = encode($postoffice).";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
 
 		//if ($this->properties["LABEL;".$type.";".$this->encoding] == '') {
 			//$this->setLabel($postoffice, $extended, $street, $city, $region, $zip, $country, $type);
@@ -215,7 +215,7 @@ class vCard
 	}
 
 	/**
-	 *  mise en forme du label
+	 *  Address (old standard)
 	 *
 	 *  @param	string	$postoffice		Postoffice
 	 *  @param	string	$extended		Extended
@@ -226,6 +226,7 @@ class vCard
 	 *  @param	string	$country		Country
 	 *  @param	string	$type			Type
 	 *  @return	void
+	 *  @deprecated
 	 */
 	public function setLabel($postoffice = "", $extended = "", $street = "", $city = "", $region = "", $zip = "", $country = "", $type = "HOME")
 	{
@@ -358,7 +359,8 @@ class vCard
 		$text .= "VERSION:4.0\r\n";		// With V4, all encoding are UTF-8
 		//$text.= "VERSION:2.1\r\n";
 		foreach ($this->properties as $key => $value) {
-			$text .= $key.":".$value."\r\n";
+			$newkey = preg_replace('/-.*$/', '', $key);	// remove suffix -twitter, -facebook, ...
+			$text .= $newkey.":".$value."\r\n";
 		}
 		$text .= "REV:".date("Ymd")."T".date("His")."Z\r\n";
 		//$text .= "MAILER: Dolibarr\r\n";
@@ -378,6 +380,7 @@ class vCard
 
 	/**
 	 * Return a VCARD string
+	 * See RFC https://datatracker.ietf.org/doc/html/rfc6350
 	 *
 	 * @param	Object			$object		Object (User or Contact)
 	 * @param	Societe|null	$company	Company. May be null
@@ -439,7 +442,7 @@ class vCard
 					}
 				}
 				if ($urlsn) {
-					$this->properties["socialProfile;type=".$key] = $urlsn;
+					$this->properties["SOCIALPROFILE;TYPE=WORK-".$key] = $key.':'.$urlsn;
 				}
 			}
 		}
@@ -447,7 +450,7 @@ class vCard
 		$country = $object->country_code ? $object->country : '';
 
 		if ($object->address || $object->town || $object->state || $object->zip || $object->country) {
-			$this->setAddress("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=WORK");
+			$this->setAddress("", "", $object->address, $object->town, $object->state, $object->zip, $country, "");
 			//$this->setLabel("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=HOME");
 		}
 
@@ -465,9 +468,9 @@ class vCard
 			$this->setTitle($object->job);
 		}
 
-		// For user, type=home
+		// For user, $object->url is not defined
 		// For contact, $object->url is not defined
-		if ($object->url) {
+		if (!empty($object->url)) {
 			$this->setURL($object->url, "");
 		}
 

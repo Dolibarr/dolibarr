@@ -932,8 +932,10 @@ class Translate
 			$fonc = 'numberwords';
 			if (file_exists($newdir.'/functions_'.$fonc.'.lib.php')) {
 				include_once $newdir.'/functions_'.$fonc.'.lib.php';
-				$newnumber = numberwords_getLabelFromNumber($this, $number, $isamount);
-				break;
+				if (function_exists('numberwords_getLabelFromNumber')) {
+					$newnumber = numberwords_getLabelFromNumber($this, $number, $isamount);
+					break;
+				}
 			}
 		}
 

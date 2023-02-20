@@ -155,3 +155,5 @@ WebpageMustBeDisabled=The web page must have the status "%s"
 SetWebsiteOnlineBefore=When website is offline, all pages are offline. Change status of website first.
 Booking=Booking
 Reservation=Reservation
+PagesViewedPreviousMonth=Pages viewed (previous month)
+PagesViewedTotal=Pages viewed (total)

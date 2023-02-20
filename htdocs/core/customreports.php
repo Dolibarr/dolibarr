@@ -443,7 +443,7 @@ if (empty($conf->use_javascript_ajax)) {
 	print '<input type="submit" class="button buttongen button-save nomargintop" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
 } else {
 	print '<!-- js code to reload page with good object type -->
-	<script type="text/javascript">
+	<script nonce="'.getNonce().'" type="text/javascript">
         jQuery(document).ready(function() {
         	jQuery("#objecttype").change(function() {
         		console.log("Reload for "+jQuery("#objecttype").val());

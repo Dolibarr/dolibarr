@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015 Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019      Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022 Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021      Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2021      Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
@@ -49,9 +49,14 @@ class FormTicket
 	public $db;
 
 	/**
-	 * @var string	The track_id of the ticket. Used also for the $keytoavoidconflict to name session vars to upload files.
+	 * @var string		A hash value of the ticket. Duplicate of ref but for public purposes.
 	 */
 	public $track_id;
+
+	/**
+	 * @var string 		Email $trackid. Used also for the $keytoavoidconflict to name session vars to upload files.
+	 */
+	public $trackid;
 
 	/**
 	 * @var int ID
@@ -89,8 +94,12 @@ class FormTicket
 	public $withusercreate;  // to show name of creating user in form
 	public $withcreatereadonly;
 
-	public $withref;  // to show ref field
+	/**
+	 * @var int withextrafields
+	 */
+	public $withextrafields;
 
+	public $withref;  // to show ref field
 	public $withcancel;
 
 	public $type_code;
@@ -239,7 +248,7 @@ class FormTicket
 
 				// search contact form email
 				$langs->load('errors');
-				print '<script type="text/javascript">
+				print '<script nonce="'.getNonce().'" type="text/javascript">
                     jQuery(document).ready(function() {
                         var contact = jQuery.parseJSON("'.dol_escape_js(json_encode($with_contact), 2).'");
                         jQuery("#contact_search_line").hide();
@@ -360,7 +369,7 @@ class FormTicket
 			// KM Articles
 			print '<tr id="KWwithajax"></tr>';
 			print '<!-- Script to manage change of ticket group -->
-			<script>
+			<script nonce="'.getNonce().'">
 			jQuery(document).ready(function() {
 				function groupticketchange() {
 					console.log("We called groupticketchange, so we try to load list KM linked to event");
@@ -478,7 +487,7 @@ class FormTicket
 			$out .= '<td>';
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
-			$out .= '<script type="text/javascript">';
+			$out .= '<script nonce="'.getNonce().'" type="text/javascript">';
 			$out .= 'jQuery(document).ready(function () {';
 			$out .= '    jQuery(".removedfile").click(function() {';
 			$out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
@@ -540,7 +549,7 @@ class FormTicket
 				print '</td></tr>';
 				if (!empty($conf->use_javascript_ajax) && !empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) {
 					$htmlname = 'socid';
-					print '<script type="text/javascript">
+					print '<script nonce="'.getNonce().'" type="text/javascript">
                     $(document).ready(function () {
                         jQuery("#'.$htmlname.'").change(function () {
                             var obj = '.json_encode($events).';
@@ -1037,7 +1046,7 @@ class FormTicket
 				}
 				$stringtoprint .='</select>';
 
-				$stringtoprint .='<script>';
+				$stringtoprint .='<script nonce="'.getNonce().'">';
 				$stringtoprint .='arraynotparents = '.json_encode($arraycodenotparent).';';	// when the last visible combo list is number x, this is the array of group
 				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.($levelid-1):'').'").val())){
 					console.log("'.$htmlname.'_child_'.$levelid.'")
@@ -1098,7 +1107,7 @@ class FormTicket
 				$stringtoprint .='})';
 				$stringtoprint .='</script>';
 			}
-			$stringtoprint .='<script>';
+			$stringtoprint .='<script nonce="'.getNonce().'">';
 			$stringtoprint .='$("#'.$htmlname.'_child_'.$use_multilevel.'").change(function() {
 				$("#ticketcategory_select").val($(this).val());
 				$("#ticketcategory_select_child_id").val($(this).attr("child_id"));
@@ -1263,7 +1272,7 @@ class FormTicket
 		$langs->loadLangs(array('other', 'mails'));
 
 		// Clear temp files. Must be done at beginning, before call of triggers
-		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
+		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
 			$this->clear_attached_files();
 		}
 
@@ -1301,8 +1310,8 @@ class FormTicket
 			$keytoavoidconflict = empty($this->track_id) ? '' : '-'.$this->track_id; // track_id instead of trackid
 		}
 		//var_dump($keytoavoidconflict);
-		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
-			if (!empty($arraydefaultmessage->joinfiles) && is_array($this->param['fileinit'])) {
+		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
+			if (!empty($arraydefaultmessage->joinfiles) && !empty($this->param['fileinit']) && is_array($this->param['fileinit'])) {
 				foreach ($this->param['fileinit'] as $file) {
 					$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
 				}
@@ -1337,7 +1346,7 @@ class FormTicket
 		$send_email = GETPOST('send_email', 'int') ? GETPOST('send_email', 'int') : 0;
 
 		// Example 1 : Adding jquery code
-		print '<script type="text/javascript">
+		print '<script nonce="'.getNonce().'" type="text/javascript">
 		jQuery(document).ready(function() {
 			send_email=' . $send_email.';
 			if (send_email) {
@@ -1523,7 +1532,7 @@ class FormTicket
 			$out .= '<td>';
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
-			$out .= '<script type="text/javascript">';
+			$out .= '<script nonce="'.getNonce().'" type="text/javascript">';
 			$out .= 'jQuery(document).ready(function () {';
 			$out .= '    jQuery(".removedfile").click(function() {';
 			$out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';

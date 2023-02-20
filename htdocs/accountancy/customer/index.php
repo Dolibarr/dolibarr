@@ -121,6 +121,7 @@ if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('acc
 if ($action == 'validatehistory') {
 	$error = 0;
 	$nbbinddone = 0;
+	$nbbindfailed = 0;
 	$notpossible = 0;
 
 	$db->begin();
@@ -266,12 +267,14 @@ if ($action == 'validatehistory') {
 				if (!$resqlupdate) {
 					$error++;
 					setEventMessages($db->lasterror(), null, 'errors');
+					$nbbindfailed++;
 					break;
 				} else {
 					$nbbinddone++;
 				}
 			} else {
 				$notpossible++;
+				$nbbindfailed++;
 			}
 
 			$i++;
@@ -286,8 +289,8 @@ if ($action == 'validatehistory') {
 	} else {
 		$db->commit();
 		setEventMessages($langs->trans('AutomaticBindingDone', 	$nbbinddone, $notpossible), null, ($notpossible ? 'warnings' : 'mesgs'));
-		if ($notpossible) {
-			setEventMessages($langs->trans('DoManualBindingForFailedRecord', $notpossible), null, 'warnings');
+		if ($nbbindfailed) {
+			setEventMessages($langs->trans('DoManualBindingForFailedRecord', $nbbindfailed), null, 'warnings');
 		}
 	}
 }

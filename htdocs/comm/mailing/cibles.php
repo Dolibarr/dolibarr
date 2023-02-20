@@ -560,6 +560,7 @@ if ($object->fetch($id) >= 0) {
 		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<input type="hidden" name="limit" value="'.$limit.'">';
+		print '<input type="hidden" name="page_y" value="">';
 
 		print '<div class="div-table-responsive">';
 		print '<table class="noborder centpercent">';
@@ -675,7 +676,7 @@ if ($object->fetch($id) >= 0) {
 
 				// Date last update
 				print '<td class="center nowraponall">';
-				print dol_print_date($obj->tms, 'dayhour');
+				print dol_print_date(dol_stringtotime($obj->tms), 'dayhour');
 				print '</td>';
 
 				// Status of recipient sending email (Warning != status of emailing)

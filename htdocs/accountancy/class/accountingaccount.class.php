@@ -723,7 +723,7 @@ class AccountingAccount extends CommonObject
 	}
 
 	/**
-	 * Return Suggest accounting accounts to bind
+	 * Return a suggested account (from chart of accounts) to bind
 	 *
 	 * @param 	Societe 							$buyer 				Object buyer
 	 * @param 	Societe 							$seller 			Object seller
@@ -733,6 +733,8 @@ class AccountingAccount extends CommonObject
 	 * @param 	array 								$accountingAccount 	Array of Accounting account
 	 * @param 	string 								$type 				Customer / Supplier
 	 * @return	array|int      											Accounting accounts suggested or < 0 if technical error.
+	 * 																	'suggestedaccountingaccountbydefaultfor'=>Will be used for the label to show on tooltip for account by default on any product
+	 * 																	'suggestedaccountingaccountfor'=>Is the account suggested for this product
 	 */
 	public function getAccountingCodeToBind(Societe $buyer, Societe $seller, Product $product, $facture, $factureDet, $accountingAccount = array(), $type = '')
 	{

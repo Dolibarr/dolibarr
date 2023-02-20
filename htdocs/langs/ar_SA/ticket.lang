@@ -26,6 +26,7 @@ Permission56002=تعديل التذاكر
 Permission56003=حذف التذاكر
 Permission56004=إدارة التذاكر
 Permission56005=عرض جميع تذاكر الأطراف الثالثة (غير فعالة للمستخدمين الخارجيين ، دائماً محدودين بالطرف الثالث المعتمدين عليه)
+Permission56006=Export tickets
 
 Tickets=التذاكر
 TicketDictType=انواع - التذاكر
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=مساهم خارجي
 
 OriginEmail=البريد الإلكتروني للمبلغ
 Notify_TICKET_SENTBYMAIL=إرسال إشعار التذكرة بالبريد الإلكتروني
+
+ExportDataset_ticket_1=التذاكر
 
 # Status
 Read=قراءة

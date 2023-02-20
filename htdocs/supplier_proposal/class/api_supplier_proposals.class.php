@@ -58,7 +58,7 @@ class Supplierproposals extends DolibarrApi
 	 * Return an array with supplier proposal informations
 	 *
 	 * @param       int         $id         ID of supplier proposal
-	 * @return 	array|mixed data without useless information
+	 * @return  	Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */

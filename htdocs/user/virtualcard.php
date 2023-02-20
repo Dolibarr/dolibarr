@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 // Load translation files required by page
-$langs->loadLangs(array("users", "companies"));
+$langs->loadLangs(array("users", "companies", "admin", "website"));
 
 // Security check
 $id = GETPOST('id', 'int');
@@ -75,6 +75,7 @@ if ($action == 'update') {
 	$tmparray['USER_PUBLIC_HIDE_USER_MOBILE'] = (GETPOST('USER_PUBLIC_HIDE_USER_MOBILE') ? 1 : 0);
 	$tmparray['USER_PUBLIC_HIDE_BIRTH'] = (GETPOST('USER_PUBLIC_HIDE_BIRTH') ? 1 : 0);
 	$tmparray['USER_PUBLIC_HIDE_SOCIALNETWORKS'] = (GETPOST('USER_PUBLIC_HIDE_SOCIALNETWORKS') ? 1 : 0);
+	$tmparray['USER_PUBLIC_HIDE_ADDRESS'] = (GETPOST('USER_PUBLIC_HIDE_ADDRESS') ? 1 : 0);
 	$tmparray['USER_PUBLIC_HIDE_COMPANY'] = (GETPOST('USER_PUBLIC_HIDE_COMPANY') ? 1 : 0);
 	$tmparray['USER_PUBLIC_MORE'] = (GETPOST('USER_PUBLIC_MORE') ? GETPOST('USER_PUBLIC_MORE') : '');
 
@@ -114,9 +115,12 @@ if ($user->rights->user->user->lire || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
 $morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 $morehtmlref .= '</a>';
+
+$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
+$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
 //dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
 
@@ -124,20 +128,6 @@ $morehtmlref .= '</a>';
 print '<div class="fichecenter">';
 
 print '<br>';
-
-/*
- print '<span class="opacitymedium">'.$langs->trans("VCard").'</span><br>';
-
-print '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid" rel="noopener">';
-print img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
-print '</a>';
-
-
-print '<hr>';
-//print '<div class="underbanner clearboth"></div>';
-
-print '<br>';
-*/
 
 print '<span class="opacitymedium">'.$langs->trans("UserPublicPageDesc").'</span><br><br>';
 
@@ -162,12 +152,16 @@ print '<input type="hidden" id="USER_ENABLE_PUBLIC" name="USER_ENABLE_PUBLIC" va
 print '<br><br>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="action" value="update">';
-print '<input type="hidden" name="id" value="'.$object->id.'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
 
 if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
+	print '<input type="hidden" name="action" value="update">';
+	print '<input type="hidden" name="id" value="'.$object->id.'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+
+
 	print '<br>';
+
+
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('PublicVirtualCardUrl').'</span><br>';
 
@@ -175,11 +169,41 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 
 	print '<div class="urllink">';
 	print '<input type="text" id="publicurluser" class="quatrevingtpercentminusx" value="'.$fullexternaleurltovirtualcard.'">';
-	print '<a target="_blank" rel="noopener noreferrer" href="'.$fullexternaleurltovirtualcard.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$fullexternaleurltovirtualcard.'">'.img_picto('', 'globe', 'class="paddingleft marginrightonly paddingright"').$langs->trans("GoTo").'...</a>';
 	print '</div>';
 	print ajax_autoselect('publicurluser');
 
 	print '<br>';
+	print '<br>';
+
+	// Show/Hide options
+	print '<div class="centpercent margintoponly marginbottomonly">';
+	print img_picto('', 'setup', 'class="pictofixedwidth"').'<a id="lnk" href="#">'.$langs->trans("ShowAdvancedOptions").'...</a>';
+	print '</div>';
+
+	print '<script type="text/javascript">
+	jQuery(document).ready(function() {
+		jQuery("#lnk").click(function() {
+			console.log("We click on link");
+			hideoptions(this);
+		});
+	});
+
+	function hideoptions(domelem) {
+		const div = document.getElementById("div_container_sub_exportoptions");
+
+	  	if (div.style.display === "none") {
+	    	div.style.display = "block";
+			domelem.innerText="'.dol_escape_js($langs->transnoentitiesnoconv("HideAdvancedoptions")).'";
+	  	} else {
+	    	div.style.display = "none";
+			domelem.innerText="'.dol_escape_js($langs->transnoentitiesnoconv("ShowAdvancedOptions")).'...";
+		}
+	}
+	</script>';
+
+	// Start div hide/Show
+	print '<div id="div_container_sub_exportoptions" style="display: none;">';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
@@ -212,21 +236,21 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 
 	// Office phone
 	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("OfficePhone"));
+	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("PhonePro"));
 	print '</td><td>';
 	print $form->selectyesno("USER_PUBLIC_HIDE_OFFICE_PHONE", (getDolUserInt('USER_PUBLIC_HIDE_OFFICE_PHONE', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_OFFICE_PHONE', 0, $object) : 0), 1);
 	print "</td></tr>\n";
 
 	// Office fax
 	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("OfficeFax"));
+	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("Fax"));
 	print '</td><td>';
 	print $form->selectyesno("USER_PUBLIC_HIDE_OFFICE_FAX", (getDolUserInt('USER_PUBLIC_HIDE_OFFICE_FAX', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_OFFICE_FAX', 0, $object) : 0), 1);
 	print "</td></tr>\n";
 
 	// User mobile
 	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("UserMobile"));
+	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("PhoneMobile"));
 	print '</td><td>';
 	print $form->selectyesno("USER_PUBLIC_HIDE_USER_MOBILE", (getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object) : 0), 1);
 	print "</td></tr>\n";
@@ -240,9 +264,16 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 
 	// Social networks
 	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("SocialNetworks"));
+	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("SocialNetworksInformation"));
 	print '</td><td>';
 	print $form->selectyesno("USER_PUBLIC_HIDE_SOCIALNETWORKS", (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object) : 0), 1);
+	print "</td></tr>\n";
+
+	// Address
+	print '<tr class="oddeven" id="tredit"><td>';
+	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("Address"));
+	print '</td><td>';
+	print $form->selectyesno("USER_PUBLIC_HIDE_ADDRESS", (getDolUserInt('USER_PUBLIC_HIDE_ADDRESS', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_ADDRESS', 0, $object) : 0), 1);
 	print "</td></tr>\n";
 
 	// Company name
@@ -257,7 +288,8 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print $langs->trans("Text");
 	print '</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('USER_PUBLIC_MORE', getDolUserString('USER_PUBLIC_MORE', '', $object), '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
+	$extendededitor = 0;	// We force no WYSIWYG editor
+	$doleditor = new DolEditor('USER_PUBLIC_MORE', getDolUserString('USER_PUBLIC_MORE', '', $object), '', 160, 'dolibarr_notes', '', false, false, $extendededitor, ROWS_5, '90%');
 	$doleditor->Create();
 	print "</td></tr>\n";
 
@@ -265,20 +297,34 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '</div>';
 
 	print '<div class="center">';
-	print $form->buttonsSaveCancel("Save", ($dol_openinpopup ? "Cancel" : ""), array(), 0, '', $dol_openinpopup);
+	print $form->buttonsSaveCancel("Save", '', array(), 0, '', $dol_openinpopup);
 	print '</div>';
+
+	print '<br>';
+
+	print '</div>';	// End hide/show
+
+	print '<br>';
+
+	// Preview
+	print '<div class="center">';
+	print '<span class="opacitymedium">'.$langs->trans("Preview").'</span><br>';
+	print '<div class="virtualcard-div">';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$fullexternaleurltovirtualcard.'">';
+	print '<iframe id="virtualcard-iframe" title="" class="center" src="'.$fullexternaleurltovirtualcard.'&mode=preview">';
+	print '</iframe>';
+	print '</a>';
+	print '</div>';
+	print '</div>';
+
+	print '<br>';
 }
 
 
-print dol_get_fiche_end();
-
 print '</form>';
-
 
 print '</div>';
 
-
-print dol_get_fiche_end();
 
 // End of page
 llxFooter();

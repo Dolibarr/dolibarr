@@ -66,8 +66,8 @@ class Recruitment extends DolibarrApi
 	 *
 	 * Return an array with jobposition informations
 	 *
-	 * @param 	int 	$id ID of jobposition
-	 * @return 	array|mixed data without useless information
+	 * @param 	int 		$id 	ID of jobposition
+	 * @return  Object             	Object with cleaned properties
 	 *
 	 * @url	GET jobposition/{id}
 	 *
@@ -97,8 +97,8 @@ class Recruitment extends DolibarrApi
 	 *
 	 * Return an array with candidature informations
 	 *
-	 * @param 	int 	$id ID of candidature
-	 * @return 	array|mixed data without useless information
+	 * @param 	int 	$id 	ID of candidature
+	 * @return  Object          Object with cleaned properties
 	 *
 	 * @url	GET candidature/{id}
 	 *
@@ -407,9 +407,9 @@ class Recruitment extends DolibarrApi
 	/**
 	 * Update jobposition
 	 *
-	 * @param int   $id             Id of jobposition to update
-	 * @param array $request_data   Datas
-	 * @return int
+	 * @param int   $id             		Id of jobposition to update
+	 * @param array $request_data   		Datas
+	 * @return  	Object              	Object with cleaned properties
 	 *
 	 * @throws RestException
 	 *
@@ -450,9 +450,9 @@ class Recruitment extends DolibarrApi
 	/**
 	 * Update candidature
 	 *
-	 * @param int   $id             Id of candidature to update
-	 * @param array $request_data   Datas
-	 * @return int
+	 * @param 	int   	$id             Id of candidature to update
+	 * @param 	array 	$request_data   Datas
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @throws RestException
 	 *

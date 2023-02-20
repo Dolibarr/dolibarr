@@ -26,6 +26,7 @@ Permission56002=Izmijenite tikete
 Permission56003=Izbrišite tikete
 Permission56004=Upravljajte tiketima
 Permission56005=Pogledajte tikete svih trećih strana (nije na snazi za vanjske korisnike, uvijek su ograničene na treću stranu o kojoj ovise)
+Permission56006=Export tickets
 
 Tickets=Tiketi
 TicketDictType=Tiketi - Vrste
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Vanjski suradnik
 
 OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Pošaljite poruku o tiketu putem e-pošte
+
+ExportDataset_ticket_1=Tiketi
 
 # Status
 Read=Čitati

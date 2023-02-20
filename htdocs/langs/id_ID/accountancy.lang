@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=Pilih jenis pengembalian angkutan
 ACCOUNTING_EXPORT_PREFIX_SPEC=Tentukan awalan untuk nama file
 ThisService=Layanan ini
 ThisProduct=Produk ini
-DefaultForService=Standar untuk Layanan
-DefaultForProduct=Standar untuk Produk
+DefaultForService=Default for services
+DefaultForProduct=Default for products
 ProductForThisThirdparty=Produk untuk pihak ketiga ini
 ServiceForThisThirdparty=Layanan untuk pihak ketiga ini
 CantSuggest=Tidak bisa menyarankan
@@ -101,7 +101,8 @@ ShowAccountingAccount=Tampilkan akun akuntansi
 ShowAccountingJournal=Tampilkan jurnal akuntansi
 ShowAccountingAccountInLedger=Tampilkan akun akuntansi dalam buku besar
 ShowAccountingAccountInJournals=Tampilkan akun akuntansi di jurnal
-AccountAccountingSuggest=Akun akuntansi yang disarankan
+DataUsedToSuggestAccount=Data used to suggest account
+AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=Akun standar
 MenuBankAccounts=Akun bank
 MenuVatAccounts=Akun PPN
@@ -126,6 +127,7 @@ WriteBookKeeping=Record transactions in accounting
 Bookkeeping=Buku Besar
 BookkeepingSubAccount=Subledger
 AccountBalance=Saldo akun
+AccountBalanceSubAccount=Sub-accounts balance
 ObjectsRef=Referensi sumber objek
 CAHTF=Jumlah total pembelian vendor sebelum pajak
 TotalExpenseReport=Jumlah total laporan pengeluaran
@@ -189,6 +191,7 @@ ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be us
 UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
 UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
@@ -218,6 +221,7 @@ JournalLabel=Label jurnal
 NumPiece=Jumlah potongan
 TransactionNumShort=Tidak. transaksi
 AccountingCategory=Custom group of accounts
+AccountingCategories=Custom groups of accounts
 GroupByAccountAccounting=Kelompokkan menurut akun buku besar
 GroupBySubAccountAccounting=Kelompokkan menurut akun subledger
 AccountingAccountGroupsDesc=Anda dapat mendefinisikan di sini beberapa grup akun akuntansi. Mereka akan digunakan untuk laporan akuntansi yang dipersonalisasi.
@@ -265,6 +269,7 @@ ShowSubtotalByGroup=Tunjukkan subtotal menurut level
 
 Pcgtype=Grup akun
 PcgtypeDesc=Grup akun digunakan sebagai kriteria 'filter' dan 'pengelompokan' yang telah ditentukan sebelumnya untuk beberapa laporan akuntansi. Misalnya, 'PENGHASILAN' atau 'BEBAN' digunakan sebagai grup untuk akun akuntansi produk untuk membangun laporan pengeluaran / pendapatan.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 
 Reconcilable=Dapat didamaikan
 
@@ -294,6 +299,7 @@ DescValidateMovements=Setiap modifikasi atau penghapusan tulisan, huruf dan peng
 
 ValidateHistory=Mengikat Secara Otomatis
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
+DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
@@ -337,11 +343,13 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Nonaktifkan pengikatan & transfer akuntansi 
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Nonaktifkan pengikatan & transfer akuntansi pada pembelian (faktur vendor tidak akan diperhitungkan dalam akuntansi)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Nonaktifkan pengikatan & transfer akuntansi pada laporan pengeluaran (laporan pengeluaran tidak akan diperhitungkan dalam akuntansi)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
 NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
 NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportFull=Export documents ?
 DateValidationAndLock=Date validation and lock
 ConfirmExportFile=Konfirmasi pembuatan file ekspor akuntansi?
 ExportDraftJournal=Ekspor draft jurnal
@@ -398,7 +406,7 @@ SaleLocal=Penjualan lokal
 SaleExport=Penjualan ekspor
 SaleEEC=Dijual dalam EEC
 SaleEECWithVAT=Dijual dalam EEC dengan PPN bukan nol, jadi kami mengira ini BUKAN penjualan intracommunautary dan akun yang disarankan adalah akun produk standar.
-SaleEECWithoutVATNumber=Dijual dalam EEC tanpa PPN tetapi ID PPN pihak ketiga tidak ditentukan. Kami mundur pada akun produk untuk penjualan standar. Anda dapat memperbaiki ID PPN pihak ketiga atau akun produk jika diperlukan.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
 ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
@@ -442,6 +450,7 @@ AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
+ErrorArchiveAddFile=Can't put "%s" file in archive
 
 ## Import
 ImportAccountingEntries=Entri akuntansi
@@ -468,5 +477,7 @@ FECFormatMulticurrencyCode=Kode multi mata uang (Idevise)
 DateExport=Tanggal ekspor
 WarningReportNotReliable=Peringatan, laporan ini tidak didasarkan pada Buku Besar, jadi tidak mengandung transaksi yang dimodifikasi secara manual di Buku Besar. Jika jurnal Anda sudah mutakhir, tampilan pembukuan lebih akurat.
 ExpenseReportJournal=Jurnal Laporan Biaya
+DocsAlreadyExportedAreExcluded=Docs already exported are excluded
+ClickToHideAlreadyExportedLines=Click to hide already exported lines
 
 NAccounts=akun %s

@@ -203,6 +203,9 @@ class Mos extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			$this->mo->$field = $value;
 		}
+
+		$this->checkRefNumbering();
+
 		if (!$this->mo->create(DolibarrApiAccess::$user)) {
 			throw new RestException(500, "Error creating MO", array_merge(array($this->mo->error), $this->mo->errors));
 		}
@@ -238,6 +241,8 @@ class Mos extends DolibarrApi
 			}
 			$this->mo->$field = $value;
 		}
+
+		$this->checkRefNumbering();
 
 		if ($this->mo->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
@@ -722,5 +727,28 @@ class Mos extends DolibarrApi
 			$myobject[$field] = $data[$field];
 		}
 		return $myobject;
+	}
+
+	/**
+	 * Validate the ref field and get the next Number if it's necessary.
+	 *
+	 * @return void
+	 */
+	private function checkRefNumbering(): void
+	{
+		$ref = substr($this->mo->ref, 1, 4);
+		if ($this->mo->status > 0 && $ref == 'PROV') {
+			throw new RestException(400, "Wrong naming scheme '(PROV%)' is only allowed on 'DRAFT' status. For automatic increment use 'auto' on the 'ref' field.");
+		}
+
+		if (strtolower($this->mo->ref) == 'auto') {
+			if (empty($this->mo->id) && $this->mo->status == 0) {
+				$this->mo->ref = ''; // 'ref' will auto incremented with '(PROV' + newID + ')'
+			} else {
+				$this->mo->fetch_product();
+				$numref = $this->mo->getNextNumRef($this->mo->product);
+				$this->mo->ref = $numref;
+			}
+		}
 	}
 }
