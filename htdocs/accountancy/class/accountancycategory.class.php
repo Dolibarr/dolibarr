@@ -873,7 +873,7 @@ class AccountancyCategory // extends CommonObject
 			$sql .= " WHERE t.fk_accounting_category = ".((int) $cat_id);
 			$sql .= " AND t.entity = ".$conf->entity;
 			$sql .= " AND t.active = 1";
-			$sql .= " AND t.fk_pcg_version = '".$pcgvercode."'";
+			$sql .= " AND t.fk_pcg_version = '".$this->db->escape($pcgvercode)."'";
 			$sql .= " ORDER BY t.account_number";
 		} else {
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
@@ -881,7 +881,7 @@ class AccountancyCategory // extends CommonObject
 			$sql .= " WHERE ".$predefinedgroupwhere;
 			$sql .= " AND t.entity = ".$conf->entity;
 			$sql .= ' AND t.active = 1';
-			$sql .= " AND t.fk_pcg_version = '".$pcgvercode."'";
+			$sql .= " AND t.fk_pcg_version = '".$this->db->escape($pcgvercode)."'";
 			$sql .= " ORDER BY t.account_number";
 		}
 
