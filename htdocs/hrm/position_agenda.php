@@ -55,6 +55,7 @@ if (GETPOST('actioncode', 'array')) {
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
+$search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -224,7 +225,9 @@ if ($object->id > 0) {
 		// List of all actions
 		$filters = array();
 		$filters['search_agenda_label'] = $search_agenda_label;
-		$object->fields['label']=array(); // Usefull to get only get agenda events linked to position (this object doesn't need label of ref field, but show_actions_done() needs it to work correctly)
+		$filters['search_rowid'] = $search_rowid;
+
+		$object->fields['label']=array(); // Usefull to get only agenda events linked to position (this object doesn't need label of ref field, but show_actions_done() needs it to work correctly)
 
 		// TODO Replace this with same code than into list.php
 		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);

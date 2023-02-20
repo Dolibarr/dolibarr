@@ -4900,7 +4900,7 @@ div.titre {
 	color: var(--colortexttitlenotab);
 }
 .tertiary {
-	color: var(--colortexttitlenotab);
+	color: var(--colortexttitlenotab2);
 }
 
 table.centpercent.notopnoleftnoright.table-fiche-title {

@@ -784,6 +784,12 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			}
 		}
 	} else {
+		// If field name is 'search_xxx' then we force the add of space after each < and > (when following char is numeric) because it means
+		// we use the < or > to make a search on a numeric value to do higher or lower so we can add a space to break html tags
+		if (strpos($paramname, 'search_') === 0) {
+			$out = preg_replace('/([<>])([-+]?\d)/', '\1 \2', $out);
+		}
+
 		$out = sanitizeVal($out, $check, $filter, $options);
 	}
 
@@ -4109,7 +4115,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'github', 'google', 'jabber', 'microsoft', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
-				'partnership', 'payment', 'payment_vat', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'region',
+				'partnership', 'payment', 'payment_vat', 'pencil-ruler', 'pictoconfirm', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'region',
 				'salary', 'shipment', 'state', 'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
 				'technic', 'ticket',
 				'error', 'warning',
@@ -4158,8 +4164,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 				'other'=>'square',
 				'playdisabled'=>'play', 'pdf'=>'file-pdf',  'poll'=>'check-double', 'pos'=>'cash-register', 'preview'=>'binoculars', 'project'=>'project-diagram', 'projectpub'=>'project-diagram', 'projecttask'=>'tasks', 'propal'=>'file-signature', 'proposal'=>'file-signature',
-				'partnership'=>'handshake', 'payment'=>'money-check-alt', 'payment_vat'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'puce'=>'angle-right',
-				'recent' => 'question', 'reception'=>'dolly', 'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
+				'partnership'=>'handshake', 'payment'=>'money-check-alt', 'payment_vat'=>'money-check-alt', 'pictoconfirm'=>'check-square', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'puce'=>'angle-right',
+				'recent' => 'check-square', 'reception'=>'dolly', 'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
 				'refresh'=>'redo', 'region'=>'map-marked', 'replacement'=>'exchange-alt', 'resource'=>'laptop-house', 'recurring'=>'history',
 				'service'=>'concierge-bell',
@@ -9751,7 +9757,7 @@ function dol_getmypid()
  *                          		    If param $mode is 0, can contains several keywords separated with a space or |
  *                                      like "keyword1 keyword2" = We want record field like keyword1 AND field like keyword2
  *                                      or like "keyword1|keyword2" = We want record field like keyword1 OR field like keyword2
- *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < 1000"
+ *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < -1000"
  *                             			If param $mode is 2, can contains a list of int id separated by comma like "1,3,4"
  *                             			If param $mode is 3, can contains a list of string separated by comma like "a,b,c"
  * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of ID separated with comma (Example '1,3,4')
@@ -9789,23 +9795,35 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 		$newres = '';
 		foreach ($fields as $field) {
 			if ($mode == 1) {
-				$operator = '=';
-				$newcrit = preg_replace('/([!<>=]+)/', '', $crit);
-
-				$reg = array();
-				preg_match('/([!<>=]+)/', $crit, $reg);
-				if (!empty($reg[1])) {
-					$operator = $reg[1];
-				}
-				if ($newcrit != '') {
-					$numnewcrit = price2num($newcrit);
-					if (is_numeric($numnewcrit)) {
-						$newres .= ($i2 > 0 ? ' OR ' : '').$field.' '.$operator.' '.((float) $numnewcrit); // should be a numeric
-					} else {
-						$newres .= ($i2 > 0 ? ' OR ' : '').'1 = 2'; // force false
+				$tmpcrits = explode('|', $crit);
+				$i3 = 0;	// count the nb of valid criteria added for this field
+				foreach ($tmpcrits as $tmpcrit) {
+					if ($tmpcrit !== '0' && empty($tmpcrit)) {
+						continue;
 					}
-					$i2++; // a criteria was added to string
+					$tmpcrit = trim($tmpcrit);
+
+					$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
+
+					$operator = '=';
+					$newcrit = preg_replace('/([!<>=]+)/', '', $tmpcrit);
+
+					$reg = array();
+					preg_match('/([!<>=]+)/', $tmpcrit, $reg);
+					if (!empty($reg[1])) {
+						$operator = $reg[1];
+					}
+					if ($newcrit != '') {
+						$numnewcrit = price2num($newcrit);
+						if (is_numeric($numnewcrit)) {
+							$newres .= $field.' '.$operator.' '.((float) $numnewcrit); // should be a numeric
+						} else {
+							$newres .= '1 = 2'; // force false, we received a corrupted data
+						}
+						$i3++; // a criteria was added to string
+					}
 				}
+				$i2++;
 			} elseif ($mode == 2 || $mode == -2) {
 				$crit = preg_replace('/[^0-9,]/', '', $crit); // ID are always integer
 				$newres .= ($i2 > 0 ? ' OR ' : '').$field." ".($mode == -2 ? 'NOT ' : '');
@@ -9847,28 +9865,36 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 						}
 					}
 				}
-			} else // $mode=0
-			{
+			} else { // $mode=0
 				$tmpcrits = explode('|', $crit);
-				$i3 = 0;
+				$i3 = 0;	// count the nb of valid criteria added for this field
 				foreach ($tmpcrits as $tmpcrit) {
 					if ($tmpcrit !== '0' && empty($tmpcrit)) {
 						continue;
 					}
+					$tmpcrit = trim($tmpcrit);
 
-					$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
+					if ($tmpcrit == '^$') {	// If we search empty, we must combined different fields with AND
+						$newres .= (($i2 > 0 || $i3 > 0) ? ' AND ' : '');
+					} else {
+						$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
+					}
 
 					if (preg_match('/\.(id|rowid)$/', $field)) {	// Special case for rowid that is sometimes a ref so used as a search field
-						$newres .= $field." = ".(is_numeric(trim($tmpcrit)) ? ((float) trim($tmpcrit)) : '0');
+						$newres .= $field." = ".(is_numeric($tmpcrit) ? ((float) $tmpcrit) : '0');
 					} else {
-						$tmpcrit = trim($tmpcrit);
 						$tmpcrit2 = $tmpcrit;
 						$tmpbefore = '%';
 						$tmpafter = '%';
+						$tmps = '';
+
 						if (preg_match('/^!/', $tmpcrit)) {
-							$newres .= $field." NOT LIKE '"; // ! as exclude character
+							$tmps .= $field." NOT LIKE "; // ! as exclude character
 							$tmpcrit2 = preg_replace('/^!/', '', $tmpcrit2);
-						} else $newres .= $field." LIKE '";
+						} else {
+							$tmps .= $field." LIKE ";
+						}
+						$tmps .= "'";
 
 						if (preg_match('/^[\^\$]/', $tmpcrit)) {
 							$tmpbefore = '';
@@ -9878,12 +9904,17 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 							$tmpafter = '';
 							$tmpcrit2 = preg_replace('/[\^\$]$/', '', $tmpcrit2);
 						}
+
+						if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
+							$tmps = "(".$tmps;
+						}
+						$newres .= $tmps;
 						$newres .= $tmpbefore;
 						$newres .= $db->escape($tmpcrit2);
 						$newres .= $tmpafter;
 						$newres .= "'";
-						if ($tmpcrit2 == '') {
-							$newres .= " OR ".$field." IS NULL";
+						if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
+							$newres .= " OR ".$field." IS NULL)";
 						}
 					}
 
@@ -9893,13 +9924,14 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 			}
 			$i++;
 		}
+
 		if ($newres) {
 			$res = $res.($res ? ' AND ' : '').($i2 > 1 ? '(' : '').$newres.($i2 > 1 ? ')' : '');
 		}
 		$j++;
 	}
 	$res = ($nofirstand ? "" : " AND ")."(".$res.")";
-	//print 'xx'.$res.'yy';
+
 	return $res;
 }
 
@@ -12135,7 +12167,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			$out .= '<h3 class="timeline-header">';
 
 			// Author of event
-			$out .= '<span class="messaging-author">';
+			$out .= '<div class="messaging-author inline-block">';
 			if ($histo[$key]['userid'] > 0) {
 				if (!isset($userGetNomUrlCache[$histo[$key]['userid']])) { // is in cache ?
 					$userstatic->fetch($histo[$key]['userid']);
@@ -12143,10 +12175,10 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 				}
 				$out .= $userGetNomUrlCache[$histo[$key]['userid']];
 			}
-			$out .= '</span>';
+			$out .= '</div>';
 
 			// Title
-			$out .= ' <span class="messaging-title">';
+			$out .= ' <div class="messaging-title inline-block">';
 
 			if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 				$out .= $langs->trans('TicketNewMessage');
@@ -12168,7 +12200,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 				}
 			}
 
-			$out .= '</span>';
+			$out .= '</div>';
 
 			$out .= '</h3>';
 

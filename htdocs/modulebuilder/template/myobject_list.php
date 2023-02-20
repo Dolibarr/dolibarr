@@ -247,6 +247,9 @@ if (empty($reshook)) {
 	$objectlabel = 'MyObject';
 	$uploaddir = $conf->mymodule->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+	// You can add more action here
+	// if ($action == 'xxx' && $permissiontoxxx) ...
 }
 
 
@@ -547,7 +550,6 @@ $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('che
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
-
 // Fields title search
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
@@ -620,6 +622,7 @@ $totalarray['nbfield'] = 0;
 print '<tr class="liste_titre">';
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
 }
 foreach ($object->fields as $key => $val) {
 	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
@@ -651,10 +654,12 @@ print $hookmanager->resPrint;
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
 }
-$totalarray['nbfield']++;
 print '</tr>'."\n";
 
+$totalarray = array();
+$totalarray['nbfield'] = 0;
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine = 0;

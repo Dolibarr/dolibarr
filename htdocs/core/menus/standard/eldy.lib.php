@@ -883,10 +883,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	$reshook = $hookmanager->executeHooks('menuLeftMenuItems', $parameters, $hook_items); // Note that $action and $object may have been modified by some hooks
 
 	if (is_numeric($reshook)) {
-		if ($reshook == 0 && !empty($hookmanager->results)) {
-			$menu_array[] = $hookmanager->results; // add
+		if ($reshook == 0 && !empty($hookmanager->resArray)) {
+			$menu_array[] = $hookmanager->resArray; // add
 		} elseif ($reshook == 1) {
-			$menu_array = $hookmanager->results; // replace
+			$menu_array = $hookmanager->resArray; // replace
 		}
 
 		// @todo Sort menu items by 'position' value
