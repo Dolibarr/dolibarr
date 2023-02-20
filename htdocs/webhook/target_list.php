@@ -381,7 +381,7 @@ if ($mode == 'modulesetup') {
 	print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 	$head = webhookAdminPrepareHead();
-	print dol_get_fiche_head($head, 'targets', $langs->trans($page_name), -1, "webhook@webhook");
+	print dol_get_fiche_head($head, 'targets', $langs->trans($page_name), -1, "webhook");
 }
 
 // Example : Adding jquery code
@@ -623,6 +623,10 @@ while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
 		break; // Should not happen
+	}
+
+	if (empty($obj->ref)) {
+		$obj->ref = $obj->rowid;
 	}
 
 	// Store properties in $object
