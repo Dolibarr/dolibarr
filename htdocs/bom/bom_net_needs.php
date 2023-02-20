@@ -296,20 +296,30 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		<script type="text/javascript" language="javascript">
 			$(document).ready(function() {
+
+                function folderManage(element) {
+                    var id_bom_line = element.attr('id').replace('collapse-', '');
+                    let TSubLines = $('[parentid="'+ id_bom_line +'"]');
+
+                    if(element.html().indexOf('folder-open') <= 0) {
+                        $('[parentid="'+ id_bom_line +'"]').show();
+                        element.html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
+                    }
+                    else {
+                        for (let i = 0; i < TSubLines.length; i++) {
+                            let subBomFolder = $(TSubLines[i]).children('.linecoldescription').children('.collapse_bom');
+                            if (subBomFolder.length > 0) {
+                                folderManage(subBomFolder);
+                            }
+                        }
+                        TSubLines.hide();
+                        element.html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
+                    }
+                }
+
 				// When clicking on collapse
 				$(".collapse_bom").click(function() {
-					console.log("We click on collapse");
-					var id_bom_line = $(this).attr('id').replace('collapse-', '');
-					console.log($(this).html().indexOf('folder-open'));
-					if($(this).html().indexOf('folder-open') <= 0) {
-						$('[parentid="'+ id_bom_line +'"]').show();
-						$(this).html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
-					}
-					else {
-						$('[parentid="'+ id_bom_line +'"]').hide();
-						$(this).html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
-					}
-
+                    folderManage($(this));
 					return false;
 				});
 
