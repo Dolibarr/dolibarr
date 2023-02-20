@@ -1690,9 +1690,8 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 			$tmpresult = '';
 
 			$tmpresult .= vatrate($object->lines[$i]->tva_tx, 0, $object->lines[$i]->info_bits, -1);
-			$tmpresult .= '%';
 			if (empty($conf->global->MAIN_PDF_MAIN_HIDE_SECOND_TAX)) {
-				if ($object->lines[$i]->total_localtax1 >= 0) {
+				if ($object->lines[$i]->total_localtax1 != 0) {
 					/*
 					if (preg_replace('/[\s0%]/', '', $tmpresult)) {
 						$tmpresult .= '|';
@@ -1705,7 +1704,7 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 				}
 			}
 			if (empty($conf->global->MAIN_PDF_MAIN_HIDE_THIRD_TAX)) {
-				if ($object->lines[$i]->total_localtax2 >= 0) {
+				if ($object->lines[$i]->total_localtax2 != 0) {
 					/*
 					if (preg_replace('/[\s0%]/', '', $tmpresult)) {
 						$tmpresult .= '|';
