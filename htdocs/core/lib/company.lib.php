@@ -1382,8 +1382,18 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			print "</tr>\n";
 			$i++;
 		}
+
+		if ($num == 0) {
+			$colspan = 1 + ($showuserlogin ? 1 : 0);
+			foreach ($arrayfields as $key => $val) {
+				if (!empty($val['checked'])) {
+					$colspan++;
+				}
+			}
+			print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+		}
 	} else {
-		$colspan = 1;
+		$colspan = 1 + ($showuserlogin ? 1 : 0);
 		foreach ($arrayfields as $key => $val) {
 			if (!empty($val['checked'])) {
 				$colspan++;
@@ -1805,7 +1815,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		if ($donetodo) {
 			$out .= '<td class="liste_titre"></td>';
 		}
-		$out .= '<td class="liste_titre"></td>';
+
+		$out .= '<td class="liste_titre"><input type="text" class="width50" name="search_rowid" value="'.(isset($filters['search_rowid']) ? $filters['search_rowid'] : '').'"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre">';
 		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1, 0, (empty($conf->global->AGENDA_USE_MULTISELECT_TYPE) ? 0 : 1), 1, 'minwidth100 maxwidth150');
@@ -2188,6 +2199,9 @@ function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
 	}
 	if (is_array($filters) && $filters['search_agenda_label']) {
 		$sql .= natural_search('a.label', $filters['search_agenda_label']);
+	}
+	if (is_array($filters) && $filters['search_rowid']) {
+		$sql .= natural_search('a.id', $filters['search_rowid'], 1);
 	}
 
 	return $sql;
