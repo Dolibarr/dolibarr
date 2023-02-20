@@ -5448,6 +5448,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	if ($picto && $titre) {
 		print '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle pictotitle widthpictotitle"', $pictoisfullpath).'</td>';
 	}
+
 	print '<td class="nobordernopadding valignmiddle col-title">';
 	print '<div class="titre inline-block">'.$titre;
 	if (!empty($titre) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') {
@@ -5456,7 +5457,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	print '</div></td>';
 
 	// Center
-	if ($morehtmlcenter) {
+	if ($morehtmlcenter && empty($conf->dol_optimize_smallscreen)) {
 		print '<td class="nobordernopadding center valignmiddle col-center">'.$morehtmlcenter.'</td>';
 	}
 
@@ -5541,8 +5542,15 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	}
 
 	print '</td>';
+	print '</tr>';
 
-	print '</tr></table>'."\n";
+	print '</table>'."\n";
+
+	// Center
+	if ($morehtmlcenter && !empty($conf->dol_optimize_smallscreen)) {
+		print '<div class="nobordernopadding marginbottomonly center valignmiddle col-center centpercent">'.$morehtmlcenter.'</div>';
+	}
+
 	print "<!-- End title -->\n\n";
 }
 
