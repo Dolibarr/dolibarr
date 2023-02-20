@@ -168,12 +168,6 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $product_type = 0;
 
 	/**
-	 * Description of the line
-	 * @var string
-	 */
-	public $desc;
-
-	/**
 	 * Id of corresponding product
 	 * @var int
 	 */
