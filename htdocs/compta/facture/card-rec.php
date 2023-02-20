@@ -105,14 +105,14 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-$permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->facture->creer; // Used by the include of actions_dellink.inc.php
-$permissiontoedit = $user->rights->facture->creer; // Used by the include of actions_lineupdonw.inc.php
+$permissionnote = $user->hasRight('facture', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('facture', 'creer'); // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $user->hasRight('facture', 'creer'); // Used by the include of actions_lineupdonw.inc.php
 
-$usercanread = $user->rights->facture->lire;
-$usercancreate = $user->rights->facture->creer;
-$usercanissuepayment = $user->rights->facture->paiement;
-$usercandelete = $user->rights->facture->supprimer;
+$usercanread = $user->hasRight('facture', 'lire');
+$usercancreate = $user->hasRight('facture', 'creer');
+$usercanissuepayment = $user->hasRight('facture', 'paiement');
+$usercandelete = $user->hasRight('facture', 'supprimer');
 $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->facture->invoice_advance->validate)));
 $usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->facture->invoice_advance->send);
 $usercanreopen = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->facture->invoice_advance->reopen);

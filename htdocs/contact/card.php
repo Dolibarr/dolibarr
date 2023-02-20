@@ -96,7 +96,7 @@ if (!($object->id > 0) && $action == 'view') {
 }
 
 $triggermodname = 'CONTACT_MODIFY';
-$permissiontoadd = $user->rights->societe->contact->creer;
+$permissiontoadd = $user->hasRight('societe', 'contact', 'creer');
 
 // Security check
 if ($user->socid) {

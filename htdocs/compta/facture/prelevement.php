@@ -87,7 +87,7 @@ if ($type == 'bank-transfer') {
 if ($type == 'bank-transfer') {
 	$usercancreate = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
 } else {
-	$usercancreate = $user->rights->facture->creer;
+	$usercancreate = $user->hasRight('facture', 'creer');
 }
 
 

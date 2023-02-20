@@ -554,7 +554,7 @@ if (empty($reshook)) {
 				// Builddoc
 				$donotredirect = 1;
 				$upload_dir = $conf->facture->dir_output;
-				$permissiontoadd = $user->rights->facture->creer;
+				$permissiontoadd = $user->hasRight('facture', 'creer');
 
 				// Call action to build doc
 				$savobject = $object;

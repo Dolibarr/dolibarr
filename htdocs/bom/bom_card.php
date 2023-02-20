@@ -87,10 +87,10 @@ $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'bom', $object->id, 'bom_bom', '', '', 'rowid', $isdraft);
 
 // Permissions
-$permissionnote = $user->rights->bom->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->bom->write; // Used by the include of actions_dellink.inc.php
-$permissiontoadd = $user->rights->bom->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->bom->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissionnote = $user->hasRight('bom', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('bom', 'write'); // Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('bom', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('bom', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $upload_dir = $conf->bom->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 
@@ -768,8 +768,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$relativepath = $objref.'/'.$objref.'.pdf';
 		$filedir = $conf->bom->dir_output.'/'.$objref;
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-		$genallowed = $user->rights->bom->read; // If you can read, you can build the PDF to read content
-		$delallowed = $user->rights->bom->write; // If you can create/edit, you can remove a file on card
+		$genallowed = $user->hasRight('bom', 'read'); // If you can read, you can build the PDF to read content
+		$delallowed = $user->hasRight('bom', 'write'); // If you can create/edit, you can remove a file on card
 		print $formfile->showdocuments('bom', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 
 		// Show links to link elements
