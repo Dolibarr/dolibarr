@@ -895,7 +895,7 @@ if ($nboftargetok) {
 
 			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp`;
 			$ret=`rm -fr $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build`;
-			
+
 			print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp\n";
 			$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp\"";
 			$ret=`$cmd`;
