@@ -705,6 +705,7 @@ class Orders extends DolibarrApi
 	 * @param   int $id             Order ID
 	 * @param   int $idwarehouse    Warehouse ID
 	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
+	 * @return  Object              Object with cleaned properties
 	 *
 	 * @url POST    {id}/validate
 	 *
@@ -712,8 +713,6 @@ class Orders extends DolibarrApi
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
-	 *
-	 * @return  array
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
