@@ -82,4 +82,6 @@ ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_user_valid 
 ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_projet (fk_projet);
 ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_account(fk_account);
 
+ALTER TABLE llx_socpeople ADD COLUMN update_parent integer AFTER fk_stcommcontact;
+ALTER TABLE llx_socpeople ADD COLUMN fk_parent integer NULL AFTER fk_stcommcontact;
 
