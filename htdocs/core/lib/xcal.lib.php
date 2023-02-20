@@ -307,7 +307,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
  */
 function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filter = '', $url = '', $langcode = '')
 {
-	global $user, $conf, $langs;
+	global $user, $conf, $langs, $mysoc;
 	global $dolibarr_main_url_root;
 
 	dol_syslog("xcal.lib.php::build_rssfile Build rss file ".$outputfile." to format ".$format);
@@ -320,8 +320,6 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 	$fichier = fopen($outputfile, "w");
 
 	if ($fichier) {
-		$date = date("r");
-
 		// Print header
 		fwrite($fichier, '<?xml version="1.0" encoding="'.$langs->charset_output.'"?>');
 		fwrite($fichier, "\n");
@@ -335,24 +333,24 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 			fwrite($fichier, "<language>".$langcode."</language>\n");
 		}
 
-		/*
-		fwrite($fichier, "<description><![CDATA[".$desc.".]]></description>"."\n".
-				// "<language>fr</language>"."\n".
-				"<copyright>Dolibarr</copyright>"."\n".
-				"<lastBuildDate>".$date."</lastBuildDate>"."\n".
-				"<generator>Dolibarr</generator>"."\n");
-		*/
+		// Define $urlwithroot
+		$urlwithouturlroot = preg_replace("/".preg_quote(DOL_URL_ROOT, "/")."$/i", "", trim($dolibarr_main_url_root));
+		$urlwithroot       = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+		//$urlwithroot=DOL_MAIN_URL_ROOT;                       // This is to use same domain name than current
 
+		// Url
 		if (empty($url)) {
-			// Define $urlwithroot
-			$urlwithouturlroot = preg_replace("/".preg_quote(DOL_URL_ROOT, "/")."$/i", "", trim($dolibarr_main_url_root));
-			$urlwithroot       = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-			//$urlwithroot=DOL_MAIN_URL_ROOT;                       // This is to use same domain name than current
-
 			$url = $urlwithroot."/public/agenda/agendaexport.php?format=rss&exportkey=".urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY);
 		}
-
 		fwrite($fichier, "<link><![CDATA[".$url."]]></link>\n");
+
+		// Image
+		if (!empty($mysoc->logo_squarred_small)) {
+			$urlimage = $urlwithroot.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode($mysoc->logo_squarred_small);
+			if ($urlimage) {
+				fwrite($fichier, "<image><url><![CDATA[".$urlimage."]]></url><title>'.$title.</title></image>\n");
+			}
+		}
 
 		foreach ($events_array as $key => $event) {
 			$eventqualified = true;
