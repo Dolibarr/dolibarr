@@ -6304,6 +6304,11 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = null;
 					}
 					break;
+				case 'link':
+					if ($this->array_options["options_".$key] === '') {
+						$this->array_options["options_".$key] = null;
+  					}
+					break;
 				/*
 				case 'link':
 					$param_list = array_keys($attributeParam['options']);
@@ -6350,7 +6355,7 @@ abstract class CommonObject
 			}
 
 			if ($linealreadyfound) {
-				if ($this->array_options["options_".$key] === null || $this->array_options["options_".$key] === "") {
+				if ($this->array_options["options_".$key] === null) {
 					$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET ".$key." = null";
 				} else {
 					$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET ".$key." = '".$this->db->escape($this->array_options["options_".$key])."'";
