@@ -145,6 +145,7 @@ Box=Widget
 Boxes=Widgets
 MaxNbOfLinesForBoxes=Max. number of lines for widgets
 AllWidgetsWereEnabled=All available widgets are enabled
+WidgetAvailable=Widget available
 PositionByDefault=Default order
 Position=Position
 MenusDesc=Menu managers set content of the two menu bars (horizontal and vertical).
