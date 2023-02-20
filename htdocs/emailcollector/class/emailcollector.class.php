@@ -386,10 +386,6 @@ class EmailCollector extends CommonObject
 		if (empty($object->host)) {
 			$object->host = 'imap.example.com';
 		}
-<<<<<<< HEAD
-
-=======
->>>>>>> upstream/develop
 		// Clear extrafields that are unique
 		if (is_array($object->array_options) && count($object->array_options) > 0) {
 			$extrafields->fetch_name_optionals_label($this->table_element);
