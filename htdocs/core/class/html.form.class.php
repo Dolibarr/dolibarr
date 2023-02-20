@@ -8582,6 +8582,9 @@ class Form
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			return '';
 		}
+		if (empty($array)) {
+			return '';
+		}
 
 		$tmpvar = "MAIN_SELECTEDFIELDS_".$varpage; // To get list of saved selected fields to show
 

@@ -38,7 +38,7 @@ function printDropdownBookmarksList()
 
 	$authorized_var=array('limit','optioncss','contextpage');
 	$url = $_SERVER["PHP_SELF"];
-	$url_param=array();
+	$url_param = array();
 	if (!empty($_SERVER["QUERY_STRING"])) {
 		if (is_array($_GET)) {
 			foreach ($_GET as $key => $val) {
@@ -79,7 +79,7 @@ function printDropdownBookmarksList()
 
 	$url .= ($tmpurl ? '?'.$tmpurl : '');
 	if (!empty($url_param)) {
-		$url .= '&'.implode('&', $url_param);
+		$url .= (strpos($url, '?') > 0 ? '&' : '?').implode('&', $url_param);
 	}
 
 	$searchForm = '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
@@ -203,15 +203,12 @@ function printDropdownBookmarksList()
 			</div>
 		';
 
-		if ($bookmarkNb) {
-			$html .= '
+		$html .= '
 				<!-- Menu Body -->
-				<div class="bookmark-body dropdown-body">
-				'.$bookmarkList.'
-				<span id="top-bookmark-search-nothing-found" class="hidden-search-result opacitymedium">'.dol_escape_htmltag($langs->trans("NoBookmarkFound")).'</span>
+				<div class="bookmark-body dropdown-body">'.$bookmarkList.'
+				<span id="top-bookmark-search-nothing-found" class="'.($bookmarkNb ? 'hidden-search-result ' : '').'opacitymedium">'.dol_escape_htmltag($langs->trans("NoBookmarkFound")).'</span>
 				</div>
 				';
-		}
 
 		$html .= '<!-- script to open/close the popup -->
 				<script>

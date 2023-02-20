@@ -53,6 +53,11 @@ class Societe extends CommonObject
 	use CommonSocialNetworks;
 
 	/**
+	 * @var string ID of module.
+	 */
+	public $module = 'societe';
+
+	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'societe';

@@ -145,6 +145,7 @@ Box=Widget
 Boxes=Widgets
 MaxNbOfLinesForBoxes=Max. number of lines for widgets
 AllWidgetsWereEnabled=All available widgets are enabled
+WidgetAvailable=Widget available
 PositionByDefault=Default order
 Position=Position
 MenusDesc=Menu managers set content of the two menu bars (horizontal and vertical).
@@ -2299,7 +2300,7 @@ ExportUseLowMemoryMode=Use a low memory mode
 ExportUseLowMemoryModeHelp=Use the low memory mode to generate the dump file (compression is done through a pipe instead of into the PHP memory). This method does not allow to check that the file is complete and error message can't be reported if it fails. Use it if you experience not enough memory errors.
 
 ModuleWebhookName = Webhook
-ModuleWebhookDesc = Interface to catch dolibarr triggers and send it to an URL
+ModuleWebhookDesc = Interface to catch dolibarr triggers and send data of the event to an URL
 WebhookSetup = Webhook setup
 Settings = Settings
 WebhookSetupPage = Webhook setup page
