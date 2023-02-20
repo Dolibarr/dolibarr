@@ -1,5 +1,9 @@
 *~
 .#*
+.git
+.gitignore
+.travis.yml
+.scrutinizer.yml
 Thumbs.db
 build/exe
 build/html
