@@ -214,7 +214,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>&nbsp;';
 	}
 	print '</td>';
-    if($action == 'treeview') print '<td class="left">'.$langs->trans('ProducedBy').'</td>';
+	if ($action == 'treeview') print '<td class="left">'.$langs->trans('ProducedBy').'</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Quantity').'</td>';
 	print '<td class="linecolstock right">'.$form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1).'</td>';
 	print '<td class="linecoltheoricalstock right">'.$form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc")).'</td>';
@@ -231,13 +231,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					$prod->fetch($TProduct['bom']->fk_product);
 					if ($TProduct['parentid'] != $object->id) print '<tr class="sub_bom_lines oddeven" parentid="'.$TProduct['parentid'].'">';
 					else print '<tr class="oddeven">';
-					if($action == 'treeview') print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$prod->getNomUrl(1);
-                    else print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$TProduct['bom']->getNomUrl(1);
+					if ($action == 'treeview') print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$prod->getNomUrl(1);
+					else print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$TProduct['bom']->getNomUrl(1);
 					print ' <a class="collapse_bom" id="collapse-'.$fk_bom.'" href="#">';
 					print img_picto('', 'folder-open');
 					print '</a>';
 					print  '</td>';
-					if($action == 'treeview') print '<td class="left">'.$TProduct['bom']->getNomUrl(1).'</td>';
+					if ($action == 'treeview') print '<td class="left">'.$TProduct['bom']->getNomUrl(1).'</td>';
 					print '<td class="linecolqty right">'.$TProduct['qty'].'</td>';
 					print '<td class="linecolstock right"></td>';
 					print '<td class="linecoltheoricalstock right"></td>';
@@ -252,7 +252,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						if ($fk_bom != $object->id) print '<tr class="sub_bom_lines oddeven" parentid="'.$fk_bom.'">';
 						else print '<tr class="oddeven">';
 						print '<td class="linecoldescription">'.str_repeat($repeatChar, $TInfos['level']).$prod->getNomUrl(1).'</td>';
-						if($action == 'treeview') print '<td></td>';
+						if ($action == 'treeview') print '<td></td>';
 						print '<td class="linecolqty right">'.$TInfos['qty'].'</td>';
 						print '<td class="linecolstock right">'.price2num($prod->stock_reel, 'MS').'</td>';
 						print '<td class="linecoltheoricalstock right">'.$prod->stock_theorique.'</td>';
@@ -297,29 +297,29 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		<script type="text/javascript" language="javascript">
 			$(document).ready(function() {
 
-                function folderManage(element) {
-                    var id_bom_line = element.attr('id').replace('collapse-', '');
-                    let TSubLines = $('[parentid="'+ id_bom_line +'"]');
+				function folderManage(element) {
+					var id_bom_line = element.attr('id').replace('collapse-', '');
+					let TSubLines = $('[parentid="'+ id_bom_line +'"]');
 
-                    if(element.html().indexOf('folder-open') <= 0) {
-                        $('[parentid="'+ id_bom_line +'"]').show();
-                        element.html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
-                    }
-                    else {
-                        for (let i = 0; i < TSubLines.length; i++) {
-                            let subBomFolder = $(TSubLines[i]).children('.linecoldescription').children('.collapse_bom');
-                            if (subBomFolder.length > 0) {
-                                folderManage(subBomFolder);
-                            }
-                        }
-                        TSubLines.hide();
-                        element.html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
-                    }
-                }
+					if(element.html().indexOf('folder-open') <= 0) {
+						$('[parentid="'+ id_bom_line +'"]').show();
+						element.html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
+					}
+					else {
+						for (let i = 0; i < TSubLines.length; i++) {
+							let subBomFolder = $(TSubLines[i]).children('.linecoldescription').children('.collapse_bom');
+							if (subBomFolder.length > 0) {
+								folderManage(subBomFolder);
+							}
+						}
+						TSubLines.hide();
+						element.html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
+					}
+				}
 
 				// When clicking on collapse
 				$(".collapse_bom").click(function() {
-                    folderManage($(this));
+					folderManage($(this));
 					return false;
 				});
 
