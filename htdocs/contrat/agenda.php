@@ -54,7 +54,11 @@ $ref		= GETPOST('ref', 'alpha');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'contrat', $id, '');
+
+// Security check
+$fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
+$fieldtype = (!empty($id) ? 'rowid' : 'ref');
+$result = restrictedArea($user, 'contrat', $fieldvalue, '', '', '', $fieldtype);
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -73,6 +77,13 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
+
+$object = new Contrat($db);
+
+if ($id > 0 || !empty($ref)) {
+	$result = $object->fetch($id, $ref);
+}
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agendacontract', 'globalcard'));
 
@@ -83,7 +94,7 @@ $permissiontoadd   = $user->rights->contrat->creer;     //  Used by the include 
  * Actions
  */
 
-$parameters = array('id'=>$id);
+$parameters = array('id' => $id, 'ref' => $ref);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -104,8 +115,6 @@ if (empty($reshook)) {
 }
 
 
-
-
 /*
  * View
  */
@@ -116,7 +125,7 @@ if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
-if ($id > 0) {
+if ($object->id > 0) {
 	// Load object modContract
 	$module = (!empty($conf->global->CONTRACT_ADDON) ? $conf->global->CONTRACT_ADDON : 'mod_contract_serpis');
 	if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php') {
@@ -130,8 +139,6 @@ if ($id > 0) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
-	$object = new Contrat($db);
-	$result = $object->fetch($id);
 	$object->fetch_thirdparty();
 
 	$title = $langs->trans("Agenda");
@@ -181,7 +188,7 @@ if ($id > 0) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -195,13 +202,13 @@ if ($id > 0) {
 	}
 	$morehtmlref .= '</div>';
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'ref', 'none', $morehtmlref);
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'none', $morehtmlref);
 
 	print '<div class="fichecenter">';
 
 	print '<div class="underbanner clearboth"></div>';
 
-	$object->info($id);
+	$object->info($object->id);
 	dol_print_object_info($object, 1);
 
 	print '</div>';
@@ -244,7 +251,7 @@ if ($id > 0) {
 	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		print '<br>';
 
-		$param = '&id='.$id;
+		$param = '&id='.$object->id;
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 			$param .= '&contextpage='.$contextpage;
 		}

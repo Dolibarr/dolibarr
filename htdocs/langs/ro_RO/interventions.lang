@@ -68,3 +68,5 @@ ConfirmReopenIntervention=Eşti sigur că vrei să re-deschizi intervenţia <b>%
 GenerateInter=Generare intervenţie
 FichinterNoContractLinked=Intervenţia %s a fost creată fără un contract asociat.
 ErrorFicheinterCompanyDoesNotExist=Compania nu există. Intervenția nu a fost creată.
+NextDateToIntervention=Data pentru următoarea generare de intervenție
+NoIntervention=Nicio intervenție

@@ -187,8 +187,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print dol_get_fiche_end();
 
-	$viewlink = dolGetButtonTitle($langs->trans('GroupByProduct'), '', 'fa fa-bars imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&token='.newToken(), '', 1, array('morecss' => 'reposition '.($action !== 'treeview' ? 'btnTitleSelected':'')));
-	$viewlink .= dolGetButtonTitle($langs->trans('TreeStructure'), '', 'fa fa-stream imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=treeview&token='.newToken(), '', 1, array('morecss' => 'reposition marginleftonly '.($action == 'treeview' ? 'btnTitleSelected':'')));
+	$viewlink = dolGetButtonTitle($langs->trans('GroupByX', $langs->transnoentitiesnoconv("Products")), '', 'fa fa-bars imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&token='.newToken(), '', 1, array('morecss' => 'reposition '.($action !== 'treeview' ? 'btnTitleSelected':'')));
+	$viewlink .= dolGetButtonTitle($langs->trans('TreeView'), '', 'fa fa-stream imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=treeview&token='.newToken(), '', 1, array('morecss' => 'reposition marginleftonly '.($action == 'treeview' ? 'btnTitleSelected':'')));
 
 	print load_fiche_titre($langs->trans("BOMNetNeeds"), $viewlink, '');
 
@@ -218,6 +218,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<td class="linecolstock right">'.$form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1).'</td>';
 	print '<td class="linecoltheoricalstock right">'.$form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc")).'</td>';
 	print  '</tr>';
+
+	print '</thead>';
+	print '<tbody>';
 	if (!empty($TChildBom)) {
 		if ($action == 'treeview') {
 			foreach ($TChildBom as $fk_bom => $TProduct) {
@@ -266,7 +269,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 		}
 	}
-	print '</thead>';
+	print '</tbody>';
 	print '</table>';
 
 

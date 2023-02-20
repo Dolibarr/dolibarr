@@ -794,8 +794,8 @@ if (!empty($arrayfields['e.tms']['checked'])) {
 }
 // Status
 if (!empty($arrayfields['e.fk_statut']['checked'])) {
-	print '<td class="liste_titre maxwidthonsmartphone right">';
-	print $form->selectarray('search_status', array('0'=>$langs->trans('StatusSendingDraftShort'), '1'=>$langs->trans('StatusSendingValidatedShort'), '2'=>$langs->trans('StatusSendingProcessedShort')), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'onrightofpage');
+	print '<td class="liste_titre right parentonrightofpage">';
+	print $form->selectarray('search_status', array('0'=>$langs->trans('StatusSendingDraftShort'), '1'=>$langs->trans('StatusSendingValidatedShort'), '2'=>$langs->trans('StatusSendingProcessedShort')), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Status billed
@@ -903,7 +903,7 @@ while ($i < min($num, $limit)) {
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="12">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
 		$object->socid = $companystatic->getNomUrl(1);
 		$object->date_delivery = $obj->delivery_date;

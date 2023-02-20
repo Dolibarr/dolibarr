@@ -28,7 +28,7 @@ AccountParameter=Paràmetres del compte
 UsageParameter=Paràmetres d'ús
 InformationToFindParameters=Ajuda per a trobar la vostra informació del compte %s
 STRIPE_CGI_URL_V2=URL CGI del mòdul Stripe per al pagament
-CSSUrlForPaymentForm=Url del full d'estil CSS per al formulari de pagament
+CSSUrlForPaymentForm=URL del full d'estil CSS per al formulari de pagament
 NewStripePaymentReceived=S'ha rebut un pagament nou de Stripe
 NewStripePaymentFailed=S'ha intentat el pagament nou de Stripe, però ha fallat
 FailedToChargeCard=No s'ha pogut fer el càrrec a la targeta
@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook clau en directe
 ONLINE_PAYMENT_WAREHOUSE=Estoc a utilitzar per a disminuir l'estoc quan es fa el pagament en línia <br>(Pendent de fer quan l'opció per a reduir l'estoc es fa en una acció a la factura i el pagament en línia es genera la seva factura?)
 StripeLiveEnabled=Stripe live activat (en cas contrari, mode de prova/sandbox)
 StripeImportPayment=Importar pagaments per Stripe
-ExampleOfTestCreditCard=Exemple de targeta de crèdit per a la prova: %s => vàlid, %s => error CVC, %s => caducat, %s => falla la càrrega
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestBankAcountForSEPA=Exemple de compte bancari BAN per a la prova de domiciliació bancària: %s
 StripeGateways=Passarel·les Stripe
 OAUTH_STRIPE_TEST_ID=Identificador de client de Stripe Connect (ca _...)
 OAUTH_STRIPE_LIVE_ID=Identificador de client de Stripe Connect (ca _...)
@@ -61,6 +62,7 @@ DeleteACard=Suprimeix la targeta
 ConfirmDeleteCard=Estàs segur que vols eliminar aquesta targeta de crèdit o de dèbit?
 CreateCustomerOnStripe=Crea un client a Stripe
 CreateCardOnStripe=Crea una targeta a Stripe
+CreateBANOnStripe=Crea un banc a Stripe
 ShowInStripe=Mostra a Stripe
 StripeUserAccountForActions=Compte d'usuari que s'utilitzarà per a la notificació per correu electrònic d'alguns esdeveniments de Stripe (pagaments de Stripe)
 StripePayoutList=Llista de pagaments de Stripe
@@ -69,4 +71,8 @@ ToOfferALinkForLiveWebhook=Enllaç a la configuració de Stripe WebHook per truc
 PaymentWillBeRecordedForNextPeriod=El pagament es registrarà per al període següent.
 ClickHereToTryAgain=<a href="%s"> Feu clic aquí per a tornar-ho a provar... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=A causa de les fortes regles d'autenticació de clients, la creació d'una fitxa s'ha de fer des del panell de Stripe. Podeu fer clic aquí per a activar el registre de clients de Stripe: %s
-TERMINAL_LOCATION=Ubicació (adreça) per a terminals
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
+RequestDirectDebitWithStripe=Sol·liciteu domiciliació bancària amb Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Activeu els pagaments per domiciliació bancària mitjançant Stripe
+

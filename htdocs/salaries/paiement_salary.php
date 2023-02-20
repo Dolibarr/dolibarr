@@ -212,7 +212,7 @@ if ($action == 'create') {
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$datepaye = dol_mktime(GETPOST("rehour", 'int'), GETPOST("remin", 'int'), GETPOST("resec", 'int'), GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
 	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (GETPOST("remonth") ? $datepaye : -1) : '';
-	print $form->selectDate($datepayment, '', 1, 1, 0, "add_payment", 1, 1);
+	print $form->selectDate($datepayment, '', 1, 1, 0, "add_payment", 1, 1, 0, '', '', $salary->dateep, '', 1, $langs->trans("DateEnd"));
 	print "</td>";
 	print '</tr>';
 

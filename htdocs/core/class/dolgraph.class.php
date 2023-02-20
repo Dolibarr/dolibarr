@@ -221,8 +221,8 @@ class DolGraph
 	/**
 	 * Set y label
 	 *
-	 * @param 	string	$label		Y label
-	 * @return	boolean|null				True
+	 * @param 	string			$label		Y label
+	 * @return	void
 	 */
 	public function SetYLabel($label)
 	{
@@ -235,7 +235,7 @@ class DolGraph
 	 * Set width
 	 *
 	 * @param 	int|string		$w			Width (Example: 320 or '100%')
-	 * @return	boolean|null				True
+	 * @return	void
 	 */
 	public function SetWidth($w)
 	{
@@ -717,7 +717,7 @@ class DolGraph
 	 *
 	 * @param	string	$file    	Image file name to use to save onto disk (also used as javascript unique id)
 	 * @param	string	$fileurl	Url path to show image if saved onto disk
-	 * @return	integer|null
+	 * @return	mixed|boolean
 	 */
 	public function draw($file, $fileurl = '')
 	{
@@ -736,7 +736,8 @@ class DolGraph
 			dol_syslog(get_class($this) . "::draw " . $this->error, LOG_WARNING);
 		}
 		$call = "draw_" . $this->_library;
-		call_user_func_array(array($this, $call), array($file, $fileurl));
+
+		return call_user_func_array(array($this, $call), array($file, $fileurl));
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -830,7 +831,7 @@ class DolGraph
 		}
 		$this->stringtoshow .= '<div id="placeholder_' . $tag . '" style="width:' . $this->width . 'px;height:' . $this->height . 'px;" class="dolgraph' . (empty($dolxaxisvertical) ? '' : ' ' . $dolxaxisvertical) . (empty($this->cssprefix) ? '' : ' dolgraph' . $this->cssprefix) . ' center"></div>' . "\n";
 
-		$this->stringtoshow .= '<script id="' . $tag . '">' . "\n";
+		$this->stringtoshow .= '<script nonce="'.getNonce().'" id="' . $tag . '">' . "\n";
 		$this->stringtoshow .= '$(function () {' . "\n";
 		$i = $firstlot;
 		if ($nblot < 0) {
@@ -1145,7 +1146,7 @@ class DolGraph
 		}
 		$this->stringtoshow .= '<div id="placeholder_' . $tag . '" style="min-height: ' . $this->height . (strpos($this->height, '%') > 0 ? '' : 'px') . '; width:' . $this->width . (strpos($this->width, '%') > 0 ? '' : 'px') . ';" class="' . $cssfordiv . ' dolgraph' . (empty($dolxaxisvertical) ? '' : ' ' . $dolxaxisvertical) . (empty($this->cssprefix) ? '' : ' dolgraph' . $this->cssprefix) . ' center"><canvas id="canvas_' . $tag . '"></canvas></div>' . "\n";
 
-		$this->stringtoshow .= '<script id="' . $tag . '">' . "\n";
+		$this->stringtoshow .= '<script nonce="'.getNonce().'" id="' . $tag . '">' . "\n";
 		$i = $firstlot;
 		if ($nblot < 0) {
 			$this->stringtoshow .= '<!-- No series of data -->';

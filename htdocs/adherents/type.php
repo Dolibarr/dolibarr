@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
+// Load translation files required by the page
 $langs->load("members");
 
 $rowid  = GETPOST('rowid', 'int');
@@ -44,6 +45,7 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
+$mode = GETPOST('mode', 'alopha');
 
 $sall = GETPOST("sall", "alpha");
 $filter = GETPOST("filter", 'alpha');
@@ -54,13 +56,15 @@ $type = GETPOST('type', 'intcomma');
 $status = GETPOST('status', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 
+// Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) {
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -83,14 +87,12 @@ $comment = GETPOST("comment", 'restricthtml');
 $mail_valid = GETPOST("mail_valid", 'restricthtml');
 $caneditamount = GETPOSTINT("caneditamount");
 
-// Security check
-$result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
-
+// Initialize technical objects
 $object = new AdherentType($db);
-
 $extrafields = new ExtraFields($db);
+$hookmanager->initHooks(array('membertypecard', 'globalcard'));
 
-// fetch optionals attributes and labels
+// Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
@@ -102,13 +104,21 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x'
 }
 
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('membertypecard', 'globalcard'));
+// Security check
+$result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
 
 
 /*
  *	Actions
  */
+
+if (GETPOST('cancel', 'alpha')) {
+	$action = 'list';
+	$massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+	$massaction = '';
+}
 
 if ($cancel) {
 	$action = '';
@@ -249,6 +259,9 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		$i = 0;
 
 		$param = '';
+		if (!empty($mode)) {
+			$param .= '&mode'.urlencode($mode);
+		}
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 			$param .= '&contextpage='.$contextpage;
 		}
@@ -257,6 +270,10 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		}
 
 		$newcardbutton = '';
+
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+
 		if ($user->hasRight('adherent', 'configurer')) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/type.php?action=create');
 		}
@@ -270,6 +287,8 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<input type="hidden" name="action" value="list">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+		print '<input type="hidden" name="mode" value="'.$mode.'">';
+
 
 		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -279,6 +298,9 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 		print '<tr class="liste_titre">';
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<th>&nbsp;</th>';
+		}
 		print '<th>'.$langs->trans("Ref").'</th>';
 		print '<th>'.$langs->trans("Label").'</th>';
 		print '<th class="center">'.$langs->trans("MembersNature").'</th>';
@@ -287,12 +309,20 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<th class="center">'.$langs->trans("CanEditAmountShort").'</th>';
 		print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
 		print '<th class="center">'.$langs->trans("Status").'</th>';
-		print '<th>&nbsp;</th>';
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<th>&nbsp;</th>';
+		}
 		print "</tr>\n";
 
 		$membertype = new AdherentType($db);
 
-		while ($i < $num) {
+		$i = 0;
+		/*$savnbfield = $totalarray['nbfield'];
+		$totalarray = array();
+		$totalarray['nbfield'] = 0;*/
+
+		$imaxinloop = ($limit ? min($num, $limit) : $num);
+		while ($i < $imaxinloop) {
 			$objp = $db->fetch_object($result);
 
 			$membertype->id = $objp->rowid;
@@ -303,32 +333,51 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			$membertype->amount = $objp->amount;
 			$membertype->caneditamount = $objp->caneditamount;
 
-			print '<tr class="oddeven">';
-			print '<td class="nowraponall">';
-			print $membertype->getNomUrl(1);
-			//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
-			print '</td>';
-			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
-			print '<td class="center">';
-			if ($objp->morphy == 'phy') {
-				print $langs->trans("Physical");
-			} elseif ($objp->morphy == 'mor') {
-				print $langs->trans("Moral");
+			if ($mode == 'kanban') {
+				if ($i == 0) {
+					print '<tr><td colspan="12">';
+					print '<div class="box-flex-container kanban">';
+				}
+				//output kanban
+				$membertype->label = $objp->label;
+				print $membertype->getKanbanView('');
+				if ($i == ($imaxinloop - 1)) {
+					print '</div>';
+					print '</td></tr>';
+				}
 			} else {
-				print $langs->trans("MorAndPhy");
+				print '<tr class="oddeven">';
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					if ($user->rights->adherent->configurer) {
+						print '<td class="center"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+					}
+				}
+				print '<td class="nowraponall">';
+				print $membertype->getNomUrl(1);
+				//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
+				print '</td>';
+				print '<td>'.dol_escape_htmltag($objp->label).'</td>';
+				print '<td class="center">';
+				if ($objp->morphy == 'phy') {
+					print $langs->trans("Physical");
+				} elseif ($objp->morphy == 'mor') {
+					print $langs->trans("Moral");
+				} else {
+					print $langs->trans("MorAndPhy");
+				}
+				print '</td>';
+				print '<td class="center">'.yn($objp->subscription).'</td>';
+				print '<td class="center"><span class="amount">'.(is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount)).'</span></td>';
+				print '<td class="center">'.yn($objp->caneditamount).'</td>';
+				print '<td class="center">'.yn($objp->vote).'</td>';
+				print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					if ($user->rights->adherent->configurer) {
+						print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+					}
+				}
+				print "</tr>";
 			}
-			print '</td>';
-			print '<td class="center">'.yn($objp->subscription).'</td>';
-			print '<td class="center"><span class="amount">'.(is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount)).'</span></td>';
-			print '<td class="center">'.yn($objp->caneditamount).'</td>';
-			print '<td class="center">'.yn($objp->vote).'</td>';
-			print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
-			if ($user->hasRight('adherent', 'configurer')) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
-			} else {
-				print '<td class="right">&nbsp;</td>';
-			}
-			print "</tr>";
 			$i++;
 		}
 
@@ -340,7 +389,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 					$colspan++;
 				}
 			}*/
-			$colspan = 8;
+			$colspan = 9;
 			print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 		}
 
@@ -478,7 +527,7 @@ if ($rowid > 0) {
 
 		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
 		if ($object->duration_value > 1) {
-			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
+			$dur = array("i"=>$langs->trans("Minutes"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
 		} elseif ($object->duration_value > 0) {
 			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 		}
@@ -678,13 +727,18 @@ if ($rowid > 0) {
 			print "</tr>\n";
 
 			print '<tr class="liste_titre">';
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
+			}
 			print_liste_field_titre("NameSlashCompany", $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "d.login", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("MemberNature", $_SERVER["PHP_SELF"], "d.morphy", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "d.email", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.statut,d.datefin", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", $param, "", 'align="center"', $sortfield, $sortorder);
-			print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
+			}
 			print "</tr>\n";
 
 			$adh = new Adherent($db);
@@ -702,7 +756,17 @@ if ($rowid > 0) {
 				$adh->statut = $objp->status;
 
 				print '<tr class="oddeven">';
-
+				// Actions
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="center">';
+					if ($user->hasRight('adherent', 'creer')) {
+						print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
+					}
+					if ($user->hasRight('adherent', 'supprimer')) {
+						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
+					}
+					print "</td>";
+				}
 				// Lastname
 				if ($objp->company != '') {
 					print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user", 'class="paddingright"').$adh->getFullName($langs, 0, -1, 20).' / '.dol_trunc($objp->company, 12).'</a></td>'."\n";
@@ -755,15 +819,16 @@ if ($rowid > 0) {
 				}
 
 				// Actions
-				print '<td class="center">';
-				if ($user->hasRight('adherent', 'creer')) {
-					print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="center">';
+					if ($user->hasRight('adherent', 'creer')) {
+						print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
+					}
+					if ($user->hasRight('adherent', 'supprimer')) {
+						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
+					}
+					print "</td>";
 				}
-				if ($user->hasRight('adherent', 'supprimer')) {
-					print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
-				}
-				print "</td>";
-
 				print "</tr>\n";
 				$i++;
 			}

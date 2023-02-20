@@ -120,7 +120,7 @@ class mailing_contacts1 extends MailingTargets
 	 */
 	public function formFilter()
 	{
-		global $langs;
+		global $conf,$langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("commercial", "companies", "suppliers", "categories"));
@@ -138,7 +138,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " ORDER BY sp.poste";
 		$resql = $this->db->query($sql);
 
-		$s .= '<select id="filter_jobposition_contact" name="filter_jobposition" class="flat" placeholder="'.dol_escape_htmltag($langs->trans("PostOrFunction")).'">';
+		$s .= '<select id="filter_jobposition_contact" name="filter_jobposition" class="flat maxwidth200" placeholder="'.dol_escape_htmltag($langs->trans("PostOrFunction")).'">';
 		$s .= '<option value="-1">'.$langs->trans("PostOrFunction").'</option>';
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -174,7 +174,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " ORDER BY c.label";
 		$resql = $this->db->query($sql);
 
-		$s .= '<select id="filter_category_contact" name="filter_category" class="flat">';
+		$s .= '<select id="filter_category_contact" name="filter_category" class="flat maxwidth200">';
 		$s .= '<option value="-1">'.$langs->trans("ContactCategoriesShort").'</option>';
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -196,7 +196,7 @@ class mailing_contacts1 extends MailingTargets
 		$s .= '<br>';
 
 		// Add prospect of a particular level
-		$s .= '<select id="filter_contact" name="filter" class="flat">';
+		$s .= '<select id="filter_contact" name="filter" class="flat maxwidth200">';
 		$sql = "SELECT code, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 		$sql .= " WHERE active > 0";
@@ -306,10 +306,12 @@ class mailing_contacts1 extends MailingTargets
 		$s .= ajax_combobox("filter_category_supplier_contact");
 
 		// Choose language
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-		$formadmin = new FormAdmin($this->db);
-		$s .= '<span class="opacitymedium">'.$langs->trans("DefaultLang").':</span> ';
-		$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang', 0, 0, 1, 0, 0, '', 0, 0, 0, null, 1);
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+			$formadmin = new FormAdmin($this->db);
+			$s .= '<span class="opacitymedium">'.$langs->trans("DefaultLang").':</span> ';
+			$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang', 0, null, 1, 0, 0, '', 0, 0, 0, null, 1);
+		}
 
 		return $s;
 	}
@@ -459,7 +461,7 @@ class mailing_contacts1 extends MailingTargets
 						'other' =>
 							($langs->transnoentities("ThirdParty").'='.$obj->companyname).';'.
 							($langs->transnoentities("UserTitle").'='.($obj->civility_id ? $langs->transnoentities("Civility".$obj->civility_id) : '')).';'.
-							($langs->transnoentities("JobPosition").'='.$obj->jobposition),
+							($langs->transnoentities("PostOrFunction").'='.$obj->jobposition),
 						'source_url' => $this->url($obj->id),
 						'source_id' => $obj->id,
 						'source_type' => 'contact'

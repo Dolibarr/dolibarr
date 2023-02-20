@@ -542,8 +542,8 @@ print $hookmanager->resPrint;
 
 // Status
 if (!empty($arrayfields['t.statut']['checked'])) {
-	print '<td class="liste_titre center">';
-	print $form->selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'onrightofpage');
+	print '<td class="liste_titre center parentonrightofpage">';
+	print $form->selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 
@@ -634,7 +634,7 @@ while ($i < min($num, $limit)) {
 	if ($mode =='kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="12">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
 		print $warehouse->getKanbanView('');

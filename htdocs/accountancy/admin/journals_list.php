@@ -431,9 +431,9 @@ if ($id) {
 		print '<td>';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '</td>';
-		print '<td style="min-width: 26px;"></td>';
-		print '<td style="min-width: 26px;"></td>';
-		print '<td style="min-width: 26px;"></td>';
+		print '<td></td>';
+		print '<td></td>';
+		print '<td></td>';
 		print '</tr>';
 
 		// Line to enter new values

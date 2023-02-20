@@ -721,4 +721,39 @@ class Loan extends CommonObject
 			return -1;
 		}
 	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string		HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		global $langs;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		if (property_exists($this, 'capital')) {
+			$return .= ' | <span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->capital).'</span>';
+		}
+		if (property_exists($this, 'datestart')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateStart").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->datestart), 'day').'</span>';
+		}
+		if (property_exists($this, 'dateend')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->dateend), 'day').'</span>';
+		}
+
+		if (method_exists($this, 'LibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->LibStatut($this->totalpaid, 5, $this->alreadypaid).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
+	}
 }

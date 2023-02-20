@@ -387,7 +387,7 @@ if (empty($conf->global->ECM_AUTO_TREE_HIDEN)) {
 	}
 }
 
-$head = ecm_prepare_dasboard_head('');
+$head = ecm_prepare_dasboard_head(null);
 print dol_get_fiche_head($head, 'index_auto', '', -1, '');
 
 

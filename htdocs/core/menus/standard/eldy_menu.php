@@ -204,7 +204,7 @@ class MenuManager
 					//if ($tmpmainmenu=='accountancy') {
 					//var_dump($submenu->liste); exit;
 					//}
-					$nexturl = dol_buildpath($submenu->liste[0]['url'], 1);
+					$nexturl = dol_buildpath(empty($submenu->liste[0]['url']) ? '' : $submenu->liste[0]['url'], 1);
 
 					$canonrelurl = preg_replace('/\?.*$/', '', $relurl);
 					$canonnexturl = preg_replace('/\?.*$/', '', $nexturl);

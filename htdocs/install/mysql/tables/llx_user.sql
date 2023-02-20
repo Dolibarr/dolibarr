@@ -84,6 +84,7 @@ create table llx_user
   datelastpassvalidation  datetime,				                    -- last date we change password or we made a disconnect all
   datestartvalidity       datetime,
   dateendvalidity         datetime,
+  flagdelsessionsbefore   datetime DEFAULT NULL,					-- set this to a date if we need to launch an external process to invalidate all sessions for the same login created before this date 
   iplastlogin             varchar(250),
   ippreviouslogin         varchar(250),
   egroupware_id           integer,

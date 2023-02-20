@@ -178,7 +178,7 @@ class SimpleOpenID
 	/**
 	 * SetOpenIDServer
 	 *
-	 * @return	void
+	 * @return	array
 	 */
 	public function GetError()
 	{
@@ -225,7 +225,7 @@ class SimpleOpenID
 	 * splitResponse
 	 *
 	 * @param	string	$response		Server
-	 * @return	void
+	 * @return	array
 	 */
 	public function splitResponse($response)
 	{
@@ -422,7 +422,7 @@ class SimpleOpenID
 		// phpcs:enable
 		$redirect_to = $this->GetRedirectURL();
 		if (headers_sent()) { // Use JavaScript to redirect if content has been previously sent (not recommended, but safe)
-			echo '<script type="text/javascript">window.location=\'';
+			echo '<script nonce="'.getNonce().'" type="text/javascript">window.location=\'';
 			echo $redirect_to;
 			echo '\';</script>';
 		} else {	// Default Header Redirect

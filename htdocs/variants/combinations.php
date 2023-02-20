@@ -463,7 +463,7 @@ if (!empty($id) || !empty($ref)) {
 	print "</table>\n";
 
 	print '</div>';
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
 
@@ -511,7 +511,7 @@ if (!empty($id) || !empty($ref)) {
 
 		<script type="text/javascript">
 
-			variants_available = <?php echo json_encode($prodattr_alljson); ?>;
+			variants_available = <?php echo json_encode($prodattr_alljson, JSON_PARTIAL_OUTPUT_ON_ERROR); ?>;
 			variants_selected = {
 				index: [],
 				info: []

@@ -291,14 +291,14 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 
 	// Opportunity percent
 	print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
-	if (strcmp($object->opp_percent, '')) {
+	if (!is_null($object->opp_percent) && strcmp($object->opp_percent, '')) {
 		print price($object->opp_percent, '', $langs, 1, 0).' %';
 	}
 	print '</td></tr>';
 
 	// Opportunity Amount
 	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
-	if (strcmp($object->opp_amount, '')) {
+	if (!is_null($object->opp_amount) && strcmp($object->opp_amount, '')) {
 		print '<span class="amount">'.price($object->opp_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
 		if (strcmp($object->opp_percent, '')) {
 			print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("Weighted").'</span>: <span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
@@ -309,7 +309,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 
 // Budget
 print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-if (strcmp($object->budget_amount, '')) {
+if (!is_null($object->budget_amount) && strcmp($object->budget_amount, '')) {
 	print '<span class="amount">'.price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
 }
 print '</td></tr>';
@@ -475,7 +475,7 @@ $listofreferent = array(
 	'table'=>'fichinter',
 	'datefieldname'=>'date_valid',
 	'disableamount'=>0,
-	'margin'=>'minus',
+	'margin'=>'',
 	'urlnew'=>DOL_URL_ROOT.'/fichinter/card.php?action=create&origin=project&originid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'lang'=>'interventions',
 	'buttonnew'=>'AddIntervention',
@@ -585,9 +585,9 @@ $listofreferent = array(
 	'name'=>"MouvementStockAssociated",
 	'title'=>"ListMouvementStockProject",
 	'class'=>'MouvementStock',
-	'margin'=>'minus',
 	'table'=>'stock_mouvement',
 	'datefieldname'=>'datem',
+	'margin'=>'minus',
 	'disableamount'=>0,
 	'test'=>!empty($conf->stock->enabled) && $user->hasRight('stock', 'mouvement', 'lire') && !empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW)),
 'salaries'=>array(
@@ -657,7 +657,6 @@ if (!empty($conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN)) {
 }
 
 
-
 $parameters = array('listofreferent'=>$listofreferent);
 $resHook = $hookmanager->executeHooks('completeListOfReferent', $parameters, $object, $action);
 
@@ -693,7 +692,7 @@ if (!$showdatefilter) {
 	print '<div class="center centpercent">';
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="tablename" value="'.$tablename.'">';
+	print '<input type="hidden" name="tablename" value="'.(empty($tablename) ? '' : $tablename).'">';
 	print '<input type="hidden" name="action" value="view">';
 	print '<div class="inline-block">';
 	print $form->selectDate($dates, 'dates', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
@@ -730,7 +729,7 @@ $tooltiponprofitplus = $tooltiponprofitminus = '';
 foreach ($listofreferent as $key => $value) {
 	$name = $langs->trans($value['name']);
 	$qualified = $value['test'];
-	$margin = $value['margin'];
+	$margin = empty($value['margin']) ? 0 : $value['margin'];
 	if ($qualified && isset($margin)) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
 		if ($margin == 'add') {
 			$tooltiponprofitplus .= ' &gt; '.$name." (+)<br>\n";
@@ -753,6 +752,7 @@ $total_revenue_ht = 0;
 $balance_ht = 0;
 $balance_ttc = 0;
 
+// Loop on each element type (proposal, sale order, invoices, ...)
 foreach ($listofreferent as $key => $value) {
 	$parameters = array(
 		'total_revenue_ht' =>& $total_revenue_ht,
@@ -777,8 +777,8 @@ foreach ($listofreferent as $key => $value) {
 	$tablename = $value['table'];
 	$datefieldname = $value['datefieldname'];
 	$qualified = $value['test'];
-	$margin = $value['margin'];
-	$project_field = $value['project_field'];
+	$margin = empty($value['margin']) ? 0 : $value['margin'];
+	$project_field = empty($value['project_field']) ? '' : $value['project_field'];
 	if ($qualified && isset($margin)) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
 		$element = new $classname($db);
 
@@ -788,6 +788,7 @@ foreach ($listofreferent as $key => $value) {
 			$total_ht = 0;
 			$total_ttc = 0;
 
+			// Loop on each object for the current element type
 			$num = count($elementarray);
 			for ($i = 0; $i < $num; $i++) {
 				$tmp = explode('_', $elementarray[$i]);
@@ -872,7 +873,7 @@ foreach ($listofreferent as $key => $value) {
 					$defaultvat = get_default_tva($mysoc, $mysoc);
 					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)), 'MT');
 				} elseif ($key == 'loan') {
-						$total_ttc_by_line = $total_ht_by_line; // For loan there is actually no taxe managed in Dolibarr
+					$total_ttc_by_line = $total_ht_by_line; // For loan there is actually no taxe managed in Dolibarr
 				} else {
 					$total_ttc_by_line = $element->total_ttc;
 				}
@@ -893,19 +894,14 @@ foreach ($listofreferent as $key => $value) {
 			}
 
 			// Each element with at least one line is output
-			$qualifiedforfinalprofit = true;
-			if ($key == 'intervention' && empty($conf->global->PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT)) {
-				$qualifiedforfinalprofit = false;
-			}
-			//var_dump($key.' '.$qualifiedforfinalprofit);
 
 			// Calculate margin
-			if ($qualifiedforfinalprofit) {
-				if ($margin == 'add') {
+			if ($margin) {
+				if ($margin === 'add') {
 					$total_revenue_ht += $total_ht;
 				}
 
-				if ($margin != "add") {	// Revert sign
+				if ($margin === "minus") {	// Revert sign
 					$total_ht = -$total_ht;
 					$total_ttc = -$total_ttc;
 				}
@@ -921,24 +917,24 @@ foreach ($listofreferent as $key => $value) {
 			print '<td class="right">'.$i.'</td>';
 			// Amount HT
 			print '<td class="right">';
-			if ($key == 'intervention' && !$qualifiedforfinalprofit) {
+			if ($key == 'intervention' && !$margin) {
 				print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
 			} else {
-				print price($total_ht);
 				if ($key == 'propal') {
 					print '<span class="opacitymedium">'.$form->textwithpicto('', $langs->trans("SignedOnly")).'</span>';
 				}
+				print price($total_ht);
 			}
 			print '</td>';
 			// Amount TTC
 			print '<td class="right">';
-			if ($key == 'intervention' && !$qualifiedforfinalprofit) {
+			if ($key == 'intervention' && !$margin) {
 				print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
 			} else {
-				print price($total_ttc);
 				if ($key == 'propal') {
 					print '<span class="opacitymedium">'.$form->textwithpicto('', $langs->trans("SignedOnly")).'</span>';
 				}
+				print price($total_ttc);
 			}
 			print '</td>';
 			print '</tr>';
@@ -990,11 +986,11 @@ foreach ($listofreferent as $key => $value) {
 	$tablename = $value['table'];
 	$datefieldname = $value['datefieldname'];
 	$qualified = $value['test'];
-	$langtoload = $value['lang'];
-	$urlnew = $value['urlnew'];
-	$buttonnew = $value['buttonnew'];
-	$testnew = $value['testnew'];
-	$project_field = $value['project_field'];
+	$langtoload = empty($value['lang']) ? '' : $value['lang'];
+	$urlnew = empty($value['urlnew']) ? '' : $value['urlnew'];
+	$buttonnew = empty($value['buttonnew']) ? '' : $value['buttonnew'];
+	$testnew = empty($value['testnew']) ? '' : $value['testnew'];
+	$project_field = empty($value['project_field']) ? '' : $value['project_field'];
 
 	$exclude_select_element = array('payment_various');
 	if (!empty($value['exclude_select_element'])) {

@@ -593,7 +593,7 @@ class Users extends DolibarrApi
 	 *
 	 * @param 	int 	$group ID of group
 	 * @param int       $load_members     Load members list or not {@min 0} {@max 1}
-	 * @return  array               Array of User objects
+	 * @return  object               object of User objects
 	 *
 	 * @throws RestException 401 Not allowed
 	 * @throws RestException 404 User not found
@@ -700,11 +700,6 @@ class Users extends DolibarrApi
 
 		unset($object->lines);
 		unset($object->model_pdf);
-
-		unset($object->skype);
-		unset($object->twitter);
-		unset($object->facebook);
-		unset($object->linkedin);
 
 		$canreadsalary = ((!empty($conf->salaries->enabled) && !empty(DolibarrApiAccess::$user->rights->salaries->read)) || (empty($conf->salaries->enabled)));
 

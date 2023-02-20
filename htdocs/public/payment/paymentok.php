@@ -452,7 +452,7 @@ if ($ispaymentok) {
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
 				// Security protection:
-				if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {	// If we didn't allow members to choose their membership amount (if free amount is allowed, no need to check)
+				if (empty($adht->caneditamount)) {	// If we didn't allow members to choose their membership amount (if the amount is allowed in edit mode, no need to check)
 					if ($object->status == $object::STATUS_DRAFT) {		// If the member is not yet validated, we check that the amount is the same as expected.
 						$typeid = $object->typeid;
 
@@ -775,7 +775,7 @@ if ($ispaymentok) {
 
 						$moreinheader = 'X-Dolibarr-Info: send_an_email by public/payment/paymentok.php'."\r\n";
 
-						$result = $object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofmimes, $listofnames, "", "", 0, -1, "", $moreinheader);
+						$result = $object->sendEmail($texttosend, $subjecttosend, $listofpaths, $listofmimes, $listofnames, "", "", 0, -1, "", $moreinheader);
 
 						if ($result < 0) {
 							$errmsg = $object->error;
@@ -1327,7 +1327,9 @@ if ($ispaymentok) {
 							if ($attendeetovalidate->email_company && $attendeetovalidate->email_company != $thirdparty->email) {
 								$cc = ($cc ? ', ' : '').$attendeetovalidate->email_company;
 							}
-							$from = $conf->global->MAILING_EMAIL_FROM;
+
+							$from = !empty($conf->global->MAILING_EMAIL_FROM) ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
+
 							$urlback = $_SERVER["REQUEST_URI"];
 
 							$ishtml = dol_textishtml($texttosend); // May contain urls
@@ -1628,7 +1630,7 @@ if ($ispaymentok) {
 		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox'));
 
 		$sendto = $sendemail;
-		$from = $conf->global->MAILING_EMAIL_FROM;
+		$from = !empty($conf->global->MAILING_EMAIL_FROM) ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
 		// Define $urlwithroot
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
@@ -1756,7 +1758,7 @@ if ($ispaymentok) {
 		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox'));
 
 		$sendto = $sendemail;
-		$from = $conf->global->MAILING_EMAIL_FROM;
+		$from = !empty($conf->global->MAILING_EMAIL_FROM) ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
 		// Define $urlwithroot
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file

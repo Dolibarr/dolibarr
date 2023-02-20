@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Code
+WebsiteName=Name of the website
 WebsiteSetupDesc=Maak hier de websites die u wilt gebruiken. Ga vervolgens naar het menu Websites om ze te bewerken.
 DeleteWebsite=Website verwijderen
 ConfirmDeleteWebsite=Weet u zeker dat u deze website wilt verwijderen? Alle pagina's en inhoud worden ook verwijderd. De geüploade bestanden (zoals in de mediasmap, de ECM-module, ...) blijven behouden.
@@ -15,9 +16,9 @@ WEBSITE_HTML_HEADER=Toevoeging onderaan HTML-koptekst (gemeenschappelijk voor al
 WEBSITE_ROBOT=Robotbestand (robots.txt)
 WEBSITE_HTACCESS=Website .htaccess bestand
 WEBSITE_MANIFEST_JSON=Website manifest.json bestand
-WEBSITE_README=README.md bestand
 WEBSITE_KEYWORDSDesc=Gebruik een komma om waarden te scheiden
-EnterHereLicenseInformation=Voer hier metadata of licentie-informatie in om een README.md bestand in te dienen. Als u uw website als sjabloon distribueert, wordt het bestand opgenomen in het template-pakket.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included into the temptate package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included into the temptate package.
 HtmlHeaderPage=HTML-header (alleen voor deze pagina)
 PageNameAliasHelp=Naam of alias van de pagina. <br> Deze alias wordt ook gebruikt om een SEO-URL te veranderen wanneer de website wordt uitgevoerd vanaf een virtuele host van een webserver (zoals Apacke, Nginx, ...). Gebruik de knop "<strong>%s</strong>" om deze alias te bewerken.
 EditTheWebSiteForACommonHeader=Opmerking: als u een gepersonaliseerde koptekst voor alle pagina's wilt definiëren, moet u de koptekst op siteniveau bewerken in plaats van op de pagina/container.
@@ -42,10 +43,12 @@ ViewPageInNewTab=Bekijk pagina in nieuw tabblad
 SetAsHomePage=Als startpagina instellen
 RealURL=Echte URL
 ViewWebsiteInProduction=Bekijk website met behulp van eigen URL's
+Virtualhost=Virtual host or domain name
+VirtualhostDesc=The name of the Virtual host or domain (For example: www.mywebsite.com, mybigcompany.net, ...)
 SetHereVirtualHost=<u> Gebruik met Apache / NGinx / ... </u> <br> Creëer op uw webserver (Apache, Nginx, ...) een speciale virtuele host met PHP ingeschakeld en een root-directory op <br><strong> %s</strong>
 ExampleToUseInApacheVirtualHostConfig=Voorbeeld om te gebruiken in Apache virtual host setup:
 YouCanAlsoTestWithPHPS=<u>Gebruik met PHP embedded server</u> <br> In een ontwikkelomgeving kunt u de site het liefst testen met de ingebouwde PHP-webserver (PHP 5.5 vereist) <br> <strong>php -S 0.0.0.0:8080 -t %s</strong>
-YouCanAlsoDeployToAnotherWHP=<u>Beheer uw website met een andere Dolibarr Hosting-provider</u> <br> Als u geen webserver zoals Apache of NGinx beschikbaar heeft op internet, kunt u uw website exporteren en importeren in een ander Dolibarr-exemplaar van een andere Dolibarr-hostingprovider die volledige integratie met de websitemodule biedt. U kunt een lijst met sommige Dolibarr-hostingproviders vinden op <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP= <u> Run uw website met een andere Dolibarr-hostingprovider </u> <br> Als u geen webserver zoals Apache of NGinx op internet heeft, kunt u uw website exporteren en importeren naar een andere Dolibarr-instantie van een andere Dolibarr-hostingprovider die volledige integratie met de Website-module. U kunt een lijst met enkele Dolibarr-hostingproviders vinden op <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external"> https://saas.dolibarr.org </a>
 CheckVirtualHostPerms=Controleer ook of de virtuele hostgebruiker (bijvoorbeeld www-data) <strong>%s</strong> permissies heeft voor bestanden in <br><strong>%s</strong>
 ReadPerm=Lezen
 WritePerm=Schrijven
@@ -60,7 +63,7 @@ YouCanEditHtmlSourceckeditor=U kunt HTML-broncode bewerken met de knop "Bron" in
 YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
+YouCanEditHtmlSourceMore= <br> Meer voorbeelden van HTML of dynamische code zijn beschikbaar in <a href="%s" target="_blank" rel="noopener noreferrer external"> de wiki-documentatie </a> <br> .
 ClonePage=Kloon pagina/container
 CloneSite=Klonen site
 SiteAdded=Website toegevoegd
@@ -137,7 +140,7 @@ PagesRegenerated=%s pagina ('s) / container (s) her-aangemaakt
 RegenerateWebsiteContent=Genereer cachebestanden van websites opnieuw
 AllowedInFrames=Toegestaan in frames
 DefineListOfAltLanguagesInWebsiteProperties=Definieer een lijst van alle beschikbare talen in website-eigenschappen.
-GenerateSitemaps=Website-site mapbestand genereren map
+GenerateSitemaps=Generate website sitemap.xml file
 ConfirmGenerateSitemaps=Als u bevestigt, wist u het bestaande site mapbestand...
 ConfirmSitemapsCreation=Generatie van sitemap bevestigen
 SitemapGenerated=Sitemap bestand <b>%s</b> gegenereerd
@@ -145,3 +148,10 @@ ImportFavicon=Favicon
 ErrorFaviconType=Favicon moet png zijn
 ErrorFaviconSize=Favicon moet de afmetingen 16x16, 32x32 of 64x64 . hebben
 FaviconTooltip=Upload een afbeelding die een png moet zijn (16x16, 32x32 of 64x64)
+NextContainer=Next page/container
+PreviousContainer=Previous page/container
+WebsiteMustBeDisabled=The website must have the status "%s"
+WebpageMustBeDisabled=The web page must have the status "%s"
+SetWebsiteOnlineBefore=When website is offline, all pages are offline. Change status of website first.
+Booking=Booking
+Reservation=Reservation

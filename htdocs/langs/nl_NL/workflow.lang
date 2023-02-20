@@ -7,6 +7,7 @@ descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatisch een verkooporder maken nadat ee
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Creëer automatisch een klantfactuur nadat een offerte is ondertekend (de nieuwe factuur heeft hetzelfde bedrag als de offerte)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Maak automatisch een klant factuur aan nadat een contract is gevalideerd.
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Creëer automatisch een klantfactuur nadat een verkooporder is gesloten (de nieuwe factuur heeft hetzelfde bedrag als de bestelling)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Maak bij het aanmaken van tickets automatisch een interventie aan.
 # Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classificeer gekoppeld bronvoorstel als gefactureerd wanneer verkooporder is ingesteld op gefactureerd (en als het bedrag van de bestelling gelijk is aan het totale bedrag van het ondertekende gekoppelde voorstel)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classificeer het gekoppelde bronvoorstel als gefactureerd wanneer de klantfactuur is gevalideerd (en als het factuurbedrag gelijk is aan het totale bedrag van het ondertekende gekoppelde voorstel)
@@ -21,10 +22,15 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classificeer gekoppel
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Classificeer inkooporder met gekoppelde bron als ontvangen wanneer een ontvangst is gevalideerd (en als de hoeveelheid die door alle ontvangsten is ontvangen hetzelfde is als in de inkooporder die moet worden bijgewerkt)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Classificeer inkooporder met gekoppelde bron als ontvangen wanneer een ontvangst wordt gesloten (en als de hoeveelheid die door alle ontvangsten wordt ontvangen hetzelfde is als in de inkooporder die moet worden bijgewerkt)
 # Autoclassify purchase invoice
-descWORKFLOW_BILL_ON_RECEPTION=Classificeer ontvangsten als "gefactureerd" wanneer een gekoppelde inkooporder wordt gevalideerd
+descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Koppel bij het aanmaken van een ticket beschikbare contracten van bijpassende derde partijen
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Zoek bij het koppelen van contracten onder die van moederbedrijven
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Sluit alle interventies die aan het ticket zijn gekoppeld wanneer een ticket is gesloten
 AutomaticCreation=Automatisch aanmaken
 AutomaticClassification=Automatisch classificeren
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classificeer gekoppelde bronzending als gesloten wanneer de klant factuur wordt gevalideerd
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
+AutomaticClosing=Automatisch sluiten
+AutomaticLinking=Automatisch koppelen

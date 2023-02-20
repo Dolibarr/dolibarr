@@ -68,3 +68,5 @@ ConfirmReopenIntervention=出張 <b>%s </b> を開いてよいか？
 GenerateInter=出張を生成する
 FichinterNoContractLinked=出張%sは、リンクされた契約なしで作成された。
 ErrorFicheinterCompanyDoesNotExist=法人は存在しない。出張は作成されていない。
+NextDateToIntervention=次回出張日付生成
+NoIntervention=介入なし

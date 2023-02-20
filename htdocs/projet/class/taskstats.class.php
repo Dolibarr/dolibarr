@@ -212,7 +212,7 @@ class TaskStats extends Stats
 	/**
 	 * Return average of entity by month
 	 * @param	int     $year           year number
-	 * @return 	int						value
+	 * @return 	array					array of values
 	 */
 	protected function getAverageByMonth($year)
 	{

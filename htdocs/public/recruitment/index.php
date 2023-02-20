@@ -252,7 +252,7 @@ if (is_array($results)) {
 				}
 			}
 			print '<b class="wordbreak">';
-			print $tmpuser->getFullName(-1);
+			print $tmpuser->getFullName($langs);
 			print ' &nbsp; '.dol_print_email($emailforcontact, 0, 0, 1, 0, 0, 'envelope');
 			print '</b>';
 			print '</b><br>';

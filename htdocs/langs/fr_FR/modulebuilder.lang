@@ -56,6 +56,8 @@ RegenerateMissingFiles=Générer les fichiers manquant
 SpecificationFile=Fichier de documentation
 LanguageFile=Fichier langue
 ObjectProperties=Propriétés de l'objet
+Property=Propriété
+PropertyDesc=Une propriété est un attribut qui caractérise un objet. Cet attribut a un code, un libellé et un type avec plusieurs options.
 ConfirmDeleteProperty=Voulez-vous vraiment supprimer la propriété <strong> %s </strong> ? Cela modifiera le code de la classe PHP, mais supprimera également la colonne de la définition de la table de l'objet.
 NotNull=Non NULL
 NotNullDesc=1=Définir la base de données sur NOT NULL, 0=Autoriser les valeurs nulles, -1=Autoriser les valeurs nulles en forçant la valeur à NULL si vide ('' ou 0)
@@ -84,13 +86,14 @@ IsAMeasure=Est une mesure
 DirScanned=Répertoire scanné
 NoTrigger=Pas de trigger
 NoWidget=Aucun widget
-GoToApiExplorer=Explorateur d'API
+ApiExplorer=Explorateur d'API
 ListOfMenusEntries=Liste des entrées du menu
 ListOfDictionariesEntries=Liste des entrées de dictionnaires
 ListOfPermissionsDefined=Liste des permissions
 SeeExamples=Voir des exemples ici
 EnabledDesc=Condition pour que ce champs soit actif.<br><br>Exemples:<br>1<br>isModEnabled('MAIN_MODULE_MYMODULE')<br>getDolGlobalString('MYMODULE_OPTION')==2
-VisibleDesc=Le champ est-il visible ? (Exemples: 0=Jamais visible, 1=Visible sur les listes et formulaires de création/mise à jour/visualisation, 2=Visible uniquement sur les listes, 3=Visible uniquement sur le formulaire de création/mise à jour/affichage (pas les listes), 4=Visible sur les listes et formulaire de mise à jour et affichage uniquement (pas en création), 5=Visible sur les listes et formulaire en lecture (pas en création ni modification).<br><br>Utiliser une valeur négative signifie que le champ n'est pas affiché par défaut sur la liste mais peut être sélectionné pour l'affichage).<br><br>Il peut s'agir d'une expression, par exemple :<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user->hasRight('holiday', 'define_holiday')?1:5
+VisibleDesc=Le champ est-il visible ? (Exemples : 0=Jamais visible, 1=Visible sur la liste et les formulaires de création/mise à jour/affichage, 2=Visible sur la liste uniquement, 3=Visible sur le formulaire de création/mise à jour/affichage uniquement (pas la liste), 4=Visible sur la liste et formulaire de mise à jour/affichage uniquement (pas de création), 5=Visible sur le formulaire d'affichage de fin de liste uniquement (pas de création, pas de mise à jour).
+ItCanBeAnExpression=Cela peut être une expression. Exemple : <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1 <br> $user->hasRight('holiday', 'define_holiday')?1:5
 DisplayOnPdfDesc=Affichez ce champ sur les documents PDF compatibles, vous pouvez gérer la position avec le champ "Position". <br>  <strong> Pour le document : </strong>  <br> 0 = non affiché  <br> 1 = affiché <br> 2 = affiché uniquement si non vide <br>  <br>  <strong> Pour les lignes de document : </strong>  <br> 0 = non affiché  <br> 1 = affiché dans une colonne <br> 3 = affiché dans la colonne description après la description <br> 4 = affiché dans la colonne description après la description uniquement si non vide
 DisplayOnPdf=Sur les PDF
 IsAMeasureDesc=Peut-on cumuler la valeur du champ pour obtenir un total dans les listes ? (Exemples: 1 ou 0)
@@ -144,7 +147,9 @@ CSSViewClass=CSS pour le formulaire de lecture
 CSSListClass=CSS pour la liste
 NotEditable=Non éditable
 ForeignKey=Clé étrangère
-TypeOfFieldsHelp=Type de champs : <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] <br> '1' signifie que nous ajoutons un bouton + après le combo pour créer l'enregistrement <br> 'filter' est une condition sql, exemple : 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+ForeignKeyDesc=Si la valeur de ce champ doit être garantie existe dans une autre table. Saisissez ici une valeur correspondant à la syntaxe : nomtable.champparentàvérifier
+TypeOfFieldsHelp=Exemple : <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] <br> ' 1' signifie que nous ajoutons un bouton + après le combo pour créer l'enregistrement <br> 'filter' est une condition sql, exemple : 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+TypeOfFieldsHelpIntro=Il s'agit du type de champ/attribut.
 AsciiToHtmlConverter=Convertisseur Ascii en HTML
 AsciiToPdfConverter=Convertisseur Ascii en PDF
 TableNotEmptyDropCanceled=La table n’est pas vide. La suppression a été annulée.
@@ -160,3 +165,11 @@ BadValueForType=Mauvaise valeur pour le type %s
 DefinePropertiesFromExistingTable=Définir des propriétés à partir d'une table existante
 DefinePropertiesFromExistingTableDesc=Si une table dans la base de données (pour l'objet à créer) existe déjà, vous pouvez l'utiliser pour définir les propriétés de l'objet.
 DefinePropertiesFromExistingTableDesc2=Laisser vide si la table n'existe pas encore. Le générateur de code utilisera différents types de champs pour créer un exemple de table que vous pourrez modifier ultérieurement.
+GeneratePermissions=Je souhaite ajouter les droits pour cet objet
+GeneratePermissionsHelp=générer les droits par défaut pour cet objet
+PermissionDeletedSuccesfuly=Les permissions ont été retirées avec succès
+PermissionUpdatedSuccesfuly=Les permissions ont été mises à jour avec succès
+PermissionAddedSuccesfuly=Les permissions ont été ajoutées avec succès
+MenuDeletedSuccessfuly=Le menu a été supprimé avec succès
+MenuAddedSuccessfuly=Le menu a été ajouté avec succès
+MenuUpdatedSuccessfuly=Le menu a été mis à jour avec succès

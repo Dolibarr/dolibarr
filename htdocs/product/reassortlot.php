@@ -217,7 +217,7 @@ $morecss = array();
 $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
 $sql .= ' p.fk_product_type, p.tms as datem,';
 $sql .= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock, p.stock, p.tosell, p.tobuy, p.tobatch,';
-$sql .= ' ps.fk_entrepot,';
+$sql .= ' ps.fk_entrepot, ps.reel,';
 $sql .= ' e.ref as warehouse_ref, e.lieu as warehouse_lieu, e.fk_parent as warehouse_parent,';
 $sql .= ' pb.batch, pb.eatby as oldeatby, pb.sellby as oldsellby,';
 $sql .= ' pl.rowid as lotid, pl.eatby, pl.sellby,';
@@ -227,7 +227,7 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps on p.rowid = ps.fk_pro
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e on ps.fk_entrepot = e.rowid'; // Link on unique key
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_batch as pb on pb.fk_product_stock = ps.rowid'; // Detail for each lot on each warehouse
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot as pl on pl.fk_product = p.rowid AND pl.batch = pb.batch'; // Link on unique key
-$sql .= " WHERE p.entity IN (".getEntity('product').")";
+$sql .= " WHERE p.entity IN (".getEntity('product').") AND e.entity IN (".getEntity('stock').")";
 if (!empty($search_categ) && $search_categ != '-1') {
 	$sql .= " AND ";
 	if ($search_categ == -2) {
@@ -319,7 +319,7 @@ foreach ($search as $key => $val) {
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
 $sql .= " p.fk_product_type, p.tms,";
 $sql .= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock, p.stock, p.tosell, p.tobuy, p.tobatch,";
-$sql .= " ps.fk_entrepot,";
+$sql .= " ps.fk_entrepot, ps.reel,";
 $sql .= " e.ref, e.lieu, e.fk_parent,";
 $sql .= " pb.batch, pb.eatby, pb.sellby,";
 $sql .= " pl.rowid, pl.eatby, pl.sellby";
@@ -328,7 +328,7 @@ if ($search_toolowstock) {
 	$sql_having .= " HAVING SUM(".$db->ifsql('ps.reel IS NULL', '0', 'ps.reel').") < p.seuil_stock_alerte"; // Not used yet
 }
 if ($search_stock_physique != '') {
-	$natural_search_physique = natural_search('SUM(' . $db->ifsql('pb.qty IS NULL', '0', 'pb.qty') . ')', $search_stock_physique, 1, 1);
+	$natural_search_physique = natural_search('SUM(' . $db->ifsql('pb.qty IS NULL', $db->ifsql('ps.reel IS NULL', '0', 'ps.reel'), 'pb.qty') . ')', $search_stock_physique, 1, 1);
 	$natural_search_physique = " " . substr($natural_search_physique, 1, -1); // remove first "(" and last ")" characters
 	if (!empty($sql_having)) {
 		$sql_having .= " AND";
@@ -514,6 +514,13 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // Fields title search
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
+// Action column
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 print '<td class="liste_titre">';
 print '<input class="flat" type="text" name="sref" size="6" value="'.$sref.'">';
 print '</td>';
@@ -571,6 +578,10 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
+// Action column
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print_liste_field_titre('');
+}
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", '', $param, "", $sortfield, $sortorder);
 print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", '', $param, "", $sortfield, $sortorder);
 if (isModEnabled("service") && $type == 1) {
@@ -591,7 +602,9 @@ print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stock_physique",
 print_liste_field_titre('');
 print_liste_field_titre("ProductStatusOnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, '', $sortfield, $sortorder, 'right ');
 print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'right ');
-print_liste_field_titre('');
+if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print_liste_field_titre('');
+}
 print "</tr>\n";
 
 $product_static = new Product($db);
@@ -648,6 +661,11 @@ while ($i < $imaxinloop) {
 
 	print '<tr>';
 
+	// Action column
+	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td></td>';
+	}
+
 	// Ref
 	print '<td class="nowrap">';
 	print $product_static->getNomUrl(1, '', 16);
@@ -699,7 +717,19 @@ while ($i < $imaxinloop) {
 
 	print '<td class="right">';
 	//if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
-	print $objp->stock_physique;
+	if (is_null($objp->stock_physique)) {
+		if (!empty($objp->reel)) {
+			if ($objp->reel < 0) { print '<span class="warning">'; }
+			print price2num($objp->reel, 'MS');
+			if ($objp->reel < 0) { print '</span>'; }
+		}
+	} else {
+		if (!empty($objp->stock_physique)) {
+			if ($objp->stock_physique < 0) { print '<span class="warning">'; }
+			print price2num($objp->stock_physique, 'MS');
+			if ($objp->stock_physique < 0) { print '</span>'; }
+		}
+	}
 	print '</td>';
 
 	print '<td class="right">';
@@ -711,7 +741,10 @@ while ($i < $imaxinloop) {
 
 	print '<td class="right nowrap">'.$product_static->LibStatut($objp->tobuy, 5, 1).'</td>';
 
-	print '<td></td>';
+	// Action column
+	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td></td>';
+	}
 
 	print "</tr>\n";
 	$i++;

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Обліковий запис, що використовується для третіх осіб користувача
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Спеціальний обліковий рахунок, визначений на картці користувача, використовуватиметься лише для обліку Subledger. Це буде використовуватися для Головної книги та як значення за замовчуванням для обліку підкниги, якщо для користувача не визначено спеціальний обліковий запис користувача.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Бухгалтерський рахунок за замовчуванням для виплати заробітної плати
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=За замовчуванням залиште порожнім параметр «Автоматично створювати загальний платіж» під час створення зарплати
 Salary=Заробітна плата
