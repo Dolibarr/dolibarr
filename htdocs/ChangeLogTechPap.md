@@ -1,0 +1,1 @@
+- NEW : objets referents sur les lots, le dev a également été PR et accepté en develop - v17 - *20/02/2023*
