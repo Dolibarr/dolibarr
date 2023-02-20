@@ -863,7 +863,7 @@ class AccountancyCategory // extends CommonObject
 
 		$pcgverid = $conf->global->CHARTOFACCOUNTS;
 		$pcgvercode = dol_getIdFromCode($this->db, $pcgverid, 'accounting_system', 'rowid', 'pcg_version');
-		if(empty($pcgvercode)) {
+		if (empty($pcgvercode)) {
 			$pcgvercode = $pcgverid;
 		}
 
