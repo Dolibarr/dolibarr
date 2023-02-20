@@ -6307,7 +6307,7 @@ abstract class CommonObject
 				case 'link':
 					if ($this->array_options["options_".$key] === '') {
 						$this->array_options["options_".$key] = null;
-  					}
+					}
 					break;
 				/*
 				case 'link':
