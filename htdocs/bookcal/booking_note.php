@@ -24,7 +24,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
 require_once DOL_DOCUMENT_ROOT.'/bookcal/class/booking.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_booking.lib.php';
 

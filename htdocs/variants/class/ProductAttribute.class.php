@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
+ * Copyright (C) 2023       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,10 +105,37 @@ class ProductAttribute extends CommonObject
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'help'=>"", 'showoncombobox'=>'1',),
 		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'default'=>0, 'position'=>40, 'notnull'=>1,),
 	);
+
+	/**
+	 * @var int rowid
+	 */
 	public $id;
+
+	/**
+	 * @var string ref
+	 */
 	public $ref;
+
+	/**
+	 * @var string external ref
+	 */
 	public $ref_ext;
+
+	/**
+	 * @var string label
+	 */
 	public $label;
+
+	/**
+	 * @var int position
+	 * @deprecated
+	 * @see $position
+	 */
+	public $rang;
+
+	/**
+	 * @var int position
+	 */
 	public $position;
 
 	/**

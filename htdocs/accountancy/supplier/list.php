@@ -170,7 +170,6 @@ if (empty($reshook)) {
 if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 	$msg = '';
 
-	//print '<div><span style="color:red">' . $langs->trans("Processing") . '...</span></div>';
 	if (!empty($mesCasesCochees)) {
 		$msg = '<div>'.$langs->trans("SelectedLines").': '.count($mesCasesCochees).'</div>';
 		$msg .= '<div class="detail">';
@@ -184,7 +183,7 @@ if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 			$monCompte = GETPOST('codeventil'.$monId);
 
 			if ($monCompte <= 0) {
-				$msg .= '<div><span style="color:red">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</span></div>';
+				$msg .= '<div><span class="error">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</span></div>';
 				$ko++;
 			} else {
 				$sql = " UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
@@ -196,10 +195,10 @@ if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 
 				dol_syslog('accountancy/supplier/list.php', LOG_DEBUG);
 				if ($db->query($sql)) {
-					$msg .= '<div><span style="color:green">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</span></div>';
+					$msg .= '<div><span class="green">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</span></div>';
 					$ok++;
 				} else {
-					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br> <pre>'.$sql.'</pre></span></div>';
+					$msg .= '<div><span class="error">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br> <pre>'.$sql.'</pre></span></div>';
 					$ko++;
 				}
 			}

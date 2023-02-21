@@ -60,9 +60,9 @@ function webhookAdminPrepareHead()
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@webhook:/webhook/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'webhook@webhook');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'webhook');
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'webhook@webhook', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'webhook', 'remove');
 
 	return $head;
 }

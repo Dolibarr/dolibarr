@@ -267,12 +267,11 @@ class Tasks extends DolibarrApi
 	/**
 	 * Get roles a user is assigned to a task with
 	 *
-	 * @param   int   $id             Id of task
-	 * @param   int   $userid         Id of user (0 = connected user)
+	 * @param   int   $id           Id of task
+	 * @param   int   $userid       Id of user (0 = connected user)
+	 * @return 	array				Array of roles
 	 *
 	 * @url	GET {id}/roles
-	 *
-	 * @return int
 	 */
 	public function getRoles($id, $userid = 0)
 	{
@@ -301,6 +300,7 @@ class Tasks extends DolibarrApi
 		foreach ($this->task->roles as $line) {
 			array_push($result, $this->_cleanObjectDatas($line));
 		}
+
 		return $result;
 	}
 

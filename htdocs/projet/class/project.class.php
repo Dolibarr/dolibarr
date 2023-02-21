@@ -202,8 +202,11 @@ class Project extends CommonObject
 	public $statut; // 0=draft, 1=opened, 2=closed
 
 	public $opp_status; // opportunity status, into table llx_c_lead_status
+	public $opp_status_code;
 	public $fk_opp_status; // opportunity status, into table llx_c_lead_status
+	public $opp_amount; // opportunity amount
 	public $opp_percent; // opportunity probability
+	public $opp_weighted_amount; // opportunity weighted amount
 
 	public $email_msgid;
 
@@ -281,8 +284,8 @@ class Project extends CommonObject
 		'public' =>array('type'=>'integer', 'label'=>'Visibility', 'enabled'=>1, 'visible'=>1, 'position'=>65),
 		'fk_opp_status' =>array('type'=>'integer', 'label'=>'OpportunityStatusShort', 'enabled'=>'getDolGlobalString("PROJECT_USE_OPPORTUNITIES")', 'visible'=>1, 'position'=>75),
 		'opp_percent' =>array('type'=>'double(5,2)', 'label'=>'OpportunityProbabilityShort', 'enabled'=>'getDolGlobalString("PROJECT_USE_OPPORTUNITIES")', 'visible'=>1, 'position'=>80),
-		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>85, 'searchall'=>1),
-		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>90, 'searchall'=>1),
+		'note_private' =>array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>85, 'searchall'=>1),
+		'note_public' =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>90, 'searchall'=>1),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPdf', 'enabled'=>1, 'visible'=>0, 'position'=>95),
 		'date_close' =>array('type'=>'datetime', 'label'=>'DateClosing', 'enabled'=>1, 'visible'=>0, 'position'=>105),
 		'fk_user_close' =>array('type'=>'integer', 'label'=>'UserClosing', 'enabled'=>1, 'visible'=>0, 'position'=>110),
@@ -293,8 +296,8 @@ class Project extends CommonObject
 		'usage_task' =>array('type'=>'integer', 'label'=>'UsageTasks', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
 		'usage_organize_event' =>array('type'=>'integer', 'label'=>'UsageOrganizeEvent', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
 		// Properties for event organization
-		'date_start_event' =>array('type'=>'date', 'label'=>'DateStartEvent', 'enabled'=>1, 'visible'=>1, 'position'=>200),
-		'date_end_event' =>array('type'=>'date', 'label'=>'DateEndEvent', 'enabled'=>1, 'visible'=>1, 'position'=>201),
+		'date_start_event' =>array('type'=>'date', 'label'=>'DateStartEvent', 'enabled'=>"isModEnabled('eventorganization')", 'visible'=>1, 'position'=>200),
+		'date_end_event' =>array('type'=>'date', 'label'=>'DateEndEvent', 'enabled'=>"isModEnabled('eventorganization')", 'visible'=>1, 'position'=>201),
 		'location' =>array('type'=>'text', 'label'=>'Location', 'enabled'=>1, 'visible'=>3, 'position'=>55, 'searchall'=>202),
 		'accept_conference_suggestions' =>array('type'=>'integer', 'label'=>'AllowUnknownPeopleSuggestConf', 'enabled'=>1, 'visible'=>-1, 'position'=>210),
 		'accept_booth_suggestions' =>array('type'=>'integer', 'label'=>'AllowUnknownPeopleSuggestBooth', 'enabled'=>1, 'visible'=>-1, 'position'=>211),
@@ -498,7 +501,7 @@ class Project extends CommonObject
 			}
 		}
 
-		if (!$error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS)) {
+		if (!$error && (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_PROJECT'))) {
 			$res = $this->setValid($user);
 			if ($res < 0) {
 				$error++;
@@ -1098,7 +1101,7 @@ class Project extends CommonObject
 	 *
 	 * 		@param		User	$user		   User that validate
 	 *      @param      int     $notrigger     1=Disable triggers
-	 * 		@return		int					   <0 if KO, >0 if OK
+	 * 		@return		int					   <0 if KO, 0=Nothing done, >0 if KO
 	 */
 	public function setValid($user, $notrigger = 0)
 	{
@@ -1106,47 +1109,51 @@ class Project extends CommonObject
 
 		$error = 0;
 
-		if ($this->statut != 1) {
-			// Check parameters
-			if (preg_match('/^'.preg_quote($langs->trans("CopyOf").' ').'/', $this->title)) {
-				$this->error = $langs->trans("ErrorFieldFormat", $langs->transnoentities("Label")).'. '.$langs->trans('RemoveString', $langs->transnoentitiesnoconv("CopyOf"));
-				return -1;
+		// Protection
+		if ($this->status == self::STATUS_VALIDATED) {
+			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
+			return 0;
+		}
+
+		// Check parameters
+		if (preg_match('/^'.preg_quote($langs->trans("CopyOf").' ').'/', $this->title)) {
+			$this->error = $langs->trans("ErrorFieldFormat", $langs->transnoentities("Label")).'. '.$langs->trans('RemoveString', $langs->transnoentitiesnoconv("CopyOf"));
+			return -1;
+		}
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
+		$sql .= " SET fk_statut = ".self::STATUS_VALIDATED;
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		//$sql .= " AND entity = ".((int) $conf->entity);	// Disabled, when we use the ID for the where, we must not add any other search condition
+
+		dol_syslog(get_class($this)."::setValid", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			// Call trigger
+			if (empty($notrigger)) {
+				$result = $this->call_trigger('PROJECT_VALIDATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
 			}
 
-			$this->db->begin();
-
-			$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
-			$sql .= " SET fk_statut = 1";
-			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= " AND entity = ".((int) $conf->entity);
-
-			dol_syslog(get_class($this)."::setValid", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				// Call trigger
-				if (empty($notrigger)) {
-					$result = $this->call_trigger('PROJECT_VALIDATE', $user);
-					if ($result < 0) {
-						$error++;
-					}
-					// End call triggers
-				}
-
-				if (!$error) {
-					$this->statut = 1;
-					$this->db->commit();
-					return 1;
-				} else {
-					$this->db->rollback();
-					$this->error = join(',', $this->errors);
-					dol_syslog(get_class($this)."::setValid ".$this->error, LOG_ERR);
-					return -1;
-				}
+			if (!$error) {
+				$this->statut = 1;
+				$this->db->commit();
+				return 1;
 			} else {
 				$this->db->rollback();
-				$this->error = $this->db->lasterror();
+				$this->error = join(',', $this->errors);
+				dol_syslog(get_class($this)."::setValid ".$this->error, LOG_ERR);
 				return -1;
 			}
+		} else {
+			$this->db->rollback();
+			$this->error = $this->db->lasterror();
+			return -1;
 		}
 	}
 
@@ -1245,6 +1252,50 @@ class Project extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$langs->load('projects');
+		$option = $params['option'] ?? '';
+		$moreinpopup = $params['morinpopup'] ?? '';
+
+		$datas = [];
+		if ($option != 'nolink') {
+			$datas['picto'] = img_picto('', $this->picto, 'class="pictofixedwidth"').' <u class="paddingrightonly">'.$langs->trans("Project").'</u>';
+		}
+		if (isset($this->status)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
+		$datas['ref'] = (isset($datas['picto']) ? '<br>' : '').'<b>'.$langs->trans('Ref').': </b>'.$this->ref; // The space must be after the : to not being explode when showing the title in img_picto
+		$datas['label'] = '<br><b>'.$langs->trans('Label').': </b>'.$this->title; // The space must be after the : to not being explode when showing the title in img_picto
+		if (isset($this->public)) {
+			$datas['visibility'] = '<br><b>'.$langs->trans("Visibility").":</b> ";
+			$datas['visibility'] .= ($this->public ? img_picto($langs->trans('SharedProject'), 'world', 'class="pictofixedwidth"').$langs->trans("SharedProject") : img_picto($langs->trans('PrivateProject'), 'private', 'class="pictofixedwidth"').$langs->trans("PrivateProject"));
+		}
+		if (!empty($this->thirdparty_name)) {
+			$datas['thirdparty'] = '<br><b>'.$langs->trans('ThirdParty').': </b>'.$this->thirdparty_name; // The space must be after the : to not being explode when showing the title in img_picto
+		}
+		if (!empty($this->date_start)) {
+			$datas['datestart'] = '<br><b>'.$langs->trans('DateStart').': </b>'.dol_print_date($this->date_start, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
+		}
+		if (!empty($this->date_end)) {
+			$datas['dateend'] = '<br><b>'.$langs->trans('DateEnd').': </b>'.dol_print_date($this->date_end, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
+		}
+		if ($moreinpopup) {
+			$datas['moreinpopup'] = '<br>'.$moreinpopup;
+		}
+
+		return $datas;
+	}
+
+	/**
 	 * 	Return clickable name (with picto eventually)
 	 *
 	 * 	@param	int		$withpicto		          0=No picto, 1=Include picto into link, 2=Only picto
@@ -1269,32 +1320,19 @@ class Project extends CommonObject
 		if (!empty($conf->global->PROJECT_OPEN_ALWAYS_ON_TAB)) {
 			$option = $conf->global->PROJECT_OPEN_ALWAYS_ON_TAB;
 		}
-
-		$label = '';
-		if ($option != 'nolink') {
-			$label = img_picto('', $this->picto, 'class="pictofixedwidth"').' <u class="paddingrightonly">'.$langs->trans("Project").'</u>';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'moreinpopup' => $moreinpopup,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = " data-params='".json_encode($params)."'";
 		}
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
-		}
-		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Ref').': </b>'.$this->ref; // The space must be after the : to not being explode when showing the title in img_picto
-		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Label').': </b>'.$this->title; // The space must be after the : to not being explode when showing the title in img_picto
-		if (isset($this->public)) {
-			$label .= '<br><b>'.$langs->trans("Visibility").":</b> ";
-			$label .= ($this->public ? img_picto($langs->trans('SharedProject'), 'world', 'class="pictofixedwidth"').$langs->trans("SharedProject") : img_picto($langs->trans('PrivateProject'), 'private', 'class="pictofixedwidth"').$langs->trans("PrivateProject"));
-		}
-		if (!empty($this->thirdparty_name)) {
-			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('ThirdParty').': </b>'.$this->thirdparty_name; // The space must be after the : to not being explode when showing the title in img_picto
-		}
-		if (!empty($this->date_start)) {
-			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateStart').': </b>'.dol_print_date($this->date_start, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
-		}
-		if (!empty($this->date_end)) {
-			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateEnd').': </b>'.dol_print_date($this->date_end, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
-		}
-		if ($moreinpopup) {
-			$label .= '<br>'.$moreinpopup;
-		}
+		$label = implode($this->getTooltipContentArray($params));
 
 		$url = '';
 		if ($option != 'nolink') {
@@ -1325,8 +1363,8 @@ class Project extends CommonObject
 				$label = $langs->trans("ShowProject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -1342,7 +1380,7 @@ class Project extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $picto, ($notooltip ? (($withpicto != 2) ? 'class="pictofixedwidth"' : '') : 'class="'.(($withpicto != 2) ? 'pictofixedwidth ' : '').'classfortooltip pictofixedwidth em088"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $picto, ($notooltip ? (($withpicto != 2) ? 'class="pictofixedwidth"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'pictofixedwidth ' : '').$classfortooltip.' pictofixedwidth em088"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -2312,5 +2350,80 @@ class Project extends CommonObject
 		$taskstatic = new Task($this->db);
 
 		$this->lines = $taskstatic->getTasksArray(0, $user, $this->id, 0, 0, '',  '-1', '', 0, 0, array(),  0,  array(),  0,  $loadRoleMode);
+	}
+
+	/**
+	 *  Function sending an email to the current member with the text supplied in parameter.
+	 *
+	 *  @param	string	$text				Content of message (not html entities encoded)
+	 *  @param	string	$subject			Subject of message
+	 *  @param 	array	$filename_list      Array of attached files
+	 *  @param 	array	$mimetype_list      Array of mime types of attached files
+	 *  @param 	array	$mimefilename_list  Array of public names of attached files
+	 *  @param 	string	$addr_cc            Email cc
+	 *  @param 	string	$addr_bcc           Email bcc
+	 *  @param 	int		$deliveryreceipt	Ask a delivery receipt
+	 *  @param	int		$msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
+	 *  @param	string	$errors_to			erros to
+	 *  @param	string	$moreinheader		Add more html headers
+	 *  @since V18
+	 *  @return	int							<0 if KO, >0 if OK
+	 */
+	public function sendEmail($text, $subject, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = -1, $errors_to = '', $moreinheader = '')
+	{
+		global $conf, $langs;
+		// TODO EMAIL
+
+		return 1;
+	}
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string		HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		global $langs,$user;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref);
+		if ($this->hasDelay()) {
+			$return .= img_warning($langs->trans('Late'));
+		}
+		$return .= '</span>';
+		if (property_exists($this, 'date_start') && $this->date_start) {
+			$return .= '<br><span class="info-box-label">'.dol_print_date($this->date_start, 'day').'</>';
+		}
+		if (property_exists($this, 'date_end') && $this->date_end) {
+			if ($this->date_start) {
+				$return .= ' - ';
+			} else {
+				$return .= '<br>';
+			}
+			$return .= '<span class="info-box-label">'.dol_print_date($this->date_end, 'day').'</>';
+		}
+		/*if (property_exists($this, 'user_author_id')) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Author").'</span>';
+			$return .= '<span> : '.$user->getNomUrl(1).'</span>';
+		}*/
+		if ($this->usage_opportunity && $this->opp_status_code) {
+			//$return .= '<br><span class="info-bo-label opacitymedium">'.$langs->trans("OpportunityStatusShort").'</span>';
+			$return .= '<br><span class="info-box-label">'.	$langs->trans("OppStatus".$this->opp_status_code);
+			$return .= ' <span class="opacitymedium">('.round($this->opp_percent).'%)</span>';
+			$return .= '<br><span class="amount">'.price($this->opp_amount).'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

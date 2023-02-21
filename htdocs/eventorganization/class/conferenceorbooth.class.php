@@ -108,7 +108,7 @@ class ConferenceOrBooth extends ActionComm
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'csslist'=>'tdoverflowmax125', 'help'=>"OrganizationEvenLabelName", 'showoncombobox'=>'1', 'autofocusoncreate'=>1),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:t.usage_organize_event=1', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'position'=>52, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'project', 'css'=>'tdoverflowmax150 maxwidth500', 'csslist'=>'width100'),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"OrganizationEventLinkToThirdParty", 'picto'=>'company', 'csslist'=>'tdoverflowmax125', 'css'=>'maxwidth500'),
-		'note' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3),
+		'note' => array('type'=>'html', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3),
 		'fk_action' => array('type'=>'sellist:c_actioncomm:libelle:id::module LIKE (\'%@eventorganization\')', 'label'=>'Format', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>1, 'css'=>'width100', 'csslist'=>'tdoverflowmax100'),
 		'datep' => array('type'=>'datetime', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'2',),
 		'datep2' => array('type'=>'datetime', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'3',),

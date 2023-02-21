@@ -451,7 +451,7 @@ ExtrafieldCheckBox=چیک باکسز
 ExtrafieldCheckBoxFromList=میز سے چیک باکسز
 ExtrafieldLink=کسی چیز سے لنک کریں۔
 ComputedFormula=شمار شدہ فیلڈ
-ComputedFormulaDesc=ڈائنامک کمپیوٹیڈ ویلیو حاصل کرنے کے لیے آپ یہاں آبجیکٹ کی دیگر خصوصیات یا کسی بھی پی ایچ پی کوڈنگ کا استعمال کرتے ہوئے ایک فارمولا درج کر سکتے ہیں۔ آپ کسی بھی پی ایچ پی کے موافق فارمولے استعمال کر سکتے ہیں بشمول "؟" حالت آپریٹر، اور مندرجہ ذیل عالمی آبجیکٹ: <strong> $db، $conf، $langs، $mysoc، $user، $object </strong> ۔ <br> <strong> انتباہ </strong> : $object کی صرف کچھ خصوصیات دستیاب ہوسکتی ہیں۔ اگر آپ کو ایسی پراپرٹیز کی ضرورت ہے جو لوڈ نہیں ہوئی ہے، تو بس اپنے آپ کو اپنے فارمولے میں آبجیکٹ لائیں جیسا کہ دوسری مثال میں ہے۔ <br> کمپیوٹیڈ فیلڈ کا استعمال کرنے کا مطلب ہے کہ آپ انٹرفیس سے اپنی کوئی قدر درج نہیں کر سکتے۔ اس کے علاوہ، اگر نحو کی خرابی ہے تو، فارمولہ کچھ بھی نہیں لوٹا سکتا ہے۔ <br> <br> فارمولے کی مثال: <br> $object->id < 10 ? round($object-> id / 2, 2): ($object->id + 2 * $user->, oct (subject)) ) <br> <br> آبجیکٹ کو دوبارہ لوڈ کرنے کی مثال >rowid: $object->id)) > 0))؟ $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1' <br> <br> آبجیکٹ اور اس کے بنیادی آبجیکٹ کو زبردستی لوڈ کرنے کے فارمولے کی دوسری مثال ((a031b$dskf=f$d9b0$bload )) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'پیرنٹ پروجیکٹ نہیں ملا'
+ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $objectoffield</strong>.<br><strong>WARNING</strong>: If you need properties of an object not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$objectoffield->id < 10 ? round($objectoffield->id / 2, 2): ($objectoffield->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0 ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1')<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
 Computedpersistent=حسابی فیلڈ اسٹور کریں۔
 ComputedpersistentDesc=کمپیوٹ شدہ اضافی فیلڈز کو ڈیٹا بیس میں اسٹور کیا جائے گا، تاہم، اس فیلڈ کی آبجیکٹ کو تبدیل کرنے پر ہی قدر کی دوبارہ گنتی کی جائے گی۔ اگر کمپیوٹنگ فیلڈ دیگر اشیاء یا عالمی ڈیٹا پر منحصر ہے تو یہ قدر غلط ہو سکتی ہے!!
 ExtrafieldParamHelpPassword=اس فیلڈ کو خالی چھوڑنے کا مطلب ہے کہ اس قدر کو بغیر خفیہ کاری کے محفوظ کیا جائے گا (فیلڈ صرف اسکرین پر ستارے کے ساتھ چھپا ہوا ہونا چاہیے)۔ <br> ڈیٹا بیس میں پاس ورڈ کو محفوظ کرنے کے لیے ڈیفالٹ انکرپشن رول کو استعمال کرنے کے لیے 'آٹو' سیٹ کریں (پھر ویلیو ریڈ صرف ہیش ہوگی، اصل قدر کو بازیافت کرنے کا کوئی طریقہ نہیں)
@@ -645,6 +645,8 @@ Module2300Name=طے شدہ ملازمتیں۔
 Module2300Desc=طے شدہ ملازمتوں کا انتظام (عرف کرون یا کرونو ٹیبل)
 Module2400Name=تقریبات/ایجنڈا
 Module2400Desc=واقعات کو ٹریک کریں۔ ٹریکنگ کے مقاصد کے لیے خودکار ایونٹس کو لاگ کریں یا دستی ایونٹس یا میٹنگز کو ریکارڈ کریں۔ یہ اچھے کسٹمر یا وینڈر ریلیشن شپ مینجمنٹ کے لیے پرنسپل ماڈیول ہے۔
+Module2430Name=Booking Calendar System
+Module2430Desc=Provide an online calendar to allow anyone to book rendez-vous, according to predefined ranges or availabilities.
 Module2500Name=ڈی ایم ایس / ای سی ایم
 Module2500Desc=دستاویز مینجمنٹ سسٹم / الیکٹرانک مواد کا انتظام۔ آپ کے تیار کردہ یا ذخیرہ شدہ دستاویزات کی خودکار تنظیم۔ جب آپ کو ضرورت ہو تو ان کا اشتراک کریں۔
 Module2600Name=API / Web services (SOAP server)
@@ -659,6 +661,8 @@ Module2800Desc=ایف ٹی پی کلائنٹ
 Module2900Name=GeoIPMaxmind
 Module2900Desc=GeoIP میکس مائنڈ تبادلوں کی صلاحیتیں۔
 Module3200Name=ناقابل تبدیلی آرکائیوز
+Module3200Desc=کاروباری واقعات کا ایک غیر تبدیل شدہ لاگ کو فعال کریں۔ واقعات کو حقیقی وقت میں محفوظ کیا جاتا ہے۔ لاگ ان زنجیروں سے جڑے واقعات کی صرف پڑھنے کے لیے جدول ہے جسے برآمد کیا جا سکتا ہے۔ یہ ماڈیول کچھ ممالک کے لیے لازمی ہو سکتا ہے۔
+Module3300Name=Module Builder
 Module3200Desc=کاروباری واقعات کا ایک غیر تبدیل شدہ لاگ کو فعال کریں۔ واقعات کو حقیقی وقت میں محفوظ کیا جاتا ہے۔ لاگ ان زنجیروں سے جڑے واقعات کی صرف پڑھنے کے لیے جدول ہے جسے برآمد کیا جا سکتا ہے۔ یہ ماڈیول کچھ ممالک کے لیے لازمی ہو سکتا ہے۔
 Module3400Name=سوشل نیٹ ورک
 Module3400Desc=سوشل نیٹ ورکس فیلڈز کو تھرڈ پارٹیز اور ایڈریسز (سکائپ، ٹویٹر، فیس بک، ...) میں فعال کریں۔
@@ -700,8 +704,10 @@ Module62000Name=انکوٹرمز
 Module62000Desc=Incoterms کا نظم کرنے کے لیے خصوصیات شامل کریں۔
 Module63000Name=حوالہ جات
 Module63000Desc=ایونٹس کو مختص کرنے کے لیے وسائل (پرنٹرز، کاریں، کمرے، ...) کا نظم کریں۔
+Module66000Name=Enable OAuth2 authentication
+Module66000Desc=Provide a tool to generate and manage OAuth2 tokens. The token can then be used by some other modules.
 Module94160Name=Receptions
-Permission11=کسٹمر کی رسیدیں پڑھیں
+Permission11=Read customer invoices (and payments)
 Permission12=کسٹمر انوائس بنائیں/ترمیم کریں۔
 Permission13=گاہک کی رسیدیں باطل کریں۔
 Permission14=کسٹمر انوائس کی توثیق کریں۔
@@ -943,7 +949,7 @@ Permission1190=(دوسری منظوری) خریداری کے آرڈر کو من�
 Permission1191=سپلائر کے احکامات اور ان کی صفات برآمد کریں۔
 Permission1201=برآمد کا نتیجہ حاصل کریں۔
 Permission1202=ایکسپورٹ بنائیں/ترمیم کریں۔
-Permission1231=وینڈر کی رسیدیں پڑھیں
+Permission1231=Read vendor invoices (and payments)
 Permission1232=وینڈر انوائسز بنائیں/ترمیم کریں۔
 Permission1233=وینڈر انوائس کی توثیق کریں۔
 Permission1234=وینڈر کی رسیدیں حذف کریں۔
@@ -1230,7 +1236,7 @@ SetupDescription4= <a href="%s"> %s -> %s </a> <br> <br> یہ سافٹ ویئر 
 SetupDescription5=دیگر سیٹ اپ مینو اندراجات اختیاری پیرامیٹرز کا نظم کرتی ہیں۔
 SetupDescriptionLink= <a href="%s"> %s - %s </a>
 SetupDescription3b=بنیادی پیرامیٹرز جو آپ کی درخواست کے پہلے سے طے شدہ رویے کو حسب ضرورت بنانے کے لیے استعمال کیے جاتے ہیں (مثلاً ملک سے متعلقہ خصوصیات کے لیے)۔
-SetupDescription4b=یہ سافٹ ویئر بہت سے ماڈیولز/ایپلی کیشنز کا مجموعہ ہے۔ آپ کی ضروریات سے متعلق ماڈیولز کو فعال اور ترتیب دیا جانا چاہیے۔ ان ماڈیولز کے ایکٹیویشن کے ساتھ مینو اندراجات ظاہر ہوں گے۔
+SetupDescription4b=This software is a suite of many modules/applications. The modules related to your needs must be activated. Menu entries will appears with the activation of these modules.
 AuditedSecurityEvents=سیکیورٹی کے واقعات جن کا آڈٹ کیا جاتا ہے۔
 NoSecurityEventsAreAduited=سیکیورٹی کے کوئی واقعات کا آڈٹ نہیں کیا جاتا ہے۔ آپ انہیں مینو %s سے فعال کر سکتے ہیں۔
 Audit=سیکیورٹی کے واقعات
@@ -1270,6 +1276,7 @@ TriggerActiveAsModuleActive=اس فائل میں محرکات فعال ہیں ک
 GeneratedPasswordDesc=خود کار طریقے سے تیار کردہ پاس ورڈز کے لیے استعمال کرنے کا طریقہ منتخب کریں۔
 DictionaryDesc=تمام حوالہ ڈیٹا داخل کریں۔ آپ اپنی اقدار کو ڈیفالٹ میں شامل کر سکتے ہیں۔
 ConstDesc=یہ صفحہ آپ کو پیرامیٹرز میں ترمیم (اوور رائڈ) کرنے کی اجازت دیتا ہے جو دوسرے صفحات میں دستیاب نہیں ہیں۔ یہ زیادہ تر صرف ڈویلپرز / ایڈوانس ٹربل شوٹنگ کے لیے مخصوص پیرامیٹرز ہیں۔
+MiscellaneousOptions=Miscellaneous options
 MiscellaneousDesc=سیکورٹی سے متعلق دیگر تمام پیرامیٹرز یہاں بیان کیے گئے ہیں۔
 LimitsSetup=حدود/صحت سے متعلق سیٹ اپ
 LimitsDesc=آپ یہاں Dolibarr کی طرف سے استعمال کردہ حدود، درستگی اور اصلاح کی وضاحت کر سکتے ہیں۔
@@ -1826,6 +1833,9 @@ AGENDA_USE_EVENT_TYPE=واقعات کی اقسام کا استعمال کریں 
 AGENDA_USE_EVENT_TYPE_DEFAULT=ایونٹ تخلیق فارم میں ایونٹ کی قسم کے لیے اس ڈیفالٹ ویلیو کو خودکار طور پر سیٹ کریں۔
 AGENDA_DEFAULT_FILTER_TYPE=ایجنڈا ویو کے سرچ فلٹر میں اس قسم کے ایونٹ کو خودکار طور پر سیٹ کریں۔
 AGENDA_DEFAULT_FILTER_STATUS=ایجنڈا ویو کے سرچ فلٹر میں ایونٹس کے لیے خودکار طور پر یہ اسٹیٹس سیٹ کریں۔
+AGENDA_EVENT_PAST_COLOR=Past event color
+AGENDA_EVENT_CURRENT_COLOR=Current event color
+AGENDA_EVENT_FUTURE_COLOR=Future event color
 AGENDA_DEFAULT_VIEW=مینو ایجنڈا کو منتخب کرتے وقت آپ ڈیفالٹ کے ذریعے کون سا منظر کھولنا چاہتے ہیں۔
 AGENDA_REMINDER_BROWSER=صارف کے براؤزر </b> پر ایونٹ کی یاد دہانی کو فعال کریں
 AGENDA_REMINDER_BROWSER_SOUND=آواز کی اطلاع کو فعال کریں۔
@@ -2129,6 +2139,7 @@ CodeLastResult=تازہ ترین نتیجہ کوڈ
 NbOfEmailsInInbox=سورس ڈائرکٹری میں ای میلز کی تعداد
 LoadThirdPartyFromName=%s پر تیسرے فریق کی تلاش کو لوڈ کریں (صرف لوڈ)
 LoadThirdPartyFromNameOrCreate=%s پر تیسرے فریق کی تلاش کو لوڈ کریں (اگر نہیں ملا تو بنائیں)
+LoadContactFromEmailOrCreate=Load contact searching on %s (create if not found)
 AttachJoinedDocumentsToObject=Save attached files into object documents if a ref of an object is found into email topic.
 WithDolTrackingID=Dolibarr سے بھیجے گئے پہلے ای میل کے ذریعے شروع کی گئی گفتگو کا پیغام
 WithoutDolTrackingID=Dolibarr سے نہیں بھیجے گئے پہلے ای میل کے ذریعے شروع کی گئی گفتگو کا پیغام
@@ -2355,3 +2366,9 @@ AllowExternalDownload=Allow external download (without login, using a shared lin
 DeadlineDayVATSubmission=Deadline day for vat submission on the next month
 MaxNumberOfAttachementOnForms=Max number of joinded files in a form
 IfDefinedUseAValueBeetween=If defined, use a value between %s and %s
+Reload=Reload
+ConfirmReload=Confirm module reload
+WarningModuleHasChangedLastVersionCheckParameter=Warning: the module %s has set a parameter to check its version at each page access. This is a bad and not allowed practice that may make the page to administer modules instable. Please contact author of module to fix this.
+WarningModuleHasChangedSecurityCsrfParameter=Warning: the module %s has disabled the CSRF security of your instance. This action is suspect and your installation may no more be secured. Please contact the author of the module for explanation.
+EMailsInGoingDesc=Incoming emails are managed by the module %s. You must enable and configure it if you need to support ingoing emails.
+MAIN_IMAP_USE_PHPIMAP=Use the PHP-IMAP library for IMAP instead of native PHP IMAP. This also allows the use of an OAuth2 connection for IMAP (module OAuth must also be activated).

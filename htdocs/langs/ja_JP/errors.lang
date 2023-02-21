@@ -304,6 +304,11 @@ ErrorValueCantBeNull=<b> %s </b> の値は null 不可
 ErrorDateOfMovementLowerThanDateOfFileTransmission=銀行取引の日付は、ファイル送信の日付より前にすることはできない
 ErrorTooMuchFileInForm=フォーム内のファイルが多すぎる。最大数は %s ファイル (s)
 ErrorSessionInvalidatedAfterPasswordChange=パスワード、ステータス、または有効期限が変更されたため、セッションが無効になった。再ログインすること。
+ErrorExistingPermission = オブジェクト <b> %s </b> に対する権限 <b> %s </b> は既に存在する
+ErrorFieldExist=<b> %s </b> の値は既に存在する
+ErrorEqualModule=<b> %s </b> で無効なモジュール
+ErrorFieldValue=<b> %s </b> の値が正しくない
+ErrorCoherenceMenu= <b> %s </b> は、<b> % </b> が LEFT と等しい場合に必要です。
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHPパラメータ upload_max_filesize(%s)は、PHPパラメータ post_max_size(%s)よりも大きくなっている。これは一貫した設定ではない。
@@ -342,6 +347,7 @@ WarningPaypalPaymentNotCompatibleWithStrict=値「Strict」では、現在はオ
 WarningThemeForcedTo=警告、テーマは隠し定数 MAIN_FORCETHEME によって<b>%s</b>に強制された
 WarningPagesWillBeDeleted=警告、これにより、ウェブサイトの既存のページ/コンテナもすべて削除される。事前にウェブサイトをエクスポートする必要があり、後で再インポートするためのバックアップとなる。
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=「請求書の検証」で在庫を減らすオプションが設定されている場合、自動検証は無効になる。
+WarningModuleNeedRefrech = モジュール <b> %s </b> が無効になった。有効にすることを忘れないこと
 
 # Validate
 RequireValidValue = 値が無効.

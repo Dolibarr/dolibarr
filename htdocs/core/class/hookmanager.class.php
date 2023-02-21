@@ -77,7 +77,7 @@ class HookManager
 	 *  Then when a hook executeHooks('aMethod'...) is called, the method aMethod found into class will be executed.
 	 *
 	 *	@param	string[]	$arraycontext	    Array list of searched hooks tab/features. For example: 'thirdpartycard' (for hook methods into page card thirdparty), 'thirdpartydao' (for hook methods into Societe), ...
-	 *	@return	int							    Always 1
+	 *	@return	int|void							    Always 1
 	 */
 	public function initHooks($arraycontext)
 	{
@@ -127,6 +127,7 @@ class HookManager
 				}
 			}
 		}
+		// Log the init of hook but only for hooks thare are declared to be managed
 		if (count($arraytolog) > 0) {
 			dol_syslog(get_class($this)."::initHooks Loading hooks: ".join(', ', $arraytolog), LOG_DEBUG);
 		}
@@ -166,32 +167,31 @@ class HookManager
 		// TODO Remove hooks with type 'output' (exemple createFrom). All hooks must be converted into 'addreplace' hooks.
 		if (in_array($method, array(
 			'createFrom',
-			'dashboardMembers',
-			'dashboardEmailings',
-			'dashboardPropals',
-			'dashboardPropals',
-			'dashboardCommercials',
-			'dashboardOrders',
-			'dashboardSpecialBills',
 			'dashboardAccountancy',
+			'dashboardActivities',
+			'dashboardCommercials',
 			'dashboardContracts',
 			'dashboardDonation',
-			'dashboardWarehouseSendings',
+			'dashboardEmailings',
 			'dashboardExpenseReport',
-			'dashboardInterventions',
-			'dashboardOrdersSuppliers',
 			'dashboardHRM',
+			'dashboardInterventions',
 			'dashboardMRP',
+			'dashboardMembers',
 			'dashboardOpensurvey',
-			'dashboardWarehouse',
+			'dashboardOrders',
+			'dashboardOrdersSuppliers',
 			'dashboardProductServices',
-			'dashboardActivities',
 			'dashboardProjects',
-			'dashboardWarehouseReceptions',
-			'dashboardThirdparties',
+			'dashboardPropals',
+			'dashboardSpecialBills',
 			'dashboardSupplierProposal',
+			'dashboardThirdparties',
 			'dashboardTickets',
 			'dashboardUsersGroups',
+			'dashboardWarehouse',
+			'dashboardWarehouseReceptions',
+			'dashboardWarehouseSendings',
 			'insertExtraHeader',
 			'insertExtraFooter',
 			'printLeftBlock',
@@ -237,7 +237,10 @@ class HookManager
 					$actionclassinstance->error = 0;
 					$actionclassinstance->errors = array();
 
-					dol_syslog(get_class($this)."::executeHooks Qualified hook found (hooktype=".$hooktype."). We call method ".get_class($actionclassinstance).'->'.$method.", context=".$context.", module=".$module.", action=".$action.((is_object($object) && property_exists($object, 'id')) ? ', object id='.$object->id : '').((is_object($object) && property_exists($object, 'element')) ? ', object element='.$object->element : ''), LOG_DEBUG);
+					if (getDolGlobalInt('MAIN_DEBUG_SHOW_EACH_QUALIFIED_HOOK_CALL') >= 2) {
+						// This his too much verbose, enabled in develop only
+						dol_syslog(get_class($this)."::executeHooks Qualified hook found (hooktype=".$hooktype."). We call method ".get_class($actionclassinstance).'->'.$method.", context=".$context.", module=".$module.", action=".$action.((is_object($object) && property_exists($object, 'id')) ? ', object id='.$object->id : '').((is_object($object) && property_exists($object, 'element')) ? ', object element='.$object->element : ''), LOG_DEBUG);
+					}
 
 					// Add current context to avoid method execution in bad context, you can add this test in your method : eg if($currentcontext != 'formfile') return;
 					// Note: The hook can use the $currentcontext in its code to avoid to be ran twice or be ran for one given context only

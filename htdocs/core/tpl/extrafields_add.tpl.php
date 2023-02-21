@@ -45,10 +45,13 @@ $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object,
 print $hookmanager->resPrint;
 if (empty($reshook)) {
 	$params = array();
-	if (isset($tpl_context)) {
-		$params['tpl_context'] = $tpl_context;
-	}
 	$params['cols'] = key_exists('colspanvalue', $parameters) ? $parameters['colspanvalue'] : '';
+	if (!empty($parameters['tdclass'])) {
+		$params['tdclass'] = $parameters['tdclass'];
+	}
+	if (!empty($parameters['tpl_context'])) {
+		$params['tpl_context'] = $parameters['tpl_context'];
+	}
 
 	print $object->showOptionals($extrafields, 'create', $params);
 }
