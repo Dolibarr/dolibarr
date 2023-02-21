@@ -113,9 +113,9 @@ $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
 $search_shippable = GETPOST('search_shippable', 'aZ09');
 
-$search_fk_cond_reglement = GETPOST('search_fk_cond_reglement', 'int');
+$search_fk_cond_reglement = GETPOST('search_fk_cond_reglement', 'int') ? GETPOST('search_fk_cond_reglement', 'int') : -1;
 $search_fk_shipping_method = GETPOST('search_fk_shipping_method', 'int');
-$search_fk_mode_reglement = GETPOST('search_fk_mode_reglement', 'int');
+$search_fk_mode_reglement = GETPOST('search_fk_mode_reglement', 'int') ? GETPOST('search_fk_mode_reglement', 'int') : -1;
 $search_fk_input_reason = GETPOST('search_fk_input_reason', 'int');
 
 // Security check
@@ -285,9 +285,9 @@ if (empty($reshook)) {
 		$search_categ_cus = 0;
 		$search_datecloture_start = '';
 		$search_datecloture_end = '';
-		$search_fk_cond_reglement = '';
+		$search_fk_cond_reglement = -1;
 		$search_fk_shipping_method = '';
-		$search_fk_mode_reglement = '';
+		$search_fk_mode_reglement = -1;
 		$search_fk_input_reason = '';
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
