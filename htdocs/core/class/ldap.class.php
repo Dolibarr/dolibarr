@@ -344,12 +344,7 @@ class Ldap
 	 */
 	public function close()
 	{
-		$r_type = get_resource_type($this->connection);
-		if ($this->connection && ($r_type === "Unknown" || !@ldap_close($this->connection))) {
-			return false;
-		} else {
-			return true;
-		}
+		return $this->unbind();
 	}
 
 	/**
@@ -401,7 +396,7 @@ class Ldap
 	public function unbind()
 	{
 		$this->result = true;
-		if ($this->connection) {
+		if (is_resource($this->connection)) {
 			$this->result = @ldap_unbind($this->connection);
 		}
 		if ($this->result) {
