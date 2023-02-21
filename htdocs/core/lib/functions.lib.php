@@ -11277,6 +11277,22 @@ function currentToken()
 }
 
 /**
+ * Return a random string to be used as a nonce value for js
+ *
+ * @return  string
+ */
+function getNonce()
+{
+	global $conf;
+
+	if (empty($conf->cache['nonce'])) {
+		$conf->cache['nonce'] = dolGetRandomBytes(8);
+	}
+
+	return $conf->cache['nonce'];
+}
+
+/**
  * Start a table with headers and a optinal clickable number (don't forget to use "finishSimpleTable()" after the last table row)
  *
  * @param string	$header		The first left header of the table (automatic translated)
