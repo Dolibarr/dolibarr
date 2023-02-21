@@ -57,12 +57,13 @@ $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $email = GETPOST('email', 'alphanohtml');
 
+
 if (!isModEnabled('ticket')) {
-	httponly_accessforbidden('Module Ticket not enabled');
+	accessforbidden('', 0, 0, 1);
 }
 
 if (empty($conf->global->TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST)) {
-	httponly_accessforbidden('Option TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST of module ticket is not enabled');
+	accessforbidden('', 0, 0, 1);
 }
 
 
