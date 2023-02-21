@@ -52,6 +52,7 @@ $backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'aZ09');
 
+$dol_openinpopup = 0;
 if (!empty($backtopagejsfields)) {
 	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
 	$dol_openinpopup = $tmpbacktopagejsfields[0];

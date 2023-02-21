@@ -1121,8 +1121,11 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	if ($search_note_private != '') {
 		$param .= '&search_note_private='.urlencode($search_note_private);
 	}
-	if ($search_birthday != '') {
-		$param .= '&search_birthday='.urlencode($search_birthday);
+	if ($search_birthday_dtstart != '') {
+		$param .= '&search_birthday_dtstart='.urlencode($search_birthday_dtstart);
+	}
+	if ($search_birthday_dtend != '') {
+		$param .= '&search_birthday_dtend='.urlencode($search_birthday_dtend);
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
@@ -2233,10 +2236,10 @@ function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
 	} elseif ($donetodo == 'done') {
 		$sql .= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
 	}
-	if (is_array($filters) && $filters['search_agenda_label']) {
+	if (is_array($filters) && !empty($filters['search_agenda_label'])) {
 		$sql .= natural_search('a.label', $filters['search_agenda_label']);
 	}
-	if (is_array($filters) && $filters['search_rowid']) {
+	if (is_array($filters) && !empty($filters['search_rowid'])) {
 		$sql .= natural_search('a.id', $filters['search_rowid'], 1);
 	}
 
