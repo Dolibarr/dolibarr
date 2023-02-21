@@ -602,7 +602,7 @@ if (empty($conf->global->PARTNERSHIP_NEWFORM_FORCETYPE)) {
 */
 
 $partnershiptype = new PartnershipType($db);
-$listofpartnershipobj = $partnershiptype->fetchAll('', '', 1000);
+$listofpartnershipobj = $partnershiptype->fetchAll('', '', 1000, 0, array('active'=>1));
 $listofpartnership = array();
 foreach ($listofpartnershipobj as $partnershipobj) {
 	$listofpartnership[$partnershipobj->id] = $partnershipobj->label;
