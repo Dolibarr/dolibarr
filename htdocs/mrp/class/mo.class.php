@@ -232,10 +232,6 @@ class Mo extends CommonObject
 	public $line = array();
 
 	/**
-	 * @var integer	Mo parent line
-	 * */
-
-	/**
 	 * @var int ID of parent line
 	 */
 	public $fk_parent_line;
