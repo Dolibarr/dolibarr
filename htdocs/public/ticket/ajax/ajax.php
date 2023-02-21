@@ -66,6 +66,15 @@ if (empty($conf->global->TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST)) {
 }
 
 
+if (!isModEnabled('ticket')) {
+	accessforbidden('', 0, 0, 1);
+}
+
+if (empty($conf->global->TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST)) {
+	accessforbidden('', 0, 0, 1);
+}
+
+
 /*
  * View
  */
