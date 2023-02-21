@@ -1006,7 +1006,7 @@ if (empty($reshook)) {
 		$newcardbutton .= '<span class="valignmiddle marginrightonly paddingleft">'.$langs->trans("ClickToHideAlreadyExportedLines").'</span>';
 		$newcardbutton .= '</a>';
 	} else {
-		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("DocsAlreadyExportedAreExcluded"), 'switch_on', 'class="warning size15x valignmiddle"').'';
+		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("DocsAlreadyExportedAreExcluded"), 'switch_on', 'class="warning size15x valignmiddle"');
 		$newcardbutton .= '<span class="valignmiddle marginrightonly paddingleft">'.$langs->trans("DocsAlreadyExportedAreExcluded").'</span>';
 		$newcardbutton .= '</a>';
 	}

@@ -1852,7 +1852,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 		\$r++;
 		";
 
-		$deleteright = dolReplaceInFile($moduledescriptorfile, array('/*'.strtoupper($objectname).'*/' => '', $rights => '', "/*END ".strtoupper($objectname).'*/'."\n\t\t" => ''."\n\t\t"));
+		$deleteright = dolReplaceInFile($moduledescriptorfile, array('/*'.strtoupper($objectname).'*/' => '', $rights => '', "/*END ".strtoupper($objectname).'*/'."\n\t\t" => "\n\t\t"));
 		if ($deleteright > 0) {
 			if (isModEnabled(strtolower($module))) {
 				$result = unActivateModule(strtolower($module));
@@ -2218,7 +2218,7 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOST('p
 
 
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
-		$check = dolReplaceInFile($moduledescriptorfile, array($rightTodelete => ''."\n\t\t"));
+		$check = dolReplaceInFile($moduledescriptorfile, array($rightTodelete => "\n\t\t"));
 	if ($check > 0) {
 		//check if all permissions of object was deleted
 		$permsForObj = array();

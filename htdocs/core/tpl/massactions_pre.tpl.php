@@ -49,7 +49,7 @@ if ($massaction == 'preclonetasks') {
 	$formquestion = array(
 		array('type' => 'other', 'name' => 'projectid', 'label' => $langs->trans('Project') .': ', 'value' => $form->selectProjects('', 'projectid', '', '', '', '', '', '', '', 1, 1)),
 	);
-	print $form->formconfirm($_SERVER['PHP_SELF'] . '?id=' . $object->id . $selected . '', $langs->trans('ConfirmMassClone'), '', 'clonetasks', $formquestion, '', 1, 300, 590);
+	print $form->formconfirm($_SERVER['PHP_SELF'] . '?id=' . $object->id . $selected, $langs->trans('ConfirmMassClone'), '', 'clonetasks', $formquestion, '', 1, 300, 590);
 }
 
 if ($massaction == 'preaffecttag' && isModEnabled('category')) {
