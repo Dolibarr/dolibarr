@@ -364,7 +364,7 @@ if ($action == 'create') {
 
 	// Status
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
-	print '<select id="warehousestatus" name="statut" class="flat">';
+	print '<select id="warehousestatus" name="statut" class="flat minwidth100">';
 	foreach ($object->statuts as $key => $value) {
 		if ($key == 1) {
 			print '<option value="'.$key.'" selected>'.$langs->trans($value).'</option>';
@@ -839,7 +839,7 @@ if ($action == 'create') {
 
 
 		/*
-		 * Edition fiche
+		 * Edit
 		 */
 		if ($action == 'edit' || $action == 're-edit') {
 			$langs->trans("WarehouseEdit");
