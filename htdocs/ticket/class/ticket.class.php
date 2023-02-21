@@ -1872,10 +1872,10 @@ class Ticket extends CommonObject
 
 		$res = $this->db->query($sql);
 		if ($res) {
-			while ($rec = $this->db->fetch_array($res)) {
+			while ($rec = $this->db->fetch_object($res)) {
 				include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 				$contactstatic = new Contact($this->db);
-				$contactstatic->fetch($rec['rowid']);
+				$contactstatic->fetch($rec->rowid);
 				$contacts[] = $contactstatic;
 			}
 

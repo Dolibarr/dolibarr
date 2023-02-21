@@ -145,7 +145,7 @@ class FormTicket
 	 * @param  	int	 			$withdolfichehead		With dol_get_fiche_head() and dol_get_fiche_end()
 	 * @param	string			$mode					Mode ('create' or 'edit')
 	 * @param	int				$public					1=If we show the form for the public interface
-	 * @param	Contact|null	$with_contact			[=NULL] Contact to link to this ticket if exists
+	 * @param	Contact|null	$with_contact			[=NULL] Contact to link to this ticket if it exists
 	 * @param	string			$action					[=''] Action in card
 	 * @return 	void
 	 */
@@ -450,7 +450,7 @@ class FormTicket
 			if (count($cate_arbo)) {
 				// Categories
 				print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 			}
 		}
