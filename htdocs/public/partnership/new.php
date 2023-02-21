@@ -651,7 +651,7 @@ if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 // Logo
 //print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
 // Other attributes
-$parameters['tdclass']='titlefield';
+$parameters['tdclass']='titlefieldauto';
 $parameters['tpl_context']='public';	// define template context to public
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // Comments
