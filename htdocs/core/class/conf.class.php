@@ -51,6 +51,12 @@ class Conf
 	public $mycompany;
 	public $admin;
 	public $medias;
+	//! To store properties of multi-company
+	public $multicompany;
+
+	//! To store module status of special module names
+	public $expedition_bon;
+	public $delivery_note;
 
 
 	//! To store if javascript/ajax is enabked
@@ -84,8 +90,6 @@ class Conf
 	 */
 	public $loghandlers = array();
 
-	//! To store properties of multi-company
-	public $multicompany;
 	//! Used to store running instance for multi-company (default 1)
 	public $entity = 1;
 	//! Used to store list of entities to use for each element
@@ -148,8 +152,6 @@ class Conf
 		// First level object that are modules.
 		// TODO Remove this part.
 		$this->multicompany = new stdClass();
-		$this->expedition_bon = new stdClass();
-		$this->delivery_note = new stdClass();
 		$this->fournisseur = new stdClass();
 		$this->product = new stdClass();
 		$this->service = new stdClass();
@@ -164,7 +166,6 @@ class Conf
 		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
 		$this->notification = new stdClass();
-		$this->mailing = new stdClass();
 		$this->expensereport = new stdClass();
 		$this->productbatch = new stdClass();
 	}
@@ -217,8 +218,6 @@ class Conf
 
 		// First level object
 		// TODO Remove this part.
-		$this->expedition_bon = new stdClass();
-		$this->delivery_note = new stdClass();
 		$this->fournisseur = new stdClass();
 		$this->product = new stdClass();
 		$this->service = new stdClass();
@@ -233,7 +232,6 @@ class Conf
 		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
 		$this->notification = new stdClass();
-		$this->mailing = new stdClass();
 		$this->expensereport = new stdClass();
 		$this->productbatch = new stdClass();
 
@@ -503,8 +501,10 @@ class Conf
 			// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
 
 			// Sous module bons d'expedition
+			$this->expedition_bon = new stdClass();
 			$this->expedition_bon->enabled = (empty($this->global->MAIN_SUBMODULE_EXPEDITION) ? 0 : $this->global->MAIN_SUBMODULE_EXPEDITION);
 			// Sub module delivery note  Sous module bons de livraison
+			$this->delivery_note = new stdClass();
 			$this->delivery_note->enabled = (empty($this->global->MAIN_SUBMODULE_DELIVERY) ? 0 : $this->global->MAIN_SUBMODULE_DELIVERY);
 
 			// Module fournisseur
@@ -705,22 +705,26 @@ class Conf
 			$this->theme = $this->global->MAIN_THEME;
 			$this->css = "/theme/".$this->theme."/style.css.php";
 
-			// conf->email_from = email pour envoi par dolibarr des mails automatiques
+			// conf->email_from = email by default to send Dolibarr automatic emails
 			$this->email_from = "robot@example.com";
 			if (!empty($this->global->MAIN_MAIL_EMAIL_FROM)) {
 				$this->email_from = $this->global->MAIN_MAIL_EMAIL_FROM;
 			}
 
-			// conf->notification->email_from = email pour envoi par Dolibarr des notifications
-			$this->notification->email_from = $this->email_from;
-			if (!empty($this->global->NOTIFICATION_EMAIL_FROM)) {
-				$this->notification->email_from = $this->global->NOTIFICATION_EMAIL_FROM;
+			// conf->notification->email_from = email by default to send Dolibarr notifications
+			if (isModEnabled('notification')) {
+				$this->notification->email_from = $this->email_from;
+				if (!empty($this->global->NOTIFICATION_EMAIL_FROM)) {
+					$this->notification->email_from = $this->global->NOTIFICATION_EMAIL_FROM;
+				}
 			}
 
-			// conf->mailing->email_from = email pour envoi par Dolibarr des mailings
-			$this->mailing->email_from = $this->email_from;
-			if (!empty($this->global->MAILING_EMAIL_FROM)) {
-				$this->mailing->email_from = $this->global->MAILING_EMAIL_FROM;
+			// conf->mailing->email_from = email by default to send Dolibarr emailings
+			if (isModEnabled('mailing')) {
+				$this->mailing->email_from = $this->email_from;
+				if (!empty($this->global->MAILING_EMAIL_FROM)) {
+					$this->mailing->email_from = $this->global->MAILING_EMAIL_FROM;
+				}
 			}
 
 			if (!isset($this->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) {
