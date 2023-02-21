@@ -188,7 +188,7 @@ $fk_usergroup1 = GETPOST('fk_usergroup1');
 
 				</div>
 
-				<div style="clear:both"></div>
+				<div class="clearboth"></div>
 
 			</div>
 

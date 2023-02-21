@@ -232,10 +232,6 @@ class Mo extends CommonObject
 	public $line = array();
 
 	/**
-	 * @var integer	Mo parent line
-	 * */
-
-	/**
 	 * @var int ID of parent line
 	 */
 	public $fk_parent_line;
@@ -1169,7 +1165,7 @@ class Mo extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
+			$dataparams = " data-params='".json_encode($params)."'";
 			// $label = $langs->trans('Loading');
 		}
 

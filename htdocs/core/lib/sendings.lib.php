@@ -133,7 +133,7 @@ function delivery_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	if ($conf->expedition_bon->enabled && $user->rights->expedition->lire) {
+	if (isModEnabled('expedition_bon') && $user->rights->expedition->lire) {
 		$head[$h][0] = DOL_URL_ROOT."/expedition/card.php?id=".$object->origin_id;
 		$head[$h][1] = $langs->trans("SendingCard");
 		$head[$h][2] = 'shipping';

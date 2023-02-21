@@ -145,6 +145,11 @@ $coldisplay++;
 	}
 
 	// Do not allow editing during a situation cycle
+	// but in some situations that is required (update legal informations for example)
+	if (!empty($conf->global->INVOICE_SITUATION_CAN_FORCE_UPDATE_DESCRIPTION)) {
+		$situationinvoicelinewithparent = 0;
+	}
+
 	if (!$situationinvoicelinewithparent) {
 		// editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -226,7 +231,7 @@ $coldisplay++;
 	if ($inputalsopricewithtax) {
 		$coldisplay++;
 		print '<td class="right"><input type="text" class="flat right" size="5" id="price_ttc" name="price_ttc" value="'.(GETPOSTISSET('price_ttc') ? GETPOST('price_ttc') : (isset($line->pu_ttc) ? price($line->pu_ttc, 0, '', 0) : '')).'"';
-		if ($line->fk_prev_id != null) {
+		if ($situationinvoicelinewithparent) {
 			print ' readonly';
 		}
 		print '></td>';

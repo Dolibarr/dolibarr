@@ -96,7 +96,7 @@ if (!($object->id > 0) && $action == 'view') {
 }
 
 $triggermodname = 'CONTACT_MODIFY';
-$permissiontoadd = $user->rights->societe->contact->creer;
+$permissiontoadd = $user->hasRight('societe', 'contact', 'creer');
 
 // Security check
 if ($user->socid) {
@@ -1500,7 +1500,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</table>";
 
 		print '</div></div>';
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 

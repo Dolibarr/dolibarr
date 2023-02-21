@@ -939,8 +939,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 						$fp = fopen($filetosave, "w");
 						fputs($fp, $tmpgeturl['content']);
 						fclose($fp);
-						if (!empty($conf->global->MAIN_UMASK))
-							@chmod($file, octdec($conf->global->MAIN_UMASK));
+						dolChmod($file);
 					}
 					*/
 
@@ -1008,8 +1007,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 						//$fp = fopen($filetosave, "w");
 						//fputs($fp, $tmpgeturl['content']);
 						//fclose($fp);
-						//if (!empty($conf->global->MAIN_UMASK))
-						//	@chmod($file, octdec($conf->global->MAIN_UMASK));
+						//dolChmod($file);
 
 						//	$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
 						$pagecsscontent .= '/* Content of file '.$urltograbbis.' */'."\n";
@@ -2659,9 +2657,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 			}
 			$domtree->appendChild($root);
 			if ($domtree->save($tempdir.$xmlname)) {
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($tempdir.$xmlname, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($tempdir.$xmlname);
 				setEventMessages($langs->trans("SitemapGenerated", $xmlname), null, 'mesgs');
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -5022,8 +5018,7 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 		print $out;
 
 		/*file_put_contents($filetpl, $out);
-		if (!empty($conf->global->MAIN_UMASK))
-			@chmod($filetpl, octdec($conf->global->MAIN_UMASK));
+		dolChmod($filetpl);
 
 		// Output file on browser
 		dol_syslog("index.php include $filetpl $filename content-type=$type");

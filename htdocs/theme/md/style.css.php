@@ -3302,6 +3302,7 @@ div.vmenu, td.vmenu {
 .companylogo { padding-top: 4px; }
 .searchform { padding-top: 10px; }
 .searchform .bordertransp { border: 0; }
+#divsearchforms2 form.searchform .button { border: none !important; }
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu {
 	white-space: nowrap; font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold;
@@ -4062,7 +4063,7 @@ div.refidpadding  {
 div.refid  {
 	font-weight: bold;
 	color: var(--colortexttitlenotab);
-	font-size: 160%;
+	font-size: 120%;
 }
 a.refid {
 	color: var(--colortexttitlenotab) !important;
@@ -4071,11 +4072,15 @@ div.refidno  {
 	padding-top: 8px;
 	font-weight: normal;
 	color: var(--refidnocolor);
-	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
-	line-height: 21px;
+	font-size: 92%;
+	line-height: 1.3em;
 }
 div.refidno form {
 	display: inline-block;
+}
+div.refaddress div.address {
+	line-height: 1.2em;
+	font-size: 0.9em;
 }
 
 div.pagination {
@@ -4920,7 +4925,7 @@ div.titre {
 	color: var(--colortexttitlenotab);
 }
 .tertiary {
-	color: var(--colortexttitlenotab);
+	color: var(--colortexttitlenotab2);
 }
 
 table.centpercent.notopnoleftnoright.table-fiche-title {
@@ -6460,8 +6465,9 @@ select.multiselectononeline {
 	.select2-container.select2-container--open .select2-dropdown.ui-dialog {
 		min-width: 220px !important;
 	}
-	.select2-container.select2-container--open .select2-dropdown--below,
-	.select2-container.select2-container--open .select2-dropdown--above {
+	
+	.select2-container.select2-container--open .select2-dropdown--below:not(.onrightofpage),
+	.select2-container.select2-container--open .select2-dropdown--above:not(.onrightofpage) {
 		min-width: 220px !important;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
@@ -6710,11 +6716,15 @@ dd.dropdowndd ul li {
 /* ============================================================================== */
 
 .searchpage .tagtr .tagtd {
-	padding-bottom: 3px;
+	padding-top: 2px;
+	padding-bottom: 2px;
 }
 .searchpage .tagtr .tagtd .button {
 	background: unset;
 	border: unset;
+}
+.searchpage .searchform input {
+	font-size: 1.15em;
 }
 
 li.ui-li-divider .ui-link {
@@ -7437,6 +7447,33 @@ div.clipboardCPValue.hidewithsize {
 	background:#888;
 	color:#fff;
 	border-color:#555;
+}
+
+
+/* ============================================================================== */
+/* Virtual business card                                                          */
+/* ============================================================================== */
+
+.virtualcard-div {
+	overflow: hidden;
+	vertical-align: top;
+	/* background: #aaa; */
+}
+
+#virtualcard-iframe {
+	border: 40px solid #aaa;
+	vertical-align: top;
+	width: 10%;
+	min-width: 100px;
+	border-radius: 10px;
+	aspect-ratio: 0.6;
+}
+.nopointervent {
+	pointer-events: none;
+}
+.scalepreview {
+	/* transform: scale(0.5); */
+	zoom: 0.20;
 }
 
 

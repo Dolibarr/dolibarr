@@ -783,13 +783,11 @@ class pdf_standard_myobject extends ModelePDFMyObject
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
-					$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath'=>$file);
 
-					return 1; // No error
+				return 1; // No error
 			} else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return 0;

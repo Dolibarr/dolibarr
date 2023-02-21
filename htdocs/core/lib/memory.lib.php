@@ -68,6 +68,7 @@ $shmoffset = 1000; // Max number of entries found into a language file. If too l
 function dol_setcache($memoryid, $data, $expire = 0)
 {
 	global $conf;
+
 	$result = 0;
 
 	if (strpos($memoryid, 'count_') === 0) {	// The memoryid key start with 'count_...'
@@ -120,6 +121,10 @@ function dol_setcache($memoryid, $data, $expire = 0)
 	} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using shmop
 		$result = dol_setshmop($memoryid, $data, $expire);
+	} else {
+		// No intersession cache system available, we use at least the perpage cache
+		$conf->cache['cachememory_'.$memoryid] = $data;
+		$result = is_array($data) ? count($data) : (is_scalar($data) ? strlen($data) : 0);
 	}
 
 	return $result;
@@ -193,6 +198,11 @@ function dol_getcache($memoryid)
 		// Using shmop
 		$data = dol_getshmop($memoryid);
 		return $data;
+	} else {
+		// No intersession cache system available, we use at least the perpage cache
+		if (isset($conf->cache['cachememory_'.$memoryid])) {
+			return $conf->cache['cachememory_'.$memoryid];
+		}
 	}
 
 	return null;

@@ -2177,7 +2177,7 @@ if ($action == 'create') {
 	} else {
 		print img_picto('', 'company').$form->select_company(empty($societe->id) ? 0 : $societe->id, 'socid', '(s.fournisseur = 1 AND s.status = 1)', 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 widthcentpercentminusxx maxwidth500');
 		// reload page to retrieve supplier informations
-		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
+		if (empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE_DISABLED)) {
 			print '<script type="text/javascript">
 				$(document).ready(function() {
 					$("#socid").change(function() {
@@ -2247,10 +2247,9 @@ if ($action == 'create') {
         			$(document).ready(function() {
         				$("#fac_rec").change(function() {
 							console.log("We have changed the template invoice - Reload page");
-        					var fac_rec = $(this).val();
-        			        var socid = $(\'#socid\').val();
-        					// For template invoice change, we must reuse data of template, not input already done, so we call a GET with action=create, not a POST submit.
-        					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
+							// reload page
+							$("input[name=action]").val("create");
+							$("form[name=add]").submit();
         				});
         			});
         			</script>';

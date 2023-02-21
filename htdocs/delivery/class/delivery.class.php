@@ -201,7 +201,7 @@ class Delivery extends CommonObject
 			dol_syslog("Delivery::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if (!$conf->expedition_bon->enabled) {
+				if (!isModEnabled('expedition_bon')) {
 					$commande = new Commande($this->db);
 					$commande->id = $this->commande_id;
 					$commande->fetch_lines();
@@ -229,7 +229,7 @@ class Delivery extends CommonObject
 						$error++;
 					}
 
-					if (!$conf->expedition_bon->enabled) {
+					if (!isModEnabled('expedition_bon')) {
 						// TODO standardize status uniformiser les statuts
 						$ret = $this->setStatut(2, $this->origin_id, $this->origin);
 						if (!$ret) {

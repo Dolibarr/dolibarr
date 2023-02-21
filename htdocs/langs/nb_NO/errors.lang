@@ -304,6 +304,11 @@ ErrorValueCantBeNull=Verdien for <b> %s </b> kan ikke være null
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Datoen for banktransaksjonen kan ikke være lavere enn datoen for filoverføringen
 ErrorTooMuchFileInForm=For mange filer i skjemaet, maksimalt antall er %s fil(er)
 ErrorSessionInvalidatedAfterPasswordChange=Økten ble ugyldig etter endring av passord, status eller gyldighetsdato. Logg på på nytt.
+ErrorExistingPermission = Tillatelse <b> %s </b> for objekt <b> %s </b> finnes allerede
+ErrorFieldExist=Verdien for <b> %s </b> finnes allerede
+ErrorEqualModule=Modulen er ugyldig i <b> %s </b>
+ErrorFieldValue=Verdien for <b> %s </b> er feil
+ErrorCoherenceMenu= <b> %s </b> er nødvendig når <b> % </b> er lik VENSTRE
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP-parameteren upload_max_filesize (%s) er høyere enn PHP-parameteren post_max_size (%s). Dette er ikke et konsistent oppsett.
@@ -342,6 +347,7 @@ WarningPaypalPaymentNotCompatibleWithStrict=Verdien 'Strict' gjør at betalingsf
 WarningThemeForcedTo=Advarsel, tema har blitt tvunget til <b> %s </b> av skjult konstant MAIN_FORCETHEME
 WarningPagesWillBeDeleted=Advarsel, dette vil også slette alle eksisterende sider/beholdere på nettstedet. Du bør eksportere nettstedet ditt før, så du har en sikkerhetskopi for å reimportere den senere.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatisk validering er deaktivert når alternativet for å redusere beholdning er satt på "Fakturavalidering".
+WarningModuleNeedRefrech = Modul <b> %s </b> er deaktivert. Ikke glem å aktivere den
 
 # Validate
 RequireValidValue = Verdien er ikke gyldig

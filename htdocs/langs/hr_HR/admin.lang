@@ -451,7 +451,7 @@ ExtrafieldCheckBox=Checkboxes
 ExtrafieldCheckBoxFromList=Checkboxes from table
 ExtrafieldLink=Poveži s objektom
 ComputedFormula=Izračunato polje
-ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $object</strong>.<br><strong>WARNING</strong>: Only some properties of $object may be available. If you need a properties not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$object->id < 10 ? round($object->id / 2, 2): ($object->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($obj->id ? $obj->id: ($obj->rowid ? $obj->rowid: $object->id)) > 0)) ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1'<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
+ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $objectoffield</strong>.<br><strong>WARNING</strong>: If you need properties of an object not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$objectoffield->id < 10 ? round($objectoffield->id / 2, 2): ($objectoffield->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0 ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1')<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
 Computedpersistent=Pohrani izračunato polje
 ComputedpersistentDesc=Izračunata dodatna polja bit će pohranjena u bazi podataka, međutim, vrijednost će se ponovno izračunati samo kada se promijeni objekt ovog polja. Ako izračunato polje ovisi o drugim objektima ili globalnim podacima, ova vrijednost može biti pogrešna!!
 ExtrafieldParamHelpPassword=Ako ovo polje ostavite praznim, znači da će ova vrijednost biti pohranjena bez šifriranja (polje mora biti skriveno samo sa zvjezdicom na zaslonu). <br> Postavite 'auto' za korištenje zadanog pravila šifriranja za spremanje lozinke u bazu podataka (tada će pročitana vrijednost biti samo hash, nema načina da se dohvati izvorna vrijednost)
@@ -704,8 +704,10 @@ Module62000Name=Incoterms
 Module62000Desc=Dodaj mogučnosti za upravljanje Incoterm-om
 Module63000Name=Sredstva
 Module63000Desc=Upravljajte resursima (pisači, automobili, sobe,...) za dodjelu događaja
+Module66000Name=Enable OAuth2 authentication
+Module66000Desc=Provide a tool to generate and manage OAuth2 tokens. The token can then be used by some other modules.
 Module94160Name=Receptions
-Permission11=Pregledaj izlazne račune
+Permission11=Read customer invoices (and payments)
 Permission12=Izradi/promijeni izlazne račune
 Permission13=Poništite račune kupaca
 Permission14=Ovjeri izlazni račun
@@ -947,7 +949,7 @@ Permission1190=Odobri (drogo odobrenje) narudžba dobavljača
 Permission1191=Izvoz narudžbi dobavljača i njihovih atributa
 Permission1201=Primi rezultat izvoza
 Permission1202=Izradi/izmjeni izvoz
-Permission1231=Čitaj račune dobavljača
+Permission1231=Read vendor invoices (and payments)
 Permission1232=Kreiraj/izmjeni račune dobavljača
 Permission1233=Ovjeri račune dobavljača
 Permission1234=Obriši račune dobavljača
@@ -1234,7 +1236,7 @@ SetupDescription4= <a href="%s"> %s -> %s </a> <br> <br> Ovaj softver je paket m
 SetupDescription5=Ostali unosi izbornika za postavljanje upravljaju izbornim parametrima.
 SetupDescriptionLink= <a href="%s"> %s - %s </a>
 SetupDescription3b=Osnovni parametri koji se koriste za prilagodbu zadanog ponašanja vaše aplikacije (npr. za značajke vezane uz zemlju).
-SetupDescription4b=Ovaj softver je skup mnogih modula/aplikacija. Moduli koji se odnose na vaše potrebe moraju biti omogućeni i konfigurirani. Unosi izbornika će se pojaviti s aktivacijom ovih modula.
+SetupDescription4b=This software is a suite of many modules/applications. The modules related to your needs must be activated. Menu entries will appears with the activation of these modules.
 AuditedSecurityEvents=Sigurnosni događaji koji se revidiraju
 NoSecurityEventsAreAduited=Sigurnosni događaji se ne revidiraju. Možete ih omogućiti iz izbornika %s
 Audit=Sigurnosni događaji
@@ -2366,3 +2368,7 @@ MaxNumberOfAttachementOnForms=Max number of joinded files in a form
 IfDefinedUseAValueBeetween=If defined, use a value between %s and %s
 Reload=Reload
 ConfirmReload=Confirm module reload
+WarningModuleHasChangedLastVersionCheckParameter=Warning: the module %s has set a parameter to check its version at each page access. This is a bad and not allowed practice that may make the page to administer modules instable. Please contact author of module to fix this.
+WarningModuleHasChangedSecurityCsrfParameter=Warning: the module %s has disabled the CSRF security of your instance. This action is suspect and your installation may no more be secured. Please contact the author of the module for explanation.
+EMailsInGoingDesc=Incoming emails are managed by the module %s. You must enable and configure it if you need to support ingoing emails.
+MAIN_IMAP_USE_PHPIMAP=Use the PHP-IMAP library for IMAP instead of native PHP IMAP. This also allows the use of an OAuth2 connection for IMAP (module OAuth must also be activated).

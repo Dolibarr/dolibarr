@@ -1695,15 +1695,14 @@ if ($action == 'create') {
 	} else {
 		print img_picto('', 'company').$form->select_company((empty($socid) ? '' : $socid), 'socid', '(s.fournisseur=1 AND s.status=1)', 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
 		// reload page to retrieve customer informations
-		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
-			print '<script type="text/javascript">
-				$(document).ready(function() {
-					$("#socid").change(function() {
-						console.log("We have changed the company - Reload page");
-						// reload page
-						$("input[name=action]").val("create");
-						$("form[name=add]").submit();
-					});
+		if (empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE_DISABLED)) {
+			print '<script>
+			$(document).ready(function() {
+				$("#socid").change(function() {
+					console.log("We have changed the company - Reload page");
+					// reload page
+					$("input[name=action]").val("create");
+					$("form[name=add]").submit();
 				});
 				</script>';
 		}

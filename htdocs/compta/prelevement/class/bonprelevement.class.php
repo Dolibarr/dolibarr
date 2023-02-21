@@ -1700,9 +1700,7 @@ class BonPrelevement extends CommonObject
 		}
 
 		fclose($this->file);
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($this->filename, octdec($conf->global->MAIN_UMASK));
-		}
+		dolChmod($this->filename);
 
 		return $result;
 	}

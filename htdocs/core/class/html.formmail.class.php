@@ -793,7 +793,7 @@ class FormMail extends Form
 				if (is_numeric($this->withfile)) {
 					// TODO Trick to have param removedfile containing nb of file to delete. But this does not works without javascript
 					$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
-					$out .= '<script type="text/javascript">';
+					$out .= '<script nonce="'.getNonce().'" type="text/javascript">';
 					$out .= 'jQuery(document).ready(function () {';
 					$out .= '    jQuery(".removedfile").click(function() {';
 					$out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
@@ -1001,7 +1001,7 @@ class FormMail extends Form
 
 			// Disable enter key if option MAIN_MAILFORM_DISABLE_ENTERKEY is set
 			if (!empty($conf->global->MAIN_MAILFORM_DISABLE_ENTERKEY)) {
-				$out .= '<script type="text/javascript">';
+				$out .= '<script nonce="'.getNonce().'" type="text/javascript">';
 				$out .= 'jQuery(document).ready(function () {';
 				$out .= '	$(document).on("keypress", \'#mailform\', function (e) {		/* Note this is called at every key pressed ! */
 	    						var code = e.keyCode || e.which;
@@ -1646,7 +1646,7 @@ class FormMail extends Form
 						$tmparray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'SecureKeyPAYMENTUniquePerContractLine';
 					}
 
-					//Online payement link
+					//Online payment link
 					if (isModEnabled('adherent')) {
 						$tmparray['__ONLINEPAYMENTLINK_MEMBER__'] = 'OnlinePaymentLinkUniquePerMember';
 					}

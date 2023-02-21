@@ -104,7 +104,8 @@ class Partnership extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>'1', 'position'=>15, 'notnull'=>1, 'visible'=>-2, 'default'=>'1', 'index'=>1,),
-		'fk_type' => array('type'=>'integer:PartnershipType:partnership/class/partnership_type.class.php:0:active=1', 'label'=>'Type', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1,),
+		'fk_type' => array('type'=>'integer:PartnershipType:partnership/class/partnership_type.class.php:0:active=1', 'label'=>'Type', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'csslist'=>'tdoverflowmax100'),
+		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax125',),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
@@ -116,12 +117,11 @@ class Partnership extends CommonObject
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
 		'date_partnership_start' => array('type'=>'date', 'label'=>'DatePartnershipStart', 'enabled'=>'1', 'position'=>52, 'notnull'=>1, 'visible'=>1,),
 		'date_partnership_end' => array('type'=>'date', 'label'=>'DatePartnershipEnd', 'enabled'=>'1', 'position'=>53, 'notnull'=>0, 'visible'=>1,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>54, 'notnull'=>0, 'visible'=>2, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('-1'=>'', '0'=>'Draft', '1'=>'Accepted', '2'=>'Refused', '8'=>'Suspended', '9'=>'Terminated'),),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>54, 'notnull'=>1, 'visible'=>2, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Accepted', '2'=>'Refused', '8'=>'Suspended', '9'=>'Terminated'),),
 		'url_to_check' => array('type'=>'varchar(255)', 'label'=>'UrlToCheck', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>-1,),
 		'count_last_url_check_error' => array('type'=>'integer', 'label'=>'CountLastUrlCheckError', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>-2, 'default'=>'0',),
 		'last_check_backlink' => array('type'=>'datetime', 'label'=>'LastCheckBacklink', 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>-2,),
 		'reason_decline_or_cancel' => array('type'=>'text', 'label'=>'ReasonDeclineOrCancel', 'enabled'=>'1', 'position'=>73, 'notnull'=>0, 'visible'=>-2,),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax150',),
 		'ip' => array('type'=>'varchar(250)', 'label'=>'Ip', 'enabled'=>'1', 'position'=>74, 'notnull'=>0, 'visible'=>-2,),
 	);
 	public $rowid;
@@ -990,7 +990,7 @@ class Partnership extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
+			$dataparams = " data-params='".json_encode($params)."'";
 			// $label = $langs->trans('Loading');
 		}
 		$label = implode($this->getTooltipContentArray($params));
@@ -1319,6 +1319,36 @@ class Partnership extends CommonObject
 		$this->db->commit();
 
 		return $error;
+	}
+
+	/**
+	 *	Return a thumb for kanban views
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $conf, $langs;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if (property_exists($this, 'label')) {
+			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+
+		return $return;
 	}
 }
 

@@ -4222,12 +4222,12 @@ function migrate_delete_old_dir($db, $langs, $conf)
  * @param	Conf		$conf			Object conf
  * @param	array		$listofmodule	List of modules, like array('MODULE_KEY_NAME'=>', $reloadmode)
  * @param   int         $force          1=Reload module even if not already loaded
- * @return	int|void					<0 if KO, >0 if OK
+ * @return	int					<0 if KO, >0 if OK
  */
 function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $force = 0)
 {
 	if (count($listofmodule) == 0) {
-		return;
+		return 0;
 	}
 
 	dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force.", listofmodule=".join(',', array_keys($listofmodule)));

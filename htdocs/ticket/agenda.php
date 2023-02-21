@@ -71,6 +71,7 @@ if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
 
+$search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
 $object = new Ticket($db);
@@ -137,7 +138,7 @@ $title = $langs->trans("Ticket").' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/ticketnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
 }
-$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|DE:Modul_Terminplanung';
 
 llxHeader('', $title, $help_url);
 
@@ -261,6 +262,8 @@ if (!empty($object->id)) {
 	// List of all actions
 	$filters = array();
 	$filters['search_agenda_label'] = $search_agenda_label;
+	$filters['search_rowid'] = $search_rowid;
+
 	show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 }
 

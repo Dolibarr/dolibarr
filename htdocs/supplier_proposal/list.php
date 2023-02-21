@@ -380,7 +380,7 @@ if ($search_login) {
 	$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_login);
 }
 if ($search_montant_ht) {
-	$sql .= natural_search('sp.total_ht=', $search_montant_ht, 1);
+	$sql .= natural_search('sp.total_ht', $search_montant_ht, 1);
 }
 if ($search_montant_vat != '') {
 	$sql .= natural_search("sp.total_tva", $search_montant_vat, 1);
@@ -984,7 +984,7 @@ if ($resql) {
 		if ($mode == 'kanban') {
 			if ($i == 0) {
 				print '<tr><td colspan="12">';
-				print '<div class="box-flex-container">';
+				print '<div class="box-flex-container kanban">';
 			}
 			// Output Kanban
 			$userstatic->fetch($obj->fk_user_author);

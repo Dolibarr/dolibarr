@@ -319,7 +319,7 @@ if (empty($reshook)) {
 	$objectlabel = 'Contact';
 	$permissiontoread = $user->hasRight('societe', 'lire');
 	$permissiontodelete = $user->hasRight('societe', 'supprimer');
-	$permissiontoadd = $user->rights->societe->creer;
+	$permissiontoadd = $user->hasRight('societe', 'creer');
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -1234,7 +1234,7 @@ while ($i < min($num, $limit)) {
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="12">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
 		$contactstatic->photo = $obj->photo;
 		if ($obj->socid > 0) {
