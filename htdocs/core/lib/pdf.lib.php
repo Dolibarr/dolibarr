@@ -2386,11 +2386,12 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefSending");
 					if (! empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] .= ' / ';
 					$linkedobjects[$objecttype]['ref_value'] .= $outputlangs->transnoentities($elementobject->ref);
-					$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date_delivery, 'day', '', $outputlangs);
+					$linkedobjects[$objecttype]['date_value'] = dol_print_date(empty($elementobject->date_shipping) ? $elementobject->date_delivery : $elementobject->date_shipping, 'day', '', $outputlangs);
 				} else {
 					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending");
 					if (empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] = $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
 					$linkedobjects[$objecttype]['ref_value'] .= ' / '.$outputlangs->transnoentities($elementobject->ref);
+					$linkedobjects[$objecttype]['date_value'] = dol_print_date(empty($elementobject->date_shipping) ? $elementobject->date_delivery : $elementobject->date_shipping, 'day', '', $outputlangs);
 				}
 			}
 		}
