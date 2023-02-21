@@ -1311,6 +1311,7 @@ class Holiday extends CommonObject
 		global $conf, $langs;
 
 		$langs->load('holiday');
+		$nofetch = empty($params['nofetch']) ? false : true;
 
 		$datas = [];
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Holiday").'</u>';
@@ -1318,6 +1319,23 @@ class Holiday extends CommonObject
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		// show type for this record only in ajax to not overload lists
+		if (!$nofetch && !empty($this->fk_type)) {
+			$typeleaves = $this->getTypes(1, -1);
+			$labeltoshow = (($typeleaves[$this->fk_type]['code'] && $langs->trans($typeleaves[$this->fk_type]['code']) != $typeleaves[$this->fk_type]['code']) ? $langs->trans($typeleaves[$this->fk_type]['code']) : $typeleaves[$this->fk_type]['label']);
+			$datas['type'] = '<br><b>'.$langs->trans("Type") . ':</b> ' . (empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved", $this->fk_type) : $labeltoshow);
+		}
+		if (isset($this->halfday) && !empty($this->date_debut) && !empty($this->date_fin)) {
+			$listhalfday = array(
+				'morning' => $langs->trans("Morning"),
+				"afternoon" => $langs->trans("Afternoon")
+			);
+			$starthalfday = ($this->halfday == -1 || $this->halfday == 2) ? 'afternoon' : 'morning';
+			$endhalfday = ($this->halfday == 1 || $this->halfday == 2) ? 'morning' : 'afternoon';
+			$datas['date_start'] = '<br><b>'.$langs->trans('DateDebCP') . '</b>: '. dol_print_date($this->date_debut, 'day') . '&nbsp;&nbsp;<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
+			$datas['date_end'] = '<br><b>'.$langs->trans('DateFinCP') . '</b>: '. dol_print_date($this->date_fin, 'day') . '&nbsp;&nbsp;<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
+		}
+
 
 		return $datas;
 	}
@@ -1339,6 +1357,7 @@ class Holiday extends CommonObject
 		$params = [
 			'id' => $this->id,
 			'objecttype' => $this->element,
+			'nofetch' => 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
