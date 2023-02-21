@@ -108,7 +108,7 @@ if ($action == 'presend') {
 				$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
 			}
 
-			$file = $fileparams['fullname'];
+			$file = isset($fileparams['fullname'])?$fileparams['fullname']:null;
 		}
 	}
 
