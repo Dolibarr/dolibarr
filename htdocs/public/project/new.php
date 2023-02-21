@@ -537,7 +537,7 @@ if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 }
 
 // Other attributes
-$tpl_context = 'public'; // define template context to public
+$parameters['tpl_context']='public';	// define template context to public
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // Comments
 print '<tr>';
