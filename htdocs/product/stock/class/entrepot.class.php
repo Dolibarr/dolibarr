@@ -150,14 +150,20 @@ class Entrepot extends CommonObject
 	const STATUS_CLOSED = 0;
 
 	/**
-	 * Warehouse open and operations for customer shipping, supplier dispatch, internal stock transfers/corrections allowed.
+	 * Warehouse open and any operations are allowed (customer shipping, supplier dispatch, internal stock transfers/corrections).
 	 */
 	const STATUS_OPEN_ALL = 1;
 
 	/**
-	 * Warehouse open and operations for stock transfers/corrections allowed (not for customer shipping and supplier dispatch).
+	 * Warehouse open and only operations for stock transfers/corrections allowed (not for customer shipping and supplier dispatch).
 	 */
 	const STATUS_OPEN_INTERNAL = 2;
+
+	/**
+	 * Warehouse open and any operations are allowed, but warehouse is not included into calculation of stock.
+	 */
+	const STATUS_OPENEXT_ALL = 3;	// TODO Implement this
+
 
 
 	/**
