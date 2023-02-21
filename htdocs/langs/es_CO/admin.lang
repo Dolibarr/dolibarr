@@ -340,7 +340,6 @@ ExtrafieldCheckBox=Casillas de verificación
 ExtrafieldCheckBoxFromList=Casillas de verificación de la mesa
 ExtrafieldLink=Enlace a un objeto
 ComputedFormula=Campo computado
-ComputedFormulaDesc=Puede ingresar aquí una fórmula usando otras propiedades del objeto o cualquier codificación PHP para obtener un valor calculado dinámico. Puede utilizar cualquier fórmula compatible con PHP, incluido el "?" operador de condición y el siguiente objeto global: <strong>$db, $conf, $langs, $mysoc, $user, $object</strong>.<br><strong>ADVERTENCIA</strong>: Solo algunas propiedades de $object pueden estar disponibles. Si necesita propiedades no cargadas, simplemente busque el objeto en su fórmula como en el segundo ejemplo.<br> El uso de un campo calculado significa que no puede ingresar ningún valor desde la interfaz. Además, si hay un error de sintaxis, es posible que la fórmula no devuelva nada.<br> <br>Ejemplo de fórmula:<br>$object->id < 10 ? round($object->id / 2, 2): ($object->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br> <br>Ejemplo para recargar el objeto<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($obj->id ? $obj->id: ($obj->rowid ? $obj->rowid: $object->id)) > 0)) ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1''<br> <br>Otro ejemplo de fórmula para forzar la carga del objeto y su objeto principal:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
 Computedpersistent=Almacenar campo calculado
 ComputedpersistentDesc=Los campos adicionales calculados se almacenarán en la base de datos, sin embargo, el valor solo se volverá a calcular cuando se cambie el objeto de este campo. Si el campo calculado depende de otros objetos o datos globales, ¡este valor puede ser incorrecto!
 ExtrafieldParamHelpPassword=Dejar este campo en blanco significa que este valor se almacenará sin cifrado (el campo solo debe estar oculto con una estrella en la pantalla). <br> Establezca 'auto' para usar la regla de cifrado predeterminada para guardar la contraseña en la base de datos (entonces el valor leído será el hash solo, no hay forma de recuperar el valor original)
@@ -516,7 +515,6 @@ Module59000Desc=Módulo para seguir márgenes
 Module60000Desc=Módulo para gestionar comisiones.
 Module62000Desc=Añadir características para gestionar Incoterms.
 Module63000Desc=Gestionar recursos (impresoras, coches, salas, ...) para destinarlos a eventos
-Permission11=Lea las facturas de los clientes.
 Permission12=Crear / modificar facturas de clientes.
 Permission13=Invalidar facturas de clientes
 Permission14=Validar facturas de clientes.
@@ -711,7 +709,6 @@ Permission1189=Marcar / desmarcar la recepción de una orden de compra
 Permission1190=Aprobar (segunda aprobación) órdenes de compra
 Permission1191=Exportar órdenes de proveedores y sus atributos
 Permission1202=Crear / Modificar una exportación
-Permission1231=Leer facturas de proveedores
 Permission1232=Crear / modificar facturas de proveedores
 Permission1233=Validar facturas de proveedores
 Permission1234=Eliminar facturas de proveedores
@@ -904,7 +901,6 @@ SetupDescription3=<a href="%s"> %s -> %s </a> <br> <br> Parámetros básicos uti
 SetupDescription4=<a href="%s"> %s -> %s </a> <br> <br> Este software es un conjunto de muchos módulos/aplicaciones. Los módulos relacionados con sus necesidades deben estar habilitados y configurados. Las entradas del menú aparecerán con la activación de estos módulos.
 SetupDescription5=Otras entradas del menú de configuración administran parámetros opcionales.
 SetupDescriptionLink=<a href="%s"> %s - %s </a>
-SetupDescription4b=Este software es un conjunto de muchos módulos / aplicaciones. Los módulos relacionados con sus necesidades deben estar habilitados y configurados. Las entradas del menú aparecerán con la activación de estos módulos.
 InfoBrowser=Navegador
 InfoOS=Sistema operativo
 InfoWebServer=Servidor web
@@ -962,6 +958,7 @@ YouMustRunCommandFromCommandLineAfterLoginToUser=Debe ejecutar este comando desd
 YourPHPDoesNotHaveSSLSupport=Funciones SSL no disponibles en tu PHP
 DownloadMoreSkins=Más skins para descargar
 SimpleNumRefModelDesc=Devuelve el número de referencia en el formato %syymm-nnnn donde yy es el año, mm es el mes y nnnn es un número secuencial que se incrementa automáticamente sin reinicio.
+AdvancedNumRefModelDesc=Devuelve el número de referencia en el formato %syymm-nnnn donde yy es el año, mm es el mes y nnnn es un número secuencial que se incrementa automáticamente sin reinicio.
 ShowProfIdInAddress=Mostrar identificación profesional con direcciones
 ShowVATIntaInAddress=Ocultar el número de IVA intracomunitario
 MAIN_DISABLE_METEO=Desactivar el pulgar meteorológico

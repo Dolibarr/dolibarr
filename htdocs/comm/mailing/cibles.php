@@ -560,6 +560,7 @@ if ($object->fetch($id) >= 0) {
 		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<input type="hidden" name="limit" value="'.$limit.'">';
+		print '<input type="hidden" name="page_y" value="">';
 
 		print '<div class="div-table-responsive">';
 		print '<table class="noborder centpercent">';

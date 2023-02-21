@@ -177,5 +177,6 @@ ReminderType=Tip callback
 AddReminder=Creați o notificare automată de reminder pentru acest eveniment
 ErrorReminderActionCommCreation=Eroare la crearea notificării de reminder pentru acest eveniment
 BrowserPush=Notificări popup browser
+Reminders=Reminder-e
 ActiveByDefault=Activat implicit
 Until=până

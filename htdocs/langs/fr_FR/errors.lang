@@ -304,6 +304,11 @@ ErrorValueCantBeNull=La valeur pour <b>%s</b> ne peut pas être nulle
 ErrorDateOfMovementLowerThanDateOfFileTransmission=La date de l'opération bancaire ne peut être inférieure à la date de transmission du fichier
 ErrorTooMuchFileInForm=Trop de fichiers dans le formulaire, le nombre maximum est de %s fichier(s)
 ErrorSessionInvalidatedAfterPasswordChange=La session a été invalidée suite à un changement de mot de passe, d'état ou de dates de validité. Veuillez vous reconnecter.
+ErrorExistingPermission = La permission <b>%s</b> pour l'objet <b>%s</b> existe déjà.
+ErrorFieldExist=La valeur pour <b>%s</b> existe déjà
+ErrorEqualModule=Module invalide dans <b>%s</b>.
+ErrorFieldValue=La valeur pour <b>%s</b> est incorrecte
+ErrorCoherenceMenu=<b>%s</b>est requise lorsque <b>%</b> vaut LEFT
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.
@@ -342,6 +347,7 @@ WarningPaypalPaymentNotCompatibleWithStrict=La valeur 'Strict' fait que les fonc
 WarningThemeForcedTo=Attention, le choix du thème a été forcé à <b> %s </b> par la constante cachée MAIN_FORCETHEME
 WarningPagesWillBeDeleted=Attention, cela supprimera également toutes les pages/conteneurs existants du site. Vous devriez exporter votre site Web avant, afin d'avoir une sauvegarde pour le réimporter plus tard.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=La validation automatique est désactivée lorsque l'option de diminution du stock est définie sur "Validation de la facture".
+WarningModuleNeedRefrech = Le module <b>%s</b> a été désactivé. N'oubliez pas de le réactiver
 
 # Validate
 RequireValidValue = Valeur non valide
