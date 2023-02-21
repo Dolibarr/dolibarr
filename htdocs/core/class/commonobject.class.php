@@ -172,11 +172,6 @@ abstract class CommonObject
 	 */
 	public $restrictiononfksoc = 0;
 
-	/**
-	 * @var string string for output
-	 */
-	public $output;
-
 	// Following vars are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
 
 	/**
@@ -677,7 +672,7 @@ abstract class CommonObject
 	public $nb = array();
 
 	/**
-	 * @var string output
+	 * @var string string for output
 	 */
 	public $output;
 
