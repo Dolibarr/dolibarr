@@ -599,7 +599,8 @@ class Expedition extends CommonObject
 				$this->socid                = $obj->socid;
 				$this->ref_customer = $obj->ref_customer;
 				$this->ref_ext		    = $obj->ref_ext;
-				$this->statut               = $obj->fk_statut;
+				$this->status               = $obj->fk_statut;
+				$this->statut               = $this->status; // Deprecated
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->fk_user_author       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
