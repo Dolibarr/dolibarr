@@ -1697,8 +1697,18 @@ class BonPrelevement extends CommonObject
 	public static function buildRumNumber($row_code_client, $row_datec, $row_drum)
 	{
 		global $langs;
+		$maxRumLength = 34 - 2; // look at iban_prefix in account.class.php
 		$pre = substr(dol_string_nospecial(dol_string_unaccent($langs->transnoentitiesnoconv('RUM'))), 0, 3); // Must always be on 3 char ('RUM' or 'UMR'. This is a protection against bad translation)
-		return $pre.'-'.$row_code_client.'-'.$row_drum.'-'.date('U', $row_datec);
+		$rum = $pre.'-'.$row_code_client.'-'.$row_drum.'-'.date('U', $row_datec);
+		$length = strlen($rum);
+		//too long
+		if($length > $maxRumLength) {
+			$toremove = $length - $maxRumLength;
+			$code_client = substr($row_code_client,0,strlen($row_code_client)-$toremove);
+			$rum = $pre.'-'.$code_client.'-'.$row_drum.'-'.date('U', $row_datec);
+			dol_syslog("RUM is too long (more than 34 chars), shrink customer code from $row_code_client to $code_client", LOG_INFO);
+		}
+		return $rum;
 	}
 
 
