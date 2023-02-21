@@ -1641,7 +1641,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 	global $conf, $user, $debugbar;
 
 	// If syslog module enabled
-	if (empty($conf->syslog->enabled)) {
+	if (!isModEnabled('syslog')) {
 		return;
 	}
 

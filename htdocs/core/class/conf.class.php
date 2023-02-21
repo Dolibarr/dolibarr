@@ -47,6 +47,12 @@ class Conf
 	//! To store browser info
 	public $browser;
 
+	//! To store some setup of generic modules
+	public $mycompany;
+	public $admin;
+	public $medias;
+
+
 	//! To store if javascript/ajax is enabked
 	public $use_javascript_ajax;
 	//! To store if javascript/ajax is enabked
@@ -141,7 +147,6 @@ class Conf
 
 		// First level object that are modules.
 		// TODO Remove this part.
-		$this->syslog = new stdClass();
 		$this->multicompany = new stdClass();
 		$this->expedition_bon = new stdClass();
 		$this->delivery_note = new stdClass();
@@ -212,7 +217,6 @@ class Conf
 
 		// First level object
 		// TODO Remove this part.
-		$this->syslog = new stdClass();
 		$this->expedition_bon = new stdClass();
 		$this->delivery_note = new stdClass();
 		$this->fournisseur = new stdClass();
@@ -1018,7 +1022,7 @@ class Conf
 				}
 			}
 
-			if (!empty($this->syslog->enabled)) {
+			if (isModEnabled('syslog')) {
 				// We init log handlers
 				if (!empty($this->global->SYSLOG_HANDLERS)) {
 					$handlers = json_decode($this->global->SYSLOG_HANDLERS);
