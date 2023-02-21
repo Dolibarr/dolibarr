@@ -694,7 +694,7 @@ class Workstation extends CommonObject
 	{
 		global $conf, $langs;
 
-		$langs->load('holiday');
+		$langs->load('mrp');
 
 		$datas = [];
 		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("Workstation").'</u>';

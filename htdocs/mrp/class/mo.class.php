@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020  Lenin Rivas		   <lenin@leninrivas.com>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2023       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,6 @@
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
  * Class for Mo
@@ -1118,7 +1116,8 @@ class Mo extends CommonObject
 	{
 		global $conf, $langs;
 
-		$langs->load('mrp');
+		$langs->loadLangs(['mrp', 'products']);
+		$nofetch = isset($params['nofetch']) ? true : false;
 
 		$datas = [];
 
@@ -1132,6 +1131,21 @@ class Mo extends CommonObject
 		}
 		if (isset($this->mrptype)) {
 			$datas['type'] = '<br><b>'.$langs->trans('Type').':</b> '.$this->fields['mrptype']['arrayofkeyval'][$this->mrptype];
+		}
+		if (isset($this->qty)) {
+			$datas['qty'] = '<br><b>'.$langs->trans('QtyToProduce').':</b> '.$this->qty;
+		}
+		if (!$nofetch && isset($this->fk_product)) {
+			require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+			$product = new Product($this->db);
+			$product->fetch($this->fk_product);
+			$datas['product'] = '<br><b>'.$langs->trans('Product').':</b> '.$product->getNomUrl(1, '', 0, -1, 1);
+		}
+		if (!$nofetch && isset($this->fk_warehouse)) {
+			require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
+			$warehouse = new Entrepot($this->db);
+			$warehouse->fetch($this->fk_warehouse);
+			$datas['warehouse'] = '<br><b>'.$langs->trans('WarehouseForProduction').':</b> '.$warehouse->getNomUrl(1, '', 0, 1);
 		}
 
 		return $datas;
@@ -1160,13 +1174,13 @@ class Mo extends CommonObject
 			'id' => $this->id,
 			'objecttype' => $this->element,
 			'option' => $option,
+			'nofetch' => 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
 			$dataparams = " data-params='".json_encode($params)."'";
-			// $label = $langs->trans('Loading');
 		}
 
 		$label = implode($this->getTooltipContentArray($params));

@@ -706,9 +706,9 @@ class Entrepot extends CommonObject
 		if (isset($this->statut)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
-		$datas['ref'] .= '<br><b>'.$langs->trans('Ref').':</b> '.(empty($this->ref) ? $this->label : $this->ref);
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.(empty($this->ref) ? $this->label : $this->ref);
 		if (!empty($this->lieu)) {
-			$datas['locationsummary'] .= '<br><b>'.$langs->trans('LocationSummary').':</b> '.$this->lieu;
+			$datas['locationsummary'] = '<br><b>'.$langs->trans('LocationSummary').':</b> '.$this->lieu;
 		}
 
 		return $datas;
