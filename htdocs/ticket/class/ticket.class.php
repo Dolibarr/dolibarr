@@ -3000,7 +3000,7 @@ class Ticket extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $langs, $selected,$arrayofselected,$obj;
+		global $langs, $selected,$arrayofselected;
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -3012,12 +3012,12 @@ class Ticket extends CommonObject
 			$selected = 1;
 		}
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		if (property_exists($this, 'fk_user_assign') && !empty($this->fk_user_assign)) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("AssignedTo").'</span> : <span class="info-box-label">'.$this->fk_user_assign.'</span>';
+		if (!empty($arraydata['user_assignment'])) {
+			$return .= '<br><span class="info-box-label" title="'.dol_escape_htmltag($langs->trans("AssignedTo")).'">'.$arraydata['user_assignment'].'</span>';
 		}
 		if (property_exists($this, 'type_code') && !empty($this->type_code)) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("Type").'</span> : ';
-			$return .= $langs->getLabelFromKey($this->db, 'TicketTypeShort'.$this->type_code, 'c_ticket_type', 'code', 'label', $this->type_code);
+			$return .= '<br>';
+			$return .= '<div class="tdoverflowmax125 inline-block">'.$langs->getLabelFromKey($this->db, 'TicketTypeShort'.$this->type_code, 'c_ticket_type', 'code', 'label', $this->type_code).'</div>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';

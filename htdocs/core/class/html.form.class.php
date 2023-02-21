@@ -8276,7 +8276,7 @@ class Form
 						containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 					    placeholder: "'.dol_escape_js($placeholder).'",
 				    	escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
-				    	minimumInputLength: '.$minimumInputLength.',
+				    	minimumInputLength: '.((int) $minimumInputLength).',
 				        formatResult: function(result, container, query, escapeMarkup) {
 	                        return escapeMarkup(result.text);
 	                    },
@@ -8529,6 +8529,8 @@ class Form
 								  },';
 				}
 				$out .= '		dir: \'ltr\',
+								containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag (ko with multiselect) */
+								dropdownCssClass: \''.$morecss.'\',				/* Line to add class on the new <span class="select2-selection...> tag (ok with multiselect) */
 								// Specify format function for dropdown item
 								formatResult: formatResult,
 							 	templateResult: formatResult,		/* For 4.0 */
