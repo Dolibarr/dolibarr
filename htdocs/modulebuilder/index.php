@@ -1262,6 +1262,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 		\$this->rights[\$r][5] = 'delete';
 		\$r++;
 		";
+				$moduledescriptorfile = $destdir.'/core/modules/mod'.$module.'.class.php';
 				dolReplaceInFile($moduledescriptorfile, array('/* END MODULEBUILDER PERMISSIONS */' => '/*'.strtoupper($objectname).'*/'.$rightToadd."/*END ".strtoupper($objectname).'*/'."\n\t\t".'/* END MODULEBUILDER PERMISSIONS */'));
 			}
 		}
@@ -2036,7 +2037,7 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 	// if not found permission for the object
 	if (!in_array($objectForPerms, array_unique($allObject))) {
 		$firstRight++;
-		$existRight = 0;
+		$existRight++;
 	}
 	if (!$error) {
 		if (isModEnabled(strtolower($module))) {
@@ -2058,11 +2059,10 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 		";
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 		if (!$existRight) {
-			//var_dump(1);exit;
 			dolReplaceInFile($moduledescriptorfile, array('/*END '.strtoupper($objectForPerms).'*/' => $rightToAdd.'/*END '.strtoupper($objectForPerms).'*/'));
 			setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
 		}
-		if ($firstRight) {
+		if ($firstRight>0) {
 			dolReplaceInFile($moduledescriptorfile, array('/* END MODULEBUILDER PERMISSIONS */' => '/*'.strtoupper($objectForPerms).'*/'.$rightToAdd."/*END ".strtoupper($objectForPerms).'*/'."\n\t\t".'/* END MODULEBUILDER PERMISSIONS */'));
 			setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
 		}
@@ -4720,8 +4720,8 @@ if ($module == 'initmodule') {
 
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
-				print '<input type="hidden" name="action" value="addproperty">';
-				print '<input type="hidden" name="tab" value="objects">';
+				print '<input type="hidden" name="action" value="addright">';
+				print '<input type="hidden" name="tab" value="permissions">';
 				print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 				print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
 
