@@ -4810,7 +4810,7 @@ if ($module == 'initmodule') {
 								print '<option value="'.dol_escape_htmltag($perm[1]).'">'.dol_escape_htmltag($perm[1]).'</option>';
 								for ($i = 0; $i<3; $i++) {
 									if ($perm[1] != $labels[$i]) {
-										print '<option value="'.GETPOST('label').'">'.$labels[$i].'</option>';
+										print '<option value="'.dol_escape_htmltag($labels[$i]).'">'.$labels[$i].'</option>';
 									}
 								}
 								print '</select></td>';
