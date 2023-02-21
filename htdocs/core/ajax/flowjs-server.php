@@ -43,7 +43,7 @@ if (!defined("NOLOGIN")) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require '../../core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $action = GETPOST('action', 'aZ09');
 $module = GETPOST('module', 'aZ09');
