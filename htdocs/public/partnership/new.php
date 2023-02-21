@@ -537,7 +537,7 @@ $extrafields->fetch_name_optionals_label($object->table_element); // fetch optio
 
 llxHeaderVierge($langs->trans("NewPartnershipRequest"));
 
-
+print '<br>';
 print load_fiche_titre($langs->trans("NewPartnershipRequest"), '', '', 0, 0, 'center');
 
 
