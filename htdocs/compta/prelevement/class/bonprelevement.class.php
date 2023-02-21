@@ -1702,9 +1702,9 @@ class BonPrelevement extends CommonObject
 		$rum = $pre.'-'.$row_code_client.'-'.$row_drum.'-'.date('U', $row_datec);
 		$length = strlen($rum);
 		//too long
-		if($length > $maxRumLength) {
+		if ($length > $maxRumLength) {
 			$toremove = $length - $maxRumLength;
-			$code_client = substr($row_code_client,0,strlen($row_code_client)-$toremove);
+			$code_client = substr($row_code_client, 0, strlen($row_code_client)-$toremove);
 			$rum = $pre.'-'.$code_client.'-'.$row_drum.'-'.date('U', $row_datec);
 			dol_syslog("RUM is too long (more than 34 chars), shrink customer code from $row_code_client to $code_client", LOG_INFO);
 		}
