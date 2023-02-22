@@ -401,7 +401,7 @@ class Ldap
 	public function unbind()
 	{
 		$this->result = true;
-		if ($this->connection) {
+		if (is_resource($this->connection) || is_object($this->connection)) {
 			$this->result = @ldap_unbind($this->connection);
 		}
 		if ($this->result) {
