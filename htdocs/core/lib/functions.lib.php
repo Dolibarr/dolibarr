@@ -2308,14 +2308,12 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 		$tmptxt = $object->getLibStatut(5);
 		$morehtmlstatus .= $tmptxt; // No status on task
-	} else { // Generic case
-		if (isset($object->status)) {
-			$tmptxt = $object->getLibStatut(6);
-			if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
-				$tmptxt = $object->getLibStatut(5);
-			}
-			$morehtmlstatus .= $tmptxt;
+	} elseif (method_exists($object, 'getLibStatut')) { // Generic case
+		$tmptxt = $object->getLibStatut(6);
+		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
+			$tmptxt = $object->getLibStatut(5);
 		}
+		$morehtmlstatus .= $tmptxt;
 	}
 
 	// Add if object was dispatched "into accountancy"
