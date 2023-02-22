@@ -854,7 +854,7 @@ if ($resql) {
 	}
 
 	$help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
-	llxHeader('', $langs->trans('ListOfProposals'), $help_url);
+	llxHeader('', $title, $help_url);
 
 	$param = '&search_status='.urlencode($search_status);
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
