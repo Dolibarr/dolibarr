@@ -669,9 +669,10 @@ if ($action == 'create' && $permissiontoadd) {
 	print '<script>';
 	print '$( document ).ready(function() {';
 		print '$("#updateAmountWithLastSalary").on("click", function updateAmountWithLastSalary() {
-					console.log("We click on link to autofill salary amount url="+url);
 					var fk_user = $("#fk_user").val()
 					var url = "'.DOL_URL_ROOT.'/salaries/ajax/ajaxsalaries.php?fk_user="+fk_user;
+					console.log("We click on link to autofill salary amount url="+url);
+
 					if (fk_user != -1) {
 						$.get(
 							url,
