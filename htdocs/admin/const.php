@@ -64,9 +64,9 @@ if ($action == 'add' && GETPOST('update')) {	// Click on button update must be u
 if ($action == 'add' && GETPOST('delete')) {	// Click on button update must be used in priority before param $action
 	$action = 'delete';
 }
-if ($action == 'update' && GETPOST('add')) {	// Click on button add must be used in priority before param $action
+/*if ($action == 'update' && GETPOST('add')) {	// 'add' button is always clicked as it is the first in form.
 	$action = 'add';
-}
+}*/
 if ($action == 'delete' && GETPOST('add')) {	// Click on button add must be used in priority before param $action
 	$action = 'add';
 }
@@ -234,7 +234,7 @@ if (isModEnabled('multicompany') && !$user->entity) {
 	print '<td class="center">';
 	print '<input type="hidden" name="entity" value="' . $conf->entity . '">';
 }
-print '<input type="submit" class="button button-add small" name="add" value="'.$langs->trans("Add").'">';
+print '<input type="submit" class="button button-add small" id="add" name="add" value="'.$langs->trans("Add").'">';
 print "</td>\n";
 print '</tr>';
 
