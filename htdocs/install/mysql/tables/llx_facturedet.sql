@@ -65,8 +65,14 @@ create table llx_facturedet
   
   situation_percent real DEFAULT 100, 								-- % progression of lines invoicing
   fk_prev_id        integer, 										-- id of the line in the previous situation
+  situation_percent_cumulated real DEFAULT 100,                     -- Invoice situation percent cumulated
+  situation_total_ht_cumulated double(24,8),                        -- Invoice situation total without taxes cumulated
+  situation_total_tva_cumulated double(24,8),                       -- Invoice situation total vat cumulated
+  situation_total_ttc_cumulated double(24,8),                       -- Invoice situation total with taxes cumulated
+  situation_retained_warranty double(24,8),                         -- Invoice situation amount retained warranty not cumulated
 
-  fk_user_author	integer,                						-- user making creation
+
+fk_user_author	integer,                						-- user making creation
   fk_user_modif     integer,                						-- user making last change
 
   fk_multicurrency				integer,

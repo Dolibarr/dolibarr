@@ -82,4 +82,13 @@ ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_user_valid 
 ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_projet (fk_projet);
 ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_account(fk_account);
 
+ALTER TABLE llx_facturedet ADD COLUMN situation_percent_cumulated real DEFAULT 100 AFTER fk_prev_id;
+ALTER TABLE llx_facturedet ADD COLUMN situation_total_ht_cumulated double(24,8) AFTER situation_percent_cumulated;
+ALTER TABLE llx_facturedet ADD COLUMN situation_total_tva_cumulated double(24,8) AFTER situation_total_ht_cumulated;
+ALTER TABLE llx_facturedet ADD COLUMN situation_total_ttc_cumulated double(24,8) AFTER situation_total_tva_cumulated;
+ALTER TABLE llx_facturedet ADD COLUMN situation_retained_warranty double(24,8) DEFAULT NULL AFTER situation_total_ttc_cumulated;
+
+
+
+
 
