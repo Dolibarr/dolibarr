@@ -420,7 +420,7 @@ $viewmode = '';
 $viewmode .= '<div class="divadvancedsearchfield">';
 $arrayofgraphs = array('bars' => 'Bars', 'lines' => 'Lines'); // also 'pies'
 $viewmode .= '<div class="inline-block opacitymedium"><span class="fas fa-chart-area paddingright" title="'.$langs->trans("Graph").'"></span>'.$langs->trans("Graph").'</div> ';
-$viewmode .= $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 0, 'minwidth100', 1);
+$viewmode .= $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 0, '', 1, 0, 0, '', 'graphtype width100');
 $viewmode .= '</div>';
 
 $num = 0;
