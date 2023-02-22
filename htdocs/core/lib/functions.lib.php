@@ -8890,7 +8890,7 @@ function dol_osencode($str)
 	}
 
 	if ($tmp == 'iso-8859-1') {
-		return mb_convert_encoding($str, 'UTF-8', 'ISO-8859-1');
+		return mb_convert_encoding($str, 'ISO-8859-1', 'UTF-8');
 	}
 	return $str;
 }
