@@ -8,6 +8,7 @@ MarginOnServices=Marge / Services
 MarginRate=Taux de marge
 MarkRate=Taux de marque
 DisplayMarginRates=Afficher les taux de marge
+ModifyMarginRates=Modifier les taux de marge
 DisplayMarkRates=Afficher les taux de marque
 InputPrice=Saisir un prix
 margin=Gestion des marges
