@@ -13,7 +13,7 @@
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2022  Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2022  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
@@ -8890,7 +8890,7 @@ function dol_osencode($str)
 	}
 
 	if ($tmp == 'iso-8859-1') {
-		return utf8_decode($str);
+		return mb_convert_encoding($str, 'ISO-8859-1', 'UTF-8');
 	}
 	return $str;
 }
