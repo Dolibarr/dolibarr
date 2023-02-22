@@ -1311,9 +1311,9 @@ class Holiday extends CommonObject
 		global $conf, $langs;
 
 		$langs->load('holiday');
-		$nofetch = empty($params['nofetch']) ? false : true;
+		$nofetch = !empty($params['nofetch']);
 
-		$datas = [];
+		$datas = array();
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Holiday").'</u>';
 		if (isset($this->statut)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);

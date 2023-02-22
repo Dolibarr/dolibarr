@@ -1432,9 +1432,9 @@ class Ticket extends CommonObject
 		global $langs;
 
 		$langs->load('ticket');
+		$nofetch = !empty($params['nofetch']);
 
-		$nofetch = empty($params['nofetch']) ? false : true;
-		$datas = [];
+		$datas = array();
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Ticket").'</u>';
 		$datas['picto'] .= ' '.$this->getLibStatut(4);
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;

@@ -5011,8 +5011,8 @@ class Product extends CommonObject
 
 		$langs->load('products');
 
-		$datas = [];
-		$nofetch = empty($params['nofetch']) ? false : true;
+		$datas = array();
+		$nofetch = !empty($params['nofetch']);
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			return ['optimize' => $langs->trans("ShowProduct")];

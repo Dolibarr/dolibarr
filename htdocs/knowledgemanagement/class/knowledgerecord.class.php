@@ -727,8 +727,9 @@ class KnowledgeRecord extends CommonObject
 
 		$langs->loadLangs(['knowledgemanagement', 'languages']);
 
-		$datas = [];
-		$nofetch = empty($params['nofetch']) ? false : true;
+		$datas = array();
+		$nofetch = !empty($params['nofetch']);
+
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("KnowledgeRecord").'</u>';
 		if (isset($this->statut)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);

@@ -2286,10 +2286,11 @@ class Adherent extends CommonObject
 	{
 		global $conf, $langs;
 
-		$datas = [];
 		$langs->loadLangs(['members', 'companies']);
+		$nofetch = !empty($params['nofetch']);
 
-		$nofetch = empty($params['nofetch']) ? false : true;
+		$datas = array();
+
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			$langs->load("users");
 			return ['optimize' => $langs->trans("ShowUser")];

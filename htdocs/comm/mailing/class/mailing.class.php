@@ -736,10 +736,10 @@ class Mailing extends CommonObject
 	{
 		global $conf, $langs;
 
-		$nofetch = empty($params['nofetch']) ? false : true;
+		$nofetch = !empty($params['nofetch']);
 		$langs->load('mails');
 
-		$datas = [];
+		$datas = array();
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ShowEMailing").'</u>';
 		if (isset($this->statut)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);

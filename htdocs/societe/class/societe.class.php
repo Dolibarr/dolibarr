@@ -2613,10 +2613,11 @@ class Societe extends CommonObject
 
 		$langs->loadLangs(['companies', 'commercial']);
 
-		$datas = [];
+		$datas = array();
 
 		$option = $params['option'] ?? '';
-		$nofetch = empty($params['nofetch']) ? false : true;
+		$nofetch = !empty($params['nofetch']);
+
 		$name = $this->name;
 
 		if (!empty($this->name_alias) && empty($noaliasinname)) {

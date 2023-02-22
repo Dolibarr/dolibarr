@@ -1705,9 +1705,11 @@ class ExpenseReport extends CommonObject
 		global $conf, $langs;
 
 		$langs->load('expensereport');
-		$nofetch = empty($params['nofetch']) ? false : true;
+
+		$nofetch = !empty($params['nofetch']);
 		$moretitle = $params['moretitle'] ?? '';
-		$datas = [];
+
+		$datas = array();
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ExpenseReport").'</u>';
 		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);

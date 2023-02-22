@@ -1578,9 +1578,10 @@ class ActionComm extends CommonObject
 	{
 		global $conf, $langs, $user;
 		$langs->load('agenda');
-		$datas = [];
 
-		$nofetch = empty($params['nofetch']) ? false : true;
+		$datas = array();
+		$nofetch = !empty($params['nofetch']);
+
 		// Set label of type
 		$labeltype = '';
 		if ($this->type_code) {

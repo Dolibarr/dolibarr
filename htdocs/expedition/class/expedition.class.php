@@ -1834,8 +1834,9 @@ class Expedition extends CommonObject
 		global $conf, $langs;
 
 		$langs->load('shipping');
-		$nofetch = empty($params['nofetch']) ? false : true;
-		$datas = [];
+		$nofetch = !empty($params['nofetch']);
+
+		$datas = array();
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Shipment").'</u>';
 		if (isset($this->statut)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
