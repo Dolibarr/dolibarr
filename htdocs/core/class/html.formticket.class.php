@@ -340,26 +340,9 @@ class FormTicket
 		$this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', 2, 1);
 		print '</td></tr>';
 
-		// Subject
-		if ($this->withtitletopic) {
-			print '<tr><td><label for="subject"><span class="fieldrequired">'.$langs->trans("Subject").'</span></label></td><td>';
-			// Answer to a ticket : display of the thread title in readonly
-			if ($this->withtopicreadonly) {
-				print $langs->trans('SubjectAnswerToTicket').' '.$this->topic_title;
-			} else {
-				if (isset($this->withreadid) && $this->withreadid > 0) {
-					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title.'';
-				} else {
-					$subject = GETPOST('subject', 'alpha');
-				}
-				print '<input class="text minwidth500" id="subject" name="subject" value="'.$subject.'" autofocus />';
-			}
-			print '</td></tr>';
-		}
-
 		if (!empty($conf->knowledgemanagement->enabled)) {
 			// KM Articles
-			print '<tr id="KWwithajax"></tr>';
+			print '<tr id="KWwithajax" class="hidden"><td></td></tr>';
 			print '<!-- Script to manage change of ticket group -->
 			<script>
 			jQuery(document).ready(function() {
@@ -372,12 +355,17 @@ class FormTicket
 
 					if (idgroupticket != "") {
 						$.ajax({ url: \''.DOL_URL_ROOT.'/core/ajax/fetchKnowledgeRecord.php\',
-							 data: { action: \'getKnowledgeRecord\', idticketgroup: idgroupticket, token: \''.newToken().'\', lang:\''.$langs->defaultlang.'\'},
+							 data: { action: \'getKnowledgeRecord\', idticketgroup: idgroupticket, token: \''.newToken().'\', lang:\''.$langs->defaultlang.'\', public:'.($public).' },
 							 type: \'GET\',
 							 success: function(response) {
 								var urllist = \'\';
 								console.log("We received response "+response);
-								response = JSON.parse(response)
+								if (typeof response == "object") {
+									console.log("response is already type object, no need to parse it");
+								} else {
+									console.log("response is type "+(typeof response));
+									response = JSON.parse(response);
+								}
 								for (key in response) {
 									answer = response[key].answer;
 									urllist += \'<li><a href="#" title="\'+response[key].title+\'" class="button_KMpopup" data-html="\'+answer+\'">\' +response[key].title+\'</a></li>\';
@@ -412,6 +400,23 @@ class FormTicket
 				}
 			});
 			</script>'."\n";
+		}
+
+		// Subject
+		if ($this->withtitletopic) {
+			print '<tr><td><label for="subject"><span class="fieldrequired">'.$langs->trans("Subject").'</span></label></td><td>';
+			// Answer to a ticket : display of the thread title in readonly
+			if ($this->withtopicreadonly) {
+				print $langs->trans('SubjectAnswerToTicket').' '.$this->topic_title;
+			} else {
+				if (isset($this->withreadid) && $this->withreadid > 0) {
+					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title.'';
+				} else {
+					$subject = GETPOST('subject', 'alpha');
+				}
+				print '<input class="text minwidth500" id="subject" name="subject" value="'.$subject.'"'.(empty($this->withemail)?' autofocus':'').' />';
+			}
+			print '</td></tr>';
 		}
 
 		// MESSAGE
@@ -845,6 +850,8 @@ class FormTicket
 					} elseif ($selected == $id) {
 						print ' selected="selected"';
 					} elseif ($arraycategories['use_default'] == "1" && !$selected && !$empty) {
+						print ' selected="selected"';
+					} elseif (count($ticketstat->cache_category_tickets) == 1) {
 						print ' selected="selected"';
 					}
 
