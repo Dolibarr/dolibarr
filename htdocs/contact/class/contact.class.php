@@ -1868,7 +1868,7 @@ class Contact extends CommonObject
 	 * Updates all roles (default contact for companies) according to values inside the ->roles array.
 	 * This is called by update of contact.
 	 *
-	 * @return void|int
+	 * @return int
 	 * @see fetchRoles()
 	 */
 	public function updateRoles()
@@ -1878,7 +1878,7 @@ class Contact extends CommonObject
 		$error = 0;
 
 		if (!isset($this->roles)) {
-			return;	// Avoid to loose roles when property not set
+			return 0;	// Avoid to loose roles when property not set
 		}
 
 		$this->db->begin();
