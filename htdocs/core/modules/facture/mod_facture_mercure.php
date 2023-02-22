@@ -53,7 +53,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 	 */
 	public function info()
 	{
-		global $db, $conf, $langs;
+		global $db, $langs;
 
 		$langs->load("bills");
 
@@ -137,35 +137,20 @@ class mod_facture_mercure extends ModeleNumRefFactures
 	 */
 	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// Get Mask value
 		$mask = '';
 		if (is_object($invoice) && $invoice->type == 1) {
-			if (isset($conf->global->FACTURE_MERCURE_MASK_REPLACEMENT)) {
-				$mask = $conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
-			}
-			if (!$mask) {
-				if (isset($conf->global->FACTURE_MERCURE_MASK_INVOICE)) {
-					$mask = $conf->global->FACTURE_MERCURE_MASK_INVOICE;
-				}
-			}
+			$mask = getDolGlobalString('FACTURE_MERCURE_MASK_REPLACEMENT', getDolGlobalString('FACTURE_MERCURE_MASK_INVOICE'));
 		} elseif (is_object($invoice) && $invoice->type == 2) {
-			if (isset($conf->global->FACTURE_MERCURE_MASK_CREDIT)) {
-				$mask = $conf->global->FACTURE_MERCURE_MASK_CREDIT;
-			}
+			$mask = getDolGlobalString('FACTURE_MERCURE_MASK_CREDIT');
 		} elseif (is_object($invoice) && $invoice->type == 3) {
-			if (isset($conf->global->FACTURE_MERCURE_MASK_DEPOSIT)) {
-				$mask = $conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
-			}
+			$mask = getDolGlobalString('FACTURE_MERCURE_MASK_DEPOSIT');
 		} else {
-			if (isset($conf->global->FACTURE_MERCURE_MASK_INVOICE)) {
-				$mask = $conf->global->FACTURE_MERCURE_MASK_INVOICE;
-			} else {
-				$mask = '';
-			}
+			$mask = getDolGlobalString('FACTURE_MERCURE_MASK_INVOICE');
 		}
 		if (!$mask) {
 			$this->error = 'NotConfigured';

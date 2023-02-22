@@ -117,13 +117,16 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 
 		$form = new Form($this->db);
 
+		$odtChosen = getDolGlobalInt('MAIN_SUPPLIER_PROPOSAL_CHOOSE_ODT_DOCUMENT') > 0;
+		$odtPath = trim(getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF_ODT_PATH'));
+
 		$texte = $this->description.".<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="SUPPLIER_PROPOSAL_ADDON_PDF_ODT_PATH">';
-		if ($conf->global->MAIN_SUPPLIER_PROPOSAL_CHOOSE_ODT_DOCUMENT > 0) {
+		if ($odtChosen) {
 			$texte .= '<input type="hidden" name="param2" value="SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT">';
 			$texte .= '<input type="hidden" name="param3" value="SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL">';
 			$texte .= '<input type="hidden" name="param4" value="SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED">';
@@ -133,7 +136,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 		// List of directories area
 		$texte .= '<tr><td>';
 		$texttitle = $langs->trans("ListOfDirectories");
-		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_PATH)));
+		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', $odtPath));
 		$listoffiles = array();
 		foreach ($listofdir as $key => $tmpdir) {
 			$tmpdir = trim($tmpdir);
@@ -159,7 +162,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte .= '<textarea class="flat" cols="60" name="value1">';
-		$texte .= $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_PATH;
+		$texte .= $odtPath;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
 		$texte .= '<input type="submit" class="button small reposition" name="modify" value="'.$langs->trans("Modify").'">';
@@ -167,7 +170,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
-		if (!empty($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_PATH)) {
+		if (!empty($odtPath)) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
@@ -185,26 +188,26 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 			}
 			$texte .= '</div>';
 
-			if ($conf->global->MAIN_SUPPLIER_PROPOSAL_CHOOSE_ODT_DOCUMENT > 0) {
+			if ($odtChosen) {
 				// Model for creation
 				$list = ModelePDFSupplierProposal::liste_modeles($this->db);
 				$texte .= '<table width="50%;">';
 				$texte .= '<tr>';
 				$texte .= '<td width="60%;">'.$langs->trans("DefaultModelSupplierProposalCreate").'</td>';
 				$texte .= '<td colspan="">';
-				$texte .= $form->selectarray('value2', $list, $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT);
+				$texte .= $form->selectarray('value2', $list, getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT'));
 				$texte .= "</td></tr>";
 
 				$texte .= '<tr>';
 				$texte .= '<td width="60%;">'.$langs->trans("DefaultModelSupplierProposalToBill").'</td>';
 				$texte .= '<td colspan="">';
-				$texte .= $form->selectarray('value3', $list, $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL);
+				$texte .= $form->selectarray('value3', $list, getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL'));
 				$texte .= "</td></tr>";
 				$texte .= '<tr>';
 
 				$texte .= '<td width="60%;">'.$langs->trans("DefaultModelSupplierProposalClosed").'</td>';
 				$texte .= '<td colspan="">';
-				$texte .= $form->selectarray('value4', $list, $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED);
+				$texte .= $form->selectarray('value4', $list, getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED'));
 				$texte .= "</td></tr>";
 				$texte .= '</table>';
 			}

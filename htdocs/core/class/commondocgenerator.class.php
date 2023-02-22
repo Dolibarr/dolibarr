@@ -36,6 +36,11 @@
 abstract class CommonDocGenerator
 {
 	/**
+	 * @var string Model name
+	 */
+	public $name = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
