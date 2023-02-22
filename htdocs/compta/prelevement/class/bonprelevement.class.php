@@ -747,9 +747,10 @@ class BonPrelevement extends CommonObject
 	 *  @param  string  $executiondate	Date to execute the transfer
 	 *  @param	int	    $notrigger		Disable triggers
 	 *  @param	string	$type			'direct-debit' or 'bank-transfer'
+	 *  @param	int		$did			ID of payment request
 	 *	@return	int						<0 if KO, No of invoice included into file if OK
 	 */
-	public function create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0, $type = 'direct-debit')
+	public function create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0, $type = 'direct-debit', $did = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs, $user;
@@ -811,7 +812,9 @@ class BonPrelevement extends CommonObject
 			$sql .= " AND pfd.traite = 0";
 			$sql .= " AND f.total_ttc > 0";
 			$sql .= " AND pfd.ext_payment_id IS NULL";
-
+			if ($did > 0) {
+				$sql .= " AND pfd.rowid = '".$this->db->escape($did)."'";
+			}
 			dol_syslog(__METHOD__."::Read invoices,", LOG_DEBUG);
 
 			$resql = $this->db->query($sql);

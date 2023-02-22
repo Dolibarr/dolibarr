@@ -1442,8 +1442,8 @@ abstract class CommonInvoice extends CommonObject
 					}
 
 					// TODO Create a prelevement_bon and set its status to sent instead of this
-					$bon = new BonPrelevement($db);
-					$nbinvoices = $bon->create();
+					$bon = new BonPrelevement($this->db);
+					$nbinvoices = $bon->create(0, 0, 'real', 'ALL', '', 0, 'direct-debit', $did);
 					if ($nbinvoices <= 0) {
 						$error++;
 						$errorforinvoice++;
@@ -1451,12 +1451,14 @@ abstract class CommonInvoice extends CommonObject
 						$this->errors[] = "Error on BonPrelevement creation";
 					}
 
-					$result = $bon->set_infotrans($user, $now, 'internet');
-					if ($result < 0) {
-						$error++;
-						$errorforinvoice++;
-						dol_syslog("Error on BonPrelevement creation", LOG_ERR);
-						$this->errors[] = "Error on BonPrelevement creation";
+					if (!$errorforinvoice) {
+						$result = $bon->set_infotrans($user, $now, 'internet');
+						if ($result < 0) {
+							$error++;
+							$errorforinvoice++;
+							dol_syslog("Error on BonPrelevement creation", LOG_ERR);
+							$this->errors[] = "Error on BonPrelevement creation";
+						}
 					}
 
 					if (!$errorforinvoice) {
