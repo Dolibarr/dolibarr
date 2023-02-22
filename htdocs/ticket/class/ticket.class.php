@@ -2354,9 +2354,10 @@ class Ticket extends CommonObject
 	 * Used for files linked into messages.
 	 * Files may be renamed during copy to avoid overwriting existing files.
 	 *
-	 * @return	array		Array with final path/name/mime of files.
+	 * @param	string	$forcetrackid	Force trackid
+	 * @return	array					Array with final path/name/mime of files.
 	 */
-	public function copyFilesForTicket()
+	public function copyFilesForTicket($forcetrackid = null)
 	{
 		global $conf;
 
@@ -2371,7 +2372,7 @@ class Ticket extends CommonObject
 		$maxheightmini = 72;
 
 		$formmail = new FormMail($this->db);
-		$formmail->trackid = 'tic'.$this->id;
+		$formmail->trackid = (is_null($forcetrackid) ? 'tic'.$this->id : '');
 		$attachedfiles = $formmail->get_attached_files();
 
 		$filepath = $attachedfiles['paths'];
