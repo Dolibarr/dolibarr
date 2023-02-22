@@ -519,18 +519,6 @@ abstract class CommonObject
 	public $name;
 
 	/**
-	 * @var string The name alias
-	 */
-	public $name_alias;
-
-	/**
-	 * @var string The name
-	 * @deprecated
-	 * @see name
-	 */
-	public $nom;
-
-	/**
 	 * @var string The lastname
 	 */
 	public $lastname;
@@ -539,21 +527,6 @@ abstract class CommonObject
 	 * @var string The firstname
 	 */
 	public $firstname;
-
-	/**
-	 * @var string The address
-	 */
-	public $address;
-
-	/**
-	 * @var string The zip code
-	 */
-	public $zip;
-
-	/**
-	 * @var string The town
-	 */
-	public $town;
 
 	/**
 	 * @var string The civility code, not an integer
