@@ -276,7 +276,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// File transfer
-				$object->copyFilesForTicket();
+				$object->copyFilesForTicket('');		// trackid is forced to '' because files were uploaded when no id for ticket exists yet and trackid was ''
 			}
 
 			if (!$error) {
@@ -726,6 +726,7 @@ if ($action == 'create' || $action == 'presend') {
 
 	print load_fiche_titre($langs->trans('NewTicket'), '', 'ticket');
 
+	$formticket->trackid = '';		// TODO Use a unique key 'tic' to avoid conflict in upload file feature
 	$formticket->withfromsocid = $socid ? $socid : $user->socid;
 	$formticket->withfromcontactid = $contactid ? $contactid : '';
 	$formticket->withtitletopic = 1;
@@ -736,7 +737,6 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withfile = 2;
 	$formticket->withextrafields = 1;
 	$formticket->param = array('origin' => GETPOST('origin'), 'originid' => GETPOST('originid'));
-	$formticket->trackid = 'tic'.$object->id;
 
 	$formticket->withcancel = 1;
 

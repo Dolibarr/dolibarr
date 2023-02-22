@@ -663,7 +663,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  conditions and billing date.
 	 *
 	 *	@param      integer	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
-	 *  @return     integer    			       	Date limite de reglement si ok, <0 si ko
+	 *  @return     integer    			       	Date limit of payment if OK, <0 if KO
 	 */
 	public function calculate_date_lim_reglement($cond_reglement = 0)
 	{
@@ -673,6 +673,9 @@ abstract class CommonInvoice extends CommonObject
 		}
 		if (!$cond_reglement) {
 			$cond_reglement = $this->cond_reglement_id;
+		}
+		if (!$cond_reglement) {
+			return $this->date;
 		}
 
 		$cdr_nbjour = 0;

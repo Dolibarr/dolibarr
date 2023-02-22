@@ -826,20 +826,29 @@ class AccountancyCategory // extends CommonObject
 			exit();
 		}
 
+		$pcgverid = $conf->global->CHARTOFACCOUNTS;
+		$pcgvercode = dol_getIdFromCode($this->db, $pcgverid, 'accounting_system', 'rowid', 'pcg_version');
+		if (empty($pcgvercode)) {
+			$pcgvercode = $pcgverid;
+		}
+
 		if (!empty($cat_id)) {
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as t";
 			$sql .= " WHERE t.fk_accounting_category = ".((int) $cat_id);
 			$sql .= " AND t.entity = ".$conf->entity;
+			$sql .= " AND t.active = 1";
+			$sql .= " AND t.fk_pcg_version = '".$this->db->escape($pcgvercode)."'";
 			$sql .= " ORDER BY t.account_number";
 		} else {
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as t";
 			$sql .= " WHERE ".$predefinedgroupwhere;
 			$sql .= " AND t.entity = ".$conf->entity;
+			$sql .= ' AND t.active = 1';
+			$sql .= " AND t.fk_pcg_version = '".$this->db->escape($pcgvercode)."'";
 			$sql .= " ORDER BY t.account_number";
 		}
-		//echo $sql;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

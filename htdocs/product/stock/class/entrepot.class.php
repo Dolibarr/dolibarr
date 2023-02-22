@@ -141,7 +141,7 @@ class Entrepot extends CommonObject
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>301),
 		//'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000),
 		//'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPDF', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
-		'statut' =>array('type'=>'tinyint(4)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>500),
+		'statut' =>array('type'=>'tinyint(4)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>500, 'css'=>'minwidth50'),
 	);
 
 	/**
@@ -150,14 +150,20 @@ class Entrepot extends CommonObject
 	const STATUS_CLOSED = 0;
 
 	/**
-	 * Warehouse open and operations for customer shipping, supplier dispatch, internal stock transfers/corrections allowed.
+	 * Warehouse open and any operations are allowed (customer shipping, supplier dispatch, internal stock transfers/corrections).
 	 */
 	const STATUS_OPEN_ALL = 1;
 
 	/**
-	 * Warehouse open and operations for stock transfers/corrections allowed (not for customer shipping and supplier dispatch).
+	 * Warehouse open and only operations for stock transfers/corrections allowed (not for customer shipping and supplier dispatch).
 	 */
 	const STATUS_OPEN_INTERNAL = 2;
+
+	/**
+	 * Warehouse open and any operations are allowed, but warehouse is not included into calculation of stock.
+	 */
+	const STATUS_OPENEXT_ALL = 3;	// TODO Implement this
+
 
 
 	/**
