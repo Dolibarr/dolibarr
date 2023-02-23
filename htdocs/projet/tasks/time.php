@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2021	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2023	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
@@ -1921,20 +1921,20 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Duration - Time spent
 			print '<td class="liste_titre right">';
 
-			$durationtouse_start = 0;
+			$durationtouse_start = '';
 			if ($search_timespent_starthour || $search_timespent_startmin) {
 				$durationtouse_start = ($search_timespent_starthour * 3600 + $search_timespent_startmin * 60);
 			}
-			print '<div class="nowraponall">'.$langs->trans('from').'&nbsp;';
-			$form->select_duration('search_timespent_duration_start', $durationtouse_start, 0, 'text');
+			print '<div class="nowraponall">'.$langs->trans('from').' ';
+			print $form->select_duration('search_timespent_duration_start', $durationtouse_start, 0, 'text', 0, 1);
 			print '</div>';
 
-			$durationtouse_end = 0;
+			$durationtouse_end = '';
 			if ($search_timespent_endhour || $search_timespent_endmin) {
 				$durationtouse_end = ($search_timespent_endhour * 3600 + $search_timespent_endmin * 60);
 			}
-			print '<div class="nowraponall">'.$langs->trans('at').'&nbsp;';
-			$form->select_duration('search_timespent_duration_end', $durationtouse_end, 0, 'text');
+			print '<div class="nowraponall">'.$langs->trans('at').' ';
+			print $form->select_duration('search_timespent_duration_end', $durationtouse_end, 0, 'text', 0, 1);
 			print '</div>';
 
 			print '</td>';

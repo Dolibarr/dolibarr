@@ -7009,8 +7009,8 @@ class Form
 
 		$retstring = '<span class="nowraponall">';
 
-		$hourSelected = 0;
-		$minSelected = 0;
+		$hourSelected = '';
+		$minSelected = '';
 
 		// Hours
 		if ($iSecond != '') {
@@ -7024,14 +7024,14 @@ class Form
 			$retstring .= '<select class="flat" id="select_'.$prefix.'hour" name="'.$prefix.'hour"'.($disabled ? ' disabled' : '').'>';
 			for ($hour = 0; $hour < 25; $hour++) {	// For a duration, we allow 24 hours
 				$retstring .= '<option value="'.$hour.'"';
-				if ($hourSelected == $hour) {
+				if (is_numeric($hourSelected) && $hourSelected == $hour) {
 					$retstring .= " selected";
 				}
 				$retstring .= ">".$hour."</option>";
 			}
 			$retstring .= "</select>";
 		} elseif ($typehour == 'text' || $typehour == 'textselect') {
-			$retstring .= '<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" name="'.$prefix.'hour"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputhour" value="'.(($hourSelected != '') ? ((int) $hourSelected) : '').'">';
+			$retstring .= '<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" name="'.$prefix.'hour"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputhour right" value="'.(($hourSelected != '') ? ((int) $hourSelected) : '').'">';
 		} else {
 			return 'BadValueForParameterTypeHour';
 		}
@@ -7046,21 +7046,23 @@ class Form
 		if ($minunderhours) {
 			$retstring .= '<br>';
 		} else {
-			$retstring .= '<span class="hideonsmartphone">&nbsp;</span>';
+			if ($typehour != 'text') {
+				$retstring .= '<span class="hideonsmartphone">&nbsp;</span>';
+			}
 		}
 
 		if ($typehour == 'select' || $typehour == 'textselect') {
 			$retstring .= '<select class="flat" id="select_'.$prefix.'min" name="'.$prefix.'min"'.($disabled ? ' disabled' : '').'>';
 			for ($min = 0; $min <= 55; $min = $min + 5) {
 				$retstring .= '<option value="'.$min.'"';
-				if ($minSelected == $min) {
+				if (is_numeric($minSelected) && $minSelected == $min) {
 					$retstring .= ' selected';
 				}
 				$retstring .= '>'.$min.'</option>';
 			}
 			$retstring .= "</select>";
 		} elseif ($typehour == 'text') {
-			$retstring .= '<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" name="'.$prefix.'min"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputminute" value="'.(($minSelected != '') ? ((int) $minSelected) : '').'">';
+			$retstring .= '<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" name="'.$prefix.'min"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputminute right" value="'.(($minSelected != '') ? ((int) $minSelected) : '').'">';
 		}
 
 		if ($typehour != 'text') {
