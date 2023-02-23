@@ -323,7 +323,7 @@ if (empty($reshook)) {
 						$newmessage = make_substitutions($message, $substitutionarray, null, 0);
 
 						$moreinheader = '';
-						if (preg_match('/__UNSUBSCRIBE__/', $message)) {
+						if (preg_match('/__UNSUBSCRIBE_(_|URL_)/', $message)) {
 							$moreinheader = "List-Unsubscribe: <__UNSUBSCRIBE_URL__>\n";
 							$moreinheader = make_substitutions($moreinheader, $substitutionarray);
 						}
