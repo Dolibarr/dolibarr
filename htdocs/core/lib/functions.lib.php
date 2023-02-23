@@ -3572,15 +3572,15 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 				$picto = '';
 			}
 		}
-		if ($adddivfloat) {
+		if ($adddivfloat == 1) {
 			$rep .= '<div class="nospan float" style="margin-right: 10px">';
-		} else {
+		} elseif (empty($adddivfloat)) {
 			$rep .= '<span style="margin-right: 10px;">';
 		}
 		$rep .= ($withpicto ?img_picto($titlealt, 'object_'.$picto.'.png').' ' : '').$newphone;
-		if ($adddivfloat) {
+		if ($adddivfloat == 1) {
 			$rep .= '</div>';
-		} else {
+		} elseif (empty($adddivfloat)) {
 			$rep .= '</span>';
 		}
 	}
@@ -7586,9 +7586,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				'__USER_ID__' => (string) $user->id,
 				'__USER_LOGIN__' => (string) $user->login,
 				'__USER_EMAIL__' => (string) $user->email,
-				'__USER_PHONE__' => (string) dol_print_phone($user->office_phone),
-				'__USER_PHONEPRO__' => (string) dol_print_phone($user->user_mobile),
-				'__USER_PHONEMOBILE__' => (string) dol_print_phone($user->personal_mobile),
+				'__USER_PHONE__' => (string) dol_print_phone($user->office_phone, '', 0, 0, '', " ", '', '', -1),
+				'__USER_PHONEPRO__' => (string) dol_print_phone($user->user_mobile, '', 0, 0, '', " ", '', '', -1),
+				'__USER_PHONEMOBILE__' => (string) dol_print_phone($user->personal_mobile, '', 0, 0, '', " ", '', '', -1),
 				'__USER_FAX__' => (string) $user->office_fax,
 				'__USER_LASTNAME__' => (string) $user->lastname,
 				'__USER_FIRSTNAME__' => (string) $user->firstname,
@@ -7603,8 +7603,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray = array_merge($substitutionarray, array(
 			'__MYCOMPANY_NAME__'    => $mysoc->name,
 			'__MYCOMPANY_EMAIL__'   => $mysoc->email,
-			'__MYCOMPANY_PHONE__'   => dol_print_phone($mysoc->phone),
-			'__MYCOMPANY_FAX__'     => dol_print_phone($mysoc->fax),
+			'__MYCOMPANY_PHONE__'   => dol_print_phone($mysoc->phone, '', 0, 0, '', " ", '', '', -1),
+			'__MYCOMPANY_FAX__'     => dol_print_phone($mysoc->fax, '', 0, 0, '', " ", '', '', -1),
 			'__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
 			'__MYCOMPANY_PROFID2__' => $mysoc->idprof2,
 			'__MYCOMPANY_PROFID3__' => $mysoc->idprof3,
