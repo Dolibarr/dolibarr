@@ -47,10 +47,10 @@ function propal_prepare_head($object)
 		$langs->load("sendings");
 		$text = '';
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$object->id;
-		if ($conf->expedition_bon->enabled) {
+		if (isModEnabled('expedition_bon')) {
 			$text = $langs->trans("Shipment");
 		}
-		if ($conf->delivery_note->enabled) {
+		if (isModEnabled('delivery_note')) {
 			$text .= '/'.$langs->trans("Receivings");
 		}
 		$head[$h][1] = $text;

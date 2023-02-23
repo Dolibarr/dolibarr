@@ -1,4 +1,6 @@
 <?php
+use Stripe\BankAccount;
+
 /* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2017       Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -37,6 +39,7 @@ if (isModEnabled('accounting')) {
 }
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "loan"));
@@ -633,12 +636,14 @@ if ($id > 0) {
 		/*
 		 * Payments
 		 */
-		$sql = "SELECT p.rowid, p.num_payment, datep as dp,";
+		$sql = "SELECT p.rowid, p.num_payment, p.datep as dp,";
 		$sql .= " p.amount_capital, p.amount_insurance, p.amount_interest,";
+		$sql .= " b.fk_account,";
 		$sql .= " c.libelle as paiement_type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."payment_loan as p";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
-		$sql .= ", ".MAIN_DB_PREFIX."loan as l";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id,";
+		$sql .= " ".MAIN_DB_PREFIX."loan as l";
 		$sql .= " WHERE p.fk_loan = ".((int) $id);
 		$sql .= " AND p.fk_loan = l.rowid";
 		$sql .= " AND l.entity IN ( ".getEntity('loan').")";
@@ -659,10 +664,13 @@ if ($id > 0) {
 			print '<td>'.$langs->trans("RefPayment").'</td>';
 			print '<td>'.$langs->trans("Date").'</td>';
 			print '<td>'.$langs->trans("Type").'</td>';
+			print '<td>'.$langs->trans("BankAccount").'</td>';
 			print '<td class="right">'.$langs->trans("Insurance").'</td>';
 			print '<td class="right">'.$langs->trans("Interest").'</td>';
 			print '<td class="right">'.$langs->trans("LoanCapital").'</td>';
 			print '</tr>';
+
+			$conf->cache['bankaccount'] = array();
 
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
@@ -671,9 +679,19 @@ if ($id > 0) {
 				print '<td><a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 				print "<td>".$objp->paiement_type.' '.$objp->num_payment."</td>\n";
-				print '<td class="nowrap right">'.price($objp->amount_insurance, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
-				print '<td class="nowrap right">'.price($objp->amount_interest, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
-				print '<td class="nowrap right">'.price($objp->amount_capital, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
+				print "<td>";
+				if (!empty($conf->cache['bankaccount'][$objp->fk_account])) {
+					$tmpbank = $conf->cache['bankaccount'][$objp->fk_account];
+				} else {
+					$tmpbank = new Account($db);
+					$tmpbank->fetch($objp->fk_account);
+					$conf->cache['bankaccount'][$objp->fk_account] = $tmpbank;
+				}
+				print $tmpbank->getNomUrl(1);
+				print "</td>\n";
+				print '<td class="nowrap right"><span class="amount">'.price($objp->amount_insurance, 0, $outputlangs, 1, -1, -1, $conf->currency)."</span></td>\n";
+				print '<td class="nowrap right"><span class="amount">'.price($objp->amount_interest, 0, $outputlangs, 1, -1, -1, $conf->currency)."</span></td>\n";
+				print '<td class="nowrap right"><span class="amount">'.price($objp->amount_capital, 0, $outputlangs, 1, -1, -1, $conf->currency)."</span></td>\n";
 				print "</tr>";
 				$total_capital += $objp->amount_capital;
 				$i++;
@@ -682,12 +700,12 @@ if ($id > 0) {
 			$totalpaid = $total_capital;
 
 			if ($object->paid == 0 || $object->paid == 2) {
-				print '<tr><td colspan="5" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="nowrap right">'.price($totalpaid, 0, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
-				print '<tr><td colspan="5" class="right">'.$langs->trans("AmountExpected").' :</td><td class="nowrap right">'.price($object->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+				print '<tr><td colspan="6" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="nowrap right">'.price($totalpaid, 0, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
+				print '<tr><td colspan="6" class="right">'.$langs->trans("AmountExpected").' :</td><td class="nowrap right">'.price($object->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 				$staytopay = $object->capital - $totalpaid;
 
-				print '<tr><td colspan="5" class="right">'.$langs->trans("RemainderToPay").' :</td>';
+				print '<tr><td colspan="6" class="right">'.$langs->trans("RemainderToPay").' :</td>';
 				print '<td class="nowrap right'.($staytopay ? ' amountremaintopay' : ' amountpaymentcomplete').'">';
 				print price($staytopay, 0, $langs, 0, -1, -1, $conf->currency);
 				print '</td></tr>';

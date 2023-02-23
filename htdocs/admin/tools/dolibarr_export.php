@@ -169,7 +169,7 @@ print '<td class="liste_titre">';
 print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
 print '</td>';
 print '</tr>';
-print '<tr class="oddeven nohover"><td style="class="nohover">';
+print '<tr class="oddeven nohover"><td class="nohover">';
 
 print '<table class="centpercent noborderbottom">';
 

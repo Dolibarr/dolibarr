@@ -398,3 +398,7 @@ ALTER TABLE llx_c_tva ADD COLUMN use_default tinyint DEFAULT 0;
 
 ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN ref varchar(128);
 ALTER TABLE llx_facture_fourn_det MODIFY COLUMN ref varchar(128);
+
+ALTER TABLE llx_projet ADD COLUMN extraparams varchar(255);
+
+

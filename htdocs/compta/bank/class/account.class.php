@@ -1415,9 +1415,9 @@ class Account extends CommonObject
 		global $langs;
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
-		$datas = [];
+		$datas = array();
 
-		$nofetch = empty($params['nofetch']) ? false : true;
+		$nofetch = !empty($params['nofetch']);
 		$pictos = img_picto('', $this->picto).' <u class="paddingrightnow">'.$langs->trans("BankAccount").'</u>';
 		if (isset($this->status)) {
 			$pictos .= ' '.$this->getLibStatut(5);
