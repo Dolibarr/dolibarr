@@ -1992,6 +1992,8 @@ class Contrat extends CommonObject
 	{
 		global $conf, $langs, $user;
 
+		$langs->load('contracts');
+
 		$datas = [];
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
