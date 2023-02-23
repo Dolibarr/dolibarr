@@ -76,7 +76,7 @@ if ($reshook < 0) {
 }
 if (empty($reshook)) {
 	// Classify paid
-	if ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->loan->write) {
+	if ($action == 'confirm_paid' && $confirm == 'yes' && $user->hasRight('loan', 'write')) {
 		$object->fetch($id);
 		$result = $object->setPaid($user);
 		if ($result > 0) {
@@ -87,7 +87,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete loan
-	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->loan->write) {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('loan', 'write')) {
 		$object->fetch($id);
 		$result = $object->delete($user);
 		if ($result > 0) {
@@ -100,12 +100,12 @@ if (empty($reshook)) {
 	}
 
 	// Add loan
-	if ($action == 'add' && $user->rights->loan->write) {
+	if ($action == 'add' && $user->hasRight('loan', 'write')) {
 		if (!$cancel) {
 			$datestart = dol_mktime(12, 0, 0, GETPOST('startmonth', 'int'), GETPOST('startday', 'int'), GETPOST('startyear', 'int'));
-			$dateend	= dol_mktime(12, 0, 0, GETPOST('endmonth', 'int'), GETPOST('endday', 'int'), GETPOST('endyear', 'int'));
+			$dateend = dol_mktime(12, 0, 0, GETPOST('endmonth', 'int'), GETPOST('endday', 'int'), GETPOST('endyear', 'int'));
 			$capital = price2num(GETPOST('capital'));
-			$rate	   = price2num(GETPOST('rate'));
+			$rate = price2num(GETPOST('rate'));
 
 			if (!$capital) {
 				$error++; $action = 'create';
@@ -168,23 +168,23 @@ if (empty($reshook)) {
 			header("Location: list.php");
 			exit();
 		}
-	} elseif ($action == 'update' && $user->rights->loan->write) {
+	} elseif ($action == 'update' && $user->hasRight('loan', 'write')) {
 		// Update record
 		if (!$cancel) {
 			$result = $object->fetch($id);
 
 			$datestart = dol_mktime(12, 0, 0, GETPOST('startmonth', 'int'), GETPOST('startday', 'int'), GETPOST('startyear', 'int'));
-			$dateend	= dol_mktime(12, 0, 0, GETPOST('endmonth', 'int'), GETPOST('endday', 'int'), GETPOST('endyear', 'int'));
-			$capital	= price2num(GETPOST('capital'));
+			$dateend = dol_mktime(12, 0, 0, GETPOST('endmonth', 'int'), GETPOST('endday', 'int'), GETPOST('endyear', 'int'));
+			$capital = price2num(GETPOST('capital'));
 
 			if (!$capital) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
 				$action = 'edit';
 			} else {
 				$object->datestart = $datestart;
-				$object->dateend	        = $dateend;
-				$object->capital	        = $capital;
-				$object->nbterm		        = GETPOST("nbterm", 'int');
+				$object->dateend = $dateend;
+				$object->capital = $capital;
+				$object->nbterm = GETPOST("nbterm", 'int');
 				$object->rate = price2num(GETPOST("rate", 'alpha'));
 				$object->insurance_amount = price2num(GETPOST('insurance_amount', 'int'));
 
@@ -225,7 +225,7 @@ if (empty($reshook)) {
 	}
 
 	// Link to a project
-	if ($action == 'classin' && $user->rights->loan->write) {
+	if ($action == 'classin' && $user->hasRight('loan', 'write')) {
 		$object->fetch($id);
 		$result = $object->setProject($projectid);
 		if ($result < 0) {
@@ -233,7 +233,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setlabel' && $user->rights->loan->write) {
+	if ($action == 'setlabel' && $user->hasRight('loan', 'write')) {
 		$object->fetch($id);
 		$result = $object->setValueFrom('label', GETPOST('label'), '', '', 'text', '', $user, 'LOAN_MODIFY');
 		if ($result < 0) {
@@ -426,13 +426,13 @@ if ($id > 0) {
 
 		$morehtmlref = '<div class="refidno">';
 		// Ref loan
-		$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->hasRight('loan', 'write'), 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("Label", 'label', $object->label, $object, $user->hasRight('loan', 'write'), 'string', '', null, null, '', 1);
 		// Project
 		if (isModEnabled('project')) {
 			$langs->loadLangs(array("projects"));
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-			if ($user->rights->loan->write) {
+			if ($user->hasRight('loan', 'write')) {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				}
@@ -740,17 +740,17 @@ if ($id > 0) {
 				print '<div class="tabsAction">';
 
 				// Edit
-				if (($object->paid == 0 || $object->paid == 2) && $user->rights->loan->write) {
+				if (($object->paid == 0 || $object->paid == 2) && $user->hasRight('loan', 'write')) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a></div>';
 				}
 
 				// Emit payment
-				if (($object->paid == 0 || $object->paid == 2) && ((price2num($object->capital) > 0 && round($staytopay) < 0) || (price2num($object->capital) > 0 && round($staytopay) > 0)) && $user->rights->loan->write) {
+				if (($object->paid == 0 || $object->paid == 2) && ((price2num($object->capital) > 0 && round($staytopay) < 0) || (price2num($object->capital) > 0 && round($staytopay) > 0)) && $user->hasRight('loan', 'write')) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&action=create&token='.newToken().'">'.$langs->trans("DoPayment").'</a></div>';
 				}
 
 				// Classify 'paid'
-				if (($object->paid == 0 || $object->paid == 2) && round($staytopay) <= 0 && $user->rights->loan->write) {
+				if (($object->paid == 0 || $object->paid == 2) && round($staytopay) <= 0 && $user->hasRight('loan', 'write')) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&action=paid&token='.newToken().'">'.$langs->trans("ClassifyPaid").'</a></div>';
 				}
 
