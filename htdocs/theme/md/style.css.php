@@ -547,8 +547,8 @@ input, select {
 	border: none;
 	text-shadow: none;
 	text-transform: uppercase;
-	font-weight: bold;
-	margin: 0em 0.9em;
+	/* font-weight: bold; */
+	margin: 0em 0.8em;
 	padding: 0.6em 0.7em;
 	line-height: 17px;
 }
