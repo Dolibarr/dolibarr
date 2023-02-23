@@ -91,6 +91,7 @@ if (empty($tag) || ($unsuscrib != '1')) {
 
 $head = '';
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
+
 llxHeader($head, $langs->trans("MailUnsubcribe"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
 dol_syslog("public/emailing/mailing-unsubscribe.php : Launch unsubscribe requests", LOG_DEBUG);
@@ -107,12 +108,12 @@ if (!$resql) {
 $obj = $db->fetch_object($resql);
 
 if (empty($obj)) {
-	print 'Email tag not found. Operation canceled.';
+	print 'Emailing tag '.$tag.' not found in database. Operation canceled.';
 	llxFooter('', 'private');
 	exit;
 }
 if (empty($obj->email)) {
-	print 'Email for this tag not valid. Operation canceled.';
+	print 'Email for this tag is not valid. Operation canceled.';
 	llxFooter('', 'private');
 	exit;
 }
