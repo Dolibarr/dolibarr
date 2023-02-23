@@ -52,6 +52,7 @@ $backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'aZ09');
 
+$dol_openinpopup = 0;
 if (!empty($backtopagejsfields)) {
 	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
 	$dol_openinpopup = $tmpbacktopagejsfields[0];
@@ -103,6 +104,8 @@ if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $acti
 	accessforbidden();
 }
 
+$permissiontoadd = $user->rights->projet->creer;
+$permissiontodelete = $user->rights->projet->supprimer;
 $permissiondellink = $user->rights->projet->creer;	// Used by the include of actions_dellink.inc.php
 
 
@@ -156,7 +159,20 @@ if (empty($reshook)) {
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
-	if ($action == 'add' && $user->rights->projet->creer) {
+	// Action setdraft object
+	if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissiontoadd) {
+		$result = $object->setStatut($object::STATUS_DRAFT, null, '', 'PROJECT_MODIFY');
+		if ($result >= 0) {
+			// Nothing else done
+		} else {
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		$action = '';
+	}
+
+	// Action add
+	if ($action == 'add' && $permissiontoadd) {
 		$error = 0;
 		if (!GETPOST('ref')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
@@ -264,7 +280,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && empty(GETPOST('cancel')) && $user->rights->projet->creer) {
+	if ($action == 'update' && empty(GETPOST('cancel')) && $permissiontoadd) {
 		$error = 0;
 
 		if (empty($ref)) {
@@ -380,7 +396,7 @@ if (empty($reshook)) {
 	}
 
 	// Build doc
-	if ($action == 'builddoc' && $user->rights->projet->creer) {
+	if ($action == 'builddoc' && $permissiontoadd) {
 		// Save last template used to generate document
 		if (GETPOST('model')) {
 			$object->setDocModel($user, GETPOST('model', 'alpha'));
@@ -399,7 +415,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete file in doc form
-	if ($action == 'remove_file' && $user->rights->projet->creer) {
+	if ($action == 'remove_file' && $permissiontoadd) {
 		if ($object->id > 0) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -417,28 +433,28 @@ if (empty($reshook)) {
 	}
 
 
-	if ($action == 'confirm_validate' && $confirm == 'yes') {
+	if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
 		$result = $object->setValid($user);
 		if ($result <= 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
-	if ($action == 'confirm_close' && $confirm == 'yes') {
+	if ($action == 'confirm_close' && $confirm == 'yes' && $permissiontoadd) {
 		$result = $object->setClose($user);
 		if ($result <= 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
-	if ($action == 'confirm_reopen' && $confirm == 'yes') {
+	if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
 		$result = $object->setValid($user);
 		if ($result <= 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
-	if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->projet->supprimer) {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 		$object->fetch($id);
 		$result = $object->delete($user);
 		if ($result > 0) {
@@ -451,7 +467,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_clone' && $user->rights->projet->creer && $confirm == 'yes') {
+	if ($action == 'confirm_clone' && $permissiontoadd && $confirm == 'yes') {
 		$clone_contacts = GETPOST('clone_contacts') ? 1 : 0;
 		$clone_tasks = GETPOST('clone_tasks') ? 1 : 0;
 		$clone_project_files = GETPOST('clone_project_files') ? 1 : 0;
@@ -1065,7 +1081,8 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			if (!empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) {
 				$filteronlist = $conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
 			}
-			$text = $form->select_company($object->thirdparty->id, 'socid', $filteronlist, 'None', 1, 0, array(), 0, 'minwidth300');
+			$text = img_picto('', 'company', 'class="pictofixedwidth"');
+			$text .= $form->select_company($object->thirdparty->id, 'socid', $filteronlist, 'None', 1, 0, array(), 0, 'minwidth300');
 			if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile)) {
 				$texthelp = $langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 				print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
@@ -1106,7 +1123,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityStatus").'</td>';
 			print '<td>';
 			print '<div>';
-			print $formproject->selectOpportunityStatus('opp_status', $object->opp_status, 1, 0, 0, 0, 'inline-block valignmiddle', 1, 1);
+			print $formproject->selectOpportunityStatus('opp_status', $object->opp_status, 1, 0, 0, 0, 'minwidth150 inline-block valignmiddle', 1, 1);
 
 			// Opportunity probability
 			print ' <input class="width50 right" type="text" id="opp_percent" name="opp_percent" title="'.dol_escape_htmltag($langs->trans("OpportunityProbability")).'" value="'.(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ?vatrate($object->opp_percent) : '')).'"> %';
@@ -1304,7 +1321,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-		if (strcmp($object->budget_amount, '')) {
+		if (!is_null($object->budget_amount) && strcmp($object->budget_amount, '')) {
 			print '<span class="amount">'.price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
 		}
 		print '</td></tr>';
@@ -1448,9 +1465,11 @@ if ($action == 'create' && $user->rights->projet->creer) {
         </script>';
 	}
 
+
 	/*
 	 * Actions Buttons
 	 */
+
 	print '<div class="tabsAction">';
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
@@ -1484,6 +1503,17 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				print dolGetButtonAction('', $langs->trans('ExportAccountingReportButtonLabel'), 'default', $url, '');
 			}
 			*/
+
+			// Back to draft
+			if (!getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') && !getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_PROJECT')) {
+				if ($object->statut != Project::STATUS_DRAFT && $user->rights->projet->creer) {
+					if ($userWrite > 0) {
+						print dolGetButtonAction('', $langs->trans('SetToDraft'), 'default', $_SERVER["PHP_SELF"].'?action=confirm_setdraft&amp;confirm=yes&amp;token='.newToken().'&amp;id='.$object->id, '');
+					} else {
+						print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('SetToDraft'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
+					}
+				}
+			}
 
 			// Modify
 			if ($object->statut != Project::STATUS_CLOSED && $user->rights->projet->creer) {
@@ -1527,15 +1557,15 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				print'<a style="margin-right: auto;"class="dropdown-toggle butAction" data-toggle="dropdown">'.$langs->trans("Create").'</a>';
 				print '<div class="dropdown-menu">';
 				print '<div class="dropdown-global-search-button-list" >';
-				if (isModEnabled("propal") && $user->rights->propal->creer) {
+				if (isModEnabled("propal") && $user->hasRight('propal', 'creer')) {
 					$langs->load("propal");
 					print dolGetButtonAction('', $langs->trans('AddProp'), 'default', DOL_URL_ROOT.'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
-				if (isModEnabled('commande') && $user->rights->commande->creer) {
+				if (isModEnabled('commande') && $user->hasRight('commande', 'creer')) {
 					$langs->load("orders");
 					print dolGetButtonAction('', $langs->trans('CreateOrder'), 'default', DOL_URL_ROOT.'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
-				if (isModEnabled('facture') && $user->rights->facture->creer) {
+				if (isModEnabled('facture') && $user->hasRight('facture', 'creer')) {
 					$langs->load("bills");
 					print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
@@ -1551,11 +1581,11 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					$langs->load("suppliers");
 					print dolGetButtonAction('', $langs->trans('AddSupplierInvoice'), 'default', DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
-				if (isModEnabled('ficheinter') && $user->rights->ficheinter->creer) {
+				if (isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'creer')) {
 					$langs->load("interventions");
 					print dolGetButtonAction('', $langs->trans('AddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
-				if (isModEnabled('contrat') && $user->rights->contrat->creer) {
+				if (isModEnabled('contrat') && $user->hasRight('contrat', 'creer')) {
 					$langs->load("contracts");
 					print dolGetButtonAction('', $langs->trans('AddContract'), 'default', DOL_URL_ROOT.'/contrat/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
@@ -1616,7 +1646,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 		$MAXEVENT = 10;
 
-		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/projet/info.php?id='.$object->id);
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/projet/messaging.php?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

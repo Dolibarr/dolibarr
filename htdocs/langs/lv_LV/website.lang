@@ -155,3 +155,5 @@ WebpageMustBeDisabled=Tīmekļa lapai ir jābūt statusam "%s"
 SetWebsiteOnlineBefore=Kad vietne ir bezsaistē, visas lapas ir bezsaistē. Vispirms mainiet vietnes statusu.
 Booking=Rezervēšana
 Reservation=Rezervācija
+PagesViewedPreviousMonth=Skatītās lapas (iepriekšējā mēnesī)
+PagesViewedTotal=Apskatītās lapas (kopā)

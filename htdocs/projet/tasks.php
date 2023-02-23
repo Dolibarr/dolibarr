@@ -637,7 +637,7 @@ if ($id > 0 || !empty($ref)) {
 
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-	if (strcmp($object->budget_amount, '')) {
+	if (!is_null($object->budget_amount) && strcmp($object->budget_amount, '')) {
 		print '<span class="amount">'.price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
 	}
 	print '</td></tr>';
@@ -770,7 +770,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	if (is_array($contactsofproject) && count($contactsofproject)) {
 		print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth300');
 	} else {
-		if ($projectid > 0 || $object->id > 0) {
+		if ((isset($projectid) && $projectid > 0) || $object->id > 0) {
 			print '<span class="opacitymedium">'.$langs->trans("NoUserAssignedToTheProject").'</span>';
 		} else {
 			print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
@@ -805,6 +805,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	// WYSIWYG editor
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$cked_enabled = (!empty($conf->global->FCKEDITOR_ENABLE_SOCIETE) ? $conf->global->FCKEDITOR_ENABLE_SOCIETE : 0);
+	$nbrows = 0;
 	if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) {
 		$nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
 	}

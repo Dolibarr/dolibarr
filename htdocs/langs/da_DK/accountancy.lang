@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=Vælg linjeskift type
 ACCOUNTING_EXPORT_PREFIX_SPEC=Angiv præfiks for filnavnet
 ThisService=Denne ydelse
 ThisProduct=Dette produkt
-DefaultForService=Forvalg ydelse
-DefaultForProduct=Forvalg produkt
+DefaultForService=Standard for tjenester
+DefaultForProduct=Standard for produkter
 ProductForThisThirdparty=Produkt til denne tredjepart
 ServiceForThisThirdparty=Service for denne tredjepart
 CantSuggest=Kan ikke foreslå
@@ -101,7 +101,8 @@ ShowAccountingAccount=Vis regnskabs konto
 ShowAccountingJournal=Vis kontokladde
 ShowAccountingAccountInLedger=Vis regnskabskonto i hovedbog
 ShowAccountingAccountInJournals=Vis regnskabskonto i tidsskrifter
-AccountAccountingSuggest=Forelslået regnskabskonto
+DataUsedToSuggestAccount=Data brugt til at foreslå konto
+AccountAccountingSuggest=Konto foreslået
 MenuDefaultAccounts=Standardkonti
 MenuBankAccounts=Bankkonti
 MenuVatAccounts=Momskonti
@@ -126,6 +127,7 @@ WriteBookKeeping=Registrer transaktioner i regnskabet
 Bookkeeping=Hovedbog
 BookkeepingSubAccount=Underkonti
 AccountBalance=Kontobalance
+AccountBalanceSubAccount=Underkonti balance
 ObjectsRef=Objektreference
 CAHTF=Samlet købeleverandør før skat
 TotalExpenseReport=Rapport for samlede udgifter
@@ -189,6 +191,7 @@ ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Konto (fra kontoplanen) skal bruges som stan
 UseAuxiliaryAccountOnCustomerDeposit=Gem kundekonto som individuel konto i hovedbog for linjer med forudbetalinger (hvis den er deaktiveret, forbliver individuel konto for forudbetalingslinjer tomme)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Konto (fra kontoplanen), der skal bruges som standard
 UseAuxiliaryAccountOnSupplierDeposit=Gem leverandørkonto som individuel konto i hovedbog for linjer med forudbetalinger (hvis den er deaktiveret, vil individuel konto for forudbetalingslinjer forblive tom)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Regnskabskonto som standard for at registrere kundebeholdt garanti
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Konto (fra kontoplanen), der skal bruges som standardkonto for de produkter, der er købt i samme land (bruges, hvis det ikke er defineret i produktarket)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Konto (fra kontoplanen), der skal bruges som standardkonto for produkter købt fra EF til et andet EF-land (bruges, hvis det ikke er defineret i produktarket)
@@ -218,6 +221,7 @@ JournalLabel=Journalmærke
 NumPiece=Partsnummer
 TransactionNumShort=Transaktionsnr.
 AccountingCategory=Brugerdefineret gruppe af konti
+AccountingCategories=Brugerdefinerede grupper af konti
 GroupByAccountAccounting=Gruppér efter hovedkontokonto
 GroupBySubAccountAccounting=Gruppér efter underkonti
 AccountingAccountGroupsDesc=Du kan definere her nogle grupper af regnskabskonto. De vil blive brugt til personlige regnskabsrapporter.
@@ -265,6 +269,7 @@ ShowSubtotalByGroup=Vis subtotal efter niveau
 
 Pcgtype=Kontoens gruppe
 PcgtypeDesc=Kontogruppe bruges som foruddefinerede 'filter' og 'gruppering' kriterier for nogle regnskabsrapporter. For eksempel bruges 'INKOMST' eller 'UDGIFT' som grupper til regnskabsmæssige regnskaber for produkter til at oprette omkostnings- / indkomstrapporten.
+AccountingCategoriesDesc=Brugerdefineret gruppe af konti kan bruges til at gruppere regnskabskonti i ét navn for at lette filterbrug eller opbygning af tilpassede rapporter.
 
 Reconcilable=Afstemning
 
@@ -294,6 +299,7 @@ DescValidateMovements=Enhver ændring eller sletning af skrivning, bogstaver og 
 
 ValidateHistory=Automatisk Bogføring
 AutomaticBindingDone=Automatiske bindinger udført (%s) - Automatisk binding er ikke mulig for nogle poster (%s)
+DoManualBindingForFailedRecord=Du skal lave et manuelt link for %s række(r), der ikke linkes automatisk.
 
 ErrorAccountancyCodeIsAlreadyUse=Fejl, du kan ikke fjerne eller deaktivere denne kontoplan, fordi den er brugt
 MvtNotCorrectlyBalanced=Bevægelse ikke korrekt afbalanceret. Debet = %s & Kredit = %s
@@ -337,11 +343,13 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Deaktiver binding og overførsel i regnskab 
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Deaktiver binding og overførsel i regnskab ved køb (leverandørfakturaer tages ikke med i regnskabet)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Deaktiver binding og overførsel i regnskab på udgiftsrapporter (udgiftsrapporter tages ikke med i regnskabet)
 ACCOUNTING_ENABLE_LETTERING=Aktiver bogstavfunktionen i regnskabet
+ACCOUNTING_ENABLE_AUTOLETTERING=Aktiver den automatiske bogstaver ved overførsel til regnskab
 
 ## Export
 NotExportLettering=Eksporter ikke bogstaverne, når du genererer filen
 NotifiedExportDate=Flag eksporterede linjer som eksporteret <span class="warning"> (for at ændre en linje skal du slette hele transaktionen og overføre den til regnskab igen) </span>
 NotifiedValidationDate=Valider og lås de eksporterede indgange <span class="warning"> (samme effekt som "%s"-funktionen, ændring og sletning af linjerne vil DEFINITIVT ikke være mulig) </span>
+NotifiedExportFull=Eksportere dokumenter?
 DateValidationAndLock=Datovalidering og lås
 ConfirmExportFile=Bekræftelse af genereringen af den regnskabsmæssige eksportfil?
 ExportDraftJournal=Eksporter udkast til kladde
@@ -398,7 +406,7 @@ SaleLocal=Lokalt salg
 SaleExport=Eksport salg
 SaleEEC=Salg i EU
 SaleEECWithVAT=Salg i EU med en moms, der ikke er null, så vi antager, at dette IKKE er et intrakommunalt salg, og den foreslåede konto er standardproduktskontoen.
-SaleEECWithoutVATNumber=Du kan fastsætte moms nummer for tredjepart eller produktkonto om nødvendigt.
+SaleEECWithoutVATNumber=Salg i EEC uden moms, men tredjemands moms-id er ikke defineret. Vi falder tilbage på kontoen for standardsalg. Du kan rette tredjepartens moms-id eller ændre den produktkonto, der er foreslået til binding, hvis det er nødvendigt.
 ForbiddenTransactionAlreadyExported=Forbudt: Transaktionen er blevet valideret og/eller eksporteret.
 ForbiddenTransactionAlreadyValidated=Forbudt: Transaktionen er blevet valideret.
 ## Dictionary
@@ -442,6 +450,7 @@ AccountancyErrorMismatchLetterCode=Uoverensstemmelse i afstemningskode
 AccountancyErrorMismatchBalanceAmount=Saldoen (%s) er ikke lig med 0
 AccountancyErrorLetteringBookkeeping=Der er opstået fejl vedrørende transaktionerne: %s
 ErrorAccountNumberAlreadyExists=Kontonummeret %s findes allerede
+ErrorArchiveAddFile=Kan ikke lægge "%s" fil i arkivet
 
 ## Import
 ImportAccountingEntries=Regnskabsposter
@@ -468,5 +477,7 @@ FECFormatMulticurrencyCode=MultiValuta-kode (Idevise)
 DateExport=Eksport dato
 WarningReportNotReliable=Advarsel, denne rapport er ikke baseret på Ledger, så indeholder ikke transaktion ændret manuelt i Ledger. Hvis din journalisering er opdateret, er bogføringsvisningen mere præcis.
 ExpenseReportJournal=Udgifts Journal
+DocsAlreadyExportedAreExcluded=Dokumenter, der allerede er eksporteret, er ekskluderet
+ClickToHideAlreadyExportedLines=Klik for at skjule allerede eksporterede linjer
 
 NAccounts=%s konti

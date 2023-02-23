@@ -26,6 +26,7 @@ Permission56002=Sprememba zahtevkov
 Permission56003=Izbriši zahtevke
 Permission56004=Upravljanje zahtevkov
 Permission56005=Pogled zahtevkov vseh partnerjev (ne velja za zunanje uporabnike, vedno bodite pozorni na pomebne partnerje)
+Permission56006=Export tickets
 
 Tickets=Vstopnice
 TicketDictType=Zahtevki - vrste
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Zunanji sodelavec
 
 OriginEmail=Poročavalec e-pošta
 Notify_TICKET_SENTBYMAIL=Pošljite sporočilo po e-pošti
+
+ExportDataset_ticket_1=Vstopnice
 
 # Status
 Read=Preberite

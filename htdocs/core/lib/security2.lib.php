@@ -96,7 +96,8 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 					// Call function to check user/password
 					$function = 'check_user_password_'.$mode;
 					$login = call_user_func($function, $usertotest, $passwordtotest, $entitytotest, $context);
-					if ($login && $login != '--bad-login-validity--') {	// Login is successfull
+					if ($login && $login != '--bad-login-validity--') {
+						// Login is successfull with this method
 						$test = false; // To stop once at first login success
 						$conf->authmode = $mode; // This properties is defined only when logged to say what mode was successfully used
 						/*$dol_tz = GETPOST('tz');
@@ -456,7 +457,7 @@ function encodedecode_dbpassconf($level = 0)
 
 			// It's config file, so we set read permission for creator only.
 			// Should set permission to web user and groups for users used by batch
-			//@chmod($file, octdec('0600'));
+			//dolChmod($file, '0600');
 
 			return 1;
 		} else {
@@ -569,7 +570,8 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 	global $conf;
 
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<!-- Js code to suggest a security key --><script type="text/javascript">';
+		print "\n".'<!-- Js code to suggest a security key -->';
+		print '<script nonce="'.getNonce().'" type="text/javascript">';
 		print '$(document).ready(function () {
             $("#'.dol_escape_js($htmlnameofbutton).'").click(function() {
 				console.log("We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. We will fill '.dol_escape_js($htmlname).'");

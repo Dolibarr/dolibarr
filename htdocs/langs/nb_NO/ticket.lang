@@ -26,6 +26,7 @@ Permission56002=Endre supportsedler
 Permission56003=Slett supportsedler
 Permission56004=Administrer supportsedler
 Permission56005=Se billetter til alle tredjeparter (ikke effektive for eksterne brukere, alltid begrenset til tredjepart de er avhengige av)
+Permission56006=Eksporter billetter
 
 Tickets=Supportsedler
 TicketDictType=Billett - Typer
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Ekstern bidragsyter
 
 OriginEmail=Rapport-epost
 Notify_TICKET_SENTBYMAIL=Send billettmelding via e-post
+
+ExportDataset_ticket_1=Supportsedler
 
 # Status
 Read=Les

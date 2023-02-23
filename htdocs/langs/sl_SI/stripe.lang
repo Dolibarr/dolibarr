@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Ključ v živo Webhook
 ONLINE_PAYMENT_WAREHOUSE=Zaloga, ki se uporabi za zmanjšanje zaloge, ko je opravljeno spletno plačilo <br> (TODO Ko se izvede možnost zmanjšanja zaloge za dejanje na računu in spletno plačilo samo ustvari račun?)
 StripeLiveEnabled=Stripe v živo omogočen (sicer preskusni/peskovniški način)
 StripeImportPayment=Uvozite plačila Stripe
-ExampleOfTestCreditCard=Primer kreditne kartice za preizkus: %s => veljavna, %s => napaka CVC, %s => potekla, %s => bremenitev ni uspela
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=Stripe prehodi
 OAUTH_STRIPE_TEST_ID=ID odjemalca Stripe Connect (ca_...)
 OAUTH_STRIPE_LIVE_ID=ID odjemalca Stripe Connect (ca_...)
@@ -70,5 +71,8 @@ ToOfferALinkForLiveWebhook=Povezava za nastavitev Stripe WebHook za klic IPN (na
 PaymentWillBeRecordedForNextPeriod=Plačilo bo evidentirano za naslednje obdobje.
 ClickHereToTryAgain= <a href="%s"> Kliknite tukaj, če želite poskusiti znova ... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Zaradi pravil stroge avtentikacije strank je treba kartico ustvariti v zaledni pisarni Stripe. Tukaj lahko kliknete, da vklopite evidenco strank Stripe: %s
-TERMINAL_LOCATION=Lokacija (naslov) za terminale
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
 RequestDirectDebitWithStripe=Zahtevajte direktno bremenitev s Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+

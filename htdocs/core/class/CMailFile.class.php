@@ -65,6 +65,7 @@ class CMailFile
 
 	public $atleastonefile;
 
+	public $msg;
 	public $eol;
 	public $eol2;
 
@@ -908,7 +909,7 @@ class CMailFile
 
 					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 
-					$storage = new DoliStorage($db, $conf);
+					$storage = new DoliStorage($db, $conf, $keyforprovider);
 					try {
 						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 						$expire = false;
@@ -962,6 +963,8 @@ class CMailFile
 				}
 
 				if ($res) {
+					dol_syslog("CMailFile::sendfile: sendMsg, HOST=".$server.", PORT=".$conf->global->$keyforsmtpport, LOG_DEBUG);
+
 					if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
 						$this->smtps->setDebug(true);
 					}
@@ -1030,7 +1033,7 @@ class CMailFile
 
 					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 
-					$storage = new DoliStorage($db, $conf);
+					$storage = new DoliStorage($db, $conf, $keyforprovider);
 
 					try {
 						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
@@ -1096,7 +1099,11 @@ class CMailFile
 					//$this->logger = new Swift_Plugins_Loggers_EchoLogger();
 					$this->mailer->registerPlugin(new Swift_Plugins_LoggerPlugin($this->logger));
 				}
+
+				dol_syslog("CMailFile::sendfile: mailer->send, HOST=".$server.", PORT=".$conf->global->$keyforsmtpport, LOG_DEBUG);
+
 				// send mail
+				$failedRecipients = array();
 				try {
 					$result = $this->mailer->send($this->message, $failedRecipients);
 				} catch (Exception $e) {
@@ -1206,9 +1213,7 @@ class CMailFile
 			}
 
 			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($outputfile);
 		}
 	}
 
@@ -1790,7 +1795,7 @@ class CMailFile
 				if ($fhandle) {
 					$nbofbyteswrote = fwrite($fhandle, base64_decode($filecontent));
 					fclose($fhandle);
-					@chmod($destfiletmp, octdec($conf->global->MAIN_UMASK));
+					dolChmod($destfiletmp);
 				} else {
 					$this->errors[] = "Failed to open file '".$destfiletmp."' for write";
 					return -1;

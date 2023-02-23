@@ -345,7 +345,7 @@ if ($mode == 'replacesite') {
 
 $usercanedit = $user->rights->website->write;
 $permissiontoadd = $user->rights->website->write;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
-$permissiontodelete = $user->rights->website->delete;
+$permissiontodelete = $user->hasRight('website', 'delete');
 
 
 /*
@@ -806,6 +806,16 @@ if ($action == 'addcontainer' && $usercanedit) {
 				// Remove comments
 				$tmp['content'] = removeHtmlComment($tmp['content']);
 
+				// Check there is no PHP content into the imported file (must be only HTML + JS)
+				$phpcontent = dolKeepOnlyPhpCode($tmp['content']);
+				if ($phpcontent) {
+					$error++;
+					setEventMessages('Error getting '.$urltograb.': file that include PHP content is not allowed', null, 'errors');
+					$action = 'createcontainer';
+				}
+			}
+
+			if (!$error) {
 				$regs = array();
 
 				preg_match('/<head>(.*)<\/head>/ims', $tmp['content'], $regs);
@@ -929,8 +939,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 						$fp = fopen($filetosave, "w");
 						fputs($fp, $tmpgeturl['content']);
 						fclose($fp);
-						if (!empty($conf->global->MAIN_UMASK))
-							@chmod($file, octdec($conf->global->MAIN_UMASK));
+						dolChmod($file);
 					}
 					*/
 
@@ -998,8 +1007,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 						//$fp = fopen($filetosave, "w");
 						//fputs($fp, $tmpgeturl['content']);
 						//fclose($fp);
-						//if (!empty($conf->global->MAIN_UMASK))
-						//	@chmod($file, octdec($conf->global->MAIN_UMASK));
+						//dolChmod($file);
 
 						//	$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
 						$pagecsscontent .= '/* Content of file '.$urltograbbis.' */'."\n";
@@ -2649,9 +2657,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 			}
 			$domtree->appendChild($root);
 			if ($domtree->save($tempdir.$xmlname)) {
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($tempdir.$xmlname, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($tempdir.$xmlname);
 				setEventMessages($langs->trans("SitemapGenerated", $xmlname), null, 'mesgs');
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -2803,7 +2809,7 @@ if (!GETPOST('hide_websitemenu')) {
 	$atleastonepage = (is_array($array) && count($array) > 0);
 
 	$websitepage = new WebSitePage($db);
-	if ($pageid > 0 && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')) {
+	if ($pageid > 0) {
 		$websitepage->fetch($pageid);
 	}
 
@@ -2930,14 +2936,20 @@ if (!GETPOST('hide_websitemenu')) {
 			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
 
 			// Delete website
-			if ($website->status == $website::STATUS_VALIDATED) {
+			if (!$permissiontodelete) {
 				$disabled = ' disabled="disabled"';
-				$title = $langs->trans("WebsiteMustBeDisabled", $langs->transnoentitiesnoconv($website->LibStatut(0, 0)));
+				$title = $langs->trans("NotEnoughPermissions");
 				$url = '#';
 			} else {
-				$disabled = '';
-				$title = $langs->trans("Delete");
-				$url = $_SERVER["PHP_SELF"].'?action=deletesite&token='.newToken().'&website='.urlencode($website->ref);
+				if ($website->status == $website::STATUS_VALIDATED) {
+					$disabled = ' disabled="disabled"';
+					$title = $langs->trans("WebsiteMustBeDisabled", $langs->transnoentitiesnoconv($website->LibStatut(0, 0)));
+					$url = '#';
+				} else {
+					$disabled = '';
+					$title = $langs->trans("Delete");
+					$url = $_SERVER["PHP_SELF"].'?action=deletesite&token='.newToken().'&website='.urlencode($website->ref);
+				}
 			}
 			print '<a href="'.$url.'" class="buttonDelete bordertransp'.($disabled ? ' disabled' : '').'"'.$disabled.' title="'.dol_escape_htmltag($title).'">'.img_picto('', 'delete', 'class=""').'<span class="hideonsmartphone paddingleft">'.$langs->trans("Delete").'</span></a>';
 
@@ -5006,8 +5018,7 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 		print $out;
 
 		/*file_put_contents($filetpl, $out);
-		if (!empty($conf->global->MAIN_UMASK))
-			@chmod($filetpl, octdec($conf->global->MAIN_UMASK));
+		dolChmod($filetpl);
 
 		// Output file on browser
 		dol_syslog("index.php include $filetpl $filename content-type=$type");
