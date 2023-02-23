@@ -540,11 +540,15 @@ class FormMail extends Form
 			// Substitution array/string
 			$helpforsubstitution = '';
 			if (is_array($this->substit) && count($this->substit)) {
-				$helpforsubstitution .= $langs->trans('AvailableVariables').' :<br>'."\n";
+				$helpforsubstitution .= $langs->trans('AvailableVariables').' :<br><br><span class="small">'."\n";
 			}
 			foreach ($this->substit as $key => $val) {
 				$helpforsubstitution .= $key.' -> '.$langs->trans(dol_string_nohtmltag(dolGetFirstLineOfText($val))).'<br>';
 			}
+			if (is_array($this->substit) && count($this->substit)) {
+				$helpforsubstitution .= '</span>';
+			}
+
 			if (!empty($this->withsubstit)) {	// Unset or set ->withsubstit=0 to disable this.
 				$out .= '<tr><td colspan="2" class="right">';
 				//$out.='<div class="floatright">';
@@ -1599,7 +1603,7 @@ class FormMail extends Form
 			$tmparray = getCommonSubstitutionArray($langs, 2, array('object', 'objectamount'), $object); // Note: On email templated edition, this is null because it is related to all type of objects
 			complete_substitutions_array($tmparray, $langs, null, $parameters);
 
-			// For mass emailing, we have different keys
+			// For mass emailing, we have different keys specific to the data into tagerts list
 			$tmparray['__ID__'] = 'IdRecord';
 			$tmparray['__THIRDPARTY_CUSTOMER_CODE__'] = 'CustomerCode';
 			$tmparray['__EMAIL__'] = 'EMailRecipient';
@@ -1611,8 +1615,6 @@ class FormMail extends Form
 			$tmparray['__OTHER3__'] = 'Other3';
 			$tmparray['__OTHER4__'] = 'Other4';
 			$tmparray['__OTHER5__'] = 'Other5';
-			$tmparray['__USER_SIGNATURE__'] = 'TagUserSignature';
-			$tmparray['__SENDEREMAIL_SIGNATURE__'] = 'TagEmailSenderSignature';
 			$tmparray['__CHECK_READ__'] = 'TagCheckMail';
 			$tmparray['__UNSUBSCRIBE__'] = 'TagUnsubscribe';
 			//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet in mass emailing

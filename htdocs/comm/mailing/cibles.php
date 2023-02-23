@@ -241,7 +241,7 @@ if ($object->fetch($id) >= 0) {
 
 	//print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->title.'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">';
+	print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td colspan="3">';
 	$emailarray = CMailFile::getArrayAddress($object->email_from);
 	foreach ($emailarray as $email => $name) {
 		if ($name && $name != $email) {
@@ -291,7 +291,7 @@ if ($object->fetch($id) >= 0) {
 			}
 		}
 		if (empty($nbemail)) {
-			$nbemail .= ' '.img_warning('').' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
+			$nbemail .= ' '.img_warning('');//.' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
 		}
 		if ($text) {
 			print $form->textwithpicto($nbemail, $text, 1, 'warning');

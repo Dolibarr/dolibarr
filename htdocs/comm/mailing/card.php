@@ -223,7 +223,6 @@ if (empty($reshook)) {
 
 						$signature = ((!empty($user->signature) && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? $user->signature : '');
 
-						$targetobject = null; // Not defined with mass emailing
 						$parameters = array('mode'=>'emailing');
 						$substitutionarray = getCommonSubstitutionArray($langs, 0, array('object', 'objectamount'), $targetobject); // Note: On mass emailing, this is null because be don't know object
 
@@ -468,19 +467,25 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			// Is the message in html
-			$msgishtml = -1; // Unknow by default
+			$msgishtml = -1; // Unknow = autodetect by default
 			if (preg_match('/[\s\t]*<html>/i', $object->body)) {
 				$msgishtml = 1;
 			}
 
+			$signature = ((!empty($user->signature) && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? $user->signature : '');
+
+			$parameters = array('mode'=>'emailing');
+			$substitutionarray = getCommonSubstitutionArray($langs, 0, array('object', 'objectamount'), $targetobject); // Note: On mass emailing, this is null because be don't know object
+
 			// other are set at begin of page
-			$object->substitutionarrayfortest['__EMAIL__'] = $object->sendto;
-			$object->substitutionarrayfortest['__MAILTOEMAIL__'] = '<a href="mailto:'.$object->sendto.'">'.$object->sendto.'</a>';
+			$substitutionarray['__EMAIL__'] = $object->sendto;
+			$substitutionarray['__MAILTOEMAIL__'] = '<a href="mailto:'.$object->sendto.'">'.$object->sendto.'</a>';
 
 			// Subject and message substitutions
-			complete_substitutions_array($object->substitutionarrayfortest, $langs);
-			$tmpsujet = make_substitutions($object->sujet, $object->substitutionarrayfortest);
-			$tmpbody = make_substitutions($object->body, $object->substitutionarrayfortest);
+			complete_substitutions_array($substitutionarray, $langs, $targetobject);
+
+			$tmpsujet = make_substitutions($object->sujet, $substitutionarray);
+			$tmpbody = make_substitutions($object->body, $substitutionarray);
 
 			$arr_file = array();
 			$arr_mime = array();
@@ -935,7 +940,7 @@ if ($action == 'create') {
 			*/
 
 			// From
-			print '<tr><td>';
+			print '<tr><td class="titlefield">';
 			print $form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'string');
 			print '</td><td>';
 			print $form->editfieldval("MailFrom", 'email_from', $object->email_from, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'string');
