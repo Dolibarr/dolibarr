@@ -155,7 +155,7 @@ if (!empty($conf->global->MAILING_EMAIL_ERRORSTO) && !isValidEmail($conf->global
 	print ' '.img_warning($langs->trans("BadEMail"));
 }
 print '</td>';
-print '<td class="hideonsmartphone"><span class="opacitymedium">webmaster@example.com></span></td>';
+print '<td class="hideonsmartphone"><span class="opacitymedium">'.dol_escape_htmltag('<webmaster@example.com>').'</span></td>';
 print '</tr>';
 
 print '<tr class="oddeven"><td>';

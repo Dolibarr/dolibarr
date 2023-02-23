@@ -61,6 +61,8 @@ global $user, $conf, $langs;
 
 $langs->loadLangs(array("main", "mails"));
 
+$mtid = GETPOST('mtid');
+$email = GETPOST('email');
 $tag = GETPOST('tag');	// To retreive the emailing, and recipient
 $unsuscrib = GETPOST('unsuscrib');
 $securitykey = GETPOST('securitykey');
@@ -70,9 +72,9 @@ $securitykey = GETPOST('securitykey');
  * Actions
  */
 
-dol_syslog("public/emailing/mailing-read.php : tag=".$tag." securitykey=".$securitykey, LOG_DEBUG);
+dol_syslog("public/emailing/mailing-unsubscribe.php : tag=".$tag." securitykey=".$securitykey, LOG_DEBUG);
 
-if ($securitykey != getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')) {
+if ($securitykey != dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-".$tag."-".$email."-".$mtid, 'md5')) {
 	print 'Bad security key value.';
 	exit;
 }
