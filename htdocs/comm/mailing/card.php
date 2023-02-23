@@ -899,6 +899,12 @@ if ($action == 'create') {
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
+			$morehtmlref = '<div class="refidno">';
+			// Ref customer
+			$morehtmlref .= $form->editfieldkey("", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string', '', 0, 1);
+			$morehtmlref .= $form->editfieldval("", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string', '', null, null, '', 1);
+			$morehtmlref .= '</div>';
+
 			$morehtmlright = '';
 			$nbtry = $nbok = 0;
 			if ($object->statut == 2 || $object->statut == 3) {
@@ -912,7 +918,7 @@ if ($action == 'create') {
 				$morehtmlright .= ') &nbsp; ';
 			}
 
-			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
+			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
@@ -920,11 +926,13 @@ if ($action == 'create') {
 			print '<table class="border centpercent tableforfield">';
 
 			// Description
+			/*
 			print '<tr><td class="titlefield">';
 			print $form->editfieldkey("MailTitle", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string');
 			print '</td><td>';
 			print $form->editfieldval("MailTitle", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string');
 			print '</td></tr>';
+			*/
 
 			// From
 			print '<tr><td>';

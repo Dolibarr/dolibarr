@@ -456,6 +456,10 @@ a.commonlink { color: var(--colortextlink) !important; text-decoration: none; }
 input {
 	font-size: unset;
 }
+.tableforfield input, .refidno input {
+	padding: 2px;
+}
+
 /*
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	background-color: #FDFDFD;
@@ -874,6 +878,9 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	border-radius: 2px;
 	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.refidno .button.smallpaddingimp {
+	font-size: 0.85em !important;
 }
 .button:focus, .buttonDelete:focus  {
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
@@ -3066,6 +3073,7 @@ form#login {
 
 .login_main_home {
 	word-break: break-word;
+	width: fit-content;
 }
 .login_main_message {
 	text-align: center;

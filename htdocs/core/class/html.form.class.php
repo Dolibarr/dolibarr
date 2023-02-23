@@ -168,7 +168,11 @@ class Form
 				$ret .= '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&token='.newToken().'&'.$paramid.'='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
 			}
 			if (!empty($notabletag) && $notabletag == 1) {
-				$ret .= ' : ';
+				if ($text) {
+					$ret .= ' : ';
+				} else {
+					$ret .= ' ';
+				}
 			}
 			if (!empty($notabletag) && $notabletag == 3) {
 				$ret .= ' ';
@@ -9350,7 +9354,7 @@ class Form
 		// Left part of banner
 		if ($morehtmlleft) {
 			if ($conf->browser->layout == 'phone') {
-				$ret .= '<!-- morehtmlleft --><div class="floatleft">'.$morehtmlleft.'</div>'; // class="center" to have photo in middle
+				$ret .= '<!-- morehtmlleft --><div class="floatleft">'.$morehtmlleft.'</div>';
 			} else {
 				$ret .= '<!-- morehtmlleft --><div class="inline-block floatleft">'.$morehtmlleft.'</div>';
 			}
