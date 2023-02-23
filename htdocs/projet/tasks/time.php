@@ -1112,23 +1112,27 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 	}
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
+	// Task
+
 	// Show section with information of task. If id of task is not defined and project id defined, then $projectidforalltimes is not empty.
 	if (empty($projectidforalltimes) && empty($allprojectforuser)) {
 		$head = task_prepare_head($object);
 		print dol_get_fiche_head($head, 'task_time', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
 		if ($action == 'deleteline') {
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?".($object->id > 0 ? "id=".$object->id : 'projectid='.$projectstatic->id).'&lineid='.GETPOST("lineid", 'int').($withproject ? '&withproject=1' : ''), $langs->trans("DeleteATimeSpent"), $langs->trans("ConfirmDeleteATimeSpent"), "confirm_deleteline", '', '', 1);
+			$urlafterconfirm = $_SERVER["PHP_SELF"]."?".($object->id > 0 ? "id=".$object->id : 'projectid='.$projectstatic->id).'&lineid='.GETPOST("lineid", 'int').($withproject ? '&withproject=1' : '');
+			print $form->formconfirm($urlafterconfirm, $langs->trans("DeleteATimeSpent"), $langs->trans("ConfirmDeleteATimeSpent"), "confirm_deleteline", '', '', 1);
 		}
 
 		$param = ($withproject ? '&withproject=1' : '');
+		$param .= ($param ? '&' : '').'id='.$object->id;		// ID of task
 		$linkback = $withproject ? '<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>' : '';
 
 		if (!GETPOST('withproject') || empty($projectstatic->id)) {
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 			$object->next_prev_filter = " fk_projet IN (".$db->sanitize($projectsListId).")";
 		} else {
-			$object->next_prev_filter = " fk_projet = ".$projectstatic->id;
+			$object->next_prev_filter = " fk_projet = ".((int) $projectstatic->id);
 		}
 
 		$morehtmlref = '';
@@ -1225,17 +1229,15 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 
 	if ($projectstatic->id > 0 || $allprojectforuser > 0) {
-		if ($action == 'deleteline' && !empty($projectidforalltimes)) {
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?".($object->id > 0 ? "id=".$object->id : 'projectid='.$projectstatic->id).'&lineid='.GETPOST('lineid', 'int').($withproject ? '&withproject=1' : ''), $langs->trans("DeleteATimeSpent"), $langs->trans("ConfirmDeleteATimeSpent"), "confirm_deleteline", '', '', 1);
-		}
-
 		// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 		$hookmanager->initHooks(array('tasktimelist'));
 
 		$formconfirm = '';
 
 		if ($action == 'deleteline' && !empty($projectidforalltimes)) {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?".($object->id > 0 ? "id=".$object->id : 'projectid='.$projectstatic->id).'&lineid='.GETPOST('lineid', 'int').($withproject ? '&withproject=1' : ''), $langs->trans("DeleteATimeSpent"), $langs->trans("ConfirmDeleteATimeSpent"), "confirm_deleteline", '', '', 1);
+			// We must use projectidprojectid if on list of timespent of project and id=taskid if on list of timespent of a task
+			$urlafterconfirm = $_SERVER["PHP_SELF"]."?".($projectstatic->id > 0 ? 'projectid='.$projectstatic->id : ($object->id > 0 ? "id=".$object->id : '')).'&lineid='.GETPOST('lineid', 'int').($withproject ? '&withproject=1' : '')."&contextpage=".urlencode($contextpage);
+			$formconfirm = $form->formconfirm($urlafterconfirm, $langs->trans("DeleteATimeSpent"), $langs->trans("ConfirmDeleteATimeSpent"), "confirm_deleteline", '', '', 1);
 		}
 
 		// Call Hook formConfirm
