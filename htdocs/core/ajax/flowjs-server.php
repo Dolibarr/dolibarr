@@ -35,6 +35,9 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
 // If there is no need to load and show top and left menu
 if (!defined("NOLOGIN")) {
 	define("NOLOGIN", '1');
@@ -68,7 +71,7 @@ if (!empty($upload_dir)) {
 	$temp_dir = $upload_dir.'/'.$flowIdentifier;
 } else {
 	$temp_dir = DOL_DATA_ROOT.'/'.$module.'/temp/'.$flowIdentifier;
-	$upload_dir = $temp_dir;
+	$upload_dir = DOL_DATA_ROOT.'/'.$module.'/temp/';
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -133,7 +136,7 @@ function createFileFromChunks($temp_dir, $upload_dir, $fileName, $chunkSize, $to
 	$total_files = 0;
 	$files = dol_dir_list($temp_dir, 'files');
 	foreach ($files as $file) {
-		if (stripos($file, $fileName) !== false) {
+		if (stripos($file["name"], $fileName) !== false) {
 			$total_files++;
 		}
 	}
