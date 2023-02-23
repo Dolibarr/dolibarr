@@ -128,6 +128,7 @@ class CMailFile
 
 	// Image
 	public $html;
+	public $msgishtml;
 	public $image_boundary;
 	public $atleastoneimage = 0; // at least one image file with file=xxx.ext into content (TODO Debug this. How can this case be tested. Remove if not used).
 	public $html_images = array();
