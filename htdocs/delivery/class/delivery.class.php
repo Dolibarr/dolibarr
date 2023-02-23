@@ -6,6 +6,7 @@
  * Copyright (C) 2011-2023 Philippe Grand	     <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry	     <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2023      Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,6 +114,9 @@ class Delivery extends CommonObject
 	 */
 	public $statuts;
 
+	/**
+	 * @var DeliveryLine[] lines
+	 */
 	public $lines = array();
 
 
@@ -1150,7 +1154,6 @@ class Delivery extends CommonObject
 }
 
 
-
 /**
  *  Management class of delivery note lines
  */
@@ -1203,12 +1206,22 @@ class DeliveryLine extends CommonObjectLine
 	public $product_ref;
 	public $product_label;
 
+	public $price;
+
 	public $fk_origin_line;
 	public $origin_id;
 
-	public $price;
-
+	/**
+	 * @var int origin line ID
+	 */
 	public $origin_line_id;
+
+	/**
+	 * @var int origin line ID
+	 * @deprecated
+	 * @see $origin_line_id
+	 */
+	public $commande_ligne_id;
 
 
 	/**
