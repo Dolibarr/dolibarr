@@ -554,7 +554,7 @@ if (empty($reshook)) {
 				// Builddoc
 				$donotredirect = 1;
 				$upload_dir = $conf->facture->dir_output;
-				$permissiontoadd = $user->rights->facture->creer;
+				$permissiontoadd = $user->hasRight('facture', 'creer');
 
 				// Call action to build doc
 				$savobject = $object;
@@ -1998,7 +1998,7 @@ if ($resql) {
 		if ($mode == 'kanban') {
 			if ($i == 0) {
 				print '<tr><td colspan="12">';
-				print '<div class="box-flex-container">';
+				print '<div class="box-flex-container kanban">';
 			}
 
 			print $generic_commande->getKanbanView('');

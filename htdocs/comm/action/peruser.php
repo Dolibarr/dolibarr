@@ -234,7 +234,7 @@ if ($reshook < 0) {
 $form = new Form($db);
 $companystatic = new Societe($db);
 
-$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda|DE:Modul_Terminplanung';
 llxHeader('', $langs->trans("Agenda"), $help_url);
 
 $now = dol_now();

@@ -65,6 +65,7 @@ class CMailFile
 
 	public $atleastonefile;
 
+	public $msg;
 	public $eol;
 	public $eol2;
 
@@ -1212,9 +1213,7 @@ class CMailFile
 			}
 
 			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($outputfile);
 		}
 	}
 
@@ -1796,7 +1795,7 @@ class CMailFile
 				if ($fhandle) {
 					$nbofbyteswrote = fwrite($fhandle, base64_decode($filecontent));
 					fclose($fhandle);
-					@chmod($destfiletmp, octdec($conf->global->MAIN_UMASK));
+					dolChmod($destfiletmp);
 				} else {
 					$this->errors[] = "Failed to open file '".$destfiletmp."' for write";
 					return -1;

@@ -104,7 +104,7 @@ class FormOther
 		$out .= '<br>';
 		$out .= '<div type="text" id="scantoolmessage" class="scantoolmessage ok nopadding"></div>';
 
-		$out .= '<script>';
+		$out .= '<script nonce="'.getNonce().'">';
 		$out .= 'jQuery("#barcodeforautodetect, #barcodeforproduct, #barcodeforlotserial").click(function(){';
 		$out .= 'console.log("select choice");';
 		$out .= 'jQuery("#scantoolmessage").text("");';
@@ -847,8 +847,8 @@ class FormOther
 			$langs->load("other");
 			if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax)) {
 				$out .= '<link rel="stylesheet" media="screen" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/css/jPicker-1.1.6.css" />';
-				$out .= '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
-				$out .= '<script type="text/javascript">
+				$out .= '<script nonce="'.getNonce().'" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
+				$out .= '<script nonce="'.getNonce().'" type="text/javascript">
 	             jQuery(document).ready(function(){
 					var originalhex = null;
 	                $(\'#colorpicker'.$prefix.'\').jPicker( {
@@ -915,8 +915,8 @@ class FormOther
 		} else { // In most cases, this is not used. We used instead function with no specific list of colors
 			if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax)) {
 				$out .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.css" type="text/css" media="screen" />';
-				$out .= '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
-				$out .= '<script type="text/javascript">
+				$out .= '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
+				$out .= '<script nonce="'.getNonce().'" type="text/javascript">
 	             jQuery(document).ready(function(){
 	                 jQuery(\'#colorpicker'.$prefix.'\').colorpicker({
 	                     size: 14,
@@ -1237,7 +1237,7 @@ class FormOther
 
 		// Javascript code for dynamic actions
 		if (!empty($conf->use_javascript_ajax)) {
-			$selectboxlist .= '<script type="text/javascript">
+			$selectboxlist .= '<script nonce="'.getNonce().'" type="text/javascript">
 
 	        // To update list of activated boxes
 	        function updateBoxOrder(closing) {

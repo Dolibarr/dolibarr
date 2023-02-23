@@ -239,7 +239,7 @@ print "</table></div><br>";
 
 // Draft contracts
 
-if (isModEnabled('contrat') && $user->rights->contrat->lire) {
+if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
 	$sql = "SELECT c.rowid, c.ref,";
 	$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 	$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";

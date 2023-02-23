@@ -1578,9 +1578,10 @@ class ActionComm extends CommonObject
 	{
 		global $conf, $langs, $user;
 		$langs->load('agenda');
-		$datas = [];
 
-		$nofetch = empty($params['nofetch']) ? false : true;
+		$datas = array();
+		$nofetch = !empty($params['nofetch']);
+
 		// Set label of type
 		$labeltype = '';
 		if ($this->type_code) {
@@ -2278,7 +2279,7 @@ class ActionComm extends CommonObject
 
 			// Create temp file
 			$outputfiletmp = tempnam($conf->agenda->dir_temp, 'tmp'); // Temporary file (allow call of function by different threads
-			@chmod($outputfiletmp, octdec($conf->global->MAIN_UMASK));
+			dolChmod($outputfiletmp);
 
 			// Write file
 			if ($format == 'vcal') {

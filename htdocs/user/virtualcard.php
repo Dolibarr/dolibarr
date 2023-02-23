@@ -297,7 +297,7 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '</div>';
 
 	print '<div class="center">';
-	print $form->buttonsSaveCancel("Save", ($dol_openinpopup ? "Cancel" : ""), array(), 0, '', $dol_openinpopup);
+	print $form->buttonsSaveCancel("Save", '', array(), 0, '', $dol_openinpopup);
 	print '</div>';
 
 	print '<br>';

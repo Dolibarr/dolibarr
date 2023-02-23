@@ -256,7 +256,7 @@ class box_actions extends ModeleBoxes
 			}
 			$out .= '</div>';
 			if ($actioncejour) {
-				$out .= '<script>';
+				$out .= '<script nonce="'.getNonce().'">';
 				$out .= '$("#dialogboxaction").dialog({ autoOpen: true });';
 				if ($conf->global->SHOW_DIALOG_HOMEPAGE > 1) {    // autoclose after this delay
 					$out .= 'setTimeout(function(){';
@@ -265,7 +265,7 @@ class box_actions extends ModeleBoxes
 				}
 				$out .= '</script>';
 			} else {
-				$out .= '<script>';
+				$out .= '<script nonce="'.getNonce().'">';
 				$out .= '$("#dialogboxaction").dialog({ autoOpen: false });';
 				$out .= '</script>';
 			}

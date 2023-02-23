@@ -325,7 +325,7 @@ $membertypestatic = new AdherentType($db);
 $memberstatic = new Adherent($db);
 
 // Page Header
-$title = $langs->trans("Members")." - ".$langs->trans("List");;
+$title = $langs->trans("Members")." - ".$langs->trans("List");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 llxHeader('', $title, $help_url);
 
@@ -1051,7 +1051,7 @@ while ($i < min($num, $limit)) {
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="12">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
 		$membertypestatic->id = $obj->type_id;
 		$membertypestatic->label = $obj->type;
