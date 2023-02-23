@@ -953,7 +953,7 @@ class Task extends CommonObjectLine
 			}
 		}
 
-		if($sortfield && $sortorder) {
+		if ($sortfield && $sortorder) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		} else {
 			$sql .= " ORDER BY p.ref, t.rang, t.dateo";
