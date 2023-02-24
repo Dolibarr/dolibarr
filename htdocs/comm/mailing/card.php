@@ -374,7 +374,7 @@ if (empty($reshook)) {
 							if (!$resql2) {
 								dol_print_error($db);
 							} else {
-								//if cheack read is use then update prospect contact status
+								//if check read is use then update prospect contact status
 								if (strpos($message, '__CHECK_READ__') !== false) {
 									//Update status communication of thirdparty prospect
 									$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".((int) $obj->rowid).")";
@@ -476,6 +476,9 @@ if (empty($reshook)) {
 			// other are set at begin of page
 			$object->substitutionarrayfortest['__EMAIL__'] = $object->sendto;
 			$object->substitutionarrayfortest['__MAILTOEMAIL__'] = '<a href="mailto:'.$object->sendto.'">'.$object->sendto.'</a>';
+			$object->substitutionarrayfortest['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefinedintestmode&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'&email='.urlencode($obj->sendto).'&mtid=0" width="1" height="1" style="width:1px;height:1px" border="0"/>';
+			$object->substitutionarrayfortest['__UNSUBSCRIBE__'] = '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag=undefinedintestmode&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'&email='.urlencode($obj->sendto).'&mtid=0" target="_blank" rel="noopener noreferrer">'.$langs->trans("MailUnsubcribe").'</a>';
+			$object->substitutionarrayfortest['__UNSUBSCRIBE_URL__'] = DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag=undefinedintestmode&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'&email='.urlencode($obj->sendto).'&mtid=0';
 
 			// Subject and message substitutions
 			complete_substitutions_array($object->substitutionarrayfortest, $langs);

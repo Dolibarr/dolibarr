@@ -1649,9 +1649,9 @@ if ($action == 'create') {
 					if ($objp->subprice >= 0) {
 						$colspan = 6;
 
-						if ($conf->margin->enabled && getDolGlobalString('PRODUCT_USE_UNITS')) {
+						if (isModEnabled('margin') && getDolGlobalString('PRODUCT_USE_UNITS')) {
 							$colspan = 8;
-						} elseif ($conf->margin->enabled || getDolGlobalString('PRODUCT_USE_UNITS')) {
+						} elseif (isModEnabled('margin') || getDolGlobalString('PRODUCT_USE_UNITS')) {
 							$colspan = 7;
 						}
 

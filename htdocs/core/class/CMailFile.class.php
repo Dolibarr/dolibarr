@@ -273,10 +273,16 @@ class CMailFile
 					if ($this->html_images[$i]) {
 						$this->atleastoneimage = 1;
 						if ($this->html_images[$i]['type'] == 'cidfromdata') {
-							$posindice = count($filename_list);
-							$filename_list[$posindice] = $this->html_images[$i]['fullpath'];
-							$mimetype_list[$posindice] = $this->html_images[$i]['content_type'];
-							$mimefilename_list[$posindice] = $this->html_images[$i]['name'];
+							if (!in_array($this->html_images[$i]['fullpath'], $filename_list)) {
+								// If this file path is not already into the $filename_list, we add it.
+								$posindice = count($filename_list);
+								$filename_list[$posindice] = $this->html_images[$i]['fullpath'];
+								$mimetype_list[$posindice] = $this->html_images[$i]['content_type'];
+								$mimefilename_list[$posindice] = $this->html_images[$i]['name'];
+							} else {
+								$posindice = array_search($this->html_images[$i]['fullpath'], $filename_list);
+							}
+							// We complete the array of cid_list
 							$cid_list[$posindice] = $this->html_images[$i]['cid'];
 						}
 						dol_syslog("CMailFile::CMailfile: html_images[$i]['name']=".$this->html_images[$i]['name'], LOG_DEBUG);
@@ -284,6 +290,8 @@ class CMailFile
 				}
 			}
 		}
+		//var_dump($filename_list);
+		//var_dump($cid_list);exit;
 
 		// Set atleastoneimage if there is at least one file (into $filename_list array)
 		if (is_array($filename_list)) {
@@ -1124,7 +1132,14 @@ class CMailFile
 				return 'Bad value for sendmode';
 			}
 
-			$parameters = array();
+			// Now we delete image files that were created dynamically to manage data inline files
+			foreach ($this->html_images as $val) {
+				if (!empty($val['type']) && $val['type'] == 'cidfromdata') {
+					//dol_delete($val['fullpath']);
+				}
+			}
+
+			$parameters = array('sent' => $res);
 			$action = '';
 			$reshook = $hookmanager->executeHooks('sendMailAfter', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 			if ($reshook < 0) {
@@ -1655,7 +1670,7 @@ class CMailFile
 	}
 
 	/**
-	 * Seearch images into html message and init array this->images_encoded if found
+	 * Search images into html message and init array this->images_encoded if found
 	 *
 	 * @param	string	$images_dir		Location of physical images files. For example $dolibarr_main_data_root.'/medias'
 	 * @return	int 		        	>0 if OK, <0 if KO
@@ -1742,7 +1757,8 @@ class CMailFile
 	}
 
 	/**
-	 * Seearch images with data:image format into html message
+	 * Seearch images with data:image format into html message.
+	 * If we find some, we create it on disk.
 	 *
 	 * @param	string	$images_dir		Location of where to store physicaly images files. For example $dolibarr_main_data_root.'/medias'
 	 * @return	int 		        	>0 if OK, <0 if KO
@@ -1784,7 +1800,7 @@ class CMailFile
 			foreach ($matches[1] as $key => $ext) {
 				// We save the image to send in disk
 				$filecontent = $matches[2][$key];
-				$cid = 'cid000'.dol_hash($this->html, 'md5');
+				$cid = 'cid000'.dol_hash($this->html, 'md5');		// The id must not change if image is same
 				$destfiletmp = $images_dir.'/'.$cid.'.'.$ext;
 
 				$fhandle = @fopen($destfiletmp, 'w');
