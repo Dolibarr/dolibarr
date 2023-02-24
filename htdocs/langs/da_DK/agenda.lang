@@ -177,5 +177,6 @@ ReminderType=Tilbagekaldelsestype
 AddReminder=Opret en automatisk påmindelsesmeddelelse om denne begivenhed
 ErrorReminderActionCommCreation=Fejl ved oprettelse af påmindelsesmeddelelsen for denne begivenhed
 BrowserPush=Browser pop op meddelelse
+Reminders=Påmindelser
 ActiveByDefault=Aktiveret som standard
 Until=indtil

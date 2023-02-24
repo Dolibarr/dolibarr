@@ -160,7 +160,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('adheren
 
 $form = new Form($db);
 
-$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 llxHeader('', $langs->trans("SubscriptionCard"), $help_url);
 
 
@@ -375,8 +375,8 @@ if ($rowid && $action != 'edit') {
 	$filename = dol_sanitizeFileName($object->ref);
 	$filedir = $conf->facture->dir_output . '/' . dol_sanitizeFileName($object->ref);
 	$urlsource = $_SERVER['PHP_SELF'] . '?facid=' . $object->id;
-	$genallowed = $user->rights->facture->lire;
-	$delallowed = $user->rights->facture->creer;
+	$genallowed = $user->hasRight('facture', 'lire');
+	$delallowed = $user->hasRight('facture', 'creer');
 
 	print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 	$somethingshown = $formfile->numoffiles;

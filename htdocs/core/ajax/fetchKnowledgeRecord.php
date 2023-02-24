@@ -36,8 +36,10 @@ if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
 // If there is no need to load and show top and left menu
-if (!defined("NOLOGIN")) {
-	define("NOLOGIN", '1');
+if (!empty($_GET['public'])) {
+	if (!defined("NOLOGIN")) {
+		define("NOLOGIN", '1');
+	}
 }
 if (!defined('NOIPCHECK')) {
 	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
@@ -51,6 +53,12 @@ $action = GETPOST('action', 'aZ09');
 $idticketgroup = GETPOST('idticketgroup', 'aZ09');
 $idticketgroup = GETPOST('idticketgroup', 'aZ09');
 $lang = GETPOST('lang', 'aZ09');
+
+/*if (defined("NOLOGIN") && !getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
+	// If we ask public content (so without login), we block if option TICKET_ENABLE_PUBLIC_INTERFACE is not enabled
+	httponly_accessforbidden('');
+}*/
+
 
 /*
  * Actions
@@ -71,8 +79,13 @@ if ($action == "getKnowledgeRecord") {
 	$sql .= " FROM ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord as kr ";
 	$sql .= " JOIN ".MAIN_DB_PREFIX."c_ticket_category as ctc ON ctc.rowid = kr.fk_c_ticket_category";
 	$sql .= " WHERE ctc.code = '".$db->escape($idticketgroup)."'";
-	$sql .= " AND ctc.active = 1 AND ctc.public = 1 AND (kr.lang = '".$db->escape($lang)."' OR kr.lang = 0 OR kr.lang IS NULL)";
+	$sql .= " AND ctc.active = 1";
+	if (defined("NOLOGIN")) {
+		$sql .= " AND ctc.public = 1";
+	}
+	$sql .= " AND (kr.lang = '".$db->escape($lang)."' OR kr.lang = 0 OR kr.lang IS NULL)";
 	$sql .= " AND kr.status = 1 AND (kr.answer IS NOT NULL AND kr.answer <> '')";
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);

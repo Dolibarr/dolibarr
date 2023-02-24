@@ -29,7 +29,7 @@ RecruitmentSetup = Configuració de la contractació
 Settings = Configuració
 RecruitmentSetupPage = Introduïu aquí la configuració de les opcions principals del mòdul de contractació
 RecruitmentArea=Àrea de contractació
-PublicInterfaceRecruitmentDesc=Les pàgines públiques de feines són URL públiques per a mostrar i respondre a feines actives. Hi ha un enllaç diferent per a cada treball actiu que es troba a cada registre de la feina.
+PublicInterfaceRecruitmentDesc=Les pàgines públiques de llocs de treball són URL públics per a mostrar i respondre a les feines obertes. Hi ha un enllaç diferent per a cada treball obert, que es troba a cada registre de feina.
 EnablePublicRecruitmentPages=Activa les pàgines públiques de treballs actius
 
 #
@@ -75,5 +75,5 @@ JobClosedTextCanceled=L’oferta de feina està tancada.
 ExtrafieldsJobPosition=Atributs complementaris (llocs de treball)
 ExtrafieldsApplication=Atributs complementaris (sol·licituds de feina)
 MakeOffer=Feu una oferta
-WeAreRecruiting=Estem reclutant. Aquesta és una llista de places obertes per cobrir...
+WeAreRecruiting=Estem reclutant. Aquesta és una llista de places obertes per a cobrir...
 NoPositionOpen=No hi ha posicions obertes de moment

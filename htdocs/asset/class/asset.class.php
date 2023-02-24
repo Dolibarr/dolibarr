@@ -157,6 +157,11 @@ class Asset extends CommonObject
 	public $status;
 	public $user_cloture_id;
 
+	/**
+	 * @var Asset object oldcopy
+	 */
+	public $oldcopy;
+
 	// /**
 	//  * @var string    Field with ID of parent key if this object has a parent
 	//  */

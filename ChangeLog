@@ -30,20 +30,20 @@ NEW: #21000 Added columns 'alias_name' on project, supplier invoice, supplier or
 NEW: #21780 Add pid field to Cronjob class and store PID on job execution
 NEW: #21395 Added option for dark theme mode in display - color and theme
 NEW: #21397 added option to auto define barcode numbers for third-parties in barcode module setup
-NEW: #21399
+NEW: #21399 add image for event_array
 NEW: #21442 Enhancement of module builder init
 NEW: #21654 add bank account number used on invoices for debit
-NEW: #22048 Added notes to productlot module
+NEW: #22048 added notes to productlot module
 NEW: #22298 Bank - Add salaries & vat in the tab of planned entries of a bank account
-NEW: #22328
-NEW: #22424
+NEW: #22328 OAuth admin
+NEW: #22424 online signature for contracts
 NEW: #22500 member module set up made easier
 NEW: #22527 projects and thirdparties can be viewed as conversation ("Message" view), like events/agenda.
 NEW: #22546 can now set user supervisors using mass action in htdocs/user
 NEW: #22594 can chose if VAT ID is unique or not for third parties
 NEW: #22622 all partnerships displayed on tab partnership of a thirdparty and member
 NEW: #22676 massaction for updating product prices
-NEW: #22735 Massaction to affect users on projects
+NEW: #22735 massaction to affect users on projects
 NEW: #25594 can chose if VAT ID is unique or not for third parties
 NEW: #4482 adding js to hide/show advanced option on the export data page
 
@@ -57,27 +57,17 @@ NEW: Add max size send for "backup and link to mail" option
 NEW: Add method httponly_accessforbidden()
 NEW: Add more advices into the Setup security page
 NEW: Add new global variable for keeping the previous signature information on proposale (case of reopen a proposale)
-NEW: Add objectLink on expedition
-NEW: Add oldcopy to Ticket so triggers intercepting TICKET_MODIFY have access to old values of the updated properties
 NEW: Add option --force on CLI cron_run_jobs.php
 NEW: Add option "Show price on the generated documents for receptions"
-NEW: invoice export : add accounting affectation
-NEW: label on products categories filter
-NEW: manage no email with thirdparties (better for GDPR)
 NEW: Manage VAT on all lines on purchases cycle
-NEW: On a bank reconciled line, we can modify the bank receipt
 NEW: parent company column and filter in invoice and order list
-NEW: possibility to select scopes with checkbox for Oauth tokens
-NEW: private and public note on user, thirdparty and contact list
+NEW: private and public note columns on user, thirdparty and contact lists
 NEW: Public counters feature
-NEW: Saved token of OAUTH module are now encrypted into llx_oauth_token
 NEW: Save one click to select on delivery ack, on emails.
 NEW: scheduled job to send unpaid invoice reminder can now use the cc and bcc from email template
-NEW: experimental SMTP using PhpImap allowing OAuth2 authentication (need to add option MAIN_IMAP_USE_PHPIMAP)
 NEW: can substitue project title in mail template
 NEW: The purge of files can purge only if older than a number of seconds
 NEW: Update ActionComm type_code on email message ticket
-NEW: Finance - VAT - Admin - Add information on deadline day for submission of VAT declaration
 NEW: Add the target to select attendees of event for emailings
 NEW: add redirect on action confirm addconsumedline and addproduceline
 NEW: Add the referrer-policy to "same-origin" by default on all public pages.
@@ -87,17 +77,18 @@ NEW: Can enter the unit price including the VAT
 NEW: Can invoice task time per different services
 NEW: Can set a commercial discount by entering amount including VAT
 NEW: Can set start and end dates and comment on button "Activate all services"
-NEW: can sort and preselected best supplier price
 NEW: show date delivery planned on orders linked to company and product
 NEW: filter on reception dates (from / to) in cheque paiement card
 
-NEW: Accountancy - Add a graphic option to enable lettering function - FPC21
-NEW: Accountancy - Add a way to clean some words when you generate thirdparty accounting account
-NEW: Accountancy - Added an option during export to export or not the lettering FPC21
+NEW: Accountancy - add a graphic option to enable lettering function - FPC21
+NEW: Accountancy - add a way to clean some words when you generate thirdparty accounting account
+NEW: Accountancy - added an option during export to export or not the lettering FPC21
+NEW: Accountancy - Invoice export : add accounting affectation
 NEW: Accountancy - Manage supplier deposit with specific account
 NEW: Accountancy - Model Digitaria - Add a way to clean some words when you generate thirdparty accounting account FPC22
 NEW: Agenda - start a simple support of recurrent events on agenda
 NEW: Bank - add salaries & VAT in tab planned entries
+NEW: Bank - on a bank reconciled line, we can modify the bank receipt
 NEW: Contracts - add a method doAutoRenewContracts that can be used as a cron task
 NEW: Contracts - default template of contract is not mandatory
 NEW: Contracts - Manage Position (Rank) on Contract Lines
@@ -108,22 +99,29 @@ NEW: EMail - can send an email on scheduled job error
 NEW: EMail - on a form to send an email, we show all emails of all contacts of object
 NEW: EMail - add the SMTP header References on ticket email created by email
 NEW: EMail - add substitution key __SENDEREMAIL_SIGNATURE__
+NEW: EMail - experimental SMTP using PhpImap allowing OAuth2 authentication (need to add option MAIN_IMAP_USE_PHPIMAP)
 NEW: EMail-Collector - add IMAP port setting 
 NEW: EMail-Collector - add a button "Test collect"
-NEW: Export - Add " as enclosure by default for CSV export. Keep removing CR/LF.
 NEW: Event-Organization - add date event (!= date project) and location on event organization
+NEW: Expedition - add objectLink on expedition
+NEW: Export - Add " as enclosure by default for CSV export. Keep removing CR/LF.
 NEW: Extrafields - add badge in admin extrafields setup
 NEW: Extrafields - can edit property css, cssview, csslist on extrafields
 NEW: Extrafields - default values in extrafields are not more limited to 255 char.
 NEW: Extrafields - field price with currency
 NEW: Extrafields - support IP type to store IP addresses
+NEW: Finance - VAT - Admin - Add information on deadline day for submission of VAT declaration
 NEW: Interventions - enable online signature for interventions
-NEW: Invoice - Add french mention on pdf when vat debit option is on
+NEW: Invoice - add french mention on PDF when VAT debit option is on
 NEW: Members - default_lang for members
-NEW: Members - Table of membership types
+NEW: Members - table of membership types
 NEW: Members - add free membership amounts at the membership type level
+NEW: OAuth - possibility to select scopes with checkbox for OAuth tokens
+NEW: OAuth - saved token of OAUTH module are now encrypted into llx_oauth_token
 NEW: Orders - resize parent company column in order list
-NEW: Products supplier price - autofill default supplier VAT
+NEW: Products - Categories - label on products categories filter
+NEW: Products - Supplier price - autofill default supplier VAT
+NEW: Products - Supplier price - can sort and preselected best supplier price
 NEW: Projects - add author on list
 NEW: Projects - add thirdparty column to the time list (projet/tasks/time.php)
 NEW: Proposals - show delivery mode on PDF for proposals
@@ -144,8 +142,10 @@ NEW: TakePOS - display currency in TakePOS menu
 NEW: TakePOS - Header Scroll in TakePOS
 NEW: TakePOS - Receipt preview in TakePOS setup
 NEW: TakePOS - support of Stripe Terminal with TakePOS
+NEW: Thirdparty - manage no email with thirdparties (better for GDPR)
 NEW: Thirdparty - set thirdparty type with company modify trigger
 NEW: Tickets - change filter type on tickets list into a multiselect combo
+NEW: Tickets - add oldcopy to Ticket so triggers intercepting TICKET_MODIFY have access to old values of the updated properties
 NEW: Website - can delete a whole website if disabled
 NEW: Website - can remove a website template
 NEW: Website - can set header "Strict-Transport-Security" in web sites.
@@ -176,11 +176,16 @@ NEW: Security: add fail2ban rules examples to limit access to /public pages
 
  Option / Const for System: 
 NEW: FICHINTER_ALLOW_EXTERNAL_DOWNLOAD
+NEW: MAIN_CHECKBOX_LEFT_COLUMN
+NEW: MAIN_EMAIL_SUPPORT_ACK
+NEW: MAIN_IMAP_USE_PHPIMAP
 NEW: MAIN_SEARCH_CATEGORY_PRODUCT_ON_LISTS  -  const to show category customer filter
+NEW: PRODUCT_ALLOW_EXTERNAL_DOWNLOAD
 NEW: PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT  -  showing warehouse on PDF
 NEW: PRODUIT_DESC_IN_FORM accept  -  desktop only or +smartphone
 NEW: PROPAL_BYPASS_VALIDATED_STATUS
 NEW: PROPAL_NEW_AS_SIGNED
+NEW: PROPAL_SKIP_ACCEPT_REFUSE
 NEW: TIMESPENT_ALWAYS_UPDATE_THM  -  when it's on we always check current thm of user to update it in task time line
 
  Localisation:
@@ -235,7 +240,10 @@ Following changes may create regressions for some external modules, but were nec
 * Deprecated method set_billed() on shipment and reception class has been removed. Use setBilled() instead.
 * Tables llx_prelevement_facture and llx_prelevement_facture_demande have been renamed into llx_prelevement and llx_prelevement_demande.
 * Rename MAIN_LIST_ALLOW_NOTES into MAIN_LIST_HIDE_NOTES and rename MAIN_LIST_ALLOW_PRIVATE_NOTES into MAIN_LIST_HIDE_PRIVATE_NOTES
-* Rename the substitution for project label instead of project title in substitution variables
+* Rename the substitution for "project label" instead of "project title" in substitution variables
+* You must use "$objectoffield" to manipulate the current object inside the formulare of computed custom extrafields instead of $obj/$object.
+* Making a global search is sending the parameter using always the name search_all (instead of sometimes sall and search_all)
+
 
 
 ***** ChangeLog for 16.0.4 compared to 16.0.3 *****
@@ -243,23 +251,24 @@ Following changes may create regressions for some external modules, but were nec
 FIX: Amount of localtax1 and 2 not correctly save on purchase order (the rate was saved instead)
 FIX: #20415
 FIX: #21280
-FIX: #23008
 FIX: #22271
 FIX: #22524
 FIX: #22837
 FIX: #22964
+FIX: #23008
 FIX: #23012
 FIX: #23019 Impossible to add task times to an existing draft invoice
 FIX: #23072
+FIX: #23075
 FIX: #23087
 FIX: #23115 
 FIX: #23116
+FIX: #23117
 FIX: #23281
 FIX: #23420 : wrong check on $search_categ value causing FATAL ERROR
 FIX: Accountancy - Quadra export
 FIX: add border left on image product when conf activated
 FIX: Add missing token when deleting template inn order_supplier admin menu
-FIX: Amount of localtax1 and 2 not correctly save on purchase order (the
 FIX: API access for deactivated users
 FIX: bad selection of barcode numbering module
 FIX: Can't see all time spent by all user
@@ -270,8 +279,6 @@ FIX: Empty FormSetup emailTemplate type IF empty fieldvalue
 FIX: Errors Handling for CreateFrom Hooks
 FIX: error with dol_banner_tab, ref is needed
 FIX: ExpenseReport card was not reloaded after addline
-FIX: #23075
-FIX: #23117
 FIX: get multicurrency infos of propal when create order from propal with "WORKFLOW_PROPAL_AUTOCREATE_ORDER" conf
 FIX: Give predictable order to inventory lines
 FIX: include class multicurrency
@@ -279,7 +286,6 @@ FIX: methods declaration (backport fix 67b9a7dc07d708231d12b5e58800334d4a01ef98)
 FIX: multicurrency_tx and not currency_tx
 FIX: on public ticket list, only the page 1 was accessible. Other pages were 404 error.
 FIX: PGSQL Integer type does not have a free lenght
-FIX: PGSQL Int type does not have a free lenght
 FIX: Product list in setup.php in new Module
 FIX: propal and order stats broken on Tag+User(retricted customer list)
 FIX: saving of numbering module for jobs

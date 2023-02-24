@@ -484,7 +484,7 @@ class FileUpload
 	/**
 	 * Output data
 	 *
-	 * @return	void
+	 * @return	string|void
 	 */
 	public function post()
 	{

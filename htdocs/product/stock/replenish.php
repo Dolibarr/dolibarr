@@ -146,6 +146,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$includeproductswithoutdesiredqty = '';
 	$draftorder = '';
 }
+$draftchecked = "";
 if ($draftorder == 'on') {
 	$draftchecked = "checked";
 }

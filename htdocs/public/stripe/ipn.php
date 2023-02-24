@@ -72,10 +72,8 @@ if (isset($_GET['connect'])) {
 		$servicestatus = 1;
 	}
 }
-$endpoint_secret = $conf->global->STRIPE_TEST_WEBHOOK_KEY;
-$service = 'StripeTest';
-$servicestatus = 0;
-if (empty($conf->stripe->enabled)) {
+
+if (!isModEnabled('stripe')) {
 	httponly_accessforbidden('Module Stripe not enabled');
 }
 
