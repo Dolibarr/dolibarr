@@ -3411,8 +3411,8 @@ if (!function_exists("llxFooter")) {
 		}
 
 		// Wrapper to add log when clicking on download or preview
-		if (isModEnabled('blockedlog') && is_object($object) && !empty($object->id) && $object->id > 0 && $object->statut > 0) {
-			if (in_array($object->element, array('facture'))) {       // Restrict for the moment to element 'facture'
+		if (isModEnabled('blockedlog') && is_object($object) && !empty($object->id) && $object->id > 0) {
+			if (in_array($object->element, array('facture')) && $object->statut > 0) {       // Restrict for the moment to element 'facture'
 				print "\n<!-- JS CODE TO ENABLE log when making a download or a preview of a document -->\n";
 				?>
 				<script>
