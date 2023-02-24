@@ -553,12 +553,12 @@ if (empty($conf->global->MAIN_EXEC_USE_POPEN)) {
 	print $conf->global->MAIN_EXEC_USE_POPEN;
 }
 if ($execmethod == 1) {
-	print '<span class="opacitymedium">, "exec" PHP method will be used for shell commands';
+	print '<span class="opacitymedium"> &nbsp; &nbsp; "exec" PHP method will be used for shell commands';
 	print ' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 1)';
 	print '</span>';
 }
 if ($execmethod == 2) {
-	print '<span class="opacitymedium">, "popen" PHP method will be used for shell commands';
+	print '<span class="opacitymedium"> &nbsp; &nbsp; "popen" PHP method will be used for shell commands';
 	print ' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 1)';
 	print '</span>';
 }
