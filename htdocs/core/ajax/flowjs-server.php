@@ -62,13 +62,19 @@ $flowTotalSize = GETPOST('flowTotalSize', 'alpha');
 top_httphead();
 dol_syslog(join(',', $_GET));
 
-$result = true;
+$result = false;
 
 if (!empty($upload_dir)) {
 	$temp_dir = $upload_dir.'/'.$flowIdentifier;
 } else {
 	$temp_dir = DOL_DATA_ROOT.'/'.$module.'/temp/'.$flowIdentifier;
-	$upload_dir = $temp_dir;
+	$upload_dir = DOL_DATA_ROOT.'/'.$module.'/temp/';
+}
+
+if ($module != "test" && !isModEnabled($module)) {
+	echo json_encode("The module ".$module." is not enabled");
+	header("HTTP/1.0 400");
+	die();
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -83,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 	if (file_exists($upload_dir.'/'.$flowFilename)) {
 		echo json_encode('File '.$flowIdentifier.' was already uploaded');
 		header("HTTP/1.0 200 Ok");
+		die();
 	} elseif (!empty($_FILES)) foreach ($_FILES as $file) {
 		// check the error status
 		if ($file['error'] != 0) {
@@ -133,7 +140,7 @@ function createFileFromChunks($temp_dir, $upload_dir, $fileName, $chunkSize, $to
 	$total_files = 0;
 	$files = dol_dir_list($temp_dir, 'files');
 	foreach ($files as $file) {
-		if (stripos($file, $fileName) !== false) {
+		if (stripos($file["name"], $fileName) !== false) {
 			$total_files++;
 		}
 	}
