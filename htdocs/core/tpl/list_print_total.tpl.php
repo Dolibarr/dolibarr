@@ -39,8 +39,8 @@ if (isset($totalarray['pos'])) {
 		}
 	}
 	print '</tr>';
-	if (!(is_null($limit) || $num < $limit))  { // we print grand total only if different of page total already printed above
-	/*$totalarray ex. Array (
+	if (!(is_null($limit) || $num < $limit)) { // we print grand total only if different of page total already printed above
+		/*$totalarray ex. Array (
 		[nbfield] => 8
 		[val] => Array
 			(
@@ -51,7 +51,7 @@ if (isset($totalarray['pos'])) {
 			(
 				[6] => p.budget_amount
 			)
-	)*/
+		)*/
 		if (isset($totalarray['pos']) && is_array($totalarray['pos']) && count($totalarray['pos']) > 0) {
 			$tbsumfields = [];
 			foreach ($totalarray['pos'] as $field) {
@@ -71,7 +71,7 @@ if (isset($totalarray['pos'])) {
 				//dol_print_error($db); // as we're not sure it's ok for ALL listings, we don't print sql errors, they'll be in logs
 			}
 			if (is_array($sumsarray) && count($sumsarray) >0) {
-			// Show grand total line
+				// Show grand total line
 				print '<tr class="liste_grandtotal">';
 				$i = 0;
 				while ($i < $totalarray['nbfield']) {
