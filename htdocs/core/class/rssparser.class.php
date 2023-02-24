@@ -36,6 +36,8 @@ class RssParser
 	 */
 	public $error = '';
 
+	public $feed_version;
+
 	private $_format = '';
 	private $_urlRSS;
 	private $_language;
@@ -446,7 +448,7 @@ class RssParser
 							$itemDescription = sanitizeVal((string) $item['description']);
 							$itemPubDate = sanitizeVal((string) $item['pubdate']);
 							$itemId = sanitizeVal((string) $item['guid']);
-							$itemAuthor = sanitizeVal((string) $item['author']);
+							$itemAuthor = sanitizeVal((string) ($item['author'] ?? ''));
 						}
 
 						// Loop on each category
