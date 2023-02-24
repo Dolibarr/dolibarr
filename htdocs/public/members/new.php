@@ -539,6 +539,8 @@ if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE)) {
 // Moral/Physic attribute
 $morphys["phy"] = $langs->trans("Physical");
 $morphys["mor"] = $langs->trans("Moral");
+print '<tr class="morphy"><td class="titlefield">'.$langs->trans('MemberNature').' <span style="color: red">*</span></td><td>'."\n";
+
 if (empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY)) {
 	print '<tr class="morphy"><td class="titlefield">'.$langs->trans('MemberNature').' <span style="color: red">*</span></td><td>'."\n";
 	print $form->selectarray("morphy", $morphys, GETPOST('morphy'), 1);
