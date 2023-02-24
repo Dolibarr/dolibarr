@@ -548,6 +548,7 @@ print '<tr><td class="center">';
 if ($action == "dosign" && empty($cancel)) {
 	print '<div class="tablepublicpayment">';
 	print '<input type="button" class="buttonDelete small" id="clearsignature" value="'.$langs->trans("ClearSignature").'">';
+	print '<input type="text" class="" id="onlinesignname" name="onlinesignname" placeholder="'.$langs->trans("Lastname").'">';
 	print '<div id="signature" style="border:solid;"></div>';
 	print '</div>';
 	// Do not use class="reposition" here: It breaks the submit and there is a message on top to say it's ok, so going back top is better.
@@ -558,7 +559,7 @@ if ($action == "dosign" && empty($cancel)) {
 	print '<script language="JavaScript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jSignature/jSignature.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function() {
-	  $("#signature").jSignature({ color:"#000", lineWidth:4, '.(empty($conf->dol_optimize_smallscreen) ? '' : 'width: 280, ' ).'height: 180});
+	  $("#signature").jSignature({ color:"#000", lineWidth:0, '.(empty($conf->dol_optimize_smallscreen) ? '' : 'width: 280, ' ).'height: 180});
 
 	  $("#signature").on("change",function(){
 		$("#clearsignature").css("display","");
