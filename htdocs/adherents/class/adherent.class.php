@@ -1789,13 +1789,11 @@ class Adherent extends CommonObject
 					}
 				} else {
 					$error++;
-					$this->error = $acct->error;
-					$this->errors = $acct->errors;
+					$this->setErrorsFromObject($acct);
 				}
 			} else {
 				$error++;
-				$this->error = $acct->error;
-				$this->errors = $acct->errors;
+				$this->setErrorsFromObject($acct);
 			}
 		}
 
