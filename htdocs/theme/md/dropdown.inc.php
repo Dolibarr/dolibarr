@@ -447,18 +447,23 @@ a.dropdown-item {
 		max-width: 360px;
 	}
 
+	#topmenu-quickadd-dropdown a.login-dropdown-a,
 	#topmenu-bookmark-dropdown a.login-dropdown-a {
 		color: #000;
 	}
+	#topmenu-quickadd-dropdown .dropdown-menu,
 	#topmenu-bookmark-dropdown .dropdown-menu {
 		width: 230px;
 	}
 
+	div#topmenu-quickadd-dropdown,
 	div#topmenu-bookmark-dropdown {
 		position: unset;
 	}
 
-	div#topmenu-global-search-dropdown, div#topmenu-bookmark-dropdown {
+	div#topmenu-global-search-dropdown,
+	div#topmenu-quickadd-dropdown,
+	div#topmenu-bookmark-dropdown {
 		line-height: unset;
 	}
 

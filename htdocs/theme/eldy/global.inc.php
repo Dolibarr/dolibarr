@@ -249,7 +249,7 @@ input {
 	padding: 4px;
 	padding-left: 5px;
 }
-.tableforfield input {
+.tableforfield input, .refidno input {
 	padding: 2px;
 }
 select {
@@ -304,9 +304,8 @@ section.setupsection {
 div.tabBar textarea:focus {
 	border: 1px solid #aaa !important;
 }
-input:focus:not(.button):not(.buttonwebsite):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-search-takepos),
+input:focus:not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-search-takepos),
  select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single {
-/* div.tabBar input:focus, div.tabBar select:focus { */
 	border-bottom: 1px solid #666 !important;
 	border-bottom-left-radius: 0 !important;
 	border-bottom-right-radius: 0 !important;
@@ -625,7 +624,7 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	text-transform: uppercase;
 	color: #444;
 }
-.valuefield .button, .valuefieldcreate .button, .refidno .button {
+.valuefield .button, .valuefieldcreate .button, .refidno .button:not(.smallpaddingimp) {
 	margin-top: 0 !important;
 	margin-bottom: 0 !important;
 	font-size: 0.85em !important;
@@ -2955,9 +2954,12 @@ if (!empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 .login_table .tdinputlogin input#securitycode {
 	font-size: 1em;
 }
+/* For the static info message */
 .login_main_home {
 	word-break: break-word;
+	width: fit-content;
 }
+/* For the result or error message */
 .login_main_message {
 	text-align: center;
 	max-width: 570px;
@@ -3984,6 +3986,10 @@ div.refidno  {
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
 	line-height: 1.4em;
 }
+div.refaddress div.address {
+	line-height: 1.2em;
+	font-size: 0.95em;
+}
 div.refidno form {
 	display: inline-block;
 }
@@ -4908,7 +4914,7 @@ div.titre {
 	color: var(--colortexttitlenotab2);
 }
 
-table.table-fiche-title .col-title div.titre{
+table.table-fiche-title .col-title div.titre, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
 table.table-fiche-title {
@@ -5240,7 +5246,7 @@ div.visible {
 	display: block;
 }
 
-div.hidden, header.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
+div.hidden, header.hidden, tr.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
 .unvisible {
@@ -6551,14 +6557,23 @@ ul.select2-results__options li {
   direction: rtl;
 }
 
+select.multiselectononeline {
+	padding: 0;
+	vertical-align: middle;
+	min-height: unset;
+	height: 28px !important;
+	opacity: 0;
+	/* width: 1px !important; */
+}
+
 @media only screen and (min-width: 767px)
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
-	.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown.ui-dialog {
 		min-width: 220px !important;
 	}
-	.select2-container.select2-container--open .select2-dropdown--below,
-	.select2-container.select2-container--open .select2-dropdown--above {
+	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--below:not(.onrightofpage),
+	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--above:not(.onrightofpage) {
 		min-width: 220px !important;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
@@ -6808,12 +6823,17 @@ dd.dropdowndd ul li {
 /* ============================================================================== */
 
 .searchpage .tagtr .tagtd {
-	padding-bottom: 3px;
+	padding-top: 2px;
+	padding-bottom: 2px;
 }
 .searchpage .tagtr .tagtd .button {
 	background: unset;
 	border: unset;
 }
+.searchpage .searchform input {
+	font-size: 1.15em;
+}
+
 
 li.ui-li-divider .ui-link {
 	color: #FFF !important;
@@ -7530,6 +7550,33 @@ div.clipboardCPValue.hidewithsize {
 }
 
 
+/* ============================================================================== */
+/* Virtual business card                                                          */
+/* ============================================================================== */
+
+.virtualcard-div {
+	overflow: hidden;
+	vertical-align: top;
+	/* background: #aaa; */
+}
+
+#virtualcard-iframe {
+	border: 40px solid #aaa;
+	vertical-align: top;
+	width: 10%;
+	min-width: 100px;
+	border-radius: 10px;
+	aspect-ratio: 0.6;
+}
+.nopointervent {
+	pointer-events: none;
+}
+.scalepreview {
+	/* transform: scale(0.5); */
+	zoom: 0.20;
+	/* filter: blur(4px); */
+}
+
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
@@ -7639,7 +7686,7 @@ div.clipboardCPValue.hidewithsize {
 	}
 
 	.dropdown dd ul {
-		max-width: 350px;
+		max-width: 370px;
 	}
 }
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */

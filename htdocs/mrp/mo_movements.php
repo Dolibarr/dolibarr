@@ -151,7 +151,7 @@ $permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && isset($
 $upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 $permissiontoproduce = $permissiontoadd;
-$permissiontoupdatecost = $user->rights->bom->write; // User who can define cost must have knowledge of pricing
+$permissiontoupdatecost = $user->hasRight('bom', 'write'); // User who can define cost must have knowledge of pricing
 
 if ($permissiontoupdatecost) {
 	$arrayfields['m.price']['enabled'] = 1;
@@ -257,7 +257,7 @@ $productlot = new ProductLot($db);
 $warehousestatic = new Entrepot($db);
 $userstatic = new User($db);
 
-$help_url = 'EN:Module_Manufacturing_Orders|FR:Module_Ordres_de_Fabrication';
+$help_url = 'EN:Module_Manufacturing_Orders|FR:Module_Ordres_de_Fabrication|DE:Modul_Fertigungsauftrag';
 
 llxHeader('', $langs->trans('Mo'), $help_url);
 

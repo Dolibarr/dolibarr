@@ -316,7 +316,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	    string	$passwd		password
 	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
 	 *	@param		integer	$port		Port of database server
-	 *	@return		SQLite3				Database access handler
+	 *	@return		SQLite3|string				Database access handler
 	 *	@see		close()
 	 */
 	public function connect($host, $login, $passwd, $name, $port = 0)

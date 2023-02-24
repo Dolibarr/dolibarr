@@ -37,7 +37,10 @@
 -- VMYSQL4.3 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN `rank` rankorder integer;
 -- VPGSQL8.2 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN rank rankorder integer;
 
-ALTER TABLE llx_accounting_system CHANGE COLUMN fk_pays fk_country integer;
+ALTER TABLE llx_accounting_system CHANGE COLUMN fk_pays fk_country integer; 
+
+ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN ref varchar(128);
+ALTER TABLE llx_facture_fourn_det MODIFY COLUMN ref varchar(128);
 
 
 -- v18
@@ -71,6 +74,8 @@ ALTER TABLE llx_bank_account ADD COLUMN owner_town varchar(50);
 ALTER TABLE llx_bank_account ADD COLUMN owner_country_id integer DEFAULT NULL;
 
 
+ALTER TABLE llx_supplier_proposal ADD UNIQUE INDEX uk_supplier_proposal_ref (ref, entity);
+
 -- Virtual products (kits) with shipment dispatcher
 CREATE TABLE llx_expeditiondet_dispatch
 (
@@ -89,6 +94,15 @@ ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_
 ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_product_parent FOREIGN KEY (fk_product_parent) REFERENCES llx_product (rowid);
 ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_entrepot FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
+
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_soc (fk_soc);
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_user_author (fk_user_author);
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_projet (fk_projet);
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_account(fk_account);
+
+ALTER TABLE llx_ecm_files ADD COLUMN share_pass varchar(32) after share;
+
 
 -- Remove indec column in virtual products (kits)
 ALTER TABLE llx_product_association DROP COLUMN incdec;

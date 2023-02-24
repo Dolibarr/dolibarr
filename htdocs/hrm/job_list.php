@@ -208,7 +208,7 @@ $now = dol_now();
 
 //$help_url="EN:Module_Job|FR:Module_Job_FR|ES:Módulo_Job";
 $help_url = '';
-$title = $langs->trans("JobsPosition");
+$title = $langs->trans("JobsProfiles");
 $morejs = array();
 $morecss = array();
 
@@ -606,7 +606,7 @@ while ($i < $imaxinloop) {
 
 		if ($i == 0) {
 			print '<tr><td colspan="'.$savnbfield.'">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
 		print $object->getKanbanView('');

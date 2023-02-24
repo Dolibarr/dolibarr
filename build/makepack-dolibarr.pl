@@ -524,12 +524,13 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/ansible`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/codesniffer`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/codetemplates`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/dbmodel`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/examples/ldap`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/examples/zapier`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/initdata`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/initdemo`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/iso-normes`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/ldap`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/licence`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/resources/dbmodel`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/resources/iso-normes`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/resources/licence`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/mail`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/multitail`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/phpcheckstyle`;
@@ -894,7 +895,7 @@ if ($nboftargetok) {
 
 			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp`;
 			$ret=`rm -fr $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build`;
-			
+
 			print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp\n";
 			$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp\"";
 			$ret=`$cmd`;

@@ -141,7 +141,7 @@ class Entrepot extends CommonObject
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>301),
 		//'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000),
 		//'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPDF', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
-		'statut' =>array('type'=>'tinyint(4)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>500),
+		'statut' =>array('type'=>'tinyint(4)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>500, 'css'=>'minwidth50'),
 	);
 
 	/**
@@ -150,14 +150,20 @@ class Entrepot extends CommonObject
 	const STATUS_CLOSED = 0;
 
 	/**
-	 * Warehouse open and operations for customer shipping, supplier dispatch, internal stock transfers/corrections allowed.
+	 * Warehouse open and any operations are allowed (customer shipping, supplier dispatch, internal stock transfers/corrections).
 	 */
 	const STATUS_OPEN_ALL = 1;
 
 	/**
-	 * Warehouse open and operations for stock transfers/corrections allowed (not for customer shipping and supplier dispatch).
+	 * Warehouse open and only operations for stock transfers/corrections allowed (not for customer shipping and supplier dispatch).
 	 */
 	const STATUS_OPEN_INTERNAL = 2;
+
+	/**
+	 * Warehouse open and any operations are allowed, but warehouse is not included into calculation of stock.
+	 */
+	const STATUS_OPENEXT_ALL = 3;	// TODO Implement this
+
 
 
 	/**
@@ -577,7 +583,7 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return number of unique different product into a warehouse
 	 *
-	 * 	@return		Array		Array('nb'=>Nb, 'value'=>Value)
+	 * 	@return		array|int		Array('nb'=>Nb, 'value'=>Value)
 	 */
 	public function nb_different_products()
 	{
@@ -608,7 +614,7 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return stock and value of warehosue
 	 *
-	 * 	@return		Array		Array('nb'=>Nb, 'value'=>Value)
+	 * 	@return		array|int		Array('nb'=>Nb, 'value'=>Value)
 	 */
 	public function nb_products()
 	{
@@ -688,6 +694,31 @@ class Entrepot extends CommonObject
 		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}
 
+	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+		$langs->load('stocks');
+		$datas = [];
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			return ['optimize' => $langs->trans("Warehouse")];
+		}
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Warehouse").'</u>';
+		if (isset($this->statut)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.(empty($this->ref) ? $this->label : $this->ref);
+		if (!empty($this->lieu)) {
+			$datas['locationsummary'] = '<br><b>'.$langs->trans('LocationSummary').':</b> '.$this->lieu;
+		}
+
+		return $datas;
+	}
 
 	/**
 	 *	Return clickable name (possibility with the pictogram)
@@ -714,15 +745,20 @@ class Entrepot extends CommonObject
 		}
 
 		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = " data-params='".json_encode($params)."'";
+			// $label = $langs->trans('Loading');
+		}
 
-		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Warehouse").'</u>';
-		if (isset($this->statut)) {
-			$label .= ' '.$this->getLibStatut(5);
-		}
-		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.(empty($this->ref) ? $this->label : $this->ref);
-		if (!empty($this->lieu)) {
-			$label .= '<br><b>'.$langs->trans('LocationSummary').':</b> '.$this->lieu;
-		}
+		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id;
 
@@ -744,7 +780,7 @@ class Entrepot extends CommonObject
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -753,7 +789,7 @@ class Entrepot extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= (($showfullpath || !empty($conf->global->STOCK_ALWAYS_SHOW_FULL_ARBO)) ? $this->get_full_arbo() : $this->label);

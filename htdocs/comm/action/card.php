@@ -1114,7 +1114,7 @@ $arrayrecurrulefreq = array(
 );
 
 
-$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda|DE:Modul_Terminplanung';
 llxHeader('', $langs->trans("Agenda"), $help_url);
 
 if ($action == 'create') {
@@ -2493,7 +2493,7 @@ if ($id > 0) {
 
 	if ($action != 'edit') {
 		if (empty($conf->global->AGENDA_DISABLE_BUILDDOC)) {
-			print '<div style="clear:both;"></div><div class="fichecenter"><div class="fichehalfleft">';
+			print '<div class="clearboth"></div><div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
 
 			/*

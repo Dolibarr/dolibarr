@@ -463,7 +463,7 @@ if ($result < 0) {
 	print '</div></div><div class="fichehalfright"><div align="center">'; // do not use class="center" here, it will have no effect for the js graph inside.
 	print $show2;
 	print '</div></div></div>';
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 }
 
 

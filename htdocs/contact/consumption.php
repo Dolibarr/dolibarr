@@ -156,21 +156,21 @@ print '</td></tr>';
 
 if ($object->thirdparty->client) {
 	$thirdTypeArray['customer'] = $langs->trans("customer");
-	if (isModEnabled("propal") && $user->rights->propal->lire) {
+	if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 		$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
 	}
-	if (isModEnabled('commande') && $user->rights->commande->lire) {
+	if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
 		$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
 	}
-	if (isModEnabled('facture') && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 		$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
 	}
-	if (isModEnabled('contrat') && $user->rights->contrat->lire) {
+	if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
 		$elementTypeArray['contract'] = $langs->transnoentitiesnoconv('Contracts');
 	}
 }
 
-if (isModEnabled('ficheinter') && $user->rights->ficheinter->lire) {
+if (isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire')) {
 	$elementTypeArray['fichinter'] = $langs->transnoentitiesnoconv('Interventions');
 }
 

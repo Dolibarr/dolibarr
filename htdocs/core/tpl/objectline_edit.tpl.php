@@ -70,7 +70,7 @@ if (!empty($inputalsopricewithtax)) {
 if (in_array($object->element, array('propal', 'supplier_proposal', 'facture', 'facturerec', 'invoice', 'commande', 'order', 'order_supplier', 'invoice_supplier', 'invoice_supplier_rec'))) {
 	$colspan++; // With this, there is a column move button
 }
-if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
+if (isModEnabled("multicurrency") && $object->multicurrency_code != $conf->currency) {
 	$colspan += 2;
 }
 if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
@@ -145,6 +145,11 @@ $coldisplay++;
 	}
 
 	// Do not allow editing during a situation cycle
+	// but in some situations that is required (update legal informations for example)
+	if (!empty($conf->global->INVOICE_SITUATION_CAN_FORCE_UPDATE_DESCRIPTION)) {
+		$situationinvoicelinewithparent = 0;
+	}
+
 	if (!$situationinvoicelinewithparent) {
 		// editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -218,7 +223,7 @@ $coldisplay++;
 	}
 	print '></td>';
 
-	if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
+	if (isModEnabled("multicurrency") && $object->multicurrency_code != $conf->currency) {
 		$coldisplay++;
 		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right" size="5" id="multicurrency_subprice" name="multicurrency_subprice" value="'.(GETPOSTISSET('multicurrency_subprice') ? GETPOST('multicurrency_subprice', 'alpha') : price($line->multicurrency_subprice)).'" /></td>';
 	}
@@ -226,7 +231,7 @@ $coldisplay++;
 	if ($inputalsopricewithtax) {
 		$coldisplay++;
 		print '<td class="right"><input type="text" class="flat right" size="5" id="price_ttc" name="price_ttc" value="'.(GETPOSTISSET('price_ttc') ? GETPOST('price_ttc') : (isset($line->pu_ttc) ? price($line->pu_ttc, 0, '', 0) : '')).'"';
-		if ($line->fk_prev_id != null) {
+		if ($situationinvoicelinewithparent) {
 			print ' readonly';
 		}
 		print '></td>';
@@ -286,7 +291,7 @@ $coldisplay++;
 
 	<?php
 	// Progession for situation invoices
-	if ($this->situation_cycle_ref) {
+	if ($object->situation_cycle_ref) {
 		$coldisplay++;
 		print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.(GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent).'" name="progress">%</td>';
 		$coldisplay++;
@@ -490,7 +495,7 @@ jQuery(document).ready(function()
 		}
 	});
 
-	<?php if (in_array($this->table_element_line, array('propaldet', 'commandedet', 'facturedet'))) { ?>
+	<?php if (in_array($object->table_element_line, array('propaldet', 'commandedet', 'facturedet'))) { ?>
 	$("#date_start, #date_end").focusout(function() {
 		if ( $(this).val() == ''  && !$(this).hasClass('inputmandatory') ) {
 			$(this).addClass('inputmandatory');

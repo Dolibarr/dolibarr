@@ -234,7 +234,7 @@ if ($reshook < 0) {
 $form = new Form($db);
 $companystatic = new Societe($db);
 
-$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda|DE:Modul_Terminplanung';
 llxHeader('', $langs->trans("Agenda"), $help_url);
 
 $now = dol_now();
@@ -923,6 +923,10 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		$sql .= " AND u.statut = 1";
 		if ($usergroup > 0)	{
 			$sql .= " AND ug.fk_usergroup = ".((int) $usergroup);
+		}
+		if ($user->socid > 0) {
+			// External users should see only contacts of their company
+			$sql .= " AND u.fk_soc = ".((int) $user->socid);
 		}
 
 		//print $sql;

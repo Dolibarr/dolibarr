@@ -688,7 +688,7 @@ ALTER TABLE llx_actioncomm MODIFY COLUMN note mediumtext;
 DELETE FROM llx_boxes WHERE box_id IN (select rowid FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php', 'box_members.php', 'box_last_modified_ticket', 'box_members_last_subscriptions', 'box_members_last_modified', 'box_members_subscriptions_by_year'));
 DELETE FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php', 'box_members.php', 'box_last_modified_ticket', 'box_members_last_subscriptions', 'box_members_last_modified', 'box_members_subscriptions_by_year');
 
-ALTER TABLE llx_takepos_floor_tables ADD UNIQUE(entity,label);
+ALTER TABLE llx_takepos_floor_tables ADD UNIQUE INDEX uk_takepos_floor_tables (entity,label);
 
 ALTER TABLE llx_partnership 		ADD COLUMN url_to_check varchar(255);
 ALTER TABLE llx_c_partnership_type 	ADD COLUMN keyword	varchar(128);
