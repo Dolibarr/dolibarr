@@ -1015,7 +1015,9 @@ class Stripe extends CommonObject
 						dol_syslog("Try to create sepa_debit with data = ".json_encode($dataforcard));
 
 						$s = new \Stripe\StripeClient($stripeacc);
+
 						//var_dump($dataforcard);exit;
+
 						$sepa = $s->paymentMethods->create($dataforcard);
 						if (!$sepa) {
 							$this->error = 'Creation of payment method sepa_debit on Stripe has failed';
