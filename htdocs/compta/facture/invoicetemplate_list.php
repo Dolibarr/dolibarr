@@ -56,7 +56,6 @@ $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hier
 
 $socid = GETPOST('socid', 'int');
 
-// Security check
 $id = (GETPOST('facid', 'int') ?GETPOST('facid', 'int') : GETPOST('id', 'int'));
 $lineid = GETPOST('lineid', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -140,7 +139,7 @@ $arrayfields = array(
 	'f.titre'=>array('label'=>"Ref", 'checked'=>1),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
 	'f.total_ht'=>array('label'=>"AmountHT", 'checked'=>1),
-	'f.total_tva'=>array('label'=>"AmountVAT", 'checked'=>1),
+	'f.total_tva'=>array('label'=>"AmountVAT", 'checked'=>-1),
 	'f.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>1),
 	'f.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>0),
 	'f.fk_cond_reglement'=>array('label'=>"PaymentTerm", 'checked'=>0),
@@ -184,6 +183,7 @@ $permissionnote = $user->hasRight('facture', 'creer'); // Used by the include of
 $permissiondellink = $user->hasRight('facture', 'creer'); // Used by the include of actions_dellink.inc.php
 $permissiontoedit = $user->hasRight('facture', 'creer'); // Used by the include of actions_lineupdonw.inc.php
 
+// Security check
 $result = restrictedArea($user, 'facture', $object->id, $objecttype);
 
 
