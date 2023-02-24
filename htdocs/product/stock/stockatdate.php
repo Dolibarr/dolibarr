@@ -361,10 +361,14 @@ print img_picto('', 'product', 'class="pictofiwedwidth"').' ';
 print '</span> ';
 print $form->select_produits($productid, 'productid', '', 0, 0, -1, 2, '', 0, array(), 0, $langs->trans('Product'), 0, 'maxwidth300', 0, '', null, 1);
 
-print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddingrightonly">&nbsp;</span> ';
-print img_picto('', 'stock', 'class="pictofiwedwidth"');
-print '</span> ';
-print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifonenodefault'), 'fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, null, '', null, 1, false, 'e.ref');
+if ($mode != 'future') {
+	// A virtual stock in future has no sense on a per warehouse view, so no filter on warehouse is available for stock at date in future
+	print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddingrightonly">&nbsp;</span> ';
+	print img_picto('', 'stock', 'class="pictofiwedwidth"');
+	print '</span> ';
+	print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifonenodefault'), 'fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, null, '', null, 1, false, 'e.ref');
+}
+
 print '</div>';
 
 $parameters = array();
