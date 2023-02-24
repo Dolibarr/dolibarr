@@ -464,7 +464,7 @@ if ($resql) {
 		print $product->getNomUrl(1, '', 16);
 		//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 		print '</td>';
-		print '<td>'.$product->label.'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($product->label).'">'.dol_escape_htmltag($product->label).'</td>';
 
 		if (isModEnabled("service") && $type == 1) {
 			print '<td class="center">';
@@ -495,7 +495,7 @@ if ($resql) {
 			if ($nb_warehouse > 1) {
 				foreach ($warehouses_list as &$wh) {
 					print '<td class="right">';
-					print price(empty($product->stock_warehouse[$wh['id']]->real) ? 0 : $product->stock_warehouse[$wh['id']]->real, 0, $langs, 1, 0);
+					print price(empty($product->stock_warehouse[$wh['id']]->real) ? 0 : price2num($product->stock_warehouse[$wh['id']]->real, 'MS'), 0, $langs, 1, 0);
 					print '</td>';
 				}
 			}
@@ -514,7 +514,7 @@ if ($resql) {
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 			print '<td class="left">'.$objp->unit_short.'</td>';
 		}
-		print '<td class="center">';
+		print '<td class="center nowraponall">';
 		print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
 		print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a>';
 		print '</td>';
