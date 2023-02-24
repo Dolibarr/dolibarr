@@ -935,7 +935,8 @@ if ($object->id > 0) {
 			print $tmpuser->getNomUrl(1, '', 0, 0, 0, 0, 'login');
 			print '</td>';
 
-			print '<td class="center">'.price($obj->amount).'</td>';
+			// Amount
+			print '<td class="center"><span class="amount">'.price($obj->amount).'</span></td>';
 
 			print '<td class="center">';
 			if ($obj->fk_prelevement_bons > 0) {
