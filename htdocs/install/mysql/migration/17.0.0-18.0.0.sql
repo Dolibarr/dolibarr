@@ -82,4 +82,5 @@ ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_user_valid 
 ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_projet (fk_projet);
 ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_account(fk_account);
 
+ALTER TABLE llx_ecm_files ADD COLUMN share_pass varchar(32) after share;
 
