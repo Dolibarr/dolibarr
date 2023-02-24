@@ -300,6 +300,8 @@ if ($event->type == 'payout.created') {
 } elseif ($event->type == 'payment_intent.succeeded') {		// Called when making payment with PaymentIntent method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
 	// TODO: create fees
 	// TODO: Redirect to paymentok.php
+
+	/* TODO Enable this only if this is a payment of a Dolibarr bon_prelevement only
 	include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 	$object = $event->data->object;
 	$invoice_id = $object->metadata->dol_id;
@@ -442,6 +444,7 @@ if ($event->type == 'payout.created') {
 			}
 		}
 	}
+	*/
 } elseif ($event->type == 'payment_intent.payment_failed') {
 	// TODO: Redirect to paymentko.php
 } elseif ($event->type == 'checkout.session.completed') {		// Called when making payment with new Checkout method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
