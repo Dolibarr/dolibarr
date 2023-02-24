@@ -161,6 +161,11 @@ if (is_file(DOL_DOCUMENT_ROOT.'/includes/flowjs/flow.js')) {
 				$("#filespan").text("No file selected.");
 				$(this).hide();
 			})
+			flow.on("fileError", function(file, message){
+				console.log("Error on file upload",file, message);
+				$("#"+file.uniqueIdentifier+"pgbar").width(20+"%");
+				$("#"+file.uniqueIdentifier+"pgbar").children("span").text("ERROR UPLOAD");
+			});
 		}
 	})
 	';
