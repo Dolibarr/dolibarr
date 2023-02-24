@@ -446,7 +446,7 @@ class RssParser
 							$itemDescription = sanitizeVal((string) $item['description']);
 							$itemPubDate = sanitizeVal((string) $item['pubdate']);
 							$itemId = sanitizeVal((string) $item['guid']);
-							$itemAuthor = sanitizeVal((string) $item['author']);
+							$itemAuthor = sanitizeVal((string) ($item['author'] ?? ''));
 						}
 
 						// Loop on each category
