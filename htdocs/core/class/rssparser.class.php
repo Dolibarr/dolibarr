@@ -36,6 +36,8 @@ class RssParser
 	 */
 	public $error = '';
 
+	public $feed_version;
+
 	private $_format = '';
 	private $_urlRSS;
 	private $_language;
