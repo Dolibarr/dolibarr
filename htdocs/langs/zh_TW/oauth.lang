@@ -31,8 +31,9 @@ OAUTH_GITHUB_SECRET=OAuth GitHub Secret
 OAUTH_URL_FOR_CREDENTIAL=前往 <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external"> 此頁面 <span class="fas fa-external-link-alt paddingleft"> </span> </a> 建立或獲取您的 OAuth ID 與憑證
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe測試
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
-OAUTH_ID=OAuth ID
+OAUTH_ID=OAuth 客戶端 ID
 OAUTH_SECRET=OAuth憑證
+OAUTH_TENANT=OAuth 用戶
 OAuthProviderAdded=已加入 OAuth提供者
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=此提供商和標籤的 OAuth 條目已存在
 URLOfServiceForAuthorization=OAuth 服務驗證網址

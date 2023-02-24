@@ -101,7 +101,7 @@ if (is_resource($handle)) {
 
 				$qualified = 1;
 				foreach ($mailmodule->require_module as $key) {
-					if (!$conf->$key->enabled || (!$user->admin && $mailmodule->require_admin)) {
+					if (empty($conf->$key->enabled) || (!$user->admin && $mailmodule->require_admin)) {
 						$qualified = 0;
 						//print "Les pr�requis d'activation du module mailing ne sont pas respect�s. Il ne sera pas actif";
 						break;
@@ -176,7 +176,7 @@ if ($result) {
 
 			print '<tr class="oddeven">';
 			print '<td class="nowrap">'.$mailstatic->getNomUrl(1).'</td>';
-			print '<td>'.dol_trunc($obj->title, 38).'</td>';
+			print '<td>'.(!empty($obj->title) ? dol_trunc($obj->title, 38) : '').'</td>';
 			print '<td class="center">'.dol_print_date($db->jdate($obj->date_creat), 'day').'</td>';
 			print '<td class="center">'.($obj->nbemail ? $obj->nbemail : "0").'</td>';
 			print '<td class="right">'.$mailstatic->LibStatut($obj->statut, 5).'</td>';

@@ -155,3 +155,5 @@ WebpageMustBeDisabled=Websiden skal have status "%s"
 SetWebsiteOnlineBefore=Når hjemmesiden er offline, er alle sider offline. Skift status på webstedet først.
 Booking=Booking
 Reservation=Reservation
+PagesViewedPreviousMonth=Viste sider (forrige måned)
+PagesViewedTotal=Viste sider (i alt)

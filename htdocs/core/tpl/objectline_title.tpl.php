@@ -71,7 +71,7 @@ if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || !empty($conf->global->FA
 if (in_array($object->element, array('propal', 'commande', 'facture', 'supplier_proposal', 'order_supplier', 'invoice_supplier')) && $object->status == $object::STATUS_DRAFT) {
 	global $mysoc;
 
-	if (empty($disableedit)) {
+	if (empty($disableedit) && GETPOST('mode', 'aZ09') != 'vatforalllines') {
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=vatforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickvatforalllines opacitymedium paddingleft cursorpointer"').'</a>';
 	}
 	//print '<script>$(document).ready(function() { $(".clickvatforalllines").click(function() { jQuery(".classvatforalllines").toggle(); }); });</script>';
@@ -111,7 +111,7 @@ print $langs->trans('ReductionShort');
 if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT) {
 	global $mysoc;
 
-	if (empty($disableedit)) {
+	if (empty($disableedit) && GETPOST('mode', 'aZ09') != 'remiseforalllines') {
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=remiseforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickvatforalllines opacitymedium paddingleft cursorpointer"').'</a>';
 	}
 	//print '<script>$(document).ready(function() { $(".clickremiseforalllines").click(function() { jQuery(".classremiseforalllines").toggle(); }); });</script>';
@@ -141,7 +141,17 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 	}
 
 	if (!empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) {
-		print '<th class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarginRate').'</th>';
+		print '<th class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarginRate');
+		if ($user->hasRight("propal", "creer")) {
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=marginforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickmarginforalllines opacitymedium paddingleft cursorpointer"').'</a>';
+			if (GETPOST('mode', 'aZ09') == 'marginforalllines') {
+				print '<div class="classmarginforalllines inline-block nowraponall">';
+				print '<input type="number" name="marginforalllines" min="0" max="999.9" value="20.0" step="0.1"><label>%</label>';
+				print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforallmargins" value="'.$langs->trans("Update").'">';
+				print '</div>';
+			}
+		}
+		print '</th>';
 	}
 	if (!empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {
 		print '<th class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarkRate').'</th>';

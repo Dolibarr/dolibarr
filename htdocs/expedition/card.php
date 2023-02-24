@@ -410,7 +410,7 @@ if (empty($reshook)) {
 			// Extrafields
 			$array_options[$i] = $extrafields->getOptionalsFromPost($object->table_element_line, $i);
 			// Unset extrafield
-			if (is_array($extrafields->attributes[$object->table_element_line]['label'])) {
+			if (isset($extrafields->attributes[$object->table_element_line]['label']) && is_array($extrafields->attributes[$object->table_element_line]['label'])) {
 				// Get extra fields
 				foreach ($extrafields->attributes[$object->table_element_line]['label'] as $key => $value) {
 					unset($_POST["options_".$key]);
@@ -940,7 +940,7 @@ if ($action == 'create2') {
 }
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 
-llxHeader('', $title, 'Expedition', $help_url);
+llxHeader('', $title, $help_url);
 
 if (empty($action)) {
 	$action = 'view';
@@ -1382,7 +1382,7 @@ if ($action == 'create') {
 										print '<!-- Show warehouse selection -->';
 
 										$stockMin = false;
-										if (empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) {
+										if (!getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
 											$stockMin = 0;
 										}
 										print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', '', 1, $stockMin, 'stock DESC, e.ref');
@@ -2147,7 +2147,7 @@ if ($action == 'create') {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 				$proj = new Project($db);

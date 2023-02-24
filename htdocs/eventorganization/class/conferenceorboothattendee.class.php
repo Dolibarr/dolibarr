@@ -108,7 +108,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'email' => array('type'=>'mail', 'label'=>'EmailAttendee', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'autofocusoncreate'=>1, 'searchall'=>1),
 		'firstname' => array('type'=>'varchar(100)', 'label'=>'Firstname', 'enabled'=>'1', 'position'=>31, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'searchall'=>1),
 		'lastname' => array('type'=>'varchar(100)', 'label'=>'Lastname', 'enabled'=>'1', 'position'=>32, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'searchall'=>1),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status = 1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'position'=>40, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"OrganizationEventLinkToThirdParty", 'picto'=>'company', 'css'=>'tdoverflowmax150 maxwidth500'),
+		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status = 1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'position'=>40, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"OrganizationEventLinkToThirdParty", 'picto'=>'company', 'css'=>'tdoverflowmax150 maxwidth500'),
 		'email_company' => array('type'=>'mail', 'label'=>'EmailCompany', 'enabled'=>'1', 'position'=>41, 'notnull'=>0, 'visible'=>-2, 'searchall'=>1),
 		'date_subscription' => array('type'=>'datetime', 'label'=>'DateOfRegistration', 'enabled'=>'1', 'position'=>56, 'notnull'=>1, 'visible'=>1, 'showoncombobox'=>'1',),
 		'fk_invoice' => array('type'=>'integer:Facture:compta/facture/class/facture.class.php', 'label'=>'Invoice', 'enabled'=>'$conf->facture->enabled', 'position'=>57, 'notnull'=>0, 'visible'=>-1, 'index'=>0, 'picto'=>'bill', 'css'=>'tdoverflowmax150 maxwidth500'),
@@ -423,7 +423,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm as a on a.id = t.fk_actioncomm";
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}

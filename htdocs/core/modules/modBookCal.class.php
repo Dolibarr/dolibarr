@@ -40,11 +40,12 @@ class modBookCal extends DolibarrModules
 	public function __construct($db)
 	{
 		global $langs, $conf;
+
 		$this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 500000; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve an id number for your module
+		$this->numero = 2430;
 
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'bookcal';
@@ -76,7 +77,7 @@ class modBookCal extends DolibarrModules
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		// To use a supported fa-xxx css style of font awesome, use this->picto='xxx'
-		$this->picto = 'fa-generic';
+		$this->picto = 'fa-calendar-check';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
@@ -463,8 +464,7 @@ class modBookCal extends DolibarrModules
 	{
 		global $conf, $langs;
 
-		//$result = $this->_load_tables('/install/mysql/', 'bookcal');
-		$result = $this->_load_tables('/bookcal/sql/');
+		$result = $this->_load_tables('/install/mysql/', 'bookcal');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}

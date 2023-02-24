@@ -61,7 +61,7 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = (!empty($conf->bom->multidir_output[$object->entity]) ? $conf->bom->multidir_output[$object->entity] : $conf->bom->dir_output)."/".$object->id;
 }
 
-$permissionnote = $user->rights->bom->write; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('bom', 'write'); // Used by the include of actions_setnotes.inc.php
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();

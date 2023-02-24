@@ -481,7 +481,6 @@ class EvalMath
  */
 class EvalMathStack
 {
-
 	public $stack = array();
 
 	public $count = 0;
@@ -489,8 +488,8 @@ class EvalMathStack
 	/**
 	 * push
 	 *
-	 * @param string $val		Val
-	 * @return void
+	 * @param 	string 	$val		Val
+	 * @return 	void
 	 */
 	public function push($val)
 	{
@@ -515,14 +514,15 @@ class EvalMathStack
 	/**
 	 * last
 	 *
-	 * @param int $n	N
-	 * @return mixed 	Stack
+	 * @param 	int 	$n		N
+	 * @return 	mixed 			Stack
 	 */
 	public function last($n = 1)
 	{
 		if (isset($this->stack[$this->count - $n])) {
 			return $this->stack[$this->count - $n];
 		}
-		return;
+
+		return '';
 	}
 }

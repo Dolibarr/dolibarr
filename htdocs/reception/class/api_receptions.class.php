@@ -59,8 +59,7 @@ class Receptions extends DolibarrApi
 	 * Return an array with reception informations
 	 *
 	 * @param       int         $id         ID of reception
-	 * @return 	array|mixed data without useless information
-	 *
+	 * @return  	Object              	Object with cleaned properties
 	 * @throws 	RestException
 	 */
 	public function get($id)
@@ -386,13 +385,11 @@ class Receptions extends DolibarrApi
 	/**
 	 * Delete a line to given reception
 	 *
-	 *
 	 * @param int   $id             Id of reception to update
 	 * @param int   $lineid         Id of line to delete
+	 * @return array
 	 *
 	 * @url	DELETE {id}/lines/{lineid}
-	 *
-	 * @return int
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -412,23 +409,27 @@ class Receptions extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// TODO Check the lineid $lineid is a line of ojbect
+		// TODO Check the lineid $lineid is a line of object
 
 		$updateRes = $this->reception->deleteline(DolibarrApiAccess::$user, $lineid);
-		if ($updateRes > 0) {
-			return $this->get($id);
-		} else {
+		if ($updateRes < 0) {
 			throw new RestException(405, $this->reception->error);
 		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Line deleted'
+			)
+		);
 	}
 
 	/**
 	 * Update reception general fields (won't touch lines of reception)
 	 *
-	 * @param int   $id             Id of reception to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param int   $id             		Id of reception to update
+	 * @param array $request_data   		Datas
+	 * @return  	Object              	Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -462,7 +463,6 @@ class Receptions extends DolibarrApi
 	 * Delete reception
 	 *
 	 * @param   int     $id         Reception ID
-	 *
 	 * @return  array
 	 */
 	public function delete($id)
@@ -497,12 +497,12 @@ class Receptions extends DolibarrApi
 	 * This may record stock movements if module stock is enabled and option to
 	 * decrease stock on reception is on.
 	 *
-	 * @param   int $id             Reception ID
-	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
+	 * @param   int 	$id             Reception ID
+	 * @param   int 	$notrigger      1=Does not execute triggers, 0= execute triggers
 	 *
 	 * @url POST    {id}/validate
 	 *
-	 * @return  array
+	 * @return  Object
 	 * \todo An error 403 is returned if the request has an empty body.
 	 * Error message: "Forbidden: Content type `text/plain` is not supported."
 	 * Workaround: send this in the body
@@ -625,12 +625,12 @@ class Receptions extends DolibarrApi
 	/**
 	* Close a reception (Classify it as "Delivered")
 	*
-	* @param   int     $id             Reception ID
-	* @param   int     $notrigger      Disabled triggers
+	* @param   	int     $id             Reception ID
+	* @param   	int     $notrigger      Disabled triggers
 	*
 	* @url POST    {id}/close
 	*
-	* @return  int
+	* @return  Object
 	*/
 	public function close($id, $notrigger = 0)
 	{

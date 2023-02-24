@@ -162,10 +162,10 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans('Numero').'</td><td>'.dol_escape_htmltag($object->num_payment).'</td></tr>';
 
 // Montant
-print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note
-print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3">'.dol_nl2br($object->note).'</td></tr>';
+print '<tr><td>'.$langs->trans('Note').'</td><td>'.dol_nl2br($object->note_private).'</td></tr>';
 
 // Bank account
 if (isModEnabled("banque")) {
@@ -175,7 +175,7 @@ if (isModEnabled("banque")) {
 
 		print '<tr>';
 		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-		print '<td colspan="3">';
+		print '<td>';
 		print $bankline->getNomUrl(1, 0, 'showall');
 		print '</td>';
 		print '</tr>';

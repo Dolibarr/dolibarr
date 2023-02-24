@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
- * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,6 +97,12 @@ class Reception extends CommonObject
 
 	public $date_delivery; // Date delivery planed
 
+	/**
+	 * @var integer|string Effective delivery date
+	 * @deprecated
+	 * @see $date_reception
+	 */
+	public $date;
 
 	/**
 	 * @var integer|string Effective delivery date
@@ -140,27 +146,6 @@ class Reception extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-
-		// List of long language codes for status
-		$this->statuts = array();
-		$this->statuts[-1] = 'StatusReceptionCanceled';
-		$this->statuts[0]  = 'StatusReceptionDraft';
-		// product to receive if stock increase is on close or already received if stock increase is on validation
-		$this->statuts[1]  = 'StatusReceptionValidated';
-		if (getDolGlobalInt("STOCK_CALCULATE_ON_RECEPTION")) {
-			$this->statuts[1]  = 'StatusReceptionValidatedReceived';
-		}
-		if (getDolGlobalInt("STOCK_CALCULATE_ON_RECEPTION_CLOSE")) {
-			$this->statuts[1]  = 'StatusReceptionValidatedToReceive';
-		}
-		$this->statuts[2]  = 'StatusReceptionProcessed';
-
-		// List of short language codes for status
-		$this->statuts_short = array();
-		$this->statuts_short[-1] = 'StatusReceptionCanceledShort';
-		$this->statuts_short[0]  = 'StatusReceptionDraftShort';
-		$this->statuts_short[1]  = 'StatusReceptionValidatedShort';
-		$this->statuts_short[2]  = 'StatusReceptionProcessedShort';
 	}
 
 	/**
@@ -417,8 +402,7 @@ class Reception extends CommonObject
 				$this->statut               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
-				$this->date                 = $this->db->jdate($obj->date_reception); // TODO deprecated
-				$this->date_reception = $this->db->jdate($obj->date_reception); // TODO deprecated
+				$this->date = $this->db->jdate($obj->date_reception); // TODO deprecated
 				$this->date_reception = $this->db->jdate($obj->date_reception); // Date real
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planed
 				$this->model_pdf            = $obj->model_pdf;
@@ -1317,8 +1301,27 @@ class Reception extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
-		$labelStatusShort = $langs->transnoentitiesnoconv($this->statuts_short[$status]);
+		// List of long language codes for status
+		$this->labelStatus[-1] = 'StatusReceptionCanceled';
+		$this->labelStatus[0]  = 'StatusReceptionDraft';
+		// product to receive if stock increase is on close or already received if stock increase is on validation
+		$this->labelStatus[1]  = 'StatusReceptionValidated';
+		if (getDolGlobalInt("STOCK_CALCULATE_ON_RECEPTION")) {
+			$this->labelStatus[1]  = 'StatusReceptionValidatedReceived';
+		}
+		if (getDolGlobalInt("STOCK_CALCULATE_ON_RECEPTION_CLOSE")) {
+			$this->labelStatus[1]  = 'StatusReceptionValidatedToReceive';
+		}
+		$this->labelStatus[2]  = 'StatusReceptionProcessed';
+
+		// List of short language codes for status
+		$this->labelStatusShort[-1] = 'StatusReceptionCanceledShort';
+		$this->labelStatusShort[0]  = 'StatusReceptionDraftShort';
+		$this->labelStatusShort[1]  = 'StatusReceptionValidatedShort';
+		$this->labelStatusShort[2]  = 'StatusReceptionProcessedShort';
+
+		$labelStatus = $langs->transnoentitiesnoconv($this->labelStatus[$status]);
+		$labelStatusShort = $langs->transnoentitiesnoconv($this->labelStatusShort[$status]);
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_VALIDATED) {

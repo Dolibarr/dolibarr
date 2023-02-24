@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=Виберіть тип перенесення ряд�
 ACCOUNTING_EXPORT_PREFIX_SPEC=Задати префікс для назви файлу
 ThisService=Ця послуга
 ThisProduct=Цей товар
-DefaultForService=За замовчуванням для обслуговування
-DefaultForProduct=За замовчуванням для продукту
+DefaultForService=Default for services
+DefaultForProduct=Default for products
 ProductForThisThirdparty=Продукт для цієї третьої сторони
 ServiceForThisThirdparty=Сервіс для цієї третьої сторони
 CantSuggest=Не можу запропонувати
@@ -101,7 +101,8 @@ ShowAccountingAccount=Показати бухгалтерський рахуно
 ShowAccountingJournal=Показати бухгалтерський журнал
 ShowAccountingAccountInLedger=Показати бухгалтерський рахунок у книзі
 ShowAccountingAccountInJournals=Показати бухгалтерський облік у журналах
-AccountAccountingSuggest=Запропоновано бухгалтерський рахунок
+DataUsedToSuggestAccount=Data used to suggest account
+AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=Облікові записи за замовчуванням
 MenuBankAccounts=Банківські рахунки
 MenuVatAccounts=ПДВ рахунки
@@ -126,6 +127,7 @@ WriteBookKeeping=Записати операції в бухгалтерсько
 Bookkeeping=Головна книга
 BookkeepingSubAccount=Підкнига
 AccountBalance=Баланс
+AccountBalanceSubAccount=Sub-accounts balance
 ObjectsRef=Посилання на вихідний об'єкт
 CAHTF=Загальна сума закупівлі постачальника до оподаткування
 TotalExpenseReport=Звіт про загальні витрати
@@ -189,6 +191,7 @@ ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be us
 UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
 UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
@@ -218,6 +221,7 @@ JournalLabel=Етикетка журналу
 NumPiece=Номер штуки
 TransactionNumShort=Кількість транзакції
 AccountingCategory=Custom group of accounts
+AccountingCategories=Custom groups of accounts
 GroupByAccountAccounting=Групувати за рахунками Головної книги
 GroupBySubAccountAccounting=Групувати за рахунками підкниги
 AccountingAccountGroupsDesc=Тут можна визначити кілька груп облікових рахунків. Вони будуть використовуватися для персоніфікованих бухгалтерських звітів.
@@ -265,6 +269,7 @@ ShowSubtotalByGroup=Показати проміжний підсумок за р
 
 Pcgtype=Група рахунку
 PcgtypeDesc=Групи облікових записів використовуються як попередньо визначені критерії «фільтра» та «групування» для деяких бухгалтерських звітів. Наприклад, «ДОХОД» або «ВИТРАТ» використовуються як групи для обліку рахунків продуктів для побудови звіту про витрати/доходи.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 
 Reconcilable=Примирений
 
@@ -294,6 +299,7 @@ DescValidateMovements=Будь-яка зміна чи видалення зап�
 
 ValidateHistory=Прив’язувати автоматично
 AutomaticBindingDone=Автоматичне прив’язування виконано (%s) – Автоматичне прив’язування неможливе для деяких записів (%s)
+DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
@@ -337,11 +343,13 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Вимкнути прив'язку та пе
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Вимкнути прив'язку та переказ в обліку закупівель (рахунки постачальника не будуть враховуватися в обліку)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Вимкнути прив'язку та перенесення в бухгалтерії у звітах про витрати (звіти про витрати не враховуватимуться в бухгалтерії)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
 NotifiedExportDate=Позначте експортовані рядки як експортовані <span class="warning"> (щоб змінити рядок, вам потрібно буде видалити всю транзакцію та повторно перенести її в облік) </span>
 NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportFull=Export documents ?
 DateValidationAndLock=Перевірка дати та блокування
 ConfirmExportFile=Підтвердження створення файлу експорту бухгалтерського обліку?
 ExportDraftJournal=Експортувати чернетку журналу
@@ -398,7 +406,7 @@ SaleLocal=Місцевий розпродаж
 SaleExport=Продаж на експорт
 SaleEEC=Продаж в ЄЕС
 SaleEECWithVAT=Продаж в ЄЕС з ПДВ не є нульовим, тому ми припускаємо, що це НЕ внутрішньокомунальний продаж, а запропонований обліковий запис є стандартним рахунком продукту.
-SaleEECWithoutVATNumber=Продаж в ЄЕС без ПДВ, але ідентифікаційний номер платника ПДВ третьої сторони не визначений. Ми повертаємось до облікового запису продукту для стандартних продажів. За потреби ви можете виправити ідентифікаційний номер платника ПДВ третьої сторони або обліковий запис продукту.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Заборонено: трансакцію підтверджено та/або експортовано.
 ForbiddenTransactionAlreadyValidated=Заборонено: трансакцію підтверджено.
 ## Dictionary
@@ -442,6 +450,7 @@ AccountancyErrorMismatchLetterCode=Невідповідність коду уз�
 AccountancyErrorMismatchBalanceAmount=Залишок (%s) не дорівнює 0
 AccountancyErrorLetteringBookkeeping=Сталися помилки щодо транзакцій: %s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
+ErrorArchiveAddFile=Can't put "%s" file in archive
 
 ## Import
 ImportAccountingEntries=Бухгалтерські проводки
@@ -468,5 +477,7 @@ FECFormatMulticurrencyCode=Мультивалютний код (Idevise)
 DateExport=Експорт дати
 WarningReportNotReliable=Попередження, цей звіт не базується на Книзі, тому не містить транзакції, змінені вручну в Книзі. Якщо ваша журнальність оновлена, бухгалтерський облік буде точнішим.
 ExpenseReportJournal=Журнал звітів про витрати
+DocsAlreadyExportedAreExcluded=Docs already exported are excluded
+ClickToHideAlreadyExportedLines=Click to hide already exported lines
 
 NAccounts=%s облікові записи

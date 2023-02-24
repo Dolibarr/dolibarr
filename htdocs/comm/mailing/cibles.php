@@ -212,6 +212,12 @@ if ($object->fetch($id) >= 0) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
+	$morehtmlref = '<div class="refidno">';
+	// Ref customer
+	$morehtmlref .= $form->editfieldkey("", 'title', $object->title, $object, 0, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("", 'title', $object->title, $object, 0, 'string', '', null, null, '', 1);
+	$morehtmlref .= '</div>';
+
 	$morehtmlright = '';
 	$nbtry = $nbok = 0;
 	if ($object->statut == 2 || $object->statut == 3) {
@@ -226,16 +232,16 @@ if ($object->fetch($id) >= 0) {
 		$morehtmlright .= ') &nbsp; ';
 	}
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border centpercent tableforfield">';
 
-	print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->title.'</td></tr>';
+	//print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->title.'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">';
+	print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td colspan="3">';
 	$emailarray = CMailFile::getArrayAddress($object->email_from);
 	foreach ($emailarray as $email => $name) {
 		if ($name && $name != $email) {
@@ -285,7 +291,7 @@ if ($object->fetch($id) >= 0) {
 			}
 		}
 		if (empty($nbemail)) {
-			$nbemail .= ' '.img_warning('').' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
+			$nbemail .= ' '.img_warning('');//.' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
 		}
 		if ($text) {
 			print $form->textwithpicto($nbemail, $text, 1, 'warning');
@@ -560,6 +566,7 @@ if ($object->fetch($id) >= 0) {
 		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<input type="hidden" name="limit" value="'.$limit.'">';
+		print '<input type="hidden" name="page_y" value="">';
 
 		print '<div class="div-table-responsive">';
 		print '<table class="noborder centpercent">';
@@ -675,7 +682,7 @@ if ($object->fetch($id) >= 0) {
 
 				// Date last update
 				print '<td class="center nowraponall">';
-				print dol_print_date($obj->tms, 'dayhour');
+				print dol_print_date(dol_stringtotime($obj->tms), 'dayhour');
 				print '</td>';
 
 				// Status of recipient sending email (Warning != status of emailing)

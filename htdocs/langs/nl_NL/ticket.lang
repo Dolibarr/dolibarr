@@ -26,6 +26,7 @@ Permission56002=Aanpassen tickets
 Permission56003=Verwijder tickets
 Permission56004=Beheer tickets
 Permission56005=Bekijk tickets van alle derde partijen (niet van toepassing voor externe gebruikers, altijd beperkt tot de derde partij waarvan ze afhankelijk zijn)
+Permission56006=Export tickets
 
 Tickets=Tickets
 TicketDictType=Ticket - Types
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Externe bijdrager
 
 OriginEmail=E-mail van de melder
 Notify_TICKET_SENTBYMAIL=Verzend ticketbericht per e-mail
+
+ExportDataset_ticket_1=Tickets
 
 # Status
 Read=Gelezen

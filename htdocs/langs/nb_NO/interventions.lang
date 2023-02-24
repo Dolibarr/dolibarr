@@ -69,4 +69,4 @@ GenerateInter=Generer intervensjon
 FichinterNoContractLinked=Intervensjon %s er opprettet uten en tilknyttet kontrakt.
 ErrorFicheinterCompanyDoesNotExist=Selskapet eksisterer ikke. Intervensjon er ikke opprettet.
 NextDateToIntervention=Dato for neste generering av intervensjoner
-NoIntervention=No intervention
+NoIntervention=Ingen intervensjon

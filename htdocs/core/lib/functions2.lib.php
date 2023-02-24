@@ -178,9 +178,9 @@ function dol_print_file($langs, $filename, $searchalt = 0)
 				$content = file_get_contents($formfilealt);
 				$isutf8 = utf8_check($content);
 				if (!$isutf8 && $conf->file->character_set_client == 'UTF-8') {
-					print utf8_encode($content);
+					print mb_convert_encoding($content, 'UTF-8', 'ISO-8859-1');
 				} elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') {
-					print utf8_decode($content);
+					print mb_convert_encoding($content, 'ISO-8859-1', 'UTF-8');
 				} else {
 					print $content;
 				}
@@ -1784,7 +1784,7 @@ function weight_convert($weight, &$from_unit, $to_unit)
  *	@param	DoliDB	$db         Handler database
  *	@param	Conf	$conf		Object conf
  *	@param	User	$user      	Object user
- *	@param	array	$tab        Array (key=>value) with all parameters to save
+ *	@param	array	$tab        Array (key=>value) with all parameters to save/update
  *	@return int         		<0 if KO, >0 if OK
  *
  *	@see		dolibarr_get_const(), dolibarr_set_const(), dolibarr_del_const()

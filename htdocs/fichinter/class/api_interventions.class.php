@@ -64,11 +64,10 @@ class Interventions extends DolibarrApi
 
 	/**
 	 * Get properties of a Expense Report object
-	 *
 	 * Return an array with Expense Report information
 	 *
 	 * @param       int         $id         ID of Expense Report
-	 * @return 	    array|mixed             Data without useless information
+	 * @return  	Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */
@@ -93,7 +92,6 @@ class Interventions extends DolibarrApi
 
 	/**
 	 * List of interventions
-	 *
 	 * Return a list of interventions
 	 *
 	 * @param string	       $sortfield	        Sort field
@@ -336,12 +334,12 @@ class Interventions extends DolibarrApi
 	 *   "notrigger": 0
 	 * }
 	 *
-	 * @param   int $id             Intervention ID
-	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
+	 * @param   int 	$id             Intervention ID
+	 * @param   int 	$notrigger      1=Does not execute triggers, 0= execute triggers
 	 *
 	 * @url POST    {id}/validate
 	 *
-	 * @return  array
+	 * @return  Object
 	 */
 	public function validate($id, $notrigger = 0)
 	{
@@ -373,11 +371,11 @@ class Interventions extends DolibarrApi
 	/**
 	 * Close an intervention
 	 *
-	 * @param   int 	$id             Intervention ID
+	 * @param   	int 	$id             Intervention ID
 	 *
 	 * @url POST    {id}/close
 	 *
-	 * @return  array
+	 * @return  Object
 	 */
 	public function closeFichinter($id)
 	{

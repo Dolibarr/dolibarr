@@ -22,7 +22,7 @@
 /**
  *      \file       htdocs/compta/localtax/index.php
  *      \ingroup    tax
- *      \brief      Index page of IRPF reports
+ *      \brief      Index page of localtax reports
  */
 
 require '../../main.inc.php';
@@ -259,6 +259,9 @@ llxHeader('', $name);
 //$textnextyear=" <a href=\"index.php?localTaxType=".$localTaxType."&year=" . ($year_current+1) . "\">".img_next()."</a>";
 //print load_fiche_titre($langs->transcountry($LT,$mysoc->country_code),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear", 'bill');
 
+$periodlink = '';
+$exportlink = '';
+
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 //report_header($name,'',$textprevyear.$langs->trans("Year")." ".$year_start.$textnextyear,'',$description,$builddate,$exportlink,array(),$calcmode);
 
@@ -271,7 +274,7 @@ print load_fiche_titre($langs->transcountry($LTSummary, $mysoc->country_code), '
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td width="30%">'.$langs->trans("Year")." ".$y."</td>";
+print '<td>'.$langs->trans("Year")."</td>";
 if ($CalcLT == 0) {
 	print '<td class="right">'.$langs->transcountry($LTCustomer, $mysoc->country_code).'</td>';
 	print '<td class="right">'.$langs->transcountry($LTSupplier, $mysoc->country_code).'</td>';

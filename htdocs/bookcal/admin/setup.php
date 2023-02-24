@@ -33,7 +33,7 @@ require_once '../lib/bookcal.lib.php';
 //require_once "../class/myclass.class.php";
 
 // Translations
-$langs->loadLangs(array("admin", "bookcal@bookcal"));
+$langs->loadLangs(array("admin", "agenda"));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('bookcalsetup', 'globalsetup'));
@@ -269,7 +269,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 // Configuration header
 $head = bookcalAdminPrepareHead();
-print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "bookcal@bookcal");
+print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "fa-calendar-check");
 
 // Setup page goes here
 echo '<span class="opacitymedium">'.$langs->trans("BookCalSetupPage").'</span><br><br>';

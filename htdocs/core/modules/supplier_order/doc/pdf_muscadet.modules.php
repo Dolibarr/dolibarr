@@ -567,7 +567,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 					// Total HT line
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN)) {
-						$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs);
+						$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
 						$pdf->SetXY($this->postotalht, $curY);
 						$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
 					}
@@ -722,9 +722,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -1130,7 +1128,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 *  @param  CommandeFournisseur		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{

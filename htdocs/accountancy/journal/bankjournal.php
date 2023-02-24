@@ -349,7 +349,11 @@ if ($result) {
 					$societestatic->email = $tabcompany[$obj->rowid]['email'];
 					$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
 					if ($compta_soc) {
-						$tabtp[$obj->rowid][$compta_soc] += $amounttouse;
+						if (empty($tabtp[$obj->rowid][$compta_soc])) {
+							$tabtp[$obj->rowid][$compta_soc] = $amounttouse;
+						} else {
+							$tabtp[$obj->rowid][$compta_soc] += $amounttouse;
+						}
 					}
 				} elseif ($links[$key]['type'] == 'user') {
 					$userstatic->id = $links[$key]['url_id'];
@@ -430,7 +434,7 @@ if ($result) {
 					$tabpay[$obj->rowid]["paymentsalid"] = $paymentsalstatic->id;
 
 					// This part of code is no more required. it is here to solve case where a link were missing (ith v14.0.0) and keep writing in accountancy complete.
-					// Note: A better way to fix this is to delete payement of salary and recreate it, or to fix the bookkeeping table manually after.
+					// Note: A better way to fix this is to delete payment of salary and recreate it, or to fix the bookkeeping table manually after.
 					if (!empty($conf->global->ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USEr_ON_SALARY_BANK_PAYMENT)) {
 						$tmpsalary = new Salary($db);
 						$tmpsalary->fetch($paymentsalstatic->id);
@@ -510,7 +514,11 @@ if ($result) {
 			}
 		}
 
-		$tabbq[$obj->rowid][$compta_bank] += $amounttouse;
+		if (empty($tabbq[$obj->rowid][$compta_bank])) {
+			$tabbq[$obj->rowid][$compta_bank] = $amounttouse;
+		} else {
+			$tabbq[$obj->rowid][$compta_bank] += $amounttouse;
+		}
 
 		// If no links were found to know the amount on thirdparty, we try to guess it.
 		// This may happens on bank entries without the links lines to 'company'.
@@ -793,7 +801,7 @@ if (!$error && $action == 'writebookkeeping') {
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 							}
 						} else {
-							if ($lettering && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
+							if ($lettering && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && getDolGlobalInt('ACCOUNTING_ENABLE_AUTOLETTERING')) {
 								require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
 								$lettering_static = new Lettering($db);
 								$nb_lettering = $lettering_static->bookkeepingLetteringAll(array($bookkeeping->id));

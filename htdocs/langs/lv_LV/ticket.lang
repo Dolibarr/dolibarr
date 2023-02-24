@@ -26,6 +26,7 @@ Permission56002=Labot pieteikumus
 Permission56003=Dzēst pieteikumus
 Permission56004=Pieteikumu pārvaldīšana
 Permission56005=Skatīt visu trešo pušu biļetes (nav efektīvas ārējiem lietotājiem, vienmēr aprobežojas ar trešajām personām, no kurām tie ir atkarīgi)
+Permission56006=Eksporta biļetes
 
 Tickets=Pieteikumi
 TicketDictType=Pieteikumu veids
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Ārējais ieguldītājs
 
 OriginEmail=Reportiera e-pasts
 Notify_TICKET_SENTBYMAIL=Sūtīt biļeti pa e-pastu
+
+ExportDataset_ticket_1=Pieteikumi
 
 # Status
 Read=Lasīt

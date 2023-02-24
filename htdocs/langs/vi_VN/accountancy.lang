@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=Chọn kiểu trả về
 ACCOUNTING_EXPORT_PREFIX_SPEC=Chỉ định tiền tố cho tên tệp
 ThisService=Dịch vụ này
 ThisProduct=Sản phẩm này
-DefaultForService=Mặc định cho dịch vụ
-DefaultForProduct=Mặc định cho sản phẩm
+DefaultForService=Default for services
+DefaultForProduct=Default for products
 ProductForThisThirdparty=Product for this thirdparty
 ServiceForThisThirdparty=Service for this thirdparty
 CantSuggest=Không thể gợi ý
@@ -101,7 +101,8 @@ ShowAccountingAccount=Hiển thị tài khoản kế toán
 ShowAccountingJournal=Hiển thị nhật ký kế toán
 ShowAccountingAccountInLedger=Show accounting account in ledger
 ShowAccountingAccountInJournals=Show accounting account in journals
-AccountAccountingSuggest=Đề xuất tài khoản kế toán
+DataUsedToSuggestAccount=Data used to suggest account
+AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=Tài khoản mặc định
 MenuBankAccounts=Tài khoản ngân hàng
 MenuVatAccounts=Tài khoản VAT
@@ -126,6 +127,7 @@ WriteBookKeeping=Record transactions in accounting
 Bookkeeping=Sổ cái
 BookkeepingSubAccount=Subledger
 AccountBalance=Số dư tài khoản
+AccountBalanceSubAccount=Sub-accounts balance
 ObjectsRef=Tham chiếu đối tượng nguồn
 CAHTF=Tổng số mua từ nhà cung cấp trước thuế
 TotalExpenseReport=Tổng báo cáo chi phí
@@ -189,6 +191,7 @@ ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be us
 UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
 UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
@@ -218,6 +221,7 @@ JournalLabel=Mã nhật ký
 NumPiece=Số lượng cái
 TransactionNumShort=Số Giao dịch
 AccountingCategory=Custom group of accounts
+AccountingCategories=Custom groups of accounts
 GroupByAccountAccounting=Group by general ledger account
 GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=Bạn có thể định nghĩa ở đây một số nhóm tài khoản kế toán. Chúng sẽ được sử dụng cho các báo cáo kế toán đã cá nhân hóa.
@@ -265,6 +269,7 @@ ShowSubtotalByGroup=Show subtotal by level
 
 Pcgtype=Nhóm tài khoản
 PcgtypeDesc=Nhóm tài khoản được sử dụng làm tiêu chí 'bộ lọc' và 'nhóm' được xác định trước cho một số báo cáo kế toán. Ví dụ: 'THU NHẬP' hoặc 'CHI PHÍ' được sử dụng làm nhóm cho tài khoản kế toán của các sản phẩm để xây dựng báo cáo chi phí / thu nhập.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 
 Reconcilable=Đối soát lại
 
@@ -294,6 +299,7 @@ DescValidateMovements=Bất kỳ sửa đổi hoặc xóa viết, chữ và xóa
 
 ValidateHistory=Tự động ràng buộc
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
+DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
@@ -337,11 +343,13 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Disable binding & transfer in accountancy on
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountancy on purchases (vendor invoices will not be taken into account in accounting)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
 NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
 NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportFull=Export documents ?
 DateValidationAndLock=Date validation and lock
 ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Xuất dữ liệu bản nháp nhật ký
@@ -398,7 +406,7 @@ SaleLocal=Bán địa phương
 SaleExport=Bán hàng xuất khẩu
 SaleEEC=Bán trong EEC
 SaleEECWithVAT=Bán trong EEC với VAT không phải là null, vì vậy chúng tôi cho rằng đây KHÔNG phải là bán hàng nội bộ và tài khoản được đề xuất là tài khoản sản phẩm tiêu chuẩn.
-SaleEECWithoutVATNumber=Bán trong EEC không có VAT nhưng ID VAT của bên thứ ba không được xác định. Chúng tôi dự phòng tài khoản sản phẩm để bán hàng tiêu chuẩn. Bạn có thể sửa ID VAT của bên thứ ba hoặc tài khoản sản phẩm nếu cần.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
 ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
@@ -442,6 +450,7 @@ AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
+ErrorArchiveAddFile=Can't put "%s" file in archive
 
 ## Import
 ImportAccountingEntries=Ghi sổ kế toán
@@ -468,5 +477,7 @@ FECFormatMulticurrencyCode=Multicurrency code (Idevise)
 DateExport=Ngày xuất
 WarningReportNotReliable=Cảnh báo, báo cáo này không dựa trên Sổ Cái, do đó không chứa giao dịch được sửa đổi thủ công trong Sổ Cái. Nếu nhật ký của bạn được cập nhật, chế độ xem sổ sách chính xác hơn.
 ExpenseReportJournal=Nhật ký báo cáo chi phí
+DocsAlreadyExportedAreExcluded=Docs already exported are excluded
+ClickToHideAlreadyExportedLines=Click to hide already exported lines
 
 NAccounts=%s accounts

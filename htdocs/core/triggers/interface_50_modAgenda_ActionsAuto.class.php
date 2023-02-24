@@ -931,7 +931,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->sendtoid = 0;
 		} else {
 			// TODO Merge all previous cases into this generic one
-			// $action = BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, CONTACT_SENTBYMAIL, RECRUITMENTCANDIDATURE_MODIFY, ...
+			// $action = PASSWORD, BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, CONTACT_SENTBYMAIL, RECRUITMENTCANDIDATURE_MODIFY, ...
 			// Can also be a value defined by an external module like SENTBYSMS, COMPANY_SENTBYSMS, MEMBER_SENTBYSMS, ...
 			// Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function).
 			// Note that these key can be set in agenda setup, only if defined into llx_c_action_trigger
@@ -1112,7 +1112,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$ret = $actioncomm->create($user); // User creating action
 
 		if ($ret > 0 && !empty($conf->global->MAIN_COPY_FILE_IN_EVENT_AUTO)) {
-			if (is_array($object->attachedfiles) && array_key_exists('paths', $object->attachedfiles) && count($object->attachedfiles['paths']) > 0) {
+			if (property_exists($object, 'attachedfiles') && is_array($object->attachedfiles) && array_key_exists('paths', $object->attachedfiles) && count($object->attachedfiles['paths']) > 0) {
 				foreach ($object->attachedfiles['paths'] as $key => $filespath) {
 					$srcfile = $filespath;
 					$destdir = $conf->agenda->dir_output.'/'.$ret;

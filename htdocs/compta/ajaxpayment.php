@@ -72,6 +72,10 @@ if (is_array($remains)) {
 			unset($remains[$key]);
 		}
 	}
+} elseif ($remains) {
+	$remains = array(price2num($remains));
+} else {
+	$remains = array();
 }
 
 // Treatment
