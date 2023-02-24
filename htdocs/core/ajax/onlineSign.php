@@ -75,6 +75,10 @@ if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed.$type.$ref.(!isModEnable
 	httponly_accessforbidden('Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref), 403);
 }
 
+$marginLeft=isset($conf->global->MAIN_PDF_MARGIN_LEFT)?$conf->global->MAIN_PDF_MARGIN_LEFT:5;
+$marginRight=isset($conf->global->MAIN_PDF_MARGIN_RIGHT)?$conf->global->MAIN_PDF_MARGIN_RIGHT:5;
+$marginTop =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:5;
+$marginDown =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:5;
 
 /*
  * Actions
@@ -146,6 +150,20 @@ if ($action == "importSignature") {
 
 						//$pdf->Open();
 						$pagecount = $pdf->setSourceFile($sourcefile);		// original PDF
+						$pdf->SetMargins($marginLeft, $marginTop, $marginRight);
+						$pdf->SetAutoPageBreak(1, 0);
+
+						$pos = array();
+						$possign = array();
+
+						if (isset($object->model_pdf_pos_sign) && !empty($object->model_pdf_pos_sign)) {
+							$pos = explode(':', $object->model_pdf_pos_sign);
+							$possign['page'] = isset($pos[0]) ? $pos[0] : '';
+							$possign['posx'] = isset($pos[1]) ? $pos[1] : '';
+							$possign['posy'] = isset($pos[2]) ? $pos[2] : '';
+							$possign['height'] = isset($pos[3]) ? $pos[3] : '';
+							$possign['width'] = isset($pos[4]) ? $pos[4] : '';
+						}
 
 						$s = array(); 	// Array with size of each page. Exemple array(w'=>210, 'h'=>297);
 						for ($i=1; $i<($pagecount+1); $i++) {
@@ -154,21 +172,28 @@ if ($action == "importSignature") {
 								$s = $pdf->getTemplatesize($tppl);
 								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
 								$pdf->useTemplate($tppl);
+
+								if (!empty($possign) && $i==$possign['page']) {
+									$pdf->Image($upload_dir.$filename, $possign['posx'], $possign['posy'], $possign['width'], $possign['height']);
+								}
 							} catch (Exception $e) {
 								dol_syslog("Error when manipulating some PDF by onlineSign: ".$e->getMessage(), LOG_ERR);
 								$response = $e->getMessage();
 								$error++;
 							}
 						}
+						if (empty($possign)) {
+							// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+							// TODO Get position of box from PDF template
+							$xysign = $pdf->getSignatureAppearanceArray();
+							$xysign = explode(' ', $xysign);
+							$xforimgstart = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
+							$yforimgstart = (empty($s['h']) ? 240 : $s['h'] - 60);
+							$wforimg = $s['w'] - 20 - $xforimgstart;
 
-						// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
-						// TODO Get position of box from PDF template
-						$xforimgstart = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
-						$yforimgstart = (empty($s['h']) ? 240 : $s['h'] - 60);
-						$wforimg = $s['w'] - 20 - $xforimgstart;
-
-						$pdf->Image($upload_dir.$filename, $xforimgstart, $yforimgstart, $wforimg, round($wforimg / 4));
-						//$pdf->Close();
+							$pdf->Image($upload_dir.$filename, $xforimgstart, $yforimgstart, $wforimg, round($wforimg / 4));
+						}
+						$pdf->Close();
 						$pdf->Output($newpdffilename, "F");
 
 						// Index the new file and update the last_main_doc property of object.
@@ -302,7 +327,7 @@ if ($action == "importSignature") {
 						$wforimg = $s['w']/2 - $xforimgstart;
 
 						$pdf->Image($upload_dir.$filename, $xforimgstart, $yforimgstart, $wforimg, round($wforimg / 4));
-						//$pdf->Close();
+						//$pdf->Close();require_once
 						$pdf->Output($newpdffilename, "F");
 
 						// Index the new file and update the last_main_doc property of object.
