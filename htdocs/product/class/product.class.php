@@ -5503,7 +5503,7 @@ class Product extends CommonObject
 	 * This function need a lot of load. If you use it on list, use a cache to execute it once for each product id.
 	 * If ENTREPOT_EXTRA_STATUS is set, filtering on warehouse status is possible.
 	 *
-	 * @param  	string 	$option 					'' = Load all stock info, also from closed and internal warehouses, 'nobatch', 'novirtual'
+	 * @param  	string 	$option 					'' = Load all stock info, also from closed and internal warehouses, 'nobatch' = do not load batch detail, 'novirtual' = do no load virtual detail
 	 * 												You can also filter on 'warehouseclosed', 'warehouseopen', 'warehouseinternal'
 	 * @param	int		$includedraftpoforvirtual	Include draft status of PO for virtual stock calculation
 	 * @param	int		$dateofvirtualstock			Date of virtual stock
@@ -5568,7 +5568,7 @@ class Product extends CommonObject
 			$this->db->free($result);
 
 			if (!preg_match('/novirtual/', $option)) {
-				$this->load_virtual_stock($includedraftpoforvirtual, $dateofvirtualstock); // This also load all arrays stats_xxx...
+				$this->load_virtual_stock($includedraftpoforvirtual, $dateofvirtualstock); // This load stock_theorique and also load all arrays stats_xxx...
 			}
 
 			return 1;
