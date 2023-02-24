@@ -941,7 +941,7 @@ if ($object->id > 0) {
 			print '</td>';
 
 			// Amount
-			print '<td class="center">'.price($obj->amount).'</td>';
+			print '<td class="center"><span class="amount">'.price($obj->amount).'</span></td>';
 
 			// Date process
 			print '<td class="center">'.dol_print_date($db->jdate($obj->date_traite), 'day')."</td>\n";
