@@ -109,7 +109,7 @@ print '<br><br>'."\n";
 
 // Test6a: Upload of big files
 print "Test 6a: Upload of big files<br>\n";
-print "The file will be uploaded in the directory: documents/test_form/temp/<br>\n";
+print "The file will be uploaded in the directory: documents/test/temp/<br>\n";
 
 if (is_file(DOL_DOCUMENT_ROOT.'/includes/flowjs/flow.js')) {
 	print '<button id="buttonbigupload" type="button">Browse...</button>';
@@ -121,7 +121,7 @@ if (is_file(DOL_DOCUMENT_ROOT.'/includes/flowjs/flow.js')) {
 	jQuery(document).ready(function() {
 		var flow = new Flow({
 			target:"'.DOL_URL_ROOT.'/core/ajax/flowjs-server.php", 
-			query:{module:"test_form"},
+			query:{module:"test", token:"'.newToken().'"},
 			testChunks:false
 		});
 		';
@@ -166,7 +166,7 @@ if (is_file(DOL_DOCUMENT_ROOT.'/includes/flowjs/flow.js')) {
 	';
 	print '</script>';
 } else {
-	print "If this message displays, please add flow.js file which can be found here :https://github.com/flowjs/flow.js and place the js lib in htdocs/includes/flowjs/<br>\n";
+	print "If this message displays, please add flow.js and flow.min.js files which can be found here: https://github.com/flowjs/flow.js and place the js lib in htdocs/includes/flowjs/<br>\n";
 }
 
 print '</div>';
