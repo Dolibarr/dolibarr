@@ -196,7 +196,6 @@ if ($event->type == 'payout.created') {
 		return -1;
 	}
 } elseif ($event->type == 'payout.paid') {
-	global $conf;
 	$error = 0;
 	$result = dolibarr_set_const($db, $service."_NEXTPAYOUT", null, 'chaine', 0, '', $conf->entity);
 	if ($result) {
@@ -298,6 +297,8 @@ if ($event->type == 'payout.created') {
 	$db->query($sql);
 	$db->commit();
 } elseif ($event->type == 'payment_intent.succeeded') {		// Called when making payment with PaymentIntent method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
+	dol_syslog("object = ".var_export($event->data, true));
+
 	// TODO: create fees
 	// TODO: Redirect to paymentok.php
 
