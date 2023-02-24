@@ -813,7 +813,7 @@ class BonPrelevement extends CommonObject
 			$sql .= " AND f.total_ttc > 0";
 			$sql .= " AND pfd.ext_payment_id IS NULL";
 			if ($did > 0) {
-				$sql .= " AND pfd.rowid = '".$this->db->escape($did)."'";
+				$sql .= " AND pfd.rowid = ".((int) $did);
 			}
 			dol_syslog(__METHOD__."::Read invoices,", LOG_DEBUG);
 
