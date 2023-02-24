@@ -649,7 +649,12 @@ $sql .= $hookmanager->resPrint;
 $sql .= ' WHERE f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
 if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	$sql .= " AND s.rowid = sc.fk_soc AND (sc.fk_user = ".((int) $user->id);
+	$userschilds = $user->getAllChildIds();
+	foreach ($userschilds as $key => $value) {
+		$sql .= ' OR sc.fk_user = '.((int) $value);
+	}
+	$sql .= ')';
 }
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
