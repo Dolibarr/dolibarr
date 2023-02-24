@@ -1726,8 +1726,7 @@ class Adherent extends CommonObject
 				return -2;
 			}
 		} else {
-			$this->error = $subscription->error;
-			$this->errors = $subscription->errors;
+			$this->setErrorsFromObject($subscription);
 			$this->db->rollback();
 			return -1;
 		}

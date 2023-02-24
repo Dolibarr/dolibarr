@@ -1672,7 +1672,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 		if (!array_key_exists($level, $logLevels)) {
 			throw new Exception('Incorrect log level');
 		}
-		if ($level > $conf->global->SYSLOG_LEVEL) {
+		if ($level > getDolGlobalInt('SYSLOG_LEVEL')) {
 			return;
 		}
 
