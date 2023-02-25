@@ -115,11 +115,6 @@ if (isModEnabled('accounting')) {
 		print "<br>";
 	}
 
-	if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_SITUATION == 1) {
-		print info_admin($langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices"));
-		print "<br>";
-	}
-
 	print '<div class="'.($helpisexpanded ? '' : 'hideobject').'" id="idfaq">'; // hideobject is to start hidden
 	print "<br>\n";
 	print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescIntro")."</span><br>\n";
