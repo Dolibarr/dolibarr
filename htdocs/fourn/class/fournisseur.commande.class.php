@@ -176,8 +176,20 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public $fk_account;
 
+	/**
+	 * @var int payment choice ID
+	 */
 	public $mode_reglement_id;
+
+	/**
+	 * @var string payment choice code
+	 */
 	public $mode_reglement_code;
+
+	/**
+	 * @var string paymnet choice label
+	 */
+	public $mode_reglement;
 	public $user_author_id;
 	public $user_valid_id;
 	public $user_approve_id;
