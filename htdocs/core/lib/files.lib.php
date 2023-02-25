@@ -2950,7 +2950,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (empty($entity) || (empty($conf->product->multidir_output[$entity]) && empty($conf->service->multidir_output[$entity]))) {
 			return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		}
-		if (($fuser->rights->produit->{$lire} || $fuser->rights->service->{$lire}) || preg_match('/^specimen/i', $original_file)) {
+		if ((isset($fuser->rights->produit) && $fuser->rights->produit->{$lire}) || (isset($fuser->rights->service) && $fuser->rights->service->{$lire}) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		if (isModEnabled("product")) {
