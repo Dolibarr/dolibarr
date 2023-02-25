@@ -575,7 +575,6 @@ if ($action == 'new') {
 	print '</tr>';
 
 	// External ref
-	/* Ext ref are not visible field on standard usage
 	print '<tr><td>';
 
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -600,7 +599,6 @@ if ($action == 'new') {
 
 	print '</td>';
 	print '</tr>';
-	*/
 
 	print '<tr><td>'.$langs->trans('Account').'</td><td colspan="2">';
 	print $accountstatic->getNomUrl(1);

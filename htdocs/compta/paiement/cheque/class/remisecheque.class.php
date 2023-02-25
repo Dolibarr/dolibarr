@@ -160,6 +160,7 @@ class RemiseCheque extends CommonObject
 		$sql .= "datec";
 		$sql .= ", date_bordereau";
 		$sql .= ", fk_user_author";
+		$sql .= ", fk_user_modif";
 		$sql .= ", fk_bank_account";
 		$sql .= ", statut";
 		$sql .= ", amount";
@@ -170,6 +171,7 @@ class RemiseCheque extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".((int) $account_id);
 		$sql .= ", 0";

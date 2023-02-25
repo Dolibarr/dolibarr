@@ -96,7 +96,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 llxHeader('', $langs->trans("ChequesReceipts"));
 
 $sql = "SELECT bc.rowid, bc.ref, bc.date_bordereau,";
-$sql .= " bc.nbcheque, bc.amount, bc.statut,";
+$sql .= " bc.nbcheque, bc.amount, bc.statut, bc.ref_ext as ref_ext,";
 $sql .= " ba.rowid as bid, ba.label";
 
 $sqlfields = $sql; // $sql fields to remove for count total
@@ -194,6 +194,7 @@ if ($resql) {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
 	print '</td>';
+	print '<td></td>';
 	print '<td class="liste_titre" align="center">';
 	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
 		print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
@@ -217,6 +218,7 @@ if ($resql) {
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "bc.ref", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Ref Ext", $_SERVER["PHP_SELF"], "bc.ref_ext", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "bc.date_bordereau", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("NbOfCheques", $_SERVER["PHP_SELF"], "bc.nbcheque", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -256,8 +258,12 @@ if ($resql) {
 
 				// Num ref cheque
 				print '<td>';
-
 				print $checkdepositstatic->getNomUrl(1);
+				print '</td>';
+
+				//Ref Ext
+				print '<td>';
+				print  $objp->ref_ext;
 				print '</td>';
 
 				// Date
