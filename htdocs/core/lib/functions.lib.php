@@ -5173,7 +5173,7 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
  *	@param  string	$moreattrib  Options of attribute td ("" by defaut)
  *	@param  string	$sortfield   Current field used to sort
  *	@param  string	$sortorder   Current sort order
- *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag.
+ *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
  *  @param	string	$tooltip	 Tooltip
  *  @param	string	$forcenowrapcolumntitle		No need for use 'wrapcolumntitle' css style
  *	@return	void
