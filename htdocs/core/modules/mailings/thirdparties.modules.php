@@ -89,6 +89,17 @@ class mailing_thirdparties extends MailingTargets
 				$addDescription .= "Unknown status ".GETPOST("filter_client_thirdparties");
 			}
 		}
+		if (GETPOSTISSET("filter_supplier_thirdparties") && GETPOST("filter_supplier_thirdparties") <> '-1') {
+			$addFilter .= " AND s.fournisseur = ".((int) GETPOST("filter_supplier_thirdparties", 'int'));
+			$addDescription = $langs->trans('Supplier')."=";
+			if (GETPOST("filter_supplier_thirdparties") == 0) {
+				$addDescription .= $langs->trans('No');
+			} elseif (GETPOST("filter_supplier_thirdparties") == 1) {
+				$addDescription .= $langs->trans('Yes');
+			} else {
+				$addDescription .= "Unknown status ".GETPOST("filter_supplier_thirdparties");
+			}
+		}
 		if (GETPOSTISSET("filter_status")) {
 			if (strlen($addDescription) > 0) {
 				$addDescription .= ";";
@@ -97,7 +108,20 @@ class mailing_thirdparties extends MailingTargets
 			if (GETPOST("filter_status") == '1') {
 				$addFilter .= " AND s.status=1";
 				$addDescription .= $langs->trans("Enabled");
-			} else {
+			} elseif (GETPOST("filter_status") == '0') {
+				$addFilter .= " AND s.status=0";
+				$addDescription .= $langs->trans("Disabled");
+			}
+		}
+		if (GETPOSTISSET("filter_status")) {
+			if (strlen($addDescription) > 0) {
+				$addDescription .= ";";
+			}
+			$addDescription .= $langs->trans("Status")."=";
+			if (GETPOST("filter_status") == '1') {
+				$addFilter .= " AND s.status=1";
+				$addDescription .= $langs->trans("Enabled");
+			} elseif (GETPOST("filter_status") == '0') {
 				$addFilter .= " AND s.status=0";
 				$addDescription .= $langs->trans("Disabled");
 			}
@@ -295,7 +319,7 @@ class mailing_thirdparties extends MailingTargets
 		$s .= '</select> ';
 
 		// filter_client_thirdparties
-		$s .= '<select id="filter_client_thirdparties" name="filter_client_thirdparties" class="flat">';
+		$s .= '<select id="filter_client_thirdparties" name="filter_client_thirdparties" class="flat minwidth100">';
 		$s .= '<option value="-1">'.$langs->trans('ProspectCustomer').'</option>';
 		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
 			$s .= '<option value="2">'.$langs->trans('Prospect').'</option>';
@@ -311,7 +335,15 @@ class mailing_thirdparties extends MailingTargets
 		$s .= '</select> ';
 		$s .= ajax_combobox("filter_client_thirdparties");
 
-		// filter_status
+		// filter_supplier_thirdparties
+		$s .= ' <select id="filter_supplier_thirdparties" name="filter_supplier_thirdparties" class="flat minwidth100">';
+		$s .= '<option value="-1">'.$langs->trans("Supplier").'</option>';
+		$s .= '<option value="1">'.$langs->trans("Yes").'</option>';
+		$s .= '<option value="0">'.$langs->trans("No").'</option>';
+		$s .= '</select>';
+		$s .= ajax_combobox("filter_supplier_thirdparties");
+
+		// filter_status_thirdparties
 		$s .= ' <select id="filter_status_thirdparties" name="filter_status" class="flat">';
 		$s .= '<option value="-1">'.$langs->trans("Status").'</option>';
 		$s .= '<option value="1">'.$langs->trans("Enabled").'</option>';
