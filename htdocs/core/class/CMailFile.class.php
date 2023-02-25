@@ -255,12 +255,14 @@ class CMailFile
 			$this->html = $msg;
 
 			$findimg = 0;
-			if (!empty($conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS)) {
+			if (!empty($conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS)) {	// Off by default
 				// Search into the body for <img tags of links in medias files to replace them with an embedded file
 				// Note because media links are public, this should be useless, except avoid blocking images with email browser.
 				// This convert an embedd file with src="/viewimage.php?modulepart... into a cid link
+				// TODO Exclude viewimage used for the read tracker ?
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
 			}
+
 			if (!empty($conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA)) {
 				// Search into the body for <img src="data:image/ext;base64,..." to replace them with an embedded file
 				// This convert an embedded file with src="data:image... into a cid link + attached file
@@ -1708,7 +1710,7 @@ class CMailFile
 							$this->html_images[$i]["content_type"] = $this->image_types[$ext];
 						}
 						// cid
-						$this->html_images[$i]["cid"] = dol_hash(uniqid(time()), 3); // Force md5 hash (does not contains special chars)
+						$this->html_images[$i]["cid"] = dol_hash($this->html_images[$i]["fullpath"], 'md5'); // Force md5 hash (does not contains special chars)
 						// type
 						$this->html_images[$i]["type"] = 'cidfromurl';
 
@@ -1800,17 +1802,22 @@ class CMailFile
 			foreach ($matches[1] as $key => $ext) {
 				// We save the image to send in disk
 				$filecontent = $matches[2][$key];
-				$cid = 'cid000'.dol_hash($this->html, 'md5');		// The id must not change if image is same
+
+				$cid = 'cid000'.dol_hash($filecontent, 'md5');		// The id must not change if image is same
+
 				$destfiletmp = $images_dir.'/'.$cid.'.'.$ext;
 
-				$fhandle = @fopen($destfiletmp, 'w');
-				if ($fhandle) {
-					$nbofbyteswrote = fwrite($fhandle, base64_decode($filecontent));
-					fclose($fhandle);
-					@chmod($destfiletmp, octdec($conf->global->MAIN_UMASK));
-				} else {
-					$this->errors[] = "Failed to open file '".$destfiletmp."' for write";
-					return -1;
+				if (!dol_is_file($destfiletmp)) {	// If file does not exist yet (this is the case for the first email sent with a data:image inside)
+					dol_syslog("write the cid file ".$destfiletmp);
+					$fhandle = @fopen($destfiletmp, 'w');
+					if ($fhandle) {
+						$nbofbyteswrote = fwrite($fhandle, base64_decode($filecontent));
+						fclose($fhandle);
+						@chmod($destfiletmp, octdec($conf->global->MAIN_UMASK));
+					} else {
+						$this->errors[] = "Failed to open file '".$destfiletmp."' for write";
+						return -1;
+					}
 				}
 
 				if (file_exists($destfiletmp)) {

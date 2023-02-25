@@ -201,9 +201,9 @@ if (empty($reshook)) {
 
 					$thirdpartystatic = new Societe($db);
 					// Loop on each email and send it
-					$i = 0;
+					$iforemailloop = 0;
 
-					while ($i < $num && $i < $conf->global->MAILING_LIMIT_SENDBYWEB) {
+					while ($iforemailloop < $num && $iforemailloop < $conf->global->MAILING_LIMIT_SENDBYWEB) {
 						// Here code is common with same loop ino mailing-send.php
 						$res = 1;
 						$now = dol_now();
@@ -366,7 +366,7 @@ if (empty($reshook)) {
 							// Mail successful
 							$nbok++;
 
-							dol_syslog("comm/mailing/card.php: ok for #".$i.($mail->error ? ' - '.$mail->error : ''), LOG_DEBUG);
+							dol_syslog("comm/mailing/card.php: ok for #".$iforemailloop.($mail->error ? ' - '.$mail->error : ''), LOG_DEBUG);
 
 							$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 							$sql .= " SET statut=1, date_envoi = '".$db->idate($now)."' WHERE rowid=".((int) $obj->rowid);
@@ -405,7 +405,7 @@ if (empty($reshook)) {
 							// Mail failed
 							$nbko++;
 
-							dol_syslog("comm/mailing/card.php: error for #".$i.($mail->error ? ' - '.$mail->error : ''), LOG_WARNING);
+							dol_syslog("comm/mailing/card.php: error for #".$iforemailloop.($mail->error ? ' - '.$mail->error : ''), LOG_WARNING);
 
 							$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 							$sql .= " SET statut=-1, error_text='".$db->escape($mail->error)."', date_envoi='".$db->idate($now)."' WHERE rowid=".((int) $obj->rowid);
@@ -415,7 +415,7 @@ if (empty($reshook)) {
 							}
 						}
 
-						$i++;
+						$iforemailloop++;
 					}
 				} else {
 					setEventMessages($langs->transnoentitiesnoconv("NoMoreRecipientToSendTo"), null, 'mesgs');
