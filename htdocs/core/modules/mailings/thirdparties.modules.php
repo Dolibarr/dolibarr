@@ -97,7 +97,7 @@ class mailing_thirdparties extends MailingTargets
 			if (GETPOST("filter_status") == '1') {
 				$addFilter .= " AND s.status=1";
 				$addDescription .= $langs->trans("Enabled");
-			} else {
+			} elseif (GETPOST("filter_status") == '0') {
 				$addFilter .= " AND s.status=0";
 				$addDescription .= $langs->trans("Disabled");
 			}
