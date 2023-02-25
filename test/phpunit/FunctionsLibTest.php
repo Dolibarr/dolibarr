@@ -167,6 +167,34 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		print __METHOD__."\n";
 	}
 
+
+	/**
+	 * testDolForgeCriteriaCallback
+	 *
+	 * @return boolean
+	 */
+	public function testDolForgeCriteriaCallback()
+	{
+		global $conf, $langs;
+
+		// An attempt for SQL injection
+		$filter='if(now()=sysdate()%2Csleep(6)%2C0)';
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals($sql, '1 = 3');
+
+		// A real search string
+		$filter='(((statut:=:1) or (entity:in:__AAA__)) and (abc:<:2.0) and (abc:!=:1.23))';
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals($sql, ' AND (((statut = 1 or entity IN (__AAA__)) and abc < 2 and abc = 1.23))');
+
+		$filter="(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.date_creation:<:'2016-01-01 12:30:00') or (t.nature:is:NULL)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals($sql, " AND (t.ref LIKE 'SO-%' or t.date_creation < '20160101' or t.date_creation < 0 or t.nature IS NULL)");
+
+		return true;
+	}
+
+
 	/**
 	 * testDolClone
 	 *

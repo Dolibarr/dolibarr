@@ -295,12 +295,7 @@ if (is_array($search_groupby) && count($search_groupby)) {
 		$sqlfilters = GETPOST('search_component_params_hidden', 'alphanohtml');
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (dolCheckFilters($sqlfilters, $errormessage)) {
-				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-				$sql .= " WHERE (".preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $sqlfilters).")";
-			} else {
-				print $errormessage;
-			}
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
 		}*/
 
 		$sql .= " LIMIT ".((int) ($MAXUNIQUEVALFORGROUP + 1));
@@ -681,11 +676,9 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 	$sqlfilters = $search_component_params_hidden;
 	if ($sqlfilters) {
 		$errormessage = '';
-		if (dolCheckFilters($sqlfilters, $errormessage)) {
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $sqlfilters).")";
-		} else {
-			print $errormessage;
+		$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+		if ($errormessage) {
+			print dol_escape_htmltag($errormessage);
 		}
 	}
 	$sql .= " GROUP BY ";
