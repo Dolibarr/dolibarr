@@ -9,7 +9,7 @@
  * Copyright (C) 2015-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
  * Copyright (C) 2019		JC Prieto				<jcprieto@virtual20.com><prietojc@gmail.com>
- * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -243,6 +243,20 @@ class Account extends CommonObject
 	 * @var int
 	 */
 	public $date_solde;
+
+	/**
+	 * Balance. Used in Account::create
+	 * @var float
+	 * @deprecated
+	 * @see $balance
+	 */
+	public $solde;
+
+	/**
+	 * Balance. Used in Account::create
+	 * @var float
+	 */
+	public $balance;
 
 	/**
 	 * Creditor Identifier CI. Some banks use different ICS for direct debit and bank tranfer
@@ -1391,6 +1405,47 @@ class Account extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $langs;
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
+
+		$datas = array();
+
+		$nofetch = !empty($params['nofetch']);
+		$pictos = img_picto('', $this->picto).' <u class="paddingrightnow">'.$langs->trans("BankAccount").'</u>';
+		if (isset($this->status)) {
+			$pictos .= ' '.$this->getLibStatut(5);
+		}
+		$datas['picto'] = $pictos;
+		$datas['label'] = '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
+		$datas['accountnumber'] = '<br><b>'.$langs->trans('AccountNumber').':</b> '.$this->number;
+		$datas['iban'] = '<br><b>'.$langs->trans('IBAN').':</b> '.getIbanHumanReadable($this);
+		$datas['bic'] = '<br><b>'.$langs->trans('BIC').':</b> '.$this->bic;
+		$datas['accountcurrency'] = '<br><b>'.$langs->trans("AccountCurrency").':</b> '.$this->currency_code;
+
+		if (isModEnabled('accounting')) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+			$langs->load("accountancy");
+			$datas['accountaccounting'] = '<br><b>'.$langs->trans('AccountAccounting').':</b> '.length_accountg($this->account_number);
+			$datas['accountancyjournal'] = '<br><b>'.$langs->trans('AccountancyJournal').':</b> '.$this->accountancy_journal;
+		}
+		// show categories for this record only in ajax to not overload lists
+		if (isModEnabled('categorie') && !$nofetch) {
+			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+			$form = new Form($this->db);
+			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_ACCOUNT, 1);
+		}
+
+		return $datas;
+	}
+
+	/**
 	 *  Return clicable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					Include picto into link
@@ -1406,28 +1461,21 @@ class Account extends CommonObject
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
 		$result = '';
-		$label = img_picto('', $this->picto).' <u class="paddingrightnow">'.$langs->trans("BankAccount").'</u>';
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+			'nofetch' => 1,
+		];
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
 		}
-		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
-		$label .= '<br><b>'.$langs->trans('AccountNumber').':</b> '.$this->number;
-		$label .= '<br><b>'.$langs->trans('IBAN').':</b> '.getIbanHumanReadable($this);
-		$label .= '<br><b>'.$langs->trans('BIC').':</b> '.$this->bic;
-		$label .= '<br><b>'.$langs->trans("AccountCurrency").':</b> '.$this->currency_code;
+		$label = implode($this->getTooltipContentArray($params));
 
-		if (empty($user->rights->banque->lire) || !empty($user->socid)) {
-			$option = 'nolink';
-		}
-
-		if (isModEnabled('accounting')) {
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-			$langs->load("accountancy");
-			$label .= '<br><b>'.$langs->trans('AccountAccounting').':</b> '.length_accountg($this->account_number);
-			$label .= '<br><b>'.$langs->trans('AccountancyJournal').':</b> '.$this->accountancy_journal;
-		}
-
-		$linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkclose = '"'.$dataparams.' title="'.dol_escape_htmltag($label, 1).'" class="'.$classfortooltip.'">';
 
 		$url = DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id;
 		if ($mode == 'transactions') {
@@ -1457,7 +1505,7 @@ class Account extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref.($option == 'reflabel' && $this->label ? ' - '.$this->label : '');
@@ -1812,7 +1860,7 @@ class Account extends CommonObject
 /**
  *	Class to manage bank transaction lines
  */
-class AccountLine extends CommonObject
+class AccountLine extends CommonObjectLine
 {
 	/**
 	 * @var string Error code (or message)

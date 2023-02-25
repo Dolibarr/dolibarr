@@ -599,9 +599,7 @@ class pdf_squille extends ModelePdfReception
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				return 1; // No error
 			} else {

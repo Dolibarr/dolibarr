@@ -128,9 +128,7 @@ class BonPrelevement extends CommonObject
 
 		$this->factures = array();
 
-		$this->methodes_trans = array();
-
-		$this->methodes_trans[0] = "Internet";
+		$this->methodes_trans = array(0 => 'Internet', 2 => 'Email', 3 => 'Api');
 
 		$this->fetched = 0;
 	}
@@ -509,7 +507,7 @@ class BonPrelevement extends CommonObject
 	 *
 	 *	@param	User		$user		id of user
 	 *	@param 	int	$date		date of action
-	 *	@param	string		$method		method of transmision to bank
+	 *	@param	string		$method		method of transmision to bank (0=Internet, 1=Api...)
 	 *	@return	int						>0 if OK, <0 if KO
 	 */
 	public function set_infotrans($user, $date, $method)
@@ -737,7 +735,11 @@ class BonPrelevement extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Create a direct debit order or a credit transfer order
+	 *	Create a BAN payment order:
+	 *  - Select waiting requests from prelevement_demande (or use $did if provided)
+	 *  - Check BAN values
+	 *  - Then create a direct debit order or a credit transfer order
+	 *  - Link the order with the prelevement_demande lines
 	 *  TODO delete params banque and agence when not necessary
 	 *
 	 *	@param 	int		$banque			dolibarr mysoc bank
@@ -747,14 +749,15 @@ class BonPrelevement extends CommonObject
 	 *  @param  string  $executiondate	Date to execute the transfer
 	 *  @param	int	    $notrigger		Disable triggers
 	 *  @param	string	$type			'direct-debit' or 'bank-transfer'
+	 *  @param	int		$did			ID of an existing payment request. If $did is defined, no entry
 	 *	@return	int						<0 if KO, No of invoice included into file if OK
 	 */
-	public function create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0, $type = 'direct-debit')
+	public function create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0, $type = 'direct-debit', $did = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs, $user;
 
-		dol_syslog(__METHOD__."::Bank=".$banque." Office=".$agence." mode=".$mode." format=".$format, LOG_DEBUG);
+		dol_syslog(__METHOD__." Bank=".$banque." Office=".$agence." mode=".$mode." format=".$format, LOG_DEBUG);
 
 		require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
 		require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
@@ -811,8 +814,10 @@ class BonPrelevement extends CommonObject
 			$sql .= " AND pfd.traite = 0";
 			$sql .= " AND f.total_ttc > 0";
 			$sql .= " AND pfd.ext_payment_id IS NULL";
-
-			dol_syslog(__METHOD__."::Read invoices,", LOG_DEBUG);
+			if ($did > 0) {
+				$sql .= " AND pfd.rowid = ".((int) $did);
+			}
+			dol_syslog(__METHOD__." Read invoices,", LOG_DEBUG);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -824,17 +829,17 @@ class BonPrelevement extends CommonObject
 					$factures[$i] = $row; // All fields
 					if ($row[7] == 0) {
 						$error++;
-						dol_syslog(__METHOD__."::Read invoices error Found a null invoice", LOG_ERR);
+						dol_syslog(__METHOD__." Read invoices error Found a null invoice", LOG_ERR);
 						$this->invoice_in_error[$row[0]] = "Error for invoice id ".$row[0].", found a null amount";
 						break;
 					}
 					$i++;
 				}
 				$this->db->free($resql);
-				dol_syslog(__METHOD__."::Read invoices, ".$i." invoices to withdraw", LOG_DEBUG);
+				dol_syslog(__METHOD__." Read invoices, ".$i." invoices to withdraw", LOG_DEBUG);
 			} else {
 				$error++;
-				dol_syslog(__METHOD__."::Read invoices error ".$this->db->error(), LOG_ERR);
+				dol_syslog(__METHOD__." Read invoices error ".$this->db->error(), LOG_ERR);
 			}
 		}
 
@@ -844,7 +849,7 @@ class BonPrelevement extends CommonObject
 
 			// Check BAN
 			$i = 0;
-			dol_syslog(__METHOD__."::Check BAN", LOG_DEBUG);
+			dol_syslog(__METHOD__." Check BAN", LOG_DEBUG);
 
 			if (count($factures) > 0) {
 				foreach ($factures as $key => $fac) {
@@ -875,19 +880,19 @@ class BonPrelevement extends CommonObject
 								$i++;
 								//dol_syslog(__METHOD__."::RIB is ok", LOG_DEBUG);
 							} else {
-								dol_syslog(__METHOD__."::Check BAN Error on default bank number IBAN/BIC for thirdparty reported by verif() ".$tmpinvoice->socid." ".$soc->name, LOG_WARNING);
+								dol_syslog(__METHOD__." Check BAN Error on default bank number IBAN/BIC for thirdparty reported by verif() ".$tmpinvoice->socid." ".$soc->name, LOG_WARNING);
 								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice ".$tmpinvoice->getNomUrl(0)." for thirdparty ".$soc->getNomUrl(0);
 								$this->thirdparty_in_error[$soc->id] = "Error on default bank number IBAN/BIC for invoice ".$tmpinvoice->getNomUrl(0)." for thirdparty ".$soc->getNomUrl(0);
 							}
 						} else {
-							dol_syslog(__METHOD__."::Check BAN Failed to read company", LOG_WARNING);
+							dol_syslog(__METHOD__." Check BAN Failed to read company", LOG_WARNING);
 						}
 					} else {
-						dol_syslog(__METHOD__."::Check BAN Failed to read invoice", LOG_WARNING);
+						dol_syslog(__METHOD__." Check BAN Failed to read invoice", LOG_WARNING);
 					}
 				}
 			} else {
-				dol_syslog(__METHOD__."::Check BAN No invoice to process", LOG_WARNING);
+				dol_syslog(__METHOD__." Check BAN No invoice to process", LOG_WARNING);
 			}
 		}
 
@@ -931,13 +936,14 @@ class BonPrelevement extends CommonObject
 			if (!$error) {
 				$ref = substr($year, -2).$month;
 
+				// Get next free nuber for the ref of bon
 				$sql = "SELECT substring(ref from char_length(ref) - 1)";	// To extract "YYMMXX" from "TYYMMXX"
 				$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons";
 				$sql .= " WHERE ref LIKE '_".$this->db->escape($ref)."%'";
 				$sql .= " AND entity = ".((int) $conf->entity);
 				$sql .= " ORDER BY ref DESC LIMIT 1";
 
-				dol_syslog(get_class($this)."::create", LOG_DEBUG);
+				dol_syslog(get_class($this)." get next free number", LOG_DEBUG);
 				$resql = $this->db->query($sql);
 
 				if ($resql) {
@@ -961,7 +967,7 @@ class BonPrelevement extends CommonObject
 
 					$this->filename = $dir.'/'.$ref.'.xml';
 
-					// Create withdraw receipt in database
+					// Create withdraw order in database
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
 					$sql .= "ref, entity, datec, type";
 					$sql .= ") VALUES (";
@@ -978,11 +984,11 @@ class BonPrelevement extends CommonObject
 						$this->ref = $ref;
 					} else {
 						$error++;
-						dol_syslog(__METHOD__."::Create withdraw receipt ".$this->db->lasterror(), LOG_ERR);
+						dol_syslog(__METHOD__." Create withdraw receipt ".$this->db->lasterror(), LOG_ERR);
 					}
 				} else {
 					$error++;
-					dol_syslog(__METHOD__."::Get last withdraw receipt ".$this->db->lasterror(), LOG_ERR);
+					dol_syslog(__METHOD__." Get last withdraw receipt ".$this->db->lasterror(), LOG_ERR);
 				}
 			}
 
@@ -993,9 +999,7 @@ class BonPrelevement extends CommonObject
 					$fact = new FactureFournisseur($this->db);
 				}
 
-				/*
-				 * Create withdrawal receipt in database
-				 */
+				// Add lines for the bon
 				if (count($factures_prev) > 0) {
 					foreach ($factures_prev as $fac) {	// Add a link in database for each invoice
 						// Fetch invoice
@@ -1006,7 +1010,7 @@ class BonPrelevement extends CommonObject
 						}
 
 						/*
-						 * Add standing order. This add record into llx_prelevement_lignes
+						 * Add standing order. This add record into llx_prelevement_lignes and llx_prelevement
 						 *
 						 * $fac[0] : invoice_id
 						 * $fac[1] : ???
@@ -1034,7 +1038,7 @@ class BonPrelevement extends CommonObject
 						if (!$resql) {
 							$error++;
 							$this->errors[] = $this->db->lasterror();
-							dol_syslog(__METHOD__."::Update Error=".$this->db->lasterror(), LOG_ERR);
+							dol_syslog(__METHOD__." Update Error=".$this->db->lasterror(), LOG_ERR);
 						}
 					}
 				}
@@ -1045,7 +1049,7 @@ class BonPrelevement extends CommonObject
 				 * Create file of type='direct-debit' for direct debit order or type='bank-transfer' for credit transfer into a XML file
 				 */
 
-				dol_syslog(__METHOD__."::Init direct debit or credit transfer file for ".count($factures_prev)." invoices", LOG_DEBUG);
+				dol_syslog(__METHOD__." Init direct debit or credit transfer file for ".count($factures_prev)." invoices", LOG_DEBUG);
 
 				if (count($factures_prev) > 0) {
 					$this->date_echeance = $datetimeprev;
@@ -1082,7 +1086,7 @@ class BonPrelevement extends CommonObject
 						$error++;
 					}
 				}
-				dol_syslog(__METHOD__."::End withdraw receipt, file ".$this->filename, LOG_DEBUG);
+				dol_syslog(__METHOD__." Bank order file has been generated under filename ".$this->filename, LOG_DEBUG);
 			}
 			//var_dump($this->total);exit;
 
@@ -1098,7 +1102,7 @@ class BonPrelevement extends CommonObject
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
-					dol_syslog(__METHOD__."::Error update total: ".$this->db->error(), LOG_ERR);
+					dol_syslog(__METHOD__." Error update total: ".$this->db->error(), LOG_ERR);
 				}
 			}
 
@@ -1223,12 +1227,15 @@ class BonPrelevement extends CommonObject
 			$labeltoshow = 'PaymentByBankTransfer';
 		}
 
-		$label = '<u>'.$langs->trans($labeltoshow).'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans($labeltoshow).'</u> '.$this->getLibStatut(5);
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		if (isset($this->statut)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+		if (isset($this->date_trans)) {
+			$label .= '<br><b>'.$langs->trans("TransData").":</b> ".dol_print_date($this->date_trans, 'dayhour', 'tzuserrel');
 		}
+		/*if (isset($this->date_credit)) {
+			$label .= '<br><b>'.$langs->trans("TransData").":</b> ".dol_print_date($this->date_credit, 'dayhour', 'tzuserrel');
+		}*/
 
 		$url = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id;
 		if (!empty($this->type) && $this->type == 'bank-transfer') {
@@ -1700,9 +1707,7 @@ class BonPrelevement extends CommonObject
 		}
 
 		fclose($this->file);
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($this->filename, octdec($conf->global->MAIN_UMASK));
-		}
+		dolChmod($this->filename);
 
 		return $result;
 	}
@@ -1719,8 +1724,11 @@ class BonPrelevement extends CommonObject
 	public static function buildRumNumber($row_code_client, $row_datec, $row_drum)
 	{
 		global $langs;
+
 		$pre = substr(dol_string_nospecial(dol_string_unaccent($langs->transnoentitiesnoconv('RUM'))), 0, 3); // Must always be on 3 char ('RUM' or 'UMR'. This is a protection against bad translation)
-		return $pre.($row_code_client ? '-'.$row_code_client : '').'-'.$row_drum.'-'.date('U', $row_datec);
+
+		// 3 char + '-' + 12 + '-' + id + '-' + code 		Must be lower than 32.
+		return $pre.'-'.dol_print_date($row_datec, 'dayhourlogsmall').'-'.dol_trunc($row_drum.($row_code_client ? '-'.$row_code_client : ''), 13, 'right', 'UTF-8', 1);
 	}
 
 

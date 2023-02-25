@@ -14,7 +14,7 @@
  * Copyright (C) 2014		Ion agorria			    <ion@agorria.com>
  * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Gustavo Novaro
- * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1566,7 +1566,7 @@ class Product extends CommonObject
 				}
 			} elseif (isset($this->multilangs[$key])) {
 				if (empty($this->multilangs["$key"]["label"])) {
-					$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label"));
+					$this->errors[] = $key . ' : ' . $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label"));
 					return -1;
 				}
 
@@ -4869,7 +4869,7 @@ class Product extends CommonObject
 	/**
 	 *  Return all parent products for current product (first level only)
 	 *
-	 * @return array         Array of product
+	 * @return array|int         Array of product
 	 * @see hasFatherOrChild()
 	 */
 	public function getFather()
@@ -4911,7 +4911,7 @@ class Product extends CommonObject
 	 * @param  int $firstlevelonly 		Return only direct child
 	 * @param  int $level          		Level of recursing call (start to 1)
 	 * @param  array $parents   	    Array of all parents of $id
-	 * @return array                    Return array(prodid=>array(0=prodid, 1=>qty, 2=>product type, 3=>label, 4=>incdec, 5=>product ref)
+	 * @return array|int                    Return array(prodid=>array(0=prodid, 1=>qty, 2=>product type, 3=>label, 4=>incdec, 5=>product ref)
 	 */
 	public function getChildsArbo($id, $firstlevelonly = 0, $level = 1, $parents = array())
 	{
@@ -5000,6 +5000,122 @@ class Product extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$langs->load('products');
+
+		$datas = array();
+		$nofetch = !empty($params['nofetch']);
+
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			return ['optimize' => $langs->trans("ShowProduct")];
+		}
+
+		if (!empty($this->entity)) {
+			$tmpphoto = $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 80);
+			if ($this->nbphoto > 0) {
+				$datas['photo'] = '<div class="photointooltip floatright">' . $tmpphoto . '</div>';
+				//$label .= '<div style="clear: both;"></div>';
+			}
+		}
+
+		if ($this->type == Product::TYPE_PRODUCT) {
+			$datas['picto'] = img_picto('', 'product').' <u class="paddingrightonly">'.$langs->trans("Product").'</u>';
+		} elseif ($this->type == Product::TYPE_SERVICE) {
+			$datas['picto']= img_picto('', 'service').' <u class="paddingrightonly">'.$langs->trans("Service").'</u>';
+		}
+		if (isset($this->status) && isset($this->status_buy)) {
+			$datas['status']= ' '.$this->getLibStatut(5, 0) . ' '.$this->getLibStatut(5, 1);
+		}
+
+		if (!empty($this->ref)) {
+			$datas['ref']= '<br><b>'.$langs->trans('ProductRef').':</b> '.$this->ref;
+		}
+		if (!empty($this->label)) {
+			$datas['label']= '<br><b>'.$langs->trans('ProductLabel').':</b> '.$this->label;
+		}
+		if ($this->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+			if (isModEnabled('productbatch')) {
+				$langs->load("productbatch");
+				$datas['batchstatus']= "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
+			}
+		}
+		if (isModEnabled('barcode')) {
+			$datas['barcode']= '<br><b>'.$langs->trans('BarCode').':</b> '.$this->barcode;
+		}
+
+		if ($this->type == Product::TYPE_PRODUCT) {
+			if ($this->weight) {
+				$datas['weight']= "<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuringUnitString(0, "weight", $this->weight_units);
+			}
+			$labelsize = "";
+			if ($this->length) {
+				$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuringUnitString(0, 'size', $this->length_units);
+			}
+			if ($this->width) {
+				$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Width").'</b>: '.$this->width.' '.measuringUnitString(0, 'size', $this->width_units);
+			}
+			if ($this->height) {
+				$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Height").'</b>: '.$this->height.' '.measuringUnitString(0, 'size', $this->height_units);
+			}
+			if ($labelsize) {
+				$datas['size']= "<br>".$labelsize;
+			}
+
+			$labelsurfacevolume = "";
+			if ($this->surface) {
+				$labelsurfacevolume .= ($labelsurfacevolume ? " - " : "")."<b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuringUnitString(0, 'surface', $this->surface_units);
+			}
+			if ($this->volume) {
+				$labelsurfacevolume .= ($labelsurfacevolume ? " - " : "")."<b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuringUnitString(0, 'volume', $this->volume_units);
+			}
+			if ($labelsurfacevolume) {
+				$datas['surface']= "<br>" . $labelsurfacevolume;
+			}
+		}
+		if (!empty($this->pmp) && $this->pmp) {
+			$datas['pmp'] = "<br><b>".$langs->trans("PMPValue").'</b>: '.price($this->pmp, 0, '', 1, -1, -1, $conf->currency);
+		}
+
+		if (isModEnabled('accounting')) {
+			if ($this->status && isset($this->accountancy_code_sell)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+				$selllabel = '<br>';
+				$selllabel .= '<br><b>'.$langs->trans('ProductAccountancySellCode').':</b> '.length_accountg($this->accountancy_code_sell);
+				$selllabel .= '<br><b>'.$langs->trans('ProductAccountancySellIntraCode').':</b> '.length_accountg($this->accountancy_code_sell_intra);
+				$selllabel .= '<br><b>'.$langs->trans('ProductAccountancySellExportCode').':</b> '.length_accountg($this->accountancy_code_sell_export);
+				$datas['accountancysell'] = $selllabel;
+			}
+			if ($this->status_buy && isset($this->accountancy_code_buy)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+				$buylabel = '';
+				if (empty($this->status)) {
+					$buylabel .= '<br>';
+				}
+				$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyCode').':</b> '.length_accountg($this->accountancy_code_buy);
+				$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyIntraCode').':</b> '.length_accountg($this->accountancy_code_buy_intra);
+				$buylabel .= '<br><b>'.$langs->trans('ProductAccountancyBuyExportCode').':</b> '.length_accountg($this->accountancy_code_buy_export);
+				$datas['accountancybuy'] = $buylabel;
+			}
+		}
+		// show categories for this record only in ajax to not overload lists
+		if (isModEnabled('categorie') && !$nofetch) {
+			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+			$form = new Form($this->db);
+			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_PRODUCT, 1);
+		}
+
+		return $datas;
+	}
+
+	/**
 	 *    Return clicable link of object (with eventually picto)
 	 *
 	 * @param	int		$withpicto				Add picto into link
@@ -5017,100 +5133,27 @@ class Product extends CommonObject
 		global $conf, $langs, $hookmanager;
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
-		$result = ''; $label = '';
+		$result = '';
 
 		$newref = $this->ref;
 		if ($maxlength) {
 			$newref = dol_trunc($newref, $maxlength, 'middle');
 		}
-
-		if (!empty($this->entity)) {
-			$tmpphoto = $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 80);
-			if ($this->nbphoto > 0) {
-				$label .= '<div class="photointooltip floatright">';
-				$label .= $tmpphoto;
-				$label .= '</div>';
-				//$label .= '<div style="clear: both;"></div>';
-			}
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+			'nofetch' => 1,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = " data-params='".json_encode($params)."'";
+			// $label = $langs->trans('Loading');
 		}
 
-		if ($this->type == Product::TYPE_PRODUCT) {
-			$label .= img_picto('', 'product').' <u class="paddingrightonly">'.$langs->trans("Product").'</u>';
-		} elseif ($this->type == Product::TYPE_SERVICE) {
-			$label .= img_picto('', 'service').' <u class="paddingrightonly">'.$langs->trans("Service").'</u>';
-		}
-		if (isset($this->status) && isset($this->status_buy)) {
-			$label .= ' '.$this->getLibStatut(5, 0);
-			$label .= ' '.$this->getLibStatut(5, 1);
-		}
-
-		if (!empty($this->ref)) {
-			$label .= '<br><b>'.$langs->trans('ProductRef').':</b> '.$this->ref;
-		}
-		if (!empty($this->label)) {
-			$label .= '<br><b>'.$langs->trans('ProductLabel').':</b> '.$this->label;
-		}
-		if ($this->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-			if (isModEnabled('productbatch')) {
-				$langs->load("productbatch");
-				$label .= "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
-			}
-		}
-		if (isModEnabled('barcode')) {
-			$label .= '<br><b>'.$langs->trans('BarCode').':</b> '.$this->barcode;
-		}
-
-		if ($this->type == Product::TYPE_PRODUCT) {
-			if ($this->weight) {
-				$label .= "<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuringUnitString(0, "weight", $this->weight_units);
-			}
-			$labelsize = "";
-			if ($this->length) {
-				$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuringUnitString(0, 'size', $this->length_units);
-			}
-			if ($this->width) {
-				$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Width").'</b>: '.$this->width.' '.measuringUnitString(0, 'size', $this->width_units);
-			}
-			if ($this->height) {
-				$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Height").'</b>: '.$this->height.' '.measuringUnitString(0, 'size', $this->height_units);
-			}
-			if ($labelsize) {
-				$label .= "<br>".$labelsize;
-			}
-
-			$labelsurfacevolume = "";
-			if ($this->surface) {
-				$labelsurfacevolume .= ($labelsurfacevolume ? " - " : "")."<b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuringUnitString(0, 'surface', $this->surface_units);
-			}
-			if ($this->volume) {
-				$labelsurfacevolume .= ($labelsurfacevolume ? " - " : "")."<b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuringUnitString(0, 'volume', $this->volume_units);
-			}
-			if ($labelsurfacevolume) {
-				$label .= "<br>".$labelsurfacevolume;
-			}
-		}
-		if (!empty($this->pmp) && $this->pmp) {
-			$label .= "<br><b>".$langs->trans("PMPValue").'</b>: '.price($this->pmp, 0, '', 1, -1, -1, $conf->currency);
-		}
-
-		if (isModEnabled('accounting')) {
-			if ($this->status && isset($this->accountancy_code_sell)) {
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-				$label .= '<br>';
-				$label .= '<br><b>'.$langs->trans('ProductAccountancySellCode').':</b> '.length_accountg($this->accountancy_code_sell);
-				$label .= '<br><b>'.$langs->trans('ProductAccountancySellIntraCode').':</b> '.length_accountg($this->accountancy_code_sell_intra);
-				$label .= '<br><b>'.$langs->trans('ProductAccountancySellExportCode').':</b> '.length_accountg($this->accountancy_code_sell_export);
-			}
-			if ($this->status_buy && isset($this->accountancy_code_buy)) {
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-				if (empty($this->status)) {
-					$label .= '<br>';
-				}
-				$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyCode').':</b> '.length_accountg($this->accountancy_code_buy);
-				$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyIntraCode').':</b> '.length_accountg($this->accountancy_code_buy_intra);
-				$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyExportCode').':</b> '.length_accountg($this->accountancy_code_buy_export);
-			}
-		}
+		$label = implode($this->getTooltipContentArray($params));
 
 		$linkclose = '';
 		if (empty($notooltip)) {
@@ -5118,9 +5161,8 @@ class Product extends CommonObject
 				$label = $langs->trans("ShowProduct");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
-			$linkclose .= ' class="nowraponall classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= $dataparams.' class="nowraponall '.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ' class="nowraponall'.($morecss ? ' '.$morecss : '').'"';
 		}
@@ -5153,10 +5195,10 @@ class Product extends CommonObject
 		$result .= $linkstart;
 		if ($withpicto) {
 			if ($this->type == Product::TYPE_PRODUCT) {
-				$result .= (img_object(($notooltip ? '' : $label), 'product', ($notooltip ? 'class="paddingright"' : 'class="paddingright classfortooltip"'), 0, 0, $notooltip ? 0 : 1));
+				$result .= (img_object(($notooltip ? '' : $label), 'product', ($notooltip ? 'class="paddingright"' : $dataparams.' class="paddingright '.$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1));
 			}
 			if ($this->type == Product::TYPE_SERVICE) {
-				$result .= (img_object(($notooltip ? '' : $label), 'service', ($notooltip ? 'class="paddingright"' : 'class="paddingright classfortooltip"'), 0, 0, $notooltip ? 0 : 1));
+				$result .= (img_object(($notooltip ? '' : $label), 'service', ($notooltip ? 'class="paddingright"' : $dataparams.' class="paddingright '.$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1));
 			}
 		}
 		$result .= dol_escape_htmltag($newref);
@@ -5461,7 +5503,7 @@ class Product extends CommonObject
 	 * This function need a lot of load. If you use it on list, use a cache to execute it once for each product id.
 	 * If ENTREPOT_EXTRA_STATUS is set, filtering on warehouse status is possible.
 	 *
-	 * @param  	string 	$option 					'' = Load all stock info, also from closed and internal warehouses, 'nobatch', 'novirtual'
+	 * @param  	string 	$option 					'' = Load all stock info, also from closed and internal warehouses, 'nobatch' = do not load batch detail, 'novirtual' = do no load virtual detail
 	 * 												You can also filter on 'warehouseclosed', 'warehouseopen', 'warehouseinternal'
 	 * @param	int		$includedraftpoforvirtual	Include draft status of PO for virtual stock calculation
 	 * @param	int		$dateofvirtualstock			Date of virtual stock
@@ -5526,7 +5568,7 @@ class Product extends CommonObject
 			$this->db->free($result);
 
 			if (!preg_match('/novirtual/', $option)) {
-				$this->load_virtual_stock($includedraftpoforvirtual, $dateofvirtualstock); // This also load all arrays stats_xxx...
+				$this->load_virtual_stock($includedraftpoforvirtual, $dateofvirtualstock); // This load stock_theorique and also load all arrays stats_xxx...
 			}
 
 			return 1;
@@ -6321,9 +6363,10 @@ class Product extends CommonObject
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
 	 *  @return		string								HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '')
+	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $langs,$conf;
 

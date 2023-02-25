@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2021	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2023	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
@@ -1109,7 +1109,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				//'builddoc'=>$langs->trans("PDFMerge"),
 			);
 		}
-		if ( isModEnabled('ficheinter') && $user->rights->ficheinter->creer) {
+		if ( isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'creer')) {
 			$langs->load("interventions");
 			$arrayofmassactions['generateinter'] = $langs->trans("GenerateInter");
 		}
@@ -1120,23 +1120,27 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 	}
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
+	// Task
+
 	// Show section with information of task. If id of task is not defined and project id defined, then $projectidforalltimes is not empty.
 	if (empty($projectidforalltimes) && empty($allprojectforuser)) {
 		$head = task_prepare_head($object);
 		print dol_get_fiche_head($head, 'task_time', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
 		if ($action == 'deleteline') {
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?".($object->id > 0 ? "id=".$object->id : 'projectid='.$projectstatic->id).'&lineid='.GETPOST("lineid", 'int').($withproject ? '&withproject=1' : ''), $langs->trans("DeleteATimeSpent"), $langs->trans("ConfirmDeleteATimeSpent"), "confirm_deleteline", '', '', 1);
+			$urlafterconfirm = $_SERVER["PHP_SELF"]."?".($object->id > 0 ? "id=".$object->id : 'projectid='.$projectstatic->id).'&lineid='.GETPOST("lineid", 'int').($withproject ? '&withproject=1' : '');
+			print $form->formconfirm($urlafterconfirm, $langs->trans("DeleteATimeSpent"), $langs->trans("ConfirmDeleteATimeSpent"), "confirm_deleteline", '', '', 1);
 		}
 
 		$param = ($withproject ? '&withproject=1' : '');
+		$param .= ($param ? '&' : '').'id='.$object->id;		// ID of task
 		$linkback = $withproject ? '<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>' : '';
 
 		if (!GETPOST('withproject') || empty($projectstatic->id)) {
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 			$object->next_prev_filter = " fk_projet IN (".$db->sanitize($projectsListId).")";
 		} else {
-			$object->next_prev_filter = " fk_projet = ".$projectstatic->id;
+			$object->next_prev_filter = " fk_projet = ".((int) $projectstatic->id);
 		}
 
 		$morehtmlref = '';
@@ -1233,17 +1237,15 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 
 	if ($projectstatic->id > 0 || $allprojectforuser > 0) {
-		if ($action == 'deleteline' && !empty($projectidforalltimes)) {
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?".($object->id > 0 ? "id=".$object->id : 'projectid='.$projectstatic->id).'&lineid='.GETPOST('lineid', 'int').($withproject ? '&withproject=1' : ''), $langs->trans("DeleteATimeSpent"), $langs->trans("ConfirmDeleteATimeSpent"), "confirm_deleteline", '', '', 1);
-		}
-
 		// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 		$hookmanager->initHooks(array('tasktimelist'));
 
 		$formconfirm = '';
 
 		if ($action == 'deleteline' && !empty($projectidforalltimes)) {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?".($object->id > 0 ? "id=".$object->id : 'projectid='.$projectstatic->id).'&lineid='.GETPOST('lineid', 'int').($withproject ? '&withproject=1' : ''), $langs->trans("DeleteATimeSpent"), $langs->trans("ConfirmDeleteATimeSpent"), "confirm_deleteline", '', '', 1);
+			// We must use projectidprojectid if on list of timespent of project and id=taskid if on list of timespent of a task
+			$urlafterconfirm = $_SERVER["PHP_SELF"]."?".($projectstatic->id > 0 ? 'projectid='.$projectstatic->id : ($object->id > 0 ? "id=".$object->id : '')).'&lineid='.GETPOST('lineid', 'int').($withproject ? '&withproject=1' : '')."&contextpage=".urlencode($contextpage);
+			$formconfirm = $form->formconfirm($urlafterconfirm, $langs->trans("DeleteATimeSpent"), $langs->trans("ConfirmDeleteATimeSpent"), "confirm_deleteline", '', '', 1);
 		}
 
 		// Call Hook formConfirm
@@ -1388,9 +1390,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print '<input type="hidden" name="action" value="updatesplitline">';
 		} elseif ($action == 'createtime' && $user->rights->projet->time) {
 			print '<input type="hidden" name="action" value="addtimespent">';
-		} elseif ($massaction == 'generateinvoice' && $user->rights->facture->creer) {
+		} elseif ($massaction == 'generateinvoice' && $user->hasRight('facture', 'creer')) {
 			print '<input type="hidden" name="action" value="confirm_generateinvoice">';
-		} elseif ($massaction == 'generateinter' && $user->rights->ficheinter->creer) {
+		} elseif ($massaction == 'generateinter' && $user->hasRight('ficheinter', 'creer')) {
 			print '<input type="hidden" name="action" value="confirm_generateinter">';
 		} else {
 			print '<input type="hidden" name="action" value="list">';
@@ -1921,20 +1923,20 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Duration - Time spent
 			print '<td class="liste_titre right">';
 
-			$durationtouse_start = 0;
+			$durationtouse_start = '';
 			if ($search_timespent_starthour || $search_timespent_startmin) {
 				$durationtouse_start = ($search_timespent_starthour * 3600 + $search_timespent_startmin * 60);
 			}
-			print '<div class="nowraponall">'.$langs->trans('from').'&nbsp;';
-			$form->select_duration('search_timespent_duration_start', $durationtouse_start, 0, 'text');
+			print '<div class="nowraponall">'.$langs->trans('from').' ';
+			print $form->select_duration('search_timespent_duration_start', $durationtouse_start, 0, 'text', 0, 1);
 			print '</div>';
 
-			$durationtouse_end = 0;
+			$durationtouse_end = '';
 			if ($search_timespent_endhour || $search_timespent_endmin) {
 				$durationtouse_end = ($search_timespent_endhour * 3600 + $search_timespent_endmin * 60);
 			}
-			print '<div class="nowraponall">'.$langs->trans('at').'&nbsp;';
-			$form->select_duration('search_timespent_duration_end', $durationtouse_end, 0, 'text');
+			print '<div class="nowraponall">'.$langs->trans('at').' ';
+			print $form->select_duration('search_timespent_duration_end', $durationtouse_end, 0, 'text', 0, 1);
 			print '</div>';
 
 			print '</td>';

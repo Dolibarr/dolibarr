@@ -115,7 +115,7 @@ if ($action == "save" && empty($cancel)) {
 
 // $wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
 
-$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Terminplanung';
 
 llxHeader('', $langs->trans("AgendaSetup"), $help_url);
 
@@ -202,7 +202,7 @@ if (!empty($triggers)) {
 				print '<td>'.$trigger['label'].'</td>';
 				print '<td class="right" width="40">';
 				$key = 'MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
-				$value = $conf->global->$key;
+				$value = getDolGlobalInt($key);
 				print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.((($action == 'selectall' || $value) && $action != "selectnone") ? ' checked' : '').'>';
 				print '</td></tr>'."\n";
 			}

@@ -127,7 +127,7 @@ class FormSms
 		print "\n<!-- Begin form SMS -->\n";
 
 		print '
-<script type="text/javascript">
+<script nonce="'.getNonce().'" type="text/javascript">
 function limitChars(textarea, limit, infodiv)
 {
     var text = textarea.value;

@@ -37,10 +37,12 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
+// Load translation files required by the page
 $langs->load("members");
 
 $rowid  = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'aZ09');
+$massaction = GETPOST('massaction', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -55,13 +57,15 @@ $type = GETPOST('type', 'intcomma');
 $status = GETPOST('status', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 
+// Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) {
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -84,14 +88,12 @@ $comment = GETPOST("comment", 'restricthtml');
 $mail_valid = GETPOST("mail_valid", 'restricthtml');
 $caneditamount = GETPOSTINT("caneditamount");
 
-// Security check
-$result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
-
+// Initialize technical objects
 $object = new AdherentType($db);
-
 $extrafields = new ExtraFields($db);
+$hookmanager->initHooks(array('membertypecard', 'globalcard'));
 
-// fetch optionals attributes and labels
+// Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
@@ -103,13 +105,21 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x'
 }
 
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('membertypecard', 'globalcard'));
+// Security check
+$result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
 
 
 /*
  *	Actions
  */
+
+if (GETPOST('cancel', 'alpha')) {
+	$action = 'list';
+	$massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+	$massaction = '';
+}
 
 if ($cancel) {
 	$action = '';
@@ -327,7 +337,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			if ($mode == 'kanban') {
 				if ($i == 0) {
 					print '<tr><td colspan="12">';
-					print '<div class="box-flex-container">';
+					print '<div class="box-flex-container kanban">';
 				}
 				//output kanban
 				$membertype->label = $objp->label;
@@ -340,9 +350,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				print '<tr class="oddeven">';
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					if ($user->rights->adherent->configurer) {
-						print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
-					} else {
-						print '<td class="right">&nbsp;</td>';
+						print '<td class="center"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
 				}
 				print '<td class="nowraponall">';
@@ -367,8 +375,6 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					if ($user->rights->adherent->configurer) {
 						print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
-					} else {
-						print '<td class="right">&nbsp;</td>';
 					}
 				}
 				print "</tr>";
@@ -384,7 +390,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 					$colspan++;
 				}
 			}*/
-			$colspan = 8;
+			$colspan = 9;
 			print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 		}
 
@@ -522,7 +528,7 @@ if ($rowid > 0) {
 
 		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
 		if ($object->duration_value > 1) {
-			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
+			$dur = array("i"=>$langs->trans("Minutes"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
 		} elseif ($object->duration_value > 0) {
 			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 		}

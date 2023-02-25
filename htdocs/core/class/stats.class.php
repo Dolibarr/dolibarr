@@ -119,10 +119,7 @@ abstract class Stats
 			$fp = fopen($newpathofdestfile, 'w');
 			fwrite($fp, json_encode($data));
 			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK)) {
-				$newmask = $conf->global->MAIN_UMASK;
-			}
-			@chmod($newpathofdestfile, octdec($newmask));
+			dolChmod($newpathofdestfile);
 
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}
@@ -222,10 +219,7 @@ abstract class Stats
 			if ($fp) {
 				fwrite($fp, json_encode($data));
 				fclose($fp);
-				if (!empty($conf->global->MAIN_UMASK)) {
-					$newmask = $conf->global->MAIN_UMASK;
-				}
-				@chmod($newpathofdestfile, octdec($newmask));
+				dolChmod($newpathofdestfile);
 			} else {
 				dol_syslog("Failed to write cache file", LOG_ERR);
 			}
@@ -332,10 +326,7 @@ abstract class Stats
 			if ($fp) {
 				fwrite($fp, json_encode($data));
 				fclose($fp);
-				if (!empty($conf->global->MAIN_UMASK)) {
-					$newmask = $conf->global->MAIN_UMASK;
-				}
-				@chmod($newpathofdestfile, octdec($newmask));
+				dolChmod($newpathofdestfile);
 			}
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}

@@ -54,12 +54,17 @@ if (! defined("NOSESSION")) {
 
 require_once dirname(__FILE__).'/../../htdocs/main.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/website.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/website2.lib.php';
 
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
+
+	if (empty($user->rights->website)) {
+		$user->rights->website = new stdClass();
+	}
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -174,5 +179,29 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." message=".$res['code']."\n";
 		// We must found no line (so code should be KO). If we found somethiing, it means there is a SQL injection of the 1=1
 		$this->assertEquals($res['code'], 'KO');
+	}
+
+
+	/**
+	 * testCheckPHPCode
+	 *
+	 * @return	void
+	 */
+	public function testCheckPHPCode()
+	{
+		global $user;
+
+		// Force permission so this is not the permission that will affect result of checkPHPCode
+		$user->rights->website->writephp = 1;
+
+		$s = '<?php exec("eee"); ?>';
+		$result = checkPHPCode('', $s);
+		print __METHOD__." result checkPHPCode=".$result."\n";
+		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
+
+		$s = '<?php $_="{"; $_=($_^"<").($_^">;").($_^"/"); ?><?=${\'_\'.$_}["_"](${\'_\'.$_}["__"]);?>';
+		$result = checkPHPCode('', $s);
+		print __METHOD__." result checkPHPCode=".$result."\n";
+		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
 	}
 }

@@ -39,6 +39,9 @@
 
 ALTER TABLE llx_accounting_system CHANGE COLUMN fk_pays fk_country integer; 
 
+ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN ref varchar(128);
+ALTER TABLE llx_facture_fourn_det MODIFY COLUMN ref varchar(128);
+
 
 -- v18
 
@@ -73,3 +76,17 @@ ALTER TABLE llx_bank_account ADD COLUMN owner_country_id integer DEFAULT NULL;
 
 ALTER TABLE llx_propal ADD COLUMN model_pdf_pos_sign VARCHAR(10) DEFAULT NULL AFTER last_main_doc;
   
+
+ALTER TABLE llx_supplier_proposal ADD UNIQUE INDEX uk_supplier_proposal_ref (ref, entity);
+
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_soc (fk_soc);
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_user_author (fk_user_author);
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_projet (fk_projet);
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_account(fk_account);
+
+ALTER TABLE llx_ecm_files ADD COLUMN share_pass varchar(32) after share;
+
+ALTER TABLE llx_prelevement_demande ADD COLUMN type varchar(12) DEFAULT '';
+UPDATE llx_prelevement_demande SET type = 'ban' WHERE ext_payment_id IS NULL AND type = '';
+

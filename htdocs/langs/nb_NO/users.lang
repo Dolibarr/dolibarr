@@ -132,4 +132,3 @@ ShowAllPerms=Vis alle tillatelsesrader
 HideAllPerms=Skjul alle tillatelsesrader
 UserPublicPageDesc=Du kan aktivere et virtuelt kort for denne brukeren. En url med brukerprofilen og en strekkode vil være tilgjengelig slik at alle med en smarttelefon kan skanne den og legge til kontakten din i adresseboken.
 EnablePublicVirtualCard=Aktiver det offentlige virtuelle brukerkortet
-PublicVirtualCardUrl=Offentlig virtuelt brukerkort

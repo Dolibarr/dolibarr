@@ -1010,17 +1010,17 @@ if (!empty($arrayfields['f.ref_supplier']['checked'])) {
 if (!empty($arrayfields['f.type']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone">';
 	$listtype = array(
-			FactureFournisseur::TYPE_STANDARD=>$langs->trans("InvoiceStandard"),
-			FactureFournisseur::TYPE_REPLACEMENT=>$langs->trans("InvoiceReplacement"),
-			FactureFournisseur::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
-			FactureFournisseur::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
+		FactureFournisseur::TYPE_STANDARD=>$langs->trans("InvoiceStandard"),
+		FactureFournisseur::TYPE_REPLACEMENT=>$langs->trans("InvoiceReplacement"),
+		FactureFournisseur::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
+		FactureFournisseur::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
 	);
 	/*
-	if (!empty($conf->global->INVOICE_USE_SITUATION))
-	{
-		$listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
-	}
-	*/
+	 if (!empty($conf->global->INVOICE_USE_SITUATION))
+	 {
+	 $listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
+	 }
+	 */
 	//$listtype[Facture::TYPE_PROFORMA]=$langs->trans("InvoiceProForma");     // A proformat invoice is not an invoice but must be an order.
 	print $form->selectarray('search_type', $listtype, $search_type, 1, 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth100');
 	print '</td>';
@@ -1047,11 +1047,11 @@ if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
 	/*
-	print $langs->trans('From').' ';
-	print $form->selectDate($search_datelimit_start ? $search_datelimit_start : -1, 'search_datelimit_start', 0, 0, 1);
-	print '</div>';
-	print '<div class="nowrap">';
-	print $langs->trans('to').' ';*/
+	 print $langs->trans('From').' ';
+	 print $form->selectDate($search_datelimit_start ? $search_datelimit_start : -1, 'search_datelimit_start', 0, 0, 1);
+	 print '</div>';
+	 print '<div class="nowrap">';
+	 print $langs->trans('to').' ';*/
 	print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("Before"));
 	print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late' ? ' checked' : '').'> '.$langs->trans("Alert");
 	print '</div>';
@@ -1412,10 +1412,11 @@ if ($num > 0) {
 				$remaintopay = -$facturestatic->getSumFromThisCreditNotesNotUsed();
 			}
 		}
+
 		if ($mode == 'kanban') {
 			if ($i == 0) {
 				print '<tr><td colspan="12">';
-				print '<div class="box-flex-container">';
+				print '<div class="box-flex-container kanban">';
 			}
 			// Output Kanban
 			$facturestatic->socid = $thirdparty->getNomUrl(1, 'supplier', 3);
@@ -1483,7 +1484,7 @@ if ($num > 0) {
 			// Label
 			if (!empty($arrayfields['f.label']['checked'])) {
 				print '<td class="nowrap">';
-				print $obj->label;
+				print dol_escape_htmltag($obj->label);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1539,7 +1540,7 @@ if ($num > 0) {
 			// Alias
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
 				print '<td class="tdoverflowmax150">';
-				print $thirdparty->name_alias;
+				print dol_escape_htmltag($thirdparty->name_alias);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1547,8 +1548,8 @@ if ($num > 0) {
 			}
 			// Town
 			if (!empty($arrayfields['s.town']['checked'])) {
-				print '<td class="nocellnopadd">';
-				print $obj->town;
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->town).'">';
+				print dol_escape_htmltag($obj->town);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1556,7 +1557,7 @@ if ($num > 0) {
 			}
 			// Zip
 			if (!empty($arrayfields['s.zip']['checked'])) {
-				print '<td class="nocellnopadd center tdoverflowmax100" title="'.dol_escape_htmltag($obj->zip).'">';
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->zip).'">';
 				print dol_escape_htmltag($obj->zip);
 				print '</td>';
 				if (!$i) {
@@ -1565,7 +1566,9 @@ if ($num > 0) {
 			}
 			// State
 			if (!empty($arrayfields['state.nom']['checked'])) {
-				print "<td>".$obj->state_name."</td>\n";
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->state_name).'">';
+				print dol_escape_htmltag($obj->state_name);
+				print "</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1829,6 +1832,7 @@ if ($num > 0) {
 
 			print "</tr>\n";
 		}
+
 		$i++;
 	}
 
@@ -1868,8 +1872,8 @@ $urlsource = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortor
 $urlsource .= str_replace('&amp;', '&', $param);
 
 $filedir = $diroutputmassaction;
-$genallowed = $user->rights->facture->lire;
-$delallowed = $user->rights->facture->creer;
+$genallowed = $user->hasRight('facture', 'lire');
+$delallowed = $user->hasRight('facture', 'creer');
 $title = '';
 
 print $formfile->showdocuments('massfilesarea_supplier_invoice', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
