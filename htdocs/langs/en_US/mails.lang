@@ -91,7 +91,7 @@ MailingModuleDescContactsByFunction=Contacts by position
 MailingModuleDescEmailsFromFile=Emails from file
 MailingModuleDescEmailsFromUser=Emails input by user
 MailingModuleDescDolibarrUsers=Users with Emails
-MailingModuleDescThirdPartiesByCategories=Third parties (by categories)
+MailingModuleDescThirdPartiesByCategories=Third parties
 SendingFromWebInterfaceIsNotAllowed=Sending from web interface is not allowed.
 EmailCollectorFilterDesc=All filters must match to have an email being collected
 
