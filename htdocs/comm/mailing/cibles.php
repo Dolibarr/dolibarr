@@ -542,7 +542,7 @@ if ($object->fetch($id) >= 0) {
 
 		$massactionbutton = '';
 
-		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
+		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit, 0, 0, 1);
 
 		print '</form>';
 
