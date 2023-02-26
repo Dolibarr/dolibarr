@@ -5,7 +5,7 @@
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
--- Copyright (C) 2011-2022 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+-- Copyright (C) 2011-2023 Alexandre Spangaro   <aspangaro@open-dsi.fr>
 -- Copyright (C) 2015-2017 Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2018      Abbes bahfir         <dolipar@dolipar.org>
 -- Copyright (C) 2020      Udo Tamm             <dev@dolibit.de>
@@ -46,13 +46,13 @@
 
 -- Accounting Journals 
 
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('VT',  'AccountingJournalType2', 2, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AC',  'AccountingJournalType3', 3, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('BQ',  'AccountingJournalType4', 4, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('OD',  'AccountingJournalType1', 1, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AN',  'AccountingJournalType9', 9, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('ER',  'AccountingJournalType5', 5, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('INV', 'AccountingJournalType8', 8, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('VT',  'ACCOUNTING_SELL_JOURNAL',          2, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AC',  'ACCOUNTING_PURCHASE_JOURNAL',      3, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('BQ',  'ACCOUNTING_BANK_JOURNAL',          4, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('OD',  'ACCOUNTING_MISCELLANEOUS_JOURNAL', 1, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AN',  'ACCOUNTING_HAS_NEW_JOURNAL',       9, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('ER',  'ACCOUNTING_EXPENSEREPORT_JOURNAL', 5, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('INV', 'ACCOUNTING_INVENTORY_JOURNAL',     8, 1, 1);
 
 
 -- Accounting Charts / Plans (Templates) for Countries
