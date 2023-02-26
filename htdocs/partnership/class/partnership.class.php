@@ -372,7 +372,7 @@ class Partnership extends CommonObject
 		$sql = 'SELECT p.rowid, p.ref, p.fk_type, p.fk_soc, p.fk_member, p.status';
 		$sql .= ', p.entity, p.date_partnership_start, p.date_partnership_end, p.date_creation';
 		$sql .= ', p.fk_user_creat, p.tms, p.fk_user_modif, p.fk_user_modif';
-		$sql .= ', p.note_private, p.note_public';
+		$sql .= ', p.note_private, p.note_public, p.url_to_check';
 		$sql .= ', p.last_main_doc, p.count_last_url_check_error, p.last_check_backlink, p.reason_decline_or_cancel';
 		$sql .= ', p.import_key, p.model_pdf';
 		$sql .= ', pt.code as type_code, pt.label as type_label';
@@ -380,7 +380,7 @@ class Partnership extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_partnership_type as pt ON p.fk_type = pt.rowid';
 
 		if ($id) {
-			$sql .= " WHERE p.rowid=".((int) $id);
+			$sql .= " WHERE p.rowid = ".((int) $id);
 		} else {
 			$sql .= " WHERE p.entity IN (0,".getEntity('partnership').")"; // Dont't use entity if you use rowid
 		}
@@ -427,6 +427,7 @@ class Partnership extends CommonObject
 				$this->reason_decline_or_cancel 	= $obj->reason_decline_or_cancel;
 				$this->import_key 					= $obj->import_key;
 				$this->model_pdf 					= $obj->model_pdf;
+				$this->url_to_check 				= $obj->url_to_check;
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
