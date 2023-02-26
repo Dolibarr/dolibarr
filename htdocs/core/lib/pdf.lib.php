@@ -2511,7 +2511,7 @@ function pdf_getSizeForImage($realpath)
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$tmp = dol_getImageSize($realpath);
 	$width = 0;
-    $height = 0;
+	$height = 0;
 	if ($tmp['height']) {
 		$width = (int) round($maxheight * $tmp['width'] / $tmp['height']); // I try to use maxheight
 		if ($width > $maxwidth) {	// Pb with maxheight, so i use maxwidth
