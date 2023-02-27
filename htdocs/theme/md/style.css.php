@@ -5296,6 +5296,12 @@ span[phptag] {
 	font-weight: normal;
 	color: #444 !important;
 }
+.websitebar .button.bordertransp {
+	color: unset;
+	text-decoration: unset !important;
+	/* margin: 0px 4px 0px 4px  !important */
+}
+
 .websitebar {
 	border-bottom: 1px solid #ccc;
 	background: #eee;
@@ -5335,7 +5341,7 @@ span[phptag] {
 .websiteinputurl {
 	display: inline-block;
 	vertical-align: top;
-	line-height: 28px;
+	line-height: 26px;
 }
 .websiteiframenoborder {
 	border: 0px;
@@ -5356,7 +5362,7 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 .websitehelp {
 	vertical-align: middle;
 	float: right;
-	padding-top: 8px;
+	padding-top: 5px;
 }
 .websiteselectionsection {
 	border-left: 1px solid #bbb;

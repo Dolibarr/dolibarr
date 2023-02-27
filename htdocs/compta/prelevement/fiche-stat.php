@@ -94,7 +94,7 @@ if ($id > 0 || $ref) {
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
 		print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount).'</span></td></tr>';
 
-		if ($object->date_trans <> 0) {
+		if (!empty($object->date_trans)) {
 			$muser = new User($db);
 			$muser->fetch($object->user_trans);
 
@@ -105,7 +105,7 @@ if ($id > 0 || $ref) {
 			print $object->methodes_trans[$object->method_trans];
 			print '</td></tr>';
 		}
-		if ($object->date_credit <> 0) {
+		if (!empty($object->date_credit)) {
 			print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
 			print dol_print_date($object->date_credit, 'day');
 			print '</td></tr>';

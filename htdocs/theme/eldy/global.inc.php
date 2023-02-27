@@ -1575,8 +1575,7 @@ table[summary="list_of_modules"] .fa-cog {
 	height: 100px;
 }
 
-.ls -alrt
-vi  {
+maxscreenheightless200 {
 	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(500, (int) $_SESSION['dol_screenheight'] - 200) : 700; ?>px;	/* we guarantee height of 500 */
 }
 .maxscreenheightless300 {
@@ -5297,6 +5296,7 @@ span[phptag] {
 .websitebar .button.bordertransp {
 	color: unset;
 	text-decoration: unset !important;
+	margin: 0px 4px 0px 4px  !important
 }
 
 .websitebar {
@@ -5344,7 +5344,7 @@ span[phptag] {
 .websiteinputurl {
 	display: inline-block;
 	vertical-align: middle;
-	line-height: 28px;
+	line-height: 26px;
 }
 .websiteiframenoborder {
 	border: 0px;
