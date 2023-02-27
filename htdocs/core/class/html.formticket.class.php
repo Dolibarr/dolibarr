@@ -50,6 +50,11 @@ class FormTicket
 	public $track_id;
 
 	/**
+	 * @var string 		Email $trackid. Used also for the $keytoavoidconflict to name session vars to upload files.
+	 */
+	public $trackid;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_user_create;
@@ -164,6 +169,7 @@ class FormTicket
 		print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
+		print '<input type="hidden" name="trackid" value="'.$this->trackid.'">';
 		foreach ($this->param as $key => $value) {
 			print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 		}
@@ -375,16 +381,16 @@ class FormTicket
 			$listofpaths = array();
 			$listofnames = array();
 			$listofmimes = array();
-			if (!empty($_SESSION["listofpaths"])) {
-				$listofpaths = explode(';', $_SESSION["listofpaths"]);
-			}
 
-			if (!empty($_SESSION["listofnames"])) {
-				$listofnames = explode(';', $_SESSION["listofnames"]);
+			$keytoavoidconflict = empty($this->trackid) ? '' : '-'.$this->trackid; // this->trackid must be defined
+			if (!empty($_SESSION["listofpaths".$keytoavoidconflict])) {
+				$listofpaths = explode(';', $_SESSION["listofpaths".$keytoavoidconflict]);
 			}
-
-			if (!empty($_SESSION["listofmimes"])) {
-				$listofmimes = explode(';', $_SESSION["listofmimes"]);
+			if (!empty($_SESSION["listofnames".$keytoavoidconflict])) {
+				$listofnames = explode(';', $_SESSION["listofnames".$keytoavoidconflict]);
+			}
+			if (!empty($_SESSION["listofmimes".$keytoavoidconflict])) {
+				$listofmimes = explode(';', $_SESSION["listofmimes".$keytoavoidconflict]);
 			}
 
 			$out = '<tr>';
@@ -1006,7 +1012,7 @@ class FormTicket
 		$langs->loadLangs(array('other', 'mails'));
 
 		// Clear temp files. Must be done at beginning, before call of triggers
-		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
+		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
 			$this->clear_attached_files();
 		}
 
@@ -1027,7 +1033,7 @@ class FormTicket
 		if ($this->param['models'] != 'none') {
 			$model_id = 0;
 			if (array_key_exists('models_id', $this->param)) {
-				$model_id = $this->param["models_id"];
+				$model_id = (int) $this->param["models_id"];
 			}
 
 			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id); // If $model_id is empty, preselect the first one
@@ -1037,12 +1043,13 @@ class FormTicket
 		$listofpaths = array();
 		$listofnames = array();
 		$listofmimes = array();
+
 		$keytoavoidconflict = empty($this->trackid) ? '' : '-'.$this->trackid; // this->trackid must be defined
 
-		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
-			if (!empty($arraydefaultmessage->joinfiles) && is_array($this->param['fileinit'])) {
+		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
+			if (!empty($arraydefaultmessage->joinfiles) && !empty($this->param['fileinit']) && is_array($this->param['fileinit'])) {
 				foreach ($this->param['fileinit'] as $file) {
-					$this->add_attached_files($file, basename($file), dol_mimetype($file));
+					$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
 				}
 			}
 		}
@@ -1116,6 +1123,7 @@ class FormTicket
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
 		print '<input type="hidden" name="actionbis" value="add_message">';
+		print '<input type="hidden" name="trackid" value="'.$this->trackid.'">';
 		foreach ($this->param as $key => $value) {
 			print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 		}
@@ -1223,7 +1231,7 @@ class FormTicket
 		// Intro
 		// External users can't send message email
 		if ($user->rights->ticket->write && !$user->socid) {
-			$mail_intro = GETPOST('mail_intro') ? GETPOST('mail_intro') : $conf->global->TICKET_MESSAGE_MAIL_INTRO;
+			$mail_intro = GETPOST('mail_intro', 'restricthtml') ? GETPOST('mail_intro', 'restricthtml') : $conf->global->TICKET_MESSAGE_MAIL_INTRO;
 			$mail_intro = make_substitutions($mail_intro, $this->substit);
 			print '<tr class="email_line"><td><label for="mail_intro">';
 			print $form->textwithpicto($langs->trans("TicketMessageMailIntro"), $langs->trans("TicketMessageMailIntroHelp"), 1, 'help');
@@ -1232,7 +1240,7 @@ class FormTicket
 			print '</td><td>';
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-			$doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 90, 'dolibarr_details', '', false, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
+			$doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 90, 'dolibarr_notes', '', false, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
 
 			$doleditor->Create();
 			print '</td></tr>';
@@ -1276,13 +1284,13 @@ class FormTicket
 		// Signature
 		// External users can't send message email
 		if ($user->rights->ticket->write && !$user->socid) {
-			$mail_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
+			$mail_signature = GETPOST('mail_signature', 'restricthtml') ? GETPOST('mail_signature', 'restricthtml') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
 			$mail_signature = make_substitutions($mail_signature, $this->substit);
 			print '<tr class="email_line"><td><label for="mail_intro">'.$langs->trans("TicketMessageMailSignature").'</label>';
 			print $form->textwithpicto('', $langs->trans("TicketMessageMailSignatureHelp"), 1, 'help');
 			print '</td><td>';
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor = new DolEditor('mail_signature', $mail_signature, '100%', 150, 'dolibarr_details', '', false, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
+			$doleditor = new DolEditor('mail_signature', $mail_signature, '100%', 150, 'dolibarr_notes', '', false, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
 			$doleditor->Create();
 			print '</td></tr>';
 		}

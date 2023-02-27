@@ -7049,6 +7049,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__RECEPTIONTRACKNUMURL__'] = 'Shipping tracking url';
 			}
 		} else {
+			// can substitute variables for project
+			if (!empty($conf->projet->enabled) && method_exists($object, 'fetch_project') && is_null($object->project)) {
+				$object->fetch_project();
+			}
+
 			$substitutionarray['__ID__'] = $object->id;
 			$substitutionarray['__REF__'] = $object->ref;
 			$substitutionarray['__LABEL__'] = (isset($object->label) ? $object->label : (isset($object->title) ? $object->title : null));
