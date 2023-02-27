@@ -129,8 +129,15 @@ if ($id > 0 || $ref) {
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent tableforfield">';
 
+		// Get bank account for the payment
 		$acc = new Account($db);
-		$result = $acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+		$fk_bank_account = $object->fk_bank_account;
+		if (empty($fk_bank_account)) {
+			$fk_bank_account = ($object->type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
+		}
+		if ($fk_bank_account > 0) {
+			$result = $acc->fetch($fk_bank_account);
+		}
 
 		print '<tr><td class="titlefieldcreate">';
 		$labelofbankfield = "BankToReceiveWithdraw";
