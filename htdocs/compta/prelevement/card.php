@@ -215,7 +215,8 @@ if ($id > 0 || $ref) {
 		$result = $acc->fetch($object->fk_bank_account);
 	} else {	// For backward compatibility
 		$acc = new Account($db);
-		$result = $acc->fetch(($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT));
+		$fk_bank_account = ($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+		$result = $acc->fetch($fk_bank_account);
 	}
 
 	print '<tr><td class="titlefieldcreate">';

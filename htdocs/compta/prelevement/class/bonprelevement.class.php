@@ -92,6 +92,7 @@ class BonPrelevement extends CommonObject
 	public $user_credit;
 
 	public $type;
+	public $fk_bank_account;	// The bank the receipt is generated for
 
 	const STATUS_DRAFT = 0;
 	const STATUS_TRANSFERED = 1;
@@ -299,6 +300,7 @@ class BonPrelevement extends CommonObject
 		$sql .= ", p.date_credit as date_credit";
 		$sql .= ", p.fk_user_credit";
 		$sql .= ", p.type";
+		$sql .= ", p.fk_bank_account";
 		$sql .= ", p.statut as status";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 		$sql .= " WHERE p.entity IN (".getEntity('invoice').")";
@@ -328,6 +330,7 @@ class BonPrelevement extends CommonObject
 				$this->user_credit    = $obj->fk_user_credit;
 
 				$this->type           = $obj->type;
+				$this->fk_bank_account = $obj->fk_bank_account;
 
 				$this->status         = $obj->status;
 				$this->statut         = $obj->status; // For backward compatibility
@@ -369,7 +372,7 @@ class BonPrelevement extends CommonObject
 
 			$this->db->begin();
 
-			$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_bons ";
+			$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
 			$sql .= " SET fk_user_credit = ".$user->id;
 			$sql .= ", statut = ".self::STATUS_CREDITED;
 			$sql .= ", date_credit = '".$this->db->idate($date)."'";
@@ -383,8 +386,12 @@ class BonPrelevement extends CommonObject
 				$subject = $langs->trans("InfoCreditSubject", $this->ref);
 				$message = $langs->trans("InfoCreditMessage", $this->ref, dol_print_date($date, 'dayhour'));
 
-				//Add payment of withdrawal into bank
-				$bankaccount = ($this->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+				// Add payment of withdrawal into bank
+				$fk_bank_account = $this->fk_bank_account;
+				if (empty($fk_bank_account)) {
+					$fk_bank_account = ($this->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+				}
+
 				$facs = array();
 				$amounts = array();
 				$amountsperthirdparty = array();
@@ -455,7 +462,7 @@ class BonPrelevement extends CommonObject
 							$modeforaddpayment = 'payment';
 						}
 
-						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, '(WithdrawalPayment)', $bankaccount, '', '');
+						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, '(WithdrawalPayment)', $fk_bank_account, '', '');
 						if ($result < 0) {
 							$error++;
 							$this->error = $paiement->error;
@@ -742,17 +749,18 @@ class BonPrelevement extends CommonObject
 	 *  - Link the order with the prelevement_demande lines
 	 *  TODO delete params banque and agence when not necessary
 	 *
-	 *	@param 	int		$banque			dolibarr mysoc bank
-	 *	@param	int		$agence			dolibarr mysoc bank office (guichet)
-	 *	@param	string	$mode			real=do action, simu=test only
-	 *  @param	string	$format			FRST, RCUR or ALL
-	 *  @param  string  $executiondate	Date to execute the transfer
-	 *  @param	int	    $notrigger		Disable triggers
-	 *  @param	string	$type			'direct-debit' or 'bank-transfer'
-	 *  @param	int		$did			ID of an existing payment request. If $did is defined, no entry
-	 *	@return	int						<0 if KO, No of invoice included into file if OK
+	 *	@param 	int		$banque				dolibarr mysoc bank
+	 *	@param	int		$agence				dolibarr mysoc bank office (guichet)
+	 *	@param	string	$mode				real=do action, simu=test only
+	 *  @param	string	$format				FRST, RCUR or ALL
+	 *  @param  string  $executiondate		Date to execute the transfer
+	 *  @param	int	    $notrigger			Disable triggers
+	 *  @param	string	$type				'direct-debit' or 'bank-transfer'
+	 *  @param	int		$did				ID of an existing payment request. If $did is defined, no entry
+	 *  @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
+	 *	@return	int							<0 if KO, No of invoice included into file if OK
 	 */
-	public function create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0, $type = 'direct-debit', $did = 0)
+	public function create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0, $type = 'direct-debit', $did = 0, $fk_bank_account = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs, $user;
@@ -762,11 +770,17 @@ class BonPrelevement extends CommonObject
 		require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
 		require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 
+		// Check params
 		if ($type != 'bank-transfer') {
 			if (empty($format)) {
 				$this->error = 'ErrorBadParametersForDirectDebitFileCreate';
 				return -1;
 			}
+		}
+
+		// Clean params
+		if (empty($fk_bank_account)) {
+			$fk_bank_account = ($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 		}
 
 		$error = 0;
@@ -969,12 +983,13 @@ class BonPrelevement extends CommonObject
 
 					// Create withdraw order in database
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
-					$sql .= "ref, entity, datec, type";
+					$sql .= "ref, entity, datec, type, fk_bank_account";
 					$sql .= ") VALUES (";
 					$sql .= "'".$this->db->escape($ref)."'";
 					$sql .= ", ".((int) $conf->entity);
 					$sql .= ", '".$this->db->idate($now)."'";
 					$sql .= ", '".($type == 'bank-transfer' ? 'bank-transfer' : 'debit-order')."'";
+					$sql .= ", ".((int) $fk_bank_account);
 					$sql .= ")";
 
 					$resql = $this->db->query($sql);
@@ -1055,12 +1070,8 @@ class BonPrelevement extends CommonObject
 					$this->date_echeance = $datetimeprev;
 					$this->reference_remise = $ref;
 
-					$id = $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
-					if ($type == 'bank-transfer') {
-						$id = $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT;
-					}
 					$account = new Account($this->db);
-					if ($account->fetch($id) > 0) {
+					if ($account->fetch($fk_bank_account) > 0) {
 						$this->emetteur_code_banque        = $account->code_banque;
 						$this->emetteur_code_guichet       = $account->code_guichet;
 						$this->emetteur_numero_compte      = $account->number;
@@ -1382,15 +1393,21 @@ class BonPrelevement extends CommonObject
 	 * File is generated with name this->filename
 	 *
 	 * @param	string	$format				FRST, RCUR or ALL
-	 * @param 	string 	$executiondate		Date to execute transfer
+	 * @param 	int 	$executiondate		Timestamp date to execute transfer
 	 * @param	string	$type				'direct-debit' or 'bank-transfer'
+	 * @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
 	 * @return	int							>=0 if OK, <0 if KO
 	 */
-	public function generate($format = 'ALL', $executiondate = '', $type = 'direct-debit')
+	public function generate($format = 'ALL', $executiondate = 0, $type = 'direct-debit', $fk_bank_account = 0)
 	{
 		global $conf, $langs, $mysoc;
 
 		//TODO: Optimize code to read lines in a single function
+
+		// Clean params
+		if (empty($fk_bank_account)) {
+			$fk_bank_account = ($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+		}
 
 		$result = 0;
 
@@ -1486,7 +1503,7 @@ class BonPrelevement extends CommonObject
 
 				// Define $fileEmetteurSection. Start of bloc PmtInf. Will contains all $nbtotalDrctDbtTxInf
 				if ($result != -2) {
-					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type);
+					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type, $fk_bank_account);
 				}
 
 				/**
@@ -2041,31 +2058,36 @@ class BonPrelevement extends CommonObject
 	 *	Write sender of request (me).
 	 *  Note: The tag PmtInf is opened here but closed into caller
 	 *
-	 *	@param	Conf	$configuration	conf
-	 *	@param	int     $ladate			Date
-	 *	@param	int		$nombre			0 or 1
-	 *	@param	float	$total			Total
-	 *	@param	string	$CrLf			End of line character
-	 *  @param	string	$format			FRST or RCUR or ALL
-	 *  @param	string	$type			'direct-debit' or 'bank-transfer'
-	 *	@return	string					String with SEPA Sender
+	 *	@param	Conf	$configuration		conf
+	 *	@param	int     $ladate				Date
+	 *	@param	int		$nombre				0 or 1
+	 *	@param	float	$total				Total
+	 *	@param	string	$CrLf				End of line character
+	 *  @param	string	$format				FRST or RCUR or ALL
+	 *  @param	string	$type				'direct-debit' or 'bank-transfer'
+	 *  @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
+	 *	@return	string						String with SEPA Sender
 	 *  @see EnregEmetteur()
 	 */
-	public function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf = '\n', $format = 'FRST', $type = 'direct-debit')
+	public function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf = '\n', $format = 'FRST', $type = 'direct-debit', $fk_bank_account = 0)
 	{
 		// phpcs:enable
 		// SEPA INITIALISATION
 		global $conf;
 
+		// Clean parameters
 		$dateTime_YMD = dol_print_date($ladate, '%Y%m%d');
 		$dateTime_ETAD = dol_print_date($ladate, '%Y-%m-%d');
 		$dateTime_YMDHMS = dol_print_date($ladate, '%Y-%m-%dT%H:%M:%S');
 
+		// Clean params
+		if (empty($fk_bank_account)) {
+			$fk_bank_account = ($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+		}
+
 		// Get data of bank account
-		//$id = $configuration->global->PRELEVEMENT_ID_BANKACCOUNT;
-		$id = ($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 		$account = new Account($this->db);
-		if ($account->fetch($id) > 0) {
+		if ($account->fetch($fk_bank_account) > 0) {
 			$this->emetteur_code_banque = $account->code_banque;
 			$this->emetteur_code_guichet = $account->code_guichet;
 			$this->emetteur_numero_compte = $account->number;
@@ -2081,8 +2103,7 @@ class BonPrelevement extends CommonObject
 
 		// Get pending payments
 		$sql = "SELECT rowid, ref";
-		$sql .= " FROM";
-		$sql .= " ".MAIN_DB_PREFIX."prelevement_bons as pb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as pb";
 		$sql .= " WHERE pb.rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
@@ -2294,10 +2315,10 @@ class BonPrelevement extends CommonObject
 	}
 
 	/**
-	 *    Return status label of object
+	 *  Return status label of object
 	 *
-	 *    @param    int		$mode   0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
-	 * 	  @return	string     		Label
+	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * 	@return	string     			Label
 	 */
 	public function getLibStatut($mode = 0)
 	{
