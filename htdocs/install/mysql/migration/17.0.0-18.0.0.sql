@@ -73,6 +73,7 @@ ALTER TABLE llx_bank_account ADD COLUMN owner_zip varchar(25);
 ALTER TABLE llx_bank_account ADD COLUMN owner_town varchar(50);
 ALTER TABLE llx_bank_account ADD COLUMN owner_country_id integer DEFAULT NULL;
 
+ALTER TABLE llx_prelevement_bons ADD COLUMN fk_bank_account integer DEFAULT NULL;
 
 ALTER TABLE llx_supplier_proposal ADD UNIQUE INDEX uk_supplier_proposal_ref (ref, entity);
 

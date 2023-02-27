@@ -210,8 +210,13 @@ if ($id > 0 || $ref) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-	$acc = new Account($db);
-	$result = $acc->fetch(($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT));
+	if ($object->fk_bank_account > 0) {
+		$acc = new Account($db);
+		$result = $acc->fetch($object->fk_bank_account);
+	} else {	// For backward compatibility
+		$acc = new Account($db);
+		$result = $acc->fetch(($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT));
+	}
 
 	print '<tr><td class="titlefieldcreate">';
 	$labelofbankfield = "BankToReceiveWithdraw";
