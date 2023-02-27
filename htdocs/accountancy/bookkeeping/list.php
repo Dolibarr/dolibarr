@@ -729,6 +729,7 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 		// Export files then exit
 		$accountancyexport = new AccountancyExport($db);
 
+		$formatexport = GETPOST('formatexport', 'int');
 		$notexportlettering = GETPOST('notexportlettering', 'alpha');
 
 		if (!empty($notexportlettering)) {
@@ -745,7 +746,7 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 		$withAttachment = !empty(trim(GETPOST('notifiedexportfull', 'alphanohtml'))) ? 1 : 0;
 
 		// Output data on screen or download
-		$result = $accountancyexport->export($object->lines, $formatexportset, $withAttachment);
+		$result = $accountancyexport->export($object->lines, $formatexport, $withAttachment);
 
 		$error = 0;
 		if ($result < 0) {
@@ -856,11 +857,13 @@ $formconfirm = '';
 if ($action == 'export_file') {
 	$form_question = array();
 
-	$form_question['notexportlettering'] = array(
-		'name' => 'notexportlettering',
-		'type' => 'other',
-		'label' => '',		// TODO  Use Selectmodelcsv and show a select combo
-		'value' => $langs->trans('Modelcsv').' : <b>'.$listofformat[$formatexportset].'</b>'
+	$form_question['formatexport'] = array(
+		'name' => 'formatexport',
+		'type' => 'select',
+		'label' => $langs->trans('Modelcsv'),		// TODO  Use Selectmodelcsv and show a select combo
+		'values' => $listofformat,
+		'default' => $formatexportset,
+		'morecss' => 'minwidth200 maxwidth200'
 	);
 
 	$form_question['separator0'] = array('name'=>'separator0', 'type'=>'separator');
