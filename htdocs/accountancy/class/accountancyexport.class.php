@@ -1177,7 +1177,9 @@ class AccountancyExport
 				print $line->code_journal . $separator;
 
 				// FEC:JournalLib
-				print dol_string_unaccent($langs->transnoentities($line->journal_label)) . $separator;
+				$labeljournal = dol_string_unaccent($langs->transnoentities($line->journal_label));
+				$labeljournal = dol_string_nospecial($labeljournal, ' ');
+				print $labeljournal . $separator;
 
 				// FEC:EcritureNum
 				print $line->piece_num . $separator;
@@ -1308,7 +1310,9 @@ class AccountancyExport
 				print $line->code_journal . $separator;
 
 				// FEC:JournalLib
-				print dol_string_unaccent($langs->transnoentities($line->journal_label)) . $separator;
+				$labeljournal = dol_string_unaccent($langs->transnoentities($line->journal_label));
+				$labeljournal = dol_string_nospecial($labeljournal, ' ');
+				print $labeljournal . $separator;
 
 				// FEC:EcritureNum
 				print $line->piece_num . $separator;

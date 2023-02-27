@@ -5168,7 +5168,7 @@ class Form
 						$formquestion[] = array('name'=>$input['name'].'year');
 						$formquestion[] = array('name'=>$input['name'].'hour');
 						$formquestion[] = array('name'=>$input['name'].'min');
-					} elseif ($input['type'] == 'other') {
+					} elseif ($input['type'] == 'other') {	// can be 1 column or 2 depending if label is set or not
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">';
 						if (!empty($input['label'])) {
 							$more .= $input['label'].'</div><div class="tagtd">';
@@ -7816,47 +7816,6 @@ class Form
 		return $out;
 	}
 
-	/**
-	 * Function to forge a SQL criteria from a Dolibarr filter syntax string.
-	 *
-	 * @param  array    $matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.nature:is:NULL"
-	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
-	 */
-	protected static function forgeCriteriaCallback($matches)
-	{
-		global $db;
-
-		//dol_syslog("Convert matches ".$matches[1]);
-		if (empty($matches[1])) {
-			return '';
-		}
-		$tmp = explode(':', $matches[1]);
-		if (count($tmp) < 3) {
-			return '1=2';	// An always false request
-		}
-
-		$tmpescaped = $tmp[2];
-		$regbis = array();
-
-		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
-			$tmpescaped = "'".$db->escape($regbis[1])."'";
-		} else {
-			$tmpescaped = $db->escape($tmpescaped);
-		}
-
-		if ($tmp[1] == '!=') {
-			$tmp[1] = '<>';
-		}
-
-		if (preg_match('/[\(\)]/', $tmp[0])) {
-			return '1=2';	// An always false request
-		}
-		if (! in_array($tmp[1], array('<', '>', '<>', 'is', 'isnot', '=', 'like'))) {
-			return '1=2';	// An always false request
-		}
-
-		return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1])).' '.$tmpescaped;
-	}
 
 	/**
 	 * Output html form to select an object.
@@ -7970,12 +7929,11 @@ class Form
 			}
 
 			if ($filter) {	 // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-				/*if (! DolibarrApi::_checkFilters($filter))
-				{
-					throw new RestException(503, 'Error when validating parameter sqlfilters '.$filter);
-				}*/
-				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-				$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'Form::forgeCriteriaCallback', $filter).")";
+				$errormessage = '';
+				$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+				if ($errormessage) {
+					return 'Error forging a SQL request from an universal criteria: '.$errormessage;
+				}
 			}
 		}
 		$sql .= $this->db->order($sortfield ? $sortfield : $fieldstoshow, "ASC");
@@ -10331,14 +10289,12 @@ class Form
 				$search_component_params_hidden .= '('.$search_component_params_hidden.')';
 			}
 			$errormessage = '';
-			if (!dolCheckFilters($search_component_params_hidden, $errormessage)) {
-				print 'ERROR in parsing search string';
+			$searchtags = forgeSQLFromUniversalSearchCriteria($search_component_params_hidden, $errormessage);
+			if ($errormessage) {
+				print 'ERROR in parsing search string: '.dol_escape_htmltag($errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			//var_dump($search_component_params_hidden);
-			$htmltags = preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $search_component_params_hidden);
-			//var_dump($htmltags);
-			$ret .= '<span class="marginleftonlyshort valignmiddle tagsearch"><span class="tagsearchdelete select2-selection__choice__remove">x</span> '.$htmltags.'</span>';
+			//var_dump($searchtags);
+			$ret .= '<span class="marginleftonlyshort valignmiddle tagsearch"><span class="tagsearchdelete select2-selection__choice__remove">x</span> '.dol_escape_htmltag($searchtags).'</span>';
 		}
 
 		//$ret .= '<button type="submit" class="liste_titre button_search paddingleftonly" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';

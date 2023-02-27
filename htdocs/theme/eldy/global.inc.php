@@ -1575,11 +1575,12 @@ table[summary="list_of_modules"] .fa-cog {
 	height: 100px;
 }
 
-.maxscreenheightless200 {
-	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(500, $_SESSION['dol_screenheight'] - 200) : 700; ?>px;	/* we guarantee height of 500 */
+.ls -alrt
+vi  {
+	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(500, (int) $_SESSION['dol_screenheight'] - 200) : 700; ?>px;	/* we guarantee height of 500 */
 }
 .maxscreenheightless300 {
-	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(400, $_SESSION['dol_screenheight'] - 300) : 700; ?>px;	/* we guarantee height of 500 */
+	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(400, (int) $_SESSION['dol_screenheight'] - 300) : 700; ?>px;	/* we guarantee height of 500 */
 }
 
 
@@ -4557,13 +4558,13 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	.thumbstat {
 		flex: 1 1 110px;
 		margin-bottom: 8px;
-		min-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(160, round($_SESSION['dol_screenwidth'] / 2 - 20)) : 150; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+		min-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(160, round((int) $_SESSION['dol_screenwidth'] / 2 - 20)) : 150; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
 	}
 	.thumbstat150 {
 		flex: 1 1 110px;
 		margin-bottom: 8px;
-		min-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(160, round($_SESSION['dol_screenwidth'] / 2 - 20)) : 160; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
-		max-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(161, round($_SESSION['dol_screenwidth'] / 2 - 20)) : 161; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+		min-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(160, round((int) $_SESSION['dol_screenwidth'] / 2 - 20)) : 160; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+		max-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(161, round((int) $_SESSION['dol_screenwidth'] / 2 - 20)) : 161; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
 		/* width: ...px; If I use with, there is trouble on size of flex boxes solved with min + (max that is a little bit higer than min) */
 	}
 	.dashboardlineindicator {
@@ -5897,7 +5898,7 @@ pre#editfilecontentaceeditorid {
 /* ============================================================================== */
 
 div.scroll2 {
-	width: <?php print isset($_SESSION['dol_screenwidth']) ?max($_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
+	width: <?php print isset($_SESSION['dol_screenwidth']) ?max((int) $_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
 }
 
 div#GanttChartDIVglisthead, div#GanttChartDIVgcharthead {

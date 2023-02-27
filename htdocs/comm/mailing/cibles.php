@@ -548,7 +548,7 @@ if ($object->fetch($id) >= 0) {
 
 		$massactionbutton = '';
 
-		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
+		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit, 0, 0, 1);
 
 		print '</form>';
 
@@ -714,9 +714,13 @@ if ($object->fetch($id) >= 0) {
 				$i++;
 			}
 		} else {
-			if ($object->statut < 2) {
-				print '<tr><td colspan="9" class="opacitymedium">';
-				print $langs->trans("NoTargetYet");
+			if ($object->statut < $object::STATUS_SENTPARTIALY) {
+				print '<tr><td colspan="9">';
+				print '<span class="opacitymedium">'.$langs->trans("NoTargetYet").'</span>';
+				print '</td></tr>';
+			} else {
+				print '<tr><td colspan="9">';
+				print '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
 				print '</td></tr>';
 			}
 		}
