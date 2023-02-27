@@ -139,12 +139,13 @@ if ($id > 0 || $ref) {
 			$result = $acc->fetch($fk_bank_account);
 		}
 
-		print '<tr><td class="titlefieldcreate">';
 		$labelofbankfield = "BankToReceiveWithdraw";
 		if ($object->type == 'bank-transfer') {
 			$labelofbankfield = 'BankToPayCreditTransfer';
 		}
-		print $langs->trans($labelofbankfield);
+
+		print '<tr><td class="titlefieldcreate">';
+		print $form->textwithpicto($langs->trans("BankAccount"), $langs->trans($labelofbankfield));
 		print '</td>';
 		print '<td>';
 		if ($acc->id > 0) {
