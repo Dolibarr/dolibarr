@@ -242,7 +242,7 @@ if ($resql) {
 			$i++;
 		}
 	} else {
-		print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+		print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 
 	if ($num > 0) {
