@@ -1396,6 +1396,9 @@ if (empty($reshook)) {
 		$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 
 		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
+		if (empty($remise_percent)) {
+			$remise_percent = 0;
+		}
 
 		// Prepare a price equivalent for minimum price check
 		$pu_equivalent = $pu_ht;

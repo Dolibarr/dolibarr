@@ -11605,7 +11605,7 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$error = '')
 		return '1 = 3';		// Bad syntax of the search string, we force a SQL not found
 	}
 
-	return " AND (".preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $filter).")";
+	return " AND (".preg_replace_callback('/'.$regexstring.'/i', 'dolForgeCriteriaCallback', $filter).")";
 }
 
 /**

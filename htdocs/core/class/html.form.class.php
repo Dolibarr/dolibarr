@@ -5168,7 +5168,7 @@ class Form
 						$formquestion[] = array('name'=>$input['name'].'year');
 						$formquestion[] = array('name'=>$input['name'].'hour');
 						$formquestion[] = array('name'=>$input['name'].'min');
-					} elseif ($input['type'] == 'other') {
+					} elseif ($input['type'] == 'other') {	// can be 1 column or 2 depending if label is set or not
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">';
 						if (!empty($input['label'])) {
 							$more .= $input['label'].'</div><div class="tagtd">';
