@@ -669,6 +669,23 @@ abstract class CommonObject
 		}
 		return -1;
 	}
+
+	/**
+	 * setErrorsFromObject
+	 *
+	 * @param CommonObject $object commonobject
+	 * @return void
+	 */
+	public function setErrorsFromObject($object)
+	{
+		if (!empty($object->error)) {
+			$this->error = $object->error;
+		}
+		if (!empty($object->errors)) {
+			$this->errors = array_merge($this->errors, $object->errors);
+		}
+	}
+
 	/**
 	 * getTooltipContentArray
 	 *

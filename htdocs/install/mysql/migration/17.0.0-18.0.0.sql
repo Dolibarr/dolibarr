@@ -103,6 +103,8 @@ ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_account(fk_
 
 ALTER TABLE llx_ecm_files ADD COLUMN share_pass varchar(32) after share;
 
+ALTER TABLE llx_prelevement_demande ADD COLUMN type varchar(12) DEFAULT '';
+UPDATE llx_prelevement_demande SET type = 'ban' WHERE ext_payment_id IS NULL AND type = '';
 
 -- Remove indec column in virtual products (kits)
 ALTER TABLE llx_product_association DROP COLUMN incdec;

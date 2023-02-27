@@ -325,7 +325,7 @@ if ($object->id > 0) {
 		$sql .= " WHERE fk_facture = ".((int) $object->id);
 	}
 	$sql .= " AND pfd.traite = 0";
-	$sql .= " AND pfd.ext_payment_id IS NULL";
+	$sql .= " AND pfd.type = 'ban'";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
 	$resql = $db->query($sql);
@@ -700,7 +700,7 @@ if ($object->id > 0) {
 		$sql .= " WHERE fk_facture = ".((int) $object->id);
 	}
 	$sql .= " AND pfd.traite = 0";
-	$sql .= " AND pfd.ext_payment_id IS NULL";
+	$sql .= " AND pfd.type = 'ban'";
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -817,7 +817,8 @@ if ($object->id > 0) {
 	print '</tr>';
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
-	$sql .= " pfd.date_traite as date_traite, pfd.amount,";
+	$sql .= " pfd.date_traite as date_traite, pfd.amount, pfd.fk_prelevement_bons,";
+	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status,";
 	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
@@ -828,7 +829,7 @@ if ($object->id > 0) {
 		$sql .= " WHERE fk_facture = ".((int) $object->id);
 	}
 	$sql .= " AND pfd.traite = 0";
-	$sql .= " AND pfd.ext_payment_id IS NULL";
+	$sql .= " AND pfd.type = 'ban'";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
 	$resql = $db->query($sql);
@@ -868,19 +869,36 @@ if ($object->id > 0) {
 			print '<td class="center"><span class="opacitymedium">'.$langs->trans("OrderWaiting").'</span></td>';
 
 			// Link to make payment now
-			print '<td>';
+			print '<td class="center">';
+			if ($obj->fk_prelevement_bons > 0) {
+				$withdrawreceipt = new BonPrelevement($db);
+				$withdrawreceipt->id = $obj->fk_prelevement_bons;
+				$withdrawreceipt->ref = $obj->ref;
+				$withdrawreceipt->date_trans = $db->jdate($obj->date_trans);
+				$withdrawreceipt->date_credit = $db->jdate($obj->date_credit);
+				$withdrawreceipt->date_creation = $db->jdate($obj->datec);
+				$withdrawreceipt->statut = $obj->status;
+				$withdrawreceipt->status = $obj->status;
+				//$withdrawreceipt->credite = $db->jdate($obj->credite);
+
+				print $withdrawreceipt->getNomUrl(1);
+			}
+
 			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
 				$langs->load("stripe");
+				if ($obj->fk_prelevement_bons > 0) {
+					print ' &nbsp; ';
+				}
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripepayment&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
 			}
 			print '</td>';
 
 			//
-			print '<td align="center">-</td>';
+			print '<td class="center">-</td>';
 
 			// Actions
 			print '<td class="right">';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.$type.'">';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
 			print img_delete();
 			print '</a></td>';
 
@@ -897,7 +915,7 @@ if ($object->id > 0) {
 	// Past requests
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
-	$sql .= " pb.ref,";
+	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status,";
 	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
@@ -908,7 +926,7 @@ if ($object->id > 0) {
 		$sql .= " WHERE fk_facture = ".((int) $object->id);
 	}
 	$sql .= " AND pfd.traite = 1";
-	$sql .= " AND pfd.ext_payment_id IS NULL";
+	$sql .= " AND pfd.type = 'ban'";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
 	$result = $db->query($sql);
@@ -941,10 +959,10 @@ if ($object->id > 0) {
 			print '</td>';
 
 			// Amount
-			print '<td class="center">'.price($obj->amount).'</td>';
+			print '<td class="center"><span class="amount">'.price($obj->amount).'</span></td>';
 
 			// Date process
-			print '<td class="center">'.dol_print_date($db->jdate($obj->date_traite), 'day')."</td>\n";
+			print '<td class="center">'.dol_print_date($db->jdate($obj->date_traite), 'dayhour', 'tzuserrel')."</td>\n";
 
 			// Link to payment request done
 			print '<td class="center">';
@@ -952,6 +970,13 @@ if ($object->id > 0) {
 				$withdrawreceipt = new BonPrelevement($db);
 				$withdrawreceipt->id = $obj->fk_prelevement_bons;
 				$withdrawreceipt->ref = $obj->ref;
+				$withdrawreceipt->date_trans = $db->jdate($obj->date_trans);
+				$withdrawreceipt->date_credit = $db->jdate($obj->date_credit);
+				$withdrawreceipt->date_creation = $db->jdate($obj->datec);
+				$withdrawreceipt->statut = $obj->status;
+				$withdrawreceipt->status = $obj->status;
+				//$withdrawreceipt->credite = $db->jdate($obj->credite);
+
 				print $withdrawreceipt->getNomUrl(1);
 			}
 			print "</td>\n";

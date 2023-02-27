@@ -167,9 +167,9 @@ ACCOUNTANCY_COMBO_FOR_AUX=Activer la liste déroulante pour les comptes auxiliai
 ACCOUNTING_DATE_START_BINDING=Définissez une date pour commencer la liaison et le transfert en comptabilité. En dessous de cette date, les transactions ne seront jamais transférées à la comptabilité.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Sur virement comptable, quelle est la période sélectionnée par défaut
 
-ACCOUNTING_SELL_JOURNAL=Journal des ventes (ventes et retours)
-ACCOUNTING_PURCHASE_JOURNAL=Journal des achats (achats et retours)
-ACCOUNTING_BANK_JOURNAL=Journal de trésorerie (encaissements et décaissements)
+ACCOUNTING_SELL_JOURNAL=Journal des ventes
+ACCOUNTING_PURCHASE_JOURNAL=Journal des achats
+ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Journal des notes de frais
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Journal des opérations diverses
 ACCOUNTING_HAS_NEW_JOURNAL=Journal des A-nouveaux
@@ -180,14 +180,14 @@ ACCOUNTING_RESULT_PROFIT=Compte de résultat (Profit)
 ACCOUNTING_RESULT_LOSS=Compte de résultat (perte)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal de fermeture
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Compte comptable de virement interne
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Compte comptable par défaut pour les virements internes
 TransitionalAccount=Compte transitoire de virement bancaire
 
-ACCOUNTING_ACCOUNT_SUSPENSE=Compte comptable d'attente
+ACCOUNTING_ACCOUNT_SUSPENSE=Compte comptable par défaut pour les opérations en attente
 DONATION_ACCOUNTINGACCOUNT=Compte comptable pour la comptabilisation des dons
-ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Compte comptable pour la comptabilisation des adhésions des adhérents
+ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Compte comptable par défaut pour les adhésions des adhérents (si l'adhésion est enregistrée sans facture)
 
-ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Compte (du plan comptable) à utiliser comme compte par défaut pour enregistrer les acomptes client
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Compte comptable par défaut pour enregistrer les acomptes client
 UseAuxiliaryAccountOnCustomerDeposit=Enregistrer le compte client comme compte individuel dans le grand livre auxiliaire pour les lignes d'acompte (si désactivé, le compte individuel pour les lignes d'acompte restera vide)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Compte comptable par défaut pour enregistrer l'acompte fournisseur
 UseAuxiliaryAccountOnSupplierDeposit=Utiliser le compte comptable auxiliaire fournisseur dans le grand livre auxiliaire pour les lignes d'acomptes fournisseurs (si désactivé, le compte comptable auxiliaire pour les lignes d'acompte restera vide)
@@ -238,6 +238,7 @@ ConfirmDeleteMvt=Cela supprimera toutes les lignes en comptabilité pour l'anné
 ConfirmDeleteMvtPartial=Cela supprimera la transaction de la comptabilité (toutes les lignes liées à la même transaction seront supprimées)
 FinanceJournal=Journal de trésorerie
 ExpenseReportsJournal=Journal des notes de frais
+InventoryJournal=Journal d'inventaire
 DescFinanceJournal=Journal de trésorerie comprenant tous les types de paiements par compte bancaire / caisse
 DescJournalOnlyBindedVisible=Il s'agit d'une vue des éléments liés à un compte comptable et qui peuvent être enregistrés dans les journaux et le grand livre.
 VATAccountNotDefined=Compte de la TVA non défini
