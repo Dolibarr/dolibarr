@@ -714,9 +714,13 @@ if ($object->fetch($id) >= 0) {
 				$i++;
 			}
 		} else {
-			if ($object->statut < 2) {
-				print '<tr><td colspan="9" class="opacitymedium">';
-				print $langs->trans("NoTargetYet");
+			if ($object->statut < $object::STATUS_SENTPARTIALY) {
+				print '<tr><td colspan="9">';
+				print '<span class="opacitymedium">'.$langs->trans("NoTargetYet").'</span>';
+				print '</td></tr>';
+			} else {
+				print '<tr><td colspan="9">';
+				print '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
 				print '</td></tr>';
 			}
 		}
