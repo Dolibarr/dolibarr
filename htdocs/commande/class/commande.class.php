@@ -2463,7 +2463,7 @@ class Commande extends CommonOrder
 	{
 		$remise = trim($remise) ?trim($remise) : 0;
 
-		if ($user->rights->commande->creer) {
+		if ($user->hasRight('commande', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
