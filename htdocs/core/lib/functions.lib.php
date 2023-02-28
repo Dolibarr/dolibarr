@@ -9091,11 +9091,9 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			}
 		}
 	} catch (Error $e) {
-		$error = 'Caught error : ';
-		$error .= $e->getMessage() . ', ';
-		$error .= 'Trace : ';
-		$error .= json_encode($e->getTrace());
-		error_log($error, 1);
+		$error = 'dol_eval try/catch error : ';
+		$error .= $e->getMessage();
+		dol_syslog($error);
 	}
 }
 
