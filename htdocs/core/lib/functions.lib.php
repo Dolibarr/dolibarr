@@ -7561,6 +7561,7 @@ function dol_textishtml($msg, $option = 0)
  */
 function dol_concatdesc($text1, $text2, $forxml = false, $invert = false)
 {
+	var_dump($text1,$text2);
 	if (!empty($invert)) {
 			$tmp = $text1;
 			$text1 = $text2;

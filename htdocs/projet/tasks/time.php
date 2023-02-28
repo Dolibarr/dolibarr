@@ -589,6 +589,8 @@ if ($action == 'confirm_generateinvoice') {
 					$arrayoftasks[$object->timespent_id]['totalvaluetodivideby3600'] = $object->timespent_duration * $object->timespent_thm;
 					$arrayoftasks[$object->timespent_id]['note'] = $ftask->ref.' - '.$ftask->label.' - '.$username;		// TODO Add user name in note
 					$arrayoftasks[$object->timespent_id]['note']=dol_concatdesc($arrayoftasks[$object->timespent_id]['note'],$object->timespent_note);
+					var_dump($arrayoftasks[$object->timespent_id]['note']);
+					exit;
 					if (!empty($withdetail)) {
 						if (isModEnabled('fckeditor') && !empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) {
 							$arrayoftasks[$object->timespent_id]['note'] .= "<br/>";
