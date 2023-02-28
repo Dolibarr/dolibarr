@@ -208,6 +208,10 @@ class Propal extends CommonObject
 	public $cond_reglement_code;
 	public $deposit_percent;
 	public $mode_reglement_code;
+
+	/**
+	 * @deprecated
+	 */
 	public $remise_percent;
 
 	/**
@@ -309,7 +313,7 @@ class Propal extends CommonObject
 		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'fk_user_cloture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user cloture', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 		'price' =>array('type'=>'double', 'label'=>'Price', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
-		'remise_percent' =>array('type'=>'double', 'label'=>'RelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
+		//'remise_percent' =>array('type'=>'double', 'label'=>'RelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
 		//'remise_absolue' =>array('type'=>'double', 'label'=>'CustomerRelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
 		//'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
 		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'TotalHT', 'enabled'=>1, 'visible'=>-1, 'position'=>125, 'isameasure'=>1),
@@ -1087,9 +1091,9 @@ class Propal extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (";
 		$sql .= "fk_soc";
 		$sql .= ", price";
-		$sql .= ", remise";
-		$sql .= ", remise_percent";
-		$sql .= ", remise_absolue";
+		$sql .= ", remise";			// deprecated
+		$sql .= ", remise_percent";	// deprecated
+		$sql .= ", remise_absolue";	// deprecated
 		$sql .= ", total_tva";
 		$sql .= ", total_ttc";
 		$sql .= ", datep";
@@ -1122,7 +1126,7 @@ class Propal extends CommonObject
 		$sql .= $this->socid;
 		$sql .= ", 0";
 		$sql .= ", ".((float) $this->remise);												// deprecated
-		$sql .= ", ".($this->remise_percent ? ((float) $this->remise_percent) : 'NULL');
+		$sql .= ", ".($this->remise_percent ? ((float) $this->remise_percent) : 'NULL');	// deprecated
 		$sql .= ", ".($this->remise_absolue ? ((float) $this->remise_absolue) : 'NULL');	// deprecated
 		$sql .= ", 0";
 		$sql .= ", 0";
@@ -1577,10 +1581,10 @@ class Propal extends CommonObject
 
 				$this->ref                  = $obj->ref;
 				$this->ref_client           = $obj->ref_client;
-				$this->remise               = $obj->remise;
-				$this->remise_percent       = $obj->remise_percent;
-				$this->remise_absolue       = $obj->remise_absolue;
-				$this->total                = $obj->total_ttc; // TODO deprecated
+				$this->remise               = $obj->remise;				// TODO deprecated
+				$this->remise_percent       = $obj->remise_percent;		// TODO deprecated
+				$this->remise_absolue       = $obj->remise_absolue;		// TODO deprecated
+				$this->total                = $obj->total_ttc;			// TODO deprecated
 				$this->total_ttc            = $obj->total_ttc;
 				$this->total_ht             = $obj->total_ht;
 				$this->total_tva            = $obj->total_tva;
@@ -2427,6 +2431,7 @@ class Propal extends CommonObject
 	 *	@param      double	$remise     Amount discount
 	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         		<0 if ko, >0 if ok
+	 *	@deprecated remise_percent is a deprecated field for object parent
 	 */
 	public function set_remise_percent($user, $remise, $notrigger = 0)
 	{
