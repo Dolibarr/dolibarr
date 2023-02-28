@@ -6,11 +6,14 @@
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
  * Copyright (C) 2016-2021  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2021  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2017       Elarifr. Ari Elbaz  <github@accedinfo.com>
  * Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2017       André Schild        <a.schild@aarboard.ch>
  * Copyright (C) 2020       Guillaume Alexandre <guillaume@tag-info.fr>
+ * Copyright (C) 2022		Joachim Kueter		<jkueter@gmx.de>
+ * Copyright (C) 2022		Eric Seigne			<eric.seigne@cap-rel.fr>
  * Copyright (C) 2022		Joachim Kueter		<jkueter@gmx.de>
  * Copyright (C) 2022		Eric Seigne			<eric.seigne@cap-rel.fr>
  *
@@ -612,6 +615,12 @@ class AccountancyExport
 		// $date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		// $date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		foreach ($TData as $data) {
+			$data->doc_ref = dol_string_unaccent($data->doc_ref);
+			$data->label_operation = dol_string_unaccent($data->label_operation);
+			$data->numero_compte = dol_string_unaccent($data->numero_compte);
+			$data->label_compte = dol_string_unaccent($data->label_compte);
+			$data->subledger_account = dol_string_unaccent($data->subledger_account);
+			$data->subledger_label = dol_string_unaccent($data->subledger_label);
 			$code_compta = $data->numero_compte;
 			if (!empty($data->subledger_account)) {
 				$code_compta = $data->subledger_account;
