@@ -60,7 +60,6 @@ class Receptions extends DolibarrApi
 	 *
 	 * @param       int         $id         ID of reception
 	 * @return  	Object              	Object with cleaned properties
-	 *
 	 * @throws 	RestException
 	 */
 	public function get($id)
@@ -145,11 +144,10 @@ class Receptions extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -386,13 +384,11 @@ class Receptions extends DolibarrApi
 	/**
 	 * Delete a line to given reception
 	 *
-	 *
 	 * @param int   $id             Id of reception to update
 	 * @param int   $lineid         Id of line to delete
+	 * @return array
 	 *
 	 * @url	DELETE {id}/lines/{lineid}
-	 *
-	 * @return int
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -412,23 +408,27 @@ class Receptions extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// TODO Check the lineid $lineid is a line of ojbect
+		// TODO Check the lineid $lineid is a line of object
 
 		$updateRes = $this->reception->deleteline(DolibarrApiAccess::$user, $lineid);
-		if ($updateRes > 0) {
-			return $this->get($id);
-		} else {
+		if ($updateRes < 0) {
 			throw new RestException(405, $this->reception->error);
 		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Line deleted'
+			)
+		);
 	}
 
 	/**
 	 * Update reception general fields (won't touch lines of reception)
 	 *
-	 * @param int   $id             Id of reception to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param int   $id             		Id of reception to update
+	 * @param array $request_data   		Datas
+	 * @return  	Object              	Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -462,7 +462,6 @@ class Receptions extends DolibarrApi
 	 * Delete reception
 	 *
 	 * @param   int     $id         Reception ID
-	 *
 	 * @return  array
 	 */
 	public function delete($id)

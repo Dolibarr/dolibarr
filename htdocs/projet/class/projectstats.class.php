@@ -366,10 +366,7 @@ class ProjectStats extends Stats
 			if ($fp) {
 				fwrite($fp, json_encode($data));
 				fclose($fp);
-				if (!empty($conf->global->MAIN_UMASK)) {
-					$newmask = $conf->global->MAIN_UMASK;
-				}
-				@chmod($newpathofdestfile, octdec($newmask));
+				dolChmod($newpathofdestfile);
 			} else {
 				dol_syslog("Failed to write cache file", LOG_ERR);
 			}
@@ -479,12 +476,11 @@ class ProjectStats extends Stats
 				dol_mkdir($conf->user->dir_temp);
 			}
 			$fp = fopen($newpathofdestfile, 'w');
-			fwrite($fp, json_encode($data));
-			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK)) {
-				$newmask = $conf->global->MAIN_UMASK;
+			if ($fp) {
+				fwrite($fp, json_encode($data));
+				fclose($fp);
+				dolChmod($newpathofdestfile);
 			}
-			@chmod($newpathofdestfile, octdec($newmask));
 
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}

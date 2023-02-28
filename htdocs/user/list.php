@@ -729,10 +729,10 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 
 // Fields title search
 // --------------------------------------------------------------------
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre_filter">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre maxwidthsearch">';
+	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
@@ -820,8 +820,8 @@ if (!empty($arrayfields['u.tms']['checked'])) {
 }
 if (!empty($arrayfields['u.statut']['checked'])) {
 	// Status
-	print '<td class="liste_titre center">';
-	print $form->selectarray('search_statut', array('-1'=>'', '0'=>$langs->trans('Disabled'), '1'=>$langs->trans('Enabled')), $search_statut, 0, 0, 0, '', 0, 0, 0, '', 'search_status minwidth75imp maxwidth125 onrightofpage');
+	print '<td class="liste_titre center parentonrightofpage">';
+	print $form->selectarray('search_statut', array('-1'=>'', '0'=>$langs->trans('Disabled'), '1'=>$langs->trans('Enabled')), $search_statut, 0, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Action column
@@ -1009,7 +1009,7 @@ while ($i < $imaxinloop) {
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="'.$savnbfield.'">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
 
 		// Output Kanban

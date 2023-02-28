@@ -796,8 +796,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK))
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 

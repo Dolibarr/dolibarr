@@ -390,7 +390,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
-	} elseif ($action == 'setretainedwarrantyconditions' && $user->rights->facture->creer) {
+	} elseif ($action == 'setretainedwarrantyconditions' && $user->hasRight('facture', 'creer')) {
 		$object->fetch($id);
 		$object->retained_warranty_fk_cond_reglement = 0; // To clean property
 		$result = $object->setRetainedWarrantyPaymentTerms(GETPOST('retained_warranty_fk_cond_reglement', 'int'));
@@ -410,13 +410,13 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
-	} elseif ($action == 'setretainedwarranty' && $user->rights->facture->creer) {
+	} elseif ($action == 'setretainedwarranty' && $user->hasRight('facture', 'creer')) {
 		$object->fetch($id);
 		$result = $object->setRetainedWarranty(GETPOST('retained_warranty', 'float'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
-	} elseif ($action == 'setretainedwarrantydatelimit' && $user->rights->facture->creer) {
+	} elseif ($action == 'setretainedwarrantydatelimit' && $user->hasRight('facture', 'creer')) {
 		$object->fetch($id);
 		$result = $object->setRetainedWarrantyDateLimit(GETPOST('retained_warranty_date_limit', 'float'));
 		if ($result < 0) {
@@ -3188,7 +3188,7 @@ if ($action == 'create') {
 		$arrayoutstandingbills = $soc->getOutstandingBills();
 		$outstandingBills = $arrayoutstandingbills['opened'];
 		print ' - <span class="opacitymedium">'.$langs->trans('CurrentOutstandingBill').':</span> ';
-		print price($outstandingBills, '', $langs, 0, 0, -1, $conf->currency);
+		print '<span class="amount">'.price($outstandingBills, '', $langs, 0, 0, -1, $conf->currency).'</span>';
 		if ($soc->outstanding_limit != '') {
 			if ($outstandingBills > $soc->outstanding_limit) {
 				print img_warning($langs->trans("OutstandingBillReached"));
@@ -3307,7 +3307,7 @@ if ($action == 'create') {
 	print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 	$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOST('type', 'int') ? '' : ' checked').'> ';
 	$tmp  = $tmp.'<label for="radio_standard" >'.$langs->trans("InvoiceStandardAsk").'</label>';
-	$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3);
+	$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3, 'standardonsmartphone');
 	print '<table class="nobordernopadding"><tr>';
 	print '<td>';
 	print $desc;
@@ -3346,7 +3346,7 @@ if ($action == 'create') {
 					jQuery("#radio_deposit").prop("checked", true);
 					setRadioForTypeOfIncoice();
 				});
-    			jQuery("#radio_standard, #radio_deposit, #radio_replacement, #radio_template").change(function() {
+    			jQuery("#radio_standard, #radio_deposit, #radio_replacement, #radio_creditnote, #radio_template").change(function() {
 					setRadioForTypeOfIncoice();
 				});
 				function setRadioForTypeOfIncoice() {
@@ -3362,10 +3362,10 @@ if ($action == 'create') {
     		});
     		</script>';
 
-			$tmp  = $tmp.'<label for="radio_deposit" >'.$langs->trans("InvoiceDeposit").'</label>';
-			$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceDepositDesc"), 1, 'help', '', 0, 3);
 			print '<table class="nobordernopadding"><tr>';
 			print '<td>';
+			$tmp  = $tmp.'<label for="radio_deposit">'.$langs->trans("InvoiceDeposit").'</label>';
+			$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceDepositDesc"), 1, 'help', '', 0, 3, 'depositonsmartphone');
 			print $desc;
 			print '</td>';
 			if (($origin == 'propal') || ($origin == 'commande')) {
@@ -3404,7 +3404,7 @@ if ($action == 'create') {
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp = '<input id="radio_situation" type="radio" name="type" value="5"'.(GETPOST('type') == 5 ? ' checked' : '').'> ';
 			$tmp  = $tmp.'<label for="radio_situation" >'.$langs->trans("InvoiceFirstSituationAsk").'</label>';
-			$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
+			$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3, 'firstsituationonsmartphone');
 			print $desc;
 			print '</div></div>';
 
@@ -3417,7 +3417,7 @@ if ($action == 'create') {
 				$tmp .= ' disabled';
 			}
 			$tmp .= '> ';
-			$text = '<label>'.$tmp.$langs->trans("InvoiceSituationAsk").'</label> ';
+			$text = $tmp.'<label>'.$langs->trans("InvoiceSituationAsk").'</label> ';
 			$text .= '<select class="flat" id="situations" name="situations"';
 			if ($opt == ('<option value ="0" selected>'.$langs->trans('NoSituations').'</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande')) {
 				$text .= ' disabled';
@@ -3465,7 +3465,7 @@ if ($action == 'create') {
     			});
     		});
     		</script>';
-			$text = '<label>'.$tmp.$langs->trans("InvoiceReplacementAsk").'</label>';
+			$text = $tmp.'<label for="radio_replacement">'.$langs->trans("InvoiceReplacementAsk").'</label>';
 			$text .= '<select class="flat" name="fac_replacement" id="fac_replacement"';
 			if (!$options || $invoice_predefined->id > 0) {
 				$text .= ' disabled';
@@ -3486,26 +3486,18 @@ if ($action == 'create') {
 		if (!empty($conf->global->INVOICE_USE_SITUATION)) {
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp = '<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
-			$text = '<label>'.$tmp.$langs->trans("InvoiceFirstSituationAsk").'</label> ';
+			$text = $tmp.'<label>'.$langs->trans("InvoiceSituationAsk").'</label> ';
 			$text .= '<span class="opacitymedium">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
-			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
-			print $desc;
-			print '</div></div>';
-
-			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-			$tmp = '<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
-			$text = '<label>'.$tmp.$langs->trans("InvoiceSituationAsk").'</label> ';
-			$text .= '<span class="opacitymedium">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
-			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
+			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3, 'firstsituationonsmartphone');
 			print $desc;
 			print '</div></div>';
 		}
 
 		print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 		$tmp = '<input type="radio" name="type" id="radio_replacement" value="0" disabled> ';
-		$text = '<label>'.$tmp.$langs->trans("InvoiceReplacement").'</label> ';
-		$text .= '<span class="opacitymedium">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
-		$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceReplacementDesc"), 1, 'help', '', 0, 3);
+		$text = $tmp.'<label for="radio_replacement" class="opacitymedium">'.$langs->trans("InvoiceReplacement").'</label> ';
+		//$text .= '<span class="opacitymedium hideonsmartphone">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
+		$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceReplacementDesc").'<br><br>'.$langs->trans("YouMustCreateInvoiceFromThird"), 1, 'help', '', 0, 3, 'replacementonsmartphone');
 		print $desc;
 		print '</div></div>';
 	}
@@ -3565,7 +3557,6 @@ if ($action == 'create') {
     			});
     			</script>';
 				$text = '<label>'.$tmp.$langs->transnoentities("InvoiceAvoirAsk").'</label> ';
-				// $text.='<input type="text" value="">';
 				$text .= '<select class="flat valignmiddle" name="fac_avoir" id="fac_avoir"';
 				if (!$optionsav || $invoice_predefined->id > 0) {
 					$text .= ' disabled';
@@ -3581,7 +3572,7 @@ if ($action == 'create') {
 				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
 				print $desc;
 
-				print '<div id="credit_note_options" class="clearboth">';
+				print '<div id="credit_note_options" class="clearboth paddingtop marginbottomonly">';
 				print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="$(\'#credit_note_options input[type=checkbox]\').not(this).prop(\'checked\', false);" '.(GETPOST('invoiceAvoirWithLines', 'int') > 0 ? 'checked' : '').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
 				print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="$(\'#credit_note_options input[type=checkbox]\').not(this).prop(\'checked\', false);" '.(GETPOST('invoiceAvoirWithPaymentRestAmount', 'int') > 0 ? 'checked' : '').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
 				print '</div>';
@@ -3595,9 +3586,9 @@ if ($action == 'create') {
 			} else {
 				$tmp = '<input type="radio" name="type" id="radio_creditnote" value="2" > ';
 			}
-			$text = '<label>'.$tmp.$langs->trans("InvoiceAvoir").'</label> ';
-			$text .= '<span class="opacitymedium">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
-			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
+			$text = $tmp.'<label class="opacitymedium" for="radio_creditnote">'.$langs->trans("InvoiceAvoir").'</label> ';
+			//$text .= '<span class="opacitymedium hideonsmartphone">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
+			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc").'<br><br>'.$langs->trans("YouMustCreateInvoiceFromThird"), 1, 'help', '', 0, 3, 'creditnoteonsmartphone');
 			print $desc;
 			print '</div></div>'."\n";
 		}
@@ -3606,9 +3597,8 @@ if ($action == 'create') {
 	// Template invoice
 	print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 	$tmp = '<input type="radio" name="type" id="radio_template" value="0" disabled> ';
-	$text = '<label>'.$tmp.$langs->trans("RepeatableInvoice").'</label> ';
-	//$text.= '('.$langs->trans("YouMustCreateStandardInvoiceFirst").') ';
-	$desc = $form->textwithpicto($text, $langs->transnoentities("YouMustCreateStandardInvoiceFirstDesc"), 1, 'help', '', 0, 3);
+	$text = $tmp.'<label class="opacitymedium" for="radio_template">'.$langs->trans("RepeatableInvoice").'</label> ';
+	$desc = $form->textwithpicto($text, $langs->transnoentities("YouMustCreateStandardInvoiceFirstDesc"), 1, 'help', '', 0, 3, 'templateonsmartphone');
 	print $desc;
 	print '</div></div>';
 
@@ -3629,7 +3619,8 @@ if ($action == 'create') {
         		$(document).ready(function() {
                     var listType = {'.$jsListType.'};
         			$("[name=\'type\'").change(function() {
-        				if($( this ).prop("checked"))
+						console.log("change name=type");
+        				if ($( this ).prop("checked"))
                         {
                             if(($( this ).val() in listType))
                             {
@@ -4682,7 +4673,7 @@ if ($action == 'create') {
 			print '<table id="retained-warranty-table" class="nobordernopadding centpercent"><tr><td>';
 			print $langs->trans('RetainedWarranty');
 			print '</td>';
-			if ($action != 'editretainedwarranty' && $user->rights->facture->creer && $object->statut == Facture::STATUS_DRAFT) {
+			if ($action != 'editretainedwarranty' && $user->hasRight('facture', 'creer') && $object->statut == Facture::STATUS_DRAFT) {
 				print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarranty&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('setretainedwarranty'), 1).'</a></td>';
 			}
 
@@ -4705,7 +4696,7 @@ if ($action == 'create') {
 			print '<table id="retained-warranty-cond-reglement-table"  class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditionsShortRetainedWarranty');
 			print '</td>';
-			if ($action != 'editretainedwarrantypaymentterms' && $user->rights->facture->creer && $object->statut == Facture::STATUS_DRAFT) {
+			if ($action != 'editretainedwarrantypaymentterms' && $user->hasRight('facture', 'creer') && $object->statut == Facture::STATUS_DRAFT) {
 				print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarrantypaymentterms&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('setPaymentConditionsShortRetainedWarranty'), 1).'</a></td>';
 			}
 
@@ -4740,7 +4731,7 @@ if ($action == 'create') {
 			print '<table id="retained-warranty-date-limit-table"  class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('RetainedWarrantyDateLimit');
 			print '</td>';
-			if ($action != 'editretainedwarrantydatelimit' && $user->rights->facture->creer && $object->statut == Facture::STATUS_DRAFT) {
+			if ($action != 'editretainedwarrantydatelimit' && $user->hasRight('facture', 'creer') && $object->statut == Facture::STATUS_DRAFT) {
 				print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarrantydatelimit&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('setretainedwarrantyDateLimit'), 1).'</a></td>';
 			}
 
@@ -5470,6 +5461,7 @@ if ($action == 'create') {
 					if (!empty($conf->global->INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE) || ($resteapayer == price2num($object->total_ttc, 'MT', 1) && empty($object->paye))) {
 						if (!$objectidnext && $object->is_last_in_cycle()) {
 							if ($usercanunvalidate) {
+								$params['attr']['title'] = '';
 								print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=modif&token='.newToken(), '', true, $params);
 							} else {
 								$params['attr']['title'] = $langs->trans('NotEnoughPermissions');
@@ -5500,6 +5492,7 @@ if ($action == 'create') {
 				&& ($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED || ($object->statut == 1 && $object->paye == 1))   // Condition ($object->statut == 1 && $object->paye == 1) should not happened but can be found due to corrupted data
 				&& ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || $usercanreopen)) {				// A paid invoice (partially or completely)
 				if ($object->close_code != 'replaced' || (!$objectidnext)) { 				// Not replaced by another invoice or replaced but the replacement invoice has been deleted
+					$params['attr']['title'] = '';
 					print dolGetButtonAction($langs->trans('ReOpen'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=reopen&token='.newToken(), '', true, $params);
 				} else {
 					$params['attr']['title'] = $langs->trans("DisabledBecauseReplacedInvoice");
@@ -5521,6 +5514,7 @@ if ($action == 'create') {
 			// Validate
 			if ($object->statut == Facture::STATUS_DRAFT && count($object->lines) > 0 && ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION) && (!empty($conf->global->FACTURE_ENABLE_NEGATIVE) || $object->total_ttc >= 0)) || ($object->type == Facture::TYPE_CREDIT_NOTE && $object->total_ttc <= 0))) {
 				if ($usercanvalidate) {
+					$params['attr']['title'] = '';
 					print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=valid&token='.newToken(), '', true, $params);
 				}
 			}
@@ -5532,8 +5526,10 @@ if ($action == 'create') {
 						print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendMail').'</span>';
 					} else {
 						if ($usercansend) {
+							$params['attr']['title'] = '';
 							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', '', true, $params);
 						} else {
+							$params['attr']['title'] = '';
 							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', '#', '', false, $params);
 						}
 					}
@@ -5576,6 +5572,7 @@ if ($action == 'create') {
 					} else {
 						// Sometimes we can receive more, so we accept to enter more and will offer a button to convert into discount (but it is not a credit note, just a prepayment done)
 						//print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/paiement.php?facid='.$object->id.'&amp;action=create&amp;accountid='.$object->fk_account.'">'.$langs->trans('DoPayment').'</a>';
+						$params['attr']['title'] = '';
 						print dolGetButtonAction($langs->trans('DoPayment'), '', 'default', DOL_URL_ROOT.'/compta/paiement.php?facid='.$object->id.'&amp;action=create&amp;accountid='.$object->fk_account, '', true, $params);
 					}
 				}
@@ -5628,6 +5625,7 @@ if ($action == 'create') {
 					$params['attr']['title'] = $langs->trans('AmountPaidMustMatchAmountOfDownPayment');
 					print dolGetButtonAction($langs->trans('ClassifyPaid'), '', 'default', '#', '', false, $params);
 				} else {
+					$params['attr']['title'] = '';
 					print dolGetButtonAction($langs->trans('ClassifyPaid'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid', '', true, $params);
 				}
 			}
@@ -5673,12 +5671,14 @@ if ($action == 'create') {
 
 			// Clone
 			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $usercancreate) {
+				$params['attr']['title'] = '';
 				print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=clone&amp;object=invoice', '', true, $params);
 			}
 
 			// Clone as predefined / Create template
 			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $object->statut == 0 && $usercancreate) {
 				if (!$objectidnext && count($object->lines) > 0) {
+					$params['attr']['title'] = '';
 					print dolGetButtonAction($langs->trans('ChangeIntoRepeatableInvoice'), '', 'default', DOL_URL_ROOT.'/compta/facture/card-rec.php?facid='.$object->id.'&amp;action=create', '', true, $params);
 				}
 			}
@@ -5712,11 +5712,6 @@ if ($action == 'create') {
 
 			// Delete
 			$isErasable = $object->is_erasable();
-			$params = array(
-				'attr' => array(
-					'class' => 'classfortooltip'
-				)
-			);
 			if ($usercandelete || ($usercancreate && $isErasable == 1)) {	// isErasable = 1 means draft with temporary ref (draft can always be deleted with no need of permissions)
 				$enableDelete = false;
 				$deleteHref = '#';
@@ -5737,8 +5732,10 @@ if ($action == 'create') {
 					$deleteHref = $_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=delete&token='.newToken();
 					$enableDelete = true;
 				}
+				$params['attr']['title'] = '';
 				print dolGetButtonAction($htmltooltip, $langs->trans('Delete'), 'delete', $deleteHref, '', $enableDelete, $params);
 			} else {
+				$params['attr']['title'] = '';
 				print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', '#', '', false);
 			}
 		}

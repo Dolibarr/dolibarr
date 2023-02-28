@@ -939,8 +939,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 						$fp = fopen($filetosave, "w");
 						fputs($fp, $tmpgeturl['content']);
 						fclose($fp);
-						if (!empty($conf->global->MAIN_UMASK))
-							@chmod($file, octdec($conf->global->MAIN_UMASK));
+						dolChmod($file);
 					}
 					*/
 
@@ -1008,8 +1007,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 						//$fp = fopen($filetosave, "w");
 						//fputs($fp, $tmpgeturl['content']);
 						//fclose($fp);
-						//if (!empty($conf->global->MAIN_UMASK))
-						//	@chmod($file, octdec($conf->global->MAIN_UMASK));
+						//dolChmod($file);
 
 						//	$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
 						$pagecsscontent .= '/* Content of file '.$urltograbbis.' */'."\n";
@@ -2659,9 +2657,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 			}
 			$domtree->appendChild($root);
 			if ($domtree->save($tempdir.$xmlname)) {
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($tempdir.$xmlname, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($tempdir.$xmlname);
 				setEventMessages($langs->trans("SitemapGenerated", $xmlname), null, 'mesgs');
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -2955,7 +2951,7 @@ if (!GETPOST('hide_websitemenu')) {
 					$url = $_SERVER["PHP_SELF"].'?action=deletesite&token='.newToken().'&website='.urlencode($website->ref);
 				}
 			}
-			print '<a href="'.$url.'" class="buttonDelete bordertransp'.($disabled ? ' disabled' : '').'"'.$disabled.' title="'.dol_escape_htmltag($title).'">'.img_picto('', 'delete', 'class=""').'<span class="hideonsmartphone paddingleft">'.$langs->trans("Delete").'</span></a>';
+			print '<a href="'.$url.'" class="button buttonDelete bordertransp'.($disabled ? ' disabled' : '').'"'.$disabled.' title="'.dol_escape_htmltag($title).'">'.img_picto('', 'delete', 'class=""').'<span class="hideonsmartphone paddingleft">'.$langs->trans("Delete").'</span></a>';
 
 			// Regenerate all pages
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=regeneratesite&token='.newToken().'&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="far fa-hdd"></span></a>';
@@ -3357,7 +3353,7 @@ if (!GETPOST('hide_websitemenu')) {
 					$title = '';
 					$url = $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&pageid='.((int) $websitepage->id).'&website='.urlencode($website->ref);	// action=delete for webpage, deletesite for website
 				}
-				print '<a href="'.$url.'" class="buttonDelete bordertransp'.($disabled ? ' disabled' : '').'"'.$disabled.' title="'.dol_escape_htmltag($title).'">'.img_picto('', 'delete', 'class=""').'<span class="hideonsmartphone paddingleft">'.$langs->trans("Delete").'</span></a>';
+				print '<a href="'.$url.'" class="button buttonDelete bordertransp'.($disabled ? ' disabled' : '').'"'.$disabled.' title="'.dol_escape_htmltag($title).'">'.img_picto('', 'delete', 'class=""').'<span class="hideonsmartphone paddingleft">'.$langs->trans("Delete").'</span></a>';
 			}
 		}
 
@@ -5022,8 +5018,7 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 		print $out;
 
 		/*file_put_contents($filetpl, $out);
-		if (!empty($conf->global->MAIN_UMASK))
-			@chmod($filetpl, octdec($conf->global->MAIN_UMASK));
+		dolChmod($filetpl);
 
 		// Output file on browser
 		dol_syslog("index.php include $filetpl $filename content-type=$type");

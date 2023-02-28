@@ -456,6 +456,10 @@ a.commonlink { color: var(--colortextlink) !important; text-decoration: none; }
 input {
 	font-size: unset;
 }
+.tableforfield input, .refidno input {
+	padding: 2px;
+}
+
 /*
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	background-color: #FDFDFD;
@@ -543,8 +547,8 @@ input, select {
 	border: none;
 	text-shadow: none;
 	text-transform: uppercase;
-	font-weight: bold;
-	margin: 0em 0.9em;
+	/* font-weight: bold; */
+	margin: 0em 0.8em;
 	padding: 0.6em 0.7em;
 	line-height: 17px;
 }
@@ -874,6 +878,9 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	border-radius: 2px;
 	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.refidno .button.smallpaddingimp {
+	font-size: 0.85em !important;
 }
 .button:focus, .buttonDelete:focus  {
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
@@ -1792,10 +1799,10 @@ table[summary="list_of_modules"] .fa-cog {
 }
 
 .maxscreenheightless200 {
-	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(500, $_SESSION['dol_screenheight'] - 200) : 700; ?>px;	/* we guarantee height of 500 */
+	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(500, (int) $_SESSION['dol_screenheight'] - 200) : 700; ?>px;	/* we guarantee height of 500 */
 }
 .maxscreenheightless300 {
-	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(400, $_SESSION['dol_screenheight'] - 300) : 700; ?>px;	/* we guarantee height of 500 */
+	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(400, (int) $_SESSION['dol_screenheight'] - 300) : 700; ?>px;	/* we guarantee height of 500 */
 }
 
 tr.nobottom td {
@@ -3066,6 +3073,7 @@ form#login {
 
 .login_main_home {
 	word-break: break-word;
+	width: fit-content;
 }
 .login_main_message {
 	text-align: center;
@@ -3302,6 +3310,7 @@ div.vmenu, td.vmenu {
 .companylogo { padding-top: 4px; }
 .searchform { padding-top: 10px; }
 .searchform .bordertransp { border: 0; }
+#divsearchforms2 form.searchform .button { border: none !important; }
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu {
 	white-space: nowrap; font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold;
@@ -4062,7 +4071,7 @@ div.refidpadding  {
 div.refid  {
 	font-weight: bold;
 	color: var(--colortexttitlenotab);
-	font-size: 160%;
+	font-size: 120%;
 }
 a.refid {
 	color: var(--colortexttitlenotab) !important;
@@ -4071,11 +4080,15 @@ div.refidno  {
 	padding-top: 8px;
 	font-weight: normal;
 	color: var(--refidnocolor);
-	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
-	line-height: 21px;
+	font-size: 92%;
+	line-height: 1.3em;
 }
 div.refidno form {
 	display: inline-block;
+}
+div.refaddress div.address {
+	line-height: 1.2em;
+	font-size: 0.9em;
 }
 
 div.pagination {
@@ -4920,7 +4933,7 @@ div.titre {
 	color: var(--colortexttitlenotab);
 }
 .tertiary {
-	color: var(--colortexttitlenotab);
+	color: var(--colortexttitlenotab2);
 }
 
 table.centpercent.notopnoleftnoright.table-fiche-title {
@@ -5230,7 +5243,7 @@ div.visible {
 	display: block;
 }
 
-div.hidden, header.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
+div.hidden, header.hidden, tr.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
 
@@ -5283,6 +5296,12 @@ span[phptag] {
 	font-weight: normal;
 	color: #444 !important;
 }
+.websitebar .button.bordertransp {
+	color: unset;
+	text-decoration: unset !important;
+	/* margin: 0px 4px 0px 4px  !important */
+}
+
 .websitebar {
 	border-bottom: 1px solid #ccc;
 	background: #eee;
@@ -5322,7 +5341,7 @@ span[phptag] {
 .websiteinputurl {
 	display: inline-block;
 	vertical-align: top;
-	line-height: 28px;
+	line-height: 26px;
 }
 .websiteiframenoborder {
 	border: 0px;
@@ -5343,7 +5362,7 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 .websitehelp {
 	vertical-align: middle;
 	float: right;
-	padding-top: 8px;
+	padding-top: 5px;
 }
 .websiteselectionsection {
 	border-left: 1px solid #bbb;
@@ -5864,7 +5883,7 @@ pre#editfilecontentaceeditorid {
 /* ============================================================================== */
 
 div.scroll2 {
-	width: <?php print isset($_SESSION['dol_screenwidth']) ?max($_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
+	width: <?php print isset($_SESSION['dol_screenwidth']) ?max((int) $_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
 }
 
 div#GanttChartDIVglisthead, div#GanttChartDIVgcharthead {
@@ -6457,11 +6476,11 @@ select.multiselectononeline {
 @media only screen and (min-width: 767px)
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
-	.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown.ui-dialog {
 		min-width: 220px !important;
 	}
-	.select2-container.select2-container--open .select2-dropdown--below,
-	.select2-container.select2-container--open .select2-dropdown--above {
+	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--below:not(.onrightofpage),
+	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--above:not(.onrightofpage) {
 		min-width: 220px !important;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
@@ -6710,11 +6729,15 @@ dd.dropdowndd ul li {
 /* ============================================================================== */
 
 .searchpage .tagtr .tagtd {
-	padding-bottom: 3px;
+	padding-top: 2px;
+	padding-bottom: 2px;
 }
 .searchpage .tagtr .tagtd .button {
 	background: unset;
 	border: unset;
+}
+.searchpage .searchform input {
+	font-size: 1.15em;
 }
 
 li.ui-li-divider .ui-link {

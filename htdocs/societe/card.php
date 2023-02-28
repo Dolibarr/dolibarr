@@ -617,7 +617,7 @@ if (empty($reshook)) {
 
 				$result = $object->create($user);
 
-				if (empty($error) && !empty($conf->mailing->enabled) && !empty($object->email) && $object->no_email == 1) {
+				if (empty($error) && isModEnabled('mailing') && !empty($object->email) && $object->no_email == 1) {
 					// Add mass emailing flag into table mailing_unsubscribe
 					$result = $object->setNoEmail($object->no_email);
 					if ($result < 0) {
@@ -1633,7 +1633,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="url" id="url" value="'.$object->url.'"></td></tr>';
 
 			// Unsubscribe
-		if (!empty($conf->mailing->enabled)) {
+		if (isModEnabled('mailing')) {
 			if ($conf->use_javascript_ajax && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
 				print "\n".'<script type="text/javascript">'."\n";
 				print '$(document).ready(function () {
@@ -2344,7 +2344,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			// Unsubscribe
-			if (!empty($conf->mailing->enabled)) {
+			if (isModEnabled('mailing')) {
 				if ($conf->use_javascript_ajax && isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
 					print "\n".'<script type="text/javascript">'."\n";
 
@@ -3031,7 +3031,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Unsubscribe opt-out
-		if (!empty($conf->mailing->enabled)) {
+		if (isModEnabled('mailing')) {
 			$result = $object->getNoEmail();
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -3185,7 +3185,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</div>';
 
 		print '</div>';
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 

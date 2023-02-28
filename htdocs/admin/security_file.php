@@ -80,8 +80,18 @@ if ($action == 'updateform') {
 	}
 
 	if (!$error) {
+		$tmpumask = GETPOST('MAIN_UMASK', 'alpha');
+		$tmpumask = (octdec($tmpumask) & 0666);
+		$tmpumask = decoct($tmpumask);
+		if (!preg_match('/^0/', $tmpumask)) {
+			$tmpumask = '0'.$tmpumask;
+		}
+		if (empty($tmpumask) || $tmpumask === '0') {
+			$tmpumask = '0664';
+		}
+
 		$res3 = dolibarr_set_const($db, 'MAIN_UPLOAD_DOC', GETPOST('MAIN_UPLOAD_DOC', 'alpha'), 'chaine', 0, '', $conf->entity);
-		$res4 = dolibarr_set_const($db, "MAIN_UMASK", GETPOST('MAIN_UMASK', 'alpha'), 'chaine', 0, '', $conf->entity);
+		$res4 = dolibarr_set_const($db, "MAIN_UMASK", $tmpumask, 'chaine', 0, '', $conf->entity);
 		$res5 = dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", trim($antivircommand), 'chaine', 0, '', $conf->entity);
 		$res6 = dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", trim($antivirparam), 'chaine', 0, '', $conf->entity);
 		if ($res3 && $res4 && $res5 && $res6) {

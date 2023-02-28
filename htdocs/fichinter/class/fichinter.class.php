@@ -39,7 +39,7 @@ class Fichinter extends CommonObject
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'notnull'=>1, 'position'=>15),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>'isModEnabled("project")', 'visible'=>-1, 'position'=>20),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Fk projet', 'enabled'=>'isModEnabled("project")', 'visible'=>-1, 'position'=>20),
 		'fk_contrat' =>array('type'=>'integer', 'label'=>'Fk contrat', 'enabled'=>'$conf->contrat->enabled', 'visible'=>-1, 'position'=>25),
 		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>30),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>35),
@@ -815,7 +815,7 @@ class Fichinter extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
+			$dataparams = " data-params='".json_encode($params)."'";
 			// $label = $langs->trans('Loading');
 		}
 		$label = implode($this->getTooltipContentArray($params));
@@ -1249,8 +1249,7 @@ class Fichinter extends CommonObject
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
-					$this->errors += $hookmanager->errors;
-					$this->error = $hookmanager->error;
+					$this->setErrorsFromObject($hookmanager);
 					$error++;
 				}
 			}
@@ -1794,8 +1793,8 @@ class FichinterLigne extends CommonObjectLine
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql .= " SET duree = ".((int) $total_duration);
-			$sql .= " , dateo = ".(!empty($obj->dateo) ? "'".$this->db->idate($obj->dateo)."'" : "null");
-			$sql .= " , datee = ".(!empty($obj->datee) ? "'".$this->db->idate($obj->datee)."'" : "null");
+			$sql .= " , dateo = ".(!empty($obj->dateo) ? "'".$this->db->escape($obj->dateo)."'" : "null");
+			$sql .= " , datee = ".(!empty($obj->datee) ? "'".$this->db->escape($obj->datee)."'" : "null");
 			$sql .= " WHERE rowid = ".((int) $this->fk_fichinter);
 
 			dol_syslog("FichinterLigne::update_total", LOG_DEBUG);

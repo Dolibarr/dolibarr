@@ -92,6 +92,10 @@ class PaymentDonation extends CommonObject
 
 	public $type_code;
 	public $type_label;
+	public $chid;
+	public $datepaid;
+	public $bank_account;
+	public $bank_line;
 
 	/**
 	 * @var string Id of external payment mode

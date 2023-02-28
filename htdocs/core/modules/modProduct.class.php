@@ -104,7 +104,7 @@ class modProduct extends DolibarrModules
 		// Boxes
 		$this->boxes = array(
 			0=>array('file'=>'box_produits.php', 'enabledbydefaulton'=>'Home'),
-			1=>array('file'=>'box_produits_alerte_stock.php', 'enabledbydefaulton'=>''),
+			1=>array('file'=>'box_produits_alerte_stock.php', 'enabledbydefaulton'=>'Home'),
 			2=>array('file'=>'box_graph_product_distribution.php', 'enabledbydefaulton'=>'Home')
 		);
 

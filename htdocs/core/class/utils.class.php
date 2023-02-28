@@ -121,7 +121,7 @@ class Utils
 					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
 				}
 
-				if (!empty($conf->syslog->enabled)) {
+				if (isModEnabled('syslog')) {
 					$filelog = $conf->global->SYSLOG_FILE;
 					$filelog = preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
 
@@ -494,9 +494,7 @@ class Utils
 					}
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($outputfile);
 			} else {
 				$langs->load("errors");
 				dol_syslog("Failed to open file ".$outputfile, LOG_ERR);
@@ -739,9 +737,7 @@ class Utils
 				pclose($handlein);
 				fclose($handle);
 			}
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($outputfile);
 		}
 
 		// Update with result
@@ -1051,7 +1047,7 @@ class Utils
 					fclose($sourcehandle);
 					gzclose($gzfilehandle);
 
-					@chmod($logpath.'/'.$logname.'.1.gz', octdec(empty($conf->global->MAIN_UMASK) ? '0664' : $conf->global->MAIN_UMASK));
+					dolChmod($logpath.'/'.$logname.'.1.gz');
 				}
 
 				dol_delete_file($logpath.'/'.$logname, 0, 0, 0, null, false, 0);
@@ -1061,7 +1057,7 @@ class Utils
 				fclose($newlog);
 
 				//var_dump($logpath.'/'.$logname." - ".octdec(empty($conf->global->MAIN_UMASK)?'0664':$conf->global->MAIN_UMASK));
-				@chmod($logpath.'/'.$logname, octdec(empty($conf->global->MAIN_UMASK) ? '0664' : $conf->global->MAIN_UMASK));
+				dolChmod($logpath.'/'.$logname);
 			}
 		}
 

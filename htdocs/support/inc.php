@@ -39,7 +39,9 @@ $conf = new stdClass(); // instantiate $conf explicitely
 $conf->global	= new stdClass();
 $conf->file = new stdClass();
 $conf->db = new stdClass();
-$conf->syslog	= new stdClass();
+if (!isset($conf->syslog) || !is_object($conf->syslog)) {
+	$conf->syslog = new stdClass();
+}
 
 // Force $_REQUEST["logtohtml"]
 $_REQUEST["logtohtml"] = 1;
