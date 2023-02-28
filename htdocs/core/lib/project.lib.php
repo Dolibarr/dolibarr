@@ -1028,6 +1028,18 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
 			print '<td></td>';
 		}
+
+		//Check if Extrafields is totalizable
+		foreach ($extrafields->attributes['projet_task']['totalizable'] as $key=>$value){
+			if ($arrayfields['ef.'.$key]['checked'] == 1){
+				print '<td align="right">';
+				if ($value == 1){
+					print $totalarray['totalizable'][$key]['total'];
+				}
+				print '</td>';
+			}
+		}
+
 		print '<td class=""></td>';
 		print '</tr>';
 	}
