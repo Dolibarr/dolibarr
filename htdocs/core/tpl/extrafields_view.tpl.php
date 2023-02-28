@@ -183,13 +183,13 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 				$permok = $user->rights->stock->creer;
 			}
 			if ($object->element == 'facturerec') {
-				$permok = $user->rights->facture->creer;
+				$permok = $user->hasRight('facture', 'creer');
 			}
 			if ($object->element == 'mo') {
 				$permok = $user->rights->mrp->write;
 			}
 			if ($object->element == 'contact') {
-				$permok = $user->rights->societe->contact->creer;
+				$permok = $user->hasRight('societe', 'contact', 'creer');
 			}
 			if ($object->element == 'salary') {
 				$permok = $user->rights->salaries->read;

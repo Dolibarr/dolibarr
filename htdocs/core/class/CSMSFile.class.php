@@ -231,9 +231,7 @@ class CSMSFile
 			fputs($fp, "Message:\n".$this->message);
 
 			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($outputfile);
 		}
 	}
 
@@ -257,9 +255,7 @@ class CSMSFile
 			fputs($fp, "\nResult id=".$result);
 
 			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($outputfile);
 		}
 	}
 }

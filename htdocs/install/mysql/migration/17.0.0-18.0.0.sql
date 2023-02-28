@@ -73,6 +73,7 @@ ALTER TABLE llx_bank_account ADD COLUMN owner_zip varchar(25);
 ALTER TABLE llx_bank_account ADD COLUMN owner_town varchar(50);
 ALTER TABLE llx_bank_account ADD COLUMN owner_country_id integer DEFAULT NULL;
 
+ALTER TABLE llx_prelevement_bons ADD COLUMN fk_bank_account integer DEFAULT NULL;
 
 ALTER TABLE llx_supplier_proposal ADD UNIQUE INDEX uk_supplier_proposal_ref (ref, entity);
 
@@ -95,3 +96,7 @@ ALTER TABLE llx_categorie_order ADD INDEX idx_categorie_order_fk_order (fk_order
 
 ALTER TABLE llx_categorie_order ADD CONSTRAINT fk_categorie_order_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_order ADD CONSTRAINT fk_categorie_order_fk_order_rowid FOREIGN KEY (fk_order) REFERENCES llx_commande (rowid);
+ALTER TABLE llx_ecm_files ADD COLUMN share_pass varchar(32) after share;
+
+ALTER TABLE llx_prelevement_demande ADD COLUMN type varchar(12) DEFAULT '';
+UPDATE llx_prelevement_demande SET type = 'ban' WHERE ext_payment_id IS NULL AND type = '';

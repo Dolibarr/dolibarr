@@ -667,13 +667,14 @@ class ProductFournisseur extends Product
 	/**
 	 *    List all supplier prices of a product
 	 *
-	 *    @param    int		$prodid	    Id of product
-	 *    @param	string	$sortfield	Sort field
-	 *    @param	string	$sortorder	Sort order
-	 *    @param	int		$limit		Limit
-	 *    @param	int		$offset		Offset
-	 *    @param	int		$socid		Filter on a third party id
+	 *    @param    int			$prodid	    Id of product
+	 *    @param	string		$sortfield	Sort field
+	 *    @param	string		$sortorder	Sort order
+	 *    @param	int			$limit		Limit
+	 *    @param	int			$offset		Offset
+	 *    @param	int			$socid		Filter on a third party id
 	 *    @return	array|int				Array of ProductFournisseur with new properties to define supplier price
+	 *    @see find_min_price_product_fournisseur()
 	 */
 	public function list_product_fournisseur_price($prodid, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0, $socid = 0)
 	{
@@ -784,6 +785,7 @@ class ProductFournisseur extends Product
 	 *  @param	int		$qty		Minimum quantity
 	 *  @param	int		$socid		get min price for specific supplier
 	 *  @return int					<0 if KO, 0=Not found of no product id provided, >0 if OK
+	 *  @see list_product_fournisseur_price()
 	 */
 	public function find_min_price_product_fournisseur($prodid, $qty = 0, $socid = 0)
 	{

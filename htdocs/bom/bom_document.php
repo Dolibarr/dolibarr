@@ -85,7 +85,7 @@ if ($id > 0 || !empty($ref)) {
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, 'bom', $object->id, 'bom_bom', '', '', 'rowid', $isdraft);
 
-$permissiontoadd = $user->rights->bom->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+$permissiontoadd = $user->hasRight('bom', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 
 
 /*
@@ -148,8 +148,8 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'bom';
-	$permissiontoadd = $user->rights->bom->write;
-	$permtoedit = $user->rights->bom->write;
+	$permissiontoadd = $user->hasRight('bom', 'write');
+	$permtoedit = $user->hasRight('bom', 'write');
 	$param = '&id='.$object->id;
 
 	//$relativepathwithnofile='bom/' . dol_sanitizeFileName($object->id).'/';

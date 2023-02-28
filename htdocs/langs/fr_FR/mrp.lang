@@ -119,3 +119,4 @@ BomCantAddChildBom=La nomenclature %s est déjà présente dans l'arbre menant �
 BOMNetNeeds = Besoins nets
 BOMProductsList=Les produits de BOM
 BOMServicesList=Les services de BOM
+ProducedBy=Produit par

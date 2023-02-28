@@ -40,20 +40,6 @@ $objectline = null;
 
 print "<!-- BEGIN PHP TEMPLATE productattributevalueline_create.tpl.php -->\n";
 $nolinesbefore = (count($this->lines) == 0 || $forcetoshowtitlelines);
-if ($nolinesbefore) {
-	?>
-	<tr class="liste_titre<?php echo ($nolinesbefore ? '' : ' liste_titre_add_') ?> nodrag nodrop">
-		<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
-			<td class="linecolnum center"></td>
-		<?php } ?>
-		<td class="linecolref">
-			<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span>
-		</td>
-		<td class="linecolvalue"><span id="title_vat"><?php echo $langs->trans('Value'); ?></span></td>
-		<td class="linecoledit" colspan="<?php echo $colspan; ?>">&nbsp;</td>
-	</tr>
-	<?php
-}
 ?>
 <tr class="pair nodrag nodrop nohoverpair<?php echo $nolinesbefore ? '' : ' liste_titre_create'; ?>">
 	<?php

@@ -1726,8 +1726,7 @@ class Adherent extends CommonObject
 				return -2;
 			}
 		} else {
-			$this->error = $subscription->error;
-			$this->errors = $subscription->errors;
+			$this->setErrorsFromObject($subscription);
 			$this->db->rollback();
 			return -1;
 		}
@@ -1790,13 +1789,11 @@ class Adherent extends CommonObject
 					}
 				} else {
 					$error++;
-					$this->error = $acct->error;
-					$this->errors = $acct->errors;
+					$this->setErrorsFromObject($acct);
 				}
 			} else {
 				$error++;
-				$this->error = $acct->error;
-				$this->errors = $acct->errors;
+				$this->setErrorsFromObject($acct);
 			}
 		}
 
@@ -2286,9 +2283,11 @@ class Adherent extends CommonObject
 	{
 		global $conf, $langs;
 
-		$datas = [];
+		$langs->loadLangs(['members', 'companies']);
+		$nofetch = !empty($params['nofetch']);
 
-		$nofetch = empty($params['nofetch']) ? false : true;
+		$datas = array();
+
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			$langs->load("users");
 			return ['optimize' => $langs->trans("ShowUser")];
@@ -2298,11 +2297,13 @@ class Adherent extends CommonObject
 			$photo .= Form::showphoto('memberphoto', $this, 80, 0, 0, 'photoref photowithmargin photologintooltip', 'small', 0, 1);
 			$photo .= '</div>';
 			$datas['photo'] = $photo;
-			//$label .= '<div style="clear: both;"></div>';
 		}
 
 		$datas['divopen'] = '<div class="centpercent">';
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Member").'</u> '.$this->getLibStatut(4);
+		if (!empty($this->morphy)) {
+			$datas['picto'] .= '&nbsp;' . $this->getmorphylib('', 1);
+		}
 		if (!empty($this->ref)) {
 			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}
@@ -2407,7 +2408,7 @@ class Adherent extends CommonObject
 		if ($withpictoimg) {
 			$paddafterimage = '';
 			if (abs($withpictoimg) == 1) {
-				$paddafterimage = 'style="margin-right: 3px;"';
+				$morecss .= ' paddingrightonly';
 			}
 			// Only picto
 			if ($withpictoimg > 0) {

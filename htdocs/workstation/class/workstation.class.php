@@ -694,7 +694,7 @@ class Workstation extends CommonObject
 	{
 		global $conf, $langs;
 
-		$langs->load('holiday');
+		$langs->load('mrp');
 
 		$datas = [];
 		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("Workstation").'</u>';
@@ -734,7 +734,7 @@ class Workstation extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
+			$dataparams = " data-params='".json_encode($params)."'";
 			// $label = $langs->trans('Loading');
 		}
 		$label = implode($this->getTooltipContentArray($params));

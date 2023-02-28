@@ -80,7 +80,7 @@ class box_members_by_type extends ModeleBoxes
 	public function loadBox($max = 5)
 	{
 		global $user, $langs, $conf;
-		$langs->load("boxes");
+		$langs->loadLangs(array("boxes", "members"));
 
 		$this->max = $max;
 
@@ -284,7 +284,7 @@ class box_members_by_type extends ModeleBoxes
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
+						'td' => 'colspan="7" class="center"',
 						'text' => $langs->trans("NoRecordedMembersByType")
 					);
 				} else {

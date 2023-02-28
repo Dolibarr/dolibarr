@@ -56,7 +56,7 @@ if (!$result) {
  * Adding a new contact
  */
 
-if ($action == 'addcontact' && $user->rights->ficheinter->creer) {
+if ($action == 'addcontact' && $user->hasRight('ficheinter', 'creer')) {
 	if ($result > 0 && $id > 0) {
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -76,10 +76,10 @@ if ($action == 'addcontact' && $user->rights->ficheinter->creer) {
 
 		setEventMessages($mesg, null, 'errors');
 	}
-} elseif ($action == 'swapstatut' && $user->rights->ficheinter->creer) {
+} elseif ($action == 'swapstatut' && $user->hasRight('ficheinter', 'creer')) {
 	// Toggle the status of a contact
 	$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
-} elseif ($action == 'deletecontact' && $user->rights->ficheinter->creer) {
+} elseif ($action == 'deletecontact' && $user->hasRight('ficheinter', 'creer')) {
 	// Deletes a contact
 	$result = $object->delete_contact(GETPOST('lineid', 'int'));
 
