@@ -5688,7 +5688,7 @@ function isOnlyOneLocalTax($local)
 function get_localtax_by_third($local)
 {
 	global $db, $mysoc;
-	$sql = "SELECT t.localtax1, t.localtax2 ";
+	$sql = "SELECT t.localtax1_type, t.localtax2_type, t.localtax1, t.localtax2 ";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=t.fk_pays";
 	$sql .= " WHERE c.code = '".$db->escape($mysoc->country_code)."' AND t.active = 1 AND t.taux=(";
 	$sql .= "  SELECT max(tt.taux) FROM ".MAIN_DB_PREFIX."c_tva as tt inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=tt.fk_pays";
@@ -5698,9 +5698,9 @@ function get_localtax_by_third($local)
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
-		if ($local == 1) {
+		if ($local == 1 && $obj->localtax1_type > 0) {
 			return $obj->localtax1;
-		} elseif ($local == 2) {
+		} elseif ($local == 2 && $obj->localtax2_type > 0) {
 			return $obj->localtax2;
 		}
 	}
