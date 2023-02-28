@@ -5697,11 +5697,12 @@ function get_localtax_by_third($local)
 
 	$resql = $db->query($sql);
 	if ($resql) {
-		$obj = $db->fetch_object($resql);
-		if ($local == 1 && $obj->localtax1_type > 0) {
-			return $obj->localtax1;
-		} elseif ($local == 2 && $obj->localtax2_type > 0) {
-			return $obj->localtax2;
+		while ($obj = $db->fetch_object($resql)) {
+			if ($local == 1 && $obj->localtax1_type > 0) {
+				return $obj->localtax1;
+			} elseif ($local == 2 && $obj->localtax2_type > 0) {
+				return $obj->localtax2;
+			}
 		}
 	}
 
