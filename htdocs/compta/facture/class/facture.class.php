@@ -168,10 +168,6 @@ class Facture extends CommonInvoice
 
 	// Warning: Do not set default value into property defintion. it must stay null.
 	// For example to avoid to have substition done when object is generic and not yet defined.
-
-	/**
-	 * @deprecated
-	 */
 	public $remise_absolue;
 
 	/**
@@ -335,7 +331,7 @@ class Facture extends CommonInvoice
 		'paye' =>array('type'=>'smallint(6)', 'label'=>'InvoicePaidCompletely', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>80),
 		//'amount' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>85),
 		//'remise_percent' =>array('type'=>'double', 'label'=>'RelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
-		//'remise_absolue' =>array('type'=>'double', 'label'=>'CustomerRelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>91),
+		'remise_absolue' =>array('type'=>'double', 'label'=>'CustomerRelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>91),
 		//'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
 		'close_code' =>array('type'=>'varchar(16)', 'label'=>'EarlyClosingReason', 'enabled'=>1, 'visible'=>-1, 'position'=>92),
 		'close_note' =>array('type'=>'varchar(128)', 'label'=>'EarlyClosingComment', 'enabled'=>1, 'visible'=>-1, 'position'=>93),
@@ -573,7 +569,7 @@ class Facture extends CommonInvoice
 			$this->total_ttc         = $_facrec->total_ttc;
 
 			// Fields always coming from template
-			$this->remise_absolue    = $_facrec->remise_absolue;	// TODO deprecated
+			$this->remise_absolue    = $_facrec->remise_absolue;
 			$this->remise_percent    = $_facrec->remise_percent;	// TODO deprecated
 			$this->fk_incoterms = $_facrec->fk_incoterms;
 			$this->location_incoterms = $_facrec->location_incoterms;
@@ -677,7 +673,7 @@ class Facture extends CommonInvoice
 		$sql .= ", type";
 		$sql .= ", fk_soc";
 		$sql .= ", datec";
-		$sql .= ", remise_absolue";	// TODO deprecated
+		$sql .= ", remise_absolue";
 		$sql .= ", remise_percent";	// TODO deprecated
 		$sql .= ", datef";
 		$sql .= ", date_pointoftax";
@@ -703,7 +699,7 @@ class Facture extends CommonInvoice
 		$sql .= ", '".$this->db->escape($this->type)."'";
 		$sql .= ", ".((int) $socid);
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".($this->remise_absolue > 0 ? $this->remise_absolue : 'NULL');	// TODO deprecated
+		$sql .= ", ".($this->remise_absolue > 0 ? $this->remise_absolue : 'NULL');
 		$sql .= ", ".($this->remise_percent > 0 ? $this->remise_percent : 'NULL');	// TODO deprecated
 		$sql .= ", '".$this->db->idate($this->date)."'";
 		$sql .= ", ".(empty($this->date_pointoftax) ? "null" : "'".$this->db->idate($this->date_pointoftax)."'");
@@ -1168,7 +1164,7 @@ class Facture extends CommonInvoice
 		$facture->fk_project        = $this->fk_project;
 		$facture->cond_reglement_id = $this->cond_reglement_id;
 		$facture->mode_reglement_id = $this->mode_reglement_id;
-		$facture->remise_absolue    = $this->remise_absolue;	// TODO deprecated
+		$facture->remise_absolue    = $this->remise_absolue;
 		$facture->remise_percent    = $this->remise_percent;	// TODO deprecated
 
 		$facture->origin            = $this->origin;
@@ -2021,7 +2017,7 @@ class Facture extends CommonInvoice
 				$this->date_modification = $this->db->jdate($obj->datem);
 				$this->datem = $this->db->jdate($obj->datem);
 				$this->remise_percent		= $obj->remise_percent;	// TODO deprecated
-				$this->remise_absolue		= $obj->remise_absolue;	// TODO deprecated
+				$this->remise_absolue		= $obj->remise_absolue;
 				$this->total_ht				= $obj->total_ht;
 				$this->total_tva			= $obj->total_tva;
 				$this->total_localtax1		= $obj->localtax1;
@@ -2357,7 +2353,7 @@ class Facture extends CommonInvoice
 		$sql .= " date_valid=".(strval($this->date_validation) != '' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
 		$sql .= " paye=".(isset($this->paye) ? $this->db->escape($this->paye) : 0).",";
 		$sql .= " remise_percent=".(isset($this->remise_percent) ? $this->db->escape($this->remise_percent) : "null").",";	// TODO deprecated
-		$sql .= " remise_absolue=".(isset($this->remise_absolue) ? $this->db->escape($this->remise_absolue) : "null").",";	// TODO deprecated
+		$sql .= " remise_absolue=".(isset($this->remise_absolue) ? $this->db->escape($this->remise_absolue) : "null").",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
 		$sql .= " close_note=".(isset($this->close_note) ? "'".$this->db->escape($this->close_note)."'" : "null").",";
 		$sql .= " total_tva=".(isset($this->total_tva) ? $this->total_tva : "null").",";
