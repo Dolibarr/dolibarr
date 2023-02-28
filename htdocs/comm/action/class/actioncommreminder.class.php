@@ -72,7 +72,6 @@ class ActionCommReminder extends CommonObject
 	 *  'showoncombobox' if field must be shown into the label of combobox
 	 */
 
-	// BEGIN MODULEBUILDER PROPERTIES
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
@@ -101,6 +100,10 @@ class ActionCommReminder extends CommonObject
 	public $entity;
 
 	public $dateremind;
+
+	/**
+	 * @var string reminder type email, browser, sms
+	 */
 	public $typeremind;
 
 	/**
@@ -108,7 +111,14 @@ class ActionCommReminder extends CommonObject
 	 */
 	public $fk_user;
 
+	/**
+	 * @var int offset value
+	 */
 	public $offsetvalue;
+
+	/**
+	 * @var string y, m, d, w, h, i
+	 */
 	public $offsetunit;
 
 	/**
@@ -130,10 +140,6 @@ class ActionCommReminder extends CommonObject
 	 * @var int Template Mail
 	 */
 	public $fk_email_template;
-
-	// END MODULEBUILDER PROPERTIES
-
-
 
 	/**
 	 * Constructor
