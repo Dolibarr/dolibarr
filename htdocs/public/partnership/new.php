@@ -617,7 +617,18 @@ print '<tr><td>'.$langs->trans("Email").' <span style="color:red;">*</span></td>
 print '<input type="text" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Url
 print '<tr><td>'.$langs->trans("Url").' <span style="color:red;">*</span></td><td>';
-print '<input type="text" name="url" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('url')).'"></td></tr>'."\n";
+print '<input type="text" name="url" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('url')).'">';
+if (getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK')) {
+	$listofkeytocheck = explode('|', getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK'));
+	$i = 0;
+	$s = '';
+	foreach ($listofkeytocheck as $val) {
+		$i++;
+		$s .= ($s ? ($i == count($listofkeytocheck) ? ' '.$langs->trans("or").' ' : ', ') : '').$val;
+	}
+	print '<br><span class="opacitymedium small">'.$langs->trans("ThisUrlMustContainsAtLeastOneLinkToWebsite", $s).'</small>';
+}
+print '</td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
