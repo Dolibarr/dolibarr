@@ -3050,11 +3050,12 @@ class Ticket extends CommonObject
 			$sql .= " WHERE IF(tc.source = 'external', sc.statut = 1, u.statut = 1)";
 			$resql = $db->query($sql);
 			if ($resql) {
-				for ($i = 0; $db->num_rows($resql) > $i; $i++) {
+				$num = $db->num_rows($resql);
+				for ($i = 0; $num > $i; $i++) {
 					$non_closed_contacts[] = $db->fetch_row($resql);
 				}
 			}
-			$to = array_filter($to, function ($v, $k) use ($non_closed_contacts, $langs) {
+			$to = array_filter($to, function($v, $k) use($non_closed_contacts, $langs) {
 				foreach ($non_closed_contacts as $non_closed_contact) {
 					if ($k == $non_closed_contact[0])
 						return true;
