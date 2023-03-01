@@ -207,11 +207,11 @@ class FileUpload
 				setEventMessage('If $fk_element = null or $element = null you must specify upload_dir on $options', 'errors');
 				throw new Exception('If $fk_element = null or $element = null you must specify upload_dir on $options');
 			} elseif (is_dir($this->options['upload_dir'])) {
-				setEventMessage('The directory '$this->options['upload_dir'].' doesn\'t exists', 'errors');
-				throw new Exception('The directory '$this->options['upload_dir'].' doesn\'t exists');
+				setEventMessage('The directory '.$this->options['upload_dir'].' doesn\'t exists', 'errors');
+				throw new Exception('The directory '.$this->options['upload_dir'].' doesn\'t exists');
 			} elseif (is_writable($this->options['upload_dir'])) {
-				setEventMessage('The directory '$this->options['upload_dir'].' is not writable', 'errors');
-				throw new Exception('The directory '$this->options['upload_dir'].' is not writable');
+				setEventMessage('The directory '.$this->options['upload_dir'].' is not writable', 'errors');
+				throw new Exception('The directory '.$this->options['upload_dir'].' is not writable');
 			}
 		}
 	}
