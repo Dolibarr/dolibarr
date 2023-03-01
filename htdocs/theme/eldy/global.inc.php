@@ -411,8 +411,8 @@ input.buttonpaymentstripe {
 	background-position: 8px 11px;
 }
 .logopublicpayment #dolpaymentlogo {
-	max-height: 100px;
-	max-width: 320px;
+	max-height: 80px;
+	max-width: 300px;
 	image-rendering: -webkit-optimize-contrast;		/* better rendering on public page header */
 }
 
@@ -7114,8 +7114,17 @@ div.tabsElem a.tab {
 .public_border {
 	border: 1px solid #888;
 }
+.publicnewmemberform div.tabBarWithBottom {
+	border: 1px solid #f0f0f0;
+	padding: 30px;
+	border-radius: 8px;
+	background-color: #f8f8f8;
+	/*box-shadow: 2px 2px 10px #ddd;*/
+}
 
-
+.publicnewmemberform #tablesubscribe {
+	color: #888;
+}
 
 /* ============================================================================== */
 /* Ticket module                                                                  */
