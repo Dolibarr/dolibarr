@@ -574,11 +574,11 @@ print '<br>';
 print '<strong>MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL</strong> = '.(empty($conf->global->MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>' : $conf->global->MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL)."<br>";
 print '<br>';
 
-$examplecsprule = "frame-ancestors 'self'; img-src * data:; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googlapis.com *.google-analytics.com *.googletagmanager.com;";
+$examplecsprule = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
 print '<strong>MAIN_SECURITY_FORCECSPRO</strong> = '.(empty($conf->global->MAIN_SECURITY_FORCECSPRO) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_FORCECSPRO).' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "'.$examplecsprule.'")</span><br>';
 print '<br>';
 
-$examplecsprule = "frame-ancestors 'self'; img-src * data:; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googlapis.com *.google-analytics.com *.googletagmanager.com;";
+$examplecsprule = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
 print '<strong>MAIN_SECURITY_FORCECSP</strong> = '.(empty($conf->global->MAIN_SECURITY_FORCECSP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_FORCECSP).' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "'.$examplecsprule.'")</span><br>';
 print '<br>';
 
