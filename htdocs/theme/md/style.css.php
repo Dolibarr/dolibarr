@@ -7043,6 +7043,10 @@ border-top-right-radius: 6px;
 	border: 1px solid #888;
 }
 
+.publicnewmemberform #tablesubscribe {
+	color: #666;
+}
+
 
 /* ============================================================================== */
 /* Ticket module                                                                  */

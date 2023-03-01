@@ -7123,7 +7123,7 @@ div.tabsElem a.tab {
 }
 
 .publicnewmemberform #tablesubscribe {
-	color: #888;
+	color: #666;
 }
 
 /* ============================================================================== */
