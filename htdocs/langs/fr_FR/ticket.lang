@@ -212,6 +212,7 @@ TicketUpdated=Ticket mis à jour
 SendMessageByEmail=Envoyer ce message par email
 TicketNewMessage=Nouveau message
 ErrorMailRecipientIsEmptyForSendTicketMessage=Le destinataire est vide. Aucun e-mail envoyé
+WarningMailNotSendContactIsClosed=E-mail vers %s refusé pour expédition car ce contact est clos
 TicketGoIntoContactTab=Rendez-vous dans le tableau "Contacts" pour les sélectionner
 TicketMessageMailIntro=Introduction
 TicketMessageMailIntroHelp=Ce texte est ajouté seulement au début de l'email et ne sera pas sauvegardé.
