@@ -550,9 +550,14 @@ class Partnership extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
+		global $user;
+
 		if ($this->fk_soc <= 0 && $this->fk_member <= 0) {
 			$this->error[] = "ErrorThirpdartyOrMemberidIsMandatory";
 			return -1;
+		}
+		if (empty($this->fk_user_creat)) {	// Fot the case the object was created with empty user.
+			$this->fk_user_creat = $user->id;
 		}
 
 		return $this->updateCommon($user, $notrigger);

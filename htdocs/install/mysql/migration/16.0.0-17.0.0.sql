@@ -64,6 +64,7 @@ ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_percent (percent);
 
 UPDATE llx_c_paiement SET code = 'BANCON' WHERE code = 'BAN' AND libelle = 'Bancontact';
 
+ALTER TABLE llx_partnership DROP FOREIGN KEY llx_partnership_fk_user_creat;
 -- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN fk_user_creat integer NULL;
 -- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN fk_user_creat DROP NOT NULL;
 
