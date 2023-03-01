@@ -1005,7 +1005,7 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 		$check = dolReplaceInFile($file_api, array($allContent => ''));
 		if ($check) {
 			dolReplaceInFile($file_api, array($begin => '', $end => ''));
-			setEventMessages($langs->trans("ApiObjectDeleted"), null);
+			setEventMessages($langs->trans("ApiObjectDeleted", $langs->transnoentities($objectname)), null);
 		}
 		fclose($handle);
 	}
