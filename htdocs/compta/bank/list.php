@@ -787,7 +787,7 @@ foreach ($accounts as $key => $type) {
 		if (!empty($arrayfields['balance']['checked'])) {
 			print '<td class="nowraponall right">';
 			print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$objecttmp->id.'">';
-			print '<span class="amount">'.price($solde, 0, $langs, 1, -1, -1, $objecttmp->currency_code).'</span>';
+			print '<span class="amount">'.price(price2num($solde, 'MT'), 0, $langs, 1, -1, -1, $objecttmp->currency_code).'</span>';
 			print '</a>';
 			print '</td>';
 			if (!$i) {

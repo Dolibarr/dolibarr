@@ -4253,15 +4253,15 @@ div.liste_titre_bydiv {
 	border-top-style: solid;
 	<?php if ($userborderontable) { ?>
 	border-left: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);
-	/* border-right: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1); */
+	border-right: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);
 	<?php } ?>
 
 	border-collapse: collapse;
-	display: table;
 	padding: 2px 0px 2px 0;
 	box-shadow: none;
-	/*width: calc(100% - 1px);	1px more, i don't know why so i remove */
-	width: calc(100%);
+	/*width: calc(100% - 1px);	1px less because display is table and with100%, it generated a right border 1px left compared to the div-table-responsive under */
+	width: unset;
+	/* display: table; */
 }
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr, tagtr.liste_titre
 {
