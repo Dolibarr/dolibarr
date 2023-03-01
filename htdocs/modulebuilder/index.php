@@ -403,6 +403,28 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 	$varnametoupdate = '';
 
 	if ($action == 'initapi') {
+		$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
+		$destdir = $dirins.'/'.strtolower($module);
+		$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
+		$objects = array();
+		foreach ($listofobject as $fileobj) {
+			if (preg_match('/^api_/', $fileobj['name'])) {
+				continue;
+			}
+			if (preg_match('/^actions_/', $fileobj['name'])) {
+				continue;
+			}
+
+			$tmpcontent = file_get_contents($fileobj['fullname']);
+			$reg = array();
+			if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
+				$objectnameloop = $reg[1];
+				$objects[] = $objectnameloop;
+			}
+		}
+		if (file_exists($dirins.'/'.strtolower($module).'/class/api_'.strtolower($module).'.class.php')) {
+			$result = dol_copy(DOL_DOCUMENT_ROOT.'/modulebuilder/template/class/api_mymodule.class.php', $dirins.'/'.strtolower($module).'/class/api_'.strtolower($module).'.class.php', 0, 1);
+		}
 		dol_mkdir($dirins.'/'.strtolower($module).'/class');
 		$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 		$srcfile = $srcdir.'/class/api_mymodule.class.php';
@@ -440,7 +462,9 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 
 	//var_dump($srcfile);
 	//var_dump($destfile);
-	$result = dol_copy($srcfile, $destfile, 0, 0);
+	if (!file_exists($destfile)) {
+		$result = dol_copy($srcfile, $destfile, 0, 0);
+	}
 
 	if ($result > 0) {
 		//var_dump($phpfileval['fullname']);
@@ -458,8 +482,74 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 			'MYOBJECT'=>strtoupper($objectname),
 			'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
 		);
+		if (count($objects) > 1) {
+			$file = $destfile;
+			$content = file($file);
+			$props = "public \$myobject;";
+			$varcomented = "@var MyObject \$myobject {@type MyObject}";
+			$constructObj = "\$this->myobject = new MyObject(\$this->db);";
+			// add properties and declare them in consturctor
+			foreach ($content as $lineNumber => &$lineContent) {
+				if (strpos($lineContent, $varcomented) !== false) {
+					$lineContent = '';
+					foreach ($objects as $object) {
+						$lineContent .= "\t * @var ".$object." \$".strtolower($object)." {@type ".$object."}". PHP_EOL;
+					}
+					//var_dump($lineContent);exit;
+				}
+				if (strpos($lineContent, $props) !== false) {
+					$lineContent = '';
+					foreach ($objects as $object) {
+						$lineContent .= "\tpublic \$".strtolower($object).";". PHP_EOL;
+					}
+				}
+				if (strpos($lineContent, $constructObj) !== false) {
+					$lineContent = '';
+					foreach ($objects as $object) {
+						$lineContent .= "\t\t\$this->".strtolower($object)."= new ".$object."(\$this->db);". PHP_EOL;
+					}
+				}
+			}
+			$allContent = implode("", $content);
+			file_put_contents($destfile, $allContent);
+		}
+		if (count($objects) > 1) {
+			$search = "/*begin methods CRUD*/";
+			// Open the file and read line by line
+			$handle = fopen($destfile, "r");
+				$i = 1;
+				$lines = array();
+				$props = " public \$myobject; ";
+			while (($line = fgets($handle)) !== false) {
+				//search line begin
+				if (strpos($line, $search) !== false) {
+					$start_line = $i;
 
-		dolReplaceInFile($destfile, $arrayreplacement);
+					// Copy lines until the end on array
+					while (($line = fgets($handle)) !== false) {
+						if (strpos($line, "/*end methods CRUD*/") !== false) {
+							$end_line = $i;
+							break;
+						}
+						$lines[] = $line;
+						$i++;
+					}
+					break;
+				}
+
+				$i++;
+			}
+			$allContent = implode("", $lines);
+
+			foreach ($objects as $object) {
+				$contentReplaced = str_replace(["myobject","MyObject"], [strtolower($object),$object], $allContent);
+				dolReplaceInFile($destfile, array('/*end methods CRUD*/' => '/*CRUD FOR '.strtoupper($object).'*/'."\n".$contentReplaced."\n\t".'/*END CRUD FOR '.strtoupper($object).'*/'."\n\t".'/*end methods CRUD*/'));
+			}
+				dolReplaceInFile($destfile, array($allContent => ''));
+			fclose($handle);
+		} else {
+			dolReplaceInFile($destfile, $arrayreplacement);
+		}
 
 		if ($varnametoupdate) {
 			// Now we update the object file to set $$varnametoupdate to 1
@@ -839,56 +929,138 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 	$objectname = $tabobj;
 
 	$relativefilename = dol_sanitizePathName(GETPOST('file', 'restricthtml'));
-	if ($relativefilename) {
-		$dirnametodelete = dirname($relativefilename);
-		$filetodelete = $dirins.'/'.$relativefilename;
-		$dirtodelete  = $dirins.'/'.$dirnametodelete;
+	$file_api = $dirins."/".$relativefilename;
 
-		$result = dol_delete_file($filetodelete);
-		if (!$result) {
-			setEventMessages($langs->trans("ErrorFailToDeleteFile", basename($filetodelete)), null, 'errors');
-		} else {
-			// If we delete a .sql file, we delete also the other .sql file
-			if (preg_match('/\.sql$/', $relativefilename)) {
-				if (preg_match('/\.key\.sql$/', $relativefilename)) {
-					$relativefilename = preg_replace('/\.key\.sql$/', '.sql', $relativefilename);
-					$filetodelete = $dirins.'/'.$relativefilename;
-					$result = dol_delete_file($filetodelete);
-				} elseif (preg_match('/\.sql$/', $relativefilename)) {
-					$relativefilename = preg_replace('/\.sql$/', '.key.sql', $relativefilename);
-					$filetodelete = $dirins.'/'.$relativefilename;
-					$result = dol_delete_file($filetodelete);
+	//check if have more than one object
+	$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
+	$destdir = $dirins.'/'.strtolower($module);
+	$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
+	$objects = array();
+
+	foreach ($listofobject as $fileobj) {
+		if (preg_match('/^api_/', $fileobj['name'])) {
+			continue;
+		}
+		if (preg_match('/^actions_/', $fileobj['name'])) {
+			continue;
+		}
+		$tmpcontent = file_get_contents($fileobj['fullname']);
+		$reg = array();
+		if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
+			$objectnameloop = $reg[1];
+			$objects[] = $objectnameloop;
+		}
+	}
+
+	$existObj = 0;
+	$file = file_get_contents($file_api);
+	$objs = array();
+	if (str_contains($file, $objectname)) {
+		$existObj++;
+	}
+	if ($existObj && count($objects) > 1) {
+		$begin = '/*CRUD FOR '.strtoupper($objectname).'*/';
+		$end = '/*END CRUD FOR '.strtoupper($objectname).'*/';
+		$varcomentedDel = "\t * @var ".$objectname." \$".strtolower($objectname)." {@type ".$objectname."}";
+		$propsDel .= "\tpublic \$".strtolower($objectname).";";
+		$constructObjDel .= "\t\t\$this->".strtolower($objectname)."= new ".$objectname."(\$this->db);";
+		$content = file($file_api);
+		// for delete property and the initialization from the construct
+		foreach ($content as $lineNumber => &$lineContent) {
+			if (strpos($lineContent, $varcomentedDel) !== false) {
+				$lineContent = '';
+			}
+			if (strpos($lineContent, $propsDel) !== false) {
+				$lineContent = '';
+			}
+			if (strpos($lineContent, $constructObjDel) !== false) {
+				$lineContent = '';
+			}
+		}
+		$allContent = implode("", $content);
+		file_put_contents($file_api, $allContent);
+		// for delete methods of object
+		$handle = fopen($file_api, "r");
+		$i = 1;
+		$lines = array();
+		while (($line = fgets($handle)) !== false) {
+			//search line begin
+			if (strpos($line, $begin) !== false) {
+				$start_line = $i;
+				// Copy lines until the end on array
+				while (($line = fgets($handle)) !== false) {
+					if (strpos($line, $end) !== false) {
+						$end_line = $i;
+						break;
+					}
+					$lines[] = $line;
+					$i++;
 				}
+				break;
 			}
+			$i++;
+		}
+		$allContent = implode("", $lines);
+		//var_dump($allContent);exit;
+		$check = dolReplaceInFile($file_api, array($allContent => ''));
+		if ($check) {
+			dolReplaceInFile($file_api, array($begin => '', $end => ''));
+			setEventMessages($langs->trans("ApiObjectDeleted"), null);
+		}
+		fclose($handle);
+	}
+	if (count($objects) == 1 && $existObj) {
+		if ($relativefilename) {
+			$dirnametodelete = dirname($relativefilename);
+			$filetodelete = $dirins.'/'.$relativefilename;
+			$dirtodelete  = $dirins.'/'.$dirnametodelete;
 
-			if (dol_is_dir_empty($dirtodelete)) {
-				dol_delete_dir($dirtodelete);
-			}
+			$result = dol_delete_file($filetodelete);
+			if (!$result) {
+				setEventMessages($langs->trans("ErrorFailToDeleteFile", basename($filetodelete)), null, 'errors');
+			} else {
+				// If we delete a .sql file, we delete also the other .sql file
+				if (preg_match('/\.sql$/', $relativefilename)) {
+					if (preg_match('/\.key\.sql$/', $relativefilename)) {
+						$relativefilename = preg_replace('/\.key\.sql$/', '.sql', $relativefilename);
+						$filetodelete = $dirins.'/'.$relativefilename;
+						$result = dol_delete_file($filetodelete);
+					} elseif (preg_match('/\.sql$/', $relativefilename)) {
+						$relativefilename = preg_replace('/\.sql$/', '.key.sql', $relativefilename);
+						$filetodelete = $dirins.'/'.$relativefilename;
+						$result = dol_delete_file($filetodelete);
+					}
+				}
 
-			// Update descriptor file to comment file
-			if (in_array($tab, array('css', 'js'))) {
-				$srcfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
-				$arrayreplacement = array('/^\s*\''.preg_quote('/'.$relativefilename, '/').'\',*/m'=>'                // \'/'.$relativefilename.'\',');
-				dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
-			}
+				if (dol_is_dir_empty($dirtodelete)) {
+					dol_delete_dir($dirtodelete);
+				}
 
-			if (preg_match('/_extrafields/', $relativefilename)) {
-				// Now we update the object file to set $isextrafieldmanaged to 0
-				$srcfile = $dirins.'/'.strtolower($module).'/class/'.strtolower($objectname).'.class.php';
-				$arrayreplacement = array('/\$isextrafieldmanaged = 1;/' => '$isextrafieldmanaged = 0;');
-				dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
-			}
+				// Update descriptor file to comment file
+				if (in_array($tab, array('css', 'js'))) {
+					$srcfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+					$arrayreplacement = array('/^\s*\''.preg_quote('/'.$relativefilename, '/').'\',*/m'=>'                // \'/'.$relativefilename.'\',');
+					dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+				}
 
-			// Now we update the lib file to set $showtabofpagexxx to 0
-			$varnametoupdate = '';
-			$reg = array();
-			if (preg_match('/_([a-z]+)\.php$/', $relativefilename, $reg)) {
-				$varnametoupdate = 'showtabofpage'.$reg[1];
-			}
-			if ($varnametoupdate) {
-				$srcfile = $dirins.'/'.strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php';
-				$arrayreplacement = array('/\$'.$varnametoupdate.' = 1;/' => '$'.$varnametoupdate.' = 0;');
-				dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+				if (preg_match('/_extrafields/', $relativefilename)) {
+					// Now we update the object file to set $isextrafieldmanaged to 0
+					$srcfile = $dirins.'/'.strtolower($module).'/class/'.strtolower($objectname).'.class.php';
+					$arrayreplacement = array('/\$isextrafieldmanaged = 1;/' => '$isextrafieldmanaged = 0;');
+					dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+				}
+
+				// Now we update the lib file to set $showtabofpagexxx to 0
+				$varnametoupdate = '';
+				$reg = array();
+				if (preg_match('/_([a-z]+)\.php$/', $relativefilename, $reg)) {
+					$varnametoupdate = 'showtabofpage'.$reg[1];
+				}
+				if ($varnametoupdate) {
+					$srcfile = $dirins.'/'.strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php';
+					$arrayreplacement = array('/\$'.$varnametoupdate.' = 1;/' => '$'.$varnametoupdate.' = 0;');
+					dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+				}
 			}
 		}
 	}
@@ -3666,6 +3838,8 @@ if ($module == 'initmodule') {
 						$urloflist = dol_buildpath('/'.$pathtolist, 1);
 						$urlofcard = dol_buildpath('/'.$pathtocard, 1);
 
+						$file = file_get_contents($realpathtoapi);
+						$objs = array();
 
 						print '<!-- section for object -->';
 						print '<div class="fichehalfleft smallxxx">';
@@ -3686,7 +3860,7 @@ if ($module == 'initmodule') {
 						// API file
 						print '<br>';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("ApiClassFile").' : <strong class="wordbreak">'.(dol_is_file($realpathtoapi) ? '' : '<strike><span class="opacitymedium">').preg_replace('/^'.strtolower($module).'\//', '', $pathtoapi).(dol_is_file($realpathtoapi)?'':'</span></strike>').'</strong>';
-						if (dol_is_file($realpathtoapi)) {
+						if (dol_is_file($realpathtoapi) && preg_match('/var '.$tabobj.'\s+([^\s]*)\s/ims', $file, $objs)) {
 							print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 							print ' ';
 							print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&token='.newToken().'&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
