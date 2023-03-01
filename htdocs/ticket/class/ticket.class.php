@@ -3084,11 +3084,11 @@ class Ticket extends CommonObject
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople sc on (ec.fk_socpeople = sc.rowid AND tc.source = 'external')";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u on (ec.fk_socpeople = u.rowid AND tc.source = 'internal')";
 			$sql .= " WHERE IF(tc.source = 'external', sc.statut = 1, u.statut = 1)";
-			$resql = $db->query($sql);
+			$resql = $this->db->query($sql);
 			if ($resql) {
-				$num = $db->num_rows($resql);
+				$num = $this->db->num_rows($resql);
 				for ($i = 0; $num > $i; $i++) {
-					$non_closed_contacts[] = $db->fetch_row($resql);
+					$non_closed_contacts[] = $this->db->fetch_row($resql);
 				}
 			}
 			$to = array_filter($to, function($v, $k) use($non_closed_contacts, $langs) {
