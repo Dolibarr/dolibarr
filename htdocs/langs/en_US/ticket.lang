@@ -223,6 +223,7 @@ TicketUpdated=Ticket updated
 SendMessageByEmail=Send message by email
 TicketNewMessage=New message
 ErrorMailRecipientIsEmptyForSendTicketMessage=Recipient is empty. No email send
+WarningMailNotSendContactIsClosed=E-mail to %s refused for shipment as this contact is closed
 TicketGoIntoContactTab=Please go into "Contacts" tab to select them
 TicketMessageMailIntro=Message header
 TicketMessageMailIntroHelp=This text is added only at the beginning of the email and will not be saved.

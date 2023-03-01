@@ -2812,6 +2812,7 @@ class Ticket extends CommonObject
 
 		$from = $conf->global->TICKET_NOTIFICATION_EMAIL_FROM;
 		$is_sent = false;
+		$array_receiver = $this->removeClosedContact($array_receiver);
 		if (is_array($array_receiver) && count($array_receiver) > 0) {
 			foreach ($array_receiver as $key => $receiver) {
 				$deliveryreceipt = 0;
@@ -3027,6 +3028,42 @@ class Ticket extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;
+	}
+
+	/**
+	 * Remove the closed contact
+	 *
+	 * @param   array      $to        Array of receiver. exemple array('john@doe.com' => 'John Doe <john@doe.com>', etc...)
+	 * @return  array                 array of email => name
+	 */
+	public function removeClosedContact($to)
+	{
+		global $db, $langs;
+		$langs->load("ticket");
+
+		if (isset($this->id)) {
+			$sql = "SELECT IF(tc.source = 'external', sc.email, u.email)";
+			$sql .= " FROM ".MAIN_DB_PREFIX."element_contact ec";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_type_contact tc on (ec.element_id = ". $this->id ." AND ec.fk_c_type_contact = tc.rowid)";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople sc on (ec.fk_socpeople = sc.rowid AND tc.source = 'external')";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u on (ec.fk_socpeople = u.rowid AND tc.source = 'internal')";
+			$sql .= " WHERE IF(tc.source = 'external', sc.statut = 1, u.statut = 1)";
+			$resql = $db->query($sql);
+			if ($resql) {
+				for ($i = 0; $db->num_rows($resql) > $i; $i++) {
+					$non_closed_contacts[] = $db->fetch_row($resql);
+				}
+			}
+			$to = array_filter($to, function($v, $k) use($non_closed_contacts, $langs) {
+				foreach($non_closed_contacts as $non_closed_contact) {
+					if ($k == $non_closed_contact[0])
+						return true;
+				}
+				setEventMessages($langs->trans('WarningMailNotSendContactIsClosed', str_replace(array('>', '<'), '', $v)), null, 'warnings');
+				return false;
+			}, ARRAY_FILTER_USE_BOTH);
+		}
+		return $to;
 	}
 }
 
