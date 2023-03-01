@@ -981,6 +981,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->trackid = 'sub'.$object->id;
 			} elseif (preg_match('/^MEMBER_/', $action)) {
 				$object->trackid = 'mem'.$object->id;
+			} elseif (preg_match('/^PARTNERSHIP_/', $action)) {
+				$object->trackid = 'pship'.$object->id;
 			} elseif (preg_match('/^PROJECT_/', $action)) {
 				$object->trackid = 'proj'.$object->id;
 			} elseif (preg_match('/^TASK_/', $action)) {
@@ -1079,7 +1081,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$actioncomm->errors_to     = empty($object->errors_to) ? null : $object->errors_to;
 		}
 
-		// Object linked (if link is for thirdparty, contact, project it is a recording error. We should not have links in link table
+		// Object linked (if link is for thirdparty, contact or project, it is a recording error. We should not have links in link table
 		// for such objects because there is already a dedicated field into table llx_actioncomm or llx_actioncomm_resources.
 		if (!in_array($elementtype, array('societe', 'contact', 'project'))) {
 			$actioncomm->fk_element  = $elementid;
