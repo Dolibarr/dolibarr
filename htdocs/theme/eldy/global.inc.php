@@ -7115,7 +7115,7 @@ div.tabsElem a.tab {
 	border: 1px solid #888;
 }
 .publicnewmemberform div.tabBarWithBottom {
-	border: 1px solid #f0f0f0;
+	border: 1px solid #e8e8e8;
 	padding: 30px;
 	border-radius: 8px;
 	background-color: #f8f8f8;
