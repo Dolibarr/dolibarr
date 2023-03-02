@@ -669,7 +669,8 @@ input.buttonpaymentstripe {
 	background-position: 8px 7px;
 }
 .logopublicpayment #dolpaymentlogo {
-	max-height: 100px;
+	max-height: 80px;
+	max-width: 300px;
 	image-rendering: -webkit-optimize-contrast;		/* better rendering on public page header */
 }
 a.butStatus {
@@ -5296,6 +5297,12 @@ span[phptag] {
 	font-weight: normal;
 	color: #444 !important;
 }
+.websitebar .button.bordertransp {
+	color: unset;
+	text-decoration: unset !important;
+	/* margin: 0px 4px 0px 4px  !important */
+}
+
 .websitebar {
 	border-bottom: 1px solid #ccc;
 	background: #eee;
@@ -5335,7 +5342,7 @@ span[phptag] {
 .websiteinputurl {
 	display: inline-block;
 	vertical-align: top;
-	line-height: 28px;
+	line-height: 26px;
 }
 .websiteiframenoborder {
 	border: 0px;
@@ -5356,7 +5363,7 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 .websitehelp {
 	vertical-align: middle;
 	float: right;
-	padding-top: 8px;
+	padding-top: 5px;
 }
 .websiteselectionsection {
 	border-left: 1px solid #bbb;
@@ -7034,6 +7041,17 @@ border-top-right-radius: 6px;
 }
 .public_border {
 	border: 1px solid #888;
+}
+.publicnewmemberform div.tabBarWithBottom {
+	border: 1px solid #e8e8e8;
+	padding: 30px;
+	border-radius: 8px;
+	background-color: #f8f8f8;
+	/*box-shadow: 2px 2px 10px #ddd;*/
+}
+
+.publicnewmemberform #tablesubscribe {
+	color: #666;
 }
 
 
