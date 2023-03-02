@@ -5588,6 +5588,7 @@ class Facture extends CommonInvoice
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture';
 		$sql .= ' WHERE type = ' . (int) $this->type ;
 		$sql .= ' AND date_valid IS NOT NULL';
+		$sql .= " AND entity IN (".getEntity('invoice').")";
 		$sql .= ' ORDER BY datef DESC LIMIT 1';
 
 		$result = $this->db->query($sql);
