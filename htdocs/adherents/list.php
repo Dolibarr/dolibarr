@@ -5,7 +5,7 @@
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2023	Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1015,7 +1015,7 @@ $i = 0;
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
-while ($i < $maxinloop) {
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 
 	$datefin = $db->jdate($obj->datefin);
