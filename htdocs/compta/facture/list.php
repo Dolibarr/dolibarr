@@ -1928,7 +1928,7 @@ if ($resql) {
 				$userstatic->fetch($obj->fk_user_author);
 				$facturestatic->fk_user_author = $userstatic->getNomUrl(1);
 				print $facturestatic->getKanbanView('');
-				if ($i == (min($num, $limit) - 1)) {
+				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
 					print '</td></tr>';
 				}

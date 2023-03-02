@@ -574,6 +574,7 @@ $total = array();
 $found = 0;
 $i = 0;
 $lastcurrencycode = '';
+$imaxinloop = ($limit ? min($num, $limit) : $num);
 
 foreach ($accounts as $key => $type) {
 	if ($i >= $limit) {
@@ -600,7 +601,7 @@ foreach ($accounts as $key => $type) {
 		}
 		// Output Kanban
 		print $objecttmp->getKanbanView('');
-		if ($i == (min($num, $limit) - 1)) {
+		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
 		}
