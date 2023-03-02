@@ -555,6 +555,9 @@ class Partnership extends CommonObject
 			$this->error[] = "ErrorThirpdartyOrMemberidIsMandatory";
 			return -1;
 		}
+		if (empty($this->fk_user_creat)) {	// For the case the object was created with empty user (from public page).
+			$this->fk_user_creat = $user->id;
+		}
 
 		return $this->updateCommon($user, $notrigger);
 	}
