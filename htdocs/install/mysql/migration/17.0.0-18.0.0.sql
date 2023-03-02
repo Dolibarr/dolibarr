@@ -93,3 +93,6 @@ ALTER TABLE llx_ecm_files ADD COLUMN share_pass varchar(32) after share;
 
 ALTER TABLE llx_prelevement_demande ADD COLUMN type varchar(12) DEFAULT '';
 UPDATE llx_prelevement_demande SET type = 'ban' WHERE ext_payment_id IS NULL AND type = '';
+
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN fk_user integer;
+
