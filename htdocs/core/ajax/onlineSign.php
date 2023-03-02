@@ -158,19 +158,21 @@ if ($action == "importSignature") {
 						$pdf->SetMargins($marginLeft, $marginTop, $marginRight);
 						$pdf->SetAutoPageBreak(1, 0);
 
+						// Retrieve information on the position of the signature
 						$pos = array();
 						$possign = array();
+						$s = array(); 	// Array with size of each page. Exemple array(w'=>210, 'h'=>297);
+						$pforimg = $pagecount; // Page number to print sign if not difini last page
 
 						if (isset($object->model_pdf_pos_sign) && !empty($object->model_pdf_pos_sign)) {
 							$pos = explode(':', $object->model_pdf_pos_sign);
-							$possign['page'] = isset($pos[0]) ? $pos[0] : '';
-							$possign['posx'] = isset($pos[1]) ? $pos[1] : '';
-							$possign['posy'] = isset($pos[2]) ? $pos[2] : '';
-							$possign['height'] = isset($pos[3]) ? $pos[3] : '';
-							$possign['width'] = isset($pos[4]) ? $pos[4] : '';
+							$pforimg = isset($pos[0]) ? $pos[0] : '';
+							$xforimgstart = isset($pos[1]) ? $pos[1] : ''; // Pos x to print sign
+							$yforimgstart = isset($pos[2]) ? $pos[2] : ''; // Pos y to print sign
+							$hforimg = isset($pos[3]) ? $pos[3] : ''; // Heignt image sign
+							$wforimg = isset($pos[4]) ? $pos[4] : ''; // Width image sign
 						}
 
-						$s = array(); 	// Array with size of each page. Exemple array(w'=>210, 'h'=>297);
 						for ($i=1; $i<($pagecount+1); $i++) {
 							try {
 								$tppl = $pdf->importPage($i);
@@ -178,8 +180,22 @@ if ($action == "importSignature") {
 								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
 								$pdf->useTemplate($tppl);
 
-								if (!empty($possign) && $i==$possign['page']) {
-									$pdf->Image($upload_dir.$filename, $possign['posx'], $possign['posy'], $possign['width'], $possign['height']);
+								if ($i==$pforimg) {
+									// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+									if (empty($pos)) {
+										$xforimgstart = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
+										$yforimgstart = (empty($s['h']) ? 240 : $s['h'] - 60);
+										$wforimg = $s['w'] - 20 - $xforimgstart;
+										$hforimg = round($wforimg / 4);
+									}
+
+									$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4) - 4);
+									$pdf->SetFont($default_font, '', $default_font_size - 1);
+									$pdf->MultiCell($wforimg, 4, $langs->trans("DateSigning").': '.dol_print_date(dol_now(), "daytext", false, $langs, true), 0, 'L');
+									$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4));
+									$pdf->MultiCell($wforimg, 4, $langs->trans("Lastname").': '.$online_sign_name, 0, 'L');
+
+									$pdf->Image($upload_dir.$filename, $xforimgstart, $yforimgstart, $wforimg, $hforimg);
 								}
 							} catch (Exception $e) {
 								dol_syslog("Error when manipulating the PDF ".$sourcefile." by onlineSign: ".$e->getMessage(), LOG_ERR);
@@ -187,31 +203,6 @@ if ($action == "importSignature") {
 								$error++;
 							}
 						}
-						if (empty($possign)) {
-							// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
-							// TODO Get position of box from PDF template
-							$xysign = $pdf->getSignatureAppearanceArray();
-							$xysign = explode(' ', $xysign);
-							$xforimgstart = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
-							$yforimgstart = (empty($s['h']) ? 240 : $s['h'] - 60);
-							$wforimg = $s['w'] - 20 - $xforimgstart;
-
-							$pdf->Image($upload_dir.$filename, $xforimgstart, $yforimgstart, $wforimg, round($wforimg / 4));
-						}
-						$pdf->Close();
-						// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
-						// TODO Get position of box from PDF template
-						$xforimgstart = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
-						$yforimgstart = (empty($s['h']) ? 240 : $s['h'] - 60);
-						$wforimg = $s['w'] - 20 - $xforimgstart;
-
-						$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4) - 4);
-						$pdf->SetFont($default_font, '', $default_font_size - 1);
-						$pdf->MultiCell($wforimg, 4, $langs->trans("DateSigning").': '.dol_print_date(dol_now(), "daytext", false, $langs, true), 0, 'L');
-						$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4));
-						$pdf->MultiCell($wforimg, 4, $langs->trans("Lastname").': '.$online_sign_name, 0, 'L');
-
-						$pdf->Image($upload_dir.$filename, $xforimgstart, $yforimgstart, $wforimg, round($wforimg / 4));
 
 						//$pdf->Close();
 						$pdf->Output($newpdffilename, "F");
