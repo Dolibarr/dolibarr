@@ -991,8 +991,8 @@ function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
  * @param	string	$srcdir 			Source directory
  * @param	string 	$destdir			Destination directory
  * @param	int		$overwriteifexists	Overwrite directory if exists (1 by default)
- * @param	int		$indexdatabase		Index new file into database.
- * @param	int		$renamedircontent	Rename contents inside srcdir.
+ * @param	int		$indexdatabase		Index new name of files into database.
+ * @param	int		$renamedircontent	Also rename contents inside srcdir after the move to match new destination name.
  *
  * @return boolean 	True if OK, false if KO
 */
@@ -1033,7 +1033,7 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 							if ($file["type"] == "dir") {
 								$res = dol_move_dir($filepath.'/'.$oldname, $filepath.'/'.$newname, $overwriteifexists, $indexdatabase, $renamedircontent);
 							} else {
-								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname);
+								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname, 0, $overwriteifexists, 0, $indexdatabase);
 							}
 							if (!$res) {
 								return $result;
