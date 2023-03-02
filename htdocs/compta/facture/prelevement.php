@@ -406,7 +406,7 @@ if ($object->id > 0) {
 	print '<span class="badgeneutral">';
 	print $object->getLibType();
 	print '</span>';
-	if ($object->module_source) {
+	if (!empty($object->module_source)) {
 		print ' <span class="opacitymediumbycolor paddingleft">('.$langs->trans("POS").' '.$object->module_source.' - '.$langs->trans("Terminal").' '.$object->pos_source.')</span>';
 	}
 	if ($object->type == $object::TYPE_REPLACEMENT) {

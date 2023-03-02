@@ -2359,7 +2359,7 @@ class Ticket extends CommonObject
 				$destfile = $destdir.'/'.$pathinfo['filename'].' - '.dol_print_date($now, 'dayhourlog').'.'.$pathinfo['extension'];
 			}
 
-			$res = dol_move($filepath[$i], $destfile, 0, 1);
+			$res = dol_move($filepath[$i], $destfile, 0, 1, 0, 1);
 
 			if (image_format_supported($destfile) == 1) {
 				// Create small thumbs for image (Ratio is near 16/9)
@@ -3021,7 +3021,7 @@ class Ticket extends CommonObject
 			$return .= '<div class="tdoverflowmax125 inline-block">'.$langs->getLabelFromKey($this->db, 'TicketTypeShort'.$this->type_code, 'c_ticket_type', 'code', 'label', $this->type_code).'</div>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

@@ -45,6 +45,12 @@ ALTER TABLE llx_facture_fourn_det MODIFY COLUMN ref varchar(128);
 
 -- v18
 
+ALTER TABLE llx_notify_def ADD COLUMN email varchar(255);
+ALTER TABLE llx_notify_def ADD COLUMN threshold double(24,8);
+ALTER TABLE llx_notify_def ADD COLUMN context varchar(128);
+
+ALTER TABLE llx_c_action_trigger ADD COLUMN contexts varchar(255) NULL;
+
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_CLOSE','Project closed','Executed when a project is closed','project',145);
 
 -- amount was removed in v12
