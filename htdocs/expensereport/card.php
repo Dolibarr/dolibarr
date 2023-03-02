@@ -2611,10 +2611,10 @@ if ($action == 'create') {
 						jQuery("#value_unit_ht").val("");
 					}
 				});
-            ';
+			';
 
-            if (! empty($conf->global->MAIN_USE_EXPENSE_IK)) {
-                print '
+			if (! empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+				print '
 
                 /* unit price coéf calculation */
                 jQuery(".input_qty, #fk_c_type_fees, #select_fk_c_exp_tax_cat, #vatrate ").change(function(event) {
@@ -2660,10 +2660,10 @@ if ($action == 'create') {
 						jQuery("#value_unit_ht").val("");
 					}*/
 				});
-                ';
-            }
+				';
+			}
 
-            print '
+			print '
 
 			});
 
