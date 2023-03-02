@@ -1600,7 +1600,7 @@ class Propal extends CommonObject
 				$this->ref_client           = $obj->ref_client;
 				$this->ref_ext           = $obj->ref_ext;
 
-        $this->remise               = $obj->remise;				// TODO deprecated
+				$this->remise               = $obj->remise;				// TODO deprecated
 				$this->remise_percent       = $obj->remise_percent;		// TODO deprecated
 				$this->remise_absolue       = $obj->remise_absolue;		// TODO deprecated
 				$this->total                = $obj->total_ttc;			// TODO deprecated
