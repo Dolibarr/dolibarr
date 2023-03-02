@@ -743,9 +743,9 @@ class AccountancyCategory // extends CommonObject
 				}
 				$listofaccount .= "'".$cptcursor."'";
 			}
-			$sql .= " AND t.numero_compte IN (".$this->db->sanitize($listofaccount).")";
+			$sql .= " AND CAST(t.numero_compte AS INTEGER) IN (".$this->db->sanitize($listofaccount).")";
 		} else {
-			$sql .= " AND t.numero_compte = '".$this->db->escape($cpt)."'";
+			$sql .= " AND CAST(t.numero_compte AS INTEGER) = ".((int) $cpt);
 		}
 		if (!empty($date_start) && !empty($date_end) && (empty($month) || empty($year))) {	// If month/year provided, it is stronger than filter date_start/date_end
 			$sql .= " AND (t.doc_date BETWEEN '".$this->db->idate($date_start)."' AND '".$this->db->idate($date_end)."')";
