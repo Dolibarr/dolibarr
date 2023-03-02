@@ -655,7 +655,7 @@ class Lettering extends BookKeeping
 		// Get payment lines
 		$sql = "SELECT DISTINCT pe2.$fk_payment_element, pe2.$fk_element";
 		$sql .=	" FROM " . MAIN_DB_PREFIX . "$payment_element AS pe";
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "$payment_element AS pe2 ON pe2.$fk_element = pe.$fk_element";
+		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "$payment_element AS pe2 ON pe2.$fk_element = pe.$fk_element";
 		$sql .=	" WHERE pe.$fk_payment_element IN (" . $this->db->sanitize(implode(',', $payment_ids)) . ")";
 
 		dol_syslog(__METHOD__ . " - Get payment lines", LOG_DEBUG);
