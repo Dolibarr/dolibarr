@@ -5465,172 +5465,166 @@ abstract class CommonObject
 
 		$parameters = array('modelspath'=>$modelspath, 'modele'=>$modele, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'hidedesc'=>$hidedesc, 'hideref'=>$hideref, 'moreparams'=>$moreparams);
 		$reshook = $hookmanager->executeHooks('commonGenerateDocument', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		
+		if (!empty($reshook)) {
+			return $reshook;
+		}
+			
+		dol_syslog("commonGenerateDocument modele=".$modele." outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
 
-		if (empty($reshook)) {
-			dol_syslog("commonGenerateDocument modele=".$modele." outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
+		if (empty($modele)) {
+			$this->error = 'BadValueForParameterModele';
+			return -1;
+		}
 
-			if (empty($modele)) {
-				$this->error = 'BadValueForParameterModele';
-				return -1;
-			}
+		// Increase limit for PDF build
+		$err = error_reporting();
+		error_reporting(0);
+		@set_time_limit(120);
+		error_reporting($err);
 
-			// Increase limit for PDF build
-			$err = error_reporting();
-			error_reporting(0);
-			@set_time_limit(120);
-			error_reporting($err);
+		// If selected model is a filename template (then $modele="modelname" or "modelname:filename")
+		$tmp = explode(':', $modele, 2);
+		if (!empty($tmp[1])) {
+			$modele = $tmp[0];
+			$srctemplatepath = $tmp[1];
+		}
 
-			// If selected model is a filename template (then $modele="modelname" or "modelname:filename")
-			$tmp = explode(':', $modele, 2);
-			if (!empty($tmp[1])) {
-				$modele = $tmp[0];
-				$srctemplatepath = $tmp[1];
-			}
-
-			// Search template files
-			$file = '';
-			$classname = '';
-			$filefound = '';
-			$dirmodels = array('/');
-			if (is_array($conf->modules_parts['models'])) {
-				$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
-			}
-			foreach ($dirmodels as $reldir) {
-				foreach (array('doc', 'pdf') as $prefix) {
-					if (in_array(get_class($this), array('Adherent'))) {
-						// Member module use prefix_modele.class.php
-						$file = $prefix."_".$modele.".class.php";
-					} else {
-						// Other module use prefix_modele.modules.php
-						$file = $prefix."_".$modele.".modules.php";
-					}
-
-					// On verifie l'emplacement du modele
-					$file = dol_buildpath($reldir.$modelspath.$file, 0);
-					if (file_exists($file)) {
-						$filefound = $file;
-						$classname = $prefix.'_'.$modele;
-						break;
-					}
+		// Search template files
+		$file = '';
+		$classname = '';
+		$filefound = '';
+		$dirmodels = array('/');
+		if (is_array($conf->modules_parts['models'])) {
+			$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
+		}
+		foreach ($dirmodels as $reldir) {
+			foreach (array('doc', 'pdf') as $prefix) {
+				if (in_array(get_class($this), array('Adherent'))) {
+					// Member module use prefix_modele.class.php
+					$file = $prefix."_".$modele.".class.php";
+				} else {
+					// Other module use prefix_modele.modules.php
+					$file = $prefix."_".$modele.".modules.php";
 				}
-				if ($filefound) {
+
+				// On verifie l'emplacement du modele
+				$file = dol_buildpath($reldir.$modelspath.$file, 0);
+				if (file_exists($file)) {
+					$filefound = $file;
+					$classname = $prefix.'_'.$modele;
 					break;
 				}
 			}
-
-			// If generator was found
 			if ($filefound) {
-				global $db; // Required to solve a conception default making an include of code using $db instead of $this->db just after.
+				break;
+			}
+		}
 
-				require_once $file;
+		if (!$filefound) {
+			$this->error = $langs->trans("Error").' Failed to load doc generator with modelpaths='.$modelspath.' - modele='.$modele;
+			$this->errors[] = $this->error;
+			dol_syslog($this->error, LOG_ERR);
+			return -1;
+		} 
 
-				$obj = new $classname($this->db);
+		// If generator was found
+		global $db; // Required to solve a conception default making an include of code using $db instead of $this->db just after.
 
-				// If generator is ODT, we must have srctemplatepath defined, if not we set it.
-				if ($obj->type == 'odt' && empty($srctemplatepath)) {
-					$varfortemplatedir = $obj->scandir;
-					if ($varfortemplatedir && !empty($conf->global->$varfortemplatedir)) {
-						$dirtoscan = $conf->global->$varfortemplatedir;
+		require_once $file;
 
-						$listoffiles = array();
+		$obj = new $classname($this->db);
 
-						// Now we add first model found in directories scanned
-						$listofdir = explode(',', $dirtoscan);
-						foreach ($listofdir as $key => $tmpdir) {
-							$tmpdir = trim($tmpdir);
-							$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
-							if (!$tmpdir) {
-								unset($listofdir[$key]);
-								continue;
-							}
-							if (is_dir($tmpdir)) {
-								$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0);
-								if (count($tmpfiles)) {
-									$listoffiles = array_merge($listoffiles, $tmpfiles);
-								}
-							}
+		// If generator is ODT, we must have srctemplatepath defined, if not we set it.
+		if ($obj->type == 'odt' && empty($srctemplatepath)) {
+			$varfortemplatedir = $obj->scandir;
+			if ($varfortemplatedir && !empty($conf->global->$varfortemplatedir)) {
+				$dirtoscan = $conf->global->$varfortemplatedir;
+
+				$listoffiles = array();
+
+				// Now we add first model found in directories scanned
+				$listofdir = explode(',', $dirtoscan);
+				foreach ($listofdir as $key => $tmpdir) {
+					$tmpdir = trim($tmpdir);
+					$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
+					if (!$tmpdir) {
+						unset($listofdir[$key]);
+						continue;
+					}
+					if (is_dir($tmpdir)) {
+						$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0);
+						if (count($tmpfiles)) {
+							$listoffiles = array_merge($listoffiles, $tmpfiles);
 						}
-
-						if (count($listoffiles)) {
-							foreach ($listoffiles as $record) {
-								$srctemplatepath = $record['fullname'];
-								break;
-							}
-						}
-					}
-
-					if (empty($srctemplatepath)) {
-						$this->error = 'ErrorGenerationAskedForOdtTemplateWithSrcFileNotDefined';
-						return -1;
 					}
 				}
 
-				if ($obj->type == 'odt' && !empty($srctemplatepath)) {
-					if (!dol_is_file($srctemplatepath)) {
-						dol_syslog("Failed to locate template file ".$srctemplatepath, LOG_WARNING);
-						$this->error = 'ErrorGenerationAskedForOdtTemplateWithSrcFileNotFound';
-						return -1;
+				if (count($listoffiles)) {
+					foreach ($listoffiles as $record) {
+						$srctemplatepath = $record['fullname'];
+						break;
 					}
 				}
+			}
 
-				// We save charset_output to restore it because write_file can change it if needed for
-				// output format that does not support UTF8.
-				$sav_charset_output = empty($outputlangs->charset_output) ? '' : $outputlangs->charset_output;
-
-				if (in_array(get_class($this), array('Adherent'))) {
-					$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
-				} else {
-					 $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
-				}
-				// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
-
-				if ($resultwritefile > 0) {
-					$outputlangs->charset_output = $sav_charset_output;
-
-					// We delete old preview
-					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-					dol_delete_preview($this);
-
-					// Index file in database
-					if (!empty($obj->result['fullpath'])) {
-						$destfull = $obj->result['fullpath'];
-
-						// Update the last_main_doc field into main object (if document generator has property ->update_main_doc_field set)
-						$update_main_doc_field = 0;
-						if (!empty($obj->update_main_doc_field)) {
-							$update_main_doc_field = 1;
-						}
-
-						$this->indexFile($destfull, $update_main_doc_field);
-					} else {
-						dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
-					}
-
-					// Success in building document. We build meta file.
-					dol_meta_create($this);
-
-					return 1;
-				} else {
-					$outputlangs->charset_output = $sav_charset_output;
-					$this->error = $obj->error;
-					$this->errors = $obj->errors;
-					dol_syslog("Error generating document for ".__CLASS__.". Error: ".$obj->error, LOG_ERR);
-					return -1;
-				}
-			} else {
-				if (!$filefound) {
-					$this->error = $langs->trans("Error").' Failed to load doc generator with modelpaths='.$modelspath.' - modele='.$modele;
-					$this->errors[] = $this->error;
-					dol_syslog($this->error, LOG_ERR);
-				} else {
-					$this->error = $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $filefound);
-					$this->errors[] = $this->error;
-					dol_syslog($this->error, LOG_ERR);
-				}
+			if (empty($srctemplatepath)) {
+				$this->error = 'ErrorGenerationAskedForOdtTemplateWithSrcFileNotDefined';
 				return -1;
 			}
+		}
+
+		if ($obj->type == 'odt' && !empty($srctemplatepath)) {
+			if (!dol_is_file($srctemplatepath)) {
+				dol_syslog("Failed to locate template file ".$srctemplatepath, LOG_WARNING);
+				$this->error = 'ErrorGenerationAskedForOdtTemplateWithSrcFileNotFound';
+				return -1;
+			}
+		}
+
+		// We save charset_output to restore it because write_file can change it if needed for
+		// output format that does not support UTF8.
+		$sav_charset_output = empty($outputlangs->charset_output) ? '' : $outputlangs->charset_output;
+
+		if (in_array(get_class($this), array('Adherent'))) {
+			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
 		} else {
-			return $reshook;
+			 $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
+		}
+		// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
+
+		if ($resultwritefile > 0) {
+			$outputlangs->charset_output = $sav_charset_output;
+
+			// We delete old preview
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_delete_preview($this);
+
+			// Index file in database
+			if (!empty($obj->result['fullpath'])) {
+				$destfull = $obj->result['fullpath'];
+
+				// Update the last_main_doc field into main object (if document generator has property ->update_main_doc_field set)
+				$update_main_doc_field = 0;
+				if (!empty($obj->update_main_doc_field)) {
+					$update_main_doc_field = 1;
+				}
+
+				$this->indexFile($destfull, $update_main_doc_field);
+			} else {
+				dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
+			}
+
+			// Success in building document. We build meta file.
+			dol_meta_create($this);
+
+			return 1;
+		} else {
+			$outputlangs->charset_output = $sav_charset_output;
+			$this->error = $obj->error;
+			$this->errors = $obj->errors;
+			dol_syslog("Error generating document for ".__CLASS__.". Error: ".$obj->error, LOG_ERR);
+			return -1;
 		}
 	}
 
