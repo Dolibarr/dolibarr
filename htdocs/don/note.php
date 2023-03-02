@@ -25,34 +25,37 @@
  *      \brief      Page to show a donation notes
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "bills", "donations"));
+$langs->loadLangs(array('companies', 'bills', 'donations'));
 
 $id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
+$hookmanager->initHooks(array('donnote'));
+
+$object = new Don($db);
+if ($id > 0 || $ref) {
+	$object->fetch($id, $ref);
+}
+
 // Security check
 $socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$hookmanager->initHooks(array('donnote'));
-
-$result = restrictedArea($user, 'don', $id, '');
-
-$object = new Don($db);
-$object->fetch($id);
+$result = restrictedArea($user, 'don', $object->id, '');
 
 $permissionnote = $user->rights->don->creer; // Used by the include of actions_setnotes.inc.php
 
@@ -60,6 +63,7 @@ $permissionnote = $user->rights->don->creer; // Used by the include of actions_s
 /*
  * Actions
  */
+
 $reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -73,6 +77,7 @@ if ($action == 'classin' && $user->rights->don->creer) {
 	$object->setProject($projectid);
 }
 
+
 /*
  * View
  */
@@ -84,7 +89,7 @@ $help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:M
 llxHeader('', $title, $help_url);
 
 $form = new Form($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -100,7 +105,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$morehtmlref = '<div class="refidno">';
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' ';
 		if ($user->rights->don->creer) {
@@ -116,7 +121,7 @@ if ($id > 0 || !empty($ref)) {
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($object->fk_project)) {

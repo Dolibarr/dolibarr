@@ -24,6 +24,7 @@
  *	\brief      Setup page for debugbar module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -90,12 +91,12 @@ print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
-print '<td class="right"><input type="submit" class="button button-edit" '.$option.' value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td class="nowrap">'.$langs->trans("DEBUGBAR_USE_LOG_FILE").'</td>';
 print '<td>';
-print $form->selectyesno('DEBUGBAR_USE_LOG_FILE', $conf->global->DEBUGBAR_USE_LOG_FILE, 1);
+print $form->selectyesno('DEBUGBAR_USE_LOG_FILE', !empty($conf->global->DEBUGBAR_USE_LOG_FILE), 1);
 print '</td><td>';
 print '<span class="opacitymedium"> '.$langs->trans("UsingLogFileShowAllRecordOfSubrequestButIsSlower").'</span>';
 print '</td></tr>';

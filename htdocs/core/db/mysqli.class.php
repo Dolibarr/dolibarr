@@ -36,10 +36,12 @@ class DoliDBMysqli extends DoliDB
 	public $db;
 	//! Database type
 	public $type = 'mysqli';
+
 	//! Database label
 	const LABEL = 'MySQL or MariaDB';
 	//! Version min database
 	const VERSIONMIN = '5.0.3';
+
 	/** @var bool|mysqli_result Resultset of last query */
 	private $_results;
 
@@ -421,7 +423,7 @@ class DoliDBMysqli extends DoliDB
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
-		return $resultset->num_rows;
+		return isset($resultset->num_rows) ? $resultset->num_rows : 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -472,18 +474,6 @@ class DoliDBMysqli extends DoliDB
 	public function escape($stringtoencode)
 	{
 		return $this->db->real_escape_string((string) $stringtoencode);
-	}
-
-	/**
-	 *	Escape a string to insert data
-	 *
-	 *	@param	string	$stringtoencode		String to escape
-	 *	@return	string						String escaped
-	 *  @deprecated
-	 */
-	public function escapeunderscore($stringtoencode)
-	{
-		return str_replace('_', '\_', (string) $stringtoencode);
 	}
 
 	/**
@@ -769,6 +759,9 @@ class DoliDBMysqli extends DoliDB
 	{
 		// phpcs:enable
 		// FIXME: $fulltext_keys parameter is unused
+
+		$pk = '';
+		$sqluq = $sqlk = array();
 
 		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');

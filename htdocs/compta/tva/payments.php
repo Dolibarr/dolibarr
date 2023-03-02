@@ -27,6 +27,7 @@
  *		\brief      Page to list payments of special expenses
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
@@ -41,6 +42,7 @@ $langs->loadLangs(array('compta', 'bills'));
 $mode = GETPOST("mode", 'alpha');
 $year = GETPOST("year", 'int');
 $filtre = GETPOST("filtre", 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 if (!$year && $mode != 'tvaonly') {
 	$year = date("Y", time());
 }
@@ -112,6 +114,8 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
+$center = '';
+
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'title_accountancy', 0, '', '', $limit);
 
 if ($year) {
@@ -129,7 +133,7 @@ if (isModEnabled('tax') && $user->rights->tax->charges->lire) {
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "ptva.datep", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "ptva.num_paiement", "", $param, '', $sortfield, $sortorder, '', 'ChequeOrTransferNumber');
-	if (isModEnabled('banque')) {
+	if (isModEnabled("banque")) {
 		print_liste_field_titre("BankTransactionLine", $_SERVER["PHP_SELF"], "ptva.fk_bank", "", $param, '', $sortfield, $sortorder);
 		print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "bank.ref", "", $param, '', $sortfield, $sortorder);
 	}
@@ -221,7 +225,7 @@ if (isModEnabled('tax') && $user->rights->tax->charges->lire) {
 			// Chq number
 			print '<td>'.dol_escape_htmltag($obj->num_payment).'</td>';
 
-			if (isModEnabled('banque')) {
+			if (isModEnabled("banque")) {
 				// Bank transaction
 				print '<td>';
 				$accountlinestatic->id = $obj->fk_bank;
@@ -258,7 +262,7 @@ if (isModEnabled('tax') && $user->rights->tax->charges->lire) {
 		print '<td class="liste_total right"></td>'; // A total here has no sense
 		print '<td align="center" class="liste_total">&nbsp;</td>';
 		print '<td align="center" class="liste_total">&nbsp;</td>';
-		if (isModEnabled('banque')) {
+		if (isModEnabled("banque")) {
 			print '<td align="center" class="liste_total">&nbsp;</td>';
 			print '<td align="center" class="liste_total">&nbsp;</td>';
 		}

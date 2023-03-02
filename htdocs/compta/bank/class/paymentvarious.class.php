@@ -423,11 +423,11 @@ class PaymentVarious extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}
-		if (isModEnabled('banque') && (empty($this->fk_account) || $this->fk_account <= 0)) {
+		if (isModEnabled("banque") && (empty($this->fk_account) || $this->fk_account <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("BankAccount"));
 			return -6;
 		}
-		if (isModEnabled('banque') && (empty($this->type_payment) || $this->type_payment <= 0)) {
+		if (isModEnabled("banque") && (empty($this->type_payment) || $this->type_payment <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -7;
 		}
@@ -481,7 +481,7 @@ class PaymentVarious extends CommonObject
 			$this->ref = $this->id;
 
 			if ($this->id > 0) {
-				if (isModEnabled('banque') && !empty($this->amount)) {
+				if (isModEnabled("banque") && !empty($this->amount)) {
 					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -767,5 +767,43 @@ class PaymentVarious extends CommonObject
 			return 1;
 		}
 		return 0;
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		if (property_exists($this, 'fk_bank')) {
+			$return .= ' | <span class="info-box-status ">'.$this->fk_bank.'</span>';
+		}
+		if (property_exists($this, 'datep')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->datep), 'day').'</span>';
+		}
+		if (property_exists($this, 'type_payment') && !empty($this->type_payment)) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Payment", $this->type_payment).'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
+		}
+		if (property_exists($this, 'accountancy_code')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Account").'</span> : <span class="info-box-label" title="'.$this->accountancy_code.'">'.$this->accountancy_code.'</span>';
+		}
+		if (property_exists($this, 'amount')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Debit").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

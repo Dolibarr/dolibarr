@@ -25,6 +25,7 @@
  *	\brief      Page of invoice statistics for a product
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -146,7 +147,7 @@ if ($id > 0 || !empty($ref)) {
 		print "</table>";
 
 		print '</div>';
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 

@@ -229,6 +229,9 @@ llxHeader('', $name);
 //$textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next($langs->trans("Next"), 'class="valignbottom"')."</a>";
 //print load_fiche_titre($langs->transcountry("VAT", $mysoc->country_code), $textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, 'bill');
 
+$periodlink = '';
+$exportlink = '';
+
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 //report_header($name,'',$textprevyear.$langs->trans("Year")." ".$year_start.$textnextyear,'',$description,$builddate,$exportlink,array(),$calcmode);
 
@@ -242,7 +245,7 @@ if ($refresh === true) {
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td width="30%">' . $langs->trans("Year") . " " . $y . '</td>';
+	print '<td width="30%">' . $langs->trans("Year") . '</td>';
 	print '<td class="right">' . $langs->trans("VATToPay") . '</td>';
 	print '<td class="right">' . $langs->trans("VATToCollect") . '</td>';
 	print '<td class="right">' . $langs->trans("Balance") . '</td>';
@@ -388,16 +391,6 @@ if ($refresh === true) {
 		// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 		$hookmanager->initHooks(array('externalbalance'));
 		$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-
-		if (!is_array($x_coll) && $coll_listbuy == -1) {
-			$langs->load("errors");
-			print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
-			break;
-		}
-		if (!is_array($x_paye) && $coll_listbuy == -2) {
-			print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
-			break;
-		}
 
 
 		print '<tr class="oddeven">';

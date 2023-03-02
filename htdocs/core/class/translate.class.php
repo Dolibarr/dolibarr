@@ -41,6 +41,9 @@ class Translate
 	public $cache_labels = array(); // Cache for labels return by getLabelFromKey method
 	public $cache_currencies = array(); // Cache to store currency symbols
 	private $cache_currencies_all_loaded = false;
+	public $origlang;
+	public $error;
+	public $errors = array();
 
 
 	/**
@@ -416,7 +419,7 @@ class Translate
 	 *
 	 *  Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
 	 *
-	 *  @param  Database    $db             Database handler
+	 *  @param  DoliDB    $db             Database handler
 	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 */
 	public function loadFromDatabase($db)
@@ -640,6 +643,7 @@ class Translate
 				try {
 					$str = sprintf($str, $param1, $param2, $param3, $param4); // Replace %s and %d except for FormatXXX strings.
 				} catch (Exception $e) {
+					// No exception managed
 				}
 			}
 
@@ -724,9 +728,9 @@ class Translate
 
 			return $str;
 		} else {
-			if ($key[0] == '$') {
+			/*if ($key[0] == '$') {
 				return dol_eval($key, 1, 1, '1');
-			}
+			}*/
 			return $this->getTradFromKey($key);
 		}
 	}
@@ -833,7 +837,6 @@ class Translate
 						'ja'=>'ja_JP',
 						'lo'=>'lo_LA',
 						'nb'=>'nb_NO',
-						'fa'=>'fa_IR',
 						'sq'=>'sq_AL',
 						'sr'=>'sr_RS',
 						'sv'=>'sv_SE',
@@ -932,8 +935,10 @@ class Translate
 			$fonc = 'numberwords';
 			if (file_exists($newdir.'/functions_'.$fonc.'.lib.php')) {
 				include_once $newdir.'/functions_'.$fonc.'.lib.php';
-				$newnumber = numberwords_getLabelFromNumber($this, $number, $isamount);
-				break;
+				if (function_exists('numberwords_getLabelFromNumber')) {
+					$newnumber = numberwords_getLabelFromNumber($this, $number, $isamount);
+					break;
+				}
 			}
 		}
 
@@ -1095,7 +1100,7 @@ class Translate
 				if ($obj) {
 					// If a translation exists, we use it lese we use the default label
 					$this->cache_currencies[$obj->code_iso]['label'] = ($obj->code_iso && $this->trans("Currency".$obj->code_iso) != "Currency".$obj->code_iso ? $this->trans("Currency".$obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
-					$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode($obj->unicode, true);
+					$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode((empty($obj->unicode) ? '' : $obj->unicode), true);
 					$label[$obj->code_iso] = $this->cache_currencies[$obj->code_iso]['label'];
 				}
 				$i++;

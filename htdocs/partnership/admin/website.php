@@ -24,6 +24,7 @@
  *		\brief      File of main public page for partnership module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -36,11 +37,11 @@ $langs->loadLangs(array("admin", "partnership"));
 
 $action = GETPOST('action', 'aZ09');
 
+$error = 0;
+
 if (!$user->admin) {
 	accessforbidden();
 }
-
-$error = 0;
 
 
 /*
@@ -174,13 +175,6 @@ if (!empty($conf->global->PARTNERSHIP_ENABLE_PUBLIC)) {
 	print '<input type="text" class="right width75" id="PARTNERSHIP_NEWFORM_AMOUNT" name="PARTNERSHIP_NEWFORM_AMOUNT" value="'.(!empty($conf->global->PARTNERSHIP_NEWFORM_AMOUNT) ? $conf->global->PARTNERSHIP_NEWFORM_AMOUNT : '').'">';
 	print "</td></tr>\n";
 
-	// Can edit
-	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("CanEditAmount");
-	print '</td><td class="right">';
-	print $form->selectyesno("PARTNERSHIP_NEWFORM_EDITAMOUNT", (!empty($conf->global->PARTNERSHIP_NEWFORM_EDITAMOUNT) ? $conf->global->PARTNERSHIP_NEWFORM_EDITAMOUNT : 0), 1);
-	print "</td></tr>\n";
-
 	// Jump to an online payment page
 	print '<tr class="oddeven" id="trpayment"><td>';
 	print $langs->trans("PARTNERSHIP_NEWFORM_PAYONLINE");
@@ -188,13 +182,13 @@ if (!empty($conf->global->PARTNERSHIP_ENABLE_PUBLIC)) {
 	$listofval = array();
 	$listofval['-1'] = $langs->trans('No');
 	$listofval['all'] = $langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';
-	if (!empty($conf->paybox->enabled)) {
+	if (isModEnabled('paybox')) {
 		$listofval['paybox'] = 'Paybox';
 	}
-	if (!empty($conf->paypal->enabled)) {
+	if (isModEnabled('paypal')) {
 		$listofval['paypal'] = 'PayPal';
 	}
-	if (!empty($conf->stripe->enabled)) {
+	if (isModEnabled('stripe')) {
 		$listofval['stripe'] = 'Stripe';
 	}
 	print $form->selectarray("PARTNERSHIP_NEWFORM_PAYONLINE", $listofval, (!empty($conf->global->PARTNERSHIP_NEWFORM_PAYONLINE) ? $conf->global->PARTNERSHIP_NEWFORM_PAYONLINE : ''), 0);
@@ -220,7 +214,7 @@ if (!empty($conf->global->PARTNERSHIP_ENABLE_PUBLIC)) {
 	print '<br>';
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';
-	if (!empty($conf->multicompany->enabled)) {
+	if (isModEnabled('multicompany')) {
 		$entity_qr = '?entity='.$conf->entity;
 	} else {
 		$entity_qr = '';

@@ -27,6 +27,7 @@
  *		\brief      Page to setup invoice module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 // Libraries
@@ -130,12 +131,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader(
-	"",
-	$langs->trans("BillsSetup"),
-	'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura'
-);
+$help_yrl = 'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura';
 
+llxHeader("", $langs->trans("BillsSetup"), $help_url);
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';

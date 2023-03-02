@@ -59,7 +59,7 @@ class box_contracts extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->contrat->lire);
+		$this->hidden = !($user->hasRight('contrat', 'lire'));
 	}
 
 	/**
@@ -97,7 +97,7 @@ class box_contracts extends ModeleBoxes
 			if ($user->socid) {
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
-			if (! empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
+			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
 				$sql .= " ORDER BY c.date_contrat DESC, c.ref DESC ";
 			} else {
 				$sql .= " ORDER BY c.tms DESC, c.ref DESC ";

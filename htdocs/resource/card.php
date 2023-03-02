@@ -22,6 +22,7 @@
  */
 
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
@@ -49,7 +50,6 @@ if ($user->socid > 0) {
 }
 
 $object = new Dolresource($db);
-
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -62,7 +62,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
 
 $permissiontoadd = $user->rights->resource->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-
+$permissiontodelete = $user->rights->resource->delete;
 
 
 /*
@@ -225,7 +225,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		// Type
 		print '<tr><td>'.$langs->trans("ResourceType").'</td>';
 		print '<td>';
-		$ret = $formresource->select_types_resource($object->fk_code_type_resource, 'fk_code_type_resource', '', 2);
+		$formresource->select_types_resource($object->fk_code_type_resource, 'fk_code_type_resource', '', 2);
 		print '</td></tr>';
 
 		// Description
@@ -245,7 +245,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '</td></tr>';
 
 		// Other attributes
-		$parameters = array('objectsrc' => $objectsrc);
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		if (empty($reshook)) {
@@ -348,12 +348,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 			}
 		}
 		if ($action != "delete" && $action != "create" && $action != "edit") {
-			// Delete resource
-			if ($user->rights->resource->delete) {
-				print '<div class="inline-block divButAction">';
-				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=delete&token='.newToken().'" class="butActionDelete">'.$langs->trans('Delete').'</a>';
-				print '</div>';
-			}
+			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
 		}
 	}
 	print '</div>';

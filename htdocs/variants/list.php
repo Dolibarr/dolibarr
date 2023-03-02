@@ -22,6 +22,7 @@
  *		\brief      List page for product attribute
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
@@ -136,7 +137,7 @@ $permissiontoadd = $user->rights->variants->write;
 $permissiontodelete = $user->rights->variants->delete;
 
 // Security check
-if (empty($conf->variants->enabled)) {
+if (!isModEnabled('variants')) {
 	accessforbidden('Module not enabled');
 }
 $socid = 0;

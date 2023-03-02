@@ -52,8 +52,6 @@ abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'delivery';
 		$list = array();
 
@@ -88,9 +86,9 @@ abstract class ModeleNumRefDeliveryOrder
 	}
 
 	/**
-	 * Renvoi la description par defaut du modele de numerotation
+	 * Returns the default description of the numbering pattern
 	 *
-	 * @return     string      Texte descripif
+	 * @return     string      Descriptive text
 	 */
 	public function info()
 	{

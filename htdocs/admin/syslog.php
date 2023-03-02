@@ -24,6 +24,7 @@
  *	\brief      Setup page for logs module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -114,9 +115,6 @@ if ($action == 'set') {
 
 	// Check configuration
 	foreach ($activeModules as $modulename) {
-		/**
-		 * @var LogHandler
-		 */
 		$module = new $modulename;
 		$error = $module->checkConfiguration();
 	}
@@ -293,7 +291,7 @@ print '<option value="'.LOG_DEBUG.'" '.($conf->global->SYSLOG_LEVEL >= LOG_DEBUG
 print '</select>';
 print '</td></tr>';
 
-if (!empty($conf->loghandlers['mod_syslog_file']) && !empty($conf->cron->enabled)) {
+if (!empty($conf->loghandlers['mod_syslog_file']) && isModEnabled('cron')) {
 	print '<tr class="oddeven"><td width="140">'.$langs->trans("SyslogFileNumberOfSaves").'</td>';
 	print '<td colspan="2"><input type="number" name="file_saves" placeholder="14" min="0" step="1" value="'.getDolGlobalString('SYSLOG_FILE_SAVES').'" />';
 	print ' (<a href="'.dol_buildpath('/cron/list.php', 1).'?search_label=CompressSyslogs&status=-1">'.$langs->trans('ConfigureCleaningCronjobToSetFrequencyOfSaves').'</a>)</td></tr>';

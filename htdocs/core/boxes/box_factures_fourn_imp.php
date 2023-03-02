@@ -58,7 +58,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->fournisseur->facture->lire);
+		$this->hidden = !($user->hasRight('fournisseur', 'facture', 'lire'));
 	}
 
 	/**

@@ -28,6 +28,8 @@
  *  \brief      Page of web sites accounts
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -35,13 +37,17 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
+
+// Load translation files required by the page
 $langs->loadLangs(array("companies", "website"));
 
-$action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
-$show_files = GETPOST('show_files', 'int');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'websitelist'; // To manage different context of search
-$backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
-$optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+
+// Get parameters
+$action 	 = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';               // The action 'add', 'create', 'edit', 'update', 'view', ...
+$show_files  = GETPOST('show_files', 'int');
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'websitelist';  // To manage different context of search
+$backtopage  = GETPOST('backtopage', 'alpha');                                              // Go back to a dedicated page
+$optioncss   = GETPOST('optioncss', 'aZ');                                                  // Option for the css output (always '' except when 'print')
 
 // Security check
 $id = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
@@ -155,8 +161,8 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'WebsiteAccount';
 	$objectlabel = 'WebsiteAccount';
-	$permissiontoread = $user->rights->societe->lire;
-	$permissiontodelete = $user->rights->societe->supprimer;
+	$permissiontoread = $user->hasRight('societe', 'lire');
+	$permissiontodelete = $user->hasRight('societe', 'supprimer');
 	$uploaddir = $conf->societe->multidir_output[$object->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -243,8 +249,8 @@ print '</div>';
 print dol_get_fiche_end();
 
 $newcardbutton = '';
-if (!empty($conf->website->enabled)) {
-	if (!empty($user->rights->societe->lire)) {
+if (isModEnabled('website')) {
+	if ($user->hasRight('societe', 'lire')) {
 		$newcardbutton .= dolGetButtonTitle($langs->trans("AddWebsiteAccount"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id));
 	} else {
 		$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', 0);
@@ -305,7 +311,7 @@ foreach($objectwebsiteaccount->fields as $key => $val)
 	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
 // Add where from hooks
 $parameters=array();

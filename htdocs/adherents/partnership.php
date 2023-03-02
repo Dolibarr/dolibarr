@@ -76,19 +76,19 @@ foreach ($object->fields as $key => $val) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-$permissiontoread 		= $user->rights->partnership->read;
-$permissiontoadd 		= $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete 	= $user->rights->partnership->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote 		= $user->rights->partnership->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink 		= $user->rights->partnership->write; // Used by the include of actions_dellink.inc.php
-$usercanclose 			= $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$upload_dir 			= $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
+$permissiontoread = $user->hasRight('partnership', 'read');
+$permissiontoadd = $user->hasRight('partnership', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('partnership', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissionnote = $user->hasRight('partnership', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('partnership', 'write'); // Used by the include of actions_dellink.inc.php
+$usercanclose = $user->hasRight('partnership', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$upload_dir = $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 
 if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') != 'member') {
 	accessforbidden('Partnership module is not activated for members');
 }
-if (empty($conf->partnership->enabled)) {
+if (!isModEnabled('partnership')) {
 	accessforbidden();
 }
 if (empty($permissiontoread)) {
@@ -151,7 +151,7 @@ if ($id > 0) {
 	$object = new Adherent($db);
 	$result = $object->fetch($id);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 

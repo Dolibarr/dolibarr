@@ -160,7 +160,7 @@ class AssetModel extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -348,7 +348,7 @@ class AssetModel extends CommonObject
 		$sql .= $this->getFieldList('t');
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= " WHERE t.entity IN (".getEntity($this->table_element).")";
+			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
 		}

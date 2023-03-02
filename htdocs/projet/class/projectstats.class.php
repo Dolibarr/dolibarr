@@ -32,6 +32,11 @@ class ProjectStats extends Stats
 	public $status;
 	public $opp_status;
 
+	//SQL stat
+	public $field;
+	public $from;
+	public $where;
+
 
 	/**
 	 * Constructor
@@ -46,6 +51,18 @@ class ProjectStats extends Stats
 
 		require_once 'project.class.php';
 		$this->project = new Project($this->db);
+
+		$this->from = MAIN_DB_PREFIX.$this->project->table_element;
+		$this->field = 'opp_amount';
+		$this->where = " entity = ".$conf->entity;
+		if ($this->socid > 0) {
+			$this->where .= " AND fk_soc = ".((int) $this->socid);
+		}
+		if (is_array($this->userid) && count($this->userid) > 0) {
+			$this->where .= ' AND fk_user IN ('.$this->db->sanitize(join(',', $this->userid)).')';
+		} elseif ($this->userid > 0) {
+			$this->where .= " AND fk_user = ".((int) $this->userid);
+		}
 	}
 
 
@@ -81,7 +98,7 @@ class ProjectStats extends Stats
 
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__METHOD__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -281,7 +298,7 @@ class ProjectStats extends Stats
 	 * @param	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
 	 * @param   int     $wonlostfilter  Add a filter on status won/lost
-	 * @return 	array					Array of values
+	 * @return 	array|int				Array of values or <0 if error
 	 */
 	public function getWeightedAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $wonlostfilter = 1)
 	{
@@ -349,10 +366,7 @@ class ProjectStats extends Stats
 			if ($fp) {
 				fwrite($fp, json_encode($data));
 				fclose($fp);
-				if (!empty($conf->global->MAIN_UMASK)) {
-					$newmask = $conf->global->MAIN_UMASK;
-				}
-				@chmod($newpathofdestfile, octdec($newmask));
+				dolChmod($newpathofdestfile);
 			} else {
 				dol_syslog("Failed to write cache file", LOG_ERR);
 			}
@@ -394,10 +408,10 @@ class ProjectStats extends Stats
 	/**
 	 * Return amount of elements by month for several years
 	 *
-	 * @param int $endyear		End year
-	 * @param int $startyear	Start year
-	 * @param int $cachedelay accept for cache file (0=No read, no save of cache, -1=No read but save)
-	 * @return array of values
+	 * @param 	int 		$endyear		End year
+	 * @param 	int 		$startyear		Start year
+	 * @param 	int 		$cachedelay 	accept for cache file (0=No read, no save of cache, -1=No read but save)
+	 * @return 	array|int					Array of values or <0 if error
 	 */
 	public function getTransformRateByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0)
 	{
@@ -462,12 +476,11 @@ class ProjectStats extends Stats
 				dol_mkdir($conf->user->dir_temp);
 			}
 			$fp = fopen($newpathofdestfile, 'w');
-			fwrite($fp, json_encode($data));
-			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK)) {
-				$newmask = $conf->global->MAIN_UMASK;
+			if ($fp) {
+				fwrite($fp, json_encode($data));
+				fclose($fp);
+				dolChmod($newpathofdestfile);
 			}
-			@chmod($newpathofdestfile, octdec($newmask));
 
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}
@@ -532,13 +545,12 @@ class ProjectStats extends Stats
 	/**
 	 * Return average of entity by month
 	 * @param	int     $year           year number
-	 * @return 	int						value
+	 * @return 	array
 	 */
 	protected function getAverageByMonth($year)
 	{
 		$sql = "SELECT date_format(datef,'%m') as dm, AVG(f.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		$sql .= $this->join;
 		$sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";

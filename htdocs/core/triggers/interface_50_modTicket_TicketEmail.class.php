@@ -61,7 +61,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	{
 		$ok = 0;
 
-		if (empty($conf->ticket) || empty($conf->ticket->enabled)) {
+		if (empty($conf->ticket) || !isModEnabled('ticket')) {
 			return 0; // Module not active, we do nothing
 		}
 
@@ -274,7 +274,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$message_admin = $langs->transnoentities($body, $object->track_id).'<br>';
 		$message_admin .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
 		$message_admin .= '<li>'.$langs->trans('Type').' : '.$langs->getLabelFromKey($this->db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code).'</li>';
-		$message_admin .= '<li>'.$langs->trans('Category').' : '.$langs->getLabelFromKey($this->db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code).'</li>';
+		$message_admin .= '<li>'.$langs->trans('TicketCategory').' : '.$langs->getLabelFromKey($this->db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code).'</li>';
 		$message_admin .= '<li>'.$langs->trans('Severity').' : '.$langs->getLabelFromKey($this->db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code).'</li>';
 		$message_admin .= '<li>'.$langs->trans('From').' : '.($object->email_from ? $object->email_from : ($object->fk_user_create > 0 ? $langs->trans('Internal') : '')).'</li>';
 		// Extrafields
@@ -343,7 +343,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$message_customer = $langs->transnoentities($body, $object->track_id).'<br>';
 		$message_customer .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
 		$message_customer .= '<li>'.$langs->trans('Type').' : '.$langs->getLabelFromKey($this->db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code).'</li>';
-		$message_customer .= '<li>'.$langs->trans('Category').' : '.$langs->getLabelFromKey($this->db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code).'</li>';
+		$message_customer .= '<li>'.$langs->trans('TicketCategory').' : '.$langs->getLabelFromKey($this->db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code).'</li>';
 		$message_customer .= '<li>'.$langs->trans('Severity').' : '.$langs->getLabelFromKey($this->db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code).'</li>';
 
 		// Extrafields
@@ -387,10 +387,12 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 		$trackid = 'tic'.$object->id;
 
+		$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
+
 		if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
-			$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
 			$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 		}
+
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mailfile = new CMailFile($subject, $sendto, $from, $message_customer, $filepath, $mimetype, $filename, '', '', 0, -1, '', '', $trackid, '', 'ticket');
 		if ($mailfile->error) {

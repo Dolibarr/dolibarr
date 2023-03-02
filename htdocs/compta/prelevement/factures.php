@@ -21,9 +21,10 @@
 /**
  *     \file       htdocs/compta/prelevement/factures.php
  *     \ingroup    prelevement
- *     \brief      Page liste des factures prelevees
+ *     \brief      Page list of invoice paied by direct debit or credit transfer
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
@@ -104,18 +105,18 @@ if ($id > 0 || $ref) {
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
 		print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount).'</span></td></tr>';
 
-		if ($object->date_trans <> 0) {
+		if (!empty($object->date_trans)) {
 			$muser = new User($db);
 			$muser->fetch($object->user_trans);
 
 			print '<tr><td>'.$langs->trans("TransData").'</td><td>';
 			print dol_print_date($object->date_trans, 'day');
-			print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getNomUrl(-1).'</td></tr>';
+			print ' &nbsp; <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getNomUrl(-1).'</td></tr>';
 			print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 			print $object->methodes_trans[$object->method_trans];
 			print '</td></tr>';
 		}
-		if ($object->date_credit <> 0) {
+		if (!empty($object->date_credit)) {
 			print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
 			print dol_print_date($object->date_credit, 'day');
 			print '</td></tr>';
@@ -128,15 +129,23 @@ if ($id > 0 || $ref) {
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent tableforfield">';
 
+		// Get bank account for the payment
 		$acc = new Account($db);
-		$result = $acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+		$fk_bank_account = $object->fk_bank_account;
+		if (empty($fk_bank_account)) {
+			$fk_bank_account = ($object->type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
+		}
+		if ($fk_bank_account > 0) {
+			$result = $acc->fetch($fk_bank_account);
+		}
 
-		print '<tr><td class="titlefieldcreate">';
 		$labelofbankfield = "BankToReceiveWithdraw";
 		if ($object->type == 'bank-transfer') {
 			$labelofbankfield = 'BankToPayCreditTransfer';
 		}
-		print $langs->trans($labelofbankfield);
+
+		print '<tr><td class="titlefieldcreate">';
+		print $form->textwithpicto($langs->trans("BankAccount"), $langs->trans($labelofbankfield));
 		print '</td>';
 		print '<td>';
 		if ($acc->id > 0) {
@@ -173,10 +182,13 @@ if ($id > 0 || $ref) {
 // List of invoices
 $sql = "SELECT pf.rowid, p.type,";
 $sql .= " f.rowid as facid, f.ref as ref, f.total_ttc,";
+if ($object->type == 'bank-transfer') {
+	$sql .= " f.ref_supplier,";
+}
 $sql .= " s.rowid as socid, s.nom as name, pl.statut, pl.amount as amount_requested";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= ", ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql .= ", ".MAIN_DB_PREFIX."prelevement_facture as pf";
+$sql .= ", ".MAIN_DB_PREFIX."prelevement as pf";
 if ($object->type != 'bank-transfer') {
 	$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 } else {
@@ -250,6 +262,9 @@ if ($resql) {
 	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Bill", $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
+	if ($object->type == 'bank-transfer') {
+		print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "f.ref_supplier", '', $param, '', $sortfield, $sortorder);
+	}
 	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("AmountInvoice", $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -280,6 +295,12 @@ if ($resql) {
 		print "<td>";
 		print $invoicetmp->getNomUrl(1);
 		print "</td>\n";
+
+		if ($object->type == 'bank-transfer') {
+			print '<td>';
+			print dol_escape_htmltag($invoicetmp->ref_supplier);
+			print "</td>\n";
+		}
 
 		print '<td>';
 		print $thirdpartytmp->getNomUrl(1);
@@ -321,6 +342,9 @@ if ($resql) {
 	if ($num > 0) {
 		print '<tr class="liste_total">';
 		print '<td>'.$langs->trans("Total").'</td>';
+		if ($object->type == 'bank-transfer') {
+			print '<td>&nbsp;</td>';
+		}
 		print '<td>&nbsp;</td>';
 		print '<td class="right">';
 		//if ($totalinvoices != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");		// It is normal to have total that differs. For an amount of invoice of 100, request to pay may be 50 only.

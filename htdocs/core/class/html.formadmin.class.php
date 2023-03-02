@@ -36,7 +36,7 @@ class FormAdmin
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDB      $db      Database handler
+	 *  @param      DoliDB|null      $db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -343,6 +343,8 @@ class FormAdmin
 			print '</option>'."\n";
 		}
 		print '</select>';
+
+		print ajax_combobox($htmlname);
 	}
 
 

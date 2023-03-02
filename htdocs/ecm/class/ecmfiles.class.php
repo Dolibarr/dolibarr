@@ -404,7 +404,7 @@ class EcmFiles extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE 1 = 1';
 		/* Fetching this table depends on filepath+filename, it must not depends on entity because filesystem on disk does not know what is Dolibarr entities
-		 if (! empty($conf->multicompany->enabled)) {
+		 if (isModEnabled('multicompany')) {
 		 $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
 		 }*/
 		if ($relativepath) {
@@ -543,7 +543,7 @@ class EcmFiles extends CommonObject
 		}
 		$sql .= ' WHERE 1 = 1';
 		/* Fetching this table depends on filepath+filename, it must not depends on entity
-		 if (! empty($conf->multicompany->enabled)) {
+		 if (isModEnabled('multicompany')) {
 		 $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
 		 }*/
 		if (count($sqlwhere) > 0) {
@@ -748,7 +748,13 @@ class EcmFiles extends CommonObject
 		}
 
 		// If you need to delete child tables to, you can insert them here
-
+		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if (!$result) {
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
+				$error++;
+			}
+		}
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' WHERE rowid='.((int) $this->id);

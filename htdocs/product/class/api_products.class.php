@@ -222,12 +222,10 @@ class Products extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			//var_dump($sqlfilters);exit;
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';	// We must accept datc:<:2020-01-01 10:10:10
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		//this query will return total products with the filters given
@@ -253,7 +251,7 @@ class Products extends DolibarrApi
 				if (!$ids_only) {
 					$product_static = new Product($this->db);
 					if ($product_static->fetch($obj->rowid)) {
-						if ($includestockdata && DolibarrApiAccess::$user->rights->stock->lire) {
+						if (!empty($includestockdata) && DolibarrApiAccess::$user->rights->stock->lire) {
 							$product_static->load_stock();
 
 							if (is_array($product_static->stock_warehouse)) {
@@ -354,7 +352,7 @@ class Products extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$oldproduct = dol_clone($this->product, 0);
+		$oldproduct = dol_clone($this->product);
 
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -595,7 +593,7 @@ class Products extends DolibarrApi
 		}
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve category list : '.array_merge(array($categories->error), $categories->errors));
+			throw new RestException(503, 'Error when retrieve category list : '.join(',', array_merge(array($categories->error), $categories->errors)));
 		}
 
 		return $result;
@@ -628,7 +626,7 @@ class Products extends DolibarrApi
 		}
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve prices list : '.array_merge(array($this->product->error), $this->product->errors));
+			throw new RestException(503, 'Error when retrieve prices list : '.join(',', array_merge(array($this->product->error), $this->product->errors)));
 		}
 
 		return array(
@@ -682,7 +680,7 @@ class Products extends DolibarrApi
 			if ($thirdparty_id) {
 				$filter['t.fk_soc'] .= $thirdparty_id;
 			}
-			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 		}
 
 		if (empty($prodcustprice->lines)) {
@@ -719,7 +717,7 @@ class Products extends DolibarrApi
 		}
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve prices list : '.array_merge(array($this->product->error), $this->product->errors));
+			throw new RestException(503, 'Error when retrieve prices list : '.join(',', array_merge(array($this->product->error), $this->product->errors)));
 		}
 
 		return array(
@@ -905,11 +903,10 @@ class Products extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -1033,11 +1030,10 @@ class Products extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -1079,8 +1075,8 @@ class Products extends DolibarrApi
 	/**
 	 * Get attribute by ID.
 	 *
-	 * @param  int $id ID of Attribute
-	 * @return array
+	 * @param  	int 		$id	 		ID of Attribute
+	 * @return 	Object    				Object with cleaned properties
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -1116,7 +1112,7 @@ class Products extends DolibarrApi
 		$obj = $this->db->fetch_object($resql);
 		$prodattr->is_used_by_products = (int) $obj->nb;
 
-		return $prodattr;
+		return $this->_cleanObjectDatas($prodattr);
 	}
 
 	/**
@@ -1213,6 +1209,7 @@ class Products extends DolibarrApi
 
 		$resql = $this->db->query($sql);
 		$obj = $this->db->fetch_object($resql);
+
 		$attr["is_used_by_products"] = (int) $obj->nb;
 
 		return $attr;
@@ -1246,15 +1243,16 @@ class Products extends DolibarrApi
 		if ($resid <= 0) {
 			throw new RestException(500, "Error creating new attribute");
 		}
+
 		return $resid;
 	}
 
 	/**
 	 * Update attributes by id.
 	 *
-	 * @param  int $id    ID of Attribute
-	 * @param  array $request_data Datas
-	 * @return array
+	 * @param  	int 	$id    			ID of Attribute
+	 * @param  	array 	$request_data 	Datas
+	 * @return 	Object    				Object with cleaned properties
 	 *
 	 * @throws RestException
 	 * @throws RestException 401
@@ -1291,7 +1289,7 @@ class Products extends DolibarrApi
 			} elseif ($result < 0) {
 				throw new RestException(500, "Error fetching attribute");
 			} else {
-				return $prodattr;
+				return $this->_cleanObjectDatas($prodattr);
 			}
 		}
 		throw new RestException(500, "Error updating attribute");
@@ -1560,9 +1558,9 @@ class Products extends DolibarrApi
 	/**
 	 * Update attribute value.
 	 *
-	 * @param  int $id ID of Attribute
-	 * @param  array $request_data Datas
-	 * @return array
+	 * @param  	int 	$id 			ID of Attribute
+	 * @param  	array 	$request_data 	Datas
+	 * @return 	Object    				Object with cleaned properties
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 500	System error
@@ -1598,7 +1596,7 @@ class Products extends DolibarrApi
 			} elseif ($result < 0) {
 				throw new RestException(500, "Error fetching attribute");
 			} else {
-				return $objectval;
+				return $this->_cleanObjectDatas($objectval);
 			}
 		}
 		throw new RestException(500, "Error updating attribute");
@@ -1656,10 +1654,10 @@ class Products extends DolibarrApi
 			$combinations[$key]->attributes = $prodc2vp->fetchByFkCombination((int) $combination->id);
 			$combinations[$key] = $this->_cleanObjectDatas($combinations[$key]);
 
-			if ($includestock==1 && DolibarrApiAccess::$user->rights->stock->lire) {
+			if (!empty($includestock) && DolibarrApiAccess::$user->rights->stock->lire) {
 				$productModel = new Product($this->db);
 				$productModel->fetch((int) $combination->fk_product_child);
-				$productModel->load_stock();
+				$productModel->load_stock($includestock);
 				$combinations[$key]->stock_warehouse = $this->_cleanObjectDatas($productModel)->stock_warehouse;
 			}
 		}
@@ -1887,7 +1885,7 @@ class Products extends DolibarrApi
 	 *
 	 * @param  int $id ID of Product
 	 * @param  int $selected_warehouse_id ID of warehouse
-	 * @return int
+	 * @return array
 	 *
 	 * @throws RestException 500	System error
 	 * @throws RestException 401
@@ -1897,7 +1895,6 @@ class Products extends DolibarrApi
 	 */
 	public function getStock($id, $selected_warehouse_id = null)
 	{
-
 		if (!DolibarrApiAccess::$user->rights->produit->lire || !DolibarrApiAccess::$user->rights->stock->lire) {
 			throw new RestException(401);
 		}
@@ -1923,7 +1920,7 @@ class Products extends DolibarrApi
 			throw new RestException(404, 'No stock found');
 		}
 
-		return ['stock_warehouses'=>$stockData];
+		return array('stock_warehouses'=>$stockData);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -2052,8 +2049,8 @@ class Products extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if ($includestockdata && DolibarrApiAccess::$user->rights->stock->lire) {
-			$this->product->load_stock();
+		if (!empty($includestockdata) && DolibarrApiAccess::$user->rights->stock->lire) {
+			$this->product->load_stock($includestockdata);
 
 			if (is_array($this->product->stock_warehouse)) {
 				foreach ($this->product->stock_warehouse as $keytmp => $valtmp) {

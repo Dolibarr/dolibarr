@@ -736,7 +736,7 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 				if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
 					foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 						if (isset($obj->{$key})) {
-							$extrafieldsOptions['options_'.$key] = $obj->{$key};
+							$extrafieldsOptions['options_'.$key] = $obj->$key;
 						}
 					}
 				}

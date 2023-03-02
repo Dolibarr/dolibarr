@@ -645,7 +645,7 @@ class FormCompany extends Form
 			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 
 			if (count($events)) {	// If there is some ajax events to run once selection is done, we add code here to run events
-				print '<script type="text/javascript">
+				print '<script nonce="'.getNonce().'" type="text/javascript">
 				jQuery(document).ready(function() {
 					$("#search_'.$htmlname.'").change(function() {
 						var obj = '.json_encode($events).';
@@ -690,7 +690,7 @@ class FormCompany extends Form
 								}
 							}
 						);
-					};
+					}
 				});
 				</script>';
 			}
@@ -908,7 +908,7 @@ class FormCompany extends Form
 	 *  @param  string  $morecss        More css
 	 *  @return	string					HTML string with prof id
 	 */
-	public function get_input_id_prof($idprof, $htmlname, $preselected, $country_code, $morecss = 'maxwidth100onsmartphone quatrevingtpercent')
+	public function get_input_id_prof($idprof, $htmlname, $preselected, $country_code, $morecss = 'maxwidth200')
 	{
 		// phpcs:enable
 		global $conf, $langs, $hookmanager;
@@ -1026,7 +1026,7 @@ class FormCompany extends Form
 	public function selectProspectCustomerType($selected, $htmlname = 'client', $htmlidname = 'customerprospect', $typeinput = 'form', $morecss = '', $allowempty = '')
 	{
 		global $conf, $langs;
-		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->fournisseur->enabled)) {
+		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && !isModEnabled('fournisseur')) {
 			return '' ;
 		}
 
@@ -1059,7 +1059,7 @@ class FormCompany extends Form
 			if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
 				$out .= '<option value="1,3"'.($selected == '1,3' ? ' selected' : '').'>'.$langs->trans('Customer').'</option>';
 			}
-			if (!empty($conf->fournisseur->enabled)) {
+			if (isModEnabled("fournisseur")) {
 				$out .= '<option value="4"'.($selected == '4' ? ' selected' : '').'>'.$langs->trans('Supplier').'</option>';
 			}
 			$out .= '<option value="0"'.($selected == '0' ? ' selected' : '').'>'.$langs->trans('Other').'</option>';

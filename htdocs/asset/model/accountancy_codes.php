@@ -22,6 +22,7 @@
  *  \brief      Card with accountancy code on Asset Model
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/asset/class/assetmodel.class.php';
@@ -59,7 +60,7 @@ $permissiontoadd = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rig
 if ($user->socid > 0) accessforbidden();
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, 'asset', $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->asset->enabled)) accessforbidden();
+if (!isModEnabled('asset')) accessforbidden();
 if (!$permissiontoread) accessforbidden();
 
 $result = $assetaccountancycodes->fetchAccountancyCodes(0, $object->id);

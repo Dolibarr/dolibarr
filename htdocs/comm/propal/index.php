@@ -25,6 +25,7 @@
  *	\brief	Home page of proposal area
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
@@ -76,7 +77,7 @@ if ($tmp) {
 /*
  * Draft proposals
  */
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.total_tva, p.total_ttc";
 	$sql .= ", s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.code_fournisseur, s.email, s.entity, s.code_compta";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
@@ -226,7 +227,7 @@ if ($resql) {
 /*
  * Open (validated) proposals
  */
-if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
+if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta";
 	$sql .= ", p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -311,7 +312,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
  */
 
 /*
-if (! empty($conf->propal->enabled))
+if (isModEnabled('propal'))
 {
 	$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as name, s.rowid as socid";
 	$sql.=" FROM ".MAIN_DB_PREFIX."propal as c";
@@ -386,7 +387,7 @@ if (! empty($conf->propal->enabled))
  */
 
 /*
-if (! empty($conf->propal->enabled))
+if (isModEnabled('propal'))
 {
 	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";

@@ -22,6 +22,7 @@
  *  \brief      Page of third party projects
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
@@ -62,12 +63,12 @@ if ($id) {
 	}
 	$socid = $object->thirdparty->id;
 	$title = $langs->trans("Projects");
-	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
 	llxHeader('', $title);
 
-	if (! empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = contact_prepare_head($object);

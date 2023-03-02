@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Účtovací účet používaný pro třetí strany
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Účelový účet určený na uživatelské kartě bude použit pouze pro účetnictví společnosti Subledger. Ten bude použit pro hlavní knihu a jako výchozí hodnota účtování společnosti Subledger, pokud není určen uživatelský účtovací účet pro uživatele.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Účtovací účet je výchozí pro mzdové platby
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=By default, leave empty the option "Automatically create a total payment" when creating a Salary
 Salary=Mzda
@@ -24,3 +24,4 @@ SalariesStatistics=Statistika platů
 SalariesAndPayments=Platy a platby
 ConfirmDeleteSalaryPayment=Do you want to delete this salary payment ?
 FillFieldFirst=Fill employee field first
+UpdateAmountWithLastSalary=Set amount with last salary

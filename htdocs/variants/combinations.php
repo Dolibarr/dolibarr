@@ -18,6 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -70,9 +71,9 @@ if ($id > 0 || $ref) {
 }
 
 $selectedvariant = !empty($_SESSION['addvariant_'.$object->id]) ? $_SESSION['addvariant_'.$object->id] : array();
-
+$selected = "";
 // Security check
-if (empty($conf->variants->enabled)) {
+if (!isModEnabled('variants')) {
 	accessforbidden('Module not enabled');
 }
 if ($user->socid > 0) { // Protection if external user
@@ -139,7 +140,7 @@ $productCombination2ValuePairs1 = array();
 
 if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST('selectvariant', 'alpha') && empty($subaction)) {	// We click on Create all defined combinations
 	//$features = GETPOST('features', 'array');
-	$features = $_SESSION['addvariant_'.$object->id];
+	$features = !empty($_SESSION['addvariant_'.$object->id]) ? $_SESSION['addvariant_'.$object->id] : array();
 
 	if (!$features) {
 		if ($action == 'create') {
@@ -154,7 +155,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		$price_impact = price2num($price_impact);
 
 		// for conf PRODUIT_MULTIPRICES
-		if ($conf->global->PRODUIT_MULTIPRICES) {
+		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 			$level_price_impact = array_map('price2num', $level_price_impact);
 		} else {
 			$level_price_impact = array(1 => $price_impact);
@@ -279,7 +280,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 	$prodcomb->variation_weight = price2num($weight_impact);
 
 	// for conf PRODUIT_MULTIPRICES
-	if ($conf->global->PRODUIT_MULTIPRICES) {
+	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 		$level_price_impact = array_map('price2num', $level_price_impact);
 
 		$prodcomb->variation_price = $level_price_impact[1];
@@ -292,7 +293,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		$prodcomb->variation_price_percentage = $price_impact_percent;
 	}
 
-	if ($conf->global->PRODUIT_MULTIPRICES) {
+	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 		$prodcomb->combination_price_levels = array();
 		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 			$productCombinationLevel = new ProductCombinationLevel($db);
@@ -370,9 +371,12 @@ if ($action === 'confirm_deletecombination') {
 
 $form = new Form($db);
 
-if (!empty($id) || !empty($ref)) {
-	llxHeader("", "", $langs->trans("CardProduct".$object->type));
+$title = $langs->trans("Variant");
 
+llxHeader("", $title);
+
+
+if (!empty($id) || !empty($ref)) {
 	$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
 	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
 		$showbarcode = 0;
@@ -395,7 +399,7 @@ if (!empty($id) || !empty($ref)) {
 	print '<table class="border centpercent tableforfield">';
 
 	// Type
-	if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+	if (isModEnabled("product") && isModEnabled("service")) {
 		$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 		print '<tr><td class="titlefieldcreate">';
 		print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
@@ -459,7 +463,7 @@ if (!empty($id) || !empty($ref)) {
 	print "</table>\n";
 
 	print '</div>';
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
 
@@ -470,7 +474,7 @@ if (!empty($id) || !empty($ref)) {
 		if ($action == 'add') {
 			$title = $langs->trans('NewProductCombination');
 			// print dol_get_fiche_head();
-			$features = $_SESSION['addvariant_'.$object->id];
+			$features = !empty($_SESSION['addvariant_'.$object->id]) ? $_SESSION['addvariant_'.$object->id] : array();
 			//First, sanitize
 			$listofvariantselected = '<div id="parttoaddvariant">';
 			if (!empty($features)) {
@@ -492,7 +496,7 @@ if (!empty($id) || !empty($ref)) {
 		}
 
 		if ($action == 'add') {
-			$prodattr_all = $prodattr->fetchAll(1);
+			$prodattr_all = $prodattr->fetchAll();
 
 			if (!$selected) {
 				$selected = $prodattr_all[key($prodattr_all)]->id;
@@ -507,7 +511,7 @@ if (!empty($id) || !empty($ref)) {
 
 		<script type="text/javascript">
 
-			variants_available = <?php echo json_encode($prodattr_alljson); ?>;
+			variants_available = <?php echo json_encode($prodattr_alljson, JSON_PARTIAL_OUTPUT_ON_ERROR); ?>;
 			variants_selected = {
 				index: [],
 				info: []
@@ -847,15 +851,15 @@ if (!empty($id) || !empty($ref)) {
 
 		$aaa = '';
 		if (count($productCombinations)) {
-			$aaa = '<label for="massaction">'.$langs->trans('BulkActions').'</label>';
-			$aaa .= '<select id="bulk_action" name="massaction" class="flat">';
+			$aaa = '<select id="bulk_action" name="massaction" class="flat">';
 			$aaa .= '	<option value="nothing">&nbsp;</option>';
-			$aaa .= '	<option value="not_buy">'.$langs->trans('ProductStatusNotOnBuy').'</option>';
-			$aaa .= '	<option value="not_sell">'.$langs->trans('ProductStatusNotOnSell').'</option>';
-			$aaa .= '	<option value="on_buy">'.$langs->trans('ProductStatusOnBuy').'</option>';
-			$aaa .= '	<option value="on_sell">'.$langs->trans('ProductStatusOnSell').'</option>';
-			$aaa .= '	<option value="delete">'.$langs->trans('Delete').'</option>';
+			$aaa .= '	<option value="not_buy" data-html="'.dol_escape_htmltag(img_picto($langs->trans("SetToStatus"), 'stop-circle', 'class="pictofixedwidth"').$langs->trans('SetToStatus', $langs->transnoentitiesnoconv('ProductStatusNotOnBuy'))).'">'.$langs->trans('ProductStatusNotOnBuy').'</option>';
+			$aaa .= '	<option value="not_sell" data-html="'.dol_escape_htmltag(img_picto($langs->trans("SetToStatus"), 'stop-circle', 'class="pictofixedwidth"').$langs->trans('SetToStatus', $langs->transnoentitiesnoconv('ProductStatusNotOnSell'))).'">'.$langs->trans('ProductStatusNotOnSell').'</option>';
+			$aaa .= '	<option value="on_buy" data-html="'.dol_escape_htmltag(img_picto($langs->trans("SetToStatus"), 'stop-circle', 'class="pictofixedwidth"').$langs->trans('SetToStatus', $langs->transnoentitiesnoconv('ProductStatusOnBuy'))).'">'.$langs->trans('ProductStatusOnBuy').'</option>';
+			$aaa .= '	<option value="on_sell" data-html="'.dol_escape_htmltag(img_picto($langs->trans("SetToStatus"), 'stop-circle', 'class="pictofixedwidth"').$langs->trans('SetToStatus', $langs->transnoentitiesnoconv('ProductStatusOnSell'))).'">'.$langs->trans('ProductStatusOnSell').'</option>';
+			$aaa .= '	<option value="delete" data-html="'.dol_escape_htmltag(img_picto($langs->trans("Delete"), 'delete', 'class="pictofixedwidth"').$langs->trans('Delete')).'">'.$langs->trans('Delete').'</option>';
 			$aaa .= '</select>';
+			$aaa .= ajax_combobox("bulk_action");
 			$aaa .= '<input type="submit" value="'.dol_escape_htmltag($langs->trans("Apply")).'" class="button small">';
 		}
 		$massactionbutton = $aaa;
@@ -931,9 +935,6 @@ if (!empty($id) || !empty($ref)) {
 		print '</div>';
 		print '</form>';
 	}
-} else {
-	llxHeader();
-	// not found
 }
 
 // End of page

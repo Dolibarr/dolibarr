@@ -24,6 +24,7 @@
  * \brief      Page to setup paypal module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -244,7 +245,7 @@ print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$con
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': '.$mysoc->name.'</span>';
 print '</td></tr>';
 
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccount").'</td><td>';
 	print img_picto('', 'bank_account').' ';

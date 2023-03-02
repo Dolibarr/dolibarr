@@ -723,16 +723,18 @@ class AccountingAccount extends CommonObject
 	}
 
 	/**
-	 * Return Suggest accounting accounts to bind
+	 * Return a suggested account (from chart of accounts) to bind
 	 *
 	 * @param 	Societe 							$buyer 				Object buyer
 	 * @param 	Societe 							$seller 			Object seller
 	 * @param 	Product 							$product 			Product object sell or buy
 	 * @param 	Facture|FactureFournisseur 			$facture 			Facture
 	 * @param 	FactureLigne|SupplierInvoiceLine	$factureDet 		Facture Det
-	 * @param 	array 								$accountingAccount 	Array of Account account
+	 * @param 	array 								$accountingAccount 	Array of Accounting account
 	 * @param 	string 								$type 				Customer / Supplier
 	 * @return	array|int      											Accounting accounts suggested or < 0 if technical error.
+	 * 																	'suggestedaccountingaccountbydefaultfor'=>Will be used for the label to show on tooltip for account by default on any product
+	 * 																	'suggestedaccountingaccountfor'=>Is the account suggested for this product
 	 */
 	public function getAccountingCodeToBind(Societe $buyer, Societe $seller, Product $product, $facture, $factureDet, $accountingAccount = array(), $type = '')
 	{
@@ -811,9 +813,9 @@ class AccountingAccount extends CommonObject
 			$suggestedaccountingaccountfor = '';
 			if ((($buyer->country_code == $seller->country_code) || empty($buyer->country_code))) {
 				// If buyer in same country than seller (if not defined, we assume it is same country)
-				if ($type=='customer' && !empty($product->accountancy_code_sell)) {
+				if ($type == 'customer' && !empty($product->accountancy_code_sell)) {
 					$code_p = $product->accountancy_code_sell;
-				} elseif ($type=='supplier' && !empty($product->accountancy_code_buy)) {
+				} elseif ($type == 'supplier' && !empty($product->accountancy_code_buy)) {
 					$code_p = $product->accountancy_code_buy;
 				}
 				$suggestedid = $accountingAccount['dom'];
@@ -821,36 +823,36 @@ class AccountingAccount extends CommonObject
 			} else {
 				if ($isSellerInEEC && $isBuyerInEEC && $factureDet->tva_tx != 0) {
 					// European intravat sale, but with VAT
-					if ($type=='customer' && !empty($product->accountancy_code_sell)) {
+					if ($type == 'customer' && !empty($product->accountancy_code_sell)) {
 						$code_p = $product->accountancy_code_sell;
-					} elseif ($type=='supplier' && !empty($product->accountancy_code_buy)) {
+					} elseif ($type == 'supplier' && !empty($product->accountancy_code_buy)) {
 						$code_p = $product->accountancy_code_buy;
 					}
 					$suggestedid = $accountingAccount['dom'];
 					$suggestedaccountingaccountfor = 'eecwithvat';
 				} elseif ($isSellerInEEC && $isBuyerInEEC && empty($buyer->tva_intra)) {
 					// European intravat sale, without VAT intra community number
-					if ($type=='customer' && !empty($product->accountancy_code_sell)) {
+					if ($type == 'customer' && !empty($product->accountancy_code_sell)) {
 						$code_p = $product->accountancy_code_sell;
-					} elseif ($type=='supplier' && !empty($product->accountancy_code_buy)) {
+					} elseif ($type == 'supplier' && !empty($product->accountancy_code_buy)) {
 						$code_p = $product->accountancy_code_buy;
 					}
 					$suggestedid = $accountingAccount['dom']; // There is a doubt for this case. Is it an error on vat or we just forgot to fill vat number ?
 					$suggestedaccountingaccountfor = 'eecwithoutvatnumber';
 				} elseif ($isSellerInEEC && $isBuyerInEEC && !empty($product->accountancy_code_sell_intra)) {
 					// European intravat sale
-					if ($type=='customer' && !empty($product->accountancy_code_sell_intra)) {
+					if ($type == 'customer' && !empty($product->accountancy_code_sell_intra)) {
 						$code_p = $product->accountancy_code_sell_intra;
-					} elseif ($type=='supplier' && !empty($product->accountancy_code_buy_intra)) {
+					} elseif ($type == 'supplier' && !empty($product->accountancy_code_buy_intra)) {
 						$code_p = $product->accountancy_code_buy_intra;
 					}
 					$suggestedid = $accountingAccount['intra'];
 					$suggestedaccountingaccountfor = 'eec';
 				} else {
 					// Foreign sale
-					if ($type=='customer' && !empty($product->accountancy_code_sell_export)) {
+					if ($type == 'customer' && !empty($product->accountancy_code_sell_export)) {
 						$code_p = $product->accountancy_code_sell_export;
-					} elseif ($type=='supplier' && !empty($product->accountancy_code_buy_export)) {
+					} elseif ($type == 'supplier' && !empty($product->accountancy_code_buy_export)) {
 						$code_p = $product->accountancy_code_buy_export;
 					}
 					$suggestedid = $accountingAccount['export'];
@@ -868,16 +870,44 @@ class AccountingAccount extends CommonObject
 			}
 
 			// Manage Deposit
-			if ($factureDet->desc == "(DEPOSIT)" || $facture->type == $facture::TYPE_DEPOSIT) {
-				$accountdeposittoventilated = new self($this->db);
-				$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
-				if ($result < 0) {
-					return -1;
+			if (getDolGlobalString('ACCOUNTING_ACCOUNT_' . strtoupper($type) . '_DEPOSIT')) {
+				if ($factureDet->desc == "(DEPOSIT)" || $facture->type == $facture::TYPE_DEPOSIT) {
+					$accountdeposittoventilated = new self($this->db);
+					if ($type == 'customer') {
+						$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+					} elseif ($type == 'supplier') {
+						$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT, 1);
+					}
+					if (isset($result) && $result < 0) {
+						return -1;
+					}
+
+					$code_l = $accountdeposittoventilated->ref;
+					$code_p = '';
+					$code_t = '';
+					$suggestedid = $accountdeposittoventilated->rowid;
+					$suggestedaccountingaccountfor = 'deposit';
 				}
 
-				$code_l = $accountdeposittoventilated->ref;
-				$suggestedid = $accountdeposittoventilated->rowid;
-				$suggestedaccountingaccountfor = 'deposit';
+				// For credit note invoice, if origin invoice is a deposit invoice, force also on specific customer/supplier deposit account
+				if (!empty($facture->fk_facture_source)) {
+					$invoiceSource = new $facture($this->db);
+					$invoiceSource->fetch($facture->fk_facture_source);
+
+					if ($facture->type == $facture::TYPE_CREDIT_NOTE && $invoiceSource->type == $facture::TYPE_DEPOSIT) {
+						$accountdeposittoventilated = new self($this->db);
+						if ($type == 'customer') {
+							$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+						} elseif ($type == 'supplier') {
+							$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT, 1);
+						}
+						$code_l = $accountdeposittoventilated->ref;
+						$code_p = '';
+						$code_t = '';
+						$suggestedid = $accountdeposittoventilated->rowid;
+						$suggestedaccountingaccountfor = 'deposit';
+					}
+				}
 			}
 
 			// If $suggestedid could not be guessed yet, we set it from the generic default accounting code $code_l

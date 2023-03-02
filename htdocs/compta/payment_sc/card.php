@@ -26,12 +26,13 @@
  *		\remarks	File similar to fourn/paiement/card.php
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-if (isModEnabled('banque')) {
+if (isModEnabled("banque")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
@@ -45,8 +46,6 @@ $confirm = GETPOST('confirm', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-// TODO ajouter regle pour restreindre acces paiement
-//$result = restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentSocialContribution($db);
 if ($id > 0) {
@@ -56,13 +55,15 @@ if ($id > 0) {
 	}
 }
 
+$result = restrictedArea($user, 'payment_sc', $id, '');
+
 
 /*
  * Actions
  */
 
 // Delete payment
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->charges->supprimer) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('tax', 'charges', 'supprimer')) {
 	$db->begin();
 
 	$result = $object->delete($user);
@@ -75,6 +76,16 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->char
 		$db->rollback();
 	}
 }
+
+/*if ($action == 'setdatep' && GETPOST('datepday') && $user->hasRight('tax', 'charges', 'creer')) {
+	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
+	$res = $object->update_date($datepaye);
+	if ($res === 0) {
+		setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans('PaymentDateUpdateFailed'), null, 'errors');
+	}
+}*/
 
 
 /*
@@ -141,7 +152,7 @@ print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->
 print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($object->note).'</td></tr>';
 
 // Bank account
-if (isModEnabled('banque')) {
+if (isModEnabled("banque")) {
 	if ($object->bank_account) {
 		$bankline = new AccountLine($db);
 		$bankline->fetch($object->bank_line);
@@ -237,7 +248,7 @@ if ($resql) {
 print '<div class="tabsAction">';
 
 /*
-if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
+if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 {
 	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '')
 	{
@@ -252,9 +263,9 @@ if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 if ($action == '') {
 	if ($user->rights->tax->charges->supprimer) {
 		if (!$disable_delete) {
-			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.GETPOST('id', 'int').'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
+			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
 		} else {
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
+			print dolGetButtonAction($langs->trans("CantRemovePaymentWithOneInvoicePaid"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 0);
 		}
 	}
 }

@@ -24,6 +24,7 @@
  *	\brief      Page with info about salaries contribution
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
@@ -57,6 +58,9 @@ $childids = $user->getAllChildIds(1);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('salaryinfo', 'globalcard'));
+
 $object = new Salary($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
@@ -75,6 +79,10 @@ if ($id > 0 || !empty($ref)) {
 }
 
 restrictedArea($user, 'salaries', $object->id, 'salary', '');
+
+$permissiontoread = $user->rights->salaries->read;
+$permissiontoadd = $user->rights->salaries->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+$permissiontodelete = $user->rights->salaries->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 
 
 /*
@@ -106,7 +114,6 @@ $title = $langs->trans('Salary')." - ".$langs->trans('Info');
 $help_url = "";
 llxHeader("", $title, $help_url);
 
-$object = new Salary($db);
 $object->fetch($id);
 $object->info($id);
 
@@ -138,34 +145,26 @@ if ($action != 'editlabel') {
 
 $morehtmlref .= '<br>'.$langs->trans('Employee').' : '.$userstatic->getNomUrl(-1);
 
+$usercancreate = $permissiontoadd;
+
 // Project
 if (isModEnabled('project')) {
-	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-	if ($user->rights->salaries->write) {
+	$langs->load("projects");
+	$morehtmlref .= '<br>';
+	if ($usercancreate) {
+		$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 		if ($action != 'classify') {
-			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 		}
-		if ($action == 'classify') {
-			//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-			$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-			$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-			$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-			$morehtmlref .= $formproject->select_projects(-1, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
-			$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-			$morehtmlref .= '</form>';
-		} else {
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-		}
+		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 	} else {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
 			$proj->fetch($object->fk_project);
-			$morehtmlref .= ' : '.$proj->getNomUrl(1);
+			$morehtmlref .= $proj->getNomUrl(1);
 			if ($proj->title) {
-				$morehtmlref .= ' - '.$proj->title;
+				$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 			}
-		} else {
-			$morehtmlref .= '';
 		}
 	}
 }
@@ -179,7 +178,7 @@ print '<div class="underbanner clearboth"></div>';
 
 print '<br>';
 
-print '<table width="100%"><tr><td>';
+print '<table class="centpercent"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
 

@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2015-2022  Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2022  		Lionel Vessiller    <lvessiller@open-dsi.fr>
  * Copyright (C) 2016       Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2022  		Progiseize         	<a.bisotti@progiseize.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +35,9 @@ $siren = getDolGlobalString('MAIN_INFO_SIREN');
 $date_export = "_".dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 $endaccountingperiod = dol_print_date(dol_now(), '%Y%m%d');
 
-header('Content-Type: text/csv');
+if (empty($withAttachment)) {
+	header('Content-Type: text/csv');
+}
 
 include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 $accountancyexport = new AccountancyExport($db);
@@ -66,4 +70,6 @@ if (($accountancyexport->getFormatCode($formatexportset) == 'fec' || $accountanc
 	$completefilename = ($code ? $code."_" : "").($prefix ? $prefix."_" : "").$filename.($nodateexport ? "" : $date_export).".".$format;
 }
 
-header('Content-Disposition: attachment;filename='.$completefilename);
+if (empty($withAttachment)) {
+	header('Content-Disposition: attachment;filename=' . $completefilename);
+}

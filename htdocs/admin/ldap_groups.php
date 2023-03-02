@@ -26,6 +26,7 @@
  *		\brief      Page to setup LDAP synchronization for groups
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -113,7 +114,7 @@ if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
-print dol_get_fiche_head($head, 'groups', $langs->trans("LDAPSetup"), -1);
+print dol_get_fiche_head($head, 'groups', '', -1);
 
 
 print '<span class="opacitymedium">'.$langs->trans("LDAPDescGroups").'</span><br>';

@@ -120,6 +120,8 @@ class box_external_rss extends ModeleBoxes
 		// INFO on items
 		$items = $rssparser->getItems();
 		//print '<pre>'.print_r($items,true).'</pre>';
+
+		// Loop on last items
 		$nbitems = count($items);
 		for ($line = 0; $line < $max && $line < $nbitems; $line++) {
 			$item = $items[$line];
@@ -131,6 +133,9 @@ class box_external_rss extends ModeleBoxes
 			if ($rssparser->getFormat() == 'rss') {   // If RSS
 				if (!$date && isset($item['pubdate'])) {
 					$date = $item['pubdate'];
+				}
+				if (!$date && isset($item['pubDate'])) {
+					$date = $item['pubDate'];
 				}
 				if (!$date && isset($item['dc']['date'])) {
 					$date = $item['dc']['date'];
@@ -179,24 +184,24 @@ class box_external_rss extends ModeleBoxes
 
 			$this->info_box_contents[$line][0] = array(
 				'td' => 'class="left" width="16"',
-				'logo' => $this->boximg,
+				'text' => img_picto('', 'rss'),
 				'url' => $href,
-				'tooltip' => $tooltip,
+				'tooltip' => dol_escape_htmltag($tooltip),
 				'target' => 'newrss',
 			);
 
 			$this->info_box_contents[$line][1] = array(
-				'td' => '',
-				'text' => $title,
+				'td' => 'class="tdoverflowmax300"',
+				'text' => dol_escape_htmltag($title),
 				'url' => $href,
-				'tooltip' => $tooltip,
-				'maxlength' => 64,
+				'tooltip' => dol_escape_htmltag($tooltip),
+				'maxlength' => 0,
 				'target' => 'newrss',
 			);
 
 			$this->info_box_contents[$line][2] = array(
 				'td' => 'class="right nowrap"',
-				'text' => $date,
+				'text' => dol_escape_htmltag($date),
 			);
 		}
 	}

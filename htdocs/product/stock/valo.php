@@ -23,6 +23,7 @@
  *  \brief      Page with stock values
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
@@ -51,7 +52,7 @@ if ($page < 0) {
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
-$year = strftime("%Y", time());
+$year = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 
 
 /*

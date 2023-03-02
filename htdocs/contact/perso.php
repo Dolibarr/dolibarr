@@ -24,6 +24,7 @@
  *       \brief      Onglet informations personnelles d'un contact
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
@@ -60,7 +61,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->societe->contact
 
 	$result = $object->update_perso($id, $user);
 	if ($result > 0) {
-		$object->oldcopy = clone $object;
+		$object->oldcopy = dol_clone($object);
 
 		// Logo/Photo save
 		$dir = $conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos';

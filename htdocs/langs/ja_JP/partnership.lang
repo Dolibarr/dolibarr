@@ -20,6 +20,7 @@ ModulePartnershipName=パートナーシップ管理
 PartnershipDescription=モジュールパートナーシップ管理
 PartnershipDescriptionLong= モジュールパートナーシップ管理
 Partnership=パートナーシップ
+Partnerships=パートナーシップ
 AddPartnership=パートナーシップを追加
 CancelPartnershipForExpiredMembers=パートナーシップ: サブスクリプションの有効期限が切れた構成員のパートナーシップをキャンセル
 PartnershipCheckBacklink=パートナーシップ: 参照元のバックリンクを確認する
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=パートナーシップ: 参照元のバックリン�
 # Menu
 #
 NewPartnership=新規パートナーシップ
+NewPartnershipbyWeb=パートナーシップ リクエストが正常に追加された。近日中にご連絡するやも...
 ListOfPartnerships=パートナーシップのリスト
 
 #

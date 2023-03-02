@@ -39,7 +39,6 @@ class ActionsCardProduct
 
 	// List of fiels for action=list
 	public $field_list = array();
-	public $list_datas = array();
 
 
 	/**
@@ -87,8 +86,6 @@ class ActionsCardProduct
 			$tmpobject->fetch($id, $ref);
 		}
 		$this->object = $tmpobject;
-
-		//parent::assign_values($action);
 
 		foreach ($this->object as $key => $value) {
 			$this->tpl[$key] = $value;
@@ -227,10 +224,6 @@ class ActionsCardProduct
 
 			$this->tpl['fiche_end'] = dol_get_fiche_end();
 		}
-
-		if ($action == 'list') {
-			$this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
-		}
 	}
 
 
@@ -279,138 +272,6 @@ class ActionsCardProduct
 			$this->db->free($resql);
 		} else {
 			dol_print_error($this->db, $sql);
-		}
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * 	Fetch datas list and save into ->list_datas
-	 *
-	 *  @param	int		$limit		Limit number of responses
-	 *  @param	int		$offset		Offset for first response
-	 *  @param	string	$sortfield	Sort field
-	 *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
-	 *  @return	void
-	 */
-	public function LoadListDatas($limit, $offset, $sortfield, $sortorder)
-	{
-		// phpcs:enable
-		global $conf, $langs;
-
-		$this->getFieldListCanvas();
-
-		$this->list_datas = array();
-
-		// Clean parameters
-		$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-
-		foreach ($this->field_list as $field) {
-			if ($field['enabled']) {
-				$fieldname = "s".$field['alias'];
-				$$fieldname = GETPOST($fieldname);
-			}
-		}
-
-		$sql = 'SELECT DISTINCT ';
-
-		// Fields requiered
-		$sql .= 'p.rowid, p.price_base_type, p.fk_product_type, p.seuil_stock_alerte, p.entity';
-
-		// Fields not requiered
-		foreach ($this->field_list as $field) {
-			if ($field['enabled']) {
-				$sql .= ", ".$field['name']." as ".$field['alias'];
-			}
-		}
-
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
-		$sql .= " WHERE p.entity IN (".getEntity('product').")";
-
-		if ($sall) {
-			$clause = '';
-			$sql .= " AND (";
-			foreach ($this->field_list as $field) {
-				if ($field['enabled']) {
-					$sql .= $clause." ".$field['name']." LIKE '%".$this->db->escape($sall)."%'";
-					if ($clause == '') {
-						$clause = ' OR';
-					}
-				}
-			}
-			$sql .= ")";
-		}
-
-		// Search fields
-		foreach ($this->field_list as $field) {
-			if ($field['enabled']) {
-				$fieldname = "s".$field['alias'];
-				if (${$fieldname}) {
-					$sql .= " AND ".$field['name']." LIKE '%".$this->db->escape(${$fieldname})."%'";
-				}
-			}
-		}
-
-		if (GETPOSTISSET("tosell")) {
-			$sql .= " AND p.tosell = ".((int) GETPOST("tosell", "int"));
-		}
-		if (GETPOSTISSET("canvas")) {
-			$sql .= " AND p.canvas = '".$this->db->escape(GETPOST("canvas"))."'";
-		}
-		$sql .= $this->db->order($sortfield, $sortorder);
-		$sql .= $this->db->plimit($limit + 1, $offset);
-		//print $sql;
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-
-			$i = 0;
-			while ($i < min($num, $limit)) {
-				$datas = array();
-
-				$obj = $this->db->fetch_object($resql);
-
-				$datas["id"] = $obj->rowid;
-
-				foreach ($this->field_list as $field) {
-					if ($field['enabled']) {
-						$alias = $field['alias'];
-
-						if ($alias == 'ref') {
-							$this->id = $obj->rowid;
-							$this->ref 		= $obj->$alias;
-							$this->type 	= $obj->fk_product_type;
-							$this->entity = $obj->entity;
-							$datas[$alias] = $this->getNomUrl(1, '', 24);
-						} elseif ($alias == 'stock') {
-							$this->load_stock();
-							if ($this->stock_reel < $obj->seuil_stock_alerte) {
-								$datas[$alias] = $this->stock_reel.' '.img_warning($langs->trans("StockTooLow"));
-							} else {
-								$datas[$alias] = $this->stock_reel;
-							}
-						} elseif ($alias == 'label') {
-							$datas[$alias] = dol_trunc($obj->$alias, 40);
-						} elseif (preg_match('/price/i', $alias)) {
-							$datas[$alias] = price($obj->$alias);
-						} elseif ($alias == 'datem') {
-							$datas[$alias] = dol_print_date($this->db->jdate($obj->$alias), 'day');
-						} elseif ($alias == 'status') {
-							$datas[$alias] = $this->LibStatut($obj->$alias, 5);
-						} else {
-							$datas[$alias] = $obj->$alias;
-						}
-					}
-				}
-
-				array_push($this->list_datas, $datas);
-
-				$i++;
-			}
-			$this->db->free($resql);
-		} else {
-			dol_print_error($this->db);
 		}
 	}
 }

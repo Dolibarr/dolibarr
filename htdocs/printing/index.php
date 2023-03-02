@@ -22,6 +22,7 @@
  *  \brief      Printing
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 

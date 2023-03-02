@@ -64,7 +64,6 @@ ErrorFieldValueNotIn=Campo <b>%s</b> : '<b>%s</b>' não é um valor encontrado n
 ErrorFieldRefNotIn=Campo <b>%s</b> : '<b>%s</b>' não é uma referência existente <b>%s</b>
 ErrorsOnXLines=%s erros encontrados
 ErrorFileIsInfectedWithAVirus=O antivírus não foi capaz de atestar o arquivo (o arquivo pode estar infectado por um vírus)
-ErrorSpecialCharNotAllowedForField=O campo "%s" não aceita caracteres especiais
 ErrorNumRefModel=Uma referência existe no banco de dados (% s) e não é compatível com esta regra de numeração. Remover registro ou referência renomeado para ativar este módulo.
 ErrorQtyTooLowForThisSupplier=Quantidade muito baixa para este fornecedor ou nenhum preço definido neste produto para este fornecedor
 ErrorOrdersNotCreatedQtyTooLow=Algumas encomendas não foram criadas por causa de quantidades muito baixas

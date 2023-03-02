@@ -18,16 +18,18 @@
  */
 
 /**
- *    \file     htdocs/ticket/agenda.php
- *    \ingroup	ticket
+ *    \file       htdocs/ticket/index.php
+ *    \ingroup    ticket
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticketstats.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+
 
 $hookmanager = new HookManager($db);
 
@@ -58,13 +60,15 @@ $year = GETPOST('year', 'int') > 0 ? GETPOST('year', 'int') : $nowyear;
 $startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
 
+// Initialize objects
 $object = new Ticket($db);
 
 // Security check
 //$result = restrictedArea($user, 'ticket|knowledgemanagement', 0, '', '', '', '');
-if (empty($user->rights->ticket->read) && empty($user->rights->knowledgemanagement->knowledgerecord->read)) {
+if (empty($user->rights->ticket->read) && !$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 	accessforbidden('Not enought permissions');
 }
+
 
 
 /*
@@ -74,9 +78,11 @@ if (empty($user->rights->ticket->read) && empty($user->rights->knowledgemanageme
 // None
 
 
+
 /*
  * View
  */
+
 $resultboxes = FormOther::getBoxesArea($user, "11"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 $form = new Form($db);
@@ -103,8 +109,8 @@ if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
 } elseif (!empty($_COOKIE['DOLUSERCOOKIE_ticket_by_status'])) {
 	$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_ticket_by_status'], true);
 	$endyear = $tmparray['year'];
-	$shownb = $tmparray['shownb'];
-	$showtot = $tmparray['showtot'];
+	$shownb = empty($tmparray['shownb']) ? 0 : $tmparray['shownb'];
+	$showtot = empty($tmparray['showtot']) ? 0 : $tmparray['showtot'];
 }
 if (empty($shownb) && empty($showtot)) {
 	$showtot = 1;
@@ -404,7 +410,7 @@ if (!empty($user->rights->ticket->read)) {
 				//print $objp->category_label;
 				print "</td>";
 
-				// Severity
+				// Severity = Priority
 				print '<td class="nowrap">';
 				$s = $langs->getLabelFromKey($db, 'TicketSeverityShort'.$objp->severity_code, 'c_ticket_severity', 'code', 'label', $objp->severity_code);
 				print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
@@ -440,7 +446,7 @@ print '</div>';
 print '</div>';
 
 
-print '<div style="clear:both"></div>';
+print '<div class="clearboth"></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardTickets', $parameters, $object); // Note that $action and $object may have been modified by hook

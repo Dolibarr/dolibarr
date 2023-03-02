@@ -33,13 +33,16 @@
  *
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/intracommreport/class/intracommreport.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("intracommreport"));
 
+// Get Parameters
 $id = GETPOST('id', 'int');
 $action = GETPOST('action');
 $exporttype = GETPOSTISSET('exporttype') ? GETPOST('exporttype', 'alphanohtml') : 'deb'; // DEB or DES
@@ -48,6 +51,7 @@ $month = GETPOSTINT('month');
 $label = (string) GETPOST('label', 'alphanohtml');
 $type_declaration = (string) GETPOST('type_declaration', 'alphanohtml');
 $backtopage = GETPOST('backtopage', 'alpha');
+
 $declaration = array(
 	"deb" => $langs->trans("DEB"),
 	"des" => $langs->trans("DES"),
@@ -56,6 +60,8 @@ $typeOfDeclaration = array(
 	"introduction" => $langs->trans("Introduction"),
 	"expedition" => $langs->trans("Expedition"),
 );
+
+// Initialize technical objects
 $object = new IntracommReport($db);
 if ($id > 0) {
 	$object->fetch($id);
@@ -68,6 +74,7 @@ $hookmanager->initHooks(array('intracommcard', 'globalcard'));
 
 $error = 0;
 
+// Permissions
 $permissiontoread = $user->rights->intracommreport->read;
 $permissiontoadd = $user->rights->intracommreport->write;
 $permissiontodelete = $user->rights->intracommreport->delete;
@@ -112,7 +119,7 @@ if ($action == 'add' && $permissiontoadd) {
 	$object->label = trim($label);
 	$object->type = trim($exporttype);
 	$object->type_declaration =  $type_declaration;
-	$object->subscription = (int) $subscription;
+	//$object->subscription = (int) $subscription;
 
 	// Fill array 'array_options' with data from add form
 	// $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
@@ -155,10 +162,11 @@ if ($action == 'add' && $permissiontoadd) {
  * View
  */
 
+$title = $langs->trans("IntracommReportTitle");
+llxHeader("", $title);
+
 // Creation mode
 if ($action == 'create') {
-	$title = $langs->trans("IntracommReportTitle");
-	llxHeader("", $title);
 	print load_fiche_titre($langs->trans("IntracommReportTitle"));
 
 	print '<form name="charge" method="post" action="'.$_SERVER["PHP_SELF"].'">';
@@ -266,7 +274,7 @@ if ($id > 0 && $action != 'edit') {
 	print "</table>\n";
 
 	print "</div></div></div>\n";
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
 }
@@ -294,8 +302,6 @@ if ($id > 0 && $action != 'edit') {
 	{
 		global $langs, $formother, $year, $month, $type_declaration;
 
-		$title = $langs->trans("IntracommReportDESTitle");
-		llxHeader("", $title);
 		print load_fiche_titre($langs->trans("IntracommReportDESTitle"));
 
 		print dol_get_fiche_head();

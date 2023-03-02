@@ -53,12 +53,14 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'knowledgemanagement', $object->id);
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+restrictedArea($user, $object->module, $object->id, $object->table_element, $object->element, '', 'rowid', $isdraft);
 
-$permission = $user->rights->knowledgemanagement->knowledgerecord->write;
+$permission = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write');
+
 
 /*
- * Add a new contact
+ * Actions
  */
 
 if ($action == 'addcontact' && $permission) {
@@ -108,16 +110,10 @@ $contactstatic = new Contact($db);
 $userstatic = new User($db);
 
 
-/* *************************************************************************** */
-/*                                                                             */
-/* View and edit mode                                                         */
-/*                                                                             */
-/* *************************************************************************** */
+// View and edit mode
 
 if ($object->id) {
-	/*
-	 * Show tabs
-	 */
+	// Show tabs
 	$head = knowledgerecordPrepareHead($object);
 
 	print dol_get_fiche_head($head, 'contact', $langs->trans("KnowledgeRecord"), -1, $object->picto);
@@ -132,7 +128,7 @@ if ($object->id) {
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->project->enabled))
+	 if (isModEnabled('project'))
 	 {
 	 $langs->load("projects");
 	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -153,7 +149,7 @@ if ($object->id) {
 	 $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 	 }
 	 } else {
-	 if (! empty($object->fk_project)) {
+	 if (!empty($object->fk_project)) {
 	 $proj = new Project($db);
 	 $proj->fetch($object->fk_project);
 	 $morehtmlref .= ': '.$proj->getNomUrl();

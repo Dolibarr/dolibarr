@@ -30,6 +30,7 @@
  *	\brief      Payment page for customers invoices
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -170,7 +171,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (isModEnabled('banque')) {
+		if (isModEnabled("banque")) {
 			// If bank module is on, account is required to enter a payment
 			if (GETPOST('accountid') <= 0) {
 				setEventMessages($langs->transnoentities('ErrorFieldRequired', $langs->transnoentities('AccountToCredit')), null, 'errors');
@@ -244,7 +245,7 @@ if (empty($reshook)) {
 			$multicurrency_code[$key] = $tmpinvoice->multicurrency_code;
 		}
 
-		if (isModEnabled('banque')) {
+		if (isModEnabled("banque")) {
 			// If the bank module is active, an account is required to input a payment
 			if (GETPOST('accountid', 'int') <= 0) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('AccountToCredit')), null, 'errors');
@@ -492,7 +493,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		// Bank account
 		print '<tr>';
-		if (isModEnabled('banque')) {
+		if (isModEnabled("banque")) {
 			if ($facture->type != 2) {
 				print '<td><span class="fieldrequired">'.$langs->trans('AccountToCredit').'</span></td>';
 			}
@@ -749,7 +750,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						$numdirectdebitopen = 0;
 						$totaldirectdebit = 0;
 						$sql = "SELECT COUNT(pfd.rowid) as nb, SUM(pfd.amount) as amount";
-						$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+						$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 						$sql .= " WHERE fk_facture = ".((int) $objp->facid);
 						$sql .= " AND pfd.traite = 0";
 						$sql .= " AND pfd.ext_payment_id IS NULL";
@@ -858,10 +859,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 			print '<br><div class="center">';
 			print '<input type="checkbox" checked name="closepaidinvoices"> '.$checkboxlabel;
-			/*if (! empty($conf->prelevement->enabled))
+			/*if (!empty($conf->prelevement->enabled))
 			{
 				$langs->load("withdrawals");
-				if (! empty($conf->global->WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS)) print '<br>'.$langs->trans("IfInvoiceNeedOnWithdrawPaymentWontBeClosed");
+				if (!empty($conf->global->WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS)) print '<br>'.$langs->trans("IfInvoiceNeedOnWithdrawPaymentWontBeClosed");
 			}*/
 			print '<br><input type="submit" class="button" value="'.dol_escape_htmltag($buttontitle).'"><br><br>';
 			print '</div>';

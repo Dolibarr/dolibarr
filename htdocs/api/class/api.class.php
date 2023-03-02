@@ -113,8 +113,9 @@ class DolibarrApi
 		unset($object->pass);
 		unset($object->pass_indatabase);
 
-		// Remove linkedObjects. We should already have linkedObjectsIds that avoid huge responses
+		// Remove linkedObjects. We should already have and keep only linkedObjectsIds that avoid huge responses
 		unset($object->linkedObjects);
+		//unset($object->lines[$i]->linked_objects);		// This is the array to create linked object during create
 
 		unset($object->fields);
 		unset($object->oldline);
@@ -125,7 +126,6 @@ class DolibarrApi
 
 		unset($object->ref_previous);
 		unset($object->ref_next);
-		unset($object->ref_int);
 		unset($object->imgWidth);
 		unset($object->imgHeight);
 		unset($object->barcode_type_code);
@@ -139,6 +139,7 @@ class DolibarrApi
 
 		unset($object->projet); // Should be fk_project
 		unset($object->project); // Should be fk_project
+		unset($object->fk_projet); // Should be fk_project
 		unset($object->author); // Should be fk_user_author
 		unset($object->timespent_old_duration);
 		unset($object->timespent_id);
@@ -160,10 +161,9 @@ class DolibarrApi
 		unset($object->statuts_short);
 		unset($object->statuts_logo);
 		unset($object->statuts_long);
-		unset($object->statutshorts);
-		unset($object->statutshort);
-		unset($object->labelStatus);
-		unset($object->labelStatusShort);
+
+		//unset($object->labelStatus);
+		//unset($object->labelStatusShort);
 
 		unset($object->stats_propale);
 		unset($object->stats_commande);
@@ -302,6 +302,7 @@ class DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Return if a $sqlfilters parameter is valid
+	 * Function no more used. Kept for backward compatibility with old APIs of modules
 	 *
 	 * @param  	string   		$sqlfilters     sqlfilter string
 	 * @param	string			$error			Error message
@@ -317,7 +318,8 @@ class DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Function to forge a SQL criteria from a Generic filter string
+	 * Function to forge a SQL criteria from a Generic filter string.
+	 * Function no more used. Kept for backward compatibility with old APIs of modules
 	 *
 	 * @param  array    $matches    Array of found string by regex search.
 	 * 								Each entry is 1 and only 1 criteria.

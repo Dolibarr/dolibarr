@@ -104,7 +104,7 @@ class FormOther
 		$out .= '<br>';
 		$out .= '<div type="text" id="scantoolmessage" class="scantoolmessage ok nopadding"></div>';
 
-		$out .= '<script>';
+		$out .= '<script nonce="'.getNonce().'">';
 		$out .= 'jQuery("#barcodeforautodetect, #barcodeforproduct, #barcodeforlotserial").click(function(){';
 		$out .= 'console.log("select choice");';
 		$out .= 'jQuery("#scantoolmessage").text("");';
@@ -429,8 +429,7 @@ class FormOther
 			if (!is_numeric($showempty)) {
 				$textforempty = $showempty;
 			}
-			$moreforfilter .= '<option class="optiongrey" value="'.($showempty < 0 ? $showempty : -1).'"'.($selected == $showempty ? ' selected' : '').'>'.$textforempty.'</option>'."\n";
-			//$moreforfilter .= '<option value="0" '.($moreparamonempty ? $moreparamonempty.' ' : '').' class="optiongrey">'.(is_numeric($showempty) ? '&nbsp;' : $showempty).'</option>'; // Should use -1 to say nothing
+			$moreforfilter .= '<option class="optiongrey" value="'.($showempty < 0 ? $showempty : -1).'"'.($selected == $showempty ? ' selected' : '').' data-html="'.dol_escape_htmltag($textforempty).'">'.dol_escape_htmltag($textforempty).'</option>'."\n";
 		}
 
 		if (is_array($tab_categs)) {
@@ -439,6 +438,7 @@ class FormOther
 				if ($categ['id'] == $selected) {
 					$moreforfilter .= ' selected';
 				}
+				$moreforfilter .= ' data-html="'.dol_escape_htmltag(img_picto('', 'category', 'class="pictofixedwidth" style="color: #'.$categ['color'].'"').dol_trunc($categ['fulllabel'], 50, 'middle')).'"';
 				$moreforfilter .= '>'.dol_trunc($categ['fulllabel'], 50, 'middle').'</option>';
 			}
 		}
@@ -847,8 +847,8 @@ class FormOther
 			$langs->load("other");
 			if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax)) {
 				$out .= '<link rel="stylesheet" media="screen" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/css/jPicker-1.1.6.css" />';
-				$out .= '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
-				$out .= '<script type="text/javascript">
+				$out .= '<script nonce="'.getNonce().'" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
+				$out .= '<script nonce="'.getNonce().'" type="text/javascript">
 	             jQuery(document).ready(function(){
 					var originalhex = null;
 	                $(\'#colorpicker'.$prefix.'\').jPicker( {
@@ -915,8 +915,8 @@ class FormOther
 		} else { // In most cases, this is not used. We used instead function with no specific list of colors
 			if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax)) {
 				$out .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.css" type="text/css" media="screen" />';
-				$out .= '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
-				$out .= '<script type="text/javascript">
+				$out .= '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
+				$out .= '<script nonce="'.getNonce().'" type="text/javascript">
 	             jQuery(document).ready(function(){
 	                 jQuery(\'#colorpicker'.$prefix.'\').colorpicker({
 	                     size: 14,
@@ -1237,7 +1237,7 @@ class FormOther
 
 		// Javascript code for dynamic actions
 		if (!empty($conf->use_javascript_ajax)) {
-			$selectboxlist .= '<script type="text/javascript">
+			$selectboxlist .= '<script nonce="'.getNonce().'" type="text/javascript">
 
 	        // To update list of activated boxes
 	        function updateBoxOrder(closing) {
@@ -1513,9 +1513,10 @@ class FormOther
 	 * @param	array	$search_xaxis		Array of preselected fields
 	 * @param	array	$arrayofxaxis		Array of groupby to fill
 	 * @param	string  $showempty          '1' or 'text'
+	 * @param	string	$morecss			More css
 	 * @return 	string						HTML string component
 	 */
-	public function selectXAxisField($object, $search_xaxis, &$arrayofxaxis, $showempty = '1')
+	public function selectXAxisField($object, $search_xaxis, &$arrayofxaxis, $showempty = '1', $morecss = 'minwidth250 maxwidth500')
 	{
 		global $form;
 
@@ -1523,7 +1524,7 @@ class FormOther
 		foreach ($arrayofxaxis as $key => $val) {
 			$arrayofxaxislabel[$key] = $val['label'];
 		}
-		$result = $form->selectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth250 maxwidth500', 1);
+		$result = $form->selectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $result;
 	}

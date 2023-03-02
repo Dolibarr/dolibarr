@@ -24,6 +24,7 @@
  *		\brief      Tool to edit menus
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
@@ -172,12 +173,12 @@ if ($action == 'add') {
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && GETPOST('menuId') && GETPOST('type') == 'top') {
+	if (!$error && GETPOST('menuId', 'alphanohtml', 3) && GETPOST('type') == 'top') {
 		setEventMessages($langs->trans("ErrorTopMenuMustHaveAParentWithId0"), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && !GETPOST('menuId') && GETPOST('type') == 'left') {
+	if (!$error && !GETPOST('menuId', 'alphanohtml', 3) && GETPOST('type') == 'left') {
 		setEventMessages($langs->trans("ErrorLeftMenuMustHaveAParentId"), null, 'errors');
 		$action = 'create';
 		$error++;
@@ -216,29 +217,6 @@ if ($action == 'add') {
 			$action = 'create';
 			setEventMessages($menu->error, $menu->errors, 'errors');
 		}
-	}
-}
-
-// delete
-if ($action == 'confirm_delete' && $confirm == 'yes') {
-	$db->begin();
-
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE rowid = ".GETPOST('menuId', 'int');
-	$result = $db->query($sql);
-
-	if ($result == 0) {
-		$db->commit();
-
-		llxHeader();
-		setEventMessages($langs->trans("MenuDeleted"), null, 'mesgs');
-		llxFooter();
-		exit;
-	} else {
-		$db->rollback();
-
-		$reload = 0;
-		$_GET["action"] = '';
-		$action = '';
 	}
 }
 
@@ -318,15 +296,17 @@ if ($action == 'create') {
 
 	// User
 	print '<tr><td class="nowrap fieldrequired">'.$langs->trans('MenuForUsers').'</td>';
-	print '<td><select class="flat" name="user">';
+	print '<td><select class="flat" name="user" id="menuuser">';
 	print '<option value="2" selected>'.$langs->trans("AllMenus").'</option>';
 	print '<option value="0">'.$langs->trans('Internal').'</option>';
 	print '<option value="1">'.$langs->trans('External').'</option>';
-	print '</select></td>';
+	print '</select>';
+	print ajax_combobox('menuuser');
+	print '</td>';
 	print '<td>'.$langs->trans('DetailUser').'</td></tr>';
 
 	// Type
-	print '<tr><td class="fieldrequired">'.$langs->trans('Type').'</td><td>';
+	print '<tr><td class="fieldrequired">'.$langs->trans('Position').'</td><td>';
 	if ($parent_rowid) {
 		print $langs->trans('Left');
 		print '<input type="hidden" name="type" value="left">';
@@ -336,6 +316,7 @@ if ($action == 'create') {
 		print '<option value="top"'.(GETPOST("type") == 'top' ? ' selected' : '').'>'.$langs->trans('Top').'</option>';
 		print '<option value="left"'.(GETPOST("type") == 'left' ? ' selected' : '').'>'.$langs->trans('Left').'</option>';
 		print '</select>';
+		print ajax_combobox('topleft');
 	}
 	print '</td><td>'.$langs->trans('DetailType').'</td></tr>';
 
@@ -373,12 +354,6 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans('Position').'</td>';
 	print '<td><input type="text" class="width100" name="position" value="'.dol_escape_htmltag(GETPOSTISSET("position") ? GETPOST("position", 'int') : 100).'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
 
-	// Target
-	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
-	print '<option value=""'.(isset($menu->target) && $menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
-	print '<option value="_blank"'.(isset($menu->target) && $menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
-	print '</select></td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
-
 	// Enabled
 	print '<tr><td>'.$langs->trans('Enabled').'</td>';
 	print '<td><input type="text" class="minwidth500" name="enabled" value="'.(GETPOSTISSET('enabled') ? GETPOST("enabled", 'alphanohtml') : '1').'"></td><td>'.$langs->trans('DetailEnabled').'</td></tr>';
@@ -386,6 +361,14 @@ if ($action == 'create') {
 	// Perms
 	print '<tr><td>'.$langs->trans('Rights').'</td>';
 	print '<td><input type="text" class="minwidth500" name="perms" value="'.(GETPOSTISSET('perms') ? GETPOST('perms', 'alphanohtml') : '1').'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
+
+	// Target
+	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target" id="target">';
+	print '<option value=""'.(isset($menu->target) && $menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
+	print '<option value="_blank"'.(isset($menu->target) && $menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
+	print '</select>';
+	print ajax_combobox("target");
+	print '</td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 
 	print '</table>';
 
@@ -415,7 +398,7 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans('Id').'</td><td>'.$menu->id.'</td><td>'.$langs->trans('DetailId').'</td></tr>';
 
 	// Module
-	print '<tr><td>'.$langs->trans('MenuModule').'</td><td>'.$menu->module.'</td><td>'.$langs->trans('DetailMenuModule').'</td></tr>';
+	print '<tr><td>'.$langs->trans('MenuModule').'</td><td>'.(empty($menu->module) ? 'Core' : $menu->module).'</td><td><span class="opacitymedium">'.$langs->trans('DetailMenuModule').'</span></td></tr>';
 
 	// Handler
 	if ($menu->menu_handler == 'all') {
@@ -426,14 +409,17 @@ if ($action == 'create') {
 	print '<tr><td class="fieldrequired">'.$langs->trans('MenuHandler').'</td><td>'.$handler.'</td><td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
 
 	// User
-	print '<tr><td class="nowrap fieldrequired">'.$langs->trans('MenuForUsers').'</td><td><select class="flat" name="user">';
+	print '<tr><td class="nowrap fieldrequired">'.$langs->trans('MenuForUsers').'</td><td>';
+	print '<select class="flat" name="user" id="menuuser">';
 	print '<option value="2"'.($menu->user == 2 ? ' selected' : '').'>'.$langs->trans("AllMenus").'</option>';
 	print '<option value="0"'.($menu->user == 0 ? ' selected' : '').'>'.$langs->trans('Internal').'</option>';
 	print '<option value="1"'.($menu->user == 1 ? ' selected' : '').'>'.$langs->trans('External').'</option>';
-	print '</select></td><td>'.$langs->trans('DetailUser').'</td></tr>';
+	print '</select>';
+	print ajax_combobox('menuuser');
+	print '</td><td>'.$langs->trans('DetailUser').'</td></tr>';
 
 	// Type
-	print '<tr><td class="fieldrequired">'.$langs->trans('Type').'</td>';
+	print '<tr><td class="fieldrequired">'.$langs->trans('Position').'</td>';
 	print '<td>'.$langs->trans(ucfirst($menu->type)).'</td><td>'.$langs->trans('DetailType').'</td></tr>';
 
 	// Mainmenu code
@@ -486,12 +472,6 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans('Position').'</td>';
 	print '<td><input type="text" class="minwidth100" name="position" value="'.$menu->position.'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
 
-	// Target
-	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
-	print '<option value=""'.($menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
-	print '<option value="_blank"'.($menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
-	print '</select></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
-
 	// Enabled
 	print '<tr><td>'.$langs->trans('Enabled').'</td>';
 	print '<td><input type="text" class="minwidth500" name="enabled" value="'.dol_escape_htmltag($menu->enabled).'"></td><td>'.$langs->trans('DetailEnabled');
@@ -507,6 +487,14 @@ if ($action == 'create') {
 		print ' <span class="opacitymedium">('.$langs->trans("ConditionIsCurrently").':</span> '.yn(dol_eval($menu->perms, 1, 1, '1')).')';
 	}
 	print '</td></tr>';
+
+	// Target
+	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" id="target" name="target">';
+	print '<option value=""'.($menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
+	print '<option value="_blank"'.($menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
+	print '</select>';
+	print ajax_combobox("target");
+	print '</td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 
 	print '</table>';
 

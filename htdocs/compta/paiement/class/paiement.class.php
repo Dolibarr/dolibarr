@@ -8,7 +8,7 @@
  * Copyright (C) 2015       Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet		 <fmarcet@2byte.es>
  * Copyright (C) 2018       Thibault FOUCART		 <support@ptibogxiv.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Andreu Bisquerra Gaya <jove@bisquerra.com>
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  *
@@ -455,7 +455,7 @@ class Paiement extends CommonObject
 
 							$newlang = '';
 							$outputlangs = $langs;
-							if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 								$invoice->fetch_thirdparty();
 								$newlang = $invoice->thirdparty->default_lang;
 							}
@@ -464,8 +464,8 @@ class Paiement extends CommonObject
 								$outputlangs->setDefaultLang($newlang);
 							}
 
-							$hidedetails = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
-							$hidedesc = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
+							$hidedetails = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
+							$hidedesc = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
 							$hideref = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0;
 
 							$ret = $invoice->fetch($facid); // Reload to get new records
@@ -628,7 +628,7 @@ class Paiement extends CommonObject
 		$error = 0;
 		$bank_line_id = 0;
 
-		if (isModEnabled('banque')) {
+		if (isModEnabled("banque")) {
 			if ($accountid <= 0) {
 				$this->error = 'Bad value for parameter accountid='.$accountid;
 				dol_syslog(get_class($this).'::addPaymentToBank '.$this->error, LOG_ERR);
@@ -643,6 +643,8 @@ class Paiement extends CommonObject
 			$acc = new Account($this->db);
 			$result = $acc->fetch($this->fk_account);
 			if ($result < 0) {
+				$this->error = $acc->error;
+				$this->errors = $acc->errors;
 				$error++;
 				return -1;
 			}
@@ -768,7 +770,7 @@ class Paiement extends CommonObject
 				}
 
 				// Add link 'InvoiceRefused' in bank_url
-				if (! $error && $label == '(InvoiceRefused)') {
+				if (!$error && $label == '(InvoiceRefused)') {
 					$result=$acc->add_url_line(
 						$bank_line_id,
 						$this->id_prelevement,
@@ -788,6 +790,7 @@ class Paiement extends CommonObject
 				}
 			} else {
 				$this->error = $acc->error;
+				$this->errors = $acc->errors;
 				$error++;
 			}
 

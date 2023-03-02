@@ -349,7 +349,7 @@ class PaiementFourn extends Paiement
 							if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 								$newlang = '';
 								$outputlangs = $langs;
-								if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+								if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 									$newlang = $invoice->thirdparty->default_lang;
 								}
 								if (!empty($newlang)) {
@@ -535,7 +535,7 @@ class PaiementFourn extends Paiement
 	 *	Return list of supplier invoices the payment point to
 	 *
 	 *	@param      string	$filter         SQL filter. Warning: This value must not come from a user input.
-	 *	@return     array           		Array of supplier invoice id
+	 *	@return     array|int           		Array of supplier invoice id | <0 si ko
 	 */
 	public function getBillsArray($filter = '')
 	{
@@ -862,7 +862,7 @@ class PaiementFourn extends Paiement
 		global $conf;
 
 		$way = 'dolibarr';
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			foreach ($this->multicurrency_amounts as $value) {
 				if (!empty($value)) { // one value found then payment is in invoice currency
 					$way = 'customer';

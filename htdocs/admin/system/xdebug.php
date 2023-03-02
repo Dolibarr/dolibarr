@@ -20,6 +20,7 @@
  *     \brief      Page administration XDebug
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 $langs->load("admin");

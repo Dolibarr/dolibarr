@@ -34,6 +34,7 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -47,7 +48,10 @@ $langs->loadLangs(array("companies", "other", "recruitment"));
 // Get parameters
 $action   = GETPOST('action', 'aZ09');
 $cancel   = GETPOST('cancel', 'alpha');
+$SECUREKEY = GETPOST("securekey");
+$entity = GETPOST('entity', 'int') ? GETPOST('entity', 'int') : $conf->entity;
 $backtopage = '';
+$suffix = "";
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -77,7 +81,7 @@ $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than curren
 
 // Security check
 if (empty($conf->recruitment->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Recruitment not enabled');
 }
 
 
@@ -167,6 +171,7 @@ if (!empty($conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE)) {
 
 
 $results = $object->fetchAll($sortfield, $sortorder, 0, 0, array('status' => 1));
+$now = dol_now();
 
 if (is_array($results)) {
 	if (empty($results)) {
@@ -247,7 +252,7 @@ if (is_array($results)) {
 				}
 			}
 			print '<b class="wordbreak">';
-			print $tmpuser->getFullName(-1);
+			print $tmpuser->getFullName($langs);
 			print ' &nbsp; '.dol_print_email($emailforcontact, 0, 0, 1, 0, 0, 'envelope');
 			print '</b>';
 			print '</b><br>';

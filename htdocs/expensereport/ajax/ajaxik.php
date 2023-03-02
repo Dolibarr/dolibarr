@@ -37,9 +37,6 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 
 $res = 0;
 require '../../main.inc.php';

@@ -6,9 +6,8 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 
 | Version    | Supported              |
 | ---------- | ---------------------- |
-| <= 15.0.0  | :x:                    |
-| >= 15.0.1+ | :white_check_mark: except CSRF attacks|
-| >= 16.0.0  | :white_check_mark:     |
+| <= 16.0.2  | :x:                    |
+| >= 16.0.3  | :white_check_mark:     |
 | >= develop | :white_check_mark:     |
 
 ## Reporting a Vulnerability
@@ -54,16 +53,17 @@ ONLY vulnerabilities discovered, when the following setup on test platform is us
 * $dolibarr_nocsrfcheck must be kept to the value 0 into conf.php (this is the default value)
 * $dolibarr_main_force_https must be set to something else than 0.
 * The constant MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 3 into backoffice menu Home - Setup - Other (this protection should be set to 3 soon by default)
-* The module DebugBar and ModuleBuilder must NOT be enabled (by default, these modules are not enabled. They are developer tools)
 * ONLY security reports on modules provided by default and with the "stable" status are valid (troubles into "experimental", "developement" or external modules are not valid vulnerabilities).
 * The root of web server must link to htdocs and the documents directory must be outside of the web server root (this is the default when using the default installer but may differs with external installer).
 * The web server setup must be done so that only the documents directory is in write mode. The root directory called htdocs must be read-only.
 * CSRF attacks are accepted but double check that you have set MAIN_SECURITY_CSRF_WITH_TOKEN to value 3.
+* The module DebugBar and ModuleBuilder must NOT be enabled (by default, these modules are not enabled. They are developer tools)
 * Ability for a high level user to edit web site pages into the CMS by including HTML or Javascript is an expected feature. Vulnerabilities into the website module are validated only if HTML or Javascript injection can be done by a non allowed user.
+* Fail2ban rules for rate limit on the login page,password forgotten page and all public pages (/public/*) must be installed as recommendend into the section "About - Admin tools - Section Access limits and mitigation".
 
 Scope is the web application (back office) and the APIs.
 
-## Qualifying vulnerabilities for reporting
+## Example of vulnerabilities Qualified for reporting.
 
 * Remote code execution (RCE)
 * Local files access and manipulation (LFI, RFI, XXE, SSRF, XSPA)
@@ -79,7 +79,7 @@ Scope is the web application (back office) and the APIs.
 * Software version disclosure (for non admin users only)
 * Stack traces or path disclosure (for non admin users only)
 
-## Non-qualifying vulnerabilities for reporting
+## Example of vulnerabilities non Non-qualified for reporting.
 
 * "Self" XSS
 * SSL/TLS best practices
@@ -96,3 +96,4 @@ Scope is the web application (back office) and the APIs.
 * Software version or private IP disclosure when logged user is admin
 * Stack traces or path disclosure when logged user is admin
 * Any vulnerabilities due to a configuration different than the one defined into chapter "Scope for qualified vulnerabilities".
+* Brute force attacks on login page, password forgotten page or any public pages (/public/*) are not qualified if the fail2ban recommended fail2ban rules were not installed.  

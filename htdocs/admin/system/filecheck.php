@@ -24,6 +24,7 @@
  *  \brief      Page to check Dolibarr files integrity
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
@@ -99,11 +100,11 @@ if (empty($xmlremote)) {
 }
 if ($xmlremote && !preg_match('/^https?:\/\//', $xmlremote)) {
 	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorURLMustStartWithHttp", $xmlremote), '', 'errors');
+	setEventMessages($langs->trans("ErrorURLMustStartWithHttp", $xmlremote), null, 'errors');
 	$error++;
 } elseif ($xmlremote && !preg_match('/\.xml$/', $xmlremote)) {
 	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorURLMustEndWith", $xmlremote, '.xml'), '', 'errors');
+	setEventMessages($langs->trans("ErrorURLMustEndWith", $xmlremote, '.xml'), null, 'errors');
 	$error++;
 }
 

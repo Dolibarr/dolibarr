@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -51,7 +51,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->mrp->multidir_output[$object->entity]."/".$object->id;
+	$upload_dir = $conf->mrp->multidir_output[empty($object->entity) ? $conf->entity : $object->entity]."/".$object->id;
 }
 
 // Security check - Protection if external user
@@ -105,33 +105,32 @@ if ($id > 0 || !empty($ref)) {
 	//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
 	//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref .= $langs->trans('ThirdParty').' : '.(is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
+	if (is_object($object->thirdparty)) {
+		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
+		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
+			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+		}
+	}
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
-		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($permissiontoadd) {
+		if (is_object($object->thirdparty)) {
+			$morehtmlref .= '<br>';
+		}
+		if (0) {
+			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			if ($action == 'classify') {
-				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_soc, $object->fk_project, 'projectid', 0, 0, 1, 1);
-				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects($object->fk_soc, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
-				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-				$morehtmlref .= '</form>';
-			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_soc, $object->fk_project, 'none', 0, 0, 0, 1);
-			}
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= ' : '.$proj->getNomUrl();
-			} else {
-				$morehtmlref .= '';
+				$morehtmlref .= $proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
+				}
 			}
 		}
 	}

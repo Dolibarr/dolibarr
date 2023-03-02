@@ -245,7 +245,7 @@ class PriceExpression
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
 		$sql .= " title = ".(isset($this->title) ? "'".$this->db->escape($this->title)."'" : "''").",";
-		$sql .= " expression = ".(isset($this->expression) ? "'".$this->db->escape($this->expression)."'" : "''")."";
+		$sql .= " expression = ".(isset($this->expression) ? "'".$this->db->escape($this->expression)."'" : "''");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();

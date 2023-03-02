@@ -177,7 +177,7 @@ class SkillRank extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -405,7 +405,7 @@ class SkillRank extends CommonObject
 		$sql .= $this->getFieldList('t');
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
@@ -527,8 +527,8 @@ class SkillRank extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->skillrank->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->skillrank->skillrank_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->skillrank->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->skillrank->skillrank_advance->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -645,8 +645,8 @@ class SkillRank extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->hrm_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->hrm_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -669,8 +669,8 @@ class SkillRank extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->hrm_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->hrm_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -693,8 +693,8 @@ class SkillRank extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->hrm_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->hrm_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -919,8 +919,8 @@ class SkillRank extends CommonObject
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_skillrank = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
-			$this->error = $this->error;
-			$this->errors = $this->errors;
+			$this->error = $objectline->error;
+			$this->errors = $objectline->errors;
 			return $result;
 		} else {
 			$this->lines = $result;

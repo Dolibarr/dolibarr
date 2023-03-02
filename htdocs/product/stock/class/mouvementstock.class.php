@@ -48,8 +48,16 @@ class MouvementStock extends CommonObject
 
 	/**
 	 * @var int ID warehouse
+	 * @deprecated
+	 * @see $warehouse_id
+	 */
+	public $entrepot_id;
+
+	/**
+	 * @var int ID warehouse
 	 */
 	public $warehouse_id;
+
 	public $qty;
 
 	/**
@@ -119,12 +127,12 @@ class MouvementStock extends CommonObject
 		'fk_origin' =>array('type'=>'integer', 'label'=>'Fk origin', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
 		'origintype' =>array('type'=>'varchar(32)', 'label'=>'Origintype', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>70),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>75),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>75),
 		'inventorycode' =>array('type'=>'varchar(128)', 'label'=>'InventoryCode', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'batch' =>array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'eatby' =>array('type'=>'date', 'label'=>'Eatby', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'sellby' =>array('type'=>'date', 'label'=>'Sellby', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
-		'fk_project' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk project', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
+		'fk_project' =>array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Fk project', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
 	);
 
 
@@ -272,7 +280,7 @@ class MouvementStock extends CommonObject
 		}
 
 		// Test if product require batch data. If yes, and there is not or values are not correct, we throw an error.
-		if (!empty($conf->productbatch->enabled) && $product->hasbatch() && !$skip_batch) {
+		if (isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 			if (empty($batch)) {
 				$langs->load("errors");
 				$this->errors[] = $langs->transnoentitiesnoconv("ErrorTryToMakeMoveOnProductRequiringBatchData", $product->ref);
@@ -383,8 +391,8 @@ class MouvementStock extends CommonObject
 
 		// Check if stock is enough when qty is < 0
 		// Note that qty should be > 0 with type 0 or 3, < 0 with type 1 or 2.
-		if ($movestock && $qty < 0 && empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) {
-			if (!empty($conf->productbatch->enabled) && $product->hasbatch() && !$skip_batch) {
+		if ($movestock && $qty < 0 && !getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
+			if (isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				$foundforbatch = 0;
 				$qtyisnotenough = 0;
 
@@ -544,7 +552,7 @@ class MouvementStock extends CommonObject
 			}
 
 			// Update detail of stock for the lot.
-			if (!$error && !empty($conf->productbatch->enabled) && $product->hasbatch() && !$skip_batch) {
+			if (!$error && isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				if ($id_product_batch > 0) {
 					$result = $this->createBatch($id_product_batch, $qty);
 				} else {
@@ -586,7 +594,7 @@ class MouvementStock extends CommonObject
 
 		// Add movement for sub products (recursive call)
 		if (!$error && !empty($conf->global->PRODUIT_SOUSPRODUITS) && empty($conf->global->INDEPENDANT_SUBPRODUCT_STOCK) && empty($disablestockchangeforsubproduct)) {
-			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label, $inventorycode); // we use 0 as price, because AWP must not change for subproduct
+			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label, $inventorycode, $datem); // we use 0 as price, because AWP must not change for subproduct
 		}
 
 		if ($movestock && !$error) {
@@ -596,7 +604,7 @@ class MouvementStock extends CommonObject
 			// End call triggers
 
 			// Check unicity for serial numbered equipments once all movement were done.
-			if (!$error && !empty($conf->productbatch->enabled) && $product->hasbatch() && !$skip_batch) {
+			if (!$error && isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				if ($product->status_batch == 2 && $qty > 0) {	// We check only if we increased qty
 					if ($this->getBatchCount($fk_product, $batch) > 1) {
 						$error++;
@@ -705,17 +713,18 @@ class MouvementStock extends CommonObject
 	/**
 	 *  Create movement in database for all subproducts
 	 *
-	 * 	@param 		User	$user			Object user
-	 * 	@param		int		$idProduct		Id product
-	 * 	@param		int		$entrepot_id	Warehouse id
-	 * 	@param		int		$qty			Quantity
-	 * 	@param		int		$type			Type
-	 * 	@param		int		$price			Price
-	 * 	@param		string	$label			Label of movement
-	 *  @param		string	$inventorycode	Inventory code
-	 * 	@return 	int     				<0 if KO, 0 if OK
+	 * 	@param 		User			$user			Object user
+	 * 	@param		int				$idProduct		Id product
+	 * 	@param		int				$entrepot_id	Warehouse id
+	 * 	@param		int				$qty			Quantity
+	 * 	@param		int				$type			Type
+	 * 	@param		int				$price			Price
+	 * 	@param		string			$label			Label of movement
+	 *  @param		string			$inventorycode	Inventory code
+	 *  @param		integer|string	$datem			Force date of movement
+	 * 	@return 	int     		<0 if KO, 0 if OK
 	 */
-	private function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '')
+	private function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '')
 	{
 		global $langs;
 
@@ -747,7 +756,7 @@ class MouvementStock extends CommonObject
 			if (!$error) {
 				$tmpmove = dol_clone($this, 1);
 
-				$result = $tmpmove->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0, $label, $inventorycode); // This will also call _createSubProduct making this recursive
+				$result = $tmpmove->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0, $label, $inventorycode, $datem); // This will also call _createSubProduct making this recursive
 				if ($result < 0) {
 					$this->error = $tmpmove->error;
 					$this->errors = array_merge($this->errors, $tmpmove->errors);
@@ -833,7 +842,7 @@ class MouvementStock extends CommonObject
 		$sql .= " WHERE fk_product = ".((int) $productidselected);
 		$sql .= " AND datem < '".$this->db->idate($datebefore)."'";
 
-		dol_syslog(get_class($this).__METHOD__.'', LOG_DEBUG);
+		dol_syslog(get_class($this).__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -976,10 +985,9 @@ class MouvementStock extends CommonObject
 					// Separate originetype with "@" : left part is class name, right part is module name
 					$origin_type_array = explode('@', $origin_type);
 					$classname = ucfirst($origin_type_array[0]);
-					$modulename = empty($origin_type_array[1]) ? $classname : $origin_type_array[1];
+					$modulename = empty($origin_type_array[1]) ? strtolower($classname) : $origin_type_array[1];
 					$result = dol_include_once('/'.$modulename.'/class/'.strtolower($classname).'.class.php');
 					if ($result) {
-						$classname = ucfirst($classname);
 						$origin = new $classname($this->db);
 					}
 				}
@@ -1094,6 +1102,13 @@ class MouvementStock extends CommonObject
 		$label .= '<div width="100%">';
 		$label .= '<b>'.$langs->trans('Label').':</b> '.$this->label;
 		$label .= '<br><b>'.$langs->trans('Qty').':</b> '.($this->qty > 0 ? '+' : '').$this->qty;
+		if ($this->batch) {
+			$label .= '<br><b>'.$langs->trans('Batch').':</b> '.$this->batch;
+		}
+		/* TODO Get also warehouse label in a property instead of id
+		if ($this->warehouse_id > 0) {
+			$label .= '<br><b>'.$langs->trans('Warehouse').':</b> '.$this->warehouse_id;
+		}*/
 		$label .= '</div>';
 
 		// Link to page of warehouse tab

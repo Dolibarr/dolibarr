@@ -13,8 +13,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 /**
  *  \defgroup   zapier     Module Zapier
  *  \brief      Zapier module descriptor.
@@ -23,7 +24,8 @@
  *  \ingroup    zapier
  *  \brief      Description and activation file for the module Zapier
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+
+require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 /**
  *  Description and activation class for module Zapier
@@ -123,7 +125,7 @@ class modZapier extends DolibarrModules
 		$this->conflictwith = array();
 		$this->langfiles = array("zapier");
 		// Minimum version of PHP required by module
-		//$this->phpmin = array(5, 6);
+		//$this->phpmin = array(7, 0);
 		// Minimum version of Dolibarr required by module
 		$this->need_dolibarr_version = array(10, 0);
 		// Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -170,7 +172,7 @@ class modZapier extends DolibarrModules
 		// 'invoice_supplier' to add a tab in supplier invoice view
 		// 'member'           to add a tab in fundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
+		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view

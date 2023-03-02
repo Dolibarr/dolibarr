@@ -58,7 +58,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->fournisseur->commande->lire);
+		$this->hidden = !($user->hasRight('fournisseur', 'commande', 'lire'));
 	}
 
 	/**

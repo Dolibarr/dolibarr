@@ -23,7 +23,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 
 				$tmpkey = 'options_'.$key;
 
-				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('date', 'datetime', 'timestamp')) && !is_numeric($obj->$tmpkey)) {
+				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('date', 'datetime', 'timestamp')) && isset($obj->$tmpkey) && !is_numeric($obj->$tmpkey)) {
 					$datenotinstring = $obj->$tmpkey;
 					if (!is_numeric($obj->$tmpkey)) {	// For backward compatibility
 						$datenotinstring = $db->jdate($datenotinstring);
@@ -67,7 +67,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 						// we keep position for the first line
 						$totalarray['totalizable'][$key]['pos'] = $totalarray['nbfield'];
 					}
-					if (is_numeric($obj->$tmpkey)) {
+					if (isset($obj->$tmpkey) && is_numeric($obj->$tmpkey)) {
 						if (!isset($totalarray['totalizable'][$key]['total'])) {
 							$totalarray['totalizable'][$key]['total'] = 0;
 						}

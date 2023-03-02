@@ -126,7 +126,7 @@ $permissiontoadd = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rig
 $permissiontodelete = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->asset->delete) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->asset->model_advance->delete)));
 
 // Security check
-if (empty($conf->asset->enabled)) {
+if (!isModEnabled('asset')) {
 	accessforbidden('Module not enabled');
 }
 
@@ -140,7 +140,7 @@ if ($user->socid > 0) {
 }
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, 'asset', $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->asset->enabled)) accessforbidden();
+if (!isModEnabled('asset')) accessforbidden();
 if (!$permissiontoread) accessforbidden();
 
 /*
@@ -307,7 +307,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$nbtotalofrecords = $db->num_rows($result);
 	*/
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^SELECT[a-z0-9\._\s\(\),]+FROM/i', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+	$sqlforcount = preg_replace('/^SELECT[a-z0-9\._\s\(\),]+FROM/Ui', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
 
 	$resql = $db->query($sqlforcount);
 	if ($resql) {

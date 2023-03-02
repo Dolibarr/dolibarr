@@ -21,7 +21,6 @@
  */
 class FormSetup
 {
-
 	/**
 	 * @var DoliDB Database handler.
 	 */
@@ -339,8 +338,8 @@ class FormSetup
 	/**
 	 * Method used to test  module builder convertion to this form usage
 	 *
-	 * @param array 	$params 	an array of arrays of params from old modulBuilder params
-	 * @return null
+	 * @param 	array 	$params 	an array of arrays of params from old modulBuilder params
+	 * @return 	void
 	 */
 	public function addItemsFromParamsArray($params)
 	{
@@ -662,7 +661,7 @@ class FormSetupItem
 	{
 		global $conf;
 		if (isset($conf->global->{$this->confKey})) {
-			$this->fieldValue = $conf->global->{$this->confKey};
+			$this->fieldValue = getDolGlobalString($this->confKey);
 			return true;
 		} else {
 			$this->fieldValue = null;
@@ -683,7 +682,8 @@ class FormSetupItem
 
 	/**
 	 * Save const value based on htdocs/core/actions_setmoduleoptions.inc.php
-	 *	@return     int         			-1 if KO, 1 if OK
+	 *
+	 * @return     int         			-1 if KO, 1 if OK
 	 */
 	public function saveConfValue()
 	{
@@ -714,10 +714,13 @@ class FormSetupItem
 				return 1;
 			}
 		}
+
+		return 0;
 	}
 
 	/**
 	 * Set an override function for saving data
+	 *
 	 * @param callable $callBack a callable function
 	 * @return void
 	 */
@@ -758,6 +761,8 @@ class FormSetupItem
 				$val = GETPOST($this->confKey, 'array');
 				if ($val && is_array($val)) {
 					$val_const = implode(',', $val);
+				} else {
+					$val_const = '';
 				}
 			} elseif ($this->type == 'html') {
 				$val_const = GETPOST($this->confKey, 'restricthtml');
@@ -835,7 +840,11 @@ class FormSetupItem
 		} elseif ($this->type== 'color') {
 			$out.=  $this->generateInputFieldColor();
 		} elseif ($this->type == 'yesno') {
-			$out.= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
+			if (!empty($conf->use_javascript_ajax)) {
+				$out.= ajax_constantonoff($this->confKey);
+			} else {
+				$out.= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
+			}
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
 			$out.= $this->generateInputFieldEmailTemplate();
 		} elseif (preg_match('/category:/', $this->type)) {
@@ -847,7 +856,7 @@ class FormSetupItem
 		} elseif ($this->type == 'securekey') {
 			$out.= $this->generateInputFieldSecureKey();
 		} elseif ($this->type == 'product') {
-			if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+			if (isModEnabled("product") || isModEnabled("service")) {
 				$selected = (empty($this->fieldValue) ? '' : $this->fieldValue);
 				$out.= $this->form->select_produits($selected, $this->confKey, '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, $this->cssClass, 0, '', null, 1);
 			}
@@ -952,21 +961,11 @@ class FormSetupItem
 		if (!empty($conf->use_javascript_ajax)) {
 			$out.= '&nbsp;'.img_picto($this->langs->trans('Generate'), 'refresh', 'id="generate_token'.$this->confKey.'" class="linkobject"');
 		}
-		if (!empty($conf->use_javascript_ajax)) {
-			$out .= "\n" . '<script type="text/javascript">';
-			$out .= '$(document).ready(function () {
-                        $("#generate_token' . $this->confKey . '").click(function() {
-                	        $.get( "' . DOL_URL_ROOT . '/core/ajax/security.php", {
-                		      action: \'getrandompassword\',
-                		      generic: true
-    				        },
-    				        function(token) {
-    					       $("#' . $this->confKey . '").val(token);
-            				});
-                         });
-                    });';
-			$out .= '</script>';
-		}
+
+		// Add button to autosuggest a key
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+		$out .= dolJSToSetRandomPassword($this->confKey, 'generate_token'.$this->confKey);
+
 		return $out;
 	}
 
@@ -1009,6 +1008,7 @@ class FormSetupItem
 	 * set the type from string : used for old module builder setup conf style conversion and tests
 	 * because this two class will quickly evolve it's important to not set directly $this->type (will be protected) so this method exist
 	 * to be sure we can manage evolution easily
+	 *
 	 * @param string $type possible values based on old module builder setup : 'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
 	 * @deprecated yes this setTypeFromTypeString came deprecated because it exists only for manage setup convertion
 	 * @return bool
@@ -1016,11 +1016,13 @@ class FormSetupItem
 	public function setTypeFromTypeString($type)
 	{
 		$this->type = $type;
+
 		return true;
 	}
 
 	/**
 	 * Add error
+	 *
 	 * @param array|string $errors the error text
 	 * @return null
 	 */
@@ -1038,11 +1040,13 @@ class FormSetupItem
 	}
 
 	/**
-	 * @return bool|string Generate the output html for this item
+	 * generateOutputField
+	 *
+	 * @return bool|string 		Generate the output html for this item
 	 */
 	public function generateOutputField()
 	{
-		global $conf, $user;
+		global $conf, $user, $langs;
 
 		if (!empty($this->fieldOverride)) {
 			return $this->fieldOverride;
@@ -1067,7 +1071,15 @@ class FormSetupItem
 		} elseif ($this->type== 'color') {
 			$out.=  $this->generateOutputFieldColor();
 		} elseif ($this->type == 'yesno') {
-			$out.= ajax_constantonoff($this->confKey);
+			if (!empty($conf->use_javascript_ajax)) {
+				$out.= ajax_constantonoff($this->confKey);
+			} else {
+				if ($this->fieldValue == 1) {
+					$out.= $langs->trans('yes');
+				} else {
+					$out.= $langs->trans('no');
+				}
+			}
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
 			if ($this->fieldValue > 0) {
 				include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
@@ -1076,7 +1088,7 @@ class FormSetupItem
 				$tmp = explode(':', $this->type);
 
 				$template = $formmail->getEMailTemplate($this->db, $tmp[1], $user, $this->langs, $this->fieldValue);
-				if ($template<0) {
+				if (is_numeric($template) && $template < 0) {
 					$this->setErrors($formmail->errors);
 				}
 				$out.= $this->langs->trans($template->label);
@@ -1105,9 +1117,8 @@ class FormSetupItem
 				$out.= $this->langs->trans("NorProspectNorCustomer");
 			}
 		} elseif ($this->type == 'product') {
-			if (!class_exists("Product")) {
-				require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-			}
+			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
 			$product = new Product($this->db);
 			$resprod = $product->fetch($this->fieldValue);
 			if ($resprod > 0) {

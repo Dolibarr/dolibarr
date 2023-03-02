@@ -79,7 +79,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -92,7 +92,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -105,7 +105,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -120,7 +120,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -468,25 +468,6 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		print join(', ', $conf->logbuffer);
 		$this->assertGreaterThanOrEqual(1, $result, "Pb with dol_compress_dir of ".$dirout." into ".$conf->admin->dir_temp.'/testdir.zip');
 	}
-
-	/**
-	 * testDolDirList
-	 *
-	 * @return	void
-	 *
-	 * @depends	testDolCompressUnCompress
-	 * The depends says test is run only if previous is ok
-	 */
-	public function testDolDirList()
-	{
-		global $conf,$user,$langs,$db;
-
-		// Scan dir to guaruante we on't have library jquery twice (we accept exception of duplicte into ckeditor because all dir is removed for debian package, so there is no duplicate).
-		$founddirs=dol_dir_list(DOL_DOCUMENT_ROOT.'/includes/', 'files', 1, '^jquery\.js', array('ckeditor'));
-		print __METHOD__." count(founddirs)=".count($founddirs)."\n";
-		$this->assertEquals(1, count($founddirs));
-	}
-
 
 	/**
 	 * testDolCheckSecureAccessDocument

@@ -11,7 +11,7 @@
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2021-2022 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2023 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2022      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@
 /**
  *  \file       htdocs/commande/class/commande.class.php
  *  \ingroup    commande
- *  \brief      Fichier des classes de commandes
+ *  \brief      class for orders
  */
 include_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
@@ -93,20 +93,14 @@ class Commande extends CommonOrder
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * @var int Thirparty ID
+	 * @var int Thirdparty ID
 	 */
 	public $socid;
 
 	/**
-	 * @var string Thirparty ref of order
+	 * @var string Thirdparty ref of order
 	 */
 	public $ref_client;
-
-	/**
-	 * @var string Internal ref for order
-	 * @deprecated
-	 */
-	public $ref_int;
 
 	/**
 	 * @var int Contact ID
@@ -247,6 +241,11 @@ class Commande extends CommonOrder
 	public $user_valid;
 
 	/**
+	 * @var OrderLine one line of an order
+	 */
+	public $line;
+
+	/**
 	 * @var OrderLine[]
 	 */
 	public $lines = array();
@@ -315,10 +314,9 @@ class Commande extends CommonOrder
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>20, 'index'=>1),
 		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>25),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>26),
-		'ref_int' =>array('type'=>'varchar(255)', 'label'=>'RefInt', 'enabled'=>1, 'visible'=>0, 'position'=>27), // deprecated
 		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'RefCustomer', 'enabled'=>1, 'visible'=>-1, 'position'=>28),
-		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>20),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>25),
+		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'notnull'=>1, 'position'=>20),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>25),
 		'date_commande' =>array('type'=>'date', 'label'=>'Date', 'enabled'=>1, 'visible'=>1, 'position'=>60),
 		'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>62),
 		'date_cloture' =>array('type'=>'datetime', 'label'=>'DateClosing', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
@@ -334,8 +332,8 @@ class Commande extends CommonOrder
 		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'LocalTax2', 'enabled'=>1, 'visible'=>-1, 'position'=>135, 'isameasure'=>1),
 		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'TotalHT', 'enabled'=>1, 'visible'=>-1, 'position'=>140, 'isameasure'=>1),
 		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'TotalTTC', 'enabled'=>1, 'visible'=>-1, 'position'=>145, 'isameasure'=>1),
-		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>150),
-		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>155),
+		'note_private' =>array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>150),
+		'note_public' =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>155),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'PDFTemplate', 'enabled'=>1, 'visible'=>0, 'position'=>160),
 		//'facture' =>array('type'=>'tinyint(4)', 'label'=>'ParentInvoice', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
 		'fk_account' =>array('type'=>'integer', 'label'=>'BankAccount', 'enabled'=>'$conf->banque->enabled', 'visible'=>-1, 'position'=>170),
@@ -352,12 +350,12 @@ class Commande extends CommonOrder
 		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>225),
 		'fk_incoterms' =>array('type'=>'integer', 'label'=>'IncotermCode', 'enabled'=>'$conf->incoterm->enabled', 'visible'=>-1, 'position'=>230),
 		'location_incoterms' =>array('type'=>'varchar(255)', 'label'=>'IncotermLabel', 'enabled'=>'$conf->incoterm->enabled', 'visible'=>-1, 'position'=>235),
-		'fk_multicurrency' =>array('type'=>'integer', 'label'=>'Fk multicurrency', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>240),
-		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'MulticurrencyCurrency', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>245),
-		'multicurrency_tx' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyRate', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>250, 'isameasure'=>1),
-		'multicurrency_total_ht' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountHT', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>255, 'isameasure'=>1),
-		'multicurrency_total_tva' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountVAT', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>260, 'isameasure'=>1),
-		'multicurrency_total_ttc' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountTTC', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>265, 'isameasure'=>1),
+		'fk_multicurrency' =>array('type'=>'integer', 'label'=>'Fk multicurrency', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>240),
+		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'MulticurrencyCurrency', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>245),
+		'multicurrency_tx' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyRate', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>250, 'isameasure'=>1),
+		'multicurrency_total_ht' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountHT', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>255, 'isameasure'=>1),
+		'multicurrency_total_tva' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountVAT', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>260, 'isameasure'=>1),
+		'multicurrency_total_ttc' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountTTC', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>265, 'isameasure'=>1),
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>-1, 'position'=>270),
 		'module_source' =>array('type'=>'varchar(32)', 'label'=>'POSModule', 'enabled'=>1, 'visible'=>-1, 'position'=>275),
 		'pos_source' =>array('type'=>'varchar(32)', 'label'=>'POSTerminal', 'enabled'=>1, 'visible'=>-1, 'position'=>280),
@@ -525,7 +523,7 @@ class Commande extends CommonOrder
 
 		if (!$error) {
 			// If stock is incremented on validate order, we must increment it
-			if ($result >= 0 && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
+			if ($result >= 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
 
@@ -653,7 +651,7 @@ class Commande extends CommonOrder
 			}
 
 			// If stock is decremented on validate order, we must reincrement it
-			if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
+			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
 				$result = 0;
 
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
@@ -838,7 +836,7 @@ class Commande extends CommonOrder
 		dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			// If stock is decremented on validate order, we must reincrement it
-			if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
+			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
 
@@ -949,7 +947,7 @@ class Commande extends CommonOrder
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande (";
-		$sql .= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note_private, note_public, ref_ext, ref_client, ref_int";
+		$sql .= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note_private, note_public, ref_ext, ref_client";
 		$sql .= ", model_pdf, fk_cond_reglement, deposit_percent, fk_mode_reglement, fk_account, fk_availability, fk_input_reason, date_livraison, fk_delivery_address";
 		$sql .= ", fk_shipping_method";
 		$sql .= ", fk_warehouse";
@@ -968,10 +966,9 @@ class Commande extends CommonOrder
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
 		$sql .= ", ".($this->ref_ext ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
-		$sql .= ", ".($this->ref_int ? "'".$this->db->escape($this->ref_int)."'" : "null");
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : "null");
-		$sql .= ", ".(! empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null");
+		$sql .= ", ".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null");
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "null");
 		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
 		$sql .= ", ".($this->availability_id > 0 ? ((int) $this->availability_id) : "null");
@@ -1185,6 +1182,8 @@ class Commande extends CommonOrder
 					return -1;
 				}
 			}
+
+			return 0;
 		} else {
 			dol_print_error($this->db);
 			$this->db->rollback();
@@ -1284,8 +1283,7 @@ class Commande extends CommonOrder
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
-					$this->errors += $hookmanager->errors;
-					$this->error = $hookmanager->error;
+					$this->setErrorsFromObject($hookmanager);
 					$error++;
 				}
 			}
@@ -1441,8 +1439,7 @@ class Commande extends CommonOrder
 			$action = '';
 			$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 			if ($reshook < 0) {
-				$this->errors += $hookmanager->errors;
-				$this->error = $hookmanager->error;
+				$this->setErrorsFromObject($hookmanager);
 				$error++;
 			}
 
@@ -1814,7 +1811,7 @@ class Commande extends CommonOrder
 			$this->lines[] = $line;
 
 			/** POUR AJOUTER AUTOMATIQUEMENT LES SOUSPRODUITS a LA COMMANDE
-			 if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
+			 if (!empty($conf->global->PRODUIT_SOUSPRODUITS))
 			 {
 			 $prod = new Product($this->db);
 			 $prod->fetch($idproduct);
@@ -1859,7 +1856,7 @@ class Commande extends CommonOrder
 		$sql .= ', c.fk_shipping_method';
 		$sql .= ', c.fk_warehouse';
 		$sql .= ', c.fk_projet as fk_project, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as billed';
-		$sql .= ', c.note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.last_main_doc, c.fk_delivery_address, c.extraparams';
+		$sql .= ', c.note_private, c.note_public, c.ref_client, c.ref_ext, c.model_pdf, c.last_main_doc, c.fk_delivery_address, c.extraparams';
 		$sql .= ', c.fk_incoterms, c.location_incoterms';
 		$sql .= ", c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc";
 		$sql .= ", c.module_source, c.pos_source";
@@ -1887,9 +1884,6 @@ class Commande extends CommonOrder
 		if ($ref_ext) {
 			$sql .= " AND c.ref_ext='".$this->db->escape($ref_ext)."'";
 		}
-		if ($notused) {
-			$sql .= " AND c.ref_int='".$this->db->escape($notused)."'";
-		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1903,7 +1897,6 @@ class Commande extends CommonOrder
 				$this->ref_client = $obj->ref_client;
 				$this->ref_customer = $obj->ref_client;
 				$this->ref_ext				= $obj->ref_ext;
-				$this->ref_int				= $obj->ref_int;
 
 				$this->socid = $obj->fk_soc;
 				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
@@ -2187,7 +2180,7 @@ class Commande extends CommonOrder
 				$line->fetch_optionals();
 
 				// multilangs
-				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
 					$tmpproduct = new Product($this->db);
 					$tmpproduct->fetch($objp->fk_product);
 					$tmpproduct->getMultiLangs();
@@ -2327,17 +2320,13 @@ class Commande extends CommonOrder
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Returns a array with expeditions lines number
+	 * Returns an array with expeditions lines number
 	 *
 	 * @return	int		Nb of shipments
-	 *
-	 * TODO deprecate, move to Shipping class
 	 */
-	public function nb_expedition()
+	public function countNbOfShipments()
 	{
-		// phpcs:enable
 		$sql = 'SELECT count(*)';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expedition as e';
 		$sql .= ', '.MAIN_DB_PREFIX.'element_element as el';
@@ -2353,6 +2342,8 @@ class Commande extends CommonOrder
 		} else {
 			dol_print_error($this->db);
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2399,58 +2390,45 @@ class Commande extends CommonOrder
 	 *
 	 *	@param      User	$user		User object
 	 *  @param      int		$lineid		Id of line to delete
+	 *  @param		int		$id			Id of object (for a check)
 	 *  @return     int        		 	>0 if OK, 0 if nothing to do, <0 if KO
 	 */
-	public function deleteline($user = null, $lineid = 0)
+	public function deleteline($user = null, $lineid = 0, $id = 0)
 	{
 		if ($this->statut == self::STATUS_DRAFT) {
 			$this->db->begin();
 
-			$sql = "SELECT fk_product, qty";
-			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql .= " WHERE rowid = ".((int) $lineid);
+			// Delete line
+			$line = new OrderLine($this->db);
 
-			$result = $this->db->query($sql);
-			if ($result) {
-				$obj = $this->db->fetch_object($result);
+			$line->context = $this->context;
 
-				if ($obj) {
-					$product = new Product($this->db);
-					$product->id = $obj->fk_product;
+			// Load data
+			$line->fetch($lineid);
 
-					// Delete line
-					$line = new OrderLine($this->db);
+			if ($id > 0 && $line->fk_commande != $id) {
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
 
-					// For triggers
-					$line->fetch($lineid);
+			// Memorize previous line for triggers
+			$staticline = clone $line;
+			$line->oldline = $staticline;
 
-					// Memorize previous line for triggers
-					$staticline = clone $line;
-					$line->oldline = $staticline;
+			if ($line->delete($user) > 0) {
+				$result = $this->update_price(1);
 
-					if ($line->delete($user) > 0) {
-						$result = $this->update_price(1);
-
-						if ($result > 0) {
-							$this->db->commit();
-							return 1;
-						} else {
-							$this->db->rollback();
-							$this->error = $this->db->lasterror();
-							return -1;
-						}
-					} else {
-						$this->db->rollback();
-						$this->error = $line->error;
-						return -1;
-					}
+				if ($result > 0) {
+					$this->db->commit();
+					return 1;
 				} else {
 					$this->db->rollback();
-					return 0;
+					$this->error = $this->db->lasterror();
+					return -1;
 				}
 			} else {
 				$this->db->rollback();
-				$this->error = $this->db->lasterror();
+				$this->error = $line->error;
 				return -1;
 			}
 		} else {
@@ -2535,6 +2513,8 @@ class Commande extends CommonOrder
 				return -1 * $error;
 			}
 		}
+
+		return 0;
 	}
 
 
@@ -2599,6 +2579,8 @@ class Commande extends CommonOrder
 				return -1 * $error;
 			}
 		}
+
+		return 0;
 	}
 
 
@@ -3388,7 +3370,7 @@ class Commande extends CommonOrder
 		$sql .= " fk_user_valid=".((isset($this->user_valid) && $this->user_valid > 0) ? $this->user_valid : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
-		$sql .= " deposit_percent=".(! empty($this->deposit_percent) ? strval($this->deposit_percent) : "null").",";
+		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? strval($this->deposit_percent) : "null").",";
 		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? $this->mode_reglement_id : "null").",";
 		$sql .= " date_livraison=".(strval($this->delivery_date) != '' ? "'".$this->db->idate($this->delivery_date)."'" : 'null').",";
 		$sql .= " fk_shipping_method=".(isset($this->shipping_method_id) ? $this->shipping_method_id : "null").",";
@@ -3397,7 +3379,7 @@ class Commande extends CommonOrder
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -3440,7 +3422,7 @@ class Commande extends CommonOrder
 	}
 
 	/**
-	 *	Delete the customer order
+	 *	Delete the sales order
 	 *
 	 *	@param	User	$user		User object
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
@@ -3467,7 +3449,7 @@ class Commande extends CommonOrder
 		}
 
 		// Test we can delete
-		if ($this->nb_expedition() != 0) {
+		if ($this->countNbOfShipments() != 0) {
 			$this->errors[] = $langs->trans('SomeShipmentExists');
 			$error++;
 		}
@@ -3671,7 +3653,7 @@ class Commande extends CommonOrder
 	public function LibStatut($status, $billed, $mode, $donotshowbilled = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf;
+		global $langs, $conf, $hookmanager;
 
 		$billedtext = '';
 		if (empty($donotshowbilled)) {
@@ -3695,11 +3677,14 @@ class Commande extends CommonOrder
 		} elseif ($status == self::STATUS_SHIPMENTONPROCESS) {
 			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderSent').$billedtext;
 			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderSentShort').$billedtext;
-			$labelTooltip = $langs->transnoentitiesnoconv("StatusOrderSent").' - '.$langs->transnoentitiesnoconv("DateDeliveryPlanned").dol_print_date($this->date_livraison).$billedtext;
+			$labelTooltip = $langs->transnoentitiesnoconv("StatusOrderSent");
+			if (!empty($this->delivery_date)) {
+				$labelTooltip .= ' - '.$langs->transnoentitiesnoconv("DateDeliveryPlanned").dol_print_date($this->delivery_date, 'day').$billedtext;
+			}
 			$statusType = 'status4';
 		} elseif ($status == self::STATUS_CLOSED && (!$billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
-			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderToBill');
-			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderToBillShort');
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderToBill'); // translated into Delivered
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderToBillShort'); // translated into Delivered
 			$statusType = 'status4';
 		} elseif ($status == self::STATUS_CLOSED && ($billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
 			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderProcessed').$billedtext;
@@ -3716,9 +3701,64 @@ class Commande extends CommonOrder
 			$mode = 0;
 		}
 
+		$parameters = array(
+			'status'          => $status,
+			'mode'            => $mode,
+			'billed'          => $billed,
+			'donotshowbilled' => $donotshowbilled
+		);
+
+		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
+
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
+		}
+
 		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', array('tooltip' => $labelTooltip));
 	}
 
+	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+
+		$datas = [];
+
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			return ['optimize' => $langs->trans("Order")];
+		}
+
+		if ($user->hasRight('commande', 'lire')) {
+			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Order").'</u>';
+			if (isset($this->statut)) {
+				$datas[] = ' '.$this->getLibStatut(5);
+			}
+			$datas['Ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+			$datas['RefCustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.(empty($this->ref_customer) ? (empty($this->ref_client) ? '' : $this->ref_client) : $this->ref_customer);
+			if (!empty($this->total_ht)) {
+				$datas['AmountHT'] = '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+			}
+			if (!empty($this->total_tva)) {
+				$datas['VAT'] = '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+			}
+			if (!empty($this->total_ttc)) {
+				$datas['AmountTTC'] = '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+			}
+			if (!empty($this->date)) {
+				$datas['Date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
+			}
+			if (!empty($this->delivery_date)) {
+				$datas['DeliveryDate'] = '<br><b>'.$langs->trans('DeliveryDate').':</b> '.dol_print_date($this->delivery_date, 'dayhour');
+			}
+		}
+
+		return $datas;
+	}
 
 	/**
 	 *	Return clicable link of object (with eventually picto)
@@ -3743,7 +3783,7 @@ class Commande extends CommonOrder
 
 		$result = '';
 
-		if (!empty($conf->expedition->enabled) && ($option == '1' || $option == '2')) {
+		if (isModEnabled("expedition") && ($option == '1' || $option == '2')) {
 			$url = DOL_URL_ROOT.'/expedition/shipment.php?id='.$this->id;
 		} else {
 			$url = DOL_URL_ROOT.'/commande/card.php?id='.$this->id;
@@ -3767,43 +3807,31 @@ class Commande extends CommonOrder
 		if ($short) {
 			return $url;
 		}
-
-		$label = '';
-
-		if ($user->rights->commande->lire) {
-			$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Order").'</u>';
-			if (isset($this->statut)) {
-				$label .= ' '.$this->getLibStatut(5);
-			}
-			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-			$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.(empty($this->ref_customer) ? (empty($this->ref_client) ? '' : $this->ref_client) : $this->ref_customer);
-			if (!empty($this->total_ht)) {
-				$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-			}
-			if (!empty($this->total_tva)) {
-				$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-			}
-			if (!empty($this->total_ttc)) {
-				$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
-			}
-			if (!empty($this->date)) {
-				$label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
-			}
-			if (!empty($this->delivery_date)) {
-				$label .= '<br><b>'.$langs->trans('DeliveryDate').':</b> '.dol_print_date($this->delivery_date, 'dayhour');
-			}
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
 		}
 
+		$label = implode($this->getTooltipContentArray($params));
+
 		$linkclose = '';
-		if (empty($notooltip) && $user->rights->commande->lire) {
+		if (empty($notooltip) && $user->hasRight('commande', 'lire')) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("Order");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 
-			$target_value=array('_self', '_blank', '_parent', '_top');
+			$target_value = array('_self', '_blank', '_parent', '_top');
 			if (in_array($target, $target_value)) {
 				$linkclose .= ' target="'.dol_escape_htmltag($target).'"';
 			}
@@ -3820,7 +3848,7 @@ class Commande extends CommonOrder
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -4072,18 +4100,18 @@ class Commande extends CommonOrder
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 		'commande'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -4104,7 +4132,7 @@ class Commande extends CommonOrder
 	}
 
 	/**
-	 * Is the customer order delayed?
+	 * Is the sales order delayed?
 	 *
 	 * @return bool     true if late, false if not
 	 */
@@ -4242,6 +4270,12 @@ class OrderLine extends CommonOrderLine
 		$result = $this->db->query($sql);
 		if ($result) {
 			$objp = $this->db->fetch_object($result);
+
+			if (!$objp) {
+				$this->error = 'OrderLine with id '. $rowid .' not found sql='.$sql;
+				return 0;
+			}
+
 			$this->rowid            = $objp->rowid;
 			$this->id = $objp->rowid;
 			$this->fk_commande      = $objp->fk_commande;
@@ -4354,16 +4388,6 @@ class OrderLine extends CommonOrderLine
 		dol_syslog("OrderLine::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			// Remove extrafields
-			if (!$error) {
-				$this->id = $this->rowid;
-				$result = $this->deleteExtraFields();
-				if ($result < 0) {
-					$error++;
-					dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
-				}
-			}
-
 			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('LINEORDER_DELETE', $user);
@@ -4371,6 +4395,15 @@ class OrderLine extends CommonOrderLine
 					$error++;
 				}
 				// End call triggers
+			}
+
+			// Remove extrafields
+			if (!$error) {
+				$result = $this->deleteExtraFields();
+				if ($result < 0) {
+					$error++;
+					dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+				}
 			}
 
 			if (!$error) {
@@ -4652,14 +4685,14 @@ class OrderLine extends CommonOrderLine
 		$sql .= " , localtax2_type='".$this->db->escape($this->localtax2_type)."'";
 		$sql .= " , qty=".price2num($this->qty);
 		$sql .= " , ref_ext='".$this->db->escape($this->ref_ext)."'";
-		$sql .= " , subprice=".price2num($this->subprice)."";
-		$sql .= " , remise_percent=".price2num($this->remise_percent)."";
-		$sql .= " , price=".price2num($this->price).""; // TODO A virer
-		$sql .= " , remise=".price2num($this->remise).""; // TODO A virer
+		$sql .= " , subprice=".price2num($this->subprice);
+		$sql .= " , remise_percent=".price2num($this->remise_percent);
+		$sql .= " , price=".price2num($this->price); // TODO A virer
+		$sql .= " , remise=".price2num($this->remise); // TODO A virer
 		if (empty($this->skip_update_total)) {
-			$sql .= " , total_ht=".price2num($this->total_ht)."";
-			$sql .= " , total_tva=".price2num($this->total_tva)."";
-			$sql .= " , total_ttc=".price2num($this->total_ttc)."";
+			$sql .= " , total_ht=".price2num($this->total_ht);
+			$sql .= " , total_tva=".price2num($this->total_tva);
+			$sql .= " , total_ttc=".price2num($this->total_ttc);
 			$sql .= " , total_localtax1=".price2num($this->total_localtax1);
 			$sql .= " , total_localtax2=".price2num($this->total_localtax2);
 		}
@@ -4677,10 +4710,10 @@ class OrderLine extends CommonOrderLine
 		$sql .= " , fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
 
 		// Multicurrency
-		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
-		$sql .= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
-		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
-		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice);
+		$sql .= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
+		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
+		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);
 
 		$sql .= " WHERE rowid = ".((int) $this->rowid);
 

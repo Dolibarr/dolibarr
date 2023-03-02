@@ -27,6 +27,7 @@
  *	\brief      Test if file conf can be modified and if does not exists, test if install process can create it
  */
 
+define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
 
 global $langs;
@@ -82,7 +83,7 @@ if (!empty($useragent)) {
 
 // Check PHP version min
 $arrayphpminversionerror = array(5, 6, 0);
-$arrayphpminversionwarning = array(5, 6, 0);
+$arrayphpminversionwarning = array(7, 0, 0);
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0) {        // Minimum to use (error if lower)
 	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
 	$checksok = 0; // 0=error, 1=warning

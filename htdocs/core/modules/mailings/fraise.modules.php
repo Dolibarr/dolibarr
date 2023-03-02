@@ -41,7 +41,7 @@ class mailing_fraise extends MailingTargets
 
 	public $require_module = array('adherent');
 
-	public $enabled = '$conf->adherent->enabled';
+	public $enabled = 'isModEnabled("adherent")';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -201,11 +201,11 @@ class mailing_fraise extends MailingTargets
 		$s .= '</select>';
 
 
-		$s .= '<br>';
+		$s .= '<br><span class="opacitymedium">';
 		$s .= $langs->trans("DateEndSubscription").': &nbsp;';
-		$s .= $langs->trans("After").' > '.$form->selectDate(-1, 'subscriptionafter', 0, 0, 1, 'fraise', 1, 0, 0);
+		$s .= $langs->trans("After").' > </span>'.$form->selectDate(-1, 'subscriptionafter', 0, 0, 1, 'fraise', 1, 0, 0);
 		$s .= ' &nbsp; ';
-		$s .= $langs->trans("Before").' < '.$form->selectDate(-1, 'subscriptionbefore', 0, 0, 1, 'fraise', 1, 0, 0);
+		$s .= '<span class="opacitymedium">'.$langs->trans("Before").' < </span>'.$form->selectDate(-1, 'subscriptionbefore', 0, 0, 1, 'fraise', 1, 0, 0);
 
 		return $s;
 	}

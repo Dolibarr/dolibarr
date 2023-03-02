@@ -27,6 +27,7 @@
  *  \brief      Setup to admin supplier invoices
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -36,10 +37,6 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "orders"));
-
-if (!$user->admin) {
-	accessforbidden();
-}
 
 $type = GETPOST('type', 'alpha');
 $value = GETPOST('value', 'alpha');
@@ -51,26 +48,34 @@ $scandir = GETPOST('scan_dir', 'alpha');
 $specimenthirdparty = new Societe($db);
 $specimenthirdparty->initAsSpecimen();
 
+$error = 0;
+
+if (!$user->admin) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
  */
 
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
 if ($action == 'updateMask') {
-	$maskconstinvoice = GETPOST('maskconstinvoice', 'alpha');
-	$maskconstcredit = GETPOST('maskconstcredit', 'alpha');
-	$maskconstdeposit = GETPOST('maskconstdeposit', 'alpha');
+	$maskconstinvoice = GETPOST('maskconstinvoice', 'aZ09');
+	$maskconstcredit = GETPOST('maskconstcredit', 'aZ09');
+	$maskconstdeposit = GETPOST('maskconstdeposit', 'aZ09');
 	$maskinvoice = GETPOST('maskinvoice', 'alpha');
 	$maskcredit = GETPOST('maskcredit', 'alpha');
 	$maskdeposit = GETPOST('maskdeposit', 'alpha');
 
-	if ($maskconstinvoice) {
+	if ($maskconstinvoice && preg_match('/_MASK$/', $maskconstinvoice)) {
 		$res = dolibarr_set_const($db, $maskconstinvoice, $maskinvoice, 'chaine', 0, '', $conf->entity);
 	}
-	if ($maskconstcredit) {
+	if ($maskconstcredit && preg_match('/_MASK$/', $maskconstcredit)) {
 		$res = dolibarr_set_const($db, $maskconstcredit, $maskcredit, 'chaine', 0, '', $conf->entity);
 	}
-	if ($maskconstdeposit) {
+	if ($maskconstdeposit && preg_match('/_MASK$/', $maskconstdeposit)) {
 		$res = dolibarr_set_const($db, $maskconstdeposit, $maskdeposit, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -392,7 +397,7 @@ foreach ($dirmodels as $reldir) {
 
 					// Default
 					print '<td class="center">';
-					if ($conf->global->INVOICE_SUPPLIER_ADDON_PDF == "$name") {
+					if (getDolGlobalString("INVOICE_SUPPLIER_ADDON_PDF") == "$name") {
 						//print img_picto($langs->trans("Default"),'on');
 						// Even if choice is the default value, we allow to disable it: For supplier invoice, we accept to have no doc generation at all
 						print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&token='.newToken().'&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'&type=invoice_supplier"" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';

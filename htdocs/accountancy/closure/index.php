@@ -21,6 +21,7 @@
  * \brief 	    Home closure page
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -63,7 +64,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->fiscalyear->write)) {
+if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {
 	accessforbidden();
 }
 
@@ -75,7 +76,7 @@ if (empty($user->rights->accounting->fiscalyear->write)) {
 
 $now = dol_now();
 
-if ($action == 'validate_movements_confirm' && !empty($user->rights->accounting->fiscalyear->write)) {
+if ($action == 'validate_movements_confirm' && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 	$date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
 	$date_end = dol_mktime(23, 59, 59, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
 

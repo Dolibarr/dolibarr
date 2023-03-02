@@ -21,6 +21,7 @@
  *  \brief	  Setup page of product lot module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -46,10 +47,10 @@ $error = 0;
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMaskLot') {
-	$maskconstbatch = GETPOST('maskconstLot', 'alpha');
+	$maskconstbatch = GETPOST('maskconstLot', 'aZ09');
 	$maskbatch = GETPOST('maskLot', 'alpha');
 
-	if ($maskconstbatch) {
+	if ($maskconstbatch && preg_match('/_MASK$/', $maskconstbatch)) {
 		$res = dolibarr_set_const($db, $maskconstbatch, $maskbatch, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) $error++;
 	}
@@ -60,10 +61,10 @@ if ($action == 'updateMaskLot') {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 } elseif ($action == 'updateMaskSN') {
-	$maskconstbatch = GETPOST('maskconstSN', 'alpha');
+	$maskconstbatch = GETPOST('maskconstSN', 'aZ09');
 	$maskbatch = GETPOST('maskSN', 'alpha');
 
-	if ($maskconstbatch) {
+	if ($maskconstbatch && preg_match('/_MASK$/', $maskconstbatch)) {
 		$res = dolibarr_set_const($db, $maskconstbatch, $maskbatch, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) $error++;
 	}

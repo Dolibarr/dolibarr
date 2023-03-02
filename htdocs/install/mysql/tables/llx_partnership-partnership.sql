@@ -28,7 +28,7 @@ CREATE TABLE llx_partnership(
 	entity integer DEFAULT 1 NOT NULL,	-- multi company id, 0 = all
 	reason_decline_or_cancel text NULL,
 	date_creation datetime NOT NULL, 
-	fk_user_creat integer NOT NULL, 
+	fk_user_creat integer NULL,			-- can be null if created from public page 
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 	fk_user_modif integer, 
 	note_private text, 
@@ -37,6 +37,7 @@ CREATE TABLE llx_partnership(
 	url_to_check varchar(255),							-- url to check to find a specific keyword (defined into llx_c_partnership) to keep status of partnership valid
 	count_last_url_check_error integer DEFAULT '0',		-- last result of check of keyword into url
 	last_check_backlink datetime NULL,					-- date of last check of keyword into url
+	ip varchar(250),
 	import_key varchar(14),
 	model_pdf varchar(255)
 ) ENGINE=innodb;

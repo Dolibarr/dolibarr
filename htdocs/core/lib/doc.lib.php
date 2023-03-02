@@ -57,7 +57,7 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 	if ($idprod) {
 		$prodser->fetch($idprod);
 		// If a predefined product and multilang and on other lang, we renamed label with label translated
-		if (!empty($conf->global->MAIN_MULTILANGS) && ($outputlangs->defaultlang != $langs->defaultlang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && ($outputlangs->defaultlang != $langs->defaultlang)) {
 			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["label"]) && $label == $prodser->label) {
 				$label = $prodser->multilangs[$outputlangs->defaultlang]["label"];
 			}

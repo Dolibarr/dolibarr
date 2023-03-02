@@ -95,7 +95,7 @@ class modResource extends DolibarrModules
 		// List of modules id to disable if this one is disabled
 		$this->requiredby = array('modPlace');
 		// Minimum version of PHP required by module
-		$this->phpmin = array(5, 6);
+		$this->phpmin = array(7, 0);
 
 		$this->langfiles = array("resource"); // langfiles@resource
 		// Constants
@@ -120,7 +120,7 @@ class modResource extends DolibarrModules
 		// 'order_supplier'		to add a tab in supplier order view
 		// 'invoice_supplier'	to add a tab in supplier invoice view
 		// 'invoice'			to add a tab in customer invoice view
-		// 'order'				to add a tab in customer order view
+		// 'order'				to add a tab in sales order view
 		// 'product'			to add a tab in product view
 		// 'stock'				to add a tab in stock view
 		// 'propal'				to add a tab in propal view

@@ -25,6 +25,7 @@
  *   \ingroup    societe
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -50,7 +51,7 @@ if ($user->socid > 0) {
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 
-$permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('societe', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 // $hookmanager->initHooks(array('contactcard')); -> Name conflict with product/card.php
@@ -86,7 +87,7 @@ if ($id > 0) {
 	/*
 	 * Affichage onglets
 	 */
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 

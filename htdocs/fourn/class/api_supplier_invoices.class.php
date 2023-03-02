@@ -160,11 +160,10 @@ class SupplierInvoices extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -433,7 +432,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			if (empty($accountid)) {
 				throw new RestException(400, 'Bank account ID is mandatory');
 			}
@@ -482,7 +481,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(400, 'Payment error : '.$paiement->error);
 		}
 
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			$result = $paiement->addPaymentToBank(DolibarrApiAccess::$user, 'payment_supplier', '(SupplierInvoicePayment)', $accountid, $chqemetteur, $chqbank);
 			if ($result < 0) {
 				$this->db->rollback();

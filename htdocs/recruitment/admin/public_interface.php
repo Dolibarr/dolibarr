@@ -24,6 +24,7 @@
  *		\brief      File of main public page for open job position
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/lib/recruitment.lib.php';
@@ -144,7 +145,7 @@ if (!empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
 	print '<br>';
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';
-	if (!empty($conf->multicompany->enabled)) {
+	if (isModEnabled('multicompany')) {
 		$entity_qr = '?entity='.$conf->entity;
 	} else {
 		$entity_qr = '';

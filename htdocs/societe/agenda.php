@@ -27,12 +27,17 @@
  *  \brief      Page of third party events
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-$langs->loadLangs(array("companies", "bills", "propal", "orders"));
+// Load translation files required by the page
+$langs->loadLangs(array('agenda', 'bills', 'companies', 'orders', 'propal'));
+
 
 if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);
@@ -40,16 +45,11 @@ if (GETPOST('actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
-$search_agenda_label = GETPOST('search_agenda_label');
 
-// Security check
-$socid = GETPOST('socid', 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'societe', $socid, '&societe');
+$search_rowid = GETPOST('search_rowid');
+$search_agenda_label = GETPOST('search_agenda_label');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -68,8 +68,18 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
+// Initialize technical objects
+$object = new Societe($db);
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agendathirdparty'));
+
+// Security check
+$socid = GETPOST('socid', 'int');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'societe', $socid, '&societe');
 
 
 /*
@@ -105,28 +115,28 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 if ($socid > 0) {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-
-	$object = new Societe($db);
 	$result = $object->fetch($socid);
 
 	$title = $langs->trans("Agenda");
 	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
-	llxHeader('', $title);
+	$help_url = '';
+	llxHeader('', $title, $help_url);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = societe_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'agenda', $langs->trans("ThirdParty"), -1, 'company');
+
+	print dol_get_fiche_head($head, 'agenda', $langs->trans("ThirdParty"), -1, $object->picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
+	$morehtmlref = '';
+
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom', $morehtmlref);
 
 	print '<div class="fichecenter">';
 
@@ -152,14 +162,30 @@ if ($socid > 0) {
 		if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
 			$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '').'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objthirdparty->id > 0 ? '?socid='.$objthirdparty->id : ''));
 		}
-		$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;percentage=-1';
+		$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '');
 		$out .= '&amp;datep='.dol_print_date(dol_now(), 'dayhourlog');
 	}
 
-	$newcardbutton = '';
+	$morehtmlright = '';
+
+	$messagingUrl = DOL_URL_ROOT.'/societe/messaging.php?socid='.$object->id;
+	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+	$messagingUrl = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
+	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
+
+	// // Show link to send an email (if read and not closed)
+	// $btnstatus = $object->status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
+	// $url = 'card.php?track_id='.$object->track_id.'&action=presend_addmessage&mode=init&private_message=0&send_email=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?track_id='.$object->track_id).'#formmailbeforetitle';
+	// $morehtmlright .= dolGetButtonTitle($langs->trans('SendMail'), '', 'fa fa-paper-plane', $url, 'email-title-button', $btnstatus);
+
+	// // Show link to add a private message (if read and not closed)
+	// $btnstatus = $object->status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
+	// $url = 'card.php?track_id='.$object->track_id.'&action=presend_addmessage&mode=init&backtopage='.urlencode($_SERVER["PHP_SELF"].'?track_id='.$object->track_id).'#formmailbeforetitle';
+	// $morehtmlright .= dolGetButtonTitle($langs->trans('TicketAddMessage'), '', 'fa fa-comment-dots', $url, 'add-new-ticket-title-button', $btnstatus);
+
 	if (isModEnabled('agenda')) {
-		if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create)) {
-			$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
+		if (!empty($user->rights->agenda->myactions->create) || $user->hasRight('agenda', 'allactions', 'create')) {
+			$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
 		}
 	}
 
@@ -174,15 +200,21 @@ if ($socid > 0) {
 			$param .= '&limit='.urlencode($limit);
 		}
 
-		print load_fiche_titre($langs->trans("ActionsOnCompany"), $newcardbutton, '');
-		//print_barre_liste($langs->trans("ActionsOnCompany"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $newcardbutton, '', 0, 1, 1);
+		// Try to know count of actioncomm from cache
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_events_thirdparty_'.$object->id;
+		$nbEvent = dol_getcache($cachekey);
+
+		// print load_fiche_titre($langs->trans("ActionsOnCompany"), $newcardbutton, '');
+		print_barre_liste($langs->trans("ActionsOnCompany").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>': ''), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
 
 		// List of all actions
 		$filters = array();
 		$filters['search_agenda_label'] = $search_agenda_label;
+		$filters['search_rowid'] = $search_rowid;
 
 		// TODO Replace this with same code than into list.php
-		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);
 	}
 }
 

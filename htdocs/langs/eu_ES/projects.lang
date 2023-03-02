@@ -156,6 +156,7 @@ ProjectsAndTasksLines=Projects and tasks
 ProjectCreatedInDolibarr=Project %s created
 ProjectValidatedInDolibarr=Project %s validated
 ProjectModifiedInDolibarr=Project %s modified
+ProjectClosedInDolibarr=Project %s closed
 TaskCreatedInDolibarr=Task %s created
 TaskModifiedInDolibarr=Task %s modified
 TaskDeletedInDolibarr=Task %s deleted

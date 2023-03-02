@@ -25,6 +25,7 @@
  *      \brief      Page to setup external calendars for agenda module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -184,7 +185,7 @@ $formother = new FormOther($db);
 $arrayofjs = array();
 $arrayofcss = array();
 
-$wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
+$wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Terminplanung';
 llxHeader('', $langs->trans("AgendaSetup"), $wikihelp, '', 0, 0, $arrayofjs, $arrayofcss);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -202,7 +203,7 @@ print '<span class="opacitymedium">'.$langs->trans("AgendaExtSitesDesc")."</span
 print "<br>\n";
 
 
-$selectedvalue=$conf->global->AGENDA_DISABLE_EXT;
+$selectedvalue = getDolGlobalInt('AGENDA_DISABLE_EXT');
 if ($selectedvalue==1) $selectedvalue=0; else $selectedvalue=1;
 
 print "<table class=\"noborder\" width=\"100%\">";
@@ -278,13 +279,13 @@ while ($i <= $MAXAGENDA) {
 	print '</td>';
 	// Calendar active by default
 	print '<td class="nowrap right">';
-	if ($conf->use_javascript_ajax) {
+	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('AGENDA_EXT_ACTIVEBYDEFAULT' . $key);
 	} else {
-		if (empty($conf->global->{$default})) {
-			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
-		} else {
+		if (getDolGlobalString($default)) {
 			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
+		} else {
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
 		}
 	}
 	print '</td>';

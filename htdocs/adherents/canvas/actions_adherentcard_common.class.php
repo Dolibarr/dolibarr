@@ -65,7 +65,7 @@ abstract class ActionsAdherentCardCommon
 
 		/*if (is_object($this->object) && method_exists($this->object,'fetch'))
 		{
-			if (! empty($id)) $this->object->fetch($id);
+			if (!empty($id)) $this->object->fetch($id);
 		}
 		else
 		{*/
@@ -179,7 +179,7 @@ abstract class ActionsAdherentCardCommon
 
 		if ($action == 'view' || $action == 'edit' || $action == 'delete') {
 			// Emailing
-			if (!empty($conf->mailing->enabled)) {
+			if (isModEnabled('mailing')) {
 				$langs->load("mails");
 				$this->tpl['nb_emailing'] = $this->object->getNbOfEMailings();
 			}

@@ -107,10 +107,14 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT);
 	curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
 
-	/*
-	if ($maxsize) {
+	// limit size of downloaded files. TODO Add MAIN_SECURITY_MAXFILESIZE_DOWNLOADED
+	$maxsize = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
+	if ($maxsize && defined('CURLOPT_MAXFILESIZE_LARGE')) {
 		curl_setopt($ch, CURLOPT_MAXFILESIZE_LARGE, $maxsize);
-	} */
+	}
+	if ($maxsize && defined('CURLOPT_MAXFILESIZE')) {
+		curl_setopt($ch, CURLOPT_MAXFILESIZE, $maxsize);
+	}
 
 	//curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);	// PHP 5.5
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // We want response
@@ -266,9 +270,9 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			$maxRedirection--;
 			// TODO Use $info['local_ip'] and $info['primary_ip'] ?
 			continue;
-		} else {
-			$http_code = 0;
 		}
+
+		$http_code = 0;
 	} while ($http_code);
 
 	$request = curl_getinfo($ch, CURLINFO_HEADER_OUT); // Reading of request must be done after sending request

@@ -76,7 +76,7 @@ class box_bookmarks extends ModeleBoxes
 			'text' => $langs->trans("BoxMyLastBookmarks", $max),
 			'sublink' => DOL_URL_ROOT.'/bookmarks/list.php',
 		);
-		if ($user->rights->bookmark->creer) {
+		if ($user->hasRight("bookmark", "creer")) {
 			$this->info_box_head['subpicto'] = 'bookmark';
 			$this->info_box_head['subtext'] = $langs->trans("BookmarksManagement");
 		} else {
@@ -121,7 +121,7 @@ class box_bookmarks extends ModeleBoxes
 
 				if ($num == 0) {
 					$mytxt = $langs->trans("NoRecordedBookmarks");
-					if ($user->rights->bookmark->creer) {
+					if ($user->hasRight("bookmark", "creer")) {
 						$mytxt .= ' '.$langs->trans("ClickToAdd");
 					}
 					$this->info_box_contents[$line][0] = array(

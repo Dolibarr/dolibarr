@@ -22,6 +22,7 @@
  *       \brief      Page to setup limits
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -33,7 +34,7 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $currencycode = GETPOST('currencycode', 'alpha');
 
-if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
+if (isModEnabled('multicompany') && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
 	// When MULTICURRENCY_USE_LIMIT_BY_CURRENCY is on, we use always a defined currency code instead of '' even for default.
 	$currencycode = (!empty($currencycode) ? $currencycode : $conf->currency);
 }
@@ -127,12 +128,12 @@ print load_fiche_titre($title, '', 'title_setup');
 
 $aCurrencies = array($conf->currency); // Default currency always first position
 
-if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
+if (isModEnabled('multicompany') && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/multicurrency.lib.php';
 
-	$sql = "SELECT rowid, code FROM ".MAIN_DB_PREFIX."multicurrency";
-	$sql .= " WHERE entity = ".((int) $conf->entity);
-	$sql .= " AND code <> '".$db->escape($conf->currency)."'"; // Default currency always first position
+	$sql = "SELECT rowid, code FROM " . MAIN_DB_PREFIX . "multicurrency";
+	$sql .= " WHERE entity = " . ((int) $conf->entity);
+	$sql .= " AND code <> '" . $db->escape($conf->currency) . "'"; // Default currency always first position
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
@@ -151,11 +152,11 @@ print '<span class="opacitymedium">'.$langs->trans("LimitsDesc")."</span><br>\n"
 print "<br>\n";
 
 if ($action == 'edit') {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="update">';
-	if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
-		print '<input type="hidden" name="currencycode" value="'.$currencycode.'">';
+	if (isModEnabled('multicompany') && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
+		print '<input type="hidden" name="currencycode" value="' . $currencycode . '">';
 	}
 
 	clearstatcache();
@@ -217,7 +218,7 @@ if ($action == 'edit') {
 	print '</div>';
 }
 
-if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
+if (isModEnabled('multicompany') && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
 	if (!empty($aCurrencies) && count($aCurrencies) > 1) {
 		print dol_get_fiche_end();
 	}

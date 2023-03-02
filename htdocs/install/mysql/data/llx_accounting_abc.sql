@@ -55,7 +55,6 @@ INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES 
 INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('INV', 'InventoryJournal',                 8, 1, 1);
 
 
-
 -- Accounting Charts / Plans (Templates) for Countries
 
 -- Description of chart of account FR PCG99-ABREGE
@@ -183,3 +182,6 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- Description of chart of account Mexico SAT/24-2019
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 154, 'SAT/24-2019', 'Catalogo y codigo agrupador fiscal del 2019', 1);
+
+-- Description of chart of account Japan JPN-BASE
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 123, 'JPN-BASE', '日本 勘定科目表 基本版', 1);

@@ -23,6 +23,7 @@
  *   \brief      Page to setup module ClickToDial
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -35,8 +36,8 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 
-if (!in_array('clicktodial', $conf->modules)) {
-	accessforbidden($langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module58Name")));
+if (!isModEnabled('clicktodial')) {
+	accessforbidden($langs->transnoentitiesnoconv("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module58Name")));
 }
 
 
@@ -107,7 +108,7 @@ print '* https://myphoneserver/phoneurl?login=__LOGIN__&password=__PASS__&caller
 print '* sip:__PHONETO__@my.sip.server';
 print '</span>';
 
-//if (! empty($user->clicktodial_url))
+//if (!empty($user->clicktodial_url))
 //{
 	print '<br>';
 	print info_admin($langs->trans("ValueOverwrittenByUserSetup"));
@@ -188,22 +189,10 @@ if (!empty($conf->global->CLICKTODIAL_URL)) {
 	}
 }
 
-if (!empty($conf->use_javascript_ajax)) {
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
-			$("#generate_token").click(function() {
-				console.log("Click done");
-				$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-					action: \'getrandompassword\',
-					generic: true
-				},
-					function(token) {
-						$("#CLICKTODIAL_KEY_FOR_CIDLOOKUP").val(token);
-					});
-				});
-			});';
-	print '</script>';
-}
+// Add button to autosuggest a key
+include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+print dolJSToSetRandomPassword('CLICKTODIAL_KEY_FOR_CIDLOOKUP');
+
 
 // End of page
 llxFooter();

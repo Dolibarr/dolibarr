@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Compte comptable utilisé pour les utilisateurs
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Le compte comptable défini sur la fiche utilisateur sera utilisé uniquement pour la comptabilité auxiliaire. Celui-ci sera utilisé pour le grand livre et comme valeur par défaut de la comptabilité auxiliaire si le compte dédié de l'utilisateur n'est pas défini.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Compte comptable par défaut pour les tiers "salariés"
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Le compte dédié défini sur la fiche utilisateur sera utilisé en tant que compte comptable de tiers (Compte auxiliaire).
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Compte comptable par défaut pour les paiements de salaires
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Par défaut, laissez vide l’option "Créer automatiquement un paiement complet" lors de la création d’un salaire
 Salary=Salaire

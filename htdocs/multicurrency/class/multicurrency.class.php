@@ -428,7 +428,7 @@ class MultiCurrency extends CommonObject
 	 *
 	 * @param	string	$code	currency code
 	 * @param	double	$rate	new rate
-	 * @return int -1 if KO, 1 if OK, 2 if label found and OK
+	 * @return 	int 			-1 if KO, 1 if OK, 2 if label found and OK
 	 */
 	public function addRateFromDolibarr($code, $rate)
 	{
@@ -609,14 +609,14 @@ class MultiCurrency extends CommonObject
 	 * @param   stdClass	$TRate	Object containing all currencies rates
 	 * @return	int					-1 if KO, 0 if nothing, 1 if OK
 	 */
-	public static function recalculRates(&$TRate)
+	public function recalculRates(&$TRate)
 	{
 		global $conf;
 
-		if ($conf->currency != $conf->global->MULTICURRENCY_APP_SOURCE) {
+		if ($conf->currency != getDolGlobalString('MULTICURRENCY_APP_SOURCE')) {
 			$alternate_source = 'USD'.$conf->currency;
-			if (!empty($TRate->{$alternate_source})) {
-				$coef = $TRate->USDUSD / $TRate->{$alternate_source};
+			if (!empty($TRate->$alternate_source)) {
+				$coef = $TRate->USDUSD / $TRate->$alternate_source;
 				foreach ($TRate as $attr => &$rate) {
 					$rate *= $coef;
 				}
@@ -637,7 +637,7 @@ class MultiCurrency extends CommonObject
 	 * @param   int     $addifnotfound      Add if not found
 	 * @return  int							<0 if KO, >0 if OK
 	 */
-	public static function syncRates($key, $addifnotfound = 0)
+	public function syncRates($key, $addifnotfound = 0)
 	{
 		global $conf, $db, $langs;
 
@@ -656,16 +656,16 @@ class MultiCurrency extends CommonObject
 
 			if ($response->success) {
 				$TRate = $response->quotes;
-				$timestamp = $response->timestamp;
+				//$timestamp = $response->timestamp;
 
-				if (self::recalculRates($TRate) >= 0) {
+				if ($this->recalculRates($TRate) >= 0) {
 					foreach ($TRate as $currency_code => $rate) {
 						$code = substr($currency_code, 3, 3);
 						$obj = new MultiCurrency($db);
 						if ($obj->fetch(null, $code) > 0) {
 							$obj->updateRate($rate);
 						} elseif ($addifnotfound) {
-							self::addRateFromDolibarr($code, $rate);
+							$this->addRateFromDolibarr($code, $rate);
 						}
 					}
 				}

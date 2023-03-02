@@ -19,6 +19,9 @@
 /**
  *	\file       htdocs/public/ticket/ajax/ajax.php
  *	\brief      Ajax component for Ticket.
+ *
+ *  This ajax component is called only by the create ticket public page. And only if TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST is set.
+ *  This option TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST has been removed because it is a security hole.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -32,9 +35,6 @@ if (!defined('NOREQUIREAJAX')) {
 }
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
-}
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
 }
 // Do not check anti CSRF attack test
 if (!defined('NOREQUIREMENU')) {
@@ -57,13 +57,12 @@ $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $email = GETPOST('email', 'alphanohtml');
 
-
 if (!isModEnabled('ticket')) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Ticket not enabled');
 }
 
 if (empty($conf->global->TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Option TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST of module ticket is not enabled');
 }
 
 
@@ -83,9 +82,18 @@ if ($action == 'getContacts') {
 		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 
 		$ticket = new Ticket($db);
-		$contacts = $ticket->searchContactByEmail($email);
-		if (is_array($contacts)) {
-			$return['contacts'] = $contacts;
+		$arrayofcontacts = $ticket->searchContactByEmail($email);
+		if (is_array($arrayofcontacts)) {
+			$arrayofminimalcontacts = array();
+			foreach ($arrayofcontacts as $tmpval) {
+				$tmpresult = new stdClass();
+				$tmpresult->id = $tmpval->id;
+				$tmpresult->firstname = $tmpval->firstname;
+				$tmpresult->lastname = $tmpval->lastname;
+				$arrayofminimalcontacts[] = $tmpresult;
+			}
+
+			$return['contacts'] = $arrayofminimalcontacts;
 		} else {
 			$return['error'] = $ticket->errorsToString();
 		}

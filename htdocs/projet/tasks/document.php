@@ -24,6 +24,7 @@
  *	\brief      Page de gestion des documents attachees a une tache d'un projet
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
@@ -119,10 +120,15 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 /*
  * View
  */
-
 $form = new Form($db);
 
-llxHeader('', $langs->trans('Task'));
+$title = $object->ref . ' - ' . $langs->trans("Documents");
+if (!empty($withproject)) {
+	$title .= ' | ' . $langs->trans("Project") . (!empty($projectstatic->ref) ? ': '.$projectstatic->ref : '')  ;
+}
+$help_url = '';
+
+llxHeader('', $title, $help_url);
 
 if ($object->id > 0) {
 	$projectstatic->fetch_thirdparty();
@@ -147,7 +153,7 @@ if ($object->id > 0) {
 		$morehtmlref .= $projectstatic->title;
 		// Thirdparty
 		if ($projectstatic->thirdparty->id > 0) {
-			$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$projectstatic->thirdparty->getNomUrl(1, 'project');
+			$morehtmlref .= '<br>'.$projectstatic->thirdparty->getNomUrl(1, 'project');
 		}
 		$morehtmlref .= '</div>';
 
@@ -166,7 +172,7 @@ if ($object->id > 0) {
 		print '<table class="border tableforfield centpercent">';
 
 		// Usage
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
 			print '<tr><td class="tdtop">';
 			print $langs->trans("Usage");
 			print '</td>';
@@ -189,7 +195,7 @@ if ($object->id > 0) {
 				print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 				print '<br>';
 			}
-			if (!empty($conf->eventorganization->enabled)) {
+			if (isModEnabled('eventorganization')) {
 				print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_organize_event ? ' checked="checked"' : '')).'"> ';
 				$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 				print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
@@ -208,8 +214,15 @@ if ($object->id > 0) {
 		}
 		print '</td></tr>';
 
-		// Date start - end
-		print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+		// Budget
+		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+		if (strcmp($projectstatic->budget_amount, '')) {
+			print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+		}
+		print '</td></tr>';
+
+		// Date start - end project
+		print '<tr><td>'.$langs->trans("Dates").'</td><td>';
 		$start = dol_print_date($projectstatic->date_start, 'day');
 		print ($start ? $start : '?');
 		$end = dol_print_date($projectstatic->date_end, 'day');
@@ -217,13 +230,6 @@ if ($object->id > 0) {
 		print ($end ? $end : '?');
 		if ($projectstatic->hasDelay()) {
 			print img_warning("Late");
-		}
-		print '</td></tr>';
-
-		// Budget
-		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-		if (strcmp($projectstatic->budget_amount, '')) {
-			print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
 		}
 		print '</td></tr>';
 

@@ -64,15 +64,23 @@ foreach ($object->fields as $key => $val) {
 		print ' tdtop';
 	}
 	print '">';
+
+	$labeltoshow = '';
 	if (!empty($val['help'])) {
-		print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
+		$labeltoshow .= $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 	} else {
 		if (isset($val['copytoclipboard']) && $val['copytoclipboard'] == 1) {
-			print showValueWithClipboardCPButton($value, 0, $langs->transnoentitiesnoconv($val['label']));
+			$labeltoshow .= showValueWithClipboardCPButton($value, 0, $langs->transnoentitiesnoconv($val['label']));
 		} else {
-			print $langs->trans($val['label']);
+			$labeltoshow .= $langs->trans($val['label']);
 		}
 	}
+	if (empty($val['alwayseditable'])) {
+		print $labeltoshow;
+	} else {
+		print $form->editfieldkey($labeltoshow, $key, $value, $object, 1, $val['type']);
+	}
+
 	print '</td>';
 	print '<td class="valuefield fieldname_'.$key;
 	if ($val['type'] == 'text') {
@@ -82,25 +90,29 @@ foreach ($object->fields as $key => $val) {
 		print ' '.$val['cssview'];
 	}
 	print '">';
-	if (in_array($val['type'], array('text', 'html'))) {
-		print '<div class="longmessagecut">';
-	}
-	if ($key == 'lang') {
-		$langs->load("languages");
-		$labellang = ($value ? $langs->trans('Language_'.$value) : '');
-		print picto_from_langcode($value, 'class="paddingrightonly saturatemedium opacitylow"');
-		print $labellang;
-	} else {
-		if (isset($val['copytoclipboard']) && $val['copytoclipboard'] == 2) {
-			$out = $object->showOutputField($val, $key, $value, '', '', '', 0);
-			print showValueWithClipboardCPButton($out, 0, $out);
-		} else {
-			print $object->showOutputField($val, $key, $value, '', '', '', 0);
+	if (empty($val['alwayseditable'])) {
+		if (preg_match('/^(text|html)/', $val['type'])) {
+			print '<div class="longmessagecut">';
 		}
-	}
-	//print dol_escape_htmltag($object->$key, 1, 1);
-	if (in_array($val['type'], array('text', 'html'))) {
-		print '</div>';
+		if ($key == 'lang') {
+			$langs->load("languages");
+			$labellang = ($value ? $langs->trans('Language_'.$value) : '');
+			print picto_from_langcode($value, 'class="paddingrightonly saturatemedium opacitylow"');
+			print $labellang;
+		} else {
+			if (isset($val['copytoclipboard']) && $val['copytoclipboard'] == 2) {
+				$out = $object->showOutputField($val, $key, $value, '', '', '', 0);
+				print showValueWithClipboardCPButton($out, 0, $out);
+			} else {
+				print $object->showOutputField($val, $key, $value, '', '', '', 0);
+			}
+		}
+		//print dol_escape_htmltag($object->$key, 1, 1);
+		if (preg_match('/^(text|html)/', $val['type'])) {
+			print '</div>';
+		}
+	} else {
+		print $form->editfieldval($labeltoshow, $key, $value, $object, 1, $val['type']);
 	}
 	print '</td>';
 	print '</tr>';
@@ -144,10 +156,20 @@ foreach ($object->fields as $key => $val) {
 		$rightpart .= ' tdtop';
 	}
 	$rightpart.= '">';
+	$labeltoshow = '';
 	if (!empty($val['help'])) {
-		$rightpart .= $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
+		$labeltoshow .= $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 	} else {
-		$rightpart .= $langs->trans($val['label']);
+		if (isset($val['copytoclipboard']) && $val['copytoclipboard'] == 1) {
+			$labeltoshow .= showValueWithClipboardCPButton($value, 0, $langs->transnoentitiesnoconv($val['label']));
+		} else {
+			$labeltoshow .= $langs->trans($val['label']);
+		}
+	}
+	if (empty($val['alwayseditable'])) {
+		$rightpart .= $labeltoshow;
+	} else {
+		$rightpart .= $form->editfieldkey($labeltoshow, $key, $value, $object, 1, $val['type']);
 	}
 	$rightpart .= '</td>';
 	$rightpart .= '<td class="valuefield fieldname_'.$key;
@@ -158,14 +180,31 @@ foreach ($object->fields as $key => $val) {
 		$rightpart .= ' '.$val['cssview'];
 	}
 	$rightpart .= '">';
-	if (in_array($val['type'], array('text', 'html'))) {
-		$rightpart .= '<div class="longmessagecut">';
+
+	if (empty($val['alwayseditable'])) {
+		if (preg_match('/^(text|html)/', $val['type'])) {
+			$rightpart .= '<div class="longmessagecut">';
+		}
+		if ($key == 'lang') {
+			$langs->load("languages");
+			$labellang = ($value ? $langs->trans('Language_'.$value) : '');
+			$rightpart .= picto_from_langcode($value, 'class="paddingrightonly saturatemedium opacitylow"');
+			$rightpart .= $labellang;
+		} else {
+			if (isset($val['copytoclipboard']) && $val['copytoclipboard'] == 2) {
+				$out = $object->showOutputField($val, $key, $value, '', '', '', 0);
+				$rightpart .= showValueWithClipboardCPButton($out, 0, $out);
+			} else {
+				$rightpart.= $object->showOutputField($val, $key, $value, '', '', '', 0);
+			}
+		}
+		if (preg_match('/^(text|html)/', $val['type'])) {
+			$rightpart .= '</div>';
+		}
+	} else {
+		$rightpart .= $form->editfieldval($labeltoshow, $key, $value, $object, 1, $val['type']);
 	}
-	$rightpart .= $object->showOutputField($val, $key, $value, '', '', '', 0);
-	//$rightpart .= dol_escape_htmltag($object->$key, 1, 1);
-	if (in_array($val['type'], array('text', 'html'))) {
-		$rightpart .= '</div>';
-	}
+
 	$rightpart .= '</td>';
 	$rightpart .= '</tr>';
 }
