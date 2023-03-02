@@ -94,7 +94,7 @@ class Form
 	 * @param   string	$text			Text of label or key to translate
 	 * @param   string	$htmlname		Name of select field ('edit' prefix will be added)
 	 * @param   string	$preselected    Value to show/edit (not used in this function)
-	 * @param	object	$object			Object
+	 * @param	object	$object			Object (on the page we show)
 	 * @param	boolean	$perm			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
 	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker' 'checkbox:ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
 	 * @param	string	$moreparam		More param to add on a href URL.
@@ -194,7 +194,7 @@ class Form
 	 * @param	string	$text			Text of label (not used in this function)
 	 * @param	string	$htmlname		Name of select field
 	 * @param	string	$value			Value to show/edit
-	 * @param	object	$object			Object
+	 * @param	object	$object			Object (that we want to show)
 	 * @param	boolean	$perm			Permission to allow button to edit parameter
 	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols%', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select;xkey:xval,ykey:yval,...')
 	 * @param	string	$editvalue		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of numeric value). Use '' to use same than $value
@@ -303,6 +303,8 @@ class Form
 						$arraylist[$tmpkey] = $tmp[1];
 					}
 					$ret .= $this->selectarray($htmlname, $arraylist, $value);
+				} elseif (preg_match('/^link/', $typeofdata)) {
+					// TODO Not yet implemented. See code for extrafields
 				} elseif (preg_match('/^ckeditor/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata); // Example: ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols:uselocalbrowser
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

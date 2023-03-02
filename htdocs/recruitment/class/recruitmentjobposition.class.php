@@ -1138,7 +1138,7 @@ class RecruitmentJobPosition extends CommonObject
 			$return .= ' | <span class="opacitymedium">'.$langs->trans("Remuneration").'</span> : <span class="info-box-label">'.$this->remuneration_suggested.'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).' | <span class="opacitymedium" title="'.$langs->trans("RecruitmentCandidatures").'">'.$langs->trans("RecruitmentCandidatures", '', '', '', '', 5).'</span> : <span>'.$obj->nbapplications.'</span></div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).' | <span class="opacitymedium" title="'.$langs->trans("RecruitmentCandidatures").'">'.$langs->trans("RecruitmentCandidatures", '', '', '', '', 5).'</span> : <span>'.$obj->nbapplications.'</span></div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
