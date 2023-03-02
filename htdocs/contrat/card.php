@@ -2116,7 +2116,7 @@ if ($action == 'create') {
 
 				if (isModEnabled('commande') && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices) {
 					$langs->load("orders");
-					if ($user->rights->commande->creer) {
+					if ($user->hasRight('commande', 'creer')) {
 						print dolGetButtonAction($langs->trans('CreateOrder'), '', 'default', DOL_URL_ROOT.'/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id, '', true, $params);
 					} else {
 						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");

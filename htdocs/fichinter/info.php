@@ -82,7 +82,7 @@ $morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl
 if (isModEnabled('project')) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-	if ($user->rights->commande->creer) {
+	if ($user->hasRight('commande', 'creer')) {
 		if ($action != 'classify') {
 			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			$morehtmlref .= ' : ';
