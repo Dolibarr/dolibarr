@@ -2359,7 +2359,7 @@ class Ticket extends CommonObject
 				$destfile = $destdir.'/'.$pathinfo['filename'].' - '.dol_print_date($now, 'dayhourlog').'.'.$pathinfo['extension'];
 			}
 
-			$res = dol_move($filepath[$i], $destfile, 0, 1);
+			$res = dol_move($filepath[$i], $destfile, 0, 1, 0, 1);
 
 			if (image_format_supported($destfile) == 1) {
 				// Create small thumbs for image (Ratio is near 16/9)

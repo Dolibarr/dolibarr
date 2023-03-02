@@ -119,3 +119,6 @@ BomCantAddChildBom=命名法 %s は、命名法 %s につながるツリーに�
 BOMNetNeeds = BOM 正味必要量
 BOMProductsList=BOMの製品
 BOMServicesList=BOMのサービス
+Manufacturing=製造業
+Disassemble=分解する
+ProducedBy=によって生産

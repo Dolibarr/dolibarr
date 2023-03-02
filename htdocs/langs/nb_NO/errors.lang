@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Feil, parameter <b> %s </b> må v�
 ErrorLoginDateValidity=Feil, denne påloggingen er utenfor gyldig datoområde
 ErrorValueLength=Lengden på feltet '<b> %s </b>' må være høyere enn '<b> %s </b>'
 ErrorReservedKeyword=Ordet '<b> %s </b>' er et reservert nøkkelord
+ErrorFilenameReserved=Filnavnet <b> %s </b> kan ikke brukes da det er en reservert og beskyttet kommando.
 ErrorNotAvailableWithThisDistribution=Ikke tilgjengelig i denne distribusjonen
 ErrorPublicInterfaceNotEnabled=Offentlig grensesnitt var ikke aktivert
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=Språket til den nye siden må defineres hvis den er angitt som oversettelse av en annen side
@@ -308,7 +309,7 @@ ErrorExistingPermission = Tillatelse <b> %s </b> for objekt <b> %s </b> finnes a
 ErrorFieldExist=Verdien for <b> %s </b> finnes allerede
 ErrorEqualModule=Modulen er ugyldig i <b> %s </b>
 ErrorFieldValue=Verdien for <b> %s </b> er feil
-ErrorCoherenceMenu= <b> %s </b> er nødvendig når <b> % </b> er lik VENSTRE
+ErrorCoherenceMenu=<b>%s</b> er påkrevd når <b>%s</b> er 'venstre'
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP-parameteren upload_max_filesize (%s) er høyere enn PHP-parameteren post_max_size (%s). Dette er ikke et konsistent oppsett.

@@ -167,9 +167,9 @@ ACCOUNTANCY_COMBO_FOR_AUX=تمكين قائمة التحرير والسرد لل
 ACCOUNTING_DATE_START_BINDING=تحديد موعد لبدء الربط والتحويل في المحاسبة. بعد هذا التاريخ ، لن يتم تحويل المعاملات إلى المحاسبة.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=في تحويل المحاسبة ، ما هي الفترة المحددة افتراضيا
 
-ACCOUNTING_SELL_JOURNAL=المبيعات في اليومية العامة (المبيعات و المرتجعات)
-ACCOUNTING_PURCHASE_JOURNAL=المشتريات في اليومية العامة (المشتريات و المرتجعات)
-ACCOUNTING_BANK_JOURNAL=النقدي اليومية ( المقبوضات و المدفوعات)
+ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
+ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
+ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
 ACCOUNTING_EXPENSEREPORT_JOURNAL=دفتر تقرير المصروف اليومي
 ACCOUNTING_MISCELLANEOUS_JOURNAL=اليومية العامة
 ACCOUNTING_HAS_NEW_JOURNAL=له دفتر يوميات جديد
@@ -238,6 +238,7 @@ ConfirmDeleteMvt=سيؤدي هذا إلى حذف جميع سطور المحاس�
 ConfirmDeleteMvtPartial=سيؤدي هذا إلى حذف المعاملة من المحاسبة (سيتم حذف جميع الأسطر المتعلقة بنفس المعاملة)
 FinanceJournal=دفتر المالية اليومي
 ExpenseReportsJournal=دفتر تقارير المصاريف
+InventoryJournal=المخزون في اليومية
 DescFinanceJournal=دفتر المالية اليومي المتضمن لجميع الدفعات عن طريق الحساب المصرفي
 DescJournalOnlyBindedVisible=هذه طريقة عرض للسجل مرتبطة بالحساب ويمكن تسجيلها في دفتر اليوميات و الأستاذ.
 VATAccountNotDefined=حساب ضريبة القيمة المضافة غير محدد

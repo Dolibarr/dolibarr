@@ -91,7 +91,7 @@ MailingModuleDescContactsByFunction=Contacten per positie
 MailingModuleDescEmailsFromFile=E-mails uit bestand
 MailingModuleDescEmailsFromUser=E-mails door gebruiker opgemaakt
 MailingModuleDescDolibarrUsers=Gebruikers met e-mails
-MailingModuleDescThirdPartiesByCategories=Derden (op categorieën)
+MailingModuleDescThirdPartiesByCategories=Derde partijen
 SendingFromWebInterfaceIsNotAllowed=Verzenden vanuit de web interface is niet toegestaan.
 EmailCollectorFilterDesc=Alle filters moeten overeenkomen om een e-mail te kunnen verzamelen
 
@@ -179,3 +179,4 @@ RecordCreatedByEmailCollector=Record aangemaakt door de E-mail Collector %s van 
 DefaultBlacklistMailingStatus=Standaardwaarde voor veld '%s' bij het aanmaken van een nieuw contact
 DefaultStatusEmptyMandatory=Leeg maar verplicht
 WarningLimitSendByDay=WARNING: The setup or contract of your instance limits your number of emails per day to <b>%s</b>. Trying to send more may result in having your instance slow down or suspended. Please contact your support if you need a higher quota.
+NoMoreRecipientToSendTo=No more recipient to send the email to

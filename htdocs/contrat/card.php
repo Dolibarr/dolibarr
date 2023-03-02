@@ -942,15 +942,8 @@ if (empty($reshook)) {
 				$old_filedir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($old_ref);
 				$new_filedir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 
-				$files = dol_dir_list($old_filedir);
-				if (!empty($files)) {
-					if (!is_dir($new_filedir)) {
-						dol_mkdir($new_filedir);
-					}
-					foreach ($files as $file) {
-						dol_move($file['fullname'], $new_filedir.'/'.$file['name']);
-					}
-				}
+				// Rename directory of contract with new name
+				dol_move_dir($old_filedir, $new_filedir);
 
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;

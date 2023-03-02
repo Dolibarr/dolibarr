@@ -26,6 +26,7 @@ Permission56002=Билеттерді өзгерту
 Permission56003=Билеттерді жою
 Permission56004=Билеттерді басқару
 Permission56005=Барлық үшінші тараптардың билеттерін қараңыз (сыртқы пайдаланушылар үшін тиімді емес, әрқашан олар тәуелді үшінші жақпен шектеледі)
+Permission56006=Export tickets
 
 Tickets=Tickets
 TicketDictType=Билет - түрлері
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Сыртқы қатысушы
 
 OriginEmail=Репортердің электрондық поштасы
 Notify_TICKET_SENTBYMAIL=Билет хабарламасын электрондық пошта арқылы жіберіңіз
+
+ExportDataset_ticket_1=Tickets
 
 # Status
 Read=Оқыңыз
@@ -183,7 +186,7 @@ CreatedBy=Жасалған
 NewTicket=Жаңа билет
 SubjectAnswerToTicket=Билет жауабы
 TicketTypeRequest=Сұраныс түрі
-TicketCategory=Билеттердің жіктелуі
+TicketCategory=Ticket group
 SeeTicket=Билетті қараңыз
 TicketMarkedAsRead=Билет оқылды деп белгіленді
 TicketReadOn=Оқыңыз
