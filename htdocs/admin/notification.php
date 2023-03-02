@@ -265,7 +265,7 @@ print load_fiche_titre($title, '', 'email');
 // Load array of available notifications
 $notificationtrigger = new InterfaceNotification($db);
 $listofnotifiedevents = $notificationtrigger->getListOfManagedEvents();
-var_dump($listofnotifiedevents);
+
 // Editing global variables not related to a specific theme
 $constantes = array();
 foreach ($listofnotifiedevents as $notifiedevent) {
