@@ -93,6 +93,7 @@ class Workstation extends CommonObject
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 
+	// BEGIN MODULEBUILDER PROPERTIES
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
@@ -129,6 +130,7 @@ class Workstation extends CommonObject
 	public $nb_operators_required;
 	public $thm_operator_estimated;
 	public $thm_machine_estimated;
+	// END MODULEBUILDER PROPERTIES
 
 	/**
 	 * @var int[] array of ID
