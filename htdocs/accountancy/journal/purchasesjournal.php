@@ -380,6 +380,12 @@ if ($action == 'writebookkeeping') {
 						require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
 						$lettering_static = new Lettering($db);
 						$nb_lettering = $lettering_static->bookkeepingLettering(array($bookkeeping->id), 'supplier_invoice');
+
+						if ($nb_lettering < 0) {
+							$error++;
+							$errorforline++;
+							setEventMessages($lettering_static->error, $lettering_static->errors, 'errors');
+						}
 					}
 				}
 			}
