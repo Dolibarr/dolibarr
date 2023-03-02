@@ -146,6 +146,7 @@ if (empty($reshook)) {
 				$username = '';
 			} else {
 				if (empty($edituser->email)) {
+					usleep(20000);	// add delay to simulate setPassword and send_password actions delay
 					$message .= $messagewarning;
 				} else {
 					$newpassword = $edituser->setPassword($user, '', 1);
