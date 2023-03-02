@@ -5465,11 +5465,11 @@ abstract class CommonObject
 
 		$parameters = array('modelspath'=>$modelspath, 'modele'=>$modele, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'hidedesc'=>$hidedesc, 'hideref'=>$hideref, 'moreparams'=>$moreparams);
 		$reshook = $hookmanager->executeHooks('commonGenerateDocument', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		
+
 		if (!empty($reshook)) {
 			return $reshook;
 		}
-			
+
 		dol_syslog("commonGenerateDocument modele=".$modele." outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
 
 		if (empty($modele)) {
@@ -5526,7 +5526,7 @@ abstract class CommonObject
 			$this->errors[] = $this->error;
 			dol_syslog($this->error, LOG_ERR);
 			return -1;
-		} 
+		}
 
 		// If generator was found
 		global $db; // Required to solve a conception default making an include of code using $db instead of $this->db just after.
@@ -5589,7 +5589,7 @@ abstract class CommonObject
 		if (in_array(get_class($this), array('Adherent'))) {
 			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
 		} else {
-			 $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
+			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 		// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
 
