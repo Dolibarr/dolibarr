@@ -1940,9 +1940,9 @@ class pdf_sponge extends ModelePDFFactures
 				$title .= $outputlangsbis->transnoentities("InvoiceProForma");
 			}
 		}
-        if (empty($this->situationinvoice)) {
-            $title .= ' '.$outputlangs->convToOutputCharset($object->ref);
-        }
+		if (empty($this->situationinvoice)) {
+			$title .= ' '.$outputlangs->convToOutputCharset($object->ref);
+		}
 
 		if ($object->statut == $object::STATUS_DRAFT) {
 			$pdf->SetTextColor(128, 0, 0);
@@ -1953,17 +1953,17 @@ class pdf_sponge extends ModelePDFFactures
 
 		$pdf->SetFont('', 'B', $default_font_size);
 
-        if ($this->situationinvoice) {
-            $posy += 5;
-            $pdf->SetXY($posx, $posy);
-            $pdf->SetTextColor(0, 0, 60);
-            $textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
-            if ($object->statut == $object::STATUS_DRAFT) {
-                $pdf->SetTextColor(128, 0, 0);
-                $textref .= ' - '.$outputlangs->transnoentities("NotValidated");
-            }
-            $pdf->MultiCell($w, 4, $textref, '', 'R');
-        }
+		if ($this->situationinvoice) {
+			$posy += 5;
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
+			if ($object->statut == $object::STATUS_DRAFT) {
+				$pdf->SetTextColor(128, 0, 0);
+				$textref .= ' - '.$outputlangs->transnoentities("NotValidated");
+			}
+			$pdf->MultiCell($w, 4, $textref, '', 'R');
+		}
 
 		$posy += 1;
 		$pdf->SetFont('', '', $default_font_size - 2);
