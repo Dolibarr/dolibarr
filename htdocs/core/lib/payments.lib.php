@@ -251,6 +251,8 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 	$urltouse = DOL_MAIN_URL_ROOT;
+	dol_syslog("getOnlinePaymentUrl DOL_MAIN_URL_ROOT=".DOL_MAIN_URL_ROOT);
+
 	if ($localorexternal) {
 		$urltouse = $urlwithroot;
 	}
