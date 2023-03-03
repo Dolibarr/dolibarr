@@ -309,6 +309,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			}
 			$object->timespent_fk_user = GETPOST("userid_line", 'int');
 			$object->timespent_fk_product = GETPOST("fk_product", 'int');
+			$object->timespent_fk_product = GETPOST("fk_product", 'int');
 
 			$result = 0;
 			if (in_array($object->timespent_fk_user, $childids) || $user->rights->projet->all->creer) {
@@ -336,8 +337,10 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			}
 			$object->timespent_fk_user = GETPOST("userid_line", 'int');
 			$object->timespent_fk_product = GETPOST("fk_product", 'int');
-
+			$object->timespent_invoiceid = GETPOST("invoiceid", 'int');
+			$object->timespent_invoicelineid = GETPOST("invoicelineid", 'int');
 			$result = 0;
+
 			if (in_array($object->timespent_fk_user, $childids) || $user->rights->projet->all->creer) {
 				$result = $object->updateTimeSpent($user);
 
