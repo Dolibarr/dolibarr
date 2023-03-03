@@ -2352,6 +2352,14 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 									print $formproject->selectInvoiceAndLine($task_time->invoice_id, $task_time->invoice_line_id, 'invoiceid', 'invoicelineid', 'maxwidth500', array('p.rowid'=>$projectstatic->id));
 								} else {
 									print $tmpinvoice->getNomUrl(1);
+									if (!empty($task_time->invoice_line_id)) {
+										$invoiceLine = new FactureLigne($db);
+										$invoiceLine->fetch($task_time->invoice_line_id);
+										if (!empty($invoiceLine->id)) {
+											print '<br>'.$langs->trans('Qty').':'.$invoiceLine->qty;
+											print ' '.$langs->trans('TotalHT').':'.price($invoiceLine->total_ht);
+										}
+									}
 								}
 							}
 						} else {
