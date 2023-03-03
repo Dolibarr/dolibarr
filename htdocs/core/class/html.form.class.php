@@ -10027,9 +10027,10 @@ class Form
 	 *  @param	string	$projectsListId ''=Automatic filter on project allowed. List of id=Filter on project ids.
 	 *  @param	string	$showproject	'all' = Show project info, ''=Hide project info
 	 *  @param	User	$usertofilter	User object to use for filtering
+	 *  @param	int		$status			Invoice status filter (-1 for no filter)
 	 *	@return int         			Nbr of project if OK, <0 if KO
 	 */
-	public function selectInvoice($socid = -1, $selected = '', $htmlname = 'invoiceid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500', $projectsListId = '', $showproject = 'all', $usertofilter = null)
+	public function selectInvoice($socid = -1,$selected = '', $htmlname = 'invoiceid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500', $projectsListId = '', $showproject = 'all', $usertofilter = null, $status=0, $events=array())
 	{
 		global $user, $conf, $langs;
 
@@ -10061,7 +10062,10 @@ class Form
 		$sql .= ' LEFT JOIN '.$this->db->prefix().'societe as s ON s.rowid = p.fk_soc,';
 		$sql .= ' '.$this->db->prefix().'facture as f';
 		$sql .= " WHERE p.entity IN (".getEntity('project').")";
-		$sql .= " AND f.fk_projet = p.rowid AND f.fk_statut=0"; //Brouillons seulement
+		$sql .= " AND f.fk_projet = p.rowid "; //Brouillons seulement
+		if ($status!== -1){
+			$sql .= " AND f.fk_statut=".(int)$status;
+		}
 		//if ($projectsListId) $sql.= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		//if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		//if ($socid > 0)  $sql.= " AND (p.fk_soc=".((int) $socid)." OR p.fk_soc IS NULL)";
@@ -10154,13 +10158,11 @@ class Form
 				$out .= '</select>';
 			}
 
-			print $out;
+			return $out;
 
 			$this->db->free($resql);
-			return $num;
 		} else {
-			dol_print_error($this->db);
-			return -1;
+			dol_print_error($this->db->lasterror);
 		}
 	}
 
