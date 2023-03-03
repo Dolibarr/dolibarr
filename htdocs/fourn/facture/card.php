@@ -884,8 +884,12 @@ if (empty($reshook)) {
 						$totalcreditnotes = $facture_source->getSumCreditNotesUsed();
 						$totaldeposits = $facture_source->getSumDepositsUsed();
 						$remain_to_pay = abs($facture_source->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits);
+						$desc = $langs->trans('invoiceAvoirLineWithPaymentRestAmount');
+						$retAddLine = $object->addline($desc, $remain_to_pay, 0, 0, 0, 1, 0, 0, '', '', 0, '', 'TTC');
 
-						$object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'), $remain_to_pay, 0, 0, 0, 1, 0, 0, '', '', 'TTC');
+						if ($retAddLine < 0) {
+							$error++;
+						}
 					}
 				}
 			}
