@@ -2069,13 +2069,14 @@ class Ticket extends CommonObject
 	}
 
 	/**
-	 * Retrieve informations about internal contacts
+	 *  Retrieve informations about internal contacts
 	 *
-	 *  @return array       Array with datas : firstname, lastname, socid (-1 for internal users), email, code, libelle, status
+	 *  @param  int     $status     Status of user or company
+	 *  @return array               Array with datas : firstname, lastname, socid (-1 for internal users), email, code, libelle, status
 	 */
-	public function getInfosTicketInternalContact()
+	public function getInfosTicketInternalContact($status = -1)
 	{
-		return $this->listeContact(-1, 'internal');
+		return $this->listeContact(-1, 'internal', 0, '', $status);
 	}
 
 	/**
@@ -2089,13 +2090,14 @@ class Ticket extends CommonObject
 	}
 
 	/**
-	 * Retrieve informations about external contacts
+	 *  Retrieve informations about external contacts
 	 *
-	 *  @return array       Array with datas : firstname, lastname, socid (-1 for internal users), email, code, libelle, status
+	 *  @param  int     $status     Status of user or company
+	 *  @return array               Array with datas : firstname, lastname, socid (-1 for internal users), email, code, libelle, status
 	 */
-	public function getInfosTicketExternalContact()
+	public function getInfosTicketExternalContact($status = -1)
 	{
-		return $this->listeContact(-1, 'external');
+		return $this->listeContact(-1, 'external', 0, '', $status);
 	}
 
 	/**
@@ -2275,13 +2277,14 @@ class Ticket extends CommonObject
 	 *    Get array of all contacts for a ticket
 	 *    Override method of file commonobject.class.php to add phone number
 	 *
-	 *    @param	int    	$status 	Status of lines to get (-1=all)
-	 *    @param	string 	$source 	Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
-	 *    @param	int    	$list   	0:Return array contains all properties, 1:Return array contains just id
+	 *    @param    int     $statusoflink     Status of lines to get (-1=all)
+	 *    @param    string  $source     Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
+	 *    @param    int     $list       0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string  $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
-	 *    @return 	array          		Array of contacts
+	 *    @param    int     $status     Status of user or company
+	 *    @return   array               Array of contacts
 	 */
-	public function listeContact($status = -1, $source = 'external', $list = 0, $code = '')
+	public function listeContact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1)
 	{
 		global $langs;
 
@@ -2321,15 +2324,21 @@ class Ticket extends CommonObject
 		$sql .= " AND tc.element='".$this->db->escape($this->element)."'";
 		if ($source == 'internal') {
 			$sql .= " AND tc.source = 'internal'";
+			if ($status >= 0) {
+				$sql .= " AND t.statut = ".((int) $status);
+			}
 		}
 
 		if ($source == 'external' || $source == 'thirdparty') {
 			$sql .= " AND tc.source = 'external'";
+			if ($status >= 0) {
+				$sql .= " AND t.statut = ".((int) $status);
+			}
 		}
 
 		$sql .= " AND tc.active=1";
-		if ($status >= 0) {
-			$sql .= " AND ec.statut = ".((int) $status);
+		if ($statusoflink >= 0) {
+			$sql .= " AND ec.statut = ".((int) $statusoflink);
 		}
 
 		$sql .= " ORDER BY t.lastname ASC";
@@ -2675,7 +2684,7 @@ class Ticket extends CommonObject
 					 */
 					if ($send_email > 0) {
 						// Retrieve internal contact datas
-						$internal_contacts = $object->getInfosTicketInternalContact();
+						$internal_contacts = $object->getInfosTicketInternalContact(1);
 
 						$sendto = array();
 						if (is_array($internal_contacts) && count($internal_contacts) > 0) {
@@ -2743,7 +2752,7 @@ class Ticket extends CommonObject
 						 */
 						if (empty($object->private)) {
 							// Retrieve email of all contacts (external)
-							$external_contacts = $object->getInfosTicketExternalContact();
+							$external_contacts = $object->getInfosTicketExternalContact(1);
 
 							// If no contact, get email from thirdparty
 							if (is_array($external_contacts) && count($external_contacts) === 0) {
@@ -2888,8 +2897,8 @@ class Ticket extends CommonObject
 
 		// If no receiver defined, load all ticket linked contacts
 		if (!is_array($array_receiver) || !count($array_receiver) > 0) {
-			$array_receiver = $this->getInfosTicketInternalContact();
-			$array_receiver = array_merge($array_receiver, $this->getInfosTicketExternalContact());
+			$array_receiver = $this->getInfosTicketInternalContact(1);
+			$array_receiver = array_merge($array_receiver, $this->getInfosTicketExternalContact(1));
 		}
 
 		if ($send_internal_cc) {
@@ -3064,43 +3073,6 @@ class Ticket extends CommonObject
 		$tables = array('ticket');
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
-	}
-
-	/**
-	 * Remove the closed contact
-	 *
-	 * @param   array      $to        Array of receiver. exemple array('john@doe.com' => 'John Doe <john@doe.com>', etc...)
-	 * @return  array                 array of email => name
-	 */
-	public function removeClosedContact($to)
-	{
-		global $db, $langs;
-		$langs->load("ticket");
-
-		if (isset($this->id)) {
-			$sql = "SELECT IF(tc.source = 'external', sc.email, u.email)";
-			$sql .= " FROM ".MAIN_DB_PREFIX."element_contact ec";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_type_contact tc on (ec.element_id = ". $this->id ." AND ec.fk_c_type_contact = tc.rowid)";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople sc on (ec.fk_socpeople = sc.rowid AND tc.source = 'external')";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u on (ec.fk_socpeople = u.rowid AND tc.source = 'internal')";
-			$sql .= " WHERE IF(tc.source = 'external', sc.statut = 1, u.statut = 1)";
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$num = $this->db->num_rows($resql);
-				for ($i = 0; $num > $i; $i++) {
-					$non_closed_contacts[] = $this->db->fetch_row($resql);
-				}
-			}
-			$to = array_filter($to, function($v, $k) use($non_closed_contacts, $langs) {
-				foreach($non_closed_contacts as $non_closed_contact) {
-					if ($k == $non_closed_contact[0])
-						return true;
-				}
-				setEventMessages($langs->trans('WarningMailNotSendContactIsClosed', str_replace(array('>', '<'), '', $v)), null, 'warnings');
-				return false;
-			}, ARRAY_FILTER_USE_BOTH);
-		}
-		return $to;
 	}
 }
 
