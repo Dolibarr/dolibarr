@@ -35,8 +35,6 @@ include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectorfilter.class
 include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectoraction.class.php';
 include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 
-// use Webklex\PHPIMAP;
-require DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
 use Webklex\PHPIMAP\ClientManager;
 use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
 use Webklex\PHPIMAP\Exceptions\InvalidWhereQueryCriteriaException;
@@ -403,6 +401,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if ($action == 'scan') {
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+			require_once DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
+
 			if ($object->acces_type == 1) {
 				// Mode OAUth2 with PHP-IMAP
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
