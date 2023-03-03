@@ -1179,7 +1179,7 @@ if ($action == 'create' || $action == 'presend') {
 						$arrayselected[] = $cat->id;
 					}
 
-					print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 					print '<input type="submit" class="button button-edit small" value="'.$langs->trans('Save').'">';
 					print '</form>';
 					print "</td>";
