@@ -757,67 +757,70 @@ class FormProjets
 	 *
 	 * @param int $selectedInvoiceId Id invoice preselected
 	 * @param int $selectedLineId Id invoice line preselected
-	 * @param string $htmlNameInvoiceId Name of HTML select for Invoice
-	 * @param int $htmlNameInvoiceLineId Name of HTML select for Invoice Line
+	 * @param string $htmlNameInvoice Name of HTML select for Invoice
+	 * @param int $htmlNameInvoiceLine Name of HTML select for Invoice Line
 	 * @param string $morecss More css added to the select component
 	 * @param array $filters Array of filters
+	 * @param int $lineOnly return only option for line
 	 * @return int                    Nbr of project if OK, <0 if KO
 	 */
-	public function selectInvoiceAndLine($selectedInvoiceId = 0, $selectedLineId = 0, $htmlNameInvoiceId = 'invoiceid', $htmlNameInvoiceLineId = 'invoicelineid', $morecss = 'maxwidth500', $filters = array())
+	public function selectInvoiceAndLine($selectedInvoiceId = 0, $selectedLineId = 0, $htmlNameInvoice = 'invoiceid', $htmlNameInvoiceLine = 'invoicelineid', $morecss = 'maxwidth500', $filters = array(), $lineOnly = 0)
 	{
 		global $user, $conf, $langs;
 
 		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 
 		$out = '';
-
-		// Search Invoice
-		$sql = "SELECT f.rowid, f.ref as fref,";
-		$sql .= ' s.nom as name';
-		$sql .= ' FROM ' . $this->db->prefix() . 'projet as p';
-		$sql .= ' INNER JOIN ' . $this->db->prefix() . 'societe as s ON s.rowid = p.fk_soc';
-		$sql .= ' INNER JOIN ' . $this->db->prefix() . 'facture as f ON f.fk_projet = p.rowid';
-		$sql .= " WHERE p.entity IN (" . getEntity('project') . ")";
-		if (!empty($filters)) {
-			foreach ($filters as $key => $value) {
-				if ($key == 'p.rowid') {
-					$sql .= " AND p.rowid=" . (int) $value;
-				}
-				if ($key == 'f.rowid') {
-					$sql .= " AND f.rowid=" . (int) $value;
-				}
-			}
-		}
-		$sql .= " ORDER BY p.ref, f.ref ASC";
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			// Use select2 selector
-			if (!empty($conf->use_javascript_ajax)) {
-				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$comboenhancement = ajax_combobox($htmlNameInvoiceId, '', 0, 0);
-				$out .= $comboenhancement;
-				$morecss = 'minwidth200imp maxwidth500';
-			}
-
-			$out .= '<select class="valignmiddle flat' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlNameInvoiceId . '" name="' . $htmlNameInvoiceId . '">';
-			$num = $this->db->num_rows($resql);
-			if ($num) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$labeltoshow = $obj->fref; // Invoice ref
-					if ($obj->name) {
-						$labeltoshow .= ' - ' . $obj->name;
+		if (empty($lineOnly)) {
+			// Search Invoice
+			$sql = "SELECT f.rowid, f.ref as fref,";
+			$sql .= ' s.nom as name';
+			$sql .= ' FROM ' . $this->db->prefix() . 'projet as p';
+			$sql .= ' INNER JOIN ' . $this->db->prefix() . 'societe as s ON s.rowid = p.fk_soc';
+			$sql .= ' INNER JOIN ' . $this->db->prefix() . 'facture as f ON f.fk_projet = p.rowid';
+			$sql .= " WHERE p.entity IN (" . getEntity('project') . ")";
+			if (!empty($filters)) {
+				foreach ($filters as $key => $value) {
+					if ($key == 'p.rowid') {
+						$sql .= " AND p.rowid=" . (int) $value;
 					}
-
-					$out .= '<option value="' . $obj->rowid . '" ';
-					if (!empty($selectedInvoiceId) && $selectedInvoiceId == $obj->rowid) {
-						$out .= ' selected ';
+					if ($key == 'f.rowid') {
+						$sql .= " AND f.rowid=" . (int) $value;
 					}
-					$out .= '>' . $labeltoshow . '</option>';
 				}
 			}
-		} else {
-			dol_print_error($this->db->lasterror);
+			$sql .= " ORDER BY p.ref, f.ref ASC";
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				// Use select2 selector
+				if (!empty($conf->use_javascript_ajax)) {
+					include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+					$comboenhancement = ajax_combobox($htmlNameInvoice, array(array('method'=>'getLines', 'url'=>dol_buildpath('/core/ajax/ajaxinvoiceline.php', 1), 'htmlname'=>$htmlNameInvoiceLine)), 0, 0);
+					$out .= $comboenhancement;
+					$morecss = 'minwidth200imp maxwidth500';
+				}
+
+				$out .= '<select class="valignmiddle flat' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlNameInvoice . '" name="' . $htmlNameInvoice . '">';
+				$num = $this->db->num_rows($resql);
+				if ($num) {
+					while ($obj = $this->db->fetch_object($resql)) {
+						$labeltoshow = $obj->fref; // Invoice ref
+						if ($obj->name) {
+							$labeltoshow .= ' - ' . $obj->name;
+						}
+
+						$out .= '<option value="' . $obj->rowid . '" ';
+						if (!empty($selectedInvoiceId) && $selectedInvoiceId == $obj->rowid) {
+							$out .= ' selected ';
+						}
+						$out .= '>' . $labeltoshow . '</option>';
+					}
+				}
+				$out .= '</select>';
+			} else {
+				dol_print_error($this->db->lasterror);
+			}
 		}
 
 		// Search Invoice Line
@@ -838,28 +841,33 @@ class FormProjets
 			$sql .= " AND f.rowid=" . (int) $selectedInvoiceId;
 		}
 		$sql .= " ORDER BY p.ref, f.ref ASC";
+		$resql = $this->db->query($sql);
 		if ($resql) {
 			// Use select2 selector
-			if (!empty($conf->use_javascript_ajax)) {
-				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$comboenhancement = ajax_combobox($htmlNameInvoiceLineId, '', 0, 0);
-				$out .= $comboenhancement;
-				$morecss = 'minwidth200imp maxwidth500';
-			}
+			if (empty($lineOnly)) {
+				if (!empty($conf->use_javascript_ajax)) {
+					include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+					$comboenhancement = ajax_combobox($htmlNameInvoiceLine, '', 0, 0);
+					$out .= $comboenhancement;
+					$morecss = 'minwidth200imp maxwidth500';
+				}
 
-			$out .= '<select class="valignmiddle flat' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlNameInvoiceLineId . '" name="' . $htmlNameInvoiceLineId . '">';
+				$out .= '<select class="valignmiddle flat' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlNameInvoiceLine . '" name="' . $htmlNameInvoiceLine . '">';
+			}
 			$num = $this->db->num_rows($resql);
 			if ($num) {
 				while ($obj = $this->db->fetch_object($resql)) {
-					$labeltoshow .= $obj->label; // Invoice ref
-					$labeltoshow .= dol_trunc($obj->description, 25); // Invoice ref
+					$labeltoshow .= $obj->description; // Invoice ref
 
 					$out .= '<option value="' . $obj->rowid . '" ';
-					if (!empty($selectedInvoiceId) && $selectedLineId == $obj->rowid) {
+					if (!empty($selectedLineId) && $selectedLineId == $obj->rowid) {
 						$out .= ' selected ';
 					}
 					$out .= '>' . $labeltoshow . '</option>';
 				}
+			}
+			if (empty($lineOnly)) {
+				$out .= '</select>';
 			}
 		} else {
 			dol_print_error($this->db->lasterror);
