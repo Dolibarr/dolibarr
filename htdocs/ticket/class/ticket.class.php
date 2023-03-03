@@ -2907,7 +2907,6 @@ class Ticket extends CommonObject
 
 		$from = $conf->global->TICKET_NOTIFICATION_EMAIL_FROM;
 		$is_sent = false;
-		$array_receiver = $this->removeClosedContact($array_receiver);
 		if (is_array($array_receiver) && count($array_receiver) > 0) {
 			foreach ($array_receiver as $key => $receiver) {
 				$deliveryreceipt = 0;
