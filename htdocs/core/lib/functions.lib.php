@@ -7591,7 +7591,6 @@ function dol_textishtml($msg, $option = 0)
  */
 function dol_concatdesc($text1, $text2, $forxml = false, $invert = false)
 {
-	var_dump($text1,$text2);
 	if (!empty($invert)) {
 			$tmp = $text1;
 			$text1 = $text2;
@@ -7599,9 +7598,9 @@ function dol_concatdesc($text1, $text2, $forxml = false, $invert = false)
 	}
 
 	$ret = '';
-	$ret .= !dol_textishtml($text1) ? dol_nl2br(dol_escape_htmltag($text1, 0, 1, '', 1), 0, $forxml) : $text1;
+	$ret .= (!dol_textishtml($text1) && dol_textishtml($text2)) ? dol_nl2br(dol_escape_htmltag($text1, 0, 1, '', 1), 0, $forxml) : $text1;
 	$ret .= (!empty($text1) && !empty($text2)) ? ((dol_textishtml($text1) || dol_textishtml($text2)) ? ($forxml ? "<br \>\n" : "<br>\n") : "\n") : "";
-	$ret .= !dol_textishtml($text2) ? dol_nl2br(dol_escape_htmltag($text2, 0, 1, '', 1), 0, $forxml) : $text2;
+	$ret .= (dol_textishtml($text1) && !dol_textishtml($text2)) ? dol_nl2br(dol_escape_htmltag($text2, 0, 1, '', 1), 0, $forxml) : $text2;
 	return $ret;
 }
 
