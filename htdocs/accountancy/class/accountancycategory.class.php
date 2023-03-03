@@ -700,7 +700,7 @@ class AccountancyCategory // extends CommonObject
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as t";
 		//if (in_array($this->db->type, array('mysql', 'mysqli'))) $sql.=' USE INDEX idx_accounting_bookkeeping_doc_date';
-		$sql .= " WHERE t.entity = ".$conf->entity;
+		$sql .= " WHERE t.entity = ".((int) $conf->entity);
 		if (is_array($cpt)) {
 			$sql .= " AND t.numero_compte IN (".$this->db->sanitize($listofaccount, 1).")";
 		} else {
