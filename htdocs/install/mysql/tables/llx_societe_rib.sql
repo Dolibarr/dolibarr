@@ -69,10 +69,9 @@ create table llx_societe_rib
   starting_date date,
   total_amount_of_all_payments double(24,8),
 
-  --For Stripe, Stancer, ...
+  --For Stripe
   stripe_card_ref varchar(128),								-- 'card_...'
   stripe_account varchar(128),								-- 'pk_live_...'
-  ext_payment_site varchar(128),							-- 'Stripe', 'StripeTest', 'Stancer', 'StancerTest', ...
 
   comment        varchar(255),
   ipaddress      varchar(68),

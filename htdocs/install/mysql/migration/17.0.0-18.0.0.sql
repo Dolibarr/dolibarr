@@ -96,6 +96,3 @@ UPDATE llx_prelevement_demande SET type = 'ban' WHERE ext_payment_id IS NULL AND
 
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN fk_user integer;
 
-ALTER TABLE llx_societe_rib ADD COLUMN ext_payment_site varchar(128);
-UPDATE llx_societe_rib SET ext_payment_site = 'StripeTest' WHERE ext_payment_site IS NULL AND (stripe_account LIKE '%@sk_test%' OR stripe_account LIKE '%@pk_test%');
-UPDATE llx_societe_rib SET ext_payment_site = 'Stripe' WHERE ext_payment_site IS NULL AND (stripe_account LIKE '%@sk_live%' OR stripe_account LIKE '%@pk_live%');
