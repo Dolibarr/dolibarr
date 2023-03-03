@@ -103,12 +103,14 @@ $payload = @file_get_contents("php://input");
 $sig_header = empty($_SERVER["HTTP_STRIPE_SIGNATURE"]) ? '' : $_SERVER["HTTP_STRIPE_SIGNATURE"];
 $event = null;
 
-$fh = fopen(DOL_DATA_ROOT.'/dolibarr_stripe.log', 'w+');
-if ($fh) {
-	fwrite($fh, 'HTTP_STRIPE_SIGNATURE='.$sig_header."\n");
-	fwrite($fh, $payload);
-	fclose($fh);
-	dolChmod(DOL_DATA_ROOT.'/dolibarr_stripe.log');
+if (getDolGlobalString('STRIPE_DEBUG')) {
+	$fh = fopen(DOL_DATA_ROOT.'/dolibarr_stripe.log', 'w+');
+	if ($fh) {
+		fwrite($fh, dol_print_date(dol_now('gmt'), 'standard').' HTTP_STRIPE_SIGNATURE='.$sig_header."\n");
+		fwrite($fh, $payload);
+		fclose($fh);
+		dolChmod(DOL_DATA_ROOT.'/dolibarr_stripe.log');
+	}
 }
 
 $error = 0;
