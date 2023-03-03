@@ -149,7 +149,9 @@ $reshook = $hookmanager->executeHooks('completeFieldsToSearchAll', $parameters, 
 if ($reshook > 0) {
 	$fieldstosearchall = $hookmanager->resArray['fieldstosearchall'];
 } elseif ($reshook == 0) {
-	$fieldstosearchall = array_merge($fieldstosearchall, $hookmanager->resArray['fieldstosearchall']);
+	if (!empty($hookmanager->resArray['fieldstosearchall'])) {
+		$fieldstosearchall = array_merge($fieldstosearchall, $hookmanager->resArray['fieldstosearchall']);
+	}
 }
 
 $arrayfields = array(
@@ -988,7 +990,6 @@ while ($i < $imaxinloop) {
 			print '<tr><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
-
 		// Output Kanban
 		$contracttmp->societe = $socstatic->getNomUrl();
 		$contracttmp->date_contrat = $obj->date_contrat;

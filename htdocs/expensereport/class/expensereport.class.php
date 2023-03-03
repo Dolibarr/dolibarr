@@ -512,8 +512,7 @@ class ExpenseReport extends CommonObject
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
-					$this->errors += $hookmanager->errors;
-					$this->error = $hookmanager->error;
+					$this->setErrorsFromObject($hookmanager);
 					$error++;
 				}
 			}
@@ -1705,9 +1704,11 @@ class ExpenseReport extends CommonObject
 		global $conf, $langs;
 
 		$langs->load('expensereport');
-		$nofetch = empty($params['nofetch']) ? false : true;
+
+		$nofetch = !empty($params['nofetch']);
 		$moretitle = $params['moretitle'] ?? '';
-		$datas = [];
+
+		$datas = array();
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ExpenseReport").'</u>';
 		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
@@ -2792,7 +2793,7 @@ class ExpenseReport extends CommonObject
 			$return .= '<span class="info-box-label">'.dol_print_date($this->date_fin, 'day').'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

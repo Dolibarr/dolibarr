@@ -1010,7 +1010,8 @@ while ($i < $imaxinloop) {
 
 	// User owner
 	if (!empty($arrayfields['owner']['checked'])) {
-		print '<td class="tdoverflowmax150"' . ($event_owner_style != '' ? ' style="'.$event_owner_style.'"' : '') . '>'; // With edge and chrome the td overflow is not supported correctly when content is not full text.
+		//print '<td class="tdoverflowmax150"' . ($event_owner_style != '' ? ' style="'.$event_owner_style.'"' : '') . '>';
+		print '<td class="tdoverflowmax150">';
 		if ($obj->fk_user_action > 0 && !isset($cache_user_list[$obj->fk_user_action])) {
 			$userstatic = new User($db);
 			$res = $userstatic->fetch($obj->fk_user_action);

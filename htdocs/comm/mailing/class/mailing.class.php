@@ -191,6 +191,12 @@ class Mailing extends CommonObject
 	public $substitutionarrayfortest;
 
 
+	const STATUS_DRAFT = 0;
+	const STATUS_VALIDATED = 1;
+	const STATUS_SENTPARTIALY = 2;
+	const STATUS_SENTCOMPLETELY = 3;
+
+
 	/**
 	 *  Constructor
 	 *
@@ -736,10 +742,10 @@ class Mailing extends CommonObject
 	{
 		global $conf, $langs;
 
-		$nofetch = empty($params['nofetch']) ? false : true;
+		$nofetch = !empty($params['nofetch']);
 		$langs->load('mails');
 
-		$datas = [];
+		$datas = array();
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ShowEMailing").'</u>';
 		if (isset($this->statut)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);

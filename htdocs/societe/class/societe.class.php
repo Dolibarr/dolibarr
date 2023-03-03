@@ -2613,10 +2613,11 @@ class Societe extends CommonObject
 
 		$langs->loadLangs(['companies', 'commercial']);
 
-		$datas = [];
+		$datas = array();
 
 		$option = $params['option'] ?? '';
-		$nofetch = empty($params['nofetch']) ? false : true;
+		$nofetch = !empty($params['nofetch']);
+
 		$name = $this->name;
 
 		if (!empty($this->name_alias) && empty($noaliasinname)) {
@@ -5224,7 +5225,7 @@ class Societe extends CommonObject
 		}
 
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

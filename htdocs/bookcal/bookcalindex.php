@@ -71,7 +71,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 // BEGIN MODULEBUILDER DRAFT MYOBJECT
 // Draft MyObject
-if ($user->rights->bookcal->availabilities->read && !empty($conf->bookcal->enabled)) {
+if ($user->hasRight('bookcal', 'availabilities', 'read') && isModEnabled('bookcal')) {
 	$langs->load("orders");
 
 	$sql = "SELECT rowid, `ref`, fk_soc, fk_project, description, note_public, note_private, date_creation, tms, fk_user_creat, fk_user_modif, last_main_doc, import_key, model_pdf, status, firstname, lastname, email, `start`, duration";
@@ -143,8 +143,7 @@ $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT
 // Last modified myobject
-if (! empty($conf->bookcal->enabled))
-{
+if (isModEnabled('bookcal')) {
 	$sql = "SELECT rowid, `ref`, fk_soc, fk_project, description, note_public, note_private, date_creation, tms, fk_user_creat, fk_user_modif, last_main_doc, import_key, model_pdf, status, firstname, lastname, email, `start`, duration";
 	$sql .= " FROM ". MAIN_DB_PREFIX . 'bookcal_booking';
 	print "here2";

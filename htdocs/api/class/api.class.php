@@ -302,6 +302,7 @@ class DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Return if a $sqlfilters parameter is valid
+	 * Function no more used. Kept for backward compatibility with old APIs of modules
 	 *
 	 * @param  	string   		$sqlfilters     sqlfilter string
 	 * @param	string			$error			Error message
@@ -317,7 +318,8 @@ class DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Function to forge a SQL criteria from a Generic filter string
+	 * Function to forge a SQL criteria from a Generic filter string.
+	 * Function no more used. Kept for backward compatibility with old APIs of modules
 	 *
 	 * @param  array    $matches    Array of found string by regex search.
 	 * 								Each entry is 1 and only 1 criteria.

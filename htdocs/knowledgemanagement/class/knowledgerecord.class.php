@@ -727,8 +727,9 @@ class KnowledgeRecord extends CommonObject
 
 		$langs->loadLangs(['knowledgemanagement', 'languages']);
 
-		$datas = [];
-		$nofetch = empty($params['nofetch']) ? false : true;
+		$datas = array();
+		$nofetch = !empty($params['nofetch']);
+
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("KnowledgeRecord").'</u>';
 		if (isset($this->statut)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
@@ -1136,15 +1137,15 @@ class KnowledgeRecord extends CommonObject
 			$selected = 1;
 		}
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		if (property_exists($this, 'question')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans('Question').'</span> : <span class="info-box-label">'.$this->question.'</span>';
-		}
 		if (property_exists($this, 'lang') && !empty($this->lang)) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("Language").'</span> : <span class="info-box-label" title="'.$langs->trans("Language_".$this->lang).'">'.$langs->trans("Language_".$this->lang, '', '', '', '', 12).'</span>';
-			$return .=  picto_from_langcode($this->lang, 'class="paddingrightonly saturatemedium opacitylow"');
+			//$return .= '<br><span class="opacitymedium">'.$langs->trans("Language").'</span> : <span class="info-box-label" title="'.$langs->trans("Language_".$this->lang).'">'.$langs->trans("Language_".$this->lang, '', '', '', '', 12).'</span>';
+			$return .= '<br>'.picto_from_langcode($this->lang, 'class="paddingrightonly saturatemedium opacitylow paddingrightonly"');
+		}
+		if (property_exists($this, 'question')) {
+			$return .= '<span class="info-box-label">'.dolGetFirstLineOfText($this->question).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

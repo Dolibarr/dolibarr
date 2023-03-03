@@ -1050,7 +1050,7 @@ class RemiseCheque extends CommonObject
 			$return .= ' | <span class="info-box-label">'.$this->account_id.'</span>';
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div style="display:inline-block" class="info-box-status margintoponly">'.$this->LibStatut($this->statut, 5).'</div>';
+			$return .= '<br><div style="display:inline-block" class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		if (property_exists($this, 'amount')) {
 			$return .= ' |   <div style="display:inline-block"><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="amount">'.price($this->amount).'</div>';

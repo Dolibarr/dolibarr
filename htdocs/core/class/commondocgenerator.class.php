@@ -36,6 +36,11 @@
 abstract class CommonDocGenerator
 {
 	/**
+	 * @var string Model name
+	 */
+	public $name = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
@@ -66,11 +71,6 @@ abstract class CommonDocGenerator
 	public $scandir;
 
 	/**
-	 * @var string model name
-	 */
-	public $name;
-
-	/**
 	 * @var string model description (short text)
 	 */
 	public $description;
@@ -79,6 +79,11 @@ abstract class CommonDocGenerator
 	 * @var array
 	 */
 	public $format;
+
+	/**
+	 * @var string pdf, odt, etc
+	 */
+	public $type;
 
 	public $page_hauteur;
 	public $page_largeur;

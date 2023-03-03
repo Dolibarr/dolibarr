@@ -6,7 +6,7 @@
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2018    	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2023  Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2022		Charlène Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -574,8 +574,12 @@ if (!empty($arrayfields['f.note_private']['checked'])) {
 // Status
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print '<td class="liste_titre right parentonrightofpage">';
-	$tmp = $objectstatic->LibStatut(0); // To load $this->statuts_short
-	$liststatus = $objectstatic->statuts_short;
+	$liststatus = [
+		$object::STATUS_DRAFT => $langs->transnoentitiesnoconv('Draft'),
+		$object::STATUS_VALIDATED => $langs->transnoentitiesnoconv('Validated'),
+		$object::STATUS_BILLED => $langs->transnoentitiesnoconv('StatusInterInvoiced'),
+		$object::STATUS_CLOSED => $langs->transnoentitiesnoconv('Done'),
+	];
 	if (empty($conf->global->FICHINTER_CLASSIFY_BILLED)) {
 		unset($liststatus[2]); // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
 	}
@@ -710,9 +714,8 @@ while ($i < $imaxinloop) {
 		$objectstatic->duration = $obj->duree;
 		$objectstatic->socid = $companystatic->getNomUrl(1, '', 44);
 
-
 		print $objectstatic->getKanbanView('');
-		if ($i == (min($num, $limit) - 1)) {
+		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
 		}

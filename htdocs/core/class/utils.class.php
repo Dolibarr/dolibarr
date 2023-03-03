@@ -121,7 +121,7 @@ class Utils
 					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
 				}
 
-				if (!empty($conf->syslog->enabled)) {
+				if (isModEnabled('syslog')) {
 					$filelog = $conf->global->SYSLOG_FILE;
 					$filelog = preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
 

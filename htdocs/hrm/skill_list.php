@@ -544,7 +544,8 @@ if (isset($extrafields->attributes[$object->table_element]['computed']) && is_ar
 $i = 0;
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-while ($i < ($limit ? min($num, $limit) : $num)) {
+$imaxiloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
 		break; // Should not happen
@@ -570,7 +571,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			}
 			print $object->getKanbanView('');
 		}
-		if ($i == (min($num, $limit) - 1)) {
+		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
 		}

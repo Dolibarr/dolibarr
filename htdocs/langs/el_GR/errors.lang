@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Σφάλμα, η παράμετρ�
 ErrorLoginDateValidity=Σφάλμα, αυτή η σύνδεση είναι εκτός του εύρους ημερομηνιών εγκυρότητας
 ErrorValueLength=Το μήκος του πεδίου ' <b> %s </b> ' πρέπει να είναι μεγαλύτερο από το ' <b> %s </b>'
 ErrorReservedKeyword=Η λέξη "<b> %s </b>" είναι μια δεσμευμένη λέξη-κλειδί
+ErrorFilenameReserved=Το όνομα αρχείου <b> %s </b> δεν μπορεί να χρησιμοποιηθεί καθώς είναι μια δεσμευμένη και προστατευμένη εντολή.
 ErrorNotAvailableWithThisDistribution=Δεν διατίθεται με αυτήν τη διανομή
 ErrorPublicInterfaceNotEnabled=Η δημόσια διεπαφή δεν ενεργοποιήθηκε
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=Η γλώσσα της νέας σελίδας πρέπει να οριστεί εάν είναι μετάφραση άλλης σελίδας
@@ -308,7 +309,7 @@ ErrorExistingPermission = Η άδεια <b> %s </b> για το αντικείμ
 ErrorFieldExist=Η τιμή για <b> %s </b> υπάρχει ήδη
 ErrorEqualModule=Μη έγκυρη ενότητα στο <b> %s </b>
 ErrorFieldValue=Η τιμή για <b> %s </b> είναι λανθασμένη
-ErrorCoherenceMenu= <b> %s </b> απαιτείται όταν <b> % </b> ισούται με LEFT
+ErrorCoherenceMenu= <b> %s </b> απαιτείται όταν το <b> %s </b> είναι 'αριστερά'
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Η παράμετρος PHP upload_max_filesize (%s) είναι υψηλότερη από την παράμετρο PHP post_max_size (%s). Αυτή δεν είναι μια συνεπής ρύθμιση.

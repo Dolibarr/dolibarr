@@ -1432,9 +1432,9 @@ class Ticket extends CommonObject
 		global $langs;
 
 		$langs->load('ticket');
+		$nofetch = !empty($params['nofetch']);
 
-		$nofetch = empty($params['nofetch']) ? false : true;
-		$datas = [];
+		$datas = array();
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Ticket").'</u>';
 		$datas['picto'] .= ' '.$this->getLibStatut(4);
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
@@ -1940,10 +1940,10 @@ class Ticket extends CommonObject
 
 		$res = $this->db->query($sql);
 		if ($res) {
-			while ($rec = $this->db->fetch_array($res)) {
+			while ($rec = $this->db->fetch_object($res)) {
 				include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 				$contactstatic = new Contact($this->db);
-				$contactstatic->fetch($rec['rowid']);
+				$contactstatic->fetch($rec->rowid);
 				$contacts[] = $contactstatic;
 			}
 
@@ -2316,9 +2316,10 @@ class Ticket extends CommonObject
 	 * Used for files linked into messages.
 	 * Files may be renamed during copy to avoid overwriting existing files.
 	 *
-	 * @return	array		Array with final path/name/mime of files.
+	 * @param	string	$forcetrackid	Force trackid
+	 * @return	array					Array with final path/name/mime of files.
 	 */
-	public function copyFilesForTicket()
+	public function copyFilesForTicket($forcetrackid = null)
 	{
 		global $conf;
 
@@ -2333,7 +2334,7 @@ class Ticket extends CommonObject
 		$maxheightmini = 72;
 
 		$formmail = new FormMail($this->db);
-		$formmail->trackid = 'tic'.$this->id;
+		$formmail->trackid = (is_null($forcetrackid) ? 'tic'.$this->id : '');
 		$attachedfiles = $formmail->get_attached_files();
 
 		$filepath = $attachedfiles['paths'];
@@ -2358,7 +2359,7 @@ class Ticket extends CommonObject
 				$destfile = $destdir.'/'.$pathinfo['filename'].' - '.dol_print_date($now, 'dayhourlog').'.'.$pathinfo['extension'];
 			}
 
-			$res = dol_move($filepath[$i], $destfile, 0, 1);
+			$res = dol_move($filepath[$i], $destfile, 0, 1, 0, 1);
 
 			if (image_format_supported($destfile) == 1) {
 				// Create small thumbs for image (Ratio is near 16/9)
@@ -3000,7 +3001,7 @@ class Ticket extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $langs, $selected,$arrayofselected,$obj;
+		global $langs, $selected,$arrayofselected;
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -3012,15 +3013,15 @@ class Ticket extends CommonObject
 			$selected = 1;
 		}
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		if (property_exists($this, 'fk_user_assign') && !empty($this->fk_user_assign)) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("AssignedTo").'</span> : <span class="info-box-label">'.$this->fk_user_assign.'</span>';
+		if (!empty($arraydata['user_assignment'])) {
+			$return .= '<br><span class="info-box-label" title="'.dol_escape_htmltag($langs->trans("AssignedTo")).'">'.$arraydata['user_assignment'].'</span>';
 		}
 		if (property_exists($this, 'type_code') && !empty($this->type_code)) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("Type").'</span> : ';
-			$return .= $langs->getLabelFromKey($this->db, 'TicketTypeShort'.$this->type_code, 'c_ticket_type', 'code', 'label', $this->type_code);
+			$return .= '<br>';
+			$return .= '<div class="tdoverflowmax125 inline-block">'.$langs->getLabelFromKey($this->db, 'TicketTypeShort'.$this->type_code, 'c_ticket_type', 'code', 'label', $this->type_code).'</div>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

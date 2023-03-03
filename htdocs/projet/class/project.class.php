@@ -202,8 +202,11 @@ class Project extends CommonObject
 	public $statut; // 0=draft, 1=opened, 2=closed
 
 	public $opp_status; // opportunity status, into table llx_c_lead_status
+	public $opp_status_code;
 	public $fk_opp_status; // opportunity status, into table llx_c_lead_status
+	public $opp_amount; // opportunity amount
 	public $opp_percent; // opportunity probability
+	public $opp_weighted_amount; // opportunity weighted amount
 
 	public $email_msgid;
 
@@ -2389,17 +2392,34 @@ class Project extends CommonObject
 		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		if (property_exists($this, 'date_start_event')) {
-			$return .= '<br><span class="info-bo-label opacitymedium">'.$langs->trans("DateStart").'</span>';
-			$return .= '<span class="info-box-label "> : '.dol_print_date($this->db->jdate($this->date_start_event), 'day').'</>';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref);
+		if ($this->hasDelay()) {
+			$return .= img_warning($langs->trans('Late'));
 		}
-		if (property_exists($this, 'user_author_id')) {
+		$return .= '</span>';
+		if (property_exists($this, 'date_start') && $this->date_start) {
+			$return .= '<br><span class="info-box-label">'.dol_print_date($this->date_start, 'day').'</>';
+		}
+		if (property_exists($this, 'date_end') && $this->date_end) {
+			if ($this->date_start) {
+				$return .= ' - ';
+			} else {
+				$return .= '<br>';
+			}
+			$return .= '<span class="info-box-label">'.dol_print_date($this->date_end, 'day').'</>';
+		}
+		/*if (property_exists($this, 'user_author_id')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Author").'</span>';
 			$return .= '<span> : '.$user->getNomUrl(1).'</span>';
+		}*/
+		if ($this->usage_opportunity && $this->opp_status_code) {
+			//$return .= '<br><span class="info-bo-label opacitymedium">'.$langs->trans("OpportunityStatusShort").'</span>';
+			$return .= '<br><span class="info-box-label">'.	$langs->trans("OppStatus".$this->opp_status_code);
+			$return .= ' <span class="opacitymedium">('.round($this->opp_percent).'%)</span>';
+			$return .= '<br><span class="amount">'.price($this->opp_amount).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

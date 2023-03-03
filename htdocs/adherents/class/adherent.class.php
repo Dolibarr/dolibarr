@@ -1726,8 +1726,7 @@ class Adherent extends CommonObject
 				return -2;
 			}
 		} else {
-			$this->error = $subscription->error;
-			$this->errors = $subscription->errors;
+			$this->setErrorsFromObject($subscription);
 			$this->db->rollback();
 			return -1;
 		}
@@ -1790,13 +1789,11 @@ class Adherent extends CommonObject
 					}
 				} else {
 					$error++;
-					$this->error = $acct->error;
-					$this->errors = $acct->errors;
+					$this->setErrorsFromObject($acct);
 				}
 			} else {
 				$error++;
-				$this->error = $acct->error;
-				$this->errors = $acct->errors;
+				$this->setErrorsFromObject($acct);
 			}
 		}
 
@@ -2286,10 +2283,11 @@ class Adherent extends CommonObject
 	{
 		global $conf, $langs;
 
-		$datas = [];
 		$langs->loadLangs(['members', 'companies']);
+		$nofetch = !empty($params['nofetch']);
 
-		$nofetch = empty($params['nofetch']) ? false : true;
+		$datas = array();
+
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			$langs->load("users");
 			return ['optimize' => $langs->trans("ShowUser")];
@@ -3325,7 +3323,7 @@ class Adherent extends CommonObject
 			$return .= '<br><span class="info-box-label">'.$this->getmorphylib('', 2).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

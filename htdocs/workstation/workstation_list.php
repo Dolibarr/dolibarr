@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('workstation', 'other'));
+$langs->loadLangs(array('mrp', 'other'));
 
 $action      = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';     // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction  = GETPOST('massaction', 'alpha');                                   // The bulk action (combo box choice into lists)

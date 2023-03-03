@@ -1663,7 +1663,7 @@ if ($ispaymentok) {
 			$content .= $companylangs->transnoentitiesnoconv("None");
 		} else {
 			$topic .= ($ispostactionok ? '' : ' ('.$companylangs->trans("WarningPostActionErrorAfterPayment").')');
-			$content .= '<span style="color: red">'.$companylangs->transnoentitiesnoconv("Error").'</span>';
+			$content .= '<span class="star">'.$companylangs->transnoentitiesnoconv("Error").'</span>';
 		}
 		$content .= '<br>'."\n";
 		foreach ($postactionmessages as $postactionmessage) {

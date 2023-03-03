@@ -94,7 +94,7 @@ class Form
 	 * @param   string	$text			Text of label or key to translate
 	 * @param   string	$htmlname		Name of select field ('edit' prefix will be added)
 	 * @param   string	$preselected    Value to show/edit (not used in this function)
-	 * @param	object	$object			Object
+	 * @param	object	$object			Object (on the page we show)
 	 * @param	boolean	$perm			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
 	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker' 'checkbox:ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
 	 * @param	string	$moreparam		More param to add on a href URL.
@@ -168,7 +168,11 @@ class Form
 				$ret .= '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&token='.newToken().'&'.$paramid.'='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
 			}
 			if (!empty($notabletag) && $notabletag == 1) {
-				$ret .= ' : ';
+				if ($text) {
+					$ret .= ' : ';
+				} else {
+					$ret .= ' ';
+				}
 			}
 			if (!empty($notabletag) && $notabletag == 3) {
 				$ret .= ' ';
@@ -190,7 +194,7 @@ class Form
 	 * @param	string	$text			Text of label (not used in this function)
 	 * @param	string	$htmlname		Name of select field
 	 * @param	string	$value			Value to show/edit
-	 * @param	object	$object			Object
+	 * @param	object	$object			Object (that we want to show)
 	 * @param	boolean	$perm			Permission to allow button to edit parameter
 	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols%', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select;xkey:xval,ykey:yval,...')
 	 * @param	string	$editvalue		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of numeric value). Use '' to use same than $value
@@ -299,6 +303,8 @@ class Form
 						$arraylist[$tmpkey] = $tmp[1];
 					}
 					$ret .= $this->selectarray($htmlname, $arraylist, $value);
+				} elseif (preg_match('/^link/', $typeofdata)) {
+					// TODO Not yet implemented. See code for extrafields
 				} elseif (preg_match('/^ckeditor/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata); // Example: ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols:uselocalbrowser
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -5164,7 +5170,7 @@ class Form
 						$formquestion[] = array('name'=>$input['name'].'year');
 						$formquestion[] = array('name'=>$input['name'].'hour');
 						$formquestion[] = array('name'=>$input['name'].'min');
-					} elseif ($input['type'] == 'other') {
+					} elseif ($input['type'] == 'other') {	// can be 1 column or 2 depending if label is set or not
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">';
 						if (!empty($input['label'])) {
 							$more .= $input['label'].'</div><div class="tagtd">';
@@ -7005,8 +7011,8 @@ class Form
 
 		$retstring = '<span class="nowraponall">';
 
-		$hourSelected = 0;
-		$minSelected = 0;
+		$hourSelected = '';
+		$minSelected = '';
 
 		// Hours
 		if ($iSecond != '') {
@@ -7020,14 +7026,14 @@ class Form
 			$retstring .= '<select class="flat" id="select_'.$prefix.'hour" name="'.$prefix.'hour"'.($disabled ? ' disabled' : '').'>';
 			for ($hour = 0; $hour < 25; $hour++) {	// For a duration, we allow 24 hours
 				$retstring .= '<option value="'.$hour.'"';
-				if ($hourSelected == $hour) {
+				if (is_numeric($hourSelected) && $hourSelected == $hour) {
 					$retstring .= " selected";
 				}
 				$retstring .= ">".$hour."</option>";
 			}
 			$retstring .= "</select>";
 		} elseif ($typehour == 'text' || $typehour == 'textselect') {
-			$retstring .= '<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" name="'.$prefix.'hour"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputhour" value="'.(($hourSelected != '') ? ((int) $hourSelected) : '').'">';
+			$retstring .= '<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" name="'.$prefix.'hour"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputhour right" value="'.(($hourSelected != '') ? ((int) $hourSelected) : '').'">';
 		} else {
 			return 'BadValueForParameterTypeHour';
 		}
@@ -7042,21 +7048,23 @@ class Form
 		if ($minunderhours) {
 			$retstring .= '<br>';
 		} else {
-			$retstring .= '<span class="hideonsmartphone">&nbsp;</span>';
+			if ($typehour != 'text') {
+				$retstring .= '<span class="hideonsmartphone">&nbsp;</span>';
+			}
 		}
 
 		if ($typehour == 'select' || $typehour == 'textselect') {
 			$retstring .= '<select class="flat" id="select_'.$prefix.'min" name="'.$prefix.'min"'.($disabled ? ' disabled' : '').'>';
 			for ($min = 0; $min <= 55; $min = $min + 5) {
 				$retstring .= '<option value="'.$min.'"';
-				if ($minSelected == $min) {
+				if (is_numeric($minSelected) && $minSelected == $min) {
 					$retstring .= ' selected';
 				}
 				$retstring .= '>'.$min.'</option>';
 			}
 			$retstring .= "</select>";
 		} elseif ($typehour == 'text') {
-			$retstring .= '<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" name="'.$prefix.'min"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputminute" value="'.(($minSelected != '') ? ((int) $minSelected) : '').'">';
+			$retstring .= '<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" name="'.$prefix.'min"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputminute right" value="'.(($minSelected != '') ? ((int) $minSelected) : '').'">';
 		}
 
 		if ($typehour != 'text') {
@@ -7810,47 +7818,6 @@ class Form
 		return $out;
 	}
 
-	/**
-	 * Function to forge a SQL criteria from a Dolibarr filter syntax string.
-	 *
-	 * @param  array    $matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.nature:is:NULL"
-	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
-	 */
-	protected static function forgeCriteriaCallback($matches)
-	{
-		global $db;
-
-		//dol_syslog("Convert matches ".$matches[1]);
-		if (empty($matches[1])) {
-			return '';
-		}
-		$tmp = explode(':', $matches[1]);
-		if (count($tmp) < 3) {
-			return '1=2';	// An always false request
-		}
-
-		$tmpescaped = $tmp[2];
-		$regbis = array();
-
-		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
-			$tmpescaped = "'".$db->escape($regbis[1])."'";
-		} else {
-			$tmpescaped = $db->escape($tmpescaped);
-		}
-
-		if ($tmp[1] == '!=') {
-			$tmp[1] = '<>';
-		}
-
-		if (preg_match('/[\(\)]/', $tmp[0])) {
-			return '1=2';	// An always false request
-		}
-		if (! in_array($tmp[1], array('<', '>', '<>', 'is', 'isnot', '=', 'like'))) {
-			return '1=2';	// An always false request
-		}
-
-		return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1])).' '.$tmpescaped;
-	}
 
 	/**
 	 * Output html form to select an object.
@@ -7964,12 +7931,11 @@ class Form
 			}
 
 			if ($filter) {	 // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-				/*if (! DolibarrApi::_checkFilters($filter))
-				{
-					throw new RestException(503, 'Error when validating parameter sqlfilters '.$filter);
-				}*/
-				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-				$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'Form::forgeCriteriaCallback', $filter).")";
+				$errormessage = '';
+				$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+				if ($errormessage) {
+					return 'Error forging a SQL request from an universal criteria: '.$errormessage;
+				}
 			}
 		}
 		$sql .= $this->db->order($sortfield ? $sortfield : $fieldstoshow, "ASC");
@@ -8276,7 +8242,7 @@ class Form
 						containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 					    placeholder: "'.dol_escape_js($placeholder).'",
 				    	escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
-				    	minimumInputLength: '.$minimumInputLength.',
+				    	minimumInputLength: '.((int) $minimumInputLength).',
 				        formatResult: function(result, container, query, escapeMarkup) {
 	                        return escapeMarkup(result.text);
 	                    },
@@ -8529,6 +8495,8 @@ class Form
 								  },';
 				}
 				$out .= '		dir: \'ltr\',
+								containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag (ko with multiselect) */
+								dropdownCssClass: \''.$morecss.'\',				/* Line to add class on the new <span class="select2-selection...> tag (ok with multiselect) */
 								// Specify format function for dropdown item
 								formatResult: formatResult,
 							 	templateResult: formatResult,		/* For 4.0 */
@@ -9348,7 +9316,7 @@ class Form
 		// Left part of banner
 		if ($morehtmlleft) {
 			if ($conf->browser->layout == 'phone') {
-				$ret .= '<!-- morehtmlleft --><div class="floatleft">'.$morehtmlleft.'</div>'; // class="center" to have photo in middle
+				$ret .= '<!-- morehtmlleft --><div class="floatleft">'.$morehtmlleft.'</div>';
 			} else {
 				$ret .= '<!-- morehtmlleft --><div class="inline-block floatleft">'.$morehtmlleft.'</div>';
 			}
@@ -10323,14 +10291,12 @@ class Form
 				$search_component_params_hidden .= '('.$search_component_params_hidden.')';
 			}
 			$errormessage = '';
-			if (!dolCheckFilters($search_component_params_hidden, $errormessage)) {
-				print 'ERROR in parsing search string';
+			$searchtags = forgeSQLFromUniversalSearchCriteria($search_component_params_hidden, $errormessage);
+			if ($errormessage) {
+				print 'ERROR in parsing search string: '.dol_escape_htmltag($errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			//var_dump($search_component_params_hidden);
-			$htmltags = preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $search_component_params_hidden);
-			//var_dump($htmltags);
-			$ret .= '<span class="marginleftonlyshort valignmiddle tagsearch"><span class="tagsearchdelete select2-selection__choice__remove">x</span> '.$htmltags.'</span>';
+			//var_dump($searchtags);
+			$ret .= '<span class="marginleftonlyshort valignmiddle tagsearch"><span class="tagsearchdelete select2-selection__choice__remove">x</span> '.dol_escape_htmltag($searchtags).'</span>';
 		}
 
 		//$ret .= '<button type="submit" class="liste_titre button_search paddingleftonly" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';

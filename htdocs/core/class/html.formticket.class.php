@@ -154,7 +154,7 @@ class FormTicket
 	 * @param  	int	 			$withdolfichehead		With dol_get_fiche_head() and dol_get_fiche_end()
 	 * @param	string			$mode					Mode ('create' or 'edit')
 	 * @param	int				$public					1=If we show the form for the public interface
-	 * @param	Contact|null	$with_contact			[=NULL] Contact to link to this ticket if exists
+	 * @param	Contact|null	$with_contact			[=NULL] Contact to link to this ticket if it exists
 	 * @param	string			$action					[=''] Action in card
 	 * @return 	void
 	 */
@@ -188,6 +188,7 @@ class FormTicket
 		print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.(!empty($this->param["returnurl"]) ? $this->param["returnurl"] : $_SERVER['PHP_SELF']).'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
+		print '<input type="hidden" name="trackid" value="'.$this->trackid.'">';
 		foreach ($this->param as $key => $value) {
 			print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 		}
@@ -348,26 +349,9 @@ class FormTicket
 		$this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', 2, 1);
 		print '</td></tr>';
 
-		// Subject
-		if ($this->withtitletopic) {
-			print '<tr><td><label for="subject"><span class="fieldrequired">'.$langs->trans("Subject").'</span></label></td><td>';
-			// Answer to a ticket : display of the thread title in readonly
-			if ($this->withtopicreadonly) {
-				print $langs->trans('SubjectAnswerToTicket').' '.$this->topic_title;
-			} else {
-				if (isset($this->withreadid) && $this->withreadid > 0) {
-					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title;
-				} else {
-					$subject = GETPOST('subject', 'alpha');
-				}
-				print '<input class="text minwidth500" id="subject" name="subject" value="'.$subject.'" autofocus />';
-			}
-			print '</td></tr>';
-		}
-
 		if (!empty($conf->knowledgemanagement->enabled)) {
 			// KM Articles
-			print '<tr id="KWwithajax"></tr>';
+			print '<tr id="KWwithajax" class="hidden"><td></td></tr>';
 			print '<!-- Script to manage change of ticket group -->
 			<script nonce="'.getNonce().'">
 			jQuery(document).ready(function() {
@@ -380,12 +364,17 @@ class FormTicket
 
 					if (idgroupticket != "") {
 						$.ajax({ url: \''.DOL_URL_ROOT.'/core/ajax/fetchKnowledgeRecord.php\',
-							 data: { action: \'getKnowledgeRecord\', idticketgroup: idgroupticket, token: \''.newToken().'\', lang:\''.$langs->defaultlang.'\'},
+							 data: { action: \'getKnowledgeRecord\', idticketgroup: idgroupticket, token: \''.newToken().'\', lang:\''.$langs->defaultlang.'\', public:'.($public).' },
 							 type: \'GET\',
 							 success: function(response) {
 								var urllist = \'\';
 								console.log("We received response "+response);
-								response = JSON.parse(response)
+								if (typeof response == "object") {
+									console.log("response is already type object, no need to parse it");
+								} else {
+									console.log("response is type "+(typeof response));
+									response = JSON.parse(response);
+								}
 								for (key in response) {
 									answer = response[key].answer;
 									urllist += \'<li><a href="#" title="\'+response[key].title+\'" class="button_KMpopup" data-html="\'+answer+\'">\' +response[key].title+\'</a></li>\';
@@ -420,6 +409,23 @@ class FormTicket
 				}
 			});
 			</script>'."\n";
+		}
+
+		// Subject
+		if ($this->withtitletopic) {
+			print '<tr><td><label for="subject"><span class="fieldrequired">'.$langs->trans("Subject").'</span></label></td><td>';
+			// Answer to a ticket : display of the thread title in readonly
+			if ($this->withtopicreadonly) {
+				print $langs->trans('SubjectAnswerToTicket').' '.$this->topic_title;
+			} else {
+				if (isset($this->withreadid) && $this->withreadid > 0) {
+					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title.'';
+				} else {
+					$subject = GETPOST('subject', 'alpha');
+				}
+				print '<input class="text minwidth500" id="subject" name="subject" value="'.$subject.'"'.(empty($this->withemail)?' autofocus':'').' />';
+			}
+			print '</td></tr>';
 		}
 
 		// MESSAGE
@@ -459,7 +465,7 @@ class FormTicket
 			if (count($cate_arbo)) {
 				// Categories
 				print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 			}
 		}
@@ -853,6 +859,8 @@ class FormTicket
 					} elseif ($selected == $id) {
 						print ' selected="selected"';
 					} elseif ($arraycategories['use_default'] == "1" && !$selected && !$empty) {
+						print ' selected="selected"';
+					} elseif (count($ticketstat->cache_category_tickets) == 1) {
 						print ' selected="selected"';
 					}
 
@@ -1423,7 +1431,7 @@ class FormTicket
 			$res = $ticketstat->fetch('', '', $this->track_id);
 
 			print '<tr><td></td><td>';
-			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : ($conf->global->TICKETS_MESSAGE_FORCE_MAIL?'checked':''));
+			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : (getDolGlobalInt('TICKETS_MESSAGE_FORCE_MAIL')?'checked':''));
 			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
 			print '<label for="send_msg_email">'.$langs->trans('SendMessageByEmail').'</label>';
 			$texttooltip = $langs->trans("TicketMessageSendEmailHelp", '{s1}');
@@ -1455,7 +1463,7 @@ class FormTicket
 
 			// Subject
 			print '<tr class="email_line"><td>'.$langs->trans('Subject').'</td>';
-			print '<td><input type="text" class="text minwidth500" name="subject" value="['.$conf->global->MAIN_INFO_SOCIETE_NOM.' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
+			print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
 			print '</td></tr>';
 
 			// Recipients / adressed-to
@@ -1489,8 +1497,8 @@ class FormTicket
 					}
 				}
 
-				if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS) {
-					$sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO.' <small class="opacitymedium">(generic email)</small>';
+				if (getDolGlobalInt('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS')) {
+					$sendto[] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO').' <small class="opacitymedium">(generic email)</small>';
 				}
 
 				// Print recipient list
