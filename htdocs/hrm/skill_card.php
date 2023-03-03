@@ -4,6 +4,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2023       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -774,16 +775,16 @@ if ($action != "create" && $action != "edit") {
 		// LINE EDITION | SUPPRESSION
 
 		print '<td>';
-
 		print '</td>';
-		print '<td>';
+
+		// print '<td>';
 		// add pencil
 		//@todo change to proper call dol_
 		//print '<a class="timeline-btn" href="' . dol_buildpath("custom/hrm/skilldet_card.php?action=edit&id=" . $objectline->id, 1) . '"><i class="fa fa-pencil" title="' . $langs->trans("Modify") . '" ></i></a>';
 		// add trash
 		//@todo change to proper call dol_
 		//print '<a class="timeline-btn" href="'.dol_buildpath("custom/hrm/skilldet_card.php?action=delete&id=".$objectline->id,1)  .'"><i class="fa fa-trash" title="'.$langs->trans("Delete").'" ></i></a>';
-		//print '</td>';
+		// print '</td>';
 
 
 		// Fields from hook
@@ -807,7 +808,7 @@ if ($action != "create" && $action != "edit") {
 	// If no record found
 
 	if ($num == 0) {
-		$colspan = 1;
+		$colspan = 2;
 		foreach ($arrayfields as $key => $val) {
 			if (!empty($val['checked'])) {
 				$colspan++;

@@ -214,7 +214,7 @@ if (empty($reshook)) {
 	}
 
 	// Add contract
-	if ($action == 'add' && $user->rights->contrat->creer) {
+	if ($action == 'add' && $user->hasRight('contrat', 'creer')) {
 		// Check
 		if (empty($datecontrat)) {
 			$error++;
@@ -408,9 +408,9 @@ if (empty($reshook)) {
 				$action = 'create';
 			}
 		}
-	} elseif ($action == 'classin' && $user->rights->contrat->creer) {
+	} elseif ($action == 'classin' && $user->hasRight('contrat', 'creer')) {
 		$object->setProject(GETPOST('projectid'));
-	} elseif ($action == 'addline' && $user->rights->contrat->creer) {
+	} elseif ($action == 'addline' && $user->hasRight('contrat', 'creer')) {
 		// Add a new line
 		// Set if we used free entry or predefined product
 		$predef = '';
@@ -682,7 +682,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	} elseif ($action == 'updateline' && $user->rights->contrat->creer && !GETPOST('cancel', 'alpha')) {
+	} elseif ($action == 'updateline' && $user->hasRight('contrat', 'creer') && !GETPOST('cancel', 'alpha')) {
 		$error = 0;
 		$predef = '';
 
@@ -795,7 +795,7 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 		}
-	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->contrat->creer) {
+	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->hasRight('contrat', 'creer')) {
 		$result = $object->deleteline(GETPOST('lineid', 'int'), $user);
 
 		if ($result >= 0) {
@@ -804,7 +804,7 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->contrat->creer) {
+	} elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->hasRight('contrat', 'creer')) {
 		$result = $object->validate($user);
 
 		if ($result > 0) {
@@ -830,18 +830,18 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'reopen' && $user->rights->contrat->creer) {
+	} elseif ($action == 'reopen' && $user->hasRight('contrat', 'creer')) {
 		$result = $object->reopen($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->contrat->creer) {
+	} elseif ($action == 'confirm_close' && $confirm == 'yes' && $user->hasRight('contrat', 'creer')) {
 		// Close all lines
 		$result = $object->closeAll($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_activate' && $confirm == 'yes' && $user->rights->contrat->creer) {
+	} elseif ($action == 'confirm_activate' && $confirm == 'yes' && $user->hasRight('contrat', 'creer')) {
 		$date_start = dol_mktime(12, 0, 0, GETPOST('d_startmonth'), GETPOST('d_startday'), GETPOST('d_startyear'));
 		$date_end   = dol_mktime(12, 0, 0, GETPOST('d_endmonth'), GETPOST('d_endday'), GETPOST('d_endyear'));
 		$comment      = GETPOST('comment', 'alpha');
@@ -857,7 +857,7 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contrat->creer) {
+	} elseif ($action == 'confirm_move' && $confirm == 'yes' && $user->hasRight('contrat', 'creer')) {
 		if (GETPOST('newcid') > 0) {
 			$contractline = new ContratLigne($db);
 			$result = $contractline->fetch(GETPOSTINT('lineid'));
@@ -942,15 +942,8 @@ if (empty($reshook)) {
 				$old_filedir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($old_ref);
 				$new_filedir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 
-				$files = dol_dir_list($old_filedir);
-				if (!empty($files)) {
-					if (!is_dir($new_filedir)) {
-						dol_mkdir($new_filedir);
-					}
-					foreach ($files as $file) {
-						dol_move($file['fullname'], $new_filedir.'/'.$file['name']);
-					}
-				}
+				// Rename directory of contract with new name
+				dol_move_dir($old_filedir, $new_filedir);
 
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
@@ -995,7 +988,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
-	if (!empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->contrat->creer) {
+	if (!empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->hasRight('contrat', 'creer')) {
 		if ($action == 'addcontact') {
 			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
 			$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -1351,7 +1344,7 @@ if ($action == 'create') {
 
 
 		// Contract
-		if (!empty($object->brouillon) && $user->rights->contrat->creer) {
+		if (!empty($object->brouillon) && $user->hasRight('contrat', 'creer')) {
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setremise">';
@@ -1448,7 +1441,7 @@ if ($action == 'create') {
 
 		print '</div>';
 
-		if (!empty($object->brouillon) && $user->rights->contrat->creer) {
+		if (!empty($object->brouillon) && $user->hasRight('contrat', 'creer')) {
 			print '</form>';
 		}
 
@@ -1650,9 +1643,9 @@ if ($action == 'create') {
 					if ($objp->subprice >= 0) {
 						$colspan = 6;
 
-						if ($conf->margin->enabled && getDolGlobalString('PRODUCT_USE_UNITS')) {
+						if (isModEnabled('margin') && getDolGlobalString('PRODUCT_USE_UNITS')) {
 							$colspan = 8;
-						} elseif ($conf->margin->enabled || getDolGlobalString('PRODUCT_USE_UNITS')) {
+						} elseif (isModEnabled('margin') || getDolGlobalString('PRODUCT_USE_UNITS')) {
 							$colspan = 7;
 						}
 
@@ -1826,7 +1819,7 @@ if ($action == 'create') {
 			/*
 			 * Confirmation to delete service line of contract
 			 */
-			if ($action == 'deleteline' && !$_REQUEST["cancel"] && $user->rights->contrat->creer && $object->lines[$cursorline - 1]->id == GETPOST('rowid')) {
+			if ($action == 'deleteline' && !$_REQUEST["cancel"] && $user->hasRight('contrat', 'creer') && $object->lines[$cursorline - 1]->id == GETPOST('rowid')) {
 				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOST('rowid'), $langs->trans("DeleteContractLine"), $langs->trans("ConfirmDeleteContractLine"), "confirm_deleteline", '', 0, 1);
 				if ($ret == 'html') {
 					print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
@@ -1836,7 +1829,7 @@ if ($action == 'create') {
 			/*
 			 * Confirmation to move service toward another contract
 			 */
-			if ($action == 'move' && !$_REQUEST["cancel"] && $user->rights->contrat->creer && $object->lines[$cursorline - 1]->id == GETPOST('rowid')) {
+			if ($action == 'move' && !$_REQUEST["cancel"] && $user->hasRight('contrat', 'creer') && $object->lines[$cursorline - 1]->id == GETPOST('rowid')) {
 				$arraycontractid = array();
 				foreach ($arrayothercontracts as $contractcursor) {
 					$arraycontractid[$contractcursor->id] = $contractcursor->ref;
@@ -2123,7 +2116,7 @@ if ($action == 'create') {
 
 				if (isModEnabled('commande') && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices) {
 					$langs->load("orders");
-					if ($user->rights->commande->creer) {
+					if ($user->hasRight('commande', 'creer')) {
 						print dolGetButtonAction($langs->trans('CreateOrder'), '', 'default', DOL_URL_ROOT.'/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id, '', true, $params);
 					} else {
 						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");

@@ -91,7 +91,7 @@ MailingModuleDescContactsByFunction=Контакти за посадою
 MailingModuleDescEmailsFromFile=Електронні листи з файлу
 MailingModuleDescEmailsFromUser=Електронні листи, введені користувачем
 MailingModuleDescDolibarrUsers=Користувачі з електронною поштою
-MailingModuleDescThirdPartiesByCategories=Треті сторони (за категоріями)
+MailingModuleDescThirdPartiesByCategories=Third parties
 SendingFromWebInterfaceIsNotAllowed=Відправлення з веб-інтерфейсу заборонено.
 EmailCollectorFilterDesc=Усі фільтри мають збігатися, щоб отримати електронний лист
 
@@ -179,3 +179,4 @@ RecordCreatedByEmailCollector=Запис, створений збирачем е
 DefaultBlacklistMailingStatus=Значення за замовчуванням для поля '%s' під час створення нового контакту
 DefaultStatusEmptyMandatory=Порожній, але обов’язковий
 WarningLimitSendByDay=WARNING: The setup or contract of your instance limits your number of emails per day to <b>%s</b>. Trying to send more may result in having your instance slow down or suspended. Please contact your support if you need a higher quota.
+NoMoreRecipientToSendTo=No more recipient to send the email to

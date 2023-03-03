@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2018  Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2023  Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,6 +66,9 @@ class Loan extends CommonObject
 	public $account_capital;
 	public $account_insurance;
 	public $account_interest;
+	public $accountancy_account_capital;
+	public $accountancy_account_insurance;
+	public $accountancy_account_interest;
 
 	/**
 	 * @var integer|string date_creation
@@ -457,7 +460,7 @@ class Loan extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Tag loan as payement as unpaid
+	 *  Tag loan as payment as unpaid
 	 *	@deprecated
 	 *  @see setUnpaid()
 	 *  @param	User	$user	Object user making change
@@ -471,7 +474,7 @@ class Loan extends CommonObject
 	}
 
 	/**
-	 *  Tag loan as payement as unpaid
+	 *  Tag loan as payment as unpaid
 	 *
 	 *  @param	User	$user	Object user making change
 	 *  @return	int				<0 if KO, >0 if OK
@@ -641,7 +644,6 @@ class Loan extends CommonObject
 		$this->fk_bank = 1;
 		$this->label = 'SPECIMEN';
 		$this->specimen = 1;
-		$this->socid = 1;
 		$this->account_capital = 16;
 		$this->account_insurance = 616;
 		$this->account_interest = 518;
@@ -749,7 +751,7 @@ class Loan extends CommonObject
 		}
 
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->LibStatut($this->totalpaid, 5, $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

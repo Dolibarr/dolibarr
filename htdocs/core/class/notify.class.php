@@ -71,9 +71,7 @@ class Notify
 		'ORDER_VALIDATE',
 		'PROPAL_VALIDATE',
 		'PROPAL_CLOSE_SIGNED',
-		'PROPAL_CLOSE_SIGNED_WEB',
 		'PROPAL_CLOSE_REFUSED',
-		'PROPAL_CLOSE_REFUSED_WEB',
 		'FICHINTER_VALIDATE',
 		'FICHINTER_ADD_CONTACT',
 		'ORDER_SUPPLIER_VALIDATE',
@@ -359,6 +357,7 @@ class Notify
 		global $dolibarr_main_url_root;
 		global $action;
 
+		// Complete the array Notify::$arrayofnotifsupported
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($this->db);
@@ -373,13 +372,14 @@ class Notify
 			}
 		}
 
+		// If the trigger code is not managed by the Notification module
 		if (!in_array($notifcode, Notify::$arrayofnotifsupported)) {
 			return 0;
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		dol_syslog(get_class($this)."::send notifcode=".$notifcode.", object=".$object->id);
+		dol_syslog(get_class($this)."::send notifcode=".$notifcode.", object id=".$object->id);
 
 		$langs->load("other");
 
@@ -407,7 +407,7 @@ class Notify
 		// Check notification per third party
 		if (!empty($object->socid) && $object->socid > 0) {
 			$sql .= "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
-			$sql .= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
+			$sql .= " a.rowid as adid, a.label, a.code, n.rowid, n.threshold, n.context, n.type";
 			$sql .= " FROM ".$this->db->prefix()."socpeople as c,";
 			$sql .= " ".$this->db->prefix()."c_action_trigger as a,";
 			$sql .= " ".$this->db->prefix()."notify_def as n,";
@@ -427,7 +427,7 @@ class Notify
 
 		// Check notification per user
 		$sql .= "SELECT 'touserid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.lang as default_lang,";
-		$sql .= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
+		$sql .= " a.rowid as adid, a.label, a.code, n.rowid, n.threshold, n.context, n.type";
 		$sql .= " FROM ".$this->db->prefix()."user as c,";
 		$sql .= " ".$this->db->prefix()."c_action_trigger as a,";
 		$sql .= " ".$this->db->prefix()."notify_def as n";
@@ -439,6 +439,11 @@ class Notify
 			$sql .= " AND a.code = '".$this->db->escape($notifcode)."'"; // New usage
 		}
 
+		// Check notification fixed
+		// TODO Move part found after, into a sql here
+
+
+		// Loop on all notifications enabled
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num = $this->db->num_rows($result);
@@ -511,13 +516,9 @@ class Notify
 								$object_type = 'propal';
 								$labeltouse = $conf->global->PROPAL_CLOSE_REFUSED_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedRefused", $link);
-								break;
-							case 'PROPAL_CLOSE_REFUSED_WEB':
-								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
-								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
-								$object_type = 'propal';
-								$labeltouse = $conf->global->PROPAL_CLOSE_REFUSED_TEMPLATE;
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedRefusedWeb", $link);
+								if (!empty($object->context['closedfromonlinesignature'])) {
+									$mesg .= ' - From online page';
+								}
 								break;
 							case 'PROPAL_CLOSE_SIGNED':
 								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
@@ -525,13 +526,9 @@ class Notify
 								$object_type = 'propal';
 								$labeltouse = $conf->global->PROPAL_CLOSE_SIGNED_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedSigned", $link);
-								break;
-							case 'PROPAL_CLOSE_SIGNED_WEB':
-								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
-								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
-								$object_type = 'propal';
-								$labeltouse = $conf->global->PROPAL_CLOSE_SIGNED_TEMPLATE;
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedSigned", $link);
+								if (!empty($object->context['closedfromonlinesignature'])) {
+									$mesg .= ' - From online page';
+								}
 								break;
 							case 'FICHINTER_ADD_CONTACT':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
@@ -651,6 +648,23 @@ class Notify
 
 						$labeltouse = !empty($labeltouse) ? $labeltouse : '';
 
+						// Replace keyword __SUPERVISOREMAIL__
+						if (preg_match('/__SUPERVISOREMAIL__/', $sendto)) {
+							$newval = '';
+							if ($user->fk_user > 0) {
+								$supervisoruser = new User($this->db);
+								$supervisoruser->fetch($user->fk_user);
+								if ($supervisoruser->email) {
+									$newval = trim(dolGetFirstLastname($supervisoruser->firstname, $supervisoruser->lastname).' <'.$supervisoruser->email.'>');
+								}
+							}
+							dol_syslog("Replace the __SUPERVISOREMAIL__ key into recipient email string with ".$newval);
+							$sendto = preg_replace('/__SUPERVISOREMAIL__/', $newval, $sendto);
+							$sendto = preg_replace('/,\s*,/', ',', $sendto); // in some case you can have $sendto like "email, __SUPERVISOREMAIL__ , otheremail" then you have "email,  , othermail" and it's not valid
+							$sendto = preg_replace('/^[\s,]+/', '', $sendto); // Clean start of string
+							$sendto = preg_replace('/[\s,]+$/', '', $sendto); // Clean end of string
+						}
+
 						$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list, 'outputlangs'=>$outputlangs, 'labeltouse'=>$labeltouse);
 						if (!isset($action)) {
 							$action = '';
@@ -721,6 +735,7 @@ class Notify
 		}
 
 		// Check notification using fixed email
+		// TODO Move vars NOTIFICATION_FIXEDEMAIL into table llx_notify_def and inclulde the case into previous loop of sql result
 		if (!$error) {
 			foreach ($conf->global as $key => $val) {
 				$reg = array();

@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 // Load translation files required by page
-$langs->loadLangs(array("users", "companies"));
+$langs->loadLangs(array("users", "companies", "admin", "website"));
 
 // Security check
 $id = GETPOST('id', 'int');
@@ -129,14 +129,6 @@ print '<div class="fichecenter">';
 
 print '<br>';
 
-/*
-
-print '<hr>';
-//print '<div class="underbanner clearboth"></div>';
-
-print '<br>';
-*/
-
 print '<span class="opacitymedium">'.$langs->trans("UserPublicPageDesc").'</span><br><br>';
 
 $param = '&id='.((int) $object->id);
@@ -160,12 +152,16 @@ print '<input type="hidden" id="USER_ENABLE_PUBLIC" name="USER_ENABLE_PUBLIC" va
 print '<br><br>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="action" value="update">';
-print '<input type="hidden" name="id" value="'.$object->id.'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
 
 if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
+	print '<input type="hidden" name="action" value="update">';
+	print '<input type="hidden" name="id" value="'.$object->id.'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+
+
 	print '<br>';
+
+
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('PublicVirtualCardUrl').'</span><br>';
 
@@ -173,11 +169,41 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 
 	print '<div class="urllink">';
 	print '<input type="text" id="publicurluser" class="quatrevingtpercentminusx" value="'.$fullexternaleurltovirtualcard.'">';
-	print '<a target="_blank" rel="noopener noreferrer" href="'.$fullexternaleurltovirtualcard.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$fullexternaleurltovirtualcard.'">'.img_picto('', 'globe', 'class="paddingleft marginrightonly paddingright"').$langs->trans("GoTo").'...</a>';
 	print '</div>';
 	print ajax_autoselect('publicurluser');
 
 	print '<br>';
+	print '<br>';
+
+	// Show/Hide options
+	print '<div class="centpercent margintoponly marginbottomonly">';
+	print img_picto('', 'setup', 'class="pictofixedwidth"').'<a id="lnk" href="#">'.$langs->trans("ShowAdvancedOptions").'...</a>';
+	print '</div>';
+
+	print '<script type="text/javascript">
+	jQuery(document).ready(function() {
+		jQuery("#lnk").click(function() {
+			console.log("We click on link");
+			hideoptions(this);
+		});
+	});
+
+	function hideoptions(domelem) {
+		const div = document.getElementById("div_container_sub_exportoptions");
+
+	  	if (div.style.display === "none") {
+	    	div.style.display = "block";
+			domelem.innerText="'.dol_escape_js($langs->transnoentitiesnoconv("HideAdvancedoptions")).'";
+	  	} else {
+	    	div.style.display = "none";
+			domelem.innerText="'.dol_escape_js($langs->transnoentitiesnoconv("ShowAdvancedOptions")).'...";
+		}
+	}
+	</script>';
+
+	// Start div hide/Show
+	print '<div id="div_container_sub_exportoptions" style="display: none;">';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
@@ -271,20 +297,34 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '</div>';
 
 	print '<div class="center">';
-	print $form->buttonsSaveCancel("Save", ($dol_openinpopup ? "Cancel" : ""), array(), 0, '', $dol_openinpopup);
+	print $form->buttonsSaveCancel("Save", '', array(), 0, '', $dol_openinpopup);
 	print '</div>';
+
+	print '<br>';
+
+	print '</div>';	// End hide/show
+
+	print '<br>';
+
+	// Preview
+	print '<div class="center">';
+	print '<span class="opacitymedium">'.$langs->trans("Preview").'</span><br>';
+	print '<div class="virtualcard-div">';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$fullexternaleurltovirtualcard.'">';
+	print '<iframe id="virtualcard-iframe" title="" class="center" src="'.$fullexternaleurltovirtualcard.'&mode=preview">';
+	print '</iframe>';
+	print '</a>';
+	print '</div>';
+	print '</div>';
+
+	print '<br>';
 }
 
 
-print dol_get_fiche_end();
-
 print '</form>';
-
 
 print '</div>';
 
-
-print dol_get_fiche_end();
 
 // End of page
 llxFooter();

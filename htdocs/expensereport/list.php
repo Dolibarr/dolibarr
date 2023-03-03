@@ -732,6 +732,8 @@ if ($resql) {
 		$totalarray['val']['d.total_tva'] = 0;
 		$totalarray['val']['d.total_ttc'] = 0;
 		$totalarray['totalizable'] = array();
+
+		$imaxinloop = ($limit ? min($num, $limit) : $num);
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 
@@ -750,20 +752,18 @@ if ($resql) {
 			if ($mode == 'kanban') {
 				if ($i == 0) {
 					print '<tr><td colspan="12">';
-					print '<div class="box-flex-container">';
+					print '<div class="box-flex-container kanban">';
 				}
 				$usertmp->fetch($obj->id_user);
 				$expensereportstatic->fk_user_author = $usertmp->getNomUrl(1);
 
 				// Output Kanban
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-					if ($massactionbutton || $massaction) {
-						$selected = 0;
+				if ($massactionbutton || $massaction) {
+					$selected = 0;
 
-						print $expensereportstatic->getKanbanView('');
-					}
+					print $expensereportstatic->getKanbanView('');
 				}
-				if ($i == (min($num, $limit) - 1)) {
+				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
 					print '</td></tr>';
 				}

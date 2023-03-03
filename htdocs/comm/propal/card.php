@@ -5,7 +5,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2010-2016 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2023 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2022 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador       <csalvador@gpcsolutions.fr>
@@ -789,7 +789,7 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'import_lines_from_object'
-		&& $user->rights->propal->creer
+		&& $user->hasRight('propal', 'creer')
 		&& $object->statut == Propal::STATUS_DRAFT
 		) {
 		// add lines from objectlinked
@@ -913,6 +913,37 @@ if (empty($reshook)) {
 		$remise_percent = str_replace('*', '', $remise_percent);
 		foreach ($object->lines as $line) {
 			$result = $object->updateline($line->id, $line->subprice, $line->qty, $remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
+		}
+	} elseif ($action == 'addline' && GETPOST('submitforallmargins', 'alpha') && GETPOST('marginforalllines') !== '' && $usercancreate) {
+		// Define margin
+		$margin_rate = (GETPOST('marginforalllines') ? GETPOST('marginforalllines') : 0);
+		foreach ($object->lines as &$line) {
+			$subprice = price2num($line->pa_ht * (1 + $margin_rate/100), 'MU');
+			$prod = new Product($db);
+			$prod->fetch($line->fk_product);
+			if ($prod->price_min > $subprice) {
+				$price_subprice  = price($subprice,        0, $outlangs, 1, -1, -1, 'auto');
+				$price_price_min = price($prod->price_min, 0, $outlangs, 1, -1, -1, 'auto');
+				setEventMessages($prod->ref.' - '.$prod->label.' ('.$price_subprice.' < '.$price_price_min.' '.strtolower($langs->trans("MinPrice")).')'."\n", null, 'warnings');
+			}
+			// Manage $line->subprice and $line->multicurrency_subprice
+			$multicurrency_subprice = $subprice * $line->multicurrency_subprice / $line->subprice;
+			// Update DB
+			$result = $object->updateline($line->id, $subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_rate, $line->localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $multicurrency_subprice);
+			// Update $object with new margin info
+			$line->price = $subprice;
+			$line->marge_tx = $margin_rate;
+			$line->marque_tx = $margin_rate * $line->pa_ht / $subprice;
+			$line->total_ht = $line->qty * $subprice;
+			$line->total_tva = $line->tva_tx * $line->qty * $subprice;
+			$line->total_ttc = (1 + $line->tva_tx) * $line->qty * $subprice;
+			// Manage $line->subprice and $line->multicurrency_subprice
+			$line->multicurrency_total_ht = $line->qty * $subprice * $line->multicurrency_subprice / $line->subprice;
+			$line->multicurrency_total_tva = $line->tva_tx * $line->qty * $subprice * $line->multicurrency_subprice / $line->subprice;
+			$line->multicurrency_total_ttc = (1 + $line->tva_tx) * $line->qty * $subprice * $line->multicurrency_subprice / $line->subprice;
+			// Used previous $line->subprice and $line->multicurrency_subprice above, now they can be set to their new values
+			$line->subprice = $subprice;
+			$line->multicurrency_subprice = $multicurrency_subprice;
 		}
 	} elseif ($action == 'addline' && $usercancreate) {		// Add line
 		// Set if we used free entry or predefined product
@@ -1365,6 +1396,9 @@ if (empty($reshook)) {
 		$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 
 		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
+		if (empty($remise_percent)) {
+			$remise_percent = 0;
+		}
 
 		// Prepare a price equivalent for minimum price check
 		$pu_equivalent = $pu_ht;

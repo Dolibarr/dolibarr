@@ -377,7 +377,7 @@ function societe_prepare_head(Societe $object)
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda')&& (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$nbEvent = 0;
-		// Enable caching of thirdrparty count actioncomm
+		// Enable caching of thirdparty count actioncomm
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 		$cachekey = 'count_events_thirdparty_'.$object->id;
 		$dataretrieved = dol_getcache($cachekey);
@@ -1121,8 +1121,11 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	if ($search_note_private != '') {
 		$param .= '&search_note_private='.urlencode($search_note_private);
 	}
-	if ($search_birthday != '') {
-		$param .= '&search_birthday='.urlencode($search_birthday);
+	if ($search_birthday_dtstart != '') {
+		$param .= '&search_birthday_dtstart='.urlencode($search_birthday_dtstart);
+	}
+	if ($search_birthday_dtend != '') {
+		$param .= '&search_birthday_dtend='.urlencode($search_birthday_dtend);
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
@@ -1418,8 +1421,18 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			print "</tr>\n";
 			$i++;
 		}
+
+		if ($num == 0) {
+			$colspan = 1 + ($showuserlogin ? 1 : 0);
+			foreach ($arrayfields as $key => $val) {
+				if (!empty($val['checked'])) {
+					$colspan++;
+				}
+			}
+			print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+		}
 	} else {
-		$colspan = 2;
+		$colspan = 1 + ($showuserlogin ? 1 : 0);
 		foreach ($arrayfields as $key => $val) {
 			if (!empty($val['checked'])) {
 				$colspan++;
@@ -1723,7 +1736,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 	//TODO Add limit in nb of results
 	if ($sql) {
 		$sql .= $db->order($sortfield_new, $sortorder);
+
 		dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$i = 0;
@@ -1839,7 +1854,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		if ($donetodo) {
 			$out .= '<td class="liste_titre"></td>';
 		}
-		$out .= '<td class="liste_titre"></td>';
+
+		$out .= '<td class="liste_titre"><input type="text" class="width50" name="search_rowid" value="'.(isset($filters['search_rowid']) ? $filters['search_rowid'] : '').'"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre">';
 		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1, 0, (empty($conf->global->AGENDA_USE_MULTISELECT_TYPE) ? 0 : 1), 1, 'minwidth100 maxwidth150');
@@ -1971,7 +1987,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$out .= '</td>';
 
 			// Date
-			$out .= '<td class="center nowrap">';
+			$out .= '<td class="center nowraponall">';
 			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour', 'tzuserrel');
 			if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart']) {
 				$tmpa = dol_getdate($histo[$key]['datestart'], true);
@@ -2220,8 +2236,11 @@ function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
 	} elseif ($donetodo == 'done') {
 		$sql .= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
 	}
-	if (is_array($filters) && $filters['search_agenda_label']) {
+	if (is_array($filters) && !empty($filters['search_agenda_label'])) {
 		$sql .= natural_search('a.label', $filters['search_agenda_label']);
+	}
+	if (is_array($filters) && !empty($filters['search_rowid'])) {
+		$sql .= natural_search('a.id', $filters['search_rowid'], 1);
 	}
 
 	return $sql;

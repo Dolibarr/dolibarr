@@ -115,6 +115,11 @@ class Opensurveysondage extends CommonObject
 	 */
 	public $allow_spy;
 
+	/**
+	 * @var array fields
+	 */
+	public $fields = array();
+
 
 	/**
 	 * Draft status (not used)
@@ -469,7 +474,7 @@ class Opensurveysondage extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
+			$dataparams = " data-params='".json_encode($params)."'";
 			// $label = $langs->trans('Loading');
 		}
 		$label = implode($this->getTooltipContentArray($params));

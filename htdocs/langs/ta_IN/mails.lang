@@ -91,7 +91,7 @@ MailingModuleDescContactsByFunction=நிலை மூலம் தொடர்
 MailingModuleDescEmailsFromFile=கோப்பிலிருந்து மின்னஞ்சல்கள்
 MailingModuleDescEmailsFromUser=பயனரின் மின்னஞ்சல்கள் உள்ளீடு
 MailingModuleDescDolibarrUsers=மின்னஞ்சல்களைக் கொண்ட பயனர்கள்
-MailingModuleDescThirdPartiesByCategories=மூன்றாம் தரப்பினர் (வகைகள் மூலம்)
+MailingModuleDescThirdPartiesByCategories=Third parties
 SendingFromWebInterfaceIsNotAllowed=இணைய இடைமுகத்திலிருந்து அனுப்ப அனுமதி இல்லை.
 EmailCollectorFilterDesc=மின்னஞ்சலைச் சேகரிக்க அனைத்து வடிப்பான்களும் பொருந்த வேண்டும்
 
@@ -179,3 +179,4 @@ RecordCreatedByEmailCollector=%s மின்னஞ்சலில் இரு�
 DefaultBlacklistMailingStatus=புதிய தொடர்பை உருவாக்கும் போது '%s' புலத்திற்கான இயல்பு மதிப்பு
 DefaultStatusEmptyMandatory=காலி ஆனால் கட்டாயம்
 WarningLimitSendByDay=WARNING: The setup or contract of your instance limits your number of emails per day to <b>%s</b>. Trying to send more may result in having your instance slow down or suspended. Please contact your support if you need a higher quota.
+NoMoreRecipientToSendTo=No more recipient to send the email to
