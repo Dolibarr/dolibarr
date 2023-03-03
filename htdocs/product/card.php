@@ -1445,6 +1445,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) {
 				$tmpcode = $modBarCodeProduct->getNextValue($object, $fk_barcode_type);
 			}
+			print img_picto('', 'barcode', 'class="pictofixedwidth"');
 			print '<input class="maxwidth100" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
 			print '</td></tr>';
 		}
@@ -1504,6 +1505,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Duration
 		if ($type == 1) {
 			print '<tr><td>'.$langs->trans("Duration").'</td><td>';
+			print img_picto('', 'clock', 'class="pictofixedwidth"');
 			print '<input name="duration_value" size="4" value="'.GETPOST('duration_value', 'int').'">';
 			print $formproduct->selectMeasuringUnits("duration_unit", "time", (GETPOSTISSET('duration_value') ? GETPOST('duration_value', 'alpha') : 'h'), 0, 1);
 
@@ -1531,6 +1533,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
 				// Brut Weight
 				print '<tr><td>'.$langs->trans("Weight").'</td><td>';
+				print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
 				print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
 				print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units') ?GETPOST('weight_units', 'alpha') : (empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? 0 : $conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 2);
 				print '</td></tr>';
@@ -1539,6 +1542,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Brut Length
 			if (empty($conf->global->PRODUCT_DISABLE_SIZE)) {
 				print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td>';
+				print img_picto('', 'fa-ruler', 'class="pictofixedwidth"');
 				print '<input name="size" class="width50" value="'.GETPOST('size').'"> x ';
 				print '<input name="sizewidth" class="width50" value="'.GETPOST('sizewidth').'"> x ';
 				print '<input name="sizeheight" class="width50" value="'.GETPOST('sizeheight').'">';
@@ -1584,7 +1588,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Origin country
 			print '<tr><td>'.$langs->trans("CountryOrigin").'</td>';
 			print '<td>';
-			print img_picto('', 'globe-americas', 'class="paddingrightonly"');
+			print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
 			print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 widthcentpercentminusx maxwidth500');
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
