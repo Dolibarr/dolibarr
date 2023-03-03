@@ -202,38 +202,46 @@ if (empty($reshook)) {
 
 	// Create user from a member
 	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->rights->user->user->creer) {
-		if ($result > 0) {
-			$jobposition = new RecruitmentJobPosition($db);
-			$jobposition->fetch($object->fk_recruitmentjobposition);
+		$jobposition = new RecruitmentJobPosition($db);
+		$jobposition->fetch($object->fk_recruitmentjobposition);
 
-			// Creation user
-			$nuser = new User($db);
-			$nuser->login = GETPOST('login', 'alphanohtml');
-			$nuser->fk_soc = 0;
-			$nuser->employee = 1;
-			$nuser->firstname = $object->firstname;
-			$nuser->lastname = $object->lastname;
-			$nuser->email = '';
-			$nuser->personal_email = $object->email;
-			$nuser->personal_mobile = $object->phone;
-			$nuser->birth = $object->date_birth;
-			$nuser->salary = $object->remuneration_proposed;
-			$nuser->fk_user = $jobposition->fk_user_supervisor; // Supervisor
-			$nuser->email = $object->email;
+		$db->begin();
 
-			$result = $nuser->create($user);
+		// Creation user
+		$nuser = new User($db);
+		$nuser->login = GETPOST('login', 'alphanohtml');
+		$nuser->fk_soc = 0;
+		$nuser->employee = 1;
+		$nuser->firstname = $object->firstname;
+		$nuser->lastname = $object->lastname;
+		$nuser->email = '';
+		$nuser->personal_email = $object->email;
+		$nuser->personal_mobile = $object->phone;
+		$nuser->birth = $object->date_birth;
+		$nuser->salary = $object->remuneration_proposed;
+		$nuser->fk_user = $jobposition->fk_user_supervisor; // Supervisor
+		$nuser->email = $object->email;
 
-			if ($result < 0) {
-				$langs->load("errors");
-				setEventMessages($langs->trans($nuser->error), null, 'errors');
-				$action = 'create_user';
-			} else {
-				setEventMessages($langs->trans("NewUserCreated", $nuser->login), null, 'mesgs');
-				$action = '';
-			}
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
+		$result = $nuser->create($user);
+
+		if ($result < 0) {
+			$error++;
+			$langs->load("errors");
+			setEventMessages($langs->trans($nuser->error), null, 'errors');
 			$action = 'create_user';
+		} else {
+			$object->fk_user = $result;
+
+			$object->update($user);
+		}
+
+		if (!$error) {
+			$db->commit();
+
+			setEventMessages($langs->trans("NewUserCreated", $nuser->login), null, 'mesgs');
+			$action = '';
+		} else {
+			$db->rollback();
 		}
 	}
 
@@ -465,7 +473,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 }*/
 	// Author
 	if (!empty($object->email_msgid)) {
-		$morehtmlref .= $langs->trans("CreatedBy").' : ';
+		$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' ';
 
 		if ($object->fk_user_creat > 0) {
 			$fuser = new User($db);
@@ -572,8 +580,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Button to convert into a user
 			if ($object->status == $object::STATUS_CONTRACT_SIGNED) {
 				if ($user->rights->user->user->creer) {
-					// TODO Check if a user already exists
-					$useralreadyexists = 0;
+					$useralreadyexists = $object->fk_user;
 					if (empty($useralreadyexists)) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
 					} else {

@@ -91,7 +91,7 @@ MailingModuleDescContactsByFunction=Kontakter efter position
 MailingModuleDescEmailsFromFile=E-post från fil
 MailingModuleDescEmailsFromUser=E-postmeddelanden inskrivna av användaren
 MailingModuleDescDolibarrUsers=Användare med e-post
-MailingModuleDescThirdPartiesByCategories=Tredje part (enligt kategorier)
+MailingModuleDescThirdPartiesByCategories=Tredjepart
 SendingFromWebInterfaceIsNotAllowed=Skicka från webbgränssnitt är inte tillåtet.
 EmailCollectorFilterDesc=Alla filter måste matcha för att ett e-postmeddelande ska samlas in
 
@@ -179,3 +179,4 @@ RecordCreatedByEmailCollector=Post skapad av e-postsamlare %s från e-post %s
 DefaultBlacklistMailingStatus=Standardvärde för fältet '%s' när en ny kontakt skapas
 DefaultStatusEmptyMandatory=Tom men obligatorisk
 WarningLimitSendByDay=VARNING: Inställningen eller kontraktet för din instans begränsar ditt antal e-postmeddelanden per dag till <b> %s </b> . Om du försöker skicka mer kan det leda till att din instans saktar ner eller avbryts. Kontakta din support om du behöver en högre kvot.
+NoMoreRecipientToSendTo=No more recipient to send the email to

@@ -91,7 +91,7 @@ MailingModuleDescContactsByFunction=Kontak berdasarkan posisi
 MailingModuleDescEmailsFromFile=Email dari file
 MailingModuleDescEmailsFromUser=Masukan input email oleh pengguna
 MailingModuleDescDolibarrUsers=Pengguna dengan Email
-MailingModuleDescThirdPartiesByCategories=Pihak ketiga (berdasarkan kategori)
+MailingModuleDescThirdPartiesByCategories=Pihak Ketiga
 SendingFromWebInterfaceIsNotAllowed=Mengirim dari antarmuka web tidak diizinkan.
 EmailCollectorFilterDesc=Semua filter harus cocok agar email dikumpulkan
 
@@ -179,3 +179,4 @@ RecordCreatedByEmailCollector=Catatan dibuat oleh Kolektor Email %s dari email %
 DefaultBlacklistMailingStatus=Nilai default untuk bidang '%s' saat membuat kontak baru
 DefaultStatusEmptyMandatory=Kosong tapi wajib
 WarningLimitSendByDay=WARNING: The setup or contract of your instance limits your number of emails per day to <b>%s</b>. Trying to send more may result in having your instance slow down or suspended. Please contact your support if you need a higher quota.
+NoMoreRecipientToSendTo=No more recipient to send the email to

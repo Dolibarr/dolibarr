@@ -1359,7 +1359,8 @@ if ($num > 0) {
 	$totalarray['val']['f.total_localtax1']=0;
 	$totalarray['val']['f.total_ttc']=0;
 
-	while ($i < min($num, $limit)) {
+	$imaxinloop = ($limit ? min($num, $limit) : $num);
+	while ($i < $imaxinloop) {
 		$obj = $db->fetch_object($resql);
 
 		$datelimit = $db->jdate($obj->datelimite);
@@ -1423,7 +1424,7 @@ if ($num > 0) {
 			$facturestatic->total_ht = $obj->total_ht;
 			$facturestatic->date = $obj->datef;
 			print $facturestatic->getKanbanView('');
-			if ($i == (min($num, $limit) - 1)) {
+			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';
 			}

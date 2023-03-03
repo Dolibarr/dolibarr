@@ -714,9 +714,8 @@ while ($i < $imaxinloop) {
 		$objectstatic->duration = $obj->duree;
 		$objectstatic->socid = $companystatic->getNomUrl(1, '', 44);
 
-
 		print $objectstatic->getKanbanView('');
-		if ($i == (min($num, $limit) - 1)) {
+		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
 		}
