@@ -1470,8 +1470,8 @@ class FormTicket
 			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients').'</td><td>';
 			if ($res) {
 				// Retrieve email of all contacts (internal and external)
-				$contacts = $ticketstat->getInfosTicketInternalContact();
-				$contacts = array_merge($contacts, $ticketstat->getInfosTicketExternalContact());
+				$contacts = $ticketstat->getInfosTicketInternalContact(1);
+				$contacts = array_merge($contacts, $ticketstat->getInfosTicketExternalContact(1));
 
 				$sendto = array();
 
