@@ -2345,9 +2345,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 						if ($task_time->invoice_id) {
 							$result = $tmpinvoice->fetch($task_time->invoice_id);
 							if ($result > 0) {
-								var_dump($task_time->invoice_line_id);
-								//print $tmpinvoice->getNomUrl(1);
-								//print $form->selectInvoiceAndLines($projectstatic->thirdparty->id, $tmpinvoice->id, 'invoiceid', 'invoicelineid', 24, 0, $langs->trans('NewInvoice'), 1, 0, 0, 'maxwidth500', '', 'all',null,-1);
+								if ($action=='editline' && $_GET['lineid'] == $task_time->rowid) {
+									print $formproject->selectInvoiceAndLine($task_time->invoice_id, $task_time->invoice_line_id, 'invoiceid', 'invoicelineid', 'maxwidth500', array('p.rowid'=>$projectstatic->id));
+								} else {
+									print $tmpinvoice->getNomUrl(1);
+								}
 							}
 						} else {
 							print $langs->trans("No");
