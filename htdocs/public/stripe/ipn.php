@@ -100,7 +100,7 @@ if (!empty($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS)) {
  */
 
 $payload = @file_get_contents("php://input");
-$sig_header = empty($_SERVER["HTTP_STRIPE_SIGNATURE"]) ? $_SERVER["HTTP_STRIPE_SIGNATURE"] : '';
+$sig_header = empty($_SERVER["HTTP_STRIPE_SIGNATURE"]) ? '' : $_SERVER["HTTP_STRIPE_SIGNATURE"];
 $event = null;
 
 $fh = fopen(DOL_DATA_ROOT.'/dolibarr_stripe.log', 'w+');
