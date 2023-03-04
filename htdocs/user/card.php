@@ -125,7 +125,7 @@ if ($user->id != $id && !$canreaduser) {
 // Define value to know what current user can do on properties of edited user
 if ($id > 0) {
 	// $user is the current logged user, $id is the user we want to edit
-	$canedituser = (($user->id == $id) && $user->hasRight("user", "self", "write")) || (!empty($user->admin) || $user->hasRight("user", "user", "write"));  // can edit myself
+	$canedituser = (($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write"));
 	$caneditfield = ((($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write")));
 	$caneditpassword = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")));
 }
