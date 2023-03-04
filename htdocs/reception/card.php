@@ -1389,14 +1389,14 @@ if ($action == 'create') {
 		if (!empty($conf->project->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>';
-				if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
-					$proj = new Project($db);
-					$proj->fetch($objectsrc->fk_project);
-					$morehtmlref .= $proj->getNomUrl(1);
-					if ($proj->title) {
-						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
-					}
+			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
+				$proj = new Project($db);
+				$proj->fetch($objectsrc->fk_project);
+				$morehtmlref .= $proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 				}
+			}
 		}
 		$morehtmlref .= '</div>';
 
