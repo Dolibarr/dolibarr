@@ -1389,13 +1389,6 @@ if ($action == 'create') {
 		if (!empty($conf->project->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>';
-			if (0) {    // Do not change on reception
-				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
-				if ($action != 'classify' && $permissiontoadd) {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
-				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
-			} else {
 				if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($objectsrc->fk_project);
@@ -1404,7 +1397,6 @@ if ($action == 'create') {
 						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 					}
 				}
-			}
 		}
 		$morehtmlref .= '</div>';
 
