@@ -176,7 +176,7 @@ if ($elemid && $action == 'addintocategory' &&
 	 ($type == Categorie::TYPE_SUPPLIER && $user->rights->societe->creer) ||
 	 ($type == Categorie::TYPE_TICKET && $user->rights->ticket->write) ||
 	 ($type == Categorie::TYPE_PROJECT && $user->rights->projet->creer) ||
-	 ($type == Categorie::TYPE_MEMBER && $user->rights->projet->creer) ||
+	 ($type == Categorie::TYPE_MEMBER && $user->hasRight('adherent', 'creer')) ||
 	 ($type == Categorie::TYPE_CONTACT && $user->rights->societe->creer) ||
 	 ($type == Categorie::TYPE_USER && $user->rights->user->user->creer) ||
 	 ($type == Categorie::TYPE_ACCOUNT && $user->rights->banque->configurer)
