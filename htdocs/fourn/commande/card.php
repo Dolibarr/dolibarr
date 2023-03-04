@@ -1780,6 +1780,7 @@ if ($action == 'create') {
 		print '<tr>';
 		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->label_incoterms, 1).'</label></td>';
 		print '<td class="maxwidthonsmartphone">';
+		print img_picto('', 'incoterm', 'class="pictofixedwidth"');
 		print $form->select_incoterms($fkincoterms, $locincoterms);
 		print '</td></tr>';
 	}
