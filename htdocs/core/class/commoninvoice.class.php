@@ -877,8 +877,7 @@ abstract class CommonInvoice extends CommonObject
 
 
 	/**
-	 *	Create a payment order for a prelevement_demande
-	 *  Then send the payment order to Stripe (for a direct debit order or a credit transfer order).
+	 *	Create a payment order into prelevement_demande then send the payment order to Stripe (for a direct debit order or a credit transfer order).
 	 *
 	 *	@param      User	$fuser      	User asking the direct debit transfer
 	 *  @param		int		$did			ID of unitary payment request to pay
@@ -890,8 +889,10 @@ abstract class CommonInvoice extends CommonObject
 	{
 		global $conf, $mysoc, $user, $langs;
 
-		if (empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
-			//exit
+		if ($type != 'bank-transfer' && empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+			return 0;
+		}
+		if ($type != 'direct-debit' && empty($conf->global->STRIPE_SEPA_CREDIT_TRANSFER)) {
 			return 0;
 		}
 
@@ -915,7 +916,12 @@ abstract class CommonInvoice extends CommonObject
 			$sql = "SELECT rowid, date_demande, amount, fk_facture, fk_facture_fourn, fk_prelevement_bons";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
 			$sql .= " WHERE rowid = ".((int) $did);
-			$sql .= " AND fk_facture = ".((int) $this->id);		// Add a protection to not pay another invoice than current one
+			if ($type != 'direct-debit') {
+				$sql .= " AND fk_facture = ".((int) $this->id);		// Add a protection to not pay another invoice than current one
+			}
+			if ($type != 'credit-transfer') {
+				$sql .= " AND fk_facture_fourn = ".((int) $this->id);		// Add a protection to not pay another invoice than current one
+			}
 			$sql .= " AND traite = 0";	// Add a protection to not process twice
 
 			dol_syslog(get_class($this)."::makeStripeSepaRequest load requests to process", LOG_DEBUG);
@@ -936,7 +942,7 @@ abstract class CommonInvoice extends CommonObject
 					$companypaymentmode->fetch($bac->id);
 
 					// Start code for Stripe
-					// TODO This must come from a parameter ? or the method may not work as expected when used from a batch ?
+					// TODO We may have this coming as a parameter from the caller.
 					$service = 'StripeTest';
 					$servicestatus = 0;
 					if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
@@ -974,7 +980,7 @@ abstract class CommonInvoice extends CommonObject
 						$amountstripe = $amountstripe * 100;
 					}
 
-					$fk_bank_account = getDolGlobalInt('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS');
+					$fk_bank_account = getDolGlobalInt('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS');		// Bank account used for SEPA direct debit or credit transfer. Must be the Stripe account in Dolibarr.
 					if (!($fk_bank_account > 0)) {
 						$error++;
 						$errorforinvoice++;
@@ -989,7 +995,7 @@ abstract class CommonInvoice extends CommonObject
 					if (!$error) {
 						if (empty($obj->fk_prelevement_bons)) {
 							// This create record into llx_prelevment_bons and update link with llx_prelevement_demande
-							$nbinvoices = $bon->create(0, 0, 'real', 'ALL', '', 0, 'direct-debit', $did, $fk_bank_account);
+							$nbinvoices = $bon->create(0, 0, 'real', 'ALL', '', 0, $type, $did, $fk_bank_account);
 							if ($nbinvoices <= 0) {
 								$error++;
 								$errorforinvoice++;
@@ -1052,14 +1058,15 @@ abstract class CommonInvoice extends CommonObject
 
 								if ($resultthirdparty > 0 && !empty($customer)) {
 									if (!$error) {	// Payment was not canceled
-										$sepaMode = false;
 										$stripecard = null;
 										if ($companypaymentmode->type == 'ban') {
-											$sepaMode = true;
 											// Check into societe_rib if a payment mode for Stripe and ban payment exists
 											// To make a Stripe SEPA payment request, we must have the payment mode source already saved into societe_rib and retreived with ->sepaStripe
 											// The payment mode source is created when we create the bank account on Stripe with paymentmodes.php?action=create
 											$stripecard = $stripe->sepaStripe($customer, $companypaymentmode, $stripeacc, $servicestatus, 0);
+										} else {
+											$error++;
+											$this->error = 'The payment mode type is not "ban"';
 										}
 
 										if ($stripecard) {  // Can be src_... (for sepa) or pm_... (new card mode). Note that card_... (old card mode) should not happen here.
@@ -1153,9 +1160,9 @@ abstract class CommonInvoice extends CommonObject
 												$postactionmessages[] = $errmsg . ' (' . $stripearrayofkeys['publishable_key'] . ')';
 												$this->errors[] = $errmsg;
 											} else {
-												dol_syslog('Successfuly request direct debit ' . $stripecard->id);
+												dol_syslog('Successfuly request '.$type.' '.$stripecard->id);
 
-												$postactionmessages[] = 'Success to request direct debit (' . $charge->id . ' with ' . $stripearrayofkeys['publishable_key'] . ')';
+												$postactionmessages[] = 'Success to request '.$type.' (' . $charge->id . ' with ' . $stripearrayofkeys['publishable_key'] . ')';
 
 												// Save a stripe payment was done in realy life so later we will be able to force a commit on recorded payments
 												// even if in batch mode (method doTakePaymentStripe), we will always make all action in one transaction with a forced commit.
@@ -1180,12 +1187,12 @@ abstract class CommonInvoice extends CommonObject
 										} else {
 											$error++;
 											$errorforinvoice++;
-											dol_syslog("No direct debit payment method found for this stripe customer " . $customer->id, LOG_WARNING);
+											dol_syslog("No ban payment method found for this stripe customer " . $customer->id, LOG_WARNING);
 											$this->errors[] = 'Failed to get direct debit payment method for stripe customer = ' . $customer->id;
 
-											$description = 'Failed to find or use the payment mode - no credit card defined for the customer account';
+											$description = 'Failed to find or use the payment mode - no ban defined for the thirdparty account';
 											$stripefailurecode = 'BADPAYMENTMODE';
-											$stripefailuremessage = 'Failed to find or use the payment mode - no credit card defined for the customer account';
+											$stripefailuremessage = 'Failed to find or use the payment mode - no ban defined for the thirdparty account';
 											$postactionmessages[] = $description . ' (' . $stripearrayofkeys['publishable_key'] . ')';
 
 											$object = $this;
@@ -1207,10 +1214,10 @@ abstract class CommonInvoice extends CommonObject
 								} else {	// Else of the   if ($resultthirdparty > 0 && ! empty($customer)) {
 									if ($resultthirdparty <= 0) {
 										dol_syslog('SellYourSaasUtils Failed to load customer for thirdparty_id = ' . $thirdparty->id, LOG_WARNING);
-										$this->errors[] = 'Failed to load customer for thirdparty_id = ' . $thirdparty->id;
+										$this->errors[] = 'Failed to load Stripe account for thirdparty_id = ' . $thirdparty->id;
 									} else { // $customer stripe not found
 										dol_syslog('SellYourSaasUtils Failed to get Stripe customer id for thirdparty_id = ' . $thirdparty->id . " in mode " . $servicestatus . " in Stripe env " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key'], LOG_WARNING);
-										$this->errors[] = 'Failed to get Stripe customer id for thirdparty_id = ' . $thirdparty->id . " in mode " . $servicestatus . " in Stripe env " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+										$this->errors[] = 'Failed to get Stripe account id for thirdparty_id = ' . $thirdparty->id . " in mode " . $servicestatus . " in Stripe env " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
 									}
 									$error++;
 									$errorforinvoice++;

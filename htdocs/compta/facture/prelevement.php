@@ -141,8 +141,23 @@ if (empty($reshook)) {
 	}
 
 	// Make payment with Direct Debit Stripe
-	if ($action == 'sepastripepayment' && $usercancreate) {
+	if ($action == 'sepastripedirectdebit' && $usercancreate) {
 		$result = $object->makeStripeSepaRequest($user, GETPOST('did', 'int'), 'direct-debit', 'facture');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		} else {
+			// We refresh object data
+			$ret = $object->fetch($id, $ref);
+			$isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
+			if ($ret > 0) {
+				$object->fetch_thirdparty();
+			}
+		}
+	}
+
+	// Make payment with Direct Debit Stripe
+	if ($action == 'sepastripecredittransfer' && $usercancreate) {
+		$result = $object->makeStripeSepaRequest($user, GETPOST('did', 'int'), 'bank-transfer', 'supplier_invoice');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
@@ -886,12 +901,22 @@ if ($object->id > 0) {
 				print $withdrawreceipt->getNomUrl(1);
 			}
 
-			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
-				$langs->load("stripe");
-				if ($obj->fk_prelevement_bons > 0) {
-					print ' &nbsp; ';
+			if ($type != 'bank-transfer') {
+				if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+					$langs->load("stripe");
+					if ($obj->fk_prelevement_bons > 0) {
+						print ' &nbsp; ';
+					}
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripedirectdebit&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
 				}
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripepayment&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
+			} else {
+				if (!empty($conf->global->STRIPE_SEPA_CREDIT_TRANSFER)) {
+					$langs->load("stripe");
+					if ($obj->fk_prelevement_bons > 0) {
+						print ' &nbsp; ';
+					}
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
+				}
 			}
 			print '</td>';
 
