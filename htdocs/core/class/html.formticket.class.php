@@ -1277,7 +1277,7 @@ class FormTicket
 		}
 
 		// Load translation files required by the page
-		$langs->loadLangs(array('other', 'mails'));
+		$langs->loadLangs(array('other', 'mails', 'ticket'));
 
 		// Clear temp files. Must be done at beginning, before call of triggers
 		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
@@ -1467,11 +1467,13 @@ class FormTicket
 			print '</td></tr>';
 
 			// Recipients / adressed-to
-			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients').'</td><td>';
+			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients');
+			print ' '.$form->textwithpicto('', $langs->trans("TicketMessageRecipientsHelp"), 1, 'help');
+			print '</td><td>';
 			if ($res) {
 				// Retrieve email of all contacts (internal and external)
-				$contacts = $ticketstat->getInfosTicketInternalContact();
-				$contacts = array_merge($contacts, $ticketstat->getInfosTicketExternalContact());
+				$contacts = $ticketstat->getInfosTicketInternalContact(1);
+				$contacts = array_merge($contacts, $ticketstat->getInfosTicketExternalContact(1));
 
 				$sendto = array();
 

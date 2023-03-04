@@ -802,7 +802,7 @@ if ($action == 'create' || $action == 'presend') {
 
 		// Confirmation close
 		if ($action == 'close') {
-			$thirdparty_contacts = $object->getInfosTicketExternalContact();
+			$thirdparty_contacts = $object->getInfosTicketExternalContact(1);
 			$contacts_select = array(
 				'-2' => $langs->trans('TicketNotifyAllTiersAtClose'),
 				'-3' => $langs->trans('TicketNotNotifyTiersAtClose')
