@@ -1308,7 +1308,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 			$objsoc->fetch($object->socid);
 			// Thirdparty
-			$morehtmlref .= $langs->trans('ThirdParty').' : ';
 			if ($objsoc->id > 0) {
 				$morehtmlref .= $objsoc->getNomUrl(1, 'contact');
 			} else {
