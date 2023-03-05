@@ -61,6 +61,8 @@ ALTER TABLE llx_socpeople CHANGE fk_prospectcontactlevel fk_prospectlevel varcha
 
 ALTER TABLE llx_facture ADD COLUMN prorata_discount	real DEFAULT NULL;
 
+ALTER TABLE llx_facture MODIFY COLUMN situation_cycle_ref integer;
+
 ALTER TABLE llx_payment_salary MODIFY COLUMN datep datetime;
 
 INSERT INTO llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1179, 117, 'I-28'  , 28,   0, '0',   0, '0', 0, 'IGST',      1);
