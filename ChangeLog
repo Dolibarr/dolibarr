@@ -29,8 +29,7 @@ NEW: #22546 can now set user supervisors using mass action in htdocs/user
 NEW: #22594 can chose if VAT ID is unique or not for third parties
 NEW: #22622 all partnerships displayed on tab partnership of a thirdparty and member
 NEW: #22676 massaction for updating product prices
-NEW: #22735 Massaction to affect users on projects
-NEW: #25594 can chose if VAT ID is unique or not for third parties
+NEW: #22735 Massaction to assign users on projects
 NEW: #4482 adding js to hide/show advanced option on the export data page
 NEW: Accountancy - Add a graphic option to enable lettering function - FPC21
 NEW: Accountancy - Add a way to clean some words when you generate thirdparty accounting account
