@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2021 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2020	   Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2023	   Charlene Benke       <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -260,7 +261,9 @@ function dol_verifyHash($chain, $hash, $type = '0')
 	global $conf;
 
 	if ($type == '0' && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_verify')) {
-		if ($hash[0] == '$') {
+		if (empty($hash) {
+			return false;
+		} elseif ($hash[0] == '$') {
 			return password_verify($chain, $hash);
 		} elseif (strlen($hash) == 32) {
 			return dol_verifyHash($chain, $hash, '3'); // md5
