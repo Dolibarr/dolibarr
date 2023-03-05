@@ -10074,7 +10074,7 @@ class Form
 	 * @param string $projectsListId ''=Automatic filter on project allowed. List of id=Filter on project ids.
 	 * @param string $showproject 'all' = Show project info, ''=Hide project info
 	 * @param User $usertofilter User object to use for filtering
-	 * @return int                    Nbr of project if OK, <0 if KO
+	 * @return string            HTML Select Invoice
 	 */
 	public function selectInvoice($socid = -1, $selected = '', $htmlname = 'invoiceid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500', $projectsListId = '', $showproject = 'all', $usertofilter = null)
 	{
@@ -10206,6 +10206,7 @@ class Form
 			$this->db->free($resql);
 		} else {
 			dol_print_error($this->db);
+			return '';
 		}
 	}
 

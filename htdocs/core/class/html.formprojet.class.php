@@ -762,7 +762,7 @@ class FormProjets
 	 * @param string $morecss More css added to the select component
 	 * @param array $filters Array of filters
 	 * @param int $lineOnly return only option for line
-	 * @return int                    Nbr of project if OK, <0 if KO
+	 * @return string                    HTML Select
 	 */
 	public function selectInvoiceAndLine($selectedInvoiceId = 0, $selectedLineId = 0, $htmlNameInvoice = 'invoiceid', $htmlNameInvoiceLine = 'invoicelineid', $morecss = 'maxwidth500', $filters = array(), $lineOnly = 0)
 	{
@@ -820,6 +820,7 @@ class FormProjets
 				$out .= '</select>';
 			} else {
 				dol_print_error($this->db->lasterror);
+				return '';
 			}
 		}
 
@@ -871,6 +872,7 @@ class FormProjets
 			}
 		} else {
 			dol_print_error($this->db->lasterror);
+			return '';
 		}
 
 		return $out;
