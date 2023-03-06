@@ -1178,7 +1178,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 					echo '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
 				} else {
 					if (!getDolGlobalString('TAKEPOS_HIDE_CATEGORY_IMAGES')) {
-						echo '<img class="imgwrapper" height="100%" id="catimg'.$count.'" />';
+						echo '<img class="imgwrapper" id="catimg'.$count.'" />';
 					}
 				}
 				?>
@@ -1220,7 +1220,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 							echo '<button type="button" id="probutton'.$count.'" class="productbutton" style="display: none;"></button>';
 						} else {
 							print '<div class="" id="proprice'.$count.'"></div>';
-							print '<img class="imgwrapper" height="100%" title="" id="proimg'.$count.'">';
+							print '<img class="imgwrapper" title="" id="proimg'.$count.'">';
 						}
 					}
 					?>
