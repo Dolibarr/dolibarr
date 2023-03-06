@@ -29,7 +29,7 @@
 // $triggersendname must be set (can be '')
 // $actiontypecode can be set
 // $object and $uobject may be defined
-
+include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 /*
  * Add file in email form
  */
@@ -210,8 +210,16 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			$receiveruser = $_POST['receiveruser'];
 			if (is_array($receiveruser) && count($receiveruser) > 0) {
 				$fuserdest = new User($db);
+				$TvalidEmail = array();
+				$TinvalidEmail = array();
 				foreach ($receiveruser as $key => $val) {
 					$tmparray[] = $fuserdest->user_get_property($val, 'email');
+					foreach ($tmparray as $value) {
+						if (strpos($value, "<")) {
+							$value = get_string_between($value, '<', '>');
+						}
+						isValidEmail($value) ? array_push($TvalidEmail, $value) : array_push($TinvalidEmail, $value);
+					}
 					$sendtouserid[] = $val;
 				}
 			}
@@ -428,8 +436,13 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 					$langs->load("other");
 					$mesg = '<div class="error">';
 					if ($mailfile->error) {
-						$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($from), dol_escape_htmltag($sendto));
-						$mesg .= '<br>'.$mailfile->error;
+						foreach ($TvalidEmail as $emailOk){
+							setEventMessages($langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($emailOk, 2)), null, 'mesgs');
+						}
+						foreach ($TinvalidEmail as $emailKo){
+							$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($from), dol_escape_htmltag($emailKo));
+							$mesg .= '<br>'.$mailfile->error;
+						}
 					} else {
 						$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($from), dol_escape_htmltag($sendto));
 						if (!empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {
