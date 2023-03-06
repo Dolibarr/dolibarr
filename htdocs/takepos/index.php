@@ -226,7 +226,7 @@ function PrintCategories(first) {
 			continue;
 		}
 		$("#catdivdesc"+i).show();
-		$("#catdesc"+i).text(categories[parseInt(i)+parseInt(first)]['label']);
+		$("#catdesc"+i).html(categories[parseInt(i)+parseInt(first)]['label']);
 		$("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[parseInt(i)+parseInt(first)]['rowid']);
 		$("#catdiv"+i).data("rowid",categories[parseInt(i)+parseInt(first)]['rowid']);
 		$("#catdiv"+i).attr('class', 'wrapper');
@@ -260,7 +260,7 @@ function MoreCategories(moreorless) {
 			continue;
 		}
 		$("#catdivdesc"+i).show();
-		$("#catdesc"+i).text(categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['label']);
+		$("#catdesc"+i).html(categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['label']);
 		$("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['rowid']);
 		$("#catdiv"+i).data("rowid",categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['rowid']);
 		$("#catwatermark"+i).show();
@@ -289,8 +289,8 @@ function LoadProducts(position, issubcat) {
 	jQuery.each(subcategories, function(i, val) {
 		if (currentcat==val.fk_parent) {
 			$("#prodivdesc"+ishow).show();
-			$("#prodesc"+ishow).text(val.label);
-			$("#probutton"+ishow).text(val.label);
+			$("#prodesc"+ishow).html(val.label);
+			$("#probutton"+ishow).html(val.label);
 			$("#probutton"+ishow).show();
 			$("#proprice"+ishow).attr("class", "hidden");
 			$("#proprice"+ishow).html("");
@@ -339,7 +339,7 @@ function LoadProducts(position, issubcat) {
 					echo '$("#proimg"+ishow).attr("src", "genimg/index.php?query=pro&id="+data[idata][\'id\']);';
 				} else {
 					echo '$("#probutton"+ishow).show();';
-					echo '$("#probutton"+ishow).text(data[parseInt(idata)][\'label\']);';
+					echo '$("#probutton"+ishow).html(data[parseInt(idata)][\'label\']);';
 				}
 				?>
 				if (data[parseInt(idata)]['price_formated']) {
@@ -401,7 +401,7 @@ function MoreProducts(moreorless) {
 				//Only show products with status=1 (for sell)
 				$("#prodivdesc"+ishow).show();
 				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
-				$("#probutton"+ishow).text(data[parseInt(idata)]['label']);
+				$("#probutton"+ishow).html(data[parseInt(idata)]['label']);
 				$("#probutton"+ishow).show();
 				if (data[parseInt(idata)]['price_formated']) {
 					$("#proprice"+ishow).attr("class", "productprice");
