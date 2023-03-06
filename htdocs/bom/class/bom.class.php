@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2019  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2019	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2023	Benjamin Falière	<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1058,8 +1059,10 @@ class BOM extends CommonObject
 						return -1;
 					}
 					$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
-					if (empty($line->unit_cost)) {
-						if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
+					if ((empty($line->unit_cost)) && ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0)) {
+						if ($productFournisseur->fourn_remise_percent != "0") {
+							$line->unit_cost = $productFournisseur->fourn_unitprice_with_discount;
+						} else {
 							$line->unit_cost = $productFournisseur->fourn_unitprice;
 						}
 					}
@@ -1073,7 +1076,8 @@ class BOM extends CommonObject
 					if ($res>0) {
 						$bom_child->calculateCosts();
 						$line->childBom[] = $bom_child;
-						$this->total_cost += $bom_child->total_cost  * $line->qty;
+						$line->total_cost = price2num($bom_child->total_cost  * $line->qty, 'MT');
+						$this->total_cost += $line->total_cost;
 					} else {
 						$this->error = $bom_child->error;
 						return -2;

@@ -334,6 +334,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 				// Previous Fiscal year (N-1)
 				foreach ($sommes as $code => $det) {
+					if (is_null($det['NP'])) {
+						$det['NP'] = 0;
+					}
 					$vars[$code] = $det['NP'];
 				}
 
@@ -341,8 +344,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 				//var_dump($result);
 				//$r = $AccCat->calculate($result);
+
 				$r = dol_eval($result, 1, 1, '1');
-				//var_dump($r);
+				if (is_nan($r)) {
+					$r = 0;
+				}
 
 				print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
 
@@ -361,6 +367,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 				//$r = $AccCat->calculate($result);
 				$r = dol_eval($result, 1, 1, 1);
+				if (is_nan($r)) {
+					$r = 0;
+				}
 
 				print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
 				$sommes[$code]['N'] += $r;
@@ -375,6 +384,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 						//$r = $AccCat->calculate($result);
 						$r = dol_eval($result, 1, 1, 1);
+						if (is_nan($r)) {
+							$r = 0;
+						}
 
 						print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
 						$sommes[$code]['M'][$k] += $r;
@@ -389,6 +401,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 						//$r = $AccCat->calculate($result);
 						$r = dol_eval($result, 1, 1, 1);
+						if (is_nan($r)) {
+							$r = 0;
+						}
 
 						print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
 						$sommes[$code]['M'][$k] += $r;
@@ -417,8 +432,10 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 
 				$arrayofaccountforfilter = array();
-				foreach ($cpts as $i => $cpt) {    // Loop on each account.
-					$arrayofaccountforfilter[] = $cpt['account_number'];
+				foreach ($cpts as $i => $cpt) {// Loop on each account.
+					if (!empty($cpt['account_number'])) {
+						$arrayofaccountforfilter[] = $cpt['account_number'];
+					}
 				}
 
 				// N-1

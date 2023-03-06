@@ -297,6 +297,7 @@ class Lettering extends BookKeeping
 		// Update request
 
 		$now = dol_now();
+		$affected_rows = 0;
 
 		if (!$error) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping SET";
@@ -309,6 +310,8 @@ class Lettering extends BookKeeping
 			if (!$resql) {
 				$error++;
 				$this->errors[] = "Error ".$this->db->lasterror();
+			} else {
+				$affected_rows = $this->db->affected_rows($resql);
 			}
 		}
 
@@ -320,7 +323,7 @@ class Lettering extends BookKeeping
 			}
 			return -1 * $error;
 		} else {
-			return 1;
+			return $affected_rows;
 		}
 	}
 
@@ -355,7 +358,7 @@ class Lettering extends BookKeeping
 			}
 			return -1 * $error;
 		} else {
-			return 1;
+			return $this->db->affected_rows($resql);
 		}
 	}
 
@@ -457,7 +460,7 @@ class Lettering extends BookKeeping
 				else $result = $this->updateLettering($bookkeeping_lines);
 				if ($result < 0) {
 					$group_error++;
-				} else {
+				} elseif ($result > 0) {
 					$nb_lettering++;
 				}
 			}
@@ -655,7 +658,7 @@ class Lettering extends BookKeeping
 		// Get payment lines
 		$sql = "SELECT DISTINCT pe2.$fk_payment_element, pe2.$fk_element";
 		$sql .=	" FROM " . MAIN_DB_PREFIX . "$payment_element AS pe";
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "$payment_element AS pe2 ON pe2.$fk_element = pe.$fk_element";
+		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "$payment_element AS pe2 ON pe2.$fk_element = pe.$fk_element";
 		$sql .=	" WHERE pe.$fk_payment_element IN (" . $this->db->sanitize(implode(',', $payment_ids)) . ")";
 
 		dol_syslog(__METHOD__ . " - Get payment lines", LOG_DEBUG);

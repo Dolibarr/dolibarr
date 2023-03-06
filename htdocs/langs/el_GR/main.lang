@@ -7,10 +7,10 @@ DIRECTION=ltr
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
 # cid0jp is for Japanish
 # cid0kr is for Korean
-# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# DejaVuSans is for some Eastern languages, greek, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
 # freeserif is for Tamil
-FONTFORPDF=helvetica
+FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
 SeparatorThousand=.

@@ -945,29 +945,43 @@ abstract class CommonInvoice extends CommonObject
 			$complementaryinfo .= '/30/'.$this->thirdparty->vat_number;
 		}
 
+		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+		$bankaccount = new Account($this->db);
+
 		// Header
-		$s .= "SPC\n";
+		$s = "SPC\n";
 		$s .= "0200\n";
 		$s .= "1\n";
+		// Info Seller ("Compte / Payable à")
 		if ($this->fk_account > 0) {
-			// Bank BAN if country is LI or CH
-			// TODO Add
-			$bankaccount = new Account($this->db);
+			// Bank BAN if country is LI or CH.  TODO Add a test to check than IBAN start with CH or LI
 			$bankaccount->fetch($this->fk_account);
 			$s .= $bankaccount->iban."\n";
 		} else {
 			$s .= "\n";
 		}
-		// Seller
-		$s .= "S\n";
-		$s .= dol_trunc($mysoc->name, 70, 'right', 'UTF-8', 1)."\n";
-		$addresslinearray = explode("\n", $mysoc->address);
-		$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
-		$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
-		$s .= dol_trunc($mysoc->zip, 16, 'right', 'UTF-8', 1)."\n";
-		$s .= dol_trunc($mysoc->town, 35, 'right', 'UTF-8', 1)."\n";
-		$s .= dol_trunc($mysoc->country_code, 2, 'right', 'UTF-8', 1)."\n";
-		// Final seller
+		if ($bankaccount->id > 0 && getDolGlobalString('PDF_SWISS_QRCODE_USE_OWNER_OF_ACCOUNT_AS_CREDITOR')) {
+			// If a bank account is prodived and we ask to use it as creditor, we use the bank address
+			// TODO In a future, we may always use this address, and if name/address/zip/town/country differs from $mysoc, we can use the address of $mysoc into the final seller field ?
+			$s .= "S\n";
+			$s .= dol_trunc($bankaccount->proprio, 70, 'right', 'UTF-8', 1)."\n";
+			$addresslinearray = explode("\n", $bankaccount->owner_address);
+			$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
+			$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
+			/*$s .= dol_trunc($mysoc->zip, 16, 'right', 'UTF-8', 1)."\n";
+			$s .= dol_trunc($mysoc->town, 35, 'right', 'UTF-8', 1)."\n";
+			$s .= dol_trunc($mysoc->country_code, 2, 'right', 'UTF-8', 1)."\n";*/
+		} else {
+			$s .= "S\n";
+			$s .= dol_trunc($mysoc->name, 70, 'right', 'UTF-8', 1)."\n";
+			$addresslinearray = explode("\n", $mysoc->address);
+			$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
+			$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
+			$s .= dol_trunc($mysoc->zip, 16, 'right', 'UTF-8', 1)."\n";
+			$s .= dol_trunc($mysoc->town, 35, 'right', 'UTF-8', 1)."\n";
+			$s .= dol_trunc($mysoc->country_code, 2, 'right', 'UTF-8', 1)."\n";
+		}
+		// Final seller (Ultimate seller) ("Créancier final" = "En faveur de")
 		$s .= "\n";
 		$s .= "\n";
 		$s .= "\n";
@@ -989,13 +1003,18 @@ abstract class CommonInvoice extends CommonObject
 		$s .= dol_trunc($this->thirdparty->country_code, 2, 'right', 'UTF-8', 1)."\n";
 		// ID of payment
 		$s .= "NON\n";			// NON or QRR
-		$s .= "\n";				// QR Code if previous field is QRR
+		$s .= "\n";				// QR Code reference if previous field is QRR
+		// Free text
 		if ($complementaryinfo) {
 			$s .= $complementaryinfo."\n";
 		} else {
 			$s .= "\n";
 		}
 		$s .= "EPD\n";
+		// More text, complementary info
+		if ($complementaryinfo) {
+			$s .= $complementaryinfo."\n";
+		}
 		$s .= "\n";
 		//var_dump($s);exit;
 		return $s;

@@ -462,6 +462,8 @@ class ExpenseReport extends CommonObject
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
+					$this->errors += $hookmanager->errors;
+					$this->error = $hookmanager->error;
 					$error++;
 				}
 			}
@@ -2678,6 +2680,11 @@ class ExpenseReportLine extends CommonObjectLine
 	 * @var DoliDB Database handler.
 	 */
 	public $db;
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'expensereport_det';
 
 	/**
 	 * @var string Error code (or message)
