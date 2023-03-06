@@ -334,7 +334,7 @@ function LoadProducts(position, issubcat) {
 				var titlestring = <?php echo $titlestring; ?>;
 				<?php if (!$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) {
 					echo '$("#prodivdesc"+ishow).show();';
-					echo '$("#prodesc"+ishow).text(data[parseInt(idata)][\'label\']);';
+					echo '$("#prodesc"+ishow).html(data[parseInt(idata)][\'label\']);';
 					echo '$("#proimg"+ishow).attr("title", titlestring);';
 					echo '$("#proimg"+ishow).attr("src", "genimg/index.php?query=pro&id="+data[idata][\'id\']);';
 				} else {
@@ -564,9 +564,9 @@ function Search2(keyCodeForEnter) {
 				$titlestring .= " + ' - ".dol_escape_js($langs->trans("Barcode").': ')."' + data[i]['barcode']";
 				?>
 				var titlestring = <?php echo $titlestring; ?>;
-				$("#prodesc" + i).text(data[i]['label']);
+				$("#prodesc" + i).html(data[i]['label']);
 				$("#prodivdesc" + i).show();
-				$("#probutton" + i).text(data[i]['label']);
+				$("#probutton" + i).html(data[i]['label']);
 				$("#probutton" + i).show();
 				if (data[i]['price_formated']) {
 					$("#proprice" + i).attr("class", "productprice");
