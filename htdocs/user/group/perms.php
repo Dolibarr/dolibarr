@@ -284,7 +284,7 @@ if ($object->id > 0) {
 		$i = 0;$j = 0;
 		$oldmod = '';
 
-		$cookietohidegroup = (empty($_COOKIE["DOLUSER_PERMS_HIDE_GRP_GRP"]) ? '' : preg_replace('/^,/', '', $_COOKIE["DOLUSER_PERMS_HIDE_GRP_GRP"]));
+		$cookietohidegroup = (empty($_COOKIE["DOLUSER_PERMS_HIDE_GRP"]) ? '' : preg_replace('/^,/', '', $_COOKIE["DOLUSER_PERMS_HIDE_GRP"]));
 		$cookietohidegrouparray = explode(',', $cookietohidegroup);
 
 		while ($i < $num) {
@@ -470,11 +470,11 @@ if ($object->id > 0) {
 		// set cookie by js
 		date = new Date(); date.setTime(date.getTime()+(30*86400000));
 		if (hideuserperm) {
-			console.log("set cookie DOLUSER_PERMS_HIDE_GRP_GRP="+hideuserperm);
-			document.cookie = "DOLUSER_PERMS_HIDE_GRP_GRP=" + hideuserperm + "; expires=" + date.toGMTString() + "; path=/ ";
+			console.log("set cookie DOLUSER_PERMS_HIDE_GRP="+hideuserperm);
+			document.cookie = "DOLUSER_PERMS_HIDE_GRP=" + hideuserperm + "; expires=" + date.toGMTString() + "; path=/ ";
 		} else {
-			console.log("delete cookie DOLUSER_PERMS_HIDE_GRP_GRP");
-			document.cookie = "DOLUSER_PERMS_HIDE_GRP_GRP=; expires=Thu, 01-Jan-70 00:00:01 GMT; path=/ ";
+			console.log("delete cookie DOLUSER_PERMS_HIDE_GRP");
+			document.cookie = "DOLUSER_PERMS_HIDE_GRP=; expires=Thu, 01-Jan-70 00:00:01 GMT; path=/ ";
 		}
 	});';
 
