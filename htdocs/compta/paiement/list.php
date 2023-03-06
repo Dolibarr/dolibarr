@@ -167,7 +167,7 @@ $formother = new FormOther($db);
 $accountstatic = new Account($db);
 $companystatic = new Societe($db);
 $bankline = new AccountLine($db);
-								  
+
 
 llxHeader('', $langs->trans('ListPayment'));
 
@@ -234,9 +234,9 @@ if (GETPOST("orphelins", "alpha")) {
 	if ($search_ref) {
 		$sql .= natural_search('p.ref', $search_ref);
 	}
-						  
-															  
-  
+
+
+
 	if ($search_date_start) {
 		$sql .= " AND p.datep >= '" . $db->idate($search_date_start) . "'";
 	}
@@ -271,7 +271,7 @@ if (GETPOST("orphelins", "alpha")) {
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 }
-										   
+
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -288,7 +288,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	}
 
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
-											
 		$page = 0;
 		$offset = 0;
 	}
@@ -551,7 +550,7 @@ while ($i < min($num, $limit)) {
 	$companystatic->id = $objp->socid;
 	$companystatic->name = $objp->name;
 	$companystatic->email = $objp->email;
-	
+
 	$invoice = new Facture($db);
 	$result = $invoice->fetch($objp->fk_facture);
 
