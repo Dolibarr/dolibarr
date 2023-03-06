@@ -208,6 +208,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 $form = new Form($db);
 $formticket = new FormTicket($db);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('ticketpublicview', 'globalcard'));
+
 if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
 	print '<div class="error">'.$langs->trans('TicketPublicInterfaceForbidden').'</div>';
 	$db->close();
@@ -321,6 +324,9 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '<tr><td>'.$langs->trans("Progression").'</td><td>';
 		print ($object->dao->progress > 0 ? dol_escape_htmltag($object->dao->progress) : '0').'%';
 		print '</td></tr>';
+
+		// Other attributes
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
 
