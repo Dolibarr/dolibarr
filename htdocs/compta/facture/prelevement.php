@@ -896,6 +896,7 @@ if ($object->id > 0) {
 				$withdrawreceipt->date_creation = $db->jdate($obj->datec);
 				$withdrawreceipt->statut = $obj->status;
 				$withdrawreceipt->status = $obj->status;
+				$withdrawreceipt->amount = $obj->amount;
 				//$withdrawreceipt->credite = $db->jdate($obj->credite);
 
 				print $withdrawreceipt->getNomUrl(1);
@@ -1003,6 +1004,7 @@ if ($object->id > 0) {
 				$withdrawreceipt->statut = $obj->status;
 				$withdrawreceipt->status = $obj->status;
 				$withdrawreceipt->fk_bank_account = $obj->fk_bank_account;
+				$withdrawreceipt->amount = $obj->amount;
 				//$withdrawreceipt->credite = $db->jdate($obj->credite);
 
 				print $withdrawreceipt->getNomUrl(1);

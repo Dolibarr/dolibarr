@@ -1317,6 +1317,9 @@ class BonPrelevement extends CommonObject
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans($labeltoshow).'</u> '.$this->getLibStatut(5);
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (isset($this->amount)) {
+			$label .= '<br><b>'.$langs->trans("Amount").":</b> ".price($this->amount);
+		}
 		if (isset($this->date_trans)) {
 			$label .= '<br><b>'.$langs->trans("TransData").":</b> ".dol_print_date($this->date_trans, 'dayhour', 'tzuserrel');
 		}
