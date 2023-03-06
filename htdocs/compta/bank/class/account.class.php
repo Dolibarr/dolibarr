@@ -30,6 +30,7 @@
  *	\ingroup    bank
  *	\brief      File of class to manage bank accounts
  */
+
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
@@ -1856,6 +1857,8 @@ class Account extends CommonObject
 	}
 }
 
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 
 /**
  *	Class to manage bank transaction lines
