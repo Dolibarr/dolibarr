@@ -257,7 +257,7 @@ if ($action == "view_ticketlist") {
 			//'t.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 2)
 			//'t.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 		);
-		
+
 		if (empty($conf->global->TICKET_SHOW_PROGRESSION))
 			unset($arrayfields['t.progress']);
 
