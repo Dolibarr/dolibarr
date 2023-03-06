@@ -470,7 +470,9 @@ if ($event->type == 'payout.created') {
 	$companypaymentmode = new CompanyPaymentMode($db);
 
 	$idthirdparty = $societeaccount->getThirdPartyID($db->escape($event->data->object->customer), 'stripe', $servicestatus);
-	if ($idthirdparty > 0) {	// If the payment mode is on an external customer that is known in societeaccount, we can create the payment mode
+	if ($idthirdparty > 0) {
+		// If the payment mode attached is to a stripe account owned by an external customer in societe_account (so a thirdparty that has a Stripe account),
+		// we can create the payment mode
 		$companypaymentmode->stripe_card_ref = $db->escape($event->data->object->id);
 		$companypaymentmode->fk_soc          = $idthirdparty;
 		$companypaymentmode->bank            = null;
@@ -488,9 +490,44 @@ if ($event->type == 'payout.created') {
 		$companypaymentmode->country_code    = $db->escape($event->data->object->card->country);
 		$companypaymentmode->status          = $servicestatus;
 
+		// TODO Check that a payment mode $companypaymentmode->stripe_card_ref does not exists yet to avoid to create duplicates
+		// so we can remove the test on STRIPE_NO_DUPLICATE_CHECK
+		if (getDolGlobalString('STRIPE_NO_DUPLICATE_CHECK')) {
+			$db->begin();
+			$result = $companypaymentmode->create($user);
+			if ($result < 0) {
+				$error++;
+			}
+			if (!$error) {
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
+		}
+	}
+} elseif ($event->type == 'payment_method.updated') {
+	require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
+	$companypaymentmode = new CompanyPaymentMode($db);
+	$companypaymentmode->fetch(0, '', 0, '', " AND stripe_card_ref = '".$db->escape($event->data->object->id)."'");
+	if ($companypaymentmode->id > 0) {
+		// If we found a payment mode with the ID
+		$companypaymentmode->bank            = null;
+		$companypaymentmode->label           = null;
+		$companypaymentmode->number          = $db->escape($event->data->object->id);
+		$companypaymentmode->last_four       = $db->escape($event->data->object->card->last4);
+		$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);
+		$companypaymentmode->exp_date_month  = $db->escape($event->data->object->card->exp_month);
+		$companypaymentmode->exp_date_year   = $db->escape($event->data->object->card->exp_year);
+		$companypaymentmode->cvn             = null;
+		$companypaymentmode->datec           = $db->escape($event->data->object->created);
+		$companypaymentmode->default_rib     = 0;
+		$companypaymentmode->type            = $db->escape($event->data->object->type);
+		$companypaymentmode->country_code    = $db->escape($event->data->object->card->country);
+		$companypaymentmode->status          = $servicestatus;
+
 		$db->begin();
 		if (!$error) {
-			$result = $companypaymentmode->create($user);
+			$result = $companypaymentmode->update($user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -500,36 +537,6 @@ if ($event->type == 'payout.created') {
 		} else {
 			$db->rollback();
 		}
-	}
-} elseif ($event->type == 'payment_method.updated') {
-	require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
-	$companypaymentmode = new CompanyPaymentMode($db);
-	$companypaymentmode->fetch(0, '', 0, '', " AND stripe_card_ref = '".$db->escape($event->data->object->id)."'");
-	$companypaymentmode->bank            = null;
-	$companypaymentmode->label           = null;
-	$companypaymentmode->number          = $db->escape($event->data->object->id);
-	$companypaymentmode->last_four       = $db->escape($event->data->object->card->last4);
-	$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);
-	$companypaymentmode->exp_date_month  = $db->escape($event->data->object->card->exp_month);
-	$companypaymentmode->exp_date_year   = $db->escape($event->data->object->card->exp_year);
-	$companypaymentmode->cvn             = null;
-	$companypaymentmode->datec           = $db->escape($event->data->object->created);
-	$companypaymentmode->default_rib     = 0;
-	$companypaymentmode->type            = $db->escape($event->data->object->type);
-	$companypaymentmode->country_code    = $db->escape($event->data->object->card->country);
-	$companypaymentmode->status          = $servicestatus;
-
-	$db->begin();
-	if (!$error) {
-		$result = $companypaymentmode->update($user);
-		if ($result < 0) {
-			$error++;
-		}
-	}
-	if (!$error) {
-		$db->commit();
-	} else {
-		$db->rollback();
 	}
 } elseif ($event->type == 'payment_method.detached') {
 	$db->begin();
