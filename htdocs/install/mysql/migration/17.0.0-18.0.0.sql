@@ -87,3 +87,20 @@ ALTER TABLE llx_ecm_files ADD COLUMN share_pass varchar(32) after share;
 
 ALTER TABLE llx_prelevement_demande ADD COLUMN type varchar(12) DEFAULT '';
 UPDATE llx_prelevement_demande SET type = 'ban' WHERE ext_payment_id IS NULL AND type = '';
+
+-- Element time
+ALTER TABLE llx_projet_task_time RENAME TO llx_element_time;
+ALTER TABLE llx_element_time CHANGE COLUMN fk_task fk_element integer NOT NULL;
+ALTER TABLE llx_element_time CHANGE COLUMN task_date element_date date;
+ALTER TABLE llx_element_time CHANGE COLUMN task_datehour element_datehour datetime;
+ALTER TABLE llx_element_time CHANGE COLUMN task_date_withhour element_date_withhour integer;
+ALTER TABLE llx_element_time CHANGE COLUMN task_duration element_duration double;
+ALTER TABLE llx_element_time ADD COLUMN elementtype varchar(32) NOT NULL DEFAULT 'task' AFTER fk_element;
+
+DROP INDEX idx_projet_task_time_task on llx_element_time;
+DROP INDEX idx_projet_task_time_date on llx_element_time;
+DROP INDEX idx_projet_task_time_datehour on llx_element_time;
+
+ALTER TABLE llx_element_time ADD INDEX idx_element_time_task (fk_element);
+ALTER TABLE llx_element_time ADD INDEX idx_element_time_date (element_date);
+ALTER TABLE llx_element_time ADD INDEX idx_element_time_datehour (element_datehour);
