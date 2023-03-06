@@ -261,7 +261,7 @@ function dol_verifyHash($chain, $hash, $type = '0')
 	global $conf;
 
 	if ($type == '0' && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_verify')) {
-		if (empty($hash) {
+		if (empty($hash)) {
 			return false;
 		} elseif ($hash[0] == '$') {
 			return password_verify($chain, $hash);
