@@ -32,6 +32,7 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -56,6 +57,7 @@ if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'facture', $facid, '');
 
 $search_ref = GETPOST("search_ref", "alpha");
+$search_refinvoice = GETPOST("search_refinvoice", "alpha");
 $search_date_startday = GETPOST('search_date_startday', 'int');
 $search_date_startmonth = GETPOST('search_date_startmonth', 'int');
 $search_date_startyear = GETPOST('search_date_startyear', 'int');
@@ -103,6 +105,7 @@ $fieldstosearchall = array(
 $arrayfields = array(
 	'p.ref'				=> array('label'=>"RefPayment", 'checked'=>1, 'position'=>10),
 	'p.datep'			=> array('label'=>"Date", 'checked'=>1, 'position'=>20),
+	'pf.fk_facture'		=> array('label'=>"Invoice", 'checked'=>1, 'position'=>25),
 	's.nom'				=> array('label'=>"ThirdParty", 'checked'=>1, 'position'=>30),
 	'c.libelle'			=> array('label'=>"Type", 'checked'=>1, 'position'=>40),
 	'transaction'		=> array('label'=>"BankTransactionLine", 'checked'=>1, 'position'=>50, 'enabled'=>(isModEnabled("banque"))),
@@ -134,6 +137,7 @@ if (empty($reshook)) {
 	// All tests are required to be compatible with all browsers
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 		$search_ref = '';
+		$search_refinvoice = '';
 		$search_date_startday = '';
 		$search_date_startmonth = '';
 		$search_date_startyear = '';
@@ -163,6 +167,7 @@ $formother = new FormOther($db);
 $accountstatic = new Account($db);
 $companystatic = new Societe($db);
 $bankline = new AccountLine($db);
+								  
 
 llxHeader('', $langs->trans('ListPayment'));
 
@@ -170,6 +175,7 @@ if (GETPOST("orphelins", "alpha")) {
 	// Payments not linked to an invoice. Should not happend. For debug only.
 	$sql = "SELECT p.rowid, p.ref, p.datep, p.amount, p.statut, p.num_paiement";
 	$sql .= ", c.code as paiement_code";
+	$sql .= ", pf.fk_facture";
 
 	// Add fields from hooks
 	$parameters = array();
@@ -190,6 +196,7 @@ if (GETPOST("orphelins", "alpha")) {
 	$sql .= ", c.code as paiement_code";
 	$sql .= ", ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal";
 	$sql .= ", s.rowid as socid, s.nom as name, s.email";
+	$sql .= ", pf.fk_facture";
 
 	// Add fields from hooks
 	$parameters = array();
@@ -227,8 +234,14 @@ if (GETPOST("orphelins", "alpha")) {
 	if ($search_ref) {
 		$sql .= natural_search('p.ref', $search_ref);
 	}
+						  
+															  
+  
 	if ($search_date_start) {
 		$sql .= " AND p.datep >= '" . $db->idate($search_date_start) . "'";
+	}
+	if ($search_refinvoice) {
+		$sql .= natural_search('pf.fk_facture', $search_refinvoice);
 	}
 	if ($search_date_end) {
 		$sql .= " AND p.datep <= '" . $db->idate($search_date_end) . "'";
@@ -258,6 +271,7 @@ if (GETPOST("orphelins", "alpha")) {
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 }
+										   
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -274,6 +288,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	}
 
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+											
 		$page = 0;
 		$offset = 0;
 	}
@@ -309,6 +324,9 @@ if (GETPOST("orphelins")) {
 }
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
+}
+if ($search_refinvoice) {
+	$param .= '&search_refinvoice='.urlencode($search_refinvoice);
 }
 if ($search_date_startday) {
 	$param .= '&search_date_startday='.urlencode($search_date_startday);
@@ -406,6 +424,13 @@ if (!empty($arrayfields['p.datep']['checked'])) {
 	print '</td>';
 }
 
+// Filter: RefInvoice
+if (!empty($arrayfields['pf.fk_facture']['checked'])) {
+	print '<td class="liste_titre left">';
+	print '<input class="flat" type="text" size="4" name="search_refinvoice" value="'.dol_escape_htmltag($search_refinvoice).'">';
+	print '</td>';
+}
+
 // Filter: Thirdparty
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre">';
@@ -474,6 +499,9 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 if (!empty($arrayfields['p.datep']['checked'])) {
 	print_liste_field_titre($arrayfields['p.datep']['label'], $_SERVER["PHP_SELF"], "p.datep", '', $param, '', $sortfield, $sortorder, 'center ');
 }
+if (!empty($arrayfields['pf.fk_facture']['checked'])) {
+	print_liste_field_titre($arrayfields['pf.fk_facture']['label'], $_SERVER["PHP_SELF"], "pf.fk_facture", '', $param, '', $sortfield, $sortorder);
+}
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
 }
@@ -523,6 +551,9 @@ while ($i < min($num, $limit)) {
 	$companystatic->id = $objp->socid;
 	$companystatic->name = $objp->name;
 	$companystatic->email = $objp->email;
+	
+	$invoice = new Facture($db);
+	$result = $invoice->fetch($objp->fk_facture);
 
 	print '<tr class="oddeven">';
 
@@ -546,6 +577,14 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['p.datep']['checked'])) {
 		$dateformatforpayment = 'dayhour';
 		print '<td class="center">'.dol_print_date($db->jdate($objp->datep), $dateformatforpayment, 'tzuser').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	// RefInvoice
+	if (!empty($arrayfields['pf.fk_facture']['checked'])) {
+		print '<td>'.$invoice->getNomUrl(1, '', 200, 0, '', 0, 1).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
