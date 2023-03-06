@@ -63,7 +63,7 @@ function printDropdownBookmarksList()
 	}
 	if (!empty($_POST) && is_array($_POST)) {
 		foreach ($_POST as $key => $val) {
-			if ((preg_match('/^search_/', $key) || in_array($key, $authorized_var))
+			if ((preg_match('/^search_|^limit$/', $key) || in_array($key, $authorized_var))
 				&& $val != ''
 				&& !array_key_exists($key, $url_param)) {
 				if (is_array($val)) {
