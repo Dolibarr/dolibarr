@@ -312,9 +312,8 @@ if ($event->type == 'payout.created') {
 	dol_syslog("object = ".var_export($event->data, true));
 
 	// TODO: create fees
-	// TODO: Redirect to paymentok.php
 
-	/* TODO Enable this only if this is a payment of a Dolibarr bon_prelevement only
+	/* TODO LMR Enable this only if this is a payment of a Dolibarr bon_prelevement only
 	include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 	$object = $event->data->object;
 	$invoice_id = $object->metadata->dol_id;
