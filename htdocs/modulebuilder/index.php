@@ -3357,15 +3357,15 @@ if ($module == 'initmodule') {
 			$pathtochangelog = $modulelowercase.'/ChangeLog.md';
 
 			if ($action != 'editfile' || empty($file)) {
-				print dol_get_fiche_head($head2, $tab, '', -1, '', 0, '', '', $MAXTABFOROBJECT, 'formodulesuffix'); // Description - level 2
+				$morehtmlright = '';
+				if (realpath($dirread.'/'.$modulelowercase) != $dirread.'/'.$modulelowercase) {
+					$morehtmlright = '<div style="padding: 12px 9px 12px">'.$form->textwithpicto('', '<span class="opacitymedium">'.$langs->trans("RealPathOfModule").' :</span> <strong class="wordbreak">'.realpath($dirread.'/'.$modulelowercase).'</strong>').'</div>';
+				}
+
+				print dol_get_fiche_head($head2, $tab, '', -1, '', 0, $morehtmlright, '', $MAXTABFOROBJECT, 'formodulesuffix'); // Description - level 2
 
 				print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc".$tab).'</span>';
-				$infoonmodulepath = '';
-				if (realpath($dirread.'/'.$modulelowercase) != $dirread.'/'.$modulelowercase) {
-					$infoonmodulepath = '<span class="opacitymedium">'.$langs->trans("RealPathOfModule").' :</span> <strong class="wordbreak">'.realpath($dirread.'/'.$modulelowercase).'</strong><br>';
-					print ' '.$infoonmodulepath;
-				}
-				print '<br>';
+				print '<br><br>';
 
 				print '<table>';
 
