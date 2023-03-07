@@ -10450,7 +10450,8 @@ function jsonOrUnserialize($stringtodecode)
  * @param $tmparray array
  * @return $Temail array
  */
-function getValidAndInvalidEmail($tmparray){
+function getValidAndInvalidEmail($tmparray)
+{
 	$Temail = array('valid'=>array(),'invalid'=>array());
 	foreach ($tmparray as $value) {
 		if (strpos($value, '<')) {

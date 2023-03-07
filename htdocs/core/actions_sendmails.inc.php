@@ -263,8 +263,8 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 
 		//return array with valid and invalid email
 		$Temailcc = getValidAndInvalidEmail($tmparray);
-		$Temail['valid'] = array_merge($Temail['valid'],$Temailcc['valid']);
-		$Temail['invalid'] = array_merge($Temail['invalid'],$Temailcc['invalid']);
+		$Temail['valid'] = array_merge($Temail['valid'], $Temailcc['valid']);
+		$Temail['invalid'] = array_merge($Temail['invalid'], $Temailcc['invalid']);
 
 		$sendtocc = implode(',', $tmparray);
 
@@ -447,7 +447,6 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 								$mesg .= '<br>' . $mailfile->error;
 							}
 						}
-
 					} else {
 						$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($from), dol_escape_htmltag($sendto));
 						if (!empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {
