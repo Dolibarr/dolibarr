@@ -173,3 +173,4 @@ PermissionAddedSuccesfuly=Permission has been successfully added
 MenuDeletedSuccessfuly=Menu has been successfully deleted
 MenuAddedSuccessfuly=Menu has been successfully added
 MenuUpdatedSuccessfuly=Menu has been successfully updated
+ApiObjectDeleted=API for object %s has been successfully deleted

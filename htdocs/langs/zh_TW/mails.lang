@@ -91,7 +91,7 @@ MailingModuleDescContactsByFunction=依職位聯絡
 MailingModuleDescEmailsFromFile=來自檔案的電子郵件
 MailingModuleDescEmailsFromUser=用戶輸入的電子郵件
 MailingModuleDescDolibarrUsers=擁有電子郵件的用戶
-MailingModuleDescThirdPartiesByCategories=合作方（依類別）
+MailingModuleDescThirdPartiesByCategories=合作方
 SendingFromWebInterfaceIsNotAllowed=不允許從Web界面發送。
 EmailCollectorFilterDesc=所有過濾條件必須符合才能收集電子郵件
 
@@ -179,3 +179,4 @@ RecordCreatedByEmailCollector=由電子郵件收集器%s從電子郵件%s建立�
 DefaultBlacklistMailingStatus=建立新聯絡人時欄位“%s”的預設值
 DefaultStatusEmptyMandatory=必填
 WarningLimitSendByDay=警告：實例的設定或合約將每天的電子郵件數量限制為 <b> %s </b> 。嘗試發送更多可能會導致您的實例變慢或暫停。如果您需要更高的配額，請聯絡您的服務人員。
+NoMoreRecipientToSendTo=No more recipient to send the email to

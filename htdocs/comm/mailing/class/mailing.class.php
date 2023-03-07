@@ -191,6 +191,12 @@ class Mailing extends CommonObject
 	public $substitutionarrayfortest;
 
 
+	const STATUS_DRAFT = 0;
+	const STATUS_VALIDATED = 1;
+	const STATUS_SENTPARTIALY = 2;
+	const STATUS_SENTCOMPLETELY = 3;
+
+
 	/**
 	 *  Constructor
 	 *

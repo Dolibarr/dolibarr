@@ -330,9 +330,7 @@ if ($action == 'create') {
 			print '<table id="tablelines" class="noborder centpercent">';
 		}
 
-		if (!empty($object->lines)) {
-			$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1, '/variants/tpl', ($permissiontoedit ? 1 : 0));
-		}
+		$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1, '/variants/tpl', ($permissiontoedit ? 1 : 0));
 
 		if (!empty($object->lines) || ($permissiontoedit && $action != 'selectlines' && $action != 'editline')) {
 			print '</table>';

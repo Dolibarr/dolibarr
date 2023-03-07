@@ -513,7 +513,7 @@ $tabcond[25] = isModEnabled('website');
 $tabcond[27] = isModEnabled("societe");
 $tabcond[28] = isModEnabled('holiday');
 $tabcond[29] = isModEnabled('project');
-$tabcond[30] = isModEnabled('label');
+$tabcond[30] = (isModEnabled('label') || isModEnabled('barcode') || isModEnabled('adherent'));	// stickers format dictionary
 //$tabcond[31]= isModEnabled('accounting');
 $tabcond[32] = (isModEnabled('holiday') || isModEnabled('hrm'));
 $tabcond[33] = isModEnabled('hrm');
@@ -599,6 +599,7 @@ foreach ($tabcomplete as $key => $value) {
 	$tabcomplete[$key]['sql'] = $tabsql[$i];
 	$tabcomplete[$key]['sqlsort'] = $tabsqlsort[$i];
 	$tabcomplete[$key]['field'] = $tabfield[$i];
+	//$tabcomplete[$key]['help'] = $tabhelp[$i];		// array help already loaded into tabcomplete
 }
 
 $keytable = '';
@@ -615,7 +616,6 @@ if (empty($sortfield)) {
 	$sortorder = (!empty($tmp2[1]) ? $tmp2[1] : '');
 	//var_dump($sortfield);var_dump($sortorder);
 }
-
 
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
 $elementList = array();
@@ -1223,7 +1223,6 @@ if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'rowid='.urlencode($rowid).'&code='.urlencode($code).$paramwithsearch, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
 
-
 /*
  * Show a dictionary
  */
@@ -1570,7 +1569,6 @@ if ($id > 0) {
 		if ($id == 3) {
 			unset($fieldlist[2]); // Remove field ??? if dictionary Regions
 		}
-
 
 		if (empty($reshook)) {
 			fieldList($fieldlist, $obj, $tabname[$id], 'add');
@@ -1927,8 +1925,8 @@ if ($id > 0) {
 					if (!is_null($withentity)) {
 						print '<input type="hidden" name="entity" value="'.$withentity.'">';
 					}
-					print '<input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
-					print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+					print '<input type="submit" class="button button-edit small" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '<input type="submit" class="button button-cancel small" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 					print '</td>';
 				} else {
 					$tmpaction = 'view';
@@ -2531,7 +2529,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 				$classtd = 'right'; $class = 'maxwidth50 right';
 			}
 			if (in_array($fieldlist[$field], array('pos', 'position'))) {
-				$classtd = 'center'; $class = 'maxwidth50 center';
+				$classtd = 'right'; $class = 'maxwidth50 right';
 			}
 			if (in_array($fieldlist[$field], array('dayrule', 'day', 'month', 'year', 'use_default', 'affect', 'delay', 'public', 'sortorder', 'sens', 'category_type', 'fk_parent'))) {
 				$class = 'maxwidth50 center';

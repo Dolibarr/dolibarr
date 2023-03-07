@@ -276,7 +276,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// File transfer
-				$object->copyFilesForTicket();
+				$object->copyFilesForTicket('');		// trackid is forced to '' because files were uploaded when no id for ticket exists yet and trackid was ''
 			}
 
 			if (!$error) {
@@ -726,6 +726,7 @@ if ($action == 'create' || $action == 'presend') {
 
 	print load_fiche_titre($langs->trans('NewTicket'), '', 'ticket');
 
+	$formticket->trackid = '';		// TODO Use a unique key 'tic' to avoid conflict in upload file feature
 	$formticket->withfromsocid = $socid ? $socid : $user->socid;
 	$formticket->withfromcontactid = $contactid ? $contactid : '';
 	$formticket->withtitletopic = 1;
@@ -736,7 +737,6 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withfile = 2;
 	$formticket->withextrafields = 1;
 	$formticket->param = array('origin' => GETPOST('origin'), 'originid' => GETPOST('originid'));
-	$formticket->trackid = 'tic'.$object->id;
 
 	$formticket->withcancel = 1;
 
@@ -802,7 +802,7 @@ if ($action == 'create' || $action == 'presend') {
 
 		// Confirmation close
 		if ($action == 'close') {
-			$thirdparty_contacts = $object->getInfosTicketExternalContact();
+			$thirdparty_contacts = $object->getInfosTicketExternalContact(1);
 			$contacts_select = array(
 				'-2' => $langs->trans('TicketNotifyAllTiersAtClose'),
 				'-3' => $langs->trans('TicketNotNotifyTiersAtClose')
@@ -1179,7 +1179,7 @@ if ($action == 'create' || $action == 'presend') {
 						$arrayselected[] = $cat->id;
 					}
 
-					print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 					print '<input type="submit" class="button button-edit small" value="'.$langs->trans('Save').'">';
 					print '</form>';
 					print "</td>";

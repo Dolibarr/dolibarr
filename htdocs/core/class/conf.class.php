@@ -79,6 +79,10 @@ class Conf
 	// An array to store cache results ->cache['nameofcache']=...
 	public $cache;
 
+	/**
+	 * @var int To tell header was output
+	 */
+	public $headerdone;
 
 	/**
 	 * @var string[]

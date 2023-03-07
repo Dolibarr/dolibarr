@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=エラー、パラメータ <b> %s
 ErrorLoginDateValidity=エラー、このログインは有効期間外だ
 ErrorValueLength=フィールドの長さ '<b> %s </b>'は '<b> %s</b>'より大きくなければならない
 ErrorReservedKeyword=「<b>%s</b>」という単語は予約語 
+ErrorFilenameReserved=ファイル名 <b> %s </b> は、予約および保護されたコマンドであるため使用不可。
 ErrorNotAvailableWithThisDistribution=このディストリビューションでは利用できない
 ErrorPublicInterfaceNotEnabled=公開インターフェイスが有効になっていない
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=別のページの翻訳として設定されている場合は、新しいページの言語を定義する必要がある
@@ -308,7 +309,7 @@ ErrorExistingPermission = オブジェクト <b> %s </b> に対する権限 <b> 
 ErrorFieldExist=<b> %s </b> の値は既に存在する
 ErrorEqualModule=<b> %s </b> で無効なモジュール
 ErrorFieldValue=<b> %s </b> の値が正しくない
-ErrorCoherenceMenu= <b> %s </b> は、<b> % </b> が LEFT と等しい場合に必要です。
+ErrorCoherenceMenu= <b> %s </b> は、<b> %s </b> が「左」の場合に必要。
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHPパラメータ upload_max_filesize(%s)は、PHPパラメータ post_max_size(%s)よりも大きくなっている。これは一貫した設定ではない。

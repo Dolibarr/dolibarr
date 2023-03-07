@@ -295,12 +295,7 @@ if (is_array($search_groupby) && count($search_groupby)) {
 		$sqlfilters = GETPOST('search_component_params_hidden', 'alphanohtml');
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (dolCheckFilters($sqlfilters, $errormessage)) {
-				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-				$sql .= " WHERE (".preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $sqlfilters).")";
-			} else {
-				print $errormessage;
-			}
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
 		}*/
 
 		$sql .= " LIMIT ".((int) ($MAXUNIQUEVALFORGROUP + 1));
@@ -420,7 +415,7 @@ $viewmode = '';
 $viewmode .= '<div class="divadvancedsearchfield">';
 $arrayofgraphs = array('bars' => 'Bars', 'lines' => 'Lines'); // also 'pies'
 $viewmode .= '<div class="inline-block opacitymedium"><span class="fas fa-chart-area paddingright" title="'.$langs->trans("Graph").'"></span>'.$langs->trans("Graph").'</div> ';
-$viewmode .= $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 0, 'minwidth100', 1);
+$viewmode .= $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 0, '', 1, 0, 0, '', 'graphtype width100');
 $viewmode .= '</div>';
 
 $num = 0;
@@ -684,11 +679,9 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 	$sqlfilters = $search_component_params_hidden;
 	if ($sqlfilters) {
 		$errormessage = '';
-		if (dolCheckFilters($sqlfilters, $errormessage)) {
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $sqlfilters).")";
-		} else {
-			print $errormessage;
+		$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+		if ($errormessage) {
+			print dol_escape_htmltag($errormessage);
 		}
 	}
 	$sql .= " GROUP BY ";

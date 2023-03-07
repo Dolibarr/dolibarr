@@ -557,10 +557,6 @@ $formcompany = new FormCompany($db);
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
-$title = $langs->trans('ListOfProposals');
-$help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
-llxHeader('', $title, $help_url);
-
 $sql = 'SELECT';
 if ($sall || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
@@ -867,6 +863,9 @@ if ($resql) {
 		header("Location: ".DOL_URL_ROOT.'/comm/propal/card.php?id='.$id);
 		exit;
 	}
+
+	$help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
+	llxHeader('', $title, $help_url);
 
 	$param = '&search_status='.urlencode($search_status);
 	if (!empty($mode)) {
@@ -1724,7 +1723,7 @@ if ($resql) {
 			$objectstatic->author = $userstatic->getNomUrl(1);
 			$objectstatic->fk_project = $projectstatic->getNomUrl(1);
 			print $objectstatic->getKanbanView('');
-			if ($i == (min($num, $limit) - 1)) {
+			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';
 			}

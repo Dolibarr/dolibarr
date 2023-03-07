@@ -37,7 +37,7 @@ $pos = strstr($uri, '/'); // $pos contient alors url sans nom domaine
 if ($pos == '/') {
 	$pos = ''; // si $pos vaut /, on le met a ''
 }
-define('DOL_URL_ROOT', $pos);
+//define('DOL_URL_ROOT', $pos);
 $entity = ((!empty($_SESSION['dol_entity']) && $_SESSION['dol_entity'] > 1) ? $_SESSION['dol_entity'] : null);
 
 // SECURITY: You must explicitly enable this "connector". (Set it to "true").

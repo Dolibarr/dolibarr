@@ -16,9 +16,9 @@
  */
 
 /**
- *       \file       htdocs/core/class/commonincoterm.class.php
+ *       \file       htdocs/core/class/commonsocialnetworks.class.php
  *       \ingroup    core
- *       \brief      File of the superclass of object classes that support incoterm (customer and supplier)
+ *       \brief      File of the superclass of object classes that support socialnetworks
  */
 
 

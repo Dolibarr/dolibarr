@@ -329,7 +329,9 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print '</td>';
 	print '</tr>';
 
-	// Create third-party with contact if email not linked to a contact
+	// Auto fill the contact found from email
+	// This option is a serious security hole. it allowe to any non looged perso, to get the database of contacts
+	/*
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketCreateThirdPartyWithContactIfNotExist").'</td>';
 	print '<td class="left">';
 	if (empty(getDolGlobalInt('TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST'))) {
@@ -342,6 +344,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print $form->textwithpicto('', $langs->trans("TicketCreateThirdPartyWithContactIfNotExistHelp"), 1, 'help');
 	print '</td>';
 	print '</tr>';
+	*/
 
 	/*if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	{

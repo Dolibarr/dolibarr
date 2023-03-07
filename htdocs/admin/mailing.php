@@ -150,17 +150,17 @@ print '</tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MailingEMailError").'</td><td>';
-print '<input class="minwidth100" type="text" name="MAILING_EMAIL_ERRORSTO" value="'.$conf->global->MAILING_EMAIL_ERRORSTO.'">';
-if (!empty($conf->global->MAILING_EMAIL_ERRORSTO) && !isValidEmail($conf->global->MAILING_EMAIL_ERRORSTO)) {
+print '<input class="minwidth100" type="text" name="MAILING_EMAIL_ERRORSTO" value="'.getDolGlobalString('MAILING_EMAIL_ERRORSTO').'">';
+if (getDolGlobalString('MAILING_EMAIL_ERRORSTO') && !isValidEmail(getDolGlobalString('MAILING_EMAIL_ERRORSTO'))) {
 	print ' '.img_warning($langs->trans("BadEMail"));
 }
 print '</td>';
-print '<td class="hideonsmartphone"><span class="opacitymedium">webmaster@example.com></span></td>';
+print '<td class="hideonsmartphone"><span class="opacitymedium">'.dol_escape_htmltag('<webmaster@example.com>').'</span></td>';
 print '</tr>';
 
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("MailingDelay"), $langs->trans("IfDefinedUseAValueBeetween", '0.001', '10')).'</td><td>';
-print '<input class="width75" type="text" name="MAILING_DELAY" value="'.$conf->global->MAILING_DELAY.'">';
+print '<input class="width75" type="text" name="MAILING_DELAY" value="'.getDolGlobalString('MAILING_DELAY').'">';
 print '</td>';
 print '<td class="hideonsmartphone"></td>';
 print '</tr>';
