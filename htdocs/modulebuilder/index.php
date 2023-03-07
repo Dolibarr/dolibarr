@@ -916,10 +916,16 @@ if ($dirins && $action == 'addlanguage' && !empty($module)) {
 				setEventMessages($langs->trans("ErrorFailToCopyFile", $srcfile, $destfile), null, 'errors');
 			}
 		} else {
-			$srcfile = $diroflang.'/langs/en_US';
-			$destfile = $diroflang.'/langs/'.$newlangcode;
+			$srcdir = $diroflang.'/langs/en_US';
+			$srcfile = $diroflang.'/langs/en_US/'.$modulelowercase.'.lang';
+			$destdir = $diroflang.'/langs/'.$newlangcode;
 
-			$result = dolCopyDir($srcfile, $destfile, 0, 0);
+			$arrayofreplacement = array();
+			if (!dol_is_dir($srcfile) || !dol_is_file($srcfile)) {
+				$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template/langs/en_US';
+				$arrayofreplacement = array('mymodule'=>$modulelowercase);
+			}
+			$result = dolCopyDir($srcdir, $destdir, 0, 0, $arrayofreplacement);
 		}
 	} else {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Language")), null, 'errors');
