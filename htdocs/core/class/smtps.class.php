@@ -1862,6 +1862,7 @@ class SMTPs
 		} elseif ($type == 'alternative') {
 			return $this->_smtpsAlternativeBoundary;
 		}
+		return '';
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

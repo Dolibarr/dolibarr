@@ -289,7 +289,8 @@ if ($resql) {
 	}
 	print "</tr>\n";
 
-	while ($i < min($num, $limit)) {
+	$imaxinloop = ($limit ? min($num, $limit) : $num);
+	while ($i < $imaxinloop) {
 		$objp = $db->fetch_object($resql);
 		$donationstatic->setVarsFromFetchObj($objp);
 		$company = new Societe($db);
@@ -314,7 +315,7 @@ if ($resql) {
 			}
 
 			print $donationstatic->getKanbanView('');
-			if ($i == (min($num, $limit) - 1)) {
+			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';
 			}

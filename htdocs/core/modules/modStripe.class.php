@@ -118,7 +118,7 @@ class modStripe extends DolibarrModules
 			'url' => '',
 			'langs' => 'stripe',
 			'position' => 100,
-			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 1',
+			'enabled' => 'isModEnabled("stripe") && isModenabled("banque")',
 			'perms' => '$user->rights->banque->lire',
 			'target' => '',
 			'user' => 0
@@ -132,7 +132,7 @@ class modStripe extends DolibarrModules
 			'url' => '/stripe/charge.php',
 			'langs' => 'stripe',
 			'position' => 102,
-			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 1',
+			'enabled' => 'isModEnabled("stripe") && isModenabled("banque") && getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 1',
 			'perms' => '$user->rights->banque->lire',
 			'target' => '',
 			'user' => 0
@@ -146,7 +146,7 @@ class modStripe extends DolibarrModules
 			'url' => '/stripe/transaction.php',
 			'langs' => 'stripe',
 			'position' => 102,
-			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 1',
+			'enabled' => 'isModEnabled("stripe") && isModenabled("banque") && getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 2',
 			'perms' => '$user->rights->banque->lire',
 			'target' => '',
 			'user' => 0
@@ -160,7 +160,7 @@ class modStripe extends DolibarrModules
 			'url' => '/stripe/payout.php',
 			'langs' => 'stripe',
 			'position' => 103,
-			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 1',
+			'enabled' => 'isModEnabled("stripe") && isModenabled("banque")',
 			'perms' => '$user->rights->banque->lire',
 			'target' => '',
 			'user' => 0

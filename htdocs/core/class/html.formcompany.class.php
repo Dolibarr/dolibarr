@@ -908,7 +908,7 @@ class FormCompany extends Form
 	 *  @param  string  $morecss        More css
 	 *  @return	string					HTML string with prof id
 	 */
-	public function get_input_id_prof($idprof, $htmlname, $preselected, $country_code, $morecss = 'maxwidth100onsmartphone quatrevingtpercent')
+	public function get_input_id_prof($idprof, $htmlname, $preselected, $country_code, $morecss = 'maxwidth200')
 	{
 		// phpcs:enable
 		global $conf, $langs, $hookmanager;

@@ -118,7 +118,7 @@ class mailing_pomme extends MailingTargets
 		$langs->load("users");
 
 		$s = '';
-		$s .= '<select id="filter_pomme"" name="filter" class="flat">';
+		$s .= '<select id="filter_pomme"" name="filter" class="flat minwidth100">';
 		$s .= '<option value="-1">'.$langs->trans("Status").'</option>';
 		$s .= '<option value="1">'.$langs->trans("Enabled").'</option>';
 		$s .= '<option value="0">'.$langs->trans("Disabled").'</option>';
@@ -126,7 +126,7 @@ class mailing_pomme extends MailingTargets
 		$s .= ajax_combobox("filter_pomme");
 
 		$s .= ' ';
-		$s .= '<select id="filteremployee_pomme" name="filteremployee" class="flat">';
+		$s .= '<select id="filteremployee_pomme" name="filteremployee" class="flat minwidth100">';
 		$s .= '<option value="-1">'.$langs->trans("Employee").'</option>';
 		$s .= '<option value="1">'.$langs->trans("Yes").'</option>';
 		$s .= '<option value="0">'.$langs->trans("No").'</option>';

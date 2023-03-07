@@ -1003,8 +1003,8 @@ function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
  * @param	string	$srcdir 			Source directory
  * @param	string 	$destdir			Destination directory
  * @param	int		$overwriteifexists	Overwrite directory if exists (1 by default)
- * @param	int		$indexdatabase		Index new file into database.
- * @param	int		$renamedircontent	Rename contents inside srcdir.
+ * @param	int		$indexdatabase		Index new name of files into database.
+ * @param	int		$renamedircontent	Also rename contents inside srcdir after the move to match new destination name.
  *
  * @return boolean 	True if OK, false if KO
 */
@@ -1045,7 +1045,7 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 							if ($file["type"] == "dir") {
 								$res = dol_move_dir($filepath.'/'.$oldname, $filepath.'/'.$newname, $overwriteifexists, $indexdatabase, $renamedircontent);
 							} else {
-								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname);
+								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname, 0, $overwriteifexists, 0, $indexdatabase);
 							}
 							if (!$res) {
 								return $result;
@@ -2590,54 +2590,54 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->adherent->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'apercufacture' && !empty($conf->facture->multidir_output[$entity])) {
 		// Wrapping for invoices (user need permission to read invoices)
-		if ($fuser->rights->facture->{$lire}) {
+		if ($fuser->hasRight('facture', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->facture->multidir_output[$entity].'/'.$original_file;
 	} elseif ($modulepart == 'apercupropal' && !empty($conf->propal->multidir_output[$entity])) {
 		// Wrapping pour les apercu propal
-		if ($fuser->rights->propal->{$lire}) {
+		if ($fuser->hasRight('propal', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_output[$entity].'/'.$original_file;
 	} elseif ($modulepart == 'apercucommande' && !empty($conf->commande->multidir_output[$entity])) {
 		// Wrapping pour les apercu commande
-		if ($fuser->rights->commande->{$lire}) {
+		if ($fuser->hasRight('commande', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->commande->multidir_output[$entity].'/'.$original_file;
 	} elseif (($modulepart == 'apercufichinter' || $modulepart == 'apercuficheinter') && !empty($conf->ficheinter->dir_output)) {
 		// Wrapping pour les apercu intervention
-		if ($fuser->rights->ficheinter->{$lire}) {
+		if ($fuser->hasRight('ficheinter', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->ficheinter->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'apercucontract') && !empty($conf->contrat->multidir_output[$entity])) {
 		// Wrapping pour les apercu contrat
-		if ($fuser->rights->contrat->{$lire}) {
+		if ($fuser->hasRight('contrat', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->contrat->multidir_output[$entity].'/'.$original_file;
 	} elseif (($modulepart == 'apercusupplier_proposal' || $modulepart == 'apercusupplier_proposal') && !empty($conf->supplier_proposal->dir_output)) {
 		// Wrapping pour les apercu supplier proposal
-		if ($fuser->rights->supplier_proposal->{$lire}) {
+		if ($fuser->hasRight('supplier_proposal', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->supplier_proposal->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'apercusupplier_order' || $modulepart == 'apercusupplier_order') && !empty($conf->fournisseur->commande->dir_output)) {
 		// Wrapping pour les apercu supplier order
-		if ($fuser->rights->fournisseur->commande->{$lire}) {
+		if ($fuser->hasRight('fournisseur', 'commande', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->commande->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'apercusupplier_invoice' || $modulepart == 'apercusupplier_invoice') && !empty($conf->fournisseur->facture->dir_output)) {
 		// Wrapping pour les apercu supplier invoice
-		if ($fuser->rights->fournisseur->facture->{$lire}) {
+		if ($fuser->hasRight('fournisseur', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->facture->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'holiday') && !empty($conf->holiday->dir_output)) {
-		if ($fuser->rights->holiday->{$read} || !empty($fuser->rights->holiday->readall) || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('holiday', $read) || !empty($fuser->rights->holiday->readall) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 			// If we known $id of holiday, call checkUserAccessToObject to check permission on properties and hierarchy of leave request
 			if ($refname && empty($fuser->rights->holiday->readall) && !preg_match('/^specimen/i', $original_file)) {
@@ -2649,7 +2649,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->holiday->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'expensereport') && !empty($conf->expensereport->dir_output)) {
-		if ($fuser->rights->expensereport->{$lire} || !empty($fuser->rights->expensereport->readall) || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('expensereport', $lire) || !empty($fuser->rights->expensereport->readall) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 			// If we known $id of expensereport, call checkUserAccessToObject to check permission on properties and hierarchy of expense report
 			if ($refname && empty($fuser->rights->expensereport->readall) && !preg_match('/^specimen/i', $original_file)) {
@@ -2662,72 +2662,72 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->expensereport->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'apercuexpensereport') && !empty($conf->expensereport->dir_output)) {
 		// Wrapping pour les apercu expense report
-		if ($fuser->rights->expensereport->{$lire}) {
+		if ($fuser->hasRight('expensereport', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->expensereport->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'propalstats' && !empty($conf->propal->multidir_temp[$entity])) {
 		// Wrapping pour les images des stats propales
-		if ($fuser->rights->propal->{$lire}) {
+		if ($fuser->hasRight('propal', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_temp[$entity].'/'.$original_file;
 	} elseif ($modulepart == 'orderstats' && !empty($conf->commande->dir_temp)) {
 		// Wrapping pour les images des stats commandes
-		if ($fuser->rights->commande->{$lire}) {
+		if ($fuser->hasRight('commande', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->commande->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'orderstatssupplier' && !empty($conf->fournisseur->dir_output)) {
-		if ($fuser->rights->fournisseur->commande->{$lire}) {
+		if ($fuser->hasRight('fournisseur', 'commande', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->commande->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'billstats' && !empty($conf->facture->dir_temp)) {
 		// Wrapping pour les images des stats factures
-		if ($fuser->rights->facture->{$lire}) {
+		if ($fuser->hasRight('facture', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->facture->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'billstatssupplier' && !empty($conf->fournisseur->dir_output)) {
-		if ($fuser->rights->fournisseur->facture->{$lire}) {
+		if ($fuser->hasRight('fournisseur', 'facture', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->facture->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'expeditionstats' && !empty($conf->expedition->dir_temp)) {
 		// Wrapping pour les images des stats expeditions
-		if ($fuser->rights->expedition->{$lire}) {
+		if ($fuser->hasRight('expedition', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->expedition->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'tripsexpensesstats' && !empty($conf->deplacement->dir_temp)) {
 		// Wrapping pour les images des stats expeditions
-		if ($fuser->rights->deplacement->{$lire}) {
+		if ($fuser->hasRight('deplacement', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->deplacement->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'memberstats' && !empty($conf->adherent->dir_temp)) {
 		// Wrapping pour les images des stats expeditions
-		if ($fuser->rights->adherent->{$lire}) {
+		if ($fuser->hasRight('adherent', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->adherent->dir_temp.'/'.$original_file;
 	} elseif (preg_match('/^productstats_/i', $modulepart) && !empty($conf->product->dir_temp)) {
 		// Wrapping pour les images des stats produits
-		if ($fuser->rights->produit->{$lire} || $fuser->rights->service->{$lire}) {
+		if ($fuser->hasRight('produit', $lire) || $fuser->hasRight('service', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = (!empty($conf->product->multidir_temp[$entity]) ? $conf->product->multidir_temp[$entity] : $conf->service->multidir_temp[$entity]).'/'.$original_file;
 	} elseif (in_array($modulepart, array('tax', 'tax-vat', 'tva')) && !empty($conf->tax->dir_output)) {
 		// Wrapping for taxes
-		if ($fuser->rights->tax->charges->{$lire}) {
+		if ($fuser->hasRight('tax', 'charges', $lire)) {
 			$accessallowed = 1;
 		}
 		$modulepartsuffix = str_replace('tax-', '', $modulepart);
 		$original_file = $conf->tax->dir_output.'/'.($modulepartsuffix != 'tax' ? $modulepartsuffix.'/' : '').$original_file;
 	} elseif ($modulepart == 'actions' && !empty($conf->agenda->dir_output)) {
 		// Wrapping for events
-		if ($fuser->rights->agenda->myactions->{$read}) {
+		if ($fuser->hasRight('agenda', 'myactions', $read)) {
 			$accessallowed = 1;
 			// If we known $id of project, call checkUserAccessToObject to check permission on the given agenda event on properties and assigned users
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
@@ -2811,85 +2811,85 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) {
 			return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		}
-		if ($fuser->rights->societe->{$lire}) {
+		if ($fuser->hasRight('societe', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->societe->multidir_output[$entity].'/contact/'.$original_file;
 	} elseif (($modulepart == 'facture' || $modulepart == 'invoice') && !empty($conf->facture->multidir_output[$entity])) {
 		// Wrapping for invoices
-		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->facture->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('invoice').")";
 	} elseif ($modulepart == 'massfilesarea_proposals' && !empty($conf->propal->multidir_output[$entity])) {
 		// Wrapping for mass actions
-		if ($fuser->rights->propal->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('propal', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_output[$entity].'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	} elseif ($modulepart == 'massfilesarea_orders') {
-		if ($fuser->rights->commande->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('commande', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->commande->multidir_output[$entity].'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	} elseif ($modulepart == 'massfilesarea_sendings') {
-		if ($fuser->rights->expedition->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('expedition', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->expedition->dir_output.'/sending/temp/massgeneration/'.$user->id.'/'.$original_file;
 	} elseif ($modulepart == 'massfilesarea_invoices') {
-		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->facture->multidir_output[$entity].'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	} elseif ($modulepart == 'massfilesarea_expensereport') {
-		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->expensereport->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	} elseif ($modulepart == 'massfilesarea_interventions') {
-		if ($fuser->rights->ficheinter->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('ficheinter', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->ficheinter->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	} elseif ($modulepart == 'massfilesarea_supplier_proposal' && !empty($conf->supplier_proposal->dir_output)) {
-		if ($fuser->rights->supplier_proposal->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('supplier_proposal', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->supplier_proposal->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	} elseif ($modulepart == 'massfilesarea_supplier_order') {
-		if ($fuser->rights->fournisseur->commande->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('fournisseur', 'commande', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->commande->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	} elseif ($modulepart == 'massfilesarea_supplier_invoice') {
-		if ($fuser->rights->fournisseur->facture->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('fournisseur', 'facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->facture->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	} elseif ($modulepart == 'massfilesarea_contract' && !empty($conf->contrat->dir_output)) {
-		if ($fuser->rights->contrat->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('contrat', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->contrat->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	} elseif (($modulepart == 'fichinter' || $modulepart == 'ficheinter') && !empty($conf->ficheinter->dir_output)) {
 		// Wrapping for interventions
-		if ($fuser->rights->ficheinter->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('ficheinter', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->ficheinter->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	} elseif ($modulepart == 'deplacement' && !empty($conf->deplacement->dir_output)) {
 		// Wrapping pour les deplacements et notes de frais
-		if ($fuser->rights->deplacement->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('deplacement', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->deplacement->dir_output.'/'.$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
-	} elseif (($modulepart == 'propal' || $modulepart == 'propale') && !empty($conf->propal->multidir_output[$entity])) {
+	} elseif (($modulepart == 'propal' || $modulepart == 'propale') && isset($conf->propal->multidir_output[$entity])) {
 		// Wrapping pour les propales
-		if ($fuser->rights->propal->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('propal', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_output[$entity].'/'.$original_file;
@@ -2903,7 +2903,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('order').")";
 	} elseif ($modulepart == 'project' && !empty($conf->project->dir_output)) {
 		// Wrapping pour les projets
-		if ($fuser->rights->projet->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('projet', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 			// If we known $id of project, call checkUserAccessToObject to check permission on properties and contact of project
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
@@ -2916,7 +2916,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->project->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";
 	} elseif ($modulepart == 'project_task' && !empty($conf->project->dir_output)) {
-		if ($fuser->rights->projet->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('projet', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 			// If we known $id of project, call checkUserAccessToObject to check permission on properties and contact of project
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
@@ -2951,7 +2951,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiementfournisseur WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	} elseif ($modulepart == 'facture_paiement' && !empty($conf->facture->dir_output)) {
 		// Wrapping pour les rapport de paiements
-		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		if ($fuser->socid > 0) {
@@ -2967,26 +2967,26 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->accounting->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'expedition' || $modulepart == 'shipment') && !empty($conf->expedition->dir_output)) {
 		// Wrapping pour les expedition
-		if ($fuser->rights->expedition->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('expedition', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->expedition->dir_output."/".(strpos('sending/', $original_file) === 0 ? '' : 'sending/').$original_file;
 		//$original_file = $conf->expedition->dir_output."/".$original_file;
 	} elseif (($modulepart == 'livraison' || $modulepart == 'delivery') && !empty($conf->expedition->dir_output)) {
 		// Delivery Note Wrapping
-		if ($fuser->rights->expedition->delivery->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('expedition', 'delivery', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->expedition->dir_output."/".(strpos('receipt/', $original_file) === 0 ? '' : 'receipt/').$original_file;
 	} elseif ($modulepart == 'actions' && !empty($conf->agenda->dir_output)) {
 		// Wrapping pour les actions
-		if ($fuser->rights->agenda->myactions->{$read} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('agenda', 'myactions', $read) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->agenda->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'actionsreport' && !empty($conf->agenda->dir_temp)) {
 		// Wrapping pour les actions
-		if ($fuser->rights->agenda->allactions->{$read} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('agenda', 'allactions', $read) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->agenda->dir_temp."/".$original_file;
@@ -2995,7 +2995,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (empty($entity) || (empty($conf->product->multidir_output[$entity]) && empty($conf->service->multidir_output[$entity]))) {
 			return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		}
-		if (($fuser->rights->produit->{$lire} || $fuser->rights->service->{$lire}) || preg_match('/^specimen/i', $original_file)) {
+		if (($fuser->hasRight('produit', $lire) || $fuser->hasRight('service', $lire)) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		if (isModEnabled("product")) {
@@ -3008,7 +3008,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (empty($entity) || (empty($conf->productbatch->multidir_output[$entity]))) {
 			return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		}
-		if (($fuser->rights->produit->{$lire} ) || preg_match('/^specimen/i', $original_file)) {
+		if (($fuser->hasRight('produit', $lire)) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		if (isModEnabled('productbatch')) {
@@ -3019,7 +3019,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (empty($entity) || empty($conf->stock->multidir_output[$entity])) {
 			return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		}
-		if (($fuser->rights->stock->{$lire} || $fuser->rights->stock->movement->{$lire} || $fuser->rights->stock->mouvement->{$lire}) || preg_match('/^specimen/i', $original_file)) {
+		if (($fuser->hasRight('stock', $lire) || $fuser->hasRight('stock', 'movement', $lire) || $fuser->hasRight('stock', 'mouvement', $lire)) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		if (isModEnabled('stock')) {
@@ -3034,26 +3034,26 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."contrat WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('contract').")";
 	} elseif ($modulepart == 'donation' && !empty($conf->don->dir_output)) {
 		// Wrapping pour les dons
-		if ($fuser->rights->don->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('don', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->don->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'dolresource' && !empty($conf->resource->dir_output)) {
 		// Wrapping pour les dons
-		if ($fuser->rights->resource->{$read} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('resource', $read) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->resource->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'remisecheque' || $modulepart == 'chequereceipt') && !empty($conf->bank->dir_output)) {
 		// Wrapping pour les remises de cheques
-		if ($fuser->rights->banque->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('banque', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 
 		$original_file = $conf->bank->dir_output.'/checkdeposits/'.$original_file; // original_file should contains relative path so include the get_exdir result
 	} elseif (($modulepart == 'banque' || $modulepart == 'bank') && !empty($conf->bank->dir_output)) {
 		// Wrapping for bank
-		if ($fuser->rights->banque->{$lire}) {
+		if ($fuser->hasRight('banque', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->bank->dir_output.'/'.$original_file;
@@ -3096,7 +3096,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->bittorrent->dir_output.'/'.$dir.'/'.$original_file;
 	} elseif ($modulepart == 'member' && !empty($conf->adherent->dir_output)) {
 		// Wrapping pour Foundation module
-		if ($fuser->rights->adherent->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('adherent', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->adherent->dir_output.'/'.$original_file;

@@ -1125,6 +1125,7 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 				}
 				continue;
 			}
+			$regs = array();
 			preg_match('/^([^\?]+(\.css\.php|\.css|\.js\.php|\.js|\.png|\.jpg|\.php)?)/i', $path, $regs); // Take part before '?'
 			if (!empty($regs[1])) {
 				//print $key.'-'.$dirroot.'/'.$path.'-'.$conf->file->dol_url_root[$type].'<br>'."\n";
@@ -1672,7 +1673,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 		if (!array_key_exists($level, $logLevels)) {
 			throw new Exception('Incorrect log level');
 		}
-		if ($level > $conf->global->SYSLOG_LEVEL) {
+		if ($level > getDolGlobalInt('SYSLOG_LEVEL')) {
 			return;
 		}
 
@@ -2324,14 +2325,12 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 		$tmptxt = $object->getLibStatut(5);
 		$morehtmlstatus .= $tmptxt; // No status on task
-	} else { // Generic case
-		if (isset($object->status)) {
-			$tmptxt = $object->getLibStatut(6);
-			if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
-				$tmptxt = $object->getLibStatut(5);
-			}
-			$morehtmlstatus .= $tmptxt;
+	} elseif (method_exists($object, 'getLibStatut')) { // Generic case
+		$tmptxt = $object->getLibStatut(6);
+		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
+			$tmptxt = $object->getLibStatut(5);
 		}
+		$morehtmlstatus .= $tmptxt;
 	}
 
 	// Add if object was dispatched "into accountancy"
@@ -2648,7 +2647,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$format = '%Y%m%d%H%M%S';
 	} elseif ($format == 'dayhourlogsmall') {
 		// Format not sensitive to language
-		$format = '%Y%m%d%H%M';
+		$format = '%y%m%d%H%M';
 	} elseif ($format == 'dayhourldap') {
 		$format = '%Y%m%d%H%M%SZ';
 	} elseif ($format == 'dayhourxcard') {
@@ -2731,8 +2730,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 			$dtts->setTimestamp($timetouse);
 			$dtts->setTimezone($tzo);
 			$newformat = str_replace(
-				array('%Y', '%y', '%m', '%d', '%H', '%I', '%M', '%S', '%p', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
-				array('Y', 'y', 'm', 'd', 'H', 'h', 'i', 's', 'A', '__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
+				array('%Y', '%y', '%m', '%d', '%H', '%I', '%M', '%S', '%p', '%w', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
+				array('Y', 'y', 'm', 'd', 'H', 'h', 'i', 's', 'A', 'w', '__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
 				$format);
 			$ret = $dtts->format($newformat);
 			$ret = str_replace(
@@ -3575,15 +3574,15 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 				$picto = '';
 			}
 		}
-		if ($adddivfloat) {
+		if ($adddivfloat == 1) {
 			$rep .= '<div class="nospan float" style="margin-right: 10px">';
-		} else {
+		} elseif (empty($adddivfloat)) {
 			$rep .= '<span style="margin-right: 10px;">';
 		}
 		$rep .= ($withpicto ?img_picto($titlealt, 'object_'.$picto.'.png').' ' : '').$newphone;
-		if ($adddivfloat) {
+		if ($adddivfloat == 1) {
 			$rep .= '</div>';
-		} else {
+		} elseif (empty($adddivfloat)) {
 			$rep .= '</span>';
 		}
 	}
@@ -4008,8 +4007,9 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
  *	Show picto whatever it's its name (generic function)
  *
  *	@param      string		$titlealt         		Text on title tag for tooltip. Not used if param notitle is set to 1.
- *	@param      string		$picto       			Name of image file to show ('filenew', ...)
- *													If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
+ *	@param      string		$picto       			Name of image file to show ('filenew', ...).
+ *													For font awesome icon (example 'user'), you can use picto_nocolor to not have the color of picto forced.
+ *													If no extension provided and it is not a font awesome icon, we use '.png'. Image must be stored into theme/xxx/img directory.
  *                                  				Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
  *                                  				Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
  *                                  				Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
@@ -4047,6 +4047,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	} else {
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
+		$pictowithouttext = str_replace('_nocolor', '', $pictowithouttext);
 
 		if (strpos($pictowithouttext, 'fontawesome_') !== false || preg_match('/^fa-/', $pictowithouttext)) {
 			// This is a font awesome image 'fonwtawesome_xxx' or 'fa-xxx'
@@ -4104,7 +4105,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'edit', 'ellipsis-h', 'email', 'entity', 'envelope', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt', 'eye',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus',
 				'gears', 'generate', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
-				'help', 'holiday',
+				'hands-helping', 'help', 'holiday',
 				'id-card', 'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'jobprofile',
 				'knowledgemanagement',
 				'label', 'language', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lock', 'lot', 'long-arrow-alt-right',
@@ -4256,7 +4257,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				//'title_setup'=>'infobox-action', 'tools'=>'infobox-action',
 				'list-alt'=>'imgforviewmode', 'calendar'=>'imgforviewmode', 'calendarweek'=>'imgforviewmode', 'calendarmonth'=>'imgforviewmode', 'calendarday'=>'imgforviewmode', 'calendarperuser'=>'imgforviewmode'
 			);
-			if (!empty($arrayconvpictotomorcess[$pictowithouttext])) {
+			if (!empty($arrayconvpictotomorcess[$pictowithouttext]) && strpos($picto, '_nocolor') === false) {
 				$morecss .= ($morecss ? ' ' : '').$arrayconvpictotomorcess[$pictowithouttext];
 			}
 
@@ -4276,7 +4277,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'uncheck'=>'#800', 'uparrow'=>'#555', 'user-cog'=>'#999', 'country'=>'#aaa', 'globe-americas'=>'#aaa', 'region'=>'#aaa', 'state'=>'#aaa',
 				'website'=>'#304', 'workstation'=>'#a69944'
 			);
-			if (isset($arrayconvpictotocolor[$pictowithouttext])) {
+			if (isset($arrayconvpictotocolor[$pictowithouttext]) && strpos($picto, '_nocolor') === false) {
 				$facolor = $arrayconvpictotocolor[$pictowithouttext];
 			}
 
@@ -5175,7 +5176,7 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
  *	@param  string	$moreattrib  Options of attribute td ("" by defaut)
  *	@param  string	$sortfield   Current field used to sort
  *	@param  string	$sortorder   Current sort order
- *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag.
+ *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
  *  @param	string	$tooltip	 Tooltip
  *  @param	string	$forcenowrapcolumntitle		No need for use 'wrapcolumntitle' css style
  *	@return	void
@@ -7638,9 +7639,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				'__USER_ID__' => (string) $user->id,
 				'__USER_LOGIN__' => (string) $user->login,
 				'__USER_EMAIL__' => (string) $user->email,
-				'__USER_PHONE__' => (string) dol_print_phone($user->office_phone),
-				'__USER_PHONEPRO__' => (string) dol_print_phone($user->user_mobile),
-				'__USER_PHONEMOBILE__' => (string) dol_print_phone($user->personal_mobile),
+				'__USER_PHONE__' => (string) dol_print_phone($user->office_phone, '', 0, 0, '', " ", '', '', -1),
+				'__USER_PHONEPRO__' => (string) dol_print_phone($user->user_mobile, '', 0, 0, '', " ", '', '', -1),
+				'__USER_PHONEMOBILE__' => (string) dol_print_phone($user->personal_mobile, '', 0, 0, '', " ", '', '', -1),
 				'__USER_FAX__' => (string) $user->office_fax,
 				'__USER_LASTNAME__' => (string) $user->lastname,
 				'__USER_FIRSTNAME__' => (string) $user->firstname,
@@ -7655,8 +7656,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray = array_merge($substitutionarray, array(
 			'__MYCOMPANY_NAME__'    => $mysoc->name,
 			'__MYCOMPANY_EMAIL__'   => $mysoc->email,
-			'__MYCOMPANY_PHONE__'   => dol_print_phone($mysoc->phone),
-			'__MYCOMPANY_FAX__'     => dol_print_phone($mysoc->fax),
+			'__MYCOMPANY_PHONE__'   => dol_print_phone($mysoc->phone, '', 0, 0, '', " ", '', '', -1),
+			'__MYCOMPANY_FAX__'     => dol_print_phone($mysoc->fax, '', 0, 0, '', " ", '', '', -1),
 			'__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
 			'__MYCOMPANY_PROFID2__' => $mysoc->idprof2,
 			'__MYCOMPANY_PROFID3__' => $mysoc->idprof3,
@@ -9093,11 +9094,9 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			}
 		}
 	} catch (Error $e) {
-		$error = 'Caught error : ';
-		$error .= $e->getMessage() . ', ';
-		$error .= 'Trace : ';
-		$error .= json_encode($e->getTrace());
-		error_log($error, 1);
+		$error = 'dol_eval try/catch error : ';
+		$error .= $e->getMessage();
+		dol_syslog($error);
 	}
 }
 
@@ -9593,7 +9592,7 @@ function printCommonFooter($zone = 'private')
 			}
 
 			// Management of focus and mandatory for fields
-			if ($action == 'create' || $action == 'edit' || (empty($action) && (preg_match('/new\.php/', $_SERVER["PHP_SELF"])))) {
+			if ($action == 'create' || $action == 'edit' || (empty($action) && (preg_match('/new\.php/', $_SERVER["PHP_SELF"]))) || ((empty($action) || $action == 'addline') && (preg_match('/card\.php/', $_SERVER["PHP_SELF"])))) {
 				print '/* JS CODE TO ENABLE to manage focus and mandatory form fields */'."\n";
 				$relativepathstring = $_SERVER["PHP_SELF"];
 				// Clean $relativepathstring
@@ -11584,15 +11583,34 @@ function jsonOrUnserialize($stringtodecode)
 
 
 /**
- * Return if a $sqlfilters parameter is valid and will pass the preg_replace_callback() to replace Generic filter string with SQL filter string
- * Example of usage:
- * if ($sqlfilters) {
- *	 $errormessage = '';
- *   if (dolCheckFilters($sqlfilters, $errormessage)) {
- *	   $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
- *	   $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $sqlfilters).")";
- *   }
- * }
+ * forgeSQLFromUniversalSearchCriteria
+ *
+ * @param 	string		$filter		String with universal search string
+ * @param	string		$error		Error message
+ * @return	string					Return forged SQL string
+ */
+function forgeSQLFromUniversalSearchCriteria($filter, &$error = '')
+{
+	$regexstring = '\(([a-zA-Z0-9_\.]+:[<>!=insotlke]+:[^\(\)]+)\)';	// Must be  (aaa:bbb:...) with aaa is a field name (with alias or not) and bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'
+
+	if (!dolCheckFilters($filter, $error)) {
+		return '1 = 2';		// Bad balance of parenthesis, we force a SQL not found
+	}
+
+	// Test the filter syntax
+	$t = preg_replace_callback('/'.$regexstring.'/i', 'dolForgeDummyCriteriaCallback', $filter);
+	$t = str_replace(array('and','or','AND','OR',' '), '', $t);		// Remove the only strings allowed between each () criteria
+	// If the string result contains something else than '()', the syntax was wrong
+	if (preg_match('/[^\(\)]/', $t)) {
+		$error = 'Bad syntax of the search string, filter criteria is inhalited';
+		return '1 = 3';		// Bad syntax of the search string, we force a SQL not found
+	}
+
+	return " AND (".preg_replace_callback('/'.$regexstring.'/i', 'dolForgeCriteriaCallback', $filter).")";
+}
+
+/**
+ * Return if a $sqlfilters parameter has a valid balance of parenthesis
  *
  * @param	string  		$sqlfilters     sqlfilter string
  * @param	string			$error			Error message
@@ -11613,7 +11631,7 @@ function dolCheckFilters($sqlfilters, &$error = '')
 			$counter--;
 		}
 		if ($counter < 0) {
-			$error = "Bad sqlfilters=".$sqlfilters;
+			$error = "Wrond balance of parenthesis in sqlfilters=".$sqlfilters;
 			dol_syslog($error, LOG_WARNING);
 			return false;
 		}
@@ -11623,57 +11641,92 @@ function dolCheckFilters($sqlfilters, &$error = '')
 }
 
 /**
- * Function to forge a SQL criteria from a Generic filter string.
- * Example of usage:
- * if ($sqlfilters) {
- *	 $errormessage = '';
- *   if (dolCheckFilters($sqlfilters, $errormessage)) {
- *	   $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
- *	   $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $sqlfilters).")";
- *   }
- * }
+ * Function to forge a SQL criteria from a Dolibarr filter syntax string.
+ * This method is called by forgeSQLFromUniversalSearchCriteria()
  *
- * @param  array    $matches    Array of found string by regex search.
- * 								Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
- * @return string               Forged criteria. Example: "t.field like 'abc%'"
+ * @param  array    $matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.nature:is:NULL"
+ * @return string                  Forged criteria. Example: "t.field like 'abc%'"
+ */
+function dolForgeDummyCriteriaCallback($matches)
+{
+	//dol_syslog("Convert matches ".$matches[1]);
+	if (empty($matches[1])) {
+		return '';
+	}
+	$tmp = explode(':', $matches[1]);
+	if (count($tmp) < 3) {
+		return '';
+	}
+
+	return '()';	// An empty criteria
+}
+
+/**
+ * Function to forge a SQL criteria from a Dolibarr filter syntax string.
+ * This method is called by forgeSQLFromUniversalSearchCriteria()
+ *
+ * @param  array    $matches       	Array of found string by regex search.
+ * 									Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
+ * @return string                  	Forged criteria. Example: "t.field like 'abc%'"
  */
 function dolForgeCriteriaCallback($matches)
 {
 	global $db;
 
-	dol_syslog("Convert matches ".$matches[1]);
+	//dol_syslog("Convert matches ".$matches[1]);
 	if (empty($matches[1])) {
 		return '';
 	}
-	$tmp = explode(':', $matches[1], 3);
-
+	$tmp = explode(':', $matches[1]);
 	if (count($tmp) < 3) {
 		return '';
 	}
-
-	$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
 
 	$operator = strtoupper(preg_replace('/[^a-z<>=]/i', '', trim($tmp[1])));
 	if ($operator == 'NOTLIKE') {
 		$operator = 'NOT LIKE';
 	}
+	if ($operator == 'ISNOT') {
+		$operator = 'IS NOT';
+	}
+	if ($operator == '!=') {
+		$operator = '<>';
+	}
 
-	$tmpescaped = trim($tmp[2]);
+	$tmpescaped = $tmp[2];
 	$regbis = array();
-	if ($operator == 'IN') {
-		$tmpescaped = "(".$db->sanitize($tmpescaped, 1).")";
+
+	if ($operator == 'IN') {	// IN is allowed for list of ID or code only
+		//if (!preg_match('/^\(.*\)$/', $tmpescaped)) {
+			$tmpescaped = '('.$db->escape($db->sanitize($tmpescaped, 1, 0)).')';
+		//} else {
+		//	$tmpescaped = $db->escape($db->sanitize($tmpescaped, 1));
+		//}
+	} elseif ($operator == 'LIKE' || $operator == 'NOT LIKE') {
+		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
+			$tmpescaped = $regbis[1];
+		}
+		//$tmpescaped = "'".$db->escapeforlike($db->escape($regbis[1]))."'";
+		$tmpescaped = "'".$db->escape($tmpescaped)."'";	// We do not escape the _ and % so the like will works
 	} elseif (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 		$tmpescaped = "'".$db->escape($regbis[1])."'";
 	} else {
-		$tmpescaped = $db->sanitize($db->escape($tmpescaped));
+		if (strtoupper($tmpescaped) == 'NULL') {
+			$tmpescaped = 'NULL';
+		} elseif (is_int($tmpescaped)) {
+			$tmpescaped = (int) $tmpescaped;
+		} else {
+			$tmpescaped = (float) $tmpescaped;
+		}
 	}
 
-	return $db->escape($operand).' '.$db->escape($operator)." ".$tmpescaped;
+	return $db->escape($tmp[0]).' '.strtoupper($operator).' '.$tmpescaped;
 }
 
 
 /**
  * Get timeline icon
+ *
  * @param ActionComm $actionstatic actioncomm
  * @param array $histo histo
  * @param int $key key

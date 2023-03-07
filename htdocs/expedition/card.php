@@ -944,7 +944,7 @@ if ($action == 'create') {
 				$langs->load("projects");
 				print '<tr>';
 				print '<td>'.$langs->trans("Project").'</td><td colspan="2">';
-				print img_picto('', 'project');
+				print img_picto('', 'project', 'class="pictofixedwidth"');
 				$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
 				print ' <a class="paddingleft" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 				print '</td>';
@@ -954,6 +954,7 @@ if ($action == 'create') {
 			// Date delivery planned
 			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td colspan="3">';
+			print img_picto('', 'action', 'class="pictofixedwidth"');
 			$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date); // $date_delivery comes from GETPOST
 			print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 			print "</td>\n";
@@ -978,7 +979,9 @@ if ($action == 'create') {
 			// Weight
 			print '<tr><td>';
 			print $langs->trans("Weight");
-			print '</td><td colspan="3"><input name="weight" size="4" value="'.GETPOST('weight', 'int').'"> ';
+			print '</td><td colspan="3">';
+			print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
+			print '<input name="weight" size="4" value="'.GETPOST('weight', 'int').'"> ';
 			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units', 'int'), 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 			print $form->textwithpicto($text, $htmltext);
@@ -986,7 +989,9 @@ if ($action == 'create') {
 			// Dim
 			print '<tr><td>';
 			print $langs->trans("Width").' x '.$langs->trans("Height").' x '.$langs->trans("Depth");
-			print ' </td><td colspan="3"><input name="sizeW" size="4" value="'.GETPOST('sizeW', 'int').'">';
+			print ' </td><td colspan="3">';
+			print img_picto('', 'fa-ruler', 'class="pictofixedwidth"');
+			print '<input name="sizeW" size="4" value="'.GETPOST('sizeW', 'int').'">';
 			print ' x <input name="sizeH" size="4" value="'.GETPOST('sizeH', 'int').'">';
 			print ' x <input name="sizeS" size="4" value="'.GETPOST('sizeS', 'int').'">';
 			print ' ';
@@ -999,6 +1004,7 @@ if ($action == 'create') {
 			print "<tr><td>".$langs->trans("DeliveryMethod")."</td>";
 			print '<td colspan="3">';
 			$expe->fetch_delivery_methods();
+			print img_picto('', 'dolly', 'class="pictofixedwidth"');
 			print $form->selectarray("shipping_method_id", $expe->meths, GETPOST('shipping_method_id', 'int'), 1, 0, 0, "", 1);
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -1008,6 +1014,7 @@ if ($action == 'create') {
 			// Tracking number
 			print "<tr><td>".$langs->trans("TrackingNumber")."</td>";
 			print '<td colspan="3">';
+			print img_picto('', 'barcode', 'class="pictofixedwidth"');
 			print '<input name="tracking_number" size="20" value="'.GETPOST('tracking_number', 'alpha').'">';
 			print "</td></tr>\n";
 
@@ -1030,6 +1037,7 @@ if ($action == 'create') {
 				print '<tr>';
 				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->label_incoterms, 1).'</label></td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
+				print img_picto('', 'incoterm', 'class="pictofixedwidth"');
 				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''));
 				print '</td></tr>';
 			}
@@ -1040,6 +1048,7 @@ if ($action == 'create') {
 			if (count($list) > 1) {
 				print "<tr><td>".$langs->trans("DefaultModel")."</td>";
 				print '<td colspan="3">';
+				print img_picto('', 'pdf', 'class="pictofixedwidth"');
 				print $form->selectarray('model', $list, $conf->global->EXPEDITION_ADDON_PDF);
 				print "</td></tr>\n";
 			}

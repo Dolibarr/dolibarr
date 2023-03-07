@@ -126,7 +126,7 @@ class ExtraFields
 	 *  @param  array|string	$param				Params for field (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @param  int				$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string			$perms				Permission to check
-	 *  @param	string			$list				Visibilty ('0'=never visible, '1'=visible on list+forms, '2'=list only, '3'=form only or 'eval string')
+	 *  @param	string			$list				Visibility ('0'=never visible, '1'=visible on list+forms, '2'=list only, '3'=form only or 'eval string')
 	 *  @param	string			$help				Text with help tooltip
 	 *  @param  string  		$computed           Computed value
 	 *  @param  string  		$entity    		 	Entity of extrafields (for multicompany modules)

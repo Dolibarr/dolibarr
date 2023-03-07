@@ -43,6 +43,7 @@ class DolEditor
 	public $cols;
 	public $height;
 	public $width;
+	public $uselocalbrowser;
 	public $readonly;
 	public $posx;
 	public $posy;

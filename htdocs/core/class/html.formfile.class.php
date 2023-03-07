@@ -458,6 +458,10 @@ class FormFile
 			$submodulepart = $tmp[1];
 		}
 
+		$addcolumforpicto = ($delallowed || $printer || $morepicto);
+		$colspan = (4 + ($addcolumforpicto ? 1 : 0));
+		$colspanmore = 0;
+
 		// Show table
 		if ($genallowed) {
 			$modellist = array();
@@ -699,10 +703,6 @@ class FormFile
 			$out .= '<table class="liste formdoc noborder centpercent">';
 
 			$out .= '<tr class="liste_titre">';
-
-			$addcolumforpicto = ($delallowed || $printer || $morepicto);
-			$colspan = (4 + ($addcolumforpicto ? 1 : 0));
-			$colspanmore = 0;
 
 			$out .= '<th colspan="'.$colspan.'" class="formdoc liste_titre maxwidthonsmartphone center">';
 

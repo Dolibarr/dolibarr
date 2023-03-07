@@ -719,7 +719,7 @@ if (count($sqlwhere) > 0) {
 // Export into a file with format defined into setup (FEC, CSV, ...)
 // Must be after definition of $sql
 if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements', 'export')) {
-	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). It consumes too much memory on large export.
+	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). It currently consumes too much memory on large export.
 	// Replace this with the query($sql) and loop on each line to export them.
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', (empty($conf->global->ACCOUNTING_REEXPORT) ? 0 : 1));
 
@@ -729,6 +729,7 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 		// Export files then exit
 		$accountancyexport = new AccountancyExport($db);
 
+		$formatexport = GETPOST('formatexport', 'int');
 		$notexportlettering = GETPOST('notexportlettering', 'alpha');
 
 		if (!empty($notexportlettering)) {
@@ -745,7 +746,7 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 		$withAttachment = !empty(trim(GETPOST('notifiedexportfull', 'alphanohtml'))) ? 1 : 0;
 
 		// Output data on screen or download
-		$result = $accountancyexport->export($object->lines, $formatexportset, $withAttachment);
+		$result = $accountancyexport->export($object->lines, $formatexport, $withAttachment);
 
 		$error = 0;
 		if ($result < 0) {
@@ -856,6 +857,17 @@ $formconfirm = '';
 if ($action == 'export_file') {
 	$form_question = array();
 
+	$form_question['formatexport'] = array(
+		'name' => 'formatexport',
+		'type' => 'select',
+		'label' => $langs->trans('Modelcsv'),		// TODO  Use Selectmodelcsv and show a select combo
+		'values' => $listofformat,
+		'default' => $formatexportset,
+		'morecss' => 'minwidth200 maxwidth200'
+	);
+
+	$form_question['separator0'] = array('name'=>'separator0', 'type'=>'separator');
+
 	if (getDolGlobalInt("ACCOUNTING_ENABLE_LETTERING")) {
 		// If 1, we check by default.
 		$checked = !empty($conf->global->ACCOUNTING_DEFAULT_NOT_EXPORT_LETTERING) ? 'true' : 'false';
@@ -866,7 +878,7 @@ if ($action == 'export_file') {
 			'value' => $checked,
 		);
 
-		$form_question['separator'] = array('name'=>'separator', 'type'=>'separator');
+		$form_question['separator1'] = array('name'=>'separator1', 'type'=>'separator');
 	}
 
 	// If 1 or not set, we check by default.
@@ -903,7 +915,7 @@ if ($action == 'export_file') {
 		);
 	}
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 400, 600);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").'...', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 420, 600);
 }
 
 //if ($action == 'delbookkeepingyear') {
@@ -1362,7 +1374,7 @@ while ($i < min($num, $limit)) {
 		$accountingjournal = new AccountingJournal($db);
 		$result = $accountingjournal->fetch('', $line->code_journal);
 		$journaltoshow = (($result > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
-		print '<td class="center">'.$journaltoshow.'</td>';
+		print '<td class="center tdoverflowmax150">'.$journaltoshow.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

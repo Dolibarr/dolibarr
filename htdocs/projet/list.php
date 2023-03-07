@@ -1002,7 +1002,7 @@ if ($user->rights->user->user->lire) {
 // Filter on categories
 if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array, 'minwidth300imp widthcentpercentminusx');
 }
 // Filter on customer categories
 if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST) && !empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
