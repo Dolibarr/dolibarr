@@ -10451,7 +10451,7 @@ function jsonOrUnserialize($stringtodecode)
  * @return $Temail array
  */
 function getValidAndInvalidEmail($tmparray){
-	$Temail = array();
+	$Temail = array('valid'=>array(),'invalid'=>array());
 	foreach ($tmparray as $value) {
 		if (strpos($value, '<')) {
 			$value = get_string_between($value, '<', '>');

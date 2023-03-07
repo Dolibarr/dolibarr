@@ -262,7 +262,9 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		}
 
 		//return array with valid and invalid email
-		$Temail = array_merge($Temail,getValidAndInvalidEmail($tmparray));
+		$Temailcc = getValidAndInvalidEmail($tmparray);
+		$Temail['valid'] = array_merge($Temail['valid'],$Temailcc['valid']);
+		$Temail['invalid'] = array_merge($Temail['invalid'],$Temailcc['invalid']);
 
 		$sendtocc = implode(',', $tmparray);
 
