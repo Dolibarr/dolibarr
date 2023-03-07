@@ -432,7 +432,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 				while (($file = readdir($handle)) !== false) {
 					$reg = array();
 					if (is_readable($newdir.'/'.$file) && preg_match('/^(.+)\.php/', $file, $reg)) {
-						if (preg_match('/\.back$/', $file)) {
+						if (preg_match('/\.back$/', $file) || preg_match('/^(.+)\.disabled\.php/', $file)) {
 							continue;
 						}
 
