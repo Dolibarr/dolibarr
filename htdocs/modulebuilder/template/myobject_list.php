@@ -473,7 +473,7 @@ if ($optioncss != '') {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
 // List of mass actions available
@@ -565,7 +565,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 print '<tr class="liste_titre_filter">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre maxwidthsearch center">';
+	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
