@@ -10445,3 +10445,18 @@ function jsonOrUnserialize($stringtodecode)
 
 	return $result;
 }
+
+/**
+ * @param $tmparray array
+ * @return $Temail array
+ */
+function getValidAndInvalidEmail($tmparray){
+	$Temail = array();
+	foreach ($tmparray as $value) {
+		if (strpos($value, '<')) {
+			$value = get_string_between($value, '<', '>');
+		}
+		isValidEmail($value) ? array_push($Temail['valid'], $value) : array_push($Temail['invalid'], $value);
+	}
+	return $Temail;
+}

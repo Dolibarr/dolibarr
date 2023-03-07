@@ -216,16 +216,9 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 				}
 			}
 		}
+		//return array with valid and invalid email
+		$Temail = getValidAndInvalidEmail($tmparray);
 
-		$TvalidEmail = array();
-		$TinvalidEmail = array();
-
-		foreach ($tmparray as $value) {
-			if (strpos($value, '<')) {
-				$value = get_string_between($value, '<', '>');
-			}
-			isValidEmail($value) ? array_push($TvalidEmail, $value) : array_push($TinvalidEmail, $value);
-		}
 
 		$sendto = implode(',', $tmparray);
 		// Define $sendtocc
@@ -255,12 +248,6 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 					//$sendtoid[] = ((int) $val);  TODO Add also id of contact in CC ?
 				}
 			}
-			foreach ($tmparray as $value) {
-				if (strpos($value, '<')) {
-					$value = get_string_between($value, '<', '>');
-				}
-				isValidEmail($value) ? array_push($TvalidEmail, $value) : array_push($TinvalidEmail, $value);
-			}
 		}
 		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
 			$receiverccuser = $_POST['receiverccuser'];
@@ -273,6 +260,10 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 				}
 			}
 		}
+
+		//return array with valid and invalid email
+		$Temail = array_merge($Temail,getValidAndInvalidEmail($tmparray));
+
 		$sendtocc = implode(',', $tmparray);
 
 		if (dol_strlen($sendto)) {
@@ -443,13 +434,18 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 					$langs->load("other");
 					$mesg = '<div class="error">';
 					if ($mailfile->error) {
-						foreach ($TvalidEmail as $emailOk){
-							setEventMessages($langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($emailOk, 2)), null, 'mesgs');
+						if (!empty($Temail['valid'])) {
+							foreach ($Temail['valid'] as $emailOk) {
+								setEventMessages($langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($emailOk, 2)), null, 'mesgs');
+							}
 						}
-						foreach ($TinvalidEmail as $emailKo){
-							$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($from), dol_escape_htmltag($emailKo));
-							$mesg .= '<br>'.$mailfile->error;
+						if (!empty($Temail['invalid'])) {
+							foreach ($Temail['invalid'] as $emailKo) {
+								$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($from), dol_escape_htmltag($emailKo));
+								$mesg .= '<br>' . $mailfile->error;
+							}
 						}
+
 					} else {
 						$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($from), dol_escape_htmltag($sendto));
 						if (!empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {
