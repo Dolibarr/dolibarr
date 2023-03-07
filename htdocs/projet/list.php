@@ -192,6 +192,8 @@ foreach ($object->fields as $key => $val) {
 
 // Add name object fields to "search in all"
 $fieldstosearchall['s.nom'] = "ThirdPartyName";
+$fieldstosearchall['s.name_alias'] = "AliasNameShort";
+$fieldstosearchall['s.code_client'] = "CustomerCode";
 
 // Definition of array of fields for columns
 $arrayfields = array();
