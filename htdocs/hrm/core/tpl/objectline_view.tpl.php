@@ -104,7 +104,7 @@ global $permissiontoadd;
 if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlines') {
 	$situationinvoicelinewithparent = 0;
 	if ($line->fk_prev_id != null && in_array($object->element, array('facture', 'facturedet'))) {
-		if ($object->type == $object::TYPE_SITUATION) {	// The constant TYPE_SITUATION exists only for object invoice
+		if (!empty($object->situation_cycle_ref)) {
 			// Set constant to disallow editing during a situation cycle
 			$situationinvoicelinewithparent = 1;
 		}

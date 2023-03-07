@@ -136,7 +136,7 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_end();
 
 
-		if ($user->rights->commande->lire) {
+		if ($user->hasRight('commande', 'lire')) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client, c.rowid, d.total_ht as total_ht, c.ref,";
 			$sql .= " c.ref_client,";
 			$sql .= " c.date_commande, c.fk_statut as statut, c.facture, c.rowid as commandeid, d.rowid, d.qty";

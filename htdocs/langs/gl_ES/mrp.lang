@@ -119,3 +119,6 @@ BomCantAddChildBom=A nomenclatura %s xa está presente na árbore que conduce á
 BOMNetNeeds = Necesidades netas de BOM
 BOMProductsList=Produtos de BOM
 BOMServicesList=Servizos de BOM
+Manufacturing=Fabricación
+Disassemble=Desmontar
+ProducedBy=Producido por

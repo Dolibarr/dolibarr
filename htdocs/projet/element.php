@@ -793,7 +793,7 @@ foreach ($listofreferent as $key => $value) {
 			for ($i = 0; $i < $num; $i++) {
 				$tmp = explode('_', $elementarray[$i]);
 				$idofelement = $tmp[0];
-				$idofelementuser = $tmp[1];
+				$idofelementuser = !empty($tmp[1]) ? $tmp[1] : "";
 
 				$element->fetch($idofelement);
 				if ($idofelementuser) {

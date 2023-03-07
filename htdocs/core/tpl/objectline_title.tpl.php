@@ -146,7 +146,7 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=marginforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickmarginforalllines opacitymedium paddingleft cursorpointer"').'</a>';
 			if (GETPOST('mode', 'aZ09') == 'marginforalllines') {
 				print '<div class="classmarginforalllines inline-block nowraponall">';
-				print '<input type="number" name="marginforalllines" min="0" max="999.9" value="20.0" step="0.1"><label>%</label>';
+				print '<input type="number" name="marginforalllines" min="0" max="999.9" value="20.0" step="0.1" class="width50"><label>%</label>';
 				print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforallmargins" value="'.$langs->trans("Update").'">';
 				print '</div>';
 			}
