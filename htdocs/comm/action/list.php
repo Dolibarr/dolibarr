@@ -916,6 +916,7 @@ while ($i < $imaxinloop) {
 	$actionstatic->note_private = dol_htmlentitiesbr($obj->note);
 	$actionstatic->datep = $db->jdate($obj->dp);
 	$actionstatic->percentage = $obj->percent;
+	$actionstatic->authorid = $obj->fk_user_author;
 
 	// Initialize $this->userassigned && this->socpeopleassigned array && this->userownerid
 	// but only if we need it
