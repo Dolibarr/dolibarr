@@ -401,27 +401,29 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 	$modulename = ucfirst($module); // Force first letter in uppercase
 	$objectname = $tabobj;
 	$varnametoupdate = '';
+	$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
+	$destdir = $dirins.'/'.strtolower($module);
+
+	// Get list of existing objects
+	$objects = array();
+	$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
+	foreach ($listofobject as $fileobj) {
+		if (preg_match('/^api_/', $fileobj['name'])) {
+			continue;
+		}
+		if (preg_match('/^actions_/', $fileobj['name'])) {
+			continue;
+		}
+
+		$tmpcontent = file_get_contents($fileobj['fullname']);
+		$reg = array();
+		if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
+			$objectnameloop = $reg[1];
+			$objects[$fileobj['fullname']] = $objectnameloop;
+		}
+	}
 
 	if ($action == 'initapi') {
-		$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
-		$destdir = $dirins.'/'.strtolower($module);
-		$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
-		$objects = array();
-		foreach ($listofobject as $fileobj) {
-			if (preg_match('/^api_/', $fileobj['name'])) {
-				continue;
-			}
-			if (preg_match('/^actions_/', $fileobj['name'])) {
-				continue;
-			}
-
-			$tmpcontent = file_get_contents($fileobj['fullname']);
-			$reg = array();
-			if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
-				$objectnameloop = $reg[1];
-				$objects[] = $objectnameloop;
-			}
-		}
 		if (file_exists($dirins.'/'.strtolower($module).'/class/api_'.strtolower($module).'.class.php')) {
 			$result = dol_copy(DOL_DOCUMENT_ROOT.'/modulebuilder/template/class/api_mymodule.class.php', $dirins.'/'.strtolower($module).'/class/api_'.strtolower($module).'.class.php', 0, 1);
 		}
@@ -482,6 +484,7 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 			'MYOBJECT'=>strtoupper($objectname),
 			'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
 		);
+
 		if (count($objects) > 1) {
 			$file = $destfile;
 			$content = file($file);
@@ -927,14 +930,15 @@ if ($dirins && $action == 'addlanguage' && !empty($module)) {
 // Remove/delete File
 if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 	$objectname = $tabobj;
+	$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
+	$destdir = $dirins.'/'.strtolower($module);
 
 	$relativefilename = dol_sanitizePathName(GETPOST('file', 'restricthtml'));
 
-	// Scan dir class to detect all classes of module $module and save them into $objects[]
-	$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
-	$destdir = $dirins.'/'.strtolower($module);
-	$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
+	// Get list of existing objects
+	// TODO ALI This part of code is common at several places and is autonomous. So replace it with $objects = dolGetListOfObjectclasses($destdir);
 	$objects = array();
+	$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
 	foreach ($listofobject as $fileobj) {
 		if (preg_match('/^api_/', $fileobj['name'])) {
 			continue;
@@ -942,11 +946,12 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 		if (preg_match('/^actions_/', $fileobj['name'])) {
 			continue;
 		}
+
 		$tmpcontent = file_get_contents($fileobj['fullname']);
 		$reg = array();
 		if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
 			$objectnameloop = $reg[1];
-			$objects[] = $objectnameloop;
+			$objects[$fileobj['fullname']] = $objectnameloop;
 		}
 	}
 
@@ -2642,6 +2647,8 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 	$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
 	$destdir = $dirins.'/'.strtolower($module);
 	$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
+
+	// Get list of existing objets
 	$objects = array();
 	foreach ($listofobject as $fileobj) {
 		if (preg_match('/^api_/', $fileobj['name'])) {
@@ -2655,7 +2662,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 		$reg = array();
 		if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
 			$objectnameloop = $reg[1];
-			$objects[] = $objectnameloop;
+			$objects[$fileobj['fullname']] = $objectnameloop;
 		}
 	}
 
@@ -4598,6 +4605,8 @@ if ($module == 'initmodule') {
 			$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
 			$destdir = $dirins.'/'.strtolower($module);
 			$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
+
+			// Get list of existing objects
 			$objects = array();
 			foreach ($listofobject as $fileobj) {
 				if (preg_match('/^api_/', $fileobj['name'])) {
@@ -4611,7 +4620,7 @@ if ($module == 'initmodule') {
 				$reg = array();
 				if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
 					$objectnameloop = $reg[1];
-					$objects[] = $objectnameloop;
+					$objects[$fileobj['fullname']] = $objectnameloop;
 				}
 			}
 			$menus = $moduleobj->menu;
@@ -4857,7 +4866,7 @@ if ($module == 'initmodule') {
 
 			$perms = $moduleobj->rights;
 
-			// Scan for object class files
+			// Get list of existing objects
 			$dir = $dirread.'/'.$modulelowercase.'/class';
 			$listofobject = dol_dir_list($dir, 'files', 0, '\.class\.php$');
 			$objects = array('myobject');
@@ -4865,9 +4874,10 @@ if ($module == 'initmodule') {
 			foreach ($listofobject as $fileobj) {
 				$tmpcontent = file_get_contents($fileobj['fullname']);
 				if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
-					$objects[] = $reg[1];
+					$objects[$fileobj['fullname']] = $reg[1];
 				}
 			}
+
 			// declared select list for actions and labels permissions
 			$crud = array('read'=>'CRUDRead', 'write'=>'CRUDCreateWrite', 'delete'=>'Delete');
 			$labels = array("Read objects of ".$module, "Create/Update objects of ".$module, "Delete objects of ".$module);
