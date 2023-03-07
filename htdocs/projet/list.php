@@ -839,7 +839,7 @@ if ($search_project_user > 0) {
 	$param .= '&search_project_user='.urlencode($search_project_user);
 }
 if ($search_project_contact != '') {
-	$param .= '&search_project_user='.urlencode($search_project_contact);
+	$param .= '&search_project_contact='.urlencode($search_project_contact);
 }
 if ($search_sale > 0) {
 	$param .= '&search_sale='.urlencode($search_sale);
