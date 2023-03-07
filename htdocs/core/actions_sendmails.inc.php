@@ -210,23 +210,24 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			$receiveruser = $_POST['receiveruser'];
 			if (is_array($receiveruser) && count($receiveruser) > 0) {
 				$fuserdest = new User($db);
-				$TvalidEmail = array();
-				$TinvalidEmail = array();
 				foreach ($receiveruser as $key => $val) {
 					$tmparray[] = $fuserdest->user_get_property($val, 'email');
-					foreach ($tmparray as $value) {
-						if (strpos($value, "<")) {
-							$value = get_string_between($value, '<', '>');
-						}
-						isValidEmail($value) ? array_push($TvalidEmail, $value) : array_push($TinvalidEmail, $value);
-					}
 					$sendtouserid[] = $val;
 				}
 			}
 		}
 
-		$sendto = implode(',', $tmparray);
+		$TvalidEmail = array();
+		$TinvalidEmail = array();
 
+		foreach ($tmparray as $value) {
+			if (strpos($value, '<')) {
+				$value = get_string_between($value, '<', '>');
+			}
+			isValidEmail($value) ? array_push($TvalidEmail, $value) : array_push($TinvalidEmail, $value);
+		}
+
+		$sendto = implode(',', $tmparray);
 		// Define $sendtocc
 		$receivercc = $_POST['receivercc'];
 		if (!is_array($receivercc)) {
@@ -253,6 +254,12 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 					//$sendtoid[] = ((int) $val);  TODO Add also id of contact in CC ?
 				}
+			}
+			foreach ($tmparray as $value) {
+				if (strpos($value, '<')) {
+					$value = get_string_between($value, '<', '>');
+				}
+				isValidEmail($value) ? array_push($TvalidEmail, $value) : array_push($TinvalidEmail, $value);
 			}
 		}
 		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
