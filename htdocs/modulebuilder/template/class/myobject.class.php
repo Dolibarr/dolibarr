@@ -905,7 +905,9 @@ class MyObject extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $conf, $langs, $selected;
+		global $conf, $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
