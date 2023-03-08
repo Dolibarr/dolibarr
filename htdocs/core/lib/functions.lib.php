@@ -71,6 +71,18 @@ if (!function_exists('utf8_decode')) {
 	}
 }
 
+/**
+ * Return multidir output for an Dolibarr object
+ *
+ * @param CommonObject $object Dolibarr common object
+ * @return string
+ */
+function getMultiDirOutput($object) : string
+{
+	global $conf;
+	$module = $object->element;
+	return $conf->$module->multidir_output[$object->entity];
+}
 
 /**
  * Return dolibarr global constant string value
