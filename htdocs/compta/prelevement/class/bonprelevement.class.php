@@ -426,6 +426,7 @@ class BonPrelevement extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set direct debit or credit transfer order to "paid" status.
+	 *  Then create the payment for each invoice of the prelemevement_bon.
 	 *
 	 *	@param	User	$user			Id of user
 	 *	@param 	int		$date			date of action
