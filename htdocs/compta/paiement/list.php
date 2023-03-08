@@ -105,7 +105,7 @@ $fieldstosearchall = array(
 $arrayfields = array(
 	'p.ref'				=> array('label'=>"RefPayment", 'checked'=>1, 'position'=>10),
 	'p.datep'			=> array('label'=>"Date", 'checked'=>1, 'position'=>20),
-	'pf.fk_facture'		=> array('label'=>"Invoice", 'checked'=>1, 'position'=>25),
+	'f.ref'				=> array('label'=>"Invoice", 'checked'=>1, 'position'=>25),
 	's.nom'				=> array('label'=>"ThirdParty", 'checked'=>1, 'position'=>30),
 	'c.libelle'			=> array('label'=>"Type", 'checked'=>1, 'position'=>40),
 	'transaction'		=> array('label'=>"BankTransactionLine", 'checked'=>1, 'position'=>50, 'enabled'=>(isModEnabled("banque"))),
@@ -175,7 +175,7 @@ if (GETPOST("orphelins", "alpha")) {
 	// Payments not linked to an invoice. Should not happend. For debug only.
 	$sql = "SELECT p.rowid, p.ref, p.datep, p.amount, p.statut, p.num_paiement";
 	$sql .= ", c.code as paiement_code";
-	$sql .= ", pf.fk_facture";
+	$sql .= ", pf.fk_facture, f.fk_facture";
 
 	// Add fields from hooks
 	$parameters = array();
@@ -183,6 +183,7 @@ if (GETPOST("orphelins", "alpha")) {
 	$sql .= $hookmanager->resPrint;
 	$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
 	$sql .= " WHERE p.entity IN (".getEntity('invoice').")";
 	$sql .= " AND pf.fk_facture IS NULL";
 
@@ -196,7 +197,7 @@ if (GETPOST("orphelins", "alpha")) {
 	$sql .= ", c.code as paiement_code";
 	$sql .= ", ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal";
 	$sql .= ", s.rowid as socid, s.nom as name, s.email";
-	$sql .= ", pf.fk_facture";
+	$sql .= ", pf.fk_facture, f.ref as ref_invoice";
 
 	// Add fields from hooks
 	$parameters = array();
@@ -234,14 +235,11 @@ if (GETPOST("orphelins", "alpha")) {
 	if ($search_ref) {
 		$sql .= natural_search('p.ref', $search_ref);
 	}
-
-
-
 	if ($search_date_start) {
 		$sql .= " AND p.datep >= '" . $db->idate($search_date_start) . "'";
 	}
 	if ($search_refinvoice) {
-		$sql .= natural_search('pf.fk_facture', $search_refinvoice);
+		$sql .= natural_search('f.ref', $search_refinvoice);
 	}
 	if ($search_date_end) {
 		$sql .= " AND p.datep <= '" . $db->idate($search_date_end) . "'";
@@ -424,7 +422,7 @@ if (!empty($arrayfields['p.datep']['checked'])) {
 }
 
 // Filter: RefInvoice
-if (!empty($arrayfields['pf.fk_facture']['checked'])) {
+if (!empty($arrayfields['f.ref']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" size="4" name="search_refinvoice" value="'.dol_escape_htmltag($search_refinvoice).'">';
 	print '</td>';
@@ -498,8 +496,8 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 if (!empty($arrayfields['p.datep']['checked'])) {
 	print_liste_field_titre($arrayfields['p.datep']['label'], $_SERVER["PHP_SELF"], "p.datep", '', $param, '', $sortfield, $sortorder, 'center ');
 }
-if (!empty($arrayfields['pf.fk_facture']['checked'])) {
-	print_liste_field_titre($arrayfields['pf.fk_facture']['label'], $_SERVER["PHP_SELF"], "pf.fk_facture", '', $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['f.ref']['checked'])) {
+	print_liste_field_titre($arrayfields['f.ref']['label'], $_SERVER["PHP_SELF"], "f.ref", '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
@@ -582,7 +580,7 @@ while ($i < min($num, $limit)) {
 	}
 
 	// RefInvoice
-	if (!empty($arrayfields['pf.fk_facture']['checked'])) {
+	if (!empty($arrayfields['f.ref']['checked'])) {
 		print '<td>'.$invoice->getNomUrl(1, '', 200, 0, '', 0, 1).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
