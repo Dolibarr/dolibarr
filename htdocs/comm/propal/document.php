@@ -45,13 +45,6 @@ $confirm = GETPOST('confirm', 'alpha');
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
-// Security check
-$socid = '';
-if (!empty($user->socid)) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'propal', $id);
-
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -86,7 +79,6 @@ $permissiontoadd = $user->rights->propal->creer;
 // Security check
 if (!empty($user->socid)) {
 	$socid = $user->socid;
-	$object->id = $user->socid;
 }
 restrictedArea($user, 'propal', $object->id);
 
