@@ -436,15 +436,17 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 					$langs->load("other");
 					$mesg = '<div class="error">';
 					if ($mailfile->error) {
-						if (!empty($Temail['valid'])) {
-							foreach ($Temail['valid'] as $emailOk) {
-								setEventMessages($langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($emailOk, 2)), null, 'mesgs');
+						$mesg .= $mailfile->error.'<br>';
+						if (strpos($mailfile->error,'Error [120]') !== false){ //Error Recipient
+							if (!empty($Temail['valid'])) {
+								foreach ($Temail['valid'] as $emailOk) {
+									setEventMessages($langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($emailOk, 2)), null, 'mesgs');
+								}
 							}
-						}
-						if (!empty($Temail['invalid'])) {
-							foreach ($Temail['invalid'] as $emailKo) {
-								$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($from), dol_escape_htmltag($emailKo));
-								$mesg .= '<br>' . $mailfile->error;
+							if (!empty($Temail['invalid'])) {
+								foreach ($Temail['invalid'] as $emailKo) {
+									$mesg .= '<br>' . $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($from), dol_escape_htmltag($emailKo));
+								}
 							}
 						}
 					} else {
