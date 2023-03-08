@@ -63,6 +63,7 @@ if (!$error) {
 }
 
 // Security check
+$socid = '';
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
