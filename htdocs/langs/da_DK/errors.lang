@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Fejl, parameter <b> %s </b> skal a
 ErrorLoginDateValidity=Fejl, dette login er uden for gyldighedsdatointervallet
 ErrorValueLength=Feltets længde '<b> %s </b>' skal være højere end '<b> %s </b>'
 ErrorReservedKeyword=Ordet '<b> %s </b>' er et forbeholdt nøgleord
+ErrorFilenameReserved=Filnavnet <b> %s </b> kan ikke bruges, da det er en reserveret og beskyttet kommando.
 ErrorNotAvailableWithThisDistribution=Ikke tilgængelig med denne distribution
 ErrorPublicInterfaceNotEnabled=Offentlig grænseflade var ikke aktiveret
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=Sprog for den nye side skal defineres, hvis det er indstillet som en oversættelse af en anden side
@@ -308,7 +309,7 @@ ErrorExistingPermission = Tilladelse <b> %s </b> for objekt <b> %s </b> findes a
 ErrorFieldExist=Værdien for <b> %s </b> findes allerede
 ErrorEqualModule=Modul ugyldigt i <b> %s </b>
 ErrorFieldValue=Værdien for <b> %s </b> er forkert
-ErrorCoherenceMenu= <b> %s </b> er påkrævet, når <b> % </b> er lig med VENSTRE
+ErrorCoherenceMenu= <b> %s </b> er påkrævet, når <b> %s a09a4b739f17left'0 er '
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Din PHP-parameter upload_max_filesize (%s) er højere end PHP-parameter post_max_size (%s). Dette er ikke en ensartet opsætning.

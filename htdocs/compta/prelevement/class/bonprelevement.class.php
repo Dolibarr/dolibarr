@@ -1317,6 +1317,9 @@ class BonPrelevement extends CommonObject
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans($labeltoshow).'</u> '.$this->getLibStatut(5);
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (isset($this->amount)) {
+			$label .= '<br><b>'.$langs->trans("Amount").":</b> ".price($this->amount);
+		}
 		if (isset($this->date_trans)) {
 			$label .= '<br><b>'.$langs->trans("TransData").":</b> ".dol_print_date($this->date_trans, 'dayhour', 'tzuserrel');
 		}
@@ -2524,6 +2527,7 @@ class BonPrelevement extends CommonObject
 	{
 		global $langs;
 
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
@@ -2532,6 +2536,7 @@ class BonPrelevement extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 
 		if (property_exists($this, 'date_echeance')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->date_echeance), 'day').'</span>';
@@ -2540,7 +2545,7 @@ class BonPrelevement extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="amount">'.price($this->total).'</span>';
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->LibStatut($this->statut, 5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

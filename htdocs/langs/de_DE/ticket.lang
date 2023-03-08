@@ -67,7 +67,7 @@ ExportDataset_ticket_1=Tickets
 # Status
 Read=Gelesen
 Assigned=Zugewiesen
-InProgress=in Bearbeitung
+InProgress=In Bearbeitung
 NeedMoreInformation=Warten auf Feedback des Erstellers
 NeedMoreInformationShort=Warten auf Feedback
 Answered=Beantwortet

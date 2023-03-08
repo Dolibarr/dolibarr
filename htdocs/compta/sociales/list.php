@@ -594,7 +594,8 @@ $i = 0;
 $totalarray = $TLoadedUsers = array();
 $totalarray['nbfield'] = 0;
 $totalarray['val']['totalttcfield'] = 0;
-while ($i < min($num, $limit)) {
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 
 	$chargesociale_static->id = $obj->rowid;
@@ -617,10 +618,9 @@ while ($i < min($num, $limit)) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-
 		$chargesociale_static->fk_project = $projectstatic->getNomUrl();
 		print $chargesociale_static->getKanbanView('');
-		if ($i == (min($num, $limit) - 1)) {
+		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
 		}

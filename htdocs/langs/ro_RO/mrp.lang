@@ -119,3 +119,6 @@ BomCantAddChildBom=Nomenclatorul %s este deja prezentă în arborele care duce l
 BOMNetNeeds = Necesar net BOM
 BOMProductsList=Produse BOM
 BOMServicesList=Servicii BOM
+Manufacturing=Producție
+Disassemble=Dezasamblare
+ProducedBy=Produs de

@@ -1032,6 +1032,8 @@ class RemiseCheque extends CommonObject
 	{
 		global $langs;
 
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -1039,6 +1041,7 @@ class RemiseCheque extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 
 		if (property_exists($this, 'date_bordereau')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateCreation").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->date_bordereau), 'day').'</span>';
@@ -1050,7 +1053,7 @@ class RemiseCheque extends CommonObject
 			$return .= ' | <span class="info-box-label">'.$this->account_id.'</span>';
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div style="display:inline-block" class="info-box-status margintoponly">'.$this->LibStatut($this->statut, 5).'</div>';
+			$return .= '<br><div style="display:inline-block" class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		if (property_exists($this, 'amount')) {
 			$return .= ' |   <div style="display:inline-block"><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="amount">'.price($this->amount).'</div>';

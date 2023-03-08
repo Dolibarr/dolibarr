@@ -942,15 +942,8 @@ if (empty($reshook)) {
 				$old_filedir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($old_ref);
 				$new_filedir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 
-				$files = dol_dir_list($old_filedir);
-				if (!empty($files)) {
-					if (!is_dir($new_filedir)) {
-						dol_mkdir($new_filedir);
-					}
-					foreach ($files as $file) {
-						dol_move($file['fullname'], $new_filedir.'/'.$file['name']);
-					}
-				}
+				// Rename directory of contract with new name
+				dol_move_dir($old_filedir, $new_filedir);
 
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
@@ -1216,6 +1209,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td>';
+	print img_picto('', 'action', 'class="pictofixedwidth"');
 	print $form->selectDate($datecontrat, '', 0, 0, '', "contrat");
 	print "</td></tr>";
 
@@ -1226,6 +1220,7 @@ if ($action == 'create') {
 		$formproject = new FormProjets($db);
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
+		print img_picto('', 'project', 'class="pictofixedwidth"');
 		$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, "projectid", 0, 0, 1, 1);
 		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print "</td></tr>";
@@ -1540,12 +1535,12 @@ if ($action == 'create') {
 				if ($nbofservices > 1 && $conf->browser->layout != 'phone' && !empty($user->rights->contrat->creer)) {
 					print '<td width="30" class="linecolmove tdlineupdown center">';
 					if ($cursorline > 1) {
-						print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&token='.newToken().'&rowid='.$objp->rowid.'">';
+						print '<a class="lineupdown reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&token='.newToken().'&rowid='.$objp->rowid.'">';
 						echo img_up('default', 0, 'imgupforline');
 						print '</a>';
 					}
 					if ($cursorline < $nbofservices) {
-						print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&token='.newToken().'&rowid='.$objp->rowid.'">';
+						print '<a class="lineupdown reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&token='.newToken().'&rowid='.$objp->rowid.'">';
 						echo img_down('default', 0, 'imgdownforline');
 						print '</a>';
 					}
@@ -2123,7 +2118,7 @@ if ($action == 'create') {
 
 				if (isModEnabled('commande') && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices) {
 					$langs->load("orders");
-					if ($user->rights->commande->creer) {
+					if ($user->hasRight('commande', 'creer')) {
 						print dolGetButtonAction($langs->trans('CreateOrder'), '', 'default', DOL_URL_ROOT.'/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id, '', true, $params);
 					} else {
 						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");

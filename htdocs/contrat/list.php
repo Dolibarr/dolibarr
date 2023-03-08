@@ -990,7 +990,6 @@ while ($i < $imaxinloop) {
 			print '<tr><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
-
 		// Output Kanban
 		$contracttmp->societe = $socstatic->getNomUrl();
 		$contracttmp->date_contrat = $obj->date_contrat;

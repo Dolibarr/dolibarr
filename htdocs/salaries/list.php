@@ -537,7 +537,8 @@ $totalarray = array();
 $totalarray['nbfield'] = 0;
 $totalarray['val'] = array();
 $totalarray['val']['totalttcfield'] = 0;
-while ($i < ($limit ? min($num, $limit) : $num)) {
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
 		break; // Should not happen
@@ -574,7 +575,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 		// Output Kanban
 		print $salstatic->getKanbanView('');
-		if ($i == (min($num, $limit) - 1)) {
+		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
 		}

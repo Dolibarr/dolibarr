@@ -162,7 +162,7 @@ if ($rss) {
 		$result = build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp, '', $website->virtualhost.'/wrapper.php?rss=1'.($l ? '&l='.$l : ''), $l);
 
 		if ($result >= 0) {
-			if (dol_move($outputfiletmp, $outputfile, 0, 1)) {
+			if (dol_move($outputfiletmp, $outputfile, 0, 1, 0, 0)) {
 				$result = 1;
 			} else {
 				$error = 'Failed to rename '.$outputfiletmp.' into '.$outputfile;

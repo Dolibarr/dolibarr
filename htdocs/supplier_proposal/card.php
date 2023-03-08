@@ -1269,7 +1269,7 @@ if ($action == 'create') {
 		print '</td>';
 	} else {
 		print '<td colspan="2">';
-		print img_picto('', 'company').$form->select_company('', 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+		print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 		// reload page to retrieve customer informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
 			print '<script>
@@ -1303,11 +1303,13 @@ if ($action == 'create') {
 
 	// Terms of payment
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
+	print img_picto('', 'payment', 'class="pictofixedwidth"');
 	print $form->getSelectConditionsPaiements(GETPOST('cond_reglement_id') > 0 ? GETPOST('cond_reglement_id') : $cond_reglement_id, 'cond_reglement_id', -1, 1);
 	print '</td></tr>';
 
 	// Mode of payment
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
+	print img_picto('', 'bank', 'class="pictofixedwidth"');
 	$form->select_types_paiements(GETPOST('mode_reglement_id') > 0 ? GETPOST('mode_reglement_id') : $mode_reglement_id, 'mode_reglement_id');
 	print '</td></tr>';
 
@@ -1321,7 +1323,7 @@ if ($action == 'create') {
 	// Shipping Method
 	if (isModEnabled("expedition")) {
 		print '<tr><td>'.$langs->trans('SendingMethod').'</td><td colspan="2">';
-		print img_picto('', 'object_dollyrevert', 'class="pictofixedwidth"');
+		print img_picto('', 'dolly', 'class="pictofixedwidth"');
 		$form->selectShippingMethod(GETPOST('shipping_method_id') > 0 ? GETPOST('shipping_method_id', 'int') : "", 'shipping_method_id', '', 1);
 		print '</td></tr>';
 	}
@@ -1329,6 +1331,7 @@ if ($action == 'create') {
 	// Delivery date (or manufacturing)
 	print '<tr><td>'.$langs->trans("DeliveryDate").'</td>';
 	print '<td colspan="2">';
+	print img_picto('', 'action', 'class="pictofixedwidth"');
 	$datedelivery = dol_mktime(0, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
 	if (!empty($conf->global->DATE_LIVRAISON_WEEK_DELAY)) {
 		$tmpdte = time() + ((7 * $conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
@@ -1346,6 +1349,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td>'.$langs->trans("DefaultModel").'</td>';
 	print '<td colspan="2">';
+	print img_picto('', 'pdf', 'class="pictofixedwidth"');
 	$list = ModelePDFSupplierProposal::liste_modeles($db);
 	$preselected = (!empty($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT) ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT : $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF);
 	print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
@@ -1363,7 +1367,7 @@ if ($action == 'create') {
 
 		print '<tr>';
 		print '<td>'.$langs->trans("Project").'</td><td colspan="2">';
-		print img_picto('', 'project').$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+		print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 
 		print '</td>';
@@ -1375,6 +1379,7 @@ if ($action == 'create') {
 		print '<tr>';
 		print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td colspan="3" class="maxwidthonsmartphone">';
+		print img_picto('', 'currency', 'class="pictofixedwidth"');
 		print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
 		print '</td></tr>';
 	}

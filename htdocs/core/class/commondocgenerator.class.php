@@ -80,6 +80,11 @@ abstract class CommonDocGenerator
 	 */
 	public $format;
 
+	/**
+	 * @var string pdf, odt, etc
+	 */
+	public $type;
+
 	public $page_hauteur;
 	public $page_largeur;
 	public $marge_gauche;

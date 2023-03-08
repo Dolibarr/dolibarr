@@ -117,8 +117,8 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 		// Pre-existing site that uses too much js code to fix but wants to ensure resources are loaded only over https and disable plugins:
 		// default-src https: 'unsafe-inline' 'unsafe-eval'; object-src 'none'
 		//
-		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googlapis.com *.google-analytics.com *.googletagmanager.com;";
-		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; default-src *; script-src 'self' 'unsafe-inline' *.paypal.com *.stripe.com *.google.com *.googlapis.com *.google-analytics.com *.googletagmanager.com; style-src 'self' 'unsafe-inline'; connect-src 'self';";
+		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
+		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; font-src *; default-src *; script-src 'self' 'unsafe-inline' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com; style-src 'self' 'unsafe-inline'; connect-src 'self';";
 		$contentsecuritypolicy = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSPRO');
 
 		if (!is_object($hookmanager)) {
@@ -149,8 +149,8 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 		// Pre-existing site that uses too much js code to fix but wants to ensure resources are loaded only over https and disable plugins:
 		// default-src https: 'unsafe-inline' 'unsafe-eval'; object-src 'none'
 		//
-		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googlapis.com *.google-analytics.com *.googletagmanager.com;";
-		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; default-src *; script-src 'self' 'unsafe-inline' *.paypal.com *.stripe.com *.google.com *.googlapis.com *.google-analytics.com *.googletagmanager.com; style-src 'self' 'unsafe-inline'; connect-src 'self';";
+		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
+		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; font-src *; default-src *; script-src 'self' 'unsafe-inline' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com; style-src 'self' 'unsafe-inline'; connect-src 'self';";
 		$contentsecuritypolicy = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSP');
 
 		if (!is_object($hookmanager)) {
