@@ -4638,7 +4638,7 @@ abstract class CommonObject
 				$sql.= " AND c.".$element['parentkey']." = p.rowid";
 			}
 			if (!empty($element['parent']) && !empty($element['parenttypefield']) && !empty($element['parenttypevalue'])) {
-				$sql.= " AND c.".$element['parenttypefield']." = '".$element['parenttypevalue']."'";
+				$sql.= " AND c.".$element['parenttypefield']." = '".$this->db->escape($element['parenttypevalue'])."'";
 			}
 			if (!empty($entity)) {
 				if (!empty($element['parent']) && !empty($element['parentkey'])) {

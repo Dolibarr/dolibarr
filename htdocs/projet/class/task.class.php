@@ -1558,7 +1558,6 @@ class Task extends CommonObjectLine
 		dol_syslog(get_class($this)."::fetchTimeSpent", LOG_DEBUG);
 
 		if ($timespent->id > 0) {
-
 			$this->timespent_id = $timespent->id;
 			$this->id = $timespent->fk_element;
 			$this->timespent_date = $this->db->jdate($timespent->element_date);
@@ -1571,7 +1570,6 @@ class Task extends CommonObjectLine
 			$this->timespent_note = $timespent->note;
 
 			return 1;
-
 		}
 
 		return 0;
