@@ -311,8 +311,7 @@ if ($event->type == 'payout.created') {
 } elseif ($event->type == 'payment_intent.succeeded') {		// Called when making payment with PaymentIntent method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
 	dol_syslog("object = ".var_export($event->data, true));
 
-	/* TODO LMR Enable this only if this is a payment of a Dolibarr bon_prelevement only
-	 * Also we must retreive the invoice and payment amount from the id = ext_payment_id into llx_prelevement_demande
+	/* TODO LMR We must retreive the invoice and payment amount from the id = ext_payment_id into llx_prelevement_demande
 	include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 	$object = $event->data->object;
 	$invoice_id = $object->metadata->dol_id;
@@ -329,19 +328,24 @@ if ($event->type == 'payout.created') {
 	global $stripearrayofkeysbyenv;
 	$stripeacc = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
 
-	dol_syslog("Try to create sepa_debit with data = ".json_encode($dataforcard));
+	dol_syslog("Try to create payment with data = ".json_encode($dataforcard));
 
 	$s = new \Stripe\StripeClient($stripeacc);
 
 	$paymentmethodstripe = $s->paymentMethods->retrieve($paymentmethodstripeid);
 
-	//$paymentTypeId = $conf->global->STRIPE_PAYMENT_MODE_FOR_PAYMENTS;
 	$paymentTypeId =  $paymentmethodstripe->type;
-	if ($paymentTypeId == "sepa_debit") {
+	if ($paymentTypeId == "ban") {
+		$paymentTypeId = "PRE"
+	} elseif ($paymentTypeId == "sepa_debit") {	// is this used ? how ?
 		$paymentTypeId = "BANCON";
 	} elseif ($paymentTypeId == "card") {
 		$paymentTypeId = "CB";
 	}
+
+	// TODO LMR Enable this only if this is a payment of a Dolibarr llx_prelevement_demande only
+
+	// TODO LMR The payment ID is $event->data->latest_charge. check that payment does not exists (it may have been created by Dolibarr) to avoid to create payment twice.
 
 	$paiement = new Paiement($db);
 	$paiement->datepaye = $now;
@@ -358,13 +362,12 @@ if ($event->type == 'payout.created') {
 		$errorforinvoice++;
 	}
 	$paiement->paiementid = $paymentTypeId;
-	$paiement->num_paiement = '';
 	$paiement->num_payment = '';
-	// Add a comment with keyword 'SellYourSaas' in text. Used by trigger.
-	$paiement->note_public = 'StripeSepa payment ' . dol_print_date($now, 'standard') . ' using ' . $paymentmethod . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
+	$paiement->note_public = '';
 	$paiement->note_private = 'StripeSepa payment ' . dol_print_date($now, 'standard') . ' using ' . $paymentmethod . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
-	$paiement->ext_payment_id = $TRANSACTIONID . ':' . $customer_id . '@' . $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
-	$paiement->ext_payment_site = 'stripe';
+	// TODO LMR Fill the  $paiement->ext_payment_id with an ID of payment intent (so 'pi_....'). Like this:
+	$paiement->ext_payment_id = $TRANSACTIONID.':'.$customer_id.'@'.$stripearrayofkeysbyenv[$servicestatus]['publishable_key'];		// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+	$paiement->ext_payment_site = $service;						// 'StripeLive' or 'Stripe' if test
 
 	if (!$errorforinvoice) {
 		dol_syslog('* Record payment for invoice id ' . $invoice_id . '. It includes closing of invoice and regenerating document');
