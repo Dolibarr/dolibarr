@@ -916,10 +916,10 @@ abstract class CommonInvoice extends CommonObject
 			$sql = "SELECT rowid, date_demande, amount, fk_facture, fk_facture_fourn, fk_prelevement_bons";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
 			$sql .= " WHERE rowid = ".((int) $did);
-			if ($type != 'direct-debit') {
+			if ($type != 'bank-transfer' && $type != 'credit-transfer') {
 				$sql .= " AND fk_facture = ".((int) $this->id);		// Add a protection to not pay another invoice than current one
 			}
-			if ($type != 'credit-transfer') {
+			if ($type != 'direct-debit') {
 				$sql .= " AND fk_facture_fourn = ".((int) $this->id);		// Add a protection to not pay another invoice than current one
 			}
 			$sql .= " AND traite = 0";	// Add a protection to not process twice
