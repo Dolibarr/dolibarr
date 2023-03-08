@@ -275,9 +275,8 @@ class Paiement extends CommonObject
 				return -1;
 			}
 			if (empty($currencyofpayment)) {
-				$currencyofpayment = $this->multicurrency_code[$key];
-			}
-			if ($currencyofpayment != $this->multicurrency_code[$key]) {
+				$currencyofpayment = isset($this->multicurrency_code[$key]) ? $this->multicurrency_code[$key] : "";
+			} elseif ($currencyofpayment != $this->multicurrency_code[$key]) {
 				// If we have invoices with different currencies in the payment, we stop here
 				$this->error = 'ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment';
 				return -1;
@@ -643,6 +642,8 @@ class Paiement extends CommonObject
 			$acc = new Account($this->db);
 			$result = $acc->fetch($this->fk_account);
 			if ($result < 0) {
+				$this->error = $acc->error;
+				$this->errors = $acc->errors;
 				$error++;
 				return -1;
 			}
@@ -768,7 +769,7 @@ class Paiement extends CommonObject
 				}
 
 				// Add link 'InvoiceRefused' in bank_url
-				if (! $error && $label == '(InvoiceRefused)') {
+				if (!$error && $label == '(InvoiceRefused)') {
 					$result=$acc->add_url_line(
 						$bank_line_id,
 						$this->id_prelevement,
@@ -788,6 +789,7 @@ class Paiement extends CommonObject
 				}
 			} else {
 				$this->error = $acc->error;
+				$this->errors = $acc->errors;
 				$error++;
 			}
 

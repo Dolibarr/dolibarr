@@ -82,15 +82,15 @@ div.ticketform {
 	box-shadow: 2px 2px 2px rgb(245, 245, 245);
 	border-radius: 10px 10px 10px 10px;
 	margin: 1.5em;
-*/
 	background : #ffffff;
+*/
 	text-align: center;
 }
 
 div.ticketform .index_create, div.ticketform .index_display {
 	display: inline-block;
 	width: 200px;
-	height: 45px;
+	height: 60px;
 	text-align: center;
 	vertical-align: middle;
 	margin: 20px;

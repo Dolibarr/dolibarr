@@ -20,6 +20,7 @@ ModulePartnershipName=Gestió de la col·laboració
 PartnershipDescription=Mòdul Gestió de la col·laboració
 PartnershipDescriptionLong= Mòdul Gestió de la col·laboració
 Partnership=Associació
+Partnerships=Col·laboracions
 AddPartnership=Afegiu associació
 CancelPartnershipForExpiredMembers=Associació: cancel·leu l'associació de membres amb subscripcions caducades
 PartnershipCheckBacklink=Associació: consulteu l'enllaç de retrocés de referència
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Associació: consulteu l'enllaç de retrocés de refer�
 # Menu
 #
 NewPartnership=Nova associació
+NewPartnershipbyWeb=La vostra sol·licitud d'associació s'ha afegit correctament. Ens posarem en contacte amb tu aviat...
 ListOfPartnerships=Llista d'associació
 
 #
@@ -36,7 +38,7 @@ ListOfPartnerships=Llista d'associació
 PartnershipSetup=Configuració de l'associació
 PartnershipAbout=Quant a Partnership
 PartnershipAboutPage=Associació sobre la pàgina
-partnershipforthirdpartyormember=L'estat de soci s'ha de definir en un "tercer" o un "membre".
+partnershipforthirdpartyormember=L'estatus de soci s'ha de definir com a «tercer» o «soci»
 PARTNERSHIP_IS_MANAGED_FOR=Associació gestionada per
 PARTNERSHIP_BACKLINKS_TO_CHECK=Retroenllaços per a comprovar
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb de dies abans de cancel·lar l'estat d'una associació quan la subscripció ha caducat
@@ -50,7 +52,7 @@ PublicFormRegistrationPartnerDesc=Dolibarr us pot proporcionar un URL/lloc web p
 DeletePartnership=Suprimiu una associació
 PartnershipDedicatedToThisThirdParty=Associació dedicada a aquest tercer
 PartnershipDedicatedToThisMember=Associació dedicada a aquest membre
-DatePartnershipStart=Data inicial
+DatePartnershipStart=Data d'inici
 DatePartnershipEnd=Data final
 ReasonDecline=Rebutjar la raó
 ReasonDeclineOrCancel=Rebutjar la raó
@@ -90,5 +92,5 @@ LastCheckBacklink=Data de l'última comprovació de l'URL
 ReasonDeclineOrCancel=Rebutjar la raó
 
 NewPartnershipRequest=Nova sol·licitud de col·laboració
-NewPartnershipRequestDesc=Aquest formulari us permet sol·licitar formar part d'un dels nostres programes d'associació. Si necessiteu ajuda per omplir aquest formulari, poseu-vos en contacte amb el correu electrònic <b> %s </b>.
+NewPartnershipRequestDesc=Aquest formulari us permet sol·licitar formar part d'un dels nostres programes d'associació. Si necessiteu ajuda per a omplir aquest formulari, poseu-vos en contacte amb el correu electrònic <b>%s</b>.
 

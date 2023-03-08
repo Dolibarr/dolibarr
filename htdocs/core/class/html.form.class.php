@@ -94,7 +94,7 @@ class Form
 	 * @param   string	$text			Text of label or key to translate
 	 * @param   string	$htmlname		Name of select field ('edit' prefix will be added)
 	 * @param   string	$preselected    Value to show/edit (not used in this function)
-	 * @param	object	$object			Object
+	 * @param	object	$object			Object (on the page we show)
 	 * @param	boolean	$perm			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
 	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker' 'checkbox:ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
 	 * @param	string	$moreparam		More param to add on a href URL.
@@ -168,7 +168,11 @@ class Form
 				$ret .= '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&token='.newToken().'&'.$paramid.'='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
 			}
 			if (!empty($notabletag) && $notabletag == 1) {
-				$ret .= ' : ';
+				if ($text) {
+					$ret .= ' : ';
+				} else {
+					$ret .= ' ';
+				}
 			}
 			if (!empty($notabletag) && $notabletag == 3) {
 				$ret .= ' ';
@@ -190,7 +194,7 @@ class Form
 	 * @param	string	$text			Text of label (not used in this function)
 	 * @param	string	$htmlname		Name of select field
 	 * @param	string	$value			Value to show/edit
-	 * @param	object	$object			Object
+	 * @param	object	$object			Object (that we want to show)
 	 * @param	boolean	$perm			Permission to allow button to edit parameter
 	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols%', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select;xkey:xval,ykey:yval,...')
 	 * @param	string	$editvalue		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of numeric value). Use '' to use same than $value
@@ -202,9 +206,10 @@ class Form
 	 * @param	string	$paramid		Key of parameter for id ('id', 'socid')
 	 * @param	string	$gm				'auto' or 'tzuser' or 'tzuserrel' or 'tzserver' (when $typeofdata is a date)
 	 * @param	array	$moreoptions	Array with more options. For example array('addnowlink'=>1), array('valuealreadyhtmlescaped'=>1)
+	 * @param	string	$editaction		[=''] use GETPOST default action or set action to edit mode
 	 * @return  string					HTML edit field
 	 */
-	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 1, $formatfunc = '', $paramid = 'id', $gm = 'auto', $moreoptions = array())
+	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 1, $formatfunc = '', $paramid = 'id', $gm = 'auto', $moreoptions = array(), $editaction = '')
 	{
 		global $conf, $langs;
 
@@ -233,7 +238,10 @@ class Form
 		if (!empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && !preg_match('/^select;|day|datepicker|dayhour|datehourpicker/', $typeofdata)) { // TODO add jquery timepicker and support select
 			$ret .= $this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $editvalue, $extObject, $custommsg);
 		} else {
-			$editmode = (GETPOST('action', 'aZ09') == 'edit'.$htmlname);
+			if ($editaction == '') {
+				$editaction = GETPOST('action', 'aZ09');
+			}
+			$editmode = ($editaction == 'edit'.$htmlname);
 			if ($editmode) {
 				$ret .= "\n";
 				$ret .= '<form method="post" action="'.$_SERVER["PHP_SELF"].($moreparam ? '?'.$moreparam : '').'">';
@@ -295,6 +303,8 @@ class Form
 						$arraylist[$tmpkey] = $tmp[1];
 					}
 					$ret .= $this->selectarray($htmlname, $arraylist, $value);
+				} elseif (preg_match('/^link/', $typeofdata)) {
+					// TODO Not yet implemented. See code for extrafields
 				} elseif (preg_match('/^ckeditor/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata); // Example: ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols:uselocalbrowser
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -448,7 +458,7 @@ class Form
 			$result .= $resultforextrlang;
 
 			$result .= '</div>';
-			$result .= '<script>$(".image-'.$object->element.'-'.$fieldname.'").click(function() { console.log("Toggle lang widget"); jQuery(".field-'.$object->element.'-'.$fieldname.'").toggle(); });</script>';
+			$result .= '<script nonce="'.getNonce().'">$(".image-'.$object->element.'-'.$fieldname.'").click(function() { console.log("Toggle lang widget"); jQuery(".field-'.$object->element.'-'.$fieldname.'").toggle(); });</script>';
 		}
 
 		return $result;
@@ -720,7 +730,7 @@ class Form
 	 *  @param  string	$extracss           Add a CSS style to td, div or span tag
 	 *  @param  int		$noencodehtmltext   Do not encode into html entity the htmltext
 	 *  @param	int		$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
-	 *  @param  string  $tooltiptrigger     ''=Tooltip on hover, 'abc'=Tooltip on click (abc is a unique key, clickable link is on image or on link if param $type='none' or on both if $type='xxxclickable')
+	 *  @param  string  $tooltiptrigger     ''=Tooltip on hover and hidden on smartphone, 'abconsmartphone'=Tooltip on hover and on click on smartphone, 'abc'=Tooltip on click (abc is a unique key, clickable link is on image or on link if param $type='none' or on both if $type='xxxclickable')
 	 *  @param	int		$forcenowrap		Force no wrap between text and picto (works with notabs=2 only)
 	 * 	@return	string						HTML code of text, picto, tooltip
 	 */
@@ -728,16 +738,20 @@ class Form
 	{
 		global $conf, $langs;
 
-		$alt = '';
-		if ($tooltiptrigger) {
-			$alt = $langs->transnoentitiesnoconv("ClickToShowHelp");
-		}
-
 		//For backwards compatibility
 		if ($type == '0') {
 			$type = 'info';
 		} elseif ($type == '1') {
 			$type = 'help';
+		}
+
+		if (preg_match('/onsmartphone$/', $tooltiptrigger) && empty($conf->dol_no_mouse_hover)) {
+			$tooltiptrigger = preg_replace('/^.*onsmartphone$/', '', $tooltiptrigger);
+		}
+
+		$alt = '';
+		if ($tooltiptrigger) {
+			$alt = $langs->transnoentitiesnoconv("ClickToShowHelp");
 		}
 
 		// If info or help with no javascript, show only text
@@ -829,7 +843,7 @@ class Form
 
 		if (!empty($conf->use_javascript_ajax)) {
 			$ret .= '<!-- JS CODE TO ENABLE mass action select -->
-    		<script>
+    		<script nonce="'.getNonce().'">
                         function initCheckForSelect(mode, name, cssclass)	/* mode is 0 during init of page or click all, 1 when we click on 1 checkboxi, "name" refers to the class of the massaction button, "cssclass" to the class of the checkfor select boxes */
         		{
         			atleastoneselected=0;
@@ -2257,7 +2271,7 @@ class Form
 		// Method with no ajax
 		if ($action != 'view') {
 			$out .= '<input type="hidden" class="removedassignedhidden" name="removedassigned" value="">';
-			$out .= '<script type="text/javascript">jQuery(document).ready(function () {';
+			$out .= '<script nonce="'.getNonce().'" type="text/javascript">jQuery(document).ready(function () {';
 			$out .= 'jQuery(".removedassigned").click(function() { jQuery(".removedassignedhidden").val(jQuery(this).val()); });';
 			$out .= 'jQuery(".assignedtouser").change(function() { console.log(jQuery(".assignedtouser option:selected").val());';
 			$out .= ' if (jQuery(".assignedtouser option:selected").val() > 0) { jQuery("#'.$action.'assignedtouser").attr("disabled", false); }';
@@ -2349,7 +2363,7 @@ class Form
 				// when a parent of variant has been selected.
 				$out .= '
 				<!-- script to auto show attributes select tags if a variant was selected -->
-				<script>
+				<script nonce="'.getNonce().'">
 					// auto show attributes fields
 					selected = '.json_encode($selected_combinations).';
 					combvalues = {};
@@ -4133,7 +4147,7 @@ class Form
 	public function select_conditions_paiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '', $deposit_percent = -1)
 	{
 		// phpcs:enable
-		print $this->getSelectConditionsPaiements($selected, $htmlname, $filtertype, $addempty, $noinfoadmin, $morecss, $deposit_percent = -1);
+		print $this->getSelectConditionsPaiements($selected, $htmlname, $filtertype, $addempty, $noinfoadmin, $morecss, $deposit_percent);
 	}
 
 
@@ -4206,7 +4220,7 @@ class Form
 			$out .= '<input id="'.$htmlname.'_deposit_percent" name="'.$htmlname.'_deposit_percent" class="maxwidth50" value="' . $deposit_percent . '" />';
 			$out .= '</span>';
 			$out .= '
-				<script>
+				<script nonce="'.getNonce().'">
 					$(document).ready(function () {
 						$("#' . $htmlname . '").change(function () {
 							let $selected = $(this).find("option:selected");
@@ -5001,7 +5015,7 @@ class Form
 	 *     Easiest way to use this is with useajax=1.
 	 *     If you use useajax='xxx', you must also add jquery code to trigger opening of box (with correct parameters)
 	 *     just after calling this method. For example:
-	 *       print '<script type="text/javascript">'."\n";
+	 *       print '<script nonce="'.getNonce().'" type="text/javascript">'."\n";
 	 *       print 'jQuery(document).ready(function() {'."\n";
 	 *       print 'jQuery(".xxxlink").click(function(e) { jQuery("#aparamid").val(jQuery(this).attr("rel")); jQuery("#dialog-confirm-xxx").dialog("open"); return false; });'."\n";
 	 *       print '});'."\n";
@@ -5109,7 +5123,7 @@ class Form
 						$more .= '</div></div>'."\n";
 					} elseif ($input['type'] == 'checkbox') {
 						$more .= '<div class="tagtr">';
-						$more .= '<div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].' </div><div class="tagtd">';
+						$more .= '<div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'"><label for="'.dol_escape_htmltag($input['name']).'">'.$input['label'].'</label></div><div class="tagtd">';
 						$more .= '<input type="checkbox" class="flat'.($morecss ? ' '.$morecss : '').'" id="'.dol_escape_htmltag($input['name']).'" name="'.dol_escape_htmltag($input['name']).'"'.$moreattr;
 						if (!is_bool($input['value']) && $input['value'] != 'false' && $input['value'] != '0' && $input['value'] != '') {
 							$more .= ' checked';
@@ -5126,10 +5140,12 @@ class Form
 						$i = 0;
 						foreach ($input['values'] as $selkey => $selval) {
 							$more .= '<div class="tagtr">';
-							if ($i == 0) {
-								$more .= '<div class="tagtd'.(empty($input['tdclass']) ? ' tdtop' : (' tdtop '.$input['tdclass'])).'">'.$input['label'].'</div>';
-							} else {
-								$more .= '<div clas="tagtd'.(empty($input['tdclass']) ? '' : (' "'.$input['tdclass'])).'">&nbsp;</div>';
+							if (isset($input['label'])) {
+								if ($i == 0) {
+									$more .= '<div class="tagtd'.(empty($input['tdclass']) ? ' tdtop' : (' tdtop '.$input['tdclass'])).'">'.$input['label'].'</div>';
+								} else {
+									$more .= '<div clas="tagtd'.(empty($input['tdclass']) ? '' : (' "'.$input['tdclass'])).'">&nbsp;</div>';
+								}
 							}
 							$more .= '<div class="tagtd'.($i == 0 ? ' tdtop' : '').'"><input type="radio" class="flat'.$morecss.'" id="'.dol_escape_htmltag($input['name'].$selkey).'" name="'.dol_escape_htmltag($input['name']).'" value="'.$selkey.'"'.$moreattr;
 							if (!empty($input['disabled'])) {
@@ -5154,7 +5170,7 @@ class Form
 						$formquestion[] = array('name'=>$input['name'].'year');
 						$formquestion[] = array('name'=>$input['name'].'hour');
 						$formquestion[] = array('name'=>$input['name'].'min');
-					} elseif ($input['type'] == 'other') {
+					} elseif ($input['type'] == 'other') {	// can be 1 column or 2 depending if label is set or not
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">';
 						if (!empty($input['label'])) {
 							$more .= $input['label'].'</div><div class="tagtd">';
@@ -5232,7 +5248,7 @@ class Form
 			$formconfirm .= '</div>'."\n";
 
 			$formconfirm .= "\n<!-- begin code of popup for formconfirm page=".$page." -->\n";
-			$formconfirm .= '<script type="text/javascript">'."\n";
+			$formconfirm .= '<script nonce="'.getNonce().'" type="text/javascript">'."\n";
 			$formconfirm .= "/* Code for the jQuery('#dialogforpopup').dialog() */\n";
 			$formconfirm .= 'jQuery(document).ready(function() {
             $(function() {
@@ -5359,7 +5375,7 @@ class Form
 
 			// Line title
 			$formconfirm .= '<tr class="validtitre"><td class="validtitre" colspan="2">';
-			$formconfirm .= img_picto('', 'recent').' '.$title;
+			$formconfirm .= img_picto('', 'pictoconfirm').' '.$title;
 			$formconfirm .= '</td></tr>'."\n";
 
 			// Line text
@@ -5392,7 +5408,7 @@ class Form
 
 			if (!empty($conf->use_javascript_ajax)) {
 				$formconfirm .= '<!-- code to disable button to avoid double clic -->';
-				$formconfirm .= '<script type="text/javascript">'."\n";
+				$formconfirm .= '<script nonce="'.getNonce().'" type="text/javascript">'."\n";
 				$formconfirm .= '
 				$(document).ready(function () {
 					$(".confirmvalidatebutton").on("click", function() {
@@ -6638,7 +6654,7 @@ class Form
 						$minYear = getDolGlobalInt('MIN_YEAR_SELECT_DATE', (date('Y') - 100));
 						$maxYear = getDolGlobalInt('MAX_YEAR_SELECT_DATE', (date('Y') + 100));
 
-						$retstring .= "<script type='text/javascript'>";
+						$retstring .= '<script nonce="'.getNonce().'" type="text/javascript">';
 						$retstring .= "$(function(){ $('#".$prefix."').datepicker({
 							dateFormat: '".$langs->trans("FormatDateShortJQueryInput")."',
 							autoclose: true,
@@ -6678,7 +6694,7 @@ class Form
 					if (!$disabled) {
 						/* Not required. Managed by option buttonImage of jquery
 						$retstring.=img_object($langs->trans("SelectDate"),'calendarday','id="'.$prefix.'id" class="datecallink"');
-						$retstring.="<script type='text/javascript'>";
+						$retstring.='<script nonce="'.getNonce().'" type="text/javascript">';
 						$retstring.="jQuery(document).ready(function() {";
 						$retstring.='	jQuery("#'.$prefix.'id").click(function() {';
 						$retstring.="    	jQuery('#".$prefix."').focus();";
@@ -6995,8 +7011,8 @@ class Form
 
 		$retstring = '<span class="nowraponall">';
 
-		$hourSelected = 0;
-		$minSelected = 0;
+		$hourSelected = '';
+		$minSelected = '';
 
 		// Hours
 		if ($iSecond != '') {
@@ -7010,14 +7026,14 @@ class Form
 			$retstring .= '<select class="flat" id="select_'.$prefix.'hour" name="'.$prefix.'hour"'.($disabled ? ' disabled' : '').'>';
 			for ($hour = 0; $hour < 25; $hour++) {	// For a duration, we allow 24 hours
 				$retstring .= '<option value="'.$hour.'"';
-				if ($hourSelected == $hour) {
+				if (is_numeric($hourSelected) && $hourSelected == $hour) {
 					$retstring .= " selected";
 				}
 				$retstring .= ">".$hour."</option>";
 			}
 			$retstring .= "</select>";
 		} elseif ($typehour == 'text' || $typehour == 'textselect') {
-			$retstring .= '<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" name="'.$prefix.'hour"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputhour" value="'.(($hourSelected != '') ? ((int) $hourSelected) : '').'">';
+			$retstring .= '<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" name="'.$prefix.'hour"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputhour right" value="'.(($hourSelected != '') ? ((int) $hourSelected) : '').'">';
 		} else {
 			return 'BadValueForParameterTypeHour';
 		}
@@ -7032,21 +7048,23 @@ class Form
 		if ($minunderhours) {
 			$retstring .= '<br>';
 		} else {
-			$retstring .= '<span class="hideonsmartphone">&nbsp;</span>';
+			if ($typehour != 'text') {
+				$retstring .= '<span class="hideonsmartphone">&nbsp;</span>';
+			}
 		}
 
 		if ($typehour == 'select' || $typehour == 'textselect') {
 			$retstring .= '<select class="flat" id="select_'.$prefix.'min" name="'.$prefix.'min"'.($disabled ? ' disabled' : '').'>';
 			for ($min = 0; $min <= 55; $min = $min + 5) {
 				$retstring .= '<option value="'.$min.'"';
-				if ($minSelected == $min) {
+				if (is_numeric($minSelected) && $minSelected == $min) {
 					$retstring .= ' selected';
 				}
 				$retstring .= '>'.$min.'</option>';
 			}
 			$retstring .= "</select>";
 		} elseif ($typehour == 'text') {
-			$retstring .= '<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" name="'.$prefix.'min"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputminute" value="'.(($minSelected != '') ? ((int) $minSelected) : '').'">';
+			$retstring .= '<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" name="'.$prefix.'min"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputminute right" value="'.(($minSelected != '') ? ((int) $minSelected) : '').'">';
 		}
 
 		if ($typehour != 'text') {
@@ -7800,34 +7818,6 @@ class Form
 		return $out;
 	}
 
-	/**
-	 * Function to forge a SQL criteria
-	 *
-	 * @param  array    $matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.nature:is:NULL"
-	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
-	 */
-	protected static function forgeCriteriaCallback($matches)
-	{
-		global $db;
-
-		//dol_syslog("Convert matches ".$matches[1]);
-		if (empty($matches[1])) {
-			return '';
-		}
-		$tmp = explode(':', $matches[1]);
-		if (count($tmp) < 3) {
-			return '';
-		}
-
-		$tmpescaped = $tmp[2];
-		$regbis = array();
-		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
-			$tmpescaped = "'".$db->escape($regbis[1])."'";
-		} else {
-			$tmpescaped = $db->escape($tmpescaped);
-		}
-		return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;
-	}
 
 	/**
 	 * Output html form to select an object.
@@ -7941,12 +7931,11 @@ class Form
 			}
 
 			if ($filter) {	 // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-				/*if (! DolibarrApi::_checkFilters($filter))
-				{
-					throw new RestException(503, 'Error when validating parameter sqlfilters '.$filter);
-				}*/
-				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-				$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'Form::forgeCriteriaCallback', $filter).")";
+				$errormessage = '';
+				$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+				if ($errormessage) {
+					return 'Error forging a SQL request from an universal criteria: '.$errormessage;
+				}
 			}
 		}
 		$sql .= $this->db->order($sortfield ? $sortfield : $fieldstoshow, "ASC");
@@ -8216,7 +8205,7 @@ class Form
 		if (!empty($conf->use_javascript_ajax)) {
 			$tmpplugin = 'select2';
 			$outdelayed = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
-		    	<script>
+		    	<script nonce="'.getNonce().'">
 		    	$(document).ready(function () {
 
 	    	        '.($callurlonselect ? 'var saveRemoteData = [];' : '').'
@@ -8253,7 +8242,7 @@ class Form
 						containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 					    placeholder: "'.dol_escape_js($placeholder).'",
 				    	escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
-				    	minimumInputLength: '.$minimumInputLength.',
+				    	minimumInputLength: '.((int) $minimumInputLength).',
 				        formatResult: function(result, container, query, escapeMarkup) {
 	                        return escapeMarkup(result.text);
 	                    },
@@ -8330,7 +8319,7 @@ class Form
 		if (!empty($conf->use_javascript_ajax)) {
 			$tmpplugin = 'select2';
 			$outdelayed = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
-				<script>
+				<script nonce="'.getNonce().'">
 				$(document).ready(function () {
 					var data = '.json_encode($formattedarrayresult).';
 
@@ -8439,8 +8428,13 @@ class Form
 			}
 		}
 
-		// Try also magic suggest
-		$out .= '<select id="'.$htmlname.'" class="multiselect'.($morecss ? ' '.$morecss : '').'" multiple name="'.$htmlname.'[]"'.($moreattrib ? ' '.$moreattrib : '').($width ? ' style="width: '.(preg_match('/%/', $width) ? $width : $width.'px').'"' : '').'>'."\n";
+		$useenhancedmultiselect = 0;
+		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')) {
+			$useenhancedmultiselect = 1;
+		}
+
+		// Output select component
+		$out .= '<select id="'.$htmlname.'" class="multiselect'.($useenhancedmultiselect ? ' multiselectononeline' : '').($morecss ? ' '.$morecss : '').'" multiple name="'.$htmlname.'[]"'.($moreattrib ? ' '.$moreattrib : '').($width ? ' style="width: '.(preg_match('/%/', $width) ? $width : $width.'px').'"' : '').'>'."\n";
 		if (is_array($array) && !empty($array)) {
 			if ($value_as_key) {
 				$array = array_combine($array, $array);
@@ -8477,7 +8471,7 @@ class Form
 		// Add code for jquery to use multiselect
 		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')) {
 			$out .= "\n".'<!-- JS CODE TO ENABLE select for id '.$htmlname.', addjscombo='.$addjscombo.' -->';
-			$out .= "\n".'<script>'."\n";
+			$out .= "\n".'<script nonce="'.getNonce().'">'."\n";
 			if ($addjscombo == 1) {
 				$tmpplugin = empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) ?constant('REQUIRE_JQUERY_MULTISELECT') : $conf->global->MAIN_USE_JQUERY_MULTISELECT;
 				$out .= 'function formatResult(record, container) {'."\n";
@@ -8501,6 +8495,8 @@ class Form
 								  },';
 				}
 				$out .= '		dir: \'ltr\',
+								containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag (ko with multiselect) */
+								dropdownCssClass: \''.$morecss.'\',				/* Line to add class on the new <span class="select2-selection...> tag (ok with multiselect) */
 								// Specify format function for dropdown item
 								formatResult: formatResult,
 							 	templateResult: formatResult,		/* For 4.0 */
@@ -8552,6 +8548,9 @@ class Form
 		global $conf, $langs, $user, $extrafields;
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			return '';
+		}
+		if (empty($array)) {
 			return '';
 		}
 
@@ -8621,7 +8620,7 @@ class Form
             </dd>
         </dl>
 
-        <script type="text/javascript">
+        <script nonce="'.getNonce().'" type="text/javascript">
           jQuery(document).ready(function () {
               $(\'.multiselectcheckbox'.$htmlname.' input[type="checkbox"]\').on(\'click\', function () {
                   console.log("A new field was added/removed, we edit field input[name=formfilteraction]");
@@ -8914,8 +8913,7 @@ class Form
 					'perms'=>1,
 					'label'=>'LinkToContract',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_customer as ref_client, t.ref_supplier, SUM(td.total_ht) as total_ht
-							FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."contrat as t, ".$this->db->prefix()."contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('contract').') GROUP BY s.rowid, s.nom, s.client, t.rowid, t.ref, t.ref_customer, t.ref_supplier'
-				),
+							FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."contrat as t, ".$this->db->prefix()."contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('contract').') GROUP BY s.rowid, s.nom, s.client, t.rowid, t.ref, t.ref_customer, t.ref_supplier'),
 				'fichinter'=>array(
 					'enabled'=>isModEnabled('ficheinter'),
 					'perms'=>1,
@@ -8946,6 +8944,12 @@ class Form
 					'label'=>'LinkToMo',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.rowid, '0' as total_ht FROM ".$this->db->prefix()."societe as s INNER JOIN ".$this->db->prefix()."mrp_mo as t ON t.fk_soc = s.rowid  WHERE  t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('mo').')')
 			);
+		}
+
+		if ($object->table_element == 'commande_fournisseur') {
+			$possiblelinks['mo']['sql'] = "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.rowid, '0' as total_ht FROM ".$this->db->prefix()."societe as s INNER JOIN ".$this->db->prefix().'mrp_mo as t ON t.fk_soc = s.rowid  WHERE t.entity IN ('.getEntity('mo').')';
+		} elseif ($object->table_element == 'mrp_mo') {
+			$possiblelinks['order_supplier']['sql'] = "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix().'commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.entity IN ('.getEntity('commande_fournisseur').')';
 		}
 
 		if (!empty($listofidcompanytoscan)) {  // If empty, we don't have criteria to scan the object we can link to
@@ -9076,7 +9080,7 @@ class Form
 
 		if (!empty($conf->use_javascript_ajax)) {
 			print '<!-- Add js to show linkto box -->
-				<script>
+				<script nonce="'.getNonce().'">
 				jQuery(document).ready(function() {
 					jQuery(".linkto").click(function() {
 						console.log("We choose to show/hide links for rel="+jQuery(this).attr(\'rel\')+" so #"+jQuery(this).attr(\'rel\')+"list");
@@ -9317,7 +9321,7 @@ class Form
 		// Left part of banner
 		if ($morehtmlleft) {
 			if ($conf->browser->layout == 'phone') {
-				$ret .= '<!-- morehtmlleft --><div class="floatleft">'.$morehtmlleft.'</div>'; // class="center" to have photo in middle
+				$ret .= '<!-- morehtmlleft --><div class="floatleft">'.$morehtmlleft.'</div>';
 			} else {
 				$ret .= '<!-- morehtmlleft --><div class="inline-block floatleft">'.$morehtmlleft.'</div>';
 			}
@@ -9760,7 +9764,7 @@ class Form
 	/**
 	 *	Return HTML to show the search and clear seach button
 	 *
-	 *  @param	string	$pos       position colon on liste value left or right
+	 *  @param	string	$pos       Position of colon on the list. Value 'left' or 'right'
 	 *  @return	string
 	 */
 	public function showFilterButtons($pos = '')
@@ -9795,7 +9799,7 @@ class Form
 		if (!empty($conf->use_javascript_ajax)) {
 			$out .= '<div class="inline-block checkallactions"><input type="checkbox" id="'.$cssclass.'s" name="'.$cssclass.'s" class="checkallactions"></div>';
 		}
-		$out .= '<script>
+		$out .= '<script nonce="'.getNonce().'">
             $(document).ready(function() {
                 $("#' . $cssclass.'s").click(function() {
                     if($(this).is(\':checked\')){
@@ -9886,7 +9890,7 @@ class Form
 				if ($resql) {
 					if ($this->db->num_rows($resql) > 0) {
 						$obj = $this->db->fetch_object($resql);
-						$out .= '<script>
+						$out .= '<script nonce="'.getNonce().'">
 							$(function() {
 								$("select[name='.$target.']").on("change", function() {
 									var current_val = $(this).val();
@@ -10292,14 +10296,12 @@ class Form
 				$search_component_params_hidden .= '('.$search_component_params_hidden.')';
 			}
 			$errormessage = '';
-			if (!dolCheckFilters($search_component_params_hidden, $errormessage)) {
-				print 'ERROR in parsing search string';
+			$searchtags = forgeSQLFromUniversalSearchCriteria($search_component_params_hidden, $errormessage);
+			if ($errormessage) {
+				print 'ERROR in parsing search string: '.dol_escape_htmltag($errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			//var_dump($search_component_params_hidden);
-			$htmltags = preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $search_component_params_hidden);
-			//var_dump($htmltags);
-			$ret .= '<span class="marginleftonlyshort valignmiddle tagsearch"><span class="tagsearchdelete select2-selection__choice__remove">x</span> '.$htmltags.'</span>';
+			//var_dump($searchtags);
+			$ret .= '<span class="marginleftonlyshort valignmiddle tagsearch"><span class="tagsearchdelete select2-selection__choice__remove">x</span> '.dol_escape_htmltag($searchtags).'</span>';
 		}
 
 		//$ret .= '<button type="submit" class="liste_titre button_search paddingleftonly" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
@@ -10446,7 +10448,7 @@ class Form
 
 		if ($dol_openinpopup) {
 			$retstring .= '<!-- buttons are shown into a $dol_openinpopup='.$dol_openinpopup.' context, so we enable the close of dialog on cancel -->'."\n";
-			$retstring .= '<script>';
+			$retstring .= '<script nonce="'.getNonce().'">';
 			$retstring .= 'jQuery(".button-cancel").click(function(e) {
 				e.preventDefault(); console.log(\'We click on cancel in iframe popup '.$dol_openinpopup.'\');
 				window.parent.jQuery(\'#idfordialog'.$dol_openinpopup.'\').dialog(\'close\');

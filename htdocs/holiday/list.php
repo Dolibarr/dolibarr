@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2020 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016 Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2018      Charlene Benke	<charlie@patas-monkey.com>
- * Copyright (C) 2019-2022 Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2023 Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -607,7 +607,7 @@ if ($resql) {
 		}
 
 		print '<td class="liste_titre maxwidthonsmartphone left">';
-		print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, $include, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth150');
+		print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, $include, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth125');
 		print '</td>';
 	}
 
@@ -617,12 +617,12 @@ if ($resql) {
 			print '<td class="liste_titre maxwidthonsmartphone left">';
 			$validator = new UserGroup($db);
 			$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
-			$valideurobjects = $validator->listUsersForGroup($excludefilter);
+			$valideurobjects = $validator->listUsersForGroup($excludefilter, 1);
 			$valideurarray = array();
 			foreach ($valideurobjects as $val) {
-				$valideurarray[$val->id] = $val->id;
+				$valideurarray[$val] = $val;
 			}
-			print $form->select_dolusers($search_valideur, "search_valideur", 1, "", 0, $valideurarray, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth150');
+			print $form->select_dolusers($search_valideur, "search_valideur", 1, "", 0, $valideurarray, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth125');
 			print '</td>';
 		} else {
 			print '<td class="liste_titre">&nbsp;</td>';
@@ -642,7 +642,7 @@ if ($resql) {
 				//$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
 				$arraytypeleaves[$val['rowid']] = $labeltoshow;
 			}
-			print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1, 0, 0, '', 0, 0, 0, '', '', 1);
+			print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100', 1);
 		}
 		print '</td>';
 	}
@@ -790,7 +790,8 @@ if ($resql) {
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
 		$totalduration = 0;
-		while ($i < min($num, $limit)) {
+		$imaxinloop = ($limit ? min($num, $limit) : $num);
+		while ($i < $imaxinloop) {
 			$obj = $db->fetch_object($resql);
 
 			// Leave request
@@ -832,7 +833,7 @@ if ($resql) {
 			if ($mode == 'kanban') {
 				if ($i == 0) {
 					print '<tr><td colspan="12">';
-					print '<div class="box-flex-container">';
+					print '<div class="box-flex-container kanban">';
 				}
 
 				$holidaystatic->fk_type = $typeleaves[$obj->fk_type]['rowid'];
@@ -852,7 +853,7 @@ if ($resql) {
 					$arraydata = array('user'=>$userstatic, 'labeltype'=>$labeltypeleavetoshow);
 					print $holidaystatic->getKanbanView('', $arraydata);
 				}
-				if ($i == (min($num, $limit) - 1)) {
+				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
 					print '</td></tr>';
 				}

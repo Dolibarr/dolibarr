@@ -28,7 +28,7 @@ CantUseScheduleWithLoanStartedToPaid = Kan ikke generere en tidslinje for et lå
 CantModifyInterestIfScheduleIsUsed = Du kan ikke endre rente hvis du bruker tidsplan
 # Admin
 ConfigLoan=Oppset av lån-modulen
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Konto (fra kontoplanen) som skal brukes som standard for kapital (Lånmodul)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Konto (fra kontoplanen) som skal brukes som standard for renter (Lånmodul)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Konto (fra kontoplanen) brukes som standard for forsikring (Lånmodul)
 CreateCalcSchedule=Rediger økonomisk forpliktelse

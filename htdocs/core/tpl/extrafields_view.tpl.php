@@ -65,6 +65,8 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 	$extrafields_collapse_num = '';
 	$extrafields_collapse_num_old = '';
 	$i = 0;
+
+	// Loop on each extrafield
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $tmpkeyextra => $tmplabelextra) {
 		$i++;
 
@@ -114,6 +116,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			$lastseparatorkeyfound = $tmpkeyextra;
 		} else {
 			$collapse_group = $extrafields_collapse_num.(!empty($object->id) ? '_'.$object->id : '');
+
 			print '<tr class="trextrafields_collapse'.$collapse_group;
 			/*if ($extrafields_collapse_num && $extrafields_collapse_num_old && $extrafields_collapse_num != $extrafields_collapse_num_old) {
 				print ' trextrafields_collapse_new';
@@ -180,13 +183,13 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 				$permok = $user->rights->stock->creer;
 			}
 			if ($object->element == 'facturerec') {
-				$permok = $user->rights->facture->creer;
+				$permok = $user->hasRight('facture', 'creer');
 			}
 			if ($object->element == 'mo') {
 				$permok = $user->rights->mrp->write;
 			}
 			if ($object->element == 'contact') {
-				$permok = $user->rights->societe->contact->creer;
+				$permok = $user->hasRight('societe', 'contact', 'creer');
 			}
 			if ($object->element == 'salary') {
 				$permok = $user->rights->salaries->read;

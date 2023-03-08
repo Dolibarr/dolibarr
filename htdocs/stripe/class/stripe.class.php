@@ -341,9 +341,10 @@ class Stripe extends CommonObject
 	 * @param   string  $payment_method                     'pm_....' (if known)
 	 * @param   string  $off_session                        If we use an already known payment method to pay when customer is not available during the checkout flow.
 	 * @param	string	$noidempotency_key					Do not use the idempotency_key when creating the PaymentIntent
+	 * @param	int		$did								ID of an existing line into llx_prelevement_demande (Dolibarr intent). If provided, no new line will be created.
 	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found and failed to create
 	 */
-	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 1)
+	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 1, $did = 0)
 	{
 		global $conf, $user;
 
@@ -364,11 +365,14 @@ class Stripe extends CommonObject
 			$stripeamount = $amount;
 		}
 
-		$fee = $amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE;
-		if ($fee >= $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL > $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-			$fee = $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL;
-		} elseif ($fee < $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-			$fee = $conf->global->STRIPE_APPLICATION_FEE_MINIMAL;
+		$fee = 0;
+		if (getDolGlobalString("STRIPE_APPLICATION_FEE_PERCENT")) {
+			$fee = $amount * ((float) getDolGlobalString("STRIPE_APPLICATION_FEE_PERCENT", '0') / 100) + (float) getDolGlobalString("STRIPE_APPLICATION_FEE", '0');
+		}
+		if ($fee >= (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MAXIMAL", '0') && (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MAXIMAL", '0') > (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MINIMAL", '0')) {
+			$fee = (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MAXIMAL", '0');
+		} elseif ($fee < (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MINIMAL", '0')) {
+			$fee = (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MINIMAL", '0');
 		}
 		if (!in_array($currency_code, $arrayzerounitcurrency)) {
 			$stripefee = round($fee * 100);
@@ -465,12 +469,14 @@ class Stripe extends CommonObject
 				"currency" => $currency_code,
 				"payment_method_types" => $paymentmethodtypes,
 				"description" => $description,
-				"statement_descriptor_suffix" => $descriptor, // For card payment, 22 chars that appears on bank receipt (prefix into stripe setup + this suffix)
-				"statement_descriptor" => $descriptor, // For SEPA, it will take only statement_descriptor, not statement_descriptor_suffix
 				//"save_payment_method" => true,
 				"setup_future_usage" => "on_session",
 				"metadata" => $metadata
 			);
+			if ($descriptor) {
+				$dataforintent["statement_descriptor_suffix"] = $descriptor; // For card payment, 22 chars that appears on bank receipt (prefix into stripe setup + this suffix)
+				$dataforintent["statement_descriptor"] = $descriptor; 	// For SEPA, it will take only statement_descriptor, not statement_descriptor_suffix
+			}
 			if (!is_null($customer)) {
 				$dataforintent["customer"] = $customer;
 			}
@@ -528,29 +534,50 @@ class Stripe extends CommonObject
 				// Store the payment intent
 				if (is_object($object)) {
 					$paymentintentalreadyexists = 0;
-					// Check that payment intent $paymentintent->id is not already recorded.
-					$sql = "SELECT pi.rowid";
-					$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pi";
-					$sql .= " WHERE pi.entity IN (".getEntity('societe').")";
-					$sql .= " AND pi.ext_payment_site = '".$this->db->escape($service)."'";
-					$sql .= " AND pi.ext_payment_id = '".$this->db->escape($paymentintent->id)."'";
 
-					dol_syslog(get_class($this)."::getPaymentIntent search if payment intent already in prelevement_demande", LOG_DEBUG);
-					$resql = $this->db->query($sql);
-					if ($resql) {
-						$num = $this->db->num_rows($resql);
-						if ($num) {
-							$obj = $this->db->fetch_object($resql);
-							if ($obj) {
-								$paymentintentalreadyexists++;
-							}
+					if ($did > 0) {
+						// If a payment request line provided, we do not need to recreate one, we just update it
+						dol_syslog(get_class($this)."::getPaymentIntent search if payment intent already in prelevement_demande", LOG_DEBUG);
+
+						$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_demande SET";
+						$sql .= " ext_payment_site = '".$this->db->escape($service)."',";
+						$sql .= " ext_payment_id = '".$this->db->escape($paymentintent->id)."'";
+						$sql .= " WHERE rowid = ".((int) $did);
+
+						$resql = $this->db->query($sql);
+						if ($resql) {
+							$paymentintentalreadyexists++;
+						} else {
+							$error++;
+							dol_print_error($this->db);
 						}
 					} else {
-						dol_print_error($this->db);
+						// Check that payment intent $paymentintent->id is not already recorded.
+						dol_syslog(get_class($this)."::getPaymentIntent search if payment intent already in prelevement_demande", LOG_DEBUG);
+
+						$sql = "SELECT pi.rowid";
+						$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pi";
+						$sql .= " WHERE pi.entity IN (".getEntity('societe').")";
+						$sql .= " AND pi.ext_payment_site = '".$this->db->escape($service)."'";
+						$sql .= " AND pi.ext_payment_id = '".$this->db->escape($paymentintent->id)."'";
+
+						$resql = $this->db->query($sql);
+						if ($resql) {
+							$num = $this->db->num_rows($resql);
+							if ($num) {
+								$obj = $this->db->fetch_object($resql);
+								if ($obj) {
+									$paymentintentalreadyexists++;
+								}
+							}
+						} else {
+							$error++;
+							dol_print_error($this->db);
+						}
 					}
 
 					// If not, we create it.
-					if (!$paymentintentalreadyexists) {
+					if (!$error && !$paymentintentalreadyexists) {
 						$now = dol_now();
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site, amount)";
 						$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $user->id).", '".$this->db->escape($paymentintent->id)."', ".((int) $object->id).", '".$this->db->escape($object->element)."', ".((int) $conf->entity).", '".$this->db->escape($service)."', ".((float) $amount).")";
@@ -920,7 +947,7 @@ class Stripe extends CommonObject
 		global $conf, $user, $langs;
 		$sepa = null;
 
-		$sql = "SELECT sa.stripe_card_ref, sa.proprio, sa.iban_prefix, sa.rum"; // stripe_card_ref is 'src_...' for Stripe SEPA
+		$sql = "SELECT sa.stripe_card_ref, sa.proprio, sa.iban_prefix as iban, sa.rum"; // stripe_card_ref is 'src_...' for Stripe SEPA
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as sa";
 		$sql .= " WHERE sa.rowid = ".((int) $object->id); // We get record from ID, no need for filter on entity
 		$sql .= " AND sa.type = 'ban'"; //type ban to get normal bank account of customer (prelevement)
@@ -958,40 +985,41 @@ class Stripe extends CommonObject
 						dol_syslog($this->error, LOG_WARNING);
 					}
 				} elseif ($createifnotlinkedtostripe) {
-					$iban = $obj->iban_prefix; //prefix ?
+					$iban = $obj->iban;
 					$ipaddress = getUserRemoteIP();
+					$metadata = array('dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress);
+					if (is_object($object)) {
+						$metadata['dol_type'] = $object->element;
+						$metadata['dol_id'] = $object->id;
+						$metadata['dol_thirdparty_id'] = $soc->id;
+					}
+
+					$description = 'SEPA for IBAN '.$iban;
 
 					$dataforcard = array(
 						'type'=>'sepa_debit',
 						"sepa_debit" => array('iban' => $iban),
-						'currency' => strtolower($conf->currency),
-						'usage' => 'reusable',
-						'owner' => array(
+						'billing_details' => array(
 							'name' => $soc->name,
+							'email' => !empty($soc->email) ? $soc->email : "",
 						),
-						"metadata" => array(
-							'dol_type'=>$object->element,
-							'dol_id'=>$object->id,
-							'dol_version'=>DOL_VERSION,
-							'dol_entity'=>$conf->entity,
-							'ipaddress'=>$ipaddress
-						)
+						"metadata" => $metadata
 					);
 					// Complete owner name
 					if (!empty($soc->town)) {
-						$dataforcard['owner']['address']['city']=$soc->town;
+						$dataforcard['billing_details']['address']['city']=$soc->town;
 					}
 					if (!empty($soc->country_code)) {
-						$dataforcard['owner']['address']['country']=$soc->country_code;
+						$dataforcard['billing_details']['address']['country']=$soc->country_code;
 					}
 					if (!empty($soc->address)) {
-						$dataforcard['owner']['address']['line1']=$soc->address;
+						$dataforcard['billing_details']['address']['line1']=$soc->address;
 					}
 					if (!empty($soc->zip)) {
-						$dataforcard['owner']['address']['postal_code']=$soc->zip;
+						$dataforcard['billing_details']['address']['postal_code']=$soc->zip;
 					}
 					if (!empty($soc->state)) {
-						$dataforcard['owner']['address']['state']=$soc->state;
+						$dataforcard['billing_details']['address']['state']=$soc->state;
 					}
 
 					//$a = \Stripe\Stripe::getApiKey();
@@ -1013,14 +1041,18 @@ class Stripe extends CommonObject
 
 						$s = new \Stripe\StripeClient($stripeacc);
 
-						// TODO LMR Deprecated with the new Stripe API and SCA.
-						// TODO LMR Replace ->create() and ->createSource() and replace with ->getSetupIntent() to then, get the Payment mode with $payment_method = \Stripe\PaymentMethod::retrieve($setupintent->payment_method); ?
-						$sepa = $s->sources->create($dataforcard);
+						//var_dump($dataforcard);exit;
+
+						$sepa = $s->paymentMethods->create($dataforcard);
 						if (!$sepa) {
-							$this->error = 'Creation of sepa_debit on Stripe has failed';
+							$this->error = 'Creation of payment method sepa_debit on Stripe has failed';
 						} else {
 							// link customer and src
-							$cs = $cu->createSource($cu->id, array('source' => $sepa->id));
+							//$cs = $this->getSetupIntent($description, $soc, $cu, '', $status);
+							$dataforintent = array(['description'=> $description, 'payment_method_types' => ['sepa_debit'], 'customer' => $cu->id, 'payment_method' => $sepa->id], 'metadata'=>$metadata);
+							$cs = $s->setupIntents->create($dataforintent);
+							//$cs = $s->setupIntents->update($cs->id, ['payment_method' => $sepa->id]);
+							$cs = $s->setupIntents->confirm($cs->id, ['mandate_data' => ['customer_acceptance' => ['type' => 'offline']]]);
 							if (!$cs) {
 								$this->error = 'Link SEPA <-> Customer failed';
 							} else {
@@ -1040,6 +1072,7 @@ class Stripe extends CommonObject
 							}
 						}
 					} catch (Exception $e) {
+						$sepa = null;
 						$this->error = $e->getMessage();
 						dol_syslog($this->error, LOG_WARNING);
 					}

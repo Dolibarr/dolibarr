@@ -172,3 +172,5 @@ ErrorSeveralCompaniesWithEmailContactUs=Έχουν βρεθεί πολλές ε�
 ErrorSeveralCompaniesWithNameContactUs=Έχουν βρεθεί πολλές εταιρείες με αυτό το όνομα, επομένως δεν μπορούμε να επικυρώσουμε αυτόματα την εγγραφή σας. Παρακαλώ επικοινωνήστε μαζί μας στο %s
 NoPublicActionsAllowedForThisEvent=Καμία δημόσια δράση δεν είναι ανοιχτή στο κοινό για αυτήν την εκδήλωση
 MaxNbOfAttendees=Μέγιστος αριθμός συμμετεχόντων
+DateStartEvent=Ημερομηνία έναρξης εκδήλωσης
+DateEndEvent=Ημερομηνία λήξης εκδήλωσης

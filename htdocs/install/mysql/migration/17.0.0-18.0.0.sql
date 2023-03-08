@@ -37,9 +37,19 @@
 -- VMYSQL4.3 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN `rank` rankorder integer;
 -- VPGSQL8.2 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN rank rankorder integer;
 
+ALTER TABLE llx_accounting_system CHANGE COLUMN fk_pays fk_country integer; 
+
+ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN ref varchar(128);
+ALTER TABLE llx_facture_fourn_det MODIFY COLUMN ref varchar(128);
 
 
 -- v18
+
+ALTER TABLE llx_notify_def ADD COLUMN email varchar(255);
+ALTER TABLE llx_notify_def ADD COLUMN threshold double(24,8);
+ALTER TABLE llx_notify_def ADD COLUMN context varchar(128);
+
+ALTER TABLE llx_c_action_trigger ADD COLUMN contexts varchar(255) NULL;
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_CLOSE','Project closed','Executed when a project is closed','project',145);
 
@@ -50,6 +60,8 @@ ALTER TABLE llx_facture DROP COLUMN amount;
 ALTER TABLE llx_socpeople CHANGE fk_prospectcontactlevel fk_prospectlevel varchar(12);
 
 ALTER TABLE llx_facture ADD COLUMN prorata_discount	real DEFAULT NULL;
+
+ALTER TABLE llx_facture MODIFY COLUMN situation_cycle_ref integer;
 
 ALTER TABLE llx_payment_salary MODIFY COLUMN datep datetime;
 
@@ -63,3 +75,26 @@ ALTER TABLE llx_website ADD COLUMN pageviews_previous_month BIGINT UNSIGNED DEFA
 
 ALTER TABLE llx_product_stock ADD CONSTRAINT fk_product_product_rowid FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 ALTER TABLE llx_product_stock ADD CONSTRAINT fk_entrepot_entrepot_rowid FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
+
+
+ALTER TABLE llx_bank_account ADD COLUMN owner_zip varchar(25);
+ALTER TABLE llx_bank_account ADD COLUMN owner_town varchar(50);
+ALTER TABLE llx_bank_account ADD COLUMN owner_country_id integer DEFAULT NULL;
+
+ALTER TABLE llx_prelevement_bons ADD COLUMN fk_bank_account integer DEFAULT NULL;
+
+ALTER TABLE llx_supplier_proposal ADD UNIQUE INDEX uk_supplier_proposal_ref (ref, entity);
+
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_soc (fk_soc);
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_user_author (fk_user_author);
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_projet (fk_projet);
+ALTER TABLE llx_supplier_proposal ADD INDEX idx_supplier_proposal_fk_account(fk_account);
+
+ALTER TABLE llx_ecm_files ADD COLUMN share_pass varchar(32) after share;
+
+ALTER TABLE llx_prelevement_demande ADD COLUMN type varchar(12) DEFAULT '';
+UPDATE llx_prelevement_demande SET type = 'ban' WHERE ext_payment_id IS NULL AND type = '';
+
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN fk_user integer;
+

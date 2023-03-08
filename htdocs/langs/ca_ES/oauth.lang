@@ -31,8 +31,9 @@ OAUTH_GITHUB_SECRET=OAuth GitHub Secret
 OAUTH_URL_FOR_CREDENTIAL=Aneu a <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external"> aquesta pàgina <span class="fas fa-external-link-alt paddingleft"> </span> </a> per a crear o obtenir el vostre identificador i secret d'OAuth
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
-OAUTH_ID=ID OAuth
+OAUTH_ID=OAuth Client ID
 OAUTH_SECRET=Secret d'OAuth
+OAUTH_TENANT=Inquilí d'OAuth
 OAuthProviderAdded=S'ha afegit el proveïdor OAuth
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Ja existeix una entrada d'OAuth per a aquest proveïdor i nom
 URLOfServiceForAuthorization=URL proporcionat pel servei OAuth per a l'autenticació

@@ -152,6 +152,10 @@ class Menubase
 	 */
 	public $tms;
 
+	/**
+	 * @var Menu menu
+	 */
+	public $newmenu;
 
 	/**
 	 *  Constructor

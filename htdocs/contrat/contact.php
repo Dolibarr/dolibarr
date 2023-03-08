@@ -61,7 +61,7 @@ $permissiontoadd   = $user->rights->contrat->creer;     //  Used by the include 
  * Actions
  */
 
-if ($action == 'addcontact' && $user->rights->contrat->creer) {
+if ($action == 'addcontact' && $user->hasRight('contrat', 'creer')) {
 	$result = $object->fetch($id);
 
 	if ($result > 0 && $id > 0) {
@@ -86,7 +86,7 @@ if ($action == 'addcontact' && $user->rights->contrat->creer) {
 }
 
 // bascule du statut d'un contact
-if ($action == 'swapstatut' && $user->rights->contrat->creer) {
+if ($action == 'swapstatut' && $user->hasRight('contrat', 'creer')) {
 	if ($object->fetch($id)) {
 		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
@@ -95,7 +95,7 @@ if ($action == 'swapstatut' && $user->rights->contrat->creer) {
 }
 
 // Delete contact
-if ($action == 'deletecontact' && $user->rights->contrat->creer) {
+if ($action == 'deletecontact' && $user->hasRight('contrat', 'creer')) {
 	$object->fetch($id);
 	$result = $object->delete_contact(GETPOST("lineid", 'int'));
 

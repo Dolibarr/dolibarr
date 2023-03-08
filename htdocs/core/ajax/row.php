@@ -74,13 +74,13 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 
 	// Make test on permission
 	$perm = 0;
-	if ($table_element_line == 'propaldet' && $user->rights->propal->creer) {
+	if ($table_element_line == 'propaldet' && $user->hasRight('propal', 'creer')) {
 		$perm = 1;
-	} elseif ($table_element_line == 'commandedet' && $user->rights->commande->creer) {
+	} elseif ($table_element_line == 'commandedet' && $user->hasRight('commande', 'creer')) {
 		$perm = 1;
-	} elseif ($table_element_line == 'facturedet' && $user->rights->facture->creer) {
+	} elseif ($table_element_line == 'facturedet' && $user->hasRight('facture', 'creer')) {
 		$perm = 1;
-	} elseif ($table_element_line == 'facturedet_rec' && $user->rights->facture->creer) {
+	} elseif ($table_element_line == 'facturedet_rec' && $user->hasRight('facture', 'creer')) {
 		$perm = 1;
 	} elseif ($table_element_line == 'emailcollector_emailcollectoraction' && $user->admin) {
 		$perm = 1;

@@ -42,21 +42,23 @@ class Ctypent // extends CommonObject
 	 */
 	public $errors = array();
 
-	//var $element='ctypent';			//!< Id that identify managed objects
-	//var $table_element='ctypent';	//!< Name of table without prefix where object is stored
+	// public $element = 'ctypent';			//!< Id that identify managed objects
+	// public $table_element = 'ctypent';	//!< Name of table without prefix where object is stored
 
 	/**
 	 * @var int ID
 	 */
 	public $id;
 
+	/**
+	 * @var int ID of country
+	 */
+	public $country_id;
+
 	public $code;
 	public $libelle;
 	public $active;
 	public $module;
-
-
-
 
 	/**
 	 *  Constructor

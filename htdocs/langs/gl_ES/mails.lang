@@ -91,7 +91,7 @@ MailingModuleDescContactsByFunction=Contactos por posición
 MailingModuleDescEmailsFromFile=Mails de ficheiros
 MailingModuleDescEmailsFromUser=Mails enviados por usuario
 MailingModuleDescDolibarrUsers=Usuarios con mails
-MailingModuleDescThirdPartiesByCategories=Terceiros (por categoría)
+MailingModuleDescThirdPartiesByCategories=Terceiros
 SendingFromWebInterfaceIsNotAllowed=O envío dende a interfaz web non está permitido.
 EmailCollectorFilterDesc=Todos os filtros deben coincidir para recibir un correo electrónico
 
@@ -179,3 +179,4 @@ RecordCreatedByEmailCollector=Rexistro creado polo receptor de correo electróni
 DefaultBlacklistMailingStatus=Valor predeterminado para o campo '%s' ao crear un novo contacto 
 DefaultStatusEmptyMandatory=Baleiro pero obrigatorio
 WarningLimitSendByDay=ADVERTENCIA: a configuración ou o contrato da súa instancia limita o seu número de correos electrónicos ao día a <b> %s </b> . Se tenta enviar máis, pode que a súa instancia se ralentice ou se suspenda. Poñase en contacto co seu servizo de asistencia se precisa unha cota máis alta.
+NoMoreRecipientToSendTo=Non hai máis destinatarios aos que enviar o correo electrónico

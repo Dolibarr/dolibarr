@@ -65,6 +65,7 @@ class CMailFile
 
 	public $atleastonefile;
 
+	public $msg;
 	public $eol;
 	public $eol2;
 
@@ -127,6 +128,7 @@ class CMailFile
 
 	// Image
 	public $html;
+	public $msgishtml;
 	public $image_boundary;
 	public $atleastoneimage = 0; // at least one image file with file=xxx.ext into content (TODO Debug this. How can this case be tested. Remove if not used).
 	public $html_images = array();
@@ -254,12 +256,14 @@ class CMailFile
 			$this->html = $msg;
 
 			$findimg = 0;
-			if (!empty($conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS)) {
+			if (!empty($conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS)) {	// Off by default
 				// Search into the body for <img tags of links in medias files to replace them with an embedded file
 				// Note because media links are public, this should be useless, except avoid blocking images with email browser.
 				// This convert an embedd file with src="/viewimage.php?modulepart... into a cid link
+				// TODO Exclude viewimage used for the read tracker ?
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
 			}
+
 			if (!empty($conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA)) {
 				// Search into the body for <img src="data:image/ext;base64,..." to replace them with an embedded file
 				// This convert an embedded file with src="data:image... into a cid link + attached file
@@ -272,10 +276,16 @@ class CMailFile
 					if ($this->html_images[$i]) {
 						$this->atleastoneimage = 1;
 						if ($this->html_images[$i]['type'] == 'cidfromdata') {
-							$posindice = count($filename_list);
-							$filename_list[$posindice] = $this->html_images[$i]['fullpath'];
-							$mimetype_list[$posindice] = $this->html_images[$i]['content_type'];
-							$mimefilename_list[$posindice] = $this->html_images[$i]['name'];
+							if (!in_array($this->html_images[$i]['fullpath'], $filename_list)) {
+								// If this file path is not already into the $filename_list, we add it.
+								$posindice = count($filename_list);
+								$filename_list[$posindice] = $this->html_images[$i]['fullpath'];
+								$mimetype_list[$posindice] = $this->html_images[$i]['content_type'];
+								$mimefilename_list[$posindice] = $this->html_images[$i]['name'];
+							} else {
+								$posindice = array_search($this->html_images[$i]['fullpath'], $filename_list);
+							}
+							// We complete the array of cid_list
 							$cid_list[$posindice] = $this->html_images[$i]['cid'];
 						}
 						dol_syslog("CMailFile::CMailfile: html_images[$i]['name']=".$this->html_images[$i]['name'], LOG_DEBUG);
@@ -283,6 +293,8 @@ class CMailFile
 				}
 			}
 		}
+		//var_dump($filename_list);
+		//var_dump($cid_list);exit;
 
 		// Set atleastoneimage if there is at least one file (into $filename_list array)
 		if (is_array($filename_list)) {
@@ -827,6 +839,10 @@ class CMailFile
 						$this->error .= ".<br>";
 						$this->error .= $langs->trans("ErrorPhpMailDelivery");
 						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+
+						if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+							$this->save_dump_mail_in_err();
+						}
 					} else {
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 					}
@@ -891,6 +907,7 @@ class CMailFile
 
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+
 					$keyforsupportedoauth2array = $conf->global->$keyforsmtpoauthservice;
 					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
 						$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
@@ -908,7 +925,7 @@ class CMailFile
 
 					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 
-					$storage = new DoliStorage($db, $conf);
+					$storage = new DoliStorage($db, $conf, $keyforprovider);
 					try {
 						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 						$expire = false;
@@ -962,6 +979,8 @@ class CMailFile
 				}
 
 				if ($res) {
+					dol_syslog("CMailFile::sendfile: sendMsg, HOST=".$server.", PORT=".$conf->global->$keyforsmtpport, LOG_DEBUG);
+
 					if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
 						$this->smtps->setDebug(true);
 					}
@@ -982,6 +1001,10 @@ class CMailFile
 						}
 						dol_syslog("CMailFile::sendfile: mail end error with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport." - ".$this->error, LOG_ERR);
 						$res = false;
+
+						if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+							$this->save_dump_mail_in_err();
+						}
 					}
 				}
 			} elseif ($this->sendmode == 'swiftmailer') {
@@ -1017,6 +1040,7 @@ class CMailFile
 				}
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+
 					$keyforsupportedoauth2array = getDolGlobalString($keyforsmtpoauthservice);
 					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
 						$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
@@ -1030,7 +1054,7 @@ class CMailFile
 
 					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 
-					$storage = new DoliStorage($db, $conf);
+					$storage = new DoliStorage($db, $conf, $keyforprovider);
 
 					try {
 						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
@@ -1096,7 +1120,11 @@ class CMailFile
 					//$this->logger = new Swift_Plugins_Loggers_EchoLogger();
 					$this->mailer->registerPlugin(new Swift_Plugins_LoggerPlugin($this->logger));
 				}
+
+				dol_syslog("CMailFile::sendfile: mailer->send, HOST=".$server.", PORT=".$conf->global->$keyforsmtpport, LOG_DEBUG);
+
 				// send mail
+				$failedRecipients = array();
 				try {
 					$result = $this->mailer->send($this->message, $failedRecipients);
 				} catch (Exception $e) {
@@ -1113,6 +1141,10 @@ class CMailFile
 					}
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
+
+					if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+						$this->save_dump_mail_in_err();
+					}
 				} else {
 					dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 				}
@@ -1121,6 +1153,13 @@ class CMailFile
 				// --------------------------------------
 
 				return 'Bad value for sendmode';
+			}
+
+			// Now we delete image files that were created dynamically to manage data inline files
+			foreach ($this->html_images as $val) {
+				if (!empty($val['type']) && $val['type'] == 'cidfromdata') {
+					//dol_delete($val['fullpath']);
+				}
 			}
 
 			$parameters = array('sent' => $res);
@@ -1193,7 +1232,7 @@ class CMailFile
 
 		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 			$outputfile = $dolibarr_main_data_root."/dolibarr_mail.log";
-			$fp = fopen($outputfile, "w");
+			$fp = fopen($outputfile, "w");	// overwrite
 
 			if ($this->sendmode == 'mail') {
 				fputs($fp, $this->headers);
@@ -1206,9 +1245,26 @@ class CMailFile
 			}
 
 			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($outputfile);
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Save content if mail is in error
+	 *  Used for debugging.
+	 *
+	 *  @return	void
+	 */
+	public function save_dump_mail_in_err()
+	{
+		global $dolibarr_main_data_root;
+
+		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
+			$srcfile = $dolibarr_main_data_root."/dolibarr_mail.log";
+			$destfile = $dolibarr_main_data_root."/dolibarr_mail.err";
+
+			dol_move($srcfile, $destfile, 0, 1, 0, 0);
 		}
 	}
 
@@ -1654,7 +1710,7 @@ class CMailFile
 	}
 
 	/**
-	 * Seearch images into html message and init array this->images_encoded if found
+	 * Search images into html message and init array this->images_encoded if found
 	 *
 	 * @param	string	$images_dir		Location of physical images files. For example $dolibarr_main_data_root.'/medias'
 	 * @return	int 		        	>0 if OK, <0 if KO
@@ -1692,7 +1748,7 @@ class CMailFile
 							$this->html_images[$i]["content_type"] = $this->image_types[$ext];
 						}
 						// cid
-						$this->html_images[$i]["cid"] = dol_hash(uniqid(time()), 3); // Force md5 hash (does not contains special chars)
+						$this->html_images[$i]["cid"] = dol_hash($this->html_images[$i]["fullpath"], 'md5'); // Force md5 hash (does not contains special chars)
 						// type
 						$this->html_images[$i]["type"] = 'cidfromurl';
 
@@ -1741,7 +1797,8 @@ class CMailFile
 	}
 
 	/**
-	 * Seearch images with data:image format into html message
+	 * Seearch images with data:image format into html message.
+	 * If we find some, we create it on disk.
 	 *
 	 * @param	string	$images_dir		Location of where to store physicaly images files. For example $dolibarr_main_data_root.'/medias'
 	 * @return	int 		        	>0 if OK, <0 if KO
@@ -1783,17 +1840,22 @@ class CMailFile
 			foreach ($matches[1] as $key => $ext) {
 				// We save the image to send in disk
 				$filecontent = $matches[2][$key];
-				$cid = 'cid000'.dol_hash($this->html, 'md5');
+
+				$cid = 'cid000'.dol_hash($filecontent, 'md5');		// The id must not change if image is same
+
 				$destfiletmp = $images_dir.'/'.$cid.'.'.$ext;
 
-				$fhandle = @fopen($destfiletmp, 'w');
-				if ($fhandle) {
-					$nbofbyteswrote = fwrite($fhandle, base64_decode($filecontent));
-					fclose($fhandle);
-					@chmod($destfiletmp, octdec($conf->global->MAIN_UMASK));
-				} else {
-					$this->errors[] = "Failed to open file '".$destfiletmp."' for write";
-					return -1;
+				if (!dol_is_file($destfiletmp)) {	// If file does not exist yet (this is the case for the first email sent with a data:image inside)
+					dol_syslog("write the cid file ".$destfiletmp);
+					$fhandle = @fopen($destfiletmp, 'w');
+					if ($fhandle) {
+						$nbofbyteswrote = fwrite($fhandle, base64_decode($filecontent));
+						fclose($fhandle);
+						dolChmod($destfiletmp);
+					} else {
+						$this->errors[] = "Failed to open file '".$destfiletmp."' for write";
+						return -1;
+					}
 				}
 
 				if (file_exists($destfiletmp)) {

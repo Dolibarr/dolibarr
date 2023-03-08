@@ -3,9 +3,10 @@
  * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2011-2018 Philippe Grand	     <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2023 Philippe Grand	     <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry	     <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2023      Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,6 +109,14 @@ class Delivery extends CommonObject
 
 	public $commande_id;
 
+	/**
+	 * @var array statuts labels
+	 */
+	public $statuts;
+
+	/**
+	 * @var DeliveryLine[] lines
+	 */
 	public $lines = array();
 
 
@@ -196,7 +205,7 @@ class Delivery extends CommonObject
 			dol_syslog("Delivery::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if (!$conf->expedition_bon->enabled) {
+				if (!isModEnabled('expedition_bon')) {
 					$commande = new Commande($this->db);
 					$commande->id = $this->commande_id;
 					$commande->fetch_lines();
@@ -224,7 +233,7 @@ class Delivery extends CommonObject
 						$error++;
 					}
 
-					if (!$conf->expedition_bon->enabled) {
+					if (!isModEnabled('expedition_bon')) {
 						// TODO standardize status uniformiser les statuts
 						$ret = $this->setStatut(2, $this->origin_id, $this->origin);
 						if (!$ret) {
@@ -721,6 +730,24 @@ class Delivery extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$datas = [];
+
+		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("ShowReceiving").'</u>:<br>';
+		$datas['picto'] .= '<b>'.$langs->trans("Status").'</b>: '.$this->ref;
+
+		return $datas;
+	}
+
+	/**
 	 *	Return clicable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
@@ -733,8 +760,18 @@ class Delivery extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("ShowReceiving").'</u>:<br>';
-		$label .= '<b>'.$langs->trans("Status").'</b>: '.$this->ref;
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
+		}
+		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/delivery/card.php?id='.$this->id;
 
@@ -750,12 +787,11 @@ class Delivery extends CommonObject
 		}
 		//}
 
-
-		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.$url.'"'.$dataparams.' title="'.dol_escape_htmltag($label, 1).'" class="'.$classfortooltip.'">';
 		$linkend = '</a>';
 
 		if ($withpicto) {
-			$result .= ($linkstart.img_object($label, $this->picto, 'class="classfortooltip"').$linkend);
+			$result .= ($linkstart.img_object($label, $this->picto, $dataparams.' class="'.$classfortooltip.'"').$linkend);
 		}
 		if ($withpicto && $withpicto != 2) {
 			$result .= ' ';
@@ -819,7 +855,7 @@ class Delivery extends CommonObject
 				$line->product_type		= $obj->fk_product_type;
 				$line->fk_origin_line = $obj->fk_origin_line;
 
-				$line->price = $obj->price;
+				$line->price = $obj->subprice;
 				$line->total_ht = $obj->total_ht;
 
 				// units
@@ -1118,7 +1154,6 @@ class Delivery extends CommonObject
 }
 
 
-
 /**
  *  Management class of delivery note lines
  */
@@ -1171,12 +1206,22 @@ class DeliveryLine extends CommonObjectLine
 	public $product_ref;
 	public $product_label;
 
+	public $price;
+
 	public $fk_origin_line;
 	public $origin_id;
 
-	public $price;
-
+	/**
+	 * @var int origin line ID
+	 */
 	public $origin_line_id;
+
+	/**
+	 * @var int origin line ID
+	 * @deprecated
+	 * @see $origin_line_id
+	 */
+	public $commande_ligne_id;
 
 
 	/**

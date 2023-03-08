@@ -45,6 +45,7 @@ $mode       = GETPOST('mode', 'aZ');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_group = GETPOST('search_group');
+$search = array();
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -380,13 +381,13 @@ while ($i < $imaxinloop) {
 
 	$object->name = $obj->name;
 	$object->note = $obj->note;
-	$object->members = $obj->nb;
 	$object->nb_rights = $obj->nbpermissions;
+	$object->nb_users = $obj->nb;
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="'.$savnbfield.'">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
 		print $object->getKanbanView('');

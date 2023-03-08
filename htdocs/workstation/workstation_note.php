@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('workstation', 'companies'));
+$langs->loadLangs(array('mrp', 'companies'));
 
 // Get parameters
 $id         = GETPOST('id', 'int');
