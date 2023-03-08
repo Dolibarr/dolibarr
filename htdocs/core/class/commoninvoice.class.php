@@ -889,7 +889,7 @@ abstract class CommonInvoice extends CommonObject
 	{
 		global $conf, $mysoc, $user, $langs;
 
-		if ($type != 'bank-transfer' && empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+		if ($type != 'bank-transfer' && $type != 'credit-transfer' && empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
 			return 0;
 		}
 		if ($type != 'direct-debit' && empty($conf->global->STRIPE_SEPA_CREDIT_TRANSFER)) {
