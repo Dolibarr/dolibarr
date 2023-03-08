@@ -1310,7 +1310,7 @@ class Task extends CommonObjectLine
 			}
 
 			// Update hourly rate of this time spent entry
-			$resql_thm_user = $this->db->query("SELECT thm FROM " . MAIN_DB_PREFIX . "user WHERE rowid = " . ((int)$timespent->fk_user));
+			$resql_thm_user = $this->db->query("SELECT thm FROM " . MAIN_DB_PREFIX . "user WHERE rowid = " . ((int) $timespent->fk_user));
 			if (!empty($resql_thm_user)) {
 				$obj_thm_user = $this->db->fetch_object($resql_thm_user);
 				$timespent->thm = $obj_thm_user->thm;
@@ -1573,7 +1573,6 @@ class Task extends CommonObjectLine
 		}
 
 		return 0;
-
 	}
 
 	/**
@@ -1760,8 +1759,8 @@ class Task extends CommonObjectLine
 
 			// Update hourly rate of this time spent entry, but only if it was not set initialy
 			$res_update = 1;
-			if(empty($timespent->thm) || !empty($conf->global->TIMESPENT_ALWAYS_UPDATE_THM)) {
-				$resql_thm_user = $this->db->query("SELECT thm FROM " . MAIN_DB_PREFIX . "user WHERE rowid = " . ((int)$timespent->fk_user));
+			if (empty($timespent->thm) || !empty($conf->global->TIMESPENT_ALWAYS_UPDATE_THM)) {
+				$resql_thm_user = $this->db->query("SELECT thm FROM " . MAIN_DB_PREFIX . "user WHERE rowid = " . ((int) $timespent->fk_user));
 				if (!empty($resql_thm_user)) {
 					$obj_thm_user = $this->db->fetch_object($resql_thm_user);
 					$timespent->thm = $obj_thm_user->thm;
