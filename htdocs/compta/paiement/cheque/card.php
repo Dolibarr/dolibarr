@@ -42,6 +42,11 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
+$type = GETPOST('type');
+if (empty($type)) {
+	$type = 'CHQ';
+}
+
 $object = new RemiseCheque($db);
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -60,6 +65,7 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
 $upload_dir = $conf->bank->multidir_output[$object->entity ? $object->entity : $conf->entity]."/checkdeposits";
+
 // filter by dates from / to
 $search_date_start_day = GETPOST('search_date_start_day', 'int');
 $search_date_start_month = GETPOST('search_date_start_month', 'int');
@@ -132,8 +138,8 @@ if ($action == 'setref' && $user->rights->banque->cheque) {
 }
 
 if ($action == 'create' && GETPOST("accountid", "int") > 0 && $user->rights->banque->cheque) {
-	if (is_array(GETPOST('toRemise'))) {
-		$result = $object->create($user, GETPOST("accountid", "int"), 0, GETPOST('toRemise'));
+	if (GETPOSTISARRAY('toRemise')) {
+		$result = $object->create($user, GETPOST("accountid", "int"), 0, GETPOST('toRemise', 'array:int'));
 		if ($result > 0) {
 			if ($object->statut == 1) {     // If statut is validated, we build doc
 				$object->fetch($object->id); // To force to reload all properties in correct property name
@@ -286,7 +292,12 @@ if (GETPOST('removefilter')) {
 	$filteraccountid = 0;
 }
 
-$title = $langs->trans("Cheques")." - ".$langs->trans("Card");
+if ($type == 'CHQ') {
+	$title = $langs->trans("Cheques");
+} else {
+	$title = $type;
+}
+
 $helpurl = "";
 llxHeader("", $title, $helpurl);
 
@@ -302,7 +313,7 @@ if ($action == 'new') {
 	$hselected = $h;
 	$h++;
 
-	print load_fiche_titre($langs->trans("Cheques"), '', 'bank_account');
+	print load_fiche_titre($title, '', 'bank_account');
 } else {
 	$result = $object->fetch($id, $ref);
 	if ($result < 0) {
@@ -357,18 +368,29 @@ if ($action == 'new') {
 
 	$now = dol_now();
 
-	print '<span class="opacitymedium">'.$langs->trans("SelectChequeTransactionAndGenerate").'</span><br><br>'."\n";
+	if ($type == 'CHQ') {
+		print '<span class="opacitymedium">'.$langs->trans("SelectChequeTransactionAndGenerate").'</span><br><br>'."\n";
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("SelectPaymentTransactionAndGenerate", $type).'</span><br><br>'."\n";
+	}
 
 	print '<form class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="new">';
+	print '<input type="hidden" name="type" value="'.$type.'">';
 
 	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	// Filter
-	print '<tr><td class="titlefieldcreate">'.$langs->trans("DateChequeReceived").'</td><td>';
+	print '<tr><td class="titlefieldcreate">';
+	if ($type == 'CHQ') {
+		print $langs->trans("DateChequeReceived");
+	} else {
+		print $langs->trans("DatePaymentForDeposit");
+	}
+	print '</td><td>';
 	// filter by dates from / to
 	print '<div class="nowrap">';
 	print $form->selectDate($search_date_start, 'search_date_start_', 0, 0, 1, '', 1, 1, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -402,7 +424,7 @@ if ($action == 'new') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON (b.fk_account = ba.rowid)";
-	$sql .= " WHERE b.fk_type = 'CHQ'";
+	$sql .= " WHERE b.fk_type = '".$db->escape($type)."'";
 	$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 	$sql .= " AND b.fk_bordereau = 0";
 	$sql .= " AND b.amount > 0";
@@ -437,7 +459,11 @@ if ($action == 'new') {
 		}
 
 		if ($i == 0) {
-			print '<div class="opacitymedium">'.$langs->trans("NoWaitingChecks").'</div><br>';
+			if ($type == 'CHQ') {
+				print '<div class="opacitymedium">'.$langs->trans("NoWaitingChecks").'</div><br>';
+			} else {
+				print '<div class="opacitymedium">'.$langs->trans("NoWaitingPaymentForDeposit", $type).'</div><br>';
+			}
 		}
 	}
 
@@ -462,6 +488,7 @@ if ($action == 'new') {
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="create">';
+		print '<input type="hidden" name="type" value="'.$type.'">';
 		print '<input type="hidden" name="accountid" value="'.$bid.'">';
 
 		$moreforfilter = '';
@@ -469,11 +496,17 @@ if ($action == 'new') {
 		print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("DateChequeReceived").'</td>'."\n";
+		print '<td>';
+		if ($type == 'CHQ') {
+			print $langs->trans("DateChequeReceived");
+		} else {
+			print $langs->trans("DatePaymentForDepositReceived", $type);
+		}
+		print '</td>'."\n";
 		print '<td>'.$langs->trans("ChequeNumber")."</td>\n";
 		print '<td>'.$langs->trans("CheckTransmitter")."</td>\n";
 		print '<td>'.$langs->trans("Bank")."</td>\n";
-		print '<td>'.$langs->trans("Amount")."</td>\n";
+		print '<td class="right">'.$langs->trans("Amount")."</td>\n";
 		print '<td class="center">'.$langs->trans("Payment")."</td>\n";
 		print '<td class="center">'.$langs->trans("LineRecord")."</td>\n";
 		print '<td class="center">'.$langs->trans("Select")."<br>";
@@ -632,7 +665,7 @@ if ($action == 'new') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON (b.fk_account = ba.rowid)";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
 	$sql .= " WHERE ba.entity IN (".getEntity('bank_account').")";
-	$sql .= " AND b.fk_type= 'CHQ'";
+	$sql .= " AND b.fk_type= '".$db->escape($type)."'";
 	$sql .= " AND b.fk_bordereau = ".((int) $object->id);
 	$sql .= $db->order($sortfield, $sortorder);
 
