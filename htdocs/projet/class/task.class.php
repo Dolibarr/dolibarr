@@ -753,7 +753,7 @@ class Task extends CommonObjectLine
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
+			$dataparams = " data-params='".json_encode($params)."'";
 			// $label = $langs->trans('Loading');
 		}
 		$label = implode($this->getTooltipContentArray($params));
@@ -842,9 +842,11 @@ class Task extends CommonObjectLine
 	 * @param   array   $search_array_options Array of search
 	 * @param   int     $loadextras         Fetch all Extrafields on each task
 	 * @param	int		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
+	 * @param	string	$sortfield			Sort field
+	 * @param	string	$sortorder			Sort order
 	 * @return 	array|string				Array of tasks
 	 */
-	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1)
+	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1, $sortfield = '', $sortorder = '')
 	{
 		global $conf, $hookmanager;
 
@@ -984,8 +986,11 @@ class Task extends CommonObjectLine
 			}
 		}
 
-
-		$sql .= " ORDER BY p.ref, t.rang, t.dateo";
+		if ($sortfield && $sortorder) {
+			$sql .= $this->db->order($sortfield, $sortorder);
+		} else {
+			$sql .= " ORDER BY p.ref, t.rang, t.dateo";
+		}
 
 		//print $sql;exit;
 		dol_syslog(get_class($this)."::getTasksArray", LOG_DEBUG);
@@ -2366,6 +2371,9 @@ class Task extends CommonObjectLine
 	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $langs, $conf;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -2374,6 +2382,7 @@ class Task extends CommonObjectLine
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'fk_project') ) {
 			$return .= '<br><span class="info-box-status ">'.$this->fk_project.'</span>';
 		}

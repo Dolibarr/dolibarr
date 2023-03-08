@@ -73,7 +73,7 @@ print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://ww
 print '<html>'."\n";
 print '<head>'."\n";
 if (GETPOST('mode') && GETPOST('mode') == 'test') {
-	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php"></script>'."\n";
+	print '<script nonce="'.getNonce().'" type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php"></script>'."\n";
 } else {
 	print '<title>'.$langs->trans("Calendar").'</title>';
 }
@@ -93,7 +93,7 @@ $tradTemp = array(
 	$langs->trans("November"),
 	$langs->trans("December")
 );
-print '<script type="text/javascript">';
+print '<script nonce="'.getNonce().'" type="text/javascript">';
 print 'var tradMonths = [';
 foreach ($tradTemp as $val) {
 	print '"'.addslashes($val).'",';

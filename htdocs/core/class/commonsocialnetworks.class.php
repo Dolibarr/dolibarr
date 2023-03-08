@@ -16,9 +16,9 @@
  */
 
 /**
- *       \file       htdocs/core/class/commonincoterm.class.php
+ *       \file       htdocs/core/class/commonsocialnetworks.class.php
  *       \ingroup    core
- *       \brief      File of the superclass of object classes that support incoterm (customer and supplier)
+ *       \brief      File of the superclass of object classes that support socialnetworks
  */
 
 
@@ -79,7 +79,7 @@ trait CommonSocialNetworks
 		print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
 
 		if ($nbofnetworks > 1) {
-			print '<script type="text/javascript">
+			print '<script nonce="'.getNonce().'" type="text/javascript">
 		$("document").ready(function() { toogleSocialNetwork(false); });
 
 		jQuery(".socialnetworklnk").click(function() {

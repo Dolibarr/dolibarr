@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020  Lenin Rivas		   <lenin@leninrivas.com>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2023       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,6 @@
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
  * Class for Mo
@@ -93,7 +91,6 @@ class Mo extends CommonObject
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 
-	// BEGIN MODULEBUILDER PROPERTIES
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
@@ -101,13 +98,13 @@ class Mo extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'showoncombobox'=>'1', 'noteditable'=>1),
-		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:t.status=1', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>'$conf->bom->enabled', 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM", 'css'=>'minwidth100 maxwidth300', 'csslist'=>'nowraponall', 'picto'=>'bom'),
+		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:(t.status:=:1)', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>'$conf->bom->enabled', 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM", 'css'=>'minwidth100 maxwidth300', 'csslist'=>'nowraponall', 'picto'=>'bom'),
 		'mrptype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>1, 'position'=>34, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing', 1=>'Disassemble'), 'css'=>'minwidth150', 'csslist'=>'minwidth150 center'),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:0', 'label'=>'Product', 'enabled'=>'$conf->product->enabled', 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce", 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax100', 'picto'=>'product'),
 		'qty' => array('type'=>'real', 'label'=>'QtyToProduce', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>1, 'comment'=>"Qty to produce", 'css'=>'width75', 'default'=>1, 'isameasure'=>1),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>42, 'notnull'=>-1, 'searchall'=>1, 'showoncombobox'=>'2', 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax200', 'alwayseditable'=>1),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax150'),
-		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'picto'=>'project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>51, 'notnull'=>-1, 'index'=>1, 'css'=>'minwidth200 maxwidth400', 'csslist'=>'tdoverflowmax100'),
+		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Project', 'picto'=>'project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>51, 'notnull'=>-1, 'index'=>1, 'css'=>'minwidth200 maxwidth400', 'csslist'=>'tdoverflowmax100'),
 		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'picto'=>'stock', 'enabled'=>'$conf->stock->enabled', 'visible'=>1, 'position'=>52, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax200'),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61, 'notnull'=>-1,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>62, 'notnull'=>-1,),
@@ -126,6 +123,10 @@ class Mo extends CommonObject
 	public $rowid;
 	public $entity;
 	public $ref;
+
+	/**
+	 * @var int mrptype
+	 */
 	public $mrptype;
 	public $label;
 	public $qty;
@@ -154,7 +155,16 @@ class Mo extends CommonObject
 	public $fk_user_modif;
 	public $import_key;
 	public $status;
+
+	/**
+	 * @var int ID of product
+	 */
 	public $fk_product;
+
+	/**
+	 * @var Product product object
+	 */
+	public $product;
 
 	/**
 	 * @var integer|string date_start_planned
@@ -167,10 +177,20 @@ class Mo extends CommonObject
 	public $date_end_planned;
 
 
+	/**
+	 * @var int ID bom
+	 */
 	public $fk_bom;
-	public $fk_project;
-	// END MODULEBUILDER PROPERTIES
 
+	/**
+	 * @var Bom bom
+	 */
+	public $bom;
+
+	/**
+	 * @var int ID project
+	 */
+	public $fk_project;
 
 	// If this object has a subtable with lines
 
@@ -205,11 +225,19 @@ class Mo extends CommonObject
 	public $lines = array();
 
 	/**
-	 * @var integer	Mo parent line
-	 * */
+	 * @var MoLine     MO line
+	 */
+	public $line = array();
 
+	/**
+	 * @var int ID of parent line
+	 */
 	public $fk_parent_line;
 
+	/**
+	 * @var array tpl
+	 */
+	public $tpl = array();
 
 	/**
 	 * Constructor
@@ -1088,7 +1116,8 @@ class Mo extends CommonObject
 	{
 		global $conf, $langs;
 
-		$langs->load('mrp');
+		$langs->loadLangs(['mrp', 'products']);
+		$nofetch = isset($params['nofetch']) ? true : false;
 
 		$datas = [];
 
@@ -1099,6 +1128,24 @@ class Mo extends CommonObject
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (isset($this->label)) {
 			$datas['label'] = '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
+		}
+		if (isset($this->mrptype)) {
+			$datas['type'] = '<br><b>'.$langs->trans('Type').':</b> '.$this->fields['mrptype']['arrayofkeyval'][$this->mrptype];
+		}
+		if (isset($this->qty)) {
+			$datas['qty'] = '<br><b>'.$langs->trans('QtyToProduce').':</b> '.$this->qty;
+		}
+		if (!$nofetch && isset($this->fk_product)) {
+			require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+			$product = new Product($this->db);
+			$product->fetch($this->fk_product);
+			$datas['product'] = '<br><b>'.$langs->trans('Product').':</b> '.$product->getNomUrl(1, '', 0, -1, 1);
+		}
+		if (!$nofetch && isset($this->fk_warehouse)) {
+			require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
+			$warehouse = new Entrepot($this->db);
+			$warehouse->fetch($this->fk_warehouse);
+			$datas['warehouse'] = '<br><b>'.$langs->trans('WarehouseForProduction').':</b> '.$warehouse->getNomUrl(1, '', 0, 1);
 		}
 
 		return $datas;
@@ -1127,13 +1174,13 @@ class Mo extends CommonObject
 			'id' => $this->id,
 			'objecttype' => $this->element,
 			'option' => $option,
+			'nofetch' => 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
+			$dataparams = " data-params='".json_encode($params)."'";
 		}
 
 		$label = implode($this->getTooltipContentArray($params));
@@ -1458,7 +1505,7 @@ class Mo extends CommonObject
 	 *  If lines are into a template, title must also be into a template
 	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
-	 * 	@param	CommonObjectLine	$line				Line
+	 * 	@param	MoLine	$line				Line
 	 * 	@param	string				$var				Var
 	 *	@param	string				$restrictlist		''=All lines, 'services'=Restrict to services only (strike line if not)
 	 *  @param	string				$defaulttpldir		Directory where to find the template
@@ -1519,7 +1566,7 @@ class Mo extends CommonObject
 	/**
 	 * Function used to return childs of Mo
 	 *
-	 * @return array|int 			array if OK, -1 if KO
+	 * @return Mo[]|int 			array if OK, -1 if KO
 	 */
 	public function getMoChilds()
 	{
@@ -1557,7 +1604,7 @@ class Mo extends CommonObject
 	/**
 	 * Function used to return childs of Mo
 	 *
-	 * @return Object|int			MO object if OK, -1 if KO, 0 if not exist
+	 * @return Mo|int			MO object if OK, -1 if KO, 0 if not exist
 	 */
 	public function getMoParent()
 	{
@@ -1599,6 +1646,9 @@ class Mo extends CommonObject
 	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -1607,6 +1657,7 @@ class Mo extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'fk_bom')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->fk_bom.'</span>';
 		}
@@ -1614,7 +1665,7 @@ class Mo extends CommonObject
 			$return .= '<br><span class="info-box-label">'.$langs->trans('Quantity').' : '.$this->qty.'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -1680,6 +1731,7 @@ class MoLine extends CommonObjectLine
 	public $qty;
 	public $qty_frozen;
 	public $disable_stock_change;
+	public $efficiency;
 	public $batch;
 	public $role;
 	public $fk_mrp_production;
@@ -1689,6 +1741,7 @@ class MoLine extends CommonObjectLine
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
+	public $fk_parent_line;
 
 	/**
 	 * Constructor

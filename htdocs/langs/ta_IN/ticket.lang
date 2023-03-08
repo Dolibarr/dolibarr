@@ -26,6 +26,7 @@ Permission56002=டிக்கெட்டுகளை மாற்றவும
 Permission56003=டிக்கெட்டுகளை நீக்கு
 Permission56004=டிக்கெட்டுகளை நிர்வகிக்கவும்
 Permission56005=அனைத்து மூன்றாம் தரப்பினரின் டிக்கெட்டுகளையும் பார்க்கவும் (வெளிப்புற பயனர்களுக்கு பயனுள்ளதாக இல்லை, எப்போதும் அவர்கள் சார்ந்திருக்கும் மூன்றாம் தரப்பினருக்கு மட்டுமே)
+Permission56006=Export tickets
 
 Tickets=Tickets
 TicketDictType=டிக்கெட் - வகைகள்
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=வெளி பங்களிப்ப
 
 OriginEmail=நிருபர் மின்னஞ்சல்
 Notify_TICKET_SENTBYMAIL=மின்னஞ்சல் மூலம் டிக்கெட் செய்தியை அனுப்பவும்
+
+ExportDataset_ticket_1=Tickets
 
 # Status
 Read=படி
@@ -183,7 +186,7 @@ CreatedBy=உருவாக்கியது
 NewTicket=புதிய டிக்கெட்
 SubjectAnswerToTicket=டிக்கெட் பதில்
 TicketTypeRequest=கோரிக்கை வகை
-TicketCategory=டிக்கெட் வகைப்பாடு
+TicketCategory=Ticket group
 SeeTicket=சீட்டைப் பார்க்கவும்
 TicketMarkedAsRead=டிக்கெட் படித்ததாகக் குறிக்கப்பட்டுள்ளது
 TicketReadOn=படிக்கவும்

@@ -31,7 +31,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	bottom: 0;
 	width: 4px;
 	background: #ddd;
-	left: 31px;
+	left: 25px;
 	margin: 0;
 	border-radius: 2px;
 }
@@ -56,7 +56,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	margin-top: 0;
 	background: #fff;
 	color: #444;
-	margin-left: 60px;
+	margin-left: 50px;
 	margin-right: 0px;
 	padding: 0;
 	position: relative;
@@ -123,7 +123,7 @@ a.timeline-btn:hover
 	color: #333;
 	border-bottom: 1px solid #f4f4f4;
 	padding: 10px;
-	font-size: 14px;
+	font-size: 1em;
 	font-weight: normal;
 	line-height: 1.1;
 }
@@ -148,14 +148,14 @@ a.timeline-btn:hover
 .timeline > li > .ion {
 	width: 30px;
 	height: 30px;
-	font-size: 15px;
+	font-size: 1em;
 	line-height: 30px;
 	position: absolute;
 	color: #666;
 	background: #d2d6de;
 	border-radius: 50%;
 	text-align: center;
-	left: 18px;
+	left: 12px;
 	top: 5px;
 }
 .timeline > .time-label > span {
@@ -211,3 +211,10 @@ a.timeline-btn:hover
 	margin-right: 5px;
 }
 
+/* Force values for small screen 767 */
+@media only screen and (max-width: 767px)
+{
+	.messaging-author.inline-block {
+		padding-bottom: 10px;
+	}
+}

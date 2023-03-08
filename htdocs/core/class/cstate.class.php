@@ -49,6 +49,11 @@ class Cstate // extends CommonObject
 	 */
 	public $id;
 
+	/**
+	 * @var int ID
+	 */
+	public $rowid;
+
 	public $code_departement;
 	public $code;
 

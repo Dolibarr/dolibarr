@@ -699,7 +699,7 @@ if ($object->id > 0) {
 	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop boxtablenomarginbottom centpercent">';
 	$boxstat .= '<tr class="impair nohover"><td colspan="2" class="tdboxstats nohover">';
 
-	if (isModEnabled("propal") && $user->rights->propal->lire) {
+	if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 		// Box proposals
 		$tmp = $object->getOutstandingProposals();
 		$outstandingOpened = $tmp['opened'];
@@ -720,7 +720,7 @@ if ($object->id > 0) {
 		}
 	}
 
-	if (isModEnabled('commande') && $user->rights->commande->lire) {
+	if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
 		// Box commandes
 		$tmp = $object->getOutstandingOrders();
 		$outstandingOpened = $tmp['opened'];
@@ -741,7 +741,7 @@ if ($object->id > 0) {
 		}
 	}
 
-	if (isModEnabled('facture') && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 		// Box factures
 		$tmp = $object->getOutstandingBills('customer', 0);
 		$outstandingOpened = $tmp['opened'];
@@ -820,7 +820,7 @@ if ($object->id > 0) {
 	/*
 	 * Latest proposals
 	 */
-	if (isModEnabled("propal") && $user->rights->propal->lire) {
+	if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 		$langs->load("propal");
 
 		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht";
@@ -915,7 +915,7 @@ if ($object->id > 0) {
 	/*
 	 * Latest orders
 	 */
-	if (isModEnabled('commande') && $user->rights->commande->lire) {
+	if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
 		$param ="";
 
 		$sql = "SELECT s.nom, s.rowid";
@@ -1124,7 +1124,7 @@ if ($object->id > 0) {
 	/*
 	 * Latest contracts
 	 */
-	if (isModEnabled('contrat') && $user->rights->contrat->lire) {
+	if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
 		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut as contract_status, c.datec as dc, c.date_contrat as dcon, c.ref_customer as refcus, c.ref_supplier as refsup, c.entity,";
 		$sql .= " c.last_main_doc, c.model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
@@ -1232,7 +1232,7 @@ if ($object->id > 0) {
 	/*
 	 * Latest interventions
 	 */
-	if (isModEnabled('ficheinter') && $user->rights->ficheinter->lire) {
+	if (isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire')) {
 		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_statut, f.duree as duration, f.datei as startdate, f.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
@@ -1318,7 +1318,7 @@ if ($object->id > 0) {
 	/*
 	 *   Latest invoices templates
 	 */
-	if (isModEnabled('facture') && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 		$sql = 'SELECT f.rowid as id, f.titre as ref';
 		$sql .= ', f.total_ht';
 		$sql .= ', f.total_tva';
@@ -1413,7 +1413,7 @@ if ($object->id > 0) {
 	/*
 	 *   Latest invoices
 	 */
-	if (isModEnabled('facture') && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 		$sql = 'SELECT f.rowid as facid, f.ref, f.type';
 		$sql .= ', f.total_ht';
 		$sql .= ', f.total_tva';
@@ -1539,7 +1539,7 @@ if ($object->id > 0) {
 	}
 
 	print '</div></div>';
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
 
@@ -1557,12 +1557,12 @@ if ($object->id > 0) {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("ThirdPartyIsClosed").'</a></div>';
 		}
 
-		if (isModEnabled("propal") && $user->rights->propal->creer && $object->status == 1) {
+		if (isModEnabled("propal") && $user->hasRight('propal', 'creer') && $object->status == 1) {
 			$langs->load("propal");
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a></div>';
 		}
 
-		if (isModEnabled('commande') && $user->rights->commande->creer && $object->status == 1) {
+		if (isModEnabled('commande') && $user->hasRight('commande', 'creer') && $object->status == 1) {
 			$langs->load("orders");
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a></div>';
 		}
@@ -1572,7 +1572,7 @@ if ($object->id > 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddContract").'</a></div>';
 		}
 
-		if (isModEnabled('ficheinter') && $user->rights->ficheinter->creer && $object->status == 1) {
+		if (isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'creer') && $object->status == 1) {
 			$langs->load("fichinter");
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a></div>';
 		}

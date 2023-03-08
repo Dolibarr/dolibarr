@@ -742,8 +742,7 @@ class ActionComm extends CommonObject
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
-					$this->errors += $hookmanager->errors;
-					$this->error = $hookmanager->error;
+					$this->setErrorsFromObject($hookmanager);
 					$error++;
 				}
 			}
@@ -1578,7 +1577,9 @@ class ActionComm extends CommonObject
 	{
 		global $conf, $langs, $user;
 		$langs->load('agenda');
-		$datas = [];
+
+		$datas = array();
+		$nofetch = !empty($params['nofetch']);
 
 		// Set label of type
 		$labeltype = '';
@@ -1630,6 +1631,12 @@ class ActionComm extends CommonObject
 			$datas['note'] = '<div class="tenlinesmax">';
 			$datas['note'] .= (dol_textishtml($texttoshow) ? str_replace(array("\r", "\n"), "", $texttoshow) : str_replace(array("\r", "\n"), '<br>', $texttoshow));
 			$datas['note'] .= '</div>';
+		}
+		// show categories for this record only in ajax to not overload lists
+		if (isModEnabled('categorie') && !$nofetch) {
+			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+			$form = new Form($this->db);
+			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_ACTIONCOMM, 1);
 		}
 
 		return $datas;
@@ -1734,6 +1741,7 @@ class ActionComm extends CommonObject
 				'id' => $this->id,
 				'objecttype' => $this->element,
 				'option' => $option,
+				'nofetch' => 1,
 			];
 			$classfortooltip = 'classforajaxtooltip';
 			$dataparams = ' data-params='.json_encode($params);
@@ -2270,7 +2278,7 @@ class ActionComm extends CommonObject
 
 			// Create temp file
 			$outputfiletmp = tempnam($conf->agenda->dir_temp, 'tmp'); // Temporary file (allow call of function by different threads
-			@chmod($outputfiletmp, octdec($conf->global->MAIN_UMASK));
+			dolChmod($outputfiletmp);
 
 			// Write file
 			if ($format == 'vcal') {
@@ -2282,7 +2290,7 @@ class ActionComm extends CommonObject
 			}
 
 			if ($result >= 0) {
-				if (dol_move($outputfiletmp, $outputfile, 0, 1)) {
+				if (dol_move($outputfiletmp, $outputfile, 0, 1, 0, 0)) {
 					$result = 1;
 				} else {
 					$this->error = 'Failed to rename '.$outputfiletmp.' into '.$outputfile;
@@ -2542,7 +2550,7 @@ class ActionComm extends CommonObject
 						}
 
 						// Sender
-						$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
+						$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 						if (empty($from)) {
 							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
 							$error++;
@@ -2550,7 +2558,7 @@ class ActionComm extends CommonObject
 
 						if (!$error) {
 							// Errors Recipient
-							$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
+							$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
 
 							// Mail Creation
 							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');

@@ -434,7 +434,7 @@ if ($result) {
 					$tabpay[$obj->rowid]["paymentsalid"] = $paymentsalstatic->id;
 
 					// This part of code is no more required. it is here to solve case where a link were missing (ith v14.0.0) and keep writing in accountancy complete.
-					// Note: A better way to fix this is to delete payement of salary and recreate it, or to fix the bookkeeping table manually after.
+					// Note: A better way to fix this is to delete payment of salary and recreate it, or to fix the bookkeeping table manually after.
 					if (!empty($conf->global->ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USEr_ON_SALARY_BANK_PAYMENT)) {
 						$tmpsalary = new Salary($db);
 						$tmpsalary->fetch($paymentsalstatic->id);

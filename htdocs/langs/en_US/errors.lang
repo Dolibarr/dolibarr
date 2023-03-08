@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be
 ErrorLoginDateValidity=Error, this login is outside the validity date range
 ErrorValueLength=Length of field '<b>%s</b>' must be higher than '<b>%s</b>'
 ErrorReservedKeyword=The word '<b>%s</b>' is a reserved keyword
+ErrorFilenameReserved=The filename <b>%s</b> can't be used as it is a reserved and protected command. 
 ErrorNotAvailableWithThisDistribution=Not available with this distribution
 ErrorPublicInterfaceNotEnabled=Public interface was not enabled
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=The language of new page must be defined if it is set as a translation of another page
@@ -305,6 +306,10 @@ ErrorDateOfMovementLowerThanDateOfFileTransmission=The date of the bank transact
 ErrorTooMuchFileInForm=Too much files in form, the maximum number is %s file(s)
 ErrorSessionInvalidatedAfterPasswordChange=The session was been invalidated following a change of password, status or dates of validity. Please relogin.
 ErrorExistingPermission = Permission <b>%s</b> for object <b>%s</b> already exists
+ErrorFieldExist=The value for <b>%s</b> already exist 
+ErrorEqualModule=Module invalid in <b>%s</b>
+ErrorFieldValue=Value for <b>%s</b> is incorrect
+ErrorCoherenceMenu=<b>%s</b> is required when <b>%s</b> is 'left'
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Erreur, le paramètre <b> %s </b> 
 ErrorLoginDateValidity=Erreur, cet identifiant est hors de la plage de date de validité
 ErrorValueLength=La longueur du champ <b>%s</b> doit être supérieure à <b>%s</b>
 ErrorReservedKeyword=Le terme '<b>%s</b>' est un mot clé réservé
+ErrorFilenameReserved=The filename <b>%s</b> can't be used as it is a reserved and protected command.
 ErrorNotAvailableWithThisDistribution=Non disponible dans cette distribution
 ErrorPublicInterfaceNotEnabled=L’interface publique n’a pas été activée
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=La langue d'une nouvelle page, si elle est la traduction d'une autre page, doit être définie
@@ -305,7 +306,11 @@ ErrorDateOfMovementLowerThanDateOfFileTransmission=La date de l'opération banca
 ErrorTooMuchFileInForm=Trop de fichiers dans le formulaire, le nombre maximum est de %s fichier(s)
 ErrorExistingPermission = La permission <b>%s</b> pour l'objet <b>%s</b> est dejà existante
 ErrorSessionInvalidatedAfterPasswordChange=La session a été invalidée suite à un changement de mot de passe, d'état ou de dates de validité. Veuillez vous reconnecter.
-
+ErrorExistingPermission = La permission <b>%s</b> pour l'objet <b>%s</b> existe déjà.
+ErrorFieldExist=La valeur pour <b>%s</b> existe déjà
+ErrorEqualModule=Module invalide dans <b>%s</b>.
+ErrorFieldValue=La valeur pour <b>%s</b> est incorrecte
+ErrorCoherenceMenu=Le champ <b>%s</b> est requis lorsque <b>%s</b> vaut 'left'
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.
@@ -344,7 +349,7 @@ WarningPaypalPaymentNotCompatibleWithStrict=La valeur 'Strict' fait que les fonc
 WarningThemeForcedTo=Attention, le choix du thème a été forcé à <b> %s </b> par la constante cachée MAIN_FORCETHEME
 WarningPagesWillBeDeleted=Attention, cela supprimera également toutes les pages/conteneurs existants du site. Vous devriez exporter votre site Web avant, afin d'avoir une sauvegarde pour le réimporter plus tard.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=La validation automatique est désactivée lorsque l'option de diminution du stock est définie sur "Validation de la facture".
-WarningModuleNeedRefrech = Module <b>%s</b> desactivé. N'oublier pas de le réactivé 
+WarningModuleNeedRefrech = Le module <b>%s</b> a été désactivé. N'oubliez pas de le réactiver
 
 # Validate
 RequireValidValue = Valeur non valide

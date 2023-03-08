@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -664,7 +664,7 @@ if ($rowid > 0) {
 	print "</table>\n";
 
 	print "</div></div>\n";
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
 
@@ -946,6 +946,8 @@ if ($rowid > 0) {
 
 		print '<tr>';
 		// Date start subscription
+		$currentyear = dol_print_date(time(), "%Y");
+		$currentmonth = dol_print_date(time(), "%m");
 		print '<td class="fieldrequired">'.$langs->trans("DateSubscription").'</td><td>';
 		if (GETPOST('reday')) {
 			$datefrom = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
@@ -955,7 +957,7 @@ if ($rowid > 0) {
 			if ($object->datefin > 0 && dol_time_plus_duree($object->datefin, $defaultdelay, $defaultdelayunit) > dol_now()) {
 				$datefrom = dol_time_plus_duree($object->datefin, 1, 'd');
 			} else {
-				$datefrom = dol_get_first_day(dol_print_date(time(), "%Y"));
+				$datefrom = dol_get_first_day($currentyear);
 			}
 		}
 		print $form->selectDate($datefrom, '', '', '', '', "subscription", 1, 1);
@@ -966,7 +968,13 @@ if ($rowid > 0) {
 			$dateto = dol_mktime(0, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
 		}
 		if (!$dateto) {
-			$dateto = -1; // By default, no date is suggested
+			if (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH')) {
+				$dateto = dol_get_last_day($currentyear, $currentmonth);
+			} elseif (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR')) {
+				$dateto = dol_get_last_day($currentyear);
+			} else {
+				$dateto = -1; // By default, no date is suggested
+			}
 		}
 		print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td>';
 		print $form->selectDate($dateto, 'end', '', '', '', "subscription", 1, 0);

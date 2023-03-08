@@ -91,7 +91,7 @@ MailingModuleDescContactsByFunction=Kontaktlar joylashuvi bo'yicha
 MailingModuleDescEmailsFromFile=Fayldan elektron pochta xabarlari
 MailingModuleDescEmailsFromUser=Foydalanuvchi tomonidan kiritilgan elektron pochta xabarlari
 MailingModuleDescDolibarrUsers=Elektron pochta xabarlari bo'lgan foydalanuvchilar
-MailingModuleDescThirdPartiesByCategories=Uchinchi shaxslar (toifalar bo'yicha)
+MailingModuleDescThirdPartiesByCategories=Third parties
 SendingFromWebInterfaceIsNotAllowed=Veb-interfeysdan yuborishga yo'l qo'yilmaydi.
 EmailCollectorFilterDesc=Elektron pochta to'planishi uchun barcha filtrlar mos kelishi kerak
 
@@ -179,3 +179,4 @@ RecordCreatedByEmailCollector=%s elektron pochtasidan elektron pochta yig'uvchis
 DefaultBlacklistMailingStatus=Yangi kontakt yaratishda "%s" maydonining standart qiymati
 DefaultStatusEmptyMandatory=Bo'sh, ammo majburiy
 WarningLimitSendByDay=WARNING: The setup or contract of your instance limits your number of emails per day to <b>%s</b>. Trying to send more may result in having your instance slow down or suspended. Please contact your support if you need a higher quota.
+NoMoreRecipientToSendTo=No more recipient to send the email to

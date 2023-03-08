@@ -226,7 +226,8 @@ if ($resql) {
 	print "</tr>\n";
 
 	if ($num > 0) {
-		while ($i < min($num, $limit)) {
+		$imaxinloop = ($limit ? min($num, $limit) : $num);
+		while ($i < $imaxinloop) {
 			$objp = $db->fetch_object($resql);
 
 			$checkdepositstatic->id = $objp->rowid;
@@ -243,11 +244,11 @@ if ($resql) {
 			if ($mode == 'kanban') {
 				if ($i == 0) {
 					print '<tr><td colspan="12">';
-					print '<div class="box-flex-container">';
+					print '<div class="box-flex-container kanban">';
 				}
 				// Output Kanban
 				print $checkdepositstatic->getKanbanView('');
-				if ($i == (min($num, $limit) - 1)) {
+				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
 					print '</td></tr>';
 				}

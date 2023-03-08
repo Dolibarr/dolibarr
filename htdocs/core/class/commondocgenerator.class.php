@@ -36,6 +36,11 @@
 abstract class CommonDocGenerator
 {
 	/**
+	 * @var string Model name
+	 */
+	public $name = '';
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
@@ -66,11 +71,6 @@ abstract class CommonDocGenerator
 	public $scandir;
 
 	/**
-	 * @var string model name
-	 */
-	public $name;
-
-	/**
 	 * @var string model description (short text)
 	 */
 	public $description;
@@ -79,6 +79,11 @@ abstract class CommonDocGenerator
 	 * @var array
 	 */
 	public $format;
+
+	/**
+	 * @var string pdf, odt, etc
+	 */
+	public $type;
 
 	public $page_hauteur;
 	public $page_largeur;
@@ -145,7 +150,11 @@ abstract class CommonDocGenerator
 			'myuser_email'=>$user->email,
 			'myuser_logo'=>$logotouse,
 			'myuser_job'=>$user->job,
-			'myuser_web'=>''	// url not exist in $user object
+			'myuser_web'=>'',	// url not exist in $user object
+			'myuser_birth'=>dol_print_date($user->birth, 'day', 'gmt'),
+			'myuser_dateemployment'=>dol_print_date($user->dateemployment, 'day', 'tzuser'),
+			'myuser_dateemploymentend'=>dol_print_date($user->dateemploymentend, 'day', 'tzuser'),
+			'myuser_gender'=>$user->gender,
 		);
 		// Retrieve extrafields
 		if (is_array($user->array_options) && count($user->array_options)) {

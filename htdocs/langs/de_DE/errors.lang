@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Fehler, Parameter <b> %s </b> muss
 ErrorLoginDateValidity=Fehler, diese Anmeldung liegt außerhalb des Gültigkeitszeitraums
 ErrorValueLength=Die Länge des Feldes '<b> %s </b>' muss höher sein als '<b> %s </b>'.
 ErrorReservedKeyword=Das Wort '<b> %s </b>' ist ein reserviertes Schlüsselwort
+ErrorFilenameReserved=Der Dateiname <b>%s</b> kann nicht verwendet werden, da es sich um einen reservierten und geschützten Befehl handelt.
 ErrorNotAvailableWithThisDistribution=Nicht verfügbar mit dieser Version
 ErrorPublicInterfaceNotEnabled=Öffentliche Schnittstelle wurde nicht aktiviert
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=Die Sprache der neuen Seite muss definiert werden, wenn sie als Übersetzung einer anderen Seite festgelegt ist
@@ -304,6 +305,11 @@ ErrorValueCantBeNull=Der Wert für <b>%s</b> darf nicht null sein
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Das Datum der Banküberweisung darf nicht vor dem Datum der Dateiübermittlung liegen
 ErrorTooMuchFileInForm=Zu viele Dateien im Formular, die maximale Anzahl beträgt %s Datei(en)
 ErrorSessionInvalidatedAfterPasswordChange=Die Sitzung wurde nach einer Änderung von Passwort, Status oder Gültigkeitsdaten ungültig. Bitte melden Sie sich erneut an.
+ErrorExistingPermission = Berechtigung <b>%s</b> für Objekt <b>%s</b> existiert bereits
+ErrorFieldExist=Der Wert für <b>%s</b> existiert bereits
+ErrorEqualModule=Modul ungültig in <b>%s</b>
+ErrorFieldValue=Der Wert für <b>%s</b> ist falsch
+ErrorCoherenceMenu= <b>%s</b> ist erforderlich, wenn <b>%s</b> 'left' ist
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Ihr PHP Parameter upload_max_filesize (%s) ist größer als Parameter post_max_size (%s). Dies ist eine inkonsistente Einstellung.
@@ -342,6 +348,7 @@ WarningPaypalPaymentNotCompatibleWithStrict=Der Wert 'Strict' führt dazu, dass 
 WarningThemeForcedTo=Warnung, das Theme wurde durch die versteckte Konstante MAIN_FORCETHEME auf <b> %s </b> erzwungen
 WarningPagesWillBeDeleted=Achtung: dadurch werden auch alle bestehenden Seiten/Container der Website gelöscht. Sie sollten Ihre Website vorher exportieren, damit Sie ein Backup haben, um sie später wieder zu importieren.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Die automatische Freigabe ist deaktiviert, wenn die Option zur Bestandsverringerung auf "Rechnungsfreigabe" eingestellt ist.
+WarningModuleNeedRefrech = Modul <b>%s</b> wurde deaktiviert. Vergessen Sie nicht, es zu aktivieren
 
 # Validate
 RequireValidValue = Wert nicht gültig

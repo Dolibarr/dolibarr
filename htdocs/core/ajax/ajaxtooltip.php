@@ -118,7 +118,6 @@ if ($objecttype == 'facture' || $objecttype == 'invoice') {
 	$module = 'contrat';
 	$myobject = 'contrat';
 } elseif ($objecttype == 'member') {
-	$langs->load('members');
 	$classpath = 'adherents/class';
 	$module = 'adherent';
 	$myobject = 'adherent';
@@ -163,6 +162,10 @@ if ($objecttype == 'facture' || $objecttype == 'invoice') {
 	$classpath = 'opensurvey/class';
 	$module = 'opensurvey';
 	$myobject = 'opensurveysondage';
+} elseif ($objecttype == 'knowledgerecord') {
+	$classpath = 'knowledgemanagement/class';
+	$module = 'knowledgemanagement';
+	$myobject = 'knowledgerecord';
 }
 
 // Generic case for $classfile and $classname

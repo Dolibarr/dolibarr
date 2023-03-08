@@ -2740,7 +2740,7 @@ class FactureFournisseur extends CommonInvoice
 				$alreadypaid = $this->alreadypaid;
 			}
 
-			$$datas['picto'] .= ' '.$this->getLibStatut(5, $alreadypaid);
+			$datas['picto'] .= ' '.$this->getLibStatut(5, $alreadypaid);
 		}
 		if ($moretitle) {
 			$datas['picto'] .= ' - '.$moretitle;
@@ -2831,7 +2831,7 @@ class FactureFournisseur extends CommonInvoice
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
+			$dataparams = " data-params='".json_encode($params)."'";
 			// $label = $langs->trans('Loading');
 		}
 
@@ -3111,15 +3111,16 @@ class FactureFournisseur extends CommonInvoice
 		$object->fk_facture_source  = 0;
 		$object->date_creation      = '';
 		$object->date_validation    = '';
-		$object->date               = (empty($this->date) ? '' : $this->date);
-		$object->date_echeance      = '';
+		$object->date               = (empty($this->date) ? dol_now() : $this->date);
 		$object->ref_client         = '';
 		$object->close_code         = '';
 		$object->close_note         = '';
-		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING == 1) {
+		if (getDolGlobalInt('MAIN_DONT_KEEP_NOTE_ON_CLONING') == 1) {
 			$object->note_private = '';
 			$object->note_public = '';
 		}
+
+		$object->date_echeance = $object->calculate_date_lim_reglement();
 
 		// Loop on each line of new invoice
 		foreach ($object->lines as $i => $line) {
@@ -3285,6 +3286,9 @@ class FactureFournisseur extends CommonInvoice
 	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -3292,6 +3296,7 @@ class FactureFournisseur extends CommonInvoice
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'socid')) {
 			$return .= ' | <span class="info-box-label">'.$this->socid.'</span>';
 		}
@@ -3306,7 +3311,8 @@ class FactureFournisseur extends CommonInvoice
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("AmountHT").'</span> : <span class="info-box-label amount">'.price($this->total_ht).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$alreadypaid = (empty($arraydata['alreadypaid']) ? 0 : $arraydata['alreadypaid']);
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $alreadypaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
