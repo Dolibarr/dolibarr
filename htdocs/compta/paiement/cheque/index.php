@@ -43,6 +43,10 @@ $result = restrictedArea($user, 'banque', '', '');
 
 $usercancreate = $user->hasRight('banque', 'cheque');
 
+// List of payment mode to support
+// Example: BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT = 'CHQ','TRA'
+$arrayofpaymentmodetomanage = explode(',', getDolGlobalString('BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT', 'CHQ'));
+
 
 /*
  * Actions
@@ -55,27 +59,27 @@ $usercancreate = $user->hasRight('banque', 'cheque');
  * View
  */
 
-llxHeader('', $langs->trans("ChequesArea"));
+if (getDolGlobalString('BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT', 'CHQ') == 'CHQ') {
+	$title = $langs->trans("ChequesArea");
+} else {
+	$title = $langs->trans("DocumentsDepositArea");
+}
+
+llxHeader('', $title);
 
 $newcardbutton = '';
 if ($usercancreate) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewDeposit'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new');
 }
 
-print load_fiche_titre($langs->trans("ChequesArea"), $newcardbutton, $checkdepositstatic->picto);
+print load_fiche_titre($title, $newcardbutton, $checkdepositstatic->picto);
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
-
-// List of payment mode to support
-// Example: BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT = 'CHQ','TRA'
-$conf->global->BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT = 'CHQ,TRA';
-$arrayofpaymentmodetomanage = explode(',', getDolGlobalString('BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT', 'CHQ'));
-
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<th colspan="2">'.$langs->trans("BankChecks")."</th>\n";
+print '<th colspan="2">'.$langs->trans("DocumentsForDeposit")."</th>\n";
 print "</tr>\n";
 
 foreach ($arrayofpaymentmodetomanage as $val) {
@@ -97,9 +101,9 @@ foreach ($arrayofpaymentmodetomanage as $val) {
 		print '<tr class="oddeven">';
 		print '<td>';
 		if ($val == 'CHQ') {
-			print $langs->trans("BankChecksToReceipt");
+			print $langs->trans("BankChecks");
 		} else {
-			print $val;
+			print ($langs->trans("PaymentType".$val) != "PaymentType".$val ? $langs->trans("PaymentType".$val) : $langs->trans("PaymentMode").' '.$val);
 		}
 		print '</td>';
 		print '<td class="right">';
@@ -139,7 +143,8 @@ foreach ($arrayofpaymentmodetomanage as $val) {
 		if ($val == 'CHQ') {
 			print $langs->trans("LastCheckReceiptShort", $max);
 		} else {
-			print $langs->trans("LastPaymentForDepositShort", $max, $val);
+			$labelpaymentmode = ($langs->trans("PaymentType".$val) != "PaymentType".$val ? $langs->trans("PaymentType".$val) : $val);
+			print $langs->trans("LastPaymentForDepositShort", $max, $labelpaymentmode);
 		}
 		print '</th>';
 		print '<th>'.$langs->trans("Date")."</th>";

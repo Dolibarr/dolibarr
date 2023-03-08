@@ -90,6 +90,10 @@ $usercandelete = $user->rights->banque->cheque;
 
 $permissiontodelete = $user->rights->banque->cheque;
 
+// List of payment mode to support
+// Example: BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT = 'CHQ','TRA'
+$arrayofpaymentmodetomanage = explode(',', getDolGlobalString('BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT', 'CHQ'));
+
 
 /*
  * Actions
@@ -139,6 +143,10 @@ if ($action == 'setref' && $user->rights->banque->cheque) {
 
 if ($action == 'create' && GETPOST("accountid", "int") > 0 && $user->rights->banque->cheque) {
 	if (GETPOSTISARRAY('toRemise')) {
+		$object->type = $type;
+		$arrayofid = GETPOST('toRemise', 'array:int');
+		var_dump($arrayofid);
+
 		$result = $object->create($user, GETPOST("accountid", "int"), 0, GETPOST('toRemise', 'array:int'));
 		if ($result > 0) {
 			if ($object->statut == 1) {     // If statut is validated, we build doc
@@ -292,10 +300,14 @@ if (GETPOST('removefilter')) {
 	$filteraccountid = 0;
 }
 
-if ($type == 'CHQ') {
-	$title = $langs->trans("Cheques");
+if ($action == 'new') {
+	$title = $langs->trans("NewChequeDeposit");
 } else {
-	$title = $type;
+	if ($type == 'CHQ') {
+		$title = $langs->trans("Cheques");
+	} else {
+		$title = ($langs->trans("PaymentType".$type) != "PaymentType".$type ? $langs->trans("PaymentType".$type) : $langs->trans("PaymentMode").' '.$type);
+	}
 }
 
 $helpurl = "";
@@ -368,27 +380,40 @@ if ($action == 'new') {
 
 	$now = dol_now();
 
+	$labeltype = ($langs->trans("PaymentType".$type) != "PaymentType".$type ? $langs->trans("PaymentType".$type) : $type);
 	if ($type == 'CHQ') {
 		print '<span class="opacitymedium">'.$langs->trans("SelectChequeTransactionAndGenerate").'</span><br><br>'."\n";
 	} else {
-		print '<span class="opacitymedium">'.$langs->trans("SelectPaymentTransactionAndGenerate", $type).'</span><br><br>'."\n";
+		print '<span class="opacitymedium">'.$langs->trans("SelectPaymentTransactionAndGenerate", $labeltype).'</span><br><br>'."\n";
 	}
 
 	print '<form class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="new">';
-	print '<input type="hidden" name="type" value="'.$type.'">';
 
 	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
-	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
-	// Filter
+
+	if (count($arrayofpaymentmodetomanage) > 1) {
+		$arrayoflabels = array();
+		foreach ($arrayofpaymentmodetomanage as $key => $val) {
+			$labelval = ($langs->trans("PaymentType".$val) != "PaymentType".$val ? $langs->trans("PaymentType".$val) : $val);
+			$arrayoflabels[$key] = $labelval;
+		}
+		// Type
+		print '<tr><td>';
+		print $langs->trans("Type");
+		print '</td><td>';
+		print $form->selectarray('type', $arrayoflabels, $type);
+		print '</td></tr>';
+	}
+	// Date
 	print '<tr><td class="titlefieldcreate">';
 	if ($type == 'CHQ') {
 		print $langs->trans("DateChequeReceived");
 	} else {
-		print $langs->trans("DatePaymentForDeposit");
+		print $langs->trans("DatePaymentReceived");
 	}
 	print '</td><td>';
 	// filter by dates from / to
@@ -462,7 +487,7 @@ if ($action == 'new') {
 			if ($type == 'CHQ') {
 				print '<div class="opacitymedium">'.$langs->trans("NoWaitingChecks").'</div><br>';
 			} else {
-				print '<div class="opacitymedium">'.$langs->trans("NoWaitingPaymentForDeposit", $type).'</div><br>';
+				print '<div class="opacitymedium">'.$langs->trans("NoWaitingPaymentForDeposit", $labeltype).'</div><br>';
 			}
 		}
 	}
@@ -485,6 +510,7 @@ if ($action == 'new') {
         ';
 
 		$num = $db->num_rows($resql);
+
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="create">';
@@ -574,7 +600,13 @@ if ($action == 'new') {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '';
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	$morehtmlleft = '';
+	$moreghtmlright = '';
+
+	$labelval = ($langs->trans("PaymentType".$object->type) != "PaymentType".$object->type ? $langs->trans("PaymentType".$object->type) : $object->type);
+	$morehtmlref = '<br><div class="refidno">'.$langs->trans("Type").' : '.$labelval.'</div>';
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, $morehtmlleft, '', 0, $moreghtmlright);
 
 
 	print '<div class="fichecenter">';
@@ -665,7 +697,7 @@ if ($action == 'new') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON (b.fk_account = ba.rowid)";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
 	$sql .= " WHERE ba.entity IN (".getEntity('bank_account').")";
-	$sql .= " AND b.fk_type= '".$db->escape($type)."'";
+	$sql .= " AND b.fk_type= '".$db->escape($object->type)."'";
 	$sql .= " AND b.fk_bordereau = ".((int) $object->id);
 	$sql .= $db->order($sortfield, $sortorder);
 
@@ -739,9 +771,9 @@ if ($action == 'new') {
 				$i++;
 			}
 		} else {
-			print '<td colspan="8" class="opacitymedium">';
+			print '<td colspan="9"><span class="opacitymedium">';
 			print $langs->trans("None");
-			print '</td>';
+			print '</span></td>';
 		}
 
 		print "</table>";

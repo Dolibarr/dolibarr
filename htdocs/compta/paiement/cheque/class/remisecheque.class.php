@@ -215,7 +215,7 @@ class RemiseCheque extends CommonObject
 			if ($this->id > 0 && $this->errno == 0) {
 				$sql = "SELECT b.rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
-				$sql .= " WHERE b.fk_type = 'CHQ'";
+				$sql .= " WHERE b.fk_type = '".$this->db->escape($this->type)."'";
 				$sql .= " AND b.amount > 0";
 				$sql .= " AND b.fk_bordereau = 0";
 				$sql .= " AND b.fk_account = ".((int) $account_id);
