@@ -2021,7 +2021,7 @@ class Project extends CommonObject
 		$sql = "SELECT ptt.rowid as taskid, ptt.element_duration, ptt.element_date, ptt.element_datehour, ptt.fk_element";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
 		$sql .= " WHERE ptt.fk_element = pt.rowid";
-        $sql .= " AND ptt.elementtype = 'task'";
+		$sql .= " AND ptt.elementtype = 'task'";
 		$sql .= " AND pt.fk_projet = ".((int) $this->id);
 		$sql .= " AND (ptt.element_date >= '".$this->db->idate($datestart)."' ";
 		$sql .= " AND ptt.element_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'w') - 1)."')";
@@ -2085,7 +2085,7 @@ class Project extends CommonObject
 		$sql = "SELECT ptt.rowid as taskid, ptt.element_duration, ptt.element_date, ptt.element_datehour, ptt.fk_element";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
 		$sql .= " WHERE ptt.fk_element = pt.rowid";
-        $sql .= " AND ptt.elementtype = 'task'";
+		$sql .= " AND ptt.elementtype = 'task'";
 		$sql .= " AND pt.fk_projet = ".((int) $this->id);
 		$sql .= " AND (ptt.element_date >= '".$this->db->idate($datestart)."' ";
 		$sql .= " AND ptt.element_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'm') - 1)."')";
