@@ -7,6 +7,7 @@
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2019      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
+ * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -782,8 +783,8 @@ class Project extends CommonObject
 			$sql = "SELECT ed.rowid FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND e.entity IN (".getEntity('expensereport').") AND ed.fk_projet IN (".$this->db->sanitize($ids).")";
 		} elseif ($type == 'project_task') {
 			$sql = "SELECT DISTINCT pt.rowid FROM ".MAIN_DB_PREFIX."projet_task as pt WHERE pt.fk_projet IN (".$this->db->sanitize($ids).")";
-		} elseif ($type == 'project_task_time') {	// Case we want to duplicate line foreach user
-			$sql = "SELECT DISTINCT pt.rowid, ptt.fk_user FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet IN (".$this->db->sanitize($ids).")";
+		} elseif ($type == 'element_time') {	// Case we want to duplicate line foreach user
+			$sql = "SELECT DISTINCT pt.rowid, ptt.fk_user FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."element_time as ptt WHERE pt.rowid = ptt.fk_element AND ptt.elementtype = 'task' AND pt.fk_projet IN (".$this->db->sanitize($ids).")";
 		} elseif ($type == 'stock_mouvement') {
 			$sql = "SELECT ms.rowid, ms.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin IN (".$this->db->sanitize($ids).") AND ms.type_mouvement = 1";
 		} elseif ($type == 'loan') {
@@ -1041,8 +1042,8 @@ class Project extends CommonObject
 			$sql = "SELECT COUNT(ed.rowid) as nb FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND e.entity IN (".getEntity('expensereport').") AND ed.fk_projet = ".((int) $this->id);
 		} elseif ($type == 'project_task') {
 			$sql = "SELECT DISTINCT COUNT(pt.rowid) as nb FROM ".MAIN_DB_PREFIX."projet_task as pt WHERE pt.fk_projet = ".((int) $this->id);
-		} elseif ($type == 'project_task_time') {	// Case we want to duplicate line foreach user
-			$sql = "SELECT DISTINCT COUNT(pt.rowid) as nb FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet = ".((int) $this->id);
+		} elseif ($type == 'element_time') {	// Case we want to duplicate line foreach user
+			$sql = "SELECT DISTINCT COUNT(pt.rowid) as nb FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."element_time as ptt WHERE pt.rowid = ptt.fk_element AND ptt.elementtype = 'task' AND pt.fk_projet = ".((int) $this->id);
 		} elseif ($type == 'stock_mouvement') {
 			$sql = "SELECT COUNT(ms.rowid) as nb FROM ".MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin = ".((int) $this->id)." AND ms.type_mouvement = 1";
 		} elseif ($type == 'loan') {
@@ -2017,14 +2018,15 @@ class Project extends CommonObject
 			dol_print_error('', 'Error datestart parameter is empty');
 		}
 
-		$sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.task_datehour, ptt.fk_task";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
-		$sql .= " WHERE ptt.fk_task = pt.rowid";
+		$sql = "SELECT ptt.rowid as taskid, ptt.element_duration, ptt.element_date, ptt.element_datehour, ptt.fk_element";
+		$sql .= " FROM ".MAIN_DB_PREFIX."element_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
+		$sql .= " WHERE ptt.fk_element = pt.rowid";
+        $sql .= " AND ptt.elementtype = 'task'";
 		$sql .= " AND pt.fk_projet = ".((int) $this->id);
-		$sql .= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
-		$sql .= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'w') - 1)."')";
+		$sql .= " AND (ptt.element_date >= '".$this->db->idate($datestart)."' ";
+		$sql .= " AND ptt.element_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'w') - 1)."')";
 		if ($taskid) {
-			$sql .= " AND ptt.fk_task=".((int) $taskid);
+			$sql .= " AND ptt.fk_element=".((int) $taskid);
 		}
 		if (is_numeric($userid)) {
 			$sql .= " AND ptt.fk_user=".((int) $userid);
@@ -2040,13 +2042,13 @@ class Project extends CommonObject
 			// Loop on each record found, so each couple (project id, task id)
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				$day = $this->db->jdate($obj->task_date); // task_date is date without hours
+				$day = $this->db->jdate($obj->element_date); // task_date is date without hours
 				if (empty($daylareadyfound[$day])) {
-					$this->weekWorkLoad[$day] = $obj->task_duration;
-					$this->weekWorkLoadPerTask[$day][$obj->fk_task] = $obj->task_duration;
+					$this->weekWorkLoad[$day] = $obj->element_duration;
+					$this->weekWorkLoadPerTask[$day][$obj->fk_element] = $obj->element_duration;
 				} else {
-					$this->weekWorkLoad[$day] += $obj->task_duration;
-					$this->weekWorkLoadPerTask[$day][$obj->fk_task] += $obj->task_duration;
+					$this->weekWorkLoad[$day] += $obj->element_duration;
+					$this->weekWorkLoadPerTask[$day][$obj->fk_element] += $obj->element_duration;
 				}
 				$daylareadyfound[$day] = 1;
 				$i++;
@@ -2080,14 +2082,15 @@ class Project extends CommonObject
 			dol_print_error('', 'Error datestart parameter is empty');
 		}
 
-		$sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.task_datehour, ptt.fk_task";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
-		$sql .= " WHERE ptt.fk_task = pt.rowid";
+		$sql = "SELECT ptt.rowid as taskid, ptt.element_duration, ptt.element_date, ptt.element_datehour, ptt.fk_element";
+		$sql .= " FROM ".MAIN_DB_PREFIX."element_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
+		$sql .= " WHERE ptt.fk_element = pt.rowid";
+        $sql .= " AND ptt.elementtype = 'task'";
 		$sql .= " AND pt.fk_projet = ".((int) $this->id);
-		$sql .= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
-		$sql .= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'm') - 1)."')";
+		$sql .= " AND (ptt.element_date >= '".$this->db->idate($datestart)."' ";
+		$sql .= " AND ptt.element_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'm') - 1)."')";
 		if ($taskid) {
-			$sql .= " AND ptt.fk_task=".((int) $taskid);
+			$sql .= " AND ptt.fk_element=".((int) $taskid);
 		}
 		if (is_numeric($userid)) {
 			$sql .= " AND ptt.fk_user=".((int) $userid);
@@ -2103,16 +2106,16 @@ class Project extends CommonObject
 			// Loop on each record found, so each couple (project id, task id)
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				if (!empty($obj->task_date)) {
-					$date = explode('-', $obj->task_date);
+				if (!empty($obj->element_date)) {
+					$date = explode('-', $obj->element_date);
 					$week_number = getWeekNumber($date[2], $date[1], $date[0]);
 				}
 				if (empty($weekalreadyfound[$week_number])) {
-					$this->monthWorkLoad[$week_number] = $obj->task_duration;
-					$this->monthWorkLoadPerTask[$week_number][$obj->fk_task] = $obj->task_duration;
+					$this->monthWorkLoad[$week_number] = $obj->element_duration;
+					$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] = $obj->element_duration;
 				} else {
-					$this->monthWorkLoad[$week_number] += $obj->task_duration;
-					$this->monthWorkLoadPerTask[$week_number][$obj->fk_task] += $obj->task_duration;
+					$this->monthWorkLoad[$week_number] += $obj->element_duration;
+					$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] += $obj->element_duration;
 				}
 				$weekalreadyfound[$week_number] = 1;
 				$i++;
