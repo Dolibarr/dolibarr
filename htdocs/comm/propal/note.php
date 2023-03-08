@@ -49,6 +49,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Security check
+$socid = '';
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
