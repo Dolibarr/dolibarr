@@ -311,9 +311,8 @@ if ($event->type == 'payout.created') {
 } elseif ($event->type == 'payment_intent.succeeded') {		// Called when making payment with PaymentIntent method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
 	dol_syslog("object = ".var_export($event->data, true));
 
-	// TODO: create fees
-
 	/* TODO LMR Enable this only if this is a payment of a Dolibarr bon_prelevement only
+	 * Also we must retreive the invoice and payment amount from the id = ext_payment_id into llx_prelevement_demande
 	include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 	$object = $event->data->object;
 	$invoice_id = $object->metadata->dol_id;
