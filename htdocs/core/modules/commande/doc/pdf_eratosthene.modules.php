@@ -1447,7 +1447,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null, $titlekey = "PdfOrderTitle")
 	{
 		// phpcs:enable
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs, $hookmanager, $mysoc;
 
 		$ltrdirection = 'L';
 		if ($outputlangs->trans("DIRECTION") == 'rtl') $ltrdirection = 'R';
@@ -1473,8 +1473,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity];
+				if (!empty(getMultidirOutput($mysoc, 'mycompany'))) {
+					$logodir = getMultidirOutput($mysoc, 'mycompany');
 				}
 				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;

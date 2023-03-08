@@ -75,16 +75,21 @@ if (!function_exists('utf8_decode')) {
  * Return multidir output for an Dolibarr object
  *
  * @param CommonObject $object Dolibarr common object
+ * @param string $module override object element, by example mycompany instead societe
  * @since Dolibarr V18
  * @return string|void
  */
-function getMultidirOutput($object)
+function getMultidirOutput($object, $module = '')
 {
 	global $conf;
 	if (!is_object($object)) {
 		return;
 	}
-	$module = $object->element;
+	if (empty($module) && !empty($object->element)) {
+		$module = $object->element;
+	} else {
+		return;
+	}
 	return $conf->$module->multidir_output[$object->entity];
 }
 
