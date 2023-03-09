@@ -1066,6 +1066,9 @@ class Evaluation extends CommonObject
 	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $selected, $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -1084,7 +1087,7 @@ class Evaluation extends CommonObject
 		}
 
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</span>';
 		$return .= '</div>';

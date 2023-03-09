@@ -839,6 +839,10 @@ class CMailFile
 						$this->error .= ".<br>";
 						$this->error .= $langs->trans("ErrorPhpMailDelivery");
 						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+
+						if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+							$this->save_dump_mail_in_err();
+						}
 					} else {
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 					}
@@ -903,6 +907,7 @@ class CMailFile
 
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+
 					$keyforsupportedoauth2array = $conf->global->$keyforsmtpoauthservice;
 					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
 						$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
@@ -996,6 +1001,10 @@ class CMailFile
 						}
 						dol_syslog("CMailFile::sendfile: mail end error with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport." - ".$this->error, LOG_ERR);
 						$res = false;
+
+						if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+							$this->save_dump_mail_in_err();
+						}
 					}
 				}
 			} elseif ($this->sendmode == 'swiftmailer') {
@@ -1031,6 +1040,7 @@ class CMailFile
 				}
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+
 					$keyforsupportedoauth2array = getDolGlobalString($keyforsmtpoauthservice);
 					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
 						$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
@@ -1131,6 +1141,10 @@ class CMailFile
 					}
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
+
+					if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+						$this->save_dump_mail_in_err();
+					}
 				} else {
 					dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 				}
@@ -1218,7 +1232,7 @@ class CMailFile
 
 		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 			$outputfile = $dolibarr_main_data_root."/dolibarr_mail.log";
-			$fp = fopen($outputfile, "w");
+			$fp = fopen($outputfile, "w");	// overwrite
 
 			if ($this->sendmode == 'mail') {
 				fputs($fp, $this->headers);
@@ -1232,6 +1246,25 @@ class CMailFile
 
 			fclose($fp);
 			dolChmod($outputfile);
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Save content if mail is in error
+	 *  Used for debugging.
+	 *
+	 *  @return	void
+	 */
+	public function save_dump_mail_in_err()
+	{
+		global $dolibarr_main_data_root;
+
+		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
+			$srcfile = $dolibarr_main_data_root."/dolibarr_mail.log";
+			$destfile = $dolibarr_main_data_root."/dolibarr_mail.err";
+
+			dol_move($srcfile, $destfile, 0, 1, 0, 0);
 		}
 	}
 

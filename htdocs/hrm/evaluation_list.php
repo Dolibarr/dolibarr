@@ -567,7 +567,8 @@ if (isset($extrafields->attributes[$object->table_element]['computed']) && is_ar
 $i = 0;
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-while ($i < ($limit ? min($num, $limit) : $num)) {
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
 		break; // Should not happen

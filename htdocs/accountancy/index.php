@@ -83,12 +83,7 @@ $help_url = 'EN:Module_Double_Entry_Accounting#Setup';
 
 llxHeader('', $langs->trans("AccountancyArea"), $help_url);
 
-if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_SITUATION == 1) {
-	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
-
-	print '<span class="opacitymedium">'.$langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices")."</span>\n";
-	print "<br>";
-} elseif (isModEnabled('accounting')) {
+if (isModEnabled('accounting')) {
 	$step = 0;
 
 	$resultboxes = FormOther::getBoxesArea($user, "27"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)

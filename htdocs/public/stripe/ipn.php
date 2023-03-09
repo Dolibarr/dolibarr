@@ -100,8 +100,18 @@ if (!empty($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS)) {
  */
 
 $payload = @file_get_contents("php://input");
-$sig_header = $_SERVER["HTTP_STRIPE_SIGNATURE"];
+$sig_header = empty($_SERVER["HTTP_STRIPE_SIGNATURE"]) ? '' : $_SERVER["HTTP_STRIPE_SIGNATURE"];
 $event = null;
+
+if (getDolGlobalString('STRIPE_DEBUG')) {
+	$fh = fopen(DOL_DATA_ROOT.'/dolibarr_stripe.log', 'w+');
+	if ($fh) {
+		fwrite($fh, dol_print_date(dol_now('gmt'), 'standard').' HTTP_STRIPE_SIGNATURE='.$sig_header."\n");
+		fwrite($fh, $payload);
+		fclose($fh);
+		dolChmod(DOL_DATA_ROOT.'/dolibarr_stripe.log');
+	}
+}
 
 $error = 0;
 
@@ -112,6 +122,8 @@ try {
 	httponly_accessforbidden('Invalid payload', 400);
 } catch (\Stripe\Error\SignatureVerification $e) {
 	httponly_accessforbidden('Invalid signature', 400);
+} catch (Exception $e) {
+	httponly_accessforbidden('Error '.$e->getMessage(), 400);
 }
 
 // Do something with $event
@@ -299,10 +311,7 @@ if ($event->type == 'payout.created') {
 } elseif ($event->type == 'payment_intent.succeeded') {		// Called when making payment with PaymentIntent method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
 	dol_syslog("object = ".var_export($event->data, true));
 
-	// TODO: create fees
-	// TODO: Redirect to paymentok.php
-
-	/* TODO Enable this only if this is a payment of a Dolibarr bon_prelevement only
+	/* TODO LMR We must retreive the invoice and payment amount from the id = ext_payment_id into llx_prelevement_demande
 	include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 	$object = $event->data->object;
 	$invoice_id = $object->metadata->dol_id;
@@ -319,19 +328,24 @@ if ($event->type == 'payout.created') {
 	global $stripearrayofkeysbyenv;
 	$stripeacc = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
 
-	dol_syslog("Try to create sepa_debit with data = ".json_encode($dataforcard));
+	dol_syslog("Try to create payment with data = ".json_encode($dataforcard));
 
 	$s = new \Stripe\StripeClient($stripeacc);
 
 	$paymentmethodstripe = $s->paymentMethods->retrieve($paymentmethodstripeid);
 
-	//$paymentTypeId = $conf->global->STRIPE_PAYMENT_MODE_FOR_PAYMENTS;
 	$paymentTypeId =  $paymentmethodstripe->type;
-	if ($paymentTypeId == "sepa_debit") {
+	if ($paymentTypeId == "ban") {
+		$paymentTypeId = "PRE"
+	} elseif ($paymentTypeId == "sepa_debit") {	// is this used ? how ?
 		$paymentTypeId = "BANCON";
 	} elseif ($paymentTypeId == "card") {
 		$paymentTypeId = "CB";
 	}
+
+	// TODO LMR Enable this only if this is a payment of a Dolibarr llx_prelevement_demande only
+
+	// TODO LMR The payment ID is $event->data->latest_charge. check that payment does not exists (it may have been created by Dolibarr) to avoid to create payment twice.
 
 	$paiement = new Paiement($db);
 	$paiement->datepaye = $now;
@@ -348,13 +362,12 @@ if ($event->type == 'payout.created') {
 		$errorforinvoice++;
 	}
 	$paiement->paiementid = $paymentTypeId;
-	$paiement->num_paiement = '';
 	$paiement->num_payment = '';
-	// Add a comment with keyword 'SellYourSaas' in text. Used by trigger.
-	$paiement->note_public = 'StripeSepa payment ' . dol_print_date($now, 'standard') . ' using ' . $paymentmethod . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
+	$paiement->note_public = '';
 	$paiement->note_private = 'StripeSepa payment ' . dol_print_date($now, 'standard') . ' using ' . $paymentmethod . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
-	$paiement->ext_payment_id = $TRANSACTIONID . ':' . $customer_id . '@' . $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
-	$paiement->ext_payment_site = 'stripe';
+	// TODO LMR Fill the  $paiement->ext_payment_id with an ID of payment intent (so 'pi_....'). Like this:
+	$paiement->ext_payment_id = $TRANSACTIONID.':'.$customer_id.'@'.$stripearrayofkeysbyenv[$servicestatus]['publishable_key'];		// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+	$paiement->ext_payment_site = $service;						// 'StripeLive' or 'Stripe' if test
 
 	if (!$errorforinvoice) {
 		dol_syslog('* Record payment for invoice id ' . $invoice_id . '. It includes closing of invoice and regenerating document');
@@ -459,7 +472,9 @@ if ($event->type == 'payout.created') {
 	$companypaymentmode = new CompanyPaymentMode($db);
 
 	$idthirdparty = $societeaccount->getThirdPartyID($db->escape($event->data->object->customer), 'stripe', $servicestatus);
-	if ($idthirdparty > 0) {	// If the payment mode is on an external customer that is known in societeaccount, we can create the payment mode
+	if ($idthirdparty > 0) {
+		// If the payment mode attached is to a stripe account owned by an external customer in societe_account (so a thirdparty that has a Stripe account),
+		// we can create the payment mode
 		$companypaymentmode->stripe_card_ref = $db->escape($event->data->object->id);
 		$companypaymentmode->fk_soc          = $idthirdparty;
 		$companypaymentmode->bank            = null;
@@ -477,9 +492,44 @@ if ($event->type == 'payout.created') {
 		$companypaymentmode->country_code    = $db->escape($event->data->object->card->country);
 		$companypaymentmode->status          = $servicestatus;
 
+		// TODO Check that a payment mode $companypaymentmode->stripe_card_ref does not exists yet to avoid to create duplicates
+		// so we can remove the test on STRIPE_NO_DUPLICATE_CHECK
+		if (getDolGlobalString('STRIPE_NO_DUPLICATE_CHECK')) {
+			$db->begin();
+			$result = $companypaymentmode->create($user);
+			if ($result < 0) {
+				$error++;
+			}
+			if (!$error) {
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
+		}
+	}
+} elseif ($event->type == 'payment_method.updated') {
+	require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
+	$companypaymentmode = new CompanyPaymentMode($db);
+	$companypaymentmode->fetch(0, '', 0, '', " AND stripe_card_ref = '".$db->escape($event->data->object->id)."'");
+	if ($companypaymentmode->id > 0) {
+		// If we found a payment mode with the ID
+		$companypaymentmode->bank            = null;
+		$companypaymentmode->label           = null;
+		$companypaymentmode->number          = $db->escape($event->data->object->id);
+		$companypaymentmode->last_four       = $db->escape($event->data->object->card->last4);
+		$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);
+		$companypaymentmode->exp_date_month  = $db->escape($event->data->object->card->exp_month);
+		$companypaymentmode->exp_date_year   = $db->escape($event->data->object->card->exp_year);
+		$companypaymentmode->cvn             = null;
+		$companypaymentmode->datec           = $db->escape($event->data->object->created);
+		$companypaymentmode->default_rib     = 0;
+		$companypaymentmode->type            = $db->escape($event->data->object->type);
+		$companypaymentmode->country_code    = $db->escape($event->data->object->card->country);
+		$companypaymentmode->status          = $servicestatus;
+
 		$db->begin();
 		if (!$error) {
-			$result = $companypaymentmode->create($user);
+			$result = $companypaymentmode->update($user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -489,36 +539,6 @@ if ($event->type == 'payout.created') {
 		} else {
 			$db->rollback();
 		}
-	}
-} elseif ($event->type == 'payment_method.updated') {
-	require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
-	$companypaymentmode = new CompanyPaymentMode($db);
-	$companypaymentmode->fetch(0, '', 0, '', " AND stripe_card_ref = '".$db->escape($event->data->object->id)."'");
-	$companypaymentmode->bank            = null;
-	$companypaymentmode->label           = null;
-	$companypaymentmode->number          = $db->escape($event->data->object->id);
-	$companypaymentmode->last_four       = $db->escape($event->data->object->card->last4);
-	$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);
-	$companypaymentmode->exp_date_month  = $db->escape($event->data->object->card->exp_month);
-	$companypaymentmode->exp_date_year   = $db->escape($event->data->object->card->exp_year);
-	$companypaymentmode->cvn             = null;
-	$companypaymentmode->datec           = $db->escape($event->data->object->created);
-	$companypaymentmode->default_rib     = 0;
-	$companypaymentmode->type            = $db->escape($event->data->object->type);
-	$companypaymentmode->country_code    = $db->escape($event->data->object->card->country);
-	$companypaymentmode->status          = $servicestatus;
-
-	$db->begin();
-	if (!$error) {
-		$result = $companypaymentmode->update($user);
-		if ($result < 0) {
-			$error++;
-		}
-	}
-	if (!$error) {
-		$db->commit();
-	} else {
-		$db->rollback();
 	}
 } elseif ($event->type == 'payment_method.detached') {
 	$db->begin();

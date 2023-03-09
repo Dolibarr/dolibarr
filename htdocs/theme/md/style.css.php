@@ -7042,6 +7042,17 @@ border-top-right-radius: 6px;
 .public_border {
 	border: 1px solid #888;
 }
+.publicnewmemberform div.tabBarWithBottom {
+	border: 1px solid #e8e8e8;
+	padding: 30px;
+	border-radius: 8px;
+	background-color: #f8f8f8;
+	/*box-shadow: 2px 2px 10px #ddd;*/
+}
+
+.publicnewmemberform #tablesubscribe {
+	color: #666;
+}
 
 
 /* ============================================================================== */

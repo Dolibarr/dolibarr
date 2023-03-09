@@ -1723,7 +1723,7 @@ if ($resql) {
 			$objectstatic->author = $userstatic->getNomUrl(1);
 			$objectstatic->fk_project = $projectstatic->getNomUrl(1);
 			print $objectstatic->getKanbanView('');
-			if ($i == (min($num, $limit) - 1)) {
+			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';
 			}

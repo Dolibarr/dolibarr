@@ -365,11 +365,14 @@ class Stripe extends CommonObject
 			$stripeamount = $amount;
 		}
 
-		$fee = $amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE;
-		if ($fee >= $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL > $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-			$fee = $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL;
-		} elseif ($fee < $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-			$fee = $conf->global->STRIPE_APPLICATION_FEE_MINIMAL;
+		$fee = 0;
+		if (getDolGlobalString("STRIPE_APPLICATION_FEE_PERCENT")) {
+			$fee = $amount * ((float) getDolGlobalString("STRIPE_APPLICATION_FEE_PERCENT", '0') / 100) + (float) getDolGlobalString("STRIPE_APPLICATION_FEE", '0');
+		}
+		if ($fee >= (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MAXIMAL", '0') && (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MAXIMAL", '0') > (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MINIMAL", '0')) {
+			$fee = (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MAXIMAL", '0');
+		} elseif ($fee < (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MINIMAL", '0')) {
+			$fee = (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MINIMAL", '0');
 		}
 		if (!in_array($currency_code, $arrayzerounitcurrency)) {
 			$stripefee = round($fee * 100);
