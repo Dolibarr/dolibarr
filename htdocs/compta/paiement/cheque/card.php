@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013 		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,7 +145,6 @@ if ($action == 'create' && GETPOST("accountid", "int") > 0 && $user->rights->ban
 	if (GETPOSTISARRAY('toRemise')) {
 		$object->type = $type;
 		$arrayofid = GETPOST('toRemise', 'array:int');
-		var_dump($arrayofid);
 
 		$result = $object->create($user, GETPOST("accountid", "int"), 0, GETPOST('toRemise', 'array:int'));
 		if ($result > 0) {
