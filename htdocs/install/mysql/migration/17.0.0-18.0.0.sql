@@ -98,6 +98,8 @@ UPDATE llx_prelevement_demande SET type = 'ban' WHERE ext_payment_id IS NULL AND
 
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN fk_user integer;
 
+ALTER TABLE llx_bordereau_cheque ADD COLUMN type VARCHAR(6) DEFAULT 'CHQ';
+
 -- Element time
 ALTER TABLE llx_projet_task_time RENAME TO llx_element_time;
 ALTER TABLE llx_element_time CHANGE COLUMN fk_task fk_element integer NOT NULL;
