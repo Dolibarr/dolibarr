@@ -345,8 +345,6 @@ if ($event->type == 'payout.created') {
 
 	// TODO LMR Enable this only if this is a payment of a Dolibarr llx_prelevement_demande only
 
-	// TODO LMR The payment ID is $event->data->latest_charge. check that payment does not exists (it may have been created by Dolibarr) to avoid to create payment twice.
-
 	$paiement = new Paiement($db);
 	$paiement->datepaye = $now;
 	$paiement->date = $now;
@@ -368,6 +366,10 @@ if ($event->type == 'payout.created') {
 	// TODO LMR Fill the  $paiement->ext_payment_id with an ID of payment intent (so 'pi_....'). Like this:
 	$paiement->ext_payment_id = $TRANSACTIONID.':'.$customer_id.'@'.$stripearrayofkeysbyenv[$servicestatus]['publishable_key'];		// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
 	$paiement->ext_payment_site = $service;						// 'StripeLive' or 'Stripe' if test
+
+
+	$db->begin();
+
 
 	if (!$errorforinvoice) {
 		dol_syslog('* Record payment for invoice id ' . $invoice_id . '. It includes closing of invoice and regenerating document');
