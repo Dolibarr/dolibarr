@@ -145,7 +145,6 @@ if ($action == 'create' && GETPOST("accountid", "int") > 0 && $user->rights->ban
 	if (GETPOSTISARRAY('toRemise')) {
 		$object->type = $type;
 		$arrayofid = GETPOST('toRemise', 'array:int');
-		var_dump($arrayofid);
 
 		$result = $object->create($user, GETPOST("accountid", "int"), 0, GETPOST('toRemise', 'array:int'));
 		if ($result > 0) {
