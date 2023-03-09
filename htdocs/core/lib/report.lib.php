@@ -48,17 +48,13 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 		$varlink = '?'.$varlink;
 	}
 
-	$head = array();
+	$title = $langs->trans("Report");
 
-	$h = 0;
-	$head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
-	$head[$h][1] = $langs->trans("Report");
-	$head[$h][2] = 'report';
-
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">'."\n";
+	print_barre_liste($title, '', '');
+	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].$varlink.'">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 
-	print dol_get_fiche_head($head, 'report');
+	print dol_get_fiche_head();
 
 	foreach ($moreparam as $key => $value) {
 		 print '<input type="hidden" name="'.$key.'" value="'.$value.'">'."\n";
