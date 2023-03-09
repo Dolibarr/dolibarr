@@ -1910,7 +1910,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 			setEventMessages($result, null, 'errors');
 			$error++;
 		} else {
-			/* TODO ALI Header reidrect must be at end after actions. Also tab=pemrissions looks strange
+			/* TODO ALI Header redirect must be at end after actions. Also tab=pemrissions looks strange
 			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
 			*/
 			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
