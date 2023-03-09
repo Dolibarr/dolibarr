@@ -145,9 +145,8 @@ if ($action == 'create' && GETPOST("accountid", "int") > 0 && $user->rights->ban
 	if (GETPOSTISARRAY('toRemise')) {
 		$object->type = $type;
 		$arrayofid = GETPOST('toRemise', 'array:int');
-		var_dump($arrayofid);
 
-		$result = $object->create($user, GETPOST("accountid", "int"), 0, GETPOST('toRemise', 'array:int'));
+		$result = $object->create($user, GETPOST("accountid", "int"), 0, $arrayofid);
 		if ($result > 0) {
 			if ($object->statut == 1) {     // If statut is validated, we build doc
 				$object->fetch($object->id); // To force to reload all properties in correct property name
