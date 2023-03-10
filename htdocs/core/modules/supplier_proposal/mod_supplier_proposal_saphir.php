@@ -83,7 +83,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("CommRequest"), $langs->transnoentities("CommRequest"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 
-		$mask = dolGetGlobalString('SUPPLIER_PROPOSAL_SAPHIR_MASK');
+		$mask = getDolGlobalString('SUPPLIER_PROPOSAL_SAPHIR_MASK');
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
