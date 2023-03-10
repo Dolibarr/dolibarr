@@ -246,7 +246,9 @@ class PropaleStats extends Stats
 		global $user;
 
 		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
-		$sql .= " FROM ".$this->from." INNER JOIN ".$this->from_line." ON p.rowid = tl.fk_propal INNER JOIN ".MAIN_DB_PREFIX."product as product ON tl.fk_product = product.rowid";
+		$sql .= " FROM ".$this->from;
+		$sql .= " INNER JOIN ".$this->from_line." ON p.rowid = tl.fk_propal";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product as product ON tl.fk_product = product.rowid";
 		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}

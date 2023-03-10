@@ -586,7 +586,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 		print $form->selectarray("morphy", $morphys, GETPOST('morphy'), 1);
 		print '</td></tr>'."\n";
 	} else {
-		print $morphys[$conf->global->MEMBER_NEWFORM_FORCEMORPHY];
+		//print $morphys[$conf->global->MEMBER_NEWFORM_FORCEMORPHY];
 		print '<input type="hidden" id="morphy" name="morphy" value="'.$conf->global->MEMBER_NEWFORM_FORCEMORPHY.'">';
 	}
 
