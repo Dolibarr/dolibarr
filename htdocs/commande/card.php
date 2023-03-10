@@ -1788,7 +1788,7 @@ if ($action == 'create' && $usercancreate) {
 		print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', '((s.client = 1 OR s.client = 2 OR s.client = 3) AND s.status=1)', 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
 		// reload page to retrieve customer informations
 		if (empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED)) {
-			print '<script type="text/javascript">
+			print '<script>
 			$(document).ready(function() {
 				$("#socid").change(function() {
 					console.log("We have changed the company - Reload page");
@@ -1850,13 +1850,13 @@ if ($action == 'create' && $usercancreate) {
 	// Terms of payment
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print img_picto('', 'payment', 'class="pictofixedwidth"');
-	print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id')?GETPOST('cond_reglement_id'):$cond_reglement_id), 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', $deposit_percent);
+	print $form->getSelectConditionsPaiements(((GETPOSTISSET('cond_reglement_id') && GETPOST('cond_reglement_id') != 0)?GETPOST('cond_reglement_id'):$cond_reglement_id), 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', $deposit_percent);
 	print '</td></tr>';
 
 	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	print $form->select_types_paiements((GETPOSTISSET('mode_reglement_id')?GETPOST('mode_reglement_id'):$mode_reglement_id), 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
+	print $form->select_types_paiements(((GETPOSTISSET('mode_reglement_id') && GETPOST('mode_reglement_id') != 0)?GETPOST('mode_reglement_id'):$mode_reglement_id), 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print '</td></tr>';
 
 	// Bank Account
