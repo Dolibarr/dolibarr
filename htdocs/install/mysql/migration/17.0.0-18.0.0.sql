@@ -109,9 +109,12 @@ ALTER TABLE llx_element_time CHANGE COLUMN task_date_withhour element_date_withh
 ALTER TABLE llx_element_time CHANGE COLUMN task_duration element_duration double;
 ALTER TABLE llx_element_time ADD COLUMN elementtype varchar(32) NOT NULL DEFAULT 'task' AFTER fk_element;
 
-DROP INDEX idx_projet_task_time_task on llx_element_time;
-DROP INDEX idx_projet_task_time_date on llx_element_time;
-DROP INDEX idx_projet_task_time_datehour on llx_element_time;
+-- VMYSQL4.1 DROP INDEX idx_projet_task_time_task on llx_element_time;
+-- VMYSQL4.1 DROP INDEX idx_projet_task_time_date on llx_element_time;
+-- VMYSQL4.1 DROP INDEX idx_projet_task_time_datehour on llx_element_time;
+-- VPGSQL8.2 DROP INDEX idx_projet_task_time_task;
+-- VPGSQL8.2 DROP INDEX idx_projet_task_time_date;
+-- VPGSQL8.2 DROP INDEX idx_projet_task_time_datehour;
 
 ALTER TABLE llx_element_time ADD INDEX idx_element_time_task (fk_element);
 ALTER TABLE llx_element_time ADD INDEX idx_element_time_date (element_date);
