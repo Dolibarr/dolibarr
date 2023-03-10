@@ -313,6 +313,7 @@ MAIN_DISABLE_ALL_SMS=Disable all SMS sending (for test purposes or demos)
 MAIN_SMS_SENDMODE=Method to use to send SMS
 MAIN_MAIL_SMS_FROM=Default sender phone number for SMS sending
 MAIN_MAIL_DEFAULT_FROMTYPE=Default sender email for manual sending (User email or Company email)
+COMM_ACTION_MAIL_DESCRIPTION=Show the email information (sender, receivers, etc) in the event description (if defined)
 UserEmail=User email
 CompanyEmail=Company Email
 FeatureNotAvailableOnLinux=Feature not available on Unix like systems. Test your sendmail program locally.
