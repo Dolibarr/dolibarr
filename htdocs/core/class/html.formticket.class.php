@@ -1182,13 +1182,15 @@ class FormTicket
 			print '</td></tr>';
 
 			// Destinataires
-			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients').'</td><td>';
+			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients');
+			print ' '.$form->textwithpicto('', $langs->trans("TicketMessageRecipientsHelp"), 1, 'help');
+			print '</td><td>';
 			$ticketstat = new Ticket($this->db);
 			$res = $ticketstat->fetch('', '', $this->track_id);
 			if ($res) {
 				// Retrieve email of all contacts (internal and external)
-				$contacts = $ticketstat->getInfosTicketInternalContact();
-				$contacts = array_merge($contacts, $ticketstat->getInfosTicketExternalContact());
+				$contacts = $ticketstat->getInfosTicketInternalContact(1);
+				$contacts = array_merge($contacts, $ticketstat->getInfosTicketExternalContact(1));
 
 				// Build array to display recipient list
 				if (is_array($contacts) && count($contacts) > 0) {
