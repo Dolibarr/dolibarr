@@ -1898,7 +1898,7 @@ if ($action == 'create') {
 			$shipping_method_id = $soc->shipping_method_id;
 		}
 		print '<tr class="field_shipping_method_id"><td class="titlefieldcreate">'.$langs->trans('SendingMethod').'</td><td class="valuefieldcreate">';
-		print img_picto('', 'object_dollyrevert', 'class="pictofixedwidth"');
+		print img_picto('', 'dolly', 'class="pictofixedwidth"');
 		$form->selectShippingMethod($shipping_method_id, 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 	}
@@ -1943,6 +1943,7 @@ if ($action == 'create') {
 		print '<tr class="field_incoterm_id">';
 		print '<td class="titlefieldcreate"><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $soc->label_incoterms, 1).'</label></td>';
 		print '<td  class="valuefieldcreate maxwidthonsmartphone">';
+		print img_picto('', 'incoterm', 'class="pictofixedwidth"');
 		print $form->select_incoterms((!empty($soc->fk_incoterms) ? $soc->fk_incoterms : ''), (!empty($soc->location_incoterms) ? $soc->location_incoterms : ''));
 		print '</td></tr>';
 	}
@@ -3037,10 +3038,14 @@ if ($action == 'create') {
 
 		print '</div><div class="fichehalfright">';
 
+		$MAXEVENT = 10;
+
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/comm/propal/agenda.php?id='.$object->id);
+
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'propal', $socid, 1);
+		$somethingshown = $formactions->showactions($object, 'propal', $socid, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for thirdparty
 
 		print '</div></div>';
 	}

@@ -90,7 +90,7 @@ create table llx_facture
 
   prorata_discount		real DEFAULT NULL,  					-- % of the prorata discount (to know how to add prorata discount lines for each vat rate in the invoice)
 
-  situation_cycle_ref smallint,  -- situation cycle reference. A key that is similar for all the serie.
+  situation_cycle_ref integer,   -- situation cycle reference. A key that is similar for all the serie.
   situation_counter   smallint,  -- situation counter. The number into the serie: 1, 2, ...
   situation_final     smallint,  -- 0 by default, 1 it if is the final invoice.
 
