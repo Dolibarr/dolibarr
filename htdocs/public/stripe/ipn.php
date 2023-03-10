@@ -34,6 +34,11 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// So log file will have a suffix
+if (!defined('USESUFFIXINLOG')) {
+	define('USESUFFIXINLOG', '_stripeipn');
+}
+
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';

@@ -155,7 +155,7 @@ if (isModEnabled('comptabilite')) {
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
-
+$hookmanager->initHooks(['customersupplierreportlist']);
 
 /*
  * View
@@ -254,7 +254,7 @@ if ($date_endyear) {
 	$param .= '&date_endyear='.$date_endyear;
 }
 
-print '<table class="noborder centpercent">';
+print '<table class="liste noborder centpercent">';
 print '<tr class="liste_titre">';
 
 if ($modecompta == 'BOOKKEEPING') {
