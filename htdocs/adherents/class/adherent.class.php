@@ -441,7 +441,7 @@ class Adherent extends CommonObject
 	 *  @param	string	$errors_to			erros to
 	 *  @param	string	$moreinheader		Add more html headers
 	 *  @deprecated since V18
-	 *  @see sendEmail
+	 *  @see sendEmail()
 	 *  @return	int							<0 if KO, >0 if OK
 	 */
 	public function send_an_email($text, $subject, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = -1, $errors_to = '', $moreinheader = '')
