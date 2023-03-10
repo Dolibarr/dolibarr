@@ -1125,6 +1125,7 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 				}
 				continue;
 			}
+			$regs = array();
 			preg_match('/^([^\?]+(\.css\.php|\.css|\.js\.php|\.js|\.png|\.jpg|\.php)?)/i', $path, $regs); // Take part before '?'
 			if (!empty($regs[1])) {
 				//print $key.'-'.$dirroot.'/'.$path.'-'.$conf->file->dol_url_root[$type].'<br>'."\n";
@@ -1787,7 +1788,9 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 	if (empty($conf->use_javascript_ajax)) {
 		$out .= ' href="'.DOL_URL_ROOT.$url.'" target="_blank"';
 	} elseif ($jsonopen) {
-		$out .= ' onclick="javascript:'.$jsonopen.'"';
+		$out .= ' href="#" onclick="javascript:'.$jsonopen.'"';
+	} else {
+		$out .= ' href="#"';
 	}
 	$out .= '>'.$buttonstring.'</a>';
 
@@ -4006,8 +4009,9 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
  *	Show picto whatever it's its name (generic function)
  *
  *	@param      string		$titlealt         		Text on title tag for tooltip. Not used if param notitle is set to 1.
- *	@param      string		$picto       			Name of image file to show ('filenew', ...)
- *													If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
+ *	@param      string		$picto       			Name of image file to show ('filenew', ...).
+ *													For font awesome icon (example 'user'), you can use picto_nocolor to not have the color of picto forced.
+ *													If no extension provided and it is not a font awesome icon, we use '.png'. Image must be stored into theme/xxx/img directory.
  *                                  				Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
  *                                  				Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
  *                                  				Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
@@ -4045,6 +4049,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	} else {
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
+		$pictowithouttext = str_replace('_nocolor', '', $pictowithouttext);
 
 		if (strpos($pictowithouttext, 'fontawesome_') !== false || preg_match('/^fa-/', $pictowithouttext)) {
 			// This is a font awesome image 'fonwtawesome_xxx' or 'fa-xxx'
@@ -4102,7 +4107,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'edit', 'ellipsis-h', 'email', 'entity', 'envelope', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt', 'eye',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus',
 				'gears', 'generate', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
-				'help', 'holiday',
+				'hands-helping', 'help', 'holiday',
 				'id-card', 'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'jobprofile',
 				'knowledgemanagement',
 				'label', 'language', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lock', 'lot', 'long-arrow-alt-right',
@@ -4254,7 +4259,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				//'title_setup'=>'infobox-action', 'tools'=>'infobox-action',
 				'list-alt'=>'imgforviewmode', 'calendar'=>'imgforviewmode', 'calendarweek'=>'imgforviewmode', 'calendarmonth'=>'imgforviewmode', 'calendarday'=>'imgforviewmode', 'calendarperuser'=>'imgforviewmode'
 			);
-			if (!empty($arrayconvpictotomorcess[$pictowithouttext])) {
+			if (!empty($arrayconvpictotomorcess[$pictowithouttext]) && strpos($picto, '_nocolor') === false) {
 				$morecss .= ($morecss ? ' ' : '').$arrayconvpictotomorcess[$pictowithouttext];
 			}
 
@@ -4274,7 +4279,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'uncheck'=>'#800', 'uparrow'=>'#555', 'user-cog'=>'#999', 'country'=>'#aaa', 'globe-americas'=>'#aaa', 'region'=>'#aaa', 'state'=>'#aaa',
 				'website'=>'#304', 'workstation'=>'#a69944'
 			);
-			if (isset($arrayconvpictotocolor[$pictowithouttext])) {
+			if (isset($arrayconvpictotocolor[$pictowithouttext]) && strpos($picto, '_nocolor') === false) {
 				$facolor = $arrayconvpictotocolor[$pictowithouttext];
 			}
 
@@ -9591,7 +9596,7 @@ function printCommonFooter($zone = 'private')
 			}
 
 			// Management of focus and mandatory for fields
-			if ($action == 'create' || $action == 'edit' || (empty($action) && (preg_match('/new\.php/', $_SERVER["PHP_SELF"])))) {
+			if ($action == 'create' || $action == 'edit' || (empty($action) && (preg_match('/new\.php/', $_SERVER["PHP_SELF"]))) || ((empty($action) || $action == 'addline') && (preg_match('/card\.php/', $_SERVER["PHP_SELF"])))) {
 				print '/* JS CODE TO ENABLE to manage focus and mandatory form fields */'."\n";
 				$relativepathstring = $_SERVER["PHP_SELF"];
 				// Clean $relativepathstring

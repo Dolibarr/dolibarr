@@ -217,7 +217,11 @@ class Commande extends CommonOrder
 	 */
 	public $fk_remise_except;
 
+	/**
+	 * @deprecated
+	 */
 	public $remise_percent;
+
 	public $remise_absolue;
 	public $info_bits;
 	public $rang;
@@ -327,7 +331,7 @@ class Commande extends CommonOrder
 		'fk_user_cloture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserClosing', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'source' =>array('type'=>'smallint(6)', 'label'=>'Source', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 		//'amount_ht' =>array('type'=>'double(24,8)', 'label'=>'AmountHT', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
-		'remise_percent' =>array('type'=>'double', 'label'=>'RelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
+		//'remise_percent' =>array('type'=>'double', 'label'=>'RelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
 		'remise_absolue' =>array('type'=>'double', 'label'=>'CustomerRelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
 		//'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
 		'total_tva' =>array('type'=>'double(24,8)', 'label'=>'VAT', 'enabled'=>1, 'visible'=>-1, 'position'=>125, 'isameasure'=>1),
@@ -339,14 +343,14 @@ class Commande extends CommonOrder
 		'note_public' =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>155),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'PDFTemplate', 'enabled'=>1, 'visible'=>0, 'position'=>160),
 		//'facture' =>array('type'=>'tinyint(4)', 'label'=>'ParentInvoice', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
-		'fk_account' =>array('type'=>'integer', 'label'=>'BankAccount', 'enabled'=>'$conf->banque->enabled', 'visible'=>-1, 'position'=>170),
+		'fk_account' =>array('type'=>'integer', 'label'=>'BankAccount', 'enabled'=>'isModEnabled("banque")', 'visible'=>-1, 'position'=>170),
 		'fk_currency' =>array('type'=>'varchar(3)', 'label'=>'MulticurrencyID', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
 		'deposit_percent' =>array('type'=>'varchar(63)', 'label'=>'DepositPercent', 'enabled'=>1, 'visible'=>-1, 'position'=>181),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'PaymentMode', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
 		'date_livraison' =>array('type'=>'date', 'label'=>'DateDeliveryPlanned', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
 		'fk_shipping_method' =>array('type'=>'integer', 'label'=>'ShippingMethod', 'enabled'=>1, 'visible'=>-1, 'position'=>195),
-		'fk_warehouse' =>array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Fk warehouse', 'enabled'=>'$conf->stock->enabled', 'visible'=>-1, 'position'=>200),
+		'fk_warehouse' =>array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Fk warehouse', 'enabled'=>'isModEnabled("stock")', 'visible'=>-1, 'position'=>200),
 		'fk_availability' =>array('type'=>'integer', 'label'=>'Availability', 'enabled'=>1, 'visible'=>-1, 'position'=>205),
 		'fk_input_reason' =>array('type'=>'integer', 'label'=>'InputReason', 'enabled'=>1, 'visible'=>-1, 'position'=>210),
 		//'fk_delivery_address' =>array('type'=>'integer', 'label'=>'DeliveryAddress', 'enabled'=>1, 'visible'=>-1, 'position'=>215),
@@ -981,7 +985,7 @@ class Commande extends CommonOrder
 		$sql .= ", ".(!empty($this->shipping_method_id) && $this->shipping_method_id > 0 ? ((int) $this->shipping_method_id) : 'NULL');
 		$sql .= ", ".(!empty($this->warehouse_id) && $this->warehouse_id > 0 ? ((int) $this->warehouse_id) : 'NULL');
 		$sql .= ", ".($this->remise_absolue > 0 ? $this->db->escape($this->remise_absolue) : 'NULL');
-		$sql .= ", ".($this->remise_percent > 0 ? $this->db->escape($this->remise_percent) : 0);
+		$sql .= ", ".($this->remise_percent > 0 ? $this->db->escape($this->remise_percent) : 0);		// TODO deprecated
 		$sql .= ", ".(int) $this->fk_incoterms;
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
 		$sql .= ", ".setEntity($this);
@@ -1929,7 +1933,7 @@ class Commande extends CommonOrder
 				$this->date_validation = $this->db->jdate($obj->date_valid);
 				$this->date_modification = $this->db->jdate($obj->tms);
 				$this->remise				= $obj->remise;
-				$this->remise_percent		= $obj->remise_percent;
+				$this->remise_percent		= $obj->remise_percent;	// TODO deprecated
 				$this->remise_absolue		= $obj->remise_absolue;
 				$this->source				= $obj->source;
 				$this->billed				= $obj->billed;
@@ -2467,12 +2471,13 @@ class Commande extends CommonOrder
 	 * 	@param     	float		$remise		Discount (percent)
 	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 					<0 if KO, >0 if OK
+	 *	@deprecated remise_percent is a deprecated field for object parent
 	 */
 	public function setDiscount($user, $remise, $notrigger = 0)
 	{
 		$remise = trim($remise) ?trim($remise) : 0;
 
-		if ($user->rights->commande->creer) {
+		if ($user->hasRight('commande', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2540,7 +2545,7 @@ class Commande extends CommonOrder
 
 		$remise = price2num($remise);
 
-		if ($user->rights->commande->creer) {
+		if ($user->hasRight('commande', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2600,7 +2605,7 @@ class Commande extends CommonOrder
 	public function set_date($user, $date, $notrigger = 0)
 	{
 		// phpcs:enable
-		if ($user->rights->commande->creer) {
+		if ($user->hasRight('commande', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2672,7 +2677,7 @@ class Commande extends CommonOrder
 	 */
 	public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
 	{
-		if ($user->rights->commande->creer) {
+		if ($user->hasRight('commande', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2731,7 +2736,7 @@ class Commande extends CommonOrder
 	 *  @param    	int		$offset			For pagination
 	 *  @param    	string	$sortfield		Sort criteria
 	 *  @param    	string	$sortorder		Sort order
-	 *  @return     int             		-1 if KO, array with result if OK
+	 *  @return     int|array             		-1 if KO, array with result if OK
 	 */
 	public function liste_array($shortlist = 0, $draft = 0, $excluser = '', $socid = 0, $limit = 0, $offset = 0, $sortfield = 'c.date_commande', $sortorder = 'DESC')
 	{
@@ -3184,17 +3189,17 @@ class Commande extends CommonOrder
 
 			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
 
-			$total_ht  = $tabprice[0];
+			$total_ht = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
-			$pu_ht  = $tabprice[3];
+			$pu_ht = $tabprice[3];
 			$pu_tva = $tabprice[4];
 			$pu_ttc = $tabprice[5];
 
 			// MultiCurrency
-			$multicurrency_total_ht  = $tabprice[16];
+			$multicurrency_total_ht = $tabprice[16];
 			$multicurrency_total_tva = $tabprice[17];
 			$multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];

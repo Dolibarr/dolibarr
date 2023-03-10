@@ -78,7 +78,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-// load mymodule libraries
+// load module libraries
 require_once __DIR__.'/class/myobject.class.php';
 
 // for other modules
@@ -158,9 +158,9 @@ foreach ($object->fields as $key => $val) {
 $parameters = array('fieldstosearchall'=>$fieldstosearchall);
 $reshook = $hookmanager->executeHooks('completeFieldsToSearchAll', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook > 0) {
-	$fieldstosearchall = $hookmanager->resArray['fieldstosearchall'];
+	$fieldstosearchall = empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall'];
 } elseif ($reshook == 0) {
-	$fieldstosearchall = array_merge($fieldstosearchall, $hookmanager->resArray['fieldstosearchall']);
+	$fieldstosearchall = array_merge($fieldstosearchall, empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall']);
 }
 
 // Definition of array of fields for columns
@@ -269,9 +269,9 @@ $form = new Form($db);
 
 $now = dol_now();
 
+$title = $langs->trans("MyObjects");
 //$help_url = "EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
 $help_url = '';
-$title = $langs->trans("MyObjects");
 $morejs = array();
 $morecss = array();
 
@@ -302,7 +302,7 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 }
 // Add table from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 if ($object->ismultientitymanaged == 1) {
 	$sql .= " WHERE t.entity IN (".getEntity($object->element).")";
@@ -449,7 +449,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 foreach ($search as $key => $val) {
 	if (is_array($search[$key])) {
@@ -473,7 +473,7 @@ if ($optioncss != '') {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
 // List of mass actions available
@@ -565,7 +565,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 print '<tr class="liste_titre_filter">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre maxwidthsearch center">';
+	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
@@ -701,6 +701,12 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+		}
 		print $object->getKanbanView('');
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';

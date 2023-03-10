@@ -475,7 +475,8 @@ $totalarray = array();
 $totalarray['nbfield'] = 0;
 $total = 0;
 
-while ($i < min($num, $limit)) {
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 
 	$tva_static->id = $obj->rowid;
@@ -492,9 +493,8 @@ while ($i < min($num, $limit)) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-
 		print $tva_static->getKanbanView('');
-		if ($i == (min($num, $limit) - 1)) {
+		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
 		}

@@ -2384,7 +2384,10 @@ class Project extends CommonObject
 	 */
 	public function getKanbanView($option = '')
 	{
-		global $langs,$user;
+		global $langs, $user;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -2397,6 +2400,7 @@ class Project extends CommonObject
 			$return .= img_warning($langs->trans('Late'));
 		}
 		$return .= '</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'date_start') && $this->date_start) {
 			$return .= '<br><span class="info-box-label">'.dol_print_date($this->date_start, 'day').'</>';
 		}
@@ -2419,7 +2423,7 @@ class Project extends CommonObject
 			$return .= '<br><span class="amount">'.price($this->opp_amount).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

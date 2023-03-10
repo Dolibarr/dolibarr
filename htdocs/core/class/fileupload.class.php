@@ -46,6 +46,12 @@ class FileUpload
 		global $db, $conf;
 		global $object;
 		global $hookmanager;
+
+		// Feature not enabled. Warning feature not used and not secured so disabled.
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		$hookmanager->initHooks(array('fileupload'));
 
 		$this->fk_element = $fk_element;
@@ -238,6 +244,10 @@ class FileUpload
 	 */
 	protected function getFileObject($file_name)
 	{
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		$file_path = $this->options['upload_dir'].$file_name;
 		if (is_file($file_path) && $file_name[0] !== '.') {
 			$file = new stdClass();
@@ -278,6 +288,10 @@ class FileUpload
 	{
 		global $maxwidthmini, $maxheightmini;
 
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		$file_path = $this->options['upload_dir'].$file_name;
 		$new_file_path = $options['upload_dir'].$file_name;
 
@@ -309,6 +323,10 @@ class FileUpload
 	 */
 	protected function validate($uploaded_file, $file, $error, $index)
 	{
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		if ($error) {
 			$file->error = $error;
 			return false;
@@ -399,8 +417,8 @@ class FileUpload
 		// Also remove control characters and spaces (\x00..\x20) around the filename:
 		$file_name = trim(basename(stripslashes($name)), ".\x00..\x20");
 		// Add missing file extension for known image types:
-		if (strpos($file_name, '.') === false &&
-				preg_match('/^image\/(gif|jpe?g|png)/', $type, $matches)) {
+		$matches = array();
+		if (strpos($file_name, '.') === false && preg_match('/^image\/(gif|jpe?g|png)/', $type, $matches)) {
 			$file_name .= '.'.$matches[1];
 		}
 		if ($this->options['discard_aborted_uploads']) {
@@ -424,6 +442,10 @@ class FileUpload
 	 */
 	protected function handleFileUpload($uploaded_file, $name, $size, $type, $error, $index)
 	{
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		$file = new stdClass();
 		$file->name = $this->trimFileName($name, $type, $index);
 		$file->mime = dol_mimetype($file->name, '', 2);
@@ -470,6 +492,10 @@ class FileUpload
 	 */
 	public function get()
 	{
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		$file_name = isset($_REQUEST['file']) ?
 		basename(stripslashes($_REQUEST['file'])) : null;
 		if ($file_name) {
@@ -488,6 +514,10 @@ class FileUpload
 	 */
 	public function post()
 	{
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
 			return $this->delete();
 		}
@@ -543,6 +573,10 @@ class FileUpload
 	 */
 	public function delete()
 	{
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		$file_name = isset($_REQUEST['file']) ?
 		basename(stripslashes($_REQUEST['file'])) : null;
 		$file_path = $this->options['upload_dir'].$file_name;

@@ -790,7 +790,8 @@ if ($resql) {
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
 		$totalduration = 0;
-		while ($i < min($num, $limit)) {
+		$imaxinloop = ($limit ? min($num, $limit) : $num);
+		while ($i < $imaxinloop) {
 			$obj = $db->fetch_object($resql);
 
 			// Leave request
@@ -852,7 +853,7 @@ if ($resql) {
 					$arraydata = array('user'=>$userstatic, 'labeltype'=>$labeltypeleavetoshow);
 					print $holidaystatic->getKanbanView('', $arraydata);
 				}
-				if ($i == (min($num, $limit) - 1)) {
+				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
 					print '</td></tr>';
 				}

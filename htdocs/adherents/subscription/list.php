@@ -502,7 +502,8 @@ print "</tr>\n";
 
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-while ($i < min($num, $limit)) {
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($result);
 
 	$subscription->ref = $obj->crowid;
@@ -546,7 +547,7 @@ while ($i < min($num, $limit)) {
 		}
 		// Output Kanban
 		print $subscription->getKanbanView('');
-		if ($i == (min($num, $limit) - 1)) {
+		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
 		}

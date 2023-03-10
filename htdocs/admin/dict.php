@@ -599,6 +599,7 @@ foreach ($tabcomplete as $key => $value) {
 	$tabcomplete[$key]['sql'] = $tabsql[$i];
 	$tabcomplete[$key]['sqlsort'] = $tabsqlsort[$i];
 	$tabcomplete[$key]['field'] = $tabfield[$i];
+	//$tabcomplete[$key]['help'] = $tabhelp[$i];		// array help already loaded into tabcomplete
 }
 
 $keytable = '';
@@ -615,7 +616,6 @@ if (empty($sortfield)) {
 	$sortorder = (!empty($tmp2[1]) ? $tmp2[1] : '');
 	//var_dump($sortfield);var_dump($sortorder);
 }
-
 
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
 $elementList = array();
@@ -1222,7 +1222,6 @@ if (GETPOST('from')) {
 if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'rowid='.urlencode($rowid).'&code='.urlencode($code).$paramwithsearch, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
-
 
 /*
  * Show a dictionary
@@ -1926,8 +1925,8 @@ if ($id > 0) {
 					if (!is_null($withentity)) {
 						print '<input type="hidden" name="entity" value="'.$withentity.'">';
 					}
-					print '<input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
-					print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+					print '<input type="submit" class="button button-edit small" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '<input type="submit" class="button button-cancel small" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 					print '</td>';
 				} else {
 					$tmpaction = 'view';

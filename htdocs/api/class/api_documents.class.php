@@ -751,7 +751,7 @@ class Documents extends DolibarrApi
 			throw new RestException(500, "Failed to open file '".$destfiletmp."' for write");
 		}
 
-		$result = dol_move($destfiletmp, $destfile, 0, $overwriteifexists, 1);
+		$result = dol_move($destfiletmp, $destfile, 0, $overwriteifexists, 1, 1);
 		if (!$result) {
 			throw new RestException(500, "Failed to move file into '".$destfile."'");
 		}

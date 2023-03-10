@@ -669,7 +669,8 @@ input.buttonpaymentstripe {
 	background-position: 8px 7px;
 }
 .logopublicpayment #dolpaymentlogo {
-	max-height: 100px;
+	max-height: 80px;
+	max-width: 300px;
 	image-rendering: -webkit-optimize-contrast;		/* better rendering on public page header */
 }
 a.butStatus {
@@ -7040,6 +7041,17 @@ border-top-right-radius: 6px;
 }
 .public_border {
 	border: 1px solid #888;
+}
+.publicnewmemberform div.tabBarWithBottom {
+	border: 1px solid #e8e8e8;
+	padding: 30px;
+	border-radius: 8px;
+	background-color: #f8f8f8;
+	/*box-shadow: 2px 2px 10px #ddd;*/
+}
+
+.publicnewmemberform #tablesubscribe {
+	color: #666;
 }
 
 

@@ -26,6 +26,7 @@ Permission56002=Modifica tickets
 Permission56003=Cancella tickets
 Permission56004=Manage tickets
 Permission56005=See tickets of all third parties (not effective for external users, always be limited to the third party they depend on)
+Permission56006=Export tickets
 
 Tickets=Tickets
 TicketDictType=Ticket - Tipologie
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=External contributor
 
 OriginEmail=Email giornalista
 Notify_TICKET_SENTBYMAIL=Send ticket message by email
+
+ExportDataset_ticket_1=Tickets
 
 # Status
 Read=Da leggere
@@ -183,7 +186,7 @@ CreatedBy=Creato da
 NewTicket=Nuovo Ticket
 SubjectAnswerToTicket=Ticket answer
 TicketTypeRequest=Request type
-TicketCategory=Classificazione dei biglietti
+TicketCategory=Ticket group
 SeeTicket=See ticket
 TicketMarkedAsRead=Ticket has been marked as read
 TicketReadOn=Read on

@@ -517,7 +517,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<table width="100%" class="nobordernopadding"><tr><td>';
 			print $langs->trans('IncotermLabel');
 			print '<td><td class="right">';
-			if ($user->rights->commande->creer) {
+			if ($user->hasRight('commande', 'creer')) {
 				print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'/expedition/shipment.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 			} else {
 				print '&nbsp;';

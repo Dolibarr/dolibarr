@@ -106,11 +106,10 @@ if ($id > 0) {
 		$objsoc = new Societe($db);
 		$objsoc->fetch($object->socid);
 		// Thirdparty
-		$morehtmlref .= $langs->trans('ThirdParty').' : ';
 		if ($objsoc->id > 0) {
 			$morehtmlref .= $objsoc->getNomUrl(1);
 		} else {
-			$morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+			$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("ContactNotLinkedToCompany").'</span>';
 		}
 	}
 	$morehtmlref .= '</div>';

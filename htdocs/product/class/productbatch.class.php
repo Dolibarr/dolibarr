@@ -431,7 +431,7 @@ class Productbatch extends CommonObject
 	 *  @param	int			$fk_product_stock	id product_stock for objet
 	 *  @param	int			$with_qty    		1 = doesn't return line with 0 quantity
 	 *  @param  int         $fk_product         If set to a product id, get eatby and sellby from table llx_product_lot
-	 *  @return array         					<0 if KO, array of batch
+	 *  @return array|int         					<0 if KO, array of batch
 	 */
 	public static function findAll($dbs, $fk_product_stock, $with_qty = 0, $fk_product = 0)
 	{

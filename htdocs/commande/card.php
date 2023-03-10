@@ -1785,10 +1785,10 @@ if ($action == 'create' && $usercancreate) {
 		print '</td>';
 	} else {
 		print '<td>';
-		print img_picto('', 'company').$form->select_company('', 'socid', '((s.client = 1 OR s.client = 2 OR s.client = 3) AND s.status=1)', 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
+		print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', '((s.client = 1 OR s.client = 2 OR s.client = 3) AND s.status=1)', 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
 		// reload page to retrieve customer informations
 		if (empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED)) {
-			print '<script type="text/javascript">
+			print '<script>
 			$(document).ready(function() {
 				$("#socid").change(function() {
 					console.log("We have changed the company - Reload page");
@@ -1828,6 +1828,7 @@ if ($action == 'create' && $usercancreate) {
 
 	// Date
 	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
+	print img_picto('', 'action', 'class="pictofixedwidth"');
 	print $form->selectDate('', 're', '', '', '', "crea_commande", 1, 1); // Always autofill date with current date
 	print '</td></tr>';
 
@@ -1835,6 +1836,7 @@ if ($action == 'create' && $usercancreate) {
 	print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 	print '<td colspan="3">';
 	$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date);
+	print img_picto('', 'action', 'class="pictofixedwidth"');
 	print $form->selectDate($date_delivery ? $date_delivery : -1, 'liv_', 1, 1, 1);
 	print "</td>\n";
 	print '</tr>';
@@ -1848,13 +1850,13 @@ if ($action == 'create' && $usercancreate) {
 	// Terms of payment
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print img_picto('', 'payment', 'class="pictofixedwidth"');
-	print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id')?GETPOST('cond_reglement_id'):$cond_reglement_id), 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', $deposit_percent);
+	print $form->getSelectConditionsPaiements(((GETPOSTISSET('cond_reglement_id') && GETPOST('cond_reglement_id') != 0)?GETPOST('cond_reglement_id'):$cond_reglement_id), 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', $deposit_percent);
 	print '</td></tr>';
 
 	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	print $form->select_types_paiements((GETPOSTISSET('mode_reglement_id')?GETPOST('mode_reglement_id'):$mode_reglement_id), 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
+	print $form->select_types_paiements(((GETPOSTISSET('mode_reglement_id') && GETPOST('mode_reglement_id') != 0)?GETPOST('mode_reglement_id'):$mode_reglement_id), 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print '</td></tr>';
 
 	// Bank Account
@@ -1867,7 +1869,7 @@ if ($action == 'create' && $usercancreate) {
 	// Shipping Method
 	if (isModEnabled('expedition')) {
 		print '<tr><td>'.$langs->trans('SendingMethod').'</td><td>';
-		print img_picto('', 'object_dolly', 'class="pictofixedwidth"');
+		print img_picto('', 'dolly', 'class="pictofixedwidth"');
 		$form->selectShippingMethod((GETPOSTISSET('shipping_method_id')?GETPOST('shipping_method_id'):$shipping_method_id), 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 	}
@@ -1911,6 +1913,7 @@ if ($action == 'create' && $usercancreate) {
 			$incoterm_id = (!empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : $soc->fk_incoterms);
 			$incoterm_location = (!empty($objectsrc->location_incoterms) ? $objectsrc->location_incoterms : $soc->location_incoterms);
 		}
+		print img_picto('', 'incoterm', 'class="pictofixedwidth"');
 		print $form->select_incoterms($incoterm_id, $incoterm_location);
 		print '</td></tr>';
 	}

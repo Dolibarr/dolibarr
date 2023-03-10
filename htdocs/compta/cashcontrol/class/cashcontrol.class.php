@@ -480,6 +480,9 @@ class CashControl extends CommonObject
 	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -488,6 +491,7 @@ class CashControl extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1, 1) : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'posmodule')) {
 			$return .= '<br><span class="opacitymedium">'.substr($langs->trans("Module/Application"), 0, 12).'</span> : <span class="info-box-label">'.$this->posmodule.'</span>';
 		}
@@ -495,7 +499,7 @@ class CashControl extends CommonObject
 			$return .= '<br><span class="info-box-label opacitymedium" >'.$langs->trans("Year").'</span> : <span>'.$this->year_close.'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

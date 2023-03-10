@@ -173,3 +173,4 @@ PermissionAddedSuccesfuly=Les permissions ont été ajoutées avec succès
 MenuDeletedSuccessfuly=Le menu a été supprimé avec succès
 MenuAddedSuccessfuly=Le menu a été ajouté avec succès
 MenuUpdatedSuccessfuly=Le menu a été mis à jour avec succès
+ApiObjectDeleted=API pour l'objet %s a été supprimé avec succès

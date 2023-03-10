@@ -328,7 +328,7 @@ if ($action == 'presend') {
 	}
 
 	$contactarr = array();
-	$contactarr = $tmpobject->liste_contact(-1, 'external');
+	$contactarr = $tmpobject->liste_contact(-1, 'external', 0, '', 1);
 
 	if (is_array($contactarr) && count($contactarr) > 0) {
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';

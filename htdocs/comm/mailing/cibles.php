@@ -73,17 +73,19 @@ $result = $object->fetch($id);
 $hookmanager->initHooks(array('ciblescard', 'globalcard'));
 
 // Security check
-if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+if (!$user->hasRight('mailing', 'lire') || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'mailing');
+
+$sqlmessage = '';
 
 
 /*
  * Actions
  */
 
-if ($action == 'add') {
+if ($action == 'add' && $user->hasRight('mailing', 'creer')) {		// Add recipients
 	$module = GETPOST("module", 'alpha');
 	$result = -1;
 
@@ -103,6 +105,8 @@ if ($action == 'add') {
 			$obj = new $classname($db);
 			dol_syslog("Call add_to_target on class ".$classname);
 			$result = $obj->add_to_target($id);
+
+			$sqlmessage = $obj->sql;
 		}
 	}
 	if ($result > 0) {
@@ -117,7 +121,7 @@ if ($action == 'add') {
 	}
 }
 
-if (GETPOST('clearlist', 'int')) {
+if (GETPOST('clearlist', 'int') && $user->hasRight('mailing', 'creer')) {
 	// Loading Class
 	$obj = new MailingTargets($db);
 	$obj->clear_target($id);
@@ -127,7 +131,7 @@ if (GETPOST('clearlist', 'int')) {
 	*/
 }
 
-if (GETPOST('exportcsv', 'int')) {
+if (GETPOST('exportcsv', 'int') && $user->hasRight('mailing', 'lire')) {
 	$completefilename = 'targets_emailing'.$object->id.'_'.dol_print_date(dol_now(), 'dayhourlog').'.csv';
 	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename='.$completefilename);
@@ -166,7 +170,7 @@ if (GETPOST('exportcsv', 'int')) {
 	exit;
 }
 
-if ($action == 'delete') {
+if ($action == 'delete' && $user->hasRight('mailing', 'creer')) {
 	// Ici, rowid indique le destinataire et id le mailing
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid = ".((int) $rowid);
 	$resql = $db->query($sql);
@@ -454,7 +458,14 @@ if ($object->fetch($id) >= 0) {
 		print '</div>';	// End table
 		print '</div>';
 
-		print '<br><br>';
+		print '<br>';
+
+		if ($sqlmessage && $user->admin) {
+			print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlmessage, 0, 0, 1, '', 'TechnicalInformation');
+			print '<br>';
+		}
+
+		print '<br>';
 	}
 
 	// List of selected targets

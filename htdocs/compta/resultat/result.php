@@ -158,7 +158,7 @@ if (isModEnabled('comptabilite')) {
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
-
+$hookmanager->initHooks(['resultreportlist']);
 
 /*
  * View
