@@ -6090,13 +6090,15 @@ abstract class CommonObject
 
 				// If field is a computed field, value must become result of compute (regardless of whether a row exists
 				// in the element's extrafields table)
-				foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
-					if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
-						//var_dump($conf->disable_compute);
-						if (empty($conf->disable_compute)) {
-							global $objectoffield;		// We set a global variable to $objectoffield so
-							$objectoffield = $this;		// we can use it inside computed formula
-							$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
+				if (is_array($extrafields->attributes[$this->table_element]['label'])) {
+					foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+						if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
+							//var_dump($conf->disable_compute);
+							if (empty($conf->disable_compute)) {
+								global $objectoffield;        // We set a global variable to $objectoffield so
+								$objectoffield = $this;        // we can use it inside computed formula
+								$this->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
+							}
 						}
 					}
 				}
