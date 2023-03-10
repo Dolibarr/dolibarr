@@ -57,3 +57,4 @@ yarn.lock
 package-lock.json
 
 doc/install.lock
+/.asciidoctorconfig.adoc

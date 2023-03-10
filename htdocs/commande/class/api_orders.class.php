@@ -712,6 +712,7 @@ class Orders extends DolibarrApi
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
+	 *
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{

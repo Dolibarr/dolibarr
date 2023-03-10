@@ -1535,12 +1535,12 @@ if ($action == 'create') {
 				if ($nbofservices > 1 && $conf->browser->layout != 'phone' && !empty($user->rights->contrat->creer)) {
 					print '<td width="30" class="linecolmove tdlineupdown center">';
 					if ($cursorline > 1) {
-						print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&token='.newToken().'&rowid='.$objp->rowid.'">';
+						print '<a class="lineupdown reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&token='.newToken().'&rowid='.$objp->rowid.'">';
 						echo img_up('default', 0, 'imgupforline');
 						print '</a>';
 					}
 					if ($cursorline < $nbofservices) {
-						print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&token='.newToken().'&rowid='.$objp->rowid.'">';
+						print '<a class="lineupdown reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&token='.newToken().'&rowid='.$objp->rowid.'">';
 						echo img_down('default', 0, 'imgdownforline');
 						print '</a>';
 					}

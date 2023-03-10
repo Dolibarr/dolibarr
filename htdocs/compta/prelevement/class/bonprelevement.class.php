@@ -426,6 +426,7 @@ class BonPrelevement extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set direct debit or credit transfer order to "paid" status.
+	 *  Then create the payment for each invoice of the prelemevement_bon.
 	 *
 	 *	@param	User	$user			Id of user
 	 *	@param 	int		$date			date of action
@@ -1317,6 +1318,9 @@ class BonPrelevement extends CommonObject
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans($labeltoshow).'</u> '.$this->getLibStatut(5);
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (isset($this->amount)) {
+			$label .= '<br><b>'.$langs->trans("Amount").":</b> ".price($this->amount);
+		}
 		if (isset($this->date_trans)) {
 			$label .= '<br><b>'.$langs->trans("TransData").":</b> ".dol_print_date($this->date_trans, 'dayhour', 'tzuserrel');
 		}
@@ -2524,6 +2528,8 @@ class BonPrelevement extends CommonObject
 	{
 		global $langs;
 
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -2531,6 +2537,7 @@ class BonPrelevement extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 
 		if (property_exists($this, 'date_echeance')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->date_echeance), 'day').'</span>';

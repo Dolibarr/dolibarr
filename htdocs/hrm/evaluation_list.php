@@ -134,10 +134,10 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Permissions
-$permissiontoread = $user->hasRight('hrm', 'evaluation', 'read');
+$permissiontoread    = $user->hasRight('hrm', 'evaluation', 'read');
 $permissiontoreadall = $user->hasRight('hrm', 'evaluation', 'readall');
-$permissiontoadd = $user->hasRight('hrm', 'evaluation', 'write');
-$permissiontodelete = $user->hasRight('hrm', 'evaluation', 'delete');
+$permissiontoadd     = $user->hasRight('hrm', 'evaluation', 'write');
+$permissiontodelete  = $user->hasRight('hrm', 'evaluation', 'delete');
 
 // Security check
 if (!isModEnabled('hrm')) {

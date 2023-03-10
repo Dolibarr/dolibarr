@@ -1788,7 +1788,9 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 	if (empty($conf->use_javascript_ajax)) {
 		$out .= ' href="'.DOL_URL_ROOT.$url.'" target="_blank"';
 	} elseif ($jsonopen) {
-		$out .= ' onclick="javascript:'.$jsonopen.'"';
+		$out .= ' href="#" onclick="javascript:'.$jsonopen.'"';
+	} else {
+		$out .= ' href="#"';
 	}
 	$out .= '>'.$buttonstring.'</a>';
 
