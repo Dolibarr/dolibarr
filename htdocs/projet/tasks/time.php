@@ -309,6 +309,8 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			}
 			$object->timespent_fk_user = GETPOST("userid_line", 'int');
 			$object->timespent_fk_product = GETPOST("fk_product", 'int');
+			$object->timespent_invoiceid = GETPOST("invoiceid", 'int');
+			$object->timespent_invoicelineid = GETPOST("invoicelineid", 'int');
 
 			$result = 0;
 			if (in_array($object->timespent_fk_user, $childids) || $user->rights->projet->all->creer) {
@@ -336,8 +338,10 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			}
 			$object->timespent_fk_user = GETPOST("userid_line", 'int');
 			$object->timespent_fk_product = GETPOST("fk_product", 'int');
-
+			$object->timespent_invoiceid = GETPOST("invoiceid", 'int');
+			$object->timespent_invoicelineid = GETPOST("invoicelineid", 'int');
 			$result = 0;
+
 			if (in_array($object->timespent_fk_user, $childids) || $user->rights->projet->all->creer) {
 				$result = $object->updateTimeSpent($user);
 
@@ -1468,7 +1472,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print $langs->trans('InvoiceToUse');
 				print '</td>';
 				print '<td>';
-				$form->selectInvoice($projectstatic->thirdparty->id, '', 'invoiceid', 24, 0, $langs->trans('NewInvoice'), 1, 0, 0, 'maxwidth500', '', 'all');
+				print $form->selectInvoice($projectstatic->thirdparty->id, '', 'invoiceid', 24, 0, $langs->trans('NewInvoice'), 1, 0, 0, 'maxwidth500', '', 'all');
 				print '</td>';
 				print '</tr>';
 				/*print '<tr>';
@@ -1553,6 +1557,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$sql .= " u.lastname, u.firstname, u.login, u.photo, u.statut as user_status,";
 		$sql .= " il.fk_facture as invoice_id, inv.fk_statut,";
 		$sql .= " p.fk_soc,s.name_alias,";
+		$sql .= " t.invoice_line_id";
 		// Add fields from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -2344,7 +2349,19 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 						if ($task_time->invoice_id) {
 							$result = $tmpinvoice->fetch($task_time->invoice_id);
 							if ($result > 0) {
-								print $tmpinvoice->getNomUrl(1);
+								if ($action=='editline' && $_GET['lineid'] == $task_time->rowid) {
+									print $formproject->selectInvoiceAndLine($task_time->invoice_id, $task_time->invoice_line_id, 'invoiceid', 'invoicelineid', 'maxwidth500', array('p.rowid'=>$projectstatic->id));
+								} else {
+									print $tmpinvoice->getNomUrl(1);
+									if (!empty($task_time->invoice_line_id)) {
+										$invoiceLine = new FactureLigne($db);
+										$invoiceLine->fetch($task_time->invoice_line_id);
+										if (!empty($invoiceLine->id)) {
+											print '<br>'.$langs->trans('Qty').':'.$invoiceLine->qty;
+											print ' '.$langs->trans('TotalHT').':'.price($invoiceLine->total_ht);
+										}
+									}
+								}
 							}
 						} else {
 							print $langs->trans("No");

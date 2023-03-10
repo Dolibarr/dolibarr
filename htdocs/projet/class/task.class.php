@@ -128,6 +128,8 @@ class Task extends CommonObjectLine
 	public $timespent_thm;
 	public $timespent_note;
 	public $timespent_fk_product;
+	public $timespent_invoiceid;
+	public $timespent_invoicelineid;
 
 	public $comments = array();
 
@@ -1736,6 +1738,8 @@ class Task extends CommonObjectLine
 		$sql .= " task_duration = ".((int) $this->timespent_duration).",";
 		$sql .= " fk_user = ".((int) $this->timespent_fk_user).",";
 		$sql .= " fk_product = ".((int) $this->timespent_fk_product).",";
+		$sql .= " invoice_id = ".((int) $this->timespent_invoiceid).",";
+		$sql .= " invoice_line_id = ".((int) $this->timespent_invoicelineid).",";
 		$sql .= " note = ".(isset($this->timespent_note) ? "'".$this->db->escape($this->timespent_note)."'" : "null");
 		$sql .= " WHERE rowid = ".((int) $this->timespent_id);
 
