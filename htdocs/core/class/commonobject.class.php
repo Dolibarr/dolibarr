@@ -2102,7 +2102,7 @@ abstract class CommonObject
 
 			$sql = "SELECT " . $field;
 			$sql .= " FROM " . MAIN_DB_PREFIX . $table;
-			$sql .= " WHERE " . $id_field . " = " . ((int)$id);
+			$sql .= " WHERE " . $id_field . " = " . ((int) $id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
