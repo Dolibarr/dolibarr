@@ -225,7 +225,11 @@ $coldisplay++;
 
 	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		$coldisplay++;
-		print '<td class="right"><input type="text" class="flat right" size="5" id="price_ttc" name="price_ttc" value="'.(GETPOSTISSET('price_ttc') ? GETPOST('price_ttc') : (isset($line->pu_ttc) ? price($line->pu_ttc, 0, '', 0) : '')).'"';
+		$upinctax = isset($line->pu_ttc) ? $line->pu_ttc : null;
+		if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES')) {
+			$upinctax = price2num($line->total_ttc / $line->qty, 'MU');
+		}
+		print '<td class="right"><input type="text" class="flat right" size="5" id="price_ttc" name="price_ttc" value="'.(GETPOSTISSET('price_ttc') ? GETPOST('price_ttc') : (isset($upinctax) ? price($upinctax, 0, '', 0) : '')).'"';
 		if ($line->fk_prev_id != null) {
 			print ' readonly';
 		}
