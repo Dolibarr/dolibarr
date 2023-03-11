@@ -431,7 +431,7 @@ foreach ($newarrayoftype as $tmpkey => $tmpval) {
 	$newarrayoftype[$tmpkey]['label'] = img_picto('', $tmpval['picto'], 'class="pictofixedwidth"').$langs->trans($tmpval['label']);
 }
 
-print '<div class="liste_titre liste_titre_bydiv centpercent">';
+print '<div class="liste_titre liste_titre_bydiv liste_titre_bydiv_inlineblock centpercent">';
 
 // Select object
 print '<div class="divadvancedsearchfield center floatnone">';
@@ -863,7 +863,7 @@ if ($sql) {
 				$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
 			}
 
-			$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->trans("Empty") : $langs->trans("NotDefined")));
+			$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->transnoentitiesnoconv("Empty") : $langs->transnoentitiesnoconv("NotDefined")));
 			$xarrayforallseries = array('label' => $labeltouse);
 			foreach ($search_measures as $key => $val) {
 				$fieldfory = 'y_'.$key;
