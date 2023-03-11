@@ -45,8 +45,12 @@ $date_endyear = GETPOST('date_endyear', 'int');
 
 $nbofyear = 4;
 
+// Change this to test different cases of setup
+//$conf->global->SOCIETE_FISCAL_MONTH_START = 7;
+
+
 // Date range
-$year = GETPOST('year', 'int');
+$year = GETPOST('year', 'int');		// this is used for navigation previous/next. It is the last year to show in filter
 if (empty($year)) {
 	$year_current = dol_print_date(dol_now(), "%Y");
 	$month_current = dol_print_date(dol_now(), "%m");
@@ -54,7 +58,7 @@ if (empty($year)) {
 } else {
 	$year_current = $year;
 	$month_current = dol_print_date(dol_now(), "%m");
-	$year_start = $year - ($nbofyear - 1);
+	$year_start = $year - $nbofyear + (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1 ? 0 : 1);
 }
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
@@ -64,18 +68,16 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 	$q = GETPOST("q") ? GETPOST("q", 'int') : 0;
 	if ($q == 0) {
 		// We define date_start and date_end
-		$year_end = $year_start + ($nbofyear - 1);
-		$month_start = GETPOST("month") ? GETPOST("month", 'int') : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+		$year_end = $year_start + $nbofyear - (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1 ? 0 : 1);
+		$month_start = GETPOST("month") ? GETPOST("month", 'int') : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		if (!GETPOST('month')) {
-			if (!GETPOST("year") && $month_start > $month_current) {
+			if (!$year && $month_start > $month_current) {
 				$year_start--;
 				$year_end--;
 			}
 			$month_end = $month_start - 1;
 			if ($month_end < 1) {
 				$month_end = 12;
-			} else {
-				$year_end++;
 			}
 		} else {
 			$month_end = $month_start;
@@ -200,7 +202,6 @@ if ($modecompta == 'CREANCES-DETTES') {
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 
-$hselected = 'report';
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta'=>$modecompta), $calcmode);
 
@@ -996,17 +997,18 @@ $reshook = $hookmanager->executeHooks('addReportInfo', $parameters, $object, $ac
 
 $totentrees = array();
 $totsorties = array();
+$year_end_for_table = ($year_end - (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1 ? 1 : 0));
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste">'."\n";
 
 print '<tr class="liste_titre"><td class="liste_titre">&nbsp;</td>';
 
-for ($annee = $year_start; $annee <= $year_end; $annee++) {
+for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
 	print '<td align="center" colspan="2" class="liste_titre borderrightlight">';
 	print '<a href="clientfourn.php?year='.$annee.'">';
 	print $annee;
-	if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) {
+	if (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1) {
 		print '-'.($annee + 1);
 	}
 	print '</a></td>';
@@ -1014,7 +1016,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 print '</tr>';
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 // Loop on each year to ouput
-for ($annee = $year_start; $annee <= $year_end; $annee++) {
+for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
 	print '<td class="liste_titre" align="center">';
 	$htmlhelp = '';
 	// if ($modecompta == 'RECETTES-DEPENSES') $htmlhelp=$langs->trans("PurchasesPlusVATEarnedAndDue");
@@ -1039,7 +1041,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 
 	print '<tr class="oddeven">';
 	print "<td>".dol_print_date(dol_mktime(12, 0, 0, $mois_modulo, 1, $annee), "%B")."</td>";
-	for ($annee = $year_start; $annee <= $year_end; $annee++) {
+	for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
 		$annee_decalage = $annee;
 		if ($mois > 12) {
 			$annee_decalage = $annee + 1;
@@ -1100,7 +1102,7 @@ if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'BOOKKEEPING') {
 	print $langs->trans("TotalTTC");
 }
 print '</td>';
-for ($annee = $year_start; $annee <= $year_end; $annee++) {
+for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
 	$nbcols += 2;
 	print '<td class="nowrap right">'.(isset($totsorties[$annee]) ?price(price2num($totsorties[$annee], 'MT')) : '&nbsp;').'</td>';
 	print '<td class="nowrap right" style="border-right: 1px solid #DDD">'.(isset($totentrees[$annee]) ?price(price2num($totentrees[$annee], 'MT')) : '&nbsp;').'</td>';
@@ -1115,7 +1117,7 @@ print "</tr>\n";
 // Balance
 
 print '<tr class="liste_total"><td>'.$langs->trans("AccountingResult").'</td>';
-for ($annee = $year_start; $annee <= $year_end; $annee++) {
+for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
 	print '<td colspan="2" class="borderrightlight right"> ';
 	if (isset($totentrees[$annee]) || isset($totsorties[$annee])) {
 		$in = (isset($totentrees[$annee]) ?price2num($totentrees[$annee], 'MT') : 0);
