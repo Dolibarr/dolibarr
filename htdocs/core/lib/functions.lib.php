@@ -5435,6 +5435,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	if ($limit < 0) {
 		$limit = $conf->liste_limit;
 	}
+
 	if ($savlimit != 0 && (($num > $limit) || ($num == -1) || ($limit == 0))) {
 		$nextpage = 1;
 	} else {
@@ -5475,7 +5476,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	}
 	// Show navigation bar
 	$pagelist = '';
-	if ($savlimit != 0 && ($page > 0 || $num > $limit)) {
+	if ($savlimit != 0 && ((int) $page > 0 || $num > $limit)) {
 		if ($totalnboflines) {	// If we know total nb of lines
 			// Define nb of extra page links before and after selected page + ... + first or last
 			$maxnbofpage = (empty($conf->dol_optimize_smallscreen) ? 4 : 0);
@@ -5535,8 +5536,8 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 		}
 	}
 
-	if ($savlimit || $morehtmlright || $morehtmlrightbeforearrow) {
-		print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtmlright, $savlimit, $totalnboflines, $hideselectlimit, $morehtmlrightbeforearrow); // output the div and ul for previous/last completed with page numbers into $pagelist
+	if (($savlimit || $morehtmlright || $morehtmlrightbeforearrow) && empty($hidenavigation)) {
+		print_fleche_navigation((int) $page, $file, $options, $nextpage, $pagelist, $morehtmlright, $savlimit, $totalnboflines, $hideselectlimit, $morehtmlrightbeforearrow); // output the div and ul for previous/last completed with page numbers into $pagelist
 	}
 
 	// js to autoselect page field on focus

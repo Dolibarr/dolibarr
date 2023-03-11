@@ -50,7 +50,8 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 
 	$title = $langs->trans("Report");
 
-	print_barre_liste($title, '', '');
+	print_barre_liste($title, 0, '', '', '', '', '', -1, '', 'generic', 0, '', '', -1, 1, 1);
+
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].$varlink.'">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 
