@@ -100,3 +100,22 @@ ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN fk_user integer;
 
 ALTER TABLE llx_bordereau_cheque ADD COLUMN type VARCHAR(6) DEFAULT 'CHQ';
 
+-- Element time
+ALTER TABLE llx_projet_task_time RENAME TO llx_element_time;
+ALTER TABLE llx_element_time CHANGE COLUMN fk_task fk_element integer NOT NULL;
+ALTER TABLE llx_element_time CHANGE COLUMN task_date element_date date;
+ALTER TABLE llx_element_time CHANGE COLUMN task_datehour element_datehour datetime;
+ALTER TABLE llx_element_time CHANGE COLUMN task_date_withhour element_date_withhour integer;
+ALTER TABLE llx_element_time CHANGE COLUMN task_duration element_duration double;
+ALTER TABLE llx_element_time ADD COLUMN elementtype varchar(32) NOT NULL DEFAULT 'task' AFTER fk_element;
+
+-- VMYSQL4.1 DROP INDEX idx_projet_task_time_task on llx_element_time;
+-- VMYSQL4.1 DROP INDEX idx_projet_task_time_date on llx_element_time;
+-- VMYSQL4.1 DROP INDEX idx_projet_task_time_datehour on llx_element_time;
+-- VPGSQL8.2 DROP INDEX idx_projet_task_time_task;
+-- VPGSQL8.2 DROP INDEX idx_projet_task_time_date;
+-- VPGSQL8.2 DROP INDEX idx_projet_task_time_datehour;
+
+ALTER TABLE llx_element_time ADD INDEX idx_element_time_task (fk_element);
+ALTER TABLE llx_element_time ADD INDEX idx_element_time_date (element_date);
+ALTER TABLE llx_element_time ADD INDEX idx_element_time_datehour (element_datehour);

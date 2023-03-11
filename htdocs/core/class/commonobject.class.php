@@ -14,7 +14,7 @@
  * Copyright (C) 2017      Rui Strecht          <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
  *
@@ -4663,6 +4663,9 @@ abstract class CommonObject
 			$sql.= " WHERE c.".$this->fk_element." = ".((int) $id);
 			if (!empty($element['parent']) && !empty($element['parentkey'])) {
 				$sql.= " AND c.".$element['parentkey']." = p.rowid";
+			}
+			if (!empty($element['parent']) && !empty($element['parenttypefield']) && !empty($element['parenttypevalue'])) {
+				$sql.= " AND c.".$element['parenttypefield']." = '".$this->db->escape($element['parenttypevalue'])."'";
 			}
 			if (!empty($entity)) {
 				if (!empty($element['parent']) && !empty($element['parentkey'])) {

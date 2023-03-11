@@ -18,7 +18,7 @@
  * Copyright (C) 2018-2022  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
- * Copyright (C) 2022      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2695,7 +2695,7 @@ class Facture extends CommonInvoice
 				return -5;
 			}
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time';
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'element_time';
 			$sql .= ' SET invoice_id = NULL, invoice_line_id = NULL';
 			$sql .= ' WHERE invoice_id = '.((int) $rowid);
 
