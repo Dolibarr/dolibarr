@@ -56,8 +56,11 @@ $date_endyear = GETPOST('date_endyear', 'int');
 
 $nbofyear = 1;
 
+// Change this to test different cases of setup
+//$conf->global->SOCIETE_FISCAL_MONTH_START = 7;
+
 // Date range
-$year = GETPOST('year', 'int');
+$year = GETPOST('year', 'int');		// year with current month, is the month of the period we must show
 if (empty($year)) {
 	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 	$month_current = strftime("%m", dol_now());
