@@ -11587,7 +11587,7 @@ function jsonOrUnserialize($stringtodecode)
 /**
  * forgeSQLFromUniversalSearchCriteria
  *
- * @param 	string		$filter		String with universal search string
+ * @param 	string		$filter		String with universal search string. Must be  (aaa:bbb:...) with aaa is a field name (with alias or not) and bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'.
  * @param	string		$error		Error message
  * @return	string					Return forged SQL string
  */
@@ -11605,7 +11605,7 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$error = '')
 	// If the string result contains something else than '()', the syntax was wrong
 	if (preg_match('/[^\(\)]/', $t)) {
 		$error = 'Bad syntax of the search string, filter criteria is inhalited';
-		return '1 = 3';		// Bad syntax of the search string, we force a SQL not found
+		return 'Filter syntax error';		// Bad syntax of the search string, we force a SQL not found
 	}
 
 	return " AND (".preg_replace_callback('/'.$regexstring.'/i', 'dolForgeCriteriaCallback', $filter).")";
