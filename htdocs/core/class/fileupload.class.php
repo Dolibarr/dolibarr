@@ -19,6 +19,8 @@
 /**
  *       \file       htdocs/core/class/fileupload.class.php
  *       \brief      File to return Ajax response on file upload
+ *
+ *       Option MAIN_USE_JQUERY_FILEUPLOAD must be enabled to have feature working. Use is NOT secured !
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -46,6 +48,12 @@ class FileUpload
 		global $db, $conf;
 		global $object;
 		global $hookmanager;
+
+		// Feature not enabled. Warning feature not used and not secured so disabled.
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		$hookmanager->initHooks(array('fileupload'));
 
 		$this->fk_element = $fk_element;
@@ -104,36 +112,40 @@ class FileUpload
 			$dir_output = $conf->$element->dir_output;
 		}
 
-		dol_include_once('/'.$pathname.'/class/'.$filename.'.class.php');
+		// If pathname and filename are null then we can still upload files
+		// IF we have specified upload_dir on $this->options
+		if ($pathname !== null && $filename !== null) {
+			dol_include_once('/'.$pathname.'/class/'.$filename.'.class.php');
 
-		$classname = ucfirst($filename);
+			$classname = ucfirst($filename);
 
-		if ($element == 'order_supplier') {
-			$classname = 'CommandeFournisseur';
-		} elseif ($element == 'invoice_supplier') {
-			$classname = 'FactureFournisseur';
-		}
-
-		$object = new $classname($db);
-
-		$object->fetch($fk_element);
-		if (!empty($parentForeignKey)) {
-			dol_include_once('/'.$parentElement.'/class/'.$parentObject.'.class.php');
-			$parent = new $parentClass($db);
-			$parent->fetch($object->$parentForeignKey);
-			if (!empty($parent->socid)) {
-				$parent->fetch_thirdparty();
+			if ($element == 'order_supplier') {
+				$classname = 'CommandeFournisseur';
+			} elseif ($element == 'invoice_supplier') {
+				$classname = 'FactureFournisseur';
 			}
-			$object->$parentObject = clone $parent;
-		} else {
-			$object->fetch_thirdparty();
-		}
 
-		$object_ref = dol_sanitizeFileName($object->ref);
-		if ($element == 'invoice_supplier') {
-			$object_ref = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$object_ref;
-		} elseif ($element == 'project_task') {
-			$object_ref = $object->project->ref.'/'.$object_ref;
+			$object = new $classname($db);
+
+			$object->fetch($fk_element);
+			if (!empty($parentForeignKey)) {
+				dol_include_once('/'.$parentElement.'/class/'.$parentObject.'.class.php');
+				$parent = new $parentClass($db);
+				$parent->fetch($object->$parentForeignKey);
+				if (!empty($parent->socid)) {
+					$parent->fetch_thirdparty();
+				}
+				$object->$parentObject = clone $parent;
+			} else {
+				$object->fetch_thirdparty();
+			}
+
+			$object_ref = dol_sanitizeFileName($object->ref);
+			if ($element == 'invoice_supplier') {
+				$object_ref = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$object_ref;
+			} elseif ($element == 'project_task') {
+				$object_ref = $object->project->ref.'/'.$object_ref;
+			}
 		}
 
 		$this->options = array(
@@ -195,6 +207,21 @@ class FileUpload
 		if ($options) {
 			$this->options = array_replace_recursive($this->options, $options);
 		}
+
+		// At this point we should have a valid upload_dir in options
+		//if ($pathname === null && $filename === null) { // OR or AND???
+		if ($pathname === null || $filename === null) {
+			if (!key_exists("upload_dir", $this->options)) {
+				setEventMessage('If $fk_element = null or $element = null you must specify upload_dir on $options', 'errors');
+				throw new Exception('If $fk_element = null or $element = null you must specify upload_dir on $options');
+			} elseif (!is_dir($this->options['upload_dir'])) {
+				setEventMessage('The directory '.$this->options['upload_dir'].' doesn\'t exists', 'errors');
+				throw new Exception('The directory '.$this->options['upload_dir'].' doesn\'t exists');
+			} elseif (!is_writable($this->options['upload_dir'])) {
+				setEventMessage('The directory '.$this->options['upload_dir'].' is not writable', 'errors');
+				throw new Exception('The directory '.$this->options['upload_dir'].' is not writable');
+			}
+		}
 	}
 
 	/**
@@ -238,6 +265,10 @@ class FileUpload
 	 */
 	protected function getFileObject($file_name)
 	{
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		$file_path = $this->options['upload_dir'].$file_name;
 		if (is_file($file_path) && $file_name[0] !== '.') {
 			$file = new stdClass();
@@ -278,6 +309,10 @@ class FileUpload
 	{
 		global $maxwidthmini, $maxheightmini;
 
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		$file_path = $this->options['upload_dir'].$file_name;
 		$new_file_path = $options['upload_dir'].$file_name;
 
@@ -309,6 +344,10 @@ class FileUpload
 	 */
 	protected function validate($uploaded_file, $file, $error, $index)
 	{
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		if ($error) {
 			$file->error = $error;
 			return false;
@@ -399,8 +438,8 @@ class FileUpload
 		// Also remove control characters and spaces (\x00..\x20) around the filename:
 		$file_name = trim(basename(stripslashes($name)), ".\x00..\x20");
 		// Add missing file extension for known image types:
-		if (strpos($file_name, '.') === false &&
-				preg_match('/^image\/(gif|jpe?g|png)/', $type, $matches)) {
+		$matches = array();
+		if (strpos($file_name, '.') === false && preg_match('/^image\/(gif|jpe?g|png)/', $type, $matches)) {
 			$file_name .= '.'.$matches[1];
 		}
 		if ($this->options['discard_aborted_uploads']) {
@@ -424,6 +463,10 @@ class FileUpload
 	 */
 	protected function handleFileUpload($uploaded_file, $name, $size, $type, $error, $index)
 	{
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		$file = new stdClass();
 		$file->name = $this->trimFileName($name, $type, $index);
 		$file->mime = dol_mimetype($file->name, '', 2);
@@ -470,6 +513,10 @@ class FileUpload
 	 */
 	public function get()
 	{
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		$file_name = isset($_REQUEST['file']) ?
 		basename(stripslashes($_REQUEST['file'])) : null;
 		if ($file_name) {
@@ -484,10 +531,14 @@ class FileUpload
 	/**
 	 * Output data
 	 *
-	 * @return	void
+	 * @return	string|void
 	 */
 	public function post()
 	{
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
 			return $this->delete();
 		}
@@ -543,6 +594,10 @@ class FileUpload
 	 */
 	public function delete()
 	{
+		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+			return;
+		}
+
 		$file_name = isset($_REQUEST['file']) ?
 		basename(stripslashes($_REQUEST['file'])) : null;
 		$file_path = $this->options['upload_dir'].$file_name;

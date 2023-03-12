@@ -423,7 +423,7 @@ class FormFile
 		if (preg_match('/massfilesarea_/', $modulepart)) {
 			$out .= '<div id="show_files"><br></div>'."\n";
 			$title = $langs->trans("MassFilesArea").' <a href="" id="togglemassfilesarea" ref="shown">('.$langs->trans("Hide").')</a>';
-			$title .= '<script>
+			$title .= '<script nonce="'.getNonce().'">
 				jQuery(document).ready(function() {
 					jQuery(\'#togglemassfilesarea\').click(function() {
 						if (jQuery(\'#togglemassfilesarea\').attr(\'ref\') == "shown")
@@ -457,6 +457,10 @@ class FormFile
 			$modulepart = $tmp[0];
 			$submodulepart = $tmp[1];
 		}
+
+		$addcolumforpicto = ($delallowed || $printer || $morepicto);
+		$colspan = (4 + ($addcolumforpicto ? 1 : 0));
+		$colspanmore = 0;
 
 		// Show table
 		if ($genallowed) {
@@ -700,10 +704,6 @@ class FormFile
 
 			$out .= '<tr class="liste_titre">';
 
-			$addcolumforpicto = ($delallowed || $printer || $morepicto);
-			$colspan = (4 + ($addcolumforpicto ? 1 : 0));
-			$colspanmore = 0;
-
 			$out .= '<th colspan="'.$colspan.'" class="formdoc liste_titre maxwidthonsmartphone center">';
 
 			// Model
@@ -920,6 +920,9 @@ class FormFile
 					}
 
 					if (is_object($hookmanager)) {
+						$addcolumforpicto = ($delallowed || $printer || $morepicto);
+						$colspan = (4 + ($addcolumforpicto ? 1 : 0));
+						$colspanmore = 0;
 						$parameters = array('colspan'=>($colspan + $colspanmore), 'socid'=>(isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id'=>(isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'modulepart'=>$modulepart, 'relativepath'=>$relativepath);
 						$res = $hookmanager->executeHooks('formBuilddocLineOptions', $parameters, $file);
 						if (empty($res)) {

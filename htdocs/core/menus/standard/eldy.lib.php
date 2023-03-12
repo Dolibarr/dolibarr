@@ -883,10 +883,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	$reshook = $hookmanager->executeHooks('menuLeftMenuItems', $parameters, $hook_items); // Note that $action and $object may have been modified by some hooks
 
 	if (is_numeric($reshook)) {
-		if ($reshook == 0 && !empty($hookmanager->results)) {
-			$menu_array[] = $hookmanager->results; // add
+		if ($reshook == 0 && !empty($hookmanager->resArray)) {
+			$menu_array[] = $hookmanager->resArray; // add
 		} elseif ($reshook == 1) {
-			$menu_array = $hookmanager->results; // replace
+			$menu_array = $hookmanager->resArray; // replace
 		}
 
 		// @todo Sort menu items by 'position' value
@@ -1087,18 +1087,21 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 		$newmenu->add("/admin/index.php?mainmenu=home&amp;leftmenu=setup", $langs->trans("Setup"), 0, $user->admin, '', $mainmenu, 'setup', 0, '', '', '', '<i class="fa fa-tools fa-fw paddingright pictofixedwidth"></i>');
 
 		if ($usemenuhider || empty($leftmenu) || $leftmenu == "setup") {
+			$nbmodulesnotautoenabled = count($conf->modules);
+			if (in_array('fckeditor', $conf->modules)) $nbmodulesnotautoenabled--;
+			if (in_array('export', $conf->modules)) $nbmodulesnotautoenabled--;
+			if (in_array('import', $conf->modules)) $nbmodulesnotautoenabled--;
+
 			// Load translation files required by the page
 			$langs->loadLangs(array("admin", "help"));
-
 			$warnpicto = '';
 			if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
 				$langs->load("errors");
 				$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 			}
 			$newmenu->add("/admin/company.php?mainmenu=home", $langs->trans("MenuCompanySetup").$warnpicto, 1);
-
 			$warnpicto = '';
-			if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only user module enabled
+			if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only user module enabled
 				$langs->load("errors");
 				$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 			}
@@ -1680,7 +1683,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 				// Multi journal
 				$sql = "SELECT rowid, code, label, nature";
 				$sql .= " FROM ".MAIN_DB_PREFIX."accounting_journal";
-				$sql .= " WHERE entity = ".$conf->entity;
+				$sql .= " WHERE entity = ".((int) $conf->entity);
 				$sql .= " AND active = 1";
 				$sql .= " ORDER BY nature ASC, label DESC";
 
@@ -1731,11 +1734,12 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 								$langs->load('accountancy');
 								$journallabel = '';
 								if ($objp->label) {
+									$journallabelwithoutspan = $langs->transnoentities($objp->label);
 									$journallabel = '<span class="opacitymedium">('.$langs->transnoentities($objp->label).')</span>'; // Label of bank account in llx_accounting_journal
 								}
 
-								$key = $langs->trans("AccountingJournalType".strtoupper($objp->nature));
-								$transferlabel = ($objp->nature && $key != "AccountingJournalType".strtoupper($langs->trans($objp->nature)) ? $key.($journallabel != $key ? ' '.$journallabel : ''): $journallabel);
+								$key = $langs->trans("AccountingJournalType".$objp->nature);	// $objp->nature is 1, 2, 3 ...
+								$transferlabel = (($objp->nature && $key != "AccountingJournalType".$objp->nature) ? $key.($journallabelwithoutspan != $key ? ' '.$journallabel : ''): $journallabel);
 
 								$newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $transferlabel, 2, $user->hasRight('accounting',  'comptarapport', 'lire'));
 							}
@@ -2273,7 +2277,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 			//$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->hasRight('hrm',  'all', 'read'));
 
 			// Job (Description of work to do and skills required)
-			$newmenu->add("/hrm/job_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("JobsPosition"), 1, $user->hasRight('hrm', 'all', 'read'), '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'technic', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/hrm/job_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("JobsProfiles"), 1, $user->hasRight('hrm', 'all', 'read'), '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'technic', 'class="paddingright pictofixedwidth"'));
 			//$newmenu->add("/hrm/job_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->transnoentities("NewObject", $langs->trans("Job")), 1, $user->hasRight('hrm',  'all', 'write'));
 			//$newmenu->add("/hrm/job_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->hasRight('hrm',  'all', 'read'));
 

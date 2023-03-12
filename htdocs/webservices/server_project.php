@@ -235,7 +235,7 @@ $server->register(
  *
  * @param	array		$authentication		Array of authentication information
  * @param	array		$project			Project info
- * @return	int								Id of new order
+ * @return	array							array of new order
  */
 function createProject($authentication, $project)
 {

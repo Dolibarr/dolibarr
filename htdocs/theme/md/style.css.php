@@ -456,6 +456,10 @@ a.commonlink { color: var(--colortextlink) !important; text-decoration: none; }
 input {
 	font-size: unset;
 }
+.tableforfield input, .refidno input {
+	padding: 2px;
+}
+
 /*
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	background-color: #FDFDFD;
@@ -543,8 +547,8 @@ input, select {
 	border: none;
 	text-shadow: none;
 	text-transform: uppercase;
-	font-weight: bold;
-	margin: 0em 0.9em;
+	/* font-weight: bold; */
+	margin: 0em 0.8em;
 	padding: 0.6em 0.7em;
 	line-height: 17px;
 }
@@ -665,7 +669,8 @@ input.buttonpaymentstripe {
 	background-position: 8px 7px;
 }
 .logopublicpayment #dolpaymentlogo {
-	max-height: 100px;
+	max-height: 80px;
+	max-width: 300px;
 	image-rendering: -webkit-optimize-contrast;		/* better rendering on public page header */
 }
 a.butStatus {
@@ -874,6 +879,9 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	border-radius: 2px;
 	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.refidno .button.smallpaddingimp {
+	font-size: 0.85em !important;
 }
 .button:focus, .buttonDelete:focus  {
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
@@ -1792,10 +1800,10 @@ table[summary="list_of_modules"] .fa-cog {
 }
 
 .maxscreenheightless200 {
-	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(500, $_SESSION['dol_screenheight'] - 200) : 700; ?>px;	/* we guarantee height of 500 */
+	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(500, (int) $_SESSION['dol_screenheight'] - 200) : 700; ?>px;	/* we guarantee height of 500 */
 }
 .maxscreenheightless300 {
-	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(400, $_SESSION['dol_screenheight'] - 300) : 700; ?>px;	/* we guarantee height of 500 */
+	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(400, (int) $_SESSION['dol_screenheight'] - 300) : 700; ?>px;	/* we guarantee height of 500 */
 }
 
 tr.nobottom td {
@@ -1806,14 +1814,13 @@ tr.nobottom td {
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
 /* ============================================================================== */
-
 .clearboth  { clear:both; }
 .hideobject { display: none; }
 .minwidth25  { min-width: 25px; }
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
 /* rule for not too small screen only */
-@media only screen and (min-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 7; ?>px)
+@media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)
 {
 	.width20  { width: 20px; }
 	.width25  { width: 25px; }
@@ -3067,6 +3074,7 @@ form#login {
 
 .login_main_home {
 	word-break: break-word;
+	width: fit-content;
 }
 .login_main_message {
 	text-align: center;
@@ -3204,7 +3212,7 @@ a.aversion {
 .alogin, .alogin:hover {
 	color: #888 !important;
 	font-weight: normal !important;
-	font-size: <?php echo $fontsizesmaller; ?>px !important;
+	font-size: <?php echo is_numeric($fontsizesmaller) ? $fontsizesmaller.'px' : $fontsizesmaller; ?> !important;
 }
 .alogin:hover, .atoplogin:hover {
 	text-decoration:underline !important;
@@ -3303,18 +3311,19 @@ div.vmenu, td.vmenu {
 .companylogo { padding-top: 4px; }
 .searchform { padding-top: 10px; }
 .searchform .bordertransp { border: 0; }
+#divsearchforms2 form.searchform .button { border: none !important; }
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu {
-	white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold;
+	white-space: nowrap; font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold;
 }
-span.vmenudisabled, font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }
+span.vmenudisabled, font.vmenudisabled  { font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }
 a.vmenu:link, a.vmenu:visited {
 	color: var(--colortextbackvmenu);
 }
 
-a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
+a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
 span.vsmenudisabled:not(.spanlilevel0), font.vsmenudisabled:not(.spanlilevel0) {
-	font-size:<?php print $fontsize ?>px;
+	font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
 }
 span.vsmenudisabled, font.vsmenudisabled {
 	font-family: <?php print $fontlist ?>;
@@ -4063,7 +4072,7 @@ div.refidpadding  {
 div.refid  {
 	font-weight: bold;
 	color: var(--colortexttitlenotab);
-	font-size: 160%;
+	font-size: 120%;
 }
 a.refid {
 	color: var(--colortexttitlenotab) !important;
@@ -4072,11 +4081,15 @@ div.refidno  {
 	padding-top: 8px;
 	font-weight: normal;
 	color: var(--refidnocolor);
-	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
-	line-height: 21px;
+	font-size: 92%;
+	line-height: 1.3em;
 }
 div.refidno form {
 	display: inline-block;
+}
+div.refaddress div.address {
+	line-height: 1.2em;
+	font-size: 0.9em;
 }
 
 div.pagination {
@@ -4190,9 +4203,6 @@ table.hidepaginationprevious .paginationprevious {
 }
 table.hidepaginationnext .paginationnext {
 	display: none;
-}
-.paginationafterarrows a.btnTitlePlus {
-	border: 1px solid var(--btncolorborder);
 }
 .paginationafterarrows a.btnTitlePlus:hover span:before {
 	/* text-shadow: 0px 0px 5px #ccc; */
@@ -4365,8 +4375,15 @@ div.liste_titre_bydiv {
 	display: table;
 	padding: 2px 0px 2px 0;
 	box-shadow: none;
-	width: calc(100% - 2px);	/* -3px because the width for table class="tagtable" under this is cal(100% - 2px) so it is aligned. */
+	width: calc(100% - 2px);	/* -2px because the width for table class="tagtable" under this is cal(100% - 2px) so it is aligned. */
 }
+/*
+div.liste_titre_bydiv_inlineblock {
+	display: inline-block;
+	width: 100%;
+}
+*/
+
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr, tagtr.liste_titre
 {
 	height: 26px !important;
@@ -4924,13 +4941,13 @@ div.titre {
 	color: var(--colortexttitlenotab);
 }
 .tertiary {
-	color: var(--colortexttitlenotab);
+	color: var(--colortexttitlenotab2);
 }
 
 table.centpercent.notopnoleftnoright.table-fiche-title {
 	margin-bottom: 10px !important;
 }
-table.table-fiche-title .col-title div.titre{
+table.table-fiche-title .col-title div.titre, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
 
@@ -5029,7 +5046,7 @@ div#card-errors {
 .ui-dialog-titlebar {
 }
 .ui-dialog-content {
-	font-size: <?php print $fontsize; ?>px !important;
+	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize; ?> !important;
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
 	z-index: 1002 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
@@ -5234,7 +5251,7 @@ div.visible {
 	display: block;
 }
 
-div.hidden, header.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
+div.hidden, header.hidden, tr.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
 
@@ -5287,6 +5304,12 @@ span[phptag] {
 	font-weight: normal;
 	color: #444 !important;
 }
+.websitebar .button.bordertransp {
+	color: unset;
+	text-decoration: unset !important;
+	/* margin: 0px 4px 0px 4px  !important */
+}
+
 .websitebar {
 	border-bottom: 1px solid #ccc;
 	background: #eee;
@@ -5326,7 +5349,7 @@ span[phptag] {
 .websiteinputurl {
 	display: inline-block;
 	vertical-align: top;
-	line-height: 28px;
+	line-height: 26px;
 }
 .websiteiframenoborder {
 	border: 0px;
@@ -5347,7 +5370,7 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 .websitehelp {
 	vertical-align: middle;
 	float: right;
-	padding-top: 8px;
+	padding-top: 5px;
 }
 .websiteselectionsection {
 	border-left: 1px solid #bbb;
@@ -5868,7 +5891,7 @@ pre#editfilecontentaceeditorid {
 /* ============================================================================== */
 
 div.scroll2 {
-	width: <?php print isset($_SESSION['dol_screenwidth']) ?max($_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
+	width: <?php print isset($_SESSION['dol_screenwidth']) ?max((int) $_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
 }
 
 div#GanttChartDIVglisthead, div#GanttChartDIVgcharthead {
@@ -6449,14 +6472,23 @@ ul.select2-results__options li {
 	font-size: 0.95em;
 }
 
+select.multiselectononeline {
+	padding: 0;
+	vertical-align: middle;
+	min-height: unset;
+	height: 28px !important;
+	opacity: 0;
+	/* width: 1px !important; */
+}
+
 @media only screen and (min-width: 767px)
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
-	.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown.ui-dialog {
 		min-width: 220px !important;
 	}
-	.select2-container.select2-container--open .select2-dropdown--below,
-	.select2-container.select2-container--open .select2-dropdown--above {
+	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--below:not(.onrightofpage),
+	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--above:not(.onrightofpage) {
 		min-width: 220px !important;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
@@ -6705,11 +6737,15 @@ dd.dropdowndd ul li {
 /* ============================================================================== */
 
 .searchpage .tagtr .tagtd {
-	padding-bottom: 3px;
+	padding-top: 2px;
+	padding-bottom: 2px;
 }
 .searchpage .tagtr .tagtd .button {
 	background: unset;
 	border: unset;
+}
+.searchpage .searchform input {
+	font-size: 1.15em;
 }
 
 li.ui-li-divider .ui-link {
@@ -7012,6 +7048,17 @@ border-top-right-radius: 6px;
 }
 .public_border {
 	border: 1px solid #888;
+}
+.publicnewmemberform div.tabBarWithBottom {
+	border: 1px solid #e8e8e8;
+	padding: 30px;
+	border-radius: 8px;
+	background-color: #f8f8f8;
+	/*box-shadow: 2px 2px 10px #ddd;*/
+}
+
+.publicnewmemberform #tablesubscribe {
+	color: #666;
 }
 
 
@@ -7436,6 +7483,33 @@ div.clipboardCPValue.hidewithsize {
 
 
 /* ============================================================================== */
+/* Virtual business card                                                          */
+/* ============================================================================== */
+
+.virtualcard-div {
+	overflow: hidden;
+	vertical-align: top;
+	/* background: #aaa; */
+}
+
+#virtualcard-iframe {
+	border: 40px solid #aaa;
+	vertical-align: top;
+	width: 10%;
+	min-width: 100px;
+	border-radius: 10px;
+	aspect-ratio: 0.6;
+}
+.nopointervent {
+	pointer-events: none;
+}
+.scalepreview {
+	/* transform: scale(0.5); */
+	zoom: 0.20;
+}
+
+
+/* ============================================================================== */
 /* CSS style used for small screen                                                */
 /* ============================================================================== */
 
@@ -7501,13 +7575,12 @@ div.clipboardCPValue.hidewithsize {
 	width: <?php echo $disableimages ? 'auto' : '44'; ?>px;
 }
 
-/* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
-/* disableimages = <?php echo $disableimages; ?> */
-/* rule to reduce top menu - 1st reduction */
-@media only screen and (max-width:  <?php echo round($nbtopmenuentries * $fontsize * 7, 0) + 300; ?>px)
+/* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?> */
+/* rule to reduce top menu - 1st reduction: Reduce width of top menu icons */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1) ? round($nbtopmenuentries * 90, 0) + 340 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1; ?>px)	/* reduction 1 */
 {
 	div.tmenucenter {
-		max-width: <?php echo round($fontsize * 4); ?>px;	/* size of viewport */
+		max-width: 56px;	/* size of viewport */
 		white-space: nowrap;
 		  overflow: hidden;
 		  text-overflow: ellipsis;
@@ -7531,16 +7604,16 @@ div.clipboardCPValue.hidewithsize {
 		display: none;
 	}
 }
-/* rule to reduce top menu - 2nd reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.5, 0) + 300; ?>px)
+/* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
 {
 	li.tmenucompanylogo {
 		display: none;
 	}
 
 	div.tmenucenter {
-		max-width: <?php echo round($fontsize * 2); ?>px;	/* size of viewport */
-		  text-overflow: clip;
+		max-width: 24px;	/* size of viewport */
+		text-overflow: clip;
 	}
 	.mainmenuaspan {
 		  font-size: 10px;

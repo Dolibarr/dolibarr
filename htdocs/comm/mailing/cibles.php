@@ -73,17 +73,19 @@ $result = $object->fetch($id);
 $hookmanager->initHooks(array('ciblescard', 'globalcard'));
 
 // Security check
-if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+if (!$user->hasRight('mailing', 'lire') || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'mailing');
+
+$sqlmessage = '';
 
 
 /*
  * Actions
  */
 
-if ($action == 'add') {
+if ($action == 'add' && $user->hasRight('mailing', 'creer')) {		// Add recipients
 	$module = GETPOST("module", 'alpha');
 	$result = -1;
 
@@ -103,6 +105,8 @@ if ($action == 'add') {
 			$obj = new $classname($db);
 			dol_syslog("Call add_to_target on class ".$classname);
 			$result = $obj->add_to_target($id);
+
+			$sqlmessage = $obj->sql;
 		}
 	}
 	if ($result > 0) {
@@ -117,7 +121,7 @@ if ($action == 'add') {
 	}
 }
 
-if (GETPOST('clearlist', 'int')) {
+if (GETPOST('clearlist', 'int') && $user->hasRight('mailing', 'creer')) {
 	// Loading Class
 	$obj = new MailingTargets($db);
 	$obj->clear_target($id);
@@ -127,7 +131,7 @@ if (GETPOST('clearlist', 'int')) {
 	*/
 }
 
-if (GETPOST('exportcsv', 'int')) {
+if (GETPOST('exportcsv', 'int') && $user->hasRight('mailing', 'lire')) {
 	$completefilename = 'targets_emailing'.$object->id.'_'.dol_print_date(dol_now(), 'dayhourlog').'.csv';
 	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename='.$completefilename);
@@ -166,7 +170,7 @@ if (GETPOST('exportcsv', 'int')) {
 	exit;
 }
 
-if ($action == 'delete') {
+if ($action == 'delete' && $user->hasRight('mailing', 'creer')) {
 	// Ici, rowid indique le destinataire et id le mailing
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid = ".((int) $rowid);
 	$resql = $db->query($sql);
@@ -212,6 +216,12 @@ if ($object->fetch($id) >= 0) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
+	$morehtmlref = '<div class="refidno">';
+	// Ref customer
+	$morehtmlref .= $form->editfieldkey("", 'title', $object->title, $object, 0, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("", 'title', $object->title, $object, 0, 'string', '', null, null, '', 1);
+	$morehtmlref .= '</div>';
+
 	$morehtmlright = '';
 	$nbtry = $nbok = 0;
 	if ($object->statut == 2 || $object->statut == 3) {
@@ -226,16 +236,16 @@ if ($object->fetch($id) >= 0) {
 		$morehtmlright .= ') &nbsp; ';
 	}
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border centpercent tableforfield">';
 
-	print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->title.'</td></tr>';
+	//print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->title.'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">';
+	print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td colspan="3">';
 	$emailarray = CMailFile::getArrayAddress($object->email_from);
 	foreach ($emailarray as $email => $name) {
 		if ($name && $name != $email) {
@@ -285,7 +295,7 @@ if ($object->fetch($id) >= 0) {
 			}
 		}
 		if (empty($nbemail)) {
-			$nbemail .= ' '.img_warning('').' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
+			$nbemail .= ' '.img_warning('');//.' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
 		}
 		if ($text) {
 			print $form->textwithpicto($nbemail, $text, 1, 'warning');
@@ -310,22 +320,15 @@ if ($object->fetch($id) >= 0) {
 	if ($allowaddtarget && $user->rights->mailing->creer) {
 		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"), ($user->admin ?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1) : ''), 'generic');
 
-		//print '<table class="noborder centpercent">';
-
 		print '<div class="div-table-responsive">';
 		print '<div class="tagtable centpercent liste_titre_bydiv borderbottom" id="tablelines">';
 
-		//print '<tr class="liste_titre">';
 		print '<div class="tagtr liste_titre">';
-		//print '<td class="liste_titre">'.$langs->trans("RecipientSelectionModules").'</td>';
+		print '<div class="tagtd"></div>';
 		print '<div class="tagtd">'.$langs->trans("RecipientSelectionModules").'</div>';
-		//print '<td class="liste_titre" align="center">'.$langs->trans("NbOfUniqueEMails").'</td>';
 		print '<div class="tagtd" align="center">'.$langs->trans("NbOfUniqueEMails").'</div>';
-		//print '<td class="liste_titre" align="left">'.$langs->trans("Filter").'</td>';
 		print '<div class="tagtd left">'.$langs->trans("Filter").'</div>';
-		//print '<td class="liste_titre" align="center">&nbsp;</td>';
 		print '<div class="tagtd">&nbsp;</div>';
-		//print "</tr>\n";
 		print '</div>';	// End tr
 
 		clearstatcache();
@@ -390,12 +393,13 @@ if ($object->fetch($id) >= 0) {
 						print '<div '.$bctag[$var].'>';
 					}
 
-					print '<div class="tagtd">';
+					print '<div class="tagtd paddingleftimp marginleftonly paddingrightimp marginrightonly valignmiddle center">';
 					if (empty($obj->picto)) {
 						$obj->picto = 'generic';
 					}
-					print img_object($langs->trans("EmailingTargetSelector").': '.get_class($obj), $obj->picto, 'class="valignmiddle pictomodule pictofixedwidth"');
-					print ' ';
+					print img_object($langs->trans("EmailingTargetSelector").': '.get_class($obj), $obj->picto, 'class="valignmiddle width25 size15x"');
+					print '</div>';
+					print '<div class="tagtd valignmiddle">';	//  style="height: 4em"
 					print $obj->getDesc();
 					print '</div>';
 
@@ -405,7 +409,7 @@ if ($object->fetch($id) >= 0) {
 						dol_syslog($e->getMessage(), LOG_ERR);
 					}
 
-					print '<div class="tagtd center">';
+					print '<div class="tagtd center valignmiddle">';
 					if ($nbofrecipient === '' || $nbofrecipient >= 0) {
 						print $nbofrecipient;
 					} else {
@@ -413,7 +417,7 @@ if ($object->fetch($id) >= 0) {
 					}
 					print '</div>';
 
-					print '<div class="tagtd left">';
+					print '<div class="tagtd left valignmiddle">';
 					if ($allowaddtarget) {
 						try {
 							$filter = $obj->formFilter();
@@ -428,7 +432,7 @@ if ($object->fetch($id) >= 0) {
 					}
 					print '</div>';
 
-					print '<div class="tagtd right">';
+					print '<div class="tagtd right valignmiddle">';
 					if ($allowaddtarget) {
 						print '<input type="submit" class="button button-add small reposition" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 					} else {
@@ -454,7 +458,14 @@ if ($object->fetch($id) >= 0) {
 		print '</div>';	// End table
 		print '</div>';
 
-		print '<br><br>';
+		print '<br>';
+
+		if ($sqlmessage && $user->admin) {
+			print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlmessage, 0, 0, 1, '', 'TechnicalInformation');
+			print '<br>';
+		}
+
+		print '<br>';
 	}
 
 	// List of selected targets
@@ -548,7 +559,7 @@ if ($object->fetch($id) >= 0) {
 
 		$massactionbutton = '';
 
-		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
+		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit, 0, 0, 1);
 
 		print '</form>';
 
@@ -560,6 +571,7 @@ if ($object->fetch($id) >= 0) {
 		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<input type="hidden" name="limit" value="'.$limit.'">';
+		print '<input type="hidden" name="page_y" value="">';
 
 		print '<div class="div-table-responsive">';
 		print '<table class="noborder centpercent">';
@@ -713,9 +725,13 @@ if ($object->fetch($id) >= 0) {
 				$i++;
 			}
 		} else {
-			if ($object->statut < 2) {
-				print '<tr><td colspan="9" class="opacitymedium">';
-				print $langs->trans("NoTargetYet");
+			if ($object->statut < $object::STATUS_SENTPARTIALY) {
+				print '<tr><td colspan="9">';
+				print '<span class="opacitymedium">'.$langs->trans("NoTargetYet").'</span>';
+				print '</td></tr>';
+			} else {
+				print '<tr><td colspan="9">';
+				print '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
 				print '</td></tr>';
 			}
 		}

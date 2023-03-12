@@ -120,9 +120,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->asset->read;
-$permissiontoadd = $user->rights->asset->write;
-$permissiontodelete = $user->rights->asset->delete;
+$permissiontoread = $user->hasRight('asset', 'read');
+$permissiontoadd = $user->hasRight('asset', 'write');
+$permissiontodelete = $user->hasRight('asset', 'delete');
 
 // Security check
 if (!isModEnabled('asset')) {

@@ -67,7 +67,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject = $langs->transnoentitiesnoconv("JobPosition");
+$textobject = $langs->transnoentitiesnoconv("JobProfile");
 
 $help_url = '';
 $page_name = "HrmSetup";

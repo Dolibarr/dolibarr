@@ -645,7 +645,7 @@ class FormCompany extends Form
 			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 
 			if (count($events)) {	// If there is some ajax events to run once selection is done, we add code here to run events
-				print '<script type="text/javascript">
+				print '<script nonce="'.getNonce().'" type="text/javascript">
 				jQuery(document).ready(function() {
 					$("#search_'.$htmlname.'").change(function() {
 						var obj = '.json_encode($events).';
@@ -908,7 +908,7 @@ class FormCompany extends Form
 	 *  @param  string  $morecss        More css
 	 *  @return	string					HTML string with prof id
 	 */
-	public function get_input_id_prof($idprof, $htmlname, $preselected, $country_code, $morecss = 'maxwidth100onsmartphone quatrevingtpercent')
+	public function get_input_id_prof($idprof, $htmlname, $preselected, $country_code, $morecss = 'maxwidth200')
 	{
 		// phpcs:enable
 		global $conf, $langs, $hookmanager;

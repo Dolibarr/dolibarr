@@ -43,7 +43,7 @@ $arrayofparameters = array(
 	'DAV_RESTICT_ON_IP'=>array('css'=>'minwidth200', 'enabled'=>1),
 	'DAV_ALLOW_PRIVATE_DIR'=>array('css'=>'minwidth200', 'enabled'=>2),
 	'DAV_ALLOW_PUBLIC_DIR'=>array('css'=>'minwidth200', 'enabled'=>1),
-	'DAV_ALLOW_ECM_DIR'=>array('css'=>'minwidth200', 'enabled'=>$conf->ecm->enabled)
+	'DAV_ALLOW_ECM_DIR'=>array('css'=>'minwidth200', 'enabled'=>isModEnabled('ecm'))
 );
 
 // To fix when dire does not exists
@@ -124,6 +124,10 @@ if ($action == 'edit') {
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($arrayofparameters as $key => $val) {
+		if (isset($val['enabled']) && empty($val['enabled'])) {
+			continue;
+		}
+
 		print '<tr class="oddeven"><td>';
 		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
 		$label = $langs->trans($key);

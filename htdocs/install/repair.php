@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -903,9 +904,8 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 	$sql = "SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb ON ps.rowid = pb.fk_product_stock";
 	$sql .= " WHERE p.rowid = ps.fk_product";
-	$sql .= " AND p.tobatch > 0";
 	$sql .= " GROUP BY p.rowid, p.ref, p.tobatch, ps.rowid, ps.fk_entrepot, ps.reel";
-	$sql .= " HAVING reel != SUM(pb.qty) or SUM(pb.qty) IS NULL";
+	$sql .= " HAVING (SUM(pb.qty) IS NOT NULL AND reel != SUM(pb.qty)) OR (SUM(pb.qty) IS NULL AND p.tobatch > 0)";
 	print $sql;
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -915,53 +915,73 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 			$i = 0;
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
-				print '<tr><td>Product '.$obj->rowid.'-'.$obj->ref.' in warehouse '.$obj->fk_entrepot.' (product_stock id '.$obj->psrowid.'): '.$obj->reel.' (Stock product_stock.reel) != '.($obj->reelbatch ? $obj->reelbatch : '0').' (Stock batch sum product_batch)';
+				print '<tr><td>Product '.$obj->rowid.'-'.$obj->ref.' in warehouse id='.$obj->fk_entrepot.' (product_stock.id='.$obj->psrowid.'): '.$obj->reel.' (Stock product_stock.reel) != '.($obj->reelbatch ? $obj->reelbatch : '0').' (Stock batch sum product_batch)';
 
-				// Fix
+				// Fix is required
 				if ($obj->reel != $obj->reelbatch) {
-					if ($methodtofix == 'updatebatch') {
-						// Method 1
-						print ' -> Insert qty '.($obj->reel - $obj->reelbatch).' with lot 000000 linked to fk_product_stock='.$obj->psrowid;
+					if (empty($obj->tobatch)) {
+						// If product is not a product that support batches, we can clean stock by deleting the product batch lines
+						print ' -> Delete qty '.$obj->reelbatch.' for any lot linked to fk_product_stock='.$obj->psrowid;
+						$sql2 = "DELETE FROM ".MAIN_DB_PREFIX."product_batch";
+						$sql2 .= " WHERE fk_product_stock = ".((int) $obj->psrowid);
+						print '<br>'.$sql2;
+
 						if (GETPOST('clean_product_stock_batch') == 'confirmed') {
-							$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_batch(fk_product_stock, batch, qty)";
-							$sql2 .= "VALUES(".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
 							$resql2 = $db->query($sql2);
 							if (!$resql2) {
-								// TODO If it fails, we must make update
-								//$sql2 ="UPDATE ".MAIN_DB_PREFIX."product_batch";
-								//$sql2.=" SET ".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
-								//$sql2.=" WHERE fk_product_stock = ".((int) $obj->psrowid)
-							}
-						}
-					}
-					if ($methodtofix == 'updatestock') {
-						// Method 2
-						print ' -> Update qty of product_stock with qty = '.($obj->reelbatch ? ((float) $obj->reelbatch) : '0').' for ps.rowid = '.((int) $obj->psrowid);
-						if (GETPOST('clean_product_stock_batch') == 'confirmed') {
-							$error = 0;
-
-							$db->begin();
-
-							$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_stock";
-							$sql2 .= " SET reel = ".($obj->reelbatch ? ((float) $obj->reelbatch) : '0')." WHERE rowid = ".((int) $obj->psrowid);
-							$resql2 = $db->query($sql2);
-							if ($resql2) {
-								// We update product_stock, so we must fill p.stock into product too.
-								$sql3 = 'UPDATE '.MAIN_DB_PREFIX.'product p SET p.stock= (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid)';
-								$resql3 = $db->query($sql3);
-								if (!$resql3) {
-									$error++;
-									dol_print_error($db);
-								}
-							} else {
 								$error++;
 								dol_print_error($db);
 							}
+						}
+					} else {
+						if ($methodtofix == 'updatebatch') {
+							// Method 1
+							print ' -> Insert qty '.($obj->reel - $obj->reelbatch).' with lot 000000 linked to fk_product_stock='.$obj->psrowid;
+							$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_batch(fk_product_stock, batch, qty)";
+							$sql2 .= "VALUES(".((int) $obj->psrowid).", '000000', ".((float) ($obj->reel - $obj->reelbatch)).")";
+							print '<br>'.$sql2;
 
-							if (!$error) {
-								$db->commit();
-							} else {
-								$db->rollback();
+							if (GETPOST('clean_product_stock_batch') == 'confirmed') {
+								$resql2 = $db->query($sql2);
+								if (!$resql2) {
+									// TODO If it fails, we must make update
+									//$sql2 ="UPDATE ".MAIN_DB_PREFIX."product_batch";
+									//$sql2.=" SET ".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
+									//$sql2.=" WHERE fk_product_stock = ".((int) $obj->psrowid)
+								}
+							}
+						}
+						if ($methodtofix == 'updatestock') {
+							// Method 2
+							print ' -> Update qty of product_stock with qty = '.($obj->reelbatch ? ((float) $obj->reelbatch) : '0').' for ps.rowid = '.((int) $obj->psrowid);
+							$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_stock";
+							$sql2 .= " SET reel = ".($obj->reelbatch ? ((float) $obj->reelbatch) : '0')." WHERE rowid = ".((int) $obj->psrowid);
+							print '<br>'.$sql2;
+
+							if (GETPOST('clean_product_stock_batch') == 'confirmed') {
+								$error = 0;
+
+								$db->begin();
+
+								$resql2 = $db->query($sql2);
+								if ($resql2) {
+									// We update product_stock, so we must fill p.stock into product too.
+									$sql3 = 'UPDATE '.MAIN_DB_PREFIX.'product p SET p.stock= (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid)';
+									$resql3 = $db->query($sql3);
+									if (!$resql3) {
+										$error++;
+										dol_print_error($db);
+									}
+								} else {
+									$error++;
+									dol_print_error($db);
+								}
+
+								if (!$error) {
+									$db->commit();
+								} else {
+									$db->rollback();
+								}
 							}
 						}
 					}
@@ -1011,7 +1031,7 @@ if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha')) {
 	print '<tr><td colspan="2"><br>*** Set value of time spent without amount</td></tr>';
 
 	$sql = "SELECT COUNT(ptt.rowid) as nb, u.rowid as user_id, u.login, u.thm as user_thm";
-	$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as ptt, ".MAIN_DB_PREFIX."user as u";
+	$sql .= " FROM ".MAIN_DB_PREFIX."element_time as ptt, ".MAIN_DB_PREFIX."user as u";
 	$sql .= " WHERE ptt.fk_user = u.rowid";
 	$sql .= " AND ptt.thm IS NULL and u.thm > 0";
 	$sql .= " GROUP BY u.rowid, u.login, u.thm";
@@ -1029,7 +1049,7 @@ if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha')) {
 				$db->begin();
 
 				if (GETPOST('set_empty_time_spent_amount') == 'confirmed') {
-					$sql2 = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
+					$sql2 = "UPDATE ".MAIN_DB_PREFIX."element_time";
 					$sql2 .= " SET thm = ".$obj->user_thm." WHERE thm IS NULL AND fk_user = ".((int) $obj->user_id);
 					$resql2 = $db->query($sql2);
 					if (!$resql2) {

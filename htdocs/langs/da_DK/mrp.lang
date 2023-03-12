@@ -119,3 +119,6 @@ BomCantAddChildBom=Nomenklaturen %s er allerede til stede i træet, der fører t
 BOMNetNeeds = Stykliste nettobehov
 BOMProductsList=BOMs produkter
 BOMServicesList=BOMs ydelser
+Manufacturing=Fremstilling
+Disassemble=Skille ad
+ProducedBy=Produceret af

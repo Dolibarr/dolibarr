@@ -260,7 +260,7 @@ class FormProduct
 	/**
 	 *  Return list of warehouses
 	 *
-	 *  @param  string|int  $selected           Id of preselected warehouse ('' or '-1' for no value, 'ifone' and 'ifonenodefault' = select value if one value otherwise no value, '-2' to use the default value from setup)
+	 *  @param  string|int|array  $selected           Id of preselected warehouse ('' or '-1' for no value, 'ifone' and 'ifonenodefault' = select value if one value otherwise no value, '-2' to use the default value from setup)
 	 *  @param  string      $htmlname           Name of html select html
 	 *  @param  string      $filterstatus       warehouse status filter, following comma separated filter options can be used
 	 *                                          'warehouseopen' = select products from open warehouses,
@@ -272,17 +272,18 @@ class FormProduct
 	 *  @param	string	    $empty_label	    Empty label if needed (only if $empty=1)
 	 *  @param	int		    $showstock		    1=Show stock count
 	 *  @param	int	    	$forcecombo		    1=Force combo iso ajax select2
-	 *  @param	array	    $events			            Events to add to select2
-	 *  @param  string      $morecss                    Add more css classes to HTML select
+	 *  @param	array	    $events			    Events to add to select2
+	 *  @param  string      $morecss            Add more css classes to HTML select
 	 *  @param	array	    $exclude            Warehouses ids to exclude
 	 *  @param  int         $showfullpath       1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
 	 *  @param  bool|int    $stockMin           [=false] Value of minimum stock to filter or false not not filter by minimum stock
 	 *  @param  string      $orderBy            [='e.ref'] Order by
+	 *  @param	int			$multiselect		1=Allow multiselect
 	 * 	@return string					        HTML select
 	 *
 	 *  @throws Exception
 	 */
-	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = array(), $showfullpath = 1, $stockMin = false, $orderBy = 'e.ref')
+	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = array(), $showfullpath = 1, $stockMin = false, $orderBy = 'e.ref', $multiselect = 0)
 	{
 		global $conf, $langs, $user, $hookmanager;
 
@@ -307,17 +308,20 @@ class FormProduct
 
 		if (strpos($htmlname, 'search_') !== 0) {
 			if (empty($user->fk_warehouse) || $user->fk_warehouse == -1) {
-				if (($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
+				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
 					$selected = $conf->global->MAIN_DEFAULT_WAREHOUSE;
 				}
 			} else {
-				if (($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
 					$selected = $user->fk_warehouse;
 				}
 			}
 		}
 
-		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled' : '').' id="'.$htmlname.'" name="'.($htmlname.($disabled ? '_disabled' : '')).'">';
+		$out .= '<select '.($multiselect ? 'multiple ' : '').'class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled' : '');
+		$out .= ' id="'.$htmlname.'" name="'.($htmlname.($multiselect?'[]':'').($disabled ? '_disabled' : '')).'"';
+		//$out .= ' placeholder="todo"'; 	// placeholder for select2 must be added by setting the id+placeholder js param when calling select2
+		$out .= '>';
 		if ($empty) {
 			$out .= '<option value="-1">'.($empty_label ? $empty_label : '&nbsp;').'</option>';
 		}
@@ -330,15 +334,21 @@ class FormProduct
 			}
 			if (($fk_product || ($showstock > 0)) && ($arraytypes['stock'] != 0 || ($showstock > 0))) {
 				if ($arraytypes['stock'] <= 0) {
-					$label .= ' <span class= \'text-warning\'>('.$langs->trans("Stock").':'.$arraytypes['stock'].')</span>';
+					$label .= ' <span class="text-warning">('.$langs->trans("Stock").':'.$arraytypes['stock'].')</span>';
 				} else {
-					$label .= ' <span class=\'opacitymedium\'>('.$langs->trans("Stock").':'.$arraytypes['stock'].')</span>';
+					$label .= ' <span class="opacitymedium">('.$langs->trans("Stock").':'.$arraytypes['stock'].')</span>';
 				}
 			}
 
 			$out .= '<option value="'.$id.'"';
-			if ($selected == $id || (preg_match('/^ifone/', $selected) && $nbofwarehouses == 1)) {
-				$out .= ' selected';
+			if (is_array($selected)) {
+				if (in_array($id, $selected)) {
+					$out .= ' selected';
+				}
+			} else {
+				if ($selected == $id || (preg_match('/^ifone/', $selected) && $nbofwarehouses == 1)) {
+					$out .= ' selected';
+				}
 			}
 			$out .= ' data-html="'.dol_escape_htmltag($label).'"';
 			$out .= '>';

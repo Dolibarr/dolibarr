@@ -204,11 +204,10 @@ class Thirdparties extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -523,8 +522,8 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Delete thirdparty
 	 *
-	 * @param 	int 	$id   Thirdparty ID
-	 * @return 	array
+	 * @param int $id   Thirdparty ID
+	 * @return array
 	 */
 	public function delete($id)
 	{
@@ -1351,10 +1350,10 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Generate a Document from a bank account record (like SEPA mandate)
 	 *
-	 * @param 	int 		$id 			Thirdparty id
-	 * @param 	int 		$companybankid 	Companybank id
-	 * @param 	string 		$model 			Model of document to generate
-	 * @return 	array
+	 * @param int 		$id 			Thirdparty id
+	 * @param int 		$companybankid 	Companybank id
+	 * @param string 	$model 			Model of document to generate
+	 * @return array
 	 *
 	 * @url GET {id}/generateBankAccountDocument/{companybankid}/{model}
 	 */

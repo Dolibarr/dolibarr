@@ -206,7 +206,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 $triggersendname = 'TICKET_SENTBYMAIL';
 $paramname = 'id';
 $autocopy = 'MAIN_MAIL_AUTOCOPY_TICKET_TO'; // used to know the automatic BCC to add
-if (!empty($object->id)) $trackid = 'tic'.$object->id;
+if (!empty($object->dao->id)) $trackid = 'tic'.$object->dao->id;
 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
@@ -217,6 +217,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 $form = new Form($db);
 $formticket = new FormTicket($db);
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('ticketpublicview', 'globalcard'));
 
 if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
 	print '<div class="error">'.$langs->trans('TicketPublicInterfaceForbidden').'</div>';
@@ -332,6 +335,9 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print ($object->dao->progress > 0 ? dol_escape_htmltag($object->dao->progress) : '0').'%';
 		print '</td></tr>';
 
+		// Other attributes
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
 		print '</table>';
 
 		print '</div>';
@@ -345,7 +351,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 			$formticket->action = "add_message";
 			$formticket->track_id = $object->dao->track_id;
-			$formticket->id = $object->dao->id;
+			$formticket->trackid = 'tic'.$object->dao->id;
 
 			$formticket->param = array('track_id' => $object->dao->track_id, 'fk_user_create' => '-1',
 									   'returnurl' => DOL_URL_ROOT.'/public/ticket/view.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:''));

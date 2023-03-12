@@ -45,7 +45,7 @@ class InterfaceNotification extends DolibarrTriggers
 
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "notification";
-		$this->description = "Triggers of this module send email notifications according to Notification module setup.";
+		$this->description = "Triggers of this module send Email notifications according to Notification module setup.";
 		// 'development', 'experimental', 'dolibarr' or version
 		$this->version = self::VERSION_DOLIBARR;
 		$this->picto = 'email';
@@ -70,6 +70,7 @@ class InterfaceNotification extends DolibarrTriggers
 			return 0; // Module not active, we do nothing
 		}
 
+		// If the trigger code is not managed by the Notification module
 		if (!in_array($action, $this->listofmanagedevents)) {
 			return 0;
 		}
@@ -112,7 +113,7 @@ class InterfaceNotification extends DolibarrTriggers
 		$ret = array();
 
 
-		$sql = "SELECT rowid, code, label, description, elementtype";
+		$sql = "SELECT rowid, code, contexts, label, description, elementtype";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger";
 		$sql .= $this->db->order("rang, elementtype, code");
 
@@ -153,7 +154,7 @@ class InterfaceNotification extends DolibarrTriggers
 				}
 
 				if ($qualified) {
-					$ret[] = array('rowid'=>$obj->rowid, 'code'=>$obj->code, 'label'=>$obj->label, 'description'=>$obj->description, 'elementtype'=>$obj->elementtype);
+					$ret[] = array('rowid'=>$obj->rowid, 'code'=>$obj->code, 'contexts'=>$obj->contexts, 'label'=>$obj->label, 'description'=>$obj->description, 'elementtype'=>$obj->elementtype);
 				}
 
 				$i++;

@@ -831,7 +831,7 @@ class DolGraph
 		}
 		$this->stringtoshow .= '<div id="placeholder_' . $tag . '" style="width:' . $this->width . 'px;height:' . $this->height . 'px;" class="dolgraph' . (empty($dolxaxisvertical) ? '' : ' ' . $dolxaxisvertical) . (empty($this->cssprefix) ? '' : ' dolgraph' . $this->cssprefix) . ' center"></div>' . "\n";
 
-		$this->stringtoshow .= '<script id="' . $tag . '">' . "\n";
+		$this->stringtoshow .= '<script nonce="'.getNonce().'" id="' . $tag . '">' . "\n";
 		$this->stringtoshow .= '$(function () {' . "\n";
 		$i = $firstlot;
 		if ($nblot < 0) {
@@ -1144,9 +1144,9 @@ class DolGraph
 		if (isset($this->type[$firstlot])) {
 			$cssfordiv .= ' dolgraphchar' . $this->type[$firstlot];
 		}
-		$this->stringtoshow .= '<div id="placeholder_' . $tag . '" style="min-height: ' . $this->height . (strpos($this->height, '%') > 0 ? '' : 'px') . '; width:' . $this->width . (strpos($this->width, '%') > 0 ? '' : 'px') . ';" class="' . $cssfordiv . ' dolgraph' . (empty($dolxaxisvertical) ? '' : ' ' . $dolxaxisvertical) . (empty($this->cssprefix) ? '' : ' dolgraph' . $this->cssprefix) . ' center"><canvas id="canvas_' . $tag . '"></canvas></div>' . "\n";
+		$this->stringtoshow .= '<div id="placeholder_' . $tag . '" style="min-height: ' . $this->height . (strpos($this->height, '%') > 0 ? '' : 'px').'; max-height: ' . (strpos($this->height, '%') > 0 ? $this->height : ($this->height + 100) . 'px').'; width:' . $this->width . (strpos($this->width, '%') > 0 ? '' : 'px') . ';" class="' . $cssfordiv . ' dolgraph' . (empty($dolxaxisvertical) ? '' : ' ' . $dolxaxisvertical) . (empty($this->cssprefix) ? '' : ' dolgraph' . $this->cssprefix) . ' center"><canvas id="canvas_' . $tag . '"></canvas></div>' . "\n";
 
-		$this->stringtoshow .= '<script id="' . $tag . '">' . "\n";
+		$this->stringtoshow .= '<script nonce="'.getNonce().'" id="' . $tag . '">' . "\n";
 		$i = $firstlot;
 		if ($nblot < 0) {
 			$this->stringtoshow .= '<!-- No series of data -->';
@@ -1418,7 +1418,7 @@ class DolGraph
 
 					//var_dump($iinstack);
 					if ($iinstack) {
-						// Change color with offset of $$iinstack
+						// Change color with offset of $iinstack
 						//var_dump($newcolor);
 						if ($iinstack % 2) {	// We increase agressiveness of reference color for color 2, 4, 6, ...
 							$ratio = min(95, 10 + 10 * $iinstack); // step of 20

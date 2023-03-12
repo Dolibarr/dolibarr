@@ -13,6 +13,7 @@
  * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021-2022	Anthony Berton       	<anthony.berton@bb2a.fr>
+ * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1295,12 +1296,14 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		}
 	}
 	// Show page nb only on iso languages (so default Helvetica font)
-	if (strtolower(pdf_getPDFFont($outputlangs)) == 'helvetica') {
-		// Option for change XY position of the page number
+	// if (strtolower(pdf_getPDFFont($outputlangs)) == 'helvetica') {
 		$pdf->SetXY($dims['wk'] - $dims['rm'] - 18 - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_X', 0), -$posy - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_Y', 0));
-		//$pdf->MultiCell(18, 2, $pdf->getPageNumGroupAlias().' / '.$pdf->getPageGroupAlias(), 0, 'R', 0);
-		$pdf->MultiCell(18, 2, $pdf->PageNo().' / '.$pdf->getAliasNbPages(), 0, 'R', 0);
-	}
+		// $pdf->MultiCell(18, 2, $pdf->getPageNumGroupAlias().' / '.$pdf->getPageGroupAlias(), 0, 'R', 0);
+		// $pdf->MultiCell(18, 2, $pdf->PageNo().' / '.$pdf->getAliasNbPages(), 0, 'R', 0); // doesn't works with all fonts
+		// $pagination = $pdf->getAliasNumPage().' / '.$pdf->getAliasNbPages(); // works with $pdf->Cell
+		$pagination = $pdf->PageNo().' / '.$pdf->getNumPages();
+		$pdf->MultiCell(18, 2, $pagination, 0, 'R', 0);
+	// }
 
 	//  Show Draft Watermark
 	if (!empty($watermark)) {
@@ -2480,10 +2483,12 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefSending");
 					if (!empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] .= ' / ';
 					$linkedobjects[$objecttype]['ref_value'] .= $outputlangs->transnoentities($elementobject->ref);
+					$linkedobjects[$objecttype]['date_value'] = dol_print_date(empty($elementobject->date_shipping) ? $elementobject->date_delivery : $elementobject->date_shipping, 'day', '', $outputlangs);
 				} else {
 					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending");
 					if (empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] = $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
 					$linkedobjects[$objecttype]['ref_value'] .= ' / '.$outputlangs->transnoentities($elementobject->ref);
+					$linkedobjects[$objecttype]['date_value'] = dol_print_date(empty($elementobject->date_shipping) ? $elementobject->date_delivery : $elementobject->date_shipping, 'day', '', $outputlangs);
 				}
 			}
 		}
@@ -2517,6 +2522,8 @@ function pdf_getSizeForImage($realpath)
 	$maxheight = (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT) ? 32 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT);
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$tmp = dol_getImageSize($realpath);
+	$width = 0;
+	$height = 0;
 	if ($tmp['height']) {
 		$width = (int) round($maxheight * $tmp['width'] / $tmp['height']); // I try to use maxheight
 		if ($width > $maxwidth) {	// Pb with maxheight, so i use maxwidth

@@ -8,6 +8,7 @@
  * Copyright (C) 2016       Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021       Noé Cendrier         <noe.cendrier@altairis.fr>
+ * Copyright (C) 2023      	Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -475,7 +476,7 @@ $listofreferent = array(
 	'table'=>'fichinter',
 	'datefieldname'=>'date_valid',
 	'disableamount'=>0,
-	'margin'=>'minus',
+	'margin'=>'',
 	'urlnew'=>DOL_URL_ROOT.'/fichinter/card.php?action=create&origin=project&originid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'lang'=>'interventions',
 	'buttonnew'=>'AddIntervention',
@@ -575,7 +576,7 @@ $listofreferent = array(
 	'class'=>'Task',
 	'margin'=>'minus',
 	'table'=>'projet_task',
-	'datefieldname'=>'task_date',
+	'datefieldname'=>'element_date',
 	'disableamount'=>0,
 	'urlnew'=>DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&action=createtime&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'buttonnew'=>'AddTimeSpent',
@@ -585,9 +586,9 @@ $listofreferent = array(
 	'name'=>"MouvementStockAssociated",
 	'title'=>"ListMouvementStockProject",
 	'class'=>'MouvementStock',
-	'margin'=>'minus',
 	'table'=>'stock_mouvement',
 	'datefieldname'=>'datem',
+	'margin'=>'minus',
 	'disableamount'=>0,
 	'test'=>!empty($conf->stock->enabled) && $user->hasRight('stock', 'mouvement', 'lire') && !empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW)),
 'salaries'=>array(
@@ -752,6 +753,7 @@ $total_revenue_ht = 0;
 $balance_ht = 0;
 $balance_ttc = 0;
 
+// Loop on each element type (proposal, sale order, invoices, ...)
 foreach ($listofreferent as $key => $value) {
 	$parameters = array(
 		'total_revenue_ht' =>& $total_revenue_ht,
@@ -787,11 +789,12 @@ foreach ($listofreferent as $key => $value) {
 			$total_ht = 0;
 			$total_ttc = 0;
 
+			// Loop on each object for the current element type
 			$num = count($elementarray);
 			for ($i = 0; $i < $num; $i++) {
 				$tmp = explode('_', $elementarray[$i]);
 				$idofelement = $tmp[0];
-				$idofelementuser = $tmp[1];
+				$idofelementuser = !empty($tmp[1]) ? $tmp[1] : "";
 
 				$element->fetch($idofelement);
 				if ($idofelementuser) {
@@ -871,7 +874,7 @@ foreach ($listofreferent as $key => $value) {
 					$defaultvat = get_default_tva($mysoc, $mysoc);
 					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)), 'MT');
 				} elseif ($key == 'loan') {
-						$total_ttc_by_line = $total_ht_by_line; // For loan there is actually no taxe managed in Dolibarr
+					$total_ttc_by_line = $total_ht_by_line; // For loan there is actually no taxe managed in Dolibarr
 				} else {
 					$total_ttc_by_line = $element->total_ttc;
 				}
@@ -892,19 +895,14 @@ foreach ($listofreferent as $key => $value) {
 			}
 
 			// Each element with at least one line is output
-			$qualifiedforfinalprofit = true;
-			if ($key == 'intervention' && empty($conf->global->PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT)) {
-				$qualifiedforfinalprofit = false;
-			}
-			//var_dump($key.' '.$qualifiedforfinalprofit);
 
 			// Calculate margin
-			if ($qualifiedforfinalprofit) {
-				if ($margin == 'add') {
+			if ($margin) {
+				if ($margin === 'add') {
 					$total_revenue_ht += $total_ht;
 				}
 
-				if ($margin != "add") {	// Revert sign
+				if ($margin === "minus") {	// Revert sign
 					$total_ht = -$total_ht;
 					$total_ttc = -$total_ttc;
 				}
@@ -920,24 +918,24 @@ foreach ($listofreferent as $key => $value) {
 			print '<td class="right">'.$i.'</td>';
 			// Amount HT
 			print '<td class="right">';
-			if ($key == 'intervention' && !$qualifiedforfinalprofit) {
+			if ($key == 'intervention' && !$margin) {
 				print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
 			} else {
-				print price($total_ht);
 				if ($key == 'propal') {
 					print '<span class="opacitymedium">'.$form->textwithpicto('', $langs->trans("SignedOnly")).'</span>';
 				}
+				print price($total_ht);
 			}
 			print '</td>';
 			// Amount TTC
 			print '<td class="right">';
-			if ($key == 'intervention' && !$qualifiedforfinalprofit) {
+			if ($key == 'intervention' && !$margin) {
 				print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
 			} else {
-				print price($total_ttc);
 				if ($key == 'propal') {
 					print '<span class="opacitymedium">'.$form->textwithpicto('', $langs->trans("SignedOnly")).'</span>';
 				}
+				print price($total_ttc);
 			}
 			print '</td>';
 			print '</tr>';
@@ -1340,7 +1338,7 @@ foreach ($listofreferent as $key => $value) {
 						$tmpuser2->fetch($element->fk_user_author);
 						print $tmpuser2->getNomUrl(1, '', 48);
 					}
-				} elseif ($tablename == 'projet_task' && $key == 'project_task_time') {	// if $key == 'project_task', we don't want details per user
+				} elseif ($tablename == 'projet_task' && $key == 'element_time') {	// if $key == 'project_task', we don't want details per user
 					print $elementuser->getNomUrl(1);
 				}
 				print '</td>';

@@ -70,6 +70,8 @@ abstract class ActionsCardCommon
 			$object->fetch($id, $ref);
 		}
 		$this->object = $object;
+
+		return $object;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

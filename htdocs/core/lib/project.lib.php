@@ -4,6 +4,7 @@
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
+ * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,8 +101,9 @@ function project_prepare_head(Project $project, $moreparam = '')
 			$sql = "SELECT t.rowid";
 			//$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
 			//$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
-			$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt";
-			$sql .= " WHERE t.fk_task = pt.rowid";
+			$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t, ".MAIN_DB_PREFIX."projet_task as pt";
+			$sql .= " WHERE t.fk_element = pt.rowid";
+			$sql .= " AND t.elementtype = 'task'";
 			$sql .= " AND pt.fk_projet =".((int) $project->id);
 			$resql = $db->query($sql);
 			if ($resql) {
@@ -372,8 +374,8 @@ function task_prepare_head($object)
 	$sql = "SELECT t.rowid";
 	//$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
 	//$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
-	$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
-	$sql .= " WHERE t.fk_task = ".((int) $object->id);
+	$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t";
+	$sql .= " WHERE t.elementtype='task' AND t.fk_element = ".((int) $object->id);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
@@ -1265,15 +1267,6 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 
 			print convertSecondToTime($lines[$i]->timespent_duration, 'allhourmin');
 
-			// Comment for avoid unnecessary multiple calculation
-			/*$modeinput = 'hours';
-
-			print '<script type="text/javascript">';
-			print "jQuery(document).ready(function () {\n";
-			print " 	jQuery('.inputhour, .inputminute').bind('keyup', function(e) { updateTotal(0, '".$modeinput."') });";
-			print "})\n";
-			print '</script>';*/
-
 			print '</td>';
 
 			// Note
@@ -1655,15 +1648,6 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				$tableCell .= $form->select_duration($lines[$i]->id.'duration', '', $disabledtask, 'text', 0, 1);
 				//$tableCell.='&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled':'').' value="'.$langs->trans("Add").'">';
 				print $tableCell;
-
-				// Comment for avoid unnecessary multiple calculation
-				/*$modeinput = 'hours';
-
-				print '<script type="text/javascript">';
-				print "jQuery(document).ready(function () {\n";
-				print " 	jQuery('.inputhour, .inputminute').bind('keyup', function(e) { updateTotal(0, '".$modeinput."') });";
-				print "})\n";
-				print '</script>';*/
 
 				print '</td>';
 
@@ -2438,12 +2422,15 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
  * @param	int		$status				-1=No filter on statut, 0 or 1 = Filter on status
  * @param	array	$listofoppstatus	List of opportunity status
  * @param   array   $hiddenfields       List of info to not show ('projectlabel', 'declaredprogress', '...', )
+ * @param	int		$max				Max nb of record to show in HTML list
  * @return	void
  */
-function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks = 0, $status = -1, $listofoppstatus = array(), $hiddenfields = array())
+function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks = 0, $status = -1, $listofoppstatus = array(), $hiddenfields = array(), $max = 0)
 {
 	global $langs, $conf, $user;
 	global $theme_datacolor;
+
+	$maxofloop = (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
 
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
@@ -2474,8 +2461,6 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	if (strcmp($status, '') && $status >= 0) {
 		$title = $langs->trans("Projects").' '.$langs->trans($projectstatic->statuts_long[$status]);
 	}
-
-	$arrayidtypeofcontact = array();
 
 	print '<!-- print_projecttasks_array -->';
 	print '<div class="div-table-responsive-no-min">';
@@ -2555,11 +2540,15 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 	$resql = $db->query($sql2);
 	if ($resql) {
+		$othernb = 0;
 		$total_task = 0;
 		$total_opp_amount = 0;
 		$ponderated_opp_amount = 0;
+		$total_plannedworkload = 0;
+		$total_declaredprogressworkload = 0;
 
 		$num = $db->num_rows($resql);
+		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 		$i = 0;
 
 		print '<tr class="liste_titre">';
@@ -2586,10 +2575,22 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		}
 		print "</tr>\n";
 
-		$total_plannedworkload = 0;
-		$total_declaredprogressworkload = 0;
-		while ($i < $num) {
+		while ($i < $nbofloop) {
 			$objp = $db->fetch_object($resql);
+
+			if ($max && $i >= $max) {
+				$othernb++;
+				$i++;
+				$total_task += $objp->nb;
+				$total_opp_amount += $objp->opp_amount;
+				$opp_weighted_amount = $objp->opp_percent * $objp->opp_amount / 100;
+				$ponderated_opp_amount += price2num($opp_weighted_amount);
+				$plannedworkload = $objp->planned_workload;
+				$total_plannedworkload += $plannedworkload;
+				$declaredprogressworkload = $objp->declared_progess_workload;
+				$total_declaredprogressworkload += $declaredprogressworkload;
+				continue;
+			}
 
 			$projectstatic->id = $objp->projectid;
 			$projectstatic->user_author_id = $objp->fk_user_creat;
@@ -2697,11 +2698,19 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 				print "</tr>\n";
 
-				$total_task = $total_task + $objp->nb;
-				$total_opp_amount = $total_opp_amount + $objp->opp_amount;
+				$total_task += $objp->nb;
+				$total_opp_amount += $objp->opp_amount;
 			}
 
 			$i++;
+		}
+
+		if ($othernb) {
+			print '<tr class="oddeven">';
+			print '<td class="nowrap" colspan="5">';
+			print '<span class="opacitymedium">'.$langs->trans("More").'...'.($othernb < $maxofloop ? ' ('.$othernb.')' : '').'</span>';
+			print '</td>';
+			print "</tr>\n";
 		}
 
 		print '<tr class="liste_total">';
@@ -2867,13 +2876,13 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 		// good
 		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.floatval($task->progress).'%" title="'.floatval($task->progress).'%">';
 		if (!empty($task->progress)) {
-			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.floatval($progressCalculated / $task->progress * 100).'%" title="'.floatval($progressCalculated).'%"></div>';
+			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.floatval($progressCalculated / (floatval($task->progress) == 0 ? 1 : $task->progress) * 100).'%" title="'.floatval($progressCalculated).'%"></div>';
 		}
 		$out .= '        </div>';
 	} else {
 		// bad
 		$out .= '        <div class="progress-bar progress-bar-consumed-late" style="width: '.floatval($progressCalculated).'%" title="'.floatval($progressCalculated).'%">';
-		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.($task->progress ? floatval($task->progress / $progressCalculated * 100).'%' : '1px').'" title="'.floatval($task->progress).'%"></div>';
+		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.($task->progress ? floatval($task->progress / (floatval($progressCalculated) == 0 ? 1 : $progressCalculated) * 100).'%' : '1px').'" title="'.floatval($task->progress).'%"></div>';
 		$out .= '        </div>';
 	}
 	$out .= '    </div>';
