@@ -232,7 +232,7 @@ $arrayofcss = array('/ticket/css/styles.css.php');
 
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
-print '<div class="ticketpublicarea">';
+print '<div class="ticketpublicarea ticketlargemargin centpercent">';
 
 if ($action == "view_ticket" || $action == "presend" || $action == "close" || $action == "confirm_public_close") {
 	if ($display_ticket) {
@@ -396,10 +396,11 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" rel="nofollow noopener">'.$langs->trans('Back').'</a></div>';
 	}
 } else {
-	print '<div class="center opacitymedium margintoponly marginbottomonly">'.$langs->trans("TicketPublicMsgViewLogIn").'</div>';
+	print '<div class="center opacitymedium margintoponly marginbottomonly ticketlargemargin">'.$langs->trans("TicketPublicMsgViewLogIn").'</div>';
 
 	print '<div id="form_view_ticket">';
 	print '<form method="post" name="form_view_ticket" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'">';
+
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="view_ticket">';
 

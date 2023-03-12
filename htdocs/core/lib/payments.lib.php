@@ -487,7 +487,7 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 
 	print '<br>';
 
-	print '<div class="center paddingleft paddingright">'."\n";
+	print '<div class="center paddingleft paddingright centpercent">'."\n";
 	if ($addformmessage) {
 		print '<!-- object = '.(empty($object) ? 'undefined' : $object->element).' -->';
 		print '<br>';

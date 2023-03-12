@@ -203,7 +203,7 @@ function generate_random_id($car = 16)
 }
 
 /**
- * Show header for public pages
+ * Show http header, open body tag and show HTML header banner for public pages for tickets
  *
  * @param  string $title       Title
  * @param  string $head        Head array
@@ -216,11 +216,14 @@ function generate_random_id($car = 16)
 function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
 {
 	global $user, $conf, $langs, $mysoc;
+
 	$urllogo = "";
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, 1); // Show html headers
 
 	print '<body id="mainbody" class="publicnewticketform">';
-	print '<div class="center">';
+	print '<div class="publicnewticketform2 flexcontainer centpercent" style="min-height: 100%;">';
+
+	print '<header class="center centpercent">';
 
 	// Define urllogo
 	if (getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO') || getDolGlobalString('TICKET_PUBLIC_INTERFACE_TOPIC')) {
@@ -264,7 +267,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '</div>';
 	}
 
-	print '</div>';
+	print '</header>';
 
-	print '<div class="ticketlargemargin">';
+	//print '<div class="ticketlargemargin">';
 }
