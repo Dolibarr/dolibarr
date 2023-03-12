@@ -1252,7 +1252,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			$pdf->SetY(-$posy);
 
 			// Option for hide all footer (page number will no hidden)
-			if (getDolGlobalInt('PDF_FOOTER_HIDDEN') !== 1) {
+			if (!getDolGlobalInt('PDF_FOOTER_HIDDEN')) {
 				// Hide footer line if footer background color is set
 				if (!getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
 					$pdf->line($dims['lm'], $dims['hk'] - $posy, $dims['wk'] - $dims['rm'], $dims['hk'] - $posy);
