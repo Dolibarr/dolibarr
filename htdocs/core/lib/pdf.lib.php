@@ -731,7 +731,7 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 			$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
 		}
 	}
-	if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND) && ($conf->global->MAIN_ADD_PDF_BACKGROUND != '-1')) {
+	if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND') && getDolGlobalString('MAIN_ADD_PDF_BACKGROUND') != '-1') {
 		$pdf->SetPageMark(); // This option avoid to have the images missing on some pages
 	}
 }
