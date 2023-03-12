@@ -19,6 +19,8 @@
 /**
  *       \file       htdocs/core/class/fileupload.class.php
  *       \brief      File to return Ajax response on file upload
+ *
+ *       Option MAIN_USE_JQUERY_FILEUPLOAD must be enabled to have feature working. Use is NOT secured !
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
