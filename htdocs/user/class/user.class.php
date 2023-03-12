@@ -3063,6 +3063,8 @@ class User extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -3082,6 +3084,7 @@ class User extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'label')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
 		}

@@ -921,9 +921,9 @@ while ($i < $imaxinloop) {
 			}
 
 			if (in_array($val['type'], array('timestamp'))) {
-				$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+				$cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
 			} elseif ($key == 'ref') {
-				$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+				$cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
 			}
 
 			if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('rowid', 'ref', 'status')) && empty($val['arrayofkeyval'])) {

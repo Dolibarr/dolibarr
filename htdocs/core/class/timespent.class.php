@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur      <eldy@users.sourceforge.net>
  * Copyright (C) 2023  Frédéric France          <frederic.france@netlogic.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2023  Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 
 /**
- * \file        htdocs/modulebuilder/template/class/myobject.class.php
- * \ingroup     mymodule
- * \brief       This file is a CRUD class file for MyObject (Create/Read/Update/Delete)
+ * \file        class/timespent.class.php
+ * \ingroup     timespent
+ * \brief       This file is a CRUD class file for TimeSpent (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -29,24 +29,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class for MyObject
+ * Class for TimeSpent
  */
-class MyObject extends CommonObject
+class TimeSpent extends CommonObject
 {
 	/**
 	 * @var string ID of module.
 	 */
-	public $module = 'mymodule';
+	public $module = 'timespent';
 
 	/**
 	 * @var string ID to identify managed object.
 	 */
-	public $element = 'myobject';
+	public $element = 'timespent';
 
 	/**
 	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
 	 */
-	public $table_element = 'mymodule_myobject';
+	public $table_element = 'element_time';
 
 	/**
 	 * @var int  Does this object support multicompany module ?
@@ -57,10 +57,10 @@ class MyObject extends CommonObject
 	/**
 	 * @var int  Does object support extrafields ? 0=No, 1=Yes
 	 */
-	public $isextrafieldmanaged = 1;
+	public $isextrafieldmanaged = 0;
 
 	/**
-	 * @var string String with name of icon for myobject. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'myobject@mymodule' if picto is file 'img/object_myobject.png'.
+	 * @var string String with name of icon for timespent. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'timespent@timespent' if picto is file 'img/object_timespent.png'.
 	 */
 	public $picto = 'fa-file';
 
@@ -111,97 +111,46 @@ class MyObject extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields into database and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields = array(
-		'rowid'         => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id', 'css'=>'left'),
-		'entity'        => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>10),
-		'ref'           => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'noteditable'=>0, 'default'=>'', 'notnull'=> 1, 'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1, 'comment'=>'Reference of object', 'validate'=>1),
-		'label'         => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>'Help text', 'showoncombobox'=>2, 'validate'=>1, 'alwayseditable'=>1),
-		'amount'        => array('type'=>'price', 'label'=>'Amount', 'enabled'=>1, 'visible'=>1, 'default'=>'null', 'position'=>40, 'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for amount', 'validate'=>1),
-		'qty'           => array('type'=>'real', 'label'=>'Qty', 'enabled'=>1, 'visible'=>1, 'default'=>'0', 'position'=>45, 'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for quantity', 'css'=>'maxwidth75imp', 'validate'=>1),
-		'fk_soc' 		=> array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'picto'=>'company', 'label'=>'ThirdParty', 'visible'=> 1, 'enabled'=>'isModEnabled("societe")', 'position'=>50, 'notnull'=>-1, 'index'=>1, 'help'=>'OrganizationEventLinkToThirdParty', 'validate'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
-		'fk_project'    => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'picto'=>'project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>52, 'notnull'=>-1, 'index'=>1, 'validate'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
-		'description'   => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>3, 'position'=>60, 'validate'=>1),
-		'note_public'   => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61, 'validate'=>1, 'cssview'=>'wordbreak'),
-		'note_private'  => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>62, 'validate'=>1, 'cssview'=>'wordbreak'),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=> 1, 'position'=>500),
-		'tms'           => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=> 0, 'position'=>501),
-		//'date_validation '    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'picto'=>'user', 'enabled'=>1, 'visible'=>-2, 'notnull'=> 1, 'position'=>510, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax150'),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'picto'=>'user', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511, 'csslist'=>'tdoverflowmax150'),
-		//'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
-		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>0, 'notnull'=>0, 'position'=>600),
-		'import_key'    => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
-		'model_pdf' 	=> array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'notnull'=>-1, 'position'=>1010),
-		'status'        => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=> 1, 'default'=>0, 'index'=>1, 'position'=>2000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 9=>'Canceled'), 'validate'=>1),
+	public $fields=array(
+		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
+		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>17, 'notnull'=>0, 'visible'=>-2,),
+		'import_key' => array('type'=>'varchar(14)', 'label'=>'import_key', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>-1,),
+		'fk_element' => array('type'=>'integer', 'label'=>'fk_element', 'enabled'=>'1', 'position'=>2, 'notnull'=>1, 'visible'=>-1,),
+		'elementtype' => array('type'=>'varchar(32)', 'label'=>'elementtype', 'enabled'=>'1', 'position'=>3, 'notnull'=>1, 'visible'=>-1,),
+		'element_date' => array('type'=>'date', 'label'=>'element_date', 'enabled'=>'1', 'position'=>4, 'notnull'=>0, 'visible'=>-1,),
+		'element_datehour' => array('type'=>'datetime', 'label'=>'element_datehour', 'enabled'=>'1', 'position'=>5, 'notnull'=>0, 'visible'=>-1,),
+		'element_date_withhour' => array('type'=>'integer', 'label'=>'element_date_withhour', 'enabled'=>'1', 'position'=>6, 'notnull'=>0, 'visible'=>-1,),
+		'element_duration' => array('type'=>'double', 'label'=>'element_duration', 'enabled'=>'1', 'position'=>7, 'notnull'=>0, 'visible'=>-1,),
+		'fk_product' => array('type'=>'integer', 'label'=>'fk_product', 'enabled'=>'1', 'position'=>8, 'notnull'=>0, 'visible'=>-1,),
+		'fk_user' => array('type'=>'integer', 'label'=>'fk_user', 'enabled'=>'1', 'position'=>9, 'notnull'=>0, 'visible'=>-1,),
+		'thm' => array('type'=>'double(24,8)', 'label'=>'thm', 'enabled'=>'1', 'position'=>10, 'notnull'=>0, 'visible'=>-1,),
+		'invoice_id' => array('type'=>'integer', 'label'=>'invoice_id', 'enabled'=>'1', 'position'=>11, 'notnull'=>0, 'visible'=>-1, 'default'=>'NULL',),
+		'invoice_line_id' => array('type'=>'integer', 'label'=>'invoice_line_id', 'enabled'=>'1', 'position'=>12, 'notnull'=>0, 'visible'=>-1, 'default'=>'NULL',),
+		'intervention_id' => array('type'=>'integer', 'label'=>'intervention_id', 'enabled'=>'1', 'position'=>13, 'notnull'=>0, 'visible'=>-1, 'default'=>'NULL',),
+		'intervention_line_id' => array('type'=>'integer', 'label'=>'intervention_line_id', 'enabled'=>'1', 'position'=>14, 'notnull'=>0, 'visible'=>-1, 'default'=>'NULL',),
+		'datec' => array('type'=>'datetime', 'label'=>'datec', 'enabled'=>'1', 'position'=>16, 'notnull'=>0, 'visible'=>-1,),
+		'note' => array('type'=>'text', 'label'=>'note', 'enabled'=>'1', 'position'=>18, 'notnull'=>0, 'visible'=>-1,),
 	);
-
-	/**
-	 * @var int ID
-	 */
 	public $rowid;
-
-	/**
-	 * @var string Ref
-	 */
-	public $ref;
-
-	/**
-	 * @var int Entity
-	 */
-	public $entity;
-
-	/**
-	 * @var string label
-	 */
-	public $label;
-
-	/**
-	 * @var string amount
-	 */
-	public $amount;
-
-	/**
-	 * @var int Thirdparty ID
-	 */
-	public $socid;		// both socid and fk_soc are used
-	public $fk_soc;		// both socid and fk_soc are used
-
-	/**
-	 * @var int Status
-	 */
-	public $status;
-
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer tms
-	 */
 	public $tms;
-
-	/**
-	 * @var int ID
-	 */
-	public $fk_user_creat;
-
-	/**
-	 * @var int ID
-	 */
-	public $fk_user_modif;
-
-	/**
-	 * @var string public $last_main_doc
-	 */
-	public $last_main_doc;
-
-	/**
-	 * @var string import_key
-	 */
 	public $import_key;
+	public $fk_element;
+	public $elementtype;
+	public $element_date;
+	public $element_datehour;
+	public $element_date_withhour;
+	public $element_duration;
+	public $fk_product;
+	public $fk_user;
+	public $thm;
+	public $invoice_id;
+	public $invoice_line_id;
+	public $intervention_id;
+	public $intervention_line_id;
+	public $datec;
+	public $note;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -210,17 +159,17 @@ class MyObject extends CommonObject
 	// /**
 	//  * @var string    Name of subtable line
 	//  */
-	// public $table_element_line = 'mymodule_myobjectline';
+	// public $table_element_line = 'timespent_timespentline';
 
 	// /**
 	//  * @var string    Field with ID of parent key if this object has a parent
 	//  */
-	// public $fk_element = 'fk_myobject';
+	// public $fk_element = 'fk_timespent';
 
 	// /**
 	//  * @var string    Name of subtable class that manage subtable lines
 	//  */
-	// public $class_element_line = 'MyObjectline';
+	// public $class_element_line = 'TimeSpentline';
 
 	// /**
 	//  * @var array	List of child tables. To test if we can delete object.
@@ -232,10 +181,10 @@ class MyObject extends CommonObject
 	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
 	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	//  */
-	// protected $childtablesoncascade = array('mymodule_myobjectdet');
+	// protected $childtablesoncascade = array('timespent_timespentdet');
 
 	// /**
-	//  * @var MyObjectLine[]     Array of subtable lines
+	//  * @var TimeSpentLine[]     Array of subtable lines
 	//  */
 	// public $lines = array();
 
@@ -260,7 +209,7 @@ class MyObject extends CommonObject
 		}
 
 		// Example to show how to set values of fields definition dynamically
-		/*if ($user->rights->mymodule->myobject->read) {
+		/*if ($user->rights->timespent->timespent->read) {
 			$this->fields['myfield']['visible'] = 1;
 			$this->fields['myfield']['noteditable'] = 0;
 		}*/
@@ -575,8 +524,8 @@ class MyObject extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->myobject->write))
-		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->myobject->myobject_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->timespent->timespent->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->timespent->timespent->timespent_advance->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -618,7 +567,7 @@ class MyObject extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('MYOBJECT_VALIDATE', $user);
+				$result = $this->call_trigger('timespent_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -632,8 +581,8 @@ class MyObject extends CommonObject
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'myobject/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'timespent/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'timespent/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
@@ -642,15 +591,15 @@ class MyObject extends CommonObject
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->mymodule->dir_output.'/myobject/'.$oldref;
-				$dirdest = $conf->mymodule->dir_output.'/myobject/'.$newref;
+				$dirsource = $conf->timespent->dir_output.'/timespent/'.$oldref;
+				$dirdest = $conf->timespent->dir_output.'/timespent/'.$newref;
 				if (!$error && file_exists($dirsource)) {
 					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
 
 					if (@rename($dirsource, $dirdest)) {
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
-						$listoffiles = dol_dir_list($conf->mymodule->dir_output.'/myobject/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+						$listoffiles = dol_dir_list($conf->timespent->dir_output.'/timespent/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 						foreach ($listoffiles as $fileentry) {
 							$dirsource = $fileentry['name'];
 							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
@@ -693,14 +642,14 @@ class MyObject extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->write))
-		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->mymodule_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->timespent->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->timespent->timespent_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'MYOBJECT_UNVALIDATE');
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'timespent_UNVALIDATE');
 	}
 
 	/**
@@ -717,14 +666,14 @@ class MyObject extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->write))
-		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->mymodule_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->timespent->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->timespent->timespent_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MYOBJECT_CANCEL');
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'timespent_CANCEL');
 	}
 
 	/**
@@ -741,14 +690,14 @@ class MyObject extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->write))
-		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->mymodule_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->timespent->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->timespent->timespent_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'MYOBJECT_REOPEN');
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'timespent_REOPEN');
 	}
 
 	/**
@@ -764,9 +713,9 @@ class MyObject extends CommonObject
 		$datas = [];
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-			return ['optimize' => $langs->trans("ShowMyObject")];
+			return ['optimize' => $langs->trans("ShowTimeSpent")];
 		}
-		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("MyObject").'</u>';
+		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("TimeSpent").'</u>';
 		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
@@ -808,7 +757,7 @@ class MyObject extends CommonObject
 		}
 		$label = implode($this->getTooltipContentArray($params));
 
-		$url = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$this->id;
+		$url = dol_buildpath('/timespent/timespent_card.php', 1).'?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -824,7 +773,7 @@ class MyObject extends CommonObject
 		$linkclose = '';
 		if (empty($notooltip)) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-				$label = $langs->trans("ShowMyObject");
+				$label = $langs->trans("ShowTimeSpent");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
@@ -906,9 +855,6 @@ class MyObject extends CommonObject
 	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $conf, $langs;
-
-		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
-
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -916,7 +862,6 @@ class MyObject extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'label')) {
 			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
 		}
@@ -925,7 +870,7 @@ class MyObject extends CommonObject
 			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -969,7 +914,7 @@ class MyObject extends CommonObject
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("mymodule@mymodule");
+			//$langs->load("timespent@timespent");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
@@ -1050,8 +995,8 @@ class MyObject extends CommonObject
 	{
 		$this->lines = array();
 
-		$objectline = new MyObjectLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_myobject = '.((int) $this->id)));
+		$objectline = new TimeSpentLine($this->db);
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_timespent = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $objectline->error;
@@ -1071,22 +1016,22 @@ class MyObject extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("mymodule@mymodule");
+		$langs->load("timespent@timespent");
 
-		if (empty($conf->global->MYMODULE_MYOBJECT_ADDON)) {
-			$conf->global->MYMODULE_MYOBJECT_ADDON = 'mod_myobject_standard';
+		if (empty($conf->global->TIMESPENT_timespent_ADDON)) {
+			$conf->global->TIMESPENT_timespent_ADDON = 'mod_timespent_standard';
 		}
 
-		if (!empty($conf->global->MYMODULE_MYOBJECT_ADDON)) {
+		if (!empty($conf->global->TIMESPENT_timespent_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->MYMODULE_MYOBJECT_ADDON.".php";
-			$classname = $conf->global->MYMODULE_MYOBJECT_ADDON;
+			$file = $conf->global->TIMESPENT_timespent_ADDON.".php";
+			$classname = $conf->global->TIMESPENT_timespent_ADDON;
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 			foreach ($dirmodels as $reldir) {
-				$dir = dol_buildpath($reldir."core/modules/mymodule/");
+				$dir = dol_buildpath($reldir."core/modules/timespent/");
 
 				// Load file with numbering class (if found)
 				$mybool |= @include_once $dir.$file;
@@ -1136,19 +1081,19 @@ class MyObject extends CommonObject
 		$result = 0;
 		$includedocgeneration = 0;
 
-		$langs->load("mymodule@mymodule");
+		$langs->load("timespent@timespent");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard_myobject';
+			$modele = 'standard_timespent';
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->MYOBJECT_ADDON_PDF)) {
-				$modele = $conf->global->MYOBJECT_ADDON_PDF;
+			} elseif (!empty($conf->global->timespent_ADDON_PDF)) {
+				$modele = $conf->global->timespent_ADDON_PDF;
 			}
 		}
 
-		$modelpath = "core/modules/mymodule/doc/";
+		$modelpath = "core/modules/timespent/doc/";
 
 		if ($includedocgeneration && !empty($modele)) {
 			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
@@ -1185,32 +1130,5 @@ class MyObject extends CommonObject
 		$this->db->commit();
 
 		return $error;
-	}
-}
-
-
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
-
-/**
- * Class MyObjectLine. You can also remove this and generate a CRUD class for lines objects.
- */
-class MyObjectLine extends CommonObjectLine
-{
-	// To complete with content of an object MyObjectLine
-	// We should have a field rowid, fk_myobject and position
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
-	 * Constructor
-	 *
-	 * @param DoliDb $db Database handler
-	 */
-	public function __construct(DoliDB $db)
-	{
-		$this->db = $db;
 	}
 }

@@ -64,7 +64,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'contact', $contactid, '');
 
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 $search_phone = GETPOST("search_phone", 'alpha');
 
@@ -297,7 +297,7 @@ if (empty($reshook)) {
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {	// All tests are required to be compatible with all browsers
-		$sall = "";
+		$search_all = "";
 		$search_id = '';
 		$search_firstlast_only = "";
 		$search_lastname = "";
@@ -430,7 +430,6 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
-// SQL Table Aliase
 $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
@@ -569,8 +568,8 @@ if (!empty($searchCategorySupplierList)) {
 	}
 }
 
-if ($sall) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
+if ($search_all) {
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 if (strlen($search_phone)) {
 	$sql .= natural_search(array('p.phone', 'p.phone_perso', 'p.phone_mobile'), $search_phone);
@@ -725,7 +724,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && ($sall != '' || $search_cti != '') && !$page) {
+if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && ($search_all != '' || $search_cti != '') && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/contact/card.php?id='.$id);
@@ -750,7 +749,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
-$param .= '&begin='.urlencode($begin).'&userid='.urlencode($userid).'&contactname='.urlencode($sall);
+$param .= '&begin='.urlencode($begin).'&userid='.urlencode($userid).'&contactname='.urlencode($search_all);
 $param .= '&type='.urlencode($type).'&view='.urlencode($view);
 if (!empty($search_categ) && $search_categ != '-1') {
 	$param .= '&search_categ='.urlencode($search_categ);
@@ -761,8 +760,8 @@ if (!empty($search_categ_thirdparty) && $search_categ_thirdparty != '-1') {
 if (!empty($search_categ_supplier) && $search_categ_supplier != '-1') {
 	$param .= '&search_categ_supplier='.urlencode($search_categ_supplier);
 }
-if ($sall != '') {
-	$param .= '&sall='.urlencode($sall);
+if ($search_all != '') {
+	$param .= '&search_all='.urlencode($search_all);
 }
 if ($search_id > 0) {
 	$param .= "&search_id=".urlencode($search_id);
@@ -886,14 +885,14 @@ $objecttmp = new Contact($db);
 $trackid = 'ctc'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-if ($sall) {
+if ($search_all) {
 	$setupstring = '';
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if CONTACT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
 }
 if ($search_firstlast_only) {
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_firstlast_only).$langs->trans("Lastname").", ".$langs->trans("Firstname").'</div>';
@@ -955,7 +954,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 print '<tr class="liste_titre_filter">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre maxwidthsearch center">';
+	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
@@ -1234,28 +1233,28 @@ if (!empty($arrayfields['p.fk_stcommcontact']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array(
-	'arrayfields'=>$arrayfields,
-	'param'=>$param,
-	'sortfield'=>$sortfield,
-	'sortorder'=>$sortorder,
-);
+$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray'=>&$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['p.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.statut']['checked'])) {
 	print_liste_field_titre($arrayfields['p.statut']['label'], $_SERVER["PHP_SELF"], "p.statut", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['p.import_key']['label'], $_SERVER["PHP_SELF"], "p.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+	$totalarray['nbfield']++;
 }
 print "</tr>\n";
 
@@ -1291,7 +1290,7 @@ while ($i < $imaxinloop) {
 	$contactstatic->country_code = $obj->country_code;
 	$contactstatic->photo = $obj->photo;
 	$contactstatic->import_key = $obj->import_key;
-
+	$contactstatic->photo = $obj->photo;
 	$contactstatic->fk_prospectlevel = $obj->fk_prospectlevel;
 
 	if ($mode == 'kanban') {
@@ -1299,7 +1298,13 @@ while ($i < $imaxinloop) {
 			print '<tr><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
-		$contactstatic->photo = $obj->photo;
+		// Output Kanban
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+		}
 		if ($obj->socid > 0) {
 			$contactstatic->fetch_thirdparty($obj->socid);
 		}
@@ -1499,7 +1504,7 @@ while ($i < $imaxinloop) {
 
 		// Alias name
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="nocellnopadd">';
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->alias).'">';
 			print dol_escape_htmltag($obj->alias);
 			print '</td>';
 			if (!$i) {
@@ -1549,7 +1554,7 @@ while ($i < $imaxinloop) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
@@ -1606,7 +1611,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 
-		print "</tr>\n";
+		print '</tr>'."\n";
 	}
 	$i++;
 }

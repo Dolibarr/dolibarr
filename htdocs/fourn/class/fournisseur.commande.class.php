@@ -529,7 +529,7 @@ class CommandeFournisseur extends CommonOrder
 
 		$this->lines = array();
 
-		$sql = "SELECT l.rowid, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
+		$sql = "SELECT l.rowid, l.fk_commande, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
 		$sql .= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice,";
 		$sql .= " l.localtax1_tx, l. localtax2_tx, l.localtax1_type, l. localtax2_type, l.total_localtax1, l.total_localtax2,";
 		$sql .= " l.total_ht, l.total_tva, l.total_ttc, l.special_code, l.fk_parent_line, l.rang,";
@@ -559,6 +559,7 @@ class CommandeFournisseur extends CommonOrder
 				$line = new CommandeFournisseurLigne($this->db);
 
 				$line->id                  = $objp->rowid;
+				$line->fk_commande         = $objp->fk_commande;
 				$line->desc                = $objp->description;
 				$line->description         = $objp->description;
 				$line->qty                 = $objp->qty;
@@ -3633,6 +3634,9 @@ class CommandeFournisseur extends CommonOrder
 	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -3641,6 +3645,7 @@ class CommandeFournisseur extends CommonOrder
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'socid') || property_exists($this, 'total_tva')) {
 			$return .='<br><span class="info-box-label amount">'.$this->socid.'</span>';
 		}

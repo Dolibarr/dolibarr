@@ -18,7 +18,7 @@
  * Copyright (C) 2018-2022  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
- * Copyright (C) 2022      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2695,7 +2695,7 @@ class Facture extends CommonInvoice
 				return -5;
 			}
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time';
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'element_time';
 			$sql .= ' SET invoice_id = NULL, invoice_line_id = NULL';
 			$sql .= ' WHERE invoice_id = '.((int) $rowid);
 
@@ -4229,19 +4229,6 @@ class Facture extends CommonInvoice
 		}
 
 		$this->db->begin();
-
-		// Free discount linked to invoice line
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-		$sql .= ' SET fk_facture_line = NULL';
-		$sql .= ' WHERE fk_facture_line = '.((int) $rowid);
-
-		dol_syslog(get_class($this)."::deleteline", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if (!$result) {
-			$this->error = $this->db->error();
-			$this->db->rollback();
-			return -1;
-		}
 
 		// Memorize previous line for triggers
 		$staticline = clone $line;
@@ -5811,6 +5798,8 @@ class Facture extends CommonInvoice
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -5819,6 +5808,7 @@ class Facture extends CommonInvoice
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'socid')) {
 			$return .= '<br><span class="info-box-label">'.$this->socid.'</span>';
 		}
@@ -6441,13 +6431,38 @@ class FactureLigne extends CommonInvoiceLine
 			return -1;
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".((int) $this->rowid);
+		// Free discount linked to invoice line
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
+		$sql .= ' SET fk_facture_line = NULL';
+		$sql .= ' WHERE fk_facture_line = '.((int) $this->id);
+
+		dol_syslog(get_class($this)."::deleteline", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if (!$result) {
+			$this->error = $this->db->error();
+			$this->errors[] = $this->error;
+			$this->db->rollback();
+			return -1;
+		}
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time';
+		$sql .= ' SET invoice_id = NULL, invoice_line_id = NULL';
+		$sql .= ' WHERE invoice_line_id = '.((int) $this->id);
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->error()." sql=".$sql;
+			$this->errors[] = $this->error;
+			$this->db->rollback();
+			return -1;
+		}
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".((int) $this->id);
 
 		if ($this->db->query($sql)) {
 			$this->db->commit();
 			return 1;
 		} else {
 			$this->error = $this->db->error()." sql=".$sql;
+			$this->errors[] = $this->error;
 			$this->db->rollback();
 			return -1;
 		}

@@ -576,7 +576,7 @@ $sql .= ' f.datef, f.date_valid, f.date_lim_reglement as datelimite, f.module_so
 $sql .= ' f.paye as paye, f.fk_statut, f.close_code,';
 $sql .= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.code_client as code_client, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
 $sql .= " s.parent as fk_parent,";
 $sql .= " s2.nom as name2,";
 $sql .= ' typent.code as typent_code,';
@@ -1862,7 +1862,6 @@ if ($resql) {
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
 			$companystatic->name_alias = $obj->alias;
-			$companystatic->code_client = $obj->code_client;
 			$companystatic->client = $obj->client;
 			$companystatic->fournisseur = $obj->fournisseur;
 			$companystatic->code_client = $obj->code_client;

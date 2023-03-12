@@ -1577,7 +1577,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					$modelselected = $conf->global->BANKADDON_PDF;
 				}
 
-				$out .= $form->selectarray('modelrib'.$rib->id, $modellist, $modelselected, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100');
+				$out .= $form->selectarray('modelrib'.$rib->id, $modellist, $modelselected, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth125');
 				$out .= ajax_combobox('modelrib'.$rib->id);
 
 				$allowgenifempty = 0;

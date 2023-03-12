@@ -269,9 +269,9 @@ $form = new Form($db);
 
 $now = dol_now();
 
+$title = $langs->trans("MyObjects");
 //$help_url = "EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
 $help_url = '';
-$title = $langs->trans("MyObjects");
 $morejs = array();
 $morecss = array();
 
