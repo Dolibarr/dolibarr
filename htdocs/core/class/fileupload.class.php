@@ -110,36 +110,40 @@ class FileUpload
 			$dir_output = $conf->$element->dir_output;
 		}
 
-		dol_include_once('/'.$pathname.'/class/'.$filename.'.class.php');
+		// If pathname and filename are null then we can still upload files
+		// IF we have specified upload_dir on $this->options
+		if ($pathname !== null && $filename !== null) {
+			dol_include_once('/'.$pathname.'/class/'.$filename.'.class.php');
 
-		$classname = ucfirst($filename);
+			$classname = ucfirst($filename);
 
-		if ($element == 'order_supplier') {
-			$classname = 'CommandeFournisseur';
-		} elseif ($element == 'invoice_supplier') {
-			$classname = 'FactureFournisseur';
-		}
-
-		$object = new $classname($db);
-
-		$object->fetch($fk_element);
-		if (!empty($parentForeignKey)) {
-			dol_include_once('/'.$parentElement.'/class/'.$parentObject.'.class.php');
-			$parent = new $parentClass($db);
-			$parent->fetch($object->$parentForeignKey);
-			if (!empty($parent->socid)) {
-				$parent->fetch_thirdparty();
+			if ($element == 'order_supplier') {
+				$classname = 'CommandeFournisseur';
+			} elseif ($element == 'invoice_supplier') {
+				$classname = 'FactureFournisseur';
 			}
-			$object->$parentObject = clone $parent;
-		} else {
-			$object->fetch_thirdparty();
-		}
 
-		$object_ref = dol_sanitizeFileName($object->ref);
-		if ($element == 'invoice_supplier') {
-			$object_ref = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$object_ref;
-		} elseif ($element == 'project_task') {
-			$object_ref = $object->project->ref.'/'.$object_ref;
+			$object = new $classname($db);
+
+			$object->fetch($fk_element);
+			if (!empty($parentForeignKey)) {
+				dol_include_once('/'.$parentElement.'/class/'.$parentObject.'.class.php');
+				$parent = new $parentClass($db);
+				$parent->fetch($object->$parentForeignKey);
+				if (!empty($parent->socid)) {
+					$parent->fetch_thirdparty();
+				}
+				$object->$parentObject = clone $parent;
+			} else {
+				$object->fetch_thirdparty();
+			}
+
+			$object_ref = dol_sanitizeFileName($object->ref);
+			if ($element == 'invoice_supplier') {
+				$object_ref = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$object_ref;
+			} elseif ($element == 'project_task') {
+				$object_ref = $object->project->ref.'/'.$object_ref;
+			}
 		}
 
 		$this->options = array(
@@ -200,6 +204,21 @@ class FileUpload
 
 		if ($options) {
 			$this->options = array_replace_recursive($this->options, $options);
+		}
+
+		// At this point we should have a valid upload_dir in options
+		//if ($pathname === null && $filename === null) { // OR or AND???
+		if ($pathname === null || $filename === null) {
+			if (!key_exists("upload_dir", $this->options)) {
+				setEventMessage('If $fk_element = null or $element = null you must specify upload_dir on $options', 'errors');
+				throw new Exception('If $fk_element = null or $element = null you must specify upload_dir on $options');
+			} elseif (!is_dir($this->options['upload_dir'])) {
+				setEventMessage('The directory '.$this->options['upload_dir'].' doesn\'t exists', 'errors');
+				throw new Exception('The directory '.$this->options['upload_dir'].' doesn\'t exists');
+			} elseif (!is_writable($this->options['upload_dir'])) {
+				setEventMessage('The directory '.$this->options['upload_dir'].' is not writable', 'errors');
+				throw new Exception('The directory '.$this->options['upload_dir'].' is not writable');
+			}
 		}
 	}
 
