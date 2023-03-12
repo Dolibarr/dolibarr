@@ -425,6 +425,7 @@ if ($action == "view_ticketlist") {
 				$reshook=$hookmanager->executeHooks('printFieldListHeader', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 
+				print '<div class="div-table-responsive">';
 				print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';
 
 				// Filter bar
@@ -696,6 +697,8 @@ if ($action == "view_ticketlist") {
 				}
 
 				print '</table>';
+				print '</div>';
+
 				print '</form>';
 
 				print '<form method="post" id="form_view_ticket" name="form_view_ticket" action="'.dol_buildpath('/public/ticket/view.php', 1).(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" style="display:none;">';
