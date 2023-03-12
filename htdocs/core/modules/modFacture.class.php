@@ -240,7 +240,7 @@ class modFacture extends DolibarrModules
 			'f.ref' => 'InvoiceRef*',
 			'f.ref_ext' => 'ExternalRef',
 			'f.ref_int' => 'ExternalRef',
-			'f.ref_client' => 'CustomerRef',
+			'f.ref_client' => 'RefCustomer',
 			'f.type' => 'Type*',
 			'f.fk_soc' => 'Customer*',
 			'f.datec' => 'InvoiceDateCreation',

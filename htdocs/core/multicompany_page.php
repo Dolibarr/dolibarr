@@ -19,7 +19,7 @@
  */
 
 /**
- *       \file       htdocs/multicompany_page.php
+ *       \file       htdocs/core/multicompany_page.php
  *       \brief      File to return a page with the list of all entities user can switch to
  */
 
@@ -41,7 +41,7 @@ if (!defined('NOREQUIREMENU')) {
 
 require_once '../main.inc.php';
 
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ');
 $entityid = GETPOST('entity', 'int');
 $backtourl = GETPOST('backtourl');
 if (empty($backtourl)) {
@@ -63,7 +63,7 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
  * Actions
  */
 
-if (GETPOST('acction', 'aZ') == 'switchentity') {
+if ($action == 'switchentity') {
 	if (is_object($mc)) {
 		$mc->switchEntity($entityid);
 	}
