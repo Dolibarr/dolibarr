@@ -3747,6 +3747,7 @@ class Commande extends CommonOrder
 				}
 				$datas['customer'] = '<br><b>'.$langs->trans('Customer').':</b> '.$this->thirdparty->name;
 			}
+			$datas['RefCustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.(empty($this->ref_customer) ? (empty($this->ref_client) ? '' : $this->ref_client) : $this->ref_customer);
 			if (!empty($this->total_ht)) {
 				$datas['AmountHT'] = '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
 			}
