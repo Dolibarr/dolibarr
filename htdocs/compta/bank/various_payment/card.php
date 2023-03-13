@@ -640,13 +640,17 @@ if ($id) {
 
 	if (isModEnabled('banque')) {
 		if ($object->fk_account > 0) {
-			$bankline = new AccountLine($db);
-			$bankline->fetch($object->fk_bank);
-
 			print '<tr>';
 			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 			print '<td colspan="3">';
-			print $bankline->getNomUrl(1, 0, 'showall');
+			if ($object->fk_bank > 0) {
+				$bankline = new AccountLine($db);
+				$bankline->fetch($object->fk_bank);
+
+				print $bankline->getNomUrl(1, 0, 'showall');
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans("NoRecordfound").'</span>';
+			}
 			print '</td>';
 			print '</tr>';
 		}
