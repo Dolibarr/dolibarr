@@ -113,10 +113,11 @@ function dolGetRandomBytes($length)
  *	@param   string		$chain		string to encode
  *	@param   string		$key		If '', we use $dolibarr_main_instance_unique_id
  *  @param	 string		$ciphering	Default ciphering algorithm
+ *  @param	 string		$forceseed	To force the seed
  *	@return  string					encoded string
  *  @see dolDecrypt(), dol_hash()
  */
-function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
+function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = '')
 {
 	global $dolibarr_main_instance_unique_id;
 	global $dolibarr_disable_dolcrypt_for_debug;
@@ -134,6 +135,9 @@ function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
 	if (empty($key)) {
 		$key = $dolibarr_main_instance_unique_id;
 	}
+	if (empty($ciphering)) {
+		$ciphering = 'AES-256-CTR';
+	}
 
 	$newchain = $chain;
 
@@ -145,7 +149,11 @@ function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
 		if ($ivlen === false || $ivlen < 1 || $ivlen > 32) {
 			$ivlen = 16;
 		}
-		$ivseed = dolGetRandomBytes($ivlen);
+		if (empty($forceseed)) {
+			$ivseed = dolGetRandomBytes($ivlen);
+		} else {
+			$ivseed = dol_trunc(md5($forceseed), $ivlen, 'right', 'UTF-8', 1);
+		}
 
 		$newchain = openssl_encrypt($chain, $ciphering, $key, 0, $ivseed);
 		return 'dolcrypt:'.$ciphering.':'.$ivseed.':'.$newchain;
