@@ -495,8 +495,6 @@ class pdf_crabe extends ModelePDFFactures
 				$qrcodestring = '';
 				if (!empty($conf->global->INVOICE_ADD_ZATCA_QR_CODE)) {
 					$qrcodestring = $object->buildZATCAQRString();
-				} elseif (!empty($conf->global->INVOICE_ADD_SWISS_QR_CODE)) {
-					$qrcodestring = $object->buildSwitzerlandQRString();
 				}
 				if ($qrcodestring) {
 					$qrcodecolor = array('25', '25', '25');
