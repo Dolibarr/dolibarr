@@ -1032,10 +1032,10 @@ class pdf_sponge extends ModelePDFFactures
 				// Show square
 				if ($pagenb == $pageposbeforeprintlines) {
 					$this->_tableau($pdf, $this->tab_top, $this->page_hauteur - $this->tab_top - $this->heightforinfotot - $this->heightforfreetext - $this->heightforfooter, 0, $outputlangs, $hidetop, 0, $object->multicurrency_code, $outputlangsbis);
-					$bottomlasttab = $this->page_hauteur - $this->heightforinfotot - $this->heightforfreetext - $this->heightforfooter + 1;
+					$bottomlasttab = $this->page_hauteur - $this->heightforinfotot - $this->heightforfreetext - $this->heightforfooter - ($pagenb == 1 ? $this->heightforqrinvoice : 0) + 1;
 				} else {
 					$this->_tableau($pdf, $this->tab_top_newpage, $this->page_hauteur - $this->tab_top_newpage - $this->heightforinfotot - $this->heightforfreetext - $this->heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code, $outputlangsbis);
-					$bottomlasttab = $this->page_hauteur - $this->heightforinfotot - $this->heightforfreetext - $this->heightforfooter + 1;
+					$bottomlasttab = $this->page_hauteur - $this->heightforinfotot - $this->heightforfreetext - $this->heightforfooter - ($pagenb == 1 ? $this->heightforqrinvoice : 0) + 1;
 				}
 
 				// Display infos area
