@@ -134,6 +134,11 @@ class pdf_sponge extends ModelePDFFactures
 	public $heightforfooter;
 
 	/**
+	 * @var int heightforfooter
+	 */
+	public $heightforqrinvoice;
+
+	/**
 	 * @var int tab_top
 	 */
 	public $tab_top;
@@ -382,6 +387,11 @@ class pdf_sponge extends ModelePDFFactures
 				$this->heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$this->heightforfooter = $this->marge_basse + (empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 12 : 22); // Height reserved to output the footer (value include bottom margin)
 
+				$this->heightforqrinvoice = 0;
+				if (!empty($conf->global->INVOICE_ADD_SWISS_QR_CODE)) {
+					// SWIFT's requirement; the SwissQR is explicitly that size, from the bottom of the page
+					$this->heightforqrinvoice = 105;
+				}
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
 					$pdf->setPrintFooter(false);

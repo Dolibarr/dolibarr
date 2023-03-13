@@ -354,6 +354,12 @@ class pdf_crabe extends ModelePDFFactures
 					$heightforfooter += 6;
 				}
 
+				$heightforqrinvoice = 0;
+				if (!empty($conf->global->INVOICE_ADD_SWISS_QR_CODE)) {
+					// SWIFT's requirement; the SwissQR is explicitly that size, from the bottom of the page
+					$heightforqrinvoice = 105;
+				}
+
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
 					$pdf->setPrintFooter(false);
