@@ -11620,7 +11620,10 @@ function dolForgeCriteriaCallback($matches)
 		return '';
 	}
 
-	$operator = strtoupper(preg_replace('/[^a-z<>=]/i', '', trim($tmp[1])));
+	$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
+
+	$operator = strtoupper(preg_replace('/[^a-z<>!=]/i', '', trim($tmp[1])));
+
 	if ($operator == 'NOTLIKE') {
 		$operator = 'NOT LIKE';
 	}
@@ -11658,7 +11661,7 @@ function dolForgeCriteriaCallback($matches)
 		}
 	}
 
-	return $db->escape($tmp[0]).' '.strtoupper($operator).' '.$tmpescaped;
+	return $db->escape($operand).' '.strtoupper($operator).' '.$tmpescaped;
 }
 
 
