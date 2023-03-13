@@ -14,7 +14,7 @@
  * Copyright (C) 2017      Rui Strecht          <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
  *
@@ -2089,10 +2089,6 @@ abstract class CommonObject
 			$id_field = 'rowid';
 		}
 
-		$error = 0;
-
-		$this->db->begin();
-
 		// Special case
 		if ($table == 'product' && $field == 'note_private') {
 			$field = 'note';
@@ -2100,6 +2096,32 @@ abstract class CommonObject
 		if (in_array($table, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment'))) {
 			$fk_user_field = 'fk_user_mod';
 		}
+
+		if ($trigkey) {
+			$oldvalue = null;
+
+			$sql = "SELECT " . $field;
+			$sql .= " FROM " . MAIN_DB_PREFIX . $table;
+			$sql .= " WHERE " . $id_field . " = " . ((int) $id);
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				if ($obj = $this->db->fetch_object($resql)) {
+					if ($format == 'date') {
+						$oldvalue = $this->db->jdate($obj->$field);
+					} else {
+						$oldvalue = $obj->$field;
+					}
+				}
+			} else {
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
+		}
+
+		$error = 0;
+
+		$this->db->begin();
 
 		$sql = "UPDATE ".$this->db->prefix().$table." SET ";
 
@@ -2133,6 +2155,11 @@ abstract class CommonObject
 				} else {
 					$result = $this->fetchCommon($id);
 				}
+				$this->oldcopy = clone $this;
+				if (property_exists($this->oldcopy, $field)) {
+					$this->oldcopy->$field = $oldvalue;
+				}
+
 				if ($result >= 0) {
 					$result = $this->call_trigger($trigkey, (!empty($fuser) && is_object($fuser)) ? $fuser : $user); // This may set this->errors
 				}
@@ -4637,6 +4664,9 @@ abstract class CommonObject
 			if (!empty($element['parent']) && !empty($element['parentkey'])) {
 				$sql.= " AND c.".$element['parentkey']." = p.rowid";
 			}
+			if (!empty($element['parent']) && !empty($element['parenttypefield']) && !empty($element['parenttypevalue'])) {
+				$sql.= " AND c.".$element['parenttypefield']." = '".$this->db->escape($element['parenttypevalue'])."'";
+			}
 			if (!empty($entity)) {
 				if (!empty($element['parent']) && !empty($element['parentkey'])) {
 					$sql.= " AND p.entity = ".((int) $entity);
@@ -6154,13 +6184,15 @@ abstract class CommonObject
 
 				// If field is a computed field, value must become result of compute (regardless of whether a row exists
 				// in the element's extrafields table)
-				foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
-					if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
-						//var_dump($conf->disable_compute);
-						if (empty($conf->disable_compute)) {
-							global $objectoffield;		// We set a global variable to $objectoffield so
-							$objectoffield = $this;		// we can use it inside computed formula
-							$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
+				if (is_array($extrafields->attributes[$this->table_element]['label'])) {
+					foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+						if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
+							//var_dump($conf->disable_compute);
+							if (empty($conf->disable_compute)) {
+								global $objectoffield;        // We set a global variable to $objectoffield so
+								$objectoffield = $this;        // we can use it inside computed formula
+								$this->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
+							}
 						}
 					}
 				}

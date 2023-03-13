@@ -86,6 +86,7 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
 if (GETPOST('actioncode', 'array')) {
@@ -261,7 +262,7 @@ if ($object->id > 0) {
 	$objthirdparty = $object;
 	$objcon = new stdClass();
 
-	$out = '&origin='.urlencode($object->element.'@'.$object->module).'&originid='.urlencode($object->id);
+	$out = '&origin='.urlencode($object->element.(property_exists($object, 'module') ? '@'.$object->module : '')).'&originid='.urlencode($object->id);
 	$urlbacktopage = $_SERVER['PHP_SELF'].'?id='.$object->id;
 	$out .= '&backtopage='.urlencode($urlbacktopage);
 	$permok = $user->rights->agenda->myactions->create;
@@ -303,7 +304,13 @@ if ($object->id > 0) {
 			$param .= '&limit='.urlencode($limit);
 		}
 
-		//print load_fiche_titre($langs->trans("ActionsOnMyObject"), '', '');
+		// Try to know count of actioncomm from cache
+		/*require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_events_myobject_'.$object->id;
+		$nbEvent = dol_getcache($cachekey);
+
+		print_barre_liste($langs->trans("ActionsOnMyObject").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>': ''), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
+		*/
 		print_barre_liste($langs->trans("ActionsOnMyObject"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
 
 		// List of all actions
@@ -312,7 +319,7 @@ if ($object->id > 0) {
 		$filters['search_rowid'] = $search_rowid;
 
 		// TODO Replace this with same code than into list.php
-		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);
+		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, property_exists($object, 'module') ? $object->module : '');
 	}
 }
 

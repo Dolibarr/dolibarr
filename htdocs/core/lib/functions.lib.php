@@ -1125,6 +1125,7 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 				}
 				continue;
 			}
+			$regs = array();
 			preg_match('/^([^\?]+(\.css\.php|\.css|\.js\.php|\.js|\.png|\.jpg|\.php)?)/i', $path, $regs); // Take part before '?'
 			if (!empty($regs[1])) {
 				//print $key.'-'.$dirroot.'/'.$path.'-'.$conf->file->dol_url_root[$type].'<br>'."\n";
@@ -1787,7 +1788,9 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 	if (empty($conf->use_javascript_ajax)) {
 		$out .= ' href="'.DOL_URL_ROOT.$url.'" target="_blank"';
 	} elseif ($jsonopen) {
-		$out .= ' onclick="javascript:'.$jsonopen.'"';
+		$out .= ' href="#" onclick="javascript:'.$jsonopen.'"';
+	} else {
+		$out .= ' href="#"';
 	}
 	$out .= '>'.$buttonstring.'</a>';
 
@@ -5432,6 +5435,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	if ($limit < 0) {
 		$limit = $conf->liste_limit;
 	}
+
 	if ($savlimit != 0 && (($num > $limit) || ($num == -1) || ($limit == 0))) {
 		$nextpage = 1;
 	} else {
@@ -5472,7 +5476,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	}
 	// Show navigation bar
 	$pagelist = '';
-	if ($savlimit != 0 && ($page > 0 || $num > $limit)) {
+	if ($savlimit != 0 && ((int) $page > 0 || $num > $limit)) {
 		if ($totalnboflines) {	// If we know total nb of lines
 			// Define nb of extra page links before and after selected page + ... + first or last
 			$maxnbofpage = (empty($conf->dol_optimize_smallscreen) ? 4 : 0);
@@ -5532,8 +5536,8 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 		}
 	}
 
-	if ($savlimit || $morehtmlright || $morehtmlrightbeforearrow) {
-		print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtmlright, $savlimit, $totalnboflines, $hideselectlimit, $morehtmlrightbeforearrow); // output the div and ul for previous/last completed with page numbers into $pagelist
+	if (($savlimit || $morehtmlright || $morehtmlrightbeforearrow) && empty($hidenavigation)) {
+		print_fleche_navigation((int) $page, $file, $options, $nextpage, $pagelist, $morehtmlright, $savlimit, $totalnboflines, $hideselectlimit, $morehtmlrightbeforearrow); // output the div and ul for previous/last completed with page numbers into $pagelist
 	}
 
 	// js to autoselect page field on focus
@@ -9591,7 +9595,7 @@ function printCommonFooter($zone = 'private')
 			}
 
 			// Management of focus and mandatory for fields
-			if ($action == 'create' || $action == 'edit' || (empty($action) && (preg_match('/new\.php/', $_SERVER["PHP_SELF"])))) {
+			if ($action == 'create' || $action == 'edit' || (empty($action) && (preg_match('/new\.php/', $_SERVER["PHP_SELF"]))) || ((empty($action) || $action == 'addline') && (preg_match('/card\.php/', $_SERVER["PHP_SELF"])))) {
 				print '/* JS CODE TO ENABLE to manage focus and mandatory form fields */'."\n";
 				$relativepathstring = $_SERVER["PHP_SELF"];
 				// Clean $relativepathstring
@@ -11584,7 +11588,7 @@ function jsonOrUnserialize($stringtodecode)
 /**
  * forgeSQLFromUniversalSearchCriteria
  *
- * @param 	string		$filter		String with universal search string
+ * @param 	string		$filter		String with universal search string. Must be  (aaa:bbb:...) with aaa is a field name (with alias or not) and bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'.
  * @param	string		$error		Error message
  * @return	string					Return forged SQL string
  */
@@ -11602,7 +11606,7 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$error = '')
 	// If the string result contains something else than '()', the syntax was wrong
 	if (preg_match('/[^\(\)]/', $t)) {
 		$error = 'Bad syntax of the search string, filter criteria is inhalited';
-		return '1 = 3';		// Bad syntax of the search string, we force a SQL not found
+		return 'Filter syntax error';		// Bad syntax of the search string, we force a SQL not found
 	}
 
 	return " AND (".preg_replace_callback('/'.$regexstring.'/i', 'dolForgeCriteriaCallback', $filter).")";

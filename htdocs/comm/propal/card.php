@@ -955,6 +955,8 @@ if (empty($reshook)) {
 		$price_ttc = '';
 		$price_ttc_devise = '';
 
+		// TODO Implement  if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES'))
+
 		if (GETPOST('price_ht') !== '') {
 			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
 		}
@@ -1806,10 +1808,10 @@ if ($action == 'create') {
 		//$warehouse_id       = $soc->warehouse_id;
 	} else {
 		print '<td class="valuefieldcreate">';
-		print img_picto('', 'company').$form->select_company('', 'socid', '((s.client = 1 OR s.client = 2 OR s.client = 3) AND status=1)', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
+		print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', '((s.client = 1 OR s.client = 2 OR s.client = 3) AND status=1)', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
 		// reload page to retrieve customer informations
 		if (empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED)) {
-			print '<script type="text/javascript">
+			print '<script>
 			$(document).ready(function() {
 				$("#socid").change(function() {
 					console.log("We have changed the company - Reload page");
@@ -1829,7 +1831,7 @@ if ($action == 'create') {
 	if ($socid > 0) {
 		// Contacts (ask contact only if thirdparty already defined).
 		print '<tr class="field_contactid"><td class="titlefieldcreate">'.$langs->trans("DefaultContact").'</td><td class="valuefieldcreate">';
-		print img_picto('', 'contact');
+		print img_picto('', 'contact', 'class="pictofixedwidth"');
 		print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, '', '', 0, 'minwidth300');
 		print '</td></tr>';
 
@@ -1847,22 +1849,26 @@ if ($action == 'create') {
 
 	// Date
 	print '<tr class="field_addprop"><td class="titlefieldcreate fieldrequired">'.$langs->trans('DatePropal').'</td><td class="valuefieldcreate">';
+	print img_picto('', 'action', 'class="pictofixedwidth"');
 	print $form->selectDate('', '', '', '', '', "addprop", 1, 1);
 	print '</td></tr>';
 
 	// Validaty duration
-	print '<tr class="field_duree_validitee"><td class="titlefieldcreate fieldrequired">'.$langs->trans("ValidityDuration").'</td><td class="valuefieldcreate">'.img_picto('', 'clock', 'class="paddingright"').'<input name="duree_validite" class="width50" value="'.(GETPOSTISSET('duree_validite') ? GETPOST('duree_validite', 'alphanohtml') : $conf->global->PROPALE_VALIDITY_DURATION).'"> '.$langs->trans("days").'</td></tr>';
+	print '<tr class="field_duree_validitee"><td class="titlefieldcreate fieldrequired">'.$langs->trans("ValidityDuration").'</td><td class="valuefieldcreate">'.img_picto('', 'clock', 'class="pictofixedwidth"').'<input name="duree_validite" class="width50" value="'.(GETPOSTISSET('duree_validite') ? GETPOST('duree_validite', 'alphanohtml') : $conf->global->PROPALE_VALIDITY_DURATION).'"> '.$langs->trans("days").'</td></tr>';
 
 	// Terms of payment
 	print '<tr class="field_cond_reglement_id"><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
-	print img_picto('', 'paiment');
-	print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id') && GETPOST('cond_reglement_id', 'int') != 0) ? GETPOST('cond_reglement_id', 'int') : $soc->cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', (GETPOSTISSET('cond_reglement_id_deposit_percent') ? GETPOST('cond_reglement_id_deposit_percent', 'alpha') : $soc->deposit_percent));
+	print img_picto('', 'payment', 'class="pictofixedwidth"');
+	// at last resort we take the payment term id which may be filled by default values set (if not getpostisset)
+	$paymentTermId = (GETPOSTISSET('cond_reglement_id') && GETPOST('cond_reglement_id', 'int') != 0) ? GETPOST('cond_reglement_id', 'int') : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : GETPOST('cond_reglement_id', 'int'));
+	print $form->getSelectConditionsPaiements($paymentTermId, 'cond_reglement_id', 1, 1, 0, '', (GETPOSTISSET('cond_reglement_id_deposit_percent') ? GETPOST('cond_reglement_id_deposit_percent', 'alpha') : $soc->deposit_percent));
 	print '</td></tr>';
 
 	// Mode of payment
 	print '<tr class="field_mode_reglement_id"><td class="titlefieldcreate">'.$langs->trans('PaymentMode').'</td><td class="valuefieldcreate">';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	print $form->select_types_paiements((GETPOSTISSET('mode_reglement_id') && GETPOST('mode_reglement_id', 'int') != 0) ? GETPOST('mode_reglement_id', 'int') : $soc->mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
+	$paymentMethod = (GETPOSTISSET('mode_reglement_id') && GETPOST('mode_reglement_id', 'int') != 0) ? GETPOST('mode_reglement_id', 'int') : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : GETPOST('mode_reglement_id', 'int'));
+	print $form->select_types_paiements($paymentMethod, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print '</td></tr>';
 
 	// Bank Account
@@ -1894,7 +1900,7 @@ if ($action == 'create') {
 			$shipping_method_id = $soc->shipping_method_id;
 		}
 		print '<tr class="field_shipping_method_id"><td class="titlefieldcreate">'.$langs->trans('SendingMethod').'</td><td class="valuefieldcreate">';
-		print img_picto('', 'object_dollyrevert', 'class="pictofixedwidth"');
+		print img_picto('', 'dolly', 'class="pictofixedwidth"');
 		$form->selectShippingMethod($shipping_method_id, 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 	}
@@ -1911,6 +1917,7 @@ if ($action == 'create') {
 	// Delivery date (or manufacturing)
 	print '<tr class="field_date_livraison"><td class="titlefieldcreate">'.$langs->trans("DeliveryDate").'</td>';
 	print '<td class="valuefieldcreate">';
+	print img_picto('', 'action', 'class="pictofixedwidth"');
 	if (isset($conf->global->DATE_LIVRAISON_WEEK_DELAY) && is_numeric($conf->global->DATE_LIVRAISON_WEEK_DELAY)) {
 		$tmpdte = time() + ((7 * $conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
 		$syear = date("Y", $tmpdte);
@@ -1938,6 +1945,7 @@ if ($action == 'create') {
 		print '<tr class="field_incoterm_id">';
 		print '<td class="titlefieldcreate"><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $soc->label_incoterms, 1).'</label></td>';
 		print '<td  class="valuefieldcreate maxwidthonsmartphone">';
+		print img_picto('', 'incoterm', 'class="pictofixedwidth"');
 		print $form->select_incoterms((!empty($soc->fk_incoterms) ? $soc->fk_incoterms : ''), (!empty($soc->location_incoterms) ? $soc->location_incoterms : ''));
 		print '</td></tr>';
 	}
@@ -3032,10 +3040,14 @@ if ($action == 'create') {
 
 		print '</div><div class="fichehalfright">';
 
+		$MAXEVENT = 10;
+
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/comm/propal/agenda.php?id='.$object->id);
+
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'propal', $socid, 1);
+		$somethingshown = $formactions->showactions($object, 'propal', $socid, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for thirdparty
 
 		print '</div></div>';
 	}

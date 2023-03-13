@@ -162,7 +162,7 @@ class PriceExpression
 	/**
 	 *    List all price expressions
 	 *
-	 *    @return	array				Array of price expressions
+	 *    @return	array|int				Array of price expressions, <0 if ko
 	 */
 	public function list_price_expression()
 	{

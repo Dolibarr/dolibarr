@@ -18,7 +18,7 @@
  * Copyright (C) 2018-2022  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
- * Copyright (C) 2022      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -163,7 +163,12 @@ class Facture extends CommonInvoice
 	// Warning: Do not set default value into property defintion. it must stay null.
 	// For example to avoid to have substition done when object is generic and not yet defined.
 	public $remise_absolue;
+
+	/**
+	 * @deprecated
+	 */
 	public $remise_percent;
+
 	public $total_ht;
 	public $total_tva;
 	public $total_localtax1;
@@ -320,7 +325,7 @@ class Facture extends CommonInvoice
 		'date_closing' =>array('type'=>'datetime', 'label'=>'Date closing', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
 		'paye' =>array('type'=>'smallint(6)', 'label'=>'InvoicePaidCompletely', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>80),
 		//'amount' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>85),
-		'remise_percent' =>array('type'=>'double', 'label'=>'RelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
+		//'remise_percent' =>array('type'=>'double', 'label'=>'RelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'remise_absolue' =>array('type'=>'double', 'label'=>'CustomerRelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>91),
 		//'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
 		'close_code' =>array('type'=>'varchar(16)', 'label'=>'EarlyClosingReason', 'enabled'=>1, 'visible'=>-1, 'position'=>92),
@@ -560,7 +565,7 @@ class Facture extends CommonInvoice
 
 			// Fields always coming from template
 			$this->remise_absolue    = $_facrec->remise_absolue;
-			$this->remise_percent    = $_facrec->remise_percent;
+			$this->remise_percent    = $_facrec->remise_percent;	// TODO deprecated
 			$this->fk_incoterms = $_facrec->fk_incoterms;
 			$this->location_incoterms = $_facrec->location_incoterms;
 
@@ -664,7 +669,7 @@ class Facture extends CommonInvoice
 		$sql .= ", fk_soc";
 		$sql .= ", datec";
 		$sql .= ", remise_absolue";
-		$sql .= ", remise_percent";
+		$sql .= ", remise_percent";	// TODO deprecated
 		$sql .= ", datef";
 		$sql .= ", date_pointoftax";
 		$sql .= ", note_private";
@@ -690,7 +695,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".((int) $socid);
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", ".($this->remise_absolue > 0 ? $this->remise_absolue : 'NULL');
-		$sql .= ", ".($this->remise_percent > 0 ? $this->remise_percent : 'NULL');
+		$sql .= ", ".($this->remise_percent > 0 ? $this->remise_percent : 'NULL');	// TODO deprecated
 		$sql .= ", '".$this->db->idate($this->date)."'";
 		$sql .= ", ".(empty($this->date_pointoftax) ? "null" : "'".$this->db->idate($this->date_pointoftax)."'");
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
@@ -1154,7 +1159,7 @@ class Facture extends CommonInvoice
 		$facture->cond_reglement_id = $this->cond_reglement_id;
 		$facture->mode_reglement_id = $this->mode_reglement_id;
 		$facture->remise_absolue    = $this->remise_absolue;
-		$facture->remise_percent    = $this->remise_percent;
+		$facture->remise_percent    = $this->remise_percent;	// TODO deprecated
 
 		$facture->origin            = $this->origin;
 		$facture->origin_id         = $this->origin_id;
@@ -2032,7 +2037,7 @@ class Facture extends CommonInvoice
 				$this->date_validation		= $this->db->jdate($obj->datev);
 				$this->date_modification = $this->db->jdate($obj->datem);
 				$this->datem = $this->db->jdate($obj->datem);
-				$this->remise_percent		= $obj->remise_percent;
+				$this->remise_percent		= $obj->remise_percent;	// TODO deprecated
 				$this->remise_absolue		= $obj->remise_absolue;
 				$this->total_ht				= $obj->total_ht;
 				$this->total_tva			= $obj->total_tva;
@@ -2368,7 +2373,7 @@ class Facture extends CommonInvoice
 		$sql .= " date_pointoftax=".(strval($this->date_pointoftax) != '' ? "'".$this->db->idate($this->date_pointoftax)."'" : 'null').",";
 		$sql .= " date_valid=".(strval($this->date_validation) != '' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
 		$sql .= " paye=".(isset($this->paye) ? $this->db->escape($this->paye) : 0).",";
-		$sql .= " remise_percent=".(isset($this->remise_percent) ? $this->db->escape($this->remise_percent) : "null").",";
+		$sql .= " remise_percent=".(isset($this->remise_percent) ? $this->db->escape($this->remise_percent) : "null").",";	// TODO deprecated
 		$sql .= " remise_absolue=".(isset($this->remise_absolue) ? $this->db->escape($this->remise_absolue) : "null").",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
 		$sql .= " close_note=".(isset($this->close_note) ? "'".$this->db->escape($this->close_note)."'" : "null").",";
@@ -2690,7 +2695,7 @@ class Facture extends CommonInvoice
 				return -5;
 			}
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time';
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'element_time';
 			$sql .= ' SET invoice_id = NULL, invoice_line_id = NULL';
 			$sql .= ' WHERE invoice_id = '.((int) $rowid);
 
@@ -4225,19 +4230,6 @@ class Facture extends CommonInvoice
 
 		$this->db->begin();
 
-		// Free discount linked to invoice line
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-		$sql .= ' SET fk_facture_line = NULL';
-		$sql .= ' WHERE fk_facture_line = '.((int) $rowid);
-
-		dol_syslog(get_class($this)."::deleteline", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if (!$result) {
-			$this->error = $this->db->error();
-			$this->db->rollback();
-			return -1;
-		}
-
 		// Memorize previous line for triggers
 		$staticline = clone $line;
 		$line->oldline = $staticline;
@@ -4285,6 +4277,7 @@ class Facture extends CommonInvoice
 	 *	@param     	double	$remise		Discount
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 				<0 if KO, >0 if OK
+	 *	@deprecated remise_percent is a deprecated field for object parent
 	 */
 	public function setDiscount($user, $remise, $notrigger = 0)
 	{
@@ -5768,6 +5761,7 @@ class Facture extends CommonInvoice
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql .= " WHERE type = " . (int) $this->type ;
 		$sql .= " AND date_valid IS NOT NULL";
+		$sql .= " AND entity IN (".getEntity('invoice').")";
 		$sql .= " ORDER BY datef DESC LIMIT 1";
 
 		$result = $this->db->query($sql);
@@ -5804,6 +5798,8 @@ class Facture extends CommonInvoice
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -5812,6 +5808,7 @@ class Facture extends CommonInvoice
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'socid')) {
 			$return .= '<br><span class="info-box-label">'.$this->socid.'</span>';
 		}
@@ -6434,13 +6431,38 @@ class FactureLigne extends CommonInvoiceLine
 			return -1;
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".((int) $this->rowid);
+		// Free discount linked to invoice line
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
+		$sql .= ' SET fk_facture_line = NULL';
+		$sql .= ' WHERE fk_facture_line = '.((int) $this->id);
+
+		dol_syslog(get_class($this)."::deleteline", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if (!$result) {
+			$this->error = $this->db->error();
+			$this->errors[] = $this->error;
+			$this->db->rollback();
+			return -1;
+		}
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time';
+		$sql .= ' SET invoice_id = NULL, invoice_line_id = NULL';
+		$sql .= ' WHERE invoice_line_id = '.((int) $this->id);
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->error()." sql=".$sql;
+			$this->errors[] = $this->error;
+			$this->db->rollback();
+			return -1;
+		}
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".((int) $this->id);
 
 		if ($this->db->query($sql)) {
 			$this->db->commit();
 			return 1;
 		} else {
 			$this->error = $this->db->error()." sql=".$sql;
+			$this->errors[] = $this->error;
 			$this->db->rollback();
 			return -1;
 		}
@@ -6494,14 +6516,15 @@ class FactureLigne extends CommonInvoiceLine
 	 * Returns situation_percent of the previous line.
 	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
 	 *
-	 * @param  int     $invoiceid      Invoice id
+	 * @param  int     $invoiceid      			Invoice id
 	 * @param  bool    $include_credit_note		Include credit note or not
-	 * @return int                     >= 0
+	 * @return int                     			>= 0
 	 */
 	public function get_prev_progress($invoiceid, $include_credit_note = true)
 	{
 		// phpcs:enable
 		global $invoicecache;
+
 		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {
 			return 0;
 		} else {

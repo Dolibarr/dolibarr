@@ -44,9 +44,6 @@ require_once DOL_DOCUMENT_ROOT .'/ticket/class/ticket.class.php';               
 //require_once DOL_DOCUMENT_ROOT .'/holiday/class/holiday.class.php';                    // Holidays (leave request)
 
 
-// use Webklex\PHPIMAP;
-require DOL_DOCUMENT_ROOT .'/includes/webklex/php-imap/vendor/autoload.php';
-
 use Webklex\PHPIMAP\ClientManager;
 use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
 use Webklex\PHPIMAP\Exceptions\InvalidWhereQueryCriteriaException;
@@ -1040,6 +1037,9 @@ class EmailCollector extends CommonObject
 		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+			require_once DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
+		}
 
 		dol_syslog("EmailCollector::doCollectOneCollector start for id=".$this->id." - ".$this->ref, LOG_DEBUG);
 
