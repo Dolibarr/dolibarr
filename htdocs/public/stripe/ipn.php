@@ -345,7 +345,7 @@ if ($event->type == 'payout.created') {
 			$paymentTypeId = $obj->type;
 		}
 	} else {
-		$error = $this->db->lasterror();
+		$error = $db->lasterror();
 		$postactionmessages[] = $error;
 		http_response_code(500);
 		return -1;
