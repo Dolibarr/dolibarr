@@ -405,23 +405,8 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 	$destdir = $dirins.'/'.strtolower($module);
 
 	// Get list of existing objects
-	$objects = array();
-	$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
-	foreach ($listofobject as $fileobj) {
-		if (preg_match('/^api_/', $fileobj['name'])) {
-			continue;
-		}
-		if (preg_match('/^actions_/', $fileobj['name'])) {
-			continue;
-		}
+	$objects = dolGetListOfObjectclasses($destdir);
 
-		$tmpcontent = file_get_contents($fileobj['fullname']);
-		$reg = array();
-		if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
-			$objectnameloop = $reg[1];
-			$objects[$fileobj['fullname']] = $objectnameloop;
-		}
-	}
 
 	if ($action == 'initapi') {
 		if (file_exists($dirins.'/'.strtolower($module).'/class/api_'.strtolower($module).'.class.php')) {
@@ -942,24 +927,8 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 	$relativefilename = dol_sanitizePathName(GETPOST('file', 'restricthtml'));
 
 	// Get list of existing objects
-	// TODO ALI This part of code is common at several places and is autonomous. So replace it with $objects = dolGetListOfObjectclasses($destdir);
-	$objects = array();
-	$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
-	foreach ($listofobject as $fileobj) {
-		if (preg_match('/^api_/', $fileobj['name'])) {
-			continue;
-		}
-		if (preg_match('/^actions_/', $fileobj['name'])) {
-			continue;
-		}
+	$objects = dolGetListOfObjectclasses($destdir);
 
-		$tmpcontent = file_get_contents($fileobj['fullname']);
-		$reg = array();
-		if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
-			$objectnameloop = $reg[1];
-			$objects[$fileobj['fullname']] = $objectnameloop;
-		}
-	}
 
 	// Now we delete the file
 	if ($relativefilename) {
@@ -2652,25 +2621,10 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 	$error = 0;
 	$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
 	$destdir = $dirins.'/'.strtolower($module);
-	$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
 
 	// Get list of existing objets
-	$objects = array();
-	foreach ($listofobject as $fileobj) {
-		if (preg_match('/^api_/', $fileobj['name'])) {
-			continue;
-		}
-		if (preg_match('/^actions_/', $fileobj['name'])) {
-			continue;
-		}
+	$objects = dolGetListOfObjectclasses($destdir);
 
-		$tmpcontent = file_get_contents($fileobj['fullname']);
-		$reg = array();
-		if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
-			$objectnameloop = $reg[1];
-			$objects[$fileobj['fullname']] = $objectnameloop;
-		}
-	}
 
 	// load class and check if right exist
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
@@ -4614,25 +4568,10 @@ if ($module == 'initmodule') {
 			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 			$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
 			$destdir = $dirins.'/'.strtolower($module);
-			$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
 
 			// Get list of existing objects
-			$objects = array();
-			foreach ($listofobject as $fileobj) {
-				if (preg_match('/^api_/', $fileobj['name'])) {
-					continue;
-				}
-				if (preg_match('/^actions_/', $fileobj['name'])) {
-					continue;
-				}
+			$objects = dolGetListOfObjectclasses($destdir);
 
-				$tmpcontent = file_get_contents($fileobj['fullname']);
-				$reg = array();
-				if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
-					$objectnameloop = $reg[1];
-					$objects[$fileobj['fullname']] = $objectnameloop;
-				}
-			}
 			$menus = $moduleobj->menu;
 
 			if ($action != 'editfile' || empty($file)) {

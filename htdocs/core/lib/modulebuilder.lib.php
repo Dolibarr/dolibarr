@@ -416,3 +416,34 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 
 	return $error ? -1 : 1;
 }
+
+/**
+ * Get list of existing objects from directory
+ * @param	string      $destdir		Directory
+ * @return Array|int                    <=0 if KO, array if OK
+ */
+function dolGetListOfObjectclasses($destdir)
+{
+	$objects = array();
+	$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
+	foreach ($listofobject as $fileobj) {
+		if (preg_match('/^api_/', $fileobj['name'])) {
+			continue;
+		}
+		if (preg_match('/^actions_/', $fileobj['name'])) {
+			continue;
+		}
+
+		$tmpcontent = file_get_contents($fileobj['fullname']);
+		$reg = array();
+		if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
+			$objectnameloop = $reg[1];
+			$objects[$fileobj['fullname']] = $objectnameloop;
+		}
+	}
+	if (count($objects)>0) {
+		return $objects;
+	} else {
+		return -1;
+	}
+}
