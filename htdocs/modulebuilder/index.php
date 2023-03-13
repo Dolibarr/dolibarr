@@ -988,20 +988,6 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 
 // Init an object
 if ($dirins && $action == 'initobject' && $module && $objectname) {
-	// check if module is enabled
-	if (isModEnabled(strtolower($module))) {
-		$result = unActivateModule(strtolower($module));
-		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
-		if ($result) {
-			setEventMessages($result, null, 'errors');
-		} else {
-			/* FIX ALI header must be after action. Always add an exit after a header.
-			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
-			*/
-			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
-		}
-	}
-
 	$objectname = ucfirst($objectname);
 
 	$dirins = $dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
@@ -1609,6 +1595,18 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 	} else {
 		$tabobj = 'newobject';
 	}
+
+	// check if module is enabled
+	if (isModEnabled(strtolower($module))) {
+		$result = unActivateModule(strtolower($module));
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		if ($result) {
+			setEventMessages($result, null, 'errors');
+		}
+		setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module);
+		exit;
+	}
 }
 
 // Add a dictionary
@@ -1871,20 +1869,6 @@ if ($dirins && $action == 'confirm_deletemodule') {
 }
 
 if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
-	// check if module is enabled (if it's disabled and send msg event)
-	if (isModEnabled(strtolower($module))) {
-		$result = unActivateModule(strtolower($module));
-		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
-		if ($result) {
-			setEventMessages($result, null, 'errors');
-			$error++;
-		} else {
-			/* TODO ALI Header redirect must be at end after actions. Also tab=pemrissions looks strange
-			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
-			*/
-			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
-		}
-	}
 	if (preg_match('/[^a-z0-9_]/i', $objectname)) {
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
@@ -1981,16 +1965,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 		";
 
 		$deleteright = dolReplaceInFile($moduledescriptorfile, array('/*'.strtoupper($objectname).'*/' => '', $rights => '', "/*END ".strtoupper($objectname).'*/'."\n\t\t" => "\n\t\t"));
-		if ($deleteright > 0) {
-			if (isModEnabled(strtolower($module))) {
-				$result = unActivateModule(strtolower($module));
-				if ($result) {
-					setEventMessages($result, null, 'errors');
-				}
-				setEventMessages($langs->trans("WarningModuleNeedRefrech", $langs->transnoentities($module)), null, 'warnings');
-				header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?index.php?tab=description&module='.$module);
-			}
-		}
+
 		$resultko = 0;
 		foreach ($filetodelete as $tmpfiletodelete) {
 			$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete, 0, 0, 1);
@@ -2009,6 +1984,18 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 
 	$action = '';
 	$tabobj = 'deleteobject';
+
+	// check if module is enabled
+	if (isModEnabled(strtolower($module))) {
+		$result = unActivateModule(strtolower($module));
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		if ($result) {
+			setEventMessages($result, null, 'errors');
+		}
+		setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module);
+		exit;
+	}
 }
 
 if ($dirins && $action == 'generatedoc') {
@@ -2173,7 +2160,6 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 			if ($result) {
 				setEventMessages($result, null, 'errors');
 			}
-			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
 			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
 		}
 		//prepare stirng to add
@@ -2319,7 +2305,6 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright')&& e
 			if ($result) {
 				setEventMessages($result, null, 'errors');
 			}
-			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
 			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
 		}
 
@@ -4574,6 +4559,18 @@ if ($module == 'initmodule') {
 
 			$menus = $moduleobj->menu;
 
+			if ($action == 'deletemenu') {
+				$formconfirms = $form->formconfirm(
+					$_SERVER["PHP_SELF"].'?menukey='.urlencode(GETPOST('menukey', 'int')).'&tab='.urlencode($tab).'&module='.urlencode($module),
+					$langs->trans('Delete'),
+					$langs->trans('Confirm Delete Menu', GETPOST('menukey', 'int')),
+					'confirm_deletemenu',
+					'',
+					0,
+					1
+				);
+				print $formconfirms;
+			}
 			if ($action != 'editfile' || empty($file)) {
 				print '<span class="opacitymedium">';
 				$htmlhelp = $langs->trans("MenusDefDescTooltip", '{s1}');
