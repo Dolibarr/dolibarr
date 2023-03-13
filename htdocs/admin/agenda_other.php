@@ -87,7 +87,6 @@ if ($action == 'set') {
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_TYPE', $defaultfilter, 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_STATUS', GETPOST('AGENDA_DEFAULT_FILTER_STATUS'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "COMM_ACTION_MAIL_DESCRIPTION", GETPOST("COMM_ACTION_MAIL_DESCRIPTION", 'int'), 'chaine', 0, '', $conf->entity);
 
 	$defaultValues = new DefaultValues($db);
 	$result = $defaultValues->fetchAll('', '', 0, 0, array('t.page'=>'comm/action/card.php', 't.param'=>'complete', 't.user_id'=>'0', 't.type'=>'createform', 't.entity'=>$conf->entity));
@@ -398,14 +397,6 @@ print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'."\n";
 $formactions->form_select_status_action('agenda', getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS'), 1, 'AGENDA_DEFAULT_FILTER_STATUS', 1, 2, 'minwidth100');
 print '</td></tr>'."\n";
-
-//comm action show in description the mail information
-print '<tr class="oddeven">'."\n";
-print '<td>'.$langs->trans("COMM_ACTION_MAIL_DESCRIPTION").'</td>'."\n";
-print '<td class="center">&nbsp;</td>'."\n";
-print '<td class="right">'."\n";
-print $form->selectyesno('COMM_ACTION_MAIL_DESCRIPTION', getDolGlobalString('COMM_ACTION_MAIL_DESCRIPTION'), 1);
-print '</td></tr>';
 
 print '</table>';
 
