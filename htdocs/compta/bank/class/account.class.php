@@ -1082,6 +1082,8 @@ class Account extends CommonObject
 
 		$this->db->begin();
 
+		// @TODO Check there is no child into llx_payment_various, ... to allow deletion ?
+
 		// Delete link between tag and bank account
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
