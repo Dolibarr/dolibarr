@@ -180,7 +180,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		// An attempt for SQL injection
 		$filter='if(now()=sysdate()%2Csleep(6)%2C0)';
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals($sql, '1 = 3');
+		$this->assertEquals($sql, 'Filter syntax error');
 
 		// A real search string
 		$filter='(((statut:=:1) or (entity:in:__AAA__)) and (abc:<:2.0) and (abc:!=:1.23))';
