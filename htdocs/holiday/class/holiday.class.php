@@ -1497,9 +1497,11 @@ class Holiday extends CommonObject
 		}
 
 		$out .= '</select>'."\n";
-		$out .= ajax_combobox($htmlname);
 
-		print $out;
+		$showempty= 0;
+		$out .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', ($showempty < 0 ? (string) $showempty : '-1'), $morecss);
+
+		return $out;
 	}
 
 	/**
