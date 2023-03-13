@@ -842,7 +842,7 @@ class pdf_crabe extends ModelePDFFactures
 						} else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
-						$this->_pagefoot($pdf, $object, $outputlangs, 1);
+						$this->_pagefoot($pdf, $object, $outputlangs, 1, ($pagenb == 1 ? $heightforqrinvoice : 0));
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
@@ -860,7 +860,7 @@ class pdf_crabe extends ModelePDFFactures
 						} else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
-						$this->_pagefoot($pdf, $object, $outputlangs, 1);
+						$this->_pagefoot($pdf, $object, $outputlangs, 1, ($pagenb == 1 ? $heightforqrinvoice : 0));
 						// New page
 						$pdf->AddPage();
 						if (!empty($tplidx)) {
@@ -896,7 +896,7 @@ class pdf_crabe extends ModelePDFFactures
 				}
 
 				// Pagefoot
-				$this->_pagefoot($pdf, $object, $outputlangs);
+				$this->_pagefoot($pdf, $object, $outputlangs, 0, ($pagenb == 1 ? $heightforqrinvoice : 0));
 				if (method_exists($pdf, 'AliasNbPages')) {
 					$pdf->AliasNbPages();
 				}
@@ -2188,9 +2188,9 @@ class pdf_crabe extends ModelePDFFactures
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0, $heightforqrinvoice = 0)
 	{
 		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
-		return pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext, $this->page_largeur, $this->watermark);
+		return pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->emetteur, $heightforqrinvoice + $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext, $this->page_largeur, $this->watermark);
 	}
 }
