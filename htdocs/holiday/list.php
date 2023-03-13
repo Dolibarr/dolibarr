@@ -881,7 +881,7 @@ if ($id && empty($user->rights->holiday->readall) && !in_array($id, $childids)) 
 				print '<div class="box-flex-container kanban">';
 			}
 
-			$holidaystatic->fk_type = $typeleaves[$obj->fk_type]['rowid'];
+			$holidaystatic->fk_type = empty($typeleaves[$obj->fk_type]['rowid']) ? 0 : $typeleaves[$obj->fk_type]['rowid'];
 
 			// Output Kanban
 			if ($massactionbutton || $massaction) {

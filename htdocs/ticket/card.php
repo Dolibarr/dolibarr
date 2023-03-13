@@ -1248,10 +1248,12 @@ if ($action == 'create' || $action == 'presend') {
 			}
 			print '</td></tr>';
 			// Group
-			print '<tr><td>'.$langs->trans("TicketCategory").'</td><td>';
+			$s = '';
 			if (!empty($object->category_code)) {
-				print $langs->getLabelFromKey($db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
+				$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
 			}
+			print '<tr><td>'.$langs->trans("TicketCategory").'</td><td class="tdoverflowmax200" title="'.dol_escape_htmltag($s).'">';
+			print dol_escape_htmltag($s);
 			print '</td></tr>';
 			// Severity
 			print '<tr><td>'.$langs->trans("TicketSeverity").'</td><td>';

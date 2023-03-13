@@ -451,8 +451,6 @@ print '</div>'."\n";
 print '<br>';
 
 
-//htmlPrintOnlinePaymentFooter($mysoc, $langs);
-
 print '<div class="backgreypublicpayment">';
 print '<div class="center">';
 print '<a href="'.$urlforqrcode.'">';
