@@ -639,10 +639,10 @@ if ($id) {
 	print '</td></tr>';
 
 	if (isModEnabled('banque')) {
+		print '<tr>';
+		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+		print '<td colspan="3">';
 		if ($object->fk_account > 0) {
-			print '<tr>';
-			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-			print '<td colspan="3">';
 			if ($object->fk_bank > 0) {
 				$bankline = new AccountLine($db);
 				$bankline->fetch($object->fk_bank);
@@ -651,9 +651,11 @@ if ($id) {
 			} else {
 				print '<span class="opacitymedium">'.$langs->trans("NoRecordfound").'</span>';
 			}
-			print '</td>';
-			print '</tr>';
+		} else {
+			print '<span class="opacitymedium">'.$langs->trans("NoRecordfound").'</span>';
 		}
+		print '</td>';
+		print '</tr>';
 	}
 
 	// Other attributes
