@@ -1821,7 +1821,6 @@ class Task extends CommonObjectLine
 		}
 
 		if (!$error) {
-
 			$timespent = new TimeSpent($this->db);
 			$timespent->fetch($this->timespent_id);
 
