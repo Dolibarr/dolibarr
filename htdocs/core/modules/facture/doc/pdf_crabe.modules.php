@@ -356,6 +356,8 @@ class pdf_crabe extends ModelePDFFactures
 
 				$heightforqrinvoice = 0;
 				if (!empty($conf->global->INVOICE_ADD_SWISS_QR_CODE)) {
+					// Shrink infotot to a base 30
+					$heightforinfotot = 30 + (4 * $nbpayments); // Height reserved to output the info and total part and payment part
 					// SWIFT's requirement; the SwissQR is explicitly that size, from the bottom of the page
 					$heightforqrinvoice = 105;
 				}
