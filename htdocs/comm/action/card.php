@@ -2107,7 +2107,7 @@ if ($id > 0) {
 		}
 
 		//mail information
-		if (!empty($object->email_msgid) && $conf->global->COMM_ACTION_MAIL_DESCRIPTION) {
+		if (!empty($object->email_msgid)) {
 			print '<tr><td>'.$langs->trans('MailTopic').'</td>';
 			print '<td>'.dol_escape_htmltag($object->email_subject).'</td></tr>';
 			print '<tr><td>'.$langs->trans('MailFrom').'</td>';

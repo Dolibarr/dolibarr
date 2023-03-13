@@ -311,7 +311,6 @@ MAIN_DISABLE_ALL_SMS=Désactiver globalement tout envoi de Sms (pour mode test o
 MAIN_SMS_SENDMODE=Méthode d'envoi des SMS
 MAIN_MAIL_SMS_FROM=Numéro de téléphone par défaut pour envoi Sms
 MAIN_MAIL_DEFAULT_FROMTYPE=Expéditeur par défaut des e-mails pour les envois manuels (e-mail utilisateur ou de la société)
-COMM_ACTION_MAIL_DESCRIPTION=Montre les informations du mail(expéditeur, destinataire, etc) dans la description de l'événement(si défini)
 UserEmail=Email utilisateur
 CompanyEmail=Email organization
 FeatureNotAvailableOnLinux=Fonctionnalité non disponible sous systèmes Unix. Tester votre sendmail localement.
