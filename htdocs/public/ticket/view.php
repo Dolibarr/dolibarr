@@ -382,7 +382,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 				// Close ticket
 				if ($object->dao->fk_statut >= Ticket::STATUS_NOT_READ && $object->dao->fk_statut < Ticket::STATUS_CLOSED) {
-					print '<div class="inline-block divButAction"><a  class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=close&track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany')?'&entity='.$entity:'').'">'.$langs->trans('CloseTicket').'</a></div>';
+					print '<div class="inline-block divButAction"><a  class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=close&token='.newToken().'&track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany')?'&entity='.$entity:'').'">'.$langs->trans('CloseTicket').'</a></div>';
 				}
 			}
 
