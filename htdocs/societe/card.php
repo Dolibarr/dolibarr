@@ -426,7 +426,7 @@ if (empty($reshook)) {
 
 				$object->name = dolGetFirstLastname(GETPOST('firstname', 'alphanohtml'), GETPOST('name', 'alphanohtml'));
 				$object->civility_id		= GETPOST('civility_id', 'alphanohtml'); // Note: civility id is a code, not an int
-				// Add non official properties
+				// Add non-official properties
 				$object->name_bis = GETPOST('name', 'alphanohtml');
 				$object->firstname = GETPOST('firstname', 'alphanohtml');
 			} else {
@@ -469,7 +469,7 @@ if (empty($reshook)) {
 
 			$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
 			$object->tva_assuj				= GETPOST('assujtva_value', 'alpha');
-			$object->vat_reverse_charge		= GETPOST('vat_reverse_charge_value', 'alpha');
+			$object->vat_reverse_charge		= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
 			$object->status					= GETPOST('status', 'alpha');
 
 			// Local Taxes
@@ -1059,7 +1059,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object->civility_id		= GETPOST('civility_id', 'alpha');
 
 		$object->tva_assuj			= GETPOST('assujtva_value', 'int');
-		$object->vat_reverse_charge	= GETPOST('vat_reverse_charge_value', 'int');
+		$object->vat_reverse_charge	= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
 		$object->status				= GETPOST('status', 'int');
 
 		//Local Taxes
@@ -1810,7 +1810,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->default_lang			= GETPOST('default_lang', 'alpha');
 
 				$object->tva_assuj				= GETPOST('assujtva_value', 'int');
-				$object->vat_reverse_charge		= GETPOST('vat_reverse_charge_value', 'int');
+				$object->vat_reverse_charge		= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
 				$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
 				$object->status					= GETPOST('status', 'int');
 
@@ -2234,9 +2234,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// VAT reverse charge by default
-			print '<tr><td>'.$form->editfieldkey('VATReverseChargeByDefault', 'vat_reverse_charge_value', '', $object, 0).'</td><td colspan="3">';
-			print $form->selectyesno('vat_reverse_charge_value', $object->vat_reverse_charge, 1);
-			print '</td></tr>';
+			if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+				print '<tr><td>' . $form->editfieldkey('VATReverseChargeByDefault', 'vat_reverse_charge', '', $object, 0) . '</td><td colspan="3">';
+				print '<input type="checkbox" name="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').'>';
+				print '</td></tr>';
+			}
 
 			// VAT Code
 			print '<tr><td>'.$form->editfieldkey('VATIntra', 'intra_vat', '', $object, 0).'</td>';
@@ -2600,7 +2602,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>';
 			print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc'));
 			print '</td><td>';
-			print yn($object->vat_reverse_charge);
+			print '<input type="checkbox" name="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').'>';
 			print '</td>';
 			print '</tr>';
 		}

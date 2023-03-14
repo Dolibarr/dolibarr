@@ -1975,6 +1975,7 @@ if ($action == 'create') {
 	} else {
 		$cond_reglement_id = $societe->cond_reglement_supplier_id;
 		$mode_reglement_id = $societe->mode_reglement_supplier_id;
+		$vat_reverse_charge = $societe->vat_reverse_charge;
 		$transport_mode_id = $societe->transport_mode_supplier_id;
 		$fk_account = $societe->fk_account;
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
@@ -2347,9 +2348,20 @@ if ($action == 'create') {
 	}
 
 	// Vat reverse-charge by default
-	print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
-	print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes((GETPOSTISSET('fk_account') ?GETPOST('fk_account', 'alpha') : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
-	print '</td></tr>';
+	if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+		print '<tr><td>' . $langs->trans('VATReverseChargeByDefault') . '</td><td>';
+		//print '<input type="checkbox" class="flat minwidth150" name="use_vat_reverse_charge"'. ($object->vat_reverse_charge ? ' checked ' : '') . '>';
+		if(!empty($vat_reverse_charge)) {
+			$vat_reverse_charge = 1;
+		} elseif (isInEEC($societe) && !empty($societe->tva_intra)) {
+			$vat_reverse_charge = 1;
+		} else {
+			$vat_reverse_charge = 0;
+		}
+
+		print '<input type="checkbox" name="use_vat_reverse_charge"'. (!empty($vat_reverse_charge) ? ' checked ' : '') . '>';
+		print '</td></tr>';
+	}
 
 	// Multicurrency
 	if (!empty($conf->multicurrency->enabled)) {
@@ -2986,6 +2998,13 @@ if ($action == 'create') {
 			}
 			print "</td>";
 			print '</tr>';
+		}
+
+		// Vat reverse-charge by default
+		if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+			print '<tr><td>' . $langs->trans('VATReverseCharge') . '</td><td>';
+			print '<input type="checkbox" class="flat minwidth150" name="use_vat_reverse_charge"'. ($object->vat_reverse_charge ? ' checked ' : '') . '>';
+			print '</td></tr>';
 		}
 
 		// Incoterms

@@ -286,7 +286,7 @@ if ($object->id > 0) {
 	print '<td class="titlefield">';
 	print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc'));
 	print '</td><td>';
-	print yn($object->vat_reverse_charge);
+	print '<input type="checkbox" name="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').'>';
 	print '</td>';
 	print '</tr>';
 

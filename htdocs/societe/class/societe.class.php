@@ -455,7 +455,7 @@ class Societe extends CommonObject
 	public $tva_intra;
 
 	/**
-	 * @var int Vat reverse charge concerned
+	 * @var int Vat reverse-charge concerned
 	 */
 	public $vat_reverse_charge = 0;
 
@@ -1267,7 +1267,7 @@ class Societe extends CommonObject
 
 		$this->tva_assuj			= trim($this->tva_assuj);
 		$this->tva_intra			= dol_sanitizeFileName($this->tva_intra, '');
-		$this->vat_reverse_charge	= trim($this->vat_reverse_charge);
+		$this->vat_reverse_charge	= empty($this->vat_reverse_charge) ? '0' : '1';
 		if (empty($this->status)) {
 			$this->status = 0;
 		}
@@ -1852,10 +1852,10 @@ class Societe extends CommonObject
 
 				$this->barcode = $obj->barcode;
 
-				$this->tva_assuj      		= $obj->tva_assuj;
-				$this->tva_intra      		= $obj->tva_intra;
+				$this->tva_assuj			= $obj->tva_assuj;
+				$this->tva_intra			= $obj->tva_intra;
 				$this->vat_reverse_charge	= $obj->vat_reverse_charge;
-				$this->status = $obj->status;
+				$this->status				= $obj->status;
 
 				// Local Taxes
 				$this->localtax1_assuj      = $obj->localtax1_assuj;
