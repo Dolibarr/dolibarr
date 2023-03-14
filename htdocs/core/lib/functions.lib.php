@@ -5435,6 +5435,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	if ($limit < 0) {
 		$limit = $conf->liste_limit;
 	}
+
 	if ($savlimit != 0 && (($num > $limit) || ($num == -1) || ($limit == 0))) {
 		$nextpage = 1;
 	} else {
@@ -5475,7 +5476,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	}
 	// Show navigation bar
 	$pagelist = '';
-	if ($savlimit != 0 && ($page > 0 || $num > $limit)) {
+	if ($savlimit != 0 && ((int) $page > 0 || $num > $limit)) {
 		if ($totalnboflines) {	// If we know total nb of lines
 			// Define nb of extra page links before and after selected page + ... + first or last
 			$maxnbofpage = (empty($conf->dol_optimize_smallscreen) ? 4 : 0);
@@ -5535,8 +5536,8 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 		}
 	}
 
-	if ($savlimit || $morehtmlright || $morehtmlrightbeforearrow) {
-		print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtmlright, $savlimit, $totalnboflines, $hideselectlimit, $morehtmlrightbeforearrow); // output the div and ul for previous/last completed with page numbers into $pagelist
+	if (($savlimit || $morehtmlright || $morehtmlrightbeforearrow) && empty($hidenavigation)) {
+		print_fleche_navigation((int) $page, $file, $options, $nextpage, $pagelist, $morehtmlright, $savlimit, $totalnboflines, $hideselectlimit, $morehtmlrightbeforearrow); // output the div and ul for previous/last completed with page numbers into $pagelist
 	}
 
 	// js to autoselect page field on focus
@@ -11587,7 +11588,7 @@ function jsonOrUnserialize($stringtodecode)
 /**
  * forgeSQLFromUniversalSearchCriteria
  *
- * @param 	string		$filter		String with universal search string
+ * @param 	string		$filter		String with universal search string. Must be  (aaa:bbb:...) with aaa is a field name (with alias or not) and bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'.
  * @param	string		$error		Error message
  * @return	string					Return forged SQL string
  */
@@ -11605,7 +11606,7 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$error = '')
 	// If the string result contains something else than '()', the syntax was wrong
 	if (preg_match('/[^\(\)]/', $t)) {
 		$error = 'Bad syntax of the search string, filter criteria is inhalited';
-		return '1 = 3';		// Bad syntax of the search string, we force a SQL not found
+		return 'Filter syntax error';		// Bad syntax of the search string, we force a SQL not found
 	}
 
 	return " AND (".preg_replace_callback('/'.$regexstring.'/i', 'dolForgeCriteriaCallback', $filter).")";
@@ -11684,7 +11685,10 @@ function dolForgeCriteriaCallback($matches)
 		return '';
 	}
 
-	$operator = strtoupper(preg_replace('/[^a-z<>=]/i', '', trim($tmp[1])));
+	$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
+
+	$operator = strtoupper(preg_replace('/[^a-z<>!=]/i', '', trim($tmp[1])));
+
 	if ($operator == 'NOTLIKE') {
 		$operator = 'NOT LIKE';
 	}
@@ -11722,7 +11726,7 @@ function dolForgeCriteriaCallback($matches)
 		}
 	}
 
-	return $db->escape($tmp[0]).' '.strtoupper($operator).' '.$tmpescaped;
+	return $db->escape($operand).' '.strtoupper($operator).' '.$tmpescaped;
 }
 
 

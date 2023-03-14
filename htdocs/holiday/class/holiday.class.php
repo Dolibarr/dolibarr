@@ -1497,9 +1497,11 @@ class Holiday extends CommonObject
 		}
 
 		$out .= '</select>'."\n";
-		$out .= ajax_combobox($htmlname);
 
-		print $out;
+		$showempty= 0;
+		$out .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', ($showempty < 0 ? (string) $showempty : '-1'), $morecss);
+
+		return $out;
 	}
 
 	/**
@@ -2488,7 +2490,7 @@ class Holiday extends CommonObject
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'fk_type')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Type").'</span> : ';
-			$return .= '<span class="info_box-label maxwidth100">'.arraydata['labeltype'].'</span>';
+			$return .= '<span class="info_box-label maxwidth100">'.$arraydata['labeltype'].'</span>';
 		}
 		if (property_exists($this, 'date_debut') && property_exists($this, 'date_fin')) {
 			$return .= '<br><span class="info-box-label">'.dol_print_date($this->date_debut, 'day').'</span>';

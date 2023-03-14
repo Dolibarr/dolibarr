@@ -1504,7 +1504,7 @@ while ($i < $imaxinloop) {
 
 		// Alias name
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="nocellnopadd">';
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->alias).'">';
 			print dol_escape_htmltag($obj->alias);
 			print '</td>';
 			if (!$i) {
