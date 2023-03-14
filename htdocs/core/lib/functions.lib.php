@@ -83,12 +83,12 @@ function getMultidirOutput($object, $module = '')
 {
 	global $conf;
 	if (!is_object($object)) {
-		return;
+		return null;
 	}
 	if (empty($module) && !empty($object->element)) {
 		$module = $object->element;
 	} else {
-		return;
+		return null;
 	}
 	return $conf->$module->multidir_output[$object->entity];
 }
