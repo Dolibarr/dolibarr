@@ -833,6 +833,8 @@ class FormSetupItem
 			$out.= $this->generateInputFieldMultiSelect();
 		} elseif ($this->type == 'select') {
 			$out.= $this->generateInputFieldSelect();
+		} elseif ($this->type == 'selectUser') {
+			$out.= $this->generateInputFieldSelectUser();
 		} elseif ($this->type == 'textarea') {
 			$out.= $this->generateInputFieldTextarea();
 		} elseif ($this->type== 'html') {
@@ -993,6 +995,14 @@ class FormSetupItem
 	}
 
 	/**
+	 * @return string
+	 */
+	public function generateInputFieldSelectUser()
+	{
+		return $this->form->select_dolusers($this->fieldValue, $this->confKey);
+	}
+
+	/**
 	 * get the type : used for old module builder setup conf style conversion and tests
 	 * because this two class will quickly evolve it's important to not set or get directly $this->type (will be protected) so this method exist
 	 * to be sure we can manage evolution easily
@@ -1066,6 +1076,8 @@ class FormSetupItem
 			$out.= $this->generateOutputFieldMultiSelect();
 		} elseif ($this->type == 'select') {
 			$out.= $this->generateOutputFieldSelect();
+		} elseif ($this->type == 'selectUser') {
+			$out.= $this->generateOutputFieldSelectUser();
 		} elseif ($this->type== 'html') {
 			$out.=  $this->fieldValue;
 		} elseif ($this->type== 'color') {
@@ -1185,6 +1197,17 @@ class FormSetupItem
 		return $outPut;
 	}
 
+	/**
+	 * @return string
+	 */
+	public function generateOutputFieldSelectUser()
+	{
+		$outPut = '';
+		$user = new User($this->db);
+		$user->fetch($this->fieldValue);
+		$outPut = $user->firstname . " "  . $user->lastname;
+		return $outPut;
+	}
 	/*
 	 * METHODS FOR SETTING DISPLAY TYPE
 	 */
@@ -1333,6 +1356,18 @@ class FormSetupItem
 		}
 
 		$this->type = 'select';
+		return $this;
+	}
+
+	/**
+	 * Set type of input as a simple title
+	 * no data to store
+	 * @param array $fieldOptions  A table of field options
+	 * @return self
+	 */
+	public function setAsSelectUser()
+	{
+		$this->type = 'selectUser';
 		return $this;
 	}
 }
