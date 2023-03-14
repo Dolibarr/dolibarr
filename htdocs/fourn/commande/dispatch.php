@@ -1128,16 +1128,15 @@ if ($id > 0 || !empty($ref)) {
 	if ($conf->reception->enabled) {
 		$sql .= " ,cfd.fk_reception, r.date_delivery";
 	}
-	$sql .= " FROM ".MAIN_DB_PREFIX."product as p,";
-	$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
+	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cfd.fk_product = p.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as cd ON cd.rowid = cfd.fk_commandefourndet";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e ON cfd.fk_entrepot = e.rowid";
 	if ($conf->reception->enabled) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."reception as r ON cfd.fk_reception = r.rowid";
 	}
 	$sql .= " WHERE cfd.fk_commande = ".((int) $object->id);
-	$sql .= " AND cfd.fk_product = p.rowid";
-	$sql .= " ORDER BY cfd.rowid ASC";
+	$sql .= " ORDER BY cfd.rowid";
 
 	$resql = $db->query($sql);
 	if ($resql) {
