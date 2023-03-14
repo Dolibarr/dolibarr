@@ -190,14 +190,10 @@ class FormActions
 
 		$num = count($listofactions);
 		if ($num || $forceshowtitle) {
-			if ($typeelement == 'invoice') {
-				$title = $langs->trans('ActionsOnBill');
-			} elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') {
+			if ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') {
 				$title = $langs->trans('ActionsOnBill');
 			} elseif ($typeelement == 'supplier_proposal') {
 				$title = $langs->trans('ActionsOnSupplierProposal');
-			} elseif ($typeelement == 'order') {
-				$title = $langs->trans('ActionsOnOrder');
 			} elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order') {
 				$title = $langs->trans('ActionsOnOrder');
 			} elseif ($typeelement == 'shipping') {
