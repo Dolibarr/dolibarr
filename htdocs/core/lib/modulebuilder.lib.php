@@ -422,7 +422,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
  * @param	string      $destdir		Directory
  * @return Array|int                    <=0 if KO, array if OK
  */
-function dolGetListOfObjectclasses($destdir)
+function dolGetListOfObjectClasses($destdir)
 {
 	$objects = array();
 	$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
