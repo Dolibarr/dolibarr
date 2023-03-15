@@ -49,9 +49,14 @@ class FormTicket
 	public $db;
 
 	/**
-	 * @var string	The track_id of the ticket. Used also for the $keytoavoidconflict to name session vars to upload files.
+	 * @deprecated
 	 */
 	public $track_id;
+
+	/**
+	 * @var string	The trackid of the ticket. Used also for the $keytoavoidconflict to name session vars to upload files.
+	 */
+	public $trackid;
 
 	/**
 	 * @var int ID
