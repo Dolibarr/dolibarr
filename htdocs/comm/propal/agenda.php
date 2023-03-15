@@ -246,6 +246,7 @@ if ($object->id > 0) {
 		$filters['search_rowid'] = $search_rowid;
 
 		// TODO Replace this with same code than into list.php
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, property_exists($object, 'module') ? $object->module : '');
 	}
 }
