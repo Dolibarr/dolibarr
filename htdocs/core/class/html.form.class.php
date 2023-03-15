@@ -2609,11 +2609,11 @@ class Form
 		// Add select from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('selectProductsListSelect', $parameters); // Note that $action and $object may have been modified by hook
-    if ($reshook > 0) {
-		  $sql .= $selectFields.$selectFieldsGrouped.$hookmanager->resPrint;
-    } else {
-      $sql .= $hookmanager->resPrint;
-    }
+		if ($reshook > 0) {
+			$sql .= $selectFields.$selectFieldsGrouped.$hookmanager->resPrint;
+		} else {
+			$sql .= $hookmanager->resPrint;
+		}
 
 		if (!empty($conf->global->PRODUCT_SORT_BY_CATEGORY)) {
 			//Product category
