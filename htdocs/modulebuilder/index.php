@@ -2235,6 +2235,8 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 				setEventMessages($langs->trans('FailedToAddCodeIntoDescriptor', 'END MODULEBUILDER PERMISSIONS'), null, 'warnings');
 			}
 		}
+
+		rewritingAllPermissions($moduledescriptorfile, $objectForPerms, $right, '', 1);
 	}
 
 	clearstatcache(true);
@@ -2355,7 +2357,8 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright')&& e
 		}
 
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
-		$check = dolReplaceInFile($moduledescriptorfile, array($right => $rightUpdated));
+
+		rewritingAllPermissions($moduledescriptorfile, $x2, $right, $rightUpdated, 2);
 
 		setEventMessages($langs->trans('PermissionUpdatedSuccesfuly'), null);
 
@@ -2400,21 +2403,12 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOST('p
 		";
 
 	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+	//reriting all permissions
+	rewritingAllPermissions($moduledescriptorfile, $x2, $rightTodelete, '', 0);
 
-	// TODO ALI The delete must be done by rewriting all content between /* BEGIN MODULEBUILDER PERMISSIONS */ and /* END MODULEBUILDER PERMISSIONS */
-	$check = dolReplaceInFile($moduledescriptorfile, array($rightTodelete => "\n\t\t"));
 
-	if ($check > 0) {
-		//check if all permissions of object was deleted
-		$permsForObj = array();
-		foreach ($permissions as $perms) {
-			$permsForObj[] = $perms[4];
-		}
-		$permsForObj = array_count_values($permsForObj);
-		if ($permsForObj[$permissions[$key][4]] == 1) {
-			$delObjStart = dolReplaceInFile($moduledescriptorfile, array('/*'.strtoupper($permissions[$key][4].'*/') => '','/*END '.strtoupper($permissions[$key][4].'*/') => ''));
-		}
-	}
+
+
 	if (!$error) {
 		// check if module is enabled
 		if (isModEnabled(strtolower($module))) {

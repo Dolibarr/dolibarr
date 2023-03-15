@@ -416,3 +416,71 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 
 	return $error ? -1 : 1;
 }
+
+/**
+ * Rewriting all permissions after updating file
+ * @param string         $file         file with path
+ * @param string         $objectname   name of the permission object
+ * @param string         $right        permission of object
+ * @param string         $rightUpdated permission of object updated
+ * @param int            $action       0 for delete, 1 for add, 2 fo update
+ * @return void
+ */
+function rewritingAllPermissions($file, $objectname, $right, $rightUpdated, $action)
+{
+	global $langs;
+	$start = "/* BEGIN MODULEBUILDER PERMISSIONS */";
+	$end = "/* END MODULEBUILDER PERMISSIONS */";
+	$perms_after_action = '';
+	$error = 0;
+	if (empty($right)) {
+		$error++;
+	}
+	if ($action == 2 && empty($rightUpdated)) {
+		$error++;
+	}
+	if (!$error) {
+		// Open the file and read line by line
+		$handle = fopen($file, "r");
+			$i = 1;
+			$lines = array();
+
+		while (($line = fgets($handle)) !== false) {
+			//search line begin
+			if (strpos($line, $start) !== false) {
+				$start_line = $i;
+
+				// Copy lines until the end on array
+				while (($line = fgets($handle)) !== false) {
+					if (strpos($line, $end) !== false) {
+						$end_line = $i;
+						break;
+					}
+					$lines[] = $line;
+					$i++;
+				}
+				break;
+			}
+			$i++;
+		}
+		$allContent = implode("", $lines);
+		if (str_contains($allContent, $right)) {
+			if ($action == 0) {
+				$perms_after_action = str_replace($right, "\n\t\t", $allContent);
+				if (!str_contains($perms_after_action, $objectname)) {
+					$perms_after_action = str_replace(['/*'.strtoupper($objectname).'*/','/*END '.strtoupper($objectname).'*/'], "", $perms_after_action);
+				}
+			}
+			if ($action == 2) {
+				$perms_after_action = str_replace($right, $rightUpdated."\n\t\t", $allContent);
+			}
+			if ($action == 1 && !empty($right)) {
+				$perms_after_action = str_replace("", $right, $allContent);
+				var_dump($perms_after_action);exit;
+			}
+			dolReplaceInFile($file, array($allContent => ''));
+			dolReplaceInFile($file, array('/* BEGIN MODULEBUILDER PERMISSIONS */' => '/* BEGIN MODULEBUILDER PERMISSIONS */'."\n".$perms_after_action));
+		}
+		fclose($handle);
+	}
+}
