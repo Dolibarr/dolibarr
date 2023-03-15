@@ -476,7 +476,6 @@ function rewritingAllPermissions($file, $objectname, $right, $rightUpdated, $act
 			}
 			if ($action == 1 && !empty($right)) {
 				$perms_after_action = str_replace("", $right, $allContent);
-				var_dump($perms_after_action);exit;
 			}
 			dolReplaceInFile($file, array($allContent => ''));
 			dolReplaceInFile($file, array('/* BEGIN MODULEBUILDER PERMISSIONS */' => '/* BEGIN MODULEBUILDER PERMISSIONS */'."\n".$perms_after_action));
