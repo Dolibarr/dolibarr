@@ -12313,25 +12313,28 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			$out .= '</div>';
 
 			// Title
+			$libelle = '';
 			$out .= ' <div class="messaging-title inline-block">';
 
 			if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 				$out .= $langs->trans('TicketNewMessage');
 			} elseif (preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
 				$out .= $langs->trans('TicketNewMessage').' <em>('.$langs->trans('Private').')</em>';
-			} else {
-				if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'action') {
-					$transcode = $langs->trans("Action".$histo[$key]['acode']);
+			} elseif (isset($histo[$key]['type'])) {
+				if ($histo[$key]['type'] == 'action') {
+					$transcode = $langs->transnoentitiesnoconv("Action".$histo[$key]['acode']);
 					$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
 					$libelle = $histo[$key]['note'];
 					$actionstatic->id = $histo[$key]['id'];
-					$out .= dol_trunc($libelle, 120);
-				}
-				if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'mailing') {
+					$out .= dol_escape_htmltag(dol_trunc($libelle, 120));
+				} elseif ($histo[$key]['type'] == 'mailing') {
 					$out .= '<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
-					$transcode = $langs->trans("Action".$histo[$key]['acode']);
+					$transcode = $langs->transnoentitiesnoconv("Action".$histo[$key]['acode']);
 					$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : 'Send mass mailing');
-					$out .= dol_trunc($libelle, 120);
+					$out .= dol_escape_htmltag(dol_trunc($libelle, 120));
+				} else {
+					$libelle .= $histo[$key]['note'];
+					$out .= dol_escape_htmltag(dol_trunc($libelle, 120));
 				}
 			}
 
@@ -12339,7 +12342,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 
 			$out .= '</h3>';
 
-			if (!empty($histo[$key]['message'])
+			if (!empty($histo[$key]['message'] && $histo[$key]['message'] != $libelle)
 				&& $actionstatic->code != 'AC_TICKET_CREATE'
 				&& $actionstatic->code != 'AC_TICKET_MODIFY'
 			) {
