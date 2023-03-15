@@ -51,7 +51,7 @@ if (!is_object($website)) {
 	$website->fetch(0, $websitekey);
 }
 // Define $websitepage if we have $websitepagefile defined
-if (!$pageid && !empty($websitepagefile)) {
+if (empty($pageid) && !empty($websitepagefile)) {
 	$pageid = str_replace(array('.tpl.php', 'page'), array('', ''), basename($websitepagefile));
 	if ($pageid == 'index.php') {
 		$pageid = $website->fk_default_home;

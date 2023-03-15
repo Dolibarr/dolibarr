@@ -526,24 +526,46 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	}
 	$msg .= ';'."\n";
 
-	if (is_array($events) && count($events)) {    // If an array of js events to do were provided.
-		$msg .= '
+	$msg .= '});'."\n";
+	$msg .= "</script>\n";
+
+	$msg .= ajax_event($htmlname, $events);
+
+	return $msg;
+}
+
+
+/**
+ * Add event management script.
+ *
+ * @param	string	$htmlname					Name of html select field ('myid' or '.myclass')
+ * @param	array	$events						Add some Ajax events option on change of $htmlname component to call ajax to autofill a HTML element (select#htmlname and #inputautocompletehtmlname)
+ * 												Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+ * @return	string								Return JS string to manage event
+ */
+function ajax_event($htmlname, $events)
+{
+	$out = '';
+
+	if (is_array($events) && count($events)) {   // If an array of js events to do were provided.
+		$out = '<!-- JS code to manage event for id = ' . $htmlname . ' -->
+	<script>
+		$(document).ready(function () {
 			jQuery("#'.$htmlname.'").change(function () {
-				var obj = '.json_encode($events).';
+				var obj = '.json_encode($events) . ';
 		   		$.each(obj, function(key,values) {
 	    			if (values.method.length) {
 	    				runJsCodeForEvent'.$htmlname.'(values);
 	    			}
 				});
 			});
-
 			function runJsCodeForEvent'.$htmlname.'(obj) {
 				var id = $("#'.$htmlname.'").val();
 				var method = obj.method;
 				var url = obj.url;
 				var htmlname = obj.htmlname;
 				var showempty = obj.showempty;
-				console.log("Run runJsCodeForEvent-'.$htmlname.' from ajax_combobox id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
+			    console.log("Run runJsCodeForEvent-'.$htmlname.' from ajax_combobox id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
 				$.getJSON(url,
 						{
 							action: method,
@@ -567,7 +589,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 								var selecthtml_str = response.value;
 								var selecthtml_dom=$.parseHTML(selecthtml_str);
 								if (typeof(selecthtml_dom[0][0]) !== \'undefined\') {
-                                   	$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+									$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
 								}
 							} else {
 								$("#inputautocomplete"+htmlname).val("");
@@ -575,14 +597,14 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 							$("select#" + htmlname).change();	/* Trigger event change */
 						}
 				);
-			}';
+			}
+		});
+	</script>';
 	}
 
-	$msg .= '});'."\n";
-	$msg .= "</script>\n";
-
-	return $msg;
+	return $out;
 }
+
 
 /**
  * 	On/off button for constant

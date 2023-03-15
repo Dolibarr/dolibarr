@@ -412,7 +412,7 @@ if ($nolinesbefore) {
 		</td>
 		<?php
 	}
-	if (!empty($inputalsopricewithtax)) {
+	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		$coldisplay++;
 		?>
 		<td class="nobottom linecoluttc right">

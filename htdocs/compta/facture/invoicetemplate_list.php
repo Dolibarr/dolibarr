@@ -1035,7 +1035,7 @@ while ($i < $imaxinloop) {
 	// Status
 	if (!empty($arrayfields['status']['checked'])) {
 		print '<td class="center">';
-		print $invoicerectmp->getLibStatut(3, 0);
+		print $invoicerectmp->getLibStatut(5, 0);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

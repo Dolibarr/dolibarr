@@ -41,6 +41,7 @@ AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
 NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
 GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
 DetailByAccount=Show detail by account
+DetailBy=Detail by
 AccountWithNonZeroValues=Accounts with non-zero values
 ListOfAccounts=List of accounts
 CountriesInEEC=Countries in EEC

@@ -1771,7 +1771,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['u.login']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			if ($userstatic->id) {
-				print $userstatic->getLoginUrl(-1);
+				print $userstatic->getNomUrl(-1);
 			} else {
 				print '&nbsp;';
 			}

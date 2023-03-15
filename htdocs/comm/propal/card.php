@@ -955,6 +955,8 @@ if (empty($reshook)) {
 		$price_ttc = '';
 		$price_ttc_devise = '';
 
+		// TODO Implement  if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES'))
+
 		if (GETPOST('price_ht') !== '') {
 			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
 		}
@@ -1809,7 +1811,7 @@ if ($action == 'create') {
 		print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', '((s.client = 1 OR s.client = 2 OR s.client = 3) AND status=1)', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
 		// reload page to retrieve customer informations
 		if (empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED)) {
-			print '<script type="text/javascript">
+			print '<script>
 			$(document).ready(function() {
 				$("#socid").change(function() {
 					console.log("We have changed the company - Reload page");

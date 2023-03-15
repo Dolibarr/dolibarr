@@ -386,6 +386,13 @@ class pdf_aurore extends ModelePDFSupplierProposal
 						}
 					}
 				}
+
+				// Extrafields in note
+				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+				if (!empty($extranote)) {
+					$notetoshow = dol_concatdesc($notetoshow, $extranote);
+				}
+
 				if ($notetoshow) {
 					$tab_top -= 2;
 

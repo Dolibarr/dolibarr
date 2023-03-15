@@ -16,9 +16,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+/**
+ *       \file       htdocs/fichinter/class/api_interventions.class.php
+ *       \ingroup    fichinter
+ *       \brief      File of API to manage intervention
+ */
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+
 
 /**
  * API class for Interventions
