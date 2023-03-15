@@ -55,7 +55,7 @@ include_once '../../../main.inc.php'; // Load $user and permissions
 
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
-$email = GETPOST('email', 'alphanohtml');
+$email = str_replace('%', '', GETPOST('email', 'alphanohtml'));
 $token = GETPOST('token', 'alpha', 1);
 
 if (!isModEnabled('ticket')) {
