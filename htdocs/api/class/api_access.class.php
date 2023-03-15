@@ -106,6 +106,9 @@ class DolibarrApiAccess implements iAuthenticate
 		if (isset($_SERVER['HTTP_DOLAPIKEY'])) {         // Param DOLAPIKEY in header can be read with HTTP_DOLAPIKEY
 			$api_key = $_SERVER['HTTP_DOLAPIKEY']; // With header method (recommanded)
 		}
+		if (preg_match('/^dolcrypt:/i', $api_key)) {
+			throw new RestException(503, 'Bad value for the API key. An API key should not start with dolcrypt:');
+		}
 
 		if ($api_key) {
 			$userentity = 0;
