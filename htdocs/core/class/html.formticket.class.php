@@ -268,7 +268,8 @@ class FormTicket
                                 "'.dol_escape_js(dol_buildpath('/public/ticket/ajax/ajax.php', 1)).'",
 								{
 									action: "getContacts",
-									email: jQuery("#email").val()
+									email: jQuery("#email").val(),
+									token: "'.currentToken().'"
 								},
 								function(response) {
 									if (response.error) {
