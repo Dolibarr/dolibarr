@@ -2598,13 +2598,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td>';
 			print '</tr>';
 
-			// VAT reverse charge by default
-			print '<tr><td>';
-			print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc'));
-			print '</td><td>';
-			print '<input type="checkbox" name="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').'>';
-			print '</td>';
-			print '</tr>';
+			if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+				// VAT reverse charge by default
+				print '<tr><td>';
+				print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc'));
+				print '</td><td>';
+				print '<input type="checkbox" name="vat_reverse_charge" ' . ($object->vat_reverse_charge == '1' ? ' checked' : '') . ' disabled>';
+				print '</td>';
+				print '</tr>';
+			}
 		}
 
 		// Local Taxes

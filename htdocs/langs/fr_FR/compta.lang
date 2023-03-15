@@ -114,6 +114,7 @@ NewLocalTaxPayment=Nouveau paiement charge %s
 Refund=Remboursement
 SocialContributionsPayments=Paiements de charges fiscales/sociales
 ShowVatPayment=Affiche paiement TVA
+SetVATReverseCharge=Définir l'autoliquidation de TVA
 TotalToPay=Total à payer
 BalanceVisibilityDependsOnSortAndFilters=Le solde est visible dans cette liste que si la table est triée sur %s et filtré sur 1 compte bancaire (sans autres filtres)
 CustomerAccountancyCodeGeneral=Code comptable général

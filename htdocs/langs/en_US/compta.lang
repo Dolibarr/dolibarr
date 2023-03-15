@@ -114,6 +114,7 @@ NewLocalTaxPayment=New tax %s payment
 Refund=Refund
 SocialContributionsPayments=Social/fiscal taxes payments
 ShowVatPayment=Show VAT payment
+SetVATReverseCharge=Set VAT reverse charge
 TotalToPay=Total to pay
 BalanceVisibilityDependsOnSortAndFilters=Balance is visible in this list only if table is sorted on %s and filtered on 1 bank account (with no other filters)
 CustomerAccountancyCodeGeneral=General accounting code

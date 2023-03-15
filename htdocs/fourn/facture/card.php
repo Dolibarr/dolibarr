@@ -395,8 +395,11 @@ if (empty($reshook)) {
 	} elseif ($action == 'setbankaccount' && $usercancreate) {
 		// bank account
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
+	} elseif ($action == 'setvatreversecharge' && $usercancreate) {
+		// vat reverse charge
+		$vatreversecharge = GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
+		$result = $object->setVATReverseCharge($vatreversecharge);
 	}
-
 
 	if ($action == 'settransportmode' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
 		// transport mode
@@ -735,6 +738,7 @@ if (empty($reshook)) {
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id', 'int');
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
 				$object->fk_account			= GETPOST('fk_account', 'int');
+				$object->vat_reverse_charge	= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
 				$object->fk_project			= ($tmpproject > 0) ? $tmpproject : null;
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
@@ -801,6 +805,7 @@ if (empty($reshook)) {
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id');
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account			= GETPOST('fk_account', 'int');
+				$object->vat_reverse_charge	= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
 				$object->fk_project			= ($tmpproject > 0) ? $tmpproject : null;
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
@@ -912,6 +917,7 @@ if (empty($reshook)) {
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id');
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account			= GETPOST('fk_account', 'int');
+				$object->vat_reverse_charge	= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
 				$object->fk_project			= ($tmpproject > 0) ? $tmpproject : null;
 				$object->fk_incoterms		= GETPOST('incoterm_id', 'int');
 				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
@@ -2349,8 +2355,7 @@ if ($action == 'create') {
 
 	// Vat reverse-charge by default
 	if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
-		print '<tr><td>' . $langs->trans('VATReverseChargeByDefault') . '</td><td>';
-		//print '<input type="checkbox" class="flat minwidth150" name="use_vat_reverse_charge"'. ($object->vat_reverse_charge ? ' checked ' : '') . '>';
+		print '<tr><td>' . $langs->trans('VATReverseCharge') . '</td><td>';
 		if(!empty($vat_reverse_charge)) {
 			$vat_reverse_charge = 1;
 		} elseif (isInEEC($societe) && !empty($societe->tva_intra)) {
@@ -2359,7 +2364,7 @@ if ($action == 'create') {
 			$vat_reverse_charge = 0;
 		}
 
-		print '<input type="checkbox" name="use_vat_reverse_charge"'. (!empty($vat_reverse_charge) ? ' checked ' : '') . '>';
+		print '<input type="checkbox" name="vat_reverse_charge"'. (!empty($vat_reverse_charge) ? ' checked ' : '') . '>';
 		print '</td></tr>';
 	}
 
@@ -3002,8 +3007,27 @@ if ($action == 'create') {
 
 		// Vat reverse-charge by default
 		if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
-			print '<tr><td>' . $langs->trans('VATReverseCharge') . '</td><td>';
-			print '<input type="checkbox" class="flat minwidth150" name="use_vat_reverse_charge"'. ($object->vat_reverse_charge ? ' checked ' : '') . '>';
+			print '<tr><td class="nowrap">';
+			print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+			print $langs->trans('VATReverseCharge');
+			print '<td>';
+			if ($action != 'editvatreversecharge' && $usercancreate) {
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editvatreversecharge&amp;id='.$object->id.'">'.img_edit($langs->trans('SetVATReverseCharge'), 1).'</a></td>';
+			}
+			print '</tr></table>';
+			print '</td><td>';
+			if ($action == 'editvatreversecharge') {
+				print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				print '<input type="hidden" name="action" value="setvatreversecharge">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+
+				print '<input type="checkbox" name="vat_reverse_charge"' . ($object->vat_reverse_charge == '1' ? ' checked ' : '') . '>';
+
+				print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				print '</form>';
+			} else {
+				print '<input type="checkbox" name="vat_reverse_charge"'. ($object->vat_reverse_charge == '1' ? ' checked ' : '') . ' disabled>';
+			}
 			print '</td></tr>';
 		}
 
