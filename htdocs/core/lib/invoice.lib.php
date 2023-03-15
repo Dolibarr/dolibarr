@@ -118,7 +118,6 @@ function facture_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
-
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/agenda.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda')&& (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
