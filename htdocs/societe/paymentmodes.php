@@ -155,7 +155,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$companybankaccount->old = dol_clone($companybankaccount);
+			$companybankaccount->oldcopy = dol_clone($companybankaccount);
 
 			$companybankaccount->socid           = $object->id;
 
@@ -196,8 +196,8 @@ if (empty($reshook)) {
 					$companybankaccount->setAsDefault($id); // This will make sure there is only one default rib
 				}
 
-				if ($companypaymentmode->old->stripe_card_ref != $companypaymentmode->stripe_card_ref) {
-					if ($companybankaccount->old->iban != $companybankaccount->iban) {
+				if ($companypaymentmode->oldcopy->stripe_card_ref != $companypaymentmode->stripe_card_ref) {
+					if ($companybankaccount->oldcopy->iban != $companybankaccount->iban) {
 						// TODO If we modified the iban, we must also update the pm_ on Stripe side, or break the link completely ?
 					}
 				}
@@ -229,7 +229,7 @@ if (empty($reshook)) {
 
 		$companypaymentmode->fetch($id);
 		if (!$error) {
-			$companybankaccount->old = dol_clone($companybankaccount);
+			$companybankaccount->oldcopy = dol_clone($companybankaccount);
 
 			$companypaymentmode->fk_soc          = $object->id;
 
@@ -258,8 +258,8 @@ if (empty($reshook)) {
 					$companypaymentmode->setAsDefault($id); // This will make sure there is only one default rib
 				}
 
-				if ($companypaymentmode->old->stripe_card_ref != $companypaymentmode->stripe_card_ref) {
-					if ($companybankaccount->old->number != $companybankaccount->number) {
+				if ($companypaymentmode->oldcopy->stripe_card_ref != $companypaymentmode->stripe_card_ref) {
+					if ($companybankaccount->oldcopy->number != $companybankaccount->number) {
 						// TODO If we modified the card, we must also update the pm_ on Stripe side, or break the link completely ?
 					}
 				}
@@ -306,7 +306,7 @@ if (empty($reshook)) {
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
 			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOST('date_rummonth', 'int'), GETPOST('date_rumday', 'int'), GETPOST('date_rumyear', 'int'));
 			$companybankaccount->datec = dol_now();
-			$companybankaccount->status          = 1;
+			$companybankaccount->status = 1;
 
 			$companybankaccount->bank = trim($companybankaccount->bank);
 			if (empty($companybankaccount->bank) && !empty($companybankaccount->thirdparty)) {
