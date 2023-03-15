@@ -1023,7 +1023,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	// Get list of remote payment modes
 	$listofsources = array();
 
-	if (is_object($stripe)) {
+	if (isset($stripe) && is_object($stripe)) {
 		try {
 			$customerstripe = $stripe->customerStripe($object, $stripeacc, $servicestatus);
 			if (!empty($customerstripe->id)) {
