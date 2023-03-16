@@ -63,8 +63,7 @@ if ($action == 'add') {
 	$langs->load('errors');
 	$i = 1;
 
-	while($i < 20){
-
+	while ($i < 20) {
 		$dateo[$i] = dol_mktime(12, 0, 0, GETPOST($i.'_month', 'int'), GETPOST($i.'_day', 'int'), GETPOST($i.'_year', 'int'));
 		$label[$i] = GETPOST($i.'_label', 'alpha');
 		$amount[$i] = intval(price2num(GETPOST($i.'_amount', 'alpha'), 'MT', 2));
@@ -77,12 +76,12 @@ if ($action == 'add') {
 		$tabnum[$i] = 0;
 		if (!empty($label[$i]) || !empty($type[$i]) || !($amount[$i] <= 0) || !($accountfrom[$i] < 0) || !($accountto[$i]  < 0)) {
 			$tabnum[$i] = 1;
-		} 
+		}
 		$i++;
 	}
 
 	$n = 1;
-	while($n < 20){
+	while ($n < 20) {
 		if ($tabnum[$n] === 1) {
 			if ($accountfrom[$n] < 0) {
 				$errori[$n]++;
@@ -92,11 +91,11 @@ if ($action == 'add') {
 				$errori[$n]++;
 				setEventMessages($langs->trans("ErrorFieldRequired", '#'.$n. ' ' .$langs->transnoentities("TransferTo")), null, 'errors');
 			}
-			if (!$type[$n]){
+			if (!$type[$n]) {
 				$errori[$n]++;
 				setEventMessages($langs->trans("ErrorFieldRequired", '#'.$n. ' ' .$langs->transnoentities("Type")), null, 'errors');
 			}
-			if (!$dateo[$n]){
+			if (!$dateo[$n]) {
 				$errori[$n]++;
 				setEventMessages($langs->trans("ErrorFieldRequired", '#'.$n. ' ' .$langs->transnoentities("Date")), null, 'errors');
 			}
@@ -112,13 +111,13 @@ if ($action == 'add') {
 
 			if (!$errori[$n]) {
 				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-	
+
 				$accountfrom = new Account($db);
 				$accountfrom->fetch(GETPOST($n.'_account_from', 'int'));
-	
+
 				$accountto = new Account($db);
 				$accountto->fetch(GETPOST($n.'_account_to', 'int'));
-	
+
 				if ($accountto->currency_code == $accountfrom->currency_code) {
 					$amountto[$n] = $amount[$n];
 				} else {
@@ -131,7 +130,7 @@ if ($action == 'add') {
 					$errori[$n]++;
 					setEventMessages($langs->trans("AmountMustBePositive").' #'.$n, null, 'errors');
 				}
-	
+
 				if ($accountto->id == $accountfrom->id) {
 					$errori[$n]++;
 					setEventMessages($langs->trans("ErrorFromToAccountsMustDiffers").' #'.$n, null, 'errors');
@@ -140,11 +139,11 @@ if ($action == 'add') {
 
 			if ($errori[$n] == 0) {
 				$db->begin();
-	
+
 				$bank_line_id_from = 0;
 				$bank_line_id_to = 0;
 				$result = 0;
-	
+
 				// By default, electronic transfert from bank to bank
 				$typefrom = $type[$n];
 				$typeto = $type[$n];
@@ -153,7 +152,7 @@ if ($action == 'add') {
 					$typefrom = 'LIQ';
 					$typeto = 'LIQ';
 				}
-	
+
 				if (!$errori[$n]) {
 					$bank_line_id_from = $accountfrom->addline($dateo[$n], $typefrom, $label[$n], price2num(-1 * $amount[$n]), '', '', $user);
 				}
@@ -166,7 +165,7 @@ if ($action == 'add') {
 				if (!($bank_line_id_to > 0)) {
 					$errori[$n]++;
 				}
-	
+
 				if (!$errori[$n]) {
 					$result = $accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
 				}
@@ -190,7 +189,7 @@ if ($action == 'add') {
 					$db->rollback();
 				}
 			}
-		} 
+		}
 		$n++;
 	}
 }
@@ -297,14 +296,13 @@ print '</tr>';
 
 print '<style>.hidejs {visibility:hidden;}</style>';
 
-for($i = 1 ; $i< 20; $i++){
+for ($i = 1 ; $i< 20; $i++) {
 	$label = '';
 	$amount = '';
 
 	if ($errori[$i]) {
 		$label = GETPOST($i.'_label', 'alpha');
 		$amount = GETPOST($i.'_amount', 'alpha');
-		
 	}
 
 	if ($i == 1) {
