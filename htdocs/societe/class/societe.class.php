@@ -1714,7 +1714,7 @@ class Societe extends CommonObject
 		}
 		$sql .= ', s.code_client, s.code_fournisseur, s.parent, s.barcode';
 		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.mode_reglement, s.cond_reglement, s.deposit_percent, s.transport_mode';
-		$sql .= ', s.fk_account, s.tva_assuj, s.vat_reverse_charge';
+		$sql .= ', s.fk_account, s.tva_assuj';
 		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.transport_mode_supplier';
 		$sql .= ', s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo, s.logo_squarred';
 		$sql .= ', s.fk_shipping_method';
