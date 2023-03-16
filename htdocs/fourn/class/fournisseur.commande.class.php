@@ -3931,7 +3931,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
 		dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result > 0) {
+		if ($result) {
 			if (!$error) {
 				$result = $this->insertExtraFields();
 				if ($result < 0) {
