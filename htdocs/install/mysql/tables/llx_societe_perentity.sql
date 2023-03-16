@@ -1,5 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2021		Open-Dsi	<support@open-dsi.fr>
+-- Copyright (C) 2021-2023  Open-Dsi	<support@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,13 +18,14 @@
 
 create table llx_societe_perentity
 (
-  rowid                             integer AUTO_INCREMENT PRIMARY KEY,
-  fk_soc                            integer,
-  entity                            integer DEFAULT 1 NOT NULL,             -- multi company id
-  accountancy_code_customer_general varchar(32) DEFAULT NULL,
-  code_compta                       varchar(24),                         	-- code compta client
-  accountancy_code_supplier_general varchar(32) DEFAULT NULL,
-  code_compta_fournisseur           varchar(24),                         	-- code compta founisseur
-  accountancy_code_sell             varchar(32),                            -- Selling accountancy code
-  accountancy_code_buy              varchar(32)                             -- Buying accountancy code
+  rowid                                 integer AUTO_INCREMENT PRIMARY KEY,
+  fk_soc                                integer,
+  entity                                integer DEFAULT 1 NOT NULL,             -- multi company id
+  vat_reverse_charge                    tinyint DEFAULT 0,                      -- VAT reverse charge
+  accountancy_code_customer_general     varchar(32) DEFAULT NULL,
+  code_compta                           varchar(24),                         	-- code compta client
+  accountancy_code_supplier_general     varchar(32) DEFAULT NULL,
+  code_compta_fournisseur               varchar(24),                         	-- code compta founisseur
+  accountancy_code_sell                 varchar(32),                            -- Selling accountancy code
+  accountancy_code_buy                  varchar(32)                             -- Buying accountancy code
 )ENGINE=innodb;

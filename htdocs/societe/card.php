@@ -1539,6 +1539,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td>';
 		print '</tr>';
 
+		// VAT reverse charge by default
+		if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+			print '<tr><td>' . $form->editfieldkey('VATReverseChargeByDefault', 'vat_reverse_charge', '', $object, 0) . '</td><td colspan="3">';
+			print '<input type="checkbox" name="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').'>';
+			print '</td></tr>';
+		}
+
 		// Local Taxes
 		//TODO: Place into a function to control showing by country or study better option
 		if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {

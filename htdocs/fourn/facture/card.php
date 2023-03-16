@@ -2356,9 +2356,8 @@ if ($action == 'create') {
 	// Vat reverse-charge by default
 	if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
 		print '<tr><td>' . $langs->trans('VATReverseCharge') . '</td><td>';
-		if(!empty($vat_reverse_charge)) {
-			$vat_reverse_charge = 1;
-		} elseif (isInEEC($societe) && !empty($societe->tva_intra)) {
+		// Try to propose to use VAT reverse charg even if the VAT reverse charge is not activated in the supplier card, if this corresponds to the context of use, the activation is proposed
+		if ($vat_reverse_charge == 1 || ($societe->country_code != 'FR' && isInEEC($societe) && !empty($societe->tva_intra))) {
 			$vat_reverse_charge = 1;
 		} else {
 			$vat_reverse_charge = 0;

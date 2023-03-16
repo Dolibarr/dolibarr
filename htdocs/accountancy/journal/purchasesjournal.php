@@ -529,7 +529,7 @@ if ($action == 'writebookkeeping') {
 				}
 
 				// VAT Reverse charge
-				if ($mysoc->country_code == 'fr' || !empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+				if ($mysoc->country_code == 'FR' || !empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
 					$has_vat = false;
 					foreach ($arrayofvat[$key] as $k => $mt) {
 						if ($mt) {
@@ -803,7 +803,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 			}
 
 			// VAT Reverse charge
-			if ($mysoc->country_code == 'fr' || !empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+			if ($mysoc->country_code == 'FR' || !empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
 				$has_vat = false;
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
@@ -1097,7 +1097,7 @@ if (empty($action) || $action == 'view') {
 			}
 
 			// VAT Reverse charge
-			if ($mysoc->country_code == 'fr' || !empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+			if ($mysoc->country_code == 'FR' || !empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
 				$has_vat = false;
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
