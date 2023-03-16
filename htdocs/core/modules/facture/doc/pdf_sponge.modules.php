@@ -1059,6 +1059,7 @@ class pdf_sponge extends ModelePDFFactures
 					$pdf->AliasNbPages();
 				}
 
+				$this->addSwissQRInvoice($pdf, $object, $outputlangs);
 				$pdf->Close();
 
 				$pdf->Output($file, 'F');
