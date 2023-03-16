@@ -1211,13 +1211,13 @@ class AccountancyExport
 				print $date_document . $separator;
 
 				// FEC:CompteNum
-				print $line->numero_compte . $separator;
+				print length_accountg($line->numero_compte) . $separator;
 
 				// FEC:CompteLib
 				print dol_string_unaccent($line->label_compte) . $separator;
 
 				// FEC:CompAuxNum
-				print $line->subledger_account . $separator;
+				print length_accounta($line->subledger_account) . $separator;
 
 				// FEC:CompAuxLib
 				print dol_string_unaccent($line->subledger_label) . $separator;
@@ -1231,6 +1231,7 @@ class AccountancyExport
 				// FEC:EcritureLib
 				// Clean label operation to prevent problem on export with tab separator & other character
 				$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
+				$line->label_operation = str_replace(array("..."), "", $line->label_operation);
 				print dol_string_unaccent($line->label_operation) . $separator;
 
 				// FEC:Debit
@@ -1362,6 +1363,7 @@ class AccountancyExport
 				// FEC:EcritureLib
 				// Clean label operation to prevent problem on export with tab separator & other character
 				$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
+				$line->label_operation = str_replace(array("..."), "", $line->label_operation);
 				print dol_string_unaccent($line->label_operation) . $separator;
 
 				// FEC:Debit
