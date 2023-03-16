@@ -965,7 +965,9 @@ if ($resql) {
 	$totalarray['val']['sp.total_ht'] = 0;
 	$totalarray['val']['sp.total_tva'] = 0;
 	$totalarray['val']['sp.total_ttc'] = 0;
-	while ($i < min($num, $limit)) {
+
+	$imaxinloop = ($limit ? min($num, $limit) : $num);
+	while ($i < $imaxinloop) {
 		$obj = $db->fetch_object($resql);
 
 		$objectstatic->id = $obj->rowid;
@@ -992,7 +994,7 @@ if ($resql) {
 			$objectstatic->user_author_id = $userstatic->getNomUrl(1);
 			$objectstatic->delivery_date = $obj->dp;
 			print $objectstatic->getKanbanView('');
-			if ($i == (min($num, $limit) - 1)) {
+			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';
 			}

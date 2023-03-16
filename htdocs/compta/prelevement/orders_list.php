@@ -239,7 +239,6 @@ if ($result) {
 					print '<div class="box-flex-container kanban">';
 				}
 				// Output Kanban
-
 				print $directdebitorder->getKanbanView('');
 				if ($i == (min($num, $limit) - 1)) {
 					print '</div>';

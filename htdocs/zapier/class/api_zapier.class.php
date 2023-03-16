@@ -239,7 +239,7 @@ class Zapier extends DolibarrApi
 	 * Create hook object
 	 *
 	 * @param array $request_data   Request datas
-	 * @return int  ID of hook
+	 * @return array  ID of hook
 	 *
 	 * @url	POST /hook/
 	 */

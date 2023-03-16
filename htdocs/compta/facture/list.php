@@ -112,6 +112,7 @@ $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'alpha');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
+$search_company_code_client = GETPOST("search_type_thirdparty", 'alpha');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
 $search_date_startday = GETPOST('search_date_startday', 'int');
@@ -576,7 +577,7 @@ $sql .= ' f.datef, f.date_valid, f.date_lim_reglement as datelimite, f.module_so
 $sql .= ' f.paye as paye, f.fk_statut, f.close_code,';
 $sql .= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.code_client as code_client, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
 $sql .= " s.parent as fk_parent,";
 $sql .= " s2.nom as name2,";
 $sql .= ' typent.code as typent_code,';
@@ -1862,7 +1863,6 @@ if ($resql) {
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
 			$companystatic->name_alias = $obj->alias;
-			$companystatic->code_client = $obj->code_client;
 			$companystatic->client = $obj->client;
 			$companystatic->fournisseur = $obj->fournisseur;
 			$companystatic->code_client = $obj->code_client;
@@ -1928,7 +1928,7 @@ if ($resql) {
 				$userstatic->fetch($obj->fk_user_author);
 				$facturestatic->fk_user_author = $userstatic->getNomUrl(1);
 				print $facturestatic->getKanbanView('');
-				if ($i == (min($num, $limit) - 1)) {
+				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
 					print '</td></tr>';
 				}

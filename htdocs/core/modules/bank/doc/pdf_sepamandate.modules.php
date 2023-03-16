@@ -504,7 +504,6 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	}
 
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
