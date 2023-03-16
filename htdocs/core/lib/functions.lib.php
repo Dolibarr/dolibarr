@@ -9033,6 +9033,9 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 				}
 			}
 		}
+		if (is_array($s) || $s === 'Array') {
+			return 'Bad string syntax to evaluate (value is Array) '.var_export($s, true);
+		}
 		if (strpos($s, '::') !== false) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (double : char is forbidden): '.$s;
