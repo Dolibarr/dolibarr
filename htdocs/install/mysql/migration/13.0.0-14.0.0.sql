@@ -753,3 +753,7 @@ DELETE FROM llx_const WHERE name = "MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS";
 
 -- Make sell-by or eat-by date mandatory
 ALTER TABLE llx_product ADD COLUMN sell_or_eat_by_mandatory tinyint DEFAULT 0 NOT NULL AFTER tobatch;
+
+-- Generate documents on product batch
+ALTER TABLE llx_product_lot ADD COLUMN model_pdf varchar(255) AFTER scrapping_date;
+ALTER TABLE llx_product_lot ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
