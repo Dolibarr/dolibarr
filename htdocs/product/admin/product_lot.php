@@ -111,7 +111,7 @@ if ($action == 'updateMaskLot') {
 	$file = '';
 	$classname = '';
 	$filefound = 0;
-	$dirmodels = array_merge(array('/'), (array)$conf->modules_parts['models']);
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir . "core/modules/product_batch/doc/pdf_" . $modele . ".modules.php", 0);
 		if (file_exists($file)) {
