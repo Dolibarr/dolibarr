@@ -630,6 +630,12 @@ if (!empty($extrafields->attributes[$object->table_element]['label']) && is_arra
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON m.batch = pl.batch AND m.fk_product = pl.fk_product";
+
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= " WHERE m.fk_product = p.rowid";
 if ($msid > 0) {
 	$sql .= " AND m.rowid = ".((int) $msid);
