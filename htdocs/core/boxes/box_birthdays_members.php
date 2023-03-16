@@ -85,12 +85,12 @@ class box_birthdays_members extends ModeleBoxes
 		if ($user->rights->adherent->lire) {
 			$tmparray = dol_getdate(dol_now(), true);
 
-			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth";
+			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth, date_format(u.birth, '%d') as daya";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as u";
 			$sql .= " WHERE u.entity IN (".getEntity('adherent').")";
 			$sql .= " AND u.statut = ".Adherent::STATUS_VALIDATED;
 			$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
-			$sql .= " ORDER BY u.birth ASC";
+			$sql .= " ORDER BY daya ASC";	// We want to have date of the month sorted by the day without taking into consideration the year
 			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
