@@ -1,0 +1,31 @@
+SPC
+0200
+1
+CH9300762011623852957
+S
+Thomas LeClaire
+Rue examplaire
+22a
+1000
+Lausanne
+CH
+
+
+
+
+
+
+
+25.90
+CHF
+
+
+
+
+
+
+
+SCOR
+RF18539007547034
+
+EPD

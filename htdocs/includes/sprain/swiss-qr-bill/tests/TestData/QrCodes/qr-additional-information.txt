@@ -1,0 +1,32 @@
+SPC
+0200
+1
+CH4431999123000889012
+S
+Thomas LeClaire
+Rue examplaire
+22a
+1000
+Lausanne
+CH
+
+
+
+
+
+
+
+25.90
+CHF
+
+
+
+
+
+
+
+QRR
+123456789012345678901234567
+Invoice 1234568 Gardening work
+EPD
+Bill Information
