@@ -1884,7 +1884,7 @@ if ($action == 'create') {
 	$head = ordersupplier_prepare_head($object);
 
 	$title = $langs->trans("SupplierOrder");
-	print dol_get_fiche_head($head, 'card', $title, -1, 'order', 0, '', '', 0, '', 1);
+	print dol_get_fiche_head($head, 'card', $title, -1, 'order');
 
 
 	$formconfirm = '';
