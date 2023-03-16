@@ -19,13 +19,14 @@ or
 - admin / adminadmin
 
 
-Save demo
--------------
-
-The script savedemo.sh will save current database into a database dump file.
-
-
 Update demo
 -------------
 
-The goal of script updatedemo.php is to update dates into the demo data so samples are up to date.
+The goal of script dev/initdemo/updatedemo.php is to update dates into the demo data so samples are up to date.
+
+
+Save demo
+-------------
+
+The script dev/initdemo.savedemo.sh will save current database into a database dump file.
+
