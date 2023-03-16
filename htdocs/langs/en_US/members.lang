@@ -27,6 +27,7 @@ MembersListNotUpToDate=List of valid members with out-of-date contribution
 MembersListExcluded=List of excluded members
 MembersListResiliated=List of terminated members
 MembersListQualified=List of qualified members
+MembersShowVotesAllowed=Show whether votes are allowed, in the table of membership types
 MenuMembersToValidate=Draft members
 MenuMembersValidated=Validated members
 MenuMembersExcluded=Excluded members
