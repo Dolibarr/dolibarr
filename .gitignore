@@ -13,6 +13,7 @@ default.properties
 /.project
 /.pydevproject
 /.vscode
+/.idea
 .DS_Store
 *.iml
 *.orig
