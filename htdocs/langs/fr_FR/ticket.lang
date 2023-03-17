@@ -236,6 +236,7 @@ TicketAssignedToYou=Ticket attribué
 TicketAssignedEmailBody=Vous avez été assigné au ticket #%s par %s
 MarkMessageAsPrivate=Marquer message comme privé
 TicketMessagePrivateHelp=Ce message ne s'affichera pas pour les utilisateurs externes
+TicketMessageRecipientsHelp=le champ des destinataires est rempli avec les contacts actifs liés a la demande de support
 TicketEmailOriginIssuer=Émetteur à l'origine des tickets
 InitialMessage=Message initial
 LinkToAContract=Lien vers un contrat
