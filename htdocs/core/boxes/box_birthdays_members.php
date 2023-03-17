@@ -85,12 +85,12 @@ class box_birthdays_members extends ModeleBoxes
 		if ($user->rights->adherent->lire) {
 			$tmparray = dol_getdate(dol_now(), true);
 
-			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth";
+			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth, date_format(u.birth, '%d') as daya, u.email, u.statut as status, u.datefin";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as u";
 			$sql .= " WHERE u.entity IN (".getEntity('adherent').")";
 			$sql .= " AND u.statut = ".Adherent::STATUS_VALIDATED;
 			$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
-			$sql .= " ORDER BY DAY(u.birth) ASC";
+			$sql .= " ORDER BY daya ASC";	// We want to have date of the month sorted by the day without taking into consideration the year
 			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
@@ -104,8 +104,15 @@ class box_birthdays_members extends ModeleBoxes
 					$memberstatic->id = $objp->rowid;
 					$memberstatic->firstname = $objp->firstname;
 					$memberstatic->lastname = $objp->lastname;
+					$memberstatic->email = $objp->email;
+					$memberstatic->status = $objp->status;
+					$memberstatic->statut = $memberstatic->status;
+					$memberstatic->datefin = $this->db->jdate($objp->datefin);
+					//$memberstatic->need_subscription = 1;
 					$dateb = $this->db->jdate($objp->birth);
 					$age = date('Y', dol_now()) - date('Y', $dateb);
+
+					$typea = '<i class="fas fa-birthday-cake inline-block"></i>';
 
 					$this->info_box_contents[$line][] = array(
 						'td' => '',
@@ -116,6 +123,12 @@ class box_birthdays_members extends ModeleBoxes
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="center nowraponall"',
 						'text' => dol_print_date($dateb, "day", 'tzserver').' - '.$age.' '.$langs->trans('DurationYears')
+					);
+
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="center nowraponall"',
+						'text' => $typea,
+						'asis' => 1
 					);
 
 					/*$this->info_box_contents[$line][] = array(

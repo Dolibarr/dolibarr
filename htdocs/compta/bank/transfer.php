@@ -200,10 +200,13 @@ if ($action == 'add') {
  * View
  */
 
+$form = new Form($db);
+
 $help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:M&oacute;dulo_Bancos_y_Cajas';
 $title = $langs->trans('MenuBankInternalTransfer');
 
 llxHeader('', $title, $help_url);
+
 
 print '		<script type="text/javascript">
         	$(document).ready(function () {
@@ -273,7 +276,6 @@ print '		<script type="text/javascript">
         	});
     		</script>';
 
-$form = new Form($db);
 
 print load_fiche_titre($langs->trans("MenuBankInternalTransfer"), '', 'bank_account');
 
@@ -290,9 +292,13 @@ print '<div class="div-table-responsive-no-min">';
 print '<table id="tablemouvbank" class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("TransferFrom").'</td><td>'.$langs->trans("TransferTo").'</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Description").'</td>';
-print '<td class="right">'.$langs->trans("Amount").'</td>';
-print '<td style="display:none" class="multicurrency">'.$langs->trans("AmountToOthercurrency").'</td>';
+print '<th>'.$langs->trans("TransferFrom").'</th>';
+print '<th>'.$langs->trans("TransferTo").'</th>';
+print '<th>'.$langs->trans("Type").'</th>';
+print '<th>'.$langs->trans("Date").'</th>';
+print '<th>'.$langs->trans("Description").'</th>';
+print '<th class="right">'.$langs->trans("Amount").'</th>';
+//print '<td class="hideobject" class="multicurrency">'.$langs->trans("AmountToOthercurrency").'</td>';
 print '</tr>';
 
 for ($i = 1 ; $i < $MAXLINES; $i++) {
@@ -312,19 +318,18 @@ for ($i = 1 ; $i < $MAXLINES; $i++) {
 		$classi .= ' hidejs hideobject';
 	}
 
-
-	print '<tr class="oddeven '.$classi.'"><td>';
+	print '<tr class="oddeven nowraponall '.$classi.'"><td>';
 	print img_picto('', 'bank_account', 'class="paddingright"');
 	$form->select_comptes(($errori[$i] ? GETPOST($i.'_account_from', 'int') : ''), $i.'_account_from', 0, '', 1, ($errori[$i] ? 'view=view' : ''), isModEnabled('multicurrency') ? 1 : 0, 'minwidth100');
 	print '</td>';
 
-	print "<td>\n";
+	print '<td class="nowraponall">';
 	print img_picto('', 'bank_account', 'class="paddingright"');
 	$form->select_comptes(($errori[$i] ? GETPOST($i.'_account_to', 'int') : ''), $i.'_account_to', 0, '', 1, ($errori[$i] ? 'view=view' : ''), isModEnabled('multicurrency') ? 1 : 0, 'minwidth100');
 	print "</td>\n";
 
 	// Payment mode
-	print "<td>\n";
+	print '<td class="nowraponall">';
 	$idpaymentmodetransfer = dol_getIdFromCode($db, 'VIR', 'c_paiement');
 	$form->select_types_paiements(($errori[$i] ? GETPOST($i.'_type', 'aZ09') : $idpaymentmodetransfer), $i.'_type', '', 0, 1, 0, 0, 1, 'minwidth100');
 	print "</td>\n";
