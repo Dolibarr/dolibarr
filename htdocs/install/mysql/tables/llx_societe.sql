@@ -100,7 +100,8 @@ create table llx_societe
   cond_reglement_supplier  tinyint,                             		-- payment term supplier
   transport_mode_supplier  tinyint,                             		-- transport mode supplier (Intracomm report)
   fk_shipping_method       integer,                                     -- preferred shipping method id
-  tva_assuj                tinyint        DEFAULT 1,	        		-- assujeti ou non a la TVA
+  tva_assuj                tinyint        DEFAULT 1,	        		-- assujetti ou non a la TVA
+  vat_reverse_charge       tinyint        DEFAULT 0,	        		-- By default, company not concerned by vat reverse charge
   localtax1_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 1
   localtax1_value 		   double(6,3),
   localtax2_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 2
