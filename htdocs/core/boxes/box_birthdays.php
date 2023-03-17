@@ -97,7 +97,7 @@ class box_birthdays extends ModeleBoxes
 			$sql .= " AND u.statut = 1";
 			$sql .= dolSqlDateFilter('u.dateemployment', 0, $tmparray['mon'], 0);
 
-			$sql .= " ORDER BY DAY(datea) ASC";
+			$sql .= " ORDER BY datea ASC";
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
 			$result = $this->db->query($sql);
