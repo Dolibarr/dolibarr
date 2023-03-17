@@ -1306,8 +1306,8 @@ class Ticket extends CommonObject
 			'mode'            => $mode,
 		);
 
-       	// Note that $action and $object may have been modified by hook
-		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); 
+		// Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this);
 
 		if ($reshook > 0) {
 			return $hookmanager->resPrint;
