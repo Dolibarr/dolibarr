@@ -3930,8 +3930,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result) {
+		$resql = $this->db->query($sql);
+		if ($resql) {
 			if (!$error) {
 				$result = $this->insertExtraFields();
 				if ($result < 0) {
@@ -3940,7 +3940,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
 			}
 
 			if (!$error && !$notrigger) {
-				global $user;
 				// Call trigger
 				$result = $this->call_trigger('LINEORDER_SUPPLIER_MODIFY', $user);
 				if ($result < 0) {
