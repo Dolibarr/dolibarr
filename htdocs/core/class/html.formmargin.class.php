@@ -98,7 +98,7 @@ class FormMargin
 			}
 
 			$pv = $line->total_ht;
-			$pa_ht = (($pv < 0 || ($pv == 0 && $object->type == $object::TYPE_CREDIT_NOTE)) ? -$line->pa_ht : $line->pa_ht); // We choosed to have line->pa_ht always positive in database, so we guess the correct sign
+			$pa_ht = (($pv < 0 || ($pv == 0 && $object->element == 'facture' && $object->type == $object::TYPE_CREDIT_NOTE)) ? -$line->pa_ht : $line->pa_ht); // We choosed to have line->pa_ht always positive in database, so we guess the correct sign
 			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {	// Special case for old situation mode
 				if (($object->element == 'facture' && $object->type == $object::TYPE_SITUATION)
 					|| ($object->element == 'facture' && $object->type == $object::TYPE_CREDIT_NOTE && getDolGlobalInt('INVOICE_USE_SITUATION_CREDIT_NOTE') && $object->situation_counter > 0)) {
