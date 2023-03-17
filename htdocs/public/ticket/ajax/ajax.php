@@ -55,8 +55,7 @@ include_once '../../../main.inc.php'; // Load $user and permissions
 
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
-$email = str_replace('%', '', GETPOST('email', 'alphanohtml'));
-$token = GETPOST('token', 'alpha', 1);
+$email = GETPOST('email', 'custom', 0, 'FILTER_VALIDATE_EMAIL');
 
 if (!isModEnabled('ticket')) {
 	httponly_accessforbidden('Module Ticket not enabled');
