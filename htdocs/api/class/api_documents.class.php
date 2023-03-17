@@ -607,7 +607,8 @@ class Documents extends DolibarrApi
 
 		if ($ref) {
 			$tmpreldir = '';
-
+			$fetchbyid = false;
+			
 			if ($modulepart == 'facture' || $modulepart == 'invoice') {
 				$modulepart = 'facture';
 
