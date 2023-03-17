@@ -134,7 +134,7 @@ class ExpeditionLineBatch extends CommonObject
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.self::$_table_element);
 
 			$this->fk_expeditiondet = $id_line_expdet;
 		}
