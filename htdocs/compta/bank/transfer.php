@@ -49,6 +49,8 @@ $action = GETPOST('action', 'aZ09');
 
 $hookmanager->initHooks(array('banktransfer'));
 
+$MAXLINES = 10;
+
 
 /*
  * Actions
@@ -63,7 +65,7 @@ if ($action == 'add') {
 	$langs->load('errors');
 	$i = 1;
 
-	while ($i < 20) {
+	while ($i < $MAXLINES) {
 		$dateo[$i] = dol_mktime(12, 0, 0, GETPOST($i.'_month', 'int'), GETPOST($i.'_day', 'int'), GETPOST($i.'_year', 'int'));
 		$label[$i] = GETPOST($i.'_label', 'alpha');
 		$amount[$i] = intval(price2num(GETPOST($i.'_amount', 'alpha'), 'MT', 2));
@@ -81,7 +83,7 @@ if ($action == 'add') {
 	}
 
 	$n = 1;
-	while ($n < 20) {
+	while ($n < $MAXLINES) {
 		if ($tabnum[$n] === 1) {
 			if ($accountfrom[$n] < 0) {
 				$errori[$n]++;
@@ -205,7 +207,6 @@ llxHeader('', $title, $help_url);
 
 print '		<script type="text/javascript">
         	$(document).ready(function () {
-				$("#btncont").hide();
     	  		$(".selectbankaccount").change(function() {
 						console.log("We change bank account");
 						init_page();
@@ -220,11 +221,11 @@ print '		<script type="text/javascript">
 
 					$("select").each(function() {
 						if( $(this).attr("view")){
-						$(this).closest("tr").removeClass("hidejs");
-						} 
+						$(this).closest("tr").removeClass("hidejs").removeClass("hideobject");
+						}
 					});
 
-				
+
 					$.get("'.DOL_URL_ROOT.'/core/ajax/getaccountcurrency.php", {id: account1})
 						.done(function( data ) {
 							if (data != null)
@@ -294,9 +295,7 @@ print '<td class="right">'.$langs->trans("Amount").'</td>';
 print '<td style="display:none" class="multicurrency">'.$langs->trans("AmountToOthercurrency").'</td>';
 print '</tr>';
 
-print '<style>.hidejs {visibility:hidden;}</style>';
-
-for ($i = 1 ; $i< 20; $i++) {
+for ($i = 1 ; $i < $MAXLINES; $i++) {
 	$label = '';
 	$amount = '';
 
@@ -310,30 +309,37 @@ for ($i = 1 ; $i< 20; $i++) {
 		$classi .= ' active';
 	} else {
 		$classi = 'numvir number'. $i;
-		$classi .= ' hidejs';
+		$classi .= ' hidejs hideobject';
 	}
 
 
 	print '<tr class="oddeven '.$classi.'"><td>';
 	print img_picto('', 'bank_account', 'class="paddingright"');
-	$form->select_comptes(($errori[$i] ? GETPOST($i.'_account_from', 'int') : ''), $i.'_account_from', 0, '', 1, ($errori[$i] ? 'view=view' : ''), !isModEnabled('multicurrency') ? 0 : 1);
+	$form->select_comptes(($errori[$i] ? GETPOST($i.'_account_from', 'int') : ''), $i.'_account_from', 0, '', 1, ($errori[$i] ? 'view=view' : ''), isModEnabled('multicurrency') ? 1 : 0, 'minwidth100');
 	print '</td>';
 
 	print "<td>\n";
 	print img_picto('', 'bank_account', 'class="paddingright"');
-	$form->select_comptes(($errori[$i] ? GETPOST($i.'_account_to', 'int') : ''), $i.'_account_to', 0, '', 1, ($errori[$i] ? 'view=view' : ''), !isModEnabled('multicurrency') ? 0 : 1);
+	$form->select_comptes(($errori[$i] ? GETPOST($i.'_account_to', 'int') : ''), $i.'_account_to', 0, '', 1, ($errori[$i] ? 'view=view' : ''), isModEnabled('multicurrency') ? 1 : 0, 'minwidth100');
 	print "</td>\n";
 
+	// Payment mode
 	print "<td>\n";
-
-	$form->select_types_paiements(($errori[$i] ? GETPOST($i.'_type', 'aZ09') : ''), $i.'_type', '');
+	$idpaymentmodetransfer = dol_getIdFromCode($db, 'VIR', 'c_paiement');
+	$form->select_types_paiements(($errori[$i] ? GETPOST($i.'_type', 'aZ09') : $idpaymentmodetransfer), $i.'_type', '', 0, 1, 0, 0, 1, 'minwidth100');
 	print "</td>\n";
-	print '<td>';
+
+	// Date
+	print '<td class="nowraponall">';
 	print $form->selectDate((!empty($dateo[$i]) ? $dateo[$i] : ''), $i.'_', '', '', '', 'add');
 	print "</td>\n";
+
 	print '<td><input name="'.$i.'_label" class="flat quatrevingtpercent selectjs" type="text" value="'.dol_escape_htmltag($label).'"></td>';
+
 	print '<td class="right"><input name="'.$i.'_amount" class="flat right selectjs" type="text" size="6" value="'.dol_escape_htmltag($amount).'"></td>';
-	print '<td style="display:none" class="multicurrency"><input name="'.$i.'_amountto" class="flat" type="text" size="6" value="'.dol_escape_htmltag($amountto).'"></td>';
+
+	print '<td class="hideobject" class="multicurrency"><input name="'.$i.'_amountto" class="flat" type="text" size="6" value="'.dol_escape_htmltag($amountto).'"></td>';
+
 	print '</tr>';
 };
 
@@ -345,15 +351,17 @@ print '<a id="btnincrement" style="margin-left:35%" class="btnTitle btnTitlePlus
 		<span class="fa fa-plus-circle valignmiddle btnTitle-icon">
 		</span>
 	   </a>';
-print '<br><div  class=""><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
+print '<br><div  class=""><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 print '</div>';
+
 print '</form>';
 
 print '		<script type="text/javascript">
 			function increment(){
-				$(".numvir").nextAll(".hidejs:first").removeClass("hidejs").addClass("active").show();
+				$(".numvir").nextAll(".hidejs:first").removeClass("hidejs").removeClass("hideobject").addClass("active").show();
 			};
 			$(".number1").on("click",(function() {
+				console.log("We click on number1");
 				$(".hidejs").each(function (){$(this).hide()});
 				$("#btncont").show();
 			}))
