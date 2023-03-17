@@ -810,6 +810,31 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 }
 
 /**
+ *	Show a message to say access is forbidden and stop program.
+ *  This includes only HTTP header.
+ *	Calling this function terminate execution of PHP.
+ *
+ *	@param	string		$message					Force error message
+ *	@param	int			$http_response_code			HTTP response code
+ *  @param	int			$stringalreadysanitized		1 if string is already sanitized with HTML entities
+ *  @return	void
+ *  @see accessforbidden()
+ */
+function httponly_accessforbidden($message = 1, $http_response_code = 403, $stringalreadysanitized = 0)
+{
+	top_httphead();
+	http_response_code($http_response_code);
+
+	if ($stringalreadysanitized) {
+		print $message;
+	} else {
+		print htmlentities($message);
+	}
+
+	exit(1);
+}
+
+/**
  *	Show a message to say access is forbidden and stop program
  *	Calling this function terminate execution of PHP.
  *
