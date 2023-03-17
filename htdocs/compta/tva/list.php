@@ -171,7 +171,7 @@ $help_url = '';
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = 'SELECT t.rowid, t.amount, t.label, t.datev, t.datep, t.paye, t.fk_typepayment as type, t.fk_account,';
+$sql = 'SELECT t.rowid, t.amount, t.label, t.datev, t.datep, t.paye as status, t.fk_typepayment as type, t.fk_account,';
 $sql.= ' ba.label as blabel, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,';
 $sql.= ' t.num_payment, pst.code as payment_code,';
 $sql .= ' SUM(ptva.amount) as alreadypayed';
@@ -580,10 +580,11 @@ while ($i < $imaxinloop) {
 	$tva_static->id = $obj->rowid;
 	$tva_static->ref = $obj->rowid;
 	$tva_static->label = $obj->label;
-	$tva_static->paiementtype = $obj->paye;
 	$tva_static->type_payment = $obj->payment_code;
 	$tva_static->datev = $obj->datev;
 	$tva_static->amount = $obj->amount;
+	$tva_static->paye = $obj->status;
+	$tva_static->status = $obj->status;
 	$object = $tva_static;
 
 	if ($mode == 'kanban') {
@@ -718,7 +719,7 @@ while ($i < $imaxinloop) {
 		}
 
 		if (!empty($arrayfields['t.status']['checked'])) {
-			print '<td class="nowrap right">' . $tva_static->LibStatut($obj->paye, 5, $obj->alreadypayed) . '</td>';
+			print '<td class="nowrap right">' . $tva_static->getLibStatut(5, $obj->alreadypayed) . '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
