@@ -373,4 +373,7 @@ UPDATE llx_c_country SET numeric_code = '262' WHERE code_iso = 'DJI';
 UPDATE llx_c_country SET numeric_code = '894' WHERE code_iso = 'ZMB';
 UPDATE llx_c_country SET numeric_code = '716' WHERE code_iso = 'ZWE';
 
+-- Generate documents on product batch
+ALTER TABLE llx_product_lot ADD COLUMN model_pdf varchar(255) AFTER scrapping_date;
+ALTER TABLE llx_product_lot ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
 
