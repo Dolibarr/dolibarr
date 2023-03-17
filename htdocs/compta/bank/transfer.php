@@ -6,6 +6,8 @@
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2023      Maxime Nicolas          <maxime@oarces.com>
+ * Copyright (C) 2023      Benjamin GREMBI         <benjamin@oarces.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +37,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'multicurrency'));
 
-
 $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
@@ -45,7 +46,6 @@ if (!$user->rights->banque->transfer) {
 }
 
 $action = GETPOST('action', 'aZ09');
-$error = 0;
 
 $hookmanager->initHooks(array('banktransfer'));
 
@@ -60,113 +60,139 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if ($action == 'add') {
-	$langs->load("errors");
+	$langs->load('errors');
+	$i = 1;
 
-	$dateo = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-	$label = GETPOST('label', 'alpha');
-	$amount = price2num(GETPOST('amount', 'alpha'), 'MT', 2);
-	$amountto = price2num(GETPOST('amountto', 'alpha'), 'MT', 2);
+	while ($i < 20) {
+		$dateo[$i] = dol_mktime(12, 0, 0, GETPOST($i.'_month', 'int'), GETPOST($i.'_day', 'int'), GETPOST($i.'_year', 'int'));
+		$label[$i] = GETPOST($i.'_label', 'alpha');
+		$amount[$i] = intval(price2num(GETPOST($i.'_amount', 'alpha'), 'MT', 2));
+		$amountto[$i] = price2num(GETPOST($i.'_amountto', 'alpha'), 'MT', 2);
+		$accountfrom[$i] = intval(GETPOST($i.'_account_from', 'int'));
+		$accountto[$i] = intval(GETPOST($i.'_account_to', 'int'));
+		$type[$i] = GETPOST($i.'_type', 'int');
+		$errori[$i] = 0;
 
-	if (!$label) {
-		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Description")), null, 'errors');
+		$tabnum[$i] = 0;
+		if (!empty($label[$i]) || !empty($type[$i]) || !($amount[$i] <= 0) || !($accountfrom[$i] < 0) || !($accountto[$i]  < 0)) {
+			$tabnum[$i] = 1;
+		}
+		$i++;
 	}
-	if (!$amount) {
-		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
-	}
-	if (!GETPOST('account_from', 'int')) {
-		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TransferFrom")), null, 'errors');
-	}
-	if (!GETPOST('account_to', 'int')) {
-		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TransferTo")), null, 'errors');
-	}
-	if (!$error) {
-		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-		$accountfrom = new Account($db);
-		$accountfrom->fetch(GETPOST('account_from', 'int'));
+	$n = 1;
+	while ($n < 20) {
+		if ($tabnum[$n] === 1) {
+			if ($accountfrom[$n] < 0) {
+				$errori[$n]++;
+				setEventMessages($langs->trans("ErrorFieldRequired", '#'.$n. ' ' .$langs->transnoentities("TransferFrom")), null, 'errors');
+			}
+			if ($accountto[$n] < 0) {
+				$errori[$n]++;
+				setEventMessages($langs->trans("ErrorFieldRequired", '#'.$n. ' ' .$langs->transnoentities("TransferTo")), null, 'errors');
+			}
+			if (!$type[$n]) {
+				$errori[$n]++;
+				setEventMessages($langs->trans("ErrorFieldRequired", '#'.$n. ' ' .$langs->transnoentities("Type")), null, 'errors');
+			}
+			if (!$dateo[$n]) {
+				$errori[$n]++;
+				setEventMessages($langs->trans("ErrorFieldRequired", '#'.$n. ' ' .$langs->transnoentities("Date")), null, 'errors');
+			}
 
-		$accountto = new Account($db);
-		$accountto->fetch(GETPOST('account_to', 'int'));
+			if (!($label[$n])) {
+				$errori[$n]++;
+				setEventMessages($langs->trans("ErrorFieldRequired", '#'.$n. ' ' . $langs->transnoentities("Description")), null, 'errors');
+			}
+			if (!($amount[$n])) {
+				$errori[$n]++;
+				setEventMessages($langs->trans("ErrorFieldRequired", '#'.$n. ' ' .$langs->transnoentities("Amount")), null, 'errors');
+			}
 
-		if ($accountto->currency_code == $accountfrom->currency_code) {
-			$amountto = $amount;
-		} else {
-			if (!$amountto) {
-				$error++;
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AmountTo")), null, 'errors');
+			if (!$errori[$n]) {
+				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+				$accountfrom = new Account($db);
+				$accountfrom->fetch(GETPOST($n.'_account_from', 'int'));
+
+				$accountto = new Account($db);
+				$accountto->fetch(GETPOST($n.'_account_to', 'int'));
+
+				if ($accountto->currency_code == $accountfrom->currency_code) {
+					$amountto[$n] = $amount[$n];
+				} else {
+					if (!$amountto[$n]) {
+						$error[$n]++;
+						setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AmountTo")).' #'.$n, null, 'errors');
+					}
+				}
+				if ($amountto[$n] < 0) {
+					$errori[$n]++;
+					setEventMessages($langs->trans("AmountMustBePositive").' #'.$n, null, 'errors');
+				}
+
+				if ($accountto->id == $accountfrom->id) {
+					$errori[$n]++;
+					setEventMessages($langs->trans("ErrorFromToAccountsMustDiffers").' #'.$n, null, 'errors');
+				}
+			}
+
+			if ($errori[$n] == 0) {
+				$db->begin();
+
+				$bank_line_id_from = 0;
+				$bank_line_id_to = 0;
+				$result = 0;
+
+				// By default, electronic transfert from bank to bank
+				$typefrom = $type[$n];
+				$typeto = $type[$n];
+				if ($accountto->courant == Account::TYPE_CASH || $accountfrom->courant == Account::TYPE_CASH) {
+					// This is transfer of change
+					$typefrom = 'LIQ';
+					$typeto = 'LIQ';
+				}
+
+				if (!$errori[$n]) {
+					$bank_line_id_from = $accountfrom->addline($dateo[$n], $typefrom, $label[$n], price2num(-1 * $amount[$n]), '', '', $user);
+				}
+				if (!($bank_line_id_from > 0)) {
+					$errori[$n]++;
+				}
+				if (!$errori[$n]) {
+					$bank_line_id_to = $accountto->addline($dateo[$n], $typeto, $label[$n], $amountto[$n], '', '', $user);
+				}
+				if (!($bank_line_id_to > 0)) {
+					$errori[$n]++;
+				}
+
+				if (!$errori[$n]) {
+					$result = $accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
+				}
+				if (!($result > 0)) {
+					$errori++;
+				}
+				if (!$errori[$n]) {
+					$result = $accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
+				}
+				if (!($result > 0)) {
+					$errori[$n]++;
+				}
+				if (!$errori[$n]) {
+					$mesgs = $langs->trans("TransferFromToDone", '{s1}', '{s2}', $amount[$n], $langs->transnoentitiesnoconv("Currency".$conf->currency));
+					$mesgs = str_replace('{s1}', '<a href="bankentries_list.php?id='.$accountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$accountfrom->label.'</a>', $mesgs);
+					$mesgs = str_replace('{s2}', '<a href="bankentries_list.php?id='.$accountto->id.'">'.$accountto->label.'</a>', $mesgs);
+					setEventMessages($mesgs, null, 'mesgs');
+					$db->commit();
+				} else {
+					setEventMessages($accountfrom->error.' '.$accountto->error, null, 'errors');
+					$db->rollback();
+				}
 			}
 		}
-		if ($amountto < 0) {
-			$error++;
-			setEventMessages($langs->trans("AmountMustBePositive"), null, 'errors');
-		}
-
-		if ($accountto->id == $accountfrom->id) {
-			$error++;
-			setEventMessages($langs->trans("ErrorFromToAccountsMustDiffers"), null, 'errors');
-		}
-
-		if (empty($error)) {
-			$db->begin();
-
-			$bank_line_id_from = 0;
-			$bank_line_id_to = 0;
-			$result = 0;
-
-			// By default, electronic transfert from bank to bank
-			$typefrom = 'PRE';
-			$typeto = 'VIR';
-			if ($accountto->courant == Account::TYPE_CASH || $accountfrom->courant == Account::TYPE_CASH) {
-				// This is transfer of change
-				$typefrom = 'LIQ';
-				$typeto = 'LIQ';
-			}
-
-			if (!$error) {
-				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, price2num(-1 * $amount), '', '', $user);
-			}
-			if (!($bank_line_id_from > 0)) {
-				$error++;
-			}
-			if (!$error) {
-				$bank_line_id_to = $accountto->addline($dateo, $typeto, $label, $amountto, '', '', $user);
-			}
-			if (!($bank_line_id_to > 0)) {
-				$error++;
-			}
-
-			if (!$error) {
-				$result = $accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
-			}
-			if (!($result > 0)) {
-				$error++;
-			}
-			if (!$error) {
-				$result = $accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
-			}
-			if (!($result > 0)) {
-				$error++;
-			}
-
-			if (!$error) {
-				$mesgs = $langs->trans("TransferFromToDone", '{s1}', '{s2}', $amount, $langs->transnoentitiesnoconv("Currency".$conf->currency));
-				$mesgs = str_replace('{s1}', '<a href="bankentries_list.php?id='.$accountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$accountfrom->label.'</a>', $mesgs);
-				$mesgs = str_replace('{s2}', '<a href="bankentries_list.php?id='.$accountto->id.'">'.$accountto->label.'</a>', $mesgs);
-				setEventMessages($mesgs, null, 'mesgs');
-				$db->commit();
-			} else {
-				setEventMessages($accountfrom->error.' '.$accountto->error, null, 'errors');
-				$db->rollback();
-			}
-		}
+		$n++;
 	}
 }
-
-
 
 /*
  * View
@@ -179,6 +205,7 @@ llxHeader('', $title, $help_url);
 
 print '		<script type="text/javascript">
         	$(document).ready(function () {
+				$("#btncont").hide();
     	  		$(".selectbankaccount").change(function() {
 						console.log("We change bank account");
 						init_page();
@@ -191,6 +218,13 @@ print '		<script type="text/javascript">
         			var currencycode1="";
         			var currencycode2="";
 
+					$("select").each(function() {
+						if( $(this).attr("view")){
+						$(this).closest("tr").removeClass("hidejs");
+						} 
+					});
+
+				
 					$.get("'.DOL_URL_ROOT.'/core/ajax/getaccountcurrency.php", {id: account1})
 						.done(function( data ) {
 							if (data != null)
@@ -240,61 +274,93 @@ print '		<script type="text/javascript">
 
 $form = new Form($db);
 
-$account_from = '';
-$account_to = '';
-$label = '';
-$amount = '';
-$amountto = '';
-
-if ($error) {
-	$account_from = GETPOST('account_from', 'int');
-	$account_to = GETPOST('account_to', 'int');
-	$label = GETPOST('label', 'alpha');
-	$amount = GETPOST('amount', 'alpha');
-}
-
 print load_fiche_titre($langs->trans("MenuBankInternalTransfer"), '', 'bank_account');
 
 print '<span class="opacitymedium">'.$langs->trans("TransferDesc").'</span>';
-print "<br><br>";
+print '<br><br>';
 
 print '<form name="add" method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-
 print '<input type="hidden" name="action" value="add">';
 
+print '<div>';
+
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
+print '<table id="tablemouvbank" class="noborder centpercent">';
+
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("TransferFrom").'</td><td>'.$langs->trans("TransferTo").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("TransferFrom").'</td><td>'.$langs->trans("TransferTo").'</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Description").'</td>';
 print '<td class="right">'.$langs->trans("Amount").'</td>';
 print '<td style="display:none" class="multicurrency">'.$langs->trans("AmountToOthercurrency").'</td>';
 print '</tr>';
 
-print '<tr class="oddeven"><td>';
-print img_picto('', 'bank_account', 'class="paddingright"');
-$form->select_comptes($account_from, 'account_from', 0, '', 1, '', !isModEnabled('multicurrency') ? 0 : 1);
-print "</td>";
+print '<style>.hidejs {visibility:hidden;}</style>';
 
-print "<td>\n";
-print img_picto('', 'bank_account', 'class="paddingright"');
-$form->select_comptes($account_to, 'account_to', 0, '', 1, '', !isModEnabled('multicurrency') ? 0 : 1);
-print "</td>\n";
+for ($i = 1 ; $i< 20; $i++) {
+	$label = '';
+	$amount = '';
 
-print "<td>";
-print $form->selectDate((!empty($dateo) ? $dateo : ''), '', '', '', '', 'add');
-print "</td>\n";
-print '<td><input name="label" class="flat quatrevingtpercent" type="text" value="'.dol_escape_htmltag($label).'"></td>';
-print '<td class="right"><input name="amount" class="flat right" type="text" size="6" value="'.dol_escape_htmltag($amount).'"></td>';
-print '<td style="display:none" class="multicurrency"><input name="amountto" class="flat" type="text" size="6" value="'.dol_escape_htmltag($amountto).'"></td>';
+	if ($errori[$i]) {
+		$label = GETPOST($i.'_label', 'alpha');
+		$amount = GETPOST($i.'_amount', 'alpha');
+	}
 
-print "</table>";
+	if ($i == 1) {
+		$classi = 'numvir number'. $i;
+		$classi .= ' active';
+	} else {
+		$classi = 'numvir number'. $i;
+		$classi .= ' hidejs';
+	}
+
+
+	print '<tr class="oddeven '.$classi.'"><td>';
+	print img_picto('', 'bank_account', 'class="paddingright"');
+	$form->select_comptes(($errori[$i] ? GETPOST($i.'_account_from', 'int') : ''), $i.'_account_from', 0, '', 1, ($errori[$i] ? 'view=view' : ''), !isModEnabled('multicurrency') ? 0 : 1);
+	print '</td>';
+
+	print "<td>\n";
+	print img_picto('', 'bank_account', 'class="paddingright"');
+	$form->select_comptes(($errori[$i] ? GETPOST($i.'_account_to', 'int') : ''), $i.'_account_to', 0, '', 1, ($errori[$i] ? 'view=view' : ''), !isModEnabled('multicurrency') ? 0 : 1);
+	print "</td>\n";
+
+	print "<td>\n";
+
+	$form->select_types_paiements(($errori[$i] ? GETPOST($i.'_type', 'aZ09') : ''), $i.'_type', '');
+	print "</td>\n";
+	print '<td>';
+	print $form->selectDate((!empty($dateo[$i]) ? $dateo[$i] : ''), $i.'_', '', '', '', 'add');
+	print "</td>\n";
+	print '<td><input name="'.$i.'_label" class="flat quatrevingtpercent selectjs" type="text" value="'.dol_escape_htmltag($label).'"></td>';
+	print '<td class="right"><input name="'.$i.'_amount" class="flat right selectjs" type="text" size="6" value="'.dol_escape_htmltag($amount).'"></td>';
+	print '<td style="display:none" class="multicurrency"><input name="'.$i.'_amountto" class="flat" type="text" size="6" value="'.dol_escape_htmltag($amountto).'"></td>';
+	print '</tr>';
+};
+
+print '</table>';
 print '</div>';
+print '</div>';
+print '<div id="btncont" style="display: flex; align-items: center">';
+print '<a id="btnincrement" style="margin-left:35%" class="btnTitle btnTitlePlus" onclick="increment()" title="Ajouter écriture">
+		<span class="fa fa-plus-circle valignmiddle btnTitle-icon">
+		</span>
+	   </a>';
+print '<br><div  class=""><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
+print '</div>';
+print '</form>';
 
-print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
-
-print "</form>";
+print '		<script type="text/javascript">
+			function increment(){
+				$(".numvir").nextAll(".hidejs:first").removeClass("hidejs").addClass("active").show();
+			};
+			$(".number1").on("click",(function() {
+				$(".hidejs").each(function (){$(this).hide()});
+				$("#btncont").show();
+			}))
+			</script>
+	 ';
 
 // End of page
 llxFooter();
+
 $db->close();
