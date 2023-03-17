@@ -5441,7 +5441,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	} else {
 		$nextpage = 0;
 	}
-	//print 'totalnboflines='.$totalnboflines.'-savlimit='.$savlimit.'-limit='.$limit.'-num='.$num.'-nextpage='.$nextpage;
+	//print 'totalnboflines='.$totalnboflines.'-savlimit='.$savlimit.'-limit='.$limit.'-num='.$num.'-nextpage='.$nextpage.'-hideselectlimit='.$hideselectlimit.'-hidenavigation='.$hidenavigation;
 
 	print "\n";
 	print "<!-- Begin title -->\n";
@@ -5584,7 +5584,8 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 		print $beforearrows;
 		print '</li>';
 	}
-	if (!empty($hidenavigation)) {
+
+	if (empty($hidenavigation)) {
 		if ((int) $limit > 0 && empty($hideselectlimit)) {
 			$pagesizechoices = '10:10,15:15,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000';
 			$pagesizechoices .= ',5000:5000,10000:10000,20000:20000';
