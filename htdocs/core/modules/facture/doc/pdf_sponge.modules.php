@@ -134,11 +134,6 @@ class pdf_sponge extends ModelePDFFactures
 	public $heightforfooter;
 
 	/**
-	 * @var int heightforfooter
-	 */
-	public $heightforqrinvoice;
-
-	/**
 	 * @var int tab_top
 	 */
 	public $tab_top;
@@ -387,12 +382,9 @@ class pdf_sponge extends ModelePDFFactures
 				$this->heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$this->heightforfooter = $this->marge_basse + (empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 12 : 22); // Height reserved to output the footer (value include bottom margin)
 
-				$this->heightforqrinvoice = 0;
-				if (!empty($conf->global->INVOICE_ADD_SWISS_QR_CODE)) {
+				if ($this->getHeightForQRInvoice(1, $object, $langs) > 0) {
 					// Shrink infotot to a base 30
 					$this->heightforinfotot = 30 + (4 * $nbpayments); // Height reserved to output the info and total part and payment part
-					// SWIFT's requirement; the SwissQR is explicitly that size, from the bottom of the page
-					$this->heightforqrinvoice = 105;
 				}
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -544,7 +536,7 @@ class pdf_sponge extends ModelePDFFactures
 
 
 				// Define heigth of table for lines (for first page)
-				$tab_height = $this->page_hauteur - $this->tab_top - $this->heightforfooter - $this->heightforfreetext - $this->heightforqrinvoice;
+				$tab_height = $this->page_hauteur - $this->tab_top - $this->heightforfooter - $this->heightforfreetext - $this->getHeightForQRInvoice(1, $object, $langs);
 
 				$nexY = $this->tab_top - 1;
 
@@ -739,7 +731,7 @@ class pdf_sponge extends ModelePDFFactures
 
 					$pdf->setTopMargin($this->tab_top_newpage);
 					$pageposbefore = $pdf->getPage();
-					$page_bottom_margin =  $this->heightforfooter + $this->heightforfreetext + $this->heightforinfotot + ($pageposbefore == 1 ? $this->heightforqrinvoice : 0);
+					$page_bottom_margin =  $this->heightforfooter + $this->heightforfreetext + $this->heightforinfotot + $this->getHeightForQRInvoice($pageposbefore, $object, $langs);
 					$pdf->setPageOrientation('', 1, $page_bottom_margin);
 
 					$showpricebeforepagebreak = 1;
@@ -994,7 +986,7 @@ class pdf_sponge extends ModelePDFFactures
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter) {
 						$pdf->setPage($pagenb);
-						$heightforqrinvoice = $pagenb == 1 ? $this->heightforqrinvoice : 0;
+						$heightforqrinvoice = $this->getHeightForQRInvoice($pagenb, $object, $langs);
 						if ($pagenb == $pageposbeforeprintlines) {
 							$this->_tableau($pdf, $this->tab_top, $this->page_hauteur - $this->tab_top - $this->heightforfooter - $heightforqrinvoice, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code, $outputlangsbis);
 						} else {
@@ -1013,7 +1005,7 @@ class pdf_sponge extends ModelePDFFactures
 					}
 
 					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
-						$heightforqrinvoice = $pagenb == 1 ? $this->heightforqrinvoice : 0;
+						$heightforqrinvoice = $this->getHeightForQRInvoice($pagenb, $object, $langs);
 						if ($pagenb == $pageposafter) {
 							$this->_tableau($pdf, $this->tab_top, $this->page_hauteur - $this->tab_top - $this->heightforfooter - $heightforqrinvoice, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code, $outputlangsbis);
 						} else {
@@ -1033,7 +1025,7 @@ class pdf_sponge extends ModelePDFFactures
 				}
 
 				// Show square
-				$heightforqrinvoice = $pagenb == 1 ? $this->heightforqrinvoice : 0;
+				$heightforqrinvoice = $this->getHeightForQRInvoice($pagenb, $object, $langs);
 				if ($pagenb == $pageposbeforeprintlines) {
 					$this->_tableau($pdf, $this->tab_top, $this->page_hauteur - $this->tab_top - $this->heightforinfotot - $this->heightforfreetext - $this->heightforfooter - $heightforqrinvoice, 0, $outputlangs, $hidetop, 0, $object->multicurrency_code, $outputlangsbis);
 					$bottomlasttab = $this->page_hauteur - $this->heightforinfotot - $this->heightforfreetext - $this->heightforfooter - $heightforqrinvoice + 1;
@@ -2452,7 +2444,7 @@ class pdf_sponge extends ModelePDFFactures
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
-		return pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->emetteur, ($pdf->getPage() == 1 ? $this->heightforqrinvoice : 0) + $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext, $this->page_largeur, $this->watermark);
+		return pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->emetteur, $this->getHeightForQRInvoice($pdf->getPage(), $object, $outputlangs) + $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext, $this->page_largeur, $this->watermark);
 	}
 
 	/**

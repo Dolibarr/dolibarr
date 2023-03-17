@@ -167,6 +167,33 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	}
 
 	/**
+	 * Get the height for bottom-page QR invoice in mm, depending on the page number.
+	 *
+	 * @param int       $pagenbr Page number
+	 * @param Facture   $object  Invoice object
+	 * @param Translate $langs   Translation object
+	 * @return int      Height in mm of the bottom-page QR invoice. Can be zero if not on right page; not enabled
+	 */
+	protected function getHeightForQRInvoice(int $pagenbr, \Facture $object, \Translate $langs) : int
+	{
+		global $conf;
+
+		// Keep it, reset it after QRinvoice getter
+		$error = $this->error;
+
+		if (!empty($conf->global->INVOICE_ADD_SWISS_QR_CODE)) {
+			if (!$this->getSwissQrBill($object, $langs)) {
+				// Reset error to previous one if exists
+				$this->error = $error;
+				return 0;
+			}
+			// SWIFT's requirementis 105, but we get more room with 100 and the page nuber is in a nice place.
+			return $pagenbr == 1 ? 100 : 0;
+		}
+		return 0;
+	}
+
+	/**
 	 * Add SwissQR invoice at bottom of page 1
 	 *
 	 * @param TCPDF     $pdf     TCPDF object
