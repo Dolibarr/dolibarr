@@ -3316,3 +3316,74 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
 
 	return $file_list;
 }
+
+/**
+ * Function to manage the drag and drop file.
+ * We use global variable $object
+ *
+ * @return  string	Js script to display
+ */
+function dragAndDropFileUpload()
+{
+	global $object;
+	//TODO: Find a way to display text over div
+	$out = "<script>";
+	$out .= "\n/* JS CODE TO ENABLE DRAG AND DROP OF FILE */\n";
+	$out .= '
+		jQuery(document).ready(function() {
+			counterdragdrop = 0;
+			$(".cssDragDropArea").on("dragenter", function(ev) {
+				// Entering drop area. Highlight area
+				counterdragdrop++;
+				$(".cssDragDropArea").addClass("highlightDragDropArea");
+				ev.preventDefault();
+			});
+			
+			$(".cssDragDropArea").on("dragleave", function(ev) {
+				// Going out of drop area. Remove Highlight
+				counterdragdrop--;
+				if (counterdragdrop === 0) { 
+					$(".cssDragDropArea").removeClass("highlightDragDropArea");
+				}
+			});
+
+			$(".cssDragDropArea").on("dragover", function(ev) {
+				ev.preventDefault();
+				return false;
+			});
+
+			$(".cssDragDropArea").on("drop", function(e) {
+				console.log("Trigger event file droped");
+				e.preventDefault();
+				fd = new FormData();
+				fd.append("fk_element","'.dol_escape_json($object->id).'");
+				fd.append("element","'.dol_escape_json($object->element).'");
+				fd.append("token","'.newToken().'");
+				fd.append("action","uploadfile");
+				var dataTransfer = e.originalEvent.dataTransfer;
+				if(dataTransfer.files && dataTransfer.files.length){
+					var droppedFiles = e.originalEvent.dataTransfer.files;
+					$.each(droppedFiles, function(index,file){
+						fd.append("files[]",file,file.name)
+					});
+				}
+				$(".cssDragDropArea").removeClass("highlightDragDropArea");
+				counterdragdrop = 0;
+				$.ajax({
+					url:"'.DOL_URL_ROOT.'/core/ajax/fileupload.php",
+					type:"POST",
+					processData:false,
+					contentType: false,
+					data:fd,
+					success:function(){ 
+						console.log("Uploaded.",arguments);
+						window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_json($object->id).'";
+					},
+					error:function(){ console.log("Error Uploading.",arguments) },
+				})
+			});
+		});
+	';
+	$out .= "</script>\n";
+	return $out;
+}

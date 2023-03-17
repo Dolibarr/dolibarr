@@ -2042,7 +2042,9 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	if (!$notab || $notab == -1 || $notab == -2 || $notab == -3) {
 		$out .= "\n".'<div class="tabBar'.($notab == -1 ? '' : ($notab == -2 ? ' tabBarNoTop' : (($notab == -3 ? ' noborderbottom' : '').' tabBarWithBottom'))).(!empty($dragdropfile) ? ' cssDragDropArea' : '').'">'."\n";
 	}
-
+	if (!empty($dragdropfile)) {
+		print dragAndDropFileUpload();
+	}
 	$parameters = array('tabname' => $active, 'out' => $out);
 	$reshook = $hookmanager->executeHooks('printTabsHead', $parameters); // This hook usage is called just before output the head of tabs. Take also a look at "completeTabsHead"
 	if ($reshook > 0) {
