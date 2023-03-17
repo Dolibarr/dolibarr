@@ -1928,10 +1928,6 @@ abstract class CommonObject
 			$id_field = 'rowid';
 		}
 
-		$error = 0;
-
-		$this->db->begin();
-
 		// Special case
 		if ($table == 'product' && $field == 'note_private') {
 			$field = 'note';
@@ -1939,6 +1935,32 @@ abstract class CommonObject
 		if (in_array($table, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment'))) {
 			$fk_user_field = 'fk_user_mod';
 		}
+
+		if ($trigkey) {
+			$oldvalue = null;
+
+			$sql = "SELECT " . $field;
+			$sql .= " FROM " . MAIN_DB_PREFIX . $table;
+			$sql .= " WHERE " . $id_field . " = " . ((int)$id);
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				if ($obj = $this->db->fetch_object($resql)) {
+					if ($format == 'date') {
+						$oldvalue = $this->db->jdate($obj->$field);
+					} else {
+						$oldvalue = $obj->$field;
+					}
+				}
+			} else {
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
+		}
+
+		$error = 0;
+
+		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
 
@@ -1970,6 +1992,11 @@ abstract class CommonObject
 				} else {
 					$result = $this->fetchCommon($id);
 				}
+				$this->oldcopy = clone $this;
+				if (property_exists($this->oldcopy, $field)) {
+					$this->oldcopy->$field = $oldvalue;
+				}
+
 				if ($result >= 0) {
 					$result = $this->call_trigger($trigkey, (!empty($fuser) && is_object($fuser)) ? $fuser : $user); // This may set this->errors
 				}
