@@ -60,7 +60,7 @@ if ($reshook < 0) {
 
 
 //var_dump($extrafields->attributes[$object->table_element]);
-if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($conf->global->EASYA_ONLY_SHOW_PUBLIC_TICKET_EF) && empty($reshook) && isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
 	$lastseparatorkeyfound = '';
 	$extrafields_collapse_num = '';
 	$extrafields_collapse_num_old = '';
