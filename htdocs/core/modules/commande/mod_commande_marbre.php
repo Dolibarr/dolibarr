@@ -20,12 +20,12 @@
 /**
  *  \file       htdocs/core/modules/commande/mod_commande_marbre.php
  *  \ingroup    commande
- *  \brief      File of class to manage customer order numbering rules Marbre
+ *  \brief      File of class to manage Sales Order numbering rules Marbre
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 
 /**
- *	Class to manage customer order numbering rules Marbre
+ *	Class to manage Sales Order numbering rules Marbre
  */
 class mod_commande_marbre extends ModeleNumRefCommandes
 {
@@ -49,6 +49,18 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 
 
 	/**
+	 * Constructor
+	 */
+	public function __construct()
+	{
+		global $conf, $mysoc;
+
+		if ((float) $conf->global->MAIN_VERSION_LAST_INSTALL >= 16.0 && $mysoc->country_code != 'FR') {
+			$this->prefix = 'SO'; // We use correct standard code "SO = Sale Order"
+		}
+	}
+
+	/**
 	 *  Return description of numbering module
 	 *
 	 *  @return     string      Text with description
@@ -56,7 +68,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	public function info()
 	{
 		global $langs;
-	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
 	}
 
 
@@ -81,7 +93,8 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	{
 		global $conf, $langs, $db;
 
-		$coyymm = ''; $max = '';
+		$coyymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
@@ -90,13 +103,14 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$row = $db->fetch_row($resql);
-			if ($row) { $coyymm = substr($row[0], 0, 6); $max = $row[0]; }
+			if ($row) {
+				$coyymm = substr($row[0], 0, 6);
+				$max = $row[0];
+			}
 		}
-		if ($coyymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
-		{
+		if ($coyymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm)) {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
@@ -124,11 +138,13 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 		$sql .= " AND entity IN (".getEntity('ordernumber', 1, $object).")";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max = 0;
+			if ($obj) {
+				$max = intval($obj->max);
+			} else {
+				$max = 0;
+			}
 		} else {
 			dol_syslog("mod_commande_marbre::getNextValue", LOG_DEBUG);
 			return -1;
@@ -138,8 +154,11 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 		$date = $object->date;
 		$yymm = strftime("%y%m", $date);
 
-		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s", $max + 1);
+		if ($max >= (pow(10, 4) - 1)) {
+			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+		} else {
+			$num = sprintf("%04s", $max + 1);
+		}
 
 		dol_syslog("mod_commande_marbre::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;

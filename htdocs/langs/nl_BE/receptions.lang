@@ -11,7 +11,6 @@ ReceptionsAndReceivingForSameOrder=Ontvangsten en bonnen voor deze bestelling
 ReceptionSheet=Ontvangst blad
 StatsOnReceptionsOnlyValidated=Statistieken uitgevoerd op ontvangsten alleen gevalideerd. De gebruikte datum is de datum van ontvangst van de ontvangstbon (geplande leverdatum is niet altijd bekend).
 ActionsOnReception=Evenementen bij de receptie
-ReceptionCreationIsDoneFromOrder=Momenteel wordt een nieuwe ontvangst gemaakt vanaf de bestelkaart.
 ProductQtyInSuppliersReceptionAlreadyRecevied=Ontvangen hoeveelheid producten uit geopende leveranciersbestelling
 ValidateOrderFirstBeforeReception=Je moet eerst de bestelling valideren voordat je recepties kunt maken.
 ReceptionsNumberingModules=Nummeringsmodule voor recepties

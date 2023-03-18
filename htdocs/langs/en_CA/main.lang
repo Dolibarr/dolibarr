@@ -26,4 +26,3 @@ TotalVAT=Total GST
 TotalLT1=Total PST
 VAT=GST
 VATRate=GST rate
-CREATEInDolibarr=Record %s create

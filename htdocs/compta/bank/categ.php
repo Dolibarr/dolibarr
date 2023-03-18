@@ -21,27 +21,37 @@
  */
 
 /**
- *      \file       htdocs/compta/bank/categ.php
- *      \ingroup    compta
- *      \brief      Page ajout de categories bancaires
+ *    \file       htdocs/compta/bank/categ.php
+ *    \ingroup    compta/bank
+ *    \brief      Page to manage Bank Categories
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
+
+// Get Parameters
 $action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
-
-if (!$user->rights->banque->configurer)
-  accessforbidden();
-
-$bankcateg = new BankCateg($db);
 $categid = GETPOST('categid');
 $label = GETPOST("label");
+
+
+// Initialize technical objects
+$bankcateg = new BankCateg($db);
+
+
+// Security Check  Access Control
+if (!$user->rights->banque->configurer) {
+	accessforbidden();
+}
 
 
 
@@ -49,8 +59,7 @@ $label = GETPOST("label");
  * Actions
  */
 
-if (GETPOST('add'))
-{
+if (GETPOST('add')) {
 	if ($label) {
 		$bankcateg = new BankCateg($db);
 		$bankcateg->label = GETPOST('label');
@@ -79,13 +88,18 @@ if ($categid) {
  * View
  */
 
-llxHeader();
+$title = $langs->trans('RubriquesTransactions');
+$help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:M&oacute;dulo_Bancos_y_Cajas';
+
+llxHeader('', $title, $help_url);
 
 
 print load_fiche_titre($langs->trans("RubriquesTransactions"), '', 'object_category');
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+if ($optioncss != '') {
+	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+}
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
@@ -104,12 +118,11 @@ print '<td></td>';
 print "</tr>\n";
 
 // Line to add category
-if ($action != 'edit')
-{
+if ($action != 'edit') {
 	print '<tr class="oddeven">';
 	print '<td>&nbsp;</td><td><input name="label" type="text" class="maxwidth100"></td>';
 	print '<td></td>';
-	print '<td class="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';
+	print '<td class="center"><input type="submit" name="add" class="button button-add small" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
 }
 
@@ -120,19 +133,17 @@ $sql .= " WHERE entity = ".$conf->entity;
 $sql .= " ORDER BY rowid";
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
-	$i = 0; $total = 0;
+	$i = 0;
+	$total = 0;
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$objp = $db->fetch_object($result);
 
 		print '<tr class="oddeven">';
 		print '<td>'.$objp->rowid.'</td>';
-		if (GETPOST('action', 'aZ09') == 'edit' && GETPOST("categid") == $objp->rowid)
-		{
+		if (GETPOST('action', 'aZ09') == 'edit' && GETPOST("categid") == $objp->rowid) {
 			print '<td colspan="3">';
 			print '<input type="hidden" name="categid" value="'.$objp->rowid.'">';
 			print '<input name="label" type="text" size=45 value="'.$objp->label.'">';
@@ -144,8 +155,8 @@ if ($result)
 			//print '<a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$langs->trans("List").'</a>';
 			print '</td>';
 			print '<td class="center">';
-			print '<a class="editfielda reposition marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=edit&amp;token='.newToken().'">'.img_edit().'</a>';
-			print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete&amp;token='.newToken().'">'.img_delete().'</a>';
+			print '<a class="editfielda reposition marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
+			print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
 			print '</td>';
 		}
 		print "</tr>";

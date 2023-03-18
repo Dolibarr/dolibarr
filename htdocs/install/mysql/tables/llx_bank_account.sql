@@ -42,10 +42,14 @@ create table llx_bank_account
   country_iban				varchar(2),					-- deprecated
   cle_iban					varchar(2),
   domiciliation				varchar(255),
+  pti_in_ctti         smallint DEFAULT 0,
   state_id					integer        DEFAULT NULL,
   fk_pays					integer        NOT NULL,
   proprio					varchar(60),
   owner_address				varchar(255),
+  owner_zip					varchar(25),
+  owner_town				varchar(50),
+  owner_country_id			integer DEFAULT NULL,
   courant					smallint DEFAULT 0 NOT NULL,
   clos						smallint DEFAULT 0 NOT NULL,
   rappro					smallint DEFAULT 1,
@@ -59,5 +63,7 @@ create table llx_bank_account
   note_public				text,
   model_pdf					varchar(255),
   import_key				varchar(14),
-  extraparams			    varchar(255)				-- for other parameters with json format
+  extraparams			    varchar(255),				-- for other parameters with json format
+  ics						varchar(32),			-- Creditor Identifier CI
+  ics_transfer			varchar(32)				-- Creditor Identifier CI for transfer
 )ENGINE=innodb;

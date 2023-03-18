@@ -21,6 +21,7 @@
  *	\brief      Page with info about vat
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
@@ -32,25 +33,26 @@ $langs->loadLangs(array('compta', 'bills'));
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 
-// Security check
-$socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'tax', '', '', 'charges');
-
 $object = new Tva($db);
 
+// Security check
+$socid = GETPOST('socid', 'int');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'tax', '', 'tva', 'charges');
 
 
 /*
  * Actions
  */
 
-if ($action == 'setlib' && $user->rights->tax->charges->creer)
-{
+if ($action == 'setlib' && $user->rights->tax->charges->creer) {
 	$object->fetch($id);
 	$result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
-	if ($result < 0)
+	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }
 
 
@@ -68,7 +70,7 @@ $object->info($id);
 
 $head = vat_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("VATPayment"), -1, 'payment');
+print dol_get_fiche_head($head, 'info', $langs->trans("VATPayment"), -1, 'payment');
 
 $morehtmlref = '<div class="refidno">';
 // Label of social contribution
@@ -83,13 +85,15 @@ dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0,
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
+print '<br>';
+
 print '<table width="100%"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 llxFooter();
 

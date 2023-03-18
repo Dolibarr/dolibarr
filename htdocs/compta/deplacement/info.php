@@ -22,6 +22,7 @@
  * 	\brief      Page to show a trip information
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/trip.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -32,7 +33,9 @@ $langs->load("trips");
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'deplacement', $id, '');
 
 
@@ -42,21 +45,20 @@ $result = restrictedArea($user, 'deplacement', $id, '');
 
 llxHeader();
 
-if ($id)
-{
+if ($id) {
 	$object = new Deplacement($db);
 	$object->fetch($id);
 	$object->info($id);
 
 	$head = trip_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("TripCard"), 0, 'trip');
+	print dol_get_fiche_head($head, 'info', $langs->trans("TripCard"), 0, 'trip');
 
-    print '<table width="100%"><tr><td>';
-    dol_print_object_info($object);
-    print '</td></tr></table>';
+	print '<table width="100%"><tr><td>';
+	dol_print_object_info($object);
+	print '</td></tr></table>';
 
-    print '</div>';
+	print '</div>';
 }
 
 // End of page

@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -26,6 +26,7 @@
  *	\ingroup    takepos
  *	\brief      File with Universal ref numbering module for takepos
  */
+
 dol_include_once('/core/modules/takepos/modules_takepos.php');
 
 /**
@@ -50,109 +51,110 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	 */
 	public $nom = 'Universal';
 
-    /**
-     *  Renvoi la description du modele de numerotation
-     *
-     * @return     string      Texte descripif
-     */
+	/**
+	 *  return description of the numbering model
+	 *
+	 * @return     string      Descriptive text
+	 */
 	public function info()
-    {
-        global $conf, $langs;
+	{
+		global $db, $langs;
 
-        $langs->load('cashdesk@cashdesk');
+		$langs->load('cashdesk@cashdesk');
 
-        $form = new Form($this->db);
+		$form = new Form($db);
 
-        $texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
-        $texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-        $texte .= '<input type="hidden" name="token" value="'.newToken().'">';
-        $texte .= '<input type="hidden" name="action" value="updateMask">';
-        $texte .= '<input type="hidden" name="maskconst" value="TAKEPOS_REF_UNIVERSAL_MASK">';
-        $texte .= '<table class="nobordernopadding" width="100%">';
+		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="action" value="updateMask">';
+		$texte .= '<input type="hidden" name="maskconst" value="TAKEPOS_REF_UNIVERSAL_MASK">';
+		$texte .= '<table class="nobordernopadding" width="100%">';
 
-        $tooltip = $langs->trans('GenericMaskCodes', $langs->transnoentities('CashDesk'), $langs->transnoentities('CashDesk'));
-        $tooltip .= $langs->trans('GenericMaskCodes2');
-        $tooltip .= $langs->trans('GenericMaskCodes3');
-        $tooltip .= $langs->trans('GenericMaskCodes4a', $langs->transnoentities('CashDesk'), $langs->transnoentities('CashDesk'));
-        $tooltip .= $langs->trans('GenericMaskCodes5');
-        $tooltip .= $langs->trans('CashDeskGenericMaskCodes6');
+		$tooltip = $langs->trans('GenericMaskCodes', $langs->transnoentities('CashDesk'), $langs->transnoentities('CashDesk'));
+		$tooltip .= $langs->trans('GenericMaskCodes2');
+		$tooltip .= $langs->trans('GenericMaskCodes3');
+		$tooltip .= $langs->trans('GenericMaskCodes4a', $langs->transnoentities('CashDesk'), $langs->transnoentities('CashDesk'));
+		$tooltip .= $langs->trans('GenericMaskCodes5');
+		$tooltip .= $langs->trans('CashDeskGenericMaskCodes6');
 
-        // Parametrage du prefix
-        $texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-        $texte .= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskvalue" value="'.$conf->global->TAKEPOS_REF_UNIVERSAL_MASK.'">', $tooltip, 1, 1).'</td>';
+		// Setting up the prefix
+		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.getDolGlobalString('TAKEPOS_REF_UNIVERSAL_MASK').'">', $tooltip, 1, 1).'</td>';
 
-        $texte .= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
-        $texte .= '</tr>';
+		$texte .= '</tr>';
 
-        $texte .= '</table>';
-        $texte .= '</form>';
+		$texte .= '</table>';
+		$texte .= '</form>';
 
-        return $texte;
-    }
+		return $texte;
+	}
 
-    /**
-     * Renvoi un exemple de numerotation
-     *
-     * @return     string      Example
-     */
+	/**
+	 * Return an example of numbering
+	 *
+	 * @return     string      Example
+	 */
 	public function getExample()
-    {
-        global $conf, $langs, $mysoc;
+	{
+		global $conf, $langs, $mysoc;
 
-        $old_code_client = $mysoc->code_client;
-        $mysoc->code_client = 'CCCCCCCCCC';
-        $numExample = $this->getNextValue($mysoc, '');
-        $mysoc->code_client = $old_code_client;
+		$old_code_client = $mysoc->code_client;
+		$mysoc->code_client = 'CCCCCCCCCC';
+		$numExample = $this->getNextValue($mysoc, '');
+		$mysoc->code_client = $old_code_client;
 
-        if (!$numExample) {
-            $numExample = $langs->trans('NotConfigured');
-        }
-        return $numExample;
-    }
+		if (!$numExample) {
+			$numExample = $langs->trans('NotConfigured');
+		}
+		return $numExample;
+	}
 
-    /**
-     * Return next free value
-     *
-     * @param   Societe     $objsoc     Object thirdparty
-     * @param   Facture		$invoice	Object invoice
-     * @param   string		$mode       'next' for next value or 'last' for last value
-     * @return  string      Value if KO, <0 if KO
-     */
-	public function getNextValue($objsoc = 0, $invoice = null, $mode = 'next')
-    {
-        global $db, $conf;
+	/**
+	 * Return next free value
+	 *
+	 * @param   Societe     $objsoc     Object thirdparty
+	 * @param   Facture		$invoice	Object invoice
+	 * @param   string		$mode       'next' for next value or 'last' for last value
+	 * @return  string      Value if KO, <0 if KO
+	 */
+	public function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
+	{
+		global $db;
 
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-        // On defini critere recherche compteur
-        $mask = $conf->global->TAKEPOS_REF_UNIVERSAL_MASK;
+		// We define search criteria counter
+		$mask = getDolGlobalString('TAKEPOS_REF_UNIVERSAL_MASK');
 
-        if (!$mask) {
-            $this->error = 'NotConfigured';
-            return 0;
-        }
+		if (!$mask) {
+			$this->error = 'NotConfigured';
+			return 0;
+		}
 
-        // Get entities
-        $entity = getEntity('invoicenumber', 1, $invoice);
+		// Get entities
+		$entity = getEntity('invoicenumber', 1, $invoice);
 
-        $pos_source = is_object($invoice) && $invoice->pos_source > 0 ? $invoice->pos_source : 0;
-	    $mask = str_replace('{TN}', $pos_source, $mask);
-        $numFinal = get_next_value($db, $mask, 'facture', 'ref', '', $objsoc, $invoice->date, $mode, false, null, $entity);
+		$date = (empty($invoice->date) ? dol_now() : $invoice->date);
+		$pos_source = is_object($invoice) && $invoice->pos_source > 0 ? $invoice->pos_source : 0;
+		$mask = str_replace('{TN}', $pos_source, $mask);
+		$numFinal = get_next_value($db, $mask, 'facture', 'ref', '', $objsoc, $date, $mode, false, null, $entity);
 
-        return $numFinal;
-    }
+		return $numFinal;
+	}
 
 
-    /**
-     * Return next free value
-     *
-     * @param   Societe     $objsoc         Object third party
-     * @param   Object      $objforref      Object for number to search
-     * @return  string      Next free value
-     */
+	/**
+	 * Return next free value
+	 *
+	 * @param   Societe     $objsoc         Object third party
+	 * @param   Object      $objforref      Object for number to search
+	 * @return  string      Next free value
+	 */
 	public function getNumRef($objsoc, $objforref)
-    {
-        return $this->getNextValue($objsoc, $objforref);
-    }
+	{
+		return $this->getNextValue($objsoc, $objforref);
+	}
 }

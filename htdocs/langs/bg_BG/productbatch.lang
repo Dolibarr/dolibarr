@@ -1,8 +1,10 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Използване на партиден / сериен №
-ProductStatusOnBatch=Да (изисква се партиден / сериен №)
+ProductStatusOnBatch=Yes (lot required)
+ProductStatusOnSerial=Да (уникалният сериен номер е задължителен)
 ProductStatusNotOnBatch=Не (не се изисква партиден / сериен №)
-ProductStatusOnBatchShort=Да
+ProductStatusOnBatchShort=Партиден
+ProductStatusOnSerialShort=Сериен
 ProductStatusNotOnBatchShort=Не
 Batch=Партиден / Сериен №
 atleast1batchfield=Дата на годност, дата на продажба или партиден / сериен №
@@ -22,3 +24,22 @@ ProductLotSetup=Настройка на модул партиден / серие
 ShowCurrentStockOfLot=Показване на текуща наличност за продукт / партида
 ShowLogOfMovementIfLot=Показване на движения за продукт / партида
 StockDetailPerBatch=Наличност по партида
+SerialNumberAlreadyInUse=Сериен номер %s е вече използван от друг продукт %s
+TooManyQtyForSerialNumber=You can only have one product %s for serial number %s
+ManageLotMask=Custom mask
+CustomMasks=Option to define a different numbering mask for each product
+BatchLotNumberingModules=Numbering rule for automatic generation of lot number
+BatchSerialNumberingModules=Numbering rule for automatic generation of serial number (for products with property 1 unique lot/serial for each product)
+QtyToAddAfterBarcodeScan=Qty to %s for each barcode/lot/serial scanned
+LifeTime=Life span (in days)
+EndOfLife=End of life
+ManufacturingDate=Manufacturing date
+DestructionDate=Destruction date
+FirstUseDate=First use date
+QCFrequency=Quality control frequency (in days)
+ShowAllLots=Show all lots
+HideLots=Hide lots
+#Traceability - qc status
+OutOfOrder=Out of order
+InWorkingOrder=In working order
+ToReplace=Replace

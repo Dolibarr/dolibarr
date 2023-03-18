@@ -28,7 +28,10 @@
  */
 function donation_admin_prepare_head()
 {
-	global $langs, $conf;
+	global $langs, $conf, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('don');
 
 	$h = 0;
 	$head = array();
@@ -46,7 +49,11 @@ function donation_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/don/admin/donation_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
-    $head[$h][2] = 'attributes';
+	$nbExtrafields = $extrafields->attributes['don']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
+	$head[$h][2] = 'attributes';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'donation_admin', 'remove');
@@ -76,25 +83,33 @@ function donation_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
 	// $this->tabs = array('entity:-tabname); to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'donation');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'donation', 'add', 'core');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->don->dir_output.'/'.dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    $nbLinks = Link::count($db, $object->element, $object->id);
+	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/don/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
 	$head[$h][2] = 'documents';
 	$h++;
 
 	$nbNote = 0;
-	if (!empty($object->note_private)) $nbNote++;
-	if (!empty($object->note_public)) $nbNote++;
+	if (!empty($object->note_private)) {
+		$nbNote++;
+	}
+	if (!empty($object->note_public)) {
+		$nbNote++;
+	}
 	$head[$h][0] = DOL_URL_ROOT.'/don/note.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Notes");
-	if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+	if ($nbNote > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+	}
 	$head[$h][2] = 'note';
 	$h++;
 
@@ -102,6 +117,8 @@ function donation_prepare_head($object)
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'donation', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'donation', 'remove');
 

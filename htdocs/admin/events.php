@@ -22,6 +22,7 @@
  *      \brief      Log event setup page
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
@@ -44,7 +45,9 @@ $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1 or if we click on clear filters
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -57,17 +60,18 @@ $eventstolog = $securityevent->eventstolog;
  *	Actions
  */
 
-if ($action == "save")
-{
+if ($action == "save") {
 	$i = 0;
 
 	$db->begin();
 
-	foreach ($eventstolog as $key => $arr)
-	{
+	foreach ($eventstolog as $key => $arr) {
 		$param = 'MAIN_LOGEVENTS_'.$arr['id'];
-		if (GETPOST($param, 'alphanohtml')) dolibarr_set_const($db, $param, GETPOST($param, 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-		else dolibarr_del_const($db, $param, $conf->entity);
+		if (GETPOST($param, 'alphanohtml')) {
+			dolibarr_set_const($db, $param, GETPOST($param, 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		} else {
+			dolibarr_del_const($db, $param, $conf->entity);
+		}
 	}
 
 	$db->commit();
@@ -102,34 +106,34 @@ print '<input type="hidden" name="action" value="save">';
 
 $head = security_prepare_head();
 
-dol_fiche_head($head, 'audit', '', -1);
+print dol_get_fiche_head($head, 'audit', '', -1);
 
-print '<table class="noborder" width="100%">';
-print "<tr class=\"liste_titre\">";
-print getTitleFieldOfList("LogEvents", 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, '')."\n";
+print '<br>';
+
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print getTitleFieldOfList("TrackableSecurityEvents", 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
-print "</tr>\n";
+print '</tr>'."\n";
 // Loop on each event type
-foreach ($eventstolog as $key => $arr)
-{
-	if ($arr['id'])
-	{
+foreach ($eventstolog as $key => $arr) {
+	if ($arr['id']) {
 		print '<tr class="oddeven">';
 		print '<td>'.$arr['id'].'</td>';
 		print '<td class="center">';
 		$key = 'MAIN_LOGEVENTS_'.$arr['id'];
-		$value = $conf->global->$key;
+		$value = empty($conf->global->$key) ? '' : $conf->global->$key;
 		print '<input class="oddeven checkforselect" type="checkbox" name="'.$key.'" value="1"'.($value ? ' checked' : '').'>';
 		print '</td></tr>'."\n";
 	}
 }
 print '</table>';
 
-dol_fiche_end();
-
 print '<div class="center">';
-print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";
+print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
 print '</div>';
+
+print dol_get_fiche_end();
 
 print "</form>\n";
 

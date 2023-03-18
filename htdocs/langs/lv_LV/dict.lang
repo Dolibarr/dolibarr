@@ -250,7 +250,9 @@ CountryMF=Saint Martin
 
 ##### Civilities #####
 CivilityMME=Kundze
+CivilityMMEShort=Kundze
 CivilityMR=Kungs
+CivilityMRShort=Kungs
 CivilityMLE=Jaunkundze.
 CivilityMTRE=Meistars
 CivilityDR=Doktors
@@ -290,7 +292,7 @@ CurrencyXOF=CFA franki BCEAO
 CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=KZP franki
 CurrencySingXPF=CFP Franc
-CurrencyCentEUR=centiem
+CurrencyCentEUR=centi
 CurrencyCentSingEUR=cents
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise

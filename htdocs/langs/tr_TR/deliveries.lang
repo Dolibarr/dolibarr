@@ -27,5 +27,7 @@ Recipient=Alıcı
 ErrorStockIsNotEnough=Yeterli stok yok
 Shippable=Sevkedilebilir
 NonShippable=Sevkedilemez
+ShowShippableStatus=Show shippable status
 ShowReceiving=Teslimat Fişini göster
 NonExistentOrder=Mevcut olmayan sipariş
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

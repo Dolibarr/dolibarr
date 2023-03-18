@@ -1,0 +1,67 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Дороиҳо
+NewAsset = Янги актив
+AccountancyCodeAsset = Рамзи баҳисобгирӣ (дороиҳо)
+AccountancyCodeDepreciationAsset = Рамзи баҳисобгирӣ (ҳисоби амортизатсияи дороиҳо)
+AccountancyCodeDepreciationExpense = Рамзи баҳисобгирӣ (ҳисоби хароҷоти амортизатсионӣ)
+NewAssetType=Навъи дороиҳо
+AssetsTypeSetup=Танзими намуди дороиҳо
+AssetTypeModified=Навъи дороиҳо тағир дода шуд
+AssetType=Навъи дороиҳо
+AssetsLines=Дороиҳо
+DeleteType=Нест кардан
+DeleteAnAssetType=Навъи дороиҳоро нест кунед
+ConfirmDeleteAssetType=Шумо мутмаин ҳастед, ки мехоҳед ин намуди дороиҳоро нест кунед?
+ShowTypeCard=Намуди '%s' -ро нишон диҳед
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Дороиҳо
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Тавсифи дороиҳо
+
+#
+# Admin page
+#
+AssetsSetup = Танзими дороиҳо
+Settings = Танзимот
+AssetsSetupPage = Саҳифаи танзими дороиҳо
+ExtraFieldsAssetsType = Хусусиятҳои иловагӣ (намуди дороиҳо)
+AssetsType=Навъи дороиҳо
+AssetsTypeId=Шиносаи намуди дороиҳо
+AssetsTypeLabel=Нишонаи намуди дороиҳо
+AssetsTypes=Навъҳои дороиҳо
+
+#
+# Menu
+#
+MenuAssets = Дороиҳо
+MenuNewAsset = Янги актив
+MenuTypeAssets = Намуди дороиҳо
+MenuListAssets = Рӯйхат
+MenuNewTypeAssets = Нав
+MenuListTypeAssets = Рӯйхат
+
+#
+# Module
+#
+Asset=Дороӣ
+NewAssetType=Навъи дороиҳо
+NewAsset=Янги актив
+ConfirmDeleteAsset=Шумо мутмаин ҳастед, ки ин активро нест кардан мехоҳед?

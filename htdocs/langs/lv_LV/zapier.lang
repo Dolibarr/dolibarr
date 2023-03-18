@@ -13,17 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#
-# Generic
-#
-
-# Module label 'ModuleZapierForDolibarrName'
 ModuleZapierForDolibarrName = Zapier priekš Dolibarr
-# Module description 'ModuleZapierForDolibarrDesc'
 ModuleZapierForDolibarrDesc = Par zapier Dolibarr moduli
-
-#
-# Admin page
-#
-ZapierForDolibarrSetup = Zapier iestatīšana Dolibarr
-ZapierDescription=Interface with Zapier
+ZapierForDolibarrSetup=Zapier iestatīšana Dolibarr
+ZapierDescription=Saskarne ar Zapier
+ZapierAbout=Par moduli Zapier
+ZapierSetupPage=Lai izmantotu Zapier, Dolibarr pusē nav nepieciešama iestatīšana. Tomēr, lai varētu izmantot Zapier ar Dolibarr, jums ir jāizveido un jāpublicē pakete zapier. Skatiet šīs wiki lapas <a href="https://wiki.dolibarr.org/index.php/Module_Zapier"> dokumentāciju </a>.

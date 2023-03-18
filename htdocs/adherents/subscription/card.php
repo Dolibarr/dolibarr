@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,13 @@
  *       \brief      Page to add/edit/remove a member subscription
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
@@ -40,24 +41,35 @@ $object = new Subscription($db);
 $errmsg = '';
 
 $action = GETPOST("action", 'alpha');
-$rowid = GETPOST("rowid", "int") ?GETPOST("rowid", "int") : GETPOST("id", "int");
+$rowid = GETPOST("rowid", "int") ? GETPOST("rowid", "int") : GETPOST("id", "int");
 $typeid = GETPOST("typeid", "int");
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm');
+$note = GETPOST('note', 'alpha');
+$typeid = (int) GETPOST('typeid', 'int');
+$amount = price2num(GETPOST('amount', 'alpha'), 'MT');
 
-if (!$user->rights->adherent->cotisation->lire)
+if (!$user->hasRight('adherent', 'cotisation', 'lire')) {
 	 accessforbidden();
+}
 
-$permissionnote = $user->rights->adherent->cotisation->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->adherent->cotisation->creer; // Used by the include of actions_dellink.inc.php
-$permissiontoedit = $user->rights->adherent->cotisation->creer; // Used by the include of actions_lineupdonw.inc.php
+$permissionnote = $user->hasRight('adherent', 'cotisation', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('adherent', 'cotisation', 'creer'); // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $user->hasRight('adherent', 'cotisation', 'creer'); // Used by the include of actions_lineupdonw.inc.php
+
+$hookmanager->initHooks(array('subscriptioncard', 'globalcard'));
+
+// Security check
+$result = restrictedArea($user, 'subscription', 0); // TODO Check on object id
 
 
 /*
  * 	Actions
  */
 
-if ($cancel) $action = '';
+if ($cancel) {
+	$action = '';
+}
 
 //include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
 
@@ -66,7 +78,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, n
 //include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
 
 
-if ($user->rights->adherent->cotisation->creer && $action == 'update' && !$cancel) {
+if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'update' && !$cancel) {
 	// Load current object
 	$result = $object->fetch($rowid);
 	if ($result > 0) {
@@ -82,9 +94,9 @@ if ($user->rights->adherent->cotisation->creer && $action == 'update' && !$cance
 			if ($accountline->rappro) {
 				$errmsg = $langs->trans("SubscriptionLinkedToConciliatedTransaction");
 			} else {
-				$accountline->datev = dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
-				$accountline->dateo = dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
-				$accountline->amount = $_POST["amount"];
+				$accountline->datev = dol_mktime(GETPOST('datesubhour', 'int'), GETPOST('datesubmin', 'int'), 0, GETPOST('datesubmonth', 'int'), GETPOST('datesubday', 'int'), GETPOST('datesubyear', 'int'));
+				$accountline->dateo = dol_mktime(GETPOST('datesubhour', 'int'), GETPOST('datesubmin', 'int'), 0, GETPOST('datesubmonth', 'int'), GETPOST('datesubday', 'int'), GETPOST('datesubyear', 'int'));
+				$accountline->amount = $amount;
 				$result = $accountline->update($user);
 				if ($result < 0) {
 					$errmsg = $accountline->error;
@@ -94,12 +106,13 @@ if ($user->rights->adherent->cotisation->creer && $action == 'update' && !$cance
 
 		if (!$errmsg) {
 			// Modify values
-			$object->dateh = dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
-			$object->datef = dol_mktime($_POST['datesubendhour'], $_POST['datesubendmin'], 0, $_POST['datesubendmonth'], $_POST['datesubendday'], $_POST['datesubendyear']);
-			$object->fk_type = $_POST["typeid"];
-			$object->note = $_POST["note"];
-			$object->amount = $_POST["amount"];
-			//print 'datef='.$object->datef.' '.$_POST['datesubendday'];
+			$object->dateh = dol_mktime(GETPOST('datesubhour', 'int'), GETPOST('datesubmin', 'int'), 0, GETPOST('datesubmonth', 'int'), GETPOST('datesubday', 'int'), GETPOST('datesubyear', 'int'));
+			$object->datef = dol_mktime(GETPOST('datesubendhour', 'int'), GETPOST('datesubendmin', 'int'), 0, GETPOST('datesubendmonth', 'int'), GETPOST('datesubendday', 'int'), GETPOST('datesubendyear', 'int'));
+			$object->fk_type = $typeid;
+			$object->note_public = $note;
+			$object->note_private = $note;
+
+			$object->amount = $amount;
 
 			$result = $object->update($user);
 			if ($result >= 0 && !count($object->errors)) {
@@ -114,7 +127,9 @@ if ($user->rights->adherent->cotisation->creer && $action == 'update' && !$cance
 					$errmsg = $object->error;
 				} else {
 					foreach ($object->errors as $error) {
-						if ($errmsg) $errmsg .= '<br>';
+						if ($errmsg) {
+							$errmsg .= '<br>';
+						}
 						$errmsg .= $error;
 					}
 				}
@@ -126,7 +141,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'update' && !$cance
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->adherent->cotisation->creer) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('adherent', 'cotisation', 'creer')) {
 	$result = $object->fetch($rowid);
 	$result = $object->delete($user);
 	if ($result > 0) {
@@ -145,14 +160,14 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->adherent-
 
 $form = new Form($db);
 
-
-llxHeader('', $langs->trans("SubscriptionCard"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
+llxHeader('', $langs->trans("SubscriptionCard"), $help_url);
 
 
 dol_htmloutput_errors($errmsg);
 
 
-if ($user->rights->adherent->cotisation->creer && $action == 'edit') {
+if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'edit') {
 	/********************************************
 	 *
 	 * Subscription card in edit mode
@@ -170,7 +185,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit') {
 	print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
 	print "<input type=\"hidden\" name=\"fk_bank\" value=\"".$object->fk_bank."\">";
 
-	dol_fiche_head($head, 'general', $langs->trans("Subscription"), 0, 'payment');
+	print dol_get_fiche_head($head, 'general', $langs->trans("Subscription"), 0, 'payment');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -216,29 +231,23 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit') {
 	print '<input type="text" class="flat" size="60" name="note" value="'.$object->note.'"></td></tr>';
 
 	// Bank line
-	if (!empty($conf->banque->enabled)) {
-		if ($conf->global->ADHERENT_BANK_USE || $object->fk_bank) {
-			print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="2">';
-			if ($object->fk_bank) {
-				$bankline = new AccountLine($db);
-				$result = $bankline->fetch($object->fk_bank);
-				print $bankline->getNomUrl(1, 0, 'showall');
-			} else {
-				print $langs->trans("NoneF");
-			}
-			print '</td></tr>';
+	if (isModEnabled("banque") && (!empty($conf->global->ADHERENT_BANK_USE) || $object->fk_bank)) {
+		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="2">';
+		if ($object->fk_bank) {
+			$bankline = new AccountLine($db);
+			$result = $bankline->fetch($object->fk_bank);
+			print $bankline->getNomUrl(1, 0, 'showall');
+		} else {
+			print $langs->trans("NoneF");
 		}
+		print '</td></tr>';
 	}
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; &nbsp; &nbsp; ';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 	print "\n";
@@ -256,14 +265,16 @@ if ($rowid && $action != 'edit') {
 
 	$head = subscription_prepare_head($object);
 
-	dol_fiche_head($head, 'general', $langs->trans("Subscription"), -1, 'payment');
+	print dol_get_fiche_head($head, 'general', $langs->trans("Subscription"), -1, 'payment');
 
 	// Confirmation to delete subscription
 	if ($action == 'delete') {
-		//$formquestion=array();
+		$formquestion=array();
 		//$formquestion['text']='<b>'.$langs->trans("ThisWillAlsoDeleteBankRecord").'</b>';
 		$text = $langs->trans("ConfirmDeleteSubscription");
-		if (!empty($conf->banque->enabled) && !empty($conf->global->ADHERENT_BANK_USE)) $text .= '<br>'.img_warning().' '.$langs->trans("ThisWillAlsoDeleteBankRecord");
+		if (isModEnabled("banque") && !empty($conf->global->ADHERENT_BANK_USE)) {
+			$text .= '<br>'.img_warning().' '.$langs->trans("ThisWillAlsoDeleteBankRecord");
+		}
 		print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id, $langs->trans("DeleteSubscription"), $text, "confirm_delete", $formquestion, 0, 1);
 	}
 
@@ -278,7 +289,7 @@ if ($rowid && $action != 'edit') {
 
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
 	// Member
 	$adh->ref = $adh->getFullName($langs);
@@ -310,24 +321,22 @@ if ($rowid && $action != 'edit') {
 	print '</tr>';
 
 	// Amount
-	print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur">'.price($object->amount).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur"><span class="amount">'.price($object->amount).'</span></td></tr>';
 
 	// Label
 	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur">'.$object->note.'</td></tr>';
 
 	// Bank line
-	if (!empty($conf->banque->enabled)) {
-		if ($conf->global->ADHERENT_BANK_USE || $object->fk_bank) {
-			print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur">';
-			if ($object->fk_bank) {
-				$bankline = new AccountLine($db);
-				$result = $bankline->fetch($object->fk_bank);
-				print $bankline->getNomUrl(1, 0, 'showall');
-			} else {
-				print $langs->trans("NoneF");
-			}
-			print '</td></tr>';
+	if (isModEnabled("banque") && (!empty($conf->global->ADHERENT_BANK_USE) || $object->fk_bank)) {
+		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur">';
+		if ($object->fk_bank) {
+			$bankline = new AccountLine($db);
+			$result = $bankline->fetch($object->fk_bank);
+			print $bankline->getNomUrl(1, 0, 'showall');
+		} else {
+			print $langs->trans("NoneF");
 		}
+		print '</td></tr>';
 	}
 
 	print "</table>\n";
@@ -335,16 +344,15 @@ if ($rowid && $action != 'edit') {
 
 	print '</form>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	/*
-     * Barre d'actions
-     *
-     */
+	 * Action bar
+	 */
 	print '<div class="tabsAction">';
 
-	if ($user->rights->adherent->cotisation->creer) {
-		if (!$bankline->rappro) {
+	if ($user->hasRight('adherent', 'cotisation', 'creer')) {
+		if (!empty($bankline->rappro)) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify")."</a></div>";
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.$langs->trans("BankLineConciliated")."\" href=\"#\">".$langs->trans("Modify")."</a></div>";
@@ -352,7 +360,7 @@ if ($rowid && $action != 'edit') {
 	}
 
 	// Delete
-	if ($user->rights->adherent->cotisation->creer) {
+	if ($user->hasRight('adherent', 'cotisation', 'creer')) {
 		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>\n";
 	}
 
@@ -362,17 +370,17 @@ if ($rowid && $action != 'edit') {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 	print '<a name="builddoc"></a>'; // ancre
 
-	// Documents generes
+	// Generated documents
 	/*
-    $filename = dol_sanitizeFileName($object->ref);
-    $filedir = $conf->facture->dir_output . '/' . dol_sanitizeFileName($object->ref);
-    $urlsource = $_SERVER['PHP_SELF'] . '?facid=' . $object->id;
-    $genallowed = $user->rights->facture->lire;
-    $delallowed = $user->rights->facture->creer;
+	$filename = dol_sanitizeFileName($object->ref);
+	$filedir = $conf->facture->dir_output . '/' . dol_sanitizeFileName($object->ref);
+	$urlsource = $_SERVER['PHP_SELF'] . '?facid=' . $object->id;
+	$genallowed = $user->hasRight('facture', 'lire');
+	$delallowed = $user->hasRight('facture', 'creer');
 
-    print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
-    $somethingshown = $formfile->numoffiles;
-    */
+	print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+	$somethingshown = $formfile->numoffiles;
+	*/
 	// Show links to link elements
 	//$linktoelem = $form->showLinkToObjectBlock($object, null, array('subscription'));
 	$somethingshown = $form->showLinkedObjectBlock($object, '');
@@ -380,18 +388,18 @@ if ($rowid && $action != 'edit') {
 	// Show links to link elements
 	/*$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
 	if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
-    */
+	*/
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 
 	// List of actions on element
 	/*
-    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
-    $formactions = new FormActions($db);
-    $somethingshown = $formactions->showactions($object, 'invoice', $socid, 1);
-    */
+	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+	$formactions = new FormActions($db);
+	$somethingshown = $formactions->showactions($object, $object->element, $socid, 1);
+	*/
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 // End of page

@@ -34,18 +34,17 @@ global $stripearrayofkeysbyenv;
 
 $stripearrayofkeysbyenv = array(
 	0=>array(
-		"secret_key"      => $conf->global->STRIPE_TEST_SECRET_KEY,
-		"publishable_key" => $conf->global->STRIPE_TEST_PUBLISHABLE_KEY
+		"secret_key"      => empty($conf->global->STRIPE_TEST_SECRET_KEY) ? '' : $conf->global->STRIPE_TEST_SECRET_KEY,
+		"publishable_key" => empty($conf->global->STRIPE_TEST_PUBLISHABLE_KEY) ? '' : $conf->global->STRIPE_TEST_PUBLISHABLE_KEY
 	),
 	1=>array(
-		"secret_key"      => $conf->global->STRIPE_LIVE_SECRET_KEY,
-		"publishable_key" => $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY
+		"secret_key"      => empty($conf->global->STRIPE_LIVE_SECRET_KEY) ? '' : $conf->global->STRIPE_LIVE_SECRET_KEY,
+		"publishable_key" => empty($conf->global->STRIPE_LIVE_PUBLISHABLE_KEY) ? '' : $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY
 	)
 );
 
 $stripearrayofkeys = array();
-if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
-{
+if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')) {
 	$stripearrayofkeys = $stripearrayofkeysbyenv[0]; // Test
 } else {
 	$stripearrayofkeys = $stripearrayofkeysbyenv[1]; // Live

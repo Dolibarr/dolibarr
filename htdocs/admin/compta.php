@@ -27,27 +27,29 @@
  *	\brief      Page to setup accountancy module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'compta', 'accountancy'));
 
-if (!$user->admin)
-accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
 // Other parameters ACCOUNTING_*
 $list = array(
-    'ACCOUNTING_PRODUCT_BUY_ACCOUNT',
-    'ACCOUNTING_PRODUCT_SOLD_ACCOUNT',
-    'ACCOUNTING_SERVICE_BUY_ACCOUNT',
-    'ACCOUNTING_SERVICE_SOLD_ACCOUNT',
-    'ACCOUNTING_VAT_SOLD_ACCOUNT',
-    'ACCOUNTING_VAT_BUY_ACCOUNT',
-    'ACCOUNTING_ACCOUNT_CUSTOMER',
-    'ACCOUNTING_ACCOUNT_SUPPLIER'
+	'ACCOUNTING_PRODUCT_BUY_ACCOUNT',
+	'ACCOUNTING_PRODUCT_SOLD_ACCOUNT',
+	'ACCOUNTING_SERVICE_BUY_ACCOUNT',
+	'ACCOUNTING_SERVICE_SOLD_ACCOUNT',
+	'ACCOUNTING_VAT_SOLD_ACCOUNT',
+	'ACCOUNTING_VAT_BUY_ACCOUNT',
+	'ACCOUNTING_ACCOUNT_CUSTOMER',
+	'ACCOUNTING_ACCOUNT_SUPPLIER'
 );
 
 /*
@@ -56,54 +58,66 @@ $list = array(
 
 $accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
 
-if ($action == 'update')
-{
-    $error = 0;
+if ($action == 'update') {
+	$error = 0;
 
-    $accounting_modes = array(
-        'RECETTES-DEPENSES',
-        'CREANCES-DETTES'
-    );
+	$accounting_modes = array(
+		'RECETTES-DEPENSES',
+		'CREANCES-DETTES'
+	);
 
-    $accounting_mode = GETPOST('accounting_mode', 'alpha');
+	$accounting_mode = GETPOST('accounting_mode', 'alpha');
 
 
-    if (in_array($accounting_mode, $accounting_modes)) {
-        if (!dolibarr_set_const($db, 'ACCOUNTING_MODE', $accounting_mode, 'chaine', 0, '', $conf->entity)) {
-            $error++;
-        }
-    } else {
-        $error++;
-    }
+	if (in_array($accounting_mode, $accounting_modes)) {
+		if (!dolibarr_set_const($db, 'ACCOUNTING_MODE', $accounting_mode, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	} else {
+		$error++;
+	}
 
-    foreach ($list as $constname) {
-        $constvalue = GETPOST($constname, 'alpha');
+	foreach ($list as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
 
-        if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-            $error++;
-        }
-    }
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	}
 
-    $report_include_varpay = GETPOST('ACCOUNTING_REPORTS_INCLUDE_VARPAY', 'alpha');
-    if (!empty($report_include_varpay))
-        if ($report_include_varpay == 'yes')
-            if (!dolibarr_set_const($db, 'ACCOUNTING_REPORTS_INCLUDE_VARPAY', 1, 'chaine', 0, '', $conf->entity)) $error++;
-        if ($report_include_varpay == 'no')
-            if (!dolibarr_del_const($db, 'ACCOUNTING_REPORTS_INCLUDE_VARPAY', $conf->entity)) $error++;
+	$report_include_varpay = GETPOST('ACCOUNTING_REPORTS_INCLUDE_VARPAY', 'alpha');
+	if (!empty($report_include_varpay)) {
+		if ($report_include_varpay == 'yes') {
+			if (!dolibarr_set_const($db, 'ACCOUNTING_REPORTS_INCLUDE_VARPAY', 1, 'chaine', 0, '', $conf->entity)) {
+				$error++;
+			}
+		}
+	}
+	if ($report_include_varpay == 'no') {
+		if (!dolibarr_del_const($db, 'ACCOUNTING_REPORTS_INCLUDE_VARPAY', $conf->entity)) {
+			$error++;
+		}
+	}
 
-    $report_include_loan = GETPOST('ACCOUNTING_REPORTS_INCLUDE_LOAN', 'alpha');
-    if (!empty($report_include_loan))
-        if ($report_include_loan == 'yes')
-            if (!dolibarr_set_const($db, 'ACCOUNTING_REPORTS_INCLUDE_LOAN', 1, 'chaine', 0, '', $conf->entity)) $error++;
-        if ($report_include_loan == 'no')
-            if (!dolibarr_del_const($db, 'ACCOUNTING_REPORTS_INCLUDE_LOAN', $conf->entity)) $error++;
+	$report_include_loan = GETPOST('ACCOUNTING_REPORTS_INCLUDE_LOAN', 'alpha');
+	if (!empty($report_include_loan)) {
+		if ($report_include_loan == 'yes') {
+			if (!dolibarr_set_const($db, 'ACCOUNTING_REPORTS_INCLUDE_LOAN', 1, 'chaine', 0, '', $conf->entity)) {
+				$error++;
+			}
+		}
+	}
+	if ($report_include_loan == 'no') {
+		if (!dolibarr_del_const($db, 'ACCOUNTING_REPORTS_INCLUDE_LOAN', $conf->entity)) {
+			$error++;
+		}
+	}
 
-    if (!$error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 /*
@@ -133,7 +147,7 @@ print "</tr>\n";
 print '<tr class="oddeven"><td width="200"><input type="radio" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode != 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeTrue').'</td>';
 print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'));
 // Write info on way to count VAT
-//if (! empty($conf->global->MAIN_MODULE_COMPTABILITE))
+//if (!empty($conf->global->MAIN_MODULE_COMPTABILITE))
 //{
 //	//	print "<br>\n";
 //	//	print nl2br($langs->trans('OptionModeTrueInfoModuleComptabilite'));
@@ -157,8 +171,7 @@ print '<td colspan="3">'.$langs->trans('OtherOptions').'</td>';
 print "</tr>\n";
 
 
-foreach ($list as $key)
-{
+foreach ($list as $key) {
 	print '<tr class="oddeven value">';
 
 	// Param
@@ -167,7 +180,7 @@ foreach ($list as $key)
 
 	// Value
 	print '<td>';
-	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	print '</td></tr>';
 }
 
@@ -187,7 +200,7 @@ print '</td></tr>';
 
 print "</table>\n";
 
-print '<br><br><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+print '<br><br><div style="text-align:center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
 print '</form>';
 
 // End of page

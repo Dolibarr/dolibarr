@@ -42,9 +42,13 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	 */
 	public $error = '';
 
+	public $tva;
+	public $tva_array;
+	public $localtax1;
+	public $localtax2;
+
 	public $atleastonediscount = 0;
 	public $atleastoneratenotnull = 0;
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -57,15 +61,13 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'invoice';
-		$liste = array();
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste = getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
@@ -90,9 +92,9 @@ abstract class ModeleNumRefFactures
 	}
 
 	/**
-	 * Renvoi la description par defaut du modele de numerotation
+	 * Returns the default description of the numbering pattern
 	 *
-	 * @return    string      Texte descripif
+	 * @return    string      Descriptive text
 	 */
 	public function info()
 	{
@@ -128,10 +130,11 @@ abstract class ModeleNumRefFactures
 	 * Renvoi prochaine valeur attribuee
 	 *
 	 * @param	Societe		$objsoc		Objet societe
-	 * @param   Facture		$facture	Objet facture
+	 * @param   Facture		$invoice	Objet facture
+	 * @param   string		$mode       'next' for next value or 'last' for last value
 	 * @return  string      			Value
 	 */
-	public function getNextValue($objsoc, $facture)
+	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -147,10 +150,16 @@ abstract class ModeleNumRefFactures
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		elseif ($this->version == 'dolibarr') return DOL_VERSION;
-		elseif ($this->version) return $this->version;
-		else return $langs->trans("NotAvailable");
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		} elseif ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		} elseif ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		} elseif ($this->version) {
+			return $this->version;
+		} else {
+			return $langs->trans("NotAvailable");
+		}
 	}
 }

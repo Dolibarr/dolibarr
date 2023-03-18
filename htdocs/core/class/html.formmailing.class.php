@@ -27,36 +27,34 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
  */
 class FormMailing extends Form
 {
-    /**
-     * @var string[] Error codes (or messages)
-     */
-    public $errors = array();
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
-    /**
-     * Output a select with destinaries status
-     *
-     * @param string   $selectedid     The selected id
-     * @param string   $htmlname       Name of controm
-     * @param integer  $show_empty     Show empty option
-     * @return string HTML select
-     */
-    public function selectDestinariesStatus($selectedid = '', $htmlname = 'dest_status', $show_empty = 0)
-    {
 
-        global $langs;
-        $langs->load("mails");
+	/**
+	 * Output a select with destinaries status
+	 *
+	 * @param 	string   $selectedid     	The selected id
+	 * @param 	string   $htmlname       	Name of controm
+	 * @param 	integer  $show_empty     	Show empty option
+	 * @return 	string 						HTML select
+	 */
+	public function selectDestinariesStatus($selectedid = '', $htmlname = 'dest_status', $show_empty = 0)
+	{
+		global $langs;
 
-        require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
-        $mailing = new Mailing($this->db);
+		$langs->load("mails");
 
-        $options = array();
+		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+		$mailing = new Mailing($this->db);
 
-        if ($show_empty) {
-            $options[-2] = ''; // Note -1 is used for error
-        }
+		$options = array();
 
-        $options = $options + $mailing->statut_dest;
+		$options = $options + $mailing->statut_dest;
 
-        return Form::selectarray($htmlname, $options, $selectedid, 0, 0, 0, '', 1);
-    }
+		// Note -1 is used for error, so we use -2 for tempty value
+		return Form::selectarray($htmlname, $options, $selectedid, ($show_empty ? -2 : 0), 0, 0, '', 1);
+	}
 }

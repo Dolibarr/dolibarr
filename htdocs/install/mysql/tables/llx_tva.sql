@@ -30,7 +30,8 @@ create table llx_tva
   label           varchar(255),
   entity          integer DEFAULT 1 NOT NULL,	-- multi company id
   note            text,
-  fk_bank         integer,  
+  paye            smallint default 0 NOT NULL,
+  fk_account      integer,
   fk_user_creat   integer,                    -- utilisateur who create record
   fk_user_modif   integer,                    -- utilisateur who modify record
   import_key      varchar(14)

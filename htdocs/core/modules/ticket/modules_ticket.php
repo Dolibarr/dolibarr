@@ -19,8 +19,8 @@
  */
 
 /**
- *        \file       htdocs/core/modules/ticket/modules_ticket.php
- *      \ingroup    project
+ *      \file       htdocs/core/modules/ticket/modules_ticket.php
+ *      \ingroup    ticket
  *      \brief      File that contain parent class for projects models
  *                  and parent class for projects numbering models
  */
@@ -33,19 +33,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 abstract class ModelePDFTicket extends CommonDocGenerator
 {
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return list of active generation modules
-     *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return list of active generation modules
+	 *
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
-		global $conf;
-
+		// phpcs:enable
 		$type = 'ticket';
 		$list = array();
 
@@ -78,9 +76,9 @@ abstract class ModeleNumRefTicket
 	}
 
 	/**
-	 *  Renvoi la description par defaut du modele de numerotation
+	 *  Returns the default description of the numbering pattern
 	 *
-	 *  @return string      Texte descripif
+	 *  @return string      Descriptive text
 	 */
 	public function info()
 	{
@@ -115,11 +113,11 @@ abstract class ModeleNumRefTicket
 	/**
 	 *  Renvoi prochaine valeur attribuee
 	 *
-	 *    @param  Societe $objsoc  Object third party
-	 *    @param  Project $project Object project
-	 *    @return string                    Valeur
+	 *    @param  Societe 	$objsoc  	Object third party
+	 *    @param  Ticket 	$ticket		Object ticket
+	 *    @return string                Valeur
 	 */
-	public function getNextValue($objsoc, $project)
+	public function getNextValue($objsoc, $ticket)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

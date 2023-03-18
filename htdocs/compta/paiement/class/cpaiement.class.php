@@ -3,6 +3,7 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,11 @@
  */
 class Cpaiement
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
 	/**
 	 * @var string Id to identify managed objects
 	 */
@@ -187,7 +193,7 @@ class Cpaiement
 			$sql .= ' WHERE t.entity IN ('.getEntity('c_paiement').')';
 			$sql .= " AND t.code = '".$this->db->escape($ref)."'";
 		} else {
-			$sql .= ' WHERE t.id = '.$id;
+			$sql .= ' WHERE t.id = '.((int) $id);
 		}
 
 		$resql = $this->db->query($sql);
@@ -273,7 +279,7 @@ class Cpaiement
 		$sql .= ' active = '.(isset($this->active) ? $this->active : "null").',';
 		$sql .= ' accountancy_code = '.(isset($this->accountancy_code) ? "'".$this->db->escape($this->accountancy_code)."'" : "null").',';
 		$sql .= ' module = '.(isset($this->module) ? "'".$this->db->escape($this->module)."'" : "null");
-		$sql .= ' WHERE id='.$this->id;
+		$sql .= ' WHERE id = '.((int) $this->id);
 
 		$this->db->begin();
 
@@ -334,7 +340,7 @@ class Cpaiement
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE id='.$this->id;
+			$sql .= ' WHERE id = '.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {

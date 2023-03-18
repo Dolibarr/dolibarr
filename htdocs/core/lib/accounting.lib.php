@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2019      Eric Seigne         <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2019      Eric Seigne          <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2021      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,11 +95,15 @@ function length_accountg($account)
 {
 	global $conf;
 
-	if ($account < 0 || is_empty($account)) return '';
+	if ($account < 0 || is_empty($account)) {
+		return '';
+	}
 
-	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $account;
+	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+		return $account;
+	}
 
-	$g = $conf->global->ACCOUNTING_LENGTH_GACCOUNT;
+	$g = getDolGlobalInt('ACCOUNTING_LENGTH_GACCOUNT');
 	if (!is_empty($g)) {
 		// Clean parameters
 		$i = strlen($account);
@@ -129,11 +134,15 @@ function length_accounta($accounta)
 {
 	global $conf;
 
-	if ($accounta < 0 || is_empty($accounta)) return '';
+	if ($accounta < 0 || is_empty($accounta)) {
+		return '';
+	}
 
-	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $accounta;
+	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+		return $accounta;
+	}
 
-	$a = $conf->global->ACCOUNTING_LENGTH_AACCOUNT;
+	$a = getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT');
 	if (!is_empty($a)) {
 		// Clean parameters
 		$i = strlen($accounta);
@@ -177,7 +186,9 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 
 	print "\n\n<!-- start banner journal -->\n";
 
-	if (!is_empty($varlink)) $varlink = '?'.$varlink;
+	if (!is_empty($varlink)) {
+		$varlink = '?'.$varlink;
+	}
 
 	$head = array();
 	$h = 0;
@@ -188,31 +199,34 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	dol_fiche_head($head, 'journal');
+	print dol_get_fiche_head($head, 'journal');
 
-	foreach ($moreparam as $key => $value)
-	{
+	foreach ($moreparam as $key => $value) {
 		print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 	}
-	print '<table width="100%" class="border">';
+	print '<table class="border centpercent tableforfield">';
 
 	// Ligne de titre
 	print '<tr>';
-	print '<td width="110">'.$langs->trans("Name").'</td>';
+	print '<td class="titlefieldcreate">'.$langs->trans("Name").'</td>';
 	print '<td colspan="3">';
 	print $nom;
 	print '</td>';
 	print '</tr>';
 
 	// Calculation mode
-	if ($calcmode)
-	{
+	if ($calcmode) {
 		print '<tr>';
-		print '<td width="110">'.$langs->trans("CalculationMode").'</td>';
-		if (!$variante) print '<td colspan="3">';
-		else print '<td>';
+		print '<td>'.$langs->trans("CalculationMode").'</td>';
+		if (!$variante) {
+			print '<td colspan="3">';
+		} else {
+			print '<td>';
+		}
 		print $calcmode;
-		if ($variante) print '</td><td colspan="2">'.$variante;
+		if ($variante) {
+			print '</td><td colspan="2">'.$variante;
+		}
 		print '</td>';
 		print '</tr>';
 	}
@@ -220,10 +234,17 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 	// Ligne de la periode d'analyse du rapport
 	print '<tr>';
 	print '<td>'.$langs->trans("ReportPeriod").'</td>';
-	if (!$periodlink) print '<td colspan="3">';
-	else print '<td>';
-	if ($period) print $period;
-	if ($periodlink) print '</td><td colspan="2">'.$periodlink;
+	if (!$periodlink) {
+		print '<td colspan="3">';
+	} else {
+		print '<td>';
+	}
+	if ($period) {
+		print $period;
+	}
+	if ($periodlink) {
+		print '</td><td colspan="2">'.$periodlink;
+	}
 	print '</td>';
 	print '</tr>';
 
@@ -235,7 +256,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></div>';
 
@@ -253,42 +274,49 @@ function getDefaultDatesForTransfer()
 {
 	global $db, $conf;
 
+	$date_start = '';
+	$date_end = '';
+	$pastmonth = 0;
+	$pastmonthyear = 0;
+
 	// Period by default on transfer (0: previous month | 1: current month | 2: fiscal year)
-	$periodbydefaultontransfer = $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER;
-	isset($periodbydefaultontransfer) ? $periodbydefaultontransfer : 0;
-	if ($periodbydefaultontransfer == 2) {
-		$sql = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
-		$sql .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
+	$periodbydefaultontransfer = (empty($conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER) ? 0 : $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER);
+	if ($periodbydefaultontransfer == 2) {	// fiscal year
+		$sql = "SELECT date_start, date_end FROM ".MAIN_DB_PREFIX."accounting_fiscalyear";
+		$sql .= " WHERE date_start < '".$db->idate(dol_now())."' AND date_end > '".$db->idate(dol_now())."'";
 		$sql .= $db->plimit(1);
 		$res = $db->query($sql);
 		if ($res->num_rows > 0) {
-			$fiscalYear = $db->fetch_object($res);
-			$date_start = strtotime($fiscalYear->date_start);
-			$date_end = strtotime($fiscalYear->date_end);
+			$obj = $db->fetch_object($res);
+
+			$date_start = $db->jdate($obj->date_start);
+			$date_end = $db->jdate($obj->date_end);
 		} else {
-			$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 			$year_start = dol_print_date(dol_now(), '%Y');
+			if ($month_start > dol_print_date(dol_now(), '%m')) {
+				$year_start = $year_start - 1;
+			}
 			$year_end = $year_start + 1;
 			$month_end = $month_start - 1;
-			if ($month_end < 1)
-			{
+			if ($month_end < 1) {
 				$month_end = 12;
 				$year_end--;
 			}
 			$date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
 			$date_end = dol_get_last_day($year_end, $month_end);
 		}
-	} elseif ($periodbydefaultontransfer == 1) {
-		$year_current = strftime("%Y", dol_now());
-		$pastmonth = strftime("%m", dol_now());
+	} elseif ($periodbydefaultontransfer == 1) {	// current month
+		$year_current = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+		$pastmonth = (int) dol_print_date(dol_now('gmt'), '%m', 'gmt');
 		$pastmonthyear = $year_current;
 		if ($pastmonth == 0) {
 			$pastmonth = 12;
 			$pastmonthyear--;
 		}
-	} else {
-		$year_current = strftime("%Y", dol_now());
-		$pastmonth = strftime("%m", dol_now()) - 1;
+	} else {	// previous month
+		$year_current = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+		$pastmonth = (int) dol_print_date(dol_now('gmt'), '%m', 'gmt') - 1;
 		$pastmonthyear = $year_current;
 		if ($pastmonth == 0) {
 			$pastmonth = 12;

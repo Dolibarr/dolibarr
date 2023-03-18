@@ -27,5 +27,7 @@ Recipient=Vastaanottaja
 ErrorStockIsNotEnough=Varaston saldo ei riitä
 Shippable=Toimitettavissa
 NonShippable=Ei toimitettavissa
+ShowShippableStatus=Show shippable status
 ShowReceiving=Näytä lähetyslista
 NonExistentOrder=Tilausta ei ole järjestelmässä
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

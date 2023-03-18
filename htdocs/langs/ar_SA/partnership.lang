@@ -1,0 +1,96 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModulePartnershipName=إدارة الشراكة
+PartnershipDescription=وحدة إدارة الشراكة
+PartnershipDescriptionLong= وحدة إدارة الشراكة
+Partnership=شراكة
+Partnerships=Partnerships
+AddPartnership=أضف شراكة
+CancelPartnershipForExpiredMembers=الشراكة: إلغاء شراكة الأعضاء المنتهية صلاحيتها
+PartnershipCheckBacklink=الشراكة: تحقق من إحالة الروابط الخلفية
+
+#
+# Menu
+#
+NewPartnership=شراكة جديدة
+NewPartnershipbyWeb= Your partnership was added successfully.
+ListOfPartnerships=قائمة الشراكات
+
+#
+# Admin page
+#
+PartnershipSetup=إعدادات الشراكة
+PartnershipAbout=حول الشراكة
+PartnershipAboutPage=صفحة حول الشراكة 
+partnershipforthirdpartyormember=يجب تعيين حالة الشريك على "طرف ثالث" أو "عضو"
+PARTNERSHIP_IS_MANAGED_FOR=إدارة الشراكة لـ
+PARTNERSHIP_BACKLINKS_TO_CHECK=الروابط الخلفية المراد التحقق منها
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=عدد الأيام قبل إلغاء حالة الشراكة عند انتهاء صلاحية الاشتراك
+ReferingWebsiteCheck=تحقق من إحالة الموقع
+ReferingWebsiteCheckDesc=يمكنك تمكين ميزة للتحقق من أن شركائك قد أضافوا رابطًا خلفيًا إلى مجالات موقع الويب الخاص بك على موقع الويب الخاص بهم.
+PublicFormRegistrationPartnerDesc=يمكن أن توفر لك Dolibarr عنوان URL / موقع ويب عام للسماح للزوار الخارجيين بطلب الانضمام إلى برنامج الشراكة.
+
+#
+# Object
+#
+DeletePartnership=حذف شراكة
+PartnershipDedicatedToThisThirdParty=شراكة مخصصة لهذا الطرف الثالث
+PartnershipDedicatedToThisMember=شراكة مكرسة لهذا العضو
+DatePartnershipStart=تاريخ البدء
+DatePartnershipEnd=تاريخ الانتهاء
+ReasonDecline=سبب الرفض
+ReasonDeclineOrCancel=سبب الرفض
+PartnershipAlreadyExist=الشراكة موجودة بالفعل
+ManagePartnership=إدارة الشراكة
+BacklinkNotFoundOnPartnerWebsite=الرابط الخلفي غير موجود على موقع الشريك
+ConfirmClosePartnershipAsk=هل أنت متأكد أنك تريد إلغاء هذه الشراكة؟
+PartnershipType=نوع الشراكة
+PartnershipRefApproved=تمت الموافقة على الشراكة %s
+KeywordToCheckInWebsite=إذا كنت تريد التحقق من وجود كلمة رئيسية معينة في موقع الويب الخاص بكل شريك ، فحدد هذه الكلمة الأساسية هنا
+PartnershipDraft=حوالة مصرفية
+PartnershipAccepted=قبلت
+PartnershipRefused=رفض
+PartnershipCanceled=ملغي
+PartnershipManagedFor=الشركاء هم
+
+#
+# Template Mail
+#
+SendingEmailOnPartnershipWillSoonBeCanceled=سيتم إلغاء الشراكة قريبًا
+SendingEmailOnPartnershipRefused=رفضت الشراكة
+SendingEmailOnPartnershipAccepted=قبلت الشراكة
+SendingEmailOnPartnershipCanceled=تم إلغاء الشراكة
+
+YourPartnershipWillSoonBeCanceledTopic=سيتم إلغاء الشراكة قريبًا
+YourPartnershipRefusedTopic=رفضت الشراكة
+YourPartnershipAcceptedTopic=قبلت الشراكة
+YourPartnershipCanceledTopic=تم إلغاء الشراكة
+
+YourPartnershipWillSoonBeCanceledContent=نعلمك أنه سيتم إلغاء شراكتك قريبًا (لم يتم العثور على Backlink)
+YourPartnershipRefusedContent=نعلمك أنه تم رفض طلب الشراكة الخاص بك.
+YourPartnershipAcceptedContent=نعلمك أنه تم قبول طلب الشراكة الخاص بك.
+YourPartnershipCanceledContent=نعلمك أنه تم إلغاء شراكتك.
+
+CountLastUrlCheckError=عدد الأخطاء الخاصة بآخر فحص لعنوان URL
+LastCheckBacklink=تاريخ آخر فحص لعنوان URL
+ReasonDeclineOrCancel=سبب الرفض
+
+NewPartnershipRequest=طلب شراكة جديد
+NewPartnershipRequestDesc=يسمح لك هذا النموذج بطلب أن تكون جزءًا من أحد برامج الشراكة الخاصة بنا. إذا كنت بحاجة إلى مساعدة لملء هذا النموذج ، فيرجى الاتصال عبر البريد الإلكتروني <b> %s </b>.
+

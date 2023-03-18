@@ -13,17 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#
-# Generic
-#
-
-# Module label 'ModuleZapierForDolibarrName'
-ModuleZapierForDolibarrName = Zapier for Dolibarr
-# Module description 'ModuleZapierForDolibarrDesc'
-ModuleZapierForDolibarrDesc = Zapier for Dolibarr module
-
-#
-# Admin page
-#
-ZapierForDolibarrSetup = Setup of Zapier for Dolibarr
-ZapierDescription=Interface with Zapier
+ModuleZapierForDolibarrName = Zapier для Dolibarr
+ModuleZapierForDolibarrDesc = Zapier для модуля Dolibarr
+ZapierForDolibarrSetup=Налаштування Zapier для Dolibarr
+ZapierDescription=Інтерфейс із Zapier
+ZapierAbout=Про модуль Zapier
+ZapierSetupPage=Для використання Zapier не потрібно налаштовувати Dolibarr. Однак ви повинні створити та опублікувати пакунок на zapier, щоб мати можливість використовувати Zapier з Dolibarr. Дивіться документацію на <a href="https://wiki.dolibarr.org/index.php/Module_Zapier"> на цій вікі-сторінці </a>.

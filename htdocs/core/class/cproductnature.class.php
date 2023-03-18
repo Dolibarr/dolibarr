@@ -29,9 +29,9 @@
 class CProductNature // extends CommonObject
 {
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	/**
 	 * @var string Error code (or message)
@@ -42,274 +42,259 @@ class CProductNature // extends CommonObject
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
+
+	/**
+	 * @var array record
+	 */
 	public $records = array();
 
-	public $element='cproductnbature';
-	public $table_element='c_product_nature';
+	/**
+	 * @var string element
+	 */
+	public $element = 'cproductnbature';
 
-    /**
+	/**
+	 * @var string table element
+	 */
+	public $table_element = 'c_product_nature';
+
+	/**
 	 * @var int ID
 	 */
 	public $id;
 
+	/**
+	 * @var int code
+	 */
 	public $code;
+
+	/**
+	 * @var string label
+	 */
 	public $label;
+
+	/**
+	 * @var int active
+	 */
 	public $active;
 
 
+	/**
+	 *  Constructor
+	 *
+	 *  @param      DoliDb		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
 
-    /**
-     *  Constructor
-     *
-     *  @param      DoliDb		$db      Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	/**
+	 *  Create object into database
+	 *
+	 *  @param      User	$user        User that create
+	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
+	 *  @return     int      		   	 <0 if KO, Id of created object if OK
+	 */
+	public function create($user, $notrigger = 0)
+	{
+		global $conf, $langs;
 
-
-    /**
-     *  Create object into database
-     *
-     *  @param      User	$user        User that create
-     *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
-     *  @return     int      		   	 <0 if KO, Id of created object if OK
-     */
-    public function create($user, $notrigger = 0)
-    {
-    	global $conf, $langs;
-		$error = 0;
-
-		// Clean parameters
-
-		if (isset($this->id)) $this->id = (int) $this->id;
-		if (isset($this->code)) $this->code = trim($this->code);
-		if (isset($this->label)) $this->libelle = trim($this->label);
-		if (isset($this->active)) $this->active = trim($this->active);
-
-		// Check parameters
-		// Put here code to add control on parameters values
-
-        // Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
+		// Insert request
+		$sql = "INSERT INTO ".$this->db->prefix().$this->table_element."(";
 		$sql .= "rowid,";
 		$sql .= "code,";
 		$sql .= "label,";
 		$sql .= "active";
-        $sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->id) ? 'NULL' : ((int) $this->id)) .",";
+		$sql .= ") VALUES (";
+		$sql .= " ".(!isset($this->id) ? 'NULL' : ((int) $this->id)).",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : ((int) $this->code)).",";
-		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->db->escape($this->active))).",";
+		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape(trim($this->label))."'").",";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->active)).",";
 		$sql .= ")";
 
 		$this->db->begin();
 
-	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
-
-		if (!$error)
-        {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
-        }
-
-        // Commit or rollback
-        if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		// Commit or rollback
+		if (!$resql) {
+			dol_syslog(get_class($this)."::create ".$this->db->lasterror(), LOG_ERR);
+			$this->error = "Error ".$this->db->lasterror();
 			$this->db->rollback();
-			return -1 * $error;
+			return -1;
 		} else {
+			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 			$this->db->commit();
-            return $this->id;
+			return $this->id;
 		}
-    }
+	}
 
 
-    /**
-     *  Load object in memory from database
-     *
-     *  @param      int		$id    			Id of CUnit object to fetch (rowid)
-     *  @param		string	$code			Code
-     *  @return     int						<0 if KO, >0 if OK
-     */
-    public function fetch($id, $code = '')
-    {
-    	global $langs;
+	/**
+	 *  Load object in memory from database
+	 *
+	 *  @param      int		$id    			Id of CUnit object to fetch (rowid)
+	 *  @param		string	$code			Code
+	 *  @return     int						<0 if KO, >0 if OK
+	 */
+	public function fetch($id, $code = '')
+	{
+		global $langs;
 
-        $sql = "SELECT";
+		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.code,";
 		$sql .= " t.label,";
 		$sql .= " t.active";
-        $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-        $sql_where = array();
-        if ($id)   $sql_where[] = " t.rowid = ".$id;
-        if ($code>=0) $sql_where[] = " t.code = ". ((int) $code);
-        if (count($sql_where) > 0) {
-        	$sql .= ' WHERE '.implode(' AND ', $sql_where);
-        }
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		$sql_where = array();
+		if ($id) {
+			$sql_where[] = " t.rowid = ".((int) $id);
+		}
+		if ($code >= 0) {
+			$sql_where[] = " t.code = ".((int) $code);
+		}
+		if (count($sql_where) > 0) {
+			$sql .= ' WHERE '.implode(' AND ', $sql_where);
+		}
 
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
-                $obj = $this->db->fetch_object($resql);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);
 
-                $this->id = $obj->rowid;
+				$this->id = $obj->rowid;
 				$this->code = $obj->code;
 				$this->label = $obj->label;
 				$this->active = $obj->active;
-            }
-            $this->db->free($resql);
+			}
+			$this->db->free($resql);
 
-            return 1;
-        } else {
-      	    $this->error = "Error ".$this->db->lasterror();
-            return -1;
-        }
-    }
-
-
-    /**
-     * Load list of objects in memory from the database.
-     *
-     * @param  string      $sortorder    Sort Order
-     * @param  string      $sortfield    Sort field
-     * @param  int         $limit        limit
-     * @param  int         $offset       Offset
-     * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
-     * @param  string      $filtermode   Filter mode (AND or OR)
-     * @return array|int                 int <0 if KO, array of pages if OK
-     */
-    public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
-    {
-    	global $conf;
-
-    	dol_syslog(__METHOD__, LOG_DEBUG);
-
-    	$sql = 'SELECT';
-    	$sql .= " t.rowid,";
-    	$sql .= " t.code,";
-    	$sql .= " t.label,";
-    	$sql .= " t.active";
-    	$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-    	// Manage filter
-    	$sqlwhere = array();
-    	if (count($filter) > 0) {
-    		foreach ($filter as $key => $value) {
-    			if ($key == 't.rowid' || $key == 't.active' || $key == 't.code') {
-    				$sqlwhere[] = $key.'='.(int) $value;
-    			} elseif (strpos($key, 'date') !== false) {
-    				$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
-    			} elseif ($key == 't.label') {
-    				$sqlwhere[] = $key.' = \''.$this->db->escape($value).'\'';
-    			} else {
-    				$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
-    			}
-    		}
-    	}
-    	if (count($sqlwhere) > 0) {
-    		$sql .= ' WHERE ('.implode(' '.$filtermode.' ', $sqlwhere).')';
-    	}
-
-    	if (!empty($sortfield)) {
-    		$sql .= $this->db->order($sortfield, $sortorder);
-    	}
-    	if (!empty($limit)) {
-    		$sql .= ' '.$this->db->plimit($limit, $offset);
-    	}
-
-    	$resql = $this->db->query($sql);
-    	if ($resql) {
-    		$this->records = array();
-    		$num = $this->db->num_rows($resql);
-    		if ($num > 0) {
-	    		while ($obj = $this->db->fetch_object($resql))
-	    		{
-	    			$record = new self($this->db);
-
-	    			$record->id    = $obj->rowid;
-	    			$record->code = $obj->code;
-	    			$record->label = $obj->label;
-	    			$this->records[$record->id] = $record;
-	    		}
-    		}
-    		$this->db->free($resql);
-
-    		return $this->records;
-    	} else {
-    		$this->errors[] = 'Error '.$this->db->lasterror();
-    		dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
-
-    		return -1;
-    	}
-    }
+			return 1;
+		} else {
+			$this->error = "Error ".$this->db->lasterror();
+			return -1;
+		}
+	}
 
 
-    /**
-     *  Update object into database
-     *
-     *  @param      User	$user        User that modify
-     *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
-     *  @return     int     		   	 <0 if KO, >0 if OK
-     */
-    public function update($user = null, $notrigger = 0)
-    {
-    	global $conf, $langs;
-		$error = 0;
+	/**
+	 * Load list of objects in memory from the database.
+	 *
+	 * @param  string      $sortorder    Sort Order
+	 * @param  string      $sortfield    Sort field
+	 * @param  int         $limit        limit
+	 * @param  int         $offset       Offset
+	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
+	 * @param  string      $filtermode   Filter mode (AND or OR)
+	 * @return array|int                 int <0 if KO, array of pages if OK
+	 */
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	{
+		global $conf;
 
-		// Clean parameters
-		if (isset($this->code)) $this->code = trim($this->code);
-		if (isset($this->label)) $this->label = trim($this->label);
-		if (isset($this->active)) $this->active = trim($this->active);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		// Check parameters
-		// Put here code to add control on parameters values
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
+		$sql .= " t.code,";
+		$sql .= " t.label,";
+		$sql .= " t.active";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		// Manage filter
+		$sqlwhere = array();
+		if (count($filter) > 0) {
+			foreach ($filter as $key => $value) {
+				if ($key == 't.rowid' || $key == 't.active' || $key == 't.code') {
+					$sqlwhere[] = $key." = ".((int) $value);
+				} elseif (strpos($key, 'date') !== false) {
+					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
+				} elseif ($key == 't.label') {
+					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
+				} else {
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+				}
+			}
+		}
+		if (count($sqlwhere) > 0) {
+			$sql .= ' WHERE ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+		}
 
-        // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+		if (!empty($sortfield)) {
+			$sql .= $this->db->order($sortfield, $sortorder);
+		}
+		if (!empty($limit)) {
+			$sql .= $this->db->plimit($limit, $offset);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$this->records = array();
+			$num = $this->db->num_rows($resql);
+			if ($num > 0) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$record = new self($this->db);
+
+					$record->id    = $obj->rowid;
+					$record->code = $obj->code;
+					$record->label = $obj->label;
+					$this->records[$record->id] = $record;
+				}
+			}
+			$this->db->free($resql);
+
+			return $this->records;
+		} else {
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+
+			return -1;
+		}
+	}
+
+
+	/**
+	 *  Update object into database
+	 *
+	 *  @param      User	$user        User that modify
+	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return     int     		   	 <0 if KO, >0 if OK
+	 */
+	public function update($user = null, $notrigger = 0)
+	{
+		global $conf, $langs;
+
+		// Update request
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
 		$sql .= " code=".(isset($this->code) ? ((int) $this->code) : "null").",";
-		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
+		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape(trim($this->label))."'" : "null").",";
 		$sql .= " active=".(isset($this->active) ? ((int) $this->active) : "null");
-        $sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".(int) $this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
-
-        // Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
+		$resql = $this->db->query($sql);
+		// Commit or rollback
+		if (!$resql) {
+			dol_syslog(get_class($this)."::update Error ".$this->db->lasterror(), LOG_ERR);
+			$this->error = "Error ".$this->db->lasterror();
 			$this->db->rollback();
-			return -1 * $error;
+			return -1;
 		} else {
 			$this->db->commit();
 			return 1;
 		}
-    }
+	}
 
 
- 	/**
+	/**
 	 *  Delete object in database
 	 *
-     *	@param  User	$user        User that delete
-     *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *	@param  User	$user        User that delete
+	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
@@ -317,25 +302,19 @@ class CProductNature // extends CommonObject
 		global $conf, $langs;
 		$error = 0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " WHERE rowid=".$this->id;
+		$sql = "DELETE FROM ".$this->db->prefix().$this->table_element;
+		$sql .= " WHERE rowid=".(int) $this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
-
-        // Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
+		// Commit or rollback
+		if (!$resql) {
+			dol_syslog(get_class($this)."::delete Error ".$this->db->lasterror(), LOG_ERR);
+			$this->error = "Error ".$this->db->lasterror();
 			$this->db->rollback();
-			return -1 * $error;
+			return -1;
 		} else {
 			$this->db->commit();
 			return 1;
@@ -345,7 +324,7 @@ class CProductNature // extends CommonObject
 
 	/**
 	 * Get unit from code
-	 * @param string $code code of unit
+	 * @param int $code code of unit
 	 * @param string $mode 0= id , short_label=Use short label as value, code=use code
 	 * @return int            <0 if KO, Id of code if OK
 	 */
@@ -353,7 +332,7 @@ class CProductNature // extends CommonObject
 	{
 		if ($mode == 'label') {
 			return dol_getIdFromCode($this->db, $code, $this->table_element, 'label', 'code');
-		} elseif ($mode == 'code'){
+		} elseif ($mode == 'code') {
 			return dol_getIdFromCode($this->db, $code, $this->table_element, 'code', 'code');
 		}
 

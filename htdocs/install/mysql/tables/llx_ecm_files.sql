@@ -22,6 +22,7 @@ CREATE TABLE llx_ecm_files
   ref				varchar(128),					-- contains hash from filename+filepath
   label				varchar(128) NOT NULL,			-- contains hash of file content
   share				varchar(128) NULL,				-- contains hash for file sharing
+  share_pass		varchar(32) NULL,				-- password to access the file (encoded with dolEncrypt)
   entity			integer DEFAULT 1 NOT NULL,		-- multi company id
   filepath    		varchar(255) NOT NULL,   	    -- relative to dolibarr document dir. Example module/def
   filename          varchar(255) NOT NULL,			-- file name only without any directory
@@ -35,8 +36,10 @@ CREATE TABLE llx_ecm_files
   gen_or_uploaded   varchar(12),                    -- 'generated' or 'uploaded' 
   extraparams		varchar(255),					-- for stocking other parameters with json format
   date_c			datetime,
-  tms			timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_c			integer,
   fk_user_m			integer,
+  note_private		text,
+  note_public		text,
   acl				text							-- for future permission 'per file'
 ) ENGINE=innodb;

@@ -26,20 +26,15 @@ create table llx_events
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,                   -- last modification date
   type           varchar(32)  NOT NULL,       -- action type
-  entity         integer DEFAULT 1 NOT NULL,	-- multi company id
-  prefix_session varchar(255) NULL,				  -- prefix of session, obtained with dol_getprefix
+  entity         integer DEFAULT 1 NOT NULL,  -- multi company id
+  prefix_session varchar(255) NULL,			  -- prefix of session, obtained with dol_getprefix
   dateevent      datetime,                    -- date event
   fk_user        integer,                     -- id user
   description    varchar(250) NOT NULL,       -- full description of action
   ip             varchar(250) NOT NULL,       -- ip (must contains ip v4 and v6 or dns names)
   user_agent     varchar(255) NULL,           -- user agent
-  fk_object      integer                      -- id of related object
+  fk_object      integer NULL,                -- id of related object
+  authentication_method varchar(64) NULL,     -- type of authentication mode used if internal login event
+  fk_oauth_token integer NULL                 -- id in oauth_token if internal login event done using an oauth_token
 ) ENGINE=innodb;
 
--- 
--- List of codes for the field entity
---
--- 1 : first company events
--- 2 : second company events
--- 3 : etc...
---

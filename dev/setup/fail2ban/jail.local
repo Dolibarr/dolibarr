@@ -1,0 +1,43 @@
+#
+# Examle of rule you can add to fail2ban to restrict bruteforce attacks.
+#
+
+[web-dol-passforgotten]
+
+; rule against call of passwordforgottenpage
+enabled = true
+port    = http,https
+filter  = web-dolibarr-rulespassforgotten
+logpath = /mypath/documents/documents/dolibarr.log
+action  = %(action_mw)s
+bantime  = 4320000   ; 50 days
+findtime = 86400     ; 1 day
+maxretry = 10
+
+
+[web-dol-bruteforce]
+
+; rule against bruteforce hacking (login + api)
+enabled = true
+port    = http,https
+filter  = web-dolibarr-rulesbruteforce
+logpath = /mypath/documents/documents/dolibarr.log
+action  = %(action_mw)s
+bantime  = 86400     ; 1 day
+findtime = 3600      ; 1 hour
+maxretry = 10
+
+
+[web-dol-limitpublic]
+
+; rule to add rate limit on some public pages
+; note you must keep enough for public access like agenda export, emailing trackers, stripe ipn access, ...
+enabled = true
+port    = http,https
+filter  = web-dolibarr-limitpublic
+logpath = /mypath/documents/documents/dolibarr.log
+action  = %(action_mw)s
+bantime  = 86400     ; 1 day
+findtime = 86400     ; 1 day
+maxretry = 1000
+

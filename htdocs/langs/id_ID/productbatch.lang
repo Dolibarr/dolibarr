@@ -1,8 +1,10 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Gunakan lot / nomor seri
-ProductStatusOnBatch=Ya (diperlukan banyak seri)
+ProductStatusOnBatch=Ya (lot diperlukan)
+ProductStatusOnSerial=Ya (nomor seri unik diperlukan)
 ProductStatusNotOnBatch=Tidak (banyak / serial tidak digunakan)
-ProductStatusOnBatchShort=Ya
+ProductStatusOnBatchShort=Lot
+ProductStatusOnSerialShort=Nomor seri
 ProductStatusNotOnBatchShort=Tidak
 Batch=Lot / Serial
 atleast1batchfield=Makan-menurut tanggal atau Jual-menurut tanggal atau Lot / nomor seri
@@ -22,3 +24,22 @@ ProductLotSetup=Pengaturan lot modul / serial
 ShowCurrentStockOfLot=Tampilkan stok saat ini untuk produk / lot pasangan
 ShowLogOfMovementIfLot=Tampilkan log pergerakan untuk produk / lot pasangan
 StockDetailPerBatch=Detail stok per lot
+SerialNumberAlreadyInUse=Nomor seri %s sudah digunakan untuk produk %s
+TooManyQtyForSerialNumber=Anda hanya dapat memiliki satu produk %s untuk nomor seri %s
+ManageLotMask=Masker kustom
+CustomMasks=Opsi untuk menentukan masker penomoran yang berbeda untuk setiap produk
+BatchLotNumberingModules=Aturan penomoran untuk pembuatan otomatis nomor lot
+BatchSerialNumberingModules=Aturan penomoran untuk pembuatan nomor seri secara otomatis (untuk produk dengan properti 1 lot/seri unik untuk setiap produk)
+QtyToAddAfterBarcodeScan=Qty to %s for each barcode/lot/serial scanned
+LifeTime=Rentang hidup (dalam hari)
+EndOfLife=Akhir Hidup
+ManufacturingDate=Tanggal pembuatan
+DestructionDate=Tanggal kehancuran
+FirstUseDate=Tanggal penggunaan pertama
+QCFrequency=Frekuensi kontrol kualitas (dalam hari)
+ShowAllLots=Show all lots
+HideLots=Hide lots
+#Traceability - qc status
+OutOfOrder=Diluar urutan kerja
+InWorkingOrder=Dalam urutan kerja
+ToReplace=Replace

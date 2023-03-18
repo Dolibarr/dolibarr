@@ -1,14 +1,19 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Tento nástroj musí používat pouze zkušení uživatelé nebo vývojáři. Poskytuje nástroje pro sestavení nebo úpravu vlastního modulu. Dokumentace pro alternativní <a href="%s" target="_blank">manuální vývoj je zde</a> .
-EnterNameOfModuleDesc=Zadejte název modulu/aplikace pro vytvoření bez mezer. Použijte velká slova k oddělení slov (například: MyModule, EcommerceForShop, SyncWithMySystem ...)
-EnterNameOfObjectDesc=Zadejte název objektu, který chcete vytvořit, bez mezer. Použijte velká písmena pro oddělení slov (například: MyObject, Student, Teacher ...). Bude vygenerován soubor třídy CRUD, ale také soubor API, stránky pro zápis / přidání / úpravy / odstranění objektů a souborů SQL.
+IdModule= Module id
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, the pages to list/add/edit/delete the object and the SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Cesta, kde jsou moduly generovány/editovány (první adresář pro externí moduly definované v %s): <strong>%s</strong>
 ModuleBuilderDesc3=Generované / upravitelné moduly nalezené: <strong> %s </strong>
 ModuleBuilderDesc4=Modul je detekován jako "upravitelný", když soubor <strong> %s </strong> existuje v kořenovém adresáři modulu
 NewModule=Nový modul
 NewObjectInModulebuilder=Nový objekt
+NewDictionary=New dictionary
+ModuleName=Module name
 ModuleKey=Klávesa modulu
 ObjectKey=Klíč objektu
+DicKey=Dictionary key
 ModuleInitialized=Modul byl inicializován
 FilesForObjectInitialized=Soubory pro nový objekt '%s' byly inicializovány
 FilesForObjectUpdated=Soubory pro aktualizaci objektu '%s' (soubory .sql a soubor .class.php)
@@ -40,18 +45,22 @@ PageForCreateEditView=PHP stránku pro vytvoření / úpravu / prohlížení zá
 PageForAgendaTab=Stránka PHP pro kartu události
 PageForDocumentTab=Stránka PHP pro kartu dokumentu
 PageForNoteTab=Stránka PHP pro kartu poznámky
+PageForContactTab=PHP page for contact tab
 PathToModulePackage=Cesta k zip modulu / aplikačního balíčku
 PathToModuleDocumentation=Cesta k souboru dokumentace modulu/aplikace (%s)
 SpaceOrSpecialCharAreNotAllowed=Mezery nebo speciální znaky nejsou povoleny.
 FileNotYetGenerated=Soubor dosud nebyl vytvořen
+GenerateCode=Generate code
 RegenerateClassAndSql=Vynutit aktualizaci souborů .class a .sql
 RegenerateMissingFiles=Generovat chybějící soubory
 SpecificationFile=Soubor dokumentace
 LanguageFile=Soubor pro jazyk
 ObjectProperties=Vlastnosti objektu
+Property=Propery
+PropertyDesc=A property is an attribute that characterizes an object. This attribute has a code, a label and a type with several options.
 ConfirmDeleteProperty=Opravdu chcete odstranit vlastnost <strong> %s </strong>? Tím se změní kód ve třídě PHP, ale také odstraníme sloupec z definice tabulky objektu.
 NotNull=Ne NULL záznam
-NotNullDesc=1 = Nastavte databázi na hodnotu NULL. -1 = Povolit hodnoty null a hodnotu síly na hodnotu NULL, pokud je prázdná ('' nebo 0).
+NotNullDesc=1=Set database to NOT NULL, 0=Allow null values, -1=Allow null values by forcing value to NULL if empty ('' or 0)
 SearchAll=Používá se pro "vyhledávání všech"
 DatabaseIndex=Databázový index
 FileAlreadyExists=Soubor %s již existuje
@@ -77,15 +86,16 @@ IsAMeasure=Je to opatření
 DirScanned=Adresář naskenován
 NoTrigger=Žádný spouštěč
 NoWidget=Žádný widget
-GoToApiExplorer=Přejděte na prohlížeč rozhraní API
+ApiExplorer=API explorer
 ListOfMenusEntries=Seznam položek menu
 ListOfDictionariesEntries=Seznam položek slovníků
 ListOfPermissionsDefined=Seznam definovaných oprávnění
 SeeExamples=Viz příklady zde
-EnabledDesc=Podmínka, aby bylo toto pole aktivní (příklady: 1 nebo $ conf-> global-> MYMODULE_MYOPTION)
-VisibleDesc=Je pole viditelné? (Příklady: 0 = Nikdy neviditelné, 1 = Viditelné v seznamu a vytvářet/aktualizovat/prohlížet formuláře, 2 = Viditelné pouze v seznamu, 3 = Viditelné pouze při vytváření/aktualizaci/zobrazit formulář (není v seznamu), 4 = Viditelné v seznamu a pouze formulář aktualizace/zobrazení (nevytvářet), 5 = viditelné pouze ve formuláři pro prohlížení koncových zobrazení (nevytvářet, neaktualizovat). <br><br>  Použití záporné hodnoty znamená, že pole není ve výchozím nastavení zobrazeno v seznamu, ale může být vybráno pro zobrazení). <br><br>Může to být výraz, například: <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Zobrazte toto pole na kompatibilních dokumentech PDF. Polohu můžete spravovat pomocí pole „Poloha“. <br/> V současné době známých modelů compatibles PDF jsou: Eratosthenés z Kyrény (objednávka), Espadon (loď), houba (faktury), cyan (propal / citát), Cornas (dodavatel pořadí) <br/> <br/> <strong> Z dokumentu: </strong> <br/> 0 = nezobrazí <br/> 1 = displej <br/> 2 = zobrazí pouze tehdy, pokud není prázdný <br/> <br/> <strong> pro linky na dokumenty: </strong> <br/> 0 = není zobrazena <br/> 1 = zobrazena v koloně <br/> 3 = zobrazení v popis řádku sloupce po popisu <br/> 4 = zobrazení ve sloupci s popisem po vyrobení popis pouze pokud není prázdný
-DisplayOnPdf=Zobrazit v PDF
+EnabledDesc=Condition to have this field active.<br><br>Examples:<br>1<br>isModEnabled('MAIN_MODULE_MYMODULE')<br>getDolGlobalString('MYMODULE_OPTION')==2
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).
+ItCanBeAnExpression=It can be an expression. Example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user->hasRight('holiday', 'define_holiday')?1:5
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
+DisplayOnPdf=On PDF
 IsAMeasureDesc=Může být hodnota pole kumulativní, aby se dostala do seznamu celkem? (Příklady: 1 nebo 0)
 SearchAllDesc=Používá se pole pro vyhledávání pomocí nástroje rychlého vyhledávání? (Příklady: 1 nebo 0)
 SpecDefDesc=Zadejte zde veškerou dokumentaci, kterou chcete poskytnout s modulem, která ještě nebyla definována jinými kartami. Můžete použít .md nebo lepší, bohatou syntaxi .asciidoc.
@@ -93,11 +103,11 @@ LanguageDefDesc=Do těchto souborů zadejte všechny klíče a překlad pro kaž
 MenusDefDesc=Zde definujte nabídky poskytované vaším modulem
 DictionariesDefDesc=Zde definujte slovníky poskytované vaším modulem
 PermissionsDefDesc=Zde definujte nová oprávnění poskytovaná vaším modulem
-MenusDefDescTooltip=Nabídky poskytované modulem / aplikací jsou definovány v <strong>menu $ this-&gt;</strong> do souboru deskriptoru modulu. Tento soubor můžete upravit ručně nebo použít vložený editor. <br><br> Poznámka: Po definování (a opětovném aktivaci modulu) jsou menu zobrazena také v editoru menu, který je k dispozici administrátorům na %s.
+MenusDefDescTooltip=The menus provided by your module/application are defined into the array <strong>$this->menus</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and the module re-activated), the menus are also visible into the menu editor available to administrator users on %s.
 DictionariesDefDescTooltip=Slovníky poskytované vaším modulem / aplikací jsou definovány do pole <strong> $ this-> slovníky </strong> do souboru deskriptoru modulu. Tento soubor můžete upravit ručně nebo použít zabudovaný editor. <br> <br> Poznámka: Jakmile je definován (a modul je znovu aktivován), jsou v oblasti nastavení také viditelné slovníky pro administrátorské uživatele na %s.
 PermissionsDefDescTooltip=Oprávnění poskytnutá vaším modulem / aplikací jsou definována do pole <strong>$ this-> práva</strong> do souboru deskriptoru modulu. Tento soubor můžete upravit ručně nebo použít vložený editor. <br><br> Poznámka: Po definování (a opětovném aktivaci modulu) jsou oprávnění viditelná ve výchozím nastavení oprávnění %s.
 HooksDefDesc=Definujte v <b> module_parts ['hooks'] </b> vlastnost, v deskriptoru modulu, kontext háčků, které chcete spravovat (seznam kontextů lze nalézt při hledání na '<b> initHooks (</b>' v jádrovém kódu) <br> Editovat soubor háku přidáte kód vašich háknutých funkcí (hákovatelné funkce lze nalézt při hledání na '<b> executeHooks </b>' v jádrovém kódu).
-TriggerDefDesc=Definujte ve spouštěcím souboru kód, který chcete provést pro každou provedenou událost.
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=Viz ID používané ve vaší instalaci
 SeeReservedIDsRangeHere=Viz rozsah vyhrazených ID
 ToolkitForDevelopers=Toolkit pro vývojáře Dolibarr
@@ -105,11 +115,11 @@ TryToUseTheModuleBuilder=Pokud máte znalosti o SQL a PHP, můžete použít pr�
 SeeTopRightMenu=Viz <span class="fa fa-bug"> </span> v pravé horní nabídce
 AddLanguageFile=Přidat jazyk
 YouCanUseTranslationKey=Zde můžete použít klíč, který je překladatelským klíčem nalezeným v jazykovém souboru (viz záložka "Jazyky")
-DropTableIfEmpty=(Vymazat tabulku, pokud je prázdná)
+DropTableIfEmpty=(Destroy table if empty)
 TableDoesNotExists=Tabulka %s neexistuje
 TableDropped=Tabulka %s byla smazána
 InitStructureFromExistingTable=Vytvořte řetězec struktury pole existující tabulky
-UseAboutPage=Zakažte stránku
+UseAboutPage=Do not generate the About page
 UseDocFolder=Zakázat složku dokumentace
 UseSpecificReadme=Použijte konkrétní ReadMe
 ContentOfREADMECustomized=Poznámka: Obsah souboru README.md byl nahrazen konkrétní hodnotou definovanou v nastavení modulu ModuleBuilder.
@@ -126,17 +136,32 @@ UseSpecificEditorURL = Použijte specifickou adresu URL editoru
 UseSpecificFamily = Použijte konkrétní rodinu
 UseSpecificAuthor = Použijte specifického autora
 UseSpecificVersion = Použijte specifickou počáteční verzi
-ModuleMustBeEnabled=Nejprve musí být aktivován modul / aplikace
-IncludeRefGeneration=Odkaz na objekt musí být generován automaticky
-IncludeRefGenerationHelp=Zaškrtněte toto, pokud chcete zahrnout kód pro automatické generování reference
-IncludeDocGeneration=Chci z objektu vygenerovat nějaké dokumenty
+IncludeRefGeneration=The reference of this object must be generated automatically by custom numbering rules
+IncludeRefGenerationHelp=Check this if you want to include code to manage the generation of the reference automatically using custom numbering rules
+IncludeDocGeneration=I want the feature to generate some documents (PDF, ODT) from templates for this object
 IncludeDocGenerationHelp=Pokud toto zaškrtnete, bude vygenerován nějaký kód pro přidání pole „Generovat dokument“ do záznamu.
-ShowOnCombobox=Zobrazit hodnotu do komboboxu
+ShowOnCombobox=Show value into combo boxes
 KeyForTooltip=Klíč pro popis
-CSSClass=Třída CSS
+CSSClass=CSS for edit/create form
+CSSViewClass=CSS for read form
+CSSListClass=CSS for list
 NotEditable=Nelze upravovat
 ForeignKey=Cizí klíč
-TypeOfFieldsHelp=Typ polí: <br> varchar (99), dvojitý (24,8), reálný, text, html, datetime, timestamp, celé číslo, celé číslo: ClassName: relativní cesta / do / classfile.class.php [: 1 [: filter]] ('1' znamená, že přidáme tlačítko + za kombajn pro vytvoření záznamu, 'filter' může být 'status = 1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__))
+ForeignKeyDesc=If the value of this field must be guaranted to exists into another table. Enter here a value matching syntax: tablename.parentfieldtocheck
+TypeOfFieldsHelp=Example:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+TypeOfFieldsHelpIntro=This is the type of the field/attribute.
 AsciiToHtmlConverter=Převodník ASCII na HTML
 AsciiToPdfConverter=Převodník ASCII na PDF
 TableNotEmptyDropCanceled=Tabulka není prázdná. Odstranění tabulky bylo zrušeno.
+ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
+ImportExportProfiles=Import and export profiles
+ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or update. Set 0 if there is no validation required.
+WarningDatabaseIsNotUpdated=Warning: The database is not updated automatically, you must destroy tables and disable-enable the module to have tables recreated
+LinkToParentMenu=Parent menu (fk_xxxxmenu)
+ListOfTabsEntries=List of tab entries
+TabsDefDesc=Define here the tabs provided by your module
+TabsDefDescTooltip=The tabs provided by your module/application are defined into the array <strong>$this->tabs</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.
+BadValueForType=Bad value for type %s
+DefinePropertiesFromExistingTable=Define properties from an existing table
+DefinePropertiesFromExistingTableDesc=If a table in the database (for the object to create) already exists, you can use it to define the properties of the object.
+DefinePropertiesFromExistingTableDesc2=Keep empty if the table does not exist yet. The code generator will use different kinds of fields to build an example of table that you can edit later.

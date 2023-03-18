@@ -15,27 +15,49 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (!defined("NOLOGIN"))       define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-if (!defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
-if (!defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
-if (!defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
-if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
+// This page return an image of a QR code
 
+if (!defined("NOLOGIN")) {
+	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1');
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+
+// Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
 require '../../core/modules/barcode/doc/tcpdfbarcode.modules.php';
 
 $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 
+
+/*
+ * View
+ */
+
+// The buildBarCode does not include the http headers but this is a page that just return an image.
+
 if (GETPOSTISSET("key")) {
 	$key = GETPOST('key');
 	$module = new modTcpdfbarcode();
 	$result = $module->buildBarCode($urlwithroot."/takepos/public/auto_order.php?key=".$key, 'QRCODE', 'Y');
-}
-else {
+} else {
 	$module = new modTcpdfbarcode();
 	$result = $module->buildBarCode($urlwithroot."/takepos/public/menu.php", 'QRCODE', 'Y');
 }

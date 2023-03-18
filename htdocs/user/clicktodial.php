@@ -22,18 +22,21 @@
  *       \brief      Page for Click to dial datas
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
 
-$action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
+$action = (string) GETPOST('action', 'aZ09');
+$id = (int) GETPOST('id', 'int');
 
 // Security check
 $socid = 0;
-if ($user->socid > 0) $socid = $user->socid;
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 $feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
@@ -41,49 +44,50 @@ $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('usercard', 'globalcard'));
 
+
 /*
  * Actions
  */
 
 $parameters = array('id'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (empty($reshook)) {
-    if ($action == 'update' && !GETPOST('cancel', 'alpha')) {
-        $edituser = new User($db);
-        $edituser->fetch($id);
+	if ($action == 'update' && !GETPOST('cancel', 'alpha')) {
+		$edituser = new User($db);
+		$edituser->fetch($id);
 
-        $edituser->clicktodial_url = GETPOST("url");
-        $edituser->clicktodial_login = GETPOST("login");
-        $edituser->clicktodial_password = GETPOST("password");
-        $edituser->clicktodial_poste = GETPOST("poste");
+		$edituser->clicktodial_url = (string) GETPOST("url", "alpha");
+		$edituser->clicktodial_login = (string) GETPOST("login", "alpha");
+		$edituser->clicktodial_password = (string) GETPOST("password", "alpha");
+		$edituser->clicktodial_poste = (string) GETPOST("poste", "alpha");
 
-        $result = $edituser->update_clicktodial();
-        if ($result < 0)
-        {
-            setEventMessages($edituser->error, $edituser->errors, 'errors');
-        }
-    }
+		$result = $edituser->update_clicktodial();
+		if ($result < 0) {
+			setEventMessages($edituser->error, $edituser->errors, 'errors');
+		}
+	}
 }
 
 
 /*
  * View
  */
-
 $form = new Form($db);
 
-llxHeader("", "ClickToDial");
+if ($id > 0) {
+	$object = new User($db);
+	$object->fetch($id, '', '', 1);
+	$object->getrights();
+	$object->fetch_clicktodial();
 
-
-if ($id > 0)
-{
-    $object = new User($db);
-    $object->fetch($id, '', '', 1);
-    $object->getrights();
-    $object->fetch_clicktodial();
-
+	$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+	$title = $person_name." - ".$langs->trans('ClickToDial');
+	$help_url = '';
+	llxHeader('', $title, $help_url);
 
 	$head = user_prepare_head($object);
 
@@ -94,7 +98,7 @@ if ($id > 0)
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
-	dol_fiche_head($head, 'clicktodial', $title, -1, 'user');
+	print dol_get_fiche_head($head, 'clicktodial', $title, -1, 'user');
 
 	$linkback = '';
 
@@ -102,109 +106,113 @@ if ($id > 0)
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= '</a>';
 
-    print '<div class="fichecenter">';
-    print '<div class="underbanner clearboth"></div>';
+	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
+	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
-    // Edit mode
-    if ($action == 'edit')
-    {
-        print '<table class="border centpercent">';
+	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
 
-        if ($user->admin)
-        {
-            print '<tr><td class="titlefield fieldrequired">ClickToDial URL</td>';
-            print '<td class="valeur">';
-            print '<input name="url" value="'.(!empty($object->clicktodial_url) ? $object->clicktodial_url : '').'" size="92">';
-            if (empty($conf->global->CLICKTODIAL_URL) && empty($object->clicktodial_url))
-            {
-                $langs->load("errors");
-                print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</font>';
-            } else {
-                print ' &nbsp; &nbsp; '.$form->textwithpicto($langs->trans("KeepEmptyToUseDefault").': '.$conf->global->CLICKTODIAL_URL, $langs->trans("ClickToDialUrlDesc"));
-            }
-            print '</td>';
-            print '</tr>';
-        }
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
-        print '<tr><td class="titlefield fieldrequired">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
-        print '<td class="valeur">';
-        print '<input name="poste" value="'.(!empty($object->clicktodial_poste) ? $object->clicktodial_poste : '').'"></td>';
-        print "</tr>\n";
+	// Edit mode
+	if ($action == 'edit') {
+		print '<table class="border centpercent">';
 
-        print '<tr><td>ClickToDial '.$langs->trans("Login").'</td>';
-        print '<td class="valeur">';
-        print '<input name="login" value="'.(!empty($object->clicktodial_login) ? $object->clicktodial_login : '').'"></td>';
-        print '</tr>';
+		if ($user->admin) {
+			print '<tr><td class="titlefield fieldrequired">ClickToDial URL</td>';
+			print '<td class="valeur">';
+			print '<input name="url" value="'.(!empty($object->clicktodial_url) ? $object->clicktodial_url : '').'" size="92">';
+			if (empty($conf->global->CLICKTODIAL_URL) && empty($object->clicktodial_url)) {
+				$langs->load("errors");
+				print '<span class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</span>';
+			} else {
+				print '<br>'.$form->textwithpicto('<span class="opacitymedium">'.$langs->trans("KeepEmptyToUseDefault").'</span>:<br>'.$conf->global->CLICKTODIAL_URL, $langs->trans("ClickToDialUrlDesc"));
+			}
+			print '</td>';
+			print '</tr>';
+		}
 
-        print '<tr><td>ClickToDial '.$langs->trans("Password").'</td>';
-        print '<td class="valeur">';
-        print '<input type="password" name="password" value="'.(!empty($object->clicktodial_password) ? $object->clicktodial_password : '').'"></td>';
-        print "</tr>\n";
+		print '<tr><td class="titlefield fieldrequired">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
+		print '<td class="valeur">';
+		print '<input name="poste" value="'.(!empty($object->clicktodial_poste) ? $object->clicktodial_poste : '').'"></td>';
+		print "</tr>\n";
 
-        print '</table>';
-    } else // View mode
-    {
-        print '<table class="border centpercent tableforfield">';
+		print '<tr><td>ClickToDial '.$langs->trans("Login").'</td>';
+		print '<td class="valeur">';
+		print '<input name="login" value="'.(!empty($object->clicktodial_login) ? $object->clicktodial_login : '').'"></td>';
+		print '</tr>';
 
-        if (!empty($user->admin))
-        {
-        	print '<tr><td class="titlefield">ClickToDial URL</td>';
-        	print '<td class="valeur">';
-        	$url = $conf->global->CLICKTODIAL_URL;
-        	if (!empty($object->clicktodial_url)) $url = $object->clicktodial_url;
-        	if (empty($url))
-        	{
-        	    $langs->load("errors");
-        	    print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</font>';
-        	} else {
-        		print $form->textwithpicto((empty($object->clicktodial_url) ? '<span class="opacitymedium">'.$langs->trans("DefaultLink").':</span> ' : '').$url, $langs->trans("ClickToDialUrlDesc"));
-        	}
-        	print '</td>';
-        	print '</tr>';
-        }
+		print '<tr><td>ClickToDial '.$langs->trans("Password").'</td>';
+		print '<td class="valeur">';
+		print '<input type="password" name="password" value="'.dol_escape_htmltag(empty($object->clicktodial_password) ? '' : $object->clicktodial_password).'"></td>';
+		print "</tr>\n";
 
-        print '<tr><td class="titlefield">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
-        print '<td class="valeur">'.(!empty($object->clicktodial_poste) ? $object->clicktodial_poste : '').'</td>';
-        print "</tr>";
+		print '</table>';
+	} else // View mode
+	{
+		print '<table class="border centpercent tableforfield">';
 
-        print '<tr><td>ClickToDial '.$langs->trans("Login").'</td>';
-        print '<td class="valeur">'.(!empty($object->clicktodial_login) ? $object->clicktodial_login : '').'</td>';
-        print '</tr>';
+		if (!empty($user->admin)) {
+			print '<tr><td class="">ClickToDial URL</td>';
+			print '<td class="valeur">';
+			if (!empty($conf->global->CLICKTODIAL_URL)) {
+				$url = $conf->global->CLICKTODIAL_URL;
+			}
+			if (!empty($object->clicktodial_url)) {
+				$url = $object->clicktodial_url;
+			}
+			if (empty($url)) {
+				$langs->load("errors");
+				print '<span class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</span>';
+			} else {
+				print $form->textwithpicto((empty($object->clicktodial_url) ? '<span class="opacitymedium">'.$langs->trans("DefaultLink").':</span> ' : '').$url, $langs->trans("ClickToDialUrlDesc"));
+			}
+			print '</td>';
+			print '</tr>';
+		}
 
-        print '<tr><td>ClickToDial '.$langs->trans("Password").'</td>';
-        print '<td class="valeur">'.preg_replace('/./', '*', (!empty($object->clicktodial_password) ? $object->clicktodial_password : '')).'</a></td>';
-        print "</tr>\n";
+		print '<tr><td class="">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
+		print '<td class="valeur">'.(!empty($object->clicktodial_poste) ? $object->clicktodial_poste : '').'</td>';
+		print "</tr>";
 
-        print "</table>\n";
-    }
+		print '<tr><td>ClickToDial '.$langs->trans("Login").'</td>';
+		print '<td class="valeur">'.(!empty($object->clicktodial_login) ? $object->clicktodial_login : '').'</td>';
+		print '</tr>';
 
-    dol_fiche_end();
+		print '<tr><td>ClickToDial '.$langs->trans("Password").'</td>';
+		print '<td class="valeur">'.preg_replace('/./', '*', (!empty($object->clicktodial_password) ? $object->clicktodial_password : '')).'</a></td>';
+		print "</tr>\n";
 
-    if ($action == 'edit')
-    {
-    	print '<br>';
-        print '<div class="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';
-        print '&nbsp;&nbsp;&nbsp;&nbsp&nbsp;';
-        print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-        print '</div>';
-    }
+		print "</table>\n";
+	}
 
-    print '</div>';
-    print '</form>';
+	print dol_get_fiche_end();
 
-    /*
-     * Barre d'actions
-     */
-    print '<div class="tabsAction">';
+	if ($action == 'edit') {
+		print '<br>';
+		print '<div class="center"><input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
+	}
 
-    if (!empty($user->admin) && $action <> 'edit')
-    {
-        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
-    }
+	print '</div>';
+	print '</form>';
 
-    print "</div>\n";
+	/*
+	 * Action bar
+	 */
+	print '<div class="tabsAction">';
+
+	if (!empty($user->admin) && $action <> 'edit') {
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+	}
+
+	print "</div>\n";
 }
 
 // End of page
