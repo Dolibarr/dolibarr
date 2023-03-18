@@ -5696,7 +5696,7 @@ function get_localtax_by_third($local)
 	$sql .= "  WHERE c.code = '".$db->escape($mysoc->country_code)."' AND tt.active = 1";
 	$sql .= "  ) ";
 	$sql .= " AND t.localtax".$local."_type > 0";
-	$sql .= " ORDER BY rowid DESC";
+	$sql .= " ORDER BY t.rowid DESC";
 
 	$resql = $db->query($sql);
 	if ($resql) {
