@@ -405,7 +405,7 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 	$destdir = $dirins.'/'.strtolower($module);
 
 	// Get list of existing objects
-	$objects = dolGetListOfObjectclasses($destdir);
+	$objects = dolGetListOfObjectClasses($destdir);
 
 
 	if ($action == 'initapi') {
@@ -927,7 +927,7 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 	$relativefilename = dol_sanitizePathName(GETPOST('file', 'restricthtml'));
 
 	// Get list of existing objects
-	$objects = dolGetListOfObjectclasses($destdir);
+	$objects = dolGetListOfObjectClasses($destdir);
 
 
 	// Now we delete the file
@@ -2549,7 +2549,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 	$destdir = $dirins.'/'.strtolower($module);
 
 	// Get list of existing objets
-	$objects = dolGetListOfObjectclasses($destdir);
+	$objects = dolGetListOfObjectClasses($destdir);
 
 
 	// load class and check if right exist
@@ -4496,7 +4496,7 @@ if ($module == 'initmodule') {
 			$destdir = $dirins.'/'.strtolower($module);
 
 			// Get list of existing objects
-			$objects = dolGetListOfObjectclasses($destdir);
+			$objects = dolGetListOfObjectClasses($destdir);
 
 			$menus = $moduleobj->menu;
 
