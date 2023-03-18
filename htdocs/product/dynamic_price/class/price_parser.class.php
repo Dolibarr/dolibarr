@@ -127,25 +127,13 @@ class PriceParser
 		global $user;
 		global $hookmanager;
 		$action = 'PARSEEXPRESSION';
-		$reshook = $hookmanager->executeHooks('doDynamicPrice', array(
-			'expression' =>$expression,
-			'product' => $product,
-			'values' => $values
-			), $this, $action);
-
-		if ($reshook > 0) {
-			// this function is replaced by hook, >0 also for incorrect expressions
-			return $hookmanager->resArray['return'];
-		} elseif ($reshook < 0) {
-			// internal error in hook, should not happen
-			$this->error_parser = array(100, $expression);
-			return -100;
-		} elseif ($reshook == 0) {
-			// hook preprocessed values and expression for further use in this function
-			$values = array_merge($values, $hookmanager->resArray['values']);
-			$expression = $hookmanager->resArray['expression'];
+		if ($result = $hookmanager->executeHooks('doDynamiPrice', array(
+								'expression' =>$expression,
+								'product' => $product,
+								'values' => $values
+		), $this, $action)) {
+			return $result;
 		}
-
 		//Check if empty
 		$expression = trim($expression);
 		if (empty($expression)) {
