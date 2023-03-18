@@ -862,6 +862,14 @@ if ($dirins && $action == 'initdoc' && !empty($module)) {
 
 		dolReplaceInFile($destfile, $arrayreplacement);
 
+		// add table of properties
+		$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
+		$destdir = $dirins.'/'.strtolower($module);
+		$objects = dolGetListOfObjectClasses($destdir);
+		foreach ($objects as $path=>$obj) {
+			writePropsInAsciiDoc($path, $obj, $destfile);
+		}
+
 		// Delete old documentation files
 		$FILENAMEDOC = $modulelowercase.'.html';
 		$FILENAMEDOCPDF = $modulelowercase.'.pdf';
