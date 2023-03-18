@@ -1503,6 +1503,13 @@ while ($i < $imaxinloop) {
 }
 
 // Show total line
+if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) {
+	foreach ($totalarray['totalizable'] as $keytotalizable => $valtotalizable) {
+		$totalarray['pos'][$valtotalizable['pos']] = $keytotalizable;
+		$totalarray['val'][$keytotalizable] = $valtotalizable['total'];
+	}
+}
+
 if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['totalplannedworkloadfield']) || isset($totalarray['totalprogress_calculatedfield'])
 	|| isset($totalarray['totaltobill']) || isset($totalarray['totalbilled']) || isset($totalarray['totalbudget'])) {
 	print '<tr class="liste_total">';
@@ -1529,6 +1536,14 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 			print '<td class="center">'.convertSecondToTime($totalarray['totalbilled'], $plannedworkloadoutputformat).'</td>';
 		} elseif ($totalarray['totalbudget_amountfield'] == $i) {
 			print '<td class="center">'.price($totalarray['totalbudgetamount'], 0, $langs, 1, 0, 0, $conf->currency).'</td>';
+		} elseif (!empty($totalarray['pos'][$i])) {
+			print '<td class="right">';
+			if (isset($totalarray['type']) && $totalarray['type'][$i] == 'duration') {
+				print (!empty($totalarray['val'][$totalarray['pos'][$i]])?convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin'):0);
+			} else {
+				print price(!empty($totalarray['val'][$totalarray['pos'][$i]])?$totalarray['val'][$totalarray['pos'][$i]]:0);
+			}
+			print '</td>';
 		} else {
 			print '<td></td>';
 		}

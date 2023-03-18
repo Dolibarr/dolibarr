@@ -95,6 +95,7 @@ $search_accountancy_code_buy = GETPOST("search_accountancy_code_buy", 'alpha');
 $search_accountancy_code_buy_intra = GETPOST("search_accountancy_code_buy_intra", 'alpha');
 $search_accountancy_code_buy_export = GETPOST("search_accountancy_code_buy_export", 'alpha');
 $search_finished = GETPOST("search_finished", 'int');
+$search_units = GETPOST('search_units', 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $type = GETPOST("type", "int");
 $mode = GETPOST('mode', 'alpha');
@@ -353,6 +354,7 @@ if (empty($reshook)) {
 		$search_accountancy_code_buy_intra = '';
 		$search_accountancy_code_buy_export = '';
 		$search_array_options = array();
+		$search_units = '';
 	}
 
 	// Mass actions
@@ -570,6 +572,9 @@ if ($search_accountancy_code_buy_intra) {
 }
 if ($search_accountancy_code_buy_export) {
 	$sql .= natural_search($alias_product_perentity . '.accountancy_code_buy_export', $search_accountancy_code_buy_export);
+}
+if (!empty($conf->global->PRODUCT_USE_UNITS) && $search_units) {
+	$sql .= natural_search('cu.rowid', $search_units);
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -1021,6 +1026,7 @@ if (!empty($arrayfields['p.volume_units']['checked'])) {
 // Unit
 if (!empty($arrayfields['cu.label']['checked'])) {
 	print '<td class="liste_titre">';
+	print $form->selectUnits($search_units, 'search_units', 1);
 	print '</td>';
 }
 

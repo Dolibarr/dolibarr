@@ -71,6 +71,25 @@ if (!function_exists('utf8_decode')) {
 	}
 }
 
+/**
+ * Return the full path of the directory where a module (or an object of a module) stores its files. Path may depends on the entity if a multicompany module is enabled.
+ *
+ * @param CommonObject 	$object 	Dolibarr common object
+ * @param string 		$module 	Override object element, for example to use 'mycompany' instead of 'societe'
+ * @return string|void				The path of the relative directory of the module
+ * @since Dolibarr V18
+ */
+function getMultidirOutput($object, $module = '')
+{
+	global $conf;
+	if (!is_object($object) && empty($module)) {
+		return null;
+	}
+	if (empty($module) && !empty($object->element)) {
+		$module = $object->element;
+	}
+	return $conf->$module->multidir_output[(!empty($object->entity) ? $object->entity : $conf->entity)];
+}
 
 /**
  * Return dolibarr global constant string value
@@ -10869,8 +10888,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *
  * @param string    	$label      Label or tooltip of button. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
  * @param string    	$text       Optional : short label on button. Can be escaped HTML content or full simple text.
- * @param string    	$actionType 'default', 'delete', 'danger'
- * @param string    	$url        Url for link
+ * @param string    	$actionType 'default', 'delete', 'danger', 'email', ...
+ * @param string|array 	$url        Url for link or array of subbutton description
  * @param string    	$id         Attribute id of button
  * @param int|boolean	$userRight  User action right
  * // phpcs:disable
@@ -10897,7 +10916,26 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 {
 	global $hookmanager, $action, $object, $langs;
 
-	//var_dump($params);
+	// If $url is an array, we must build a dropdown button
+	if (is_array($url)) {
+		$out = '<div class="dropdown inline-block dropdown-holder">';
+		$out .= '<a style="margin-right: auto;" class="dropdown-toggle butAction" data-toggle="dropdown">'.$label.'</a>';
+		$out .= '<div class="dropdown-content">';
+		foreach ($url as $subbutton) {
+			if ($subbutton['enabled'] && $subbutton['perm']) {
+				if (!empty($subbutton['lang'])) {
+					$langs->load($subbutton['lang']);
+				}
+				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', DOL_URL_ROOT.$subbutton['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage'])), '', 1, array('isDropDown' => true));
+			}
+		}
+		$out .= "</div>";
+		$out .= "</div>";
+
+		return $out;
+	}
+
+	// If $url is a simple link
 	if (!empty($params['isDropdown']))
 		$class = "dropdown-item";
 	else {
