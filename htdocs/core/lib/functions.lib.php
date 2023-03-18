@@ -72,12 +72,12 @@ if (!function_exists('utf8_decode')) {
 }
 
 /**
- * Return multidir output for an Dolibarr object
+ * Return the full path of the directory where a module (or an object of a module) stores its files. Path may depends on the entity if a multicompany module is enabled.
  *
- * @param CommonObject $object Dolibarr common object
- * @param string $module override object element, by example mycompany instead societe
+ * @param CommonObject 	$object 	Dolibarr common object
+ * @param string 		$module 	Override object element, for example to use 'mycompany' instead of 'societe'
+ * @return string|void				The path of the relative directory of the module
  * @since Dolibarr V18
- * @return string|void
  */
 function getMultidirOutput($object, $module = '')
 {
