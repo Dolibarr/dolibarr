@@ -3,6 +3,10 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 17.0.1 compared to 17.0.0 *****
+
+TODO
+
 
 ***** ChangeLog for 17.0.0 compared to 16.0.0 *****
 
@@ -208,6 +212,10 @@ Following changes may create regressions for some external modules, but were nec
 * You must use "$objectoffield" to manipulate the current object inside the formulare of computed custom extrafields instead of $obj/$object.
 * Making a global search is sending the parameter using always the name search_all (instead of sometimes sall and search_all)
 * The property $url_last_version must be public if defined into module descriptor files;
+
+***** ChangeLog for 16.0.5 compared to 16.0.4 *****
+
+TODO
 
 
 ***** ChangeLog for 16.0.4 compared to 16.0.3 *****
