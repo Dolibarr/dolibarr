@@ -865,10 +865,7 @@ if ($dirins && $action == 'initdoc' && !empty($module)) {
 		// add table of properties
 		$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
 		$destdir = $dirins.'/'.strtolower($module);
-
-		// Need to merged ModuleBuilderFixes for get the function
-		//after that uncomment the line below
-		//$objects = dolGetListOfObjectClasses($destdir);
+		$objects = dolGetListOfObjectClasses($destdir);
 		foreach ($objects as $path=>$obj) {
 			writePropsInAsciiDoc($path, $obj, $destfile);
 		}
