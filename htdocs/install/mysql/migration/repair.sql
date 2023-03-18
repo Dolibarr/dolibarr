@@ -217,6 +217,10 @@ DELETE from llx_bank_url where type = 'company' and url_id not in (select rowid 
 --SELECT * from llx_bank where rappro = 0 and label LIKE '(CustomerInvoicePayment%)' and rowid not in (select fk_bank from llx_bank_url where type = 'payment');
 --SELECT * from llx_bank where rappro = 0 and label LIKE '(SupplierInvoicePayment%)' and rowid not in (select fk_bank from llx_bank_url where type = 'payment_supplier');
 
+-- Fix: delete orphelins in llx_bank
+DELETE FROM llx_bank WHERE fk_account NOT IN (select rowid from llx_bank_account);
+
+
 -- Fix link on parent that were removed
 DROP table tmp_user;
 CREATE TABLE tmp_user as (select * from llx_user);

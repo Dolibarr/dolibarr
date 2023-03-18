@@ -581,6 +581,9 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 					token: \''.dol_escape_js(newToken()).'\'
 				},
 				function(result) {
+					if ($("input#'.dol_escape_js($htmlname).'").attr("type") == "password") {
+						$("input#'.dol_escape_js($htmlname).'").attr("type", "text");
+					}
 					$("#'.dol_escape_js($htmlname).'").val(result);
 				});
             });

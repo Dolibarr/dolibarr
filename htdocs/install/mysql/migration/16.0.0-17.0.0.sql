@@ -401,4 +401,6 @@ ALTER TABLE llx_facture_fourn_det MODIFY COLUMN ref varchar(128);
 
 ALTER TABLE llx_projet ADD COLUMN extraparams varchar(255);
 
+DELETE FROM llx_const WHERE name = 'TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST';
+
 
