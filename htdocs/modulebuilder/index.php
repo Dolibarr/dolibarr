@@ -405,23 +405,8 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 	$destdir = $dirins.'/'.strtolower($module);
 
 	// Get list of existing objects
-	$objects = array();
-	$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
-	foreach ($listofobject as $fileobj) {
-		if (preg_match('/^api_/', $fileobj['name'])) {
-			continue;
-		}
-		if (preg_match('/^actions_/', $fileobj['name'])) {
-			continue;
-		}
+	$objects = dolGetListOfObjectclasses($destdir);
 
-		$tmpcontent = file_get_contents($fileobj['fullname']);
-		$reg = array();
-		if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
-			$objectnameloop = $reg[1];
-			$objects[$fileobj['fullname']] = $objectnameloop;
-		}
-	}
 
 	if ($action == 'initapi') {
 		if (file_exists($dirins.'/'.strtolower($module).'/class/api_'.strtolower($module).'.class.php')) {
@@ -942,24 +927,8 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 	$relativefilename = dol_sanitizePathName(GETPOST('file', 'restricthtml'));
 
 	// Get list of existing objects
-	// TODO ALI This part of code is common at several places and is autonomous. So replace it with $objects = dolGetListOfObjectclasses($destdir);
-	$objects = array();
-	$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
-	foreach ($listofobject as $fileobj) {
-		if (preg_match('/^api_/', $fileobj['name'])) {
-			continue;
-		}
-		if (preg_match('/^actions_/', $fileobj['name'])) {
-			continue;
-		}
+	$objects = dolGetListOfObjectclasses($destdir);
 
-		$tmpcontent = file_get_contents($fileobj['fullname']);
-		$reg = array();
-		if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
-			$objectnameloop = $reg[1];
-			$objects[$fileobj['fullname']] = $objectnameloop;
-		}
-	}
 
 	// Now we delete the file
 	if ($relativefilename) {
@@ -1019,20 +988,6 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 
 // Init an object
 if ($dirins && $action == 'initobject' && $module && $objectname) {
-	// check if module is enabled
-	if (isModEnabled(strtolower($module))) {
-		$result = unActivateModule(strtolower($module));
-		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
-		if ($result) {
-			setEventMessages($result, null, 'errors');
-		} else {
-			/* FIX ALI header must be after action. Always add an exit after a header.
-			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
-			*/
-			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
-		}
-	}
-
 	$objectname = ucfirst($objectname);
 
 	$dirins = $dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
@@ -1640,6 +1595,18 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 	} else {
 		$tabobj = 'newobject';
 	}
+
+	// check if module is enabled
+	if (isModEnabled(strtolower($module))) {
+		$result = unActivateModule(strtolower($module));
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		if ($result) {
+			setEventMessages($result, null, 'errors');
+		}
+		setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module);
+		exit;
+	}
 }
 
 // Add a dictionary
@@ -1902,20 +1869,6 @@ if ($dirins && $action == 'confirm_deletemodule') {
 }
 
 if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
-	// check if module is enabled (if it's disabled and send msg event)
-	if (isModEnabled(strtolower($module))) {
-		$result = unActivateModule(strtolower($module));
-		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
-		if ($result) {
-			setEventMessages($result, null, 'errors');
-			$error++;
-		} else {
-			/* TODO ALI Header redirect must be at end after actions. Also tab=pemrissions looks strange
-			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
-			*/
-			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
-		}
-	}
 	if (preg_match('/[^a-z0-9_]/i', $objectname)) {
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
@@ -2012,16 +1965,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 		";
 
 		$deleteright = dolReplaceInFile($moduledescriptorfile, array('/*'.strtoupper($objectname).'*/' => '', $rights => '', "/*END ".strtoupper($objectname).'*/'."\n\t\t" => "\n\t\t"));
-		if ($deleteright > 0) {
-			if (isModEnabled(strtolower($module))) {
-				$result = unActivateModule(strtolower($module));
-				if ($result) {
-					setEventMessages($result, null, 'errors');
-				}
-				setEventMessages($langs->trans("WarningModuleNeedRefrech", $langs->transnoentities($module)), null, 'warnings');
-				header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?index.php?tab=description&module='.$module);
-			}
-		}
+
 		$resultko = 0;
 		foreach ($filetodelete as $tmpfiletodelete) {
 			$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete, 0, 0, 1);
@@ -2040,6 +1984,18 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 
 	$action = '';
 	$tabobj = 'deleteobject';
+
+	// check if module is enabled
+	if (isModEnabled(strtolower($module))) {
+		$result = unActivateModule(strtolower($module));
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		if ($result) {
+			setEventMessages($result, null, 'errors');
+		}
+		setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module);
+		exit;
+	}
 }
 
 if ($dirins && $action == 'generatedoc') {
@@ -2591,25 +2547,10 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 	$error = 0;
 	$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
 	$destdir = $dirins.'/'.strtolower($module);
-	$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
 
 	// Get list of existing objets
-	$objects = array();
-	foreach ($listofobject as $fileobj) {
-		if (preg_match('/^api_/', $fileobj['name'])) {
-			continue;
-		}
-		if (preg_match('/^actions_/', $fileobj['name'])) {
-			continue;
-		}
+	$objects = dolGetListOfObjectclasses($destdir);
 
-		$tmpcontent = file_get_contents($fileobj['fullname']);
-		$reg = array();
-		if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
-			$objectnameloop = $reg[1];
-			$objects[$fileobj['fullname']] = $objectnameloop;
-		}
-	}
 
 	// load class and check if right exist
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
@@ -4553,27 +4494,24 @@ if ($module == 'initmodule') {
 			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 			$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
 			$destdir = $dirins.'/'.strtolower($module);
-			$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
 
 			// Get list of existing objects
-			$objects = array();
-			foreach ($listofobject as $fileobj) {
-				if (preg_match('/^api_/', $fileobj['name'])) {
-					continue;
-				}
-				if (preg_match('/^actions_/', $fileobj['name'])) {
-					continue;
-				}
+			$objects = dolGetListOfObjectclasses($destdir);
 
-				$tmpcontent = file_get_contents($fileobj['fullname']);
-				$reg = array();
-				if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
-					$objectnameloop = $reg[1];
-					$objects[$fileobj['fullname']] = $objectnameloop;
-				}
-			}
 			$menus = $moduleobj->menu;
 
+			if ($action == 'deletemenu') {
+				$formconfirms = $form->formconfirm(
+					$_SERVER["PHP_SELF"].'?menukey='.urlencode(GETPOST('menukey', 'int')).'&tab='.urlencode($tab).'&module='.urlencode($module),
+					$langs->trans('Delete'),
+					$langs->trans('Confirm Delete Menu', GETPOST('menukey', 'int')),
+					'confirm_deletemenu',
+					'',
+					0,
+					1
+				);
+				print $formconfirms;
+			}
 			if ($action != 'editfile' || empty($file)) {
 				print '<span class="opacitymedium">';
 				$htmlhelp = $langs->trans("MenusDefDescTooltip", '{s1}');
