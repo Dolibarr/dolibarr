@@ -172,10 +172,13 @@ if ($action == 'add') {
  * View
  */
 
+$form = new Form($db);
+
 $help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:M&oacute;dulo_Bancos_y_Cajas';
 $title = $langs->trans('MenuBankInternalTransfer');
 
 llxHeader('', $title, $help_url);
+
 
 print '		<script type="text/javascript">
         	$(document).ready(function () {
@@ -238,7 +241,6 @@ print '		<script type="text/javascript">
         	});
     		</script>';
 
-$form = new Form($db);
 
 $account_from = '';
 $account_to = '';
@@ -260,33 +262,40 @@ print "<br><br>";
 
 print '<form name="add" method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-
 print '<input type="hidden" name="action" value="add">';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("TransferFrom").'</td><td>'.$langs->trans("TransferTo").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Description").'</td>';
-print '<td class="right">'.$langs->trans("Amount").'</td>';
-print '<td style="display:none" class="multicurrency">'.$langs->trans("AmountToOthercurrency").'</td>';
+print '<th>'.$langs->trans("TransferFrom").'</th>';
+print '<th>'.$langs->trans("TransferTo").'</th>';
+print '<th>'.$langs->trans("Date").'</th>';
+print '<th>'.$langs->trans("Description").'</th>';
+print '<th class="right">'.$langs->trans("Amount").'</th>';
+//print '<td class="hideobject" class="multicurrency">'.$langs->trans("AmountToOthercurrency").'</td>';
 print '</tr>';
 
-print '<tr class="oddeven"><td>';
+print '<tr class="oddeven">';
+
+print '<td class="nowraponall">';
 print img_picto('', 'bank_account', 'class="paddingright"');
-$form->select_comptes($account_from, 'account_from', 0, '', 1, '', !isModEnabled('multicurrency') ? 0 : 1);
+$form->select_comptes($account_from, 'account_from', 0, '', 1, '', !isModEnabled('multicurrency') ? 0 : 1, 'minwidth100');
 print "</td>";
 
-print "<td>\n";
+print '<td class="nowraponall">';
 print img_picto('', 'bank_account', 'class="paddingright"');
-$form->select_comptes($account_to, 'account_to', 0, '', 1, '', !isModEnabled('multicurrency') ? 0 : 1);
+$form->select_comptes($account_to, 'account_to', 0, '', 1, '', !isModEnabled('multicurrency') ? 0 : 1, 'minwidth100');
 print "</td>\n";
 
-print "<td>";
+print '<td class="nowraponall">';
 print $form->selectDate((!empty($dateo) ? $dateo : ''), '', '', '', '', 'add');
-print "</td>\n";
+print "</td>";
+
 print '<td><input name="label" class="flat quatrevingtpercent" type="text" value="'.dol_escape_htmltag($label).'"></td>';
+
 print '<td class="right"><input name="amount" class="flat right" type="text" size="6" value="'.dol_escape_htmltag($amount).'"></td>';
-print '<td style="display:none" class="multicurrency"><input name="amountto" class="flat" type="text" size="6" value="'.dol_escape_htmltag($amountto).'"></td>';
+
+//print '<td class="hideobject" class="multicurrency"><input name="amountto" class="flat" type="text" size="6" value="'.dol_escape_htmltag($amountto).'"></td>';
 
 print "</table>";
 print '</div>';
