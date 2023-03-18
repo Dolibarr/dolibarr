@@ -3978,6 +3978,7 @@ class Commande extends CommonOrder
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
+		$this->entity = $conf->entity;
 		$this->socid = 1;
 		$this->date = time();
 		$this->date_lim_reglement = $this->date + 3600 * 24 * 30;
