@@ -5413,7 +5413,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pict
  *  @param  string      $morecss            More css to the table
  *  @param  int         $limit              Max number of lines (-1 = use default, 0 = no limit, > 0 = limit).
  *  @param  int         $hideselectlimit    Force to hide select limit
- *  @param  int         $hidenavigation     Force to hide all navigation tools
+ *  @param  int         $hidenavigation     Force to hide the arrows and page for navigation
  *  @param  int			$pagenavastextinput 1=Do not suggest list of pages to navigate but suggest the page number into an input field.
  *  @param	string		$morehtmlrightbeforearrow	More html to show (before arrows)
  *	@return	void
@@ -5441,7 +5441,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	} else {
 		$nextpage = 0;
 	}
-	//print 'totalnboflines='.$totalnboflines.'-savlimit='.$savlimit.'-limit='.$limit.'-num='.$num.'-nextpage='.$nextpage;
+	//print 'totalnboflines='.$totalnboflines.'-savlimit='.$savlimit.'-limit='.$limit.'-num='.$num.'-nextpage='.$nextpage.'-hideselectlimit='.$hideselectlimit.'-hidenavigation='.$hidenavigation;
 
 	print "\n";
 	print "<!-- Begin title -->\n";
@@ -5536,8 +5536,8 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 		}
 	}
 
-	if (($savlimit || $morehtmlright || $morehtmlrightbeforearrow) && empty($hidenavigation)) {
-		print_fleche_navigation((int) $page, $file, $options, $nextpage, $pagelist, $morehtmlright, $savlimit, $totalnboflines, $hideselectlimit, $morehtmlrightbeforearrow); // output the div and ul for previous/last completed with page numbers into $pagelist
+	if ($savlimit || $morehtmlright || $morehtmlrightbeforearrow) {
+		print_fleche_navigation((int) $page, $file, $options, $nextpage, $pagelist, $morehtmlright, $savlimit, $totalnboflines, $hideselectlimit, $morehtmlrightbeforearrow, $hidenavigation); // output the div and ul for previous/last completed with page numbers into $pagelist
 	}
 
 	// js to autoselect page field on focus
@@ -5571,9 +5571,10 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
  *	@param	int		        $totalnboflines		Total number of records/lines for all pages (if known)
  *  @param  int             $hideselectlimit    Force to hide select limit
  *  @param	string			$beforearrows		HTML content to show before arrows. Must NOT contains '<li> </li>' tags.
+ *  @param  int        		$hidenavigation     Force to hide the arrows and page for navigation
  *	@return	void
  */
-function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $betweenarrows = '', $afterarrows = '', $limit = -1, $totalnboflines = 0, $hideselectlimit = 0, $beforearrows = '')
+function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $betweenarrows = '', $afterarrows = '', $limit = -1, $totalnboflines = 0, $hideselectlimit = 0, $beforearrows = '', $hidenavigation = 0)
 {
 	global $conf, $langs;
 
@@ -5583,69 +5584,72 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 		print $beforearrows;
 		print '</li>';
 	}
-	if ((int) $limit > 0 && empty($hideselectlimit)) {
-		$pagesizechoices = '10:10,15:15,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000';
-		$pagesizechoices .= ',5000:5000,10000:10000,20000:20000';
-		//$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported
-		//$pagesizechoices.=',2:2';
-		if (!empty($conf->global->MAIN_PAGESIZE_CHOICES)) {
-			$pagesizechoices = $conf->global->MAIN_PAGESIZE_CHOICES;
-		}
 
-		print '<li class="pagination">';
-		print '<select class="flat selectlimit" name="limit" title="'.dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")).'">';
-		$tmpchoice = explode(',', $pagesizechoices);
-		$tmpkey = $limit.':'.$limit;
-		if (!in_array($tmpkey, $tmpchoice)) {
-			$tmpchoice[] = $tmpkey;
-		}
-		$tmpkey = $conf->liste_limit.':'.$conf->liste_limit;
-		if (!in_array($tmpkey, $tmpchoice)) {
-			$tmpchoice[] = $tmpkey;
-		}
-		asort($tmpchoice, SORT_NUMERIC);
-		foreach ($tmpchoice as $val) {
-			$selected = '';
-			$tmp = explode(':', $val);
-			$key = $tmp[0];
-			$val = $tmp[1];
-			if ($key != '' && $val != '') {
-				if ((int) $key == (int) $limit) {
-					$selected = ' selected="selected"';
-				}
-				print '<option name="'.$key.'"'.$selected.'>'.dol_escape_htmltag($val).'</option>'."\n";
+	if (empty($hidenavigation)) {
+		if ((int) $limit > 0 && empty($hideselectlimit)) {
+			$pagesizechoices = '10:10,15:15,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000';
+			$pagesizechoices .= ',5000:5000,10000:10000,20000:20000';
+			//$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported
+			//$pagesizechoices.=',2:2';
+			if (!empty($conf->global->MAIN_PAGESIZE_CHOICES)) {
+				$pagesizechoices = $conf->global->MAIN_PAGESIZE_CHOICES;
 			}
+
+			print '<li class="pagination">';
+			print '<select class="flat selectlimit" name="limit" title="'.dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")).'">';
+			$tmpchoice = explode(',', $pagesizechoices);
+			$tmpkey = $limit.':'.$limit;
+			if (!in_array($tmpkey, $tmpchoice)) {
+				$tmpchoice[] = $tmpkey;
+			}
+			$tmpkey = $conf->liste_limit.':'.$conf->liste_limit;
+			if (!in_array($tmpkey, $tmpchoice)) {
+				$tmpchoice[] = $tmpkey;
+			}
+			asort($tmpchoice, SORT_NUMERIC);
+			foreach ($tmpchoice as $val) {
+				$selected = '';
+				$tmp = explode(':', $val);
+				$key = $tmp[0];
+				$val = $tmp[1];
+				if ($key != '' && $val != '') {
+					if ((int) $key == (int) $limit) {
+						$selected = ' selected="selected"';
+					}
+					print '<option name="'.$key.'"'.$selected.'>'.dol_escape_htmltag($val).'</option>'."\n";
+				}
+			}
+			print '</select>';
+			if ($conf->use_javascript_ajax) {
+				print '<!-- JS CODE TO ENABLE select limit to launch submit of page -->
+	            		<script>
+	                	jQuery(document).ready(function () {
+	            	  		jQuery(".selectlimit").change(function() {
+	                            console.log("Change limit. Send submit");
+	                            $(this).parents(\'form:first\').submit();
+	            	  		});
+	                	});
+	            		</script>
+	                ';
+			}
+			print '</li>';
 		}
-		print '</select>';
-		if ($conf->use_javascript_ajax) {
-			print '<!-- JS CODE TO ENABLE select limit to launch submit of page -->
-            		<script>
-                	jQuery(document).ready(function () {
-            	  		jQuery(".selectlimit").change(function() {
-                            console.log("Change limit. Send submit");
-                            $(this).parents(\'form:first\').submit();
-            	  		});
-                	});
-            		</script>
-                ';
+		if ($page > 0) {
+			print '<li class="pagination paginationpage paginationpageleft"><a class="paginationprevious" href="'.$file.'?page='.($page - 1).$options.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
 		}
-		print '</li>';
-	}
-	if ($page > 0) {
-		print '<li class="pagination paginationpage paginationpageleft"><a class="paginationprevious" href="'.$file.'?page='.($page - 1).$options.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
-	}
-	if ($betweenarrows) {
-		print '<!--<div class="betweenarrows nowraponall inline-block">-->';
-		print $betweenarrows;
-		print '<!--</div>-->';
-	}
-	if ($nextpage > 0) {
-		print '<li class="pagination paginationpage paginationpageright"><a class="paginationnext" href="'.$file.'?page='.($page + 1).$options.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
-	}
-	if ($afterarrows) {
-		print '<li class="paginationafterarrows">';
-		print $afterarrows;
-		print '</li>';
+		if ($betweenarrows) {
+			print '<!--<div class="betweenarrows nowraponall inline-block">-->';
+			print $betweenarrows;
+			print '<!--</div>-->';
+		}
+		if ($nextpage > 0) {
+			print '<li class="pagination paginationpage paginationpageright"><a class="paginationnext" href="'.$file.'?page='.($page + 1).$options.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
+		}
+		if ($afterarrows) {
+			print '<li class="paginationafterarrows">';
+			print $afterarrows;
+			print '</li>';
+		}
 	}
 	print '</ul></div>'."\n";
 }
@@ -8985,7 +8989,7 @@ function verifCond($strToEvaluate)
  * @param 	string	$s					String to evaluate
  * @param	int		$returnvalue		0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
  * @param   int     $hideerrors     	1=Hide errors
- * @param	string	$onlysimplestring	'0' (used for computed property of extrafields)=Accept all chars, '1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',  '2' (not used)=Accept also ';[]'
+ * @param	string	$onlysimplestring	'0' (used for computed property of extrafields)=Accept all chars, '1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',  '2' (rarely used)=Accept also '[]'
  * @return	mixed						Nothing or return result of eval
  */
 function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1')
@@ -9021,14 +9025,20 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			}
 		} elseif ($onlysimplestring == '2') {
 			// We must accept: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
-			if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@;[]', '/').']/i', $s)) {
+			if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@[]', '/').']/i', $s)) {
 				if ($returnvalue) {
 					return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
 				} else {
 					dol_syslog('Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s);
 					return '';
 				}
+				// TODO
+				// We can exclude all parenthesis ( that are not '($db' and 'getDolGlobalInt(' and 'getDolGlobalString(' and 'preg_match(' and 'isModEnabled('
+				// ...
 			}
+		}
+		if (is_array($s) || $s === 'Array') {
+			return 'Bad string syntax to evaluate (value is Array) '.var_export($s, true);
 		}
 		if (strpos($s, '::') !== false) {
 			if ($returnvalue) {
@@ -12310,25 +12320,28 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			$out .= '</div>';
 
 			// Title
+			$libelle = '';
 			$out .= ' <div class="messaging-title inline-block">';
 
 			if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 				$out .= $langs->trans('TicketNewMessage');
 			} elseif (preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
 				$out .= $langs->trans('TicketNewMessage').' <em>('.$langs->trans('Private').')</em>';
-			} else {
-				if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'action') {
-					$transcode = $langs->trans("Action".$histo[$key]['acode']);
+			} elseif (isset($histo[$key]['type'])) {
+				if ($histo[$key]['type'] == 'action') {
+					$transcode = $langs->transnoentitiesnoconv("Action".$histo[$key]['acode']);
 					$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
 					$libelle = $histo[$key]['note'];
 					$actionstatic->id = $histo[$key]['id'];
-					$out .= dol_trunc($libelle, 120);
-				}
-				if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'mailing') {
+					$out .= dol_escape_htmltag(dol_trunc($libelle, 120));
+				} elseif ($histo[$key]['type'] == 'mailing') {
 					$out .= '<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
-					$transcode = $langs->trans("Action".$histo[$key]['acode']);
+					$transcode = $langs->transnoentitiesnoconv("Action".$histo[$key]['acode']);
 					$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : 'Send mass mailing');
-					$out .= dol_trunc($libelle, 120);
+					$out .= dol_escape_htmltag(dol_trunc($libelle, 120));
+				} else {
+					$libelle .= $histo[$key]['note'];
+					$out .= dol_escape_htmltag(dol_trunc($libelle, 120));
 				}
 			}
 
@@ -12336,7 +12349,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 
 			$out .= '</h3>';
 
-			if (!empty($histo[$key]['message'])
+			if (!empty($histo[$key]['message'] && $histo[$key]['message'] != $libelle)
 				&& $actionstatic->code != 'AC_TICKET_CREATE'
 				&& $actionstatic->code != 'AC_TICKET_MODIFY'
 			) {

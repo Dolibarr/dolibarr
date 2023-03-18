@@ -416,3 +416,116 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 
 	return $error ? -1 : 1;
 }
+
+/**
+ * Get list of existing objects from directory
+ *
+ * @param	string      $destdir		Directory
+ * @return 	array|int                    <=0 if KO, array if OK
+ */
+function dolGetListOfObjectClasses($destdir)
+{
+	$objects = array();
+	$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
+	foreach ($listofobject as $fileobj) {
+		if (preg_match('/^api_/', $fileobj['name'])) {
+			continue;
+		}
+		if (preg_match('/^actions_/', $fileobj['name'])) {
+			continue;
+		}
+
+		$tmpcontent = file_get_contents($fileobj['fullname']);
+		$reg = array();
+		if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
+			$objectnameloop = $reg[1];
+			$objects[$fileobj['fullname']] = $objectnameloop;
+		}
+	}
+	if (count($objects)>0) {
+		return $objects;
+	}
+
+	return -1;
+}
+
+/**
+ * Delete all permissions
+ *
+ * @param string         $file         file with path
+ * @return void
+ */
+function deletePerms($file)
+{
+	$start = "/* BEGIN MODULEBUILDER PERMISSIONS */";
+	$end = "/* END MODULEBUILDER PERMISSIONS */";
+	$i = 1;
+	$array = array();
+	$lines = file($file);
+	// Search for start and end lines
+	foreach ($lines as $i => $line) {
+		if (strpos($line, $start) !== false) {
+			$start_line = $i + 1;
+
+			// Copy lines until the end on array
+			while (($line = $lines[++$i]) !== false) {
+				if (strpos($line, $end) !== false) {
+					$end_line = $i + 1;
+					break;
+				}
+				$array[] = $line;
+			}
+			break;
+		}
+	}
+	$allContent = implode("", $array);
+	dolReplaceInFile($file, array($allContent => ''));
+}
+
+/**
+ * Rewriting all permissions after any actions
+ * @param string      $file            filename or path
+ * @param array       $permissions     permissions existing in file
+ * @param int|null         $key             key for permission needed
+ * @param array|null  $right           $right to update or add
+ * @param int         $action          0 for delete, 1 for add, 2 for update
+ * @return int                         1 if OK,-1 if KO
+ */
+function reWriteAllPermissions($file, $permissions, $key, $right, $action)
+{
+	$error = 0;
+	$rights = array();
+	if ($action == 0) {
+		// delete right from permissions array
+		array_splice($permissions, array_search($permissions[$key], $permissions), 1);
+	} elseif ($action == 1) {
+		array_push($permissions, $right);
+	} elseif ($action == 2 && !empty($right)) {
+		// update right from permissions array
+		array_splice($permissions, array_search($permissions[$key], $permissions), 1, $right);
+	} else {
+		$error++;
+	}
+	if (!$error) {
+		// prepare permissions array
+		$count_perms = count($permissions);
+		for ($i = 0;$i<$count_perms;$i++) {
+			$permissions[$i][0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1)";
+			$permissions[$i][1] = "\$this->rights[\$r][1] = '".$permissions[$i][1]."'";
+			$permissions[$i][4] = "\$this->rights[\$r][4] = '".$permissions[$i][4]."'";
+			$permissions[$i][5] = "\$this->rights[\$r][5] = '".$permissions[$i][5]."';\n\t\t";
+		}
+
+		//convert to string
+		foreach ($permissions as $perms) {
+			$rights[] = implode(";\n\t\t", $perms);
+			$rights[] = "\$r++;\n\t\t";
+		}
+		$rights_str = implode("", $rights);
+		// delete all permission from file
+		deletePerms($file);
+		// rewrite all permission again
+		dolReplaceInFile($file, array('/* BEGIN MODULEBUILDER PERMISSIONS */' => '/* BEGIN MODULEBUILDER PERMISSIONS */'."\n\t\t".$rights_str));
+		return 1;
+	}
+}

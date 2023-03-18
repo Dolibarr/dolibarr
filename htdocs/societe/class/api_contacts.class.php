@@ -326,8 +326,13 @@ class Contacts extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
+			} elseif ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->contact->array_options[$index] = $val;
+				}
+			} else {
+				$this->contact->$field = $value;
 			}
-			$this->contact->$field = $value;
 		}
 
 		if (isModEnabled('mailing') && !empty($this->contact->email) && isset($this->contact->no_email)) {
