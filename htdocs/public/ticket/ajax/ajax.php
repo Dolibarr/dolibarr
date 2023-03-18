@@ -36,11 +36,9 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-// Do not check anti CSRF attack test
 if (!defined('NOREQUIREMENU')) {
-	define('NOREQUIREMENU', '1');
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
 }
-// If there is no need to load and show top and left menu
 if (!defined("NOLOGIN")) {
 	define("NOLOGIN", '1');
 }
@@ -56,7 +54,6 @@ include_once '../../../main.inc.php'; // Load $user and permissions
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $email = GETPOST('email', 'custom', 2, FILTER_VALIDATE_EMAIL);
-$token = GETPOST('token', 'alpha', 2);
 
 if (!isModEnabled('ticket')) {
 	httponly_accessforbidden('Module Ticket not enabled');
@@ -64,12 +61,6 @@ if (!isModEnabled('ticket')) {
 
 if (empty($conf->global->TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST)) {
 	httponly_accessforbidden('Option TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST of module ticket is not enabled');
-}
-
-if (empty($token) || $token !== currentToken()) {
-	echo json_encode(array('status' => 'error'));
-	$db->close();
-	exit();
 }
 
 
