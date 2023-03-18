@@ -3,6 +3,11 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 16.0.5 compared to 16.0.4 *****
+
+TODO
+
+
 ***** ChangeLog for 16.0.4 compared to 16.0.3 *****
 
 FIX: Amount of localtax1 and 2 not correctly save on purchase order (the rate was saved instead)
