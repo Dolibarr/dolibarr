@@ -1460,7 +1460,7 @@ while ($i < min($num, $limit)) {
 
 	// Creation operation date
 	if (!empty($arrayfields['t.date_creation']['checked'])) {
-		print '<td class="center">'.dol_print_date($line->date_creation, 'dayhour').'</td>';
+		print '<td class="center">'.dol_print_date($line->date_creation, 'dayhour', 'tzuserel').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1468,7 +1468,7 @@ while ($i < min($num, $limit)) {
 
 	// Modification operation date
 	if (!empty($arrayfields['t.tms']['checked'])) {
-		print '<td class="center">'.dol_print_date($line->date_modification, 'dayhour').'</td>';
+		print '<td class="center">'.dol_print_date($line->date_modification, 'dayhour', 'tzuserel').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1476,7 +1476,7 @@ while ($i < min($num, $limit)) {
 
 	// Exported operation date
 	if (!empty($arrayfields['t.date_export']['checked'])) {
-		print '<td class="center nowraponall">'.dol_print_date($line->date_export, 'dayhour').'</td>';
+		print '<td class="center nowraponall">'.dol_print_date($line->date_export, 'dayhour', 'tzuserel').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1484,7 +1484,7 @@ while ($i < min($num, $limit)) {
 
 	// Validated operation date
 	if (!empty($arrayfields['t.date_validated']['checked'])) {
-		print '<td class="center nowraponall">'.dol_print_date($line->date_validation, 'dayhour').'</td>';
+		print '<td class="center nowraponall">'.dol_print_date($line->date_validation, 'dayhour', 'tzuserel').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
