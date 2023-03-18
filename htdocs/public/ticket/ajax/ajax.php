@@ -56,6 +56,7 @@ $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $email = GETPOST('email', 'custom', 0, FILTER_VALIDATE_EMAIL);
 
+
 if (!isModEnabled('ticket')) {
 	httponly_accessforbidden('Module Ticket not enabled');
 }
