@@ -62,6 +62,8 @@ $contratid = (int) GETPOST('contratid', 'int');
 $action		= GETPOST('action', 'alpha');
 $cancel		= GETPOST('cancel', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+
 $mesg = GETPOST('msg', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ?GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
@@ -890,6 +892,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="socid" value='.$soc->id.'>';
 		print '<input type="hidden" name="action" value="add">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 		print dol_get_fiche_head('');
 
@@ -1043,6 +1046,7 @@ if ($action == 'create') {
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="create">';		// We go back to create action
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 		print dol_get_fiche_head('');
 
@@ -1308,6 +1312,7 @@ if ($action == 'create') {
 		} else {
 			print '<input type="hidden" name="action" value="addline">';
 		}
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 		// Intervention lines
 		$sql = 'SELECT ft.rowid, ft.description, ft.fk_fichinter, ft.duree, ft.rang,';

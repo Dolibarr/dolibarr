@@ -10869,8 +10869,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *
  * @param string    	$label      Label or tooltip of button. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
  * @param string    	$text       Optional : short label on button. Can be escaped HTML content or full simple text.
- * @param string    	$actionType 'default', 'delete', 'danger'
- * @param string    	$url        Url for link
+ * @param string    	$actionType 'default', 'delete', 'danger', 'email', ...
+ * @param string|array 	$url        Url for link or array of subbutton description
  * @param string    	$id         Attribute id of button
  * @param int|boolean	$userRight  User action right
  * // phpcs:disable
@@ -10897,7 +10897,26 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 {
 	global $hookmanager, $action, $object, $langs;
 
-	//var_dump($params);
+	// If $url is an array, we must build a dropdown button
+	if (is_array($url)) {
+		$out = '<div class="dropdown inline-block dropdown-holder">';
+		$out .= '<a style="margin-right: auto;" class="dropdown-toggle butAction" data-toggle="dropdown">'.$label.'</a>';
+		$out .= '<div class="dropdown-content">';
+		foreach ($url as $subbutton) {
+			if ($subbutton['enabled'] && $subbutton['perm']) {
+				if (!empty($subbutton['lang'])) {
+					$langs->load($subbutton['lang']);
+				}
+				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', DOL_URL_ROOT.$subbutton['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage'])), '', 1, array('isDropDown' => true));
+			}
+		}
+		$out .= "</div>";
+		$out .= "</div>";
+
+		return $out;
+	}
+
+	// If $url is a simple link
 	if (!empty($params['isDropdown']))
 		$class = "dropdown-item";
 	else {
