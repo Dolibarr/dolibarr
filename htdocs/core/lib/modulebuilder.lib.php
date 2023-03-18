@@ -421,7 +421,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
  * Get list of existing objects from directory
  *
  * @param	string      $destdir		Directory
- * @return Array|int                    <=0 if KO, array if OK
+ * @return 	array|int                    <=0 if KO, array if OK
  */
 function dolGetListOfObjectClasses($destdir)
 {
@@ -444,8 +444,9 @@ function dolGetListOfObjectClasses($destdir)
 	}
 	if (count($objects)>0) {
 		return $objects;
- 	} else {
-  	return -1;
+	}
+
+	return -1;
 }
 
 /**
