@@ -1358,6 +1358,9 @@ while ($i < min($num, $limit)) {
 			print '<input id="cb'.$line->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$line->id.'"'.($selected ? ' checked="checked"' : '').' />';
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	// Piece number
@@ -1573,11 +1576,11 @@ while ($i < min($num, $limit)) {
 			print '<input id="cb'.$line->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$line->id.'"'.($selected ? ' checked="checked"' : '').' />';
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
 
 	print "</tr>\n";
 
