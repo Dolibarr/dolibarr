@@ -1168,7 +1168,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-	 * testGetDefaultTva
+	 * testGetDefaultLocalTax
 	 *
 	 * @return	void
 	 */
@@ -1252,6 +1252,27 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$vat2=get_default_localtax($companyes, $companyus, 2, 0);
 		$this->assertEquals(0, $vat1);
 		$this->assertEquals(0, $vat2);
+	}
+
+
+	/**
+	 * testGetLocalTaxByThird
+	 *
+	 * @return	void
+	 */
+	public function testGetLocalTaxByThird()
+	{
+		global $mysoc;
+
+		$mysoc->country_code = 'ES';
+
+		$result = get_localtax_by_third(1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('5.2', $result);
+
+		$result = get_localtax_by_third(2);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('-19:-15:-9', $result);
 	}
 
 
