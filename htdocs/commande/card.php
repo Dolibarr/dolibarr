@@ -2998,7 +2998,7 @@ if ($action == 'create' && $usercancreate) {
 		// Presend form
 		$modelmail = 'order_send';
 		$defaulttopic = 'SendOrderRef';
-		$diroutput = $conf->commande->multidir_output[$object->entity];
+		$diroutput = getMultidirOutput($object);
 		$trackid = 'ord'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
