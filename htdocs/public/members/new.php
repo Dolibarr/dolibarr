@@ -836,6 +836,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 		$units[$lines->short_label] = $langs->trans(ucfirst($lines->label));
 
 	$publiccounters = getDolGlobalString("MEMBER_COUNTERS_ARE_PUBLIC");
+	$hidevoteallowed = getDolGlobalString("MEMBER_HIDE_VOTE_ALLOWED");
 
 	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.note, d.duration, d.statut as status, d.morphy,";
 	$sql .= " COUNT(a.rowid) AS membercount";
@@ -859,7 +860,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 		print '<th class="center">'.$langs->trans("MembershipDuration").'</th>';
 		print '<th class="center">'.$langs->trans("Amount").'</th>';
 		print '<th class="center">'.$langs->trans("MembersNature").'</th>';
-		print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
+		if (empty($hidevoteallowed)) print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
 		if ($publiccounters) print '<th class="center">'.$langs->trans("Members").'</th>';
 		print '<th class="center">'.$langs->trans("NewSubscription").'</th>';
 		print "</tr>\n";
@@ -899,7 +900,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 				print $langs->trans("MorAndPhy");
 			}
 			print '</td>';
-			print '<td class="center">'.yn($objp->vote).'</td>';
+			if (empty($hidevoteallowed)) print '<td class="center">'.yn($objp->vote).'</td>';
 			$membercount = $objp->membercount>0? $objp->membercount: "–";
 			if ($publiccounters) print '<td class="center">'.$membercount.'</td>';
 			print '<td class="center"><button class="button button-save reposition" name="typeid" type="submit" name="submit" value="'.$objp->rowid.'">'.$langs->trans("GetMembershipButtonLabel").'</button></td>';

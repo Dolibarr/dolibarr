@@ -726,6 +726,8 @@ class ExtraFields
 
 			if (is_array($param) && count($param) > 0) {
 				$params = serialize($param);
+			} elseif (is_array($param)) {
+				$params = '';
 			} elseif (strlen($param) > 0) {
 				$params = trim($param);
 			} else {
