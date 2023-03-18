@@ -498,3 +498,94 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $action)
 		return -1;
 	}
 }
+
+/**
+ * Write all properties of the object in AsciiDoc format
+ * @param  string   $file           path of the class
+ * @param  string   $objectname     name of the objectClass
+ * @param  string   $destfile       file where write table of properties
+ * @return int                      1 if OK, -1 if KO
+ */
+function writePropsInAsciiDoc($file, $objectname, $destfile)
+{
+
+	// stock all properties in array
+	$attributesUnique = array ('label', 'type', 'arrayofkeyval', 'notnull', 'default', 'index', 'foreignkey', 'position', 'enabled', 'visible', 'noteditable', 'alwayseditable', 'searchall', 'isameasure', 'css','cssview','csslist', 'help', 'showoncombobox', 'validate','comment','picto' );
+
+	$start = "public \$fields=array(";
+	$end = ");";
+	$i = 1;
+	$keys = array();
+	$lines = file($file);
+	// Search for start and end lines
+	foreach ($lines as $i => $line) {
+		if (strpos($line, $start) !== false) {
+			// Copy lines until the end on array
+			while (($line = $lines[++$i]) !== false) {
+				if (strpos($line, $end) !== false) {
+					break;
+				}
+				$keys[] = $line;
+			}
+			break;
+		}
+	}
+	// write the begin of table with specifics options
+	$table = "== DATA SPECIFICATIONS\n";
+	$table .= "== Table of fields and their properties for object *$objectname* : \n";
+	$table .= "[options='header',grid=rows,frame=topbot,width=100%,caption=Organisation]\n";
+	$table .= "|===\n";
+	$table .= "|code";
+	// write all properties in the header of the table
+	foreach ($attributesUnique as $attUnique) {
+		$table .= "|".$attUnique;
+	}
+	$table .="\n";
+	$countKeys = count($keys);
+	for ($j=0;$j<$countKeys;$j++) {
+		$string = $keys[$j];
+		$string = trim($string, "'");
+		$string = rtrim($string, ",");
+
+		$array = [];
+		eval("\$array = [$string];");
+
+		// check if is array after cleaning string
+		if (!is_array($array)) {
+			return -1;
+		}
+		// name of field
+		$field = array_keys($array);
+		// all values of each property
+		$values = array_values($array);
+
+
+		// check each field has all properties and add it if missed
+		if (count($values[0]) <=22) {
+			foreach ($attributesUnique as $cle) {
+				if (!in_array($cle, array_keys($values[0]))) {
+					$values[0][$cle] = '';
+				}
+			}
+		}
+
+		//reorganize $values with order attributeUnique
+		$valuesRestructured = array();
+		foreach ($attributesUnique as $key) {
+			if (array_key_exists($key, $values[0])) {
+				$valuesRestructured[$key] = $values[0][$key];
+			}
+		}
+		// write all values of properties for each field
+		$table .= "|*".$field[0]."*|";
+		$table .= implode("|", array_values($valuesRestructured))."\n";
+	}
+	// end table
+	$table .= "|===";
+	//write in file
+	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS'=> $table));
+	if ($writeInFile<0) {
+		return -1;
+	}
+	return 1;
+}
