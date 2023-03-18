@@ -145,7 +145,7 @@ class PriceParser
 			$values = array_merge($values, $hookmanager->resArray['values']);
 			$expression = $hookmanager->resArray['expression'];
 		}
-		
+
 		//Check if empty
 		$expression = trim($expression);
 		if (empty($expression)) {
