@@ -641,7 +641,7 @@ while ($i < $imaxinloop) {
 		}
 		// Output Kanban
 		$chargesociale_static->fk_project = $projectstatic->getNomUrl();
-		print $chargesociale_static->getKanbanView('');
+		print $chargesociale_static->getKanbanView('', array('selected' => in_array($chargesociale_static->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -655,10 +655,10 @@ while ($i < $imaxinloop) {
 			print '<td class="center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
-				if (in_array($obj->rowid, $arrayofselected)) {
+				if (in_array($chargesociale_static->id, $arrayofselected)) {
 					$selected = 1;
 				}
-				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+				print '<input id="cb'.$chargesociale_static->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$chargesociale_static->id.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
 		}
@@ -807,10 +807,10 @@ while ($i < $imaxinloop) {
 			print '<td class="center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
-				if (in_array($obj->rowid, $arrayofselected)) {
+				if (in_array($chargesociale_static->id, $arrayofselected)) {
 					$selected = 1;
 				}
-				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+				print '<input id="cb'.$chargesociale_static->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$chargesociale_static->id.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
 		}
