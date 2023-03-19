@@ -56,10 +56,6 @@ jobs:
       if: type = push AND branch = develop
       php: nightly 
       env: DB=mysql
-    - stage: PHP Dev
-      if: type = push AND branch = 15.0
-      php: nightly 
-      env: DB=mysql
 
 notifications:
   email:
