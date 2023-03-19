@@ -1733,12 +1733,6 @@ class Facture extends CommonInvoice
 			}
 		}
 
-
-		if (! is_object($hookmanager)) {
-			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($origin->db);
-		}
-
 		$hookmanager->initHooks(array('invoicedao'));
 
 		$parameters = array('objFrom' => $origin);
