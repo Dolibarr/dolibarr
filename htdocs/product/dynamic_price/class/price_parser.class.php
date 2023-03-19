@@ -156,7 +156,7 @@ class PriceParser
 
 		//Retrieve all extrafield for product and add it to values
 		$extrafields = new ExtraFields($this->db);
-        $extralabels = $extrafields->fetch_name_optionals_label($product->table_element);
+		$extralabels = $extrafields->fetch_name_optionals_label($product->table_element);
 		$product->fetch_optionals();
 		foreach ($extralabels as $key => $label) {
 			$values["extrafield_".$key] = $product->array_options['options_'.$key];
