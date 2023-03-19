@@ -152,6 +152,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1915);	// we use year 1915 to be sure to not have existing invoice for this year (usefull only if numbering is {0000@1}
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
