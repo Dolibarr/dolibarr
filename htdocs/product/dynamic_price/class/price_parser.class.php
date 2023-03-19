@@ -124,8 +124,8 @@ class PriceParser
 	 */
 	public function parseExpression($product, $expression, $values)
 	{
-		global $user;
-		global $hookmanager;
+		global $user, $hookmanager, $extrafields;
+
 		$action = 'PARSEEXPRESSION';
 		if ($reshook = $hookmanager->executeHooks('doDynamiPrice', array(
 								'expression' => &$expression,
@@ -154,12 +154,17 @@ class PriceParser
 			"pmp" => $product->pmp,
 		));
 
-		//Retrieve all extrafield for product and add it to values
-		$extrafields = new ExtraFields($this->db);
-		$extralabels = $extrafields->fetch_name_optionals_label($product->table_element);
+		// Retrieve all extrafields if not already not know (should not happen)
+		if (! is_object($extrafields)) {
+			$extrafields = new ExtraFields($this->db);
+			$extrafields->fetch_name_optionals_label();
+		}
+
 		$product->fetch_optionals();
-		foreach ($extralabels as $key => $label) {
-			$values["extrafield_".$key] = $product->array_options['options_'.$key];
+		if (is_array($extrafields->attributes[$product->table_element]['label'])) {
+			foreach ($extrafields->attributes[$product->table_element]['label'] as $key => $label) {
+				$values["extrafield_".$key] = $product->array_options['options_'.$key];
+			}
 		}
 
 		//Process any pending updaters
