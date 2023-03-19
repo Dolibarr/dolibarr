@@ -178,8 +178,8 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'CashControl';
 	$objectlabel = 'CashControl';
-	//$uploaddir = '';
-	//include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+	$uploaddir = $conf->bank->dir_output;
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 
@@ -376,15 +376,9 @@ $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, 
 $param .= $hookmanager->resPrint;
 
 // List of mass actions available
-$arrayofmassactions = array(
-//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
-//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-);
-//if ($permissiontodelete) {
-//	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
-//}
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
-	$arrayofmassactions = array();
+$arrayofmassactions = array();
+if (!empty($permissiontodelete)) {
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
@@ -585,7 +579,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$object->cheque = $obj->cheque;
 
 
-		print $object->getKanbanView('');
+		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 		if ($i == (min($num, $limit) - 1)) {
 			print '</div>';
 			print '</td></tr>';
