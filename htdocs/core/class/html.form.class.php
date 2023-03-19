@@ -10211,9 +10211,9 @@ class Form
 				$out .= '</select>';
 			}
 
-			return $out;
-
 			$this->db->free($resql);
+
+			return $out;
 		} else {
 			dol_print_error($this->db);
 			return '';

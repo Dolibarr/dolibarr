@@ -2850,7 +2850,7 @@ if ($action == 'create') {
 
 	print '<div class="div-table-responsive-no-min">';
 	if (!empty($object->lines) || ($object->statut == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'editline')) {
-		print '<table id="tablelines" class="noborder noshadow" width="100%">';
+		print '<table id="tablelines" class="noborder noshadow centpercent">';
 	}
 
 	if (!empty($object->lines)) {
