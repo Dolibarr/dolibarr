@@ -703,10 +703,10 @@ function currency_name($code_iso, $withcode = '', $outputlangs = null)
 }
 
 /**
- *    Retourne le nom traduit de la forme juridique
+ *    Return the name translated of juridical status
  *
- *    @param      string	$code       Code de la forme juridique
- *    @return     string     			Nom traduit du pays
+ *    @param      string	$code       Code of juridical status
+ *    @return     string     			Value of the juridical status
  */
 function getFormeJuridiqueLabel($code)
 {
@@ -717,20 +717,24 @@ function getFormeJuridiqueLabel($code)
 	}
 
 	$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_forme_juridique";
-	$sql .= " WHERE code='".$db->escape($code)."'";
+	$sql .= " WHERE code = '".$db->escape($code)."'";
 
 	dol_syslog("Company.lib::getFormeJuridiqueLabel", LOG_DEBUG);
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
-
 		if ($num) {
 			$obj = $db->fetch_object($resql);
+
 			$label = ($obj->libelle != '-' ? $obj->libelle : '');
-			return $label;
+
+			return $langs->trans($label);
 		} else {
 			return $langs->trans("NotDefined");
 		}
+	} else {
+		return 'Error '.$db->lasterror();
 	}
 }
 
@@ -2238,8 +2242,7 @@ function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
  */
 function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
 {
-	global $conf, $db;
-	// Condition on actioncode
+	global $db;
 
 	if ($donetodo == 'todo') {
 		$sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
@@ -2266,12 +2269,10 @@ function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
  */
 function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 {
-	global $conf, $langs, $db;
-	// Add also event from emailings. TODO This should be replaced by an automatic event ? May be it's too much for very large emailing.
-	if (isModEnabled('mailing') && !empty($objcon->email)
-		&& (empty($actioncode) || $actioncode == 'AC_OTH_AUTO' || $actioncode == 'AC_EMAILING')) {
-		$langs->load("mails");
+	global $db;
 
+	// Add also event from emailings. TODO This should be replaced by an automatic event ? May be it's too much for very large emailing.
+	if (isModEnabled('mailing') && !empty($objcon->email) && (empty($actioncode) || $actioncode == 'AC_OTH_AUTO' || $actioncode == 'AC_EMAILING')) {
 		$sql2 = "SELECT m.rowid as id, m.titre as label, mc.date_envoi as dp, mc.date_envoi as dp2, '100' as percent, 'mailing' as type";
 		$sql2 .= ", null as fk_element, '' as elementtype, null as contact_id";
 		$sql2 .= ", 'AC_EMAILING' as acode, '' as alabel, '' as apicto";
@@ -2292,6 +2293,9 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 		$sql2 .= " AND mc.statut = 1";
 		$sql2 .= " AND u.rowid = m.fk_user_valid";
 		$sql2 .= " AND mc.fk_mailing=m.rowid";
+
 		return $sql2;
+	} else {
+		return '';
 	}
 }
