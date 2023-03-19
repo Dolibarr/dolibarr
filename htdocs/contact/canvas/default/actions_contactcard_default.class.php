@@ -83,7 +83,6 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	public function assign_values(&$action, $id)
 	{
 		// phpcs:enable
-		global $limit, $offset, $sortfield, $sortorder;
 		global $conf, $db, $langs, $user;
 		global $form;
 

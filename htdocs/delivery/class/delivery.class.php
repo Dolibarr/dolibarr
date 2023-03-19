@@ -303,9 +303,11 @@ class Delivery extends CommonObject
 			$result = $line->insertExtraFields();
 		}
 
-		if ($error == 0) {
+		if (!$error) {
 			return 1;
 		}
+
+		return -1;
 	}
 
 	/**
@@ -519,8 +521,10 @@ class Delivery extends CommonObject
 					}
 				}
 			}
+
+			return -1;
 		} else {
-			$this->error = "Non autorise";
+			$this->error = "NotAllowed";
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -639,7 +643,7 @@ class Delivery extends CommonObject
 	 *	Delete line
 	 *
 	 *	@param	int		$lineid		Line id
-	 *	@return	integer|null
+	 *	@return	integer				<0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function deleteline($lineid)
 	{
@@ -652,9 +656,11 @@ class Delivery extends CommonObject
 
 				return 1;
 			} else {
-				return 0;
+				return -1;
 			}
 		}
+
+		return 0;
 	}
 
 	/**
