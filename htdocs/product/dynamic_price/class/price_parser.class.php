@@ -127,12 +127,12 @@ class PriceParser
 		global $user;
 		global $hookmanager;
 		$action = 'PARSEEXPRESSION';
-		if ($result = $hookmanager->executeHooks('doDynamiPrice', array(
-								'expression' =>$expression,
-								'product' => $product,
-								'values' => $values
+		if ($reshook = $hookmanager->executeHooks('doDynamiPrice', array(
+								'expression' => &$expression,
+								'product' => &$product,
+								'values' => &$values
 		), $this, $action)) {
-			return $result;
+			return $hookmanager->resArray['return'];
 		}
 		//Check if empty
 		$expression = trim($expression);
