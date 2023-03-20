@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2012-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -587,6 +587,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1980);	// we use year 1980 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -597,6 +599,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1980);	// we use year 1980 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -607,6 +611,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 2, 1, 1980);	// we use year 1980 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
