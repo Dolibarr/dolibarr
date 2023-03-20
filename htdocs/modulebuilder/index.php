@@ -1914,6 +1914,12 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 			'core/modules/mymodule/doc/pdf_standard_myobject.modules.php'=>'core/modules/'.strtolower($module).'/doc/pdf_standard_'.strtolower($objectname).'.modules.php'
 		);
 
+		// delete property if documentation was generated
+		$file_doc = $dirins.'/'.strtolower($module).'/doc/Documentation.asciidoc';
+		if (file_exists($file_doc)) {
+			deletePropsFromDoc($file_doc, $objectname);
+		}
+
 		//menu for the object selected
 		// load class and check if menu exist for this object
 			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
