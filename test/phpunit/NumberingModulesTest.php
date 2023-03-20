@@ -404,6 +404,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1941);	// we use same fiscal year but different year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
