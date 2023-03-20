@@ -850,7 +850,7 @@ class Categorie extends CommonObject
 	 * @return  array|int              	-1 if KO, array of instance of object if OK
 	 * @see containsObject()
 	 */
-	public function getObjectsInCateg($type, $onlyids = 0, $limit = 0, $offset = 0, $sortfield = '', $sortorder = 'ASC')
+	public function getObjectsInCateg($type, $onlyids = 0, $limit = 0, $offset = 0, $sortfield = '', $sortorder = 'ASC', $filter = array(), $filtermode = 'AND')
 	{
 		global $user;
 
