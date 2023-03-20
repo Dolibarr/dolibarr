@@ -2355,7 +2355,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 	$withentity = '';
 
 	foreach ($fieldlist as $field => $value) {
-		if ($value == 'entity') {
+		if (isset($entity) && $value == 'entity') {
 			$withentity = $obj->{$value};
 			continue;
 		}
