@@ -172,6 +172,7 @@ EditTicket=Modifier ticket
 TicketsManagement=Gestion de tickets
 CreatedBy=Créé par
 NewTicket=Nouveau ticket
+OtherTickets=Autres tickets
 SubjectAnswerToTicket=Réponse ticket
 TicketTypeRequest=Type de demande
 TicketCategory=Catégorisation du ticket

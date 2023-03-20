@@ -893,6 +893,10 @@ if ($action == 'create' || $action == 'presend') {
 			} else {
 				$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, 'none', '', 1, 0, 0, array(), 1);
 			}
+			if (empty($conf->global->MAIN_DISABLE_OTHER_LINK)) {
+				$object->fetch_thirdparty();
+				$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/ticket/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherTickets").'</a>)';
+			}
 		}
 
 		// Project
