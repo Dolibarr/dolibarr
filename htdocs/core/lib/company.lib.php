@@ -1498,7 +1498,7 @@ function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = '', $noprin
  */
 function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC', $module = '')
 {
-	global $user, $conf;
+	global $user, $conf, $hookmanager;
 	global $form;
 	global $param, $massactionbutton;
 
