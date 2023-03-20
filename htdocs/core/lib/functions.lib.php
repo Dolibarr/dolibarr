@@ -2042,7 +2042,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	if (!$notab || $notab == -1 || $notab == -2 || $notab == -3) {
 		$out .= "\n".'<div id="dragDropAreaTabBar" class="tabBar'.($notab == -1 ? '' : ($notab == -2 ? ' tabBarNoTop' : (($notab == -3 ? ' noborderbottom' : '')))).'">'."\n";
 	}
-	if (!empty($dragdropfile)) {
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2 && !empty($dragdropfile)) {
 		$out .= dragAndDropFileUpload("dragDropAreaTabBar");
 	}
 	$parameters = array('tabname' => $active, 'out' => $out);
