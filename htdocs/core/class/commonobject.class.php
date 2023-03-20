@@ -209,7 +209,7 @@ abstract class CommonObject
 	public $fk_project;
 
 	/**
-	 * @var Project 	The related project object
+	 * @var Project The related project object
 	 * @deprecated
 	 * @see project
 	 */
