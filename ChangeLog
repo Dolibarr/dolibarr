@@ -5,7 +5,51 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 16.0.5 compared to 16.0.4 *****
 
-TODO
+FIX: 16.0 propalestats Unknown column 'p.fk_soc' in 'on clause'
+FIX: #23804
+FIX: #23860
+FIX: #23966 Error "Param dbt_keyfield is required but not defined"
+FIX: accountancy lettering: better error management
+FIX: accountancy lettering: correctly calculated number of lettering operations done
+FIX: accountancy lettering: error management and prevention
+FIX: accountancy lettering: prevent null results when fetching link with payments
+FIX: Add missing hook on LibStatut
+FIX: Add more context for selectForFormsListWhere Hook
+FIX: attach file and send by mail in ticket
+FIX: bad check on if in get_all_ways
+FIX: Cannot import find type_fees with cgenericdic.class because it has id and not rowid
+FIX: clicktodial backtopage
+FIX: discount wasn't taken into account when adding a line in BOM
+FIX: expense reports: error when selecting mileage fees expense type if MAIN_USE_EXPENSE_IK disabled
+FIX: expense reports: JS error when selecting mileage fees expense type if MAIN_USE_EXPENSE_IK disabled
+FIX: Extrafields in Notes to unify with orders or invoices.
+FIX: fatal error on clicktodial backtopage
+FIX: filter sql accounting account
+FIX: Get data back on product update
+FIX: Get data back when error on command create
+FIX: label dictionary is used by barcode and member module
+FIX: mandatory date for service didnt work for invoice
+FIX: missing "authorid" for getNomUrl link right access
+FIX: missing getEntity filter
+FIX: vulnerability: missing protection on ajax public ticket page for valid email.
+FIX: Missing right to edit service note when module product is disabled
+FIX: multicompany compatibility
+FIX: object $user is not defined
+FIX: Object of class LDAP\Connection could not be converted to string
+FIX: parse error and NAN
+FIX: product ref fourn same size in supplier order/invoice as in product price fourn
+FIX: Profit calculation on project preview tab.
+FIX: Remove orphelan $this->db->rollback() in the function insertExtrafields()
+FIX: request new password with "mc" and "twofactor" authentication
+FIX: Resolve error message due to missing arguments
+FIX: select for task in event card
+FIX: several email sent to the same recipient when adding message from ticket
+FIX: shipping list for external user
+FIX: SQL error "unknown column p.fk_soc" because ANSI-92 joins take precedence over ANSI-89 joins
+FIX: strato pdf
+FIX: typos in getAttchments() $arrayobject
+FIX: whitespaces
+FIX: wrong url param name action
 
 
 ***** ChangeLog for 16.0.4 compared to 16.0.3 *****
