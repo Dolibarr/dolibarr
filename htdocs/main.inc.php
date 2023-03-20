@@ -354,7 +354,7 @@ if (!defined('NOSESSION')) {
 }
 
 
-// Init the 5 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc
+// Init the 6 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc, $hookmanager
 require_once 'master.inc.php';
 
 // If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.
@@ -668,7 +668,7 @@ if (!defined('NOLOGIN')) {
 	} else {
 		// Authentication mode
 		if (empty($dolibarr_main_authentication)) {
-			$dolibarr_main_authentication = 'http,dolibarr';
+			$dolibarr_main_authentication = 'dolibarr';
 		}
 		// Authentication mode: forceuser
 		if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) {
@@ -2454,27 +2454,39 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		}
         jQuery(document).ready(function() {
             jQuery(document).on("click", function(event) {
+				// console.log("Click somewhere on screen");
                 if (!$(event.target).closest("#topmenu-login-dropdown").length) {
 					closeTopMenuLoginDropdown();
                 }
             });
-			';
+
+	        jQuery(".butAction.dropdown-toggle").on("click", function(event) {
+				console.log("Click on .butAction.dropdown-toggle");
+				var parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown");
+            	var offset = parentholder.offset();
+				var left = offset.left;
+				var right = $(document).width() - offset.left - parentholder.width();
+	            parentholder.toggleClass("open");
+	            parentholder.children(".dropdown-content").css({"right": right+"px", "left": "auto"});
+	        });
+		';
+
 
 		if ($conf->theme != 'md') {
 			$btnUser .= '
 	            jQuery("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
-					console.log("toggle login dropdown");
+					console.log("Click on #topmenu-login-dropdown .dropdown-toggle");
 					event.preventDefault();
 	                jQuery("#topmenu-login-dropdown").toggleClass("open");
 	            });
 
 	            jQuery("#topmenulogincompanyinfo-btn").on("click", function() {
-					console.log("Clik on topmenulogincompanyinfo-btn");
+					console.log("Clik on #topmenulogincompanyinfo-btn");
 	                jQuery("#topmenulogincompanyinfo").slideToggle();
 	            });
 
 	            jQuery("#topmenuloginmoreinfo-btn").on("click", function() {
-					console.log("Clik on topmenuloginmoreinfo-btn");
+					console.log("Clik on #topmenuloginmoreinfo-btn");
 	                jQuery("#topmenuloginmoreinfo").slideToggle();
 	            });';
 		}
@@ -2515,6 +2527,7 @@ function top_menu_quickadd()
                 }
             });
             $("#topmenu-quickadd-dropdown .dropdown-toggle").on("click", function(event) {
+				console.log("Click on #topmenu-quickadd-dropdown .dropdown-toggle");
                 openQuickAddDropDown();
             });
             // Key map shortcut
@@ -2762,7 +2775,7 @@ function top_menu_bookmark()
 	            });
 
 	            jQuery("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
-					console.log("toggle bookmark dropdown");
+					console.log("Click on #topmenu-bookmark-dropdown .dropdown-toggle");
 					openBookMarkDropDown();
 	            });
 
@@ -2904,7 +2917,7 @@ function top_menu_search()
 
         // Open drop down
         jQuery("#topmenu-global-search-dropdown .dropdown-toggle").on("click", function(event) {
-			console.log("toggle search dropdown");
+			console.log("click on toggle #topmenu-global-search-dropdown .dropdown-toggle");
             openGlobalSearchDropDown();
         });
 

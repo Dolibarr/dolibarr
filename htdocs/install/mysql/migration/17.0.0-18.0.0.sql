@@ -37,7 +37,7 @@
 -- VMYSQL4.3 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN `rank` rankorder integer;
 -- VPGSQL8.2 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN rank rankorder integer;
 
-ALTER TABLE llx_accounting_system CHANGE COLUMN fk_pays fk_country integer; 
+ALTER TABLE llx_accounting_system CHANGE COLUMN fk_pays fk_country integer;
 
 ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN ref varchar(128);
 ALTER TABLE llx_facture_fourn_det MODIFY COLUMN ref varchar(128);
@@ -373,4 +373,6 @@ UPDATE llx_c_country SET numeric_code = '262' WHERE code_iso = 'DJI';
 UPDATE llx_c_country SET numeric_code = '894' WHERE code_iso = 'ZMB';
 UPDATE llx_c_country SET numeric_code = '716' WHERE code_iso = 'ZWE';
 
-
+-- Generate documents on product batch
+ALTER TABLE llx_product_lot ADD COLUMN model_pdf varchar(255) AFTER scrapping_date;
+ALTER TABLE llx_product_lot ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;

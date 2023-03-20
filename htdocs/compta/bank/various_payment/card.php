@@ -643,18 +643,28 @@ if ($id) {
 	print $form->editfieldval('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0);
 	print '</td></tr>';
 
-	if (isModEnabled("banque")) {
-		if ($object->fk_account > 0) {
-			$bankline = new AccountLine($db);
-			$bankline->fetch($object->fk_bank);
+	$bankaccountnotfound = 0;
 
-			print '<tr>';
-			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-			print '<td colspan="3">';
-			print $bankline->getNomUrl(1, 0, 'showall');
-			print '</td>';
-			print '</tr>';
+	if (isModEnabled('banque')) {
+		print '<tr>';
+		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+		print '<td colspan="3">';
+		if ($object->fk_bank > 0) {
+			$bankline = new AccountLine($db);
+			$result = $bankline->fetch($object->fk_bank);
+
+			if ($result <= 0) {
+				$bankaccountnotfound = 1;
+			} else {
+				print $bankline->getNomUrl(1, 0, 'showall');
+			}
+		} else {
+			$bankaccountnotfound = 1;
+
+			print '<span class="opacitymedium">'.$langs->trans("NoRecordfound").'</span>';
 		}
+		print '</td>';
+		print '</tr>';
 	}
 
 	// Other attributes
@@ -684,7 +694,7 @@ if ($id) {
 	}
 
 	// Delete
-	if (empty($object->rappro)) {
+	if (empty($object->rappro) || $bankaccountnotfound) {
 		if (!empty($user->rights->banque->modifier)) {
 			if ($alreadyaccounted) {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("Accounted").'">'.$langs->trans("Delete").'</a></div>';

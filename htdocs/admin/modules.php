@@ -1181,7 +1181,11 @@ if ($mode == 'deploy') {
 	} else {
 		if (getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')) {
 			// Show clean message
-			$message = info_admin($langs->trans('InstallModuleFromWebHasBeenDisabledContactUs'));
+			if (!is_numeric('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')) {
+				$message = info_admin($langs->trans(getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')));
+			} else {
+				$message = info_admin($langs->trans('InstallModuleFromWebHasBeenDisabledContactUs'));
+			}
 		} else {
 			// Show technical message
 			$message = info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock'));

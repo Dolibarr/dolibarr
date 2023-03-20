@@ -61,20 +61,15 @@ abstract class ActionsAdherentCardCommon
 	 */
 	public function getObject($id)
 	{
-		//$ret = $this->getInstanceDao();
+		$object = new Adherent($this->db);
 
-		/*if (is_object($this->object) && method_exists($this->object,'fetch'))
-		{
-			if (!empty($id)) $this->object->fetch($id);
-		}
-		else
-		{*/
-			$object = new Adherent($this->db);
 		if (!empty($id)) {
 			$object->fetch($id);
 		}
-			$this->object = $object;
-		//}
+
+		$this->object = $object;
+
+		return $object;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -83,7 +78,7 @@ abstract class ActionsAdherentCardCommon
 	 *
 	 *  @param	string		$action    Type of action
 	 *  @param	int			$id			Id
-	 *  @return	string					HTML output
+	 *  @return	void
 	 */
 	public function assign_values(&$action, $id)
 	{

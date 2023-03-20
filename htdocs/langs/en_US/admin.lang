@@ -522,6 +522,7 @@ GoIntoTranslationMenuToChangeThis=A translation has been found for the key with 
 WarningSettingSortOrder=Warning, setting a default sort order may result in a technical error when going on the list page if field is an unknown field. If you experience such an error, come back to this page to remove the default sort order and restore default behavior.
 Field=Field
 ProductDocumentTemplates=Document templates to generate product document
+ProductBatchDocumentTemplates=Document templates to generate product lots document
 FreeLegalTextOnExpenseReports=Free legal text on expense reports
 WatermarkOnDraftExpenseReports=Watermark on draft expense reports
 ProjectIsRequiredOnExpenseReports=The project is mandatory for entering an expense report
@@ -2374,5 +2375,5 @@ WarningModuleHasChangedSecurityCsrfParameter=Warning: the module %s has disabled
 EMailsInGoingDesc=Incoming emails are managed by the module %s. You must enable and configure it if you need to support ingoing emails.
 MAIN_IMAP_USE_PHPIMAP=Use the PHP-IMAP library for IMAP instead of native PHP IMAP. This also allows the use of an OAuth2 connection for IMAP (module OAuth must also be activated).
 MAIN_CHECKBOX_LEFT_COLUMN=Show the column for field and line selection on the left (on the right by default)
-
+NotAvailableByDefaultEnabledOnModuleActivation=Not created by default. Created on module activation only.
 CSSPage=CSS Style

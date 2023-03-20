@@ -266,7 +266,7 @@ class FileUpload
 	protected function getFileObject($file_name)
 	{
 		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
-			return;
+			return null;
 		}
 
 		$file_path = $this->options['upload_dir'].$file_name;
@@ -310,7 +310,7 @@ class FileUpload
 		global $maxwidthmini, $maxheightmini;
 
 		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
-			return;
+			return false;
 		}
 
 		$file_path = $this->options['upload_dir'].$file_name;
@@ -345,7 +345,7 @@ class FileUpload
 	protected function validate($uploaded_file, $file, $error, $index)
 	{
 		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
-			return;
+			return false;
 		}
 
 		if ($error) {
@@ -459,12 +459,12 @@ class FileUpload
 	 * @param 	string		$type				Type
 	 * @param 	string		$error				Error
 	 * @param	string		$index				Index
-	 * @return stdClass
+	 * @return stdClass|null
 	 */
 	protected function handleFileUpload($uploaded_file, $name, $size, $type, $error, $index)
 	{
 		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
-			return;
+			return null;
 		}
 
 		$file = new stdClass();
@@ -590,12 +590,12 @@ class FileUpload
 	/**
 	 * Delete uploaded file
 	 *
-	 * @return	string
+	 * @return	string|null
 	 */
 	public function delete()
 	{
 		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
-			return;
+			return null;
 		}
 
 		$file_name = isset($_REQUEST['file']) ?

@@ -197,18 +197,22 @@ if ($action == 'confirmconvertimgwebp') {
 
 	$section_dir=GETPOST('section_dir', 'alpha');
 	$section=GETPOST('section', 'alpha');
+	$file=GETPOST('filetoregenerate', 'alpha');
 	$form = new Form($db);
 	$formquestion['section_dir']=array('type'=>'hidden', 'value'=>$section_dir, 'name'=>'section_dir');
 	$formquestion['section']=array('type'=>'hidden', 'value'=>$section, 'name'=>'section');
+	$formquestion['filetoregenerate']=array('type'=>'hidden', 'value'=>$file, 'name'=>'filetoregenerate');
 	if ($module == 'medias') {
 		$formquestion['website']=array('type'=>'hidden', 'value'=>$website->ref, 'name'=>'website');
 	}
-	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('ConfirmImgWebpCreation'), $langs->trans('ConfirmGenerateImgWebp', $object->ref), 'convertimgwebp', $formquestion, "yes", 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"], empty($file) ? $langs->trans('ConfirmImgWebpCreation') : $langs->trans('ConfirmChosenImgWebpCreation'), empty($file) ? $langs->trans('ConfirmGenerateImgWebp') : $langs->trans('ConfirmGenerateChosenImgWebp'), 'convertimgwebp', $formquestion, "yes", 1);
 	$action = 'file_manager';
 }
 
 // Duplicate images into .webp
 if ($action == 'convertimgwebp' && $permtoadd) {
+	$file = GETPOST('filetoregenerate', 'alpha');
+
 	if ($module == 'medias') {
 		$imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/'.dol_sanitizePathName(GETPOST('section_dir', 'alpha'));
 	} else {
@@ -217,9 +221,14 @@ if ($action == 'convertimgwebp' && $permtoadd) {
 
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-	$regeximgext = getListOfPossibleImageExt();
+	if (!empty($file)) {
+		$filelist = array();
+		$filelist[]["fullname"] = dol_osencode($imagefolder.'/'.$file); // get $imagefolder.'/'.$file infos
+	} else {
+		$regeximgext = getListOfPossibleImageExt();
 
-	$filelist = dol_dir_list($imagefolder, "files", 0, $regeximgext);
+		$filelist = dol_dir_list($imagefolder, "files", 0, $regeximgext);
+	}
 
 	$nbconverted = 0;
 
@@ -245,7 +254,11 @@ if ($action == 'convertimgwebp' && $permtoadd) {
 		}
 	}
 	if (!$error) {
-		setEventMessages($langs->trans('SucessConvertImgWebp'), null);
+		if (!empty($file)) {
+			setEventMessages($langs->trans('SucessConvertChosenImgWebp'), null);
+		} else {
+			setEventMessages($langs->trans('SucessConvertImgWebp'), null);
+		}
 	}
 	$action = 'file_manager';
 }
