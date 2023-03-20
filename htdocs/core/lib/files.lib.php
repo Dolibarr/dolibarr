@@ -3321,30 +3321,32 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
  * Function to manage the drag and drop file.
  * We use global variable $object
  *
- * @return  string	Js script to display
+ * @param	string	$htmlname	The id of the component where we need to drag and drop
+ * @return  string				Js script to display
  */
-function dragAndDropFileUpload()
+function dragAndDropFileUpload($htmlname)
 {
-	global $object;
-	//TODO: Find a way to display text over div
-	$out = "<script>";
-	$out .= "\n/* JS CODE TO ENABLE DRAG AND DROP OF FILE */\n";
+	global $object, $langs;
+	$out = "";
+	$out .= '<div id="'.$htmlname.'Message" class="dragDropAreaMessage hidden"><span>'.img_picto("", 'download').'<br>'.$langs->trans("DropFileToAddItToObject").'</span></div>';
+	$out .= "\n<!-- JS CODE TO ENABLE DRAG AND DROP OF FILE -->\n";
+	$out .= "<script>";
 	$out .= '
 		jQuery(document).ready(function() {
-			counterdragdrop = 0;
+			$("#'.$htmlname.'").addClass("cssDragDropArea");
 			$(".cssDragDropArea").on("dragenter", function(ev) {
 				// Entering drop area. Highlight area
-				counterdragdrop++;
-				$(".cssDragDropArea").addClass("highlightDragDropArea");
+				console.log("We add class highlightDragDropArea")
+				$(this).addClass("highlightDragDropArea");
+				$("#'.$htmlname.'Message").removeClass("hidden");
 				ev.preventDefault();
 			});
 			
 			$(".cssDragDropArea").on("dragleave", function(ev) {
 				// Going out of drop area. Remove Highlight
-				counterdragdrop--;
-				if (counterdragdrop === 0) { 
-					$(".cssDragDropArea").removeClass("highlightDragDropArea");
-				}
+				console.log("We remove class highlightDragDropArea")
+				$("#'.$htmlname.'Message").addClass("hidden");
+				$(this).removeClass("highlightDragDropArea");
 			});
 
 			$(".cssDragDropArea").on("dragover", function(ev) {
