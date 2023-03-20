@@ -72,6 +72,8 @@ $object = new PaymentVarious($db);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('variouscard', 'globalcard'));
 
+$permissiontoadd = $user->hasRight('banque', 'modifier');
+
 
 /**
  * Actions
@@ -97,9 +99,9 @@ if (empty($reshook)) {
 	}
 
 	// Link to a project
-	if ($action == 'classin' && $user->rights->banque->modifier) {
+	if ($action == 'classin' && $permissiontoadd) {
 		$object->fetch($id);
-		$object->setProject(GETPOST('projectid'));
+		$object->setProject(GETPOST('projectid', 'int'));
 	}
 
 	if ($action == 'add') {
@@ -253,7 +255,7 @@ if ($action == 'confirm_clone' && $confirm != 'yes') {
 	$action = '';
 }
 
-if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->banque->modifier)) {
+if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 	$db->begin();
 
 	$originalId = $id;
@@ -577,32 +579,25 @@ if ($id) {
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");
-		$morehtmlref .= $langs->trans('Project').' ';
-		if ($user->rights->banque->modifier) {
+		//$morehtmlref .= '<br>';
+		if ($permissiontoadd) {
+			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			if ($action == 'classify') {
-				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-				$morehtmlref .= '</form>';
-			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
-			}
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
-			} else {
-				$morehtmlref .= '';
+				if ($proj->title) {
+					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
+				}
 			}
 		}
 	}
+
 	$morehtmlref .= '</div>';
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -640,20 +635,6 @@ if ($id) {
 	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
 
 	// Account of Chart of account
-	/*
-	print '<tr><td class="nowrap">';
-	print $form->editfieldkey('AccountAccounting', 'account', $object->accountancy_code, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0);
-	print '</td><td>';
-	if ($action == 'editaccount') {
-		if (isModEnabled('accounting')) {
-			print $formaccounting->select_account($object->accountancy_code, 'accountancy_code', 1, null, 1, 1);
-		} else { // For external software
-			print '<input class="minwidth100 maxwidthonsmartphone" name="accountancy_code" value="'.$accountancy_code.'">';
-		}
-	} else {
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-		print length_accounta($object->accountancy_code);
-	}*/
 	$editvalue = '';
 	if (isModEnabled('accounting')) {
 		$editvalue = $formaccounting->select_account($object->accountancy_code, 'accountancy_code', 1, null, 1, 1);
@@ -661,16 +642,16 @@ if ($id) {
 
 	print '</td></tr>';
 	print '<tr><td class="nowrap">';
-	print $form->editfieldkey('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0);
+	print $form->editfieldkey('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $permissiontoadd), 'string', '', 0);
 	print '</td><td>';
-	print $form->editfieldval('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'asis', $editvalue, 0, null, '', 1, 'lengthAccountg');
+	print $form->editfieldval('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $permissiontoadd), 'asis', $editvalue, 0, null, '', 1, 'lengthAccountg');
 	print '</td></tr>';
 
 	// Subledger account
 	print '<tr><td class="nowrap">';
-	print $form->editfieldkey('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0);
+	print $form->editfieldkey('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $permissiontoadd), 'string', '', 0);
 	print '</td><td>';
-	print $form->editfieldval('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0, null, '', 1, 'lengthAccounta');
+	print $form->editfieldval('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $permissiontoadd), 'string', '', 0, null, '', 1, 'lengthAccounta');
 	print '</td></tr>';
 
 	$bankaccountnotfound = 0;
@@ -719,13 +700,13 @@ if ($id) {
 	// Add button modify
 
 	// Clone
-	if ($user->rights->banque->modifier) {
+	if ($permissiontoadd) {
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.dol_buildpath("/compta/bank/various_payment/card.php", 1).'?id='.$object->id.'&amp;action=clone">'.$langs->trans("ToClone")."</a></div>";
 	}
 
 	// Delete
 	if (empty($object->rappro) || $bankaccountnotfound) {
-		if (!empty($user->rights->banque->modifier)) {
+		if ($permissiontoadd) {
 			if ($alreadyaccounted) {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("Accounted").'">'.$langs->trans("Delete").'</a></div>';
 			} else {
