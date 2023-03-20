@@ -1811,7 +1811,7 @@ if ($action == 'create') {
 					$moreparam = 'style="display: none;"';
 				}
 				print '<tr class="oddeven" '.$moreparam.'>';
-				print '<td class="tdhrthin" colspan="'.($conf->margin->enabled ? 7 : 6).'"><hr class="opacitymedium tdhrthin"></td>';
+				print '<td class="tdhrthin" colspan="'.(isModEnabled('margin') ? 7 : 6).'"><hr class="opacitymedium tdhrthin"></td>';
 				print "</tr>\n";
 			}
 
