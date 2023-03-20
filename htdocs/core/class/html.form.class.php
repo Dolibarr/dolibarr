@@ -191,23 +191,23 @@ class Form
 	/**
 	 * Output value of a field for an editable field
 	 *
-	 * @param string $text Text of label (not used in this function)
-	 * @param string $htmlname Name of select field
-	 * @param string $value Value to show/edit
-	 * @param object $object Object (that we want to show)
-	 * @param boolean $perm Permission to allow button to edit parameter
-	 * @param string $typeofdata Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols%', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select;xkey:xval,ykey:yval,...')
-	 * @param string $editvalue When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of numeric value). Use '' to use same than $value
-	 * @param object $extObject External object ???
-	 * @param mixed $custommsg String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
-	 * @param string $moreparam More param to add on the form on action href URL parameter
-	 * @param int $notabletag Do no output table tags
-	 * @param string $formatfunc Call a specific function to output field in view mode (For example: 'dol_print_email')
-	 * @param string $paramid Key of parameter for id ('id', 'socid')
-	 * @param string $gm 'auto' or 'tzuser' or 'tzuserrel' or 'tzserver' (when $typeofdata is a date)
-	 * @param array $moreoptions Array with more options. For example array('addnowlink'=>1), array('valuealreadyhtmlescaped'=>1)
-	 * @param string $editaction [=''] use GETPOST default action or set action to edit mode
-	 * @return  string                    HTML edit field
+	 * @param string 	$text 			Text of label (not used in this function)
+	 * @param string 	$htmlname 		Name of select field
+	 * @param string 	$value 			Value to show/edit
+	 * @param object 	$object 		Object (that we want to show)
+	 * @param boolean 	$perm 			Permission to allow button to edit parameter
+	 * @param string 	$typeofdata 	Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols%', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select;xkey:xval,ykey:yval,...')
+	 * @param string 	$editvalue 		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of numeric value, or a select combo). Use '' to use same than $value
+	 * @param object 	$extObject 		External object ???
+	 * @param mixed 	$custommsg 		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
+	 * @param string 	$moreparam 		More param to add on the form on action href URL parameter
+	 * @param int 		$notabletag 	Do no output table tags
+	 * @param string 	$formatfunc 	Call a specific method of $object->$formatfunc to output field in view mode (For example: 'dol_print_email')
+	 * @param string 	$paramid 		Key of parameter for id ('id', 'socid')
+	 * @param string 	$gm 			'auto' or 'tzuser' or 'tzuserrel' or 'tzserver' (when $typeofdata is a date)
+	 * @param array 	$moreoptions 	Array with more options. For example array('addnowlink'=>1), array('valuealreadyhtmlescaped'=>1)
+	 * @param string 	$editaction 	[=''] use GETPOST default action or set action to edit mode
+	 * @return string                   HTML edit field
 	 */
 	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 1, $formatfunc = '', $paramid = 'id', $gm = 'auto', $moreoptions = array(), $editaction = '')
 	{
@@ -310,6 +310,8 @@ class Form
 					require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 					$doleditor = new DolEditor($htmlname, ($editvalue ? $editvalue : $value), (empty($tmp[2]) ? '' : $tmp[2]), (empty($tmp[3]) ? '100' : $tmp[3]), (empty($tmp[1]) ? 'dolibarr_notes' : $tmp[1]), 'In', (empty($tmp[5]) ? 0 : $tmp[5]), (isset($tmp[8]) ? ($tmp[8] ? true : false) : true), true, (empty($tmp[6]) ? '20' : $tmp[6]), (empty($tmp[7]) ? '100' : $tmp[7]));
 					$ret .= $doleditor->Create(1);
+				} elseif ($typeofdata == 'asis') {
+					$ret .= ($editvalue ? $editvalue : $value);
 				}
 				if (empty($notabletag)) {
 					$ret .= '</td>';
