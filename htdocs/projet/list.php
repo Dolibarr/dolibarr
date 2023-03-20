@@ -192,6 +192,8 @@ foreach ($object->fields as $key => $val) {
 
 // Add name object fields to "search in all"
 $fieldstosearchall['s.nom'] = "ThirdPartyName";
+$fieldstosearchall['s.name_alias'] = "AliasNameShort";
+$fieldstosearchall['s.code_client'] = "CustomerCode";
 
 // Definition of array of fields for columns
 $arrayfields = array();
@@ -442,7 +444,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total

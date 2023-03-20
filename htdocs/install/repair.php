@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1030,7 +1031,7 @@ if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha')) {
 	print '<tr><td colspan="2"><br>*** Set value of time spent without amount</td></tr>';
 
 	$sql = "SELECT COUNT(ptt.rowid) as nb, u.rowid as user_id, u.login, u.thm as user_thm";
-	$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as ptt, ".MAIN_DB_PREFIX."user as u";
+	$sql .= " FROM ".MAIN_DB_PREFIX."element_time as ptt, ".MAIN_DB_PREFIX."user as u";
 	$sql .= " WHERE ptt.fk_user = u.rowid";
 	$sql .= " AND ptt.thm IS NULL and u.thm > 0";
 	$sql .= " GROUP BY u.rowid, u.login, u.thm";
@@ -1048,7 +1049,7 @@ if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha')) {
 				$db->begin();
 
 				if (GETPOST('set_empty_time_spent_amount') == 'confirmed') {
-					$sql2 = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
+					$sql2 = "UPDATE ".MAIN_DB_PREFIX."element_time";
 					$sql2 .= " SET thm = ".$obj->user_thm." WHERE thm IS NULL AND fk_user = ".((int) $obj->user_id);
 					$resql2 = $db->query($sql2);
 					if (!$resql2) {

@@ -377,7 +377,7 @@ llxHeader("", $title);
 
 
 if (!empty($id) || !empty($ref)) {
-	$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
+	$showbarcode = isModEnabled('barcode');
 	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
 		$showbarcode = 0;
 	}

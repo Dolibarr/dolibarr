@@ -755,7 +755,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Project
 	print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfProjectTask").'</td><td>';
-	print img_picto('', 'project');
+	print img_picto('', 'project', 'class="pictofixedwidth"');
 	if ($projectoktoentertime) {
 		$formother->selectProjectTasks(GETPOST('task_parent'), empty($projectid) ? $object->id : $projectid, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500 widthcentpercentminusxx');
 	} else {
@@ -767,6 +767,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Assigned to
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
+	print img_picto('', 'user', 'class="pictofixedwidth"');
 	if (is_array($contactsofproject) && count($contactsofproject)) {
 		print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth300');
 	} else {
@@ -780,21 +781,25 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Date start task
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+	print img_picto('', 'action', 'class="pictofixedwidth"');
 	print $form->selectDate((!empty($date_start) ? $date_start : ''), 'dateo', 1, 1, 0, '', 1, 1);
 	print '</td></tr>';
 
 	// Date end task
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+	print img_picto('', 'action', 'class="pictofixedwidth"');
 	print $form->selectDate((!empty($date_end) ? $date_end : -1), 'datee', -1, 1, 0, '', 1, 1);
 	print '</td></tr>';
 
 	// Planned workload
 	print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
+	print img_picto('', 'clock', 'class="pictofixedwidth"');
 	print $form->select_duration('planned_workload', !empty($planned_workload) ? $planned_workload : 0, 0, 'text');
 	print '</td></tr>';
 
 	// Progress
 	print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
+	print img_picto('', 'fa-percent', 'class="pictofixedwidth"');
 	print $formother->select_percent($progress, 'progress', 0, 5, 0, 100, 1);
 	print '</td></tr>';
 
@@ -814,8 +819,9 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Budget").'</td>';
-	print '<td><input size="5" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : '').'"></td>';
+	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+	print img_picto('', 'currency', 'class="pictofixedwidth"');
+	print '<input size="8" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : '').'"></td>';
 	print '</tr>';
 
 	// Other options
@@ -1105,11 +1111,11 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		$j = 0; $level = 0;
 		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, $filterprogresscalc, ($object->usage_bill_time ? 1 : 0), $arrayfields, $arrayofselected);
 	} else {
-		$colspan = 10;
+		$colspan = 11;
 		if ($object->usage_bill_time) {
 			$colspan += 2;
 		}
-		print '<tr class="oddeven nobottom"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoTasks").'</span></td></tr>';
+		print '<tr class="oddeven"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoTasks").'</span></td></tr>';
 	}
 
 	print "</table>";

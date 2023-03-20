@@ -155,9 +155,6 @@ if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) {
 $TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
 
 $result = restrictedArea($user, 'agenda', $object->id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
-if ($user->socid && $socid) {
-	$result = restrictedArea($user, 'societe', $socid);
-}
 
 $usercancreate = $user->hasRight('agenda', 'allactions', 'create') || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create);
 
@@ -1469,7 +1466,7 @@ if ($action == 'create') {
 		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
 	               $("#projectid").change(function () {
-                        var url = "'.DOL_URL_ROOT.'/projet/ajax/projects.php?mode=gettasks&socid="+$("#projectid").val()+"&projectid="+$("#projectid").val();
+                        var url = "'.DOL_URL_ROOT.'/projet/ajax/projects.php?mode=gettasks&socid="+$("#search_socid").val()+"&projectid="+$("#projectid").val();
 						console.log("Call url to get new list of tasks: "+url);
                         $.get(url, function(data) {
                             console.log(data);
@@ -2401,6 +2398,20 @@ if ($id > 0) {
 				print $link;
 			}
 			print '</td></tr>';
+		}
+
+		//mail information
+		if (!empty($object->email_msgid)) {
+			print '<tr><td>'.$langs->trans('MailTopic').'</td>';
+			print '<td>'.dol_escape_htmltag($object->email_subject).'</td></tr>';
+			print '<tr><td>'.$langs->trans('MailFrom').'</td>';
+			print '<td>'.dol_escape_htmltag($object->email_from).'</td></tr>';
+			print '<tr><td>'.$langs->trans('MailTo').'</td>';
+			print '<td>'.dol_escape_htmltag($object->email_to).'</td></tr>';
+			if (!empty($object->email_tocc)) {
+				print '<tr><td>'.$langs->trans('MailCC').'</td>';
+				print '<td>'.dol_escape_htmltag($object->email_tocc).'</td></tr>';
+			}
 		}
 
 		// Description
