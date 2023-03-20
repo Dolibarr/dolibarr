@@ -58,7 +58,7 @@ class FormProjets
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Output a combo list with projects qualified for a third party / user
+	 * Output a combo list with projects qualified for a third party / user
 	 *
 	 * @param int $socid Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
 	 * @param string|Project $selected Id of preselected project or Project (or ''). Note: If you know the ref, you can also provide it into $selected_input_value to save one request in some cases.
@@ -145,7 +145,7 @@ class FormProjets
 	 * @param int $htmlid Html id to use instead of htmlname
 	 * @param string $morecss More CSS
 	 * @param string $morefilter More filters (Must be a sql sanitized string)
-	 * @return int                           Nb of project if OK, <0 if KO
+	 * @return int|string|array                           HTML string or array of option or <0 if KO
 	 */
 	public function select_projects_list($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 24, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $htmlid = '', $morecss = 'maxwidth500', $morefilter = '')
 	{

@@ -2415,7 +2415,7 @@ class Societe extends CommonObject
 	 *  @param	int			$mode			0=Array with properties, 1=Array of id.
 	 *  @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
 	 *  @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
-	 *  @return array       				Array of sales representatives of third party
+	 *  @return array|int      				Array of sales representatives of third party or <0 if KO
 	 */
 	public function getSalesRepresentatives(User $user, $mode = 0, $sortfield = null, $sortorder = null)
 	{
@@ -4358,7 +4358,9 @@ class Societe extends CommonObject
 		global $langs;
 
 		$this->id = 0;
+		$this->entity = $conf->entity;
 		$this->name = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
+		$this->nom = $this->name; // deprecated
 		$this->address = getDolGlobalString('MAIN_INFO_SOCIETE_ADDRESS');
 		$this->zip = getDolGlobalString('MAIN_INFO_SOCIETE_ZIP');
 		$this->town = getDolGlobalString('MAIN_INFO_SOCIETE_TOWN');
@@ -4367,8 +4369,6 @@ class Societe extends CommonObject
 		$this->socialobject = getDolGlobalString('MAIN_INFO_SOCIETE_OBJECT');
 
 		$this->note_private = getDolGlobalString('MAIN_INFO_SOCIETE_NOTE');
-
-		$this->nom = $this->name; // deprecated
 
 		// We define country_id, country_code and country
 		$country_id = $country_code = $country_label = '';

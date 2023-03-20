@@ -56,6 +56,7 @@ $langs->loadLangs(array("contracts", "orders", "companies", "bills", "products",
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 $socid = GETPOST('socid', 'int');
 $id = GETPOST('id', 'int');
@@ -1135,10 +1136,10 @@ if ($action == 'create') {
 
 	print '<form name="form_contract" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input type="hidden" name="remise_percent" value="0">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print dol_get_fiche_head();
 
@@ -1350,6 +1351,7 @@ if ($action == 'create') {
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setremise">';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		}
 
 		// Contract card
@@ -1490,6 +1492,7 @@ if ($action == 'create') {
 			print '<form name="update" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="updateline">';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			print '<input type="hidden" name="elrowid" value="'.$object->lines[$cursorline - 1]->id.'">';
 			print '<input type="hidden" name="fournprice" value="'.(!empty($object->lines[$cursorline - 1]->fk_fournprice) ? $object->lines[$cursorline - 1]->fk_fournprice : 0).'">';
 
@@ -1808,7 +1811,7 @@ if ($action == 'create') {
 					$moreparam = 'style="display: none;"';
 				}
 				print '<tr class="oddeven" '.$moreparam.'>';
-				print '<td class="tdhrthin" colspan="'.($conf->margin->enabled ? 7 : 6).'"><hr class="opacitymedium tdhrthin"></td>';
+				print '<td class="tdhrthin" colspan="'.(isModEnabled('margin') ? 7 : 6).'"><hr class="opacitymedium tdhrthin"></td>';
 				print "</tr>\n";
 			}
 
@@ -1914,6 +1917,7 @@ if ($action == 'create') {
 				print '<form name="active" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="confirm_active">';
+				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				print '<input type="hidden" name="ligne" value="'.GETPOST('ligne', 'int').'">';
 				print '<input type="hidden" name="confirm" value="yes">';
@@ -1973,6 +1977,7 @@ if ($action == 'create') {
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="confirm" value="yes">';
 				print '<input type="hidden" name="action" value="confirm_closeline">';
+				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').'" width="100%">';
 
@@ -2038,6 +2043,7 @@ if ($action == 'create') {
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="id" value="'.$object->id.'">
 			<input type="hidden" name="page_y" value="">
+			<input type="hidden" name="backtopage" value="'.$backtopage.'">
 			';
 
 			print '<div class="div-table-responsive-no-min">';

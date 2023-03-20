@@ -5,17 +5,24 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 18.0.0 compared to 17.0.0 *****
 
-NEW: PHP 8.2 compatibility:
+NEW: PHP 8.2 compatibility.
 
 
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Minimal PHP version is now PHP 7.1 instead of PHP 7.0
 * The deprecated method "escapeunderscore()" of database handlers has been removed. You must use "escapeforlike()" instead.
 * The method "nb_expedition()" has been renamed into "countNbOfShipments()" 
 * Revert default type of hooks. Default is now 'addreplace' hooks (and exception become 'output' hooks, that become deprecated).
 * Deprecated property libelle removed from entrepot class.
 * The type 'text' in ->fields property dos not accept html content anymore. Use the type 'html' for that.
+
+
+
+***** ChangeLog for 17.0.1 compared to 17.0.0 *****
+
+TODO
 
 
 ***** ChangeLog for 17.0.0 compared to 16.0.0 *****
@@ -222,6 +229,10 @@ Following changes may create regressions for some external modules, but were nec
 * You must use "$objectoffield" to manipulate the current object inside the formulare of computed custom extrafields instead of $obj/$object.
 * Making a global search is sending the parameter using always the name search_all (instead of sometimes sall and search_all)
 * The property $url_last_version must be public if defined into module descriptor files;
+
+***** ChangeLog for 16.0.5 compared to 16.0.4 *****
+
+TODO
 
 
 ***** ChangeLog for 16.0.4 compared to 16.0.3 *****
