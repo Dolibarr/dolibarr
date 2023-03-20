@@ -184,6 +184,7 @@ EditTicket=Edit ticket
 TicketsManagement=Tickets Management
 CreatedBy=Created by
 NewTicket=New Ticket
+OtherTickets=Other tickets
 SubjectAnswerToTicket=Ticket answer
 TicketTypeRequest=Request type
 TicketCategory=Ticket group

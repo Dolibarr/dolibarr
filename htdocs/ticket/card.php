@@ -961,6 +961,10 @@ if ($action == 'create' || $action == 'presend') {
 				$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty'), 0).'</a> ';
 			}
 			$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
+			if (empty($conf->global->MAIN_DISABLE_OTHER_LINK)) {
+				$object->fetch_thirdparty();
+				$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/ticket/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherTickets").'</a>)';
+			}
 		}
 
 		// Project
