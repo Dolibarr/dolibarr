@@ -317,7 +317,7 @@ if ($event->type == 'payout.created') {
 	dol_syslog("object = ".var_export($event->data, true));
 	include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php'; //TOTEST
 	global $stripearrayofkeysbyenv;
-	$errors = 0;
+	$error = 0;
 	$object = $event->data->object;
 	$TRANSACTIONID = $object->id;
 	$ipaddress = $object->metadata->ipaddress;
@@ -345,8 +345,7 @@ if ($event->type == 'payout.created') {
 			$paymentTypeId = $obj->type;
 		}
 	} else {
-		$error = $db->lasterror();
-		$postactionmessages[] = $error;
+		$postactionmessages[] = $db->lasterror();
 		http_response_code(500);
 		return -1;
 	}
@@ -377,7 +376,7 @@ if ($event->type == 'payout.created') {
 			$postactionmessages[] = 'Payment was done in a different currency than currency expected of company';
 			$ispostactionok = -1;
 			// Not yet supported, so error
-			$errors++;
+			$error++;
 		}
 		$paiement->paiementid = $paymentTypeId;
 		$paiement->num_payment = '';
@@ -387,22 +386,22 @@ if ($event->type == 'payout.created') {
 		$paiement->ext_payment_site = $service;
 
 		$db->begin();
-		if (!$errors) {
+		if (!$error) {
 			dol_syslog('* Record payment for invoice id ' . $invoice_id . '. It includes closing of invoice and regenerating document');
 
 			// This include closing invoices to 'paid' (and trigger including unsuspending) and regenerating document
 			$paiement_id = $paiement->create($user, 1);
 			if ($paiement_id < 0) {
-				$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
+				$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->error);
 				$ispostactionok = -1;
-				$errors++;
+				$error++;
 			} else {
 				$postactionmessages[] = 'Payment created';
 			}
 
 			dol_syslog("The payment has been created for invoice id " . $invoice_id);
 		}
-		if (!$errors && isModEnabled('banque')) {
+		if (!$error && isModEnabled('banque')) {
 			dol_syslog('* Add payment to bank');
 
 			// The bank used is the one defined into Stripe setup
@@ -414,18 +413,18 @@ if ($event->type == 'payout.created') {
 				if ($result < 0) {
 					$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
 					$ispostactionok = -1;
-					$errors++;
+					$error++;
 				} else {
 					$postactionmessages[] = 'Bank transaction of payment created (by makeStripeSepaRequest)';
 				}
 			} else {
 				$postactionmessages[] = 'Setup of bank account to use in module ' . $paymentmethod . ' was not set. No way to record the payment.';
 				$ispostactionok = -1;
-				$errors++;
+				$error++;
 			}
 		}
 
-		if (!$errors && isModEnabled('prelevement')) {
+		if (!$error && isModEnabled('prelevement')) {
 			dol_syslog('* Set prelevement to credite');
 			$bon = new BonPrelevement($db);
 			$idbon = 0;
@@ -444,10 +443,10 @@ if ($event->type == 'payout.created') {
 			} else {
 				$postactionmessages[] = $db->lasterror();
 				$ispostactionok = -1;
-				$errors++;
+				$error++;
 			}
 
-			if (!$errors && !empty($idbon)) {
+			if (!$error && !empty($idbon)) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
 				$sql .= " SET fk_user_credit = ".$user->id;
 				$sql .= ", statut = '".$db->escape($bon::STATUS_CREDITED)."'";
@@ -460,11 +459,11 @@ if ($event->type == 'payout.created') {
 				if (!$result) {
 					$postactionmessages[] = $db->lasterror();
 					$ispostactionok = -1;
-					$errors++;
+					$error++;
 				}
 			}
 
-			if (!$errors && !empty($idbon)) {
+			if (!$error && !empty($idbon)) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";
 				$sql .= " SET statut = 2";
 				$sql .= " WHERE fk_prelevement_bons = '".$db->escape($idbon)."'";
@@ -472,12 +471,12 @@ if ($event->type == 'payout.created') {
 				if (!$result) {
 					$postactionmessages[] = $db->lasterror();
 					$ispostactionok = -1;
-					$errors++;
+					$error++;
 				}
 			}
 		}
 
-		if (!$errors) {
+		if (!$error) {
 			$db->commit();
 			http_response_code(200);
 			return 1;
