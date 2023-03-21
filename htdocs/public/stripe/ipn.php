@@ -385,14 +385,25 @@ if ($event->type == 'payout.created') {
 		$paiement->ext_payment_id = $TRANSACTIONID.':'.$customer_id.'@'.$stripearrayofkeysbyenv[$servicestatus]['publishable_key'];		// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
 		$paiement->ext_payment_site = $service;
 
+		$ispaymentdone = 0;
+		$sql = "SELECT p.id FROM llx_paiement as p";
+		$sql .= " WHERE p.ext_payment_id = '".$paiement->ext_payment_id."'";
+		$sql .= " AND p.ext_payment_site = '".$paiement->ext_payment_site."'";
+		$result = $db->query($sql);
+		if ($result) {
+			if ($db->num_rows($result)) {
+				$ispaymentdone = 1;
+				dol_syslog('* Payment for ext_payment_id '.$paiement->ext_payment_id.' already done. We do not recreate the payment');
+			}
+		}
 		$db->begin();
-		if (!$error) {
+		if (!$error && !$ispaymentdone) {
 			dol_syslog('* Record payment for invoice id ' . $invoice_id . '. It includes closing of invoice and regenerating document');
 
 			// This include closing invoices to 'paid' (and trigger including unsuspending) and regenerating document
 			$paiement_id = $paiement->create($user, 1);
 			if ($paiement_id < 0) {
-				$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->error);
+				$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
 				$ispostactionok = -1;
 				$error++;
 			} else {
@@ -402,25 +413,40 @@ if ($event->type == 'payout.created') {
 			dol_syslog("The payment has been created for invoice id " . $invoice_id);
 		}
 		if (!$error && isModEnabled('banque')) {
-			dol_syslog('* Add payment to bank');
+			$ispaymentdone = 0;
+			$sql = "SELECT p.id, p.fk_bank FROM llx_paiement as p";
+			$sql .= " WHERE p.ext_payment_id = '".$paiement->ext_payment_id."'";
+			$sql .= " AND p.ext_payment_site = '".$paiement->ext_payment_site."'";
+			$sql .= " AND p.fk_bank <> '0'";
+			$result = $db->query($sql);
+			if ($result) {
+				if ($db->num_rows($result)) {
+					$ispaymentdone = 1;
+					$obj = $db->fetch_object($result);
+					dol_syslog('* Payment already linked to bank record '.$obj->fk_bank.' . We do not recrate the link');
+				}
+			}
+			if (!$ispaymentdone) {
+				dol_syslog('* Add payment to bank');
 
-			// The bank used is the one defined into Stripe setup
-			$bankaccountid = getDolGlobalInt("STRIPE_BANK_ACCOUNT_FOR_PAYMENTS");
+				// The bank used is the one defined into Stripe setup
+				$bankaccountid = getDolGlobalInt("STRIPE_BANK_ACCOUNT_FOR_PAYMENTS");
 
-			if ($bankaccountid > 0) {
-				$label = '(CustomerInvoicePayment)';
-				$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, $customer_id, '');
-				if ($result < 0) {
-					$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
+				if ($bankaccountid > 0) {
+					$label = '(CustomerInvoicePayment)';
+					$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, $customer_id, '');
+					if ($result < 0) {
+						$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
+						$ispostactionok = -1;
+						$error++;
+					} else {
+						$postactionmessages[] = 'Bank transaction of payment created (by makeStripeSepaRequest)';
+					}
+				} else {
+					$postactionmessages[] = 'Setup of bank account to use in module ' . $paymentmethod . ' was not set. No way to record the payment.';
 					$ispostactionok = -1;
 					$error++;
-				} else {
-					$postactionmessages[] = 'Bank transaction of payment created (by makeStripeSepaRequest)';
 				}
-			} else {
-				$postactionmessages[] = 'Setup of bank account to use in module ' . $paymentmethod . ' was not set. No way to record the payment.';
-				$ispostactionok = -1;
-				$error++;
 			}
 		}
 
