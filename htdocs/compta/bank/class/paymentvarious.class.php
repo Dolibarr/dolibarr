@@ -800,4 +800,37 @@ class PaymentVarious extends CommonObject
 		}
 		return 0;
 	}
+
+
+	/**
+	 * Return General accounting account with defined length (used for product and miscellaneous)
+	 *
+	 * @param 	string	$account		General accounting account
+	 * @return	string          		String with defined length
+	 */
+	public function lengthAccountg($account)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+
+		/*
+		if (isModEnabled('accounting')) {
+			$accountingaccount = new AccountingAccount($db);
+			$accountingaccount->fetch('', $valuetoshow, 1);
+		}*/
+
+		return length_accountg($account);
+	}
+
+	/**
+	 * Return Auxiliary accounting account of thirdparties with defined length
+	 *
+	 * @param 	string	$account		Auxiliary accounting account
+	 * @return	string          		String with defined length
+	 */
+	public function lengthAccounta($account)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+
+		return length_accounta($account);
+	}
 }

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,14 +83,8 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	// Link to a project
-	if ($action == 'classin' && $user->rights->banque->modifier) {
-		$object->fetch($id);
-		$object->setProject(GETPOST('projectid'));
-	}
-
 	if ($cancel) {
-		if ($action != 'addlink') {
+		if ($action != 'addlink' && $action != 'setaccountancy_code' && $action != 'setsubledger_account') {
 			$urltogo = $backtopage ? $backtopage : dol_buildpath('/compta/bank/various_payment/list.php', 1);
 			header("Location: ".$urltogo);
 			exit;
@@ -98,6 +93,12 @@ if (empty($reshook)) {
 			$ret = $object->fetch($id, $ref);
 		}
 		$action = '';
+	}
+
+	// Link to a project
+	if ($action == 'classin' && $user->rights->banque->modifier) {
+		$object->fetch($id);
+		$object->setProject(GETPOST('projectid'));
 	}
 
 	if ($action == 'add') {
@@ -210,6 +211,22 @@ if (empty($reshook)) {
 			}
 		} else {
 			setEventMessages('Error try do delete a line linked to a conciliated bank transaction', null, 'errors');
+		}
+	}
+
+	if ($action == 'setaccountancy_code') {
+		$db->begin();
+
+		$result = $object->fetch($id);
+
+		$object->accountancy_code = GETPOST('accountancy_code', 'alpha');
+
+		$res = $object->update($user);
+		if ($res > 0) {
+			$db->commit();
+		} else {
+			$db->rollback();
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -620,25 +637,39 @@ if ($id) {
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
-	// Accountancy code
+	// Account of Chart of account
+	/*
 	print '<tr><td class="nowrap">';
-	print $langs->trans("AccountAccounting");
+	print $form->editfieldkey('AccountAccounting', 'account', $object->accountancy_code, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0);
 	print '</td><td>';
-	if (!empty($conf->accounting->enabled)) {
-		$accountingaccount = new AccountingAccount($db);
-		$accountingaccount->fetch('', $object->accountancy_code, 1);
-
-		print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+	if ($action == 'editaccount') {
+		if (isModEnabled('accounting')) {
+			print $formaccounting->select_account($object->accountancy_code, 'accountancy_code', 1, null, 1, 1);
+		} else { // For external software
+			print '<input class="minwidth100 maxwidthonsmartphone" name="accountancy_code" value="'.$accountancy_code.'">';
+		}
 	} else {
 		print $object->accountancy_code;
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+		print length_accounta($object->accountancy_code);
+	}*/
+	$editvalue = '';
+	if (isModEnabled('accounting')) {
+		$editvalue = $formaccounting->select_account($object->accountancy_code, 'accountancy_code', 1, null, 1, 1);
 	}
+
+	print '</td></tr>';
+	print '<tr><td class="nowrap">';
+	print $form->editfieldkey('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0);
+	print '</td><td>';
+	print $form->editfieldval('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'asis', $editvalue, 0, null, '', 1, 'lengthAccountg');
 	print '</td></tr>';
 
 	// Subledger account
 	print '<tr><td class="nowrap">';
 	print $form->editfieldkey('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0);
 	print '</td><td>';
-	print $form->editfieldval('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0);
+	print $form->editfieldval('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0, null, '', 1, 'lengthAccounta');
 	print '</td></tr>';
 
 	if (!empty($conf->banque->enabled)) {
