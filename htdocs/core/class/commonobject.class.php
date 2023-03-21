@@ -12,9 +12,9 @@
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2017      Rui Strecht          <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
  *
@@ -183,6 +183,7 @@ abstract class CommonObject
 	public $fk_project;
 
 	/**
+	 * @var Project The related project object
 	 * @deprecated
 	 * @see project
 	 */
@@ -2089,10 +2090,6 @@ abstract class CommonObject
 			$id_field = 'rowid';
 		}
 
-		$error = 0;
-
-		$this->db->begin();
-
 		// Special case
 		if ($table == 'product' && $field == 'note_private') {
 			$field = 'note';
@@ -2100,6 +2097,32 @@ abstract class CommonObject
 		if (in_array($table, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment'))) {
 			$fk_user_field = 'fk_user_mod';
 		}
+
+		if ($trigkey) {
+			$oldvalue = null;
+
+			$sql = "SELECT " . $field;
+			$sql .= " FROM " . MAIN_DB_PREFIX . $table;
+			$sql .= " WHERE " . $id_field . " = " . ((int) $id);
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				if ($obj = $this->db->fetch_object($resql)) {
+					if ($format == 'date') {
+						$oldvalue = $this->db->jdate($obj->$field);
+					} else {
+						$oldvalue = $obj->$field;
+					}
+				}
+			} else {
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
+		}
+
+		$error = 0;
+
+		$this->db->begin();
 
 		$sql = "UPDATE ".$this->db->prefix().$table." SET ";
 
@@ -2133,6 +2156,11 @@ abstract class CommonObject
 				} else {
 					$result = $this->fetchCommon($id);
 				}
+				$this->oldcopy = clone $this;
+				if (property_exists($this->oldcopy, $field)) {
+					$this->oldcopy->$field = $oldvalue;
+				}
+
 				if ($result >= 0) {
 					$result = $this->call_trigger($trigkey, (!empty($fuser) && is_object($fuser)) ? $fuser : $user); // This may set this->errors
 				}
@@ -4637,6 +4665,9 @@ abstract class CommonObject
 			if (!empty($element['parent']) && !empty($element['parentkey'])) {
 				$sql.= " AND c.".$element['parentkey']." = p.rowid";
 			}
+			if (!empty($element['parent']) && !empty($element['parenttypefield']) && !empty($element['parenttypevalue'])) {
+				$sql.= " AND c.".$element['parenttypefield']." = '".$this->db->escape($element['parenttypevalue'])."'";
+			}
 			if (!empty($entity)) {
 				if (!empty($element['parent']) && !empty($element['parentkey'])) {
 					$sql.= " AND p.entity = ".((int) $entity);
@@ -4937,9 +4968,9 @@ abstract class CommonObject
 	 *	But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
 	 *	@param	string		$action				Action code
-	 *	@param  string		$seller            	Object of seller third party
-	 *	@param  string  	$buyer             	Object of buyer third party
-	 *	@param	int			$selected		   	Object line selected
+	 *	@param  Societe		$seller            	Object of seller third party
+	 *	@param  Societe  	$buyer             	Object of buyer third party
+	 *	@param	int			$selected		   	ID line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
 	 *  @param	string		$defaulttpldir		Directory where to find the template
 	 *	@return	void
@@ -5028,9 +5059,9 @@ abstract class CommonObject
 	 *	@param  int		    		$num               	Number of line (0)
 	 *	@param  int		    		$i					I
 	 *	@param  int		    		$dateSelector      	1=Show also date range input fields
-	 *	@param  string	    		$seller            	Object of seller third party
-	 *	@param  string	    		$buyer             	Object of buyer third party
-	 *	@param	int					$selected		   	Object line selected
+	 *	@param  Societe	    		$seller            	Object of seller third party
+	 *	@param  Societe	    		$buyer             	Object of buyer third party
+	 *	@param	int					$selected		   	ID line selected
 	 *  @param  Extrafields			$extrafields		Object of extrafields
 	 *  @param	string				$defaulttpldir		Directory where to find the template (deprecated)
 	 *	@return	void
@@ -5042,8 +5073,6 @@ abstract class CommonObject
 		global $object_rights, $disableedit, $disablemove, $disableremove; // TODO We should not use global var for this !
 
 		$object_rights = $this->getRights();
-
-		$element = $this->element;
 
 		$text = '';
 		$description = '';
@@ -5466,171 +5495,165 @@ abstract class CommonObject
 		$parameters = array('modelspath'=>$modelspath, 'modele'=>$modele, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'hidedesc'=>$hidedesc, 'hideref'=>$hideref, 'moreparams'=>$moreparams);
 		$reshook = $hookmanager->executeHooks('commonGenerateDocument', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
-		if (empty($reshook)) {
-			dol_syslog("commonGenerateDocument modele=".$modele." outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
+		if (!empty($reshook)) {
+			return $reshook;
+		}
 
-			if (empty($modele)) {
-				$this->error = 'BadValueForParameterModele';
-				return -1;
-			}
+		dol_syslog("commonGenerateDocument modele=".$modele." outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
 
-			// Increase limit for PDF build
-			$err = error_reporting();
-			error_reporting(0);
-			@set_time_limit(120);
-			error_reporting($err);
+		if (empty($modele)) {
+			$this->error = 'BadValueForParameterModele';
+			return -1;
+		}
 
-			// If selected model is a filename template (then $modele="modelname" or "modelname:filename")
-			$tmp = explode(':', $modele, 2);
-			if (!empty($tmp[1])) {
-				$modele = $tmp[0];
-				$srctemplatepath = $tmp[1];
-			}
+		// Increase limit for PDF build
+		$err = error_reporting();
+		error_reporting(0);
+		@set_time_limit(120);
+		error_reporting($err);
 
-			// Search template files
-			$file = '';
-			$classname = '';
-			$filefound = '';
-			$dirmodels = array('/');
-			if (is_array($conf->modules_parts['models'])) {
-				$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
-			}
-			foreach ($dirmodels as $reldir) {
-				foreach (array('doc', 'pdf') as $prefix) {
-					if (in_array(get_class($this), array('Adherent'))) {
-						// Member module use prefix_modele.class.php
-						$file = $prefix."_".$modele.".class.php";
-					} else {
-						// Other module use prefix_modele.modules.php
-						$file = $prefix."_".$modele.".modules.php";
-					}
+		// If selected model is a filename template (then $modele="modelname" or "modelname:filename")
+		$tmp = explode(':', $modele, 2);
+		if (!empty($tmp[1])) {
+			$modele = $tmp[0];
+			$srctemplatepath = $tmp[1];
+		}
 
-					// On verifie l'emplacement du modele
-					$file = dol_buildpath($reldir.$modelspath.$file, 0);
-					if (file_exists($file)) {
-						$filefound = $file;
-						$classname = $prefix.'_'.$modele;
-						break;
-					}
+		// Search template files
+		$file = '';
+		$classname = '';
+		$filefound = '';
+		$dirmodels = array('/');
+		if (is_array($conf->modules_parts['models'])) {
+			$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
+		}
+		foreach ($dirmodels as $reldir) {
+			foreach (array('doc', 'pdf') as $prefix) {
+				if (in_array(get_class($this), array('Adherent'))) {
+					// Member module use prefix_modele.class.php
+					$file = $prefix."_".$modele.".class.php";
+				} else {
+					// Other module use prefix_modele.modules.php
+					$file = $prefix."_".$modele.".modules.php";
 				}
-				if ($filefound) {
+
+				// On verifie l'emplacement du modele
+				$file = dol_buildpath($reldir.$modelspath.$file, 0);
+				if (file_exists($file)) {
+					$filefound = $file;
+					$classname = $prefix.'_'.$modele;
 					break;
 				}
 			}
-
-			// If generator was found
 			if ($filefound) {
-				global $db; // Required to solve a conception default making an include of code using $db instead of $this->db just after.
+				break;
+			}
+		}
 
-				require_once $file;
+		if (!$filefound) {
+			$this->error = $langs->trans("Error").' Failed to load doc generator with modelpaths='.$modelspath.' - modele='.$modele;
+			$this->errors[] = $this->error;
+			dol_syslog($this->error, LOG_ERR);
+			return -1;
+		}
 
-				$obj = new $classname($this->db);
+		// If generator was found
+		global $db; // Required to solve a conception default making an include of code using $db instead of $this->db just after.
 
-				// If generator is ODT, we must have srctemplatepath defined, if not we set it.
-				if ($obj->type == 'odt' && empty($srctemplatepath)) {
-					$varfortemplatedir = $obj->scandir;
-					if ($varfortemplatedir && !empty($conf->global->$varfortemplatedir)) {
-						$dirtoscan = $conf->global->$varfortemplatedir;
+		require_once $file;
 
-						$listoffiles = array();
+		$obj = new $classname($this->db);
 
-						// Now we add first model found in directories scanned
-						$listofdir = explode(',', $dirtoscan);
-						foreach ($listofdir as $key => $tmpdir) {
-							$tmpdir = trim($tmpdir);
-							$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
-							if (!$tmpdir) {
-								unset($listofdir[$key]);
-								continue;
-							}
-							if (is_dir($tmpdir)) {
-								$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0);
-								if (count($tmpfiles)) {
-									$listoffiles = array_merge($listoffiles, $tmpfiles);
-								}
-							}
+		// If generator is ODT, we must have srctemplatepath defined, if not we set it.
+		if ($obj->type == 'odt' && empty($srctemplatepath)) {
+			$varfortemplatedir = $obj->scandir;
+			if ($varfortemplatedir && !empty($conf->global->$varfortemplatedir)) {
+				$dirtoscan = $conf->global->$varfortemplatedir;
+
+				$listoffiles = array();
+
+				// Now we add first model found in directories scanned
+				$listofdir = explode(',', $dirtoscan);
+				foreach ($listofdir as $key => $tmpdir) {
+					$tmpdir = trim($tmpdir);
+					$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
+					if (!$tmpdir) {
+						unset($listofdir[$key]);
+						continue;
+					}
+					if (is_dir($tmpdir)) {
+						$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0);
+						if (count($tmpfiles)) {
+							$listoffiles = array_merge($listoffiles, $tmpfiles);
 						}
-
-						if (count($listoffiles)) {
-							foreach ($listoffiles as $record) {
-								$srctemplatepath = $record['fullname'];
-								break;
-							}
-						}
-					}
-
-					if (empty($srctemplatepath)) {
-						$this->error = 'ErrorGenerationAskedForOdtTemplateWithSrcFileNotDefined';
-						return -1;
 					}
 				}
 
-				if ($obj->type == 'odt' && !empty($srctemplatepath)) {
-					if (!dol_is_file($srctemplatepath)) {
-						dol_syslog("Failed to locate template file ".$srctemplatepath, LOG_WARNING);
-						$this->error = 'ErrorGenerationAskedForOdtTemplateWithSrcFileNotFound';
-						return -1;
+				if (count($listoffiles)) {
+					foreach ($listoffiles as $record) {
+						$srctemplatepath = $record['fullname'];
+						break;
 					}
 				}
+			}
 
-				// We save charset_output to restore it because write_file can change it if needed for
-				// output format that does not support UTF8.
-				$sav_charset_output = empty($outputlangs->charset_output) ? '' : $outputlangs->charset_output;
-
-				if (in_array(get_class($this), array('Adherent'))) {
-					$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
-				} else {
-					 $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
-				}
-				// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
-
-				if ($resultwritefile > 0) {
-					$outputlangs->charset_output = $sav_charset_output;
-
-					// We delete old preview
-					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-					dol_delete_preview($this);
-
-					// Index file in database
-					if (!empty($obj->result['fullpath'])) {
-						$destfull = $obj->result['fullpath'];
-
-						// Update the last_main_doc field into main object (if document generator has property ->update_main_doc_field set)
-						$update_main_doc_field = 0;
-						if (!empty($obj->update_main_doc_field)) {
-							$update_main_doc_field = 1;
-						}
-
-						$this->indexFile($destfull, $update_main_doc_field);
-					} else {
-						dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
-					}
-
-					// Success in building document. We build meta file.
-					dol_meta_create($this);
-
-					return 1;
-				} else {
-					$outputlangs->charset_output = $sav_charset_output;
-					$this->error = $obj->error;
-					$this->errors = $obj->errors;
-					dol_syslog("Error generating document for ".__CLASS__.". Error: ".$obj->error, LOG_ERR);
-					return -1;
-				}
-			} else {
-				if (!$filefound) {
-					$this->error = $langs->trans("Error").' Failed to load doc generator with modelpaths='.$modelspath.' - modele='.$modele;
-					$this->errors[] = $this->error;
-					dol_syslog($this->error, LOG_ERR);
-				} else {
-					$this->error = $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $filefound);
-					$this->errors[] = $this->error;
-					dol_syslog($this->error, LOG_ERR);
-				}
+			if (empty($srctemplatepath)) {
+				$this->error = 'ErrorGenerationAskedForOdtTemplateWithSrcFileNotDefined';
 				return -1;
 			}
+		}
+
+		if ($obj->type == 'odt' && !empty($srctemplatepath)) {
+			if (!dol_is_file($srctemplatepath)) {
+				dol_syslog("Failed to locate template file ".$srctemplatepath, LOG_WARNING);
+				$this->error = 'ErrorGenerationAskedForOdtTemplateWithSrcFileNotFound';
+				return -1;
+			}
+		}
+
+		// We save charset_output to restore it because write_file can change it if needed for
+		// output format that does not support UTF8.
+		$sav_charset_output = empty($outputlangs->charset_output) ? '' : $outputlangs->charset_output;
+
+		if (in_array(get_class($this), array('Adherent'))) {
+			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
 		} else {
-			return $reshook;
+			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
+		}
+		// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
+
+		if ($resultwritefile > 0) {
+			$outputlangs->charset_output = $sav_charset_output;
+
+			// We delete old preview
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_delete_preview($this);
+
+			// Index file in database
+			if (!empty($obj->result['fullpath'])) {
+				$destfull = $obj->result['fullpath'];
+
+				// Update the last_main_doc field into main object (if document generator has property ->update_main_doc_field set)
+				$update_main_doc_field = 0;
+				if (!empty($obj->update_main_doc_field)) {
+					$update_main_doc_field = 1;
+				}
+
+				$this->indexFile($destfull, $update_main_doc_field);
+			} else {
+				dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
+			}
+
+			// Success in building document. We build meta file.
+			dol_meta_create($this);
+
+			return 1;
+		} else {
+			$outputlangs->charset_output = $sav_charset_output;
+			$this->error = $obj->error;
+			$this->errors = $obj->errors;
+			dol_syslog("Error generating document for ".__CLASS__.". Error: ".$obj->error, LOG_ERR);
+			return -1;
 		}
 	}
 
@@ -6154,13 +6177,15 @@ abstract class CommonObject
 
 				// If field is a computed field, value must become result of compute (regardless of whether a row exists
 				// in the element's extrafields table)
-				foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
-					if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
-						//var_dump($conf->disable_compute);
-						if (empty($conf->disable_compute)) {
-							global $objectoffield;		// We set a global variable to $objectoffield so
-							$objectoffield = $this;		// we can use it inside computed formula
-							$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
+				if (is_array($extrafields->attributes[$this->table_element]['label'])) {
+					foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+						if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
+							//var_dump($conf->disable_compute);
+							if (empty($conf->disable_compute)) {
+								global $objectoffield;        // We set a global variable to $objectoffield so
+								$objectoffield = $this;        // we can use it inside computed formula
+								$this->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
+							}
 						}
 					}
 				}

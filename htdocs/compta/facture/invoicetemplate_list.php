@@ -300,7 +300,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
@@ -1035,7 +1035,7 @@ while ($i < $imaxinloop) {
 	// Status
 	if (!empty($arrayfields['status']['checked'])) {
 		print '<td class="center">';
-		print $invoicerectmp->getLibStatut(3, 0);
+		print $invoicerectmp->getLibStatut(5, 0);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

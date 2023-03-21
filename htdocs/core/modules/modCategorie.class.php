@@ -142,16 +142,16 @@ class modCategorie extends DolibarrModules
 		if (isModEnabled("societe")) {
 			$typeexample .= ($typeexample ? " / " : "")."4=Contact";
 		}
-		if (!empty($conf->bank->enabled)) {
+		if (isModEnabled('bank')) {
 			$typeexample .= ($typeexample ? " / " : "")."5=Bank account";
 		}
 		if (isModEnabled('project')) {
 			$typeexample .= ($typeexample ? " / " : "")."6=Project";
 		}
-		if (!empty($conf->user->enabled)) {
+		if (isModEnabled('user')) {
 			$typeexample .= ($typeexample ? " / " : "")."7=User";
 		}
-		if (!empty($conf->bank->enabled)) {
+		if (isModEnabled('bank')) {
 			$typeexample .= ($typeexample ? " / " : "")."8=Bank line";
 		}
 		if (isModEnabled('stock')) {
@@ -411,7 +411,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_7_'.Categorie::$MAP_ID_TO_CODE[7];
 		$this->export_label[$r] = 'CatUsersList';
 		$this->export_icon[$r] = $this->picto;
-		$this->export_enabled[$r] = '!empty($conf->user->enabled)';
+		$this->export_enabled[$r] = 'isModEnabled("user")';
 		$this->export_permission[$r] = array(array("categorie", "lire"), array("user", "export"));
 		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'pcat.label'=>"ParentCategoryLabel", 'p.rowid'=>'UserID', 'p.login'=>'Login', 'p.lastname'=>'Lastname', 'p.firstname'=>'Firstname');
 		$this->export_TypeFields_array[$r] = array('cat.rowid'=>"Numeric", 'cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'Numeric', 'pcat.label'=>'Text', 'p.rowid'=>'Numeric', 'p.login'=>'Text', 'p.lastname'=>'Text', 'p.firstname'=>'Text');
@@ -594,7 +594,7 @@ class modCategorie extends DolibarrModules
 		}
 
 		// 7 Users
-		if (!empty($conf->user->enabled)) {
+		if (isModEnabled('user')) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_7_'.Categorie::$MAP_ID_TO_CODE[7];
 			$this->import_label[$r] = "CatUsersLinks"; // Translation key

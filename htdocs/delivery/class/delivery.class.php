@@ -281,7 +281,6 @@ class Delivery extends CommonObject
 		// phpcs:enable
 		$error = 0;
 		$idprod = $fk_product;
-		$j = 0;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."deliverydet (fk_delivery, fk_origin_line,";
 		$sql .= " fk_product, description, qty)";
@@ -304,9 +303,11 @@ class Delivery extends CommonObject
 			$result = $line->insertExtraFields();
 		}
 
-		if ($error == 0) {
+		if (!$error) {
 			return 1;
 		}
+
+		return -1;
 	}
 
 	/**
@@ -317,8 +318,6 @@ class Delivery extends CommonObject
 	 */
 	public function fetch($id)
 	{
-		global $conf;
-
 		$sql = "SELECT l.rowid, l.fk_soc, l.date_creation, l.date_valid, l.ref, l.ref_customer, l.fk_user_author,";
 		$sql .= " l.total_ht, l.fk_statut, l.fk_user_valid, l.note_private, l.note_public";
 		$sql .= ", l.date_delivery, l.fk_address, l.model_pdf";
@@ -396,7 +395,8 @@ class Delivery extends CommonObject
 	 */
 	public function valid($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
+
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		dol_syslog(get_class($this)."::valid begin");
@@ -521,8 +521,10 @@ class Delivery extends CommonObject
 					}
 				}
 			}
+
+			return -1;
 		} else {
-			$this->error = "Non autorise";
+			$this->error = "NotAllowed";
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -532,9 +534,9 @@ class Delivery extends CommonObject
 	/**
 	 * 	Creating the delivery slip from an existing shipment
 	 *
-	 *	@param	User	$user            User who creates
-	 *	@param  int		$sending_id      Id of the expedition that serves as a model
-	 *	@return	integer
+	 *	@param	User	$user           User who creates
+	 *	@param  int		$sending_id		Id of the expedition that serves as a model
+	 *	@return	integer					<=0 if KO, >0 if OK
 	 */
 	public function create_from_sending($user, $sending_id)
 	{
@@ -543,6 +545,9 @@ class Delivery extends CommonObject
 
 		$expedition = new Expedition($this->db);
 		$result = $expedition->fetch($sending_id);
+		if ($result <= 0) {
+			return $result;
+		}
 
 		$this->lines = array();
 
@@ -638,7 +643,7 @@ class Delivery extends CommonObject
 	 *	Delete line
 	 *
 	 *	@param	int		$lineid		Line id
-	 *	@return	integer|null
+	 *	@return	integer				<0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function deleteline($lineid)
 	{
@@ -651,9 +656,11 @@ class Delivery extends CommonObject
 
 				return 1;
 			} else {
-				return 0;
+				return -1;
 			}
 		}
+
+		return 0;
 	}
 
 	/**
@@ -737,7 +744,7 @@ class Delivery extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$datas = [];
 
@@ -944,8 +951,6 @@ class Delivery extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $user, $langs, $conf;
-
 		$now = dol_now();
 
 		// Load array of products prodids
@@ -994,13 +999,11 @@ class Delivery extends CommonObject
 	/**
 	 *  Renvoie la quantite de produit restante a livrer pour une commande
 	 *
-	 *  @return     array		Product remaining to be delivered
+	 *  @return     array|int		Product remaining to be delivered or <0 if KO
 	 *  TODO use new function
 	 */
 	public function getRemainingDelivered()
 	{
-		global $langs;
-
 		// Get the linked object
 		$this->fetchObjectLinked('', '', $this->id, $this->element);
 		//var_dump($this->linkedObjectsIds);
@@ -1098,7 +1101,7 @@ class Delivery extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf, $user, $langs;
+		global $conf, $langs;
 
 		$langs->load("deliveries");
 		$outputlangs->load("products");

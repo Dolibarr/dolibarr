@@ -209,7 +209,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
 		}
 
-		$nblines = count($object->lines);
+		$nblines = is_array($object->lines) ? count($object->lines) : 0;
 
 		$hidetop = 0;
 		if (!empty($conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE)) {
@@ -1551,7 +1551,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 
 		// Adapt dynamically the width of subprice, if text is too long.
 		$tmpwidth = 0;
-		$nblines = count($object->lines);
+		$nblines = is_array($object->lines) ? count($object->lines) : 0;
 		for ($i = 0; $i < $nblines; $i++) {
 			$tmpwidth2 = dol_strlen(dol_string_nohtmltag(pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails)));
 			$tmpwidth = max($tmpwidth, $tmpwidth2);

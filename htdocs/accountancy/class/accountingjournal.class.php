@@ -388,12 +388,6 @@ class AccountingJournal extends CommonObject
 		if (empty($type)) $type = 'view';
 		if (empty($in_bookkeeping)) $in_bookkeeping = 'notyet';
 
-		// Hook
-		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
-
 		$data = array();
 
 		$hookmanager->initHooks(array('accountingjournaldao'));
@@ -790,12 +784,6 @@ class AccountingJournal extends CommonObject
 		global $conf, $langs, $hookmanager;
 		require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 
-		// Hook
-		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
-
 		$error = 0;
 
 		$hookmanager->initHooks(array('accountingjournaldao'));
@@ -940,11 +928,6 @@ class AccountingJournal extends CommonObject
 		$out = '';
 
 		// Hook
-		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
-
 		$hookmanager->initHooks(array('accountingjournaldao'));
 		$parameters = array('journal_data' => &$journal_data, 'search_date_end' => &$search_date_end, 'sep' => &$sep, 'out' => &$out);
 		$reshook = $hookmanager->executeHooks('exportCsv', $parameters, $this); // Note that $action and $object may have been

@@ -339,7 +339,7 @@ class FormSetup
 	 * Method used to test  module builder convertion to this form usage
 	 *
 	 * @param 	array 	$params 	an array of arrays of params from old modulBuilder params
-	 * @return 	void
+	 * @return 	boolean
 	 */
 	public function addItemsFromParamsArray($params)
 	{
@@ -347,6 +347,7 @@ class FormSetup
 		foreach ($params as $confKey => $param) {
 			$this->addItemFromParams($confKey, $param); // todo manage error
 		}
+		return true;
 	}
 
 

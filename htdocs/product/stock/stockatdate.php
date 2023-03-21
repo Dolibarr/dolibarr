@@ -375,7 +375,7 @@ if ($mode != 'future') {
 	print img_picto('', 'stock', 'class="pictofixedwidth"').$langs->trans("Warehouse").' :';
 	print '</span> ';
 	$selected = ((GETPOSTISSET('search_fk_warehouse') || GETPOSTISSET('fk_warehouse')) ? $search_fk_warehouse : 'ifonenodefault');
-	print $formproduct->selectWarehouses($selected, 'search_fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, null, '', null, 1, false, 'e.ref', 1);
+	print $formproduct->selectWarehouses($selected, 'search_fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, null, 'minwidth200', null, 1, false, 'e.ref', 1);
 }
 
 print '</div>';

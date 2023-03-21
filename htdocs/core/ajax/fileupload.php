@@ -19,6 +19,8 @@
 /**
  *       \file       htdocs/core/ajax/fileupload.php
  *       \brief      File to return Ajax response on file upload
+ *
+ *       Option MAIN_USE_JQUERY_FILEUPLOAD must be enabled to have this feature working. Use is NOT secured !
  */
 
 if (!defined('NOTOKENRENEWAL')) {

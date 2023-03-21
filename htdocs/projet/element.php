@@ -8,6 +8,7 @@
  * Copyright (C) 2016       Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021       Noé Cendrier         <noe.cendrier@altairis.fr>
+ * Copyright (C) 2023      	Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -575,7 +576,7 @@ $listofreferent = array(
 	'class'=>'Task',
 	'margin'=>'minus',
 	'table'=>'projet_task',
-	'datefieldname'=>'task_date',
+	'datefieldname'=>'element_date',
 	'disableamount'=>0,
 	'urlnew'=>DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&action=createtime&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'buttonnew'=>'AddTimeSpent',
@@ -1337,7 +1338,7 @@ foreach ($listofreferent as $key => $value) {
 						$tmpuser2->fetch($element->fk_user_author);
 						print $tmpuser2->getNomUrl(1, '', 48);
 					}
-				} elseif ($tablename == 'projet_task' && $key == 'project_task_time') {	// if $key == 'project_task', we don't want details per user
+				} elseif ($tablename == 'projet_task' && $key == 'element_time') {	// if $key == 'project_task', we don't want details per user
 					print $elementuser->getNomUrl(1);
 				}
 				print '</td>';
