@@ -346,7 +346,7 @@ for ($i = 1 ; $i < $MAXLINES; $i++) {
 	print '<td class="hideobject" class="multicurrency"><input name="'.$i.'_amountto" class="flat" type="text" size="6" value="'.dol_escape_htmltag($amountto).'"></td>';
 
 	print '</tr>';
-};
+}
 
 print '</table>';
 print '</div>';
