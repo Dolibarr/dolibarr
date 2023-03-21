@@ -6522,7 +6522,11 @@ class Form
 			if (empty($labeladddateof)) {
 				$labeladddateof = $langs->trans("DateInvoice");
 			}
-			$retstring .= ' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="console.log(\'Click on now link\'); jQuery(\'#'.dol_escape_js($prefix).'\').val(\''.dol_print_date($adddateof, 'dayinputnoreduce').'\');jQuery(\'#'.dol_escape_js($prefix).'day\').val(\''.$tmparray['mday'].'\');jQuery(\'#'.dol_escape_js($prefix).'month\').val(\''.$tmparray['mon'].'\');jQuery(\'#'.dol_escape_js($prefix).'year\').val(\''.$tmparray['year'].'\');">'.$labeladddateof.'</a>';
+			$reset_scripts = 'jQuery(\'#'.dol_escape_js($prefix).'\').val(\''.dol_print_date($adddateof, 'dayinputnoreduce').'\');';
+			$reset_scripts .= 'jQuery(\'#'.dol_escape_js($prefix).'day\').val(\''.$tmparray['mday'].'\');';
+			$reset_scripts .= 'jQuery(\'#'.dol_escape_js($prefix).'month\').val(\''.$tmparray['mon'].'\');';
+			$reset_scripts .= 'jQuery(\'#'.dol_escape_js($prefix).'year\').val(\''.$tmparray['year'].'\');';
+			$retstring .= ' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="'.$reset_scripts.'">'.$labeladddateof.'</a>';
 		}
 
 		return $retstring;
