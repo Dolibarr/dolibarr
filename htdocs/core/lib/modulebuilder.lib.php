@@ -622,35 +622,6 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 }
 
 /**
- * Search a string and return all lines needed from file
- * @param  string  $file    file for searching
- * @param  string  $start   start line if exist
- * @param  string  $end     end line if exist
- * @return string           return the content needed
- */
-function getFromFile($file, $start, $end)
-{
-	$i = 1;
-	$keys = array();
-	$lines = file($file);
-	// Search for start and end lines
-	foreach ($lines as $i => $line) {
-		if (strpos($line, $start) !== false) {
-			// Copy lines until the end on array
-			while (($line = $lines[++$i]) !== false) {
-				if (strpos($line, $end) !== false) {
-					break;
-				}
-				$keys[] = $line;
-			}
-			break;
-		}
-	}
-	$content = implode("", $keys);
-	return $content;
-}
-
-/**
  * Delete property from documentation if we delete object
  * @param  string  $file         file or path
  * @param  string  $objectname   name of object wants to deleted
@@ -661,7 +632,8 @@ function deletePropsFromDoc($file, $objectname)
 
 	$start = "== Table of fields and their properties for object *".ucfirst($objectname)."* : ";
 	$end = "== end table for object ".ucfirst($objectname);
-	$string = getFromFile($file, $start, $end);
-	dolReplaceInFile($file, array($string => ''));
-	dolReplaceInFile($file, array($start => '', $end => ''));
+	$str = file_get_contents($file);
+	$search = '/' . preg_quote($start, '/') . '(.*?)' . preg_quote($end, '/') . '/s';
+	$new_contents = preg_replace($search, '', $str);
+	file_put_contents($file, $new_contents);
 }
