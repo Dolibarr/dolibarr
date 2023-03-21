@@ -3224,10 +3224,10 @@ class Form
 
 		$parameters = array('objp'=>$objp);
 		$reshook = $hookmanager->executeHooks('constructProductListOption', $parameters); // Note that $action and $object may have been modified by hook
-		if (!empty($reshook)) {
-			$opt = $hookmanager->resPrint;
-		} else {
+		if (empty($reshook)) {
 			$opt .= $hookmanager->resPrint;
+		} else {
+			$opt = $hookmanager->resPrint;
 		}
 
 		$opt .= "</option>\n";
