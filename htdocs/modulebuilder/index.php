@@ -1586,6 +1586,13 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			setEventMessages($langs->trans('ErrorFailToCreateFile', $pathoffiletoeditsrc), null, 'errors');
 			$error++;
 		}
+		// check if documentation was generate and add table of properties object
+		$file = $destdir.'/class/'.strtolower($objectname).'.class.php';
+		$destfile = $destdir.'/doc/Documentation.asciidoc';
+
+		if (file_exists($destfile)) {
+			writePropsInAsciiDoc($file, $objectname, $destfile);
+		}
 	}
 	if (!$error) {
 		// Edit sql with new properties
