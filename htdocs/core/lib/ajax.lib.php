@@ -710,6 +710,7 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
 	if (empty($htmlname)) {
 		$htmlname = $code;
 	}
+	//var_dump($object->module); var_dump($object->element);
 
 	$out = '<script>
         $(function() {
@@ -722,7 +723,7 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     action: \'set\',
                     field: \''.dol_escape_js($field).'\',
                     value: \'1\',
-                    element: \''.dol_escape_js($object->element).'\',
+                    element: \''.dol_escape_js(((empty($object->module) || $object->module == $object->element) ? '' : $object->module.'@').$object->element).'\',
                     id: \''.$object->id.'\',
 					token: \''.currentToken().'\'
                 },
@@ -754,7 +755,7 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     action: \'set\',
                     field: \''.dol_escape_js($field).'\',
                     value: \'0\',
-                    element: \''.dol_escape_js($object->element).'\',
+                    element: \''.dol_escape_js(((empty($object->module) || $object->module == $object->element) ? '' : $object->module.'@').$object->element).'\',
                     id: \''.$object->id.'\',
 					token: \''.currentToken().'\'
                 },
