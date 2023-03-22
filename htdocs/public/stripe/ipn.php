@@ -387,8 +387,8 @@ if ($event->type == 'payout.created') {
 
 		$ispaymentdone = 0;
 		$sql = "SELECT p.id FROM llx_paiement as p";
-		$sql .= " WHERE p.ext_payment_id = '".$paiement->ext_payment_id."'";
-		$sql .= " AND p.ext_payment_site = '".$paiement->ext_payment_site."'";
+		$sql .= " WHERE p.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."'";
+		$sql .= " AND p.ext_payment_site = '".$db->escape($paiement->ext_payment_site)."'";
 		$result = $db->query($sql);
 		if ($result) {
 			if ($db->num_rows($result)) {
@@ -415,8 +415,8 @@ if ($event->type == 'payout.created') {
 		if (!$error && isModEnabled('banque')) {
 			$ispaymentdone = 0;
 			$sql = "SELECT p.id, p.fk_bank FROM llx_paiement as p";
-			$sql .= " WHERE p.ext_payment_id = '".$paiement->ext_payment_id."'";
-			$sql .= " AND p.ext_payment_site = '".$paiement->ext_payment_site."'";
+			$sql .= " WHERE p.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."'";
+			$sql .= " AND p.ext_payment_site = '".$db->escape($paiement->ext_payment_site)."'";
 			$sql .= " AND p.fk_bank <> '0'";
 			$result = $db->query($sql);
 			if ($result) {
