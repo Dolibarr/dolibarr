@@ -60,7 +60,7 @@ if ($action == 'update') {
 	$amount = price2num(GETPOST('MEMBER_NEWFORM_AMOUNT'), 'MT', 2);
 	$minamount = GETPOST('MEMBER_MIN_AMOUNT');
 	$publiccounters = GETPOST('MEMBER_COUNTERS_ARE_PUBLIC');
-	$showtable = GETPOST('MEMBER_SHOW_TABLE');;
+	$showtable = GETPOST('MEMBER_SHOW_TABLE');
 	$showvoteallowed = GETPOST('MEMBER_SHOW_VOTE_ALLOWED');
 	$payonline = GETPOST('MEMBER_NEWFORM_PAYONLINE');
 	$forcetype = GETPOST('MEMBER_NEWFORM_FORCETYPE', 'int');

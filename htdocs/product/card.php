@@ -2199,7 +2199,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						$arrayselected[] = $cat->id;
 					}
 				}
-				if (GETPOSTISSET('categories', 'array')) {
+				if (GETPOSTISARRAY('categories')) {
 					foreach (GETPOST('categories', 'array') as $cat) {
 						$arrayselected[] = $cat;
 					}
