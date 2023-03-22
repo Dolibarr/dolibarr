@@ -43,6 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
@@ -230,6 +231,7 @@ $arrayfields = array(
 	'p.volume'=>array('label'=>'Volume', 'checked'=>0, 'enabled'=>(isModEnabled("product") && empty($conf->global->PRODUCT_DISABLE_VOLUME) && $type != '1'), 'position'=>30),
 	'p.volume_units'=>array('label'=>'VolumeUnits', 'checked'=>0, 'enabled'=>(isModEnabled("product") && empty($conf->global->PRODUCT_DISABLE_VOLUME) && $type != '1'), 'position'=>31),
 	'cu.label'=>array('label'=>"DefaultUnitToShow", 'checked'=>0, 'enabled'=>(isModEnabled("product") && !empty($conf->global->PRODUCT_USE_UNITS)), 'position'=>32),
+	'p.fk_default_worksation'=>array('label'=>'DefaultWorkstation', 'checked'=>0, 'enabled'=>isModEnabled('workstation') && $type == 1, 'position'=>33),
 	'p.sellprice'=>array('label'=>"SellingPrice", 'checked'=>1, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES), 'position'=>40),
 	'p.tva_tx'=>array('label'=>"VATRate", 'checked'=>0, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES), 'position'=>41),
 	'p.minbuyprice'=>array('label'=>"BuyingPriceMinShort", 'checked'=>1, 'enabled'=>(!empty($user->rights->fournisseur->lire)), 'position'=>42),
@@ -409,7 +411,10 @@ if ($search_type != '' && $search_type != '-1') {
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.fk_product_type, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type, p.entity,';
 $sql .= ' p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
-$sql .= ' p.tobatch,';
+$sql .= ' p.tobatch, ';
+if (isModEnabled('workstation')) {
+	$sql .= ' p.fk_default_workstation, ws.status as status_workstation, ws.ref as ref_workstation, ';
+}
 if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
 } else {
@@ -438,6 +443,9 @@ $sql .= $hookmanager->resPrint;
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
+if (isModEnabled('workstation')) {
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "workstation_workstation ws ON (p.fk_default_workstation = ws.rowid)";
+}
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 }
@@ -1015,6 +1023,12 @@ if (!empty($arrayfields['cu.label']['checked'])) {
 	print '</td>';
 }
 
+// Default workstation
+if (!empty($arrayfields['p.fk_default_worksation']['checked'])) {
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+
 // Sell price
 if (!empty($arrayfields['p.sellprice']['checked'])) {
 	print '<td class="liste_titre right">';
@@ -1229,6 +1243,9 @@ if (!empty($arrayfields['p.volume_units']['checked'])) {
 }
 if (!empty($arrayfields['cu.label']['checked'])) {
 	print_liste_field_titre($arrayfields['cu.label']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center ');
+}
+if (!empty($arrayfields['p.fk_default_worksation']['checked'])) {
+	print_liste_field_titre($arrayfields['p.fk_default_worksation']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['p.sellprice']['checked'])) {
 	print_liste_field_titre($arrayfields['p.sellprice']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
@@ -1663,6 +1680,25 @@ while ($i < min($num, $limit)) {
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
+	}
+
+	// Default Workstation
+	if (!empty($arrayfields['p.fk_default_worksation']['checked'])) {
+
+		print '<td align="center">';
+		if (!empty($obj->fk_default_workstation)) {
+			$static_ws = new Workstation($db);
+			$static_ws->id = $obj->fk_default_workstation;
+			$static_ws->ref = $obj->ref_workstation;
+			$static_ws->status = $obj->status_workstation;
+
+			print $static_ws->getNomUrl(1);
+		}
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+
 	}
 
 	// Sell price
