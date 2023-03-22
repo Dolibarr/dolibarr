@@ -70,6 +70,7 @@ $search_ref = GETPOST("search_ref", 'alpha');
 $search_ref_supplier = GETPOST("search_ref_supplier", 'alpha');
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
+$search_default_workstation = GETPOST("search_default_workstation", 'alpha');
 $search_type = GETPOST("search_type", 'int');
 $search_vatrate = GETPOST("search_vatrate", 'alpha');
 $searchCategoryProductOperator = 0;
@@ -231,7 +232,7 @@ $arrayfields = array(
 	'p.volume'=>array('label'=>'Volume', 'checked'=>0, 'enabled'=>(isModEnabled("product") && empty($conf->global->PRODUCT_DISABLE_VOLUME) && $type != '1'), 'position'=>30),
 	'p.volume_units'=>array('label'=>'VolumeUnits', 'checked'=>0, 'enabled'=>(isModEnabled("product") && empty($conf->global->PRODUCT_DISABLE_VOLUME) && $type != '1'), 'position'=>31),
 	'cu.label'=>array('label'=>"DefaultUnitToShow", 'checked'=>0, 'enabled'=>(isModEnabled("product") && !empty($conf->global->PRODUCT_USE_UNITS)), 'position'=>32),
-	'p.fk_default_worksation'=>array('label'=>'DefaultWorkstation', 'checked'=>0, 'enabled'=>isModEnabled('workstation') && $type == 1, 'position'=>33),
+	'p.fk_default_workstation'=>array('label'=>'DefaultWorkstation', 'checked'=>0, 'enabled'=>isModEnabled('workstation') && $type == 1, 'position'=>33),
 	'p.sellprice'=>array('label'=>"SellingPrice", 'checked'=>1, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES), 'position'=>40),
 	'p.tva_tx'=>array('label'=>"VATRate", 'checked'=>0, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES), 'position'=>41),
 	'p.minbuyprice'=>array('label'=>"BuyingPriceMinShort", 'checked'=>1, 'enabled'=>(!empty($user->rights->fournisseur->lire)), 'position'=>42),
@@ -333,6 +334,7 @@ if (empty($reshook)) {
 		$search_ref = "";
 		$search_ref_supplier = "";
 		$search_label = "";
+		$search_default_workstation = "";
 		$search_barcode = "";
 		$searchCategoryProductOperator = 0;
 		$searchCategoryProductList = array();
@@ -500,6 +502,9 @@ if ($search_ref) {
 }
 if ($search_label) {
 	$sql .= natural_search('p.label', $search_label);
+}
+if ($search_default_workstation) {
+	$sql .= natural_search('ws.ref', $search_default_workstation);
 }
 if ($search_barcode) {
 	$sql .= natural_search('p.barcode', $search_barcode);
@@ -706,6 +711,9 @@ if ($search_barcode) {
 }
 if ($search_label) {
 	$param .= "&search_label=".urlencode($search_label);
+}
+if ($search_default_workstation) {
+	$param .= "&search_default_workstation=".urlencode($search_default_workstation);
 }
 if ($search_tosell != '') {
 	$param .= "&search_tosell=".urlencode($search_tosell);
@@ -1024,8 +1032,9 @@ if (!empty($arrayfields['cu.label']['checked'])) {
 }
 
 // Default workstation
-if (!empty($arrayfields['p.fk_default_worksation']['checked'])) {
+if (!empty($arrayfields['p.fk_default_workstation']['checked'])) {
 	print '<td class="liste_titre">';
+	print '<input class="flat" type="text" name="search_default_workstation" size="12" value="'.dol_escape_htmltag($search_default_workstation).'">';
 	print '</td>';
 }
 
@@ -1244,8 +1253,8 @@ if (!empty($arrayfields['p.volume_units']['checked'])) {
 if (!empty($arrayfields['cu.label']['checked'])) {
 	print_liste_field_titre($arrayfields['cu.label']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center ');
 }
-if (!empty($arrayfields['p.fk_default_worksation']['checked'])) {
-	print_liste_field_titre($arrayfields['p.fk_default_worksation']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['p.fk_default_workstation']['checked'])) {
+	print_liste_field_titre($arrayfields['p.fk_default_workstation']['label'], $_SERVER['PHP_SELF'], 'ws.ref', '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['p.sellprice']['checked'])) {
 	print_liste_field_titre($arrayfields['p.sellprice']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
@@ -1339,6 +1348,7 @@ print "</tr>\n";
 
 
 $product_static = new Product($db);
+$static_ws = new Workstation($db);
 $product_fourn = new ProductFournisseur($db);
 
 $i = 0;
@@ -1683,11 +1693,10 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Default Workstation
-	if (!empty($arrayfields['p.fk_default_worksation']['checked'])) {
+	if (!empty($arrayfields['p.fk_default_workstation']['checked'])) {
 
-		print '<td align="center">';
+		print '<td align="left">';
 		if (!empty($obj->fk_default_workstation)) {
-			$static_ws = new Workstation($db);
 			$static_ws->id = $obj->fk_default_workstation;
 			$static_ws->ref = $obj->ref_workstation;
 			$static_ws->status = $obj->status_workstation;
