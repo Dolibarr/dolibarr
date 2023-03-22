@@ -3383,9 +3383,12 @@ function dragAndDropFileUpload($htmlname)
 					data:fd,
 					success:function(){ 
 						console.log("Uploaded.",arguments);
-						window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_json($object->id).'";
+						window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_json($object->id).'&seteventmessages=uploadFileDragDropSuccess:mesgs";
 					},
-					error:function(){ console.log("Error Uploading.",arguments) },
+					error:function(){ 
+						console.log("Error Uploading.",arguments)
+						window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_json($object->id).'&seteventmessages=uploadFileDragDropError:errors";
+					},
 				})
 			});
 		});

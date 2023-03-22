@@ -1388,7 +1388,14 @@ if (!defined('NOREQUIREMENU')) {
 	$menumanager->loadMenu();
 }
 
-
+if (!empty(GETPOST('seteventmessages', 'alpha'))) {
+	$message = GETPOST('seteventmessages', 'alpha');
+	$messages  = explode(',', $message);
+	foreach ($messages as $key => $msg) {
+		$tmp = explode(':', $msg);
+		setEventMessages($tmp[0], null, !empty($tmp[1]) ? $tmp[1] : 'mesgs');
+	}
+}
 
 // Functions
 
