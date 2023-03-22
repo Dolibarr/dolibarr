@@ -3333,10 +3333,12 @@ function dragAndDropFileUpload($htmlname)
 	$out .= "<script>";
 	$out .= '
 		jQuery(document).ready(function() {
+			var enterTargetDragDrop = null;
 			$("#'.$htmlname.'").addClass("cssDragDropArea");
 			$(".cssDragDropArea").on("dragenter", function(ev) {
 				// Entering drop area. Highlight area
 				console.log("We add class highlightDragDropArea")
+				enterTargetDragDrop = ev.target;
 				$(this).addClass("highlightDragDropArea");
 				$("#'.$htmlname.'Message").removeClass("hidden");
 				ev.preventDefault();
@@ -3344,9 +3346,11 @@ function dragAndDropFileUpload($htmlname)
 			
 			$(".cssDragDropArea").on("dragleave", function(ev) {
 				// Going out of drop area. Remove Highlight
-				console.log("We remove class highlightDragDropArea")
-				$("#'.$htmlname.'Message").addClass("hidden");
-				$(this).removeClass("highlightDragDropArea");
+				if (enterTargetDragDrop == ev.target){
+					console.log("We remove class highlightDragDropArea")
+					$("#'.$htmlname.'Message").addClass("hidden");
+					$(this).removeClass("highlightDragDropArea");
+				}
 			});
 
 			$(".cssDragDropArea").on("dragover", function(ev) {

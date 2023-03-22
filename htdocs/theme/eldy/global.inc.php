@@ -7597,27 +7597,21 @@ div.clipboardCPValue.hidewithsize {
 
 .cssDragDropArea{
 	position: relative;
-	 border: 2px rgba(123, 123, 123, .2) dashed !important;
-	padding: 10px !important;
 }
 .highlightDragDropArea{
 	border: 2px #000 dashed !important;
-	background-color: #666 !important;
-}
-.highlightDragDropArea * {
-	pointer-events: none;
+	background-color: #bbbbbb !important;
 }
 .highlightDragDropArea * :not(.dragDropAreaMessage *){
-	opacity:0.5;
+	opacity:0.7;
 	filter: blur(3px) grayscale(100%);
 }
 .dragDropAreaMessage {
 	position: absolute;
 	left:50%;
-	   top:50%;
-	   transform: translate(-50%, -50%);
+	top:50%;
+	transform: translate(-50%, -50%);
 	text-align:center;
-	/*BIEN PLACER CETTE DIV */
 }
 
 /* ============================================================================== */
