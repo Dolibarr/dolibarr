@@ -1183,7 +1183,7 @@ class DoliDBPgsql extends DoliDB
 		$sql = "ALTER TABLE ".$table." ADD ".$field_name." ";
 		$sql .= $field_desc['type'];
 		if (preg_match("/^[^\s]/i", $field_desc['value'])) {
-			if (!in_array($field_desc['type'], array('int', 'date', 'datetime')) && $field_desc['value']) {
+			if (!in_array($field_desc['type'], array('smallint', 'int', 'date', 'datetime')) && $field_desc['value']) {
 				$sql .= "(".$field_desc['value'].")";
 			}
 		}
@@ -1225,9 +1225,11 @@ class DoliDBPgsql extends DoliDB
 	{
 		// phpcs:enable
 		$sql = "ALTER TABLE ".$table;
-		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
-		if (in_array($field_desc['type'], array('double', 'varchar')) && $field_desc['value']) {
-			$sql .= "(".$field_desc['value'].")";
+		$sql .= ' ALTER COLUMN "'.$field_name.'" TYPE '.$field_desc['type'];
+		if (preg_match("/^[^\s]/i", $field_desc['value'])) {
+			if (!in_array($field_desc['type'], array('smallint', 'int', 'date', 'datetime')) && $field_desc['value']) {
+				$sql .= "(".$field_desc['value'].")";
+			}
 		}
 
 		if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL') {
