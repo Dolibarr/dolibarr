@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2016-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify

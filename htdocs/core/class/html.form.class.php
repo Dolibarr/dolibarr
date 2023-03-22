@@ -4879,6 +4879,8 @@ class Form
 					print '<span class="opacitymedium">' . $langs->trans("NoEstablishmentFound") . '</span>';
 				}
 			}
+
+			return $num;
 		} else {
 			dol_print_error($this->db);
 			return -1;
@@ -8765,9 +8767,9 @@ class Form
 		);
 		$reshook = $hookmanager->executeHooks('showLinkedObjectBlock', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
-		if (empty($reshook)) {
-			$nbofdifferenttypes = count($object->linkedObjects);
+		$nbofdifferenttypes = count($object->linkedObjects);
 
+		if (empty($reshook)) {
 			print '<!-- showLinkedObjectBlock -->';
 			print load_fiche_titre($langs->trans($title), $morehtmlright, '', 0, 0, 'showlinkedobjectblock');
 
@@ -8893,20 +8895,19 @@ class Form
 				$res = @include dol_buildpath('core/tpl/objectlinked_lineimport.tpl.php');
 			}
 
-
 			print '</div>';
-
-			return $nbofdifferenttypes;
 		}
+
+		return $nbofdifferenttypes;
 	}
 
 	/**
 	 *  Show block with links to link to other objects.
 	 *
-	 * @param CommonObject $object Object we want to show links to
-	 * @param array $restrictlinksto Restrict links to some elements, for exemple array('order') or array('supplier_order'). null or array() if no restriction.
-	 * @param array $excludelinksto Do not show links of this type, for exemple array('order') or array('supplier_order'). null or array() if no exclusion.
-	 * @return    string                                <0 if KO, >0 if OK
+	 * @param 	CommonObject 	$object 			Object we want to show links to
+	 * @param 	array 			$restrictlinksto 	Restrict links to some elements, for exemple array('order') or array('supplier_order'). null or array() if no restriction.
+	 * @param 	array 			$excludelinksto 	Do not show links of this type, for exemple array('order') or array('supplier_order'). null or array() if no exclusion.
+	 * @return  string                              HTML block
 	 */
 	public function showLinkToObjectBlock($object, $restrictlinksto = array(), $excludelinksto = array())
 	{

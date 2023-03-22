@@ -485,7 +485,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$readok = 0;
 				$nbko++;
 			}
-		} elseif (!empty($feature2)) { 													// This is for permissions on 2 levels
+		} elseif (!empty($feature2)) { 													// This is for permissions on 2 levels (module->object->read)
 			$tmpreadok = 1;
 			foreach ($feature2 as $subfeature) {
 				if ($subfeature == 'user' && $user->id == $objectid) {
@@ -504,7 +504,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$readok = 0; // All tests are ko (we manage here the and, the or will be managed later using $nbko).
 				$nbko++;
 			}
-		} elseif (!empty($feature) && ($feature != 'user' && $feature != 'usergroup')) {		// This is permissions on 1 level
+		} elseif (!empty($feature) && ($feature != 'user' && $feature != 'usergroup')) {		// This is permissions on 1 level (module->read)
 			if (empty($user->rights->$feature->lire)
 				&& empty($user->rights->$feature->read)
 				&& empty($user->rights->$feature->run)) {
@@ -531,7 +531,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	// Check write permission from module (we need to know write permission to create but also to delete drafts record or to upload files)
 	$createok = 1;
 	$nbko = 0;
-	$wemustcheckpermissionforcreate = (GETPOST('sendit', 'alpha') || GETPOST('linkit', 'alpha') || in_array(GETPOST('action', 'aZ09'), array('create', 'update', 'add_element_resource', 'confirm_delete_linked_resource')) || GETPOST('roworder', 'alpha', 2));
+	$wemustcheckpermissionforcreate = (GETPOST('sendit', 'alpha') || GETPOST('linkit', 'alpha') || in_array(GETPOST('action', 'aZ09'), array('create', 'update', 'set', 'add_element_resource', 'confirm_delete_linked_resource')) || GETPOST('roworder', 'alpha', 2));
 	$wemustcheckpermissionfordeletedraft = ((GETPOST("action", "aZ09") == 'confirm_delete' && GETPOST("confirm", "aZ09") == 'yes') || GETPOST("action", "aZ09") == 'delete');
 
 	if ($wemustcheckpermissionforcreate || $wemustcheckpermissionfordeletedraft) {
@@ -576,7 +576,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 					$createok = 0;
 					$nbko++;
 				}
-			} elseif (!empty($feature2)) {														// This is for permissions on one level
+			} elseif (!empty($feature2)) {													// This is for permissions on 2 levels (module->object->write)
 				foreach ($feature2 as $subfeature) {
 					if ($subfeature == 'user' && $user->id == $objectid && $user->rights->user->self->creer) {
 						continue; // User can edit its own card
@@ -599,7 +599,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 						break;
 					}
 				}
-			} elseif (!empty($feature)) {												// This is for permissions on 2 levels ('creer' or 'write')
+			} elseif (!empty($feature)) {												// This is for permissions on 1 levels (module->write)
 				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->creer.' write='.$user->rights->$feature->write; exit;
 				if (empty($user->rights->$feature->creer)
 				&& empty($user->rights->$feature->write)

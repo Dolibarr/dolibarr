@@ -2122,6 +2122,8 @@ abstract class CommonObject
 
 		$error = 0;
 
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".$this->db->prefix().$table." SET ";
@@ -2146,7 +2148,6 @@ abstract class CommonObject
 
 		$sql .= " WHERE ".$id_field." = ".((int) $id);
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($trigkey) {
