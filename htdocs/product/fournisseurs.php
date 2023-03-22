@@ -947,7 +947,7 @@ END;
 					'pfp.quantity'=>array('label'=>$langs->trans("QtyMin"), 'checked'=>1, 'position'=>5),
 					'pfp.unitprice'=>array('label'=>$langs->trans("UnitPriceHT"), 'checked'=>1, 'position'=>9),
 					'pfp.multicurrency_unitprice'=>array('label'=>$langs->trans("UnitPriceHTCurrency"), 'enabled' => isModEnabled('multicurrency'), 'checked'=>0, 'position'=>10),
-					'pfp.charges'=>array('label'=>$langs->trans("Charges"), 'enabled' => !empty($conf->global->PRODUCT_CHARGES), 'checked'=>0, 'position'=>11), 
+					'pfp.charges'=>array('label'=>$langs->trans("Charges"), 'enabled' => !empty($conf->global->PRODUCT_CHARGES), 'checked'=>0, 'position'=>11),
 					'pfp.delivery_time_days'=>array('label'=>$langs->trans("NbDaysToDelivery"), 'checked'=>-1, 'position'=>13),
 					'pfp.supplier_reputation'=>array('label'=>$langs->trans("ReputationForThisProduct"), 'checked'=>-1, 'position'=>14),
 					'pfp.fk_barcode_type'=>array('label'=>$langs->trans("BarcodeType"), 'enabled' => isModEnabled('barcode'), 'checked'=>0, 'position'=>15),
