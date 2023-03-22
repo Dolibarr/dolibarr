@@ -1684,7 +1684,6 @@ while ($i < min($num, $limit)) {
 
 	// Default Workstation
 	if (!empty($arrayfields['p.fk_default_worksation']['checked'])) {
-
 		print '<td align="center">';
 		if (!empty($obj->fk_default_workstation)) {
 			$static_ws = new Workstation($db);
@@ -1698,7 +1697,6 @@ while ($i < min($num, $limit)) {
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
-
 	}
 
 	// Sell price
