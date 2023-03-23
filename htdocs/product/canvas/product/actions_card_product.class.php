@@ -77,7 +77,6 @@ class ActionsCardProduct
 	public function assign_values(&$action, $id = 0, $ref = '')
 	{
 		// phpcs:enable
-		global $limit, $offset, $sortfield, $sortorder;
 		global $conf, $langs, $user, $mysoc, $canvas;
 		global $form, $formproduct;
 

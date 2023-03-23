@@ -4252,7 +4252,7 @@ class Product extends CommonObject
 			$sql = "SELECT MAX(rang) as max_rank FROM ".$this->db->prefix()."product_association";
 			$sql .= " WHERE fk_product_pere  = ".((int) $id_pere);
 			$resql = $this->db->query($sql);
-			if ($resql > 0) {
+			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
 				$rank = $obj->max_rank + 1;
 				//Addition of a product with the highest rank +1
@@ -5687,10 +5687,6 @@ class Product extends CommonObject
 			$this->stock_theorique += ($stock_commande_fournisseur - $stock_reception_fournisseur);
 		}
 
-		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
 		$hookmanager->initHooks(array('productdao'));
 		$parameters = array('id'=>$this->id, 'includedraftpoforvirtual' => $includedraftpoforvirtual);
 		// Note that $action and $object may have been modified by some hooks

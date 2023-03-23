@@ -319,11 +319,6 @@ class AssetDepreciationOptions extends CommonObject
 		$asset_id = $asset_id > 0 ? $asset_id : 0;
 		$asset_model_id = $asset_model_id > 0 ? $asset_model_id : 0;
 
-		if (!is_object($hookmanager)) {
-			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
-
 		$hookmanager->initHooks(array('assetdepreciationoptionsdao'));
 		$parameters = array('asset_id' => $asset_id, 'asset_model_id' => $asset_model_id);
 		$reshook = $hookmanager->executeHooks('fetchDepreciationOptions', $parameters, $this); // Note that $action and $object may have been modified by some hooks
@@ -392,11 +387,6 @@ class AssetDepreciationOptions extends CommonObject
 		// Clean parameters
 		$mode = strtolower(trim($mode));
 
-		if (!is_object($hookmanager)) {
-			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
-
 		$hookmanager->initHooks(array('assetdepreciationoptionsdao'));
 		$parameters = array('mode' => $mode);
 		$reshook = $hookmanager->executeHooks('getGeneralDepreciationInfoForMode', $parameters, $this); // Note that $action and $object may have been modified by some hooks
@@ -436,11 +426,6 @@ class AssetDepreciationOptions extends CommonObject
 		// Clean parameters
 		$asset_id = $asset_id > 0 ? $asset_id : 0;
 		$asset_model_id = $asset_model_id > 0 ? $asset_model_id : 0;
-
-		if (!is_object($hookmanager)) {
-			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
 
 		$hookmanager->initHooks(array('assetdepreciationoptionsdao'));
 		$parameters = array('user' => $user, 'asset_id' => $asset_id, 'asset_model_id' => $asset_model_id);

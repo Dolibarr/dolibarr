@@ -686,6 +686,8 @@ class CMailFile
 					$this->error .= '<br>'.$langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS);
 					$this->errors[] = $langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS);
 				}
+
+				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_WARNING);
 				return false;
 			}
 
@@ -756,7 +758,7 @@ class CMailFile
 				// Use mail php function (default PHP method)
 				// ------------------------------------------
 				dol_syslog("CMailFile::sendfile addr_to=".$this->addr_to.", subject=".$this->subject, LOG_DEBUG);
-				dol_syslog("CMailFile::sendfile header=\n".$this->headers, LOG_DEBUG);
+				//dol_syslog("CMailFile::sendfile header=\n".$this->headers, LOG_DEBUG);
 				//dol_syslog("CMailFile::sendfile message=\n".$message);
 
 				// If Windows, sendmail_from must be defined
@@ -1268,6 +1270,7 @@ class CMailFile
 			$srcfile = $dolibarr_main_data_root."/dolibarr_mail.log";
 			$destfile = $dolibarr_main_data_root."/dolibarr_mail.err";
 
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_move($srcfile, $destfile, 0, 1, 0, 0);
 		}
 	}

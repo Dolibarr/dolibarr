@@ -330,7 +330,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print '</tr>';
 
 	// Auto fill the contact found from email
-	// This option is a serious security hole. it allowe to any non looged perso, to get the database of contacts
+	// This option is a serious security hole. it allows to any non logged perso, to get the database of contacts or to check if an email is a customer or not. We must keep it as hidden option only.
 	/*
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketCreateThirdPartyWithContactIfNotExist").'</td>';
 	print '<td class="left">';

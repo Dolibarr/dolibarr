@@ -60,6 +60,8 @@ if ($action == 'update') {
 	$amount = price2num(GETPOST('MEMBER_NEWFORM_AMOUNT'), 'MT', 2);
 	$minamount = GETPOST('MEMBER_MIN_AMOUNT');
 	$publiccounters = GETPOST('MEMBER_COUNTERS_ARE_PUBLIC');
+	$showtable = GETPOST('MEMBER_SHOW_TABLE');
+	$showvoteallowed = GETPOST('MEMBER_SHOW_VOTE_ALLOWED');
 	$payonline = GETPOST('MEMBER_NEWFORM_PAYONLINE');
 	$forcetype = GETPOST('MEMBER_NEWFORM_FORCETYPE', 'int');
 	$forcemorphy = GETPOST('MEMBER_NEWFORM_FORCEMORPHY', 'aZ09');
@@ -68,6 +70,8 @@ if ($action == 'update') {
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT", $amount, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_MIN_AMOUNT", $minamount, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_COUNTERS_ARE_PUBLIC", $publiccounters, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "MEMBER_SKIP_TABLE", !$showtable, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "skip -> show"
+	$res = dolibarr_set_const($db, "MEMBER_HIDE_VOTE_ALLOWED", !$showvoteallowed, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "hide -> show"
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE", $payonline, 'chaine', 0, '', $conf->entity);
 	if ($forcetype < 0) {
 		$res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE", $conf->entity);
@@ -244,6 +248,22 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print $langs->trans("MemberCountersArePublic");
 	print '</td><td>';
 	print $form->selectyesno("MEMBER_COUNTERS_ARE_PUBLIC", (!empty($conf->global->MEMBER_COUNTERS_ARE_PUBLIC) ? $conf->global->MEMBER_COUNTERS_ARE_PUBLIC : 0), 1);
+	print "</td></tr>\n";
+
+	// Show the table of all available membership types. If not, show a form (as the default was for Dolibarr <=16.0)
+	$skiptable = (!empty($conf->global->MEMBER_SKIP_TABLE) ? $conf->global->MEMBER_SKIP_TABLE : 0);
+	print '<tr class="oddeven" id="tredit"><td>';
+	print $langs->trans("MembersShowMembershipTypesTable");
+	print '</td><td>';
+	print $form->selectyesno("MEMBER_SHOW_TABLE", !$skiptable, 1); // Reverse the logic "hide -> show" for retrocompatibility
+	print "</td></tr>\n";
+
+	// Show "vote allowed" setting for membership types
+	$hidevoteallowed = (!empty($conf->global->MEMBER_HIDE_VOTE_ALLOWED) ? $conf->global->MEMBER_HIDE_VOTE_ALLOWED : 0);
+	print '<tr class="oddeven" id="tredit"><td>';
+	print $langs->trans("MembersShowVotesAllowed");
+	print '</td><td>';
+	print $form->selectyesno("MEMBER_SHOW_VOTE_ALLOWED", !$hidevoteallowed, 1); // Reverse the logic "hide -> show" for retrocompatibility
 	print "</td></tr>\n";
 
 	// Jump to an online payment page

@@ -84,6 +84,8 @@ $socid     =  GETPOST('socid', 'int');
 $action    =  GETPOST('action', 'aZ09');
 $cancel    =  GETPOST('cancel', 'alpha');
 $confirm   =  GETPOST('confirm', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+
 $lineid    =  GETPOST('lineid', 'int');
 $contactid =  GETPOST('contactid', 'int');
 $projectid =  GETPOST('projectid', 'int');
@@ -1755,6 +1757,7 @@ if ($action == 'create' && $usercancreate) {
 	print '<input type="hidden" name="remise_percent" value="'.$soc->remise_percent.'">';
 	print '<input type="hidden" name="origin" value="'.$origin.'">';
 	print '<input type="hidden" name="originid" value="'.$originid.'">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	if (!empty($currency_tx)) {
 		print '<input type="hidden" name="originmulticurrency_tx" value="'.$currency_tx.'">';
 	}
@@ -2449,6 +2452,7 @@ if ($action == 'create' && $usercancreate) {
 			print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate">';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			print $form->selectDate($object->date, 'order_', '', '', '', "setdate");
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
@@ -2470,6 +2474,7 @@ if ($action == 'create' && $usercancreate) {
 			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			print $form->selectDate($object->delivery_date ? $object->delivery_date : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
@@ -2763,7 +2768,9 @@ if ($action == 'create' && $usercancreate) {
 		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 		<input type="hidden" name="mode" value="">
 		<input type="hidden" name="page_y" value="">
-		<input type="hidden" name="id" value="' . $object->id.'">';
+		<input type="hidden" name="id" value="' . $object->id.'">
+		<input type="hidden" name="backtopage" value="'.$backtopage.'">
+			';
 
 		if (!empty($conf->use_javascript_ajax) && $object->statut == Commande::STATUS_DRAFT) {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
@@ -2991,7 +2998,7 @@ if ($action == 'create' && $usercancreate) {
 		// Presend form
 		$modelmail = 'order_send';
 		$defaulttopic = 'SendOrderRef';
-		$diroutput = $conf->commande->multidir_output[$object->entity];
+		$diroutput = getMultidirOutput($object);
 		$trackid = 'ord'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
