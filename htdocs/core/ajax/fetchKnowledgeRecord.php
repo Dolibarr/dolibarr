@@ -54,10 +54,10 @@ $idticketgroup = GETPOST('idticketgroup', 'aZ09');
 $idticketgroup = GETPOST('idticketgroup', 'aZ09');
 $lang = GETPOST('lang', 'aZ09');
 
-/*if (defined("NOLOGIN") && !getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
-	// If we ask public content (so without login), we block if option TICKET_ENABLE_PUBLIC_INTERFACE is not enabled
-	httponly_accessforbidden('');
-}*/
+// Security check
+if (!defined("NOLOGIN")) {	// No need for restrictedArea if not logged. Later the select will filter on public articles only if not logged.
+	restrictedArea($user, 'knowledgemanagement', 0, 'knowledgemanagement_knowledgerecord', 'knowledgerecord');
+}
 
 
 /*

@@ -31,6 +31,14 @@ if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
+$object = new Societe($db);
+
+$usesublevelpermission = '';
+
+// Security check
+restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
 
 
 /*
@@ -68,15 +76,15 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn')) {
 		$sql .= " AND (";
 		// Add criteria on name/code
 		if (!empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE)) {   // Can use index
-			$sql .= "s.nom LIKE '".$db->escape($socid)."%'";
-			$sql .= " OR s.code_client LIKE '".$db->escape($socid)."%'";
-			$sql .= " OR s.code_fournisseur LIKE '".$db->escape($socid)."%'";
+			$sql .= "s.nom LIKE '".$db->escape($db->escapeforlike($socid))."%'";
+			$sql .= " OR s.code_client LIKE '".$db->escape($db->escapeforlike($socid))."%'";
+			$sql .= " OR s.code_fournisseur LIKE '".$db->escape($db->escapeforlike($socid))."%'";
 		} else {
-			$sql .= "s.nom LIKE '%".$db->escape($socid)."%'";
-			$sql .= " OR s.code_client LIKE '%".$db->escape($socid)."%'";
-			$sql .= " OR s.code_fournisseur LIKE '%".$db->escape($socid)."%'";
+			$sql .= "s.nom LIKE '%".$db->escape($db->escapeforlike($socid))."%'";
+			$sql .= " OR s.code_client LIKE '%".$db->escape($db->escapeforlike($socid))."%'";
+			$sql .= " OR s.code_fournisseur LIKE '%".$db->escape($db->escapeforlike($socid))."%'";
 		}
-		if (!empty($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID)) $sql .= " OR s.rowid = '".$db->escape($socid)."'";
+		if (!empty($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID)) $sql .= " OR s.rowid = ".((int) $socid);
 		$sql .= ")";
 	}
 	//if (GETPOST("filter")) $sql.= " AND (".GETPOST("filter", "alpha").")"; // Add other filters

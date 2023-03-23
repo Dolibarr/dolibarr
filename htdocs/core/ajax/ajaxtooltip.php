@@ -39,13 +39,14 @@ include '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
+
+
 top_httphead();
 
 // opensurvey as aZ09 id
 $id = GETPOST('id', 'aZ09');
-$objecttype = GETPOST('objecttype', 'aZ09');
+$objecttype = GETPOST('objecttype', 'aZ09');	// 'module' or 'myobject@mymodule', 'mymodule_myobject'
 
-$html = '';
 $regs = array();
 $params = array();
 if (GETPOSTISSET('infologin')) {
@@ -214,22 +215,58 @@ if ($objecttype == 'invoice_supplier') {
 }
 // print "objecttype=".$objecttype." module=".$module." subelement=".$subelement." classfile=".$classfile." classname=".$classname." classpath=".$classpath."<br>";
 
+
+// Define a generic object with a very low cost memory and cpu load
+$object = new stdClass();
+$object->module = $module;
+$object->element = $myobject;
+if (empty($classname)) {
+	$classname = ucfirst($module);
+}
+if (empty($classpath)) {
+	$classpath = $module.'/class';
+}
+if (empty($classfile)) {
+	$classfile = $myobject;
+}
+
+// Load object
 if (isModEnabled($module)) {
 	$res = dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 	if ($res) {
-		if (class_exists($classname)) {
+		if (class_exists($classname) && $id > 0) {
 			$object = new $classname($db);
 			$res = $object->fetch($id);
-			if ($res > 0) {
-				$html = $object->getTooltipContent($params);
-			} elseif ($res == 0) {
-				$html = $langs->trans('Deleted');
-			}
-			unset($object);
 		} else {
 			dol_syslog("Class with classname ".$classname." is unknown even after the include", LOG_ERR);
 		}
+	} else {
+		dol_syslog("Failed to include ".$classpath."/".$classfile, LOG_ERR);
 	}
+}
+
+$usesublevelpermission = ($module != $myobject ? $myobject : '');
+if ($usesublevelpermission && !isset($user->rights->$module->$myobject)) {	// There is no permission on object defined, we will check permission on module directly
+	$usesublevelpermission = '';
+}
+
+// Security check
+restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
+
+
+/*
+ * View
+ */
+
+$html = '';
+
+if (is_object($object)) {
+	if ($object->id > 0) {
+		$html = $object->getTooltipContent($params);
+	} elseif ($res == 0) {
+		$html = $langs->trans('Deleted');
+	}
+	unset($object);
 }
 
 print $html;
