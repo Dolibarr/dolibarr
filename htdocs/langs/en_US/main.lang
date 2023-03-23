@@ -1230,5 +1230,4 @@ PublicVirtualCardUrl=Virtual business card page URL
 PublicVirtualCard=Virtual business card
 TreeView=Tree view
 DropFileToAddItToObject=Drop a file to add it to this object
-uploadFileDragDropSuccess=The file(s) have been uploaded successfully
-uploadFileDragDropError=There was an error while the file(s) upload
+UploadFileDragDropSuccess=The file(s) have been uploaded successfully
