@@ -1734,8 +1734,8 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 								$langs->load('accountancy');
 								$journallabel = '';
 								if ($objp->label) {
-									$journallabelwithoutspan = $langs->transnoentities($objp->label);
-									$journallabel = '<span class="opacitymedium">('.$langs->transnoentities($objp->label).')</span>'; // Label of bank account in llx_accounting_journal
+									$journallabelwithoutspan = $langs->trans($objp->label);
+									$journallabel = '<span class="opacitymedium">('.$langs->trans($objp->label).')</span>'; // Label of bank account in llx_accounting_journal
 								}
 
 								$key = $langs->trans("AccountingJournalType".$objp->nature);	// $objp->nature is 1, 2, 3 ...

@@ -55,6 +55,7 @@ $langs->loadLangs(array("banks", "bills", "categories", "companies", "compta", "
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 $object = new Account($db);
 $extrafields = new ExtraFields($db);
@@ -380,6 +381,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="clos" value="0">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print dol_get_fiche_head('');
 
@@ -527,6 +529,12 @@ if ($action == 'create') {
 		print '<td><input type="text" class="flat minwidth150" name="bank" value="'.(GETPOST('bank') ?GETPOST('bank', 'alpha') : $object->bank).'"></td>';
 		print '</tr>';
 
+		$ibankey = FormBank::getIBANLabel($object);
+		$bickey = "BICNumber";
+		if ($object->getCountryCode() == 'IN') {
+			$bickey = "SWIFT";
+		}
+
 		// IBAN
 		print '<tr><td>'.$langs->trans($ibankey).'</td>';
 		print '<td><input maxlength="34" type="text" class="flat minwidth300" name="iban" value="'.(GETPOSTISSET('iban') ?GETPOST('iban', 'alpha') : $object->iban).'"></td></tr>';
@@ -560,11 +568,6 @@ if ($action == 'create') {
 			print '<td>'.$langs->trans($val).'</td>';
 			print '<td><input type="text" class="flat '.$sizecss.'" name="'.$name.'" value="'.(GETPOSTISSET($name) ? GETPOST($name, 'alpha') : $content).'"></td>';
 			print '</tr>';
-		}
-		$ibankey = FormBank::getIBANLabel($object);
-		$bickey = "BICNumber";
-		if ($object->getCountryCode() == 'IN') {
-			$bickey = "SWIFT";
 		}
 
 		if (isModEnabled('paymentbybanktransfer')) {
@@ -903,6 +906,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">'."\n\n";
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 		print dol_get_fiche_head(array(), 0, '', 0);
 

@@ -18,7 +18,7 @@
 /**
  *       \file       htdocs/core/ajax/objectonoff.php
  *       \brief      File to set status for an object
- *       			 This Ajax service is called when option MAIN_DIRECT_STATUS_UPDATE is set.
+ *       			 This Ajax service is oftenly called when option MAIN_DIRECT_STATUS_UPDATE is set.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -53,14 +53,33 @@ $format = 'int';
 
 $object = new GenericObject($db);
 
-$tablename = $element;
-if ($tablename == 'websitepage') {
-	$tablename = 'website_page';
-}
+$tmparray = explode('@', $element);
+if (empty($tmparray[1])) {
+	$subelement = '';
 
-$object->table_element = $tablename;
+	$object->module = $element;
+	$object->element = $element;
+	$object->table_element = $element;
+
+	// Special case for compatibility
+	if ($object->table_element == 'websitepage') {
+		$object->table_element = 'website_page';
+	}
+} else {
+	$element = $tmparray[0];
+	$subelement = $tmparray[1];
+
+	$object->module = $element;
+	$object->element = $subelement;
+	$object->table_element = $object->module.'_'.$object->element;
+}
 $object->id = $id;
 $object->fields[$field] = array('type' => $format, 'enabled' => 1);
+
+$module = $object->module;
+$element = $object->element;
+
+//var_dump($object->module); var_dump($object->element); var_dump($object->table_element);
 
 // Security check
 if (!empty($user->socid)) {
@@ -70,12 +89,20 @@ if (!empty($user->socid)) {
 //$user->hasRight('societe', 'lire') = 0;$user->rights->fournisseur->lire = 0;
 //restrictedArea($user, 'societe', $id);
 
-if (in_array($field, array('status'))) {
-	restrictedArea($user, $element, $id);
+// We check permission.
+// Check is done on $user->rights->element->create or $user->rights->element->subelement->create (because $action = 'set')
+if (preg_match('/status$/', $field)) {
+	$module = $object->module;
+	$element = $object->element;
+	$usesublevelpermission = ($module != $element ? $element : '');
+	if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+		$usesublevelpermission = '';
+	}
+	restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
 } elseif ($element == 'product' && in_array($field, array('tosell', 'tobuy', 'tobatch'))) {	// Special case for products
-	restrictedArea($user, 'produit|service', $id, 'product&product', '', '', 'rowid');
+	restrictedArea($user, 'produit|service', $object, 'product&product', '', '', 'rowid');
 } else {
-	httponly_accessforbidden("Bad value for combination of parameters element/field.");
+	httponly_accessforbidden("Bad value for combination of parameters element/field.");	// This includes the exit.
 }
 
 
@@ -89,7 +116,7 @@ print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"])
 
 // Registering new values
 if (($action == 'set') && !empty($id)) {
-	$triggerkey = strtoupper($element).'_UPDATE';
+	$triggerkey = strtoupper(($module != $element ? $module.'_' : '').$element).'_UPDATE';
 	// Special case
 	if ($triggerkey == 'SOCIETE_UPDATE') {
 		$triggerkey = 'COMPANY_MODIFY';
@@ -98,5 +125,11 @@ if (($action == 'set') && !empty($id)) {
 		$triggerkey = 'PRODUCT_MODIFY';
 	}
 
-	$object->setValueFrom($field, $value, $tablename, $id, $format, '', $user, $triggerkey);
+	$result = $object->setValueFrom($field, $value, $object->table_element, $id, $format, '', $user, $triggerkey);
+
+	if ($result < 0) {
+		print $object->error;
+		http_response_code(500);
+		exit;
+	}
 }

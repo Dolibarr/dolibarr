@@ -86,6 +86,8 @@ $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+
 $lineid = GETPOST('lineid', 'int');
 $userid = GETPOST('userid', 'int');
 $search_ref = GETPOST('sf_ref', 'alpha') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
@@ -3153,6 +3155,8 @@ if ($action == 'create') {
 	if ($soc->id > 0) {
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	}
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input name="ref" type="hidden" value="provisoire">';
 	print '<input name="ref_client" type="hidden" value="'.$ref_client.'">';
 	print '<input name="force_cond_reglement_id" type="hidden" value="0">';
@@ -4688,6 +4692,7 @@ if ($action == 'create') {
 				print '<form  id="retained-warranty-form"  method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
 				print '<input type="hidden" name="action" value="setretainedwarranty">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 				print '<input name="retained_warranty" type="number" step="0.01" min="0" max="100" value="'.$object->retained_warranty.'" >';
 				print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				print '</form>';
@@ -4717,6 +4722,7 @@ if ($action == 'create') {
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
 				print '<input type="hidden" name="action" value="setretainedwarrantyconditions">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 				$retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
 				$retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $object->retained_warranty_fk_cond_reglement;
 				$retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
@@ -4752,6 +4758,7 @@ if ($action == 'create') {
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
 				print '<input type="hidden" name="action" value="setretainedwarrantydatelimit">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 				print '<input name="retained_warranty_date_limit" type="date" step="1" min="'.dol_print_date($object->date, '%Y-%m-%d').'" value="'.dol_print_date($defaultDate, '%Y-%m-%d').'" >';
 				print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				print '</form>';
@@ -4832,6 +4839,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setrevenuestamp">';
 			print '<input type="hidden" name="revenuestamp" id="revenuestamp_val" value="'.price2num($object->revenuestamp).'">';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			print $formother->select_revenue_stamp('', 'revenuestamp_type', $mysoc->country_code);
 			print ' &rarr; <span id="revenuestamp_span"></span>';
 			print ' <input type="submit" class="button buttongen button-save" value="'.$langs->trans('Modify').'">';
@@ -5371,6 +5379,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'" />';
 			print '<input type="hidden" name="action" value="updatealllines" />';
 			print '<input type="hidden" name="id" value="'.$object->id.'" />';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 			print '<table id="tablelines_all_progress" class="noborder noshadow" width="100%">';
 
@@ -5409,6 +5418,7 @@ if ($action == 'create') {
 	<input type="hidden" name="mode" value="">
 	<input type="hidden" name="page_y" value="">
 	<input type="hidden" name="id" value="' . $object->id.'">
+	<input type="hidden" name="backtopage" value="'.$backtopage.'">
 	';
 
 	if (!empty($conf->use_javascript_ajax) && $object->statut == 0) {

@@ -4134,7 +4134,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'off', 'on', 'order',
 				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
 				'stock', 'resize', 'service', 'stats', 'trip',
-				'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'user-tie', 'vcard', 'wrench',
+				'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_warning', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'user-tie', 'vcard', 'wrench',
 				'github', 'google', 'jabber', 'microsoft', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
@@ -4180,7 +4180,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'member'=>'user-alt', 'meeting'=>'chalkboard-teacher', 'mrp'=>'cubes', 'next'=>'arrow-alt-circle-right',
 				'trip'=>'wallet', 'expensereport'=>'wallet', 'group'=>'users', 'movement'=>'people-carry',
 				'sign-out'=>'sign-out-alt',
-				'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'switch_on_red'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star',
+				'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on',  'switch_on_warning'=>'toggle-on', 'switch_on_red'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star',
 				'bank'=>'university', 'close_title'=>'times', 'delete'=>'trash', 'filter'=>'filter',
 				'list-alt'=>'list-alt', 'calendarlist'=>'bars', 'calendar'=>'calendar-alt', 'calendarmonth'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
 				'intervention'=>'ambulance', 'invoice'=>'file-invoice-dollar', 'currency'=>'dollar-sign', 'multicurrency'=>'dollar-sign', 'order'=>'file-invoice',
@@ -4264,7 +4264,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'members'=>'infobox-adherent', 'member'=>'infobox-adherent', 'money-bill-alt'=>'infobox-bank_account',
 				'order'=>'infobox-commande',
 				'user'=>'infobox-adherent', 'users'=>'infobox-adherent',
-				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4', 'switch_on_red'=>'font-status8',
+				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4', 'switch_on_warning'=>'font-status4 warning', 'switch_on_red'=>'font-status8',
 				'holiday'=>'infobox-holiday', 'info'=>'opacityhigh', 'invoice'=>'infobox-commande',
 				'knowledgemanagement'=>'infobox-contrat rotate90', 'loan'=>'infobox-bank_account',
 				'payment'=>'infobox-bank_account', 'payment_vat'=>'infobox-bank_account', 'poll'=>'infobox-adherent', 'pos'=>'infobox-bank_account', 'project'=>'infobox-project', 'projecttask'=>'infobox-project',
@@ -6190,30 +6190,30 @@ function isOnlyOneLocalTax($local)
 /**
  * Get values of localtaxes (1 or 2) for company country for the common vat with the highest value
  *
- * @param	int		$local 	LocalTax to get
- * @return	number			Values of localtax
+ * @param	int				$local 		LocalTax to get
+ * @return	string						Values of localtax (Can be '20', '-19:-15:-9')
  */
 function get_localtax_by_third($local)
 {
 	global $db, $mysoc;
-	$sql = "SELECT t.localtax1, t.localtax2 ";
-	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=t.fk_pays";
-	$sql .= " WHERE c.code = '".$db->escape($mysoc->country_code)."' AND t.active = 1 AND t.taux=(";
-	$sql .= "  SELECT max(tt.taux) FROM ".MAIN_DB_PREFIX."c_tva as tt inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=tt.fk_pays";
-	$sql .= "  WHERE c.code = '".$db->escape($mysoc->country_code)."' AND tt.active = 1";
-	$sql .= "  )";
+
+	$sql  = " SELECT t.localtax".$local." as localtax";
+	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t INNER JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = t.fk_pays";
+	$sql .= " WHERE c.code = '".$db->escape($mysoc->country_code)."' AND t.active = 1 AND t.taux = (";
+	$sql .= "SELECT MAX(tt.taux) FROM ".MAIN_DB_PREFIX."c_tva as tt INNER JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = tt.fk_pays";
+	$sql .= " WHERE c.code = '".$db->escape($mysoc->country_code)."' AND tt.active = 1)";
+	$sql .= " AND t.localtax".$local."_type <> '0'";
+	$sql .= " ORDER BY t.rowid DESC";
 
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
-		if ($local == 1) {
-			return $obj->localtax1;
-		} elseif ($local == 2) {
-			return $obj->localtax2;
-		}
+		return $obj->localtax;
+	} else {
+		return 'Error';
 	}
 
-	return 0;
+	return '0';
 }
 
 
@@ -6322,10 +6322,12 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 		}
 
 		$sql .= ", ".MAIN_DB_PREFIX."c_country as c";
-		if ($mysoc->country_code == 'ES') {
-			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($buyer->country_code)."'"; // local tax in spain use the buyer country ??
+		if (!empty($mysoc) && $mysoc->country_code == 'ES') {
+			$countrycodetouse = ((empty($buyer) || empty($buyer->country_code)) ? $mysoc->country_code : $buyer->country_code);
+			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($countrycodetouse)."'"; // local tax in spain use the buyer country ??
 		} else {
-			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape(empty($seller->country_code) ? $mysoc->country_code : $seller->country_code)."'";
+			$countrycodetouse = ((empty($seller) || empty($seller->country_code)) ? $mysoc->country_code : $seller->country_code);
+			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($countrycodetouse)."'";
 		}
 		$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
 		if ($vatratecode) {
@@ -10888,8 +10890,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *
  * @param string    	$label      Label or tooltip of button. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
  * @param string    	$text       Optional : short label on button. Can be escaped HTML content or full simple text.
- * @param string    	$actionType 'default', 'delete', 'danger'
- * @param string    	$url        Url for link
+ * @param string    	$actionType 'default', 'delete', 'danger', 'email', ...
+ * @param string|array 	$url        Url for link or array of subbutton description
  * @param string    	$id         Attribute id of button
  * @param int|boolean	$userRight  User action right
  * // phpcs:disable
@@ -10916,7 +10918,26 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 {
 	global $hookmanager, $action, $object, $langs;
 
-	//var_dump($params);
+	// If $url is an array, we must build a dropdown button
+	if (is_array($url)) {
+		$out = '<div class="dropdown inline-block dropdown-holder">';
+		$out .= '<a style="margin-right: auto;" class="dropdown-toggle butAction" data-toggle="dropdown">'.$label.'</a>';
+		$out .= '<div class="dropdown-content">';
+		foreach ($url as $subbutton) {
+			if ($subbutton['enabled'] && $subbutton['perm']) {
+				if (!empty($subbutton['lang'])) {
+					$langs->load($subbutton['lang']);
+				}
+				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', DOL_URL_ROOT.$subbutton['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage'])), '', 1, array('isDropDown' => true));
+			}
+		}
+		$out .= "</div>";
+		$out .= "</div>";
+
+		return $out;
+	}
+
+	// If $url is a simple link
 	if (!empty($params['isDropdown']))
 		$class = "dropdown-item";
 	else {

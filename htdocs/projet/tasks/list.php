@@ -1536,7 +1536,7 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 			print '<td class="center">'.convertSecondToTime($totalarray['totalbilled'], $plannedworkloadoutputformat).'</td>';
 		} elseif ($totalarray['totalbudget_amountfield'] == $i) {
 			print '<td class="center">'.price($totalarray['totalbudgetamount'], 0, $langs, 1, 0, 0, $conf->currency).'</td>';
-		} else if (!empty($totalarray['pos'][$i])) {
+		} elseif (!empty($totalarray['pos'][$i])) {
 			print '<td class="right">';
 			if (isset($totalarray['type']) && $totalarray['type'][$i] == 'duration') {
 				print (!empty($totalarray['val'][$totalarray['pos'][$i]])?convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin'):0);
@@ -1544,7 +1544,7 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 				print price(!empty($totalarray['val'][$totalarray['pos'][$i]])?$totalarray['val'][$totalarray['pos'][$i]]:0);
 			}
 			print '</td>';
-		}else {
+		} else {
 			print '<td></td>';
 		}
 	}

@@ -1733,12 +1733,6 @@ class Facture extends CommonInvoice
 			}
 		}
 
-
-		if (! is_object($hookmanager)) {
-			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($origin->db);
-		}
-
 		$hookmanager->initHooks(array('invoicedao'));
 
 		$parameters = array('objFrom' => $origin);
@@ -3584,6 +3578,7 @@ class Facture extends CommonInvoice
 
 	/**
 	 *  Add an invoice line into database (linked to product/service or not).
+	 *  Note: ->thirdparty must be defined.
 	 *  Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
 	 *  de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
 	 *  par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
