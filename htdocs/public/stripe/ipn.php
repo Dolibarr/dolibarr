@@ -451,20 +451,25 @@ if ($event->type == 'payout.created') {
 		}
 
 		if (!$error && isModEnabled('prelevement')) {
-			dol_syslog('* Set prelevement to credite');
 			$bon = new BonPrelevement($db);
 			$idbon = 0;
 			$sql = "SELECT dp.fk_prelevement_bons as idbon";
 			$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as dp";
-			$sql .= " WHERE dp.fk_facture = '".$db->escape($invoice_id)."'";
+			$sql .= " JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb"; // Here we join to prevent modification of a prelevement bon already credited
+			$sql .= " ON pb.rowid = dp.fk_prelevement_bons";
+			$sql .= " WHERE dp.fk_facture = ".$db->escape($invoice_id);
 			$sql .= " AND dp.sourcetype = 'facture'";
 			$sql .= " AND dp.ext_payment_id = '".$db->escape($TRANSACTIONID)."'";
 			$sql .= " AND dp.traite = 1";
+			$sql .= " AND statut = ".$db->escape($bon::STATUS_TRANSFERED); // To be sure that it's not already credited
 			$result = $db->query($sql);
 			if ($result) {
 				if ($db->num_rows($result)) {
 					$obj = $db->fetch_object($result);
 					$idbon = $obj->idbon;
+					dol_syslog('* Set prelevement to credite');
+				} else {
+					dol_syslog('* Prelevement not found or already credited');
 				}
 			} else {
 				$postactionmessages[] = $db->lasterror();
