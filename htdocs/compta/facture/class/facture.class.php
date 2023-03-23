@@ -5656,7 +5656,7 @@ class Facture extends CommonInvoice
 								$actioncomm->contact_id = 0;
 
 								$actioncomm->code = 'AC_EMAIL';
-								$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateOK';
+								$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' forcerecipient='.$forcerecipient.')';
 								$actioncomm->note_private = $sendContent;
 								$actioncomm->fk_project = $tmpinvoice->fk_project;
 								$actioncomm->datep = dol_now();
@@ -5666,6 +5666,7 @@ class Facture extends CommonInvoice
 								$actioncomm->userownerid = $user->id; // Owner of action
 								// Fields when action is an email (content should be added into note)
 								$actioncomm->email_msgid = $cMailFile->msgid;
+								$actioncomm->email_subject = $sendTopic;
 								$actioncomm->email_from = $from;
 								$actioncomm->email_sender = '';
 								$actioncomm->email_to = $to;
