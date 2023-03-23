@@ -457,11 +457,11 @@ if ($event->type == 'payout.created') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as dp";
 			$sql .= " JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb"; // Here we join to prevent modification of a prelevement bon already credited
 			$sql .= " ON pb.rowid = dp.fk_prelevement_bons";
-			$sql .= " WHERE dp.fk_facture = ".$db->escape($invoice_id);
+			$sql .= " WHERE dp.fk_facture = ".(int) $db->escape($invoice_id);
 			$sql .= " AND dp.sourcetype = 'facture'";
 			$sql .= " AND dp.ext_payment_id = '".$db->escape($TRANSACTIONID)."'";
 			$sql .= " AND dp.traite = 1";
-			$sql .= " AND statut = ".$db->escape($bon::STATUS_TRANSFERED); // To be sure that it's not already credited
+			$sql .= " AND statut = ".(int) $db->escape($bon::STATUS_TRANSFERED); // To be sure that it's not already credited
 			$result = $db->query($sql);
 			if ($result) {
 				if ($db->num_rows($result)) {
@@ -479,12 +479,12 @@ if ($event->type == 'payout.created') {
 
 			if (!$error && !empty($idbon)) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
-				$sql .= " SET fk_user_credit = ".$user->id;
-				$sql .= ", statut = '".$db->escape($bon::STATUS_CREDITED)."'";
+				$sql .= " SET fk_user_credit = ".(int) $db->escape($user->id);
+				$sql .= ", statut = ".(int) $db->escape($bon::STATUS_CREDITED);
 				$sql .= ", date_credit = '".$db->idate($now)."'";
 				$sql .= ", credite = 1";
-				$sql .= " WHERE rowid = '".$db->escape($idbon)."'";
-				$sql .= " AND statut = '".$db->escape($bon::STATUS_TRANSFERED)."'";
+				$sql .= " WHERE rowid = ".(int) $db->escape($idbon);
+				$sql .= " AND statut = ".(int) $db->escape($bon::STATUS_TRANSFERED);
 
 				$result = $db->query($sql);
 				if (!$result) {
@@ -497,7 +497,7 @@ if ($event->type == 'payout.created') {
 			if (!$error && !empty($idbon)) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";
 				$sql .= " SET statut = 2";
-				$sql .= " WHERE fk_prelevement_bons = '".$db->escape($idbon)."'";
+				$sql .= " WHERE fk_prelevement_bons = ".(int) $db->escape($idbon);
 				$result = $db->query($sql);
 				if (!$result) {
 					$postactionmessages[] = $db->lasterror();
