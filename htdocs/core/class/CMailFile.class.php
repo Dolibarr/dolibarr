@@ -1268,6 +1268,7 @@ class CMailFile
 			$srcfile = $dolibarr_main_data_root."/dolibarr_mail.log";
 			$destfile = $dolibarr_main_data_root."/dolibarr_mail.err";
 
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_move($srcfile, $destfile, 0, 1, 0, 0);
 		}
 	}

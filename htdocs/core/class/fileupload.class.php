@@ -60,6 +60,7 @@ class FileUpload
 		$this->element = $element;
 
 		$pathname = $filename = $element;
+		$regs = array();
 		if (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {
 			$pathname = $regs[1];
 			$filename = $regs[2];
