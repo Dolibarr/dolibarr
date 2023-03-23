@@ -11193,10 +11193,10 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
 /**
  * Get an array with properties of an element.
- * Called by fetchObjectByElement.
  *
- * @param   string 	$element_type 	Element type (Value of $object->element). Example: 'action', 'facture', 'project_task' or 'object@mymodule'...
+ * @param   string 	$element_type 	Element type (Value of $object->element). Example: 'action', 'facture', 'project_task', 'myobject@mymodule' or 'mymodule_myobject' ...
  * @return  array					(module, classpath, element, subelement, classfile, classname)
+ * @see fetchObjectByElement()
  */
 function getElementProperties($element_type)
 {
@@ -11328,25 +11328,34 @@ function getElementProperties($element_type)
  * Inclusion of classes is automatic
  *
  * @param	int     	$element_id 	Element id
- * @param	string  	$element_type 	Element type
+ * @param	string  	$element_type 	Element type ('module' or 'myobject@mymodule' or 'mymodule_myobject')
  * @param	string     	$element_ref 	Element ref (Use this or element_id but not both)
- * @return 	int|object 					object || 0 || -1 if error
+ * @return 	int|object 					object || 0 || <0 if error
  */
 function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 {
 	global $conf, $db;
 
+	$ret = 0;
+
 	$element_prop = getElementProperties($element_type);
-	if (is_array($element_prop) && $conf->{$element_prop['module']}->enabled) {
+
+	if (is_array($element_prop) && isModEnabled($element_prop['module'])) {
 		dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
 
-		$objecttmp = new $element_prop['classname']($db);
-		$ret = $objecttmp->fetch($element_id, $element_ref);
-		if ($ret >= 0) {
-			return $objecttmp;
+		if (class_exists($element_prop['classname'])) {
+			$classname = $element_prop['classname'];
+			$objecttmp = new $classname($db);
+			$ret = $objecttmp->fetch($element_id, $element_ref);
+			if ($ret >= 0) {
+				return $objecttmp;
+			}
+		} else {
+			return -1;
 		}
 	}
-	return 0;
+
+	return $ret;
 }
 
 /**

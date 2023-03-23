@@ -36,7 +36,7 @@ if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
 // If there is no need to load and show top and left menu
-if (!empty($_GET['public'])) {
+if (!empty($_GET['public'])) {	// GETPOST() is not yet defined so we use $_GET
 	if (!defined("NOLOGIN")) {
 		define("NOLOGIN", '1');
 	}

@@ -2603,6 +2603,7 @@ class Societe extends CommonObject
 
 	/**
 	 * getTooltipContentArray
+	 *
 	 * @param array $params params to construct tooltip data
 	 * @since v18
 	 * @return array
@@ -2619,6 +2620,7 @@ class Societe extends CommonObject
 		$nofetch = !empty($params['nofetch']);
 
 		$name = $this->name;
+		$noaliasinname = (empty($params['noaliasinname']) ? 0 : $params['noaliasinname']);
 
 		if (!empty($this->name_alias) && empty($noaliasinname)) {
 			$name .= ' ('.$this->name_alias.')';
@@ -2718,6 +2720,9 @@ class Societe extends CommonObject
 				$datas['profid6'] = '<br><b>'.$langs->trans('ProfId6'.$this->country_code).':</b> '.$this->idprof6;
 			}
 		}
+
+		$datas['separator'] = '<br>';
+
 		if (!empty($this->code_client) && ($this->client == 1 || $this->client == 3)) {
 			$datas['customercode'] = '<br><b>'.$langs->trans('CustomerCode').':</b> '.$this->code_client;
 		}

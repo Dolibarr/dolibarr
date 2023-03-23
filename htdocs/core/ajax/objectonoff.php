@@ -45,49 +45,29 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
 $action = GETPOST('action', 'aZ09');
+
 $id = GETPOST('id', 'int');
-$value = GETPOST('value', 'int');
+$element = GETPOST('element', 'alpha');	// 'module' or 'myobject@mymodule' or 'mymodule_myobject'
 $field = GETPOST('field', 'alpha');
-$element = GETPOST('element', 'alpha');
+$value = GETPOST('value', 'int');
 $format = 'int';
 
-$object = new GenericObject($db);
+// Load object according to $element
+$object = fetchObjectByElement($id, $element);
 
-$tmparray = explode('@', $element);
-if (empty($tmparray[1])) {
-	$subelement = '';
-
-	$object->module = $element;
-	$object->element = $element;
-	$object->table_element = $element;
-
-	// Special case for compatibility
-	if ($object->table_element == 'websitepage') {
-		$object->table_element = 'website_page';
-	}
-} else {
-	$element = $tmparray[0];
-	$subelement = $tmparray[1];
-
-	$object->module = $element;
-	$object->element = $subelement;
-	$object->table_element = $object->module.'_'.$object->element;
-}
-$object->id = $id;
 $object->fields[$field] = array('type' => $format, 'enabled' => 1);
 
 $module = $object->module;
 $element = $object->element;
-
 //var_dump($object->module); var_dump($object->element); var_dump($object->table_element);
 
 // Security check
 if (!empty($user->socid)) {
 	$socid = $user->socid;
+	if (!empty($object->socid) && $socid != $object->socid) {
+		httponly_accessforbidden("Access on object not allowed for this external user.");	// This includes the exit.
+	}
 }
-
-//$user->hasRight('societe', 'lire') = 0;$user->rights->fournisseur->lire = 0;
-//restrictedArea($user, 'societe', $id);
 
 // We check permission.
 // Check is done on $user->rights->element->create or $user->rights->element->subelement->create (because $action = 'set')

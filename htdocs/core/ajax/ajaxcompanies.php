@@ -62,9 +62,9 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn')) {
 	$return_arr = array();
 
 	// Define filter on text typed
-	$socid = $_GET['newcompany'] ? $_GET['newcompany'] : '';
-	if (!$socid) $socid = $_GET['socid'] ? $_GET['socid'] : '';
-	if (!$socid) $socid = $_GET['id_fourn'] ? $_GET['id_fourn'] : '';
+	$socid = GETPOST('newcompany');
+	if (!$socid) $socid = GETPOST('socid');
+	if (!$socid) $socid = GETPOST('id_fourn');
 
 	$sql = "SELECT s.rowid, s.nom, s.name_alias, s.code_client, s.code_fournisseur, s.address, s.zip, s.town, s.email, s.siren, s.siret, s.ape, s.idprof4, s.client, s.fournisseur, s.datec, s.logo";
 	$sql .= " , c.label as country, d.nom as departement";
@@ -84,8 +84,13 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn')) {
 			$sql .= " OR s.code_client LIKE '%".$db->escape($db->escapeforlike($socid))."%'";
 			$sql .= " OR s.code_fournisseur LIKE '%".$db->escape($db->escapeforlike($socid))."%'";
 		}
-		if (!empty($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID)) $sql .= " OR s.rowid = ".((int) $socid);
+		if (!empty($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID)) {
+			$sql .= " OR s.rowid = ".((int) $socid);
+		}
 		$sql .= ")";
+	}
+	if ($user->socid > 0) {
+		$sql .= " AND s.rowid = ".((int) $user->socid);
 	}
 	//if (GETPOST("filter")) $sql.= " AND (".GETPOST("filter", "alpha").")"; // Add other filters
 	$sql .= " ORDER BY s.nom ASC";
