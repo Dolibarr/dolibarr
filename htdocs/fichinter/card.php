@@ -575,7 +575,6 @@ if (empty($reshook)) {
 		// Extrafields
 		$extrafields->fetch_name_optionals_label($object->table_element_line);
 		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
-		$objectline->fetch_optionals();
 		$objectline->array_options = array_merge($objectline->array_options, $array_options);
 
 		$result = $objectline->update($user);
