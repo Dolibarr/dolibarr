@@ -86,7 +86,7 @@ if (empty($conf->dol_no_mouse_hover)) {
 		open: function (event, ui) {
 			var elem = $(this);
 			var params = JSON.parse($(this).attr("data-params"));
-			objparams.token = "'.currentToken().'";
+			params.token = "'.currentToken().'";
 			$.ajax({
 				url:"' . dol_buildpath('/core/ajax/ajaxtooltip.php', 1) . '",
 				type: "post",
