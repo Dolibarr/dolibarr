@@ -600,6 +600,9 @@ $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_u
 if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	$sql .= ', p.fk_unit, cu.label';
 }
+if (isModEnabled('workstation')) {
+	$sql .= ', p.fk_default_workstation, ws.status, ws.ref ';
+}
 
 if (isModEnabled('variants') && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
 	$sql .= ', pac.rowid';
