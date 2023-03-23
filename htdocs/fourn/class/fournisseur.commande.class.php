@@ -873,6 +873,8 @@ class CommandeFournisseur extends CommonOrder
 		$langs->loadLangs(['bills', 'orders']);
 
 		$datas = [];
+		$nofetch = !empty($params['nofetch']);
+
 		if ($user->hasRight("fournisseur", "commande", "read")) {
 			$datas['picto'] = '<u class="paddingrightonly">'.$langs->trans("SupplierOrder").'</u>';
 			if (isset($this->statut)) {
@@ -883,6 +885,13 @@ class CommandeFournisseur extends CommonOrder
 			}
 			if (!empty($this->ref_supplier)) {
 				$datas['refsupplier'] = '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
+			}
+			if (!$nofetch) {
+				$langs->load('companies');
+				if (empty($this->thirdparty)) {
+					$this->fetch_thirdparty();
+				}
+				$datas['supplier'] = '<br><b>'.$langs->trans('Supplier').':</b> '.$this->thirdparty->getNomUrl(1, '', 0, 1);
 			}
 			if (!empty($this->total_ht)) {
 				$datas['totalht'] = '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
@@ -922,6 +931,7 @@ class CommandeFournisseur extends CommonOrder
 			'id' => $this->id,
 			'objecttype' => $this->element,
 			'option' => $option,
+			'nofetch' => 1
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
