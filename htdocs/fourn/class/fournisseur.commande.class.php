@@ -931,6 +931,7 @@ class CommandeFournisseur extends CommonOrder
 			'id' => $this->id,
 			'objecttype' => $this->element,
 			'option' => $option,
+			'nofetch' => 1
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
