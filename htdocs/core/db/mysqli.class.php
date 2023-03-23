@@ -935,17 +935,17 @@ class DoliDBMysqli extends DoliDB
 		if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL') {
 			// We will try to change format of column to NOT NULL. To be sure the ALTER works, we try to update fields that are NULL
 			if ($field_desc['type'] == 'varchar' || $field_desc['type'] == 'text') {
-				$sqlbis = "UPDATE ".$table." SET ".$field_name." = '".$this->escape($field_desc['default'] ? $field_desc['default'] : '')."' WHERE ".$field_name." IS NULL";
+				$sqlbis = "UPDATE ".$table." SET ".$field_name." = '".$this->escape(isset($field_desc['default']) ? $field_desc['default'] : '')."' WHERE ".$field_name." IS NULL";
 				$this->query($sqlbis);
 			} elseif ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') {
-				$sqlbis = "UPDATE ".$table." SET ".$field_name." = ".((int) $this->escape($field_desc['default'] ? $field_desc['default'] : 0))." WHERE ".$field_name." IS NULL";
+				$sqlbis = "UPDATE ".$table." SET ".$field_name." = ".((int) $this->escape(isset($field_desc['default']) ? $field_desc['default'] : 0))." WHERE ".$field_name." IS NULL";
 				$this->query($sqlbis);
 			}
 
 			$sql .= " NOT NULL";
 		}
 
-		if ($field_desc['default'] != '') {
+		if (isset($field_desc['default']) && $field_desc['default'] != '') {
 			if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') {
 				$sql .= " DEFAULT ".$this->escape($field_desc['default']);
 			} elseif ($field_desc['type'] != 'text') {
