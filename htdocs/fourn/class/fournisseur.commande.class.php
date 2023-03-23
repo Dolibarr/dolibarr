@@ -874,6 +874,9 @@ class CommandeFournisseur extends CommonOrder
 
 		$datas = [];
 		if ($user->hasRight("fournisseur", "commande", "read")) {
+			if (!is_object($this->thirdparty)) {
+				$this->fetch_thirdparty();
+			}
 			$datas['picto'] = '<u class="paddingrightonly">'.$langs->trans("SupplierOrder").'</u>';
 			if (isset($this->statut)) {
 				$datas['picto'] .= ' '.$this->getLibStatut(5);
@@ -883,6 +886,9 @@ class CommandeFournisseur extends CommonOrder
 			}
 			if (!empty($this->ref_supplier)) {
 				$datas['refsupplier'] = '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
+			}
+			if (!empty($this->thirdparty->name)) {
+				$datas['suppliername'] = '<br><b>'.$langs->trans('Supplier').':</b> '.$this->thirdparty->name;
 			}
 			if (!empty($this->total_ht)) {
 				$datas['totalht'] = '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
