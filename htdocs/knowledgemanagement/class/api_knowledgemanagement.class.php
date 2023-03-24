@@ -70,7 +70,7 @@ class KnowledgeManagement extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->read) {
+		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 			throw new RestException(401);
 		}
 
@@ -144,7 +144,7 @@ class KnowledgeManagement extends DolibarrApi
 		$obj_ret = array();
 		$tmpobject = new KnowledgeRecord($this->db);
 
-		if (!DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->read) {
+		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 			throw new RestException(401);
 		}
 
@@ -199,11 +199,10 @@ class KnowledgeManagement extends DolibarrApi
 		}
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -249,7 +248,7 @@ class KnowledgeManagement extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->write) {
+		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'write')) {
 			throw new RestException(401);
 		}
 
@@ -282,7 +281,7 @@ class KnowledgeManagement extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->write) {
+		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'write')) {
 			throw new RestException(401);
 		}
 
@@ -324,7 +323,7 @@ class KnowledgeManagement extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->delete) {
+		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'delete')) {
 			throw new RestException(401);
 		}
 		$result = $this->knowledgerecord->fetch($id);

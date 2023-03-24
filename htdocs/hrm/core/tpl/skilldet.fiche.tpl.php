@@ -65,9 +65,9 @@ $permission = $user->rights->fournisseur->commande->creer;
 $permission = $user->rights->supplier_order->creer;
 }
 } elseif ($module == 'societe') {
-$permission = $user->rights->societe->creer;
+$permission = $user->hasRight('societe', 'creer');
 } elseif ($module == 'contact') {
-$permission = $user->rights->societe->creer;
+$permission = $user->hasRight('societe', 'creer');
 } elseif ($module == 'shipping') {
 $permission = $user->rights->expedition->creer;
 } elseif ($module == 'product') {

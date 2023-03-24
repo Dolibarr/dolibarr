@@ -125,8 +125,9 @@ if (!$sortfield) {
 	$sortfield = "s.nom";
 }
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -160,12 +161,12 @@ if ($type == 'f') {
 	}
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize technical objects to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Societe($db);
 $hookmanager->initHooks(array('thirdpartylist'));
 $extrafields = new ExtraFields($db);
 
-// fetch optionals attributes and labels
+// Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
@@ -244,7 +245,7 @@ $arrayfields = array(
 	's.phone'=>array('label'=>"Phone", 'position'=>27, 'checked'=>1),
 	's.fax'=>array('label'=>"Fax", 'position'=>28, 'checked'=>0),
 	'typent.code'=>array('label'=>"ThirdPartyType", 'position'=>29, 'checked'=>$checkedtypetiers),
-	'staff.code'=>array('label'=>"Staff", 'position'=>31, 'checked'=>0),
+	'staff.code'=>array('label'=>"Workforce", 'position'=>31, 'checked'=>0),
 	's.siren'=>array('label'=>"ProfId1Short", 'position'=>40, 'checked'=>$checkedprofid1),
 	's.siret'=>array('label'=>"ProfId2Short", 'position'=>41, 'checked'=>$checkedprofid2),
 	's.ape'=>array('label'=>"ProfId3Short", 'position'=>42, 'checked'=>$checkedprofid3),
@@ -339,7 +340,7 @@ if (empty($reshook)) {
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-	// Did we click on purge search criteria ?
+	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_id = '';
 		$search_nom = '';
@@ -432,6 +433,7 @@ $prospectstatic = new Client($db);
 $prospectstatic->client = 2;
 $prospectstatic->loadCacheOfProspStatus();
 
+$now = dol_now();
 
 $title = $langs->trans("ThirdParties");
 if ($type == 'c' && (empty($search_type) || ($search_type == '1,3'))) {
@@ -467,6 +469,8 @@ if ($resql) {
 	dol_print_error($db);
 }
 
+// Build and execute select
+// --------------------------------------------------------------------
 $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.address, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
 $sql .= " s.entity,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
@@ -494,13 +498,14 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sqlfields = $sql; // $sql fields to remove for count total
+$sqlfields = $sql; // $sql fields to remove for count totall
 
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s.parent = s2.rowid";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (s.rowid = ef.fk_object)";
 }
+
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_effectif as staff on (staff.id = s.fk_effectif)";
@@ -790,10 +795,16 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && (
 	exit;
 }
 
+// Output page
+// --------------------------------------------------------------------
+
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
 $param = '';
+if (!empty($mode)) {
+	$param .= '&mode='.urlencode($mode);
+}
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
@@ -947,11 +958,11 @@ if ($user->hasRight("societe", "creer")) {
 if ($user->hasRight("societe", "creer")) {
 	$arrayofmassactions['presetcommercial'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("AllocateCommercial");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
-	$arrayofmassactions = array();
-}
 if ($user->hasRight('societe', 'supprimer')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+}
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
+	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
@@ -982,23 +993,32 @@ if ($contextpage != 'poslist') {
 	if (!empty($socid)) {
 		$url .= '&socid='.$socid;
 	}
-	$newcardbutton = dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->hasRight("societe", "creer"));
-} elseif ($user->hasRight("societe", "creer")) {
+	$newcardbutton   = '';
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->rights->societe->creer);
+} elseif ($user->rights->societe->creer) {
 	$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=t&contextpage=poslist&optioncss=print&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type=t&contextpage=poslist&nomassaction=1&optioncss=print&place='.$place);
 	$label = 'MenuNewCustomer';
 	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
 }
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 //print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="page_y" value="">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
+if (empty($arrayfields['customerorsupplier']['checked'])) {
+	print '<input type="hidden" name="type" value="'.$type.'">';
+}
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'building', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -1061,7 +1081,7 @@ if ($user->hasRight("societe", "client", "voir") || $socid) {
 	$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $langs->trans('SalesRepresentatives'), ($conf->dol_optimize_smallscreen ? 'maxwidth200' : 'maxwidth300'), 1);
 	$moreforfilter .= '</div>';
 }
-if ($moreforfilter) {
+if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
 	$parameters = array('type'=>$type);
@@ -1077,18 +1097,14 @@ if ($massactionbutton && $contextpage != 'poslist') {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
 
-if (empty($arrayfields['customerorsupplier']['checked'])) {
-	print '<input type="hidden" name="type" value="'.$type.'">';
-}
-
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
 print '<tr class="liste_titre_filter">';
+// Action column
 if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-	// Action column
-	print '<td class="liste_titre center actioncolumn">';
+	print '<td class="liste_titre maxwidthsearch center actioncolumn">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
@@ -1324,112 +1340,151 @@ if (!empty($arrayfields['s.import_key']['checked'])) {
 }
 if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 	// Action column
-	print '<td class="liste_titre center actioncolumn">';
+	print '<td class="liste_titre maxwidthsearch center actioncolumn">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
 }
 
-print "</tr>\n";
+print '</tr>'."\n";
+
+$totalarray = array();
+$totalarray['nbfield'] = 0;
+
+// Fields title label
+// --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.rowid']['checked'])) {
 	print_liste_field_titre($arrayfields['s.rowid']['label'], $_SERVER["PHP_SELF"], "s.rowid", "", $param, ' data-key="id"', $sortfield, $sortorder, 'actioncolumn ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, ' data-key="ref"', $sortfield, $sortorder, 'actioncolumn ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
 	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.barcode']['checked'])) {
 	print_liste_field_titre($arrayfields['s.barcode']['label'], $_SERVER["PHP_SELF"], "s.barcode", $param, '', '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.code_client']['checked'])) {
 	print_liste_field_titre($arrayfields['s.code_client']['label'], $_SERVER["PHP_SELF"], "s.code_client", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.code_fournisseur']['checked'])) {
 	print_liste_field_titre($arrayfields['s.code_fournisseur']['label'], $_SERVER["PHP_SELF"], "s.code_fournisseur", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.code_compta']['checked'])) {
 	print_liste_field_titre($arrayfields['s.code_compta']['label'], $_SERVER["PHP_SELF"], "s.code_compta", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.code_compta_fournisseur']['checked'])) {
 	print_liste_field_titre($arrayfields['s.code_compta_fournisseur']['label'], $_SERVER["PHP_SELF"], "s.code_compta_fournisseur", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.address']['checked'])) {
 	print_liste_field_titre($arrayfields['s.address']['label'], $_SERVER['PHP_SELF'], 's.address', '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.zip']['checked'])) {
 	print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], "s.zip", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.town']['checked'])) {
 	print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], "s.town", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['state.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['state.nom']['label'], $_SERVER["PHP_SELF"], "state.nom", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['region.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['region.nom']['label'], $_SERVER["PHP_SELF"], "region.nom", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['country.code_iso']['checked'])) {
 	print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, "", $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['staff.code']['checked'])) {
 	print_liste_field_titre($arrayfields['staff.code']['label'], $_SERVER["PHP_SELF"], "staff.code", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.price_level']['checked'])) {
 	print_liste_field_titre($arrayfields['s.price_level']['label'], $_SERVER["PHP_SELF"], "s.price_level", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.email']['checked'])) {
 	print_liste_field_titre($arrayfields['s.email']['label'], $_SERVER["PHP_SELF"], "s.email", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.phone']['checked'])) {
 	print_liste_field_titre($arrayfields['s.phone']['label'], $_SERVER["PHP_SELF"], "s.phone", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.fax']['checked'])) {
 	print_liste_field_titre($arrayfields['s.fax']['label'], $_SERVER["PHP_SELF"], "s.fax", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.url']['checked'])) {
 	print_liste_field_titre($arrayfields['s.url']['label'], $_SERVER["PHP_SELF"], "s.url", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.siren']['checked'])) {
 	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId1Short"), $textprofid[1], 1, 0), $_SERVER["PHP_SELF"], "s.siren", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.siret']['checked'])) {
 	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId2Short"), $textprofid[2], 1, 0), $_SERVER["PHP_SELF"], "s.siret", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.ape']['checked'])) {
 	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId3Short"), $textprofid[3], 1, 0), $_SERVER["PHP_SELF"], "s.ape", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.idprof4']['checked'])) {
 	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId4Short"), $textprofid[4], 1, 0), $_SERVER["PHP_SELF"], "s.idprof4", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.idprof5']['checked'])) {
 	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId5Short"), $textprofid[5], 1, 0), $_SERVER["PHP_SELF"], "s.idprof5", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.idprof6']['checked'])) {
 	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId6Short"), $textprofid[6], 1, 0), $_SERVER["PHP_SELF"], "s.idprof6", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.tva_intra']['checked'])) {
 	print_liste_field_titre($arrayfields['s.tva_intra']['label'], $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['customerorsupplier']['checked'])) {
 	print_liste_field_titre($arrayfields['customerorsupplier']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center '); // type of customer
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.fk_prospectlevel']['checked'])) {
 	print_liste_field_titre($arrayfields['s.fk_prospectlevel']['label'], $_SERVER["PHP_SELF"], "s.fk_prospectlevel", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
 	print_liste_field_titre($arrayfields['s.fk_stcomm']['label'], $_SERVER["PHP_SELF"], "s.fk_stcomm", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s2.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s2.nom']['label'], $_SERVER["PHP_SELF"], "s2.nom", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -1439,27 +1494,39 @@ $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $objec
 print $hookmanager->resPrint;
 if (!empty($arrayfields['s.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['s.datec']['label'], $_SERVER["PHP_SELF"], "s.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;	// For the column action
 }
 if (!empty($arrayfields['s.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['s.tms']['label'], $_SERVER["PHP_SELF"], "s.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;	// For the column action
 }
 if (!empty($arrayfields['s.status']['checked'])) {
 	print_liste_field_titre($arrayfields['s.status']['label'], $_SERVER["PHP_SELF"], "s.status", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;	// For the column action
 }
 if (!empty($arrayfields['s.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['s.import_key']['label'], $_SERVER["PHP_SELF"], "s.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;	// For the column action
 }
-if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
+// Action column
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
+	$totalarray['nbfield']++;	// For the column action
 }
-print "</tr>\n";
+print '</tr>'."\n";
 
 
 $i = 0;
+$savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-while ($i < min($num, $limit)) {
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
+	if (empty($obj)) {
+		break; // Should not happen
+	}
+
 	$parameters = array('staticdata' => $obj);
 	// Note that $action and $object may have been modified by hook
 	// do companystatic fetch in hook if wanted or anything else
@@ -1491,349 +1558,362 @@ while ($i < min($num, $limit)) {
 		$companystatic->entity = $obj->entity;
 	}
 
-	print '<tr class="oddeven"';
-	if ($contextpage == 'poslist') {
-		print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'\'"';
-	}
-	print '>';
-
-	// Action column (Show the massaction button only when this page is not opend from the Extended POS)
-	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-		print '<td class="nowrap center actioncolumn">';
-		if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($obj->rowid, $arrayofselected)) {
-				$selected = 1;
-			}
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+	if ($mode == 'kanban') {
+		if ($i == 0) {
+			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<div class="box-flex-container kanban">';
 		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+		// Output Kanban
+		print $companystatic->getKanbanView('');
+		if ($i == ($imaxinloop - 1)) {
+			print '</div>';
+			print '</td></tr>';
 		}
-	}
-	if (!empty($arrayfields['s.rowid']['checked'])) {
-		print '<td class="tdoverflowmax50" data-key="id">';
-		print $obj->rowid;
-		print "</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td'.(empty($conf->global->MAIN_SOCIETE_SHOW_COMPLETE_NAME) ? ' class="tdoverflowmax200"' : '').' data-key="ref">';
+	} else {
+		print '<tr class="oddeven"';
 		if ($contextpage == 'poslist') {
-			print dol_escape_htmltag($companystatic->name);
-		} else {
-			print $companystatic->getNomUrl(1, '', 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+			print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'\'"';
 		}
-		print "</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	if (!empty($arrayfields['s.name_alias']['checked'])) {
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
-		print dol_escape_htmltag($companystatic->name_alias);
-		print "</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Barcode
-	if (!empty($arrayfields['s.barcode']['checked'])) {
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->barcode).'">'.dol_escape_htmltag($companystatic->barcode).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Customer code
-	if (!empty($arrayfields['s.code_client']['checked'])) {
-		print '<td class="nowraponall">'.dol_escape_htmltag($companystatic->code_client).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Supplier code
-	if (!empty($arrayfields['s.code_fournisseur']['checked'])) {
-		print '<td class="nowraponall">'.dol_escape_htmltag($companystatic->code_fournisseur).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Account customer code
-	if (!empty($arrayfields['s.code_compta']['checked'])) {
-		print '<td>'.dol_escape_htmltag($companystatic->code_compta_client).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Account supplier code
-	if (!empty($arrayfields['s.code_compta_fournisseur']['checked'])) {
-		print '<td>'.dol_escape_htmltag($companystatic->code_compta_fournisseur).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Address
-	if (!empty($arrayfields['s.address']['checked'])) {
-		print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($companystatic->address).'">'.dol_escape_htmltag($companystatic->address).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Zip
-	if (!empty($arrayfields['s.zip']['checked'])) {
-		print "<td>".dol_escape_htmltag($companystatic->zip)."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Town
-	if (!empty($arrayfields['s.town']['checked'])) {
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->town).'">'.dol_escape_htmltag($companystatic->town)."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// State
-	if (!empty($arrayfields['state.nom']['checked'])) {
-		print "<td>".dol_escape_htmltag($obj->state_name)."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Region
-	if (!empty($arrayfields['region.nom']['checked'])) {
-		print "<td>".dol_escape_htmltag($obj->region_name)."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Country
-	if (!empty($arrayfields['country.code_iso']['checked'])) {
-		print '<td class="center tdoverflowmax100">';
-		$labelcountry = ($companystatic->country_code && ($langs->trans("Country".$companystatic->country_code) != "Country".$companystatic->country_code)) ? $langs->trans("Country".$companystatic->country_code) : $obj->country_label;
-		print $labelcountry;
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Type ent
-	if (!empty($arrayfields['typent.code']['checked'])) {
-		if (!isset($typenArray) || !is_array($typenArray) || count($typenArray) == 0) {
-			$typenArray = $formcompany->typent_array(1);
-		}
-		$labeltypeofcompany= empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
+		print '>';
 
-		print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($labeltypeofcompany).'">';
-		print dol_escape_htmltag($labeltypeofcompany);
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Multiprice level
-	if (!empty($arrayfields['s.price_level']['checked'])) {
-		print '<td class="center">'.$obj->price_level."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Staff
-	if (!empty($arrayfields['staff.code']['checked'])) {
-		print '<td class="center">';
-		if (!is_array($staffArray) || count($staffArray) == 0) {
-			$staffArray = $formcompany->effectif_array(1);
-		}
-		print $staffArray[$obj->staff_code];
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	if (!empty($arrayfields['s.email']['checked'])) {
-		print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->rowid, 'AC_EMAIL', 0, 0, 1)."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	if (!empty($arrayfields['s.phone']['checked'])) {
-		print '<td class="nowraponall">'.dol_print_phone($obj->phone, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	if (!empty($arrayfields['s.fax']['checked'])) {
-		print '<td class="nowraponall">'.dol_print_phone($obj->fax, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'fax')."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	if (!empty($arrayfields['s.url']['checked'])) {
-		print "<td>".dol_print_url($obj->url, '', '', 1)."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	if (!empty($arrayfields['s.siren']['checked'])) {
-		print "<td>".$obj->idprof1."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	if (!empty($arrayfields['s.siret']['checked'])) {
-		print "<td>".$obj->idprof2."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	if (!empty($arrayfields['s.ape']['checked'])) {
-		print "<td>".$obj->idprof3."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	if (!empty($arrayfields['s.idprof4']['checked'])) {
-		print "<td>".$obj->idprof4."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	if (!empty($arrayfields['s.idprof5']['checked'])) {
-		print "<td>".$obj->idprof5."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	if (!empty($arrayfields['s.idprof6']['checked'])) {
-		print "<td>".$obj->idprof6."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// VAT
-	if (!empty($arrayfields['s.tva_intra']['checked'])) {
-		print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($companystatic->tva_intra).'">';
-		if ($companystatic->tva_intra && !isValidVATID($companystatic)) {
-			print img_warning("BadVATNumber", '', 'pictofixedwidth');
-		}
-		print $companystatic->tva_intra;
-		print "</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Type
-	if (!empty($arrayfields['customerorsupplier']['checked'])) {
-		print '<td class="center">';
-		print $companystatic->getTypeUrl(1);
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	if (!empty($arrayfields['s.fk_prospectlevel']['checked'])) {
-		// Prospect level
-		print '<td class="center">';
-		print $companystatic->getLibProspLevel();
-		print "</td>";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
-		// Prospect status
-		print '<td class="center nowrap"><div class="nowraponall">';
-		print '<div class="inline-block">';
-		print $companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
-		print '</div> - <div class="inline-block">';
-		foreach ($prospectstatic->cacheprospectstatus as $key => $val) {
-			$titlealt = 'default';
-			if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) {
-				$titlealt = $val['label'];
+		// Action column (Show the massaction button only when this page is not opend from the Extended POS)
+		if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+			print '<td class="nowrap center actioncolumn">';
+			if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
-			if ($obj->stcomm_id != $val['id']) {
-				print '<a class="pictosubstatus reposition" href="'.$_SERVER["PHP_SELF"].'?stcommsocid='.$obj->rowid.'&stcomm='.urlencode($val['code']).'&action=setstcomm&token='.newToken().$param.($page ? '&page='.urlencode($page) : '').'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
 			}
 		}
-		print '</div></div></td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Parent company
-	if (!empty($arrayfields['s2.nom']['checked'])) {
-		print '<td class="center tdoverflowmax100">';
-		if ($companystatic->fk_parent > 0) {
-			$companyparent->fetch($companystatic->fk_parent);
-			print $companyparent->getNomUrl(1);
-		}
-		print "</td>";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Extra fields
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
-	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-	// Date creation
-	if (!empty($arrayfields['s.datec']['checked'])) {
-		print '<td class="center nowraponall">';
-		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Date modification
-	if (!empty($arrayfields['s.tms']['checked'])) {
-		print '<td class="center nowraponall">';
-		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Status
-	if (!empty($arrayfields['s.status']['checked'])) {
-		print '<td class="center nowraponall">'.$companystatic->getLibStatut(5).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Import key
-	if (!empty($arrayfields['s.import_key']['checked'])) {
-		print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->import_key).'">';
-		print dol_escape_htmltag($obj->import_key);
-		print "</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Action column (Show the massaction button only when this page is not opend from the Extended POS)
-	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-		print '<td class="nowrap center actioncolumn">';
-		if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($obj->rowid, $arrayofselected)) {
-				$selected = 1;
+		if (!empty($arrayfields['s.rowid']['checked'])) {
+			print '<td class="tdoverflowmax50" data-key="id">';
+			print $obj->rowid;
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
 			}
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+		if (!empty($arrayfields['s.nom']['checked'])) {
+			print '<td'.(empty($conf->global->MAIN_SOCIETE_SHOW_COMPLETE_NAME) ? ' class="tdoverflowmax200"' : '').' data-key="ref">';
+			if ($contextpage == 'poslist') {
+				print dol_escape_htmltag($companystatic->name);
+			} else {
+				print $companystatic->getNomUrl(1, '', 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+			}
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
-	}
+		if (!empty($arrayfields['s.name_alias']['checked'])) {
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
+			print dol_escape_htmltag($companystatic->name_alias);
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Barcode
+		if (!empty($arrayfields['s.barcode']['checked'])) {
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->barcode).'">'.dol_escape_htmltag($companystatic->barcode).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Customer code
+		if (!empty($arrayfields['s.code_client']['checked'])) {
+			print '<td class="nowraponall">'.dol_escape_htmltag($companystatic->code_client).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Supplier code
+		if (!empty($arrayfields['s.code_fournisseur']['checked'])) {
+			print '<td class="nowraponall">'.dol_escape_htmltag($companystatic->code_fournisseur).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Account customer code
+		if (!empty($arrayfields['s.code_compta']['checked'])) {
+			print '<td>'.dol_escape_htmltag($companystatic->code_compta_client).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Account supplier code
+		if (!empty($arrayfields['s.code_compta_fournisseur']['checked'])) {
+			print '<td>'.dol_escape_htmltag($companystatic->code_compta_fournisseur).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Address
+		if (!empty($arrayfields['s.address']['checked'])) {
+			print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($companystatic->address).'">'.dol_escape_htmltag($companystatic->address).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Zip
+		if (!empty($arrayfields['s.zip']['checked'])) {
+			print "<td>".dol_escape_htmltag($companystatic->zip)."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Town
+		if (!empty($arrayfields['s.town']['checked'])) {
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->town).'">'.dol_escape_htmltag($companystatic->town)."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// State
+		if (!empty($arrayfields['state.nom']['checked'])) {
+			print "<td>".dol_escape_htmltag($obj->state_name)."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Region
+		if (!empty($arrayfields['region.nom']['checked'])) {
+			print "<td>".dol_escape_htmltag($obj->region_name)."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Country
+		if (!empty($arrayfields['country.code_iso']['checked'])) {
+			print '<td class="center tdoverflowmax100">';
+			$labelcountry = ($companystatic->country_code && ($langs->trans("Country".$companystatic->country_code) != "Country".$companystatic->country_code)) ? $langs->trans("Country".$companystatic->country_code) : $obj->country_label;
+			print $labelcountry;
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Type ent
+		if (!empty($arrayfields['typent.code']['checked'])) {
+			if (!isset($typenArray) || !is_array($typenArray) || count($typenArray) == 0) {
+				$typenArray = $formcompany->typent_array(1);
+			}
+			$labeltypeofcompany= empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
 
-	print '</tr>'."\n";
+			print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($labeltypeofcompany).'">';
+			print dol_escape_htmltag($labeltypeofcompany);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Multiprice level
+		if (!empty($arrayfields['s.price_level']['checked'])) {
+			print '<td class="center">'.$obj->price_level."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Staff
+		if (!empty($arrayfields['staff.code']['checked'])) {
+			print '<td class="center">';
+			if (!is_array($staffArray) || count($staffArray) == 0) {
+				$staffArray = $formcompany->effectif_array(1);
+			}
+			print $staffArray[$obj->staff_code];
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		if (!empty($arrayfields['s.email']['checked'])) {
+			print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->rowid, 'AC_EMAIL', 0, 0, 1)."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		if (!empty($arrayfields['s.phone']['checked'])) {
+			print '<td class="nowraponall">'.dol_print_phone($obj->phone, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		if (!empty($arrayfields['s.fax']['checked'])) {
+			print '<td class="nowraponall">'.dol_print_phone($obj->fax, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'fax')."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		if (!empty($arrayfields['s.url']['checked'])) {
+			print "<td>".dol_print_url($obj->url, '', '', 1)."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		if (!empty($arrayfields['s.siren']['checked'])) {
+			print "<td>".$obj->idprof1."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		if (!empty($arrayfields['s.siret']['checked'])) {
+			print "<td>".$obj->idprof2."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		if (!empty($arrayfields['s.ape']['checked'])) {
+			print "<td>".$obj->idprof3."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		if (!empty($arrayfields['s.idprof4']['checked'])) {
+			print "<td>".$obj->idprof4."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		if (!empty($arrayfields['s.idprof5']['checked'])) {
+			print "<td>".$obj->idprof5."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		if (!empty($arrayfields['s.idprof6']['checked'])) {
+			print "<td>".$obj->idprof6."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// VAT
+		if (!empty($arrayfields['s.tva_intra']['checked'])) {
+			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($companystatic->tva_intra).'">';
+			if ($companystatic->tva_intra && !isValidVATID($companystatic)) {
+				print img_warning("BadVATNumber", '', 'pictofixedwidth');
+			}
+			print $companystatic->tva_intra;
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Type
+		if (!empty($arrayfields['customerorsupplier']['checked'])) {
+			print '<td class="center">';
+			print $companystatic->getTypeUrl(1);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		if (!empty($arrayfields['s.fk_prospectlevel']['checked'])) {
+			// Prospect level
+			print '<td class="center">';
+			print $companystatic->getLibProspLevel();
+			print "</td>";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
+			// Prospect status
+			print '<td class="center nowrap"><div class="nowraponall">';
+			print '<div class="inline-block">';
+			print $companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
+			print '</div> - <div class="inline-block">';
+			foreach ($prospectstatic->cacheprospectstatus as $key => $val) {
+				$titlealt = 'default';
+				if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) {
+					$titlealt = $val['label'];
+				}
+				if ($obj->stcomm_id != $val['id']) {
+					print '<a class="pictosubstatus reposition" href="'.$_SERVER["PHP_SELF"].'?stcommsocid='.$obj->rowid.'&stcomm='.urlencode($val['code']).'&action=setstcomm&token='.newToken().$param.($page ? '&page='.urlencode($page) : '').'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
+				}
+			}
+			print '</div></div></td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Parent company
+		if (!empty($arrayfields['s2.nom']['checked'])) {
+			print '<td class="center tdoverflowmax100">';
+			if ($companystatic->fk_parent > 0) {
+				$companyparent->fetch($companystatic->fk_parent);
+				print $companyparent->getNomUrl(1);
+			}
+			print "</td>";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Extra fields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+		// Fields from hook
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		// Date creation
+		if (!empty($arrayfields['s.datec']['checked'])) {
+			print '<td class="center nowraponall">';
+			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Date modification
+		if (!empty($arrayfields['s.tms']['checked'])) {
+			print '<td class="center nowraponall">';
+			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Status
+		if (!empty($arrayfields['s.status']['checked'])) {
+			print '<td class="center nowraponall">'.$companystatic->getLibStatut(5).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Import key
+		if (!empty($arrayfields['s.import_key']['checked'])) {
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->import_key).'">';
+			print dol_escape_htmltag($obj->import_key);
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Action column (Show the massaction button only when this page is not opend from the Extended POS)
+		if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+			print '<td class="nowrap center actioncolumn">';
+			if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		print '</tr>'."\n";
+	}
 	$i++;
 }
 

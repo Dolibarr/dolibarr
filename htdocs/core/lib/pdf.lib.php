@@ -13,6 +13,7 @@
  * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021-2022	Anthony Berton       	<anthony.berton@bb2a.fr>
+ * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -724,10 +725,15 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 		$filepath = $conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF;
 		if (file_exists($filepath)) {
 			$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak before adding image
+			if (getDolGlobalString('MAIN_USE_BACKGROUND_ON_PDF_ALPHA')) { $pdf->SetAlpha($conf->global->MAIN_USE_BACKGROUND_ON_PDF_ALPHA); } // Option for change opacity of background
 			$pdf->Image($filepath, (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_X) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_X : 0), (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y : 0), 0, $page_height);
+			if (getDolGlobalString('MAIN_USE_BACKGROUND_ON_PDF_ALPHA')) { $pdf->SetAlpha(1); }
 			$pdf->SetPageMark(); // This option avoid to have the images missing on some pages
 			$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
 		}
+	}
+	if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND') && getDolGlobalString('MAIN_ADD_PDF_BACKGROUND') != '-1') {
+		$pdf->SetPageMark(); // This option avoid to have the images missing on some pages
 	}
 }
 
@@ -1246,52 +1252,58 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 			$pdf->SetY(-$posy);
 
-			// Hide footer line if footer background color is set
-			if (!getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
-				$pdf->line($dims['lm'], $dims['hk'] - $posy, $dims['wk'] - $dims['rm'], $dims['hk'] - $posy);
-			}
+			// Option for hide all footer (page number will no hidden)
+			if (!getDolGlobalInt('PDF_FOOTER_HIDDEN')) {
+				// Hide footer line if footer background color is set
+				if (!getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
+					$pdf->line($dims['lm'], $dims['hk'] - $posy, $dims['wk'] - $dims['rm'], $dims['hk'] - $posy);
+				}
 
-			// Option for set top margin height of footer after freetext
-			if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalInt('PDF_FOOTER_TOP_MARGIN') === 0) {
-				$posy -= floatval(getDolGlobalString('PDF_FOOTER_TOP_MARGIN'));
-			} else {
-				$posy--;
-			}
+				// Option for set top margin height of footer after freetext
+				if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalInt('PDF_FOOTER_TOP_MARGIN') === 0) {
+					$posy -= floatval(getDolGlobalString('PDF_FOOTER_TOP_MARGIN'));
+				} else {
+					$posy--;
+				}
 
-			if (!empty($line1)) {
-				$pdf->SetFont('', 'B', 7);
-				$pdf->SetXY($dims['lm'], -$posy);
-				$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line1, 0, 'C', 0);
-				$posy -= 3;
-				$pdf->SetFont('', '', 7);
-			}
+				if (!empty($line1)) {
+					$pdf->SetFont('', 'B', 7);
+					$pdf->SetXY($dims['lm'], -$posy);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line1, 0, 'C', 0);
+					$posy -= 3;
+					$pdf->SetFont('', '', 7);
+				}
 
-			if (!empty($line2)) {
-				$pdf->SetFont('', 'B', 7);
-				$pdf->SetXY($dims['lm'], -$posy);
-				$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line2, 0, 'C', 0);
-				$posy -= 3;
-				$pdf->SetFont('', '', 7);
-			}
+				if (!empty($line2)) {
+					$pdf->SetFont('', 'B', 7);
+					$pdf->SetXY($dims['lm'], -$posy);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line2, 0, 'C', 0);
+					$posy -= 3;
+					$pdf->SetFont('', '', 7);
+				}
 
-			if (!empty($line3)) {
-				$pdf->SetXY($dims['lm'], -$posy);
-				$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line3, 0, 'C', 0);
-			}
+				if (!empty($line3)) {
+					$pdf->SetXY($dims['lm'], -$posy);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line3, 0, 'C', 0);
+				}
 
-			if (!empty($line4)) {
-				$posy -= 3;
-				$pdf->SetXY($dims['lm'], -$posy);
-				$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line4, 0, 'C', 0);
+				if (!empty($line4)) {
+					$posy -= 3;
+					$pdf->SetXY($dims['lm'], -$posy);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line4, 0, 'C', 0);
+				}
 			}
 		}
 	}
 	// Show page nb only on iso languages (so default Helvetica font)
-	if (strtolower(pdf_getPDFFont($outputlangs)) == 'helvetica') {
-		$pdf->SetXY($dims['wk'] - $dims['rm'] - 18, -$posy);
-		//$pdf->MultiCell(18, 2, $pdf->getPageNumGroupAlias().' / '.$pdf->getPageGroupAlias(), 0, 'R', 0);
-		$pdf->MultiCell(18, 2, $pdf->PageNo().' / '.$pdf->getAliasNbPages(), 0, 'R', 0);
-	}
+	// if (strtolower(pdf_getPDFFont($outputlangs)) == 'helvetica') {
+		$pdf->SetXY($dims['wk'] - $dims['rm'] - 18 - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_X', 0), -$posy - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_Y', 0));
+		// $pdf->MultiCell(18, 2, $pdf->getPageNumGroupAlias().' / '.$pdf->getPageGroupAlias(), 0, 'R', 0);
+		// $pdf->MultiCell(18, 2, $pdf->PageNo().' / '.$pdf->getAliasNbPages(), 0, 'R', 0); // doesn't works with all fonts
+		// $pagination = $pdf->getAliasNumPage().' / '.$pdf->getAliasNbPages(); // works with $pdf->Cell
+		$pagination = $pdf->PageNo().' / '.$pdf->getNumPages();
+		$pdf->MultiCell(18, 2, $pagination, 0, 'R', 0);
+	// }
 
 	//  Show Draft Watermark
 	if (!empty($watermark)) {
@@ -2471,10 +2483,12 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefSending");
 					if (!empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] .= ' / ';
 					$linkedobjects[$objecttype]['ref_value'] .= $outputlangs->transnoentities($elementobject->ref);
+					$linkedobjects[$objecttype]['date_value'] = dol_print_date(empty($elementobject->date_shipping) ? $elementobject->date_delivery : $elementobject->date_shipping, 'day', '', $outputlangs);
 				} else {
 					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending");
 					if (empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] = $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
 					$linkedobjects[$objecttype]['ref_value'] .= ' / '.$outputlangs->transnoentities($elementobject->ref);
+					$linkedobjects[$objecttype]['date_value'] = dol_print_date(empty($elementobject->date_shipping) ? $elementobject->date_delivery : $elementobject->date_shipping, 'day', '', $outputlangs);
 				}
 			}
 		}
@@ -2508,6 +2522,8 @@ function pdf_getSizeForImage($realpath)
 	$maxheight = (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT) ? 32 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT);
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$tmp = dol_getImageSize($realpath);
+	$width = 0;
+	$height = 0;
 	if ($tmp['height']) {
 		$width = (int) round($maxheight * $tmp['width'] / $tmp['height']); // I try to use maxheight
 		if ($width > $maxwidth) {	// Pb with maxheight, so i use maxwidth

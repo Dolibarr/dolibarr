@@ -191,6 +191,12 @@ class Mailing extends CommonObject
 	public $substitutionarrayfortest;
 
 
+	const STATUS_DRAFT = 0;
+	const STATUS_VALIDATED = 1;
+	const STATUS_SENTPARTIALY = 2;
+	const STATUS_SENTCOMPLETELY = 3;
+
+
 	/**
 	 *  Constructor
 	 *
@@ -556,15 +562,14 @@ class Mailing extends CommonObject
 	/**
 	 *  Delete emailing
 	 *
-	 *  @param	int		$rowid      Id if emailing to delete
+	 *  @param	User	$user		User that delete
 	 *  @param	int		$notrigger	Disable triggers
 	 *  @return int         		>0 if OK, <0 if KO
 	 */
-	public function delete($rowid, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
-		global $user;
-
 		$error = 0;
+
 		$this->db->begin();
 
 		if (!$notrigger) {
@@ -576,7 +581,7 @@ class Mailing extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "mailing";
-			$sql .= " WHERE rowid = " . ((int) $rowid);
+			$sql .= " WHERE rowid = " . ((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -727,6 +732,36 @@ class Mailing extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$nofetch = !empty($params['nofetch']);
+		$langs->load('mails');
+
+		$datas = array();
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ShowEMailing").'</u>';
+		if (isset($this->statut)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (isset($this->title)) {
+			$datas['title'] .= '<br><b>'.$langs->trans('MailTitle').':</b> '.$this->title;
+		}
+		if (isset($this->sujet)) {
+			$datas['subject'] .= '<br><b>'.$langs->trans('MailTopic').':</b> '.$this->sujet;
+		}
+
+		return $datas;
+	}
+
+	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -747,11 +782,20 @@ class Mailing extends CommonObject
 		}
 
 		$result = '';
-		$companylink = '';
-
-		$label = '<u>'.$langs->trans("ShowEMailing").'</u>';
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+			'nofetch' => 1,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
+		}
+		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/comm/mailing/card.php?id='.$this->id;
 
@@ -772,8 +816,8 @@ class Mailing extends CommonObject
 				$label = $langs->trans("ShowEMailing");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -784,7 +828,7 @@ class Mailing extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;

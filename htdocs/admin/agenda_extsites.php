@@ -185,7 +185,7 @@ $formother = new FormOther($db);
 $arrayofjs = array();
 $arrayofcss = array();
 
-$wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
+$wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Terminplanung';
 llxHeader('', $langs->trans("AgendaSetup"), $wikihelp, '', 0, 0, $arrayofjs, $arrayofcss);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -203,7 +203,7 @@ print '<span class="opacitymedium">'.$langs->trans("AgendaExtSitesDesc")."</span
 print "<br>\n";
 
 
-$selectedvalue=$conf->global->AGENDA_DISABLE_EXT;
+$selectedvalue = getDolGlobalInt('AGENDA_DISABLE_EXT');
 if ($selectedvalue==1) $selectedvalue=0; else $selectedvalue=1;
 
 print "<table class=\"noborder\" width=\"100%\">";

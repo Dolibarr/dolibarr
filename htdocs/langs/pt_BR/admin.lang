@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - admin
 BoldRefAndPeriodOnPDF=Imprimir referência e período do item em PDF
-BoldLabelOnPDF=Imprimir etiqueta do item em negrito, em PDF
 VersionProgram=Versão Programa
 VersionLastInstall=Versão de instalação inicial
 VersionLastUpgrade=Atualização versão mais recente
@@ -338,7 +337,6 @@ ExtrafieldCheckBox=Caixas de seleção
 ExtrafieldCheckBoxFromList=Caixas de seleção da tabela
 ExtrafieldLink=Link para um objeto
 ComputedFormula=Campo computado
-ComputedFormulaDesc=Você pode inserir aqui uma fórmula usando outras propriedades do objeto ou qualquer código PHP para obter um valor computado dinâmico. Você pode usar qualquer fórmula compatível com PHP, incluindo o "?" operador de condição e objeto global seguinte: <strong>$db, $conf, $langs, $mysoc, $user, $object</strong> . <br> <strong>AVISO</strong> : Apenas algumas propriedades do $object podem estar disponíveis. Se você precisar de propriedades não carregadas, basta buscar o objeto em sua fórmula, como no segundo exemplo. <br> Usar um campo computado significa que você não pode inserir qualquer valor da interface. Além disso, se houver um erro de sintaxe, a fórmula pode retornar nada. <br><br> Exemplo de fórmula: <br> $object-> id < 10? round ($object-> id / 2, 2): ($object-> id + 2 * $user-> id) * (int) substr ($mysoc-> zip, 1, 2) <br><br> Exemplo para recarregar o objeto <br> (($reloadedobj = novo Societe($db)) && ($reloadedobj-> fetch ($obj-> id? $ obj-> id: ($obj-> rowid? $obj-> rowid: $object-> id )) > 0))? $reloadedobj-> array_options ['options_extrafieldkey'] * $reloadedobj-> capital / 5: '-1' <br><br> Outro exemplo de fórmula para forçar a carga do objeto e seu objeto pai: <br> (($reloadedobj = new Task($db)) &&  ($reloadedobj-> fetch ($object-> id) > 0) && ($secondloadedobj = new Project ($db)) && ($secondloadedobj-> fetch($reloadedobj-> fk_project) > 0)) ? $secondloadedobj-> ref: 'Projeto pai não encontrado'
 Computedpersistent=Armazenar campo computado
 ComputedpersistentDesc=Campos extra computados serão armazenados no banco de dados, no entanto, o valor será recalculado somente quando o objeto deste campo for alterado. Se o campo computado depender de outros objetos ou dados globais, esse valor pode estar errado !!
 ExtrafieldParamHelpselect=Lista de valores deve ser linhas com chave de formato, valor (onde a chave não pode ser '0') <br><br> por exemplo: <br> 1, value1 <br> 2, value2 <br> código3, valor3 <br>...<br><br> Para que a lista dependa de outra lista de atributos complementares: <br> 1, valor1 | <i>opções_ pai_list_code</i> : parent_key <br> 2, valor2 | <i>opções_ pai_list_code</i> : parent_key <br><br> Para ter a lista dependendo de outra lista: <br> 1, valor1 | <i>parent_list_code</i> : parent_key <br> 2, value2 | <i>parent_list_code</i> : parent_key
@@ -515,7 +513,6 @@ Module62000Name=Termos Internacionais de Comércio
 Module62000Desc=Adicione recursos para gerenciar Termos Internacionais de Comércio
 Module63000Desc=Gerenciar recursos (impressoras, carros, salas, ...) para alocar eventos
 Module94160Name=Recebimentos
-Permission11=Ler Faturas de Clientes
 Permission12=Criar/Modificar Faturas de Clientes
 Permission14=Faturas de Clientes Validadas
 Permission15=Enviar Faturas de Clientes por E-Mail
@@ -741,7 +738,6 @@ Permission1190=Aprovar pedidos de compra (segunda aprovação)
 Permission1191=Exportar pedidos de fornecedores e seus atributos
 Permission1201=Conseguir Resultado de uma Exportação
 Permission1202=Criar/Modificar uma Exportação
-Permission1231=Ler faturas de fornecedores
 Permission1232=Criar/modificar faturas de fornecedores
 Permission1234=Excluir faturas de fornecedores
 Permission1235=Enviar faturas de fornecedores por e-mail
@@ -956,7 +952,6 @@ SetupDescription4=<a href="%s"> %s -> %s </a> <br> <br> Este software é um conj
 SetupDescription5=Outras entradas do menu de configuração gerenciam parâmetros opcionais.
 SetupDescriptionLink=<a href="%s"> %s - %s </a>
 SetupDescription3b=Parâmetros básicos usados para personalizar o comportamento padrão do seu aplicativo (por exemplo, para recursos relacionados ao país).
-SetupDescription4b=Este software é um conjunto de muitos módulos/aplicativos. Os módulos relacionados às suas necessidades devem estar habilitados e configurados. As entradas do menu aparecerão com a ativação desses módulos.
 AuditedSecurityEvents=Eventos de segurança que são auditados
 NoSecurityEventsAreAduited=Nenhum evento de segurança é auditado. Você pode habilitá-los no menu %s
 InfoOS=Sobre o SO
@@ -1011,6 +1006,7 @@ YouMustRunCommandFromCommandLineAfterLoginToUser=Você deve rodar esse comando n
 YourPHPDoesNotHaveSSLSupport=Função SSL functions não está disponível no seu PHP
 DownloadMoreSkins=Mais skins para baixar
 SimpleNumRefModelDesc=Retorna o número de referência no formato %s yymm-nnnn onde yy é o ano, mm é o mês e nnnn é um número de incremento automático sequencial sem redefinição
+AdvancedNumRefModelDesc=Retorna o número de referência no formato %s yymm-nnnn onde yy é o ano, mm é o mês e nnnn é um número de incremento automático sequencial sem redefinição
 SimpleNumRefNoDateModelDesc=Retorna o número de referência no formato %s-nnnn onde nnnn é um número sequencial de incremento automático sem reinicialização
 ShowProfIdInAddress=Mostrar ID profissional com endereços
 ShowVATIntaInAddress=Ocultar número de IVA intracomunitário

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016    Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016         Christophe Battarel <christophe@altairis.fr>
+ * Copyright (C) 2023         Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +27,6 @@
 if (!defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
 }*/
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', '1');
-}
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
@@ -514,7 +512,7 @@ $arrayofcss = array('/opensurvey/css/style.css', '/ticket/css/styles.css.php');
 llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
-print '<div class="ticketpublicarea">';
+print '<div class="ticketpublicarea ticketlargemargin centpercent">';
 
 if ($action != "infos_success") {
 	$formticket->withfromsocid = isset($socid) ? $socid : $user->socid;

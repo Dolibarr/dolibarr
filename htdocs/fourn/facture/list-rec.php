@@ -130,9 +130,9 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-$permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->facture->creer; // Used by the include of actions_dellink.inc.php
-$permissiontoedit = $user->rights->facture->creer; // Used by the include of actions_lineupdonw.inc.php
+$permissionnote = $user->hasRight('facture', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('facture', 'creer'); // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $user->hasRight('facture', 'creer'); // Used by the include of actions_lineupdonw.inc.php
 
 $arrayfields = array(
 	'f.titre'=>array('label'=>'Ref', 'checked'=>1),
@@ -278,7 +278,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn_rec as f';

@@ -193,9 +193,8 @@ $arrayofcss = array('/ticket/css/styles.css.php');
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
-
 if ($action == "view_ticketlist") {
-	print '<div class="ticketpublicarealist">';
+	print '<div class="ticketpublicarealist ticketlargemargin centpercent">';
 
 	print '<br>';
 	if ($display_ticket_list) {
@@ -229,9 +228,10 @@ if ($action == "view_ticketlist") {
 		$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 		$filter = array();
+
 		$param = '&action=view_ticketlist';
 		if (!empty($entity) && isModEnabled('multicompany')) {
-			$param .= '&entity='.$entity;
+			$param .= '&entity='.((int) $entity);
 		}
 
 		// Definition of fields for list
@@ -407,7 +407,8 @@ if ($action == "view_ticketlist") {
 			$resql = $db->query($sql);
 			if ($resql) {
 				$num = $db->num_rows($resql);
-				print_barre_liste($langs->trans('TicketList'), $page, '/public/ticket/list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket');
+
+				print_barre_liste($langs->trans('TicketList'), $page, 'list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket');
 
 				// Search bar
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" id="searchFormList" >'."\n";
@@ -424,6 +425,7 @@ if ($action == "view_ticketlist") {
 				$reshook=$hookmanager->executeHooks('printFieldListHeader', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 
+				print '<div class="div-table-responsive">';
 				print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';
 
 				// Filter bar
@@ -695,6 +697,8 @@ if ($action == "view_ticketlist") {
 				}
 
 				print '</table>';
+				print '</div>';
+
 				print '</form>';
 
 				print '<form method="post" id="form_view_ticket" name="form_view_ticket" action="'.dol_buildpath('/public/ticket/view.php', 1).(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" style="display:none;">';
@@ -722,7 +726,7 @@ if ($action == "view_ticketlist") {
 
 	print '</div>';
 } else {
-	print '<div class="ticketpublicarea">';
+	print '<div class="ticketpublicarea ticketlargemargin centpercent">';
 
 	print '<p class="center opacitymedium">'.$langs->trans("TicketPublicMsgViewLogIn").'</p>';
 	print '<br>';

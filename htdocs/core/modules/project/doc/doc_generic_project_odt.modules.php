@@ -3,7 +3,8 @@
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -749,13 +750,14 @@ class doc_generic_project_odt extends ModelePDFProjects
 						}
 
 						//Time ressources
-						$sql = "SELECT t.rowid, t.task_date, t.task_duration, t.fk_user, t.note";
+						$sql = "SELECT t.rowid, t.element_date as task_date, t.element_duration as task_duration, t.fk_user, t.note";
 						$sql .= ", u.lastname, u.firstname, t.thm";
-						$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
+						$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t";
 						$sql .= " , ".MAIN_DB_PREFIX."user as u";
-						$sql .= " WHERE t.fk_task =".((int) $task->id);
+						$sql .= " WHERE t.fk_element =".((int) $task->id);
+						$sql .= " AND t.elementtype = 'task'";
 						$sql .= " AND t.fk_user = u.rowid";
-						$sql .= " ORDER BY t.task_date DESC";
+						$sql .= " ORDER BY t.element_date DESC";
 
 						$resql = $this->db->query($sql);
 						if ($resql) {
@@ -945,31 +947,31 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListProposalsAssociatedProject",
 						'class' => 'Propal',
 						'table' => 'propal',
-						'test' => $conf->propal->enabled && $user->rights->propal->lire
+						'test' => isModEnabled('propal') && $user->hasRight('propal', 'lire')
 					),
 					'order' => array(
 						'title' => "ListOrdersAssociatedProject",
 						'class' => 'Commande',
 						'table' => 'commande',
-						'test' => $conf->commande->enabled && $user->rights->commande->lire
+						'test' => isModEnabled('commande') && $user->hasRight('commande', 'lire')
 					),
 					'invoice' => array(
 						'title' => "ListInvoicesAssociatedProject",
 						'class' => 'Facture',
 						'table' => 'facture',
-						'test' => $conf->facture->enabled && $user->rights->facture->lire
+						'test' => isModEnabled('facture') && $user->hasRight('facture', 'lire')
 					),
 					'invoice_predefined' => array(
 						'title' => "ListPredefinedInvoicesAssociatedProject",
 						'class' => 'FactureRec',
 						'table' => 'facture_rec',
-						'test' => $conf->facture->enabled && $user->rights->facture->lire
+						'test' => isModEnabled('facture') && $user->hasRight('facture', 'lire')
 					),
 					'proposal_supplier' => array(
 						'title' => "ListSupplierProposalsAssociatedProject",
 						'class' => 'SupplierProposal',
 						'table' => 'supplier_proposal',
-						'test' => $conf->supplier_proposal->enabled && $user->rights->supplier_proposal->lire
+						'test' => isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire
 					),
 					'order_supplier' => array(
 						'title' => "ListSupplierOrdersAssociatedProject",
@@ -987,14 +989,14 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListContractAssociatedProject",
 						'class' => 'Contrat',
 						'table' => 'contrat',
-						'test' => $conf->contrat->enabled && $user->rights->contrat->lire
+						'test' => isModEnabled('contrat') && $user->hasRight('contrat', 'lire')
 					),
 					'intervention' => array(
 						'title' => "ListFichinterAssociatedProject",
 						'class' => 'Fichinter',
 						'table' => 'fichinter',
 						'disableamount' => 1,
-						'test' => $conf->ficheinter->enabled && $user->rights->ficheinter->lire
+						'test' => $conf->ficheinter->enabled && $user->hasRight('ficheinter', 'lire')
 					),
 					'shipping' => array(
 						'title' => "ListShippingAssociatedProject",
@@ -1167,9 +1169,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
 				$reshook = $hookmanager->executeHooks('afterODTCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$odfHandler = null; // Destroy object
 

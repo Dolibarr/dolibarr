@@ -146,7 +146,7 @@ function payment_supplier_prepare_head(Paiement $object)
  */
 function getValidOnlinePaymentMethods($paymentmethod = '')
 {
-	global $conf, $langs, $hookmanager, $action;
+	global $langs, $hookmanager, $action;
 
 	$validpaymentmethod = array();
 
@@ -170,7 +170,16 @@ function getValidOnlinePaymentMethods($paymentmethod = '')
 		'validpaymentmethod' => &$validpaymentmethod
 	];
 	$tmpobject = new stdClass();
-	$hookmanager->executeHooks('doValidatePayment', $parameters, $tmpobject, $action);
+	$reshook = $hookmanager->executeHooks('getValidPayment', $parameters, $tmpobject, $action);
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	} elseif (!empty($hookmanager->resArray['validpaymentmethod'])) {
+		if ($reshook == 0) {
+			$validpaymentmethod = array_merge($validpaymentmethod, $hookmanager->resArray['validpaymentmethod']);
+		} else {
+			$validpaymentmethod = $hookmanager->resArray['validpaymentmethod'];
+		}
+	}
 
 	return $validpaymentmethod;
 }
@@ -241,7 +250,9 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	$urltouse = DOL_MAIN_URL_ROOT;
+	$urltouse = DOL_MAIN_URL_ROOT;						// Should be "https://www.mydomain.com/mydolibarr" for example
+	//dol_syslog("getOnlinePaymentUrl DOL_MAIN_URL_ROOT=".DOL_MAIN_URL_ROOT);
+
 	if ($localorexternal) {
 		$urltouse = $urlwithroot;
 	}
@@ -423,6 +434,8 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 {
 	global $conf;
 
+	$reg = array();
+
 	// Juridical status
 	$line1 = "";
 	if ($fromcompany->forme_juridique_code) {
@@ -474,9 +487,8 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 
 	print '<!-- htmlPrintOnlinePaymentFooter -->'."\n";
 
+	print '<footer class="center paddingleft paddingright centpercent">'."\n";
 	print '<br>';
-
-	print '<div class="center paddingleft paddingright">'."\n";
 	if ($addformmessage) {
 		print '<!-- object = '.(empty($object) ? 'undefined' : $object->element).' -->';
 		print '<br>';
@@ -508,5 +520,6 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 		print ' - ';
 	}
 	print $line2;
-	print '</span></div>'."\n";
+	print '</span>';
+	print '</footer>'."\n";
 }

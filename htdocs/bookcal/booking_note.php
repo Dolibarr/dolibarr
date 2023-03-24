@@ -24,12 +24,11 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
 require_once DOL_DOCUMENT_ROOT.'/bookcal/class/booking.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_booking.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bookcal@bookcal", "companies"));
+$langs->loadLangs(array("agenda", "companies"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -71,7 +70,7 @@ if ($enablepermissioncheck) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->bookcal->enabled)) accessforbidden();
+if (!isModEnabled('bookcal')) accessforbidden();
 if (!$permissiontoread) accessforbidden();
 
 

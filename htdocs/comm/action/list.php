@@ -33,18 +33,22 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("users", "companies", "agenda", "commercial", "other", "orders", "bills"));
 
-$action = GETPOST('action', 'aZ09');
+// Get Parameters
+$action 	= GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
+$confirm 	= GETPOST('confirm', 'alpha');
+$cancel     = GETPOST('cancel', 'alpha');
+$toselect 	= GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'actioncommlist'; // To manage different context of search
-$optioncss = GETPOST('optioncss', 'alpha');
-$toselect = GETPOST('toselect', 'array');
-$confirm = GETPOST('confirm', 'alpha');
+$optioncss 	= GETPOST('optioncss', 'alpha');
+
 
 $disabledefaultvalues = GETPOST('disabledefaultvalues', 'int');
 
@@ -70,6 +74,7 @@ if (GETPOST('search_actioncode', 'array')) {
 	$actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 
+// Search Fields
 $search_id = GETPOST('search_id', 'alpha');
 $search_title = GETPOST('search_title', 'alpha');
 $search_note = GETPOST('search_note', 'alpha');
@@ -106,6 +111,7 @@ if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS)) {
 	$filtert = $user->id;
 }
 
+// Pagination parameters
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -283,7 +289,7 @@ $nav .= ' <input type="submit" name="submitdateselect" class="button" value="'.$
 
 $now = dol_now();
 
-$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda|DE:Modul_Terminplanung';
 $title = $langs->trans("Agenda");
 llxHeader('', $title, $help_url);
 
@@ -409,7 +415,7 @@ if ($usergroup > 0) {
 }
 $sql .= " s.nom as societe, s.rowid as socid, s.client, s.email as socemail,";
 $sql .= " a.id, a.code, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulldayevent, a.location,";
-$sql .= ' a.fk_user_author,a.fk_user_action,';
+$sql .= " a.fk_user_author, a.fk_user_action,";
 $sql .= " a.fk_contact, a.note, a.percent as percent,";
 $sql .= " a.fk_element, a.elementtype, a.datec, a.tms as datem,";
 $sql .= " c.code as type_code, c.libelle as type_label, c.color as type_color, c.type as type_type, c.picto as type_picto,";
@@ -600,7 +606,7 @@ $num = $db->num_rows($resql);
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 // Local calendar
-$newtitle = '<div class="nowrap clear inline-block minheight30 margintoponly">';
+$newtitle = '<div class="nowrap clear inline-block minheight30">';
 $newtitle .= '<input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; ';
 $newtitle .= '</div>';
 //$newtitle=$langs->trans($title);
@@ -795,9 +801,8 @@ if (!empty($arrayfields['a.tms']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
 if (!empty($arrayfields['a.percent']['checked'])) {
-	print '<td class="liste_titre center">';
-	$formactions->form_select_status_action('formaction', $search_status, 1, 'search_status', 1, 2, 'minwidth100imp maxwidth125');
-	print ajax_combobox('selectsearch_status');
+	print '<td class="liste_titre right parentonrightofpage">';
+	$formactions->form_select_status_action('formaction', $search_status, 1, 'search_status', 1, 2, 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Action column
@@ -928,6 +933,7 @@ while ($i < $imaxinloop) {
 	$actionstatic->note_private = dol_htmlentitiesbr($obj->note);
 	$actionstatic->datep = $db->jdate($obj->dp);
 	$actionstatic->percentage = $obj->percent;
+	$actionstatic->authorid = $obj->fk_user_author;
 
 	// Initialize $this->userassigned && this->socpeopleassigned array && this->userownerid
 	// but only if we need it
@@ -1005,7 +1011,8 @@ while ($i < $imaxinloop) {
 
 	// User owner
 	if (!empty($arrayfields['owner']['checked'])) {
-		print '<td class="tdoverflowmax150"' . ($event_owner_style != '' ? ' style="'.$event_owner_style.'"' : '') . '>'; // With edge and chrome the td overflow is not supported correctly when content is not full text.
+		//print '<td class="tdoverflowmax150"' . ($event_owner_style != '' ? ' style="'.$event_owner_style.'"' : '') . '>';
+		print '<td class="tdoverflowmax150">';
 		if ($obj->fk_user_action > 0 && !isset($cache_user_list[$obj->fk_user_action])) {
 			$userstatic = new User($db);
 			$res = $userstatic->fetch($obj->fk_user_action);

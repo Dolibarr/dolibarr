@@ -296,18 +296,18 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 
 
-		if ($conf->commande->multidir_output[$conf->entity]) {
+		if (getMultidirOutput($object)) {
 			$object->fetch_thirdparty();
 
 			$deja_regle = 0;
 
 			// Definition of $dir and $file
 			if ($object->specimen) {
-				$dir = $conf->commande->multidir_output[$conf->entity];
+				$dir = getMultidirOutput($object);
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->commande->multidir_output[$object->entity]."/".$objectref;
+				$dir = getMultidirOutput($object)."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 
@@ -767,7 +767,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 					$localtax1_type = $object->lines[$i]->localtax1_type;
 					$localtax2_type = $object->lines[$i]->localtax2_type;
 
-					if ($object->remise_percent) {
+					// TODO remise_percent is an obsolete field for object parent
+					/*if ($object->remise_percent) {
 						$tvaligne -= ($tvaligne * $object->remise_percent) / 100;
 					}
 					if ($object->remise_percent) {
@@ -775,7 +776,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 					}
 					if ($object->remise_percent) {
 						$localtax2ligne -= ($localtax2ligne * $object->remise_percent) / 100;
-					}
+					}*/
 
 					$vatrate = (string) $object->lines[$i]->tva_tx;
 
@@ -900,9 +901,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -1448,7 +1447,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null, $titlekey = "PdfOrderTitle")
 	{
 		// phpcs:enable
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs, $hookmanager, $mysoc;
 
 		$ltrdirection = 'L';
 		if ($outputlangs->trans("DIRECTION") == 'rtl') $ltrdirection = 'R';
@@ -1474,8 +1473,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity];
+				if (!empty(getMultidirOutput($mysoc, 'mycompany'))) {
+					$logodir = getMultidirOutput($mysoc, 'mycompany');
 				}
 				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;

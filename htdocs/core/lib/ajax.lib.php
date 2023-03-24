@@ -526,24 +526,46 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	}
 	$msg .= ';'."\n";
 
-	if (is_array($events) && count($events)) {    // If an array of js events to do were provided.
-		$msg .= '
+	$msg .= '});'."\n";
+	$msg .= "</script>\n";
+
+	$msg .= ajax_event($htmlname, $events);
+
+	return $msg;
+}
+
+
+/**
+ * Add event management script.
+ *
+ * @param	string	$htmlname					Name of html select field ('myid' or '.myclass')
+ * @param	array	$events						Add some Ajax events option on change of $htmlname component to call ajax to autofill a HTML element (select#htmlname and #inputautocompletehtmlname)
+ * 												Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+ * @return	string								Return JS string to manage event
+ */
+function ajax_event($htmlname, $events)
+{
+	$out = '';
+
+	if (is_array($events) && count($events)) {   // If an array of js events to do were provided.
+		$out = '<!-- JS code to manage event for id = ' . $htmlname . ' -->
+	<script>
+		$(document).ready(function () {
 			jQuery("#'.$htmlname.'").change(function () {
-				var obj = '.json_encode($events).';
+				var obj = '.json_encode($events) . ';
 		   		$.each(obj, function(key,values) {
 	    			if (values.method.length) {
 	    				runJsCodeForEvent'.$htmlname.'(values);
 	    			}
 				});
 			});
-
 			function runJsCodeForEvent'.$htmlname.'(obj) {
 				var id = $("#'.$htmlname.'").val();
 				var method = obj.method;
 				var url = obj.url;
 				var htmlname = obj.htmlname;
 				var showempty = obj.showempty;
-				console.log("Run runJsCodeForEvent-'.$htmlname.' from ajax_combobox id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
+			    console.log("Run runJsCodeForEvent-'.$htmlname.' from ajax_combobox id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
 				$.getJSON(url,
 						{
 							action: method,
@@ -567,7 +589,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 								var selecthtml_str = response.value;
 								var selecthtml_dom=$.parseHTML(selecthtml_str);
 								if (typeof(selecthtml_dom[0][0]) !== \'undefined\') {
-                                   	$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+									$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
 								}
 							} else {
 								$("#inputautocomplete"+htmlname).val("");
@@ -575,14 +597,14 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 							$("select#" + htmlname).change();	/* Trigger event change */
 						}
 				);
-			}';
+			}
+		});
+	</script>';
 	}
 
-	$msg .= '});'."\n";
-	$msg .= "</script>\n";
-
-	return $msg;
+	return $out;
 }
+
 
 /**
  * 	On/off button for constant
@@ -674,8 +696,8 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
  *  @param  Object  $object     Object to set
  *  @param  string  $code       Name of property in object : 'status' or 'status_buy' for product by example
  *  @param  string  $field      Name of database field : 'tosell' or 'tobuy' for product by example
- *  @param  string  $text_on    Text if on
- *  @param  string  $text_off   Text if off
+ *  @param  string  $text_on    Text if on ('Text' or 'Text:css picto on')
+ *  @param  string  $text_off   Text if off ('Text' or 'Text:css picto on')
  *  @param  array   $input      Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
  *  @param	string	$morecss	More CSS
  *  @param	string	$htmlname	Name of HTML component. Keep '' or use a different value if you need to use this component several time on same page for same property.
@@ -688,6 +710,7 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
 	if (empty($htmlname)) {
 		$htmlname = $code;
 	}
+	//var_dump($object->module); var_dump($object->element);
 
 	$out = '<script>
         $(function() {
@@ -700,8 +723,8 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     action: \'set\',
                     field: \''.dol_escape_js($field).'\',
                     value: \'1\',
-                    element: \''.dol_escape_js($object->element).'\',
-                    id: \''.$object->id.'\',
+                    element: \''.dol_escape_js(((empty($object->module) || $object->module == $object->element) ? '' : $object->module.'@').$object->element).'\',
+                    id: \''.((int) $object->id).'\',
 					token: \''.currentToken().'\'
                 },
                 function() {
@@ -732,8 +755,8 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     action: \'set\',
                     field: \''.dol_escape_js($field).'\',
                     value: \'0\',
-                    element: \''.dol_escape_js($object->element).'\',
-                    id: \''.$object->id.'\',
+                    element: \''.dol_escape_js(((empty($object->module) || $object->module == $object->element) ? '' : $object->module.'@').$object->element).'\',
+                    id: \''.((int) $object->id).'\',
 					token: \''.currentToken().'\'
                 },
                 function() {
@@ -758,8 +781,22 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
             });
         });
     </script>';
-	$out .= '<span id="set_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_off), 'switch_off').'</span>';
-	$out .= '<span id="del_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_on), 'switch_on').'</span>';
+
+	$switchon = 'switch_on';
+	$switchoff = 'switch_off';
+	$tmparray = explode(':', $text_on);
+	if (!empty($tmparray[1])) {
+		$text_on = $tmparray[0];
+		$switchon = $tmparray[1];
+	}
+	$tmparray = explode(':', $text_off);
+	if (!empty($tmparray[1])) {
+		$text_off = $tmparray[0];
+		$switchoff = $tmparray[1];
+	}
+
+	$out .= '<span id="set_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_off), $switchoff).'</span>';
+	$out .= '<span id="del_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_on), $switchon).'</span>';
 
 	return $out;
 }

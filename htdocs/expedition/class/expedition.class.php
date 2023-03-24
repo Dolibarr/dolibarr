@@ -90,6 +90,15 @@ class Expedition extends CommonObject
 	 */
 	public $fields = array();
 
+	/**
+	 * @var int ID of user author
+	 */
+	public $user_author_id;
+
+	/**
+	 * @var int ID of user author
+	 */
+	public $fk_user_author;
 
 	public $socid;
 
@@ -175,8 +184,35 @@ class Expedition extends CommonObject
 	public $meths;
 	public $listmeths; // List of carriers
 
+	/**
+	 * @var int ID of order
+	 */
+	public $commande_id;
+
+	/**
+	 * @var Commande order
+	 */
+	public $commande;
+
+	/**
+	 * @var ExpeditionLigne[] array of shipping lines
+	 */
 	public $lines = array();
 
+	// Multicurrency
+	/**
+	 * @var int Currency ID
+	 */
+	public $fk_multicurrency;
+
+	/**
+	 * @var string multicurrency code
+	 */
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 
 	/**
 	 * Draft status
@@ -494,6 +530,7 @@ class Expedition extends CommonObject
 				foreach ($tab as $detbatch) {
 					if ($detbatch->entrepot_id == $stockLocation) {
 						if (!($detbatch->create($line_id) > 0)) {		// Create an ExpeditionLineBatch
+							$this->errors = $detbatch->errors;
 							$error++;
 						}
 					}
@@ -563,8 +600,10 @@ class Expedition extends CommonObject
 				$this->socid                = $obj->socid;
 				$this->ref_customer = $obj->ref_customer;
 				$this->ref_ext		    = $obj->ref_ext;
-				$this->statut               = $obj->fk_statut;
+				$this->status               = $obj->fk_statut;
+				$this->statut               = $this->status; // Deprecated
 				$this->user_author_id       = $obj->fk_user_author;
+				$this->fk_user_author       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
 				$this->date_valid = $this->db->jdate($obj->date_valid);
 				$this->date                 = $this->db->jdate($obj->date_expedition); // TODO deprecated
@@ -1785,6 +1824,31 @@ class Expedition extends CommonObject
 
 
 	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$langs->load('shipping');
+		$nofetch = !empty($params['nofetch']);
+
+		$datas = array();
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Shipment").'</u>';
+		if (isset($this->statut)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
+
+		return $datas;
+	}
+
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      int			$withpicto      			Add picto into link
@@ -1800,9 +1864,20 @@ class Expedition extends CommonObject
 		global $langs, $conf, $hookmanager;
 
 		$result = '';
-		$label = '<u>'.$langs->trans("Shipment").'</u>';
-		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+			'nofetch' => 1,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params='.json_encode($params);
+			// $label = $langs->trans('Loading');
+		}
+		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/expedition/card.php?id='.$this->id;
 
@@ -1827,8 +1902,8 @@ class Expedition extends CommonObject
 				$label = $langs->trans("Shipment");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip"';
+			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="'.$classfortooltip.'"';
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -1837,7 +1912,7 @@ class Expedition extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -2946,7 +3021,7 @@ class ExpeditionLigne extends CommonObjectLine
 						$shipmentLot->qty = $this->detail_batch->qty;
 						$shipmentLot->fk_origin_stock = $batch_id;
 						if ($shipmentLot->create($this->id) < 0) {
-							$this->errors[] = $shipmentLot->errors;
+							$this->errors = $shipmentLot->errors;
 							$error++;
 						}
 					}

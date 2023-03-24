@@ -49,6 +49,7 @@ if (!empty($conf->modules_parts['theme'])) {	// This slow down
 }
 
 //print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
+$themeparam = '';
 print '<link rel="stylesheet" type="text/css" href="'.$themepath.$themeparam.'">'."\n";
 ?>
 		<script type="text/javascript" src="js/fckxml.js"></script>

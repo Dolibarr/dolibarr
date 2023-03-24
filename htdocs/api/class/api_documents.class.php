@@ -461,7 +461,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'knowledgemanagement') {
 			require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->read && !DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->read) {
+			if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read') && !DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 				throw new RestException(401);
 			}
 
@@ -607,6 +607,7 @@ class Documents extends DolibarrApi
 
 		if ($ref) {
 			$tmpreldir = '';
+			$fetchbyid = false;
 
 			if ($modulepart == 'facture' || $modulepart == 'invoice') {
 				$modulepart = 'facture';
@@ -666,13 +667,22 @@ class Documents extends DolibarrApi
 				$modulepart = 'propale';
 				require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 				$object = new Propal($this->db);
+			} elseif ($modulepart == 'contact' || $modulepart == 'socpeople') {
+				$modulepart = 'contact';
+				require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+				$object = new Contact($this->db);
+				$fetchbyid = true;
 			} else {
 				// TODO Implement additional moduleparts
 				throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 			}
 
 			if (is_object($object)) {
-				$result = $object->fetch('', $ref);
+				if ($fetchbyid) {
+					$result = $object->fetch($ref);
+				} else {
+					$result = $object->fetch('', $ref);
+				}
 
 				if ($result == 0) {
 					throw new RestException(404, "Object with ref '".$ref."' was not found.");
@@ -746,12 +756,12 @@ class Documents extends DolibarrApi
 		if ($fhandle) {
 			$nbofbyteswrote = fwrite($fhandle, $newfilecontent);
 			fclose($fhandle);
-			@chmod($destfiletmp, octdec($conf->global->MAIN_UMASK));
+			dolChmod($destfiletmp);
 		} else {
 			throw new RestException(500, "Failed to open file '".$destfiletmp."' for write");
 		}
 
-		$result = dol_move($destfiletmp, $destfile, 0, $overwriteifexists, 1);
+		$result = dol_move($destfiletmp, $destfile, 0, $overwriteifexists, 1, 1);
 		if (!$result) {
 			throw new RestException(500, "Failed to move file into '".$destfile."'");
 		}

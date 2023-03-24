@@ -227,7 +227,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		$result = file_put_contents(dol_osencode($pathoffiletoedittarget), $contentclass);
 
 		if ($result) {
-			@chmod($pathoffiletoedittarget, octdec($newmask));
+			dolChmod($pathoffiletoedittarget, $newmask);
 		} else {
 			$error++;
 		}
@@ -369,7 +369,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 
 	$result = file_put_contents($pathoffiletoedittarget, $contentsql);
 	if ($result) {
-		@chmod($pathoffiletoedittarget, octdec($newmask));
+		dolChmod($pathoffiletoedittarget, $newmask);
 	} else {
 		$error++;
 		setEventMessages($langs->trans("ErrorFailToCreateFile", $pathoffiletoedittarget), null, 'errors');
@@ -408,11 +408,215 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 
 	$result2 = file_put_contents($pathoffiletoedittarget, $contentsql);
 	if ($result2) {
-		@chmod($pathoffiletoedittarget, octdec($newmask));
+		dolChmod($pathoffiletoedittarget, $newmask);
 	} else {
 		$error++;
 		setEventMessages($langs->trans("ErrorFailToCreateFile", $pathoffiletoedittarget), null, 'errors');
 	}
 
 	return $error ? -1 : 1;
+}
+
+/**
+ * Get list of existing objects from directory
+ *
+ * @param	string      $destdir		Directory
+ * @return 	array|int                    <=0 if KO, array if OK
+ */
+function dolGetListOfObjectClasses($destdir)
+{
+	$objects = array();
+	$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
+	foreach ($listofobject as $fileobj) {
+		if (preg_match('/^api_/', $fileobj['name'])) {
+			continue;
+		}
+		if (preg_match('/^actions_/', $fileobj['name'])) {
+			continue;
+		}
+
+		$tmpcontent = file_get_contents($fileobj['fullname']);
+		$reg = array();
+		if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
+			$objectnameloop = $reg[1];
+			$objects[$fileobj['fullname']] = $objectnameloop;
+		}
+	}
+	if (count($objects)>0) {
+		return $objects;
+	}
+
+	return -1;
+}
+
+/**
+ * Delete all permissions
+ *
+ * @param string         $file         file with path
+ * @return void
+ */
+function deletePerms($file)
+{
+	$start = "/* BEGIN MODULEBUILDER PERMISSIONS */";
+	$end = "/* END MODULEBUILDER PERMISSIONS */";
+	$i = 1;
+	$array = array();
+	$lines = file($file);
+	// Search for start and end lines
+	foreach ($lines as $i => $line) {
+		if (strpos($line, $start) !== false) {
+			$start_line = $i + 1;
+
+			// Copy lines until the end on array
+			while (($line = $lines[++$i]) !== false) {
+				if (strpos($line, $end) !== false) {
+					$end_line = $i + 1;
+					break;
+				}
+				$array[] = $line;
+			}
+			break;
+		}
+	}
+	$allContent = implode("", $array);
+	dolReplaceInFile($file, array($allContent => ''));
+}
+
+/**
+ * Rewriting all permissions after any actions
+ * @param string      $file            filename or path
+ * @param array       $permissions     permissions existing in file
+ * @param int|null         $key             key for permission needed
+ * @param array|null  $right           $right to update or add
+ * @param int         $action          0 for delete, 1 for add, 2 for update
+ * @return int                         1 if OK,-1 if KO
+ */
+function reWriteAllPermissions($file, $permissions, $key, $right, $action)
+{
+	$error = 0;
+	$rights = array();
+	if ($action == 0) {
+		// delete right from permissions array
+		array_splice($permissions, array_search($permissions[$key], $permissions), 1);
+	} elseif ($action == 1) {
+		array_push($permissions, $right);
+	} elseif ($action == 2 && !empty($right)) {
+		// update right from permissions array
+		array_splice($permissions, array_search($permissions[$key], $permissions), 1, $right);
+	} else {
+		$error++;
+	}
+	if (!$error) {
+		// prepare permissions array
+		$count_perms = count($permissions);
+		for ($i = 0;$i<$count_perms;$i++) {
+			$permissions[$i][0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1)";
+			$permissions[$i][1] = "\$this->rights[\$r][1] = '".$permissions[$i][1]."'";
+			$permissions[$i][4] = "\$this->rights[\$r][4] = '".$permissions[$i][4]."'";
+			$permissions[$i][5] = "\$this->rights[\$r][5] = '".$permissions[$i][5]."';\n\t\t";
+		}
+
+		//convert to string
+		foreach ($permissions as $perms) {
+			$rights[] = implode(";\n\t\t", $perms);
+			$rights[] = "\$r++;\n\t\t";
+		}
+		$rights_str = implode("", $rights);
+		// delete all permission from file
+		deletePerms($file);
+		// rewrite all permission again
+		dolReplaceInFile($file, array('/* BEGIN MODULEBUILDER PERMISSIONS */' => '/* BEGIN MODULEBUILDER PERMISSIONS */'."\n\t\t".$rights_str));
+		return 1;
+	}
+}
+
+/**
+ * Write all properties of the object in AsciiDoc format
+ * @param  string   $file           path of the class
+ * @param  string   $objectname     name of the objectClass
+ * @param  string   $destfile       file where write table of properties
+ * @return int                      1 if OK, -1 if KO
+ */
+function writePropsInAsciiDoc($file, $objectname, $destfile)
+{
+
+	// stock all properties in array
+	$attributesUnique = array ('label', 'type', 'arrayofkeyval', 'notnull', 'default', 'index', 'foreignkey', 'position', 'enabled', 'visible', 'noteditable', 'alwayseditable', 'searchall', 'isameasure', 'css','cssview','csslist', 'help', 'showoncombobox', 'validate','comment','picto' );
+
+	$start = "public \$fields=array(";
+	$end = ");";
+	$i = 1;
+	$keys = array();
+	$lines = file($file);
+	// Search for start and end lines
+	foreach ($lines as $i => $line) {
+		if (strpos($line, $start) !== false) {
+			// Copy lines until the end on array
+			while (($line = $lines[++$i]) !== false) {
+				if (strpos($line, $end) !== false) {
+					break;
+				}
+				$keys[] = $line;
+			}
+			break;
+		}
+	}
+	// write the begin of table with specifics options
+	$table = "== DATA SPECIFICATIONS\n";
+	$table .= "== Table of fields and their properties for object *$objectname* : \n";
+	$table .= "[options='header',grid=rows,frame=topbot,width=100%,caption=Organisation]\n";
+	$table .= "|===\n";
+	$table .= "|code";
+	// write all properties in the header of the table
+	foreach ($attributesUnique as $attUnique) {
+		$table .= "|".$attUnique;
+	}
+	$table .="\n";
+	$countKeys = count($keys);
+	for ($j=0;$j<$countKeys;$j++) {
+		$string = $keys[$j];
+		$string = trim($string, "'");
+		$string = rtrim($string, ",");
+
+		$array = [];
+		eval("\$array = [$string];");
+
+		// check if is array after cleaning string
+		if (!is_array($array)) {
+			return -1;
+		}
+		// name of field
+		$field = array_keys($array);
+		// all values of each property
+		$values = array_values($array);
+
+
+		// check each field has all properties and add it if missed
+		if (count($values[0]) <=22) {
+			foreach ($attributesUnique as $cle) {
+				if (!in_array($cle, array_keys($values[0]))) {
+					$values[0][$cle] = '';
+				}
+			}
+		}
+
+		//reorganize $values with order attributeUnique
+		$valuesRestructured = array();
+		foreach ($attributesUnique as $key) {
+			if (array_key_exists($key, $values[0])) {
+				$valuesRestructured[$key] = $values[0][$key];
+			}
+		}
+		// write all values of properties for each field
+		$table .= "|*".$field[0]."*|";
+		$table .= implode("|", array_values($valuesRestructured))."\n";
+	}
+	// end table
+	$table .= "|===";
+	//write in file
+	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS'=> $table));
+	if ($writeInFile<0) {
+		return -1;
+	}
+	return 1;
 }

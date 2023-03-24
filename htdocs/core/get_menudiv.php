@@ -216,7 +216,7 @@ if ($langs->trans("DIRECTION") == 'rtl') {
 	}
 </style>
 
-<script type="text/javascript">
+<script nonce="'.getNonce().'" type="text/javascript">
 $(document).ready(function(){
     $("body ul").click(function(){
         console.log("We click on body ul");

@@ -574,6 +574,7 @@ $total = array();
 $found = 0;
 $i = 0;
 $lastcurrencycode = '';
+$imaxinloop = ($limit ? min($num, $limit) : $num);
 
 foreach ($accounts as $key => $type) {
 	if ($i >= $limit) {
@@ -596,11 +597,11 @@ foreach ($accounts as $key => $type) {
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="12">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
 		print $objecttmp->getKanbanView('');
-		if ($i == (min($num, $limit) - 1)) {
+		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
 		}
@@ -787,7 +788,7 @@ foreach ($accounts as $key => $type) {
 		if (!empty($arrayfields['balance']['checked'])) {
 			print '<td class="nowraponall right">';
 			print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$objecttmp->id.'">';
-			print '<span class="amount">'.price($solde, 0, $langs, 1, -1, -1, $objecttmp->currency_code).'</span>';
+			print '<span class="amount">'.price(price2num($solde, 'MT'), 0, $langs, 1, -1, -1, $objecttmp->currency_code).'</span>';
 			print '</a>';
 			print '</td>';
 			if (!$i) {

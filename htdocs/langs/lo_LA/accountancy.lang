@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=ເລືອກປະເພດການຂົນສົ
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 ThisService=ການບໍລິການນີ້
 ThisProduct=ຜະລິດຕະພັນນີ້
-DefaultForService=ຄ່າເລີ່ມຕົ້ນ ສຳ ລັບການບໍລິການ
-DefaultForProduct=ຄ່າເລີ່ມຕົ້ນ ສຳ ລັບຜະລິດຕະພັນ
+DefaultForService=Default for services
+DefaultForProduct=Default for products
 ProductForThisThirdparty=ຜະລິດຕະພັນສໍາລັບພາກສ່ວນທີສາມນີ້
 ServiceForThisThirdparty=ບໍລິການ ສຳ ລັບພາກສ່ວນທີສາມນີ້
 CantSuggest=ບໍ່ສາມາດແນະ ນຳ ໄດ້
@@ -101,7 +101,8 @@ ShowAccountingAccount=ສະແດງບັນຊີບັນຊີ
 ShowAccountingJournal=ສະແດງວາລະສານບັນຊີ
 ShowAccountingAccountInLedger=ສະແດງບັນຊີການບັນຊີຢູ່ໃນບັນຊີແຍກປະເພດ
 ShowAccountingAccountInJournals=ສະແດງບັນຊີບັນຊີຢູ່ໃນວາລະສານ
-AccountAccountingSuggest=ບັນຊີບັນຊີແນະນໍາ
+DataUsedToSuggestAccount=Data used to suggest account
+AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=ບັນຊີເລີ່ມຕົ້ນ
 MenuBankAccounts=ບັນຊີທະນາຄານ
 MenuVatAccounts=ບັນຊີອາກອນ
@@ -126,6 +127,7 @@ WriteBookKeeping=Record transactions in accounting
 Bookkeeping=ປື້ມບັນຊີ
 BookkeepingSubAccount=Subledger
 AccountBalance=ຍອດເງິນໃນບັນຊີ
+AccountBalanceSubAccount=Sub-accounts balance
 ObjectsRef=ແຫຼ່ງຂໍ້ມູນອ້າງອີງ
 CAHTF=ຜູ້ຂາຍທັງpurchaseົດທີ່ຊື້ກ່ອນອາກອນ
 TotalExpenseReport=ລາຍງານລາຍຈ່າຍທັງົດ
@@ -189,6 +191,7 @@ ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be us
 UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
 UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
@@ -218,6 +221,7 @@ JournalLabel=ປ້າຍວາລະສານ
 NumPiece=ຈໍານວນສິ້ນ
 TransactionNumShort=ຕົວເລກ. ທຸລະກໍາ
 AccountingCategory=Custom group of accounts
+AccountingCategories=Custom groups of accounts
 GroupByAccountAccounting=ຈັດກຸ່ມຕາມບັນຊີແຍກປະເພດທົ່ວໄປ
 GroupBySubAccountAccounting=ຈັດກຸ່ມຕາມບັນຊີ subledger
 AccountingAccountGroupsDesc=ເຈົ້າສາມາດ ກຳ ນົດທີ່ນີ້ບາງກຸ່ມບັນຊີບັນຊີ. ພວກມັນຈະຖືກນໍາໃຊ້ສໍາລັບບົດລາຍງານການບັນຊີສ່ວນບຸກຄົນ.
@@ -265,6 +269,7 @@ ShowSubtotalByGroup=ສະແດງຜົນຮວມຍ່ອຍຕາມລະ
 
 Pcgtype=ກຸ່ມບັນຊີ
 PcgtypeDesc=ກຸ່ມບັນຊີໄດ້ຖືກນໍາໃຊ້ເປັນເກນທີ່ໄດ້ກໍານົດໄວ້ລ່ວງ ໜ້າ 'ຕົວກັ່ນຕອງ' ແລະ 'ການຈັດກຸ່ມ' ສໍາລັບບົດລາຍງານການບັນຊີບາງອັນ. ຕົວຢ່າງ, 'ລາຍຮັບ' ຫຼື 'ລາຍຈ່າຍ' ຖືກໃຊ້ເປັນກຸ່ມສໍາລັບບັນຊີບັນຊີຂອງຜະລິດຕະພັນເພື່ອສ້າງລາຍງານລາຍຈ່າຍ/ລາຍຮັບ.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 
 Reconcilable=ເຂົ້າກັນໄດ້
 
@@ -294,6 +299,7 @@ DescValidateMovements=ການດັດແກ້ຫຼືການລຶບລ�
 
 ValidateHistory=ຜູກມັດອັດຕະໂນມັດ
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
+DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
@@ -337,11 +343,13 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=ປິດໃຊ້ງານການຜູ�
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=ປິດໃຊ້ງານການຜູກມັດແລະການໂອນບັນຊີຢູ່ໃນການຊື້ (ໃບເກັບເງິນຂອງຜູ້ຂາຍຈະບໍ່ຖືກເອົາເຂົ້າໃນບັນຊີ)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=ປິດໃຊ້ງານການຜູກມັດແລະການໂອນບັນຊີຢູ່ໃນລາຍງານລາຍຈ່າຍ (ບົດລາຍງານຄ່າໃຊ້ຈ່າຍຈະບໍ່ຖືກເອົາເຂົ້າໃນບັນຊີ)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
 NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
 NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportFull=Export documents ?
 DateValidationAndLock=Date validation and lock
 ConfirmExportFile=ການຢືນຢັນການສ້າງເອກະສານການສົ່ງອອກບັນຊີບໍ?
 ExportDraftJournal=ສົ່ງອອກວາລະສານຮ່າງ
@@ -398,7 +406,7 @@ SaleLocal=ການຂາຍໃນທ້ອງຖິ່ນ
 SaleExport=ຂາຍສົ່ງອອກ
 SaleEEC=ຂາຍໃນ EEC
 SaleEECWithVAT=ການຂາຍໃນ EEC ດ້ວຍອາກອນມູນຄ່າເພີ່ມບໍ່ແມ່ນ null, ດັ່ງນັ້ນພວກເຮົາຄິດວ່າອັນນີ້ບໍ່ແມ່ນການຂາຍພາຍໃນລະບົບສື່ສານແລະບັນຊີທີ່ແນະນໍາແມ່ນບັນຊີຜະລິດຕະພັນມາດຕະຖານ.
-SaleEECWithoutVATNumber=ຂາຍໃນ EEC ໂດຍບໍ່ມີ VAT ແຕ່ ID VAT ຂອງພາກສ່ວນທີສາມບໍ່ໄດ້ລະບຸ. ພວກເຮົາຕົກຢູ່ໃນບັນຊີຜະລິດຕະພັນສໍາລັບການຂາຍມາດຕະຖານ. ເຈົ້າສາມາດແກ້ໄຂ VAT ID ຂອງພາກສ່ວນທີສາມຫຼືບັນຊີຜະລິດຕະພັນຖ້າຈໍາເປັນ.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
 ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
@@ -442,6 +450,7 @@ AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
+ErrorArchiveAddFile=Can't put "%s" file in archive
 
 ## Import
 ImportAccountingEntries=ລາຍການບັນຊີ
@@ -468,5 +477,7 @@ FECFormatMulticurrencyCode=ລະຫັດຫຼາຍສະກຸນເງິ�
 DateExport=ວັນທີສົ່ງອອກ
 WarningReportNotReliable=ຄຳ ເຕືອນ, ບົດລາຍງານນີ້ບໍ່ໄດ້ອີງໃສ່ປຶ້ມບັນຊີ, ສະນັ້ນບໍ່ມີການເຮັດທຸລະ ກຳ ທີ່ດັດແກ້ດ້ວຍຕົນເອງຢູ່ໃນປຶ້ມບັນຊີ. ຖ້າວາລະສານຂອງເຈົ້າໃis່ຫຼ້າສຸດ, ມຸມມອງການເຮັດບັນຊີແມ່ນຖືກຕ້ອງກວ່າ.
 ExpenseReportJournal=ວາລະສານລາຍງານລາຍຈ່າຍ
+DocsAlreadyExportedAreExcluded=Docs already exported are excluded
+ClickToHideAlreadyExportedLines=Click to hide already exported lines
 
 NAccounts=%s ບັນຊີ

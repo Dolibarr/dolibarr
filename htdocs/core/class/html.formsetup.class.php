@@ -21,7 +21,6 @@
  */
 class FormSetup
 {
-
 	/**
 	 * @var DoliDB Database handler.
 	 */
@@ -340,7 +339,7 @@ class FormSetup
 	 * Method used to test  module builder convertion to this form usage
 	 *
 	 * @param 	array 	$params 	an array of arrays of params from old modulBuilder params
-	 * @return 	void
+	 * @return 	boolean
 	 */
 	public function addItemsFromParamsArray($params)
 	{
@@ -348,6 +347,7 @@ class FormSetup
 		foreach ($params as $confKey => $param) {
 			$this->addItemFromParams($confKey, $param); // todo manage error
 		}
+		return true;
 	}
 
 
@@ -1082,16 +1082,18 @@ class FormSetupItem
 				}
 			}
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
-			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-			$formmail = new FormMail($this->db);
+			if ($this->fieldValue > 0) {
+				include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+				$formmail = new FormMail($this->db);
 
-			$tmp = explode(':', $this->type);
+				$tmp = explode(':', $this->type);
 
-			$template = $formmail->getEMailTemplate($this->db, $tmp[1], $user, $this->langs, $this->fieldValue);
-			if (is_numeric($template) && $template < 0) {
-				$this->setErrors($formmail->errors);
+				$template = $formmail->getEMailTemplate($this->db, $tmp[1], $user, $this->langs, $this->fieldValue);
+				if (is_numeric($template) && $template < 0) {
+					$this->setErrors($formmail->errors);
+				}
+				$out.= $this->langs->trans($template->label);
 			}
-			$out.= $this->langs->trans($template->label);
 		} elseif (preg_match('/category:/', $this->type)) {
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			$c = new Categorie($this->db);
@@ -1117,6 +1119,7 @@ class FormSetupItem
 			}
 		} elseif ($this->type == 'product') {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
 			$product = new Product($this->db);
 			$resprod = $product->fetch($this->fieldValue);
 			if ($resprod > 0) {

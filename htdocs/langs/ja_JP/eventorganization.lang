@@ -172,3 +172,5 @@ ErrorSeveralCompaniesWithEmailContactUs=このメールを使用している会�
 ErrorSeveralCompaniesWithNameContactUs=この名前の会社がいくつか見つかったため、登録を自動的に検証ことはできない。手動検証については、%sまで問い合わせること。
 NoPublicActionsAllowedForThisEvent=このイベントの公開アクションは公開されていない
 MaxNbOfAttendees=参加者の最大数
+DateStartEvent=イベント開始日
+DateEndEvent=イベント終了日

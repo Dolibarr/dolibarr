@@ -80,6 +80,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	protected $savuser;
 	protected $savlangs;
 	protected $savdb;
+	protected $savmysoc;
 
 	/**
 	 * Constructor
@@ -92,11 +93,12 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		parent::__construct();
 
 		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$this->savconf=$conf;
 		$this->savuser=$user;
 		$this->savlangs=$langs;
 		$this->savdb=$db;
+		$this->savmysoc=$mysoc;
 
 		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
 		//print " - db ".$db->db;
@@ -142,17 +144,18 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-	 * Init phpunit tests
+	 * Init phpunit tests. Restore variables before each test.
 	 *
 	 * @return	void
 	 */
 	protected function setUp(): void
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
+		$mysoc=$this->savmysoc;
 
 		print __METHOD__."\n";
 	}
@@ -166,6 +169,34 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	{
 		print __METHOD__."\n";
 	}
+
+
+	/**
+	 * testDolForgeCriteriaCallback
+	 *
+	 * @return boolean
+	 */
+	public function testDolForgeCriteriaCallback()
+	{
+		global $conf, $langs;
+
+		// An attempt for SQL injection
+		$filter='if(now()=sysdate()%2Csleep(6)%2C0)';
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals($sql, 'Filter syntax error');
+
+		// A real search string
+		$filter='(((statut:=:1) or (entity:in:__AAA__)) and (abc:<:2.0) and (abc:!=:1.23))';
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals($sql, ' AND (((statut = 1 or entity IN (__AAA__)) and abc < 2 and abc <> 1.23))');
+
+		$filter="(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.date_creation:<:'2016-01-01 12:30:00') or (t.nature:is:NULL)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals($sql, " AND (t.ref LIKE 'SO-%' or t.date_creation < '20160101' or t.date_creation < 0 or t.nature IS NULL)");
+
+		return true;
+	}
+
 
 	/**
 	 * testDolClone
@@ -1205,7 +1236,6 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		// We do same tests but with option SERVICE_ARE_ECOMMERCE_200238EC on.
 		$conf->global->SERVICE_ARE_ECOMMERCE_200238EC = 1;
 
-
 		// Test RULE 1 (FR-US)
 		$vat=get_default_tva($companyfr, $companyus, 0);
 		$this->assertEquals(0, $vat, 'RULE 1 ECOMMERCE_200238EC');
@@ -1228,7 +1258,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-	 * testGetDefaultTva
+	 * testGetDefaultLocalTax
 	 *
 	 * @return	void
 	 */
@@ -1312,6 +1342,27 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$vat2=get_default_localtax($companyes, $companyus, 2, 0);
 		$this->assertEquals(0, $vat1);
 		$this->assertEquals(0, $vat2);
+	}
+
+
+	/**
+	 * testGetLocalTaxByThird
+	 *
+	 * @return	void
+	 */
+	public function testGetLocalTaxByThird()
+	{
+		global $mysoc;
+
+		$mysoc->country_code = 'ES';
+
+		$result = get_localtax_by_third(1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('5.2', $result);
+
+		$result = get_localtax_by_third(2);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('-19:-15:-9', $result);
 	}
 
 

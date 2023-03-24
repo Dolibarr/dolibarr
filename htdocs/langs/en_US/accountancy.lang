@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=Select the carriage return type
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 ThisService=This service
 ThisProduct=This product
-DefaultForService=Default for service
-DefaultForProduct=Default for product
+DefaultForService=Default for services
+DefaultForProduct=Default for products
 ProductForThisThirdparty=Product for this thirdparty
 ServiceForThisThirdparty=Service for this thirdparty
 CantSuggest=Can't suggest
@@ -41,6 +41,7 @@ AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
 NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
 GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
 DetailByAccount=Show detail by account
+DetailBy=Detail by
 AccountWithNonZeroValues=Accounts with non-zero values
 ListOfAccounts=List of accounts
 CountriesInEEC=Countries in EEC
@@ -101,7 +102,8 @@ ShowAccountingAccount=Show accounting account
 ShowAccountingJournal=Show accounting journal
 ShowAccountingAccountInLedger=Show accounting account in ledger
 ShowAccountingAccountInJournals=Show accounting account in journals
-AccountAccountingSuggest=Accounting account suggested
+DataUsedToSuggestAccount=Data used to suggest account
+AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=Default accounts
 MenuBankAccounts=Bank accounts
 MenuVatAccounts=Vat accounts
@@ -166,9 +168,9 @@ ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow 
 ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
-ACCOUNTING_SELL_JOURNAL=Sales journal (sales and returns)
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal (purchase and returns)
-ACCOUNTING_BANK_JOURNAL=Cash journal (receipts and disbursements)
+ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
+ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
+ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_MISCELLANEOUS_JOURNAL=General journal
 ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
@@ -237,6 +239,7 @@ ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month an
 ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Expense reports journal
+InventoryJournal=Inventory journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 DescJournalOnlyBindedVisible=This is a view of record that are bound to an accounting account and can be recorded into the Journals and Ledger.
 VATAccountNotDefined=Account for VAT not defined
@@ -346,8 +349,8 @@ ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
-NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportDate=Flag not yet exported lines as Exported <span class="warning">(to modify a line flagged as exported, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries not yet already locked <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 NotifiedExportFull=Export documents ?
 DateValidationAndLock=Date validation and lock
 ConfirmExportFile=Confirmation of the generation of the accounting export file ?
@@ -405,7 +408,7 @@ SaleLocal=Local sale
 SaleExport=Export sale
 SaleEEC=Sale in EEC
 SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
-SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fallback on the product account for standard sales. You can fix the VAT ID of thirdparty or the product account if needed.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
 ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
@@ -444,7 +447,7 @@ NoJournalDefined=No journal defined
 Binded=Lines bound
 ToBind=Lines to bind
 UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to make the binding manually
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Note: this module or page is not completely compatible with the experimental feature of situation invoices. Some data may be wrong.
 AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
@@ -476,5 +479,7 @@ FECFormatMulticurrencyCode=Multicurrency code (Idevise)
 DateExport=Date export
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Expense Report Journal
+DocsAlreadyExportedAreExcluded=Docs already exported are excluded
+ClickToHideAlreadyExportedLines=Click to hide already exported lines
 
 NAccounts=%s accounts

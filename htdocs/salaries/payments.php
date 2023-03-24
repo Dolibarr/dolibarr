@@ -97,6 +97,7 @@ $search_chq_number = GETPOST('search_chq_number', 'int');
 
 $filtre = GETPOST("filtre", 'restricthtml');
 
+$search_type_id = '';
 if (!GETPOST('search_type_id', 'int')) {
 	$newfiltre = str_replace('filtre=', '', $filtre);
 	$filterarray = explode('-', $newfiltre);
@@ -532,7 +533,8 @@ if (isset($extrafields->attributes[$object->table_element]['computed']) && is_ar
 $i = 0;
 $total = 0;
 $totalarray = array();
-while ($i < ($limit ? min($num, $limit) : $num)) {
+$totalarray['nbfield'] = 0;
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
 		break;
@@ -541,8 +543,6 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
-
-
 
 	$userstatic->id = $obj->uid;
 	$userstatic->lastname = $obj->lastname;
@@ -568,18 +568,14 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	$paymentsalstatic->fk_bank = $accountlinestatic->getNomUrl(1);
 	$paymentsalstatic->fk_user_author = $userstatic->getNomUrl(1);
 
-
-
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="12">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-
-
 		print $paymentsalstatic->getKanbanView('');
-		if ($i == (min($num, $limit) - 1)) {
+		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
 		}
@@ -697,7 +693,12 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		if (!$i) {
 			$totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
 		}
-		$totalarray['val']['totalttcfield'] += $obj->amount;
+		if (!$i) {
+			$totalarray['val']['totalttcfield'] = $obj->amount;
+		} else {
+			$totalarray['val']['totalttcfield'] += $obj->amount;
+		}
+
 
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
