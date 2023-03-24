@@ -422,6 +422,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ", fk_soc";
 		$sql .= ", datec";
 		$sql .= ", datef";
+		$sql .= ", vat_reverse_charge";
 		$sql .= ", fk_projet";
 		$sql .= ", fk_cond_reglement";
 		$sql .= ", fk_mode_reglement";
@@ -446,6 +447,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ", ".$this->socid;
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->idate($this->date)."'";
+		$sql .= ", ".($this->vat_reverse_charge != '' ? ((int) $this->db->escape($this->vat_reverse_charge)) : 0);
 		$sql .= ", ".($this->fk_project > 0 ? $this->fk_project : "null");
 		$sql .= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : "null");
 		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : "null");
@@ -672,6 +674,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " t.fk_user_author,";
 		$sql .= " t.fk_user_valid,";
 		$sql .= " t.fk_facture_source,";
+		$sql .= " t.vat_reverse_charge,";
 		$sql .= " t.fk_projet as fk_project,";
 		$sql .= " t.fk_cond_reglement,";
 		$sql .= " t.fk_account,";
@@ -735,27 +738,28 @@ class FactureFournisseur extends CommonInvoice
 				$this->total_ttc			= $obj->total_ttc;
 				$this->fk_statut			= $obj->fk_statut;
 				$this->statut				= $obj->fk_statut;
-				$this->fk_user_author = $obj->fk_user_author;
+				$this->fk_user_author		= $obj->fk_user_author;
 				$this->author				= $obj->fk_user_author;
-				$this->fk_user_valid = $obj->fk_user_valid;
+				$this->fk_user_valid		= $obj->fk_user_valid;
 				$this->fk_facture_source	= $obj->fk_facture_source;
-				$this->fk_project = $obj->fk_project;
+				$this->vat_reverse_charge	= empty($obj->vat_reverse_charge) ? '0' : '1';
+				$this->fk_project			= $obj->fk_project;
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
-				$this->cond_reglement_code = $obj->cond_reglement_code;
-				$this->cond_reglement = $obj->cond_reglement_label; // deprecated
-				$this->cond_reglement_label = $obj->cond_reglement_label;
-				$this->cond_reglement_doc = $obj->cond_reglement_doc;
-				$this->fk_account = $obj->fk_account;
-				$this->mode_reglement_id = $obj->fk_mode_reglement;
-				$this->mode_reglement_code = $obj->mode_reglement_code;
-				$this->mode_reglement = $obj->mode_reglement_label;
+				$this->cond_reglement_code	= $obj->cond_reglement_code;
+				$this->cond_reglement		= $obj->cond_reglement_label; // deprecated
+				$this->cond_reglement_label	= $obj->cond_reglement_label;
+				$this->cond_reglement_doc	= $obj->cond_reglement_doc;
+				$this->fk_account			= $obj->fk_account;
+				$this->mode_reglement_id	= $obj->fk_mode_reglement;
+				$this->mode_reglement_code	= $obj->mode_reglement_code;
+				$this->mode_reglement		= $obj->mode_reglement_label;
 				$this->date_echeance		= $this->db->jdate($obj->date_lim_reglement);
-				$this->note = $obj->note_private; // deprecated
+				$this->note					= $obj->note_private; // deprecated
 				$this->note_private			= $obj->note_private;
-				$this->note_public = $obj->note_public;
-				$this->model_pdf = $obj->model_pdf;
-				$this->modelpdf = $obj->model_pdf; // deprecated
-				$this->import_key = $obj->import_key;
+				$this->note_public			= $obj->note_public;
+				$this->model_pdf			= $obj->model_pdf;
+				$this->modelpdf				= $obj->model_pdf; // deprecated
+				$this->import_key			= $obj->import_key;
 
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
@@ -1045,6 +1049,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " fk_user_author=".(isset($this->author) ? $this->author : "null").",";
 		$sql .= " fk_user_valid=".(isset($this->fk_user_valid) ? $this->fk_user_valid : "null").",";
 		$sql .= " fk_facture_source=".($this->fk_facture_source ? ((int) $this->db->escape($this->fk_facture_source)) : "null").",";
+		$sql .= " vat_reverse_charge = ".($this->vat_reverse_charge != '' ? ((int) $this->db->escape($this->vat_reverse_charge)) : 0).",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
 		$sql .= " date_lim_reglement=".(dol_strlen($this->date_echeance) != 0 ? "'".$this->db->idate($this->date_echeance)."'" : 'null').",";
@@ -2966,6 +2971,35 @@ class FactureFournisseur extends CommonInvoice
 		}
 
 		return $isUsed;
+	}
+
+	/**
+	 *  Change the option VAT reverse charge
+	 *
+	 *  @param      int     $vatreversecharge	0 = Off, 1 = On
+	 *  @return     int              			1 if OK, 0 if KO
+	 */
+	public function setVATReverseCharge($vatreversecharge)
+	{
+		if (!$this->table_element) {
+			dol_syslog(get_class($this)."::setVATReverseCharge was called on objet with property table_element not defined", LOG_ERR);
+			return -1;
+		}
+
+		dol_syslog(get_class($this).'::setVATReverseCharge('.$vatreversecharge.')');
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " SET vat_reverse_charge = ".((int) $vatreversecharge);
+		$sql .= " WHERE rowid=".((int) $this->id);
+
+		if ($this->db->query($sql)) {
+			$this->vat_reverse_charge = ($vatreversecharge == 0) ? 0 : 1;
+			return 1;
+		} else {
+			dol_syslog(get_class($this).'::setVATReverseCharge Error ', LOG_DEBUG);
+			$this->error = $this->db->error();
+			return 0;
+		}
 	}
 }
 
