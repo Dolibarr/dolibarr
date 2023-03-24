@@ -613,6 +613,7 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 	}
 	// end table
 	$table .= "|===";
+	$table .= "__ end table for object $objectname";
 	//write in file
 	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS'=> $table));
 	if ($writeInFile<0) {
@@ -631,7 +632,7 @@ function deletePropsFromDoc($file, $objectname)
 {
 
 	$start = "== Table of fields and their properties for object *".ucfirst($objectname)."* : ";
-	$end = "== end table for object ".ucfirst($objectname);
+	$end = "__ end table for object ".ucfirst($objectname);
 	$str = file_get_contents($file);
 	$search = '/' . preg_quote($start, '/') . '(.*?)' . preg_quote($end, '/') . '/s';
 	$new_contents = preg_replace($search, '', $str);
