@@ -2106,6 +2106,20 @@ if ($id > 0) {
 			print '</td></tr>';
 		}
 
+		//mail information
+		if (!empty($object->email_msgid)) {
+			print '<tr><td>'.$langs->trans('MailTopic').'</td>';
+			print '<td>'.dol_escape_htmltag($object->email_subject).'</td></tr>';
+			print '<tr><td>'.$langs->trans('MailFrom').'</td>';
+			print '<td>'.dol_escape_htmltag($object->email_from).'</td></tr>';
+			print '<tr><td>'.$langs->trans('MailTo').'</td>';
+			print '<td>'.dol_escape_htmltag($object->email_to).'</td></tr>';
+			if (!empty($object->email_tocc)) {
+				print '<tr><td>'.$langs->trans('MailCC').'</td>';
+				print '<td>'.dol_escape_htmltag($object->email_tocc).'</td></tr>';
+			}
+		}
+
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreak">';
 		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
