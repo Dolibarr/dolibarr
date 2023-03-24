@@ -227,7 +227,7 @@ $morecss = array();
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT ";
-$sql .= " COUNT(DISTINCT pav.rowid) AS nb_of_values, COUNT(DISTINCT pac2v.fk_prod_combination) AS nb_products,";
+$sql .= " COUNT(DISTINCT pav.rowid) AS nb_of_values, COUNT(DISTINCT pac2v.fk_prod_combination) AS nb_products";
 $sql .= $object->getFieldList("t");
 // Add fields from extrafields
 //if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -238,7 +238,7 @@ $sql .= $object->getFieldList("t");
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 //if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {

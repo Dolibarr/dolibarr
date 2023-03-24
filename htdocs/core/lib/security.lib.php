@@ -113,10 +113,11 @@ function dolGetRandomBytes($length)
  *	@param   string		$chain		string to encode
  *	@param   string		$key		If '', we use $dolibarr_main_instance_unique_id
  *  @param	 string		$ciphering	Default ciphering algorithm
+ *  @param	 string		$forceseed	To force the seed
  *	@return  string					encoded string
  *  @see dolDecrypt(), dol_hash()
  */
-function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
+function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = '')
 {
 	global $dolibarr_main_instance_unique_id;
 	global $dolibarr_disable_dolcrypt_for_debug;
@@ -134,6 +135,9 @@ function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
 	if (empty($key)) {
 		$key = $dolibarr_main_instance_unique_id;
 	}
+	if (empty($ciphering)) {
+		$ciphering = 'AES-256-CTR';
+	}
 
 	$newchain = $chain;
 
@@ -145,7 +149,11 @@ function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
 		if ($ivlen === false || $ivlen < 1 || $ivlen > 32) {
 			$ivlen = 16;
 		}
-		$ivseed = dolGetRandomBytes($ivlen);
+		if (empty($forceseed)) {
+			$ivseed = dolGetRandomBytes($ivlen);
+		} else {
+			$ivseed = dol_trunc(md5($forceseed), $ivlen, 'right', 'UTF-8', 1);
+		}
 
 		$newchain = openssl_encrypt($chain, $ciphering, $key, 0, $ivseed);
 		return 'dolcrypt:'.$ciphering.':'.$ivseed.':'.$newchain;
@@ -260,7 +268,7 @@ function dol_verifyHash($chain, $hash, $type = '0')
 	global $conf;
 
 	if ($type == '0' && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_verify')) {
-		if ($hash[0] == '$') {
+		if (! empty($hash[0]) && $hash[0] == '$') {
 			return password_verify($chain, $hash);
 		} elseif (strlen($hash) == 32) {
 			return dol_verifyHash($chain, $hash, '3'); // md5
@@ -477,7 +485,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$readok = 0;
 				$nbko++;
 			}
-		} elseif (!empty($feature2)) { 													// This is for permissions on 2 levels
+		} elseif (!empty($feature2)) { 													// This is for permissions on 2 levels (module->object->read)
 			$tmpreadok = 1;
 			foreach ($feature2 as $subfeature) {
 				if ($subfeature == 'user' && $user->id == $objectid) {
@@ -496,7 +504,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$readok = 0; // All tests are ko (we manage here the and, the or will be managed later using $nbko).
 				$nbko++;
 			}
-		} elseif (!empty($feature) && ($feature != 'user' && $feature != 'usergroup')) {		// This is permissions on 1 level
+		} elseif (!empty($feature) && ($feature != 'user' && $feature != 'usergroup')) {		// This is permissions on 1 level (module->read)
 			if (empty($user->rights->$feature->lire)
 				&& empty($user->rights->$feature->read)
 				&& empty($user->rights->$feature->run)) {
@@ -523,7 +531,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	// Check write permission from module (we need to know write permission to create but also to delete drafts record or to upload files)
 	$createok = 1;
 	$nbko = 0;
-	$wemustcheckpermissionforcreate = (GETPOST('sendit', 'alpha') || GETPOST('linkit', 'alpha') || in_array(GETPOST('action', 'aZ09'), array('create', 'update', 'add_element_resource', 'confirm_delete_linked_resource')) || GETPOST('roworder', 'alpha', 2));
+	$wemustcheckpermissionforcreate = (GETPOST('sendit', 'alpha') || GETPOST('linkit', 'alpha') || in_array(GETPOST('action', 'aZ09'), array('create', 'update', 'set', 'add_element_resource', 'confirm_delete_linked_resource')) || GETPOST('roworder', 'alpha', 2));
 	$wemustcheckpermissionfordeletedraft = ((GETPOST("action", "aZ09") == 'confirm_delete' && GETPOST("confirm", "aZ09") == 'yes') || GETPOST("action", "aZ09") == 'delete');
 
 	if ($wemustcheckpermissionforcreate || $wemustcheckpermissionfordeletedraft) {
@@ -568,7 +576,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 					$createok = 0;
 					$nbko++;
 				}
-			} elseif (!empty($feature2)) {														// This is for permissions on one level
+			} elseif (!empty($feature2)) {													// This is for permissions on 2 levels (module->object->write)
 				foreach ($feature2 as $subfeature) {
 					if ($subfeature == 'user' && $user->id == $objectid && $user->rights->user->self->creer) {
 						continue; // User can edit its own card
@@ -591,7 +599,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 						break;
 					}
 				}
-			} elseif (!empty($feature)) {												// This is for permissions on 2 levels ('creer' or 'write')
+			} elseif (!empty($feature)) {												// This is for permissions on 1 levels (module->write)
 				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->creer.' write='.$user->rights->$feature->write; exit;
 				if (empty($user->rights->$feature->creer)
 				&& empty($user->rights->$feature->write)

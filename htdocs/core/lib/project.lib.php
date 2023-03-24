@@ -4,6 +4,7 @@
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
+ * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,8 +101,9 @@ function project_prepare_head(Project $project, $moreparam = '')
 			$sql = "SELECT t.rowid";
 			//$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
 			//$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
-			$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt";
-			$sql .= " WHERE t.fk_task = pt.rowid";
+			$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t, ".MAIN_DB_PREFIX."projet_task as pt";
+			$sql .= " WHERE t.fk_element = pt.rowid";
+			$sql .= " AND t.elementtype = 'task'";
 			$sql .= " AND pt.fk_projet =".((int) $project->id);
 			$resql = $db->query($sql);
 			if ($resql) {
@@ -372,8 +374,8 @@ function task_prepare_head($object)
 	$sql = "SELECT t.rowid";
 	//$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
 	//$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
-	$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
-	$sql .= " WHERE t.fk_task = ".((int) $object->id);
+	$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t";
+	$sql .= " WHERE t.elementtype='task' AND t.fk_element = ".((int) $object->id);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
@@ -1067,6 +1069,18 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
 			print '<td></td>';
 		}
+
+		//Check if Extrafields is totalizable
+		foreach ($extrafields->attributes['projet_task']['totalizable'] as $key=>$value) {
+			if ($arrayfields['ef.'.$key]['checked'] == 1) {
+				print '<td align="right">';
+				if ($value == 1) {
+					print $totalarray['totalizable'][$key]['total'];
+				}
+				print '</td>';
+			}
+		}
+
 		print '<td class=""></td>';
 		print '</tr>';
 	}

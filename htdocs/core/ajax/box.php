@@ -18,7 +18,7 @@
 
 /**
  *       \file       htdocs/core/ajax/box.php
- *       \brief      File to return Ajax response on Box move or close
+ *       \brief      File to return Ajax response on a Box move or close
  */
 
 if (!defined('NOTOKENRENEWAL')) {

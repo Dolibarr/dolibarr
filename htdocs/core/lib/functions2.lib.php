@@ -1314,8 +1314,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	if (empty($counter)) {
 		$counter = $maskoffset;
 	} elseif (preg_match('/[^0-9]/i', $counter)) {
-		$counter = 0;
 		dol_syslog("Error, the last counter found is '".$counter."' so is not a numeric value. We will restart to 1.", LOG_ERR);
+		$counter = 0;
 	} elseif ($counter < $maskoffset && empty($conf->global->MAIN_NUMBERING_OFFSET_ONLY_FOR_FIRST)) {
 		$counter = $maskoffset;
 	}

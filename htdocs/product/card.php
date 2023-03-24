@@ -207,7 +207,7 @@ if ($cancel) {
 	$action = '';
 }
 
-$createbarcode = empty($conf->barcode->enabled) ? 0 : 1;
+$createbarcode = isModEnabled('barcode');
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->creer_advance)) {
 	$createbarcode = 0;
 }
@@ -1419,7 +1419,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		}
 
-		$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
+		$showbarcode = isModEnabled('barcode');
 		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
 			$showbarcode = 0;
 		}
@@ -1984,7 +1984,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Barcode
-			$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
+			$showbarcode = isModEnabled('barcode');
 			if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
 				$showbarcode = 0;
 			}
@@ -2199,7 +2199,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						$arrayselected[] = $cat->id;
 					}
 				}
-				if (GETPOSTISSET('categories', 'array')) {
+				if (GETPOSTISARRAY('categories')) {
 					foreach (GETPOST('categories', 'array') as $cat) {
 						$arrayselected[] = $cat;
 					}
@@ -2312,7 +2312,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		} else {
 			// Fiche en mode visu
 
-			$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
+			$showbarcode = isModEnabled('barcode');
 			if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
 				$showbarcode = 0;
 			}

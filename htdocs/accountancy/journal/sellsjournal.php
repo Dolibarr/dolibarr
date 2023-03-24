@@ -463,7 +463,15 @@ if ($action == 'writebookkeeping') {
 					if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && getDolGlobalInt('ACCOUNTING_ENABLE_AUTOLETTERING')) {
 						require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
 						$lettering_static = new Lettering($db);
+
 						$nb_lettering = $lettering_static->bookkeepingLettering(array($bookkeeping->id));
+
+						if ($nb_lettering < 0) {
+							$error++;
+							$errorforline++;
+							$errorforinvoice[$key] = 'other';
+							setEventMessages($lettering_static->error, $lettering_static->errors, 'errors');
+						}
 					}
 				}
 			}

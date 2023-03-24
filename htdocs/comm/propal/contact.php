@@ -63,9 +63,9 @@ if (!$error) {
 }
 
 // Security check
+$socid = '';
 if (!empty($user->socid)) {
 	$socid = $user->socid;
-	$object->id = $user->socid;
 }
 restrictedArea($user, 'propal', $object->id);
 
