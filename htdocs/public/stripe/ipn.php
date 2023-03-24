@@ -111,7 +111,7 @@ $event = null;
 if (getDolGlobalString('STRIPE_DEBUG')) {
 	$fh = fopen(DOL_DATA_ROOT.'/dolibarr_stripe.log', 'w+');
 	if ($fh) {
-		fwrite($fh, dol_print_date(dol_now('gmt'), 'standard').' HTTP_STRIPE_SIGNATURE='.$sig_header."\n");
+		fwrite($fh, dol_print_date(dol_now('gmt'), 'standard').' IPN Called. HTTP_STRIPE_SIGNATURE='.$sig_header."\n");
 		fwrite($fh, $payload);
 		fclose($fh);
 		dolChmod(DOL_DATA_ROOT.'/dolibarr_stripe.log');
@@ -139,7 +139,7 @@ $langs->load("main");
 if (isModEnabled('multicompany') && !empty($conf->stripeconnect->enabled) && is_object($mc)) {
 	$sql = "SELECT entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."oauth_token";
-	$sql .= " WHERE service = '".$db->escape($service)."' and tokenstring LIKE '%".$db->escape($event->account)."%'";
+	$sql .= " WHERE service = '".$db->escape($service)."' and tokenstring LIKE '%".$db->escape($db->escapeforlike($event->account))."%'";
 
 	dol_syslog(get_class($db)."::fetch", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -329,6 +329,8 @@ if ($event->type == 'payout.created') {
 	$paymentTypeId = "";
 	$payment_amount = 0;
 
+	dol_syslog("Try to find the payment in database for the payment id = ".$TRANSACTIONID);
+
 	$sql = "SELECT pi.fk_facture, pi.fk_prelevement_bons, pi.amount, pi.type";
 	$sql .= " FROM llx_prelevement_demande as pi";
 	$sql .= " WHERE pi.ext_payment_id = '".$db->escape($TRANSACTIONID)."'";
@@ -345,14 +347,14 @@ if ($event->type == 'payout.created') {
 			$paymentTypeId = $obj->type;
 		}
 	} else {
-		$postactionmessages[] = $db->lasterror();
 		http_response_code(500);
+		print $db->lasterror();
 		return -1;
 	}
 
 	$stripeacc = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
 
-	dol_syslog("Try to find a payment method with id = ".json_encode($paymentmethodstripeid));
+	dol_syslog("Get the Stripe payment object for the payment method id = ".json_encode($paymentmethodstripeid));
 
 	$s = new \Stripe\StripeClient($stripeacc);
 
@@ -516,6 +518,8 @@ if ($event->type == 'payout.created') {
 			http_response_code(500);
 			return -1;
 		}
+	} else {
+		dol_syslog("The payment mode of this payment is ".$paymentTypeId.". This payment mode is not managed by the IPN");
 	}
 } elseif ($event->type == 'payment_intent.payment_failed') {
 	// TODO: Redirect to paymentko.php
