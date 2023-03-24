@@ -81,6 +81,10 @@ $list_account[] = '---Others---';
 $list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_SOLD_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_PAY_ACCOUNT';
+$list_account[] = 'ACCOUNTING_ACCOUNT_VAT_BUY_REVERSE_CHARGES_CREDIT';
+$list_account[] = 'ACCOUNTING_ACCOUNT_VAT_BUY_REVERSE_CHARGES_DEBIT';
+
+$list_account[] = 'ACCOUNTING_ACCOUNT_SUSPENSE';
 if (!empty($conf->banque->enabled)) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_TRANSFER_CASH';
 }
@@ -95,7 +99,6 @@ if (!empty($conf->loan->enabled)) {
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INTEREST';
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INSURANCE';
 }
-$list_account[] = 'ACCOUNTING_ACCOUNT_SUSPENSE';
 if (!empty($conf->societe->enabled)) {
 	$list_account[] = '---Deposits---';
 }
@@ -250,7 +253,7 @@ foreach ($list_account as $key) {
 			print img_picto('', 'service', 'class="pictofixedwidth"');
 		} elseif (preg_match('/^ACCOUNTING_VAT_PAY_ACCOUNT/', $key)) {
 			print img_picto('', 'payment_vat', 'class="pictofixedwidth"');
-		} elseif (preg_match('/^ACCOUNTING_VAT/', $key)) {
+		} elseif (preg_match('/^ACCOUNTING_VAT/', $key) || preg_match('/^ACCOUNTING_ACCOUNT_VAT/', $key)) {
 			print img_picto('', 'vat', 'class="pictofixedwidth"');
 		} elseif (preg_match('/^ACCOUNTING_ACCOUNT_CUSTOMER/', $key)) {
 			print img_picto('', 'bill', 'class="pictofixedwidth"');

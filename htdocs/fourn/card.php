@@ -281,6 +281,15 @@ if ($object->id > 0) {
 		print '</td></tr>';
 	}
 
+	// VAT reverse-charge by default on supplier invoice or not
+	print '<tr>';
+	print '<td class="titlefield">';
+	print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc'));
+	print '</td><td>';
+	print '<input type="checkbox" name="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').' disabled>';
+	print '</td>';
+	print '</tr>';
+
 	// TVA Intra
 	print '<tr><td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
 	print showValueWithClipboardCPButton(dol_escape_htmltag($object->tva_intra));

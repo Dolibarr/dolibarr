@@ -586,7 +586,7 @@ class FormTicket
 	{
 		global $langs, $user;
 
-		$selected = is_array($selected) ? $selected : (!empty($selected) ? implode(',', $selected) : array());
+		$selected = is_array($selected) ? $selected : (!empty($selected) ? explode(',', $selected) : array());
 		$ticketstat = new Ticket($this->db);
 
 		dol_syslog(get_class($this)."::select_types_tickets ".implode(';',$selected).", ".$htmlname.", ".$filtertype.", ".$format.", ".$multiselect, LOG_DEBUG);

@@ -335,6 +335,12 @@ NumberOfAccountancyMovements=Nombre de mouvements
 ACCOUNTING_DISABLE_BINDING_ON_SALES=Désactiver la liaison et le transfert en comptabilité des factures de ventes (les factures clients ne seront pas prises en compte en comptabilité).
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Désactiver la liaison et le transfert en comptabilité des factures d'achats (les factures fournisseurs ne seront pas prises en compte en comptabilité).
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Désactiver la liaison et le transfert en comptabilité des notes de frais (les notes de frais ne seront pas prises en compte en comptabilité).
+ACCOUNTING_ENABLE_LETTERING=Activer la fonction de lettrage dans la comptabilité
+ACCOUNTING_ENABLE_AUTOLETTERING=Activer le lettrage automatique lors du transfert en comptabilité
+OptionsAdvanced=Options avancées
+ACCOUNTANCY_ENABLE_NEWINTERFACE=Activer la nouvelle interface de gestion des comptes comptables dans les fiches produits (Détail selon taux de TVA & champ supplémentaire)
+ACCOUNTING_PRODUCT_ACCOUNTANCY_CODE_ADDITIONAL_KEY=Choix d'une deuxième clé autre que la TVA pour différencier le compte comptable du produit
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activer la gestion de la TVA autoliquidée sur les achats fournisseurs
 
 ## Export
 NotExportLettering=Ne pas exporter les informations de lettrage lors de la génération du fichier

@@ -509,6 +509,7 @@ class Expedition extends CommonObject
 				foreach ($tab as $detbatch) {
 					if ($detbatch->entrepot_id == $stockLocation) {
 						if (!($detbatch->create($line_id) > 0)) {		// Create an ExpeditionLineBatch
+							$this->errors = $detbatch->errors;
 							$error++;
 						}
 					}
@@ -3220,7 +3221,7 @@ class ExpeditionLigne extends CommonObjectLine
 						$shipmentLot->qty = $this->detail_batch->qty;
 						$shipmentLot->fk_origin_stock = $batch_id;
 						if ($shipmentLot->create($this->id) < 0) {
-							$this->errors[] = $shipmentLot->errors;
+							$this->errors = $shipmentLot->errors;
 							$error++;
 						}
 					}
