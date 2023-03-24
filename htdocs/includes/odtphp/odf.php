@@ -167,14 +167,13 @@ class Odf
 	{
 		$value = html_entity_decode($value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
 
-		// fix breaklines...
-		$value = str_replace("<br>", "<br />", $value);
+		// fix breaklines.
+		$value = preg_replace('/<[ ]*br[ ]*\/?>/', "<br />", $value);
 		$convertedValue = $value;
 
 		// Check if the value includes html tags
 		if ($this->_hasHtmlTag($value) === true) {
-			// Note: allowing many tags is supported on PHP >7.4 . For older versions, this will strip all HTML tags.
-			$value = strip_tags($value, ['<br>', '<strong>', '<b>', '<i>', '<em>', '<u>', '<s>', '<sub>', '<sup>', '<span>']);
+			$value = strip_tags($value, '<br><strong><b><i><em><u><s><sub><sup><span>');
 
 			// Default styles for strong/b, i/em, u, s, sub & sup
 			$automaticStyles = array(
