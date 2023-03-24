@@ -109,12 +109,12 @@ $sig_header = empty($_SERVER["HTTP_STRIPE_SIGNATURE"]) ? '' : $_SERVER["HTTP_STR
 $event = null;
 
 if (getDolGlobalString('STRIPE_DEBUG')) {
-	$fh = fopen(DOL_DATA_ROOT.'/dolibarr_stripe.log', 'w+');
+	$fh = fopen(DOL_DATA_ROOT.'/dolibarr_stripe_ipn_payload.log', 'w+');
 	if ($fh) {
 		fwrite($fh, dol_print_date(dol_now('gmt'), 'standard').' IPN Called. HTTP_STRIPE_SIGNATURE='.$sig_header."\n");
 		fwrite($fh, $payload);
 		fclose($fh);
-		dolChmod(DOL_DATA_ROOT.'/dolibarr_stripe.log');
+		dolChmod(DOL_DATA_ROOT.'/dolibarr_stripe_ipn_payload.log');
 	}
 }
 
@@ -314,8 +314,8 @@ if ($event->type == 'payout.created') {
 	$db->query($sql);
 	$db->commit();
 } elseif ($event->type == 'payment_intent.succeeded') {		// Called when making payment with PaymentIntent method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
-	dol_syslog("object = ".var_export($event->data, true));
-	include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php'; //TOTEST
+	//dol_syslog("object = ".var_export($event->data, true));
+	include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 	global $stripearrayofkeysbyenv;
 	$error = 0;
 	$object = $event->data->object;
@@ -522,10 +522,9 @@ if ($event->type == 'payout.created') {
 		dol_syslog("The payment mode of this payment is ".$paymentTypeId.". This payment mode is not managed by the IPN");
 	}
 } elseif ($event->type == 'payment_intent.payment_failed') {
-	// TODO: Redirect to paymentko.php
+	dol_syslog("A try to make a payment has failed");
 } elseif ($event->type == 'checkout.session.completed') {		// Called when making payment with new Checkout method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
 	// TODO: create fees
-	// TODO: Redirect to paymentok.php
 } elseif ($event->type == 'payment_method.attached') {
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
