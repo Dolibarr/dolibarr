@@ -27,6 +27,8 @@ CREATE TABLE llx_product_lot (
   eol_date      datetime NULL,
   manufacturing_date datetime NULL,
   scrapping_date datetime NULL,
+  model_pdf			varchar(255),
+  last_main_doc		varchar(255),				-- relative filepath+filename of last main generated document
   datec         datetime,
   tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat integer,
