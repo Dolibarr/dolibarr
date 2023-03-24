@@ -597,7 +597,7 @@ class ChargeSociales extends CommonObject
 			$this->ref = $this->label;
 		}
 
-		$label = img_picto('', 'tax').'<u class="paddingrightonly">'.$langs->trans("SocialContribution").'</u>';
+		$label = img_picto('', $this->picto, 'class="pictofixedwidth"').'<u class="paddingrightonly">'.$langs->trans("SocialContribution").'</u>';
 		if (isset($this->paye)) {
 			$label .= ' '.$this->getLibStatut(5);
 		}

@@ -723,14 +723,6 @@ class Conf
 				}
 			}
 
-			// conf->mailing->email_from = email by default to send Dolibarr emailings
-			if (isModEnabled('mailing')) {
-				$this->mailing->email_from = $this->email_from;
-				if (!empty($this->global->MAILING_EMAIL_FROM)) {
-					$this->mailing->email_from = $this->global->MAILING_EMAIL_FROM;
-				}
-			}
-
 			if (!isset($this->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) {
 				$this->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP = 1;
 			}

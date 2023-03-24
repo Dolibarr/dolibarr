@@ -185,7 +185,7 @@ function getVersions($authentication)
  * @param 	string	$modulepart		 	Properties of document
  * @param	string	$file				Relative path
  * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided)
- * @return	void
+ * @return	array
  */
 function getDocument($authentication, $modulepart, $file, $refname = '')
 {

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2016-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2504,6 +2504,14 @@ $tempdir = $conf->website->dir_output.'/'.$websitekey.'/';
 
 // Generate web site sitemaps
 if ($action == 'generatesitemaps' && $usercanedit) {
+	// Define $domainname
+	if ($website->virtualhost) {
+		$domainname = $website->virtualhost;
+	}
+	if (! preg_match('/^http/i', $domainname)) {
+		$domainname = 'https://'.$domainname;
+	}
+
 	$domtree = new DOMDocument('1.0', 'UTF-8');
 
 	$root = $domtree->createElementNS('http://www.sitemaps.org/schemas/sitemap/0.9', 'urlset');
@@ -2511,6 +2519,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 
 	$domtree->formatOutput = true;
 
+	$addrsswrapper = 0;
 	$xmlname = 'sitemap.xml';
 
 	$sql = "SELECT wp.rowid, wp.type_container , wp.pageurl, wp.lang, wp.fk_page, wp.tms as tms,";
@@ -2539,6 +2548,11 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 					$shortlangcode = substr($object->lang, 0, 2); // Use short lang code of website
 				}
 
+				// Is it a blog post for the RSS wrapper ?
+				if ($objp->type_container == 'blogpost') {
+					$addrsswrapper = 1;
+				}
+
 				// Forge $pageurl, adding language prefix if it is an alternative language
 				$pageurl = $objp->pageurl.'.php';
 				if ($objp->fk_default_home == $objp->rowid) {
@@ -2549,24 +2563,18 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 					}
 				}
 
-				if ($objp->virtualhost) {
-					$domainname = $objp->virtualhost;
-				}
-				if (! preg_match('/^http/i', $domainname)) {
-					$domainname = 'https://'.$domainname;
-				}
 				//$pathofpage = $dolibarr_main_url_root.'/'.$pageurl.'.php';
 
 				// URL of sitemaps must end with trailing slash if page is ''
 				$loc = $domtree->createElement('loc', $domainname.'/'.$pageurl);
 				$lastmod = $domtree->createElement('lastmod', dol_print_date($db->jdate($objp->tms), 'dayrfc', 'gmt'));
-				$changefreq = $domtree->createElement('changefreq', 'weekly');	// TODO Manage other values
 				$priority = $domtree->createElement('priority', '1');
 
 				$url->appendChild($loc);
 				$url->appendChild($lastmod);
 				// Add suggested frequency for refresh
 				if (!empty($conf->global->WEBSITE_SITEMAPS_ADD_WEEKLY_FREQ)) {
+					$changefreq = $domtree->createElement('changefreq', 'weekly');	// TODO Manage other values
 					$url->appendChild($changefreq);
 				}
 				// Add higher priority for home page
@@ -2655,7 +2663,31 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 				$root->appendChild($url);
 				$i++;
 			}
+
+			// Adding a RSS feed into a sitemap should nto be required. The RSS contains pages that are already included into
+			// the sitemap and RSS feeds are not shown into index.
+			if ($addrsswrapper && getDolGlobalInt('WEBSITE_ADD_RSS_FEED_INTO_SITEMAP')) {
+				$url = $domtree->createElement('url');
+
+				$pageurl = 'wrapper.php?rss=1';
+
+				// URL of sitemaps must end with trailing slash if page is ''
+				$loc = $domtree->createElement('loc', $domainname.'/'.$pageurl);
+				$lastmod = $domtree->createElement('lastmod', dol_print_date($db->jdate(dol_now()), 'dayrfc', 'gmt'));
+
+				$url->appendChild($loc);
+				$url->appendChild($lastmod);
+				// Add suggested frequency for refresh
+				if (!empty($conf->global->WEBSITE_SITEMAPS_ADD_WEEKLY_FREQ)) {
+					$changefreq = $domtree->createElement('changefreq', 'weekly');	// TODO Manage other values
+					$url->appendChild($changefreq);
+				}
+
+				$root->appendChild($url);
+			}
+
 			$domtree->appendChild($root);
+
 			if ($domtree->save($tempdir.$xmlname)) {
 				dolChmod($tempdir.$xmlname);
 				setEventMessages($langs->trans("SitemapGenerated", $xmlname), null, 'mesgs');

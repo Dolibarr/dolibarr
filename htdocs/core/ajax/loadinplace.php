@@ -94,6 +94,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				}
 			} elseif (!empty($ext_element)) {
 				$module = $subelement = $ext_element;
+				$regs = array();
 				if (preg_match('/^([^_]+)_([^_]+)/i', $ext_element, $regs)) {
 					$module = $regs[1];
 					$subelement = $regs[2];
