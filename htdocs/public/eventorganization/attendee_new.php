@@ -686,12 +686,13 @@ print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, 0, 'center')
 
 print '<div align="center">';
 print '<div id="divsubscribe">';
-print '<div class="center subscriptionformhelptext opacitymedium justify">';
+print '<div class="center subscriptionformhelptext justify">';
 
 // Welcome message
-
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgWelcomeMessage").'</span>';
 print '<br>';
+
+// Title
 print '<span class="eventlabel">'.dol_escape_htmltag($project->title . ' '. $conference->label).'</span><br>';
 if ($project->date_start_event || $project->date_end_event) {
 	print '<br><span class="fa fa-calendar pictofixedwidth"></span>';
