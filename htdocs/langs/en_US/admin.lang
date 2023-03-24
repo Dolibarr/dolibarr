@@ -512,6 +512,7 @@ GoIntoTranslationMenuToChangeThis=A translation has been found for the key with 
 WarningSettingSortOrder=Warning, setting a default sort order may result in a technical error when going on the list page if field is an unknown field. If you experience such an error, come back to this page to remove the default sort order and restore default behavior.
 Field=Field
 ProductDocumentTemplates=Document templates to generate product document
+ProductBatchDocumentTemplates=Document templates to generate product lots document
 FreeLegalTextOnExpenseReports=Free legal text on expense reports
 WatermarkOnDraftExpenseReports=Watermark on draft expense reports
 AttachMainDocByDefault=Set this to 1 if you want to attach main document to email by default (if applicable)
