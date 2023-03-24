@@ -865,10 +865,10 @@ class Categorie extends CommonObject
 		if (($type == 'customer' || $type == 'supplier') && $user->socid > 0) {
 			$sql .= " AND o.rowid = ".((int) $user->socid);
 		}
+		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit > 0 || $offset > 0) {
 			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
-		$sql .= $this->db->order($sortfield, $sortorder);
 
 		dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
 		$resql = $this->db->query($sql);
