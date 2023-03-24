@@ -157,7 +157,7 @@ if ($in_bookkeeping == 'notyet') {
 	$sql .= " AND f.rowid NOT IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";
 	// $sql .= " AND fd.rowid NOT IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
 }
-$sql .= " ORDER BY f.datef";
+$sql .= " ORDER BY f.datef, f.ref";
 //print $sql; exit;
 
 dol_syslog('accountancy/journal/sellsjournal.php', LOG_DEBUG);
