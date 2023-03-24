@@ -565,7 +565,7 @@ class SMTPs
 				// Most servers expect a 2nd pass of EHLO after TLS is established to get another time
 				// the answer with list of supported AUTH methods. They may differs between non STARTTLS and with STARTTLS.
 				if (! $_retVal = $this->socket_send_str('EHLO '.$hosth, '250')) {
-					$this->_setErr(126, '"'.$hosth.'" does not support authenticated connections. Error after sending EHLO '.$hosth);
+					$this->_setErr(126, '"'.$hosth.'" does not support authenticated connections or temporary error. Error after 2nd sending EHLO '.$hosth.' : '.$this->lastretval);
 					return $_retVal;
 				}
 			}
@@ -615,7 +615,7 @@ class SMTPs
 				$this->_setErr(130, 'Invalid Authentication Credentials.');
 			}
 		} else {
-			$this->_setErr(126, '"'.$host.'" does not support authenticated connections. Error after sending EHLO '.$hosth);
+			$this->_setErr(126, '"'.$host.'" does not support authenticated connections or temporary error. Error after sending EHLO '.$hosth.' : '.$this->lastretval);
 		}
 
 		return $_retVal;
@@ -719,7 +719,7 @@ class SMTPs
 				// Now tell the server we are done and close the socket...
 				fputs($this->socket, 'QUIT');
 			} else {
-				// We got code $this->lastretval
+				// We got error code into $this->lastretval
 			}
 
 			fclose($this->socket);
