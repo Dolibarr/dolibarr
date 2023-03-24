@@ -997,7 +997,26 @@ class CMailFile
 						$this->dump_mail();
 					}
 
-					$result = $this->smtps->getErrors();
+					if (! $result) {
+						$smtperrorcode = $this->smtps->lastretval;	// SMTP error code
+						dol_syslog("CMailFile::sendfile: mail SMTP error code ".$smtperrorcode, LOG_WARNING);
+
+						if ($smtperrorcode == '421') {	// Try later
+							// TODO Add a delay and try again
+							/*
+							dol_syslog("CMailFile::sendfile: Try later error, so we wait and we retry");
+							sleep(2);
+
+							$result = $this->smtps->sendMsg();
+
+							if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+								$this->dump_mail();
+							}
+							*/
+						}
+					}
+
+					$result = $this->smtps->getErrors();	// applicative error code (not SMTP error code)
 					if (empty($this->error) && empty($result)) {
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 						$res = true;
@@ -1268,7 +1287,11 @@ class CMailFile
 
 		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 			$srcfile = $dolibarr_main_data_root."/dolibarr_mail.log";
-			$destfile = $dolibarr_main_data_root."/dolibarr_mail.err";
+			if (getDolGlobalString('MAIN_MAIL_DEBUG_ERR_WITH_DATE')) {
+				$destfile = $dolibarr_main_data_root."/dolibarr_mail.".dol_print_date(dol_now(), 'dayhourlog', 'gmt').".err";
+			} else {
+				$destfile = $dolibarr_main_data_root."/dolibarr_mail.err";
+			}
 
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_move($srcfile, $destfile, 0, 1, 0, 0);

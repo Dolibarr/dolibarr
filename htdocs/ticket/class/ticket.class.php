@@ -1940,20 +1940,18 @@ class Ticket extends CommonObject
 	{
 		$contacts = array();
 
-		// Generation requete recherche
+		// Forge the search SQL
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople";
 		$sql .= " WHERE entity IN (".getEntity('contact').")";
 		if (!empty($socid)) {
-			$sql .= " AND fk_soc='".$this->db->escape($socid)."'";
+			$sql .= " AND fk_soc = ".((int) $socid);
 		}
-
 		if (!empty($email)) {
 			$sql .= " AND ";
-
 			if (!$case) {
-				$sql .= "email LIKE '".$this->db->escape($email)."'";
+				$sql .= "email = '".$this->db->escape($email)."'";
 			} else {
-				$sql .= "email LIKE BINARY '".$this->db->escape($email)."'";
+				$sql .= "email LIKE BINARY '".$this->db->escape($this->db->escapeforlike($email))."'";
 			}
 		}
 

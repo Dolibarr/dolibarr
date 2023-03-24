@@ -733,15 +733,15 @@ if ($rowid > 0) {
 			}
 
 			print '<td class="liste_titre left">';
-			print '<input class="flat" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'" size="12"></td>';
+			print '<input class="flat maxwidth100" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'"></td>';
 
 			print '<td class="liste_titre left">';
-			print '<input class="flat" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'" size="7"></td>';
+			print '<input class="flat maxwidth100" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'"></td>';
 
 			print '<td class="liste_titre">&nbsp;</td>';
 
 			print '<td class="liste_titre left">';
-			print '<input class="flat" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'" size="12"></td>';
+			print '<input class="flat maxwidth100" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'"></td>';
 
 			print '<td class="liste_titre">&nbsp;</td>';
 
