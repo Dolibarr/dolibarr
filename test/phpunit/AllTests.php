@@ -112,6 +112,8 @@ class AllTests
 		$suite->addTestSuite('CodingSqlTest');
 		require_once dirname(__FILE__).'/CodingPhpTest.php';
 		$suite->addTestSuite('CodingPhpTest');
+		require_once dirname(__FILE__).'/DoliDBTest.php';
+		$suite->addTestSuite('DoliDBTest');
 
 		require_once dirname(__FILE__).'/SecurityTest.php';
 		$suite->addTestSuite('SecurityTest');

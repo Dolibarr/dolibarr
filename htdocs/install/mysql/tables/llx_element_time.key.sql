@@ -1,5 +1,6 @@
 -- ===========================================================================
 -- Copyright (C) 2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2023 Gauthier VERDOL	   <gauthier.verdol@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
 --
 -- ===========================================================================
 
-ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_task (fk_task);
-ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_date (task_date);
-ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_datehour (task_datehour);
+ALTER TABLE llx_element_time ADD INDEX idx_element_time_task (fk_element);
+ALTER TABLE llx_element_time ADD INDEX idx_element_time_date (element_date);
+ALTER TABLE llx_element_time ADD INDEX idx_element_time_datehour (element_datehour);
 

@@ -24,7 +24,7 @@
 
 /**
  *  \file       htdocs/fichinter/class/fichinterrec.class.php
- *  \ingroup    facture
+ *  \ingroup    fichinter
  *  \brief      Fichier de la classe des factures recurentes
  */
 

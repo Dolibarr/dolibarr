@@ -20,6 +20,11 @@
  */
 class BlockedLogAuthority
 {
+	/**
+	 * DoliDB
+	 * @var DoliDB
+	 */
+	public $db;
 
 	/**
 	 * Id of the log
@@ -44,6 +49,12 @@ class BlockedLogAuthority
 	 * @var int
 	 */
 	public $tms = 0;
+
+	/**
+	 * Error message
+	 * @var string
+	 */
+	public $error;
 
 	/**
 	 *      Constructor

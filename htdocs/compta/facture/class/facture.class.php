@@ -18,7 +18,7 @@
  * Copyright (C) 2018-2022  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
- * Copyright (C) 2022      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -336,10 +336,6 @@ class Facture extends CommonInvoice
 		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'LT2', 'enabled'=>1, 'visible'=>-1, 'position'=>120, 'isameasure'=>1),
 		'revenuestamp' =>array('type'=>'double(24,8)', 'label'=>'RevenueStamp', 'enabled'=>1, 'visible'=>-1, 'position'=>115, 'isameasure'=>1),
 		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'AmountTTC', 'enabled'=>1, 'visible'=>1, 'position'=>130, 'isameasure'=>1),
-		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
-		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>166),
-		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>167),
-		'fk_user_closing' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserClosing', 'enabled'=>1, 'visible'=>-1, 'position'=>168),
 		'fk_facture_source' =>array('type'=>'integer', 'label'=>'SourceInvoice', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
 		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
 		'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
@@ -370,7 +366,11 @@ class Facture extends CommonInvoice
 		'module_source' =>array('type'=>'varchar(32)', 'label'=>'POSModule', 'enabled'=>1, 'visible'=>-1, 'position'=>315),
 		'pos_source' =>array('type'=>'varchar(32)', 'label'=>'POSTerminal', 'enabled'=>1, 'visible'=>-1, 'position'=>320),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModificationShort', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModificationShort', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>502),
+		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>506),
+		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'notnull'=>-1, 'position'=>508),
+		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>510),
+		'fk_user_closing' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserClosing', 'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
 		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Paid', 3=>'Abandonned')),
 	);
@@ -1733,12 +1733,6 @@ class Facture extends CommonInvoice
 			}
 		}
 
-
-		if (! is_object($hookmanager)) {
-			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($origin->db);
-		}
-
 		$hookmanager->initHooks(array('invoicedao'));
 
 		$parameters = array('objFrom' => $origin);
@@ -2695,7 +2689,7 @@ class Facture extends CommonInvoice
 				return -5;
 			}
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time';
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'element_time';
 			$sql .= ' SET invoice_id = NULL, invoice_line_id = NULL';
 			$sql .= ' WHERE invoice_id = '.((int) $rowid);
 
@@ -3584,6 +3578,7 @@ class Facture extends CommonInvoice
 
 	/**
 	 *  Add an invoice line into database (linked to product/service or not).
+	 *  Note: ->thirdparty must be defined.
 	 *  Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
 	 *  de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
 	 *  par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
@@ -4229,19 +4224,6 @@ class Facture extends CommonInvoice
 		}
 
 		$this->db->begin();
-
-		// Free discount linked to invoice line
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-		$sql .= ' SET fk_facture_line = NULL';
-		$sql .= ' WHERE fk_facture_line = '.((int) $rowid);
-
-		dol_syslog(get_class($this)."::deleteline", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if (!$result) {
-			$this->error = $this->db->error();
-			$this->db->rollback();
-			return -1;
-		}
 
 		// Memorize previous line for triggers
 		$staticline = clone $line;
@@ -5674,7 +5656,7 @@ class Facture extends CommonInvoice
 								$actioncomm->contact_id = 0;
 
 								$actioncomm->code = 'AC_EMAIL';
-								$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateOK';
+								$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' forcerecipient='.$forcerecipient.')';
 								$actioncomm->note_private = $sendContent;
 								$actioncomm->fk_project = $tmpinvoice->fk_project;
 								$actioncomm->datep = dol_now();
@@ -5684,6 +5666,7 @@ class Facture extends CommonInvoice
 								$actioncomm->userownerid = $user->id; // Owner of action
 								// Fields when action is an email (content should be added into note)
 								$actioncomm->email_msgid = $cMailFile->msgid;
+								$actioncomm->email_subject = $sendTopic;
 								$actioncomm->email_from = $from;
 								$actioncomm->email_sender = '';
 								$actioncomm->email_to = $to;
@@ -5811,6 +5794,8 @@ class Facture extends CommonInvoice
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -5819,6 +5804,7 @@ class Facture extends CommonInvoice
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'socid')) {
 			$return .= '<br><span class="info-box-label">'.$this->socid.'</span>';
 		}
@@ -6441,13 +6427,38 @@ class FactureLigne extends CommonInvoiceLine
 			return -1;
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".((int) $this->rowid);
+		// Free discount linked to invoice line
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
+		$sql .= ' SET fk_facture_line = NULL';
+		$sql .= ' WHERE fk_facture_line = '.((int) $this->id);
+
+		dol_syslog(get_class($this)."::deleteline", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if (!$result) {
+			$this->error = $this->db->error();
+			$this->errors[] = $this->error;
+			$this->db->rollback();
+			return -1;
+		}
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time';
+		$sql .= ' SET invoice_id = NULL, invoice_line_id = NULL';
+		$sql .= ' WHERE invoice_line_id = '.((int) $this->id);
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->error()." sql=".$sql;
+			$this->errors[] = $this->error;
+			$this->db->rollback();
+			return -1;
+		}
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".((int) $this->id);
 
 		if ($this->db->query($sql)) {
 			$this->db->commit();
 			return 1;
 		} else {
 			$this->error = $this->db->error()." sql=".$sql;
+			$this->errors[] = $this->error;
 			$this->db->rollback();
 			return -1;
 		}
@@ -6501,9 +6512,9 @@ class FactureLigne extends CommonInvoiceLine
 	 * Returns situation_percent of the previous line.
 	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
 	 *
-	 * @param  int     $invoiceid      Invoice id
+	 * @param  int     $invoiceid      			Invoice id
 	 * @param  bool    $include_credit_note		Include credit note or not
-	 * @return int                     >= 0
+	 * @return int                     			>= 0
 	 */
 	public function get_prev_progress($invoiceid, $include_credit_note = true)
 	{

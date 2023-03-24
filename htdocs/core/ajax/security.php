@@ -36,7 +36,7 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-// We need langs because the getRandomPassword may use user language to define some rules of pass generation
+// We need langs because the getRandomPassword may use the user language to define some rules of pass generation
 /*if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
 }*/

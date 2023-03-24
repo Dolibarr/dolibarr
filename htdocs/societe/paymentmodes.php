@@ -155,7 +155,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$companybankaccount->old = dol_clone($companybankaccount);
+			$companybankaccount->oldcopy = dol_clone($companybankaccount);
 
 			$companybankaccount->socid           = $object->id;
 
@@ -196,8 +196,8 @@ if (empty($reshook)) {
 					$companybankaccount->setAsDefault($id); // This will make sure there is only one default rib
 				}
 
-				if ($companypaymentmode->old->stripe_card_ref != $companypaymentmode->stripe_card_ref) {
-					if ($companybankaccount->old->iban != $companybankaccount->iban) {
+				if ($companypaymentmode->oldcopy->stripe_card_ref != $companypaymentmode->stripe_card_ref) {
+					if ($companybankaccount->oldcopy->iban != $companybankaccount->iban) {
 						// TODO If we modified the iban, we must also update the pm_ on Stripe side, or break the link completely ?
 					}
 				}
@@ -229,7 +229,7 @@ if (empty($reshook)) {
 
 		$companypaymentmode->fetch($id);
 		if (!$error) {
-			$companybankaccount->old = dol_clone($companybankaccount);
+			$companybankaccount->oldcopy = dol_clone($companybankaccount);
 
 			$companypaymentmode->fk_soc          = $object->id;
 
@@ -258,8 +258,8 @@ if (empty($reshook)) {
 					$companypaymentmode->setAsDefault($id); // This will make sure there is only one default rib
 				}
 
-				if ($companypaymentmode->old->stripe_card_ref != $companypaymentmode->stripe_card_ref) {
-					if ($companybankaccount->old->number != $companybankaccount->number) {
+				if ($companypaymentmode->oldcopy->stripe_card_ref != $companypaymentmode->stripe_card_ref) {
+					if ($companybankaccount->oldcopy->number != $companybankaccount->number) {
 						// TODO If we modified the card, we must also update the pm_ on Stripe side, or break the link completely ?
 					}
 				}
@@ -306,7 +306,7 @@ if (empty($reshook)) {
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
 			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOST('date_rummonth', 'int'), GETPOST('date_rumday', 'int'), GETPOST('date_rumyear', 'int'));
 			$companybankaccount->datec = dol_now();
-			$companybankaccount->status          = 1;
+			$companybankaccount->status = 1;
 
 			$companybankaccount->bank = trim($companybankaccount->bank);
 			if (empty($companybankaccount->bank) && !empty($companybankaccount->thirdparty)) {
@@ -1023,7 +1023,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	// Get list of remote payment modes
 	$listofsources = array();
 
-	if (is_object($stripe)) {
+	if (isset($stripe) && is_object($stripe)) {
 		try {
 			$customerstripe = $stripe->customerStripe($object, $stripeacc, $servicestatus);
 			if (!empty($customerstripe->id)) {
@@ -1364,7 +1364,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		if ($nbremote == 0 && $nblocal == 0) {
 			$colspan = (!empty($conf->global->STRIPE_ALLOW_LOCAL_CARD) ? 10 : 9);
-			print '<tr><td colspan="'.$colspan.'"<span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		print "</table>";
 		print "</div>";
@@ -1577,7 +1577,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					$modelselected = $conf->global->BANKADDON_PDF;
 				}
 
-				$out .= $form->selectarray('modelrib'.$rib->id, $modellist, $modelselected, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100');
+				$out .= $form->selectarray('modelrib'.$rib->id, $modellist, $modelselected, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth125');
 				$out .= ajax_combobox('modelrib'.$rib->id);
 
 				$allowgenifempty = 0;
