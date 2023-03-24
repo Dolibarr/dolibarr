@@ -692,9 +692,9 @@ print '<div class="center subscriptionformhelptext opacitymedium justify">';
 
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgWelcomeMessage").'</span>';
 print '<br>';
-print '<span class="eventlabel">'.$project->title . ' '. $conference->label.'</span><br>';
+print '<span class="eventlabel">'.dol_escape_htmltag($project->title . ' '. $conference->label).'</span><br>';
 if ($project->date_start_event || $project->date_end_event) {
-	print '<span class="fa fa-calendar pictofixedwidth"></span>';
+	print '<br><span class="fa fa-calendar pictofixedwidth"></span>';
 }
 if ($project->date_start_event) {
 	$format = 'day';
@@ -719,7 +719,7 @@ if ($project->date_start_event || $project->date_end_event) {
 	print '<br>';
 }
 if ($project->location) {
-	print '<span class="fa fa-map-marked-alt pictofixedwidth"></span>'.$project->location.'<br>';
+	print '<span class="fa fa-map-marked-alt pictofixedwidth"></span>'.dol_escape_htmltag($project->location).'<br>';
 }
 
 $maxattendees = 0;
