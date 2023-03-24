@@ -109,12 +109,12 @@ $sig_header = empty($_SERVER["HTTP_STRIPE_SIGNATURE"]) ? '' : $_SERVER["HTTP_STR
 $event = null;
 
 if (getDolGlobalString('STRIPE_DEBUG')) {
-	$fh = fopen(DOL_DATA_ROOT.'/dolibarr_stripe_ipn_payload.log', 'w+');
+	$fh = fopen(DOL_DATA_ROOT.'/dolibarr_stripeipn_payload.log', 'w+');
 	if ($fh) {
 		fwrite($fh, dol_print_date(dol_now('gmt'), 'standard').' IPN Called. HTTP_STRIPE_SIGNATURE='.$sig_header."\n");
 		fwrite($fh, $payload);
 		fclose($fh);
-		dolChmod(DOL_DATA_ROOT.'/dolibarr_stripe_ipn_payload.log');
+		dolChmod(DOL_DATA_ROOT.'/dolibarr_stripeipn_payload.log');
 	}
 }
 
