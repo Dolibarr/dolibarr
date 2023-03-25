@@ -26,6 +26,7 @@
  *	\brief      Page to show a receipt.
  */
 
+// Includes
 if (!isset($action)) {
 	//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER', '1');	// Not disabled cause need to load personalized language
 	//if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
@@ -57,7 +58,7 @@ $facid = GETPOST('facid', 'int');
 $action = GETPOST('action', 'aZ09');
 $gift = GETPOST('gift', 'int');
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 
