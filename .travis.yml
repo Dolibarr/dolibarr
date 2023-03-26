@@ -57,7 +57,7 @@ addons:
 env:
   global:
   # Set to true for very verbose output
-  - DEBUG=false
+  - DEBUG=true
 
 jobs:
   fast_finish: true
@@ -501,7 +501,7 @@ after_failure:
   # Show upgrade log files
   for ficlog in `ls $TRAVIS_BUILD_DIR/*.log`
   do
-    echo "Debugging informations for file $ficlog"
+    #echo "Debugging informations for file $ficlog"
     #cat $ficlog
   done
   # Show Apache log file
