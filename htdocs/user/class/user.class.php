@@ -888,6 +888,7 @@ class User extends CommonObject
 		}
 
 		// Add automatically other permission using the criteria whereforadd
+		// $whereforadd can be a SQL filter or the string 'allmodules'
 		if (!empty($whereforadd)) {
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
@@ -897,31 +898,37 @@ class User extends CommonObject
 				$sql .= " AND (".$whereforadd.")";	// Note: parenthesis are important because whereforadd can contains OR. Also note that $whereforadd is already sanitized
 			}
 
-			$result = $this->db->query($sql);
-			if ($result) {
-				$num = $this->db->num_rows($result);
-				$i = 0;
-				while ($i < $num) {
-					$obj = $this->db->fetch_object($result);
-
-					if ($obj) {
-						$nid = $obj->id;
-
-						$sql = "DELETE FROM ".$this->db->prefix()."user_rights WHERE fk_user = ".((int) $this->id)." AND fk_id = ".((int) $nid)." AND entity = ".((int) $entity);
-						if (!$this->db->query($sql)) {
-							$error++;
-						}
-						$sql = "INSERT INTO ".$this->db->prefix()."user_rights (entity, fk_user, fk_id) VALUES (".((int) $entity).", ".((int) $this->id).", ".((int) $nid).")";
-						if (!$this->db->query($sql)) {
-							$error++;
-						}
-					}
-
-					$i++;
-				}
-			} else {
+			$sqldelete = "DELETE FROM ".$this->db->prefix()."user_rights";
+			$sqldelete .= " WHERE fk_user = ".((int) $this->id)." AND fk_id IN (";
+			$sqldelete .= $sql;
+			$sqldelete .= ") AND entity = ".((int) $entity);
+			if (!$this->db->query($sqldelete)) {
 				$error++;
-				dol_print_error($this->db);
+			}
+
+			if (!$error) {
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$num = $this->db->num_rows($resql);
+					$i = 0;
+					while ($i < $num) {
+						$obj = $this->db->fetch_object($resql);
+
+						if ($obj) {
+							$nid = $obj->id;
+
+							$sql = "INSERT INTO ".$this->db->prefix()."user_rights (entity, fk_user, fk_id) VALUES (".((int) $entity).", ".((int) $this->id).", ".((int) $nid).")";
+							if (!$this->db->query($sql)) {
+								$error++;
+							}
+						}
+
+						$i++;
+					}
+				} else {
+					$error++;
+					dol_print_error($this->db);
+				}
 			}
 		}
 
@@ -1034,24 +1041,14 @@ class User extends CommonObject
 				$sql .= " AND id NOT IN (358)"; // user export
 			}
 
-			$result = $this->db->query($sql);
-			if ($result) {
-				$num = $this->db->num_rows($result);
-				$i = 0;
-				while ($i < $num) {
-					$obj = $this->db->fetch_object($result);
-					$nid = $obj->id;
+			$sqldelete = "DELETE FROM ".$this->db->prefix()."user_rights";
+			$sqldelete .= " WHERE fk_user = ".((int) $this->id)." AND fk_id IN (";
+			$sqldelete .= $sql;
+			$sqldelete .= ")";
+			$sqldelete .= " AND entity = ".((int) $entity);
 
-					$sql = "DELETE FROM ".$this->db->prefix()."user_rights";
-					$sql .= " WHERE fk_user = ".((int) $this->id)." AND fk_id = ".((int) $nid);
-					$sql .= " AND entity = ".((int) $entity);
-					if (!$this->db->query($sql)) {
-						$error++;
-					}
-
-					$i++;
-				}
-			} else {
+			$resql = $this->db->query($sqldelete);
+			if (!$resql) {
 				$error++;
 				dol_print_error($this->db);
 			}
