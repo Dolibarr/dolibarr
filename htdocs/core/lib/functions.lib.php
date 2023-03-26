@@ -210,7 +210,8 @@ function getEntity($element, $shared = 1, $currentobject = null)
 {
 	global $conf, $mc, $hookmanager, $object, $action, $db;
 
-	if (! is_object($hookmanager)) {
+	if (!is_object($hookmanager)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 		$hookmanager = new HookManager($db);
 	}
 

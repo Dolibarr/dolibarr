@@ -1114,6 +1114,7 @@ function httponly_accessforbidden($message = 1, $http_response_code = 403, $stri
 function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
 {
 	global $conf, $db, $user, $langs, $hookmanager;
+	global $action, $object;
 
 	if (!is_object($langs)) {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
@@ -1139,12 +1140,13 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 	print '</div>';
 	print '<br>';
 	if (empty($showonlymessage)) {
-		global $action, $object;
 		if (empty($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
 			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 			$hookmanager->initHooks(array('main'));
 		}
+
 		$parameters = array('message'=>$message, 'params'=>$params);
 		$reshook = $hookmanager->executeHooks('getAccessForbiddenMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		print $hookmanager->resPrint;

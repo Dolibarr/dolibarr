@@ -641,7 +641,7 @@ class CMailFile
 	 */
 	public function sendfile()
 	{
-		global $conf, $db, $langs;
+		global $conf, $db, $langs, $hookmanager;
 
 		$errorlevel = error_reporting();
 		//error_reporting($errorlevel ^ E_WARNING);   // Desactive warnings
@@ -649,8 +649,10 @@ class CMailFile
 		$res = false;
 
 		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($db);
+			if (!is_object($hookmanager)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+				$hookmanager = new HookManager($db);
+			}
 			$hookmanager->initHooks(array('mail'));
 
 			$parameters = array();
