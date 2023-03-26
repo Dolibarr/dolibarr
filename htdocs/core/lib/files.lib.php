@@ -707,12 +707,14 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
  * @param	string	$destfile			Destination file (can't be a directory)
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
+ * @param   int     $testvirus          Do an antivirus test. Move is canceled if a virus is found.
+ * @param	int		$indexdatabase		Index new file into database.
  * @return	int							<0 if error, 0 if nothing done (dest file already exists and overwriteifexists=0), >0 if OK
  * @see		dol_delete_file() dolCopyDir()
  */
-function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1)
+function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 0)
 {
-	global $conf;
+	global $conf, $db, $user;
 
 	dol_syslog("files.lib.php::dol_copy srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwriteifexists=".$overwriteifexists);
 
@@ -737,6 +739,17 @@ function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1)
 		dol_syslog("files.lib.php::dol_copy failed Permission denied to write into target directory ".$newdirdestfile, LOG_WARNING);
 		return -2;
 	}
+
+	// Check virus
+	$testvirusarray = array();
+	if ($testvirus) {
+		$testvirusarray = dolCheckVirus($srcfile);
+		if (count($testvirusarray)) {
+			dol_syslog("files.lib.php::dol_copy canceled because a virus was found into source file. we ignore the copy request.", LOG_WARNING);
+			return -3;
+		}
+	}
+
 	// Copy with overwriting if exists
 	$result = @copy($newpathofsrcfile, $newpathofdestfile);
 	//$result=copy($newpathofsrcfile, $newpathofdestfile);	// To see errors, remove @
@@ -754,7 +767,64 @@ function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1)
 
 	dolChmod($newpathofdestfile, $newmask);
 
-	return 1;
+	if ($result && $indexdatabase) {
+		// Add entry into ecm database
+		$rel_filetocopyafter = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $newpathofdestfile);
+		if (!preg_match('/([\\/]temp[\\/]|[\\/]thumbs|\.meta$)/', $rel_filetocopyafter)) {     // If not a tmp file
+			$rel_filetocopyafter = preg_replace('/^[\\/]/', '', $rel_filetocopyafter);
+			//var_dump($rel_filetorenamebefore.' - '.$rel_filetocopyafter);exit;
+
+			dol_syslog("Try to copy also entries in database for: ".$rel_filetocopyafter, LOG_DEBUG);
+			include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+
+			$ecmfiletarget = new EcmFiles($db);
+			$resultecmtarget = $ecmfiletarget->fetch(0, '', $rel_filetocopyafter);
+			if ($resultecmtarget > 0) {   // An entry for target name already exists for target, we delete it, a new one will be created.
+				dol_syslog("ECM dest file found, remove it", LOG_DEBUG);
+				$ecmfiletarget->delete($user);
+			} else {
+				dol_syslog("ECM dest file not found, create it", LOG_DEBUG);
+			}
+
+			$ecmSrcfile = new EcmFiles($db);
+			$resultecm  = $ecmSrcfile->fetch(0, '', $srcfile);
+			if ($resultecm) {
+				dol_syslog("Fetch src file ok", LOG_DEBUG);
+			} else {
+				dol_syslog("Fetch src file error", LOG_DEBUG);
+			}
+
+			$ecmfile = new EcmFiles($db);
+			$filename = basename($rel_filetocopyafter);
+			$rel_dir = dirname($rel_filetocopyafter);
+			$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+			$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+
+			$ecmfile->filepath = $rel_dir;
+			$ecmfile->filename = $filename;
+			$ecmfile->label = md5_file(dol_osencode($destfile)); // $destfile is a full path to file
+			$ecmfile->fullpath_orig = $srcfile;
+			$ecmfile->gen_or_uploaded = 'copy';
+			$ecmfile->description = $ecmSrcfile->description;
+			$ecmfile->keywords = $ecmSrcfile->keywords;
+			$resultecm = $ecmfile->create($user);
+			if ($resultecm < 0) {
+				dol_syslog("Create ECM file ok", LOG_DEBUG);
+				setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+			} else {
+				dol_syslog("Create ECM file error", LOG_DEBUG);
+				setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+			}
+
+			if ($resultecm > 0) {
+				$result = 1;
+			} else {
+				$result = -1;
+			}
+		}
+	}
+
+	return $result;
 }
 
 /**
