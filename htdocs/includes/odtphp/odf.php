@@ -168,7 +168,7 @@ class Odf
 		$value = html_entity_decode($value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
 
 		// fix breaklines.
-		$value = preg_replace('/<[ ]*br[ ]*\/?>/', "<br />", $value);
+		$value = preg_replace('/<br\s*\/?>/', "<br />", $value);
 		$convertedValue = $value;
 
 		// Check if the value includes html tags
