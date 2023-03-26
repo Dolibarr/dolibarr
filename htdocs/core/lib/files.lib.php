@@ -3388,7 +3388,7 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
 }
 
 /**
- * Function to manage the drag and drop file.
+ * Function to manage the drag and drop of a file.
  * We use global variable $object
  *
  * @param	string	$htmlname	The id of the component where we need to drag and drop
@@ -3397,6 +3397,7 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
 function dragAndDropFileUpload($htmlname)
 {
 	global $object, $langs;
+
 	$out = "";
 	$out .= '<div id="'.$htmlname.'Message" class="dragDropAreaMessage hidden"><span>'.img_picto("", 'download').'<br>'.$langs->trans("DropFileToAddItToObject").'</span></div>';
 	$out .= "\n<!-- JS CODE TO ENABLE DRAG AND DROP OF FILE -->\n";
@@ -3413,7 +3414,7 @@ function dragAndDropFileUpload($htmlname)
 				$("#'.$htmlname.'Message").removeClass("hidden");
 				ev.preventDefault();
 			});
-			
+
 			$(".cssDragDropArea").on("dragleave", function(ev) {
 				// Going out of drop area. Remove Highlight
 				if (enterTargetDragDrop == ev.target){
@@ -3429,38 +3430,38 @@ function dragAndDropFileUpload($htmlname)
 			});
 
 			$(".cssDragDropArea").on("drop", function(e) {
-				console.log("Trigger event file droped");
+				console.log("Trigger event file dropped. fk_element='.dol_escape_js($object->id).' element='.dol_escape_js($object->element).'");
 				e.preventDefault();
 				fd = new FormData();
-				fd.append("fk_element","'.dol_escape_json($object->id).'");
-				fd.append("element","'.dol_escape_json($object->element).'");
-				fd.append("token","'.newToken().'");
-				fd.append("action","linkit");
+				fd.append("fk_element", "'.dol_escape_js($object->id).'");
+				fd.append("element", "'.dol_escape_js($object->element).'");
+				fd.append("token", "'.currentToken().'");
+				fd.append("action", "linkit");
 				var dataTransfer = e.originalEvent.dataTransfer;
-				if(dataTransfer.files && dataTransfer.files.length){
+				if (dataTransfer.files && dataTransfer.files.length){
 					var droppedFiles = e.originalEvent.dataTransfer.files;
 					$.each(droppedFiles, function(index,file){
-						fd.append("files[]",file,file.name)
+						fd.append("files[]", file,file.name)
 					});
 				}
 				$(".cssDragDropArea").removeClass("highlightDragDropArea");
 				counterdragdrop = 0;
 				$.ajax({
-					url:"'.DOL_URL_ROOT.'/core/ajax/fileupload.php",
-					type:"POST",
-					processData:false,
+					url: "'.DOL_URL_ROOT.'/core/ajax/fileupload.php",
+					type: "POST",
+					processData: false,
 					contentType: false,
-					data:fd,
-					success:function(){ 
-						console.log("Uploaded.",arguments);
-						window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_json($object->id).'&seteventmessages=UploadFileDragDropSuccess:mesgs";
+					data: fd,
+					success:function() {
+						console.log("Uploaded.", arguments);
+						window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js($object->id).'&seteventmessages=UploadFileDragDropSuccess:mesgs";
 					},
-					error:function(){ 
-						console.log("Error Uploading.",arguments)
-						if (arguments[0].status == 403){
-							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_json($object->id).'&seteventmessages=ErrorUploadPermissionDenied:errors";
+					error:function() {
+						console.log("Error Uploading.", arguments)
+						if (arguments[0].status == 403) {
+							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js($object->id).'&seteventmessages=ErrorUploadPermissionDenied:errors";
 						}
-						window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_json($object->id).'&seteventmessages=ErrorUploadFileDragDropPermissionDenied:errors";
+						window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js($object->id).'&seteventmessages=ErrorUploadFileDragDropPermissionDenied:errors";
 					},
 				})
 			});

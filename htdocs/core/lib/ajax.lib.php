@@ -723,7 +723,7 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     action: \'set\',
                     field: \''.dol_escape_js($field).'\',
                     value: \'1\',
-                    element: \''.dol_escape_js(((empty($object->module) || $object->module == $object->element) ? '' : $object->module.'@').$object->element).'\',
+                    element: \''.dol_escape_js((empty($object->module) || $object->module == $object->element) ? $object->element : $object->element.'@'.$object->module).'\',
                     id: \''.((int) $object->id).'\',
 					token: \''.currentToken().'\'
                 },
@@ -755,7 +755,7 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     action: \'set\',
                     field: \''.dol_escape_js($field).'\',
                     value: \'0\',
-                    element: \''.dol_escape_js(((empty($object->module) || $object->module == $object->element) ? '' : $object->module.'@').$object->element).'\',
+                    element: \''.dol_escape_js((empty($object->module) || $object->module == $object->element) ? $object->element : $object->element.'@'.$object->module).'\',
                     id: \''.((int) $object->id).'\',
 					token: \''.currentToken().'\'
                 },

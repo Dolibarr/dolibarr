@@ -7509,7 +7509,7 @@ div.clipboardCPValue.hidewithsize {
 }
 
 /* ============================================================================== */
-/* For drag and drop feature                                                         */
+/* For drag and drop file feature                                                 */
 /* ============================================================================== */
 
 .cssDragDropArea{
@@ -7517,11 +7517,11 @@ div.clipboardCPValue.hidewithsize {
 }
 .highlightDragDropArea{
 	border: 2px #000 dashed !important;
-	background-color: #bbbbbb !important;
+	background-color: #eee !important;
 }
 .highlightDragDropArea * :not(.dragDropAreaMessage *){
-	opacity:0.7;
-	filter: blur(3px) grayscale(100%);
+	opacity:0.8;
+	filter: blur(1px) grayscale(90%);
 }
 .dragDropAreaMessage {
 	position: absolute;
@@ -7529,6 +7529,7 @@ div.clipboardCPValue.hidewithsize {
 	top:50%;
 	transform: translate(-50%, -50%);
 	text-align:center;
+	font-size: 2em;
 }
 
 /* ============================================================================== */

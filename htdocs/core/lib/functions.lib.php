@@ -11199,7 +11199,10 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 /**
  * Get an array with properties of an element.
  *
- * @param   string 	$element_type 	Element type (Value of $object->element). Example: 'action', 'facture', 'project_task', 'myobject@mymodule' or 'mymodule_myobject' ...
+ * @param   string 	$element_type 	Element type (Value of $object->element). Example:
+ * 									'action', 'facture', 'project_task',
+ * 									'myobject@mymodule' or
+ * 									'myobject_mysubobject' (where mymodule = myobject, like 'project_task')
  * @return  array					(module, classpath, element, subelement, classfile, classname)
  * @see fetchObjectByElement()
  */
@@ -11209,19 +11212,20 @@ function getElementProperties($element_type)
 
 	$classfile = $classname = $classpath = '';
 
-	// Parse element/subelement (ex: project_task)
+	// Parse element/subelement
 	$module = $element_type;
 	$element = $element_type;
 	$subelement = $element_type;
 
-	// If we ask an resource form external module (instead of default path)
-	if (preg_match('/^([^@]+)@([^@]+)$/i', $element_type, $regs)) {
+	// If we ask a resource form external module (instead of default path)
+	if (preg_match('/^([^@]+)@([^@]+)$/i', $element_type, $regs)) {	// 'myobject@mymodule'
 		$element = $subelement = $regs[1];
 		$module = $regs[2];
 	}
 
-	//print '<br>1. element : '.$element.' - module : '.$module .'<br>';
-	if (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {
+	// If we ask a resource for a string with an element and a subelement
+	// Example 'project_task'
+	if (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {	// 'myobject_mysubobject' with myobject=mymodule
 		$module = $element = $regs[1];
 		$subelement = $regs[2];
 	}
@@ -11293,14 +11297,18 @@ function getElementProperties($element_type)
 	if ($element_type == 'order_supplier') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
-		$subelement = 'commandefournisseur';
 		$classfile = 'fournisseur.commande';
+		$element = 'commande';
+		$subelement = '';
+		$classname = 'CommandeFournisseur';
 	}
 	if ($element_type == 'invoice_supplier') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
-		$subelement = 'facturefournisseur';
 		$classfile = 'fournisseur.facture';
+		$element = 'facture';
+		$subelement = '';
+		$classname = 'FactureFournisseur';
 	}
 	if ($element_type == "service") {
 		$classpath = 'product/class';
@@ -11353,6 +11361,10 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 			$objecttmp = new $classname($db);
 			$ret = $objecttmp->fetch($element_id, $element_ref);
 			if ($ret >= 0) {
+				if (empty($objecttmp->module)) {
+					$objecttmp->module = $element_prop['module'];
+				}
+
 				return $objecttmp;
 			}
 		} else {
