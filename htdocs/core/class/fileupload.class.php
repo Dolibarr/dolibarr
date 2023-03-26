@@ -19,8 +19,6 @@
 /**
  *       \file       htdocs/core/class/fileupload.class.php
  *       \brief      File to return Ajax response on file upload
- *
- *       Option MAIN_USE_JQUERY_FILEUPLOAD must be enabled to have feature working. Use is NOT secured !
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -48,11 +46,6 @@ class FileUpload
 		global $db, $conf;
 		global $object;
 		global $hookmanager;
-
-		// Feature not enabled. Warning feature not used and not secured so disabled.
-		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
-			return;
-		}
 
 		$hookmanager->initHooks(array('fileupload'));
 
@@ -266,9 +259,6 @@ class FileUpload
 	 */
 	protected function getFileObject($file_name)
 	{
-		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
-			return null;
-		}
 
 		$file_path = $this->options['upload_dir'].$file_name;
 		if (is_file($file_path) && $file_name[0] !== '.') {
@@ -310,10 +300,6 @@ class FileUpload
 	{
 		global $maxwidthmini, $maxheightmini;
 
-		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
-			return false;
-		}
-
 		$file_path = $this->options['upload_dir'].$file_name;
 		$new_file_path = $options['upload_dir'].$file_name;
 
@@ -345,10 +331,6 @@ class FileUpload
 	 */
 	protected function validate($uploaded_file, $file, $error, $index)
 	{
-		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
-			return false;
-		}
-
 		if ($error) {
 			$file->error = $error;
 			return false;
@@ -464,10 +446,6 @@ class FileUpload
 	 */
 	protected function handleFileUpload($uploaded_file, $name, $size, $type, $error, $index)
 	{
-		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
-			return null;
-		}
-
 		$file = new stdClass();
 		$file->name = $this->trimFileName($name, $type, $index);
 		$file->mime = dol_mimetype($file->name, '', 2);
@@ -514,10 +492,6 @@ class FileUpload
 	 */
 	public function get()
 	{
-		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
-			return;
-		}
-
 		$file_name = isset($_REQUEST['file']) ?
 		basename(stripslashes($_REQUEST['file'])) : null;
 		if ($file_name) {
@@ -536,10 +510,6 @@ class FileUpload
 	 */
 	public function post()
 	{
-		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
-			return;
-		}
-
 		if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
 			return $this->delete();
 		}
@@ -595,10 +565,6 @@ class FileUpload
 	 */
 	public function delete()
 	{
-		if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
-			return null;
-		}
-
 		$file_name = isset($_REQUEST['file']) ?
 		basename(stripslashes($_REQUEST['file'])) : null;
 		$file_path = $this->options['upload_dir'].$file_name;
