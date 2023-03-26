@@ -267,9 +267,9 @@ function dol_verifyHash($chain, $hash, $type = '0')
 	if ($type == '0' && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_verify')) {
 		if (! empty($hash[0]) && $hash[0] == '$') {
 			return password_verify($chain, $hash);
-		} elseif (strlen($hash) == 32) {
+		} elseif (dol_strlen($hash) == 32) {
 			return dol_verifyHash($chain, $hash, '3'); // md5
-		} elseif (strlen($hash) == 40) {
+		} elseif (dol_strlen($hash) == 40) {
 			return dol_verifyHash($chain, $hash, '2'); // sha1md5
 		}
 
