@@ -101,8 +101,8 @@ if (GETPOST('datep')) {
 // Security check
 $socid = GETPOST('socid', 'int');
 $id = GETPOST('id', 'int');
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->socid && ($socid != $user->socid)) {
+	accessforbidden();
 }
 
 $error = GETPOST("error");
