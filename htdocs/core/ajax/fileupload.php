@@ -70,17 +70,16 @@ if (!empty($user->socid)) {
 }
 
 $result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
-
 if (!$result) {
-	header('HTTP/1.0 403 Forbidden');
-	exit;
+	httponly_accessforbidden('Not allowed by restrictArea');
 }
-$upload_handler = new FileUpload(null, $id, $elementupload);
 
 
 /*
  * View
  */
+
+$upload_handler = new FileUpload(null, $id, $elementupload);
 
 top_httphead();
 

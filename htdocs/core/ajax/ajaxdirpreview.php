@@ -117,14 +117,14 @@ if (empty($url)) {	// autoset $url but it is better to have it defined before in
 // Load translation files required by the page
 $langs->loadLangs(array("ecm", "companies", "other"));
 
+if (empty($modulepart)) {
+	$modulepart = $module;
+}
+
 // Security check
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-
-//print 'xxx'.$upload_dir;
-
-// Security:
 // On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
 if (preg_match('/\.\./', $upload_dir) || preg_match('/[<>|]/', $upload_dir)) {
 	dol_syslog("Refused to deliver file ".$upload_dir);
@@ -132,11 +132,6 @@ if (preg_match('/\.\./', $upload_dir) || preg_match('/[<>|]/', $upload_dir)) {
 	dol_print_error(0, $langs->trans("ErrorFileNameInvalid", $upload_dir));
 	exit;
 }
-
-if (empty($modulepart)) {
-	$modulepart = $module;
-}
-
 // Check permissions
 if ($modulepart == 'ecm') {
 	if (!$user->hasRight('ecm', 'read')) {

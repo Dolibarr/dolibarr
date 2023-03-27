@@ -3199,41 +3199,45 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		// Define $accessallowed
 		$reg = array();
 		if (preg_match('/^([a-z]+)_user_temp$/i', $modulepart, $reg)) {
-			if (empty($conf->{$reg[1]}->dir_temp)) {	// modulepart not supported
+			$tmpmodule = $reg[1];
+			if (empty($conf->$tmpmodule->dir_temp)) {	// modulepart not supported
 				dol_print_error('', 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
 				exit;
 			}
-			if ($fuser->rights->{$reg[1]}->{$lire} || $fuser->rights->{$reg[1]}->{$read} || ($fuser->rights->{$reg[1]}->{$download})) {
+			if ($fuser->hasRight($tmpmodule, $lire) || $fuser->hasRight($tmpmodule, $read) || $fuser->hasRight($tmpmodule, $download)) {
 				$accessallowed = 1;
 			}
 			$original_file = $conf->{$reg[1]}->dir_temp.'/'.$fuser->id.'/'.$original_file;
 		} elseif (preg_match('/^([a-z]+)_temp$/i', $modulepart, $reg)) {
-			if (empty($conf->{$reg[1]}->dir_temp)) {	// modulepart not supported
+			$tmpmodule = $reg[1];
+			if (empty($conf->$tmpmodule->dir_temp)) {	// modulepart not supported
 				dol_print_error('', 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
 				exit;
 			}
-			if ($fuser->rights->{$reg[1]}->{$lire} || $fuser->rights->{$reg[1]}->{$read} || ($fuser->rights->{$reg[1]}->{$download})) {
+			if ($fuser->hasRight($tmpmodule, $lire) || $fuser->hasRight($tmpmodule, $read) || $fuser->hasRight($tmpmodule, $download)) {
 				$accessallowed = 1;
 			}
-			$original_file = $conf->{$reg[1]}->dir_temp.'/'.$original_file;
+			$original_file = $conf->$tmpmodule->dir_temp.'/'.$original_file;
 		} elseif (preg_match('/^([a-z]+)_user$/i', $modulepart, $reg)) {
-			if (empty($conf->{$reg[1]}->dir_output)) {	// modulepart not supported
+			$tmpmodule = $reg[1];
+			if (empty($conf->$tmpmodule->dir_output)) {	// modulepart not supported
 				dol_print_error('', 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
 				exit;
 			}
-			if ($fuser->rights->{$reg[1]}->{$lire} || $fuser->rights->{$reg[1]}->{$read} || ($fuser->rights->{$reg[1]}->{$download})) {
+			if ($fuser->hasRight($tmpmodule, $lire) || $fuser->hasRight($tmpmodule, $read) || $fuser->hasRight($tmpmodule, $download)) {
 				$accessallowed = 1;
 			}
-			$original_file = $conf->{$reg[1]}->dir_output.'/'.$fuser->id.'/'.$original_file;
+			$original_file = $conf->$tmpmodule->dir_output.'/'.$fuser->id.'/'.$original_file;
 		} elseif (preg_match('/^massfilesarea_([a-z]+)$/i', $modulepart, $reg)) {
-			if (empty($conf->{$reg[1]}->dir_output)) {	// modulepart not supported
+			$tmpmodule = $reg[1];
+			if (empty($conf->$tmpmodule->dir_output)) {	// modulepart not supported
 				dol_print_error('', 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
 				exit;
 			}
-			if ($fuser->rights->{$reg[1]}->{$lire} || preg_match('/^specimen/i', $original_file)) {
+			if ($fuser->hasRight($tmpmodule, $lire) || preg_match('/^specimen/i', $original_file)) {
 				$accessallowed = 1;
 			}
-			$original_file = $conf->{$reg[1]}->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+			$original_file = $conf->$tmpmodule->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 		} else {
 			if (empty($conf->$modulepart->dir_output)) {	// modulepart not supported
 				dol_print_error('', 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.'). The module for this modulepart value may not be activated.');
@@ -3248,7 +3252,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 					$accessallowed = 1;
 				}
 			}
-			if (!empty($fuser->rights->$modulepart->{$lire}) || !empty($fuser->rights->$modulepart->{$read})) {
+			if ($fuser->hasRight($modulepart, $lire) || $fuser->hasRight($modulepart, $read)) {
 				$accessallowed = 1;
 			}
 

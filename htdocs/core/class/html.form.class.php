@@ -7879,20 +7879,20 @@ class Form
 	 * Output html form to select an object.
 	 * Note, this function is called by selectForForms or by ajax selectobject.php
 	 *
-	 * @param Object $objecttmp Object to knwo the table to scan for combo.
-	 * @param string $htmlname Name of HTML select component
-	 * @param int $preselectedvalue Preselected value (ID of element)
-	 * @param string $showempty ''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
-	 * @param string $searchkey Search value
-	 * @param string $placeholder Place holder
-	 * @param string $morecss More CSS
-	 * @param string $moreparams More params provided to ajax call
-	 * @param int $forcecombo Force to load all values and output a standard combobox (with no beautification)
-	 * @param int $outputmode 0=HTML select string, 1=Array
-	 * @param int $disabled 1=Html component is disabled
-	 * @param string $sortfield Sort field
-	 * @param string $filter Add more filter
-	 * @return    string|array                        Return HTML string
+	 * @param Object 		$objecttmp 			Object to knwo the table to scan for combo.
+	 * @param string 		$htmlname 			Name of HTML select component
+	 * @param int 			$preselectedvalue 	Preselected value (ID of element)
+	 * @param string 		$showempty 			''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
+	 * @param string 		$searchkey 			Search value
+	 * @param string 		$placeholder 		Place holder
+	 * @param string 		$morecss 			More CSS
+	 * @param string 		$moreparams 		More params provided to ajax call
+	 * @param int 			$forcecombo 		Force to load all values and output a standard combobox (with no beautification)
+	 * @param int 			$outputmode 		0=HTML select string, 1=Array
+	 * @param int 			$disabled 			1=Html component is disabled
+	 * @param string 		$sortfield 			Sort field
+	 * @param string 		$filter 			Add more filter
+	 * @return string|array                     Return HTML string
 	 * @see selectForForms()
 	 */
 	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '', $filter = '')
