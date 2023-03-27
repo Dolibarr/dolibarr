@@ -340,7 +340,7 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  *	@param  string				$feature2		Feature to check, second level of permission (optional). Can be a 'or' check with 'sublevela|sublevelb'.
  *												This is used to check permission $user->rights->features->feature2...
  *  @param  string				$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional). Can use '' if NA.
- *  @param  string				$dbt_select     Field name for select if not "rowid". Not used if objectid is null (optional)
+ *  @param  string				$dbt_select     Field rowid name, for select into tableandshare if not "rowid". Not used if objectid is null (optional)
  *  @param	int					$isdraft		1=The object with id=$objectid is a draft
  *  @param	int					$mode			Mode (0=default, 1=return without dieing)
  * 	@return	int									If mode = 0 (default): Always 1, die process if not allowed. If mode = 1: Return 0 if access not allowed.
@@ -351,6 +351,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	global $db, $conf;
 	global $hookmanager;
 
+	// Define $objectid
 	if (is_object($object)) {
 		$objectid = $object->id;
 	} else {
@@ -369,6 +370,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 
 	// Fix syntax of $features param
 	$originalfeatures = $features;
+	if ($features == 'agenda') {
+		$tableandshare = 'actioncomm&societe';
+		$feature2 = 'myactions|allactions';
+		$dbt_select = 'id';
+	}
 	if ($features == 'facturerec') {
 		$features = 'facture';
 	}
@@ -402,6 +408,8 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 			$feature2 = 'commande';
 		}
 	}
+
+	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
 	// Get more permissions checks from hooks
 	$parameters = array('features'=>$features, 'originalfeatures'=>$originalfeatures, 'objectid'=>$objectid, 'dbt_select'=>$dbt_select, 'idtype'=>$dbt_select, 'isdraft'=>$isdraft);
