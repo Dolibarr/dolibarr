@@ -1147,6 +1147,8 @@ class FormSetupItem
 
 
 	/**
+	 * generateOutputFieldMultiSelect
+	 * 
 	 * @return string
 	 */
 	public function generateOutputFieldMultiSelect()
@@ -1168,6 +1170,8 @@ class FormSetupItem
 	}
 
 	/**
+	 * generateOutputFieldColor
+	 * 
 	 * @return string
 	 */
 	public function generateOutputFieldColor()
@@ -1176,6 +1180,8 @@ class FormSetupItem
 		return $this->generateInputField();
 	}
 	/**
+	 * generateInputFieldColor
+	 * 
 	 * @return string
 	 */
 	public function generateInputFieldColor()
@@ -1185,6 +1191,8 @@ class FormSetupItem
 	}
 
 	/**
+	 * generateOutputFieldSelect
+	 *
 	 * @return string
 	 */
 	public function generateOutputFieldSelect()
@@ -1198,6 +1206,8 @@ class FormSetupItem
 	}
 
 	/**
+	 * generateOutputFieldSelectUser
+	 *
 	 * @return string
 	 */
 	public function generateOutputFieldSelectUser()
@@ -1208,12 +1218,14 @@ class FormSetupItem
 		$outPut = $user->firstname . " "  . $user->lastname;
 		return $outPut;
 	}
+	
 	/*
 	 * METHODS FOR SETTING DISPLAY TYPE
 	 */
 
 	/**
 	 * Set type of input as string
+	 *
 	 * @return self
 	 */
 	public function setAsString()
@@ -1224,6 +1236,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as color
+	 *
 	 * @return self
 	 */
 	public function setAsColor()
@@ -1234,6 +1247,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as textarea
+	 *
 	 * @return self
 	 */
 	public function setAsTextarea()
@@ -1244,6 +1258,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as html editor
+	 *
 	 * @return self
 	 */
 	public function setAsHtml()
@@ -1254,6 +1269,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as emailtemplate selector
+	 *
 	 * @param string $templateType email template type
 	 * @return self
 	 */
@@ -1265,6 +1281,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as thirdparty_type selector
+	 *
 	 * @return self
 	 */
 	public function setAsThirdpartyType()
@@ -1275,6 +1292,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as Yes
+	 *
 	 * @return self
 	 */
 	public function setAsYesNo()
@@ -1285,6 +1303,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as secure key
+	 *
 	 * @return self
 	 */
 	public function setAsSecureKey()
@@ -1295,6 +1314,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as product
+	 *
 	 * @return self
 	 */
 	public function setAsProduct()
@@ -1306,6 +1326,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a category selector
 	 * TODO add default value
+	 *
 	 * @param	int		$catType		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
 	 * @return self
 	 */
@@ -1316,8 +1337,8 @@ class FormSetupItem
 	}
 
 	/**
-	 * Set type of input as a simple title
-	 * no data to store
+	 * Set type of input as a simple title. No data to store
+	 *
 	 * @return self
 	 */
 	public function setAsTitle()
@@ -1328,8 +1349,8 @@ class FormSetupItem
 
 
 	/**
-	 * Set type of input as a simple title
-	 * no data to store
+	 * Set type of input as a simple title. No data to store
+	 *
 	 * @param array $fieldOptions A table of field options
 	 * @return self
 	 */
@@ -1344,8 +1365,8 @@ class FormSetupItem
 	}
 
 	/**
-	 * Set type of input as a simple title
-	 * no data to store
+	 * Set type of input as a simple title. No data to store
+	 *
 	 * @param array $fieldOptions  A table of field options
 	 * @return self
 	 */
@@ -1360,9 +1381,8 @@ class FormSetupItem
 	}
 
 	/**
-	 * Set type of input as a simple title
-	 * no data to store
-	 * @param array $fieldOptions  A table of field options
+	 * Set type of input as a simple title. No data to store
+	 *
 	 * @return self
 	 */
 	public function setAsSelectUser()
