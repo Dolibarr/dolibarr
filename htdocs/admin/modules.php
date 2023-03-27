@@ -230,12 +230,16 @@ if ($action == 'install') {
 					// Now we install the module
 					if (!$error) {
 						@dol_delete_dir_recursive($dirins.'/'.$modulenameval); // delete the target directory
-						dol_syslog("We copy now directory ".$modulenamedir." into target dir ".$dirins.'/'.$modulenameval);
-						$result = dolCopyDir($modulenamedir, $dirins.'/'.$modulenameval, '0444', 1);
+						$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulenameval;
+						if (!dol_is_dir($modulenamedir)) {
+							$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval;
+						}
+						dol_syslog("We copy now directory ".$submodulenamedir." into target dir ".$dirins.'/'.$modulenameval);
+						$result = dolCopyDir($submodulenamedir, $dirins.'/'.$modulenameval, '0444', 1);
 						if ($result <= 0) {
-							dol_syslog('Failed to call dolCopyDir result='.$result." with param ".$modulenamedir." and ".$dirins.'/'.$modulenameval, LOG_WARNING);
+							dol_syslog('Failed to call dolCopyDir result='.$result." with param ".$submodulenamedir." and ".$dirins.'/'.$modulenameval, LOG_WARNING);
 							$langs->load("errors");
-							setEventMessages($langs->trans("ErrorFailToCopyDir", $modulenamedir, $dirins.'/'.$modulenameval), null, 'errors');
+							setEventMessages($langs->trans("ErrorFailToCopyDir", $submodulenamedir, $dirins.'/'.$modulenameval), null, 'errors');
 							$error++;
 						}
 					}
