@@ -151,6 +151,10 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s ON p.rowid = s.fk_produ
 if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_units as u on p.fk_unit = u.rowid';
 }
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE p.entity IN (".getEntity('product').")";
 if (!empty($search_categ) && $search_categ != '-1') {
 	$sql .= " AND ";
@@ -207,10 +211,12 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $objec
 $sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
 $sql .= " p.fk_product_type, p.tms, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock";
-// Add fields from hooks
+
+// Add GROUP BY from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+
 $sql_having = '';
 if ($search_toolowstock) {
 	$sql_having .= " HAVING SUM(".$db->ifsql('s.reel IS NULL', '0', 's.reel').") < p.seuil_stock_alerte";
@@ -226,6 +232,19 @@ if ($search_stock_physique != '') {
 	}
 	$sql_having .= $natural_search_physique;
 }
+
+// Add HAVING from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
+if (!empty($hookmanager->resPrint)) {
+	if (!empty($sql_having)) {
+		$sql_having .= " AND";
+	} else {
+		$sql_having .= " HAVING";
+	}
+	$sql_having .= $hookmanager->resPrint;
+}
+
 if (!empty($sql_having)) {
 	$sql .= $sql_having;
 }
@@ -515,7 +534,7 @@ if ($resql) {
 				print img_warning($langs->trans("StockLowerThanLimit", $objp->seuil_stock_alerte)).' ';
 			}
 			if ($objp->stock_physique < 0) { print '<span class="warning">'; }
-			print price2num($product->stock_theorique, 'MS', 0, $langs, 1, 0);
+			print price(price2num($product->stock_theorique, 'MS'), 0, $langs, 1, 0);
 			if ($objp->stock_physique < 0) { print '</span>'; }
 			print '</td>';
 		}

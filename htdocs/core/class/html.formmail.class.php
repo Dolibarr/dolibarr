@@ -1324,10 +1324,10 @@ class FormMail extends Form
 			$sql .= " AND (lang = '".$dbs->escape($languagetosearch)."'".($languagetosearchmain ? " OR lang = '".$dbs->escape($languagetosearchmain)."'" : "")." OR lang IS NULL OR lang = '')";
 		}
 		if ($id > 0) {
-			$sql .= " AND rowid=".(int) $id;
+			$sql .= " AND rowid = ".(int) $id;
 		}
 		if ($id == -1) {
-			$sql .= " AND position=0";
+			$sql .= " AND position = 0";
 		}
 		if ($languagetosearch) {
 			$sql .= $dbs->order("position,lang,label", "ASC,DESC,ASC"); // We want line with lang set first, then with lang null or ''

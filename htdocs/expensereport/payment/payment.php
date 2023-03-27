@@ -112,7 +112,7 @@ if ($action === 'add_payment' || ($action === 'confirm_payment' && $confirm === 
 			// Create a line of payments
 			$payment = new PaymentUser($db);
 			$payment->fk_expensereport = $expensereport->id;
-			$payment->datepaid       = $datepaid;
+			$payment->datep       = $datepaid;
 			$payment->amounts        = $amounts; // Tableau de montants
 			$payment->total          = $total;
 			$payment->fk_typepayment = GETPOST("fk_typepayment", 'int');

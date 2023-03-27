@@ -92,7 +92,7 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currenc
 	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHTCurrency', $this->multicurrency_code).'</th>';
 }
 
-if ($inputalsopricewithtax) {
+if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 	print '<th class="right nowraponall">'.$langs->trans('PriceUTTC').'</th>';
 }
 

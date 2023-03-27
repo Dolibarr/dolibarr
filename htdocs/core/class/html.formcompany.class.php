@@ -989,15 +989,15 @@ class FormCompany extends Form
 		// phpcs:enable
 		$tax = get_localtax_by_third($local);
 
-		$num = $this->db->num_rows($tax);
-		$i = 0;
-		if ($num) {
+		if ($tax) {
 			$valors = explode(":", $tax);
+			$nbvalues = count($valors);
 
-			if (count($valors) > 1) {
+			if ($nbvalues > 1) {
 				//montar select
 				print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-				while ($i <= (count($valors)) - 1) {
+				$i = 0;
+				while ($i < $nbvalues) {
 					if ($selected == $valors[$i]) {
 						print '<option value="'.$valors[$i].'" selected>';
 					} else {
@@ -1007,7 +1007,7 @@ class FormCompany extends Form
 					print '</option>';
 					$i++;
 				}
-				print'</select>';
+				print '</select>';
 			}
 		}
 	}
