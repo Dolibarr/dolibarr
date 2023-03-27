@@ -47,19 +47,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 $action = GETPOST('action', 'aZ09');
 
 $id = GETPOST('id', 'int');
-$element = GETPOST('element', 'alpha');	// 'module' or 'myobject@mymodule' or 'mymodule_myobject'
+$element = GETPOST('element', 'alpha');	// 'myobject' (myobject=mymodule) or 'myobject@mymodule' or 'myobject_mysubobject' (myobject=mymodule)
 $field = GETPOST('field', 'alpha');
 $value = GETPOST('value', 'int');
 $format = 'int';
 
-// Load object according to $element
+// Load object according to $id and $element
 $object = fetchObjectByElement($id, $element);
 
 $object->fields[$field] = array('type' => $format, 'enabled' => 1);
 
 $module = $object->module;
 $element = $object->element;
-//var_dump($object->module); var_dump($object->element); var_dump($object->table_element);
+$usesublevelpermission = ($module != $element ? $element : '');
+if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+	$usesublevelpermission = '';
+}
+
+//print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
 
 // Security check
 if (!empty($user->socid)) {
@@ -72,12 +77,6 @@ if (!empty($user->socid)) {
 // We check permission.
 // Check is done on $user->rights->element->create or $user->rights->element->subelement->create (because $action = 'set')
 if (preg_match('/status$/', $field)) {
-	$module = $object->module;
-	$element = $object->element;
-	$usesublevelpermission = ($module != $element ? $element : '');
-	if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
-		$usesublevelpermission = '';
-	}
 	restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
 } elseif ($element == 'product' && in_array($field, array('tosell', 'tobuy', 'tobatch'))) {	// Special case for products
 	restrictedArea($user, 'produit|service', $object, 'product&product', '', '', 'rowid');

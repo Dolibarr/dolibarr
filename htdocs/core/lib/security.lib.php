@@ -340,7 +340,7 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  *	@param  string				$feature2		Feature to check, second level of permission (optional). Can be a 'or' check with 'sublevela|sublevelb'.
  *												This is used to check permission $user->rights->features->feature2...
  *  @param  string				$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional). Can use '' if NA.
- *  @param  string				$dbt_select     Field name for select if not "rowid". Not used if objectid is null (optional)
+ *  @param  string				$dbt_select     Field rowid name, for select into tableandshare if not "rowid". Not used if objectid is null (optional)
  *  @param	int					$isdraft		1=The object with id=$objectid is a draft
  *  @param	int					$mode			Mode (0=default, 1=return without dieing)
  * 	@return	int									If mode = 0 (default): Always 1, die process if not allowed. If mode = 1: Return 0 if access not allowed.
@@ -351,6 +351,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	global $db, $conf;
 	global $hookmanager;
 
+	// Define $objectid
 	if (is_object($object)) {
 		$objectid = $object->id;
 	} else {
@@ -369,6 +370,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 
 	// Fix syntax of $features param
 	$originalfeatures = $features;
+	if ($features == 'agenda') {
+		$tableandshare = 'actioncomm&societe';
+		$feature2 = 'myactions|allactions';
+		$dbt_select = 'id';
+	}
 	if ($features == 'facturerec') {
 		$features = 'facture';
 	}
@@ -393,6 +399,17 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	if ($features == 'product') {
 		$features = 'produit';
 	}
+	if ($features == 'fournisseur') {	// When vendor invoice and pruchase order are into module 'fournisseur'
+		$features = 'fournisseur';
+		$feature2 = '';
+		if ($object->element == 'invoice_supplier') {
+			$feature2 = 'facture';
+		} elseif ($object->element == 'order_supplier') {
+			$feature2 = 'commande';
+		}
+	}
+
+	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
 	// Get more permissions checks from hooks
 	$parameters = array('features'=>$features, 'originalfeatures'=>$originalfeatures, 'objectid'=>$objectid, 'dbt_select'=>$dbt_select, 'idtype'=>$dbt_select, 'isdraft'=>$isdraft);
@@ -531,7 +548,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	// Check write permission from module (we need to know write permission to create but also to delete drafts record or to upload files)
 	$createok = 1;
 	$nbko = 0;
-	$wemustcheckpermissionforcreate = (GETPOST('sendit', 'alpha') || GETPOST('linkit', 'alpha') || in_array(GETPOST('action', 'aZ09'), array('create', 'update', 'set', 'add_element_resource', 'confirm_delete_linked_resource')) || GETPOST('roworder', 'alpha', 2));
+	$wemustcheckpermissionforcreate = (GETPOST('sendit', 'alpha') || GETPOST('linkit', 'alpha') || in_array(GETPOST('action', 'aZ09'), array('create', 'update', 'set', 'upload', 'add_element_resource', 'confirm_delete_linked_resource')) || GETPOST('roworder', 'alpha', 2));
 	$wemustcheckpermissionfordeletedraft = ((GETPOST("action", "aZ09") == 'confirm_delete' && GETPOST("confirm", "aZ09") == 'yes') || GETPOST("action", "aZ09") == 'delete');
 
 	if ($wemustcheckpermissionforcreate || $wemustcheckpermissionfordeletedraft) {
@@ -1114,6 +1131,7 @@ function httponly_accessforbidden($message = 1, $http_response_code = 403, $stri
 function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
 {
 	global $conf, $db, $user, $langs, $hookmanager;
+	global $action, $object;
 
 	if (!is_object($langs)) {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
@@ -1139,12 +1157,13 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 	print '</div>';
 	print '<br>';
 	if (empty($showonlymessage)) {
-		global $action, $object;
 		if (empty($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
 			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 			$hookmanager->initHooks(array('main'));
 		}
+
 		$parameters = array('message'=>$message, 'params'=>$params);
 		$reshook = $hookmanager->executeHooks('getAccessForbiddenMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		print $hookmanager->resPrint;

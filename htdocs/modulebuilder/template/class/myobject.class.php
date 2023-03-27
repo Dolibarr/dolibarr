@@ -796,7 +796,7 @@ class MyObject extends CommonObject
 		$result = '';
 		$params = [
 			'id' => $this->id,
-			'objecttype' => $this->element,
+			'objecttype' => $this->element.($this->module ? '@'.$this->module : ''),
 			'option' => $option,
 		];
 		$classfortooltip = 'classfortooltip';

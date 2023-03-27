@@ -1955,25 +1955,25 @@ class Form
 	/**
 	 *    Return select list of users
 	 *
-	 * @param string $selected User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1, keep unselected (if empty is allowed)
-	 * @param string $htmlname Field name in form
-	 * @param int|string $show_empty 0=list with no empty value, 1=add also an empty value into list
-	 * @param array $exclude Array list of users id to exclude
-	 * @param int $disabled If select list must be disabled
-	 * @param array|string $include Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
-	 * @param array $enableonly Array list of users id to be enabled. If defined, it means that others will be disabled
-	 * @param string $force_entity '0' or Ids of environment to force
-	 * @param int $maxlength Maximum length of string into list (0=no limit)
-	 * @param int $showstatus 0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
-	 * @param string $morefilter Add more filters into sql request (Example: 'employee = 1'). This value must not come from user input.
-	 * @param integer $show_every 0=default list, 1=add also a value "Everybody" at beginning of list
-	 * @param string $enableonlytext If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
-	 * @param string $morecss More css
-	 * @param int $notdisabled Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
-	 * @param int $outputmode 0=HTML select string, 1=Array
-	 * @param bool $multiple add [] in the name of element and add 'multiple' attribut
-	 * @param int $forcecombo Force the component to be a simple combo box without ajax
-	 * @return    array|string                    HTML select string
+	 * @param string 		$selected 		User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1, keep unselected (if empty is allowed)
+	 * @param string 		$htmlname 		Field name in form
+	 * @param int|string 	$show_empty 	0=list with no empty value, 1=add also an empty value into list
+	 * @param array 		$exclude 		Array list of users id to exclude
+	 * @param int 			$disabled 		If select list must be disabled
+	 * @param array|string 	$include 		Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
+	 * @param array|string	$enableonly 	Array list of users id to be enabled. If defined, it means that others will be disabled
+	 * @param string 		$force_entity 	'0' or Ids of environment to force
+	 * @param int 			$maxlength 		Maximum length of string into list (0=no limit)
+	 * @param int 			$showstatus 	0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+	 * @param string 		$morefilter 	Add more filters into sql request (Example: 'employee = 1'). This value must not come from user input.
+	 * @param integer 		$show_every 	0=default list, 1=add also a value "Everybody" at beginning of list
+	 * @param string 		$enableonlytext If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
+	 * @param string 		$morecss 		More css
+	 * @param int 			$notdisabled 	Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
+	 * @param int 			$outputmode 	0=HTML select string, 1=Array
+	 * @param bool 			$multiple 		add [] in the name of element and add 'multiple' attribut
+	 * @param int 			$forcecombo 	Force the component to be a simple combo box without ajax
+	 * @return array|string                    HTML select string
 	 * @see select_dolgroups()
 	 */
 	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
@@ -2013,6 +2013,7 @@ class Form
 
 		$out = '';
 		$outarray = array();
+		$outarray2 = array();
 
 		// Forge request to select users
 		$sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut as status, u.login, u.admin, u.entity, u.photo";
@@ -2151,7 +2152,7 @@ class Form
 						}
 					}
 					$moreinfo .= ($moreinfo ? ')' : '');
-					$moreinfohtml .= ($moreinfohtml ? ')' : '');
+					$moreinfohtml .= ($moreinfohtml ? ')</span>' : '');
 					if ($disableline && $disableline != '1') {
 						// Add text from $enableonlytext parameter
 						$moreinfo .= ' - ' . $disableline;
@@ -2182,6 +2183,11 @@ class Form
 					$out .= '</option>';
 
 					$outarray[$userstatic->id] = $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength) . $moreinfo;
+					$outarray2[$userstatic->id] = array(
+						'id'=>$userstatic->id,
+						'label'=>$labeltoshow,
+						'labelhtml'=>$labeltoshowhtml
+					);
 
 					$i++;
 				}
@@ -2200,7 +2206,9 @@ class Form
 			dol_print_error($this->db);
 		}
 
-		if ($outputmode) {
+		if ($outputmode == 2) {
+			return $outarray2;
+		} elseif ($outputmode) {
 			return $outarray;
 		}
 
@@ -6993,7 +7001,12 @@ class Form
 			if (empty($labeladddateof)) {
 				$labeladddateof = $langs->trans("DateInvoice");
 			}
-			$retstring .= ' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="console.log(\'Click on now link\'); jQuery(\'#re\').val(\'' . dol_print_date($adddateof, 'dayinputnoreduce') . '\');jQuery(\'#reday\').val(\'' . $tmparray['mday'] . '\');jQuery(\'#remonth\').val(\'' . $tmparray['mon'] . '\');jQuery(\'#reyear\').val(\'' . $tmparray['year'] . '\');">' . $labeladddateof . '</a>';
+			$reset_scripts = 'console.log(\'Click on now link\'); ';
+			$reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(\''.dol_print_date($adddateof, 'dayinputnoreduce').'\');';
+			$reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(\''.$tmparray['mday'].'\');';
+			$reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(\''.$tmparray['mon'].'\');';
+			$reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.$tmparray['year'].'\');';
+			$retstring .= ' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="'.$reset_scripts.'">'.$labeladddateof.'</a>';
 		}
 
 		return $retstring;
@@ -7874,20 +7887,20 @@ class Form
 	 * Output html form to select an object.
 	 * Note, this function is called by selectForForms or by ajax selectobject.php
 	 *
-	 * @param Object $objecttmp Object to knwo the table to scan for combo.
-	 * @param string $htmlname Name of HTML select component
-	 * @param int $preselectedvalue Preselected value (ID of element)
-	 * @param string $showempty ''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
-	 * @param string $searchkey Search value
-	 * @param string $placeholder Place holder
-	 * @param string $morecss More CSS
-	 * @param string $moreparams More params provided to ajax call
-	 * @param int $forcecombo Force to load all values and output a standard combobox (with no beautification)
-	 * @param int $outputmode 0=HTML select string, 1=Array
-	 * @param int $disabled 1=Html component is disabled
-	 * @param string $sortfield Sort field
-	 * @param string $filter Add more filter
-	 * @return    string|array                        Return HTML string
+	 * @param Object 		$objecttmp 			Object to knwo the table to scan for combo.
+	 * @param string 		$htmlname 			Name of HTML select component
+	 * @param int 			$preselectedvalue 	Preselected value (ID of element)
+	 * @param string 		$showempty 			''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
+	 * @param string 		$searchkey 			Search value
+	 * @param string 		$placeholder 		Place holder
+	 * @param string 		$morecss 			More CSS
+	 * @param string 		$moreparams 		More params provided to ajax call
+	 * @param int 			$forcecombo 		Force to load all values and output a standard combobox (with no beautification)
+	 * @param int 			$outputmode 		0=HTML select string, 1=Array
+	 * @param int 			$disabled 			1=Html component is disabled
+	 * @param string 		$sortfield 			Sort field
+	 * @param string 		$filter 			Add more filter
+	 * @return string|array                     Return HTML string
 	 * @see selectForForms()
 	 */
 	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '', $filter = '')
@@ -8456,19 +8469,19 @@ class Form
 	/**
 	 *    Show a multiselect form from an array. WARNING: Use this only for short lists.
 	 *
-	 * @param string $htmlname Name of select
-	 * @param array $array Array(key=>value) or Array(key=>array('id'=> , 'label'=> ))
-	 * @param array $selected Array of keys preselected
-	 * @param int $key_in_label 1 to show key like in "[key] value"
-	 * @param int $value_as_key 1 to use value as key
-	 * @param string $morecss Add more css style
-	 * @param int $translate Translate and encode value
-	 * @param int|string $width Force width of select box. May be used only when using jquery couch. Example: 250, '95%'
-	 * @param string $moreattrib Add more options on select component. Example: 'disabled'
-	 * @param string $elemtype Type of element we show ('category', ...). Will execute a formating function on it. To use in readonly mode if js component support HTML formatting.
-	 * @param string $placeholder String to use as placeholder
-	 * @param int $addjscombo Add js combo
-	 * @return    string                        HTML multiselect string
+	 * @param 	string 		$htmlname 		Name of select
+	 * @param 	array 		$array 			Array(key=>value) or Array(key=>array('id'=> , 'label'=> , 'color'=> , 'picto'=> , 'labelhtml'=> ))
+	 * @param 	array 		$selected 		Array of keys preselected
+	 * @param 	int 		$key_in_label 	1 to show key like in "[key] value"
+	 * @param 	int 		$value_as_key 	1 to use value as key
+	 * @param 	string 		$morecss 		Add more css style
+	 * @param 	int 		$translate 		Translate and encode value
+	 * @param 	int|string 	$width 			Force width of select box. May be used only when using jquery couch. Example: 250, '95%'
+	 * @param 	string 		$moreattrib 	Add more options on select component. Example: 'disabled'
+	 * @param 	string 		$elemtype 		Type of element we show ('category', ...). Will execute a formating function on it. To use in readonly mode if js component support HTML formatting.
+	 * @param 	string 		$placeholder 	String to use as placeholder
+	 * @param 	int 		$addjscombo 	Add js combo
+	 * @return 	string                      HTML multiselect string
 	 * @see selectarray(), selectArrayAjax(), selectArrayFilter()
 	 */
 	public static function multiselectarray($htmlname, $array, $selected = array(), $key_in_label = 0, $value_as_key = 0, $morecss = '', $translate = 0, $width = 0, $moreattrib = '', $elemtype = '', $placeholder = '', $addjscombo = -1)
@@ -8503,11 +8516,13 @@ class Form
 					$tmpvalue = $value;
 					$tmpcolor = '';
 					$tmppicto = '';
+					$tmplabelhtml = '';
 					if (is_array($value) && array_key_exists('id', $value) && array_key_exists('label', $value)) {
 						$tmpkey = $value['id'];
 						$tmpvalue = $value['label'];
 						$tmpcolor = $value['color'];
 						$tmppicto = $value['picto'];
+						$tmplabelhtml = $value['labelhtml'];
 					}
 					$newval = ($translate ? $langs->trans($tmpvalue) : $tmpvalue);
 					$newval = ($key_in_label ? $tmpkey . ' - ' . $newval : $newval);
@@ -8516,7 +8531,11 @@ class Form
 					if (is_array($selected) && !empty($selected) && in_array((string) $tmpkey, $selected) && ((string) $tmpkey != '')) {
 						$out .= ' selected';
 					}
-					$out .= ' data-html="' . dol_escape_htmltag(($tmppicto ? img_picto('', $tmppicto, 'class="pictofixedwidth" style="color: #' . $tmpcolor . '"') : '') . $newval) . '"';
+					if (!empty($tmplabelhtml)) {
+						$out .= ' data-html="' . dol_escape_htmltag($tmplabelhtml) . '"';
+					} else {
+						$out .= ' data-html="' . dol_escape_htmltag(($tmppicto ? img_picto('', $tmppicto, 'class="pictofixedwidth" style="color: #' . $tmpcolor . '"') : '') . $newval) . '"';
+					}
 					$out .= '>';
 					$out .= dol_htmlentitiesbr($newval);
 					$out .= '</option>' . "\n";

@@ -870,6 +870,10 @@ if ($dirins && $action == 'initdoc' && !empty($module)) {
 			writePropsInAsciiDoc($path, $obj, $destfile);
 		}
 
+		// add table of permissions
+		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+		writePermsInAsciiDoc($moduledescriptorfile, $destfile);
+
 		// Delete old documentation files
 		$FILENAMEDOC = $modulelowercase.'.html';
 		$FILENAMEDOCPDF = $modulelowercase.'.pdf';

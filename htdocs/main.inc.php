@@ -1388,7 +1388,14 @@ if (!defined('NOREQUIREMENU')) {
 	$menumanager->loadMenu();
 }
 
-
+if (!empty(GETPOST('seteventmessages', 'alpha'))) {
+	$message = GETPOST('seteventmessages', 'alpha');
+	$messages  = explode(',', $message);
+	foreach ($messages as $key => $msg) {
+		$tmp = explode(':', $msg);
+		setEventMessages($tmp[0], null, !empty($tmp[1]) ? $tmp[1] : 'mesgs');
+	}
+}
 
 // Functions
 
@@ -1615,6 +1622,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 	//print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">'."\n";
 	if (empty($disablehead)) {
 		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
 		}
 		$hookmanager->initHooks(array("main"));
