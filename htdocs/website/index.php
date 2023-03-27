@@ -3278,6 +3278,12 @@ if (!GETPOST('hide_websitemenu')) {
 
 				// Edit HTML content
 				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editsource&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "HTML" : "EditHTMLSource")).'</a>';
+
+				// Edit CKEditor
+				if (getDolGlobalInt('WEBSITE_ALLOW_CKEDITOR')) {
+					print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editcontent&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "CKEditor" : "CKEditor")).'</a>';
+				}
+
 				print '</span>';
 
 
@@ -4496,8 +4502,7 @@ if ($action == 'editsource') {
 	$doleditor->Create(0, '', false, 'HTML Source', 'php');
 }
 
-/*if ($action == 'editcontent')
-{
+if ($action == 'editcontent') {
 	// Editing with default ckeditor
 
 	$contentforedit = '';
@@ -4506,13 +4511,15 @@ if ($action == 'editsource') {
 	//$contentforedit.='</style>'."\n";
 	$contentforedit .= $objectpage->content;
 
+	$nbrep = array();
 	$contentforedit = preg_replace('/(<img.*src=")(?!http)/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $contentforedit, -1, $nbrep);
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$poscursor = array('x'=>GETPOST('PAGE_CONTENT_x'), 'y'=>GETPOST('PAGE_CONTENT_y'));
-	$doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,true,ROWS_5,'90%',$poscursor);
+	$doleditor=new DolEditor('PAGE_CONTENT', $contentforedit, '', 500, 'Full', '', true, true, true, ROWS_5, '90%', 0, $poscursor);
 	$doleditor->Create(0, '', false);
-}*/
+}
+
 
 print "</div>\n";
 print "</form>\n";
