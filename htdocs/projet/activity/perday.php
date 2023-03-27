@@ -84,9 +84,9 @@ $monthofday = GETPOST('addtimemonth');
 $dayofday = GETPOST('addtimeday');
 $yearofday = GETPOST('addtimeyear');
 
-/*var_dump(GETPOST('remonth'));
-var_dump(GETPOST('button_search_x'));
-var_dump(GETPOST('button_addtime'));*/
+//var_dump(GETPOST('remonth'));
+//var_dump(GETPOST('button_search_x'));
+//var_dump(GETPOST('button_addtime'));
 
 $daytoparse = $now;
 if ($year && $month && $day) {
@@ -197,11 +197,11 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 			$error++;
 		}
 	} else {
-		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), '', 'errors');
+		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), null, 'errors');
 		$error++;
 	}
 	if (!GETPOST('type')) {
-		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), '', 'errors');
+		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		$error++;
 	}
 	if (!$error) {
@@ -222,7 +222,8 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 					$listofprojcontact = $project->liste_type_contact('internal');
 
 					if (count($listofprojcontact)) {
-						$typeforprojectcontact = reset(array_keys($listofprojcontact));
+						$tmparray = array_keys($listofprojcontact);
+						$typeforprojectcontact = reset($tmparray);
 						$result = $project->add_contact($idfortaskuser, $typeforprojectcontact, 'internal');
 					}
 				}
@@ -397,8 +398,8 @@ $tasksarray = $taskstatic->getTasksArray(0, 0, ($project->id ? $project->id : 0)
 if ($morewherefilter) {	// Get all task without any filter, so we can show total of time spent for not visible tasks
 	$tasksarraywithoutfilter = $taskstatic->getTasksArray(0, 0, ($project->id ? $project->id : 0), $socid, 0, '', $onlyopenedproject, '', ($search_usertoprocessid ? $search_usertoprocessid : 0)); // We want to see all task of opened project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
 }
-$projectsrole = $taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, 0, ($project->id ? $project->id : 0), 0, $onlyopenedproject);
-$tasksrole = $taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($project->id ? $project->id : 0), 0, $onlyopenedproject);
+$projectsrole = $taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, null, ($project->id ? $project->id : 0), 0, $onlyopenedproject);
+$tasksrole = $taskstatic->getUserRolesForProjectsOrTasks(null, $usertoprocess, ($project->id ? $project->id : 0), 0, $onlyopenedproject);
 //var_dump($usertoprocess);
 //var_dump($projectsrole);
 //var_dump($taskrole);
@@ -431,7 +432,7 @@ $nav .= dol_print_date(dol_mktime(0, 0, 0, $month, $day, $year), "%A").' ';
 $nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $month, $day, $year), "day")." </span>\n";
 $nav .= '<a class="inline-block valignmiddle" href="?year='.$next_year."&month=".$next_month."&day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
 $nav .= ' '.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 1).' ';
-$nav .= ' <button type="submit" name="button_search_x" value="x" class="bordertransp"><span class="fa fa-search"></span></button>';
+$nav .= ' <button type="submit" name="button_search_x" value="x" class="bordertransp nobordertransp button_search"><span class="fa fa-search"></span></button>';
 
 $picto = 'clock';
 
@@ -485,7 +486,7 @@ $formproject->selectTasks($socid ? $socid : -1, $taskid, 'taskid', 32, 0, '-- '.
 print '</div>';
 print ' ';
 print $formcompany->selectTypeContact($object, '', 'type', 'internal', 'rowid', 0, 'maxwidth150onsmartphone');
-print '<input type="submit" class="button valignmiddle smallonsmartphone" name="assigntask" value="'.dol_escape_htmltag($titleassigntask).'">';
+print '<input type="submit" class="button valignmiddle smallonsmartphone small" name="assigntask" value="'.dol_escape_htmltag($titleassigntask).'">';
 print '</div>';
 
 print '<div class="clearboth" style="padding-bottom: 20px;"></div>';
@@ -494,7 +495,7 @@ print '<div class="clearboth" style="padding-bottom: 20px;"></div>';
 $moreforfilter = '';
 
 // Filter on categories
-/*if (! empty($conf->categorie->enabled))
+/*if (!empty($conf->categorie->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 	$moreforfilter.='<div class="divsearchfield">';
@@ -709,7 +710,7 @@ if (count($tasksarray) > 0) {
 
 	// Calculate total for all tasks
 	$listofdistinctprojectid = array(); // List of all distinct projects
-	if (is_array($tasksarraywithoutfilter) && count($tasksarraywithoutfilter)) {
+	if (!empty($tasksarraywithoutfilter) && is_array($tasksarraywithoutfilter) && count($tasksarraywithoutfilter)) {
 		foreach ($tasksarraywithoutfilter as $tmptask) {
 			$listofdistinctprojectid[$tmptask->fk_project] = $tmptask->fk_project;
 		}
@@ -795,12 +796,12 @@ print '</div>';
 
 print '</form>';
 
-$modeinput = 'hours';
-
-if ($conf->use_javascript_ajax) {
+if (!empty($conf->use_javascript_ajax)) {
+	$modeinput = 'hours';
 	print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip -->\n";
 	print '<script type="text/javascript">'."\n";
 	print "jQuery(document).ready(function () {\n";
+	print "		updateTotal(0,\''.$modeinput.'\');\n";
 	print '		jQuery(".timesheetalreadyrecorded").tooltip({
 					show: { collision: "flipfit", effect:\'toggle\', delay:50 },
 					hide: { effect:\'toggle\', delay: 50 },
@@ -809,8 +810,7 @@ if ($conf->use_javascript_ajax) {
 						return \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $usertoprocess->getFullName($langs))).'\';
 					}
 				});'."\n";
-
-	print '    updateTotal(0,\''.$modeinput.'\');';
+	print " 	jQuery('.inputhour, .inputminute').bind('keyup', function(e) { updateTotal(0, '".$modeinput."') });";
 	print "\n});\n";
 	print '</script>';
 }

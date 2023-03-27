@@ -56,6 +56,7 @@ create table llx_contratdet
   product_type			integer       DEFAULT 1,               -- Type of line (1=service by default)
   info_bits		        integer DEFAULT 0, 		               -- TVA NPR ou non
 
+  rang					integer DEFAULT 0,
   buy_price_ht          double(24,8)  DEFAULT NULL,            -- buying price
   fk_product_fournisseur_price integer DEFAULT NULL,           -- reference of supplier price when line was added was created (may be used to update buy_price_ht when future invoice will be created)
 

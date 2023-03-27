@@ -24,7 +24,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 
-print "<!-- BEGIN PHP TEMPLATE expensereport/tpl/linkedopjectblock.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE expensereport/tpl/linkedobjectblock.tpl.php -->\n";
 
 
 global $user;

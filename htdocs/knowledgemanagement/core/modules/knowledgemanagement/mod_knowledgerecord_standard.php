@@ -26,7 +26,7 @@ dol_include_once('/knowledgemanagement/core/modules/knowledgemanagement/modules_
 
 
 /**
- *	Class to manage customer order numbering rules standard
+ *	Class to manage the knowledgerecord numbering rules standard
  */
 class mod_knowledgerecord_standard extends ModeleNumRefKnowledgeRecord
 {

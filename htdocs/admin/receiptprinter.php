@@ -24,6 +24,7 @@
  *      \brief      Page to setup receipt printer
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -45,7 +46,7 @@ $printername = GETPOST('printername', 'alpha');
 $printerid = GETPOST('printerid', 'int');
 $parameter = GETPOST('parameter', 'alpha');
 
-$template = GETPOST('template', 'nohtml');
+$template = GETPOST('template', 'alphanohtml');
 $templatename = GETPOST('templatename', 'alpha');
 $templateid = GETPOST('templateid', 'int');
 
@@ -183,8 +184,8 @@ if ($action == 'testtemplate' && $user->admin) {
 	// test
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$object = new Facture($db);
-	//$object->initAsSpecimen();
-	$object->fetch(18);
+	$object->initAsSpecimen();
+	//$object->fetch(18);
 	//var_dump($object->lines);
 	$ret = $printer->sendToPrinter($object, $templateid, 1);
 	if ($ret == 0) {

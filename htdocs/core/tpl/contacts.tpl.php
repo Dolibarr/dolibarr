@@ -41,7 +41,7 @@ $module = $object->element;
 
 // Special cases
 if ($module == 'propal') {
-	$permission = $user->rights->propale->creer;
+	$permission = $user->rights->propal->creer;
 } elseif ($module == 'fichinter') {
 	$permission = $user->rights->ficheinter->creer;
 } elseif ($module == 'order_supplier') {
@@ -259,7 +259,7 @@ $arrayfields = array(
 	'rowid' 		=> array('label'=>$langs->trans("Id"), 'checked'=>1),
 	'nature' 		=> array('label'=>$langs->trans("NatureOfContact"), 'checked'=>1),
 	'thirdparty' 	=> array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
-	'contact' 		=> array('label'=>$langs->trans("Users").'/'.$langs->trans("Contacts"), 'checked'=>1),
+	'contact' 		=> array('label'=>$langs->trans("Users").' | '.$langs->trans("Contacts"), 'checked'=>1),
 	'type' 			=> array('label'=>$langs->trans("ContactType"), 'checked'=>1),
 	'status' 		=> array('label'=>$langs->trans("Status"), 'checked'=>1),
 	'link' 			=> array('label'=>$langs->trans("Link"), 'checked'=>1),
@@ -279,9 +279,6 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 print '<div class="div-table-responsive-no-min">'."\n";
 print '<table class="tagtable nobottomiftotal liste">';
-
-//print '<tr class="liste_titre_filter">';
-//print '</tr>';
 
 print '<tr class="liste_titre">';
 print_liste_field_titre($arrayfields['thirdparty']['label'], $_SERVER["PHP_SELF"], "thirdparty_name", "", $param, "", $sortfield, $sortorder);
@@ -316,7 +313,17 @@ foreach ($list as $entry) {
 
 	print "</tr>";
 }
-
+if (empty($list)) {
+	$colspan = 5 + ($permission ? 1 : 0);
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">';
+	if (is_object($object) && !empty($object->thirdparty)) {
+		print $form->textwithpicto($langs->trans("NoSpecificContactAddress"), $langs->trans("NoSpecificContactAddressBis"));
+	} else {
+		print $langs->trans("NoSpecificContactAddress");
+	}
+	print '</span>';
+	print '</td></tr>';
+}
 print "</table>";
 print '</div>';
 

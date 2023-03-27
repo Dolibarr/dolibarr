@@ -16,77 +16,79 @@
 #
 # Generic
 #
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+ModulePartnershipName=Партнерське управління
+PartnershipDescription=Модуль Управління партнерством
+PartnershipDescriptionLong= Модуль Управління партнерством
+Partnership=Партнерство
+AddPartnership=Додати партнерство
+CancelPartnershipForExpiredMembers=Партнерство: скасувати партнерство учасників із простроченими підписками
+PartnershipCheckBacklink=Партнерство: перевірте зворотне посилання
 
 #
 # Menu
 #
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
+NewPartnership=Нове партнерство
+ListOfPartnerships=Список партнерства
 
 #
 # Admin page
 #
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PartnershipSetup=Налаштування партнерства
+PartnershipAbout=Про партнерство
+PartnershipAboutPage=Партнерство про сторінку
+partnershipforthirdpartyormember=Статус партнера має бути встановлений як "третя сторона" або "член"
+PARTNERSHIP_IS_MANAGED_FOR=Партнерство керується для
+PARTNERSHIP_BACKLINKS_TO_CHECK=Зворотні посилання для перевірки
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Кількість днів до скасування статусу партнерства, коли закінчився термін дії підписки
+ReferingWebsiteCheck=Перевірка посилання на сайт
+ReferingWebsiteCheckDesc=Ви можете ввімкнути функцію, щоб перевірити, чи ваші партнери додали зворотне посилання на домени вашого веб-сайту на своєму власному веб-сайті.
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
-DatePartnershipStart=Start date
-DatePartnershipEnd=End date
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
+DeletePartnership=Видалити партнерство
+PartnershipDedicatedToThisThirdParty=Партнерство, присвячене цій третьій стороні
+PartnershipDedicatedToThisMember=Партнерство, присвячене цьому учаснику
+DatePartnershipStart=Дата початку
+DatePartnershipEnd=Дата закінчення
+ReasonDecline=Причина відмови
+ReasonDeclineOrCancel=Причина відмови
+PartnershipAlreadyExist=Партнерство вже існує
+ManagePartnership=Керуйте партнерством
+BacklinkNotFoundOnPartnerWebsite=Зворотне посилання не знайдено на веб-сайті партнера
+ConfirmClosePartnershipAsk=Ви впевнені, що хочете скасувати це партнерство?
+PartnershipType=Тип партнерства
+PartnershipRefApproved=Партнерство %s затверджено
+KeywordToCheckInWebsite=Якщо ви хочете переконатися, що дане ключове слово є на веб-сайті кожного партнера, визначте це ключове слово тут
 
 #
 # Template Mail
 #
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
+SendingEmailOnPartnershipWillSoonBeCanceled=Партнерство скоро буде скасовано
+SendingEmailOnPartnershipRefused=Від партнерства відмовили
+SendingEmailOnPartnershipAccepted=Партнерство прийнято
+SendingEmailOnPartnershipCanceled=Партнерство скасовано
 
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
+YourPartnershipWillSoonBeCanceledTopic=Партнерство скоро буде скасовано
+YourPartnershipRefusedTopic=Від партнерства відмовили
+YourPartnershipAcceptedTopic=Партнерство прийнято
+YourPartnershipCanceledTopic=Партнерство скасовано
 
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
+YourPartnershipWillSoonBeCanceledContent=Повідомляємо, що ваше партнерство незабаром буде скасовано (Зворотне посилання не знайдено)
+YourPartnershipRefusedContent=Повідомляємо, що ваш запит на партнерство відхилено.
+YourPartnershipAcceptedContent=Повідомляємо, що ваш запит на партнерство прийнято.
+YourPartnershipCanceledContent=Повідомляємо, що ваше партнерство скасовано.
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
+CountLastUrlCheckError=Кількість помилок для останньої перевірки URL-адреси
+LastCheckBacklink=Дата останньої перевірки URL-адреси
+ReasonDeclineOrCancel=Причина відмови
 
 #
 # Status
 #
 PartnershipDraft=Проект
-PartnershipAccepted=Accepted
-PartnershipRefused=Refused
-PartnershipCanceled=Canceled
-PartnershipManagedFor=Partners are
+PartnershipAccepted=Прийнято
+PartnershipRefused=Відмовився
+PartnershipCanceled=Скасовано
+PartnershipManagedFor=Партнери є
+

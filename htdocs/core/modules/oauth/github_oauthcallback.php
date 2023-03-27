@@ -1,5 +1,5 @@
 <?php
-/*
+/* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,6 +22,7 @@
  *      \brief      Page to get oauth callback
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 use OAuth\Common\Storage\DoliStorage;
@@ -34,9 +35,12 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 
-
 $action = GETPOST('action', 'aZ09');
 $backtourl = GETPOST('backtourl', 'alpha');
+$keyforprovider = GETPOST('keyforprovider', 'aZ09');
+if (empty($keyforprovider) && !empty($_SESSION["oauthkeyforproviderbeforeoauthjump"]) && (GETPOST('code') || $action == 'delete')) {
+	$keyforprovider = $_SESSION["oauthkeyforproviderbeforeoauthjump"];
+}
 
 
 /**
@@ -61,12 +65,14 @@ $httpClient = new \OAuth\Common\Http\Client\CurlClient();
 $serviceFactory->setHttpClient($httpClient);
 
 // Dolibarr storage
-$storage = new DoliStorage($db, $conf);
+$storage = new DoliStorage($db, $conf, $keyforprovider);
 
 // Setup the credentials for the requests
+$keyforparamid = 'OAUTH_GITHUB'.($keyforprovider ? '-'.$keyforprovider : '').'_ID';
+$keyforparamsecret = 'OAUTH_GITHUB'.($keyforprovider ? '-'.$keyforprovider : '').'_SECRET';
 $credentials = new Credentials(
-	$conf->global->OAUTH_GITHUB_ID,
-	$conf->global->OAUTH_GITHUB_SECRET,
+	getDolGlobalString($keyforparamid),
+	getDolGlobalString($keyforparamsecret),
 	$currentUri->getAbsoluteUri()
 );
 
@@ -88,6 +94,13 @@ $apiService = $serviceFactory->createService('GitHub', $credentials, $storage, $
 
 $langs->load("oauth");
 
+if (!getDolGlobalString($keyforparamid)) {
+	accessforbidden('Setup of service is not complete. Customer ID is missing');
+}
+if (!getDolGlobalString($keyforparamsecret)) {
+	accessforbidden('Setup of service is not complete. Secret key is missing');
+}
+
 
 /*
  * Actions
@@ -102,30 +115,21 @@ if ($action == 'delete') {
 	exit();
 }
 
-if (!empty($_GET['code'])) {     // We are coming from oauth provider page
+if (GETPOST('code')) {     // We are coming from oauth provider page
 	// We should have
 	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
 
-	dol_syslog("We are coming from the oauth provider page");
-	//llxHeader('',$langs->trans("OAuthSetup"));
-
-	//$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-	//print load_fiche_titre($langs->trans("OAuthSetup"),$linkback,'title_setup');
-
-	//print dol_get_fiche_head();
-	// retrieve the CSRF state parameter
-	$state = isset($_GET['state']) ? $_GET['state'] : null;
-	//print '<table>';
+	dol_syslog("We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5));
 
 	// This was a callback request from service, get the token
 	try {
-		//var_dump($_GET['code']);
 		//var_dump($state);
 		//var_dump($apiService);      // OAuth\OAuth2\Service\GitHub
 
-		//$token = $apiService->requestAccessToken($_GET['code'], $state);
-		$token = $apiService->requestAccessToken($_GET['code']);
-		// Github is a service that does not need state to be stored.
+		//$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+		$token = $apiService->requestAccessToken(GETPOST('code'));
+		// Github is a service that does not need state to be stored as second paramater of requestAccessToken
+
 		// Into constructor of GitHub, the call
 		// parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri)
 		// has not the ending parameter to true like the Google class constructor.
@@ -140,14 +144,15 @@ if (!empty($_GET['code'])) {     // We are coming from oauth provider page
 	} catch (Exception $e) {
 		print $e->getMessage();
 	}
-} else // If entry on page with no parameter, we arrive here
-{
+} else { // If entry on page with no parameter, we arrive here
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
+	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
+	$_SESSION['oauthstateanticsrf'] = $state;
 
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state in this tables depend on the Provider used (see its constructor).
 	if (GETPOST('state')) {
-		$url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
+		$url = $apiService->getAuthorizationUri(array('state' => GETPOST('state')));
 	} else {
 		$url = $apiService->getAuthorizationUri(); // Parameter state will be randomly generated
 	}

@@ -21,7 +21,7 @@ CountryNL=Alankomaat
 CountryHU=Unkari
 CountryRU=Venäjä
 CountrySE=Ruotsi
-CountryCI=Norsunluurannikko
+CountryCI=Ivory Coast
 CountrySN=Senegal
 CountryAR=Argentiina
 CountryCM=Kamerun
@@ -250,7 +250,9 @@ CountryMF=Saint Martin
 
 ##### Civilities #####
 CivilityMME=Mrs
+CivilityMMEShort=Mrs
 CivilityMR=Hra
+CivilityMRShort=Hra
 CivilityMLE=Nti
 CivilityMTRE=Mestari
 CivilityDR=Tohtori

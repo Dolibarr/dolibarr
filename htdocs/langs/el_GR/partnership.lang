@@ -16,77 +16,81 @@
 #
 # Generic
 #
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+ModulePartnershipName=Διαχείριση συνεργασιών
+PartnershipDescription=Ενότητα Διαχείριση Συνεργασιών
+PartnershipDescriptionLong= Ενότητα Διαχείριση Συνεργασιών
+Partnership=Συνεργασία
+Partnerships=Συνεργασίες
+AddPartnership=Προσθήκη συνεργασίας
+CancelPartnershipForExpiredMembers=Συνεργασία: Ακύρωση συνεργασίας μελών με συνδρομές που έχουν λήξει
+PartnershipCheckBacklink=Συνεργασία: Ελέγξτε την παραπομπή backlink
 
 #
 # Menu
 #
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
+NewPartnership=Νέα Συνεργασία
+NewPartnershipbyWeb=Το αίτημα συνεργασίας σας προστέθηκε με επιτυχία. Θα επικοινωνήσουμε μαζί σας σύντομα...
+ListOfPartnerships=Λίστα συνεργασιών
 
 #
 # Admin page
 #
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PartnershipSetup=Ρύθμιση συνεργασίας
+PartnershipAbout=Σχετικά με τη Συνεργασία
+PartnershipAboutPage=Σελίδα σχετικά με τη συνεργασία 
+partnershipforthirdpartyormember=Η κατάσταση συνεργάτη πρέπει να οριστεί σε "τρίτο μέρος" ή "μέλος"
+PARTNERSHIP_IS_MANAGED_FOR=Η διαχείριση της συνεργασίας
+PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks για έλεγχο
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Αριθμός ημερών πριν από την κατάσταση ακύρωσης μιας συνεργασίας όταν έχει λήξει μια συνδρομή
+ReferingWebsiteCheck=Έλεγχος αναφοράς ιστότοπου
+ReferingWebsiteCheckDesc=Μπορείτε να ενεργοποιήσετε μια δυνατότητα για να ελέγχετε ότι οι συνεργάτες σας έχουν προσθέσει έναν σύνδεσμο backlink του ιστότοπου σας στον δικό τους ιστότοπο.
+PublicFormRegistrationPartnerDesc=Το Dolibarr μπορεί να σας παρέχει μια δημόσια διεύθυνση URL/ιστότοπο για να επιτρέπεται σε εξωτερικούς επισκέπτες η αίτηση συμμετοχής στο πρόγραμμα συνεργασίας.
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
+DeletePartnership=Διαγραφή συνεργασίας
+PartnershipDedicatedToThisThirdParty=Συνεργασία που αφορά αυτό το τρίτο μέρος
+PartnershipDedicatedToThisMember=Συνεργασία που αφορά αυτό το μέλος
 DatePartnershipStart=Ημερομηνία έναρξης
 DatePartnershipEnd=Ημερομηνία λήξης
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
+ReasonDecline=Λόγος απόρριψης
+ReasonDeclineOrCancel=Λόγος απόρριψης
+PartnershipAlreadyExist=Υπάρχει ήδη Συνεργασία 
+ManagePartnership=Διαχείριση της συνεργασίας
+BacklinkNotFoundOnPartnerWebsite=Ο σύνδεσμος Backlink δεν βρέθηκε στον ιστότοπο του συνεργάτη
+ConfirmClosePartnershipAsk=Είστε σίγουροι ότι θέλετε να ακυρώσετε αυτήν τη συνεργασία;
+PartnershipType=Τύπος συνεργασίας
+PartnershipRefApproved=Εγκρίθηκε η συνεργασία %s
+KeywordToCheckInWebsite=Εάν θέλετε να ελέγξετε ότι μια δεδομένη λέξη-κλειδί υπάρχει στον ιστότοπο κάθε συνεργάτη, ορίστε αυτήν τη λέξη-κλειδί εδώ
+PartnershipDraft=Προσχέδιο
+PartnershipAccepted=Αποδεκτή
+PartnershipRefused=Απορρίφθηκε
+PartnershipCanceled=Ακυρώθηκε
+PartnershipManagedFor=Συνεργάτες είναι
 
 #
 # Template Mail
 #
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
+SendingEmailOnPartnershipWillSoonBeCanceled=Η συνεργασία θα ακυρωθεί σύντομα
+SendingEmailOnPartnershipRefused=Η συνεργασία απορρίφθηκε
+SendingEmailOnPartnershipAccepted=Η Συνεργασία έγινε αποδεκτή
+SendingEmailOnPartnershipCanceled=Η συνεργασία ακυρώθηκε
 
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
+YourPartnershipWillSoonBeCanceledTopic=Η συνεργασία θα ακυρωθεί σύντομα
+YourPartnershipRefusedTopic=Η συνεργασία απορρίφθηκε
+YourPartnershipAcceptedTopic=Η Συνεργασία έγινε αποδεκτή
+YourPartnershipCanceledTopic=Η συνεργασία ακυρώθηκε
 
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
+YourPartnershipWillSoonBeCanceledContent=Σας ενημερώνουμε ότι η συνεργασία μας θα ακυρωθεί σύντομα (δεν βρέθηκε backlink )
+YourPartnershipRefusedContent=Σας ενημερώνουμε ότι το αίτημα σας για συνεργασία απορρίφθηκε.
+YourPartnershipAcceptedContent=Σας ενημερώνουμε ότι το αίτημα συνεργασίας σας έγινε δεκτό.
+YourPartnershipCanceledContent=Σας ενημερώνουμε ότι η συνεργασία μας έχει ακυρωθεί.
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
+CountLastUrlCheckError=Αριθμός σφαλμάτων για τον τελευταίο έλεγχο URL
+LastCheckBacklink=Ημερομηνία τελευταίου ελέγχου διεύθυνσης URL
+ReasonDeclineOrCancel=Λόγος απόρριψης
 
-#
-# Status
-#
-PartnershipDraft=Πρόχειρο
-PartnershipAccepted=Αποδεκτή
-PartnershipRefused=Απορρίφθηκε
-PartnershipCanceled=Ακυρώθηκε
-PartnershipManagedFor=Partners are
+NewPartnershipRequest=Νέο αίτημα συνεργασίας
+NewPartnershipRequestDesc=Αυτή η φόρμα σάς επιτρέπει να ζητήσετε να συμμετάσχετε σε ένα από τα προγράμματα συνεργασίας μας. Εάν χρειάζεστε βοήθεια για να συμπληρώσετε αυτήν τη φόρμα, επικοινωνήστε μέσω email <b> %s </b> .
+

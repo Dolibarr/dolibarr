@@ -39,7 +39,9 @@ $conf = new stdClass(); // instantiate $conf explicitely
 $conf->global	= new stdClass();
 $conf->file = new stdClass();
 $conf->db = new stdClass();
-$conf->syslog	= new stdClass();
+if (!isset($conf->syslog) || !is_object($conf->syslog)) {
+	$conf->syslog = new stdClass();
+}
 
 // Force $_REQUEST["logtohtml"]
 $_REQUEST["logtohtml"] = 1;
@@ -235,7 +237,10 @@ function pHeader($soutitre, $next, $action = 'none')
 
 	// On force contenu dans format sortie
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
+
+	// Security options
 	header("X-Content-Type-Options: nosniff");
+	header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
 
 	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
 	print '<head>'."\n";

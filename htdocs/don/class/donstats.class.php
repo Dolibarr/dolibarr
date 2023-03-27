@@ -68,10 +68,11 @@ class DonationStats extends Stats
 	 */
 	public function __construct($db, $socid, $mode, $userid = 0)
 	{
-		global $user, $conf;
+		global $conf;
 
 		$this->db = $db;
 
+		$this->field = 'amount';
 		$this->socid = ($socid > 0 ? $socid : 0);
 		$this->userid = $userid;
 		$this->cachefilesuffix = $mode;
@@ -98,8 +99,6 @@ class DonationStats extends Stats
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
-		global $user;
-
 		$sql = "SELECT date_format(d.datedon,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
 		$sql .= " WHERE d.datedon BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -119,8 +118,6 @@ class DonationStats extends Stats
 	 */
 	public function getNbByYear()
 	{
-		global $user;
-
 		$sql = "SELECT date_format(d.datedon,'%Y') as dm, COUNT(*) as nb, SUM(d.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		$sql .= " WHERE ".$this->where;
@@ -131,14 +128,51 @@ class DonationStats extends Stats
 	}
 
 	/**
+	 * Return the number of subscriptions by month for a given year
+	 *
+	 * @param   int		$year       Year
+	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @return	array				Array of amount each month
+	 */
+	public function getAmountByMonth($year, $format = 0)
+	{
+		$sql = "SELECT date_format(d.datedon,'%m') as dm, sum(d.".$this->field.")";
+		$sql .= " FROM ".$this->from;
+		//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= " WHERE ".dolSqlDateFilter('d.datedon', 0, 0, (int) $year, 1);
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+		$sql .= $this->db->order('dm', 'DESC');
+
+		return $this->_getAmountByMonth($year, $sql, $format);
+	}
+
+	/**
+	 * Return average amount each month
+	 *
+	 * @param   int		$year       Year
+	 * @return	array				Array of average each month
+	 */
+	public function getAverageByMonth($year)
+	{
+		$sql = "SELECT date_format(d.datedon,'%m') as dm, avg(d.".$this->field.")";
+		$sql .= " FROM ".$this->from;
+		//if (empty($user->rights->societe->client->voir) && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= " WHERE ".dolSqlDateFilter('d.datedon', 0, 0, (int) $year, 1);
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+		$sql .= $this->db->order('dm', 'DESC');
+
+		return $this->_getAverageByMonth($year, $sql);
+	}
+
+	/**
 	 *  Return nb, total and average
 	 *
 	 *  @return	array	Array of values
 	 */
 	public function getAllByYear()
 	{
-		global $user;
-
 		$sql = "SELECT date_format(d.datedon,'%Y') as year, COUNT(*) as nb, SUM(d.".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
 		$sql .= " WHERE ".$this->where;

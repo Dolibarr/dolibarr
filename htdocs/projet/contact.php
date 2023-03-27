@@ -22,19 +22,20 @@
  *       \brief      List of all contacts of a project
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-if ($conf->categorie->enabled) {
+if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
 // Load translation files required by the page
 $langsLoad=array('projects', 'companies');
-if (!empty($conf->eventorganization->enabled)) {
+if (isModEnabled('eventorganization')) {
 	$langsLoad[]='eventorganization';
 }
 
@@ -68,134 +69,142 @@ $hookmanager->initHooks(array('projectcontactcard', 'globalcard'));
  * Actions
  */
 
-// Test if we can add contact to the tasks at the same times, if not or not required, make a redirect
-$formconfirmtoaddtasks = '';
-if ($action == 'addcontact') {
-	$form = new Form($db);
-
-	$source=GETPOST("source", 'aZ09');
-
-	$taskstatic = new Task($db);
-	$task_array = $taskstatic->getTasksArray(0, 0, $object->id, 0, 0);
-	$nbTasks = count($task_array);
-
-	//If no task avaiblable, redirec to to add confirm
-	$type_to = (GETPOST('typecontact') ? 'typecontact='.GETPOST('typecontact') : 'type='.GETPOST('type'));
-	$personToAffect = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-	$affect_to = (GETPOST('userid') ? 'userid='.$personToAffect : 'contactid='.$personToAffect);
-	$url_redirect='?id='.$object->id.'&'.$affect_to.'&'.$type_to.'&source='.$source;
-
-	if ($personToAffect > 0 && (empty($conf->global->PROJECT_HIDE_TASKS) || $nbTasks > 0)) {
-		$text = $langs->trans('AddPersonToTask');
-		$textbody = $text.' (<a href="#" class="selectall">'.$langs->trans("SelectAll").'</a>)';
-		$formquestion = array('text' => $textbody);
-
-		$task_to_affect = array();
-		foreach ($task_array as $task) {
-			$task_already_affected=false;
-			$personsLinked = $task->liste_contact(-1, $source);
-			if (!is_array($personsLinked) && count($personsLinked) < 0) {
-				setEventMessage($object->error, 'errors');
-			} else {
-				foreach ($personsLinked as $person) {
-					if ($person['id']==$personToAffect) {
-						$task_already_affected = true;
-						break;
-					}
-				}
-				if (!$task_already_affected) {
-					$task_to_affect[$task->id] = $task->id;
-				}
-			}
-		}
-
-		if (empty($task_to_affect)) {
-			$action = 'addcontact_confirm';
-		} else {
-			$formcompany = new FormCompany($db);
-			foreach ($task_array as $task) {
-				$key = $task->id;
-				$val = $task->ref . ' '.dol_trunc($task->label);
-				$formquestion[] = array(
-					'type' => 'other',
-					'name' => 'person_'.$key.',person_role_'.$key,
-					'label' => '<input type="checkbox" class="flat'.(in_array($key, $task_to_affect) ? ' taskcheckboxes"' : '" checked disabled').' id="person_'.$key.'" name="person_'.$key.'" value="1"> <label for="person_'.$key.'">'.$val.'<label>',
-					'value' => $formcompany->selectTypeContact($taskstatic, '', 'person_role_'.$key, $source, 'position', 0, 'minwidth100imp', 0, 1)
-				);
-			}
-			$formquestion[] = array('type'=> 'other', 'name'=>'tasksavailable', 'label'=>'', 'value' => '<input type="hidden" id="tasksavailable" name="tasksavailable" value="'.implode(',', array_keys($task_to_affect)).'">');
-		}
-
-		$formconfirmtoaddtasks = $form->formconfirm($_SERVER['PHP_SELF'] . $url_redirect, $text, '', 'addcontact_confirm', $formquestion, '', 1, 300, 590);
-		$formconfirmtoaddtasks .='
-		 <script>
-		 $(document).ready(function() {
-			var saveprop = false;
-		 	$(".selectall").click(function(){
-				console.log("We click on select all with "+saveprop);
-				if (!saveprop) {
-					$(".taskcheckboxes").prop("checked", true);
-					saveprop = true;
-				} else {
-					$(".taskcheckboxes").prop("checked", false);
-					saveprop = false;
-				}
-			});
-		 });
-		 </script>';
-	} else {
-		$action = 'addcontact_confirm';
-	}
+$parameters = array('id'=>$id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-// Add new contact
-if ($action == 'addcontact_confirm' && $user->rights->projet->creer) {
-	$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-	$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+if (empty($reshook)) {
+	// Test if we can add contact to the tasks at the same times, if not or not required, make a redirect
+	$formconfirmtoaddtasks = '';
+	if ($action == 'addcontact') {
+		$form = new Form($db);
 
-	if (! ($contactid > 0)) {
-		$error++;
-		$langs->load("errors");
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Contact")), null, 'errors');
+		$source=GETPOST("source", 'aZ09');
+
+		$taskstatic = new Task($db);
+		$task_array = $taskstatic->getTasksArray(0, 0, $object->id, 0, 0);
+		$nbTasks = count($task_array);
+
+		//If no task avaiblable, redirec to to add confirm
+		$type_to = (GETPOST('typecontact') ? 'typecontact='.GETPOST('typecontact') : 'type='.GETPOST('type'));
+		$personToAffect = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+		$affect_to = (GETPOST('userid') ? 'userid='.$personToAffect : 'contactid='.$personToAffect);
+		$url_redirect='?id='.$object->id.'&'.$affect_to.'&'.$type_to.'&source='.$source;
+
+		if ($personToAffect > 0 && (empty($conf->global->PROJECT_HIDE_TASKS) || $nbTasks > 0)) {
+			$text = $langs->trans('AddPersonToTask');
+			$textbody = $text.' (<a href="#" class="selectall">'.$langs->trans("SelectAll").'</a>)';
+			$formquestion = array('text' => $textbody);
+
+			$task_to_affect = array();
+			foreach ($task_array as $task) {
+				$task_already_affected=false;
+				$personsLinked = $task->liste_contact(-1, $source);
+				if (!is_array($personsLinked) && count($personsLinked) < 0) {
+					setEventMessage($object->error, 'errors');
+				} else {
+					foreach ($personsLinked as $person) {
+						if ($person['id']==$personToAffect) {
+							$task_already_affected = true;
+							break;
+						}
+					}
+					if (!$task_already_affected) {
+						$task_to_affect[$task->id] = $task->id;
+					}
+				}
+			}
+
+			if (empty($task_to_affect)) {
+				$action = 'addcontact_confirm';
+			} else {
+				$formcompany = new FormCompany($db);
+				foreach ($task_array as $task) {
+					$key = $task->id;
+					$val = $task->ref . ' '.dol_trunc($task->label);
+					$formquestion[] = array(
+						'type' => 'other',
+						'name' => 'person_'.$key.',person_role_'.$key,
+						'label' => '<input type="checkbox" class="flat'.(in_array($key, $task_to_affect) ? ' taskcheckboxes"' : '" checked disabled').' id="person_'.$key.'" name="person_'.$key.'" value="1"> <label for="person_'.$key.'">'.$val.'<label>',
+						'value' => $formcompany->selectTypeContact($taskstatic, '', 'person_role_'.$key, $source, 'position', 0, 'minwidth100imp', 0, 1)
+					);
+				}
+				$formquestion[] = array('type'=> 'other', 'name'=>'tasksavailable', 'label'=>'', 'value' => '<input type="hidden" id="tasksavailable" name="tasksavailable" value="'.implode(',', array_keys($task_to_affect)).'">');
+			}
+
+			$formconfirmtoaddtasks = $form->formconfirm($_SERVER['PHP_SELF'] . $url_redirect, $text, '', 'addcontact_confirm', $formquestion, '', 1, 300, 590);
+			$formconfirmtoaddtasks .='
+			 <script>
+			 $(document).ready(function() {
+				var saveprop = false;
+			 	$(".selectall").click(function(){
+					console.log("We click on select all with "+saveprop);
+					if (!saveprop) {
+						$(".taskcheckboxes").prop("checked", true);
+						saveprop = true;
+					} else {
+						$(".taskcheckboxes").prop("checked", false);
+						saveprop = false;
+					}
+				});
+			 });
+			 </script>';
+		} else {
+			$action = 'addcontact_confirm';
+		}
 	}
 
-	$result = 0;
-	$result = $object->fetch($id);
+	// Add new contact
+	if ($action == 'addcontact_confirm' && $user->rights->projet->creer) {
+		$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 
-	if (!$error && $result > 0 && $id > 0) {
-		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
-
-		if ($result == 0) {
+		if (! ($contactid > 0)) {
+			$error++;
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-		} elseif ($result < 0) {
-			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-				$langs->load("errors");
-				setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-			} else {
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Contact")), null, 'errors');
 		}
 
-		$affecttotask=GETPOST('tasksavailable', 'intcomma');
-		if (!empty($affecttotask)) {
-			require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-			$task_to_affect = explode(',', $affecttotask);
-			if (!empty($task_to_affect)) {
-				foreach ($task_to_affect as $task_id) {
-					if (GETPOSTISSET('person_'.$task_id) && GETPOST('person_'.$task_id, 'san_alpha')) {
-						$tasksToAffect = new Task($db);
-						$result=$tasksToAffect->fetch($task_id);
-						if ($result < 0) {
-							setEventMessages($tasksToAffect->error, null, 'errors');
-						} else {
-							$result = $tasksToAffect->add_contact($contactid, GETPOST('person_role_'.$task_id), GETPOST("source", 'aZ09'));
+		$result = 0;
+		$result = $object->fetch($id);
+
+		if (!$error && $result > 0 && $id > 0) {
+			$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
+
+			if ($result == 0) {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+			} elseif ($result < 0) {
+				if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
+
+			$affecttotask=GETPOST('tasksavailable', 'intcomma');
+			if (!empty($affecttotask)) {
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+				$task_to_affect = explode(',', $affecttotask);
+				if (!empty($task_to_affect)) {
+					foreach ($task_to_affect as $task_id) {
+						if (GETPOSTISSET('person_'.$task_id) && GETPOST('person_'.$task_id, 'san_alpha')) {
+							$tasksToAffect = new Task($db);
+							$result=$tasksToAffect->fetch($task_id);
 							if ($result < 0) {
-								if ($tasksToAffect->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-									$langs->load("errors");
-									setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-								} else {
-									setEventMessages($tasksToAffect->error, $tasksToAffect->errors, 'errors');
+								setEventMessages($tasksToAffect->error, null, 'errors');
+							} else {
+								$result = $tasksToAffect->add_contact($contactid, GETPOST('person_role_'.$task_id), GETPOST("source", 'aZ09'));
+								if ($result < 0) {
+									if ($tasksToAffect->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+										$langs->load("errors");
+										setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+									} else {
+										setEventMessages($tasksToAffect->error, $tasksToAffect->errors, 'errors');
+									}
 								}
 							}
 						}
@@ -203,36 +212,35 @@ if ($action == 'addcontact_confirm' && $user->rights->projet->creer) {
 				}
 			}
 		}
+
+		if ($result >= 0) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
 	}
 
-	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
+	// Change contact's status
+	if ($action == 'swapstatut' && $user->rights->projet->creer) {
+		if ($object->fetch($id)) {
+			$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
+		} else {
+			dol_print_error($db);
+		}
+	}
+
+	// Delete a contact
+	if (($action == 'deleteline' || $action == 'deletecontact') && $user->rights->projet->creer) {
+		$object->fetch($id);
+		$result = $object->delete_contact(GETPOST("lineid", 'int'));
+
+		if ($result >= 0) {
+			header("Location: contact.php?id=".$object->id);
+			exit;
+		} else {
+			dol_print_error($db);
+		}
 	}
 }
-
-// Change contact's status
-if ($action == 'swapstatut' && $user->rights->projet->creer) {
-	if ($object->fetch($id)) {
-		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
-	} else {
-		dol_print_error($db);
-	}
-}
-
-// Delete a contact
-if (($action == 'deleteline' || $action == 'deletecontact') && $user->rights->projet->creer) {
-	$object->fetch($id);
-	$result = $object->delete_contact(GETPOST("lineid", 'int'));
-
-	if ($result >= 0) {
-		header("Location: contact.php?id=".$object->id);
-		exit;
-	} else {
-		dol_print_error($db);
-	}
-}
-
 
 
 /*
@@ -295,7 +303,7 @@ if ($id > 0 || !empty($ref)) {
 	$morehtmlref .= $object->title;
 	// Thirdparty
 	if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
-		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
+		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
 
@@ -315,7 +323,7 @@ if ($id > 0 || !empty($ref)) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Usage
-	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
 		print '<tr><td class="tdtop">';
 		print $langs->trans("Usage");
 		print '</td>';
@@ -338,7 +346,7 @@ if ($id > 0 || !empty($ref)) {
 			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 			print '<br>';
 		}
-		if (!empty($conf->eventorganization->enabled)) {
+		if (isModEnabled('eventorganization')) {
 			print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 			print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
@@ -349,8 +357,10 @@ if ($id > 0 || !empty($ref)) {
 	// Visibility
 	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 	if ($object->public) {
+		print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 		print $langs->trans('SharedProject');
 	} else {
+		print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 		print $langs->trans('PrivateProject');
 	}
 	print '</td></tr>';
@@ -375,12 +385,22 @@ if ($id > 0 || !empty($ref)) {
 		print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
 		if (strcmp($object->opp_amount, '')) {
 			print '<span class="amount">'.price($object->opp_amount, '', $langs, 0, 0, 0, $conf->currency).'</span>';
+			if (strcmp($object->opp_percent, '')) {
+				print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("Weighted").'</span>: <span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
+			}
 		}
 		print '</td></tr>';
 	}
 
-	// Date start - end
-	print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+	// Budget
+	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+	if (!is_null($object->budget_amount) && strcmp($object->budget_amount, '')) {
+		print '<span class="amount">'.price($object->budget_amount, '', $langs, 0, 0, 0, $conf->currency).'</span>';
+	}
+	print '</td></tr>';
+
+	// Date start - end project
+	print '<tr><td>'.$langs->trans("Dates").'</td><td>';
 	$start = dol_print_date($object->date_start, 'day');
 	print ($start ? $start : '?');
 	$end = dol_print_date($object->date_end, 'day');
@@ -388,13 +408,6 @@ if ($id > 0 || !empty($ref)) {
 	print ($end ? $end : '?');
 	if ($object->hasDelay()) {
 		print img_warning("Late");
-	}
-	print '</td></tr>';
-
-	// Budget
-	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-	if (strcmp($object->budget_amount, '')) {
-		print '<span class="amount">'.price($object->budget_amount, '', $langs, 0, 0, 0, $conf->currency).'</span>';
 	}
 	print '</td></tr>';
 
@@ -416,7 +429,7 @@ if ($id > 0 || !empty($ref)) {
 	print '</td></tr>';
 
 	// Categories
-	if ($conf->categorie->enabled) {
+	if (isModEnabled('categorie')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";

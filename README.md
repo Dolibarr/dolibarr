@@ -2,7 +2,7 @@
 
 ![Downloads per day](https://img.shields.io/sourceforge/dw/dolibarr.svg)
 ![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg?style=flat-square)](https://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.0-8892BF.svg?style=flat-square)](https://php.net/)
 [![GitHub release](https://img.shields.io/github/v/release/Dolibarr/dolibarr)](https://github.com/Dolibarr/dolibarr)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/5521/badge)](https://bestpractices.coreinfrastructure.org/projects/5521)
 
@@ -32,7 +32,7 @@ Other licenses apply for some included dependencies. See [COPYRIGHT](https://git
 
 If you have low technical skills and you're looking to install Dolibarr ERP/CRM in just a few clicks, you can use one of the packaged versions:
 
-- [DoliWamp for Windows](https://wiki.dolibarr.org/index.php/Dolibarr_for_Windows_DoliWamp)
+- [DoliWamp for Windows](https://wiki.dolibarr.org/index.php/Dolibarr_for_Windows_(DoliWamp))
 - [DoliDeb for Debian](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian)
 - DoliRpm for Redhat, Fedora, OpenSuse, Mandriva or Mageia
 
@@ -81,7 +81,7 @@ If you don't have time to install it yourself, you can try some commercial 'read
 Dolibarr supports upgrading, usually without the need for any (commercial) support (depending on if you use any commercial extensions). It supports upgrading all the way from any version after 2.8 without breakage. This is unique in the ERP ecosystem and a benefit our users highly appreciate!
 
 - At first make a backup of your Dolibarr files & then [see](https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr)
-- Check that your installed PHP version is supported by the new version [see PHP support](./doc/phpmatrix.md).
+- Check that your installed PHP version is supported by the new version [see PHP support](https://wiki.dolibarr.org/index.php/Releases).
 - Overwrite all old files from 'dolibarr' directory with files provided into the new version's package.
 - At first next access, Dolibarr will redirect you to the "install/" page to follow the upgrade process.
   If an `install.lock` file exists to lock any other upgrade process, the application will ask you to remove the file manually (you should find the `install.lock` file in the directory used to store generated and uploaded documents, in most cases, it is the directory called "*documents*").
@@ -111,7 +111,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 - Customers/Prospects + Contacts management
 - Opportunities or Leads management
-- Commercial proposals management
+- Commercial proposals management (online signing)
 - Customer Orders management
 - Contracts/Subscription management
 - Interventions management
@@ -129,11 +129,11 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Supplier Invoices/credit notes and payment management
 - INCOTERMS
 
- Finance / Accounting
+ Finance/Accounting
 
-- Invoices / Payments
+- Invoices/Payments
 - Bank accounts management
-- Direct debit orders management (European SEPA)
+- Direct debit and Credit transfer management (European SEPA)
 - Accounting management
 - Donations management
 - Loan management
@@ -142,14 +142,14 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
  Collaboration
 
-- Shared calendar/agenda (with ical and vcal export for third party tools integration)
+- Shared calendar/agenda (with ical and vcal import/export for third party tools integration)
 - Projects & Tasks management
 - Ticket System
 - Surveys
 
  HR
 
-- Employee's leave requests management
+- Employee's leaves management
 - Expense reports
 - Recruitment management
 - Timesheets
@@ -157,16 +157,14 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 ### Other application/modules
 
 - Electronic Document Management (EDM)
-- Bookmarks management
+- Bookmarks
 - Reporting
 - Data export/import
 - Barcodes
-- Margin calculations
 - LDAP connectivity
 - ClickToDial integration
 - Mass emailing
 - RSS integration
-- Skype integration
 - Social platforms linking
 - Payment platforms integration (PayPal, Stripe, Paybox...)
 - Email-Collector
@@ -175,13 +173,12 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 ### Other general features
 
-- Localization in most major languages
-- Multi-Language Support
+- Multi-Language Support (Localization in most major languages)
 - Multi-Users and groups with finely grained rights
 - Multi-Currency
 - Multi-Company (by adding of an external module)
 - Very user friendly and easy to use
-- customizable Dashboard
+- Customizable dashboards
 - Highly customizable: enable only the modules you need, add user personalized fields, choose your skin, several menu managers (can be used by internal users as a back-office with a particular menu, or by external users as a front-office with another one)
 - APIs (REST, SOAP)
 - Code that is easy to understand, maintain and develop (PHP with no heavy framework; trigger and hook architecture)
@@ -191,8 +188,9 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
   - Canadian double taxes (federal/province) and other countries using cumulative VAT
   - Tunisian tax stamp
   - Argentina invoice numbering using A,B,C...
+  - ZATCA e-invoicing QR-Code
   - Compatible with [European directives](https://europa.eu/legislation_summaries/taxation/l31057_en.htm) (2006/112/CE ... 2010/45/UE)
-  - Compatible with European GDPR rules
+  - Compatible with data privacy rules (europe GDPR, ...)
   - ...
 - Flexible PDF & ODT generation for invoices, proposals, orders...
 - ...
@@ -244,6 +242,7 @@ Follow Dolibarr project on:
 - [Facebook](https://www.facebook.com/dolibarr)
 - [Twitter](https://www.twitter.com/dolibarr)
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
+- [Reddit](https://www.reddit.com/r/Dolibarr_ERP_CRM/)
 - [YouTube](https://www.youtube.com/user/DolibarrERPCRM)
 - [GitHub](https://github.com/Dolibarr/dolibarr)
 

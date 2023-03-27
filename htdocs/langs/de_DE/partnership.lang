@@ -20,6 +20,7 @@ ModulePartnershipName=Partnerschaften
 PartnershipDescription=Modul zur Parnterschafts-Verwaltung
 PartnershipDescriptionLong= Modul zur Parnterschafts-Verwaltung
 Partnership=Partnerschaft
+Partnerships=Partnerschaften
 AddPartnership=Partnerschaft hinzufügen
 CancelPartnershipForExpiredMembers=Partnerschaft: Partnerschaft von Mitgliedern mit abgelaufenen Abonnements kündigen
 PartnershipCheckBacklink=Partnerschaft: Überprüfen Sie den verweisenden Backlink
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Partnerschaft: Überprüfen Sie den verweisenden Backli
 # Menu
 #
 NewPartnership=Neue Partnerschaft
+NewPartnershipbyWeb=Ihre Partnerschaftsanfrage wurde erfolgreich hinzugefügt. Wir werden uns in Kürze mit Ihnen in Verbindung setzen...
 ListOfPartnerships=Liste der Partnerschaften
 
 #
@@ -42,6 +44,7 @@ PARTNERSHIP_BACKLINKS_TO_CHECK=zu überprüfende Backlinks
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Anzahl Tage bis zur Kündigung des Status einer Partnerschaft, wenn ein Abonnement abgelaufen ist
 ReferingWebsiteCheck=Überprüfung der verweisenden Website
 ReferingWebsiteCheckDesc=Sie können eine Funktion aktivieren, um zu überprüfen, ob Ihre Partner auf ihrer eigenen Website einen Backlink zu Ihren Website-Domains hinzugefügt haben.
+PublicFormRegistrationPartnerDesc=Dolibarr kann eine öffentliche URL/Website bereitstellen, damit externe Besucher eine Teilnahme am Partnerschaftsprogramm beantragen können.
 
 #
 # Object
@@ -59,6 +62,12 @@ BacklinkNotFoundOnPartnerWebsite=Backlink auf Partner-Website nicht gefunden
 ConfirmClosePartnershipAsk=Möchten Sie diese Partnerschaft wirklich beenden?
 PartnershipType=Partnerschaftstyp
 PartnershipRefApproved=Partnerschaft %s genehmigt
+KeywordToCheckInWebsite=Wenn Sie überprüfen möchten, ob ein bestimmtes Schlüsselwort auf der Website jedes Partners vorhanden ist, definieren Sie dieses Schlüsselwort hier
+PartnershipDraft=Entwurf
+PartnershipAccepted=Bestätigt
+PartnershipRefused=Abgelehnt
+PartnershipCanceled=storniert
+PartnershipManagedFor=Partner sind
 
 #
 # Template Mail
@@ -82,11 +91,6 @@ CountLastUrlCheckError=Anzahl der Fehler bei der letzten URL-Überprüfung
 LastCheckBacklink=Datum der letzten URL-Überprüfung
 ReasonDeclineOrCancel=Ablehnungsgrund
 
-#
-# Status
-#
-PartnershipDraft=Entwurf
-PartnershipAccepted=Bestätigt
-PartnershipRefused=Abgelehnt
-PartnershipCanceled=storniert
-PartnershipManagedFor=Partner sind
+NewPartnershipRequest=Neue Partnerschaftsanfrage
+NewPartnershipRequestDesc=Mit diesem Formular können Sie die Teilnahme an einem unserer Partnerprogramme beantragen. Wenn Sie Hilfe beim Ausfüllen dieses Formulars benötigen, wenden Sie sich bitte per E-Mail an <b>%s</b> .
+

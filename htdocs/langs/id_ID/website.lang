@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Kode
+WebsiteName=Name of the website
 WebsiteSetupDesc=Buat di sini situs web yang ingin Anda gunakan. Kemudian masuk ke menu Website untuk mengeditnya.
 DeleteWebsite=Hapus situs web
 ConfirmDeleteWebsite=Anda yakin ingin menghapus situs web ini? Semua halaman dan kontennya juga akan dihapus. File yang diunggah (seperti ke direktori media, modul ECM, ...) akan tetap ada.
@@ -15,9 +16,9 @@ WEBSITE_HTML_HEADER=Tambahan di bagian bawah Header HTML (umum untuk semua halam
 WEBSITE_ROBOT=File robot (robots.txt)
 WEBSITE_HTACCESS=File .htaccess situs web
 WEBSITE_MANIFEST_JSON=File manifest.json situs web
-WEBSITE_README=File README.md
 WEBSITE_KEYWORDSDesc=Gunakan koma untuk memisahkan nilai
-EnterHereLicenseInformation=Masukkan di sini data meta atau informasi lisensi untuk memfilter file README.md. jika Anda mendistribusikan situs web Anda sebagai templat, file tersebut akan dimasukkan ke dalam paket temptate.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included into the temptate package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included into the temptate package.
 HtmlHeaderPage=Header HTML (khusus untuk halaman ini saja)
 PageNameAliasHelp=Nama atau alias halaman. <br> Alias ini juga digunakan untuk memalsukan URL SEO ketika situs web dijalankan dari host virtual server Web (seperti Apacke, Nginx, ...). Gunakan tombol "<strong> %s </strong>" untuk mengedit alias ini.
 EditTheWebSiteForACommonHeader=Catatan: Jika Anda ingin menentukan tajuk yang dipersonalisasi untuk semua halaman, edit tajuk di tingkat situs alih-alih pada halaman / wadah.
@@ -42,10 +43,12 @@ ViewPageInNewTab=Lihat halaman di tab baru
 SetAsHomePage=Setel sebagai homepage
 RealURL=URL asli
 ViewWebsiteInProduction=Lihat situs web menggunakan URL beranda
+Virtualhost=Virtual host or domain name
+VirtualhostDesc=The name of the Virtual host or domain (For example: www.mywebsite.com, mybigcompany.net, ...)
 SetHereVirtualHost= <u>Gunakan dengan Apache / NGinx /...</u><br> Buat di server web Anda (Apache, Nginx, ...) Host Virtual khusus dengan PHP yang diaktifkan dan direktori Root pada <br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Contoh untuk digunakan dalam pengaturan host virtual Apache:
 YouCanAlsoTestWithPHPS= <u>Gunakan dengan server yang telah tertanam PHP</u> <br>Pada lingkungan pengembangan software, Anda dapat memilih untuk menguji situs dengan server web yang tertanam PHP (PHP 5.5 diperlukan) dengan menjalankan<br><strong>php -S 0.0.0.0:8080 -t %s</strong>
-YouCanAlsoDeployToAnotherWHP= <u> Jalankan situs web Anda dengan penyedia Hosting Dolibarr lain integrasi dengan modul Situs web. Anda dapat menemukan daftar beberapa penyedia hosting Dolibarr di <a href="https://saas.dolibarr.org" target="_blank"> https://saas.dolibarr.org </a>
+YouCanAlsoDeployToAnotherWHP=<u>Run your web site with another Dolibarr Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on internet, you can export and import your web site onto another Dolibarr instance provided by another Dolibarr hosting provider that provide full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Periksa juga bahwa pengguna host virtual (misalnya www-data) memiliki izin <strong> %s </strong> pada file ke <br> <strong> %s </strong>
 ReadPerm=Baca
 WritePerm=Menulis
@@ -60,7 +63,7 @@ YouCanEditHtmlSourceckeditor=Anda dapat mengedit kode sumber HTML menggunakan to
 YouCanEditHtmlSource= <br><span class="fa fa-bug"></span> Anda dapat mencantumkan kode PHP ke dalam sumber source ini menggunakan tag <strong>&lt;? php?&gt;</strong>. Variabel global berikut tersedia: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs. <br><br><span class="fa fa-bug"></span> Anda juga dapat mencantumkan konten dari Halaman/Kontainer lainnya dengan sintaks berikut:<br><strong>&lt;?php includeContainer ('alias_kontainer_yang_ingin_dicantumkan');?&gt;</strong><br><br><span class="fa fa-bug"></span> Anda dapat membuat pengalihkan ke Halaman/Kontainer yang lain dengan sintaks berikut (Catatan: Jangan membuat output konten sebelum dialihkan):<br><strong>&lt;?php redirectToContainer ('alias_kontainer_yang_ingin dialihkan');&gt; </strong> <br> <br> <span class="fa fa-link"></span> Untuk menambahkan link ke halaman lain, gunakan sintaks: <br><strong>&lt;a href = "alias_halaman_yang_ingin dihubungkan.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> Untuk mencantumkan sebuah <strong>link untuk diunduh</strong> berkas yang disimpan ke dalam direktori <strong>dokumen</strong>, gunakan <strong>document.php</strong> wrapper:<br> Contoh, untuk sebuah berkas ke dalam dokumen/ecm (perlu login), sintaksnya adalah:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt; </strong><br>Untuk sebuah berkas ke dalam dokumen/media (direktori terbuka untuk akses publik), sintaksnya adalah:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br> Untuk berkas yang dibagikan dengan tautan berbagi (akses terbuka menggunakan pembagian kunci hash berkas), sintaksnya adalah:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> untuk mencantumkan <strong>gambar</strong> yang disimpan ke dalam direktori <strong>dokumen</strong>, gunakan <strong>viewimage.php</strong> wrapper:<br> Contoh, untuk sebuah gambar ke dalam dokumen/media (direktori terbuka untuk akses publik), sintaksnya adalah:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource2=Untuk gambar yang dibagikan dengan tautan berbagi (akses terbuka menggunakan kunci hash berbagi file), sintaksnya adalah: <br><strong>&lt;img src = "/ viewimage.php?
-YouCanEditHtmlSourceMore= <br> Lebih banyak contoh HTML atau kode dinamis yang tersedia di <a href="%s" target="_blank"> dokumentasi wiki </a> <br>.
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external">the wiki documentation</a><br>.
 ClonePage=Halaman / wadah klon
 CloneSite=Situs klon
 SiteAdded=Situs web ditambahkan
@@ -137,7 +140,7 @@ PagesRegenerated=%s halaman / wadah dibuat ulang
 RegenerateWebsiteContent=Regenerasi file cache situs web
 AllowedInFrames=Diizinkan dalam Bingkai
 DefineListOfAltLanguagesInWebsiteProperties=Tentukan daftar semua bahasa yang tersedia ke dalam properti situs web.
-GenerateSitemaps=Hasilkan file peta situs situs web
+GenerateSitemaps=Generate website sitemap.xml file
 ConfirmGenerateSitemaps=Jika Anda mengonfirmasi, Anda akan menghapus file peta situs yang ada...
 ConfirmSitemapsCreation=Konfirmasi pembuatan peta situs
 SitemapGenerated=File peta situs <b> %s </b> dihasilkan
@@ -145,3 +148,10 @@ ImportFavicon=Favicon
 ErrorFaviconType=Favicon harus png
 ErrorFaviconSize=Favicon harus berukuran 16x16, 32x32 atau 64x64
 FaviconTooltip=Unggah gambar yang harus png (16x16, 32x32 atau 64x64)
+NextContainer=Next page/container
+PreviousContainer=Previous page/container
+WebsiteMustBeDisabled=The website must have the status "%s"
+WebpageMustBeDisabled=The web page must have the status "%s"
+SetWebsiteOnlineBefore=When website is offline, all pages are offline. Change status of website first.
+Booking=Booking
+Reservation=Reservation

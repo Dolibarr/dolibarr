@@ -21,6 +21,7 @@
  *		\brief      Page with geographical statistics on members
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -41,7 +42,7 @@ if ($user->socid > 0) {
 }
 $result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 
-$year = strftime("%Y", time());
+$year = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
 

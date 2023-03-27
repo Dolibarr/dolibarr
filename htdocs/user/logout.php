@@ -33,6 +33,11 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
+/* We do now force CSRF check so we can logout using logout.php page (required for DoliDroid for example)
+if (!defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1');
+}
+*/
 //if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');	// We need company to get correct logo onto home page
 if (!defined('EVEN_IF_ONLY_LOGIN_ALLOWED')) {
 	define('EVEN_IF_ONLY_LOGIN_ALLOWED', '1');

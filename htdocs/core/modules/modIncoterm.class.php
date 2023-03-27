@@ -68,7 +68,7 @@ class modIncoterm extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("incoterm");
 
@@ -85,7 +85,7 @@ class modIncoterm extends DolibarrModules
 		}
 		$this->dictionaries = array(
 			'langs'=>'incoterm',
-			'tabname'=>array(MAIN_DB_PREFIX."c_incoterms"), // List of tables we want to see into dictonnary editor
+			'tabname'=>array("c_incoterms"), // List of tables we want to see into dictonnary editor
 			'tablib'=>array("Incoterms"), // Label of tables
 			'tabsql'=>array('SELECT rowid, code, libelle, active FROM '.MAIN_DB_PREFIX.'c_incoterms'), // Request to select fields
 			'tabsqlsort'=>array("rowid ASC"), // Sort order

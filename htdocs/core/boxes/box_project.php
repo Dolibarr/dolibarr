@@ -62,7 +62,7 @@ class box_project extends ModeleBoxes
 		$this->db = $db;
 		$this->boxlabel = "OpenedProjects";
 
-		$this->hidden = !($user->rights->projet->lire);
+		$this->hidden = empty($user->rights->projet->lire);
 	}
 
 	/**
@@ -84,6 +84,7 @@ class box_project extends ModeleBoxes
 		$textHead = $langs->trans("OpenedProjects");
 		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
 
+		$i = 0;
 		// list the summary of the orders
 		if ($user->rights->projet->lire) {
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -113,7 +114,6 @@ class box_project extends ModeleBoxes
 
 			if ($result) {
 				$num = $this->db->num_rows($result);
-				$i = 0;
 				while ($i < min($num, $max)) {
 					$objp = $this->db->fetch_object($result);
 
@@ -175,7 +175,6 @@ class box_project extends ModeleBoxes
 		$this->info_box_contents[$i][] = array(
 			'td' => 'class="liste_total"',
 			'text' => $langs->trans("Total")."&nbsp;".$textHead,
-			 'text' => "&nbsp;",
 		);
 		$this->info_box_contents[$i][] = array(
 			'td' => 'class="right liste_total" ',

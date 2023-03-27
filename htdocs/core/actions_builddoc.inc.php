@@ -26,7 +26,7 @@
 // $id must be defined
 // $object must be defined and must have a method generateDocument().
 // $permissiontoadd must be defined
-// $upload_dir must be defined (example $conf->projet->dir_output . "/";)
+// $upload_dir must be defined (example $conf->project->dir_output . "/";)
 // $hidedetails, $hidedesc, $hideref and $moreparams may have been set or not.
 
 if (!empty($permissioncreate) && empty($permissiontoadd)) {
@@ -34,7 +34,7 @@ if (!empty($permissioncreate) && empty($permissiontoadd)) {
 }
 
 // Build doc
-if ($action == 'builddoc' && $permissiontoadd) {
+if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) {
 	if (is_numeric(GETPOST('model', 'alpha'))) {
 		$error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Model"));
 	} else {
@@ -66,13 +66,13 @@ if ($action == 'builddoc' && $permissiontoadd) {
 		$outputlangs = $langs;
 		$newlang = '';
 
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && isset($object->thirdparty->default_lang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($object->thirdparty->default_lang)) {
 			$newlang = $object->thirdparty->default_lang; // for proposal, order, invoice, ...
 		}
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && isset($object->default_lang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($object->default_lang)) {
 			$newlang = $object->default_lang; // for thirdparty
 		}
 		if (!empty($newlang)) {

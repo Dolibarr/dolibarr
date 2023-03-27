@@ -45,11 +45,12 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Security check
 if (empty($conf->adherent->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Membership not enabled');
 }
 
 
@@ -65,16 +66,8 @@ $langs->loadLangs(array("main", "members", "companies", "other"));
  */
 function llxHeaderVierge($title, $head = "")
 {
-	global $user, $conf, $langs;
+	top_htmlhead($head, $title);
 
-	header("Content-type: text/html; charset=".$conf->file->character_set_client);
-	print "<html>\n";
-	print "<head>\n";
-	print "<title>".$title."</title>\n";
-	if ($head) {
-		print $head."\n";
-	}
-	print "</head>\n";
 	print '<body class="public_body">'."\n";
 }
 
@@ -151,13 +144,13 @@ if ($result) {
 	print '<table class="public_border centpercent">';
 
 	print '<tr class="public_liste_titre">';
-	print '<td><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=firstname">'.dolGetFirstLastname($langs->trans("Firstname"), $langs->trans("Lastname")).'</a></td>';
-	print '<td><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=societe">'.$langs->trans("Company").'</a></td>'."\n";
+	print '<th class="left"><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=firstname">'.dolGetFirstLastname($langs->trans("Firstname"), $langs->trans("Lastname")).'</a></th>';
+	print '<th class="left"><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=societe">'.$langs->trans("Company").'</a></th>'."\n";
 	//print_liste_field_titre("DateOfBirth", $_SERVER["PHP_SELF"],"birth",'',$param,$sortfield,$sortorder); // est-ce nécessaire ??
-	print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "email", '', $param, '', $sortfield, $sortorder, 'public_');
-	print_liste_field_titre("Zip", $_SERVER["PHP_SELF"], "zip", "", $param, '', $sortfield, $sortorder, 'public_');
-	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "town", "", $param, '', $sortfield, $sortorder, 'public_');
-	print_liste_field_titre("Photo", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'public_');
+	print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "email", '', $param, '', $sortfield, $sortorder, 'left public_');
+	print_liste_field_titre("Zip", $_SERVER["PHP_SELF"], "zip", "", $param, '', $sortfield, $sortorder, 'left public_');
+	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "town", "", $param, '', $sortfield, $sortorder, 'left public_');
+	print_liste_field_titre("Photo", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center public_');
 	print "</tr>\n";
 
 	while ($i < $num && $i < $conf->liste_limit) {
@@ -170,7 +163,7 @@ if ($result) {
 		print '<td>'.$objp->zip.'</td>'."\n";
 		print '<td>'.$objp->town.'</td>'."\n";
 		if (isset($objp->photo) && $objp->photo != '') {
-			print '<td>';
+			print '<td class="center">';
 			print $form->showphoto('memberphoto', $objp, 64);
 			print '</td>'."\n";
 		} else {

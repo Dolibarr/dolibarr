@@ -155,18 +155,16 @@ class ModeleImports
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Charge en memoire et renvoie la liste des modeles actifs
+	 *  Load into memory list of available import format
 	 *
 	 *  @param	DoliDB	$db     			Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
 	 *  @return	array						List of templates
 	 */
-	public function liste_modeles($db, $maxfilenamelength = 0)
+	public function listOfAvailableImportFormat($db, $maxfilenamelength = 0)
 	{
-		// phpcs:enable
-		dol_syslog(get_class($this)."::liste_modeles");
+		dol_syslog(get_class($this)."::listOfAvailableImportFormat");
 
 		$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
 		$handle = opendir($dir);

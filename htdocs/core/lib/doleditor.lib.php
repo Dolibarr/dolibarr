@@ -49,12 +49,7 @@ function show_skin($fuser, $edit = 0)
 	$dirskins = array_unique($dirskins);
 	// Now dir_themes=array('/themes') or dir_themes=array('/theme','/mymodule/theme')
 
-	$selected_theme = '';
-	if (empty($conf->global->FCKEDITOR_SKIN)) {
-		$selected_theme = 'moono-lisa';
-	} else {
-		$selected_theme = $conf->global->FCKEDITOR_SKIN;
-	}
+	$selected_theme = getDolGlobalString('FCKEDITOR_SKIN', 'moono-lisa');
 
 	$colspan = 2;
 

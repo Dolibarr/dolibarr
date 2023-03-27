@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,10 +20,10 @@
 /**
  *	    \file       htdocs/core/doxygen.php
  *      \ingroup    core
- *		\mainpage	Dolibarr project
+ *		\mainpage	Dolibarr documentation of source code
  *
  *	    This is source documentation for Dolibarr ERP/CRM.<br>
- *      This documentation can be built or updated running the script <b>dolibarr-doxygen-build.pl</b> or from Eclipse with Doxygen plugin.<br>
+ *      This documentation can be built or updated running the script <b>build/doxygen/dolibarr-doxygen-build.pl</b> or from Eclipse with Doxygen plugin.<br>
  *      <br>
  *      Dolibarr official web site: <a href="https://www.dolibarr.org">www.dolibarr.org</a><br>
  *      <br>

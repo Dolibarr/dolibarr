@@ -49,6 +49,16 @@ __README__
 __DATA_SPECIFICATION__
 
 
+== MATRIX OF PERMISSIONS
+
+__DATA_PERMISSIONS__
+
+
+== OTHER
+
+__API_DOC__
+
+
 == CHANGELOG
 
 //include::ChangeLog.md[]

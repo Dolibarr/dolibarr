@@ -7,7 +7,5 @@ MembersTypes=Mitgliedertypen
 MemberStatusActiveLateShort=abgelaufen
 MemberStatusNoSubscriptionShort=Bestätigt
 SubscriptionEndDate=Abonnementauslaufdatum
-SubscriptionLate=Versätet
-NewMemberType=Neues Mitgliedsrt
 Filehtpasswd=htpasswd-Datei
 HTPasswordExport=htpassword-Dateierstellung

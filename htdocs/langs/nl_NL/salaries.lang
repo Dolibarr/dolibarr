@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Grootboekrekening voor medewerker derde partij
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=De boekhoudrekening die in het gebruikersbestand is gedefinieerd, wordt alleen gebruikt voor aanvullende boekhouding. Deze wordt gebruikt voor het grootboek en als standaardwaarde voor aanvullende boekhouding als de speciale rekening van de gebruiker niet is gedefinieerd.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standaard grootboekrekening voor salaris betalingen
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Laat standaard de optie "Automatisch een totale betaling aanmaken" leeg bij het aanmaken van een Salaris
 Salary=Salaris
 Salaries=Salarissen
 NewSalary=Nieuw salaris
-AddSalary=Add salary
+AddSalary=Salaris toevoegen
 NewSalaryPayment=Nieuwe salariskaart
 AddSalaryPayment=Salarisbetaling toevoegen
 SalaryPayment=Salarisbetaling
@@ -23,4 +23,5 @@ AllSalaries=Alle salarissen
 SalariesStatistics=Salaris statistieken
 SalariesAndPayments=Salarissen en betalingen
 ConfirmDeleteSalaryPayment=Wilt u deze salarisbetaling verwijderen?
-FillFieldFirst=Fill employee field first
+FillFieldFirst=Vul eerst het werknemersveld in
+UpdateAmountWithLastSalary=Vast bedrag met laatste salaris

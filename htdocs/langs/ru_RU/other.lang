@@ -110,7 +110,7 @@ ChooseYourDemoProfilMore=... или создайте свой собственн
 DemoFundation=Управление членов Фонда
 DemoFundation2=Управление членами и банковские счета Фонда
 DemoCompanyServiceOnly=Только услуги компании или внештатного продавца
-DemoCompanyShopWithCashDesk=Работа магазина в кассу
+DemoCompanyShopWithCashDesk=Manage a shop with a cash box
 DemoCompanyProductAndStocks=Магазин, продающий товары с помощью Точки продаж
 DemoCompanyManufacturing=Компания по производству продукции
 DemoCompanyAll=Компания с несколькими видами деятельности (все основные модули)
@@ -258,10 +258,10 @@ PassEncoding=Кодировка пароля
 PermissionsAdd=Разрешения добавлены
 PermissionsDelete=Разрешения удалены
 YourPasswordMustHaveAtLeastXChars=Ваш пароль должен содержать не менее <strong>%s</strong> символов.
-PasswordNeedAtLeastXUpperCaseChars=The password need at least <strong>%s</strong> upper case chars
-PasswordNeedAtLeastXDigitChars=The password need at least <strong>%s</strong> numeric chars
-PasswordNeedAtLeastXSpecialChars=The password need at least <strong>%s</strong> special chars
-PasswordNeedNoXConsecutiveChars=The password must not have <strong>%s</strong> consecutive similar chars
+PasswordNeedAtLeastXUpperCaseChars=Пароль должен состоять как минимум из символов верхнего регистра <strong> %s </strong>
+PasswordNeedAtLeastXDigitChars=Пароль должен состоять как минимум из <strong> %s </strong> числовых символов.
+PasswordNeedAtLeastXSpecialChars=Пароль должен содержать как минимум специальные символы <strong> %s </strong>
+PasswordNeedNoXConsecutiveChars=В пароле не должно быть <strong> %s </strong> последовательных одинаковых символов.
 YourPasswordHasBeenReset=Ваш пароль был успешно сброшен
 ApplicantIpAddress=IP-адрес заявителя
 SMSSentTo=SMS отправлено на %s
@@ -272,7 +272,7 @@ ProjectCreatedByEmailCollector=Проект создан сборщиком пи
 TicketCreatedByEmailCollector=Тикет создан сборщиком электронной почты из электронного адреса MSGID %s
 OpeningHoursFormatDesc=Используйте - для разделения часов открытия и закрытия.<br>Используйте пробел для ввода различных диапазонов.<br>Пример: 8-12 14-18
 SuffixSessionName=Суффикс имени сеанса
-LoginWith=Login with %s
+LoginWith=Войти с помощью %s
 
 ##### Export #####
 ExportsArea=Экспорт области
@@ -303,3 +303,25 @@ SelectTheTypeOfObjectToAnalyze=Выберите объект, чтобы про�
 ConfirmBtnCommonContent = Вы уверены, что хотите «%s»?
 ConfirmBtnCommonTitle = Подтвердите свое действие
 CloseDialog = Закрыть
+Autofill = Автозаполнение
+
+# externalsite
+ExternalSiteSetup=Установка ссылки на внешний веб-сайт
+ExternalSiteURL=External Site URL of HTML iframe content
+ExternalSiteModuleNotComplete=Модуль ВнешнийСайт не был надлежащим образом настроен.
+ExampleMyMenuEntry=Пункт "Моё меню"
+
+# FTP
+FTPClientSetup=Настройка модуля FTP или SFTP-клиента
+NewFTPClient=Настройка нового соединения FTP/FTPS
+FTPArea=Область FTP/FTPS
+FTPAreaDesc=This screen shows a view of an FTP et SFTP server.
+SetupOfFTPClientModuleNotComplete=The setup of the FTP or SFTP client module seems to be incomplete
+FTPFeatureNotSupportedByYourPHP=Your PHP does not support FTP or SFTP functions
+FailedToConnectToFTPServer=Failed to connect to server (server %s, port %s)
+FailedToConnectToFTPServerWithCredentials=Не удалось войти на сервер с определенным логином/паролем
+FTPFailedToRemoveFile=Не удалось удалить файл <b>%s</b>.
+FTPFailedToRemoveDir=Не удалось удалить каталог <b>%s</b>: проверьте разрешения и убедитесь, что каталог пуст.
+FTPPassiveMode=Пассивный режим
+ChooseAFTPEntryIntoMenu=Выберите сайт FTP/SFTP в меню ...
+FailedToGetFile=Не удалось получить файлы %s

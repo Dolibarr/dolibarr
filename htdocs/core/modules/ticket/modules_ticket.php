@@ -44,8 +44,6 @@ abstract class ModelePDFTicket extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'ticket';
 		$list = array();
 
@@ -78,9 +76,9 @@ abstract class ModeleNumRefTicket
 	}
 
 	/**
-	 *  Renvoi la description par defaut du modele de numerotation
+	 *  Returns the default description of the numbering pattern
 	 *
-	 *  @return string      Texte descripif
+	 *  @return string      Descriptive text
 	 */
 	public function info()
 	{
@@ -115,11 +113,11 @@ abstract class ModeleNumRefTicket
 	/**
 	 *  Renvoi prochaine valeur attribuee
 	 *
-	 *    @param  Societe $objsoc  Object third party
-	 *    @param  Project $project Object project
-	 *    @return string                    Valeur
+	 *    @param  Societe 	$objsoc  	Object third party
+	 *    @param  Ticket 	$ticket		Object ticket
+	 *    @return string                Valeur
 	 */
-	public function getNextValue($objsoc, $project)
+	public function getNextValue($objsoc, $ticket)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

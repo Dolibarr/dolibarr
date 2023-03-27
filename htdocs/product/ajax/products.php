@@ -38,20 +38,19 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {
 	define('NOREQUIREHTML', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 $htmlname = GETPOST('htmlname', 'aZ09');
 $socid = GETPOST('socid', 'int');
 $type = GETPOST('type', 'int');
 $mode = GETPOST('mode', 'int');
-$status = ((GETPOST('status', 'int') >= 0) ? GETPOST('status', 'int') : - 1);
+$status = ((GETPOST('status', 'int') >= 0) ? GETPOST('status', 'int') : - 1);	// status buy when mode = customer , status purchase when mode = supplier
+$status_purchase = ((GETPOST('status_purchase', 'int') >= 0) ? GETPOST('status_purchase', 'int') : - 1);	// status purchase when mode = customer
 $outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
 $price_level = GETPOST('price_level', 'int');
 $action = GETPOST('action', 'aZ09');
@@ -78,6 +77,8 @@ if ($action == 'fetch' && !empty($id)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
+	top_httphead('application/json');
+
 	$outjson = array();
 
 	$object = new Product($db);
@@ -92,6 +93,7 @@ if ($action == 'fetch' && !empty($id)) {
 		$outprice_ht = null;
 		$outprice_ttc = null;
 		$outpricebasetype = null;
+		$outtva_tx_formated = 0;
 		$outtva_tx = 0;
 		$outdefault_vat_code = '';
 		$outqty = 1;
@@ -101,26 +103,36 @@ if ($action == 'fetch' && !empty($id)) {
 
 		$price_level = 1;
 		if ($socid > 0) {
-			$thirdpartytemp = new Societe($db);
-			$thirdpartytemp->fetch($socid);
-
-			//Load translation description and label
-			if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
-				$newlang = $thirdpartytemp->default_lang;
-
-				if (!empty($newlang)) {
-					$outputlangs = new Translate("", $conf);
-					$outputlangs->setDefaultLang($newlang);
-					$outdesc_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["description"])) ? $object->multilangs[$outputlangs->defaultlang]["description"] : $object->description;
-					$outlabel_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["label"])) ? $object->multilangs[$outputlangs->defaultlang]["label"] : $object->label;
-				} else {
-					$outdesc_trans = $object->description;
-					$outlabel_trans = $object->label;
-				}
+			$needchangeaccordingtothirdparty = 0;
+			if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
+				$needchangeaccordingtothirdparty = 1;
 			}
+			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+				$needchangeaccordingtothirdparty = 1;
+			}
+			if ($needchangeaccordingtothirdparty) {
+				$thirdpartytemp = new Societe($db);
+				$thirdpartytemp->fetch($socid);
 
-			if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
-				$price_level = $thirdpartytemp->price_level;
+				//Load translation description and label according to thirdparty language
+				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
+					$newlang = $thirdpartytemp->default_lang;
+
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+						$outdesc_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["description"])) ? $object->multilangs[$outputlangs->defaultlang]["description"] : $object->description;
+						$outlabel_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["label"])) ? $object->multilangs[$outputlangs->defaultlang]["label"] : $object->label;
+					} else {
+						$outdesc_trans = $object->description;
+						$outlabel_trans = $object->label;
+					}
+				}
+
+				//Set price level according to thirdparty
+				if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+					$price_level = $thirdpartytemp->price_level;
+				}
 			}
 		}
 
@@ -139,7 +151,8 @@ if ($action == 'fetch' && !empty($id)) {
 					$outprice_ttc = price($objp->unitprice * (1 + ($object->tva_tx / 100)));
 
 					$outpricebasetype = $object->price_base_type;
-					$outtva_tx = $object->tva_tx;
+					$outtva_tx_formated = price($object->tva_tx);
+					$outtva_tx = price2num($object->tva_tx);
 					$outdefault_vat_code = $object->default_vat_code;
 
 					$outqty = $objp->quantity;
@@ -164,15 +177,17 @@ if ($action == 'fetch' && !empty($id)) {
 				$objp = $db->fetch_object($result);
 				if ($objp) {
 					$found = true;
-					$outprice_ht = price($objp->price);
-					$outprice_ttc = price($objp->price_ttc);
+					$outprice_ht = price($objp->price);			// formated for langage user because is inserted into input field
+					$outprice_ttc = price($objp->price_ttc);	// formated for langage user because is inserted into input field
 					$outpricebasetype = $objp->price_base_type;
 					if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {
-						$outtva_tx = $objp->tva_tx;
+						$outtva_tx_formated = price($objp->tva_tx);	// formated for langage user because is inserted into input field
+						$outtva_tx = price2num($objp->tva_tx);		// international numeric
 						$outdefault_vat_code = $objp->default_vat_code;
 					} else {
 						// The common and default behaviour.
-						$outtva_tx = $object->tva_tx;
+						$outtva_tx_formated = price($object->tva_tx);
+						$outtva_tx = price2num($object->tva_tx);
 						$outdefault_vat_code = $object->default_vat_code;
 					}
 				}
@@ -180,21 +195,22 @@ if ($action == 'fetch' && !empty($id)) {
 		}
 
 		// Price by customer
-		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
+		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') && !empty($socid)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
 			$prodcustprice = new Productcustomerprice($db);
 
 			$filter = array('t.fk_product' => $object->id, 't.fk_soc' => $socid);
 
-			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 			if ($result) {
 				if (count($prodcustprice->lines) > 0) {
 					$found = true;
 					$outprice_ht = price($prodcustprice->lines[0]->price);
 					$outprice_ttc = price($prodcustprice->lines[0]->price_ttc);
 					$outpricebasetype = $prodcustprice->lines[0]->price_base_type;
-					$outtva_tx = $prodcustprice->lines[0]->tva_tx;
+					$outtva_tx_formated = price($prodcustprice->lines[0]->tva_tx);
+					$outtva_tx = price2num($prodcustprice->lines[0]->tva_tx);
 					$outdefault_vat_code = $prodcustprice->lines[0]->default_vat_code;
 				}
 			}
@@ -204,7 +220,8 @@ if ($action == 'fetch' && !empty($id)) {
 			$outprice_ht = price($object->price);
 			$outprice_ttc = price($object->price_ttc);
 			$outpricebasetype = $object->price_base_type;
-			$outtva_tx = $object->tva_tx;
+			$outtva_tx_formated = price($object->tva_tx);
+			$outtva_tx = price2num($object->tva_tx);
 			$outdefault_vat_code = $object->default_vat_code;
 		}
 
@@ -218,6 +235,7 @@ if ($action == 'fetch' && !empty($id)) {
 			'price_ht' => $outprice_ht,
 			'price_ttc' => $outprice_ttc,
 			'pricebasetype' => $outpricebasetype,
+			'tva_tx_formated' => $outtva_tx_formated,
 			'tva_tx' => $outtva_tx,
 			'default_vat_code' => $outdefault_vat_code,
 			'qty' => $outqty,
@@ -260,7 +278,7 @@ if ($action == 'fetch' && !empty($id)) {
 	}
 
 	if (empty($mode) || $mode == 1) {  // mode=1: customer
-		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus);
+		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus, $status_purchase);
 	} elseif ($mode == 2) {            // mode=2: supplier
 		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, 0, $alsoproductwithnosupplierprice);
 	}

@@ -14,15 +14,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *  \file       htdocs/intracommreport/class/intracommreport.class.php
- *  \ingroup    Intracomm report
- *  \brief      File of class to manage intracomm report
+ *    \file       htdocs/intracommreport/class/intracommreport.class.php
+ *    \ingroup    Intracomm report
+ *    \brief      File of class to manage intracomm report
  */
+
+
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+
 
 /**
  * Class to manage intracomm report
@@ -45,15 +48,27 @@ class IntracommReport extends CommonObject
 	public $fk_element = 'fk_intracommreport';
 
 	/**
+	 * 0 = No test on entity, 1 = Test with field entity, 2 = Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
+
+	public $picto = 'intracommreport';
+
+
+	public $label; 		// ref ???
+
+	public $period;
+
+	public $declaration;
+
+	/**
 	 * @var string declaration number
 	 */
 	public $declaration_number;
 
-	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
+	public $type_declaration;		// deb or des
+
 
 	/**
 	 * DEB - Product
@@ -70,6 +85,7 @@ class IntracommReport extends CommonObject
 		'expedition'=>'Expédition'
 	);
 
+
 	/**
 	 * Constructor
 	 *
@@ -82,7 +98,8 @@ class IntracommReport extends CommonObject
 	}
 
 	/**
-	 * Fonction create
+	 * Function create
+	 *
 	 * @param 	User 	$user 		User
 	 * @param 	int 	$notrigger 	notrigger
 	 * @return 	int
@@ -93,7 +110,8 @@ class IntracommReport extends CommonObject
 	}
 
 	/**
-	 * Fonction fetch
+	 * Function fetch
+	 *
 	 * @param 	int 	$id 	object ID
 	 * @return 	int
 	 */
@@ -103,7 +121,8 @@ class IntracommReport extends CommonObject
 	}
 
 	/**
-	 * Fonction delete
+	 * Function delete
+	 *
 	 * @param 	int 	$id 		object ID
 	 * @param 	User 	$user 		User
 	 * @param 	int 	$notrigger 	notrigger
@@ -124,7 +143,6 @@ class IntracommReport extends CommonObject
 	 */
 	public function getXML($mode = 'O', $type = 'introduction', $period_reference = '')
 	{
-
 		global $conf, $mysoc;
 
 		/**************Construction de quelques variables********************/
@@ -231,7 +249,7 @@ class IntracommReport extends CommonObject
 		if ($resql) {
 			$i = 1;
 
-			if (empty($resql->num_rows)) {
+			if ($this->db->num_rows($resql) <= 0) {
 				$this->errors[] = 'No data for this period';
 				return 0;
 			}
@@ -286,34 +304,34 @@ class IntracommReport extends CommonObject
 		global $mysoc, $conf;
 
 		if ($type == 'expedition' || $exporttype == 'des') {
-			$sql = 'SELECT f.ref as refinvoice, f.total_ht';
+			$sql = "SELECT f.ref as refinvoice, f.total_ht";
 			$table = 'facture';
 			$table_extraf = 'facture_extrafields';
 			$tabledet = 'facturedet';
 			$field_link = 'fk_facture';
 		} else { // Introduction
-			$sql = 'SELECT f.ref_supplier as refinvoice, f.total_ht';
+			$sql = "SELECT f.ref_supplier as refinvoice, f.total_ht";
 			$table = 'facture_fourn';
 			$table_extraf = 'facture_fourn_extrafields';
 			$tabledet = 'facture_fourn_det';
 			$field_link = 'fk_facture_fourn';
 		}
-		$sql .= ', l.fk_product, l.qty
+		$sql .= ", l.fk_product, l.qty
 				, p.weight, p.rowid as id_prod, p.customcode
 				, s.rowid as id_client, s.nom, s.zip, s.fk_pays, s.tva_intra
 				, c.code
 				, ext.mode_transport
-				FROM '.MAIN_DB_PREFIX.$tabledet.' l
-				INNER JOIN '.MAIN_DB_PREFIX.$table.' f ON (f.rowid = l.'.$field_link.')
-				LEFT JOIN '.MAIN_DB_PREFIX.$table_extraf.' ext ON (ext.fk_object = f.rowid)
-				INNER JOIN '.MAIN_DB_PREFIX.'product p ON (p.rowid = l.fk_product)
-				INNER JOIN '.MAIN_DB_PREFIX.'societe s ON (s.rowid = f.fk_soc)
-				LEFT JOIN '.MAIN_DB_PREFIX.'c_country c ON (c.rowid = s.fk_pays)
+				FROM ".MAIN_DB_PREFIX.$tabledet." l
+				INNER JOIN ".MAIN_DB_PREFIX.$table." f ON (f.rowid = l.".$this->db->escape($field_link).")
+				LEFT JOIN ".MAIN_DB_PREFIX.$table_extraf." ext ON (ext.fk_object = f.rowid)
+				INNER JOIN ".MAIN_DB_PREFIX."product p ON (p.rowid = l.fk_product)
+				INNER JOIN ".MAIN_DB_PREFIX."societe s ON (s.rowid = f.fk_soc)
+				LEFT JOIN ".MAIN_DB_PREFIX."c_country c ON (c.rowid = s.fk_pays)
 				WHERE f.fk_statut > 0
-				AND l.product_type = '.($exporttype == 'des' ? 1 : 0).'
-				AND f.entity = '.$conf->entity.'
-				AND (s.fk_pays <> '.$mysoc->country_id.' OR s.fk_pays IS NULL)
-				AND f.datef BETWEEN "'.$period_reference.'-01" AND "'.$period_reference.'-'.date('t').'"';
+				AND l.product_type = ".($exporttype == "des" ? 1 : 0)."
+				AND f.entity = ".((int) $conf->entity)."
+				AND (s.fk_pays <> ".((int) $mysoc->country_id)." OR s.fk_pays IS NULL)
+				AND f.datef BETWEEN '".$this->db->escape($period_reference)."-01' AND '".$this->db->escape($period_reference)."-".date('t')."'";
 
 		return $sql;
 	}
@@ -399,27 +417,27 @@ class IntracommReport extends CommonObject
 		}
 
 		foreach ($TLinesFraisDePort as $res) {
-			$sql = 'SELECT p.customcode
-					FROM '.MAIN_DB_PREFIX.$tabledet.' d
-					INNER JOIN '.MAIN_DB_PREFIX.$table.' f ON (f.rowid = d.'.$field_link.')
-					INNER JOIN '.MAIN_DB_PREFIX.'product p ON (p.rowid = d.fk_product)
+			$sql = "SELECT p.customcode
+					FROM ".MAIN_DB_PREFIX.$tabledet." d
+					INNER JOIN ".MAIN_DB_PREFIX.$table." f ON (f.rowid = d.".$this->db->escape($field_link).")
+					INNER JOIN ".MAIN_DB_PREFIX."product p ON (p.rowid = d.fk_product)
 					WHERE d.fk_product IS NOT NULL
-					AND f.entity = '.$conf->entity.'
-					AND '.$more_sql.' = "'.$res->refinvoice.'"
+					AND f.entity = ".((int) $conf->entity)."
+					AND ".$more_sql." = '".$this->db->escape($res->refinvoice)."'
 					AND d.total_ht =
 					(
 						SELECT MAX(d.total_ht)
-						FROM '.MAIN_DB_PREFIX.$tabledet.' d
-						INNER JOIN '.MAIN_DB_PREFIX.$table.' f ON (f.rowid = d.'.$field_link.')
+						FROM ".MAIN_DB_PREFIX.$tabledet." d
+						INNER JOIN ".MAIN_DB_PREFIX.$table." f ON (f.rowid = d.".$this->db->escape($field_link).")
 						WHERE d.fk_product IS NOT NULL
-						AND '.$more_sql.' = "'.$res->refinvoice.'"
+						AND ".$more_sql." = '".$this->db->escape($res->refinvoice)."'
 						AND d.fk_product NOT IN
 						(
 							SELECT fk_product
-							FROM '.MAIN_DB_PREFIX.'categorie_product
-							WHERE fk_categorie = '.((int) $categ_fraisdeport->id).'
+							FROM ".MAIN_DB_PREFIX."categorie_product
+							WHERE fk_categorie = ".((int) $categ_fraisdeport->id)."
 						)
-					)';
+					)";
 
 			$resql = $this->db->query($sql);
 			$ress = $this->db->fetch_object($resql);
@@ -437,7 +455,9 @@ class IntracommReport extends CommonObject
 	 */
 	public function getNextDeclarationNumber()
 	{
-		$resql = $this->db->query('SELECT MAX(numero_declaration) as max_declaration_number FROM '.MAIN_DB_PREFIX.$this->table_element." WHERE exporttype='".$this->db->escape($this->exporttype)."'");
+		$sql = "SELECT MAX(numero_declaration) as max_declaration_number FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " WHERE exporttype = '".$this->db->escape($this->exporttype)."'";
+		$resql = $this->db->query($sql);
 		if ($resql) {
 			$res = $this->db->fetch_object($resql);
 		}
@@ -463,7 +483,6 @@ class IntracommReport extends CommonObject
 	 */
 	public function generateXMLFile()
 	{
-
 		$name = $this->periode.'.xml';
 		$fname = sys_get_temp_dir().'/'.$name;
 		$f = fopen($fname, 'w+');

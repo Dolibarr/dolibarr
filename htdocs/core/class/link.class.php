@@ -97,7 +97,7 @@ class Link extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."links (entity, datea, url, label, objecttype, objectid)";
+		$sql = "INSERT INTO ".$this->db->prefix()."links (entity, datea, url, label, objecttype, objectid)";
 		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datea)."'";
 		$sql .= ", '".$this->db->escape($this->url)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
@@ -107,7 +107,7 @@ class Link extends CommonObject
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."links");
+			$this->id = $this->db->last_insert_id($this->db->prefix()."links");
 
 			if ($this->id > 0) {
 				// Call trigger
@@ -175,7 +175,7 @@ class Link extends CommonObject
 
 		$this->db->begin();
 
-		$sql  = "UPDATE ".MAIN_DB_PREFIX."links SET ";
+		$sql  = "UPDATE ".$this->db->prefix()."links SET ";
 		$sql .= "entity = ".$conf->entity;
 		$sql .= ", datea = '".$this->db->idate(dol_now())."'";
 		$sql .= ", url = '".$this->db->escape($this->url)."'";
@@ -233,7 +233,7 @@ class Link extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".MAIN_DB_PREFIX."links";
+		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".$this->db->prefix()."links";
 		$sql .= " WHERE objecttype = '".$this->db->escape($objecttype)."' AND objectid = ".((int) $objectid);
 		if ($conf->entity != 0) {
 			$sql .= " AND entity = ".$conf->entity;
@@ -274,7 +274,7 @@ class Link extends CommonObject
 	/**
 	 *  Return nb of links
 	 *
-	 *  @param  DoliDb  $dbs         Database handler
+	 *  @param  DoliDb  $dbs		Database handler
 	 *  @param  string  $objecttype Type of the associated object in dolibarr
 	 *  @param  int     $objectid   Id of the associated object in dolibarr
 	 *  @return int                 Nb of links, -1 if error
@@ -283,7 +283,7 @@ class Link extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."links";
+		$sql = "SELECT COUNT(rowid) as nb FROM ".$dbs->prefix()."links";
 		$sql .= " WHERE objecttype = '".$dbs->escape($objecttype)."' AND objectid = ".((int) $objectid);
 		if ($conf->entity != 0) {
 			$sql .= " AND entity = ".$conf->entity;
@@ -313,7 +313,7 @@ class Link extends CommonObject
 			$rowid = $this->id;
 		}
 
-		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".MAIN_DB_PREFIX."links";
+		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".$this->db->prefix()."links";
 		$sql .= " WHERE rowid = ".((int) $rowid);
 		if ($conf->entity != 0) {
 			$sql .= " AND entity = ".$conf->entity;
@@ -364,7 +364,7 @@ class Link extends CommonObject
 		// End call triggers
 
 		// Remove link
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."links";
+		$sql = "DELETE FROM ".$this->db->prefix()."links";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);

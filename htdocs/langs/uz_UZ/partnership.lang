@@ -19,7 +19,7 @@
 ModulePartnershipName=Hamkorlikni boshqarish
 PartnershipDescription=Modul sherikligini boshqarish
 PartnershipDescriptionLong= Modul sherikligini boshqarish
-Partnership=Partnership
+Partnership=Hamkorlik
 AddPartnership=Hamkorlik qo'shing
 CancelPartnershipForExpiredMembers=Hamkorlik: muddati o'tgan obunalari bo'lgan a'zolarning sherikligini bekor qiling
 PartnershipCheckBacklink=Hamkorlik: teskari bog'lanishni tekshiring
@@ -42,6 +42,7 @@ PARTNERSHIP_BACKLINKS_TO_CHECK=Tekshirish uchun qayta bog'lanishlar
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Obuna muddati tugaganidan keyin hamkorlik maqomini bekor qilishdan bir necha kun oldin
 ReferingWebsiteCheck=Veb-saytga yo'naltirilganligini tekshiring
 ReferingWebsiteCheckDesc=Siz o'zingizning veb-saytingizda sheriklaringizning veb-sayt domenlariga orqa bog'lanishni qo'shganligini tekshirish uchun xususiyatni yoqishingiz mumkin.
+PublicFormRegistrationPartnerDesc=Dolibarr sizga tashqi tashrif buyuruvchilarga hamkorlik dasturining bir qismi bo'lishni so'rashiga ruxsat berish uchun sizga umumiy URL/veb-sayt taqdim etishi mumkin.
 
 #
 # Object
@@ -58,7 +59,13 @@ ManagePartnership=Hamkorlikni boshqarish
 BacklinkNotFoundOnPartnerWebsite=Backlink sherik veb-saytida topilmadi
 ConfirmClosePartnershipAsk=Haqiqatan ham ushbu hamkorlikni bekor qilmoqchimisiz?
 PartnershipType=Hamkorlik turi
-PartnershipRefApproved=Partnership %s approved
+PartnershipRefApproved=%s hamkorlik tasdiqlandi
+KeywordToCheckInWebsite=Agar siz har bir sherikning veb-saytida berilgan kalit so'z mavjudligini tekshirmoqchi bo'lsangiz, ushbu kalit so'zni shu yerda belgilang
+PartnershipDraft=Qoralama
+PartnershipAccepted=Qabul qilindi
+PartnershipRefused=Rad etildi
+PartnershipCanceled=Bekor qilindi
+PartnershipManagedFor=Hamkorlar
 
 #
 # Template Mail
@@ -82,11 +89,6 @@ CountLastUrlCheckError=Oxirgi URL tekshiruvidagi xatolar soni
 LastCheckBacklink=URLni oxirgi tekshirish sanasi
 ReasonDeclineOrCancel=Rad etish sababi
 
-#
-# Status
-#
-PartnershipDraft=Qoralama
-PartnershipAccepted=Qabul qilindi
-PartnershipRefused=Rad etildi
-PartnershipCanceled=Bekor qilindi
-PartnershipManagedFor=Hamkorlar
+NewPartnershipRequest=Yangi hamkorlik talabi
+NewPartnershipRequestDesc=Ushbu shakl sizga hamkorlik dasturimizning bir qismi bo'lish uchun so'rov yuborish imkonini beradi. Agar sizga ushbu shaklni to'ldirishda yordam kerak bo'lsa, <b> %s </b> elektron pochta orqali bog'laning.
+

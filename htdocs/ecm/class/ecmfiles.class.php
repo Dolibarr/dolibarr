@@ -155,6 +155,31 @@ class EcmFiles extends CommonObject
 	 */
 	public $section_id;
 
+	public $fields = array(
+		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>-1, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'validate'=>'1', 'comment'=>"contains hash from filename+filepath"),
+		'label' => array('type'=>'varchar(128)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>-1, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>"Help text", 'showoncombobox'=>'2', 'validate'=>'1', 'comment'=>"contains hash of file content"),
+		'share' => array('type'=>'varchar(128)', 'label'=>'Share', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>-1, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>"Help text", 'showoncombobox'=>'2', 'validate'=>'1', 'comment' => "contains hash for file sharing"),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 50, 'index' => 1),
+		'filepath' => array('type'=>'varchar(255)', 'label'=>'FilePath', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>0, 'searchall'=>0, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>"Help text", 'showoncombobox'=>'2', 'validate'=>'1','comment'=> "relative to dolibarr document dir. Example module/def"),
+		'filename' => array('type'=>'varchar(255)', 'label'=>'FileName', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>"Help text", 'showoncombobox'=>'2', 'validate'=>'1','comment'=>"file name only without any directory"),
+		'src_object_type' => array('type'=>'varchar(64)', 'label'=>'SourceType', 'enabled'=>'1', 'position'=>80, 'notnull'=>0, 'visible'=>0, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>"Help text", 'showoncombobox'=>'2', 'validate'=>'1','comment'=> "Source object type ('proposal', 'invoice', ...)"),
+		'src_object_id' => array('type' => 'integer', 'label' => 'SourceID', 'default' => 1, 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 90, 'index' => 1, 'comment' => "Source object id"),
+		'fullpath_orig' => array('type'=>'varchar(750)', 'label'=>'FullPathOrig', 'enabled'=>'1', 'position'=>100, 'notnull'=>0, 'visible'=>0, 'searchall'=>0, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>"Help text", 'showoncombobox'=>'2', 'validate'=>'1','comment'=>"full path of original filename, when file is uploaded from a local computer"),
+		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => 0, 'position' => 110),
+		'keywords' => array('type'=>'varchar(750)', 'label'=>'Keywords', 'enabled'=>'1', 'position'=>120, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>"Help text", 'showoncombobox'=>'2', 'validate'=>'1','comment'=>"list of keywords, separated with comma. Must be limited to most important keywords."),
+		'cover' => array('type' => 'text', 'label' => 'Cover', 'enabled' => 1, 'visible' => 0, 'position' => 130, 'comment'=>"is this file a file to use for a cover"),
+		'position' => array('type' => 'integer', 'label' => 'Position', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 140, 'index' => 1, 'comment' => "position of file among others"),
+		'gen_or_uploaded' => array('type'=>'varchar(12)', 'label'=>'GenOrUpload', 'enabled'=>'1', 'position'=>150, 'notnull'=>0, 'visible'=>-1, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>"Help text", 'showoncombobox'=>'2', 'validate'=>'1','comment'=>"'generated' or 'uploaded'"),
+		'extraparams' => array('type'=>'varchar(255)', 'label'=>'ExtraParams', 'enabled'=>'1', 'position'=>160, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>"Help text", 'showoncombobox'=>'2', 'validate'=>'1', 'comment' => "for stocking other parameters with json format"),
+		'date_c' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 170),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 175),
+		'fk_user_c' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
+		'fk_user_m' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
+		'note_public' => array('type' => 'text', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 155),
+		'note_private' => array('type' => 'text', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 160),
+		'acl' => array('type' => 'text', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 160, 'comment' => "for future permission 'per file'"),
+	);
 
 
 	/**
@@ -404,7 +429,7 @@ class EcmFiles extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE 1 = 1';
 		/* Fetching this table depends on filepath+filename, it must not depends on entity because filesystem on disk does not know what is Dolibarr entities
-		 if (! empty($conf->multicompany->enabled)) {
+		 if (isModEnabled('multicompany')) {
 		 $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
 		 }*/
 		if ($relativepath) {
@@ -543,7 +568,7 @@ class EcmFiles extends CommonObject
 		}
 		$sql .= ' WHERE 1 = 1';
 		/* Fetching this table depends on filepath+filename, it must not depends on entity
-		 if (! empty($conf->multicompany->enabled)) {
+		 if (isModEnabled('multicompany')) {
 		 $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
 		 }*/
 		if (count($sqlwhere) > 0) {
@@ -566,7 +591,7 @@ class EcmFiles extends CommonObject
 				$line = new EcmfilesLine();
 
 				$line->id = $obj->rowid;
-				$line->ref = $obj->ref;
+				$line->ref = $obj->rowid;
 				$line->label = $obj->label;
 				$line->share = $obj->share;
 				$line->entity = $obj->entity;
@@ -748,7 +773,13 @@ class EcmFiles extends CommonObject
 		}
 
 		// If you need to delete child tables to, you can insert them here
-
+		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if (!$result) {
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
+				$error++;
+			}
+		}
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' WHERE rowid='.((int) $this->id);
@@ -836,7 +867,7 @@ class EcmFiles extends CommonObject
 	{
 		global $db, $conf, $langs;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
+		global $menumanager, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -873,6 +904,16 @@ class EcmFiles extends CommonObject
 			}
 		}
 		$result .= $linkstart.$this->ref.$linkend;
+
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 

@@ -35,6 +35,7 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 
@@ -87,19 +88,47 @@ if ($idprod > 0) {
 				$label .= ' ('.$productSupplier->fourn_ref.')';
 			}
 
-			$prices[] = array("id" => $productSupplier->product_fourn_price_id, "price" => price2num($price, 0, '', 0), "label" => $label, "title" => $title); // For price field, we must use price2num(), for label or title, price()
+			$prices[] = array("id" => $productSupplier->product_fourn_price_id, "price" => price2num($price, '', 0), "label" => $label, "title" => $title); // For price field, we must use price2num(), for label or title, price()
 		}
 	}
 
 	// After best supplier prices and before costprice
-	if (!empty($conf->stock->enabled)) {
+	if (isModEnabled('stock')) {
 		// Add price for pmp
 		$price = $producttmp->pmp;
-		$prices[] = array("id" => 'pmpprice', "price" => price2num($price), "label" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency)); // For price field, we must use price2num(), for label or title, price()
+		if (empty($price) && !empty($conf->global->PRODUCT_USE_SUB_COST_PRICES_IF_COST_PRICE_EMPTY)) {
+			// get pmp for subproducts if any
+			$producttmp->get_sousproduits_arbo();
+			$prods_arbo=$producttmp->get_arbo_each_prod();
+			if (!empty($prods_arbo)) {
+				$price = 0;
+				foreach ($prods_arbo as $child) {
+					$sousprod = new Product($db);
+					$sousprod->fetch($child['id']);
+					$price += $sousprod->pmp;
+				}
+			}
+		}
+
+		$prices[] = array("id" => 'pmpprice', "price" => price2num($price), "label" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency));  // For price field, we must use price2num(), for label or title, price()
 	}
 
 	// Add price for costprice (at end)
 	$price = $producttmp->cost_price;
+	if (empty($price) && !empty($conf->global->PRODUCT_USE_SUB_COST_PRICES_IF_COST_PRICE_EMPTY)) {
+		// get costprice for subproducts if any
+		$producttmp->get_sousproduits_arbo();
+		$prods_arbo=$producttmp->get_arbo_each_prod();
+		if (!empty($prods_arbo)) {
+			$price = 0;
+			foreach ($prods_arbo as $child) {
+				$sousprod = new Product($db);
+				$sousprod->fetch($child['id']);
+				$price += $sousprod->cost_price;
+			}
+		}
+	}
+
 	$prices[] = array("id" => 'costprice', "price" => price2num($price), "label" => $langs->trans("CostPrice").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency)); // For price field, we must use price2num(), for label or title, price()
 }
 

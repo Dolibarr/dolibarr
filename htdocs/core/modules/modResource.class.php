@@ -95,7 +95,7 @@ class modResource extends DolibarrModules
 		// List of modules id to disable if this one is disabled
 		$this->requiredby = array('modPlace');
 		// Minimum version of PHP required by module
-		$this->phpmin = array(5, 6);
+		$this->phpmin = array(7, 0);
 
 		$this->langfiles = array("resource"); // langfiles@resource
 		// Constants
@@ -120,7 +120,7 @@ class modResource extends DolibarrModules
 		// 'order_supplier'		to add a tab in supplier order view
 		// 'invoice_supplier'	to add a tab in supplier invoice view
 		// 'invoice'			to add a tab in customer invoice view
-		// 'order'				to add a tab in customer order view
+		// 'order'				to add a tab in sales order view
 		// 'product'			to add a tab in product view
 		// 'stock'				to add a tab in stock view
 		// 'propal'				to add a tab in propal view
@@ -185,11 +185,11 @@ class modResource extends DolibarrModules
 
 		// Menus declaration
 		$this->menu[$r] = array(
-			'fk_menu'=>'fk_mainmenu=tools',
+			'fk_menu'=>'fk_mainmenu=agenda',
 			'type'=>'left',
 			'titre'=> 'MenuResourceIndex',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em92"'),
-			'mainmenu'=>'tools',
+			'mainmenu'=>'agenda',
 			'leftmenu'=> 'resource',
 			'url'=> '/resource/list.php',
 			'langs'=> 'resource',
@@ -201,10 +201,10 @@ class modResource extends DolibarrModules
 		$r++;
 
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
+			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
 			'type'=> 'left', // Toujours un menu gauche
 			'titre'=> 'MenuResourceAdd',
-			'mainmenu'=> 'tools',
+			'mainmenu'=> 'agenda',
 			'leftmenu'=> 'resource_add',
 			'url'=> '/resource/card.php?action=create',
 			'langs'=> 'resource',
@@ -216,10 +216,10 @@ class modResource extends DolibarrModules
 		);
 
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
+			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
 			'type'=> 'left', // Toujours un menu gauche
 			'titre'=> 'List',
-			'mainmenu'=> 'tools',
+			'mainmenu'=> 'agenda',
 			'leftmenu'=> 'resource_list',
 			'url'=> '/resource/list.php',
 			'langs'=> 'resource',

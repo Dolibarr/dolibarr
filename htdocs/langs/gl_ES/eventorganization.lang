@@ -37,7 +37,8 @@ EventOrganization=Organización de eventos
 Settings=Configuracións
 EventOrganizationSetupPage = Páxina de configuración da Organización de Eventos
 EVENTORGANIZATION_TASK_LABEL = Etiqueta de tarefas para crear automaticamente cando o proxecto é validado 
-EVENTORGANIZATION_TASK_LABELTooltip = Cando valida un evento organizado, pódense crear automaticamente algunhas tarefas no proxecto<br><br>Por exemplo<br>Enviar Chamada a Conferencia<br>Enviar Chamada a Stand<br>Recibir Chamadas para Conferencias<br>Recibir chamada a Stand<br>Abrir subscricións a eventos para os participantes<br>Enviar recordatorio do evento aos relatores<br>Enviar recordatorio do evento ao anfitrión do stand<br>Enviar recordatorio do evento aos asistentes
+EVENTORGANIZATION_TASK_LABELTooltip = Cando valida un evento organizado, pódense crear automaticamente algunhas tarefas no proxecto<br><br>Por exemplo<br>Enviar Chamada para Conferencias<br>Enviar Chamada para Stand<br>validar suxerencias para Conferencias<br>Validar aplicacións para Stand<br>Abrir subscricións a eventos para os participantes<br>Enviar lembranza do evento aos ponentes<br>Enviar lembranza do evento aos anfitrións do Stand<br>Enviar lembranza do evento aos asistentes
+EVENTORGANIZATION_TASK_LABELTooltip2=Manteña o campo baleiro se non precisa crear tarefas automaticamente.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Categoría para engadir a terceiros creada automaticamente cando alguén suxire unha conferencia 
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Categoría para engadir a terceiros creada automaticamente cando suxiren un stand 
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Modelo de correo electrónico para enviar despois de recibir unha suxestión dunha conferencia.
@@ -53,12 +54,15 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = No formulario para crear/engadir un asi
 # Object
 #
 EventOrganizationConfOrBooth= Conferencia ou Stand
+EventOrganizationConfOrBoothes=Conferencias ou Stands
 ManageOrganizeEvent = Xestionar a organización dun evento 
 ConferenceOrBooth = Conferencia ou Stand
 ConferenceOrBoothTab = Conferencia ou Stand
 AmountPaid = Cantidade xa paga
 DateOfRegistration = Data de rexistro
 ConferenceOrBoothAttendee = Asistente á conferencia ou stand 
+ApplicantOrVisitor=Solicitante ou visitante
+Speaker=Ponente
 
 #
 # Template Mail
@@ -111,15 +115,15 @@ EvntOrgRegistrationHelpMessage = Aquí pode votar por unha conferencia ou suxeri
 EvntOrgRegistrationConfHelpMessage = Aquí pode suxerir unha nova conferencia para animar durante o evento. 
 EvntOrgRegistrationBoothHelpMessage = Aquí pode solicitar un stand durante o evento.
 ListOfSuggestedConferences = Listaxe de conferencias suxeridas 
-ListOfSuggestedBooths = Listaxe de stands suxeridos
-ListOfConferencesOrBooths=Listaxe de conferencias ou stands do evento
+ListOfSuggestedBooths=Stands suxeridos
+ListOfConferencesOrBooths=Conferencias ou stands de eventos do proxecto
 SuggestConference = Suxerir unha nova conferencia 
 SuggestBooth = Suxerir un stand
 ViewAndVote = Ver e votar por eventos suxeridos 
 PublicAttendeeSubscriptionGlobalPage = Ligazón pública para a inscrición ao evento 
 PublicAttendeeSubscriptionPage = Ligazón pública para a inscrición só neste evento 
 MissingOrBadSecureKey = A clave de seguridade non é válida ou inexistente
-EvntOrgWelcomeMessage = Este formulario permítelle rexistrarse como novo participante no evento: <b> %s</b>
+EvntOrgWelcomeMessage = Este formulario permítelle rexistrarse como novo participante no evento
 EvntOrgDuration = Esta conferencia comeza en %s e remata en %s. 
 ConferenceAttendeeFee = Importe de asistente á conferencia para o evento:' %s ' acontece de %s a %s
 BoothLocationFee = Localización do stand para o evento: "%s" que acontece do %s ao %s
@@ -129,7 +133,7 @@ LabelOfconference=Etiqueta de conferencia
 ConferenceIsNotConfirmed=Rexistro non dispoñible, a conferencia aínda non está confirmada
 DateMustBeBeforeThan=%s debe ser antes de %s
 DateMustBeAfterThan=%s debe ser despois de %s
-
+MaxNbOfAttendeesReached=Alcanzouse o número máximo de participantes
 NewSubscription=Rexistro
 OrganizationEventConfRequestWasReceived=A súa suxestión para unha conferencia foi recibida
 OrganizationEventBoothRequestWasReceived=A súa solicitude para un stand foi recibida
@@ -138,6 +142,7 @@ OrganizationEventPaymentOfRegistrationWasReceived=O seu pagamento pola inscrici�
 OrganizationEventBulkMailToAttendees=Esta é unha lembranza da súa participación no evento como asistente 
 OrganizationEventBulkMailToSpeakers=Esta é unha lembranza da súa participación no evento como ponente 
 OrganizationEventLinkToThirdParty=Ligazón a terceiros (cliente, provedor ou asociado) 
+OrganizationEvenLabelName=Nome público da conferencia ou posto
 
 NewSuggestionOfBooth=Solicitude de stand
 NewSuggestionOfConference=Solicitude para unha conferencia 
@@ -153,7 +158,7 @@ VoteOk = O seu voto foi aceptado
 AlreadyVoted = Xa votou para este evento
 VoteError = Produciuse un erro durante a votación, ténteo de novo. 
 
-SubscriptionOk = A súa inscrición foi validada
+SubscriptionOk=O seu rexistro foi gravado
 ConfAttendeeSubscriptionConfirmation = Confirmación da súa subscrición ao evento
 Attendee = Asistente
 PaymentConferenceAttendee = Pagamento de asistente á conferencia
@@ -161,7 +166,11 @@ PaymentBoothLocation = Pagamento da localización do stand
 DeleteConferenceOrBoothAttendee=Eliminar asistente 
 RegistrationAndPaymentWereAlreadyRecorder=Xa se rexistrou unha inscrición e un pagamento para este correo electrónico <b> %s</b> 
 EmailAttendee=Correo electrónico do asistente 
+EmailCompany=Correo electrónico da empresa
 EmailCompanyForInvoice=Correo electrónico da empresa (para factura, se é diferente do correo electrónico do participante) 
 ErrorSeveralCompaniesWithEmailContactUs=Atopáronse varias empresas con este correo electrónico polo que non podemos validar automaticamente a súa inscrición. Póñase en contacto connosco en %s para unha validación manual 
 ErrorSeveralCompaniesWithNameContactUs=Atopáronse varias empresas con este nome polo que non podemos validar automaticamente a súa inscrición. Póñase en contacto connosco en %s para unha validación manual 
 NoPublicActionsAllowedForThisEvent=Non hai accións públicas abertas ao público para este evento 
+MaxNbOfAttendees=Número máximo de asistentes
+DateStartEvent=Data de inicio do evento
+DateEndEvent=Data de finalización do evento

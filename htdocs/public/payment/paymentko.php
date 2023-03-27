@@ -46,18 +46,19 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
-if (!empty($conf->paypal->enabled)) {
+if (isModEnabled('paypal')) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
 
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
 
-if (!empty($conf->paypal->enabled)) {
+if (isModEnabled('paypal')) {
 	$PAYPALTOKEN = GETPOST('TOKEN');
 	if (empty($PAYPALTOKEN)) {
 		$PAYPALTOKEN = GETPOST('token');
@@ -67,9 +68,9 @@ if (!empty($conf->paypal->enabled)) {
 		$PAYPALPAYERID = GETPOST('PayerID');
 	}
 }
-if (!empty($conf->paybox->enabled)) {
+if (isModEnabled('paybox')) {
 }
-if (!empty($conf->stripe->enabled)) {
+if (isModEnabled('stripe')) {
 }
 
 $FULLTAG = GETPOST('FULLTAG');
@@ -95,20 +96,20 @@ if (empty($paymentmethod)) {
 
 
 $validpaymentmethod = array();
-if (!empty($conf->paypal->enabled)) {
+if (isModEnabled('paypal')) {
 	$validpaymentmethod['paypal'] = 'paypal';
 }
-if (!empty($conf->paybox->enabled)) {
+if (isModEnabled('paybox')) {
 	$validpaymentmethod['paybox'] = 'paybox';
 }
-if (!empty($conf->stripe->enabled)) {
+if (isModEnabled('stripe')) {
 	$validpaymentmethod['stripe'] = 'stripe';
 }
 
 
 // Security check
 if (empty($validpaymentmethod)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('No valid payment mode');
 }
 
 
@@ -133,6 +134,10 @@ foreach ($_POST as $k => $v) {
 	$tracepost .= "{$k} - {$v}\n";
 }
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
+
+
+// Set $appli for emails title
+$appli = $mysoc->name;
 
 
 if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
@@ -171,21 +176,6 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 
 		$from = !empty($conf->global->MAILING_EMAIL_FROM) ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
 		$sendto = $sendemail;
-
-		// Define link to login card
-		$appli = constant('DOL_APPLICATION_TITLE');
-		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-			$appli = $conf->global->MAIN_APPLICATION_TITLE;
-			if (preg_match('/\d\.\d/', $appli)) {
-				if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
-					$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-				}
-			} else {
-				$appli .= " ".DOL_VERSION;
-			}
-		} else {
-			$appli .= " ".DOL_VERSION;
-		}
 
 		$urlback = $_SERVER["REQUEST_URI"];
 		$topic = '['.$appli.'] '.$companylangs->transnoentitiesnoconv("NewOnlinePaymentFailed");

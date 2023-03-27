@@ -22,22 +22,25 @@
  *  \brief      Page setup for blockedlog module
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "other", "blockedlog"));
+$langs->loadLangs(array('admin', 'blockedlog', 'other'));
 
+// Access Control
 if (!$user->admin || empty($conf->blockedlog->enabled)) {
 	accessforbidden();
 }
 
-$action = GETPOST('action', 'aZ09');
+// Get Parameters
+$action     = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
-
-$withtab = GETPOST('withtab', 'int');
+$withtab    = GETPOST('withtab', 'int');
 
 
 /*

@@ -61,7 +61,7 @@ class box_factures_imp extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->facture->lire);
+		$this->hidden = empty($user->rights->facture->lire);
 	}
 
 	/**
@@ -98,7 +98,7 @@ class box_factures_imp extends ModeleBoxes
 			$sql .= ", s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
 			$sql .= ", f.ref, f.date_lim_reglement as datelimite";
 			$sql .= ", f.type";
-			$sql .= ", f.datef as df";
+			$sql .= ", f.datef as date";
 			$sql .= ", f.total_ht";
 			$sql .= ", f.total_tva";
 			$sql .= ", f.total_ttc";
@@ -156,6 +156,7 @@ class box_factures_imp extends ModeleBoxes
 					$facturestatic->total_ttc = $objp->total_ttc;
 					$facturestatic->statut = $objp->status;
 					$facturestatic->status = $objp->status;
+					$facturestatic->date = $this->db->jdate($objp->date);
 					$facturestatic->date_lim_reglement = $this->db->jdate($objp->datelimite);
 					$facturestatic->alreadypaid = $objp->paye;
 
@@ -200,7 +201,7 @@ class box_factures_imp extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateDue").': '.dol_print_date($datelimite, 'day', 'tzuserrel')).'"',
 						'text' => dol_print_date($datelimite, 'day', 'tzuserrel'),
 					);
 

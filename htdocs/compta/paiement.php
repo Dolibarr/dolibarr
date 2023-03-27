@@ -30,6 +30,7 @@
  *	\brief      Payment page for customers invoices
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -170,7 +171,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			// If bank module is on, account is required to enter a payment
 			if (GETPOST('accountid') <= 0) {
 				setEventMessages($langs->transnoentities('ErrorFieldRequired', $langs->transnoentities('AccountToCredit')), null, 'errors');
@@ -212,7 +213,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_paiement' && $confirm == 'yes' && $usercanissuepayment) {
 		$error = 0;
 
-		$datepaye = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+		$datepaye = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'), 'tzuser');
 
 		$db->begin();
 
@@ -244,7 +245,7 @@ if (empty($reshook)) {
 			$multicurrency_code[$key] = $tmpinvoice->multicurrency_code;
 		}
 
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			// If the bank module is active, an account is required to input a payment
 			if (GETPOST('accountid', 'int') <= 0) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('AccountToCredit')), null, 'errors');
@@ -413,7 +414,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             				json["amountPayment"] = $("#amountpayment").attr("value");
 							json["amounts"] = _elemToJson(form.find("input.amount"));
 							json["remains"] = _elemToJson(form.find("input.remain"));
-
+							json["token"] = "'.currentToken().'";
 							if (imgId != null) {
 								json["imgClicked"] = imgId;
 							}
@@ -492,15 +493,17 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		// Bank account
 		print '<tr>';
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			if ($facture->type != 2) {
 				print '<td><span class="fieldrequired">'.$langs->trans('AccountToCredit').'</span></td>';
 			}
 			if ($facture->type == 2) {
 				print '<td><span class="fieldrequired">'.$langs->trans('AccountToDebit').'</span></td>';
 			}
+
 			print '<td>';
-			print $form->select_comptes($accountid, 'accountid', 0, '', 2, '', 0, '', 1);
+			print img_picto('', 'bank_account');
+			print $form->select_comptes($accountid, 'accountid', 0, '', 2, '', 0, 'widthcentpercentminusx maxwidth500', 1);
 			print '</td>';
 		} else {
 			print '<td>&nbsp;</td>';
@@ -509,26 +512,27 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		// Bank check number
 		print '<tr><td>'.$langs->trans('Numero');
-		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+		print ' <em class="opacitymedium">('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '</td>';
 		print '<td><input name="num_paiement" type="text" class="maxwidth200" value="'.$paymentnum.'"></td></tr>';
 
 		// Check transmitter
 		print '<tr><td class="'.(GETPOST('paiementcode') == 'CHQ' ? 'fieldrequired ' : '').'fieldrequireddyn">'.$langs->trans('CheckTransmitter');
-		print ' <em>('.$langs->trans("ChequeMaker").')</em>';
+		print ' <em class="opacitymedium">('.$langs->trans("ChequeMaker").')</em>';
 		print '</td>';
 		print '<td><input id="fieldchqemetteur" class="maxwidth300" name="chqemetteur" type="text" value="'.GETPOST('chqemetteur', 'alphanohtml').'"></td></tr>';
 
 		// Bank name
 		print '<tr><td>'.$langs->trans('Bank');
-		print ' <em>('.$langs->trans("ChequeBank").')</em>';
+		print ' <em class="opacitymedium">('.$langs->trans("ChequeBank").')</em>';
 		print '</td>';
 		print '<td><input name="chqbank" class="maxwidth300" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'"></td></tr>';
 
 		// Comments
 		print '<tr><td>'.$langs->trans('Comments').'</td>';
 		print '<td class="tdtop">';
-		print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('comment', 'restricthtml').'</textarea></td></tr>';
+		print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('comment', 'restricthtml').'</textarea>';
+		print '</td></tr>';
 
 		print '</table>';
 
@@ -594,7 +598,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				print '<td>'.$arraytitle.'</td>';
 				print '<td class="center">'.$langs->trans('Date').'</td>';
 				print '<td class="center">'.$langs->trans('DateMaxPayment').'</td>';
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled('multicurrency')) {
 					print '<td>'.$langs->trans('Currency').'</td>';
 					print '<td class="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
 					print '<td class="right">'.$multicurrencyalreadypayedlabel.'</td>';
@@ -637,7 +641,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					$remaintopay = price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
 
 					// Multicurrency Price
-					if (!empty($conf->multicurrency->enabled)) {
+					if (isModEnabled('multicurrency')) {
 						$multicurrency_payment = $invoice->getSommePaiement(1);
 						$multicurrency_creditnotes = $invoice->getSumCreditNotesUsed(1);
 						$multicurrency_deposits = $invoice->getSumDepositsUsed(1);
@@ -673,12 +677,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					}
 
 					// Currency
-					if (!empty($conf->multicurrency->enabled)) {
+					if (isModEnabled('multicurrency')) {
 						print '<td class="center">'.$objp->multicurrency_code."</td>\n";
 					}
 
 					// Multicurrency Price
-					if (!empty($conf->multicurrency->enabled)) {
+					if (isModEnabled('multicurrency')) {
 						print '<td class="right">';
 						if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
 							print price($sign * $objp->multicurrency_total_ttc);
@@ -716,11 +720,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								if (!empty($conf->use_javascript_ajax)) {
 									print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
 								}
-								print '<input type="text" class="maxwidth75 multicurrency_amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
+								print '<input type="text" class="maxwidth75 multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
 								print '<input type="hidden" class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
 							} else {
-								print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled>';
-								print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
+								print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.GETPOST($namef).'" disabled>';
+								print '<input type="hidden" name="'.$namef.'" value="'.GETPOST($namef).'">';
 							}
 						}
 						print "</td>";
@@ -746,7 +750,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						$numdirectdebitopen = 0;
 						$totaldirectdebit = 0;
 						$sql = "SELECT COUNT(pfd.rowid) as nb, SUM(pfd.amount) as amount";
-						$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+						$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 						$sql .= " WHERE fk_facture = ".((int) $objp->facid);
 						$sql .= " AND pfd.traite = 0";
 						$sql .= " AND pfd.ext_payment_id IS NULL";
@@ -811,7 +815,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					// Print total
 					print '<tr class="liste_total">';
 					print '<td colspan="3" class="left">'.$langs->trans('TotalTTC').'</td>';
-					if (!empty($conf->multicurrency->enabled)) {
+					if (isModEnabled('multicurrency')) {
 						print '<td></td>';
 						print '<td></td>';
 						print '<td></td>';
@@ -855,10 +859,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 			print '<br><div class="center">';
 			print '<input type="checkbox" checked name="closepaidinvoices"> '.$checkboxlabel;
-			/*if (! empty($conf->prelevement->enabled))
+			/*if (!empty($conf->prelevement->enabled))
 			{
 				$langs->load("withdrawals");
-				if (! empty($conf->global->WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS)) print '<br>'.$langs->trans("IfInvoiceNeedOnWithdrawPaymentWontBeClosed");
+				if (!empty($conf->global->WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS)) print '<br>'.$langs->trans("IfInvoiceNeedOnWithdrawPaymentWontBeClosed");
 			}*/
 			print '<br><input type="submit" class="button" value="'.dol_escape_htmltag($buttontitle).'"><br><br>';
 			print '</div>';

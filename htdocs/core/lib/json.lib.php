@@ -36,9 +36,12 @@ if (!function_exists('json_encode')) {
 	}
 }
 
+
 /**
  * Implement json_encode for PHP that does not support it.
  * Use json_encode and json_decode in your code !
+ * Note: We can found some special chars into a json string:
+ * Quotation mark (") = \", Backslash (\) = \\, Slash (/) =	\/, Backspace = \b, Form feed = \f, New line =\n, Carriage return =\r, Horizontal tab = \t
  *
  * @param	mixed	$elements		PHP Object to json encode
  * @return 	string					Json encoded string

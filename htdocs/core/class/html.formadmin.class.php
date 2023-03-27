@@ -36,7 +36,7 @@ class FormAdmin
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDB      $db      Database handler
+	 *  @param      DoliDB|null      $db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -113,7 +113,7 @@ class FormAdmin
 			$out .= '>'.$langs->trans("AutoDetectLang").'</option>';
 		}
 
-		asort($langs_available);
+		asort($langs_available);	// array('XX' => 'Language (Country)', ...)
 
 		foreach ($langs_available as $key => $value) {
 			$valuetoshow = $value;
@@ -343,6 +343,8 @@ class FormAdmin
 			print '</option>'."\n";
 		}
 		print '</select>';
+
+		print ajax_combobox($htmlname);
 	}
 
 
@@ -420,7 +422,7 @@ class FormAdmin
 		$langs->load("dict");
 
 		$sql = "SELECT code, label, width, height, unit";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_paper_format";
+		$sql .= " FROM ".$this->db->prefix()."c_paper_format";
 		$sql .= " WHERE active=1";
 		if ($filter) {
 			$sql .= " AND code LIKE '%".$this->db->escape($filter)."%'";
