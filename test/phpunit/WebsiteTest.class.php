@@ -175,4 +175,22 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 		// We must found no line (so code should be KO). If we found somethiing, it means there is a SQL injection of the 1=1
 		$this->assertEquals($res['code'], 'KO');
 	}
+
+	/**
+	 * testDolStripPhpCode
+	 *
+	 * @return	void
+	 */
+	public function testDolStripPhpCode()
+	{
+		global $db;
+
+		$s = "abc\n<?php echo 'def'\n// comment\n ?>ghi";
+		$result = dolStripPhpCode($s);
+		$this->assertEquals("abc\n<span phptag></span>ghi", $result);
+
+		$s = "abc\n<?PHP echo 'def'\n// comment\n ?>ghi";
+		$result = dolStripPhpCode($s);
+		$this->assertEquals("abc\n<span phptag></span>ghi", $result);
+	}
 }
