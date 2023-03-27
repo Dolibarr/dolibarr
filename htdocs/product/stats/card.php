@@ -191,24 +191,24 @@ if ($result || !($id > 0)) {
 	}
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
+	print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Filter").'</td><td></td></tr>';
 
 	if (!($id > 0) || $notab) {
 		// Type
-		print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
+		print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("Type").'</td><td>';
 		$array = array('-1'=>'&nbsp;', '0'=>$langs->trans('Product'), '1'=>$langs->trans('Service'));
 		print $form->selectarray('type', $array, $type, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
 		print '</td></tr>';
 
 		// Product
-		print '<tr><td class="titlefield">'.$langs->trans("ProductOrService").'</td><td>';
+		print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("ProductOrService").'</td><td>';
 		print img_picto('', 'product', 'class="pictofixedwidth"');
 		print $form->select_produits($id, 'id', '', 0, 0, 1, 2, '', ($conf->dol_optimize_smallscreen ? 1 : 0), array(), 0, '1', 0, 'widthcentpercentminusx maxwidth400');
 		print '</td></tr>';
 
 		// Tag
 		if (isModEnabled('categorie')) {
-			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
+			print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
 			$moreforfilter .= img_picto($langs->trans("Categories"), 'category', 'class="pictofixedwidth"');
 			$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1, 1, 'widthcentpercentminusx maxwidth400');
 			print $moreforfilter;
@@ -219,7 +219,7 @@ if ($result || !($id > 0)) {
 	}
 
 	// Year
-	print '<tr><td class="titlefield">'.$langs->trans("Year").'</td><td>';
+	print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("Year").'</td><td>';
 	$arrayyears = array();
 	for ($year = $currentyear - 25; $year < $currentyear; $year++) {
 		$arrayyears[$year] = $year;
@@ -235,7 +235,7 @@ if ($result || !($id > 0)) {
 	print '</td></tr>';
 
 	// thirdparty
-	print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';
+	print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth400');
 	print '</td></tr>';
@@ -494,7 +494,7 @@ if ($result || !($id > 0)) {
 			print '<td align="right">'.$linktoregenerate.'</td>';
 			print '</tr>';
 			// Image
-			print '<tr class="impair"><td colspan="2" class="nohover" align="center">';
+			print '<tr><td colspan="2" class="nohover" align="center">';
 			print $graphfiles[$key]['output'];
 			print '</td></tr>';
 			print '</table>';
