@@ -1148,7 +1148,7 @@ class FormSetupItem
 
 	/**
 	 * generateOutputFieldMultiSelect
-	 * 
+	 *
 	 * @return string
 	 */
 	public function generateOutputFieldMultiSelect()
@@ -1171,7 +1171,7 @@ class FormSetupItem
 
 	/**
 	 * generateOutputFieldColor
-	 * 
+	 *
 	 * @return string
 	 */
 	public function generateOutputFieldColor()
@@ -1181,7 +1181,7 @@ class FormSetupItem
 	}
 	/**
 	 * generateInputFieldColor
-	 * 
+	 *
 	 * @return string
 	 */
 	public function generateInputFieldColor()
@@ -1218,7 +1218,7 @@ class FormSetupItem
 		$outPut = $user->firstname . " "  . $user->lastname;
 		return $outPut;
 	}
-	
+
 	/*
 	 * METHODS FOR SETTING DISPLAY TYPE
 	 */
