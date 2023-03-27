@@ -254,17 +254,18 @@ if ($result || !($id > 0)) {
 	}
 
 	// Choice of stats mode (byunit or bynumber)
+
 	if (!empty($conf->dol_use_jmobile)) {
 		print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
 	}
 
-	if ($mode == 'bynumber') {
+	if ($mode != 'byunit') {
 		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?mode=byunit'.$param.'">';
 	} else {
 		print '<span class="a-mesure marginleftonly marginrightonly">';
 	}
 	print $langs->trans("StatsByNumberOfUnits");
-	if ($mode == 'bynumber') {
+	if ($mode != 'byunit') {
 		print '</a>';
 	} else {
 		print '</span>';
@@ -274,18 +275,35 @@ if ($result || !($id > 0)) {
 		print '</div>'."\n".'<div class="nowrap">'."\n";
 	}
 
-	if ($mode == 'byunit') {
+	if ($mode != 'bynumber') {
 		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?mode=bynumber'.$param.'">';
 	} else {
 		print '<span class="a-mesure marginleftonly marginrightonly">';
 	}
 	print $langs->trans("StatsByNumberOfEntities");
-	if ($mode == 'byunit') {
+	if ($mode != 'bynumber') {
 		print '</a>';
 	} else {
 		print '</span>';
 	}
 
+	if (!empty($conf->dol_use_jmobile)) {
+		print '</div>'."\n".'<div class="nowrap">'."\n";
+	}
+
+	if ($mode != 'byamount') {
+		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?mode=byamount'.$param.'">';
+	} else {
+		print '<span class="a-mesure marginleftonly marginrightonly">';
+	}
+	print $langs->trans("StatsByAmount");
+	if ($mode != 'byamount') {
+		print '</a>';
+	} else {
+		print '</span>';
+	}
+
+	// End of choices
 	if (!empty($conf->dol_use_jmobile)) {
 		print '</div></div>';
 	} else {
@@ -304,52 +322,55 @@ if ($result || !($id > 0)) {
 		}
 	}
 
+	$arrayforlabel = array('byunit' => 'NumberOfUnits', 'bynumber' => 'NumberOf', 'byamount' => 'AmountIn');
+
 	if (isModEnabled('propal')) {
 		$graphfiles['propal'] = array('modulepart'=>'productstats_proposals',
-		'file' => $object->id.'/propal12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
-		'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsProposals") : $langs->transnoentitiesnoconv("NumberOfProposals")));
+			'file' => $object->id.'/propal12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
+			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("Proposals")));
 	}
 
 	if (isModEnabled('supplier_proposal')) {
+		$langs->load("supplier_proposal");
 		$graphfiles['proposalssuppliers'] = array('modulepart'=>'productstats_proposalssuppliers',
-		'file' => $object->id.'/proposalssuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
-		'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsSupplierProposals") : $langs->transnoentitiesnoconv("NumberOfSupplierProposals")));
+			'file' => $object->id.'/proposalssuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
+			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("SupplierProposals")));
 	}
 
 	if (isModEnabled('order')) {
 		$graphfiles['orders'] = array('modulepart'=>'productstats_orders',
-		'file' => $object->id.'/orders12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
-		'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsCustomerOrders") : $langs->transnoentitiesnoconv("NumberOfCustomerOrders")));
+			'file' => $object->id.'/orders12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
+			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("Orders")));
 	}
 
 	if (isModEnabled('supplier_order')) {
 		$graphfiles['orderssuppliers'] = array('modulepart'=>'productstats_orderssuppliers',
-		'file' => $object->id.'/orderssuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
-		'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsSupplierOrders") : $langs->transnoentitiesnoconv("NumberOfSupplierOrders")));
+			'file' => $object->id.'/orderssuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
+			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("SuppliersOrders")));
 	}
 
 	if (isModEnabled('facture')) {
 		$graphfiles['invoices'] = array('modulepart'=>'productstats_invoices',
-		'file' => $object->id.'/invoices12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
-		'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsCustomerInvoices") : $langs->transnoentitiesnoconv("NumberOfCustomerInvoices")));
+			'file' => $object->id.'/invoices12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
+			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("Invoices")));
 	}
 
 	if (isModEnabled('supplier_invoice')) {
 		$graphfiles['invoicessuppliers'] = array('modulepart'=>'productstats_invoicessuppliers',
-		'file' => $object->id.'/invoicessuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
-		'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsSupplierInvoices") : $langs->transnoentitiesnoconv("NumberOfSupplierInvoices")));
+			'file' => $object->id.'/invoicessuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
+			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("SupplierInvoices")));
 	}
 
 	if (isModEnabled('contrat')) {
 		$graphfiles['contracts'] = array('modulepart'=>'productstats_contracts',
 			'file' => $object->id.'/contracts12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
-			'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsContracts") : $langs->transnoentitiesnoconv("NumberOfContracts")));
+			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("Contracts")));
 	}
 
-	if (isModEnabled('mrp')) {
+	if (isModEnabled('mrp') && $mode != 'byamount') {
 		$graphfiles['mrp'] = array('modulepart'=>'productstats_mrp',
 			'file' => $object->id.'/mos12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
-			'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsMos") : $langs->transnoentitiesnoconv("NumberOfMos")));
+			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode]."Mos"));
 	}
 
 	$px = new DolGraph();
