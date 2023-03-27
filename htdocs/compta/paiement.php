@@ -536,7 +536,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '</td></tr>';
 
 		// Go Source Invoice (useful when there are many invoices)
-		if ($action != 'add_paiement') {
+		if ($action != 'add_paiement' && !empty($conf->global->FACTURE_PAYMENTS_SHOW_LINK_TO_INPUT_ORIGIN_IS_MORE_THAN)) {
 			print '<tr><td></td>';
 			print '<td class="tdtop right">';
 			print '<a class="right" href="#amount_'.$facid.'">'.$langs->trans("GoSourceInvoice").'</a>';
