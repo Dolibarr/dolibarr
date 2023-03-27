@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Erro, o parámetro <b>%s</b>1debe 
 ErrorLoginDateValidity=Erro, este inicio de sesión está fóra do intervalo de datas validas
 ErrorValueLength=A lonxitude do campo "<b>%s</b>" debe ser superior a "<b>%s</b>"
 ErrorReservedKeyword=A palabra '<b>%s</b>' é unha palabra chave reservada
+ErrorFilenameReserved=O nome de ficheiro <b> %s </b> non se pode usar xa que é un comando reservado e protexido.
 ErrorNotAvailableWithThisDistribution=Non dispoñible con esta distribución
 ErrorPublicInterfaceNotEnabled=Interfaz pública non activada
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=O idioma da nova páxina debe definirse se se define como tradución doutra páxina
@@ -308,7 +309,7 @@ ErrorExistingPermission = Permiso <b> %s </b> para o obxecto <b> %s </b>
 ErrorFieldExist=O valor de <b> %s </b> xa existe
 ErrorEqualModule=Módulo non válido en <b> %s </b>
 ErrorFieldValue=O valor para <b> %s </b> é incorrecto
-ErrorCoherenceMenu= <b> %s </b> é preciso cando <b> % </b> é igual á ESQUERDA
+ErrorCoherenceMenu= <b> %s </b> é preciso cando <b> %s </b> é 'esquerda'
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=O seu parámetro PHP upload_max_filesize (%s) é superior ao parámetro PHP post_max_size (%s). Esta non é unha configuración consistente.

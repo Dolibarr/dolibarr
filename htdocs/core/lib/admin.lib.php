@@ -1716,7 +1716,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 
 			print '<tr class="oddeven">';
 
-			// Show constant
+			// Show label of parameter
 			print '<td>';
 			if (empty($strictw3c)) {
 				print '<input type="hidden" name="action" value="update">';
@@ -1725,8 +1725,11 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 			print '<input type="hidden" name="constname'.(empty($strictw3c) ? '' : '[]').'" value="'.$const.'">';
 			print '<input type="hidden" name="constnote_'.$obj->name.'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 			print '<input type="hidden" name="consttype_'.$obj->name.'" value="'.($obj->type ? $obj->type : 'string').'">';
-
-			print ($label ? $label : $langs->trans('Desc'.$const));
+			if (!empty($tableau[$key]['tooltip'])) {
+				print $form->textwithpicto($label ? $label : $langs->trans('Desc'.$const), $tableau[$key]['tooltip']);
+			} else {
+				print ($label ? $label : $langs->trans('Desc'.$const));
+			}
 
 			if ($const == 'ADHERENT_MAILMAN_URL') {
 				print '. '.$langs->trans("Example").': <a href="#" id="exampleclick1">'.img_down().'</a><br>';

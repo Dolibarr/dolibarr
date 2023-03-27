@@ -201,7 +201,7 @@ class Availabilities extends CommonObject
 		}
 
 		// Example to show how to set values of fields definition dynamically
-		/*if ($user->rights->bookcal->availabilities->read) {
+		/*if ($user->hasRight('bookcal', 'availabilities', 'read')) {
 			$this->fields['myfield']['visible'] = 1;
 			$this->fields['myfield']['noteditable'] = 0;
 		}*/
@@ -516,7 +516,7 @@ class Availabilities extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bookcal->availabilities->write))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('bookcal', 'availabilities', 'write'))
 		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bookcal->availabilities->availabilities_advance->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';

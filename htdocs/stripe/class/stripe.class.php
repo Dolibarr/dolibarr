@@ -151,7 +151,7 @@ class Stripe extends CommonObject
 	 * @param	string	$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int		$status							Status (0=test, 1=live)
 	 * @param	int		$createifnotlinkedtostripe		1=Create the stripe customer and the link if the thirdparty is not yet linked to a stripe customer
-	 * @return 	\Stripe\StripeCustomer|null 			Stripe Customer or null if not found
+	 * @return 	\Stripe\Customer|null 					Stripe Customer or null if not found
 	 */
 	public function customerStripe(Societe $object, $key = '', $status = 0, $createifnotlinkedtostripe = 0)
 	{
@@ -365,11 +365,14 @@ class Stripe extends CommonObject
 			$stripeamount = $amount;
 		}
 
-		$fee = $amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE;
-		if ($fee >= $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL > $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-			$fee = $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL;
-		} elseif ($fee < $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-			$fee = $conf->global->STRIPE_APPLICATION_FEE_MINIMAL;
+		$fee = 0;
+		if (getDolGlobalString("STRIPE_APPLICATION_FEE_PERCENT")) {
+			$fee = $amount * ((float) getDolGlobalString("STRIPE_APPLICATION_FEE_PERCENT", '0') / 100) + (float) getDolGlobalString("STRIPE_APPLICATION_FEE", '0');
+		}
+		if ($fee >= (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MAXIMAL", '0') && (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MAXIMAL", '0') > (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MINIMAL", '0')) {
+			$fee = (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MAXIMAL", '0');
+		} elseif ($fee < (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MINIMAL", '0')) {
+			$fee = (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MINIMAL", '0');
 		}
 		if (!in_array($currency_code, $arrayzerounitcurrency)) {
 			$stripefee = round($fee * 100);
@@ -780,12 +783,12 @@ class Stripe extends CommonObject
 	/**
 	 * Get the Stripe card of a company payment mode (option to create it on Stripe if not linked yet is no more available on new Stripe API)
 	 *
-	 * @param	\Stripe\StripeCustomer	$cu								Object stripe customer.
+	 * @param	\Stripe\Customer		$cu								Object stripe customer.
 	 * @param	CompanyPaymentMode		$object							Object companypaymentmode to check, or create on stripe (create on stripe also update the societe_rib table for current entity)
 	 * @param	string					$stripeacc						''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int						$status							Status (0=test, 1=live)
 	 * @param	int						$createifnotlinkedtostripe		1=Create the stripe card and the link if the card is not yet linked to a stripe card. Deprecated with new Stripe API and SCA.
-	 * @return 	\Stripe\StripeCard|\Stripe\PaymentMethod|null 			Stripe Card or null if not found
+	 * @return 	\Stripe\Card|\Stripe\PaymentMethod|null 				Stripe Card or null if not found
 	 */
 	public function cardStripe($cu, CompanyPaymentMode $object, $stripeacc = '', $status = 0, $createifnotlinkedtostripe = 0)
 	{
@@ -932,7 +935,7 @@ class Stripe extends CommonObject
 	/**
 	 * Get the Stripe SEPA of a company payment mode
 	 *
-	 * @param	\Stripe\StripeCustomer	$cu								Object stripe customer.
+	 * @param	\Stripe\Customer		$cu								Object stripe customer.
 	 * @param	CompanyPaymentMode		$object							Object companypaymentmode to check, or create on stripe (create on stripe also update the societe_rib table for current entity)
 	 * @param	string					$stripeacc						''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int						$status							Status (0=test, 1=live)

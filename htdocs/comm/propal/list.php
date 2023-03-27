@@ -196,7 +196,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'p.ref'=>'Ref',
-	'p.ref_client'=>'CustomerRef',
+	'p.ref_client'=>'RefCustomer',
 	'pd.description'=>'Description',
 	's.nom'=>"ThirdParty",
 	's.name_alias'=>"AliasNameShort",
@@ -1723,7 +1723,7 @@ if ($resql) {
 			$objectstatic->author = $userstatic->getNomUrl(1);
 			$objectstatic->fk_project = $projectstatic->getNomUrl(1);
 			print $objectstatic->getKanbanView('');
-			if ($i == (min($num, $limit) - 1)) {
+			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';
 			}

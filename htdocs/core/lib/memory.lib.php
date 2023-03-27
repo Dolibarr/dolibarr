@@ -57,7 +57,7 @@ $shmoffset = 1000; // Max number of entries found into a language file. If too l
 
 
 /**
- * 	Save data into a memory area shared by all users, all sessions on server
+ * 	Save data into a memory area shared by all users, all sessions on server. Note: MAIN_CACHE_COUNT must be set.
  *
  *  @param	string      $memoryid		Memory id of shared area
  * 	@param	mixed		$data			Data to save. It must not be a null value.

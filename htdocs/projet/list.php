@@ -192,6 +192,8 @@ foreach ($object->fields as $key => $val) {
 
 // Add name object fields to "search in all"
 $fieldstosearchall['s.nom'] = "ThirdPartyName";
+$fieldstosearchall['s.name_alias'] = "AliasNameShort";
+$fieldstosearchall['s.code_client'] = "CustomerCode";
 
 // Definition of array of fields for columns
 $arrayfields = array();
@@ -442,7 +444,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
@@ -1002,7 +1004,7 @@ if ($user->rights->user->user->lire) {
 // Filter on categories
 if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array, 'minwidth300imp widthcentpercentminusx');
 }
 // Filter on customer categories
 if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST) && !empty($conf->categorie->enabled) && $user->rights->categorie->lire) {

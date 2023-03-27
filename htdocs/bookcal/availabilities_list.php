@@ -132,9 +132,9 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
 if ($enablepermissioncheck) {
-	$permissiontoread = $user->rights->bookcal->availabilities->read;
-	$permissiontoadd = $user->rights->bookcal->availabilities->write;
-	$permissiontodelete = $user->rights->bookcal->availabilities->delete;
+	$permissiontoread = $user->hasRight('bookcal', 'availabilities', 'read');
+	$permissiontoadd = $user->hasRight('bookcal', 'availabilities', 'write');
+	$permissiontodelete = $user->hasRight('bookcal', 'availabilities', 'delete');
 } else {
 	$permissiontoread = 1;
 	$permissiontoadd = 1;
@@ -147,7 +147,7 @@ if ($user->socid > 0) accessforbidden();
 //$socid = 0; if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, 0, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->bookcal->enabled)) accessforbidden('Module not enabled');
+if (!isModEnabled('bookcal')) accessforbidden('Module not enabled');
 if (!$permissiontoread) accessforbidden();
 
 
@@ -227,7 +227,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 //$sql .= ", COUNT(rc.rowid) as anotherfield";
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";

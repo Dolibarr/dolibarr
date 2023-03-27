@@ -1,4 +1,6 @@
 <?php
+use Stripe\BankAccount;
+
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004       Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2016  Laurent Destailleur		<eldy@users.sourceforge.net>
@@ -138,9 +140,24 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Payment with Direct Debit Stripe
-	if ($action == 'sepastripepayment' && $usercancreate) {
+	// Make payment with Direct Debit Stripe
+	if ($action == 'sepastripedirectdebit' && $usercancreate) {
 		$result = $object->makeStripeSepaRequest($user, GETPOST('did', 'int'), 'direct-debit', 'facture');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		} else {
+			// We refresh object data
+			$ret = $object->fetch($id, $ref);
+			$isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
+			if ($ret > 0) {
+				$object->fetch_thirdparty();
+			}
+		}
+	}
+
+	// Make payment with Direct Debit Stripe
+	if ($action == 'sepastripecredittransfer' && $usercancreate) {
+		$result = $object->makeStripeSepaRequest($user, GETPOST('did', 'int'), 'bank-transfer', 'supplier_invoice');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
@@ -153,7 +170,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// payments conditions
+	// Set payments conditions
 	if ($action == 'setconditions' && $usercancreate) {
 		$object->fetch($id);
 		$object->cond_reglement_code = 0; // To clean property
@@ -404,7 +421,7 @@ if ($object->id > 0) {
 	print '<span class="badgeneutral">';
 	print $object->getLibType();
 	print '</span>';
-	if ($object->module_source) {
+	if (!empty($object->module_source)) {
 		print ' <span class="opacitymediumbycolor paddingleft">('.$langs->trans("POS").' '.$object->module_source.' - '.$langs->trans("Terminal").' '.$object->pos_source.')</span>';
 	}
 	if ($object->type == $object::TYPE_REPLACEMENT) {
@@ -818,7 +835,7 @@ if ($object->id > 0) {
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
 	$sql .= " pfd.date_traite as date_traite, pfd.amount, pfd.fk_prelevement_bons,";
-	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status,";
+	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.amount as pb_amount,";
 	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
@@ -879,17 +896,28 @@ if ($object->id > 0) {
 				$withdrawreceipt->date_creation = $db->jdate($obj->datec);
 				$withdrawreceipt->statut = $obj->status;
 				$withdrawreceipt->status = $obj->status;
+				$withdrawreceipt->amount = $obj->pb_amount;
 				//$withdrawreceipt->credite = $db->jdate($obj->credite);
 
 				print $withdrawreceipt->getNomUrl(1);
 			}
 
-			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
-				$langs->load("stripe");
-				if ($obj->fk_prelevement_bons > 0) {
-					print ' &nbsp; ';
+			if ($type != 'bank-transfer') {
+				if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+					$langs->load("stripe");
+					if ($obj->fk_prelevement_bons > 0) {
+						print ' &nbsp; ';
+					}
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripedirectdebit&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
 				}
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripepayment&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
+			} else {
+				if (!empty($conf->global->STRIPE_SEPA_CREDIT_TRANSFER)) {
+					$langs->load("stripe");
+					if ($obj->fk_prelevement_bons > 0) {
+						print ' &nbsp; ';
+					}
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
+				}
 			}
 			print '</td>';
 
@@ -915,7 +943,7 @@ if ($object->id > 0) {
 	// Past requests
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
-	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status,";
+	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.fk_bank_account, pb.amount as pb_amount,";
 	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
@@ -929,16 +957,16 @@ if ($object->id > 0) {
 	$sql .= " AND pfd.type = 'ban'";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
-	$result = $db->query($sql);
-	if ($result) {
-		$num = $db->num_rows($result);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
 		$numclosed = $num;
 		$i = 0;
 
 		$tmpuser = new User($db);
 
 		while ($i < $num) {
-			$obj = $db->fetch_object($result);
+			$obj = $db->fetch_object($resql);
 
 			$tmpuser->id = $obj->user_id;
 			$tmpuser->login = $obj->login;
@@ -975,9 +1003,27 @@ if ($object->id > 0) {
 				$withdrawreceipt->date_creation = $db->jdate($obj->datec);
 				$withdrawreceipt->statut = $obj->status;
 				$withdrawreceipt->status = $obj->status;
+				$withdrawreceipt->fk_bank_account = $obj->fk_bank_account;
+				$withdrawreceipt->amount = $obj->pb_amount;
 				//$withdrawreceipt->credite = $db->jdate($obj->credite);
 
 				print $withdrawreceipt->getNomUrl(1);
+				print ' ';
+				print $withdrawreceipt->getLibStatut(2);
+
+				// Show the bank account
+				$fk_bank_account = $withdrawreceipt->fk_bank_account;
+				if (empty($fk_bank_account)) {
+					$fk_bank_account = ($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+				}
+				if ($fk_bank_account > 0) {
+					$bankaccount = new Account($db);
+					$result = $bankaccount->fetch($fk_bank_account);
+					if ($result > 0) {
+						print ' - ';
+						print $bankaccount->getNomUrl(1);
+					}
+				}
 			}
 			print "</td>\n";
 
@@ -995,7 +1041,7 @@ if ($object->id > 0) {
 			print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 
-		$db->free($result);
+		$db->free($resql);
 	} else {
 		dol_print_error($db);
 	}

@@ -70,13 +70,11 @@ class BonPrelevement extends CommonObject
 	public $emetteur_bic;
 	public $emetteur_ics;
 
-	public $date_trans;
 	public $user_trans;
-	public $method_trans;
+	public $user_credit;
 
 	public $total;
 	public $fetched;
-	public $statut; // 0-Wait, 1-Trans, 2-Done
 	public $labelStatus = array();
 
 	public $factures = array();
@@ -84,19 +82,88 @@ class BonPrelevement extends CommonObject
 	public $invoice_in_error = array();
 	public $thirdparty_in_error = array();
 
-	public $amount;
-	public $note;
-	public $datec;
-
-	public $date_credit;
-	public $user_credit;
-
-	public $type;
 
 	const STATUS_DRAFT = 0;
 	const STATUS_TRANSFERED = 1;
 	const STATUS_CREDITED = 2;		// STATUS_CREDITED and STATUS_DEBITED is same. Difference is in ->type
 	const STATUS_DEBITED = 2;		// STATUS_CREDITED and STATUS_DEBITED is same. Difference is in ->type
+
+
+	/**
+	 *  'type' field format:
+	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
+	 *  	'select' (list of values are in 'options'),
+	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]',
+	 *  	'chkbxlst:...',
+	 *  	'varchar(x)',
+	 *  	'text', 'text:none', 'html',
+	 *   	'double(24,8)', 'real', 'price',
+	 *  	'date', 'datetime', 'timestamp', 'duration',
+	 *  	'boolean', 'checkbox', 'radio', 'array',
+	 *  	'mail', 'phone', 'url', 'password', 'ip'
+	 *		Note: Filter must be a Dolibarr filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *  'label' the translation key.
+	 *  'picto' is code of a picto to show before value in forms
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM' or 'isModEnabled("multicurrency")' ...)
+	 *  'position' is the sort order of field.
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'noteditable' says if field is not editable (1 or 0)
+	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
+	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
+	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
+	 *  'help' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
+	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
+	 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
+	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *	'validate' is 1 if need to validate with $this->validateField()
+	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
+	 *
+	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
+	 */
+
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields=array(
+		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>0,),
+		'ref' => array('type'=>'varchar(12)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>-1, 'csslist'=>'tdoverflowmax150', 'showoncombobox'=>'1',),
+		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>25, 'notnull'=>0, 'visible'=>-1,),
+		'amount' => array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>-1,),
+		'statut' => array('type'=>'smallint(6)', 'label'=>'Statut', 'enabled'=>'1', 'position'=>500, 'notnull'=>0, 'visible'=>-1, 'arrayofkeyval'=>array(0=>'Wait', 1=>'Transfered', 2=>'Credited')),
+		'credite' => array('type'=>'smallint(6)', 'label'=>'Credite', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>-1,),
+		'note' => array('type'=>'text', 'label'=>'Note', 'enabled'=>'1', 'position'=>45, 'notnull'=>0, 'visible'=>-1,),
+		'date_trans' => array('type'=>'datetime', 'label'=>'Datetrans', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
+		'method_trans' => array('type'=>'smallint(6)', 'label'=>'Methodtrans', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1,),
+		'fk_user_trans' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fkusertrans', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>-1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150',),
+		'date_credit' => array('type'=>'datetime', 'label'=>'Datecredit', 'enabled'=>'1', 'position'=>65, 'notnull'=>0, 'visible'=>-1,),
+		'fk_user_credit' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fkusercredit', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>-1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150',),
+		'type' => array('type'=>'varchar(16)', 'label'=>'Type', 'enabled'=>'1', 'position'=>75, 'notnull'=>0, 'visible'=>-1,),
+		'fk_bank_account' => array('type'=>'integer', 'label'=>'Fkbankaccount', 'enabled'=>'1', 'position'=>80, 'notnull'=>0, 'visible'=>-1, 'css'=>'maxwidth500 widthcentpercentminusxx',),
+	);
+	public $rowid;
+	public $ref;
+	public $datec;
+	public $amount;
+	public $statut;
+	public $credite;
+	public $note;
+	public $date_trans;
+	public $method_trans;
+	public $fk_user_trans;
+	public $date_credit;
+	public $fk_user_credit;
+	public $type;
+	public $fk_bank_account;
+	// END MODULEBUILDER PROPERTIES
+
 
 
 	/**
@@ -290,8 +357,6 @@ class BonPrelevement extends CommonObject
 	 */
 	public function fetch($rowid, $ref = '')
 	{
-		global $conf;
-
 		$sql = "SELECT p.rowid, p.ref, p.amount, p.note";
 		$sql .= ", p.datec as dc";
 		$sql .= ", p.date_trans as date_trans";
@@ -299,6 +364,7 @@ class BonPrelevement extends CommonObject
 		$sql .= ", p.date_credit as date_credit";
 		$sql .= ", p.fk_user_credit";
 		$sql .= ", p.type";
+		$sql .= ", p.fk_bank_account";
 		$sql .= ", p.statut as status";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 		$sql .= " WHERE p.entity IN (".getEntity('invoice').")";
@@ -328,6 +394,7 @@ class BonPrelevement extends CommonObject
 				$this->user_credit    = $obj->fk_user_credit;
 
 				$this->type           = $obj->type;
+				$this->fk_bank_account = $obj->fk_bank_account;
 
 				$this->status         = $obj->status;
 				$this->statut         = $obj->status; // For backward compatibility
@@ -344,9 +411,22 @@ class BonPrelevement extends CommonObject
 		}
 	}
 
+	/**
+	 * Update object into database
+	 *
+	 * @param  User $user      User that modifies
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function update(User $user, $notrigger = false)
+	{
+		return $this->updateCommon($user, $notrigger);
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set direct debit or credit transfer order to "paid" status.
+	 *  Then create the payment for each invoice of the prelemevement_bon.
 	 *
 	 *	@param	User	$user			Id of user
 	 *	@param 	int		$date			date of action
@@ -369,7 +449,7 @@ class BonPrelevement extends CommonObject
 
 			$this->db->begin();
 
-			$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_bons ";
+			$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
 			$sql .= " SET fk_user_credit = ".$user->id;
 			$sql .= ", statut = ".self::STATUS_CREDITED;
 			$sql .= ", date_credit = '".$this->db->idate($date)."'";
@@ -383,8 +463,12 @@ class BonPrelevement extends CommonObject
 				$subject = $langs->trans("InfoCreditSubject", $this->ref);
 				$message = $langs->trans("InfoCreditMessage", $this->ref, dol_print_date($date, 'dayhour'));
 
-				//Add payment of withdrawal into bank
-				$bankaccount = ($this->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+				// Add payment of withdrawal into bank
+				$fk_bank_account = $this->fk_bank_account;
+				if (empty($fk_bank_account)) {
+					$fk_bank_account = ($this->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+				}
+
 				$facs = array();
 				$amounts = array();
 				$amountsperthirdparty = array();
@@ -455,7 +539,7 @@ class BonPrelevement extends CommonObject
 							$modeforaddpayment = 'payment';
 						}
 
-						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, '(WithdrawalPayment)', $bankaccount, '', '');
+						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, '(WithdrawalPayment)', $fk_bank_account, '', '');
 						if ($result < 0) {
 							$error++;
 							$this->error = $paiement->error;
@@ -742,17 +826,18 @@ class BonPrelevement extends CommonObject
 	 *  - Link the order with the prelevement_demande lines
 	 *  TODO delete params banque and agence when not necessary
 	 *
-	 *	@param 	int		$banque			dolibarr mysoc bank
-	 *	@param	int		$agence			dolibarr mysoc bank office (guichet)
-	 *	@param	string	$mode			real=do action, simu=test only
-	 *  @param	string	$format			FRST, RCUR or ALL
-	 *  @param  string  $executiondate	Date to execute the transfer
-	 *  @param	int	    $notrigger		Disable triggers
-	 *  @param	string	$type			'direct-debit' or 'bank-transfer'
-	 *  @param	int		$did			ID of an existing payment request. If $did is defined, no entry
-	 *	@return	int						<0 if KO, No of invoice included into file if OK
+	 *	@param 	int		$banque				dolibarr mysoc bank
+	 *	@param	int		$agence				dolibarr mysoc bank office (guichet)
+	 *	@param	string	$mode				real=do action, simu=test only
+	 *  @param	string	$format				FRST, RCUR or ALL
+	 *  @param  string  $executiondate		Date to execute the transfer
+	 *  @param	int	    $notrigger			Disable triggers
+	 *  @param	string	$type				'direct-debit' or 'bank-transfer'
+	 *  @param	int		$did				ID of an existing payment request. If $did is defined, no entry
+	 *  @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
+	 *	@return	int							<0 if KO, No of invoice included into file if OK
 	 */
-	public function create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0, $type = 'direct-debit', $did = 0)
+	public function create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0, $type = 'direct-debit', $did = 0, $fk_bank_account = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs, $user;
@@ -762,11 +847,17 @@ class BonPrelevement extends CommonObject
 		require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
 		require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 
+		// Check params
 		if ($type != 'bank-transfer') {
 			if (empty($format)) {
 				$this->error = 'ErrorBadParametersForDirectDebitFileCreate';
 				return -1;
 			}
+		}
+
+		// Clean params
+		if (empty($fk_bank_account)) {
+			$fk_bank_account = ($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 		}
 
 		$error = 0;
@@ -969,12 +1060,13 @@ class BonPrelevement extends CommonObject
 
 					// Create withdraw order in database
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
-					$sql .= "ref, entity, datec, type";
+					$sql .= "ref, entity, datec, type, fk_bank_account";
 					$sql .= ") VALUES (";
 					$sql .= "'".$this->db->escape($ref)."'";
 					$sql .= ", ".((int) $conf->entity);
 					$sql .= ", '".$this->db->idate($now)."'";
 					$sql .= ", '".($type == 'bank-transfer' ? 'bank-transfer' : 'debit-order')."'";
+					$sql .= ", ".((int) $fk_bank_account);
 					$sql .= ")";
 
 					$resql = $this->db->query($sql);
@@ -1055,12 +1147,8 @@ class BonPrelevement extends CommonObject
 					$this->date_echeance = $datetimeprev;
 					$this->reference_remise = $ref;
 
-					$id = $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
-					if ($type == 'bank-transfer') {
-						$id = $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT;
-					}
 					$account = new Account($this->db);
-					if ($account->fetch($id) > 0) {
+					if ($account->fetch($fk_bank_account) > 0) {
 						$this->emetteur_code_banque        = $account->code_banque;
 						$this->emetteur_code_guichet       = $account->code_guichet;
 						$this->emetteur_numero_compte      = $account->number;
@@ -1230,6 +1318,9 @@ class BonPrelevement extends CommonObject
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans($labeltoshow).'</u> '.$this->getLibStatut(5);
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (isset($this->amount)) {
+			$label .= '<br><b>'.$langs->trans("Amount").":</b> ".price($this->amount);
+		}
 		if (isset($this->date_trans)) {
 			$label .= '<br><b>'.$langs->trans("TransData").":</b> ".dol_print_date($this->date_trans, 'dayhour', 'tzuserrel');
 		}
@@ -1382,15 +1473,21 @@ class BonPrelevement extends CommonObject
 	 * File is generated with name this->filename
 	 *
 	 * @param	string	$format				FRST, RCUR or ALL
-	 * @param 	string 	$executiondate		Date to execute transfer
+	 * @param 	int 	$executiondate		Timestamp date to execute transfer
 	 * @param	string	$type				'direct-debit' or 'bank-transfer'
+	 * @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
 	 * @return	int							>=0 if OK, <0 if KO
 	 */
-	public function generate($format = 'ALL', $executiondate = '', $type = 'direct-debit')
+	public function generate($format = 'ALL', $executiondate = 0, $type = 'direct-debit', $fk_bank_account = 0)
 	{
 		global $conf, $langs, $mysoc;
 
 		//TODO: Optimize code to read lines in a single function
+
+		// Clean params
+		if (empty($fk_bank_account)) {
+			$fk_bank_account = ($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+		}
 
 		$result = 0;
 
@@ -1486,7 +1583,7 @@ class BonPrelevement extends CommonObject
 
 				// Define $fileEmetteurSection. Start of bloc PmtInf. Will contains all $nbtotalDrctDbtTxInf
 				if ($result != -2) {
-					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type);
+					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type, $fk_bank_account);
 				}
 
 				/**
@@ -2041,31 +2138,36 @@ class BonPrelevement extends CommonObject
 	 *	Write sender of request (me).
 	 *  Note: The tag PmtInf is opened here but closed into caller
 	 *
-	 *	@param	Conf	$configuration	conf
-	 *	@param	int     $ladate			Date
-	 *	@param	int		$nombre			0 or 1
-	 *	@param	float	$total			Total
-	 *	@param	string	$CrLf			End of line character
-	 *  @param	string	$format			FRST or RCUR or ALL
-	 *  @param	string	$type			'direct-debit' or 'bank-transfer'
-	 *	@return	string					String with SEPA Sender
+	 *	@param	Conf	$configuration		conf
+	 *	@param	int     $ladate				Date
+	 *	@param	int		$nombre				0 or 1
+	 *	@param	float	$total				Total
+	 *	@param	string	$CrLf				End of line character
+	 *  @param	string	$format				FRST or RCUR or ALL
+	 *  @param	string	$type				'direct-debit' or 'bank-transfer'
+	 *  @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
+	 *	@return	string						String with SEPA Sender
 	 *  @see EnregEmetteur()
 	 */
-	public function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf = '\n', $format = 'FRST', $type = 'direct-debit')
+	public function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf = '\n', $format = 'FRST', $type = 'direct-debit', $fk_bank_account = 0)
 	{
 		// phpcs:enable
 		// SEPA INITIALISATION
 		global $conf;
 
+		// Clean parameters
 		$dateTime_YMD = dol_print_date($ladate, '%Y%m%d');
 		$dateTime_ETAD = dol_print_date($ladate, '%Y-%m-%d');
 		$dateTime_YMDHMS = dol_print_date($ladate, '%Y-%m-%dT%H:%M:%S');
 
+		// Clean params
+		if (empty($fk_bank_account)) {
+			$fk_bank_account = ($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+		}
+
 		// Get data of bank account
-		//$id = $configuration->global->PRELEVEMENT_ID_BANKACCOUNT;
-		$id = ($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 		$account = new Account($this->db);
-		if ($account->fetch($id) > 0) {
+		if ($account->fetch($fk_bank_account) > 0) {
 			$this->emetteur_code_banque = $account->code_banque;
 			$this->emetteur_code_guichet = $account->code_guichet;
 			$this->emetteur_numero_compte = $account->number;
@@ -2081,8 +2183,7 @@ class BonPrelevement extends CommonObject
 
 		// Get pending payments
 		$sql = "SELECT rowid, ref";
-		$sql .= " FROM";
-		$sql .= " ".MAIN_DB_PREFIX."prelevement_bons as pb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as pb";
 		$sql .= " WHERE pb.rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
@@ -2294,10 +2395,10 @@ class BonPrelevement extends CommonObject
 	}
 
 	/**
-	 *    Return status label of object
+	 *  Return status label of object
 	 *
-	 *    @param    int		$mode   0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
-	 * 	  @return	string     		Label
+	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * 	@return	string     			Label
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -2427,6 +2528,7 @@ class BonPrelevement extends CommonObject
 	{
 		global $langs;
 
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
@@ -2435,6 +2537,7 @@ class BonPrelevement extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 
 		if (property_exists($this, 'date_echeance')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->date_echeance), 'day').'</span>';
@@ -2443,7 +2546,7 @@ class BonPrelevement extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="amount">'.price($this->total).'</span>';
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->LibStatut($this->statut, 5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

@@ -758,7 +758,7 @@ class Contrat extends CommonObject
 	 *
 	 *	@param		int				$only_services			0=Default, 1=Force only services (depending on setup, we may also have physical products in a contract)
 	 *	@param		int				$loadalsotranslation	0=Default, 1=Load also translations of product descriptions
-	 *  @return 	ContratLigne[]  						Return array of contract lines
+	 *  @return 	array|int  						Return array of contract lines
 	 */
 	public function fetch_lines($only_services = 0, $loadalsotranslation = 0)
 	{
@@ -1995,6 +1995,7 @@ class Contrat extends CommonObject
 		$langs->load('contracts');
 
 		$datas = [];
+		$nofetch = !empty($params['nofetch']);
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			return ['optimize' => $langs->trans("ShowContract")];
@@ -2006,7 +2007,23 @@ class Contrat extends CommonObject
 				$label .= ' '.$this->getLibStatut(5);
 			}*/
 			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.($this->ref ? $this->ref : $this->id);
+			if (!$nofetch) {
+				$langs->load('companies');
+				if (empty($this->thirdparty)) {
+					$this->fetch_thirdparty();
+				}
+				$datas['customer'] = '<br><b>'.$langs->trans('Customer').':</b> '.$this->thirdparty->getNomUrl(1, '', 0, 1);
+			}
 			$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '. $this->ref_customer;
+			if (!$nofetch) {
+				$langs->load('project');
+				if (empty($this->project)) {
+					$res = $this->fetch_project();
+					if ($res > 0) {
+						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
+					}
+				}
+			}
 			$datas['refsupplier'] = '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
 			if (!empty($this->total_ht)) {
 				$datas['amountht'] = '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
@@ -2052,6 +2069,7 @@ class Contrat extends CommonObject
 		$params = [
 			'id' => $this->id,
 			'objecttype' => $this->element,
+			'nofetch' => 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
@@ -2829,6 +2847,9 @@ class Contrat extends CommonObject
 	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -2837,6 +2858,7 @@ class Contrat extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'societe')) {
 			$return .= '<br><span class="info-box-label ">'.$this->societe.'</span>';
 		}
@@ -2844,7 +2866,7 @@ class Contrat extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateContract").' : </span><span class="info-box-label">'.dol_print_date($this->date_contrat, 'day').'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

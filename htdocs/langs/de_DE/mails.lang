@@ -91,7 +91,7 @@ MailingModuleDescContactsByFunction=Kontakte nach Position
 MailingModuleDescEmailsFromFile=E-Mail-Adressen aus csv-Datei importieren
 MailingModuleDescEmailsFromUser=E-Mail-Adresse durch manuelle Eingabe hinzufügen
 MailingModuleDescDolibarrUsers=Benutzer mit E-Mail-Adresse
-MailingModuleDescThirdPartiesByCategories=Geschäftspartner (nach Kategorien)
+MailingModuleDescThirdPartiesByCategories=Geschäftspartner
 SendingFromWebInterfaceIsNotAllowed=Versand vom Webinterface ist nicht erlaubt
 EmailCollectorFilterDesc=Alle Filter müssen übereinstimmen, damit eine E-Mail erfasst wird
 
@@ -179,3 +179,4 @@ RecordCreatedByEmailCollector=Datensatz, der vom E-Mail-Sammler %s aus der E-Mai
 DefaultBlacklistMailingStatus=Standardwert für Feld '%s' beim Anlegen eines neuen Kontakts
 DefaultStatusEmptyMandatory=Leer aber erforderlich
 WarningLimitSendByDay=WARNUNG: Die Konfiguration oder der Vertrag Ihrer Instanz begrenzt Ihre Anzahl von E-Mails pro Tag auf <b> %s </b>. Der Versuch mehr zu senden kann dazu führen, dass Ihre Instanz langsamer wird oder ausgesetzt wird. Bitte wenden Sie sich an Ihren Support, wenn Sie ein höheres Kontingent benötigen.
+NoMoreRecipientToSendTo=Kein weiteren Empfänger, an die die E-Mail gesendet werden kann

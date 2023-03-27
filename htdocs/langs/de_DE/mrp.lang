@@ -119,3 +119,6 @@ BomCantAddChildBom=Die Nomenklatur %s ist bereits im Baum vorhanden, der zur Nom
 BOMNetNeeds = BOM-Nettobedarf
 BOMProductsList=BOM-Produkte
 BOMServicesList=BOM-Leistungen
+Manufacturing=Fertigung
+Disassemble=Demontage
+ProducedBy=Hergestellt von
