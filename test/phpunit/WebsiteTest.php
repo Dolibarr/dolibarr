@@ -54,6 +54,7 @@ if (! defined("NOSESSION")) {
 
 require_once dirname(__FILE__).'/../../htdocs/main.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/website.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/website/class/website.class.php';
 
 
 if (empty($user->id)) {
@@ -160,7 +161,9 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testGetPagesFromSearchCriterias()
 	{
-		global $db;
+		global $db, $website;
+
+		$website = new Website($db);	// $website must be defined globally for getPagesFromSearchCriterias()
 
 		$s = "123') OR 1=1-- \' xxx";
 		/*
