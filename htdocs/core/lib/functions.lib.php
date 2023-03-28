@@ -11244,6 +11244,12 @@ function getElementProperties($element_type)
 		$classpath = 'comm/action/class';
 		$subelement = 'Actioncomm';
 		$module = 'agenda';
+	} elseif ($element_type == 'adherent_type') {
+		$classpath = 'adherents/class';
+		$classfile = 'adherent_type';
+		$module = 'adherent';
+		$subelement = 'adherent_type';
+		$classname = 'AdherentType';
 	} elseif ($element_type == 'bank_account') {
 		$classpath = 'compta/bank/class';
 		$module = 'banque';
@@ -11329,6 +11335,9 @@ function getElementProperties($element_type)
 	} elseif ($element_type == "service") {
 		$classpath = 'product/class';
 		$subelement = 'product';
+	} elseif ($objecttype == 'salary') {
+		$classpath = 'salaries/class';
+		$module = 'salaries';
 	}
 
 	if (empty($classfile)) {
