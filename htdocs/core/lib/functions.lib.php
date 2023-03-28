@@ -11244,11 +11244,21 @@ function getElementProperties($element_type)
 		$classpath = 'comm/action/class';
 		$subelement = 'Actioncomm';
 		$module = 'agenda';
+	} elseif ($element_type == 'adherent_type') {
+		$classpath = 'adherents/class';
+		$classfile = 'adherent_type';
+		$module = 'adherent';
+		$subelement = 'adherent_type';
+		$classname = 'AdherentType';
 	} elseif ($element_type == 'bank_account') {
 		$classpath = 'compta/bank/class';
 		$module = 'banque';
 		$classfile = 'Account';
 		$classname = 'Account';
+	} elseif ($element_type == 'category') {
+		$classpath = 'categories/class';
+		$module = 'categorie';
+		$subelement = 'categorie';
 	} elseif ($element_type == 'stock') {
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
@@ -11272,6 +11282,10 @@ function getElementProperties($element_type)
 		$classpath = 'comm/propal/class';
 	} elseif ($element_type == 'supplier_proposal') {
 		$classpath = 'supplier_proposal/class';
+		$module = 'supplier_proposal';
+		$element = 'supplierproposal';
+		$classfile = 'supplier_proposal';
+		$subelement = 'supplierproposal';
 	} elseif ($element_type == 'shipping') {
 		$classpath = 'expedition/class';
 		$subelement = 'expedition';
@@ -11321,6 +11335,9 @@ function getElementProperties($element_type)
 	} elseif ($element_type == "service") {
 		$classpath = 'product/class';
 		$subelement = 'product';
+	} elseif ($objecttype == 'salary') {
+		$classpath = 'salaries/class';
+		$module = 'salaries';
 	}
 
 	if (empty($classfile)) {
