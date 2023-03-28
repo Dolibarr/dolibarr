@@ -65,7 +65,13 @@ function printDropdownBookmarksList()
 			if ((preg_match('/^search_/', $key) || in_array($key, $authorized_var))
 				&& $val != ''
 				&& !array_key_exists($key, $url_param)) {
-				$url_param[$key] = http_build_query(array(dol_escape_htmltag($key) => dol_escape_htmltag($val)));
+				if (is_array($val)) {
+					foreach ($val as $tmpsubval) {
+						$url_param[] = http_build_query(array(dol_escape_htmltag($key).'[]' => dol_escape_htmltag($tmpsubval)));
+					}
+				} elseif ($val != '') {
+					$url_param[$key] = http_build_query(array(dol_escape_htmltag($key) => dol_escape_htmltag($val)));
+				}
 			}
 		}
 	}
