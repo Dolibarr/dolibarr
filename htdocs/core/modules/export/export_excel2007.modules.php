@@ -92,7 +92,7 @@ class ExportExcel2007 extends ModeleExports
 		if (empty($this->disabled)) {
 			require_once PHPEXCELNEW_PATH.'Spreadsheet.php';
 			$this->label_lib = 'PhpSpreadSheet';
-			$this->version_lib = '1.6.0'; // No way to get info from library
+			$this->version_lib = '1.12.0'; // No way to get info from library
 		}
 
 		$this->row = 0;
