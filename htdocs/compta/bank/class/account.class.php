@@ -1416,6 +1416,7 @@ class Account extends CommonObject
 	public function getTooltipContentArray($params)
 	{
 		global $langs;
+		$langs->loadLangs(['banks', 'compta']);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
 		$datas = array();
