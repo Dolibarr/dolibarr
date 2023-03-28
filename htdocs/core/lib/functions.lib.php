@@ -11409,6 +11409,7 @@ function isAFileWithExecutableContent($filename)
  * Return the value of token currently saved into session with name 'newtoken'.
  * This token must be send by any POST as it will be used by next page for comparison with value in session.
  *
+ * @since Dolibarr v10.0.7
  * @return  string
  */
 function newToken()
@@ -11420,6 +11421,7 @@ function newToken()
  * Return the value of token currently saved into session with name 'token'.
  * For ajax call, you must use this token as a parameter of the call into the js calling script (the called ajax php page must also set constant NOTOKENRENEWAL).
  *
+ * @since Dolibarr v10.0.7
  * @return  string
  */
 function currentToken()
