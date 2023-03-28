@@ -612,11 +612,6 @@ class Mo extends CommonObject
 			$error++;
 		}
 
-		$result = $this->updateProduction($user, $notrigger);
-		if ($result <= 0) {
-			$error++;
-		}
-
 		if (!$error) {
 			$this->db->commit();
 			return 1;
