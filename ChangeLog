@@ -17,7 +17,7 @@ Following changes may create regressions for some external modules, but were nec
 * Revert default type of hooks. Default is now 'addreplace' hooks (and exception become 'output' hooks, that become deprecated).
 * Deprecated property libelle removed from entrepot class.
 * The type 'text' in ->fields property dos not accept html content anymore. Use the type 'html' for that.
-
+* The module for WebService SOAP API have been deprecated. Use instead the Webservice REST API module.
 
 
 ***** ChangeLog for 17.0.1 compared to 17.0.0 *****
