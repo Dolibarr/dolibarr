@@ -371,8 +371,11 @@ class pdf_espadon extends ModelePdfExpedition
 
 					// Tracking number
 					if (!empty($object->tracking_number)) {
+
 						$pdf->SetFont('', 'B', $default_font_size - 2);
 						$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber") . " : " . $object->tracking_number, 0, 1, false, true, 'L');
+
+						$height_trackingnumber = 0;
 
 						$tab_top_alt = $pdf->GetY();
 						$object->getUrlTrackingStatus($object->tracking_number);
@@ -383,15 +386,19 @@ class pdf_espadon extends ModelePdfExpedition
 								$label = '';
 								if ($object->tracking_url != $object->tracking_number) {
 									$label .= $outputlangs->trans("LinkToTrackYourPackage")."<br>";
+									$height_trackingnumber += 4;
 								}
 								$label .= $outputlangs->trans("SendingMethod").": ".$outputlangs->trans("SendingMethod".strtoupper($code));
 								//var_dump($object->tracking_url != $object->tracking_number);exit;
 								if ($object->tracking_url != $object->tracking_number) {
 									$label .= " : ";
 									$label .= $object->tracking_url;
+									$height_trackingnumber += 4;
 								}
+
+								$height_trackingnumber += 4;
 								$pdf->SetFont('', 'B', $default_font_size - 2);
-								$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top_alt, $label, 0, 1, false, true, 'L');
+								$pdf->writeHTMLCell(60, $height_trackingnumber, $this->posxdesc - 1, $tab_top_alt, $label, 0, 1, false, true, 'L');
 
 								$tab_top = $pdf->GetY();
 							}
