@@ -9692,8 +9692,7 @@ abstract class CommonObject
 			$result = $this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
-				//Do also here what you must do to rollback action if trigger fail
-			}
+			} //Do also here what you must do to rollback action if trigger fail
 			// End call triggers
 		}
 
@@ -9798,8 +9797,7 @@ abstract class CommonObject
 				$result = $this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
 				if ($result < 0) {
 					$error++;
-					// Do also here what you must do to rollback action if trigger fail
-				}
+				} // Do also here what you must do to rollback action if trigger fail
 				// End call triggers
 			}
 		}
