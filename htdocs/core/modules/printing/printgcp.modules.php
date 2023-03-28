@@ -377,7 +377,8 @@ class printing_printgcp extends PrintingDriver
 	 *  @return array                       status array
 	 */
 	public function sendPrintToPrinter($printerid, $printjobtitle, $filepath, $contenttype)
-	{global $conf;
+	{
+		global $conf;
 		// Check if printer id
 		if (empty($printerid)) {
 			return array('status' =>0, 'errorcode' =>'', 'errormessage'=>'No provided printer ID');
@@ -454,7 +455,7 @@ class printing_printgcp extends PrintingDriver
 		$keyforprovider = '';	// @FIXME
 
 		// Token storage
-		$storage = new DoliStorage($this->db, $this->conf, $keyforprovider);
+		$storage = new DoliStorage($this->db, $conf, $keyforprovider);
 		// Setup the credentials for the requests
 		$credentials = new Credentials(
 			$this->google_id,
