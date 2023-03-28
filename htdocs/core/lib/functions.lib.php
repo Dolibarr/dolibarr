@@ -588,7 +588,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 				}
 			}
 			if (!empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) {
-				if (!empty($_GET['action']) && (preg_match('/^create/', $_GET['action']) || preg_match('/^presend/', $_GET['action'])) && !isset($_GET[$paramname]) && !isset($_POST[$paramname])) {
+				if (!empty($_GET['action']) && (preg_match('/^create|^add|^make/', $_GET['action']) || preg_match('/^presend/', $_GET['action'])) && !isset($_GET[$paramname]) && !isset($_POST[$paramname])) {
 					// Now search in setup to overwrite default values
 					if (!empty($user->default_values)) {		// $user->default_values defined from menu 'Setup - Default values'
 						if (isset($user->default_values[$relativepathstring]['createform'])) {
