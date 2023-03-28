@@ -1624,6 +1624,8 @@ class Categorie extends CommonObject
 	{
 		global $langs;
 
+		$langs->load('categories');
+
 		$datas = [];
 
 		$datas['label'] = $langs->trans("ShowCategory").': '.($this->ref ? $this->ref : $this->label);
@@ -1656,7 +1658,6 @@ class Categorie extends CommonObject
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
 			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
 		}
 		$label = implode($this->getTooltipContentArray($params));
 
