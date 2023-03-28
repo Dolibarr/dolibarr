@@ -111,9 +111,8 @@ class PaymentExpenseReport extends CommonObject
 		$error = 0;
 
 		$now = dol_now();
-
 		// Validate parameters
-		if (!$this->datepaid) {
+		if (!$this->datep) {
 			$this->error = 'ErrorBadValueForParameterCreatePaymentExpenseReport';
 			return -1;
 		}
@@ -170,7 +169,7 @@ class PaymentExpenseReport extends CommonObject
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_expensereport (fk_expensereport, datec, datep, amount,";
 			$sql .= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
 			$sql .= " VALUES ($this->fk_expensereport, '".$this->db->idate($now)."',";
-			$sql .= " '".$this->db->idate($this->datepaid)."',";
+			$sql .= " '".$this->db->idate($this->datep)."',";
 			$sql .= " ".price2num($totalamount).",";
 			$sql .= " ".((int) $this->fk_typepayment).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".((int) $user->id).",";
 			$sql .= " 0)";	// fk_bank is ID of transaction into ll_bank
@@ -531,7 +530,7 @@ class PaymentExpenseReport extends CommonObject
 
 			// Insert payment into llx_bank
 			$bank_line_id = $acc->addline(
-				$this->datepaid,
+				$this->datep,
 				$this->fk_typepayment, // Payment mode id or code ("CHQ or VIR for example")
 				$label,
 				-$amount,

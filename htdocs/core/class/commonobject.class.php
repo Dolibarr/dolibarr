@@ -750,19 +750,23 @@ abstract class CommonObject
 	{
 		global $action, $extrafields, $langs, $hookmanager;
 
+		$MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP = 5;	// If there is too much extrafields, we do not include them into tooltip
+
 		$datas = $this->getTooltipContentArray($params);
 
 		if (!empty($extrafields->attributes[$this->table_element]['label'])) {
-			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
-				if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
-					$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
-				}
-				$labelextra = $langs->trans((string) $extrafields->attributes[$this->table_element]['label'][$key]);
-				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
-					$datas[$key]= '<br><b><u>'. $labelextra . '</u></b>';
-				} else {
-					$value = $this->array_options['options_' . $key];
-					$datas[$key]= '<br><b>'. $labelextra . ':</b> ' . $extrafields->showOutputField($key, $value, '', $this->table_element);
+			if (count($extrafields->attributes[$this->table_element]['label']) < $MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP) {
+				foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+					if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
+						$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
+					}
+					$labelextra = $langs->trans((string) $extrafields->attributes[$this->table_element]['label'][$key]);
+					if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
+						$datas[$key]= '<br><b><u>'. $labelextra . '</u></b>';
+					} else {
+						$value = (empty($this->array_options['options_' . $key]) ? '' : $this->array_options['options_' . $key]);
+						$datas[$key]= '<br><b>'. $labelextra . ':</b> ' . $extrafields->showOutputField($key, $value, '', $this->table_element);
+					}
 				}
 			}
 		}
@@ -2166,6 +2170,8 @@ abstract class CommonObject
 
 		$error = 0;
 
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".$this->db->prefix().$table." SET ";
@@ -2190,7 +2196,6 @@ abstract class CommonObject
 
 		$sql .= " WHERE ".$id_field." = ".((int) $id);
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($trigkey) {

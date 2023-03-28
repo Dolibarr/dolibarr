@@ -534,7 +534,7 @@ if ($resql) {
 				print img_warning($langs->trans("StockLowerThanLimit", $objp->seuil_stock_alerte)).' ';
 			}
 			if ($objp->stock_physique < 0) { print '<span class="warning">'; }
-			print price2num($product->stock_theorique, 'MS', 0, $langs, 1, 0);
+			print price(price2num($product->stock_theorique, 'MS'), 0, $langs, 1, 0);
 			if ($objp->stock_physique < 0) { print '</span>'; }
 			print '</td>';
 		}

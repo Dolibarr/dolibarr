@@ -3753,6 +3753,11 @@ class Product extends CommonObject
 					$tab[$keyfortab] = (empty($tab[$keyfortab]) ? 0 : $tab[$keyfortab]) + $arr[0]; // 1st field
 				} elseif ($mode == 'bynumber') {
 					$tab[$keyfortab] = (empty($tab[$keyfortab]) ? 0 : $tab[$keyfortab]) + $arr[2]; // 3rd field
+				} elseif ($mode == 'byamount') {
+					$tab[$keyfortab] = (empty($tab[$keyfortab]) ? 0 : $tab[$keyfortab]) + $arr[2]; // 3rd field
+				} else {
+					// Bad value for $mode
+					return -1;
 				}
 				$i++;
 			}
@@ -3812,10 +3817,11 @@ class Product extends CommonObject
 		global $conf;
 		global $user;
 
-		$sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m')";
+		$sql = "SELECT sum(d.qty) as qty, date_format(f.datef, '%Y%m')";
 		if ($mode == 'bynumber') {
 			$sql .= ", count(DISTINCT f.rowid)";
 		}
+		$sql .= ", sum(d.total_ht) as total_ht";
 		$sql .= " FROM ".$this->db->prefix()."facturedet as d, ".$this->db->prefix()."facture as f, ".$this->db->prefix()."societe as s";
 		if ($filteronproducttype >= 0) {
 			$sql .= ", ".$this->db->prefix()."product as p";
@@ -3865,10 +3871,11 @@ class Product extends CommonObject
 		global $conf;
 		global $user;
 
-		$sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m')";
+		$sql = "SELECT sum(d.qty) as qty, date_format(f.datef, '%Y%m')";
 		if ($mode == 'bynumber') {
 			$sql .= ", count(DISTINCT f.rowid)";
 		}
+		$sql .= ", sum(d.total_ht) as total_ht";
 		$sql .= " FROM ".$this->db->prefix()."facture_fourn_det as d, ".$this->db->prefix()."facture_fourn as f, ".$this->db->prefix()."societe as s";
 		if ($filteronproducttype >= 0) {
 			$sql .= ", ".$this->db->prefix()."product as p";
@@ -3905,7 +3912,7 @@ class Product extends CommonObject
 	 * Return nb of units in proposals in which product is included
 	 *
 	 * @param  int    $socid               Limit count on a particular third party id
-	 * @param  string $mode                'byunit'=number of unit, 'bynumber'=nb of entities
+	 * @param  string $mode                'byunit'=number of unit, 'bynumber'=nb of entities, 'byamount'=amount
 	 * @param  int    $filteronproducttype 0=To filter on product only, 1=To filter on services only
 	 * @param  int    $year                Year (0=last 12 month, -1=all years)
 	 * @param  string $morefilter          More sql filters
@@ -3916,10 +3923,11 @@ class Product extends CommonObject
 		// phpcs:enable
 		global $conf, $user;
 
-		$sql = "SELECT sum(d.qty), date_format(p.datep, '%Y%m')";
+		$sql = "SELECT sum(d.qty) as qty, date_format(p.datep, '%Y%m')";
 		if ($mode == 'bynumber') {
 			$sql .= ", count(DISTINCT p.rowid)";
 		}
+		$sql .= ", sum(d.total_ht) as total_ht";
 		$sql .= " FROM ".$this->db->prefix()."propaldet as d, ".$this->db->prefix()."propal as p, ".$this->db->prefix()."societe as s";
 		if ($filteronproducttype >= 0) {
 			$sql .= ", ".$this->db->prefix()."product as prod";
@@ -3968,10 +3976,11 @@ class Product extends CommonObject
 		global $conf;
 		global $user;
 
-		$sql = "SELECT sum(d.qty), date_format(p.date_valid, '%Y%m')";
+		$sql = "SELECT sum(d.qty) as qty, date_format(p.date_valid, '%Y%m')";
 		if ($mode == 'bynumber') {
 			$sql .= ", count(DISTINCT p.rowid)";
 		}
+		$sql .= ", sum(d.total_ht) as total_ht";
 		$sql .= " FROM ".$this->db->prefix()."supplier_proposaldet as d, ".$this->db->prefix()."supplier_proposal as p, ".$this->db->prefix()."societe as s";
 		if ($filteronproducttype >= 0) {
 			$sql .= ", ".$this->db->prefix()."product as prod";
@@ -4019,10 +4028,11 @@ class Product extends CommonObject
 		// phpcs:enable
 		global $conf, $user;
 
-		$sql = "SELECT sum(d.qty), date_format(c.date_commande, '%Y%m')";
+		$sql = "SELECT sum(d.qty) as qty, date_format(c.date_commande, '%Y%m')";
 		if ($mode == 'bynumber') {
 			$sql .= ", count(DISTINCT c.rowid)";
 		}
+		$sql .= ", sum(d.total_ht) as total_ht";
 		$sql .= " FROM ".$this->db->prefix()."commandedet as d, ".$this->db->prefix()."commande as c, ".$this->db->prefix()."societe as s";
 		if ($filteronproducttype >= 0) {
 			$sql .= ", ".$this->db->prefix()."product as p";
@@ -4070,10 +4080,11 @@ class Product extends CommonObject
 		// phpcs:enable
 		global $conf, $user;
 
-		$sql = "SELECT sum(d.qty), date_format(c.date_commande, '%Y%m')";
+		$sql = "SELECT sum(d.qty) as qty, date_format(c.date_commande, '%Y%m')";
 		if ($mode == 'bynumber') {
 			$sql .= ", count(DISTINCT c.rowid)";
 		}
+		$sql .= ", sum(d.total_ht) as total_ht";
 		$sql .= " FROM ".$this->db->prefix()."commande_fournisseurdet as d, ".$this->db->prefix()."commande_fournisseur as c, ".$this->db->prefix()."societe as s";
 		if ($filteronproducttype >= 0) {
 			$sql .= ", ".$this->db->prefix()."product as p";
@@ -4121,10 +4132,11 @@ class Product extends CommonObject
 		// phpcs:enable
 		global $conf, $user;
 
-		$sql = "SELECT sum(d.qty), date_format(c.date_contrat, '%Y%m')";
+		$sql = "SELECT sum(d.qty) as qty, date_format(c.date_contrat, '%Y%m')";
 		if ($mode == 'bynumber') {
 			$sql .= ", count(DISTINCT c.rowid)";
 		}
+		$sql .= ", sum(d.total_ht) as total_ht";
 		$sql .= " FROM ".$this->db->prefix()."contratdet as d, ".$this->db->prefix()."contrat as c, ".$this->db->prefix()."societe as s";
 		if ($filteronproducttype >= 0) {
 			$sql .= ", ".$this->db->prefix()."product as p";

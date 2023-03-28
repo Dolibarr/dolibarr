@@ -7591,6 +7591,29 @@ div.clipboardCPValue.hidewithsize {
 	/* filter: blur(4px); */
 }
 
+/* ============================================================================== */
+/* For drag and drop file feature                                                 */
+/* ============================================================================== */
+
+.cssDragDropArea{
+	position: relative;
+}
+.highlightDragDropArea{
+	border: 2px #000 dashed !important;
+	background-color: #eee !important;
+}
+.highlightDragDropArea * :not(.dragDropAreaMessage *){
+	opacity:0.8;
+	filter: blur(1px) grayscale(90%);
+}
+.dragDropAreaMessage {
+	position: absolute;
+	left:50%;
+	top:50%;
+	transform: translate(-50%, -50%);
+	text-align:center;
+	font-size: 2em;
+}
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */

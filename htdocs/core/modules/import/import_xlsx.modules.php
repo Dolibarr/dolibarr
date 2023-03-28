@@ -694,7 +694,7 @@ class ImportXlsx extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, $key));
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $key));
 									$newval = $res; 	// We get new value computed.
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
@@ -853,7 +853,7 @@ class ImportXlsx extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, $key));
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $key));
 									$fieldArr = explode('.', $fieldname);
 									if (count($fieldArr) > 0) {
 										$fieldname = $fieldArr[1];
