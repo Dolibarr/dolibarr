@@ -11245,7 +11245,12 @@ function getElementProperties($element_type)
 		$subelement = 'Actioncomm';
 		$module = 'agenda';
 	}
-
+	if ($element_type == 'bank_account') {
+		$classpath = 'compta/bank/class';
+		$module = 'banque';
+		$classfile = 'Account';
+		$classname = 'Account';
+	}
 	// To work with non standard path
 	if ($element_type == 'facture' || $element_type == 'invoice') {
 		$classpath = 'compta/facture/class';
@@ -11361,7 +11366,6 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 	$ret = 0;
 
 	$element_prop = getElementProperties($element_type);
-
 	if (is_array($element_prop) && isModEnabled($element_prop['module'])) {
 		dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
 
