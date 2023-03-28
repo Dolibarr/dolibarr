@@ -2861,7 +2861,7 @@ class EmailCollector extends CommonObject
 									$result = $candidaturetocreate->create($user);
 									if ($result <= 0) {
 										$errorforactions++;
-										$this->error = 'Failed to create ticket: '.join(', ', $candidaturetocreate->errors);
+										$this->error = 'Failed to create candidature: '.join(', ', $candidaturetocreate->errors);
 										$this->errors = $candidaturetocreate->errors;
 									}
 

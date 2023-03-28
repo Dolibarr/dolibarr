@@ -7,6 +7,7 @@
  * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	  <info@inovea-conseil.com>
  * Copyright (C) 2018       Frédéric France         <frederic.francenetlogic.fr>
+ * Copyright (C) 2023      Joachim Kueter		  <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -341,7 +342,18 @@ class PaiementFourn extends Paiement
 										}
 									}
 								} else {
-									dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing.");
+									// hook to have an option to automatically close a closable invoice with less payment than the total amount (e.g. agreed cash discount terms)
+									global $hookmanager;
+									$hookmanager->initHooks(array('payment_supplierdao'));
+									$parameters = array('facid' => $facid, 'invoice' => $invoice, 'remaintopay' => $remaintopay);
+									$action = 'CLOSEPAIDSUPPLIERINVOICE';
+									$reshook = $hookmanager->executeHooks('createPayment', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+									if ($reshook < 0) {
+										$this->error = $hookmanager->error;
+										$error++;
+									} elseif ($reshook == 0) {
+										dol_syslog("Remain to pay for invoice " . $facid . " not null. We do nothing more.");
+									}
 								}
 							}
 

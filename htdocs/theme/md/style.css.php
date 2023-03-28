@@ -4375,8 +4375,15 @@ div.liste_titre_bydiv {
 	display: table;
 	padding: 2px 0px 2px 0;
 	box-shadow: none;
-	width: calc(100% - 2px);	/* -3px because the width for table class="tagtable" under this is cal(100% - 2px) so it is aligned. */
+	width: calc(100% - 2px);	/* -2px because the width for table class="tagtable" under this is cal(100% - 2px) so it is aligned. */
 }
+/*
+div.liste_titre_bydiv_inlineblock {
+	display: inline-block;
+	width: 100%;
+}
+*/
+
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr, tagtr.liste_titre
 {
 	height: 26px !important;
@@ -7501,6 +7508,29 @@ div.clipboardCPValue.hidewithsize {
 	zoom: 0.20;
 }
 
+/* ============================================================================== */
+/* For drag and drop file feature                                                 */
+/* ============================================================================== */
+
+.cssDragDropArea{
+	position: relative;
+}
+.highlightDragDropArea{
+	border: 2px #000 dashed !important;
+	background-color: #eee !important;
+}
+.highlightDragDropArea * :not(.dragDropAreaMessage *){
+	opacity:0.8;
+	filter: blur(1px) grayscale(90%);
+}
+.dragDropAreaMessage {
+	position: absolute;
+	left:50%;
+	top:50%;
+	transform: translate(-50%, -50%);
+	text-align:center;
+	font-size: 2em;
+}
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */

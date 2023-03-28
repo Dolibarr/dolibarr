@@ -1995,6 +1995,7 @@ class Contrat extends CommonObject
 		$langs->load('contracts');
 
 		$datas = [];
+		$nofetch = !empty($params['nofetch']);
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			return ['optimize' => $langs->trans("ShowContract")];
@@ -2006,7 +2007,23 @@ class Contrat extends CommonObject
 				$label .= ' '.$this->getLibStatut(5);
 			}*/
 			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.($this->ref ? $this->ref : $this->id);
+			if (!$nofetch) {
+				$langs->load('companies');
+				if (empty($this->thirdparty)) {
+					$this->fetch_thirdparty();
+				}
+				$datas['customer'] = '<br><b>'.$langs->trans('Customer').':</b> '.$this->thirdparty->getNomUrl(1, '', 0, 1);
+			}
 			$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '. $this->ref_customer;
+			if (!$nofetch) {
+				$langs->load('project');
+				if (empty($this->project)) {
+					$res = $this->fetch_project();
+					if ($res > 0) {
+						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
+					}
+				}
+			}
 			$datas['refsupplier'] = '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
 			if (!empty($this->total_ht)) {
 				$datas['amountht'] = '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
@@ -2052,6 +2069,7 @@ class Contrat extends CommonObject
 		$params = [
 			'id' => $this->id,
 			'objecttype' => $this->element,
+			'nofetch' => 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';

@@ -365,6 +365,7 @@ $morehtmlright = "";
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.office_phone, u.user_mobile, u.email, u.api_key, u.accountancy_code, u.gender, u.employee, u.photo,";
+$sql .= " u.fk_user,";
 $sql .= " u.ref_employee, u.national_registration_number, u.job, u.salary, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.ldap_sid, u.statut as status, u.entity,";
 $sql .= " u.tms as date_update, u.datec as date_creation,";
@@ -379,7 +380,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
@@ -1152,10 +1153,13 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['u.api_key']['checked'])) {
-			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->api_key).'">';
-			if ($obj->api_key) {
+			$api_key = dolDecrypt($obj->api_key);
+			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($api_key).'">';
+			if ($api_key) {
 				if ($canreadsecretapi) {
-					print dol_escape_htmltag($obj->api_key);
+					print '<span class="opacitymedium">';
+					print showValueWithClipboardCPButton($object->api_key, 1, dol_trunc($api_key, 3));		// TODO Add an option to also reveal the hash, not only copy paste
+					print '</span>';
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
 				}

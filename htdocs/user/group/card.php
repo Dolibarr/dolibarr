@@ -473,7 +473,7 @@ if ($action == 'create') {
 						print "</td></tr>\n";
 					}
 				} else {
-					print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+					print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 				}
 				print "</table>";
 				print '</div>';

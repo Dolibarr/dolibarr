@@ -322,7 +322,12 @@ function LoadProducts(position, issubcat) {
 	});
 
 	idata=0; //product data counter
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&category='+currentcat, function(data) {
+	var limit = 0;
+	if (maxproduct >= 1) {
+		limit = maxproduct-1;
+	}
+	// Only show products for sale (tosell=1)
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&category='+currentcat+'&tosell=1&limit='+limit+'&offset=0', function(data) {
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat+" then loop on result to fill image thumbs");
 		console.log(data);
 		while (ishow < maxproduct) {
@@ -342,10 +347,7 @@ function LoadProducts(position, issubcat) {
 				$("#proprice"+ishow).html("");
 				$("#prodiv"+ishow).data("rowid","");
 				$("#prodiv"+ishow).attr("class","wrapper2 divempty");
-				$("#prowatermark"+ishow).hide();
-				ishow++; //Next product to show after print data product
-			}
-			else if ((data[idata]['status']) == "1") {		// Only show products with status=1 (for sell)
+			} else  {
 				<?php
 					$titlestring = "'".dol_escape_js($langs->transnoentities('Ref').': ')."' + data[idata]['ref']";
 					$titlestring .= " + ' - ".dol_escape_js($langs->trans("Barcode").': ')."' + data[idata]['barcode']";
@@ -376,8 +378,7 @@ function LoadProducts(position, issubcat) {
 				console.log($('#prodiv4').data('rowid'));
 				$("#prodiv"+ishow).data("iscat", 0);
 				$("#prodiv"+ishow).attr("class","wrapper2");
-				$("#prowatermark"+ishow).hide();
-				ishow++; //Next product to show after print data product
+
 				<?php
 				// Add js from hooks
 				$parameters=array();
@@ -386,7 +387,8 @@ function LoadProducts(position, issubcat) {
 				print $hookmanager->resPrint;
 				?>
 			}
-			//console.log("Hide the prowatermark for ishow="+ishow);
+			$("#prowatermark"+ishow).hide();
+			ishow++; //Next product to show after print data product
 			idata++; //Next data everytime
 		}
 	});
@@ -414,15 +416,22 @@ function MoreProducts(moreorless) {
 		if (pageproducts==0) return; //Return if no less pages
 		pageproducts=pageproducts-1;
 	}
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&category='+currentcat, function(data) {
+
+	ishow=0; //product to show counter
+	idata=0; //product data counter
+	var limit = 0;
+	if (maxproduct >= 1) {
+		limit = maxproduct-1;
+	}
+	var offset = <?php echo ($MAXPRODUCT - 2); ?> * pageproducts;
+	// Only show products for sale (tosell=1)
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&category='+currentcat+'&tosell=1&limit='+limit+'&offset='+offset, function(data) {
 		console.log("Call ajax.php (in MoreProducts) to get Products of category "+currentcat);
 
-		if (typeof (data[(maxproduct * pageproducts)]) == "undefined" && moreorless=="more"){ // Return if no more pages
+		if (typeof (data[0]) == "undefined" && moreorless=="more"){ // Return if no more pages
 			pageproducts=pageproducts-1;
 			return;
 		}
-		idata=<?php echo ($MAXPRODUCT - 2); ?> * pageproducts; //product data counter
-		ishow=0; //product to show counter
 
 		while (ishow < maxproduct) {
 			if (typeof (data[idata]) == "undefined") {
@@ -434,10 +443,7 @@ function MoreProducts(moreorless) {
 				$("#proprice"+ishow).html("");
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
-				ishow++; //Next product to show after print data product
-			}
-			else if ((data[idata]['status']) == "1") {
-				//Only show products with status=1 (for sell)
+			} else {
 				$("#prodivdesc"+ishow).show();
 				<?php
 				if (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 1) { ?>
@@ -454,9 +460,9 @@ function MoreProducts(moreorless) {
 				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
 				$("#prodiv"+ishow).data("iscat",0);
-				ishow++; //Next product to show after print data product
 			}
 			$("#prowatermark"+ishow).hide();
+			ishow++; //Next product to show after print data product
 			idata++; //Next data everytime
 		}
 	});
@@ -1388,7 +1394,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 					echo '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em; cursor: pointer;"></span>';
 				} else {
 					if (!getDolGlobalString('TAKEPOS_HIDE_CATEGORY_IMAGES')) {
-						echo '<img class="imgwrapper" height="100%" id="catimg'.$count.'" />';
+						echo '<img class="imgwrapper" id="catimg'.$count.'" />';
 					}
 				}
 				?>
@@ -1433,7 +1439,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 							echo '<button type="button" id="probutton'.$count.'" class="productbutton" style="display: none;"></button>';
 						} else {
 							print '<div class="" id="proprice'.$count.'"></div>';
-							print '<img class="imgwrapper" height="100%" title="" id="proimg'.$count.'">';
+							print '<img class="imgwrapper" title="" id="proimg'.$count.'">';
 						}
 					}
 					?>

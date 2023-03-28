@@ -21,11 +21,14 @@
 
 create table llx_c_country
 (
-  rowid    integer            PRIMARY KEY,
-  code     varchar(2)         NOT NULL,
-  code_iso varchar(3)         ,
-  label    varchar(128)       NOT NULL,
-  eec      tinyint DEFAULT 0  NOT NULL,
-  active   tinyint DEFAULT 1  NOT NULL,
-  favorite tinyint DEFAULT 0  NOT NULL
+  rowid    		integer            PRIMARY KEY,
+  code     		varchar(2)         NOT NULL,	-- the iso 2 alpha code
+  code_iso 		varchar(3),						-- the iso 3 alpha code
+  numeric_code 	varchar(3),						-- the iso numeric number
+  label    		varchar(128)       NOT NULL,
+  eec      		tinyint DEFAULT 0  NOT NULL,
+  active   		tinyint DEFAULT 1  NOT NULL,
+  favorite 		tinyint DEFAULT 0  NOT NULL
 )ENGINE=innodb;
+
+

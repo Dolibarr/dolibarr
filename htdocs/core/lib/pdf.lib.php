@@ -725,10 +725,15 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 		$filepath = $conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF;
 		if (file_exists($filepath)) {
 			$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak before adding image
+			if (getDolGlobalString('MAIN_USE_BACKGROUND_ON_PDF_ALPHA')) { $pdf->SetAlpha($conf->global->MAIN_USE_BACKGROUND_ON_PDF_ALPHA); } // Option for change opacity of background
 			$pdf->Image($filepath, (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_X) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_X : 0), (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y : 0), 0, $page_height);
+			if (getDolGlobalString('MAIN_USE_BACKGROUND_ON_PDF_ALPHA')) { $pdf->SetAlpha(1); }
 			$pdf->SetPageMark(); // This option avoid to have the images missing on some pages
 			$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
 		}
+	}
+	if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND') && getDolGlobalString('MAIN_ADD_PDF_BACKGROUND') != '-1') {
+		$pdf->SetPageMark(); // This option avoid to have the images missing on some pages
 	}
 }
 
@@ -739,12 +744,13 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
  *	@param	Translate	$outputlangs	Output language
  *	@param	array       $exclude        Array of family keys we want to exclude. For example array('mycompany', 'object', 'date', 'user', ...)
  *	@param	Object      $object         Object
- *	@param	int         $onlykey       1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are truncated and html sanitized (to use for help tooltip)
+ *	@param	int         $onlykey       	1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are truncated and html sanitized (to use for help tooltip)
+ *  @param   array      $include        Array of family keys we want to include. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
  *	@return	array						Array of substitutions
  */
-function pdf_getSubstitutionArray($outputlangs, $exclude = null, $object = null, $onlykey = 0)
+function pdf_getSubstitutionArray($outputlangs, $exclude = null, $object = null, $onlykey = 0, $include = null)
 {
-	$substitutionarray = getCommonSubstitutionArray($outputlangs, $onlykey, $exclude, $object);
+	$substitutionarray = getCommonSubstitutionArray($outputlangs, $onlykey, $exclude, $object, $include);
 	$substitutionarray['__FROM_NAME__'] = '__FROM_NAME__';
 	$substitutionarray['__FROM_EMAIL__'] = '__FROM_EMAIL__';
 	return $substitutionarray;
@@ -1247,49 +1253,52 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 			$pdf->SetY(-$posy);
 
-			// Hide footer line if footer background color is set
-			if (!getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
-				$pdf->line($dims['lm'], $dims['hk'] - $posy, $dims['wk'] - $dims['rm'], $dims['hk'] - $posy);
-			}
+			// Option for hide all footer (page number will no hidden)
+			if (!getDolGlobalInt('PDF_FOOTER_HIDDEN')) {
+				// Hide footer line if footer background color is set
+				if (!getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
+					$pdf->line($dims['lm'], $dims['hk'] - $posy, $dims['wk'] - $dims['rm'], $dims['hk'] - $posy);
+				}
 
-			// Option for set top margin height of footer after freetext
-			if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalInt('PDF_FOOTER_TOP_MARGIN') === 0) {
-				$posy -= floatval(getDolGlobalString('PDF_FOOTER_TOP_MARGIN'));
-			} else {
-				$posy--;
-			}
+				// Option for set top margin height of footer after freetext
+				if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalInt('PDF_FOOTER_TOP_MARGIN') === 0) {
+					$posy -= floatval(getDolGlobalString('PDF_FOOTER_TOP_MARGIN'));
+				} else {
+					$posy--;
+				}
 
-			if (!empty($line1)) {
-				$pdf->SetFont('', 'B', 7);
-				$pdf->SetXY($dims['lm'], -$posy);
-				$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line1, 0, 'C', 0);
-				$posy -= 3;
-				$pdf->SetFont('', '', 7);
-			}
+				if (!empty($line1)) {
+					$pdf->SetFont('', 'B', 7);
+					$pdf->SetXY($dims['lm'], -$posy);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line1, 0, 'C', 0);
+					$posy -= 3;
+					$pdf->SetFont('', '', 7);
+				}
 
-			if (!empty($line2)) {
-				$pdf->SetFont('', 'B', 7);
-				$pdf->SetXY($dims['lm'], -$posy);
-				$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line2, 0, 'C', 0);
-				$posy -= 3;
-				$pdf->SetFont('', '', 7);
-			}
+				if (!empty($line2)) {
+					$pdf->SetFont('', 'B', 7);
+					$pdf->SetXY($dims['lm'], -$posy);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line2, 0, 'C', 0);
+					$posy -= 3;
+					$pdf->SetFont('', '', 7);
+				}
 
-			if (!empty($line3)) {
-				$pdf->SetXY($dims['lm'], -$posy);
-				$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line3, 0, 'C', 0);
-			}
+				if (!empty($line3)) {
+					$pdf->SetXY($dims['lm'], -$posy);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line3, 0, 'C', 0);
+				}
 
-			if (!empty($line4)) {
-				$posy -= 3;
-				$pdf->SetXY($dims['lm'], -$posy);
-				$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line4, 0, 'C', 0);
+				if (!empty($line4)) {
+					$posy -= 3;
+					$pdf->SetXY($dims['lm'], -$posy);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line4, 0, 'C', 0);
+				}
 			}
 		}
 	}
 	// Show page nb only on iso languages (so default Helvetica font)
 	// if (strtolower(pdf_getPDFFont($outputlangs)) == 'helvetica') {
-		$pdf->SetXY($dims['wk'] - $dims['rm'] - 18, -$posy);
+		$pdf->SetXY($dims['wk'] - $dims['rm'] - 18 - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_X', 0), -$posy - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_Y', 0));
 		// $pdf->MultiCell(18, 2, $pdf->getPageNumGroupAlias().' / '.$pdf->getPageGroupAlias(), 0, 'R', 0);
 		// $pdf->MultiCell(18, 2, $pdf->PageNo().' / '.$pdf->getAliasNbPages(), 0, 'R', 0); // doesn't works with all fonts
 		// $pagination = $pdf->getAliasNumPage().' / '.$pdf->getAliasNbPages(); // works with $pdf->Cell

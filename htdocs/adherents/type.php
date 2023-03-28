@@ -585,6 +585,9 @@ if ($rowid > 0) {
 		$sql .= " d.datefin,";
 		$sql .= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut as status,";
 		$sql .= " t.libelle as type, t.subscription, t.amount";
+
+		$sqlfields = $sql; // $sql fields to remove for count total
+
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql .= " WHERE d.fk_adherent_type = t.rowid ";
 		$sql .= " AND d.entity IN (".getEntity('adherent').")";
@@ -616,24 +619,32 @@ if ($rowid > 0) {
 			$sql .= " AND (datefin < '".$db->idate($now)."' AND t.subscription = 1)";
 		}
 
-		$sql .= " ".$db->order($sortfield, $sortorder);
-
 		// Count total nb of records
 		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-			$resql = $db->query($sql);
+			/* The fast and low memory method to get and count full list converts the sql into a sql count */
+			$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+			$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+			$resql = $db->query($sqlforcount);
 			if ($resql) {
-				$nbtotalofrecords = $db->num_rows($result);
+				$objforcount = $db->fetch_object($resql);
+				$nbtotalofrecords = $objforcount->nbtotalofrecords;
 			} else {
 				dol_print_error($db);
 			}
-			if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+
+			if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 				$page = 0;
 				$offset = 0;
 			}
+			$db->free($resql);
 		}
 
-		$sql .= " ".$db->plimit($conf->liste_limit + 1, $offset);
+		// Complete request and execute it with limit
+		$sql .= $db->order($sortfield, $sortorder);
+		if ($limit) {
+			$sql .= $db->plimit($limit + 1, $offset);
+		}
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -668,6 +679,15 @@ if ($rowid > 0) {
 			}
 
 			$param = "&rowid=".urlencode($object->id);
+			if (!empty($mode)) {
+				$param .= '&mode='.urlencode($mode);
+			}
+			if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+				$param .= '&contextpage='.urlencode($contextpage);
+			}
+			if ($limit > 0 && $limit != $conf->liste_limit) {
+				$param .= '&limit='.((int) $limit);
+			}
 			if (!empty($status)) {
 				$param .= "&status=".urlencode($status);
 			}
@@ -691,12 +711,11 @@ if ($rowid > 0) {
 				print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
 			}
 
-			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input class="flat" type="hidden" name="rowid" value="'.$object->id.'" size="12"></td>';
+			print '<input class="flat" type="hidden" name="rowid" value="'.$object->id.'"></td>';
 
-			print '<br>';
-			print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
+			print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
 
 			$moreforfilter = '';
 
@@ -706,24 +725,35 @@ if ($rowid > 0) {
 			// Fields title search
 			print '<tr class="liste_titre_filter">';
 
-			print '<td class="liste_titre left">';
-			print '<input class="flat" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'" size="12"></td>';
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="liste_titre center maxwidthsearch">';
+				$searchpicto = $form->showFilterButtons('left');
+				print $searchpicto;
+				print '</td>';
+			}
 
 			print '<td class="liste_titre left">';
-			print '<input class="flat" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'" size="7"></td>';
+			print '<input class="flat maxwidth100" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'"></td>';
+
+			print '<td class="liste_titre left">';
+			print '<input class="flat maxwidth100" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'"></td>';
 
 			print '<td class="liste_titre">&nbsp;</td>';
 
 			print '<td class="liste_titre left">';
-			print '<input class="flat" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'" size="12"></td>';
+			print '<input class="flat maxwidth100" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'"></td>';
 
 			print '<td class="liste_titre">&nbsp;</td>';
 
-			print '<td class="liste_titre right" colspan="2">';
-			print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-			print '&nbsp; ';
-			print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-			print '</td>';
+			print '<td class="liste_titre">&nbsp;</td>';
+
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="liste_titre center nowraponall">';
+				print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+				print '&nbsp; ';
+				print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+				print '</td>';
+			}
 
 			print "</tr>\n";
 

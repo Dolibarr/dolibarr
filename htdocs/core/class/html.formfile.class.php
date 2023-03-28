@@ -1445,7 +1445,28 @@ class FormFile
 							if (in_array($modulepart, array('product', 'produit', 'service'))) {
 								$newmodulepart = 'produit|service';
 							}
-
+							if (image_format_supported($file['name']) > 0) {
+								if ($permtoeditline) {
+									$moreparaminurl = '';
+									if (!empty($object->id) && $object->id > 0) {
+										$moreparaminurl .= '&id='.$object->id;
+									} elseif (GETPOST('website', 'alpha')) {
+										$moreparaminurl .= '&website='.GETPOST('website', 'alpha');
+									}
+									// Set the backtourl
+									if ($modulepart == 'medias' && !GETPOST('website')) {
+										$moreparaminurl .= '&backtourl='.urlencode(DOL_URL_ROOT.'/ecm/index_medias.php?file_manager=1&modulepart='.$modulepart.'&section_dir='.$relativepath);
+									}
+									// Link to convert into webp
+									if (!preg_match('/\.webp$/i', $file['name'])) {
+										if ($modulepart == 'medias' && !GETPOST('website')) {
+											print '<a href="'.DOL_URL_ROOT.'/ecm/index_medias.php?action=confirmconvertimgwebp&token='.newToken().'&section_dir='.urlencode($relativepath).'&filetoregenerate='.urlencode($fileinfo['basename']).'&module='.$modulepart.$param.$moreparaminurl.'" title="'.dol_escape_htmltag($langs->trans("GenerateChosenImgWebp")).'">'.img_picto('', 'images', 'class="flip marginrightonly"').'</a>';
+										} elseif ($modulepart == 'medias' && GETPOST('website')) {
+											print '<a href="'.DOL_URL_ROOT.'/website/index.php?action=confirmconvertimgwebp&token='.newToken().'&section_dir='.urlencode($relativepath).'&filetoregenerate='.urlencode($fileinfo['basename']).'&module='.$modulepart.$param.$moreparaminurl.'" title="'.dol_escape_htmltag($langs->trans("GenerateChosenImgWebp")).'">'.img_picto('', 'images', 'class="flip marginrightonly"').'</a>';
+										}
+									}
+								}
+							}
 							if (!$disablecrop && image_format_supported($file['name']) > 0) {
 								if ($permtoeditline) {
 									// Link to resize

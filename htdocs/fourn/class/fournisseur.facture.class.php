@@ -649,7 +649,7 @@ class FactureFournisseur extends CommonInvoice
 						$res = $this->updateline(
 							$idligne,
 							$this->lines[$i]->description,
-							$this->lines[$i]->pu_ht,
+							$this->lines[$i]->subprice,
 							$this->lines[$i]->tva_tx.($this->lines[$i]->vat_src_code ? ' ('.$this->lines[$i]->vat_src_code.')' : ''),
 							$this->lines[$i]->localtax1_tx,
 							$this->lines[$i]->localtax2_tx,
@@ -1824,12 +1824,11 @@ class FactureFournisseur extends CommonInvoice
 				$cpt = count($this->lines);
 				for ($i = 0; $i < $cpt; $i++) {
 					if ($this->lines[$i]->fk_product > 0) {
-						$this->line = $this->lines[$i];
 						$mouvP = new MouvementStock($this->db);
 						$mouvP->origin = &$this;
 						$mouvP->setOrigin($this->element, $this->id);
 						// We increase stock for product
-						$up_ht_disc = $this->lines[$i]->pu_ht;
+						$up_ht_disc = $this->lines[$i]->subprice;
 						if (!empty($this->lines[$i]->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) {
 							$up_ht_disc = price2num($up_ht_disc * (100 - $this->lines[$i]->remise_percent) / 100, 'MU');
 						}
@@ -1841,7 +1840,6 @@ class FactureFournisseur extends CommonInvoice
 						if ($result < 0) {
 							$error++;
 						}
-						unset($this->line);
 					}
 				}
 			}
@@ -2174,61 +2172,61 @@ class FactureFournisseur extends CommonInvoice
 			}
 
 			// Insert line
-			$this->line = new SupplierInvoiceLine($this->db);
+			$supplierinvoiceline = new SupplierInvoiceLine($this->db);
 
-			$this->line->context = $this->context;
+			$supplierinvoiceline->context = $this->context;
 
-			$this->line->fk_facture_fourn = $this->id;
-			//$this->line->label=$label;	// deprecated
-			$this->line->desc = $desc;
-			$this->line->ref_supplier = $ref_supplier;
+			$supplierinvoiceline->fk_facture_fourn = $this->id;
+			//$supplierinvoiceline->label=$label;	// deprecated
+			$supplierinvoiceline->desc = $desc;
+			$supplierinvoiceline->ref_supplier = $ref_supplier;
 
-			$this->line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs($qty) : $qty); // For credit note, quantity is always positive and unit price negative
-			$this->line->subprice = ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ht) : $pu_ht); // For credit note, unit price always negative, always positive otherwise
+			$supplierinvoiceline->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs($qty) : $qty); // For credit note, quantity is always positive and unit price negative
+			$supplierinvoiceline->subprice = ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ht) : $pu_ht); // For credit note, unit price always negative, always positive otherwise
 
-			$this->line->vat_src_code = $vat_src_code;
-			$this->line->tva_tx = $txtva;
-			$this->line->localtax1_tx = ($total_localtax1 ? $localtaxes_type[1] : 0);
-			$this->line->localtax2_tx = ($total_localtax2 ? $localtaxes_type[3] : 0);
-			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
-			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
+			$supplierinvoiceline->vat_src_code = $vat_src_code;
+			$supplierinvoiceline->tva_tx = $txtva;
+			$supplierinvoiceline->localtax1_tx = ($total_localtax1 ? $localtaxes_type[1] : 0);
+			$supplierinvoiceline->localtax2_tx = ($total_localtax2 ? $localtaxes_type[3] : 0);
+			$supplierinvoiceline->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$supplierinvoiceline->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
-			$this->line->total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_ht) : $total_ht); // For credit note and if qty is negative, total is negative
-			$this->line->total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_tva) : $total_tva); // For credit note and if qty is negative, total is negative
-			$this->line->total_localtax1 = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_localtax1) : $total_localtax1); // For credit note and if qty is negative, total is negative
-			$this->line->total_localtax2 = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_localtax2) : $total_localtax2); // For credit note and if qty is negative, total is negative
-			$this->line->total_ttc = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_ttc) : $total_ttc); // For credit note and if qty is negative, total is negative
+			$supplierinvoiceline->total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_ht) : $total_ht); // For credit note and if qty is negative, total is negative
+			$supplierinvoiceline->total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_tva) : $total_tva); // For credit note and if qty is negative, total is negative
+			$supplierinvoiceline->total_localtax1 = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_localtax1) : $total_localtax1); // For credit note and if qty is negative, total is negative
+			$supplierinvoiceline->total_localtax2 = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_localtax2) : $total_localtax2); // For credit note and if qty is negative, total is negative
+			$supplierinvoiceline->total_ttc = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_ttc) : $total_ttc); // For credit note and if qty is negative, total is negative
 
-			$this->line->fk_product = $fk_product;
-			$this->line->product_type = $type;
-			$this->line->remise_percent = $remise_percent;
-			$this->line->date_start = $date_start;
-			$this->line->date_end = $date_end;
-			$this->line->fk_code_ventilation = $ventil;
-			$this->line->rang = $rang;
-			$this->line->info_bits = $info_bits;
-			$this->line->fk_remise_except = $fk_remise_except;
+			$supplierinvoiceline->fk_product = $fk_product;
+			$supplierinvoiceline->product_type = $type;
+			$supplierinvoiceline->remise_percent = $remise_percent;
+			$supplierinvoiceline->date_start = $date_start;
+			$supplierinvoiceline->date_end = $date_end;
+			$supplierinvoiceline->fk_code_ventilation = $ventil;
+			$supplierinvoiceline->rang = $rang;
+			$supplierinvoiceline->info_bits = $info_bits;
+			$supplierinvoiceline->fk_remise_except = $fk_remise_except;
 
-			$this->line->special_code = ((string) $special_code != '' ? $special_code : $this->special_code);
-			$this->line->fk_parent_line = $fk_parent_line;
-			$this->line->origin = $this->origin;
-			$this->line->origin_id = $origin_id;
-			$this->line->fk_unit = $fk_unit;
+			$supplierinvoiceline->special_code = ((string) $special_code != '' ? $special_code : $this->special_code);
+			$supplierinvoiceline->fk_parent_line = $fk_parent_line;
+			$supplierinvoiceline->origin = $this->origin;
+			$supplierinvoiceline->origin_id = $origin_id;
+			$supplierinvoiceline->fk_unit = $fk_unit;
 
 			// Multicurrency
-			$this->line->fk_multicurrency = $this->fk_multicurrency;
-			$this->line->multicurrency_code = $this->multicurrency_code;
-			$this->line->multicurrency_subprice	= ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ht_devise) : $pu_ht_devise); // For credit note, unit price always negative, always positive otherwise
+			$supplierinvoiceline->fk_multicurrency = $this->fk_multicurrency;
+			$supplierinvoiceline->multicurrency_code = $this->multicurrency_code;
+			$supplierinvoiceline->multicurrency_subprice	= ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ht_devise) : $pu_ht_devise); // For credit note, unit price always negative, always positive otherwise
 
-			$this->line->multicurrency_total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($multicurrency_total_ht) : $multicurrency_total_ht); // For credit note and if qty is negative, total is negative
-			$this->line->multicurrency_total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($multicurrency_total_tva) : $multicurrency_total_tva); // For credit note and if qty is negative, total is negative
-			$this->line->multicurrency_total_ttc = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($multicurrency_total_ttc) : $multicurrency_total_ttc); // For credit note and if qty is negative, total is negative
+			$supplierinvoiceline->multicurrency_total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($multicurrency_total_ht) : $multicurrency_total_ht); // For credit note and if qty is negative, total is negative
+			$supplierinvoiceline->multicurrency_total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($multicurrency_total_tva) : $multicurrency_total_tva); // For credit note and if qty is negative, total is negative
+			$supplierinvoiceline->multicurrency_total_ttc = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($multicurrency_total_ttc) : $multicurrency_total_ttc); // For credit note and if qty is negative, total is negative
 
 			if (is_array($array_options) && count($array_options) > 0) {
-				$this->line->array_options = $array_options;
+				$supplierinvoiceline->array_options = $array_options;
 			}
 
-			$result = $this->line->insert($notrigger);
+			$result = $supplierinvoiceline->insert($notrigger);
 			if ($result > 0) {
 				// Reorder if child line
 				if (!empty($fk_parent_line)) {
@@ -2244,15 +2242,15 @@ class FactureFournisseur extends CommonInvoice
 				$result = $this->update_price(1, 'auto', 0, $this->thirdparty); // The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
 				if ($result > 0) {
 					$this->db->commit();
-					return $this->line->id;
+					return $supplierinvoiceline->id;
 				} else {
 					$this->error = $this->db->error();
 					$this->db->rollback();
 					return -1;
 				}
 			} else {
-				$this->error = $this->line->error;
-				$this->errors = $this->line->errors;
+				$this->error = $supplierinvoiceline->error;
+				$this->errors = $supplierinvoiceline->errors;
 				$this->db->rollback();
 				return -2;
 			}

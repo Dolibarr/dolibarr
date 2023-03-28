@@ -116,7 +116,7 @@ class UserGroup extends CommonObject
 		'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>5),
 		'nom'=>array('type'=>'varchar(180)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Group name'),
-		'note' => array('type'=>'html', 'label'=>'Description', 'enabled'=>1, 'visible'=>1, 'position'=>20, 'notnull'=>-1,),
+		'note' => array('type'=>'html', 'label'=>'Description', 'enabled'=>1, 'visible'=>1, 'position'=>20, 'notnull'=>-1, 'searchall'=>1),
 		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>50, 'notnull'=>1,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'position'=>60, 'notnull'=>1,),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPDF', 'enabled'=>1, 'visible'=>0, 'position'=>100),

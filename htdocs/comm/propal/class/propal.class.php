@@ -871,6 +871,8 @@ class Propal extends CommonObject
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
+			// TODO Implement  if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES')) ?
+
 			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -3706,6 +3708,7 @@ class Propal extends CommonObject
 		global $conf, $langs, $user;
 
 		$datas = [];
+		$nofetch = !empty($params['nofetch']);
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			return ['optimize' => $langs->trans("Proposal")];
@@ -3718,8 +3721,24 @@ class Propal extends CommonObject
 			if (!empty($this->ref)) {
 				$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 			}
+			if (!$nofetch) {
+				$langs->load('companies');
+				if (empty($this->thirdparty)) {
+					$this->fetch_thirdparty();
+				}
+				$datas['customer'] = '<br><b>'.$langs->trans('Customer').':</b> '.$this->thirdparty->getNomUrl(1, '', 0, 1);
+			}
 			if (!empty($this->ref_client)) {
 				$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_client;
+			}
+			if (!$nofetch) {
+				$langs->load('project');
+				if (empty($this->project)) {
+					$res = $this->fetch_project();
+					if ($res > 0) {
+						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
+					}
+				}
 			}
 			if (!empty($this->total_ht)) {
 				$datas['amountht'] = '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
@@ -3765,6 +3784,7 @@ class Propal extends CommonObject
 			'id' => $this->id,
 			'objecttype' => $this->element,
 			'option' => $option,
+			'nofetch' => 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';

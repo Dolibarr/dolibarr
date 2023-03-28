@@ -1319,15 +1319,17 @@ class ActionComm extends CommonObject
 	 */
 	public function getActions($socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$resarray = array();
 
 		dol_syslog(get_class()."::getActions", LOG_DEBUG);
 
-		require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-		$hookmanager = new HookManager($this->db);
 		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($db);
+		}
 		$hookmanager->initHooks(array('agendadao'));
 
 		$sql = "SELECT a.id";
