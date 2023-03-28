@@ -11249,6 +11249,10 @@ function getElementProperties($element_type)
 		$module = 'banque';
 		$classfile = 'Account';
 		$classname = 'Account';
+	} elseif ($element_type == 'category') {
+		$classpath = 'categories/class';
+		$module = 'categorie';
+		$subelement = 'categorie';
 	} elseif ($element_type == 'stock') {
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
@@ -11272,6 +11276,10 @@ function getElementProperties($element_type)
 		$classpath = 'comm/propal/class';
 	} elseif ($element_type == 'supplier_proposal') {
 		$classpath = 'supplier_proposal/class';
+		$module = 'supplier_proposal';
+		$element = 'supplierproposal';
+		$classfile = 'supplier_proposal';
+		$subelement = 'supplierproposal';
 	} elseif ($element_type == 'shipping') {
 		$classpath = 'expedition/class';
 		$subelement = 'expedition';
