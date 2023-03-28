@@ -53,8 +53,8 @@ if ($action === "updatestatusprospect") {
 	$response = '';
 
 	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-	$sql .= "fk_stcomm=".$db->escape($idstatus);
-	$sql .= " WHERE rowid = ".$db->escape($idprospect);
+	$sql .= "fk_stcomm=".(int) $db->escape($idstatus);
+	$sql .= " WHERE rowid = ".(int) $db->escape($idprospect);
 
 	$resql = $db->query($sql);
 
