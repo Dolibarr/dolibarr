@@ -26,6 +26,7 @@ Permission56002=Sửa đổi vé
 Permission56003=Xóa vé
 Permission56004=Quản lý vé
 Permission56005=Xem vé của tất cả các bên thứ ba (không hiệu quả đối với người dùng bên ngoài, luôn bị giới hạn ở bên thứ ba mà họ phụ thuộc)
+Permission56006=Export tickets
 
 Tickets=Vé
 TicketDictType=Vé - Các loại
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Người cộng tác bên ngoài
 
 OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Gửi tin nhắn vé qua email
+
+ExportDataset_ticket_1=Vé
 
 # Status
 Read=Đọc

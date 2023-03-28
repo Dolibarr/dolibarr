@@ -98,7 +98,7 @@ class Asset extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'noteditable'=>'0', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'validate'=>'1', 'comment'=>"Reference of object"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'showoncombobox'=>'2', 'validate'=>'1',),
-		'fk_asset_model' => array('type'=>'integer:AssetModel:asset/class/assetmodel.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'AssetModel', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'validate'=>'1',),
+		'fk_asset_model' => array('type'=>'integer:AssetModel:asset/class/assetmodel.class.php:1:((status:=:1) and (entity:IN:__SHARED_ENTITIES__))', 'label'=>'AssetModel', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'validate'=>'1',),
 		'qty' => array('type'=>'real', 'label'=>'Qty', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>0, 'default'=>'1', 'isameasure'=>'1', 'css'=>'maxwidth75imp', 'validate'=>'1',),
 		'acquisition_type' => array('type'=>'smallint', 'label'=>'AssetAcquisitionType', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>1, 'arrayofkeyval'=>array('0'=>'AssetAcquisitionTypeNew', '1'=>'AssetAcquisitionTypeOccasion'), 'validate'=>'1',),
 		'asset_type' => array('type'=>'smallint', 'label'=>'AssetType', 'enabled'=>'1', 'position'=>70, 'notnull'=>1, 'visible'=>1, 'arrayofkeyval'=>array('0'=>'AssetTypeIntangible', '1'=>'AssetTypeTangible', '2'=>'AssetTypeInProgress', '3'=>'AssetTypeFinancial'), 'validate'=>'1',),
@@ -156,6 +156,11 @@ class Asset extends CommonObject
 	public $model_pdf;
 	public $status;
 	public $user_cloture_id;
+
+	/**
+	 * @var Asset object oldcopy
+	 */
+	public $oldcopy;
 
 	// /**
 	//  * @var string    Field with ID of parent key if this object has a parent

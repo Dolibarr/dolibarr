@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2012-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,6 +152,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1915);	// we use year 1915 to be sure to not have existing invoice for this year (usefull only if numbering is {0000@1}
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -165,8 +167,11 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 		$result=$localobject->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
 		$this->assertGreaterThanOrEqual(1, $result, 'Test for is_erasable, 1st invoice');						    // Can be deleted
+
 		$localobject2=new Facture($this->savdb);
 		$localobject2->initAsSpecimen();
+		$localobject2->fetch_thirdparty();
+
 		$localobject2->date=dol_mktime(12, 0, 0, 1, 1, 1916);	// we use following year for second invoice (there is no reset into mask)
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject2, 'last');
@@ -193,6 +198,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1910);	// we use year 1910 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -200,15 +207,21 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 		$result3=$localobject->validate($user, $result);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('1910-0001', $result, 'Test for {yyyy}-{0000@1} 1st invoice');				// counter must start to 1
+
 		$localobject2=new Facture($this->savdb);
 		$localobject2->initAsSpecimen();
+		$localobject2->fetch_thirdparty();
+
 		$localobject2->date=dol_mktime(12, 0, 0, 1, 1, 1910);	// we use same year for second invoice (and there is a reset required)
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject2);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('1910-0002', $result, 'Test for {yyyy}-{0000@1} 2nd invoice, same day');	// counter must be now 2
+
 		$localobject3=new Facture($this->savdb);
 		$localobject3->initAsSpecimen();
+		$localobject3->fetch_thirdparty();
+
 		$localobject3->date=dol_mktime(12, 0, 0, 1, 1, 1911);	// we use next year for third invoice (and there is a reset required)
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject3);
@@ -218,8 +231,11 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 		// Same but we add month after year
 		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000@1}';
 		$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}{mm}-{0000@1}';
+
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1920);	// we use year 1920 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -230,8 +246,11 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 		$result=$localobject->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
 		$this->assertGreaterThanOrEqual(1, $result);						// Can be deleted
+
 		$localobject2=new Facture($this->savdb);
 		$localobject2->initAsSpecimen();
+		$localobject2->fetch_thirdparty();
+
 		$localobject2->date=dol_mktime(12, 0, 0, 1, 1, 1921);	// we use following year for second invoice (and there is a reset required)
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject2);
@@ -251,6 +270,7 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 		$conf->global->FACTURE_MERCURE_MASK_INVOICE='{mm}{yy}-{0000@1}';
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1925);	// we use year 1925 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -261,8 +281,10 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 		$result=$localobject->is_erasable();					// This call get getNextNumRef with param 'last'
 		print __METHOD__." is_erasable=".$result."\n";
 		$this->assertGreaterThanOrEqual(1, $result);						// Can be deleted
+
 		$localobject2=new Facture($this->savdb);
 		$localobject2->initAsSpecimen();
+		$localobject2->fetch_thirdparty();
 		$localobject2->date=dol_mktime(12, 0, 0, 1, 1, 1925);	// we use same year 1925 for second invoice (and there is a reset required)
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject2);
@@ -276,8 +298,10 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 		$result=$localobject->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
 		$this->assertLessThanOrEqual(0, $result);						// Case 1 can not be deleted (because there is an invoice 2)
+
 		$localobject3=new Facture($this->savdb);
 		$localobject3->initAsSpecimen();
+		$localobject3->fetch_thirdparty();
 		$localobject3->date=dol_mktime(12, 0, 0, 1, 1, 1926);	// we use following year for third invoice (and there is a reset required)
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject3);
@@ -295,6 +319,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1930);	// we use year 1930 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject, 'last');
@@ -311,6 +337,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1930);	// we use same year but fiscal month after
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject, 'last');
@@ -324,6 +352,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1931);	// we use same fiscal year but different year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -334,6 +364,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1931);	// we use different fiscal year but same year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -348,6 +380,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1940);	// we use year 1940 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -358,6 +392,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1940);	// we use same year but fiscal month after
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -368,6 +404,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1941);	// we use same fiscal year but different year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -378,6 +416,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1941);	// we use different discal year but same year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -392,6 +432,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1950);	// we use year 1950 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -402,6 +444,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1950);	// we use same year but fiscal month after
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -412,6 +456,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1951);	// we use same fiscal year but different year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -422,6 +468,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1951);	// we use different discal year but same year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -436,6 +484,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1960);	// we use year 1960 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -446,6 +496,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1960);	// we use same year but fiscal month after
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -456,6 +508,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1961);	// we use same fiscal year but different year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -466,6 +520,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1961);	// we use different discal year but same year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -480,6 +536,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1970);	// we use year 1970 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -490,6 +548,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1970);	// we use same year but fiscal month after
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -500,6 +560,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1971);	// we use same fiscal year but different year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -510,6 +572,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1971);	// we use different fiscal year but same year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -523,6 +587,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1980);	// we use year 1980 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -533,6 +599,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1980);	// we use year 1980 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -543,6 +611,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 2, 1, 1980);	// we use year 1980 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -553,6 +623,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1981);	// we use year 1981 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
@@ -572,6 +644,8 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1982);	// we use year 1982 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($tmpthirdparty, $localobject);

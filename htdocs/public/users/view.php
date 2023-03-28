@@ -205,7 +205,7 @@ $arrayofjs = array();
 $arrayofcss = array();
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
-llxHeader($head, $langs->trans("UserProfile").' '.$object->getFullName($langs), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1, 1);
+llxHeader($head, $object->getFullName($langs).' - '.$langs->trans("PublicVirtualCard"), '', '', 0, 0, '', '', '', 'onlinepaymentbody'.(GETPOST('mode')=='preview' ? ' scalepreview cursorpointer virtualcardpreview' : ''), $replacemainarea, 1, 1);
 
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
@@ -451,8 +451,6 @@ print '</div>'."\n";
 print '<br>';
 
 
-//htmlPrintOnlinePaymentFooter($mysoc, $langs);
-
 print '<div class="backgreypublicpayment">';
 print '<div class="center">';
 print '<a href="'.$urlforqrcode.'">';
@@ -464,6 +462,19 @@ print '</div>';
 //print '<div>';
 //print '</div>';
 print '</div>';
+
+$fullexternaleurltovirtualcard = $object->getOnlineVirtualCardUrl('', 'external');
+$fullinternalurltovirtualcard = $object->getOnlineVirtualCardUrl('', 'internal');
+
+print '<script>';
+print 'jQuery(document).ready(function() {
+ 	jQuery(".virtualcardpreview").click(function(event) {
+ 		event.preventDefault();
+		console.log("We click on the card");
+		window.open("'.$fullexternaleurltovirtualcard.'");
+ 	});
+});';
+print '</script>';
 
 llxFooter('', 'public');
 

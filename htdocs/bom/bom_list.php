@@ -121,9 +121,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->bom->read;
-$permissiontoadd = $user->rights->bom->write;
-$permissiontodelete = $user->rights->bom->delete;
+$permissiontoread = $user->hasRight('bom', 'read');
+$permissiontoadd = $user->hasRight('bom', 'write');
+$permissiontodelete = $user->hasRight('bom', 'delete');
 
 // Security check
 if ($user->socid > 0) {
@@ -175,8 +175,8 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'BOM';
 	$objectlabel = 'BillOfMaterials';
-	$permissiontoread = $user->rights->bom->read;
-	$permissiontodelete = $user->rights->bom->delete;
+	$permissiontoread = $user->hasRight('bom', 'read');
+	$permissiontodelete = $user->hasRight('bom', 'delete');
 	$uploaddir = $conf->bom->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -306,7 +306,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
@@ -685,7 +685,7 @@ while ($i < $imaxinloop) {
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="'.$savnbfield.'">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
 		// Output kanban
 		print $object->getKanbanView('');

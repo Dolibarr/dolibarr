@@ -37,7 +37,6 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 
@@ -1177,7 +1176,9 @@ class AccountancyExport
 				print $line->code_journal . $separator;
 
 				// FEC:JournalLib
-				print dol_string_unaccent($langs->transnoentities($line->journal_label)) . $separator;
+				$labeljournal = dol_string_unaccent($langs->transnoentities($line->journal_label));
+				$labeljournal = dol_string_nospecial($labeljournal, ' ');
+				print $labeljournal . $separator;
 
 				// FEC:EcritureNum
 				print $line->piece_num . $separator;
@@ -1308,7 +1309,9 @@ class AccountancyExport
 				print $line->code_journal . $separator;
 
 				// FEC:JournalLib
-				print dol_string_unaccent($langs->transnoentities($line->journal_label)) . $separator;
+				$labeljournal = dol_string_unaccent($langs->transnoentities($line->journal_label));
+				$labeljournal = dol_string_nospecial($labeljournal, ' ');
+				print $labeljournal . $separator;
 
 				// FEC:EcritureNum
 				print $line->piece_num . $separator;
@@ -2130,14 +2133,16 @@ class AccountancyExport
 			//Calcul de la longueur des numéros de comptes
 			$taille_numero = strlen(length_accountg($line->numero_compte));
 
-			//Création du numéro de client générique
+			//Création du numéro de client et fournisseur générique
 			$numero_cpt_client = '411';
+			$numero_cpt_fourn = '401';
 			for ($i = 1; $i <= ($taille_numero - 3); $i++) {
 				$numero_cpt_client .= '0';
+				$numero_cpt_fourn .= '0';
 			}
 
-			//Création des comptes auxiliaire des clients
-			if (length_accountg($line->numero_compte) == $numero_cpt_client) {
+			//Création des comptes auxiliaire des clients et fournisseur
+			if (length_accountg($line->numero_compte) == $numero_cpt_client || length_accountg($line->numero_compte) == $numero_cpt_fourn) {
 				$tab[] = rtrim(length_accounta($line->subledger_account), "0");
 			} else {
 				$tab[] = length_accountg($line->numero_compte);

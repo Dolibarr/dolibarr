@@ -219,6 +219,12 @@ if ($resql) {
 
 	// Filters lines
 	print '<tr class="liste_titre_filter">';
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch">';
+		$searchpicto = $form->showFilterAndCheckAddButtons(0);
+		print $searchpicto;
+		print '</td>';
+	}
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
 	print '</td>';
@@ -252,13 +258,18 @@ if ($resql) {
 	);
 	print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'search_status maxwidth100 onrightofpage');
 	print '</td>';
-	print '<td class="liste_titre maxwidthsearch">';
-	$searchpicto = $form->showFilterAndCheckAddButtons(0);
-	print $searchpicto;
-	print '</td>';
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch">';
+		$searchpicto = $form->showFilterAndCheckAddButtons(0);
+		print $searchpicto;
+		print '</td>';
+	}
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre('');
+	}
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", $param, "", $sortfield, $sortorder);
 	if (!empty($conf->global->DONATION_USE_THIRDPARTIES)) {
 		print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "d.fk_soc", "", $param, "", $sortfield, $sortorder);
@@ -273,10 +284,13 @@ if ($resql) {
 	}
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "d.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre('');
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre('');
+	}
 	print "</tr>\n";
 
-	while ($i < min($num, $limit)) {
+	$imaxinloop = ($limit ? min($num, $limit) : $num);
+	while ($i < $imaxinloop) {
 		$objp = $db->fetch_object($resql);
 		$donationstatic->setVarsFromFetchObj($objp);
 		$company = new Societe($db);
@@ -285,7 +299,7 @@ if ($resql) {
 		if ($mode == 'kanban') {
 			if ($i == 0) {
 				print '<tr><td colspan="12">';
-				print '<div class="box-flex-container">';
+				print '<div class="box-flex-container kanban">';
 			}
 			// Output Kanban
 			$donationstatic->amount = $objp->amount;
@@ -301,12 +315,15 @@ if ($resql) {
 			}
 
 			print $donationstatic->getKanbanView('');
-			if ($i == (min($num, $limit) - 1)) {
+			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';
 			}
 		} else {
 			print '<tr class="oddeven">';
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td></td>';
+			}
 			$donationstatic->id = $objp->rowid;
 			$donationstatic->ref = $objp->rowid;
 			$donationstatic->lastname = $objp->lastname;
@@ -339,7 +356,9 @@ if ($resql) {
 			}
 			print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 			print '<td class="right">'.$donationstatic->LibStatut($objp->status, 5).'</td>';
-			print '<td></td>';
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td></td>';
+			}
 			print "</tr>";
 		}
 		$i++;

@@ -208,7 +208,7 @@ $now = dol_now();
 
 //$help_url="EN:Module_Job|FR:Module_Job_FR|ES:Módulo_Job";
 $help_url = '';
-$title = $langs->trans("JobsPosition");
+$title = $langs->trans("JobsProfiles");
 $morejs = array();
 $morecss = array();
 
@@ -226,7 +226,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
@@ -606,7 +606,7 @@ while ($i < $imaxinloop) {
 
 		if ($i == 0) {
 			print '<tr><td colspan="'.$savnbfield.'">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
 		print $object->getKanbanView('');

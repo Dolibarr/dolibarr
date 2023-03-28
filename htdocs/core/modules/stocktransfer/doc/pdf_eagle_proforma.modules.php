@@ -209,7 +209,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
 		}
 
-		$nblines = count($object->lines);
+		$nblines = is_array($object->lines) ? count($object->lines) : 0;
 
 		$hidetop = 0;
 		if (!empty($conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE)) {
@@ -694,9 +694,10 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 					$localtax1_type = $object->lines[$i]->localtax1_type;
 					$localtax2_type = $object->lines[$i]->localtax2_type;
 
-					if ($object->remise_percent) $tvaligne -= ($tvaligne * $object->remise_percent) / 100;
+					// TODO remise_percent is an obsolete field for object parent
+					/*if ($object->remise_percent) $tvaligne -= ($tvaligne * $object->remise_percent) / 100;
 					if ($object->remise_percent) $localtax1ligne -= ($localtax1ligne * $object->remise_percent) / 100;
-					if ($object->remise_percent) $localtax2ligne -= ($localtax2ligne * $object->remise_percent) / 100;
+					if ($object->remise_percent) $localtax2ligne -= ($localtax2ligne * $object->remise_percent) / 100;*/
 
 					$vatrate = (string) $object->lines[$i]->tva_tx;
 
@@ -796,8 +797,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK))
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -1551,7 +1551,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 
 		// Adapt dynamically the width of subprice, if text is too long.
 		$tmpwidth = 0;
-		$nblines = count($object->lines);
+		$nblines = is_array($object->lines) ? count($object->lines) : 0;
 		for ($i = 0; $i < $nblines; $i++) {
 			$tmpwidth2 = dol_strlen(dol_string_nohtmltag(pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails)));
 			$tmpwidth = max($tmpwidth, $tmpwidth2);

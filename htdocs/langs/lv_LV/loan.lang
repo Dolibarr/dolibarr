@@ -28,7 +28,7 @@ CantUseScheduleWithLoanStartedToPaid = Nevar ģenerēt laika grafiku aizdevumam 
 CantModifyInterestIfScheduleIsUsed = Jūs nevarat mainīt interesi, ja izmantojat grafiku
 # Admin
 ConfigLoan=Configuration of the module loan
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Konts (no konta plāna), kas pēc noklusējuma jāizmanto kapitālam (aizdevuma modulis)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Konts (no konta plāna), kas pēc noklusējuma jāizmanto procentiem (aizdevuma modulis)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Konts (no konta plāna), kas pēc noklusējuma jāizmanto apdrošināšanai (aizdevuma modulis)
 CreateCalcSchedule=Rediģēt finansiālās saistības

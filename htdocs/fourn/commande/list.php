@@ -190,15 +190,17 @@ $checkedtypetiers = 0;
 
 // Definition of array of fields for columns
 $arrayfields = array(
-	's.name_alias'=>array('label'=>"AliasNameShort", 'position'=>47, 'checked'=>0),
-	's.town'=>array('label'=>"Town", 'enabled'=>1, 'position'=>47, 'checked'=>1),
-	's.zip'=>array('label'=>"Zip", 'enabled'=>1, 'position'=>47, 'checked'=>1),
-	'state.nom'=>array('label'=>"StateShort", 'enabled'=>1, 'position'=>48),
-	'country.code_iso'=>array('label'=>"Country", 'enabled'=>1, 'position'=>49),
-	'typent.code'=>array('label'=>"ThirdPartyType", 'enabled'=>$checkedtypetiers, 'position'=>50),
-	'u.login'=>array('label'=>"AuthorRequest", 'enabled'=>1, 'position'=>51),
-	'cf.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position'=>100),
-	'cf.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position'=>110),
+	'u.login'=>array('label'=>"AuthorRequest", 'enabled'=>1, 'position'=>41),
+	's.name_alias'=>array('label'=>"AliasNameShort", 'position'=>51, 'checked'=>0),
+	's.town'=>array('label'=>"Town", 'enabled'=>1, 'position'=>55, 'checked'=>1),
+	's.zip'=>array('label'=>"Zip", 'enabled'=>1, 'position'=>56, 'checked'=>1),
+	'state.nom'=>array('label'=>"StateShort", 'enabled'=>1, 'position'=>57),
+	'country.code_iso'=>array('label'=>"Country", 'enabled'=>1, 'position'=>58),
+	'typent.code'=>array('label'=>"ThirdPartyType", 'enabled'=>$checkedtypetiers, 'position'=>59),
+	'cf.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax1_assuj == "1"), 'position'=>140),
+	'cf.total_localtax2'=>array('label'=>$langs->transcountry("AmountLT2", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax2_assuj == "1"), 'position'=>145),
+	'cf.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position'=>750),
+	'cf.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position'=>760),
 );
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
@@ -766,6 +768,7 @@ $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.town, s.zip,
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as date_livraison,cf.date_valid, cf.date_approve,";
+$sql .= ' cf.localtax1 as total_localtax1, cf.localtax2 as total_localtax2,';
 $sql .= ' cf.fk_multicurrency, cf.multicurrency_code, cf.multicurrency_tx, cf.multicurrency_total_ht, cf.multicurrency_total_tva, cf.multicurrency_total_ttc,';
 $sql .= ' cf.date_creation as date_creation, cf.tms as date_update,';
 $sql .= ' cf.note_public, cf.note_private,';
@@ -1674,7 +1677,7 @@ if ($resql) {
 		if ($mode == 'kanban') {
 			if ($i == 0) {
 				print '<tr><td colspan="12">';
-				print '<div class="box-flex-container">';
+				print '<div class="box-flex-container kanban">';
 			}
 
 			$thirdpartytmp->id = $obj->socid;
@@ -1686,7 +1689,7 @@ if ($resql) {
 			$objectstatic->socid = $thirdpartytmp->getNomUrl('supplier', 0, 0, -1);
 			// Output Kanban
 			print $objectstatic->getKanbanView('');
-			if ($i == (min($num, $limit) - 1)) {
+			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';
 			}
@@ -1774,7 +1777,7 @@ if ($resql) {
 					$totalarray['nbfield']++;
 				}
 			}
-			//alias
+			// Alias
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
 				print '<td class="tdoverflowmax150">';
 				print $obj->alias;

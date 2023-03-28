@@ -58,7 +58,7 @@ $hookmanager->initHooks(array('paymentcard', 'globalcard'));
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-$result = restrictedArea($user, $object->element, $object->id, 'paiement');
+$result = restrictedArea($user, $object->element, $object->id, 'paiement');	// This also test permission on read invoice
 
 // Security check
 if ($user->socid) {
@@ -244,7 +244,7 @@ $thirdpartystatic = new Societe($db);
 
 $result = $object->fetch($id, $ref);
 if ($result <= 0) {
-	dol_print_error($db, 'Payement '.$id.' not found in database');
+	dol_print_error($db, 'Payment '.$id.' not found in database');
 	exit;
 }
 

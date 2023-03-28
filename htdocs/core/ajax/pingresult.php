@@ -50,14 +50,15 @@ $hash_algo = GETPOST('hash_algo', 'alpha');
 
 
 // Security check
-// None.
+// None. Beeing connected is enough.
 
-$now = dol_now();
 
 
 /*
  * View
  */
+
+$now = dol_now();
 
 top_httphead();
 

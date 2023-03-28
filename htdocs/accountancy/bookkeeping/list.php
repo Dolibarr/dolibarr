@@ -505,7 +505,7 @@ if (empty($reshook)) {
 	$objectlabel = 'Bookkeeping';
 	$permissiontoread = $user->hasRight('societe', 'lire');
 	$permissiontodelete = $user->hasRight('societe', 'supprimer');
-	$permissiontoadd = $user->rights->societe->creer;
+	$permissiontoadd = $user->hasRight('societe', 'creer');
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -719,7 +719,7 @@ if (count($sqlwhere) > 0) {
 // Export into a file with format defined into setup (FEC, CSV, ...)
 // Must be after definition of $sql
 if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements', 'export')) {
-	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). It consumes too much memory on large export.
+	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). It currently consumes too much memory on large export.
 	// Replace this with the query($sql) and loop on each line to export them.
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', (empty($conf->global->ACCOUNTING_REEXPORT) ? 0 : 1));
 
@@ -729,6 +729,7 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 		// Export files then exit
 		$accountancyexport = new AccountancyExport($db);
 
+		$formatexport = GETPOST('formatexport', 'int');
 		$notexportlettering = GETPOST('notexportlettering', 'alpha');
 
 		if (!empty($notexportlettering)) {
@@ -745,7 +746,7 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 		$withAttachment = !empty(trim(GETPOST('notifiedexportfull', 'alphanohtml'))) ? 1 : 0;
 
 		// Output data on screen or download
-		$result = $accountancyexport->export($object->lines, $formatexportset, $withAttachment);
+		$result = $accountancyexport->export($object->lines, $formatexport, $withAttachment);
 
 		$error = 0;
 		if ($result < 0) {
@@ -753,30 +754,33 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 		} else {
 			if (!empty($notifiedexportdate) || !empty($notifiedvalidationdate)) {
 				if (is_array($object->lines)) {
+					dol_syslog("/accountancy/bookkeeping/list.php Function export_file Specify movements as exported", LOG_DEBUG);
+
 					// Specify as export : update field date_export or date_validated
 					$db->begin();
 
+					// TODO Merge update for each line into one gloacl using rowid IN (list of movement ids)
 					foreach ($object->lines as $movement) {
 						$now = dol_now();
 
-						$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
-						$sql .= " SET";
-						if (!empty($notifiedexportdate) && !empty($notifiedvalidationdate)) {
-							$sql .= " date_export = '".$db->idate($now)."'";
-							$sql .= ", date_validated = '".$db->idate($now)."'";
-						} elseif (!empty($notifiedexportdate)) {
-							$sql .= " date_export = '".$db->idate($now)."'";
-						} elseif (!empty($notifiedvalidationdate)) {
-							$sql .= " date_validated = '".$db->idate($now)."'";
+						$setfields = '';
+						if (!empty($notifiedexportdate) && empty($movement->date_export)) {
+							$setfields .= ($setfields ? "," : "")." date_export = '".$db->idate($now)."'";
 						}
-						$sql .= " WHERE rowid = ".((int) $movement->id);
+						if (!empty($notifiedvalidationdate) && empty($movement->date_validation)) {
+							$setfields .= ($setfields ? "," : "")." date_validated = '".$db->idate($now)."'";
+						}
 
-						dol_syslog("/accountancy/bookkeeping/list.php Function export_file Specify movements as exported", LOG_DEBUG);
+						if ($setfields) {
+							$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
+							$sql .= " SET ".$setfields;
+							$sql .= " WHERE rowid = ".((int) $movement->id);
 
-						$result = $db->query($sql);
-						if (!$result) {
-							$error++;
-							break;
+							$result = $db->query($sql);
+							if (!$result) {
+								$error++;
+								break;
+							}
 						}
 					}
 
@@ -856,6 +860,17 @@ $formconfirm = '';
 if ($action == 'export_file') {
 	$form_question = array();
 
+	$form_question['formatexport'] = array(
+		'name' => 'formatexport',
+		'type' => 'select',
+		'label' => $langs->trans('Modelcsv'),		// TODO  Use Selectmodelcsv and show a select combo
+		'values' => $listofformat,
+		'default' => $formatexportset,
+		'morecss' => 'minwidth200 maxwidth200'
+	);
+
+	$form_question['separator0'] = array('name'=>'separator0', 'type'=>'separator');
+
 	if (getDolGlobalInt("ACCOUNTING_ENABLE_LETTERING")) {
 		// If 1, we check by default.
 		$checked = !empty($conf->global->ACCOUNTING_DEFAULT_NOT_EXPORT_LETTERING) ? 'true' : 'false';
@@ -866,7 +881,7 @@ if ($action == 'export_file') {
 			'value' => $checked,
 		);
 
-		$form_question['separator'] = array('name'=>'separator', 'type'=>'separator');
+		$form_question['separator1'] = array('name'=>'separator1', 'type'=>'separator');
 	}
 
 	// If 1 or not set, we check by default.
@@ -903,7 +918,7 @@ if ($action == 'export_file') {
 		);
 	}
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 400, 600);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").'...', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 420, 600);
 }
 
 //if ($action == 'delbookkeepingyear') {
@@ -1002,17 +1017,17 @@ $newcardbutton = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
 if (empty($reshook)) {
 	// Button re-export
 	if (!empty($conf->global->ACCOUNTING_REEXPORT)) {
-		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=0'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("ClickToHideAlreadyExportedLines"), 'switch_off', 'class="small size15x valignmiddle"');
+		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=0'.($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder).'">'.img_picto($langs->trans("ClickToHideAlreadyExportedLines"), 'switch_off', 'class="small size15x valignmiddle"');
 		$newcardbutton .= '<span class="valignmiddle marginrightonly paddingleft">'.$langs->trans("ClickToHideAlreadyExportedLines").'</span>';
 		$newcardbutton .= '</a>';
 	} else {
-		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("DocsAlreadyExportedAreExcluded"), 'switch_on', 'class="warning size15x valignmiddle"').'';
+		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder).'">'.img_picto($langs->trans("DocsAlreadyExportedAreExcluded"), 'switch_on', 'class="warning size15x valignmiddle"');
 		$newcardbutton .= '<span class="valignmiddle marginrightonly paddingleft">'.$langs->trans("DocsAlreadyExportedAreExcluded").'</span>';
 		$newcardbutton .= '</a>';
 	}
 
 	if ($user->hasRight('accounting', 'mouvements', 'export')) {
-		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file&token='.newToken().($param ? '&'.$param : ''), $user->hasRight('accounting', 'mouvements', 'export'));
+		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file&token='.newToken().($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder), $user->hasRight('accounting', 'mouvements', 'export'));
 	}
 
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
@@ -1343,6 +1358,9 @@ while ($i < min($num, $limit)) {
 			print '<input id="cb'.$line->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$line->id.'"'.($selected ? ' checked="checked"' : '').' />';
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	// Piece number
@@ -1362,7 +1380,7 @@ while ($i < min($num, $limit)) {
 		$accountingjournal = new AccountingJournal($db);
 		$result = $accountingjournal->fetch('', $line->code_journal);
 		$journaltoshow = (($result > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
-		print '<td class="center">'.$journaltoshow.'</td>';
+		print '<td class="center tdoverflowmax150">'.$journaltoshow.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1510,7 +1528,7 @@ while ($i < min($num, $limit)) {
 
 	// Creation operation date
 	if (!empty($arrayfields['t.date_creation']['checked'])) {
-		print '<td class="center">'.dol_print_date($line->date_creation, 'dayhour').'</td>';
+		print '<td class="center">'.dol_print_date($line->date_creation, 'dayhour', 'tzuserrel').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1518,7 +1536,7 @@ while ($i < min($num, $limit)) {
 
 	// Modification operation date
 	if (!empty($arrayfields['t.tms']['checked'])) {
-		print '<td class="center">'.dol_print_date($line->date_modification, 'dayhour').'</td>';
+		print '<td class="center">'.dol_print_date($line->date_modification, 'dayhour', 'tzuserrel').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1526,7 +1544,7 @@ while ($i < min($num, $limit)) {
 
 	// Exported operation date
 	if (!empty($arrayfields['t.date_export']['checked'])) {
-		print '<td class="center nowraponall">'.dol_print_date($line->date_export, 'dayhour').'</td>';
+		print '<td class="center nowraponall">'.dol_print_date($line->date_export, 'dayhour', 'tzuserrel').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1534,7 +1552,7 @@ while ($i < min($num, $limit)) {
 
 	// Validated operation date
 	if (!empty($arrayfields['t.date_validated']['checked'])) {
-		print '<td class="center nowraponall">'.dol_print_date($line->date_validation, 'dayhour').'</td>';
+		print '<td class="center nowraponall">'.dol_print_date($line->date_validation, 'dayhour', 'tzuserrel').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1558,11 +1576,11 @@ while ($i < min($num, $limit)) {
 			print '<input id="cb'.$line->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$line->id.'"'.($selected ? ' checked="checked"' : '').' />';
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
 
 	print "</tr>\n";
 

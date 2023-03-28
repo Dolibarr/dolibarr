@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=حدد نوع إرجاع السطر
 ACCOUNTING_EXPORT_PREFIX_SPEC=تحديد بادئة لاسم الملف
 ThisService=هذه الخدمة
 ThisProduct=هذا المنتج
-DefaultForService=افتراضي للخدمة
-DefaultForProduct=افتراضي للمنتج
+DefaultForService=Default for services
+DefaultForProduct=Default for products
 ProductForThisThirdparty=منتج لهذا الطرف الثالث
 ServiceForThisThirdparty=خدمة لهذا الطرف الثالث
 CantSuggest=لا أستطيع أن أقترح
@@ -101,7 +101,8 @@ ShowAccountingAccount=عرض حساب المحاسبة
 ShowAccountingJournal=عرض دفتر يومية
 ShowAccountingAccountInLedger=عرض حساب المحاسبة في دفتر الأستاذ
 ShowAccountingAccountInJournals=عرض حساب المحاسبة في دفاتر اليومية
-AccountAccountingSuggest=حساب المحاسبة المقترح
+DataUsedToSuggestAccount=Data used to suggest account
+AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=الحسابات الافتراضية
 MenuBankAccounts=الحسابات المصرفية
 MenuVatAccounts=حسابات ضريبة القيمة المضافة
@@ -126,6 +127,7 @@ WriteBookKeeping=تسجيل المعاملات في المحاسبة
 Bookkeeping=دفتر حسابات
 BookkeepingSubAccount=حساب استاذ فرعي
 AccountBalance=رصيد الحساب
+AccountBalanceSubAccount=Sub-accounts balance
 ObjectsRef=مرجع الكائن المصدر
 CAHTF=Total purchase vendor before tax
 TotalExpenseReport=تقرير المصاريف الإجمالية
@@ -165,9 +167,9 @@ ACCOUNTANCY_COMBO_FOR_AUX=تمكين قائمة التحرير والسرد لل
 ACCOUNTING_DATE_START_BINDING=تحديد موعد لبدء الربط والتحويل في المحاسبة. بعد هذا التاريخ ، لن يتم تحويل المعاملات إلى المحاسبة.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=في تحويل المحاسبة ، ما هي الفترة المحددة افتراضيا
 
-ACCOUNTING_SELL_JOURNAL=المبيعات في اليومية العامة (المبيعات و المرتجعات)
-ACCOUNTING_PURCHASE_JOURNAL=المشتريات في اليومية العامة (المشتريات و المرتجعات)
-ACCOUNTING_BANK_JOURNAL=النقدي اليومية ( المقبوضات و المدفوعات)
+ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
+ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
+ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
 ACCOUNTING_EXPENSEREPORT_JOURNAL=دفتر تقرير المصروف اليومي
 ACCOUNTING_MISCELLANEOUS_JOURNAL=اليومية العامة
 ACCOUNTING_HAS_NEW_JOURNAL=له دفتر يوميات جديد
@@ -189,6 +191,7 @@ ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be us
 UseAuxiliaryAccountOnCustomerDeposit=تخزين حساب العميل كحساب فردي في دفتر الأستاذ الفرعي لخطوط الدفعات المقدمة (إذا تم تعطيله ، فسيظل الحساب الفردي لبنود الدَفعة المقدمة فارغًا)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
 UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
@@ -218,6 +221,7 @@ JournalLabel=اسم دفتر اليومية
 NumPiece=رقم القطعة
 TransactionNumShort=رقم. العملية
 AccountingCategory=Custom group of accounts
+AccountingCategories=Custom groups of accounts
 GroupByAccountAccounting=تجميع حسب حساب دفتر الأستاذ العام
 GroupBySubAccountAccounting=تجميع حسب حساب دفتر الأستاذ الفرعي
 AccountingAccountGroupsDesc=يمكنك هنا تحديد بعض مجموعات الحساب. سيتم استخدامها لتقارير المحاسبة الشخصية.
@@ -234,6 +238,7 @@ ConfirmDeleteMvt=سيؤدي هذا إلى حذف جميع سطور المحاس�
 ConfirmDeleteMvtPartial=سيؤدي هذا إلى حذف المعاملة من المحاسبة (سيتم حذف جميع الأسطر المتعلقة بنفس المعاملة)
 FinanceJournal=دفتر المالية اليومي
 ExpenseReportsJournal=دفتر تقارير المصاريف
+InventoryJournal=المخزون في اليومية
 DescFinanceJournal=دفتر المالية اليومي المتضمن لجميع الدفعات عن طريق الحساب المصرفي
 DescJournalOnlyBindedVisible=هذه طريقة عرض للسجل مرتبطة بالحساب ويمكن تسجيلها في دفتر اليوميات و الأستاذ.
 VATAccountNotDefined=حساب ضريبة القيمة المضافة غير محدد
@@ -265,6 +270,7 @@ ShowSubtotalByGroup=عرض المجموع الفرعي حسب المستوى
 
 Pcgtype=مجموعة الحساب
 PcgtypeDesc=تُستخدم مجموعة الحسابات كمعايير "تصفية" و "تجميع" محددة مسبقًا لبعض التقارير المحاسبية. على سبيل المثال ، يتم استخدام "الدخل" أو "المصاريف" كمجموعات لحسابات المنتجات لإنشاء تقرير المصاريف / الدخل.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 
 Reconcilable=قابل للتسوية
 
@@ -294,6 +300,7 @@ DescValidateMovements=سيتم حظر أي تعديل أو حذف للكتابة
 
 ValidateHistory=ربط تلقائي
 AutomaticBindingDone=تم إجراء عمليات ربط تلقائية (%s) - الربط التلقائي غير ممكن لبعض السجلات (%s)
+DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=الحركة غير متوازنة بشكل صحيح. الخصم = %s والائتمان = %s
@@ -337,11 +344,13 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=تعطيل الربط والتحويل في 
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=تعطيل الربط والتحويل في المحاسبة على المشتريات (لن يتم أخذ فواتير البائعين في الاعتبار في المحاسبة)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=تعطيل الربط والتحويل في المحاسبة على تقارير المصروفات (لن يتم أخذ تقارير المصروفات في الاعتبار في المحاسبة)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
 NotifiedExportDate=ضع علامة على الخطوط المصدرة كـ <span class="warning"> (لتعديل سطر ، ستحتاج إلى حذف المعاملة بالكامل وإعادة تحويلها إلى المحاسبة) </span>
 NotifiedValidationDate=تحقق من صحة الإدخالات التي تم تصديرها وقفلها <span class="warning"> (نفس التأثير من ميزة "%s" ، ولن يكون تعديل الأسطر وحذفها بالتأكيد ممكنًا) </span>
+NotifiedExportFull=Export documents ?
 DateValidationAndLock=التحقق من صحة التاريخ والقفل
 ConfirmExportFile=تأكيد إنشاء ملف محاسبي تصدير؟
 ExportDraftJournal=تصدير مسودة دفتر اليومية
@@ -398,7 +407,7 @@ SaleLocal=بيع محلي
 SaleExport=بيع تصدير
 SaleEEC=بيع في الاتحاد الاوروبي
 SaleEECWithVAT=البيع في EEC مع ضريبة القيمة المضافة ليست فارغة ، لذلك نفترض أن هذا ليس بيعًا داخل الاتحاد والحساب المقترح هو حساب المنتج القياسي.
-SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fallback on the product account for standard sales. You can fix the VAT ID of thirdparty or the product account if needed.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=ممنوع: تم التحقق من صحة المعاملة و / أو تصديرها.
 ForbiddenTransactionAlreadyValidated=ممنوع: تم التحقق من صحة المعاملة.
 ## Dictionary
@@ -442,6 +451,7 @@ AccountancyErrorMismatchLetterCode=عدم تطابق في التوفيق بين 
 AccountancyErrorMismatchBalanceAmount=الرصيد (%s) لا يساوي 0
 AccountancyErrorLetteringBookkeeping=حدثت أخطاء بخصوص المعاملات: %s
 ErrorAccountNumberAlreadyExists=رقم المحاسبة %s موجود بالفعل
+ErrorArchiveAddFile=Can't put "%s" file in archive
 
 ## Import
 ImportAccountingEntries=مداخيل حسابية
@@ -468,5 +478,7 @@ FECFormatMulticurrencyCode=كود متعدد العملات (ايديفيز)
 DateExport=تاريخ التصدير
 WarningReportNotReliable=تحذير ، هذا التقرير لا يستند إلى دفتر الأستاذ ، لذلك لا يحتوي على معاملة تم تعديلها يدويًا في دفتر الأستاذ. إذا كان تسجيل دفتر اليومية الخاص بك محدثًا ، فسيكون عرض مسك الدفاتر أكثر دقة.
 ExpenseReportJournal=تقرير دفتر المصاريف
+DocsAlreadyExportedAreExcluded=Docs already exported are excluded
+ClickToHideAlreadyExportedLines=Click to hide already exported lines
 
 NAccounts=%s حساباً

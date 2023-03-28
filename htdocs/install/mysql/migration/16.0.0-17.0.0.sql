@@ -33,8 +33,9 @@
 
 
 -- Missing in v16 or lower
-
+ALTER TABLE llx_accounting_account DROP FOREIGN KEY fk_accounting_account_fk_pcg_version;
 ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL;
+ALTER TABLE llx_accounting_account ADD CONSTRAINT fk_accounting_account_fk_pcg_version FOREIGN KEY (fk_pcg_version) REFERENCES llx_accounting_system (pcg_version);
 
 ALTER TABLE llx_c_action_trigger MODIFY elementtype VARCHAR(64);
 
@@ -64,6 +65,7 @@ ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_percent (percent);
 
 UPDATE llx_c_paiement SET code = 'BANCON' WHERE code = 'BAN' AND libelle = 'Bancontact';
 
+ALTER TABLE llx_partnership DROP FOREIGN KEY llx_partnership_fk_user_creat;
 -- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN fk_user_creat integer NULL;
 -- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN fk_user_creat DROP NOT NULL;
 
@@ -140,6 +142,9 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 ALTER TABLE llx_societe_rib ADD COLUMN state_id integer AFTER default_rib;
 ALTER TABLE llx_societe_rib ADD COLUMN fk_country integer AFTER state_id;
 ALTER TABLE llx_societe_rib ADD COLUMN currency_code varchar(3) AFTER fk_country;
+
+DELETE FROM llx_societe_rib WHERE fk_soc = 0;
+ALTER TABLE llx_societe_rib ADD CONSTRAINT llx_societe_rib_fk_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);
 
 ALTER TABLE llx_user_rib ADD COLUMN state_id integer AFTER owner_address;
 ALTER TABLE llx_user_rib ADD COLUMN fk_country integer AFTER state_id;
@@ -238,9 +243,7 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_MODIFY','Customer proposal modified','Executed when a customer proposal is modified','propal',2);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_SENTBYMAIL','Commercial proposal sent by mail','Executed when a commercial proposal is sent by mail','propal',3);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLOSE_SIGNED','Customer proposal closed signed','Executed when a customer proposal is closed signed','propal',2);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLOSE_SIGNED_WEB','Customer proposal closed signed on portal','Executed when a customer proposal is closed signed on portal','propal',2);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLOSE_REFUSED','Customer proposal closed refused','Executed when a customer proposal is closed refused','propal',2);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLOSE_REFUSED_WEB','Customer proposal closed refused on portal','Executed when a customer proposal is closed refused on portal','propal',2);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLASSIFY_BILLED','Customer proposal set billed','Executed when a customer proposal is set to billed','propal',2);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_DELETE','Customer proposal deleted','Executed when a customer proposal is deleted','propal',2);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_VALIDATE','Customer order validate','Executed when a customer order is validated','commande',4);
@@ -392,3 +395,12 @@ ALTER TABLE llx_opensurvey_user_studs ADD COLUMN date_creation datetime NULL;
 ALTER TABLE llx_opensurvey_comments ADD COLUMN date_creation datetime NULL;
 
 ALTER TABLE llx_c_tva ADD COLUMN use_default tinyint DEFAULT 0;
+
+ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN ref varchar(128);
+ALTER TABLE llx_facture_fourn_det MODIFY COLUMN ref varchar(128);
+
+ALTER TABLE llx_projet ADD COLUMN extraparams varchar(255);
+
+DELETE FROM llx_const WHERE name = 'TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST';
+
+

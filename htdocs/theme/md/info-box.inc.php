@@ -153,7 +153,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	margin-bottom: 15px;
 	border: 1px solid #e9e9e9;
 }
-.info-box.info-box-sm{
+.info-box.info-box-sm {
 	min-height: 80px;
 	margin-bottom: 10px;
 }
@@ -212,6 +212,10 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	width: 80px;
 	font-size: 25px;
 	line-height: 92px;
+}
+.info-box-module .info-box-icon {
+	padding-top: 4px;
+	padding-bottom: 4px;
 }
 .opened-dash-board-wrap .info-box .info-box-icon {
 	font-size: 2em;

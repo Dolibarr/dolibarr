@@ -134,13 +134,13 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Permissions
-$permissiontoread    = $user->rights->hrm->evaluation->read;
-$permissiontoreadall = $user->rights->hrm->evaluation->readall;
-$permissiontoadd     = $user->rights->hrm->evaluation->write;
-$permissiontodelete  = $user->rights->hrm->evaluation->delete;
+$permissiontoread    = $user->hasRight('hrm', 'evaluation', 'read');
+$permissiontoreadall = $user->hasRight('hrm', 'evaluation', 'readall');
+$permissiontoadd     = $user->hasRight('hrm', 'evaluation', 'write');
+$permissiontodelete  = $user->hasRight('hrm', 'evaluation', 'delete');
 
 // Security check
-if (empty($conf->hrm->enabled)) {
+if (!isModEnabled('hrm')) {
 	accessforbidden('Module not enabled');
 }
 
@@ -231,7 +231,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
@@ -567,7 +567,8 @@ if (isset($extrafields->attributes[$object->table_element]['computed']) && is_ar
 $i = 0;
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-while ($i < ($limit ? min($num, $limit) : $num)) {
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
 		break; // Should not happen
@@ -579,7 +580,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="'.$savnbfield.'">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
 		$object->date_eval = $obj->date_eval;

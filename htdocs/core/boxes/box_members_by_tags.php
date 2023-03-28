@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2020 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2023 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2021-2022 Waël Almoman         <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -87,10 +87,11 @@ class box_members_by_tags extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
 		$staticmember = new Adherent($this->db);
 
+		$now = dol_now();
 		$year = date('Y');
 		$numberyears = empty(getDolGlobalInt("MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH")) ? 2 : getDolGlobalInt("MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH");
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByTags").' ('.$year-$numberyears.' - '.$year.')');
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByTags").' ('.($year - $numberyears).' - '.$year.')');
 
 		if ($user->rights->adherent->lire) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';

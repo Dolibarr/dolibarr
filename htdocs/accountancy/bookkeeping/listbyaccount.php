@@ -413,7 +413,7 @@ if (empty($reshook)) {
 	$objectlabel = 'Bookkeeping';
 	$permissiontoread = $user->hasRight('societe', 'lire');
 	$permissiontodelete = $user->hasRight('societe', 'supprimer');
-	$permissiontoadd = $user->rights->societe->creer;
+	$permissiontoadd = $user->hasRight('societe', 'creer');
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -951,6 +951,10 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['t.date_export']['checked'])) { $colspanend++; }
 	if (!empty($arrayfields['t.date_validating']['checked'])) { $colspanend++; }
 	if (!empty($arrayfields['t.lettering_code']['checked'])) { $colspanend++; }
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		$colspan++;
+		$colspanend--;
+	}
 
 	// Is it a break ?
 	if ($accountg != $displayed_account_number || !isset($displayed_account_number)) {
@@ -990,7 +994,9 @@ while ($i < min($num, $limit)) {
 		print '<td colspan="'.($totalarray['nbfield'] ? $totalarray['nbfield'] : count($arrayfields)+1).'" class="tdforbreak">';
 		if ($type == 'sub') {
 			if ($line->subledger_account != "" && $line->subledger_account != '-1') {
-				print $line->subledger_label . ' : ' . length_accounta($line->subledger_account);
+				print empty($line->subledger_label) ? '<span class="error">'.$langs->trans("Unknown").'</span>' : $line->subledger_label;
+				print ' : ';
+				print length_accounta($line->subledger_account);
 			} else {
 				// Should not happen: subledger account must be null or a non empty value
 				print '<span class="error">' . $langs->trans("Unknown");
@@ -1033,6 +1039,9 @@ while ($i < min($num, $limit)) {
 			print '<input id="cb' . $line->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $line->id . '"' . ($selected ? ' checked="checked"' : '') . ' />';
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 	// Piece number
 	if (!empty($arrayfields['t.piece_num']['checked'])) {
@@ -1216,9 +1225,9 @@ while ($i < min($num, $limit)) {
 			print '<input id="cb' . $line->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $line->id . '"' . ($selected ? ' checked="checked"' : '') . ' />';
 		}
 		print '</td>';
-	}
-	if (!$i) {
-		$totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	// Comptabilise le sous-total

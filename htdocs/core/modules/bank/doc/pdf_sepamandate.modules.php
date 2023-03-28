@@ -429,9 +429,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -478,7 +476,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *   @param		CompanyBankAccount	$object			Object to show
 	 *   @param		int					$posy			Y
 	 *   @param		Translate			$outputlangs	Langs object
-	 *   @return	void
+	 *   @return	float
 	 */
 	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -504,7 +502,6 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 		return $posy;
 	}
-
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

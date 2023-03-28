@@ -128,8 +128,8 @@ if ($action == 'validatehistory') {
 
 	// Now make the binding. Bind automatically only for product with a dedicated account that exists into chart of account, others need a manual bind
 	// Customer Invoice lines (must be same request than into page list.php for manual binding)
-	$sql = "SELECT f.rowid as facid, f.ref as ref, f.datef, f.type as ftype, f.fk_facture_source,";
-	$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
+	$sql = "SELECT f.rowid as facid, f.ref as ref, f.datef, f.type as ftype, f.situation_cycle_ref, f.fk_facture_source,";
+	$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.situation_percent, l.tva_tx as tva_tx_line, l.vat_src_code,";
 	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
 	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 		$sql .= " ppe.accountancy_code_sell as code_sell, ppe.accountancy_code_sell_intra as code_sell_intra, ppe.accountancy_code_sell_export as code_sell_export,";
@@ -312,6 +312,10 @@ print '<span class="opacitymedium">'.$langs->trans("DescVentilCustomer").'</span
 print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")).'<br>';
 print '</span><br>';
 
+if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+	print info_admin($langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices"));
+	print "<br>";
+}
 
 $y = $year_current;
 
@@ -386,6 +390,11 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ($row = $db->fetch_row($resql)) {
+		// TODO When INVOICE_USE_SITUATION = 1, values here are wrong. There is no compensation on bad stored amounts
+		//$situation_ratio = 1;
+		//if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+		//}
+
 		print '<tr class="oddeven">';
 		print '<td>';
 		if ($row[0] == 'tobind') {
@@ -519,6 +528,11 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ($row = $db->fetch_row($resql)) {
+		// TODO When INVOICE_USE_SITUATION = 1, values here are wrong. There is no compensation on bad stored amounts
+		//$situation_ratio = 1;
+		//if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+		//}
+
 		print '<tr class="oddeven">';
 		print '<td>';
 		if ($row[0] == 'tobind') {
@@ -630,7 +644,6 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 	print "</table>\n";
 	print '</div>';
 
-
 	if (isModEnabled('margin')) {
 		print "<br>\n";
 		print '<div class="div-table-responsive-no-min">';
@@ -644,22 +657,41 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 			print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
 		}
 		print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
-		$sql = "SELECT '".$db->escape($langs->trans("Vide"))."' AS marge,";
-		for ($i = 1; $i <= 12; $i++) {
-			$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-			if ($j > 12) {
-				$j -= 12;
-			}
-			$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".$j,
-						" (".$db->ifsql("fd.total_ht < 0",
-							" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",
-							"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))").")",
-						 0).") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
-		}
-		$sql .= "  SUM(".$db->ifsql("fd.total_ht < 0",
-							" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",
-							"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))").") as total";
 
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+			// With old situation invoice setup
+			$sql = "SELECT '".$db->escape($langs->trans("Vide"))."' AS marge,";
+			for ($i = 1; $i <= 12; $i++) {
+				$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+				if ($j > 12) {
+					$j -= 12;
+				}
+				$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".$j,
+							" (".$db->ifsql("fd.total_ht < 0",
+								" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",	// TODO This is bugged, we must use the percent for the invoice and fd.situation_percent is cumulated percent !
+								"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))").")",
+							 0).") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+			}
+			$sql .= "  SUM(".$db->ifsql("fd.total_ht < 0",
+				" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",	// TODO This is bugged, we must use the percent for the invoice and fd.situation_percent is cumulated percent !
+								"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))").") as total";
+		} else {
+			$sql = "SELECT '".$db->escape($langs->trans("Vide"))."' AS marge,";
+			for ($i = 1; $i <= 12; $i++) {
+				$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+				if ($j > 12) {
+					$j -= 12;
+				}
+				$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".$j,
+					" (".$db->ifsql("fd.total_ht < 0",
+						" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty)))",
+						"  (fd.total_ht - (fd.buy_price_ht * fd.qty))").")",
+					0).") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+			}
+			$sql .= "  SUM(".$db->ifsql("fd.total_ht < 0",
+				" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty)))",
+				"  (fd.total_ht - (fd.buy_price_ht * fd.qty))").") as total";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 		$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 		$sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";

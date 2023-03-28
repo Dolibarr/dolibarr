@@ -151,6 +151,10 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s ON p.rowid = s.fk_produ
 if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_units as u on p.fk_unit = u.rowid';
 }
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE p.entity IN (".getEntity('product').")";
 if (!empty($search_categ) && $search_categ != '-1') {
 	$sql .= " AND ";
@@ -207,10 +211,12 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $objec
 $sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
 $sql .= " p.fk_product_type, p.tms, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock";
-// Add fields from hooks
+
+// Add GROUP BY from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+
 $sql_having = '';
 if ($search_toolowstock) {
 	$sql_having .= " HAVING SUM(".$db->ifsql('s.reel IS NULL', '0', 's.reel').") < p.seuil_stock_alerte";
@@ -226,6 +232,19 @@ if ($search_stock_physique != '') {
 	}
 	$sql_having .= $natural_search_physique;
 }
+
+// Add HAVING from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
+if (!empty($hookmanager->resPrint)) {
+	if (!empty($sql_having)) {
+		$sql_having .= " AND";
+	} else {
+		$sql_having .= " HAVING";
+	}
+	$sql_having .= $hookmanager->resPrint;
+}
+
 if (!empty($sql_having)) {
 	$sql .= $sql_having;
 }
@@ -465,7 +484,7 @@ if ($resql) {
 		print $product->getNomUrl(1, '', 16);
 		//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 		print '</td>';
-		print '<td>'.$product->label.'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($product->label).'">'.dol_escape_htmltag($product->label).'</td>';
 
 		if (isModEnabled("service") && $type == 1) {
 			print '<td class="center">';
@@ -493,7 +512,7 @@ if ($resql) {
 			print img_warning($langs->trans("StockLowerThanLimit", $objp->seuil_stock_alerte)).' ';
 		}
 		if ($objp->stock_physique < 0) { print '<span class="warning">'; }
-		print price2num($objp->stock_physique, 'MS');
+		print price(price2num($objp->stock_physique, 'MS'), 0, $langs, 1, 0);
 		if ($objp->stock_physique < 0) { print '</span>'; }
 		print '</td>';
 
@@ -502,7 +521,7 @@ if ($resql) {
 			if ($nb_warehouse > 1) {
 				foreach ($warehouses_list as &$wh) {
 					print '<td class="right">';
-					print empty($product->stock_warehouse[$wh['id']]->real) ? '0' : $product->stock_warehouse[$wh['id']]->real;
+					print price(empty($product->stock_warehouse[$wh['id']]->real) ? 0 : price2num($product->stock_warehouse[$wh['id']]->real, 'MS'), 0, $langs, 1, 0);
 					print '</td>';
 				}
 			}
@@ -511,11 +530,11 @@ if ($resql) {
 		// Virtual stock
 		if ($virtualdiffersfromphysical) {
 			print '<td class="right">';
-			if ($objp->seuil_stock_alerte != '' && ($product->stock_theorique < $objp->seuil_stock_alerte)) {
+			if ($objp->seuil_stock_alerte != '' && ($product->stock_theorique < (float) $objp->seuil_stock_alerte)) {
 				print img_warning($langs->trans("StockLowerThanLimit", $objp->seuil_stock_alerte)).' ';
 			}
 			if ($objp->stock_physique < 0) { print '<span class="warning">'; }
-			print price2num($product->stock_theorique, 'MS');
+			print price(price2num($product->stock_theorique, 'MS'), 0, $langs, 1, 0);
 			if ($objp->stock_physique < 0) { print '</span>'; }
 			print '</td>';
 		}
@@ -523,7 +542,7 @@ if ($resql) {
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 			print '<td class="left">'.dol_escape_htmltag($objp->unit_short).'</td>';
 		}
-		print '<td class="center">';
+		print '<td class="center nowraponall">';
 		print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
 		print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a>';
 		print '</td>';

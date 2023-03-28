@@ -53,6 +53,8 @@ class RemiseCheque extends CommonObject
 	//! Numero d'erreur Plage 1024-1279
 	public $errno;
 
+	public $type = 'CHQ';		// 'CHQ', 'TRA', ...
+
 	public $amount;
 	public $date_bordereau;
 	public $account_id;
@@ -92,9 +94,9 @@ class RemiseCheque extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author, bc.fk_bank_account, bc.amount, bc.ref, bc.statut, bc.nbcheque, bc.ref_ext";
-		$sql .= ", bc.date_bordereau as date_bordereau";
-		$sql .= ", ba.label as account_label";
+		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author, bc.fk_bank_account, bc.amount, bc.ref, bc.statut, bc.nbcheque, bc.ref_ext,";
+		$sql .= " bc.date_bordereau as date_bordereau, bc.type,";
+		$sql .= " ba.label as account_label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON bc.fk_bank_account = ba.rowid";
 		$sql .= " WHERE bc.entity = ".$conf->entity;
@@ -118,6 +120,7 @@ class RemiseCheque extends CommonObject
 				$this->nbcheque       = $obj->nbcheque;
 				$this->statut         = $obj->statut;
 				$this->ref_ext        = $obj->ref_ext;
+				$this->type           = $obj->type;
 
 				if ($this->statut == 0) {
 					$this->ref = "(PROV".$this->id.")";
@@ -154,6 +157,11 @@ class RemiseCheque extends CommonObject
 
 		dol_syslog("RemiseCheque::Create start", LOG_DEBUG);
 
+		// Clean parameters
+		if (empty($this->type)) {
+			$this->type = 'CHQ';
+		}
+
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bordereau_cheque (";
@@ -167,6 +175,7 @@ class RemiseCheque extends CommonObject
 		$sql .= ", entity";
 		$sql .= ", nbcheque";
 		$sql .= ", ref_ext";
+		$sql .= ", type";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
@@ -178,6 +187,7 @@ class RemiseCheque extends CommonObject
 		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", 0";
 		$sql .= ", ''";
+		$sql .= ", '".$this->db->escape($this->type)."'";
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -205,7 +215,7 @@ class RemiseCheque extends CommonObject
 			if ($this->id > 0 && $this->errno == 0) {
 				$sql = "SELECT b.rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
-				$sql .= " WHERE b.fk_type = 'CHQ'";
+				$sql .= " WHERE b.fk_type = '".$this->db->escape($this->type)."'";
 				$sql .= " AND b.amount > 0";
 				$sql .= " AND b.fk_bordereau = 0";
 				$sql .= " AND b.fk_account = ".((int) $account_id);
@@ -261,7 +271,7 @@ class RemiseCheque extends CommonObject
 			$this->errno = $this->db->lasterrno();
 		}
 
-		if (!$this->errno && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS)) {
+		if (!$this->errno && (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_CHEQUE'))) {
 			$res = $this->validate($user);
 			//if ($res < 0) $error++;
 		}
@@ -278,9 +288,9 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *	Supprime la remise en base
+	 *	Delete deposit from database
 	 *
-	 *	@param  User	$user 		Utilisateur qui effectue l'operation
+	 *	@param  User	$user 		User that delete
 	 *	@return	int
 	 */
 	public function delete($user = '')
@@ -464,10 +474,11 @@ class RemiseCheque extends CommonObject
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *      @param      User	$user       Objet user
+	 *      @param  User	$user       Objet user
+	 *      @param	string	$type		Type of payment mode deposit ('CHQ', 'TRA', ...)
 	 *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
-	public function load_board($user)
+	public function load_board($user, $type = 'CHQ')
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -481,7 +492,7 @@ class RemiseCheque extends CommonObject
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.fk_type = 'CHQ'";
+		$sql .= " AND b.fk_type = '".$this->db->escape($type)."'";
 		$sql .= " AND b.fk_bordereau = 0";
 		$sql .= " AND b.amount > 0";
 
@@ -518,9 +529,10 @@ class RemiseCheque extends CommonObject
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
-	 *      @return     int         <0 if ko, >0 if ok
+	 *      @param	string	$type		Type of payment mode deposit ('CHQ', 'TRA', ...)
+	 *      @return int         		<0 if ko, >0 if ok
 	 */
-	public function load_state_board()
+	public function load_state_board($type = 'CHQ')
 	{
 		// phpcs:enable
 		global $user;
@@ -534,7 +546,7 @@ class RemiseCheque extends CommonObject
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.fk_type = 'CHQ'";
+		$sql .= " AND b.fk_type = '".$this->db->escape($type)."'";
 		$sql .= " AND b.amount > 0";
 
 		$resql = $this->db->query($sql);
@@ -615,7 +627,7 @@ class RemiseCheque extends CommonObject
 
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
-			$sav_charseSupprimert_output = $outputlangs->charset_output;
+			$sav_charset_output = $outputlangs->charset_output;
 
 			$result = $docmodel->write_file($this, $conf->bank->dir_output.'/checkdeposits', $this->ref, $outputlangs);
 			if ($result > 0) {
@@ -664,7 +676,7 @@ class RemiseCheque extends CommonObject
 			$sql .= " SET amount = ".price2num($total);
 			$sql .= ", nbcheque = ".((int) $nb);
 			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " AND entity = ".((int) $conf->entity);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -813,7 +825,7 @@ class RemiseCheque extends CommonObject
 
 		$sql = "SELECT MAX(rowid)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque";
-		$sql .= " WHERE rowid < ".$this->id;
+		$sql .= " WHERE rowid < ".((int) $this->id);
 		$sql .= " AND entity = ".$conf->entity;
 
 		$result = $this->db->query($sql);
@@ -825,7 +837,7 @@ class RemiseCheque extends CommonObject
 
 		$sql = "SELECT MIN(rowid)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque";
-		$sql .= " WHERE rowid > ".$this->id;
+		$sql .= " WHERE rowid > ".((int) $this->id);
 		$sql .= " AND entity = ".$conf->entity;
 
 		$result = $this->db->query($sql);
@@ -1032,6 +1044,8 @@ class RemiseCheque extends CommonObject
 	{
 		global $langs;
 
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -1039,6 +1053,7 @@ class RemiseCheque extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 
 		if (property_exists($this, 'date_bordereau')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateCreation").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->date_bordereau), 'day').'</span>';
@@ -1050,7 +1065,7 @@ class RemiseCheque extends CommonObject
 			$return .= ' | <span class="info-box-label">'.$this->account_id.'</span>';
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div style="display:inline-block" class="info-box-status margintoponly">'.$this->LibStatut($this->statut, 5).'</div>';
+			$return .= '<br><div style="display:inline-block" class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		if (property_exists($this, 'amount')) {
 			$return .= ' |   <div style="display:inline-block"><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="amount">'.price($this->amount).'</div>';

@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Σφάλμα, η παράμετρ�
 ErrorLoginDateValidity=Σφάλμα, αυτή η σύνδεση είναι εκτός του εύρους ημερομηνιών εγκυρότητας
 ErrorValueLength=Το μήκος του πεδίου ' <b> %s </b> ' πρέπει να είναι μεγαλύτερο από το ' <b> %s </b>'
 ErrorReservedKeyword=Η λέξη "<b> %s </b>" είναι μια δεσμευμένη λέξη-κλειδί
+ErrorFilenameReserved=Το όνομα αρχείου <b> %s </b> δεν μπορεί να χρησιμοποιηθεί καθώς είναι μια δεσμευμένη και προστατευμένη εντολή.
 ErrorNotAvailableWithThisDistribution=Δεν διατίθεται με αυτήν τη διανομή
 ErrorPublicInterfaceNotEnabled=Η δημόσια διεπαφή δεν ενεργοποιήθηκε
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=Η γλώσσα της νέας σελίδας πρέπει να οριστεί εάν είναι μετάφραση άλλης σελίδας
@@ -303,6 +304,12 @@ ErrorValueForTooLow=Η τιμή για <b> %s </b> είναι πολύ χαμη�
 ErrorValueCantBeNull=Η τιμή για <b> %s </b> δεν μπορεί να είναι μηδενική
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Η ημερομηνία της τραπεζικής συναλλαγής δεν μπορεί να είναι παλαιότερη από την ημερομηνία αποστολής του αρχείου
 ErrorTooMuchFileInForm=Πάρα πολλά αρχεία στην φόρμα, ο μέγιστος αριθμός είναι %s αρχεία 
+ErrorSessionInvalidatedAfterPasswordChange=Η συνεδρία ακυρώθηκε μετά από αλλαγή κωδικού πρόσβασης, κατάστασης ή ημερομηνιών εγκυρότητας. Παρακαλώ συνδεθείτε ξανά.
+ErrorExistingPermission = Η άδεια <b> %s </b> για το αντικείμενο <b> %s </b> υπάρχει ήδη
+ErrorFieldExist=Η τιμή για <b> %s </b> υπάρχει ήδη
+ErrorEqualModule=Μη έγκυρη ενότητα στο <b> %s </b>
+ErrorFieldValue=Η τιμή για <b> %s </b> είναι λανθασμένη
+ErrorCoherenceMenu= <b> %s </b> απαιτείται όταν το <b> %s </b> είναι 'αριστερά'
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Η παράμετρος PHP upload_max_filesize (%s) είναι υψηλότερη από την παράμετρο PHP post_max_size (%s). Αυτή δεν είναι μια συνεπής ρύθμιση.
@@ -325,6 +332,7 @@ WarningPaymentDateLowerThanInvoiceDate=Η ημερομηνία πληρωμής 
 WarningTooManyDataPleaseUseMoreFilters=Πάρα πολλά δεδομένα (περισσότερες από %sγραμμές). Χρησιμοποιήστε περισσότερα φίλτρα ή ορίστε τη σταθερά %s σε υψηλότερο όριο.
 WarningSomeLinesWithNullHourlyRate=Κάποιοι χρόνοι καταγράφηκαν από ορισμένους χρήστες ενώ η ωριαία τιμή τους δεν είχε καθοριστεί. Χρησιμοποιήθηκε μια τιμή 0 %s ανά ώρα, αλλά αυτό μπορεί να οδηγήσει σε λανθασμένη εκτίμηση του χρόνου που δαπανήθηκε.
 WarningYourLoginWasModifiedPleaseLogin=Η σύνδεσή σας τροποποιήθηκε. Για λόγους ασφαλείας θα πρέπει να συνδεθείτε με τη νέα σας σύνδεση πριν από την επόμενη ενέργεια.
+WarningYourPasswordWasModifiedPleaseLogin=Ο κωδικός πρόσβασης σας τροποποιήθηκε. Για λόγους ασφαλείας θα πρέπει να συνδεθείτε τώρα με τον νέο σας κωδικό πρόσβασης.
 WarningAnEntryAlreadyExistForTransKey=Υπάρχει ήδη μια καταχώριση για το κλειδί μετάφρασης για αυτήν τη γλώσσα
 WarningNumberOfRecipientIsRestrictedInMassAction=Προειδοποίηση, ο αριθμός διαφορετικών παραληπτών περιορίζεται σε <b>%s</b> όταν χρησιμοποιείτε τις μαζικές ενέργειες σε λίστες
 WarningDateOfLineMustBeInExpenseReportRange=Προειδοποίηση, η ημερομηνία γραμμής δεν είναι στο εύρος της αναφοράς εξόδων
@@ -340,6 +348,7 @@ WarningPaypalPaymentNotCompatibleWithStrict=Η τιμή "Αυστηρή" κάν�
 WarningThemeForcedTo=Προειδοποίηση, έχει γίνει επιβολή του θέματος<b> %s </b> από την κρυφή σταθερά MAIN_FORCETEME
 WarningPagesWillBeDeleted=Προειδοποίηση, αυτό θα διαγράψει επίσης όλες τις υπάρχουσες σελίδες/container του ιστότοπου. Θα πρέπει να εξάγετε τον ιστότοπό σας νωρίτερα, ώστε να έχετε ένα αντίγραφο ασφαλείας για να μπορείτε να τον εισάγετε ξανά αργότερα αν χρειαστει.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Η αυτόματη επικύρωση είναι απενεργοποιημένη όταν η επιλογή μείωσης του αποθέματος έχει οριστεί στην "Επικύρωση τιμολογίου".
+WarningModuleNeedRefrech = Η ενότητα <b> %s </b> έχει απενεργοποιηθεί. Μην ξεχάσετε να την ενεργοποιήσετε
 
 # Validate
 RequireValidValue = Η τιμή δεν είναι έγκυρη

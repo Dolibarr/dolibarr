@@ -126,6 +126,9 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('product', 'list', $canvas);
 }
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('productreassortlotlist'));
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
@@ -217,16 +220,24 @@ $morecss = array();
 $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
 $sql .= ' p.fk_product_type, p.tms as datem,';
 $sql .= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock, p.stock, p.tosell, p.tobuy, p.tobatch,';
-$sql .= ' ps.fk_entrepot,';
+$sql .= ' ps.fk_entrepot, ps.reel,';
 $sql .= ' e.ref as warehouse_ref, e.lieu as warehouse_lieu, e.fk_parent as warehouse_parent,';
 $sql .= ' pb.batch, pb.eatby as oldeatby, pb.sellby as oldsellby,';
 $sql .= ' pl.rowid as lotid, pl.eatby, pl.sellby,';
 $sql .= ' SUM(pb.qty) as stock_physique, COUNT(pb.rowid) as nbinbatchtable';
+// Add fields from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps on p.rowid = ps.fk_product'; // Detail for each warehouse
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e on ps.fk_entrepot = e.rowid'; // Link on unique key
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_batch as pb on pb.fk_product_stock = ps.rowid'; // Detail for each lot on each warehouse
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot as pl on pl.fk_product = p.rowid AND pl.batch = pb.batch'; // Link on unique key
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE p.entity IN (".getEntity('product').") AND e.entity IN (".getEntity('stock').")";
 if (!empty($search_categ) && $search_categ != '-1') {
 	$sql .= " AND ";
@@ -315,20 +326,28 @@ foreach ($search as $key => $val) {
 		}
 	}
 }
+// Add where from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
 $sql .= " p.fk_product_type, p.tms,";
 $sql .= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock, p.stock, p.tosell, p.tobuy, p.tobatch,";
-$sql .= " ps.fk_entrepot,";
+$sql .= " ps.fk_entrepot, ps.reel,";
 $sql .= " e.ref, e.lieu, e.fk_parent,";
 $sql .= " pb.batch, pb.eatby, pb.sellby,";
 $sql .= " pl.rowid, pl.eatby, pl.sellby";
+// Add GROUP BY from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql_having = '';
 if ($search_toolowstock) {
 	$sql_having .= " HAVING SUM(".$db->ifsql('ps.reel IS NULL', '0', 'ps.reel').") < p.seuil_stock_alerte"; // Not used yet
 }
 if ($search_stock_physique != '') {
-	$natural_search_physique = natural_search('SUM(' . $db->ifsql('pb.qty IS NULL', '0', 'pb.qty') . ')', $search_stock_physique, 1, 1);
+	$natural_search_physique = natural_search('SUM(' . $db->ifsql('pb.qty IS NULL', $db->ifsql('ps.reel IS NULL', '0', 'ps.reel'), 'pb.qty') . ')', $search_stock_physique, 1, 1);
 	$natural_search_physique = " " . substr($natural_search_physique, 1, -1); // remove first "(" and last ")" characters
 	if (!empty($sql_having)) {
 		$sql_having .= " AND";
@@ -336,6 +355,17 @@ if ($search_stock_physique != '') {
 		$sql_having .= " HAVING";
 	}
 	$sql_having .= $natural_search_physique;
+}
+// Add HAVING from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
+if (!empty($hookmanager->resPrint)) {
+	if (!empty($sql_having)) {
+		$sql_having .= " AND";
+	} else {
+		$sql_having .= " HAVING";
+	}
+	$sql_having .= $hookmanager->resPrint;
 }
 if (!empty($sql_having)) {
 	$sql .= $sql_having;
@@ -563,6 +593,9 @@ print '</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
 // Action column
 if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 	print '<td class="liste_titre maxwidthsearch">';
@@ -602,6 +635,10 @@ print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stock_physique",
 print_liste_field_titre('');
 print_liste_field_titre("ProductStatusOnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, '', $sortfield, $sortorder, 'right ');
 print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'right ');
+// Hook fields
+$parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
 if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 	print_liste_field_titre('');
 }
@@ -716,9 +753,20 @@ while ($i < $imaxinloop) {
 	}
 
 	print '<td class="right">';
-	if ($objp->stock_physique < 0) { print '<span class="warning">'; }
-	print $objp->stock_physique;
-	if ($objp->stock_physique < 0) { print '</span>'; }
+	//if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
+	if (is_null($objp->stock_physique)) {
+		if (!empty($objp->reel)) {
+			if ($objp->reel < 0) { print '<span class="warning">'; }
+			print price2num($objp->reel, 'MS');
+			if ($objp->reel < 0) { print '</span>'; }
+		}
+	} else {
+		if (!empty($objp->stock_physique)) {
+			if ($objp->stock_physique < 0) { print '<span class="warning">'; }
+			print price2num($objp->stock_physique, 'MS');
+			if ($objp->stock_physique < 0) { print '</span>'; }
+		}
+	}
 	print '</td>';
 
 	print '<td class="right">';
@@ -729,6 +777,11 @@ while ($i < $imaxinloop) {
 	print '<td class="right nowrap">'.$product_static->LibStatut($objp->statut, 5, 0).'</td>';
 
 	print '<td class="right nowrap">'.$product_static->LibStatut($objp->tobuy, 5, 1).'</td>';
+
+	// Fields values from hook
+	$parameters = array('obj'=>$objp);
+	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $product); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	// Action column
 	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {

@@ -172,3 +172,5 @@ ErrorSeveralCompaniesWithEmailContactUs=Plusieurs entreprises avec cet email ont
 ErrorSeveralCompaniesWithNameContactUs=Plusieurs sociétés portant ce nom ont été trouvées, nous ne pouvons donc pas valider automatiquement votre inscription. Veuillez nous contacter à %s pour une validation manuelle
 NoPublicActionsAllowedForThisEvent=Aucune action publique n'est ouverte au public pour cet événement
 MaxNbOfAttendees=Nombre maximum de participants
+DateStartEvent=Date de début de l'événement
+DateEndEvent=Date de fin de l'événement

@@ -41,7 +41,7 @@ if (empty($conf->adherent->enabled)) {
 	print "Error: Module member must be enabled to have significant results.\n";
 	exit(1);
 }
-if (!empty($conf->ldap->enabled)) {
+if (isModEnabled('ldap')) {
 	print "Error: LDAP module should not be enabled.\n";
 	exit(1);
 }
@@ -112,6 +112,8 @@ class AllTests
 		$suite->addTestSuite('CodingSqlTest');
 		require_once dirname(__FILE__).'/CodingPhpTest.php';
 		$suite->addTestSuite('CodingPhpTest');
+		require_once dirname(__FILE__).'/DoliDBTest.php';
+		$suite->addTestSuite('DoliDBTest');
 
 		require_once dirname(__FILE__).'/SecurityTest.php';
 		$suite->addTestSuite('SecurityTest');
@@ -221,6 +223,7 @@ class AllTests
 		require_once dirname(__FILE__).'/AccountingAccountTest.php';
 		$suite->addTestSuite('AccountingAccountTest');
 
+		// Rest
 		require_once dirname(__FILE__).'/RestAPIUserTest.php';
 		$suite->addTestSuite('RestAPIUserTest');
 		require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
@@ -271,6 +274,10 @@ class AllTests
 		// Email collector
 		require_once dirname(__FILE__).'/EmailCollectorTest.php';
 		$suite->addTestSuite('EmailCollectorTest');
+
+		// Website
+		require_once dirname(__FILE__).'/WebsiteTest.php';
+		$suite->addTestSuite('Website');
 
 		return $suite;
 	}
