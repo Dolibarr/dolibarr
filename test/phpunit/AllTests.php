@@ -275,7 +275,7 @@ class AllTests
 
 		// Website
 		require_once dirname(__FILE__).'/WebsiteTest.php';
-		$suite->addTestSuite('Website');
+		$suite->addTestSuite('WebsiteTest');
 
 		return $suite;
 	}
