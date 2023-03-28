@@ -11253,6 +11253,13 @@ function getElementProperties($element_type)
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
 		$classname = 'Entrepot';
+	} elseif ($element_type == 'project') {
+		$classpath = 'projet/class';
+		$module = 'projet';
+	} elseif ($element_type == 'project_task') {
+		$classpath = 'projet/class';
+		$module = 'projet';
+		$subelement = 'task';
 	} elseif ($element_type == 'facture' || $element_type == 'invoice') {
 		$classpath = 'compta/facture/class';
 		$module = 'facture';
