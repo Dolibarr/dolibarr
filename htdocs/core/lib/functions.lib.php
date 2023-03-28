@@ -11244,12 +11244,15 @@ function getElementProperties($element_type)
 		$classpath = 'comm/action/class';
 		$subelement = 'Actioncomm';
 		$module = 'agenda';
-	}
-	if ($element_type == 'bank_account') {
+	} elseif ($element_type == 'bank_account') {
 		$classpath = 'compta/bank/class';
 		$module = 'banque';
 		$classfile = 'Account';
 		$classname = 'Account';
+	} elseif ($element_type == 'stock') {
+		$classpath = 'product/stock/class';
+		$classfile = 'entrepot';
+		$classname = 'Entrepot';
 	}
 	// To work with non standard path
 	if ($element_type == 'facture' || $element_type == 'invoice') {
