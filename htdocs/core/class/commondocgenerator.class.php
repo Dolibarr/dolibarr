@@ -1550,9 +1550,9 @@ abstract class CommonDocGenerator
 				$colDef['title']['label'] = !empty($colDef['title']['label']) ? $colDef['title']['label'] : $outputlangs->transnoentities($colDef['title']['textkey']);
 
 				// Add column separator
-				if (!empty($colDef['border-left'])) {
+				if (!empty($colDef['border-left']) && isset($colDef['xStartPos'])) {
 					$pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
-				}
+				}				
 
 				if (empty($hidetop)) {
 					// save curent cell padding
