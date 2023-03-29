@@ -346,7 +346,7 @@ if (empty($reshook)) {
 				$db->rollback();
 			}
 		} else {
-			$action = 'add_price';
+			$action = 'create_price';
 		}
 	}
 }
@@ -467,7 +467,7 @@ if ($id > 0 || $ref) {
 
 
 			// Form to add or update a price
-			if (($action == 'add_price' || $action == 'update_price') && $usercancreate) {
+			if (($action == 'create_price' || $action == 'update_price') && $usercancreate) {
 				$langs->load("suppliers");
 
 				print "<!-- form to add a supplier price -->\n";
@@ -507,7 +507,7 @@ if ($id > 0 || $ref) {
 					$reshook = $hookmanager->executeHooks('formCreateThirdpartyOptions', $parameters, $object, $action);
 					if (empty($reshook)) {
 						if (empty($form->result)) {
-							print '<a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&type=f&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action='.urlencode($action).($action == 'add_price' ? '&token='.newToken() : '')).'">';
+							print '<a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&type=f&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action='.urlencode($action).($action == 'create_price' ? '&token='.newToken() : '')).'">';
 							print img_picto($langs->trans("CreateDolibarrThirdPartySupplier"), 'add', 'class="marginleftonly"');
 							print '</a>';
 						}
@@ -904,12 +904,12 @@ END;
 
 			print '<div class="tabsAction">'."\n";
 
-			if ($action != 'add_price' && $action != 'update_price') {
+			if ($action != 'create_price' && $action != 'update_price') {
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				if (empty($reshook)) {
 					if ($usercancreate) {
-						print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.((int) $object->id).'&action=add_price&token='.newToken().'">';
+						print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.((int) $object->id).'&action=create_price&token='.newToken().'">';
 						print $langs->trans("AddSupplierPrice").'</a>';
 					}
 				}
