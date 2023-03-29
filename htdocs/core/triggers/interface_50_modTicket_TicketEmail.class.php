@@ -127,7 +127,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					}
 
 					// Send an email to the Customer to inform him that his ticket has been taken in charge.
-					if (!empty($conf->global->TICKET_NOTIFY_CUSTOMER_TICKET_ASSIGNED)&& empty($object->oldcopy->fk_user_assign)) {
+					if (!empty($conf->global->TICKET_NOTIFY_CUSTOMER_TICKET_ASSIGNED) && empty($object->oldcopy->fk_user_assign)) {
 						$langs->load('ticket');
 
 						$subject_customer = 'TicketAssignedCustomerEmail';
