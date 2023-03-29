@@ -190,7 +190,7 @@ class Menubase
 		if (!isset($this->enabled)) {
 			$this->enabled = '1';
 		}
-		$this->entity = (isset($this->entity) ? (int) $this->entity : $conf->entity);
+		$this->entity = (isset($this->entity) && (int) $this->entity >= 0 ? (int) $this->entity : $conf->entity);
 		$this->menu_handler = trim((string) $this->menu_handler);
 		$this->module = trim((string) $this->module);
 		$this->type = trim((string) $this->type);
