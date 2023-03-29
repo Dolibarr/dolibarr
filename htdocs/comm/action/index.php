@@ -1000,7 +1000,7 @@ if ($showbirthday) {
 	}
 }
 
-// LEAVE CALENDAR
+// LEAVE-HOLIDAY CALENDAR
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = x.fk_user";
@@ -1012,12 +1012,12 @@ if ($mode == 'show_day') {
 	$sql .= " AND '".$db->escape($year)."-".$db->escape($month)."-".$db->escape($day)."' BETWEEN x.date_debut AND x.date_fin";	// date_debut and date_fin are date without time
 } elseif ($mode == 'show_week') {
 	// Restrict on current month (we get more, but we will filter later)
-	$sql .= " AND date_debut < '".dol_get_last_day($year, $month)."'";
-	$sql .= " AND date_fin >= '".dol_get_first_day($year, $month)."'";
+	$sql .= " AND date_debut < '".$db->idate(dol_get_last_day($year, $month))."'";
+	$sql .= " AND date_fin >= '".$db->idate(dol_get_first_day($year, $month))."'";
 } elseif ($mode == 'show_month') {
 	// Restrict on current month
-	$sql .= " AND date_debut <= '".dol_get_last_day($year, $month)."'";
-	$sql .= " AND date_fin >= '".dol_get_first_day($year, $month)."'";
+	$sql .= " AND date_debut <= '".$db->idate(dol_get_last_day($year, $month))."'";
+	$sql .= " AND date_fin >= '".$db->idate(dol_get_first_day($year, $month))."'";
 }
 
 $resql = $db->query($sql);
