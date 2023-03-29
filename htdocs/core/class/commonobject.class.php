@@ -392,6 +392,22 @@ abstract class CommonObject
 	public $shipping_method_id;
 
 	/**
+	 * @var string Shipping method label
+	 * @see setShippingMethod()
+	 */
+	public $shipping_method;
+
+	/**
+	 * @var string multicurrency code
+	 */
+	public $multicurrency_code;
+
+	/**
+	 * @var string multicurrency tx
+	 */
+	public $multicurrency_tx;
+
+	/**
 	 * @var string
 	 * @see SetDocModel()
 	 */
