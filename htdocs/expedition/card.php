@@ -761,11 +761,10 @@ if (empty($reshook)) {
 					}
 				}
 
-				if(empty($update_done)) {
+				if (empty($update_done)) {
 					$line->id = $lines[$i]->id;
 					$line->insertExtraFields();
 				}
-
 			}
 		}
 
