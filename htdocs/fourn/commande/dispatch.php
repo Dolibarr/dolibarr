@@ -1129,7 +1129,7 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= " ,cfd.fk_reception, r.date_delivery";
 	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cfd.fk_product = p.rowid";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product as p ON cfd.fk_product = p.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as cd ON cd.rowid = cfd.fk_commandefourndet";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e ON cfd.fk_entrepot = e.rowid";
 	if ($conf->reception->enabled) {
