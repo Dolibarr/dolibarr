@@ -2618,7 +2618,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 				print '<table class="nobordernopadding">';
 				if ($object->logo) {
-					print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+					print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> <label for="photodelete">'.$langs->trans("Delete").'</photo><br><br></td></tr>';
 				}
 				//print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
 				print '<tr><td>';
