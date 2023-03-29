@@ -1834,7 +1834,8 @@ class Expedition extends CommonObject
 	{
 		global $conf, $langs;
 
-		$langs->load('shipping');
+		$langs->load('sendings');
+
 		$nofetch = !empty($params['nofetch']);
 
 		$datas = array();

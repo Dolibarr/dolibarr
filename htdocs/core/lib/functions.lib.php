@@ -11280,6 +11280,11 @@ function getElementProperties($element_type)
 		$subelement = 'commande';
 	} elseif ($element_type == 'propal') {
 		$classpath = 'comm/propal/class';
+	} elseif ($element_type == 'shipping') {
+		$classpath = 'expedition/class';
+		$classfile = 'expedition';
+		$classname = 'Expedition';
+		$module = 'expedition';
 	} elseif ($element_type == 'supplier_proposal') {
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
