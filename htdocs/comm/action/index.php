@@ -927,6 +927,7 @@ if ($resql) {
 }
 //var_dump($eventarray);
 
+
 // BIRTHDATES CALENDAR
 // Complete $eventarray with birthdates
 if ($showbirthday) {
@@ -971,6 +972,8 @@ if ($showbirthday) {
 			$event->label = $langs->trans("Birthday").' '.dolGetFirstLastname($obj->firstname, $obj->lastname);
 			$event->percentage = 100;
 			$event->fulldayevent = 1;
+
+			$event->contact_id = $obj->rowid;
 
 			$event->date_start_in_calendar = $db->jdate($event->datep);
 			$event->date_end_in_calendar = $db->jdate($event->datef);
@@ -1800,7 +1803,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						$color = ($event->icalcolor ? $event->icalcolor : -1);
 						$cssclass = (!empty($event->icalname) ? 'family_ext'.md5($event->icalname) : 'family_other');
 					} elseif ($event->type_code == 'BIRTHDAY') {
-						$numbirthday++; $colorindex = 2; $cssclass = 'family_birthday '; $color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
+						$numbirthday++;
+						$colorindex = 2;
+						$cssclass = 'family_birthday ';
+						$color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
 					} else {
 						$numother++;
 						$color = ($event->icalcolor ? $event->icalcolor : -1);
@@ -1930,9 +1936,31 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
 					$daterange = '';
 
-					if ($event->type_code == 'BIRTHDAY') { 			// It's birthday calendar
-						print $event->getNomUrl(1, $maxnbofchar, 'cal_event', 'birthday', 'contact');
-					} elseif ($event->type_code == 'HOLIDAY') {		// It's holiday calendar
+					if ($event->type_code == 'BIRTHDAY') {
+						// It's birthday calendar
+						$picb = '<i class="fas fa-birthday-cake inline-block"></i>';
+						//$pice = '<i class="fas fa-briefcase inline-block"></i>';
+						//$typea = ($objp->typea == 'birth') ? $picb : $pice;
+						//var_dump($event);
+						print $picb.' '.$langs->trans("Birthday").'<br>';
+						//print img_picto($langs->trans("Birthday"), 'birthday-cake').' ';
+
+						$tmpid = $event->id;
+						if (empty($cachecontacts[$tmpid])) {
+							$newcontact = new Contact($db);
+							$newcontact->fetch($tmpid);
+							$cachecontact[$tmpid] = $newcontact;
+						}
+						print $cachecontact[$tmpid]->getNomUrl(1);
+
+						//$event->picto = 'birthday-cake';
+						//print $event->getNomUrl(1, $maxnbofchar, 'cal_event', 'birthday', 'contact');
+						/*$listofcontacttoshow = '';
+						$listofcontacttoshow .= '<br>'.$cacheusers[$tmpid]->getNomUrl(-1, '', 0, 0, 0, 0, '', 'paddingright valignmiddle');
+						print $listofcontacttoshow;
+						*/
+					} elseif ($event->type_code == 'HOLIDAY') {
+						// It's holiday calendar
 						$tmpholiday->fetch($event->id);
 
 						print $tmpholiday->getNomUrl(1);
@@ -1947,8 +1975,8 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						$listofusertoshow = '';
 						$listofusertoshow .= '<br>'.$cacheusers[$tmpid]->getNomUrl(-1, '', 0, 0, 0, 0, '', 'paddingright valignmiddle');
 						print $listofusertoshow;
-					} else {										// Other calendar
-						// Picto
+					} else {
+						// Other calendar
 						if (empty($event->fulldayevent)) {
 							//print $event->getNomUrl(2).' ';
 						}
