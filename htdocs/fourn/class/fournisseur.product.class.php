@@ -1249,7 +1249,7 @@ class ProductFournisseur extends Product
 			$label .= $this->displayPriceProductFournisseurLog($logPrices);
 		}
 
-		$url = dol_buildpath('/product/fournisseurs.php', 1).'?id='.$this->id.'&action=add_price&token='.newToken().'&socid='.$this->fourn_id.'&rowid='.$this->product_fourn_price_id;
+		$url = dol_buildpath('/product/fournisseurs.php', 1).'?id='.$this->id.'&action=create_price&token='.newToken().'&socid='.$this->fourn_id.'&rowid='.$this->product_fourn_price_id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
