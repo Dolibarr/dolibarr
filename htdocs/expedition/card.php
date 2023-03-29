@@ -581,6 +581,7 @@ if (empty($reshook)) {
 		$num_prod = count($lines);
 		for ($i = 0; $i < $num_prod; $i++) {
 			if ($lines[$i]->id == $line_id) {		// we have found line to update
+				$update_done = false;
 				$line = new ExpeditionLigne($db);
 				$line->fk_expedition = $object->id;
 
@@ -621,6 +622,8 @@ if (empty($reshook)) {
 								if ($line->update($user) < 0) {
 									setEventMessages($line->error, $line->errors, 'errors');
 									$error++;
+								} else {
+									$update_done=true;
 								}
 							} else {
 								setEventMessages($lotStock->error, $lotStock->errors, 'errors');
@@ -663,6 +666,8 @@ if (empty($reshook)) {
 									if ($line->update($user) < 0) {
 										setEventMessages($line->error, $line->errors, 'errors');
 										$error++;
+									} else {
+										$update_done=true;
 									}
 								} else {
 									setEventMessages($line->error, $line->errors, 'errors');
@@ -680,6 +685,8 @@ if (empty($reshook)) {
 								if ($object->create_line_batch($line, $line->array_options) < 0) {
 									setEventMessages($object->error, $object->errors, 'errors');
 									$error++;
+								} else {
+									$update_done=true;
 								}
 							}
 						} else {
@@ -717,6 +724,8 @@ if (empty($reshook)) {
 										if ($line->update($user) < 0) {
 											setEventMessages($line->error, $line->errors, 'errors');
 											$error++;
+										} else {
+											$update_done=true;
 										}
 									}
 									unset($_POST[$stockLocation]);
@@ -731,6 +740,8 @@ if (empty($reshook)) {
 							if ($line->update($user) < 0) {
 								setEventMessages($line->error, $line->errors, 'errors');
 								$error++;
+							} else {
+								$update_done=true;
 							}
 							unset($_POST[$qty]);
 						}
@@ -743,10 +754,18 @@ if (empty($reshook)) {
 						if ($line->update($user) < 0) {
 							setEventMessages($line->error, $line->errors, 'errors');
 							$error++;
+						} else {
+							$update_done=true;
 						}
 						unset($_POST[$qty]);
 					}
 				}
+
+				if(empty($update_done)) {
+					$line->id = $lines[$i]->id;
+					$line->insertExtraFields();
+				}
+
 			}
 		}
 
