@@ -271,8 +271,18 @@ print '<input type="hidden" name="action" value="update">';
 clearstatcache();
 
 
+if (getDolGlobalString('PDF_SECURITY_ENCRYPTION')) {
+	print '<div class="warning">';
+	print 'The not supported and hidden option PDF_SECURITY_ENCRYPTION has been enabled. This means a lof of feature related to PDF will be broken, like mass PDF generation or online signature of PDF.'."\n";
+	print 'You should disable this option.';
+	print '</div>';
+}
+
+
+
 // Misc options
 print load_fiche_titre($langs->trans("DictionaryPaperFormat"), '', '');
+
 
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';

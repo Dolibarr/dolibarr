@@ -54,7 +54,7 @@ function dav_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/dav.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/admin/dav.php';
 	$head[$h][1] = $langs->trans("WebDAV");
 	$head[$h][2] = 'webdav';
 	$h++;

@@ -228,8 +228,8 @@ if (empty($chartaccountcode)) {
 }
 
 // Customer Invoice lines
-$sql = "SELECT f.rowid as facid, f.ref, f.datef, f.type as ftype, f.fk_facture_source,";
-$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
+$sql = "SELECT f.rowid as facid, f.ref, f.datef, f.type as ftype, f.situation_cycle_ref, f.fk_facture_source,";
+$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.situation_percent, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " ppe.accountancy_code_sell as code_sell, ppe.accountancy_code_sell_intra as code_sell_intra, ppe.accountancy_code_sell_export as code_sell_export,";
@@ -655,8 +655,30 @@ if ($result) {
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $facture_static_det->desc);
 		print '</td>';
 
+		// Amount
 		print '<td class="right nowraponall amount">';
-		print price($objp->total_ht);
+
+		// Create a compensation rate for old situation invoice feature.
+		$situation_ratio = 1;
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+			if ($objp->situation_cycle_ref) {
+				// Avoid divide by 0
+				if ($objp->situation_percent == 0) {
+					$situation_ratio = 0;
+				} else {
+					$line = new FactureLigne($db);
+					$line->fetch($objp->rowid);
+
+					// Situation invoices handling
+					$prev_progress = $line->get_prev_progress($objp->facid);
+
+					$situation_ratio = ($objp->situation_percent - $prev_progress) / $objp->situation_percent;
+				}
+			}
+			print price($objp->total_ht * $situation_ratio);
+		} else {
+			print price($objp->total_ht);
+		}
 		print '</td>';
 
 		// Vat rate

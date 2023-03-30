@@ -94,13 +94,16 @@ if (!empty($section)) {
 
 // Permissions
 $permissiontoadd = 0;
+$permissiontodelete = 0;
 $permissiontoupload = 0;
 if ($module == 'ecm') {
 	$permissiontoadd = $user->rights->ecm->setup;
+	$permissiontodelete = $user->rights->ecm->setup;
 	$permissiontoupload = $user->rights->ecm->upload;
 }
 if ($module == 'medias') {
 	$permissiontoadd = ($user->rights->mailing->creer || $user->rights->website->write);
+	$permissiontodelete = ($user->rights->mailing->creer || $user->rights->website->write);
 	$permissiontoupload = ($user->rights->mailing->creer || $user->rights->website->write);
 }
 
@@ -189,7 +192,7 @@ if ($action == 'add' && $permissiontoadd) {
 			exit;
 		}
 	}
-} elseif ($action == 'confirm_deletesection' && $confirm == 'yes' && $permissiontoadd) {
+} elseif ($action == 'confirm_deletesection' && $confirm == 'yes' && $permissiontodelete) {
 	// Deleting file
 	$result = $ecmdir->delete($user);
 	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
@@ -231,7 +234,8 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 
 	// Label
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth100" maxlength="32" value="'.(GETPOST("label", 'alpha') ? GETPOST("label", 'alpha') : $ecmdir->label).'" autofocus></td></tr>'."\n";
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td>';
+	print '<input name="label" class="minwidth100" maxlength="32" value="'.GETPOST("label", 'alpha').'" autofocus></td></tr>'."\n";
 
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 	print $formecm->selectAllSections((GETPOST("catParent", 'alpha') ? GETPOST("catParent", 'alpha') : $ecmdir->fk_parent), 'catParent', $module);

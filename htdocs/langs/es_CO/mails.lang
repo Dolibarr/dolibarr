@@ -5,7 +5,6 @@ EMailings=e-mailing
 AllEMailings=Todos los e-mailings
 MailCard=Tarjeta de e-mailing
 MailRecipient=Recipiente
-MailFrom=De
 MailTo=A
 MailToUsers=Para usuario(s)
 MailCC=Copiar a

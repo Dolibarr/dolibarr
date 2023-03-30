@@ -937,6 +937,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					if (isModEnabled('productbatch')) {
 						print '<td></td>';
 					}
+
+					// Split
+					print '<td></td>';
+
+					// Split All
+					print '<td></td>';
+
 					// Action delete line
 					if ($permissiontodelete) {
 						$href = $_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=deleteline&token='.newToken().'&lineid='.((int) $line->id);
@@ -946,12 +953,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '</a>';
 						print '</td>';
 					}
-
-					// Split
-					print '<td></td>';
-
-					// Split All
-					print '<td></td>';
 
 					print '</tr>';
 
@@ -1001,6 +1002,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							}
 							print '</td>';
 						}
+
+						// Split
+						print '<td></td>';
+
+						// Split All
+						print '<td></td>';
 
 						// Action delete line
 						if ($permissiontodelete) {
@@ -1067,22 +1074,27 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						// Lot / Batch
 						if (isModEnabled('productbatch')) {
-							print '<td>';
+							print '<td class="nowraponall">';
 							if ($tmpproduct->status_batch) {
 								$preselected = (GETPOSTISSET('batch-'.$line->id.'-'.$i) ? GETPOST('batch-'.$line->id.'-'.$i) : '');
 								print '<input type="text" class="width50" name="batch-'.$line->id.'-'.$i.'" value="'.$preselected.'" list="batch-'.$line->id.'-'.$i.'">';
 								print $formproduct->selectLotDataList('batch-'.$line->id.'-'.$i, 0, $line->fk_product, '', '');
-
-								$type = 'batch';
-								print '<td align="right" class="split">';
-								print ' '.img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.((int) $line->id).', \''.dol_escape_js($type).'\', \'qtymissingconsume\')"');
-								print '</td>';
-								print '<td align="right" class="splitall">';
-								if (($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton splitallbutton field-error-icon" data-max-qty="1" onClick="addDispatchLine('.$line->id.', \'batch\', \'allmissingconsume\')"');
-								print '</td>';
 							}
 							print '</td>';
 						}
+
+						// Split
+						$type = 'batch';
+						print '<td align="right" class="split">';
+						print ' '.img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.((int) $line->id).', \''.dol_escape_js($type).'\', \'qtymissingconsume\')"');
+						print '</td>';
+
+						// Split All
+						print '<td align="right" class="splitall">';
+						if (($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) {
+							print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton splitallbutton field-error-icon" data-max-qty="1" onClick="addDispatchLine('.$line->id.', \'batch\', \'allmissingconsume\')"');
+						}
+						print '</td>';
 
 						// Action delete line
 						if ($permissiontodelete) {
@@ -1138,8 +1150,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<table id="tablelinestoproduce" class="noborder noshadow nobottom centpercent">';
 
 		print '<tr class="liste_titre">';
+		// Product
 		print '<td>'.$langs->trans("Product").'</td>';
+		// Qty
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
+		// Cost price
 		if ($permissiontoupdatecost) {
 			if (empty($bomcostupdated)) {
 				print '<td class="right">'.$form->textwithpicto($langs->trans("UnitCost"), $langs->trans("AmountUsedToUpdateWAP")).'</td>';
@@ -1147,16 +1162,59 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '<td class="right">'.$form->textwithpicto($langs->trans("ManufacturingPrice"), $langs->trans("AmountUsedToUpdateWAP")).'</td>';
 			}
 		}
+		// Already produced
 		print '<td class="right">'.$langs->trans("QtyAlreadyProduced").'</td>';
+		// Warehouse
 		print '<td>';
 		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 			print $langs->trans("Warehouse");
 		}
 		print '</td>';
+
+		// Lot
 		if (isModEnabled('productbatch')) {
 			print '<td>';
 			if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 				print $langs->trans("Batch");
+			}
+			print '</td>';
+
+			// Split
+			print '<td></td>';
+
+			// Split All
+			print '<td></td>';
+		}
+
+		// Action delete
+		if ($permissiontodelete) {
+			print '<td></td>';
+		}
+
+		print '</tr>';
+
+		if ($action == 'addproduceline') {
+			print '<!-- Add line to produce -->'."\n";
+			print '<tr class="liste_titre">';
+
+			// Product
+			print '<td>';
+			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300');
+			print '</td>';
+			// Qty
+			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
+			// Cost price
+			if ($permissiontoupdatecost) {
+				print '<td></td>';
+			}
+			// Action (cost price + already produced)
+			print '<td colspan="2">';
+			print '<input type="submit" class="button buttongen button-add" name="addproducelinebutton" value="'.$langs->trans("Add").'">';
+			print '<input type="submit" class="button buttongen button-cancel" name="canceladdproducelinebutton" value="'.$langs->trans("Cancel").'">';
+			print '</td>';
+			// Lot - serial
+			if (isModEnabled('productbatch')) {
+				print '<td></td>';
 
 				// Split
 				print '<td></td>';
@@ -1164,33 +1222,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				// Split All
 				print '<td></td>';
 			}
-			print '</td>';
-			print '<td></td>';
-		}
-		print '</tr>';
-
-		if ($action == 'addproduceline') {
-			print '<!-- Add line to produce -->'."\n";
-			print '<tr class="liste_titre">';
-			print '<td>';
-			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300');
-			print '</td>';
-			// Qty
-			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
-			// Cost price
-			print '<td></td>';
-
-			// Qty already produced
-			print '<td colspan="2">';
-			// Warehouse
-			print '<input type="submit" class="button buttongen button-add" name="addproducelinebutton" value="'.$langs->trans("Add").'">';
-			print '<input type="submit" class="button buttongen button-cancel" name="canceladdproducelinebutton" value="'.$langs->trans("Cancel").'">';
-			print '</td>';
-			// Lot - serial
-			if (isModEnabled('productbatch')) {
-				print '<td></td>';
-			}
-			// Action
+			// Action delete
 			if ($permissiontodelete) {
 				print '<td></td>';
 			}
@@ -1228,10 +1260,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '<input id="qty_dispatched'.$suffix.'" type="hidden" value="'.$alreadyproduced.'">';
 
 					print '<tr>';
+					// Product
 					print '<td>'.$tmpproduct->getNomUrl(1);
 					print '<br><span class="opacitymedium small">'.$tmpproduct->label.'</span>';
 					print '</td>';
+					// Qty
 					print '<td class="right">'.$line->qty.'</td>';
+					// Cost price
 					if ($permissiontoupdatecost) {
 						// Defined $manufacturingcost
 						$manufacturingcost = 0;
@@ -1259,6 +1294,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 						print '</td>';
 					}
+					// Already produced
 					print '<td class="right nowraponall">';
 					if ($alreadyproduced) {
 						print '<script>';
@@ -1283,28 +1319,41 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					}
 					print ' '.$alreadyproduced;
 					print '</td>';
-					print '<td>'; // Warehouse
+					// Warehouse
+					print '<td>';
 					print '</td>';
+					// Lot
 					if (isModEnabled('productbatch')) {
-						print '<td></td>'; // Lot
-					}
+						print '<td></td>';
 
-					if ($permissiontodelete && $line->origin_type == 'free') {
-						$href = $_SERVER["PHP_SELF"];
-						$href .= '?id='.$object->id;
-						$href .= '&action=deleteline';
-						$href .= '&lineid='.$line->id;
-						print '<td class="center">';
-						print '<a class="reposition" href="'.$href.'">';
-						print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), "delete");
-						print '</a>';
-						print '</td>';
+						// Split
+						print '<td></td>';
+
+						// Split All
+						print '<td></td>';
+					}
+					// Delete
+					if ($permissiontodelete) {
+						if ($line->origin_type == 'free') {
+							$href = $_SERVER["PHP_SELF"];
+							$href .= '?id='.$object->id;
+							$href .= '&action=deleteline';
+							$href .= '&lineid='.$line->id;
+							print '<td class="center">';
+							print '<a class="reposition" href="'.$href.'">';
+							print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), "delete");
+							print '</a>';
+							print '</td>';
+						} else {
+							print '<td></td>';
+						}
 					}
 					print '</tr>';
 
 					// Show detailed of already consumed with js code to collapse
 					foreach ($arrayoflines as $line2) {
 						print '<tr class="expanddetailtoproduce'.$line->id.' hideobject opacitylow">';
+						// Product
 						print '<td>';
 						$tmpstockmovement->id = $line2['fk_stock_movement'];
 						print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?search_ref='.$tmpstockmovement->id.'">'.img_picto($langs->trans("StockMovement"), 'movement', 'class="paddingright"').'</a>';
@@ -1316,8 +1365,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						if ($permissiontoupdatecost) {
 							print '<td></td>';
 						}
-						// Qty already produced
+						// Already produced
 						print '<td class="right">'.$line2['qty'].'</td>';
+						// Warehouse
 						print '<td class="tdoverflowmax150">';
 						if ($line2['fk_warehouse'] > 0) {
 							$result = $tmpwarehouse->fetch($line2['fk_warehouse']);
@@ -1326,6 +1376,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							}
 						}
 						print '</td>';
+						// Lot
 						if (isModEnabled('productbatch')) {
 							print '<td>';
 							if ($line2['batch'] != '') {
@@ -1333,12 +1384,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								print $tmpbatch->getNomUrl(1);
 							}
 							print '</td>';
-							print '<td></td>';
 
 							// Split
 							print '<td></td>';
 
 							// Split All
+							print '<td></td>';
+						}
+						// Action delete
+						if ($permissiontodelete) {
 							print '<td></td>';
 						}
 						print '</tr>';
@@ -1348,12 +1402,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<!-- Enter line to produce -->'."\n";
 						$maxQty = 1;
 						print '<tr data-max-qty="'.$maxQty.'" name="batch_'.$line->id.'_'.$i.'">';
+						// Product
 						print '<td><span class="opacitymedium">'.$langs->trans("ToProduce").'</span></td>';
 						$preselected = (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i) ? GETPOST('qtytoproduce-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyproduced));
 						if ($action == 'consumeorproduce' && !GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) {
 							$preselected = 0;
 						}
+						// Qty
 						print '<td class="right"><input type="text" class="width50 right" id="qtytoproduce-'.$line->id.'-'.$i.'" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
+						// Cost
 						if ($permissiontoupdatecost) {
 							// Defined $manufacturingcost
 							$manufacturingcost = 0;
@@ -1382,7 +1439,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								print '<td><input type="hidden" class="width50 right" name="pricetoproduce-'.$line->id.'-'.$i.'" value="'.($manufacturingcost ? $manufacturingcost : '').'"></td>';
 							}
 						}
+						// Already produced
 						print '<td></td>';
+						// Warehouse
 						print '<td>';
 						if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 							$preselected = (GETPOSTISSET('idwarehousetoproduce-'.$line->id.'-'.$i) ? GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) : ($object->fk_warehouse > 0 ? $object->fk_warehouse : 'ifone'));
@@ -1391,6 +1450,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							print '<span class="opacitymedium">'.$langs->trans("NoStockChangeOnServices").'</span>';
 						}
 						print '</td>';
+						// Lot
 						if (isModEnabled('productbatch')) {
 							print '<td>';
 							if ($tmpproduct->status_batch) {
@@ -1399,7 +1459,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							}
 							print '</td>';
 							// Batch number in same column than the stock movement picto
-							print '<td>';
 							if ($tmpproduct->status_batch) {
 								$type = 'batch';
 								print '<td align="right" class="split">';
@@ -1409,9 +1468,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								print '<td align="right"  class="splitall">';
 								if (($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton splitallbutton field-error-icon" onClick="addDispatchLine('.$line->id.', \'batch\', \'alltoproduce\')"'); //
 								print '</td>';
+							} else {
+								print '<td></td>';
+
+								print '<td></td>';
 							}
-							print '</td>';
 						}
+
+						// Action delete
+						print '<td></td>';
+
 						print '</tr>';
 					}
 				}

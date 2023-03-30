@@ -91,7 +91,7 @@ MailingModuleDescContactsByFunction=Kontakter etter stilling
 MailingModuleDescEmailsFromFile=E-poster fra fil
 MailingModuleDescEmailsFromUser=E-postmeldinger innlagt av bruker
 MailingModuleDescDolibarrUsers=Brukere med e-post
-MailingModuleDescThirdPartiesByCategories=Tredjeparter (etter kategorier)
+MailingModuleDescThirdPartiesByCategories=Tredjeparter
 SendingFromWebInterfaceIsNotAllowed=Det er ikke tillatt å sende fra webgrensesnitt.
 EmailCollectorFilterDesc=Alle filtre må samsvare for at en e-post skal hentes inn
 
@@ -179,3 +179,4 @@ RecordCreatedByEmailCollector=Post opprettet av Email Collector %s fra e-post %s
 DefaultBlacklistMailingStatus=Standardverdi for feltet '%s' når du oppretter en ny kontakt
 DefaultStatusEmptyMandatory=Tom, men obligatorisk
 WarningLimitSendByDay=WARNING: The setup or contract of your instance limits your number of emails per day to <b>%s</b>. Trying to send more may result in having your instance slow down or suspended. Please contact your support if you need a higher quota.
+NoMoreRecipientToSendTo=Ingen flere mottaker å sende e-posten til

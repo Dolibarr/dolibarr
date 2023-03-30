@@ -2407,8 +2407,7 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 			} else {
 				print ' - ';
 			}
-			//print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ExampleOnFirstLine").': </span>';
-			print '<i class="opacitymedium">'.$example.'</i>';
+			print '<i class="opacitymedium">'.dol_escape_htmltag($example).'</i>';
 		}
 		print '</td>';
 		print '</tr>';

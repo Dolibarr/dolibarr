@@ -2229,12 +2229,16 @@ class Adherent extends CommonObject
 
 		$label .= '<div class="centpercent">';
 		$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Member").'</u>';
+
 		$label .= ' '.$this->getLibStatut(4);
 		if (!empty($this->ref)) {
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}
 		if (!empty($this->login)) {
 			$label .= '<br><b>'.$langs->trans('Login').':</b> '.$this->login;
+		}
+		if (!empty($this->email)) {
+			$label .= '<br><b>'.$langs->trans('Email').':</b> '.$this->email;
 		}
 		if (!empty($this->firstname) || !empty($this->lastname)) {
 			$label .= '<br><b>'.$langs->trans('Name').':</b> '.$this->getFullName($langs);

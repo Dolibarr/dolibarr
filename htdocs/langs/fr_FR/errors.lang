@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Erreur, le paramètre <b> %s </b> 
 ErrorLoginDateValidity=Erreur, cet identifiant est hors de la plage de date de validité
 ErrorValueLength=La longueur du champ <b>%s</b> doit être supérieure à <b>%s</b>
 ErrorReservedKeyword=Le terme '<b>%s</b>' est un mot clé réservé
+ErrorFilenameReserved=The filename <b>%s</b> can't be used as it is a reserved and protected command.
 ErrorNotAvailableWithThisDistribution=Non disponible dans cette distribution
 ErrorPublicInterfaceNotEnabled=L’interface publique n’a pas été activée
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=La langue d'une nouvelle page, si elle est la traduction d'une autre page, doit être définie
@@ -308,7 +309,7 @@ ErrorExistingPermission = La permission <b>%s</b> pour l'objet <b>%s</b> existe 
 ErrorFieldExist=La valeur pour <b>%s</b> existe déjà
 ErrorEqualModule=Module invalide dans <b>%s</b>.
 ErrorFieldValue=La valeur pour <b>%s</b> est incorrecte
-ErrorCoherenceMenu=<b>%s</b>est requise lorsque <b>%</b> vaut LEFT
+ErrorCoherenceMenu=<b>%s</b> is required when <b>%s</b> is 'left'
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.

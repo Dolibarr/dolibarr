@@ -228,6 +228,7 @@ class SMTPs
 
 	// @CHANGE LDR
 	public $log = '';
+	public $lastretval = '';
 	private $_errorsTo = '';
 	private $_deliveryReceipt = 0;
 	private $_trackId = '';
@@ -564,7 +565,7 @@ class SMTPs
 				// Most servers expect a 2nd pass of EHLO after TLS is established to get another time
 				// the answer with list of supported AUTH methods. They may differs between non STARTTLS and with STARTTLS.
 				if (! $_retVal = $this->socket_send_str('EHLO '.$hosth, '250')) {
-					$this->_setErr(126, '"'.$hosth.'" does not support authenticated connections. Error after sending EHLO '.$hosth);
+					$this->_setErr(126, '"'.$hosth.'" does not support authenticated connections or temporary error. Error after 2nd sending EHLO '.$hosth.' : '.$this->lastretval);
 					return $_retVal;
 				}
 			}
@@ -614,7 +615,7 @@ class SMTPs
 				$this->_setErr(130, 'Invalid Authentication Credentials.');
 			}
 		} else {
-			$this->_setErr(126, '"'.$host.'" does not support authenticated connections. Error after sending EHLO '.$hosth);
+			$this->_setErr(126, '"'.$host.'" does not support authenticated connections or temporary error. Error after sending EHLO '.$hosth.' : '.$this->lastretval);
 		}
 
 		return $_retVal;
@@ -670,10 +671,11 @@ class SMTPs
 					}
 				}
 
+				// Send the HELO message to the SMTP server
 				$_retVal = $this->socket_send_str('HELO '.$hosth, '250');
 			}
 
-			// Well, did we get to the server?
+			// Well, did we get the server answer with correct code ?
 			if ($_retVal) {
 				// From this point onward most server response codes should be 250
 				// Specify who the mail is from....
@@ -716,8 +718,11 @@ class SMTPs
 
 				// Now tell the server we are done and close the socket...
 				fputs($this->socket, 'QUIT');
-				fclose($this->socket);
+			} else {
+				// We got error code into $this->lastretval
 			}
+
+			fclose($this->socket);
 		}
 
 		return $_retVal;
@@ -1870,7 +1875,9 @@ class SMTPs
 	 * using SMTP Extensions
 	 *
 	 * @param	resource    $socket			Socket handler
-	 * @param	string		$response		Response. Example: "550 5.7.1  https://support.google.com/a/answer/6140680#invalidcred j21sm814390wre.3"
+	 * @param	string		$response		Expected response ('250', ...). Example of response we can get:
+	 * 										"421 4.7.0 Try again later, closing connection. (EHLO) nb21-20020a1709071c9500b0093d0d964affsm869534ejc.73 - gsmtp"
+	 * 										"550 5.7.1  https://support.google.com/a/answer/6140680#invalidcred j21sm814390wre.3"
 	 * @return	boolean						True or false
 	 */
 	public function server_parse($socket, $response)
@@ -1897,8 +1904,10 @@ class SMTPs
 			$limit++;
 		}
 
+		$this->lastretval = substr($server_response, 0, 3);
+
 		if (!(substr($server_response, 0, 3) == $response)) {
-			$this->_setErr(120, "Ran into problems sending Mail.\r\nResponse:".$server_response);
+			$this->_setErr(120, "Ran into problems sending Mail.\r\nResponse: ".$server_response);
 			$_retVal = false;
 		}
 
@@ -1910,9 +1919,9 @@ class SMTPs
 	 * Send str
 	 *
 	 * @param	string		$_strSend		String to send
-	 * @param 	string		$_returnCode	Return code
+	 * @param 	string		$_returnCode	Expected return code
 	 * @param 	string		$CRLF			CRLF
-	 * @return 	boolean|null						True or false
+	 * @return 	boolean|null				True or false
 	 */
 	public function socket_send_str($_strSend, $_returnCode = null, $CRLF = "\r\n")
 	{
@@ -1928,6 +1937,8 @@ class SMTPs
 		if ($_returnCode) {
 			return $this->server_parse($this->socket, $_returnCode);
 		}
+
+		return null;
 	}
 
 	// =============================================================
@@ -1949,7 +1960,7 @@ class SMTPs
 	}
 
 	/**
-	 * Returns errors codes and messages for Class
+	 * Returns applicative errors codes and messages for Class (not the SMTP error code)
 	 *
 	 * @return string $_errMsg  Error Message
 	 */

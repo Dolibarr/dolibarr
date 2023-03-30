@@ -195,6 +195,7 @@ llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
 if ($action == "view_ticketlist") {
+	print '<div class="div-table-responsive">';
 	print '<div class="ticketpublicarealist">';
 
 	print '<br>';
@@ -722,6 +723,7 @@ if ($action == "view_ticketlist") {
 		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'">'.$langs->trans('Back').'</a></div>';
 	}
 
+	print '</div>';
 	print '</div>';
 } else {
 	print '<div class="ticketpublicarea">';

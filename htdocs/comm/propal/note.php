@@ -49,9 +49,9 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Security check
+$socid = '';
 if ($user->socid > 0) {
 	$socid = $user->socid;
-	$object->id = $user->socid;
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context

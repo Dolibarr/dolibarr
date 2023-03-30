@@ -143,7 +143,6 @@ class ExpeditionLineBatch extends CommonObject
 				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
-			$this->db->rollback();
 			return -1 * $error;
 		}
 	}
