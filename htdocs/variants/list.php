@@ -226,8 +226,7 @@ $morecss = array();
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = "SELECT ";
-$sql .= " COUNT(DISTINCT pav.rowid) AS nb_of_values, COUNT(DISTINCT pac2v.fk_prod_combination) AS nb_products";
+$sql = "SELECT COUNT(DISTINCT pav.rowid) AS nb_of_values, COUNT(DISTINCT pac2v.fk_prod_combination) AS nb_products, ";
 $sql .= $object->getFieldList("t");
 // Add fields from extrafields
 //if (!empty($extrafields->attributes[$object->table_element]['label'])) {
