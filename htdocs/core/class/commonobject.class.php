@@ -5992,6 +5992,8 @@ abstract class CommonObject
 					case 'chkbxlst':
 						if (is_array($this->array_options[$key])) {
 							$new_array_options[$key] = implode(',', $this->array_options[$key]);
+						} else {
+							$new_array_options[$key] = $this->array_options[$key];
 						}
 						break;
 				}
@@ -6343,6 +6345,8 @@ abstract class CommonObject
 				case 'chkbxlst':
 					if (is_array($this->array_options[$key])) {
 						$new_array_options[$key] = implode(',', $this->array_options[$key]);
+					} else {
+						$new_array_options[$key] = $this->array_options[$key];
 					}
 					break;
 			}
