@@ -425,7 +425,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 print "</div>";
 
 // End of page
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix, $object);
+htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
 
 llxFooter('', 'public');
 
