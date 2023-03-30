@@ -719,8 +719,8 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields["stockqty"]['checked'])) {
 			print '<td class="right">'.price2num($obj->stockqty, 5).'</td>';
 			if (!$i) {
-				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'stockqty';
+				$totalarray['nbfield']++;
 			}
 		}
 
