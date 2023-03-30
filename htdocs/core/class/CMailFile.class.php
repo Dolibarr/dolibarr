@@ -849,7 +849,7 @@ class CMailFile
 						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 
 						if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
-							$this->save_dump_mail_in_err();
+							$this->save_dump_mail_in_err('Mail with topic '.$this->subject);
 						}
 					} else {
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
@@ -1030,7 +1030,7 @@ class CMailFile
 						$res = false;
 
 						if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
-							$this->save_dump_mail_in_err();
+							$this->save_dump_mail_in_err('Mail with topic '.$this->subject);
 						}
 					}
 				}
@@ -1170,7 +1170,7 @@ class CMailFile
 					$res = false;
 
 					if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
-						$this->save_dump_mail_in_err();
+						$this->save_dump_mail_in_err('Mail with topic '.$this->subject);
 					}
 				} else {
 					dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
@@ -1281,13 +1281,20 @@ class CMailFile
 	 *  Save content if mail is in error
 	 *  Used for debugging.
 	 *
+	 *  @param	string		$message		Add also a message
 	 *  @return	void
 	 */
-	public function save_dump_mail_in_err()
+	public function save_dump_mail_in_err($message = '')
 	{
 		global $dolibarr_main_data_root;
 
 		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
+			// Add message to dolibarr_mail.log
+			if ($message) {
+				dol_syslog($message, LOG_DEBUG, 0, '_mail');
+			}
+
+			// Move dolibarr_mail.log into a dolibarr_mail.err or dolibarr_mail.date.err
 			$srcfile = $dolibarr_main_data_root."/dolibarr_mail.log";
 			if (getDolGlobalString('MAIN_MAIL_DEBUG_ERR_WITH_DATE')) {
 				$destfile = $dolibarr_main_data_root."/dolibarr_mail.".dol_print_date(dol_now(), 'dayhourlog', 'gmt').".err";
