@@ -238,8 +238,16 @@ class DoliStorage implements TokenStorageInterface
 	 */
 	public function clearAllTokens()
 	{
-		// TODO
-		$this->conf->remove($this->key);
+		// TODO Remove token using a loop on each $service
+		/*
+		$servicepluskeyforprovider = $service;
+		if (!empty($this->keyforprovider)) {
+			// We clean the keyforprovider after the - to be sure it is not present
+			$servicepluskeyforprovider = preg_replace('/\-'.preg_quote($this->keyforprovider, '/').'$/', '', $servicepluskeyforprovider);
+			// Now we add the keyforprovider
+			$servicepluskeyforprovider .= '-'.$this->keyforprovider;
+		}
+		*/
 
 		// allow chaining
 		return $this;
@@ -334,7 +342,6 @@ class DoliStorage implements TokenStorageInterface
 	{
 		// TODO
 		// get previously saved tokens
-		//$states = $this->conf->get($this->stateKey);
 
 		if (is_array($this->states) && array_key_exists($service, $this->states)) {
 			unset($this->states[$service]);
@@ -353,7 +360,6 @@ class DoliStorage implements TokenStorageInterface
 	public function clearAllAuthorizationStates()
 	{
 		// TODO
-		//$this->conf->remove($this->stateKey);
 
 		// allow chaining
 		return $this;
