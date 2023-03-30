@@ -5425,10 +5425,10 @@ class Facture extends CommonInvoice
 
 
 	/**
-	 *  Send reminders by emails for ivoices that are due
+	 *  Send reminders by emails for invoices that are due
 	 *  CAN BE A CRON TASK
 	 *
-	 *  @param	int			$nbdays				Delay after due date (or before if delay is negative)
+	 *  @param	int			$nbdays				Delay before due date (or after if delay is negative)
 	 *  @param	string		$paymentmode		'' or 'all' by default (no filter), or 'LIQ', 'CHQ', CB', ...
 	 *  @param	int|string	$template			Name (or id) of email template (Must be a template of type 'facture_send')
 	 *  @param	string		$forcerecipient		Force email of recipient (for example to send the email to an accountant supervisor instead of the customer)
