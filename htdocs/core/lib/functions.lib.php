@@ -5740,8 +5740,8 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0,
  *		@param	integer				$form			Type of format, HTML or not (not by default)
  *		@param	Translate|string	$outlangs		Object langs for output. '' use default lang. 'none' use international separators.
  *		@param	int					$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accurancy) before beeing inserted into database or after a computation, so this parameter should be useless.
- *		@param	int					$rounding		MINIMUM number of decimal to show. 0=no change, -1=we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
- *		@param	int|string			$forcerounding	Force the MAXIMUM of decimal to forcerounding decimal (-1=no change, 'MU' or 'MT' or numeric to round to MU or MT or to a given number of decimal)
+ *		@param	int					$rounding		MINIMUM number of decimal to show: 0=no change, -1=we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
+ *		@param	int|string			$forcerounding	MAXIMUM number of decimal to forcerounding decimal: -1=no change, 'MU' or 'MT' or numeric to round to MU or MT or to a given number of decimal
  *		@param	string				$currency_code	To add currency symbol (''=add nothing, 'auto'=Use default currency, 'XXX'=add currency symbols for XXX currency)
  *		@return	string								String with formated amount
  *
@@ -5756,7 +5756,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 		$amount = 0; // To have a numeric value if amount not defined or = ''
 	}
 	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
-	if ($rounding < 0) {
+	if ($rounding == -1) {
 		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
 	}
 	$nbdecimal = $rounding;
