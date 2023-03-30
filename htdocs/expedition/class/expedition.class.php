@@ -1834,7 +1834,8 @@ class Expedition extends CommonObject
 	{
 		global $conf, $langs;
 
-		$langs->load('shipping');
+		$langs->load('sendings');
+
 		$nofetch = !empty($params['nofetch']);
 
 		$datas = array();
@@ -1844,6 +1845,13 @@ class Expedition extends CommonObject
 		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
+		if (!$nofetch) {
+			$langs->load('companies');
+			if (empty($this->thirdparty)) {
+				$this->fetch_thirdparty();
+			}
+			$datas['customer'] = '<br><b>'.$langs->trans('Customer').':</b> '.$this->thirdparty->getNomUrl(1, '', 0, 1);
+		}
 
 		return $datas;
 	}

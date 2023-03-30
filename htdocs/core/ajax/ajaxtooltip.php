@@ -79,7 +79,7 @@ top_httphead();
 $html = '';
 
 if (is_object($object)) {
-	if ($object->id > 0) {
+	if ($object->id > 0 || !empty($object->ref)) {
 		$html = $object->getTooltipContent($params);
 	} elseif ($res == 0) {
 		$html = $langs->trans('Deleted');

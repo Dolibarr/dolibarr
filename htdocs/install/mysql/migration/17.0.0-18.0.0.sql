@@ -380,3 +380,6 @@ ALTER TABLE llx_product_lot ADD COLUMN last_main_doc varchar(255) AFTER model_pd
 
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN status integer DEFAULT 1;
 
+ALTER TABLE llx_product_fournisseur_price_log ADD INDEX idx_product_fournisseur_price_log_fk_product_fournisseur (fk_product_fournisseur);
+ALTER TABLE llx_product_fournisseur_price_log ADD INDEX idx_product_fournisseur_price_log_fk_user (fk_user);
+--ALTER TABLE llx_product_fournisseur_price_log ADD INDEX idx_product_fournisseur_price_log_fk_multicurrency (fk_multicurrency);
