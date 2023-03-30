@@ -1030,7 +1030,7 @@ class CMailFile
 						$res = false;
 
 						if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
-							$this->save_dump_mail_in_err('Mail with topic '.$this->subject);
+							$this->save_dump_mail_in_err('Mail smtp error '.$smtperrorcode.' with topic '.$this->subject);
 						}
 					}
 				}
@@ -1289,13 +1289,25 @@ class CMailFile
 		global $dolibarr_main_data_root;
 
 		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
-			// Add message to dolibarr_mail.log
+			$srcfile = $dolibarr_main_data_root."/dolibarr_mail.log";
+
+			// Add message to dolibarr_mail.log. We do not use dol_syslog() on purpose,
+			// to be sure to write into dolibarr_mail.log
 			if ($message) {
-				dol_syslog($message, LOG_DEBUG, 0, '_mail');
+				// Test constant SYSLOG_FILE_NO_ERROR (should stay a constant defined with define('SYSLOG_FILE_NO_ERROR',1);
+				if (defined('SYSLOG_FILE_NO_ERROR')) {
+					$filefd = @fopen($srcfile, 'a+');
+				} else {
+					$filefd = fopen($srcfile, 'a+');
+				}
+				if ($filefd) {
+					fwrite($filefd, $message."\n");
+					fclose($filefd);
+					dolChmod($srcfile);
+				}
 			}
 
 			// Move dolibarr_mail.log into a dolibarr_mail.err or dolibarr_mail.date.err
-			$srcfile = $dolibarr_main_data_root."/dolibarr_mail.log";
 			if (getDolGlobalString('MAIN_MAIL_DEBUG_ERR_WITH_DATE')) {
 				$destfile = $dolibarr_main_data_root."/dolibarr_mail.".dol_print_date(dol_now(), 'dayhourlog', 'gmt').".err";
 			} else {
