@@ -609,22 +609,22 @@ class Form
 	}
 
 	/**
-	 *    Show a text and picto with tooltip on text or picto.
+	 *  Show a text and picto with tooltip on text or picto.
 	 *  Can be called by an instancied $form->textwithtooltip or by a static call Form::textwithtooltip
 	 *
-	 * @param string $text Text to show
-	 * @param string $htmltext HTML content of tooltip. Must be HTML/UTF8 encoded.
-	 * @param int $tooltipon 1=tooltip on text, 2=tooltip on image, 3=tooltip sur les 2
-	 * @param int $direction -1=image is before, 0=no image, 1=image is after
-	 * @param string $img Html code for image (use img_xxx() function to get it)
-	 * @param string $extracss Add a CSS style to td tags
-	 * @param int $notabs 0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
-	 * @param string $incbefore Include code before the text
-	 * @param int $noencodehtmltext Do not encode into html entity the htmltext
-	 * @param string $tooltiptrigger ''=Tooltip on hover, 'abc'=Tooltip on click (abc is a unique key)
-	 * @param int $forcenowrap Force no wrap between text and picto (works with notabs=2 only)
-	 * @return    string                            Code html du tooltip (texte+picto)
-	 * @see    textwithpicto() Use thisfunction if you can.
+	 * 	@param 	string 	$text 				Text to show
+	 * 	@param 	string 	$htmltext 			HTML content of tooltip. Must be HTML/UTF8 encoded.
+	 * 	@param 	int 	$tooltipon 			1=tooltip on text, 2=tooltip on image, 3=tooltip sur les 2
+	 * 	@param 	int 	$direction 			-1=image is before, 0=no image, 1=image is after
+	 * 	@param 	string 	$img 				Html code for image (use img_xxx() function to get it)
+	 * 	@param 	string 	$extracss 			Add a CSS style to td tags
+	 * 	@param 	int 	$notabs 			0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
+	 * 	@param 	string 	$incbefore 			Include code before the text
+	 * 	@param 	int 	$noencodehtmltext 	Do not encode into html entity the htmltext
+	 * 	@param 	string 	$tooltiptrigger 	''=Tooltip on hover, 'abc'=Tooltip on click (abc is a unique key)
+	 * 	@param 	int 	$forcenowrap 		Force no wrap between text and picto (works with notabs=2 only)
+	 * 	@return string                      Code html du tooltip (texte+picto)
+	 * 	@see    textwithpicto() 			Use thisfunction if you can.
 	 */
 	public function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 3, $incbefore = '', $noencodehtmltext = 0, $tooltiptrigger = '', $forcenowrap = 0)
 	{
@@ -725,16 +725,16 @@ class Form
 	/**
 	 *    Show a text with a picto and a tooltip on picto
 	 *
-	 * @param string $text Text to show
-	 * @param string $htmltext Content of tooltip
-	 * @param int $direction 1=Icon is after text, -1=Icon is before text, 0=no icon
-	 * @param string $type Type of picto ('info', 'infoclickable', 'help', 'helpclickable', 'warning', 'superadmin', 'mypicto@mymodule', ...) or image filepath or 'none'
-	 * @param string $extracss Add a CSS style to td, div or span tag
-	 * @param int $noencodehtmltext Do not encode into html entity the htmltext
-	 * @param int $notabs 0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
-	 * @param string $tooltiptrigger ''=Tooltip on hover and hidden on smartphone, 'abconsmartphone'=Tooltip on hover and on click on smartphone, 'abc'=Tooltip on click (abc is a unique key, clickable link is on image or on link if param $type='none' or on both if $type='xxxclickable')
-	 * @param int $forcenowrap Force no wrap between text and picto (works with notabs=2 only)
-	 * @return    string                        HTML code of text, picto, tooltip
+	 * @param 	string 		$text 				Text to show
+	 * @param 	string 		$htmltext 			Content of tooltip
+	 * @param 	int 		$direction 			1=Icon is after text, -1=Icon is before text, 0=no icon
+	 * @param 	string 		$type 				Type of picto ('info', 'infoclickable', 'help', 'helpclickable', 'warning', 'superadmin', 'mypicto@mymodule', ...) or image filepath or 'none'
+	 * @param 	string 		$extracss 			Add a CSS style to td, div or span tag
+	 * @param 	int 		$noencodehtmltext 	Do not encode into html entity the htmltext
+	 * @param 	int 		$notabs 			0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
+	 * @param 	string 		$tooltiptrigger 	''=Tooltip on hover and hidden on smartphone, 'abconsmartphone'=Tooltip on hover and on click on smartphone, 'abc'=Tooltip on click (abc is a unique key, clickable link is on image or on link if param $type='none' or on both if $type='xxxclickable')
+	 * @param 	int 		$forcenowrap 		Force no wrap between text and picto (works with notabs=2 only)
+	 * @return	string                        	HTML code of text, picto, tooltip
 	 */
 	public function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 3, $tooltiptrigger = '', $forcenowrap = 0)
 	{

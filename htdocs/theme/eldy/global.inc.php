@@ -1744,6 +1744,8 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.hideonsmartphone { display: none; }
 	.hideonsmartphoneimp { display: none !important; }
 
+	.margintoponsmartphone { margin-top: 6px; }
+
 	span.pictotitle {
 		margin-<?php echo $left; ?>: 0 !important;
 	}
