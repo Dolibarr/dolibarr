@@ -357,8 +357,8 @@ class Paiement extends CommonObject
 				$facid = $key;
 				if (is_numeric($amount) && $amount <> 0) {
 					$amount = price2num($amount);
-					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement_facture (fk_facture, fk_paiement, amount, multicurrency_amount, multicurrency_code, multicurrency_tx)';
-					$sql .= ' VALUES ('.((int) $facid).', '.((int) $this->id).', "'.((float) $amount).'", "'.((float) $this->multicurrency_amounts[$key]).'", '.($this->multicurrency_code ? '"'.$this->db->escape($currencyofpayment).'"' : 'NULL').', '.(!empty($this->multicurrency_tx) ? (double) $currencytxofpayment : 1).')';
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount, multicurrency_amount, multicurrency_code, multicurrency_tx)";
+					$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).", ".((float) $this->multicurrency_amounts[$key]).", ".($this->multicurrency_code ? $this->db->escape($currencyofpayment) : 'NULL').", ".(!empty($this->multicurrency_tx) ? (double) $currencytxofpayment : 1).")";
 
 					dol_syslog(get_class($this).'::create Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
 					$resql = $this->db->query($sql);
