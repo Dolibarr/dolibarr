@@ -1416,7 +1416,7 @@ class Propal extends CommonObject
 		// update prices
 		if ($update_prices === true || $update_desc === true) {
 			if ($objsoc->id > 0 && !empty($object->lines)) {
-				if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+				if ($update_prices === true && !empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 					// If price per customer
 					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 				}
