@@ -720,8 +720,6 @@ while ($i < $imaxinloop) {
 			print '<td class="right">'.price2num($obj->stockqty, 5).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
-			}
-			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'stockqty';
 			}
 		}
@@ -736,10 +734,8 @@ while ($i < $imaxinloop) {
 			}
 			print '</td>';
 			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'estimatedvalue';
+				$totalarray['nbfield']++;
 			}
 		}
 
@@ -756,10 +752,8 @@ while ($i < $imaxinloop) {
 			}
 			print '</td>';
 			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'estimatedstockvaluesell';
+				$totalarray['nbfield']++;
 			}
 		}
 
@@ -790,9 +784,9 @@ while ($i < $imaxinloop) {
 			}
 			print '</td>';
 		}
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+		// if (!$i) {
+		// 	$totalarray['nbfield']++;
+		// }
 
 		print '</tr>'."\n";
 	}
