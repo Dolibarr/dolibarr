@@ -7,6 +7,7 @@
  * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	  <info@inovea-conseil.com>
  * Copyright (C) 2018       Frédéric France         <frederic.francenetlogic.fr>
+ * Copyright (C) 2023      Sylvain Legrand		  <technique@infras.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -173,14 +174,38 @@ class PaiementFourn extends Paiement
 			$amounts_to_update = &$this->amounts;
 		}
 
+		$currencyofpayment = '';
+		$currencytxofpayment = '';
 		foreach ($amounts as $key => $value) {
 			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value ? $value : 0, $way, 'facture_fourn');
+			if (empty($currencyofpayment)) {
+				$currencyofpayment = $this->multicurrency_code[$key];
+			}
+			if ($currencyofpayment != $this->multicurrency_code[$key]) {
+				// If we have invoices with different currencies in the payment, we stop here
+				$this->error = 'ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment';
+				return -1;
+			}
+			if (empty($currencytxofpayment)) {
+				$currencytxofpayment = $this->multicurrency_tx[$key];
+			}
 			$totalamount_converted += $value_converted;
 			$amounts_to_update[$key] = price2num($value_converted, 'MT');
 
 			$newvalue = price2num($value, 'MT');
 			$amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
+		}
+		if (!empty($currencyofpayment)) {
+			// We must check that the currency of invoices is the same than the currency of the bank
+			$bankaccount = new Account($this->db);
+			$bankaccount->fetch($this->fk_account);
+			$bankcurrencycode = empty($bankaccount->currency_code) ? $conf->currency : $bankaccount->currency_code;
+			if ($currencyofpayment != $bankcurrencycode && $currencyofpayment != $conf->currency && $bankcurrencycode != $conf->currency) {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency', $currencyofpayment, $bankcurrencycode);
+				return -1;
+			}
 		}
 		$totalamount = price2num($totalamount);
 		$totalamount_converted = price2num($totalamount_converted);
@@ -213,8 +238,8 @@ class PaiementFourn extends Paiement
 					$facid = $key;
 					if (is_numeric($amount) && $amount <> 0) {
 						$amount = price2num($amount);
-						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn (fk_facturefourn, fk_paiementfourn, amount, multicurrency_amount)';
-						$sql .= ' VALUES ('.$facid.','.$this->id.',\''.$amount.'\', \''.$this->multicurrency_amounts[$key].'\')';
+						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn (fk_facturefourn, fk_paiementfourn, amount, multicurrency_amount, multicurrency_code, multicurrency_tx)';
+						$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).', '.((float) $this->multicurrency_amounts[$key]).', '.($currencyofpayment ? '"'.$this->db->escape($currencyofpayment).'"' : 'NULL').', '.(!empty($currencytxofpayment) ? (double) $currencytxofpayment : 1).')';
 						$resql = $this->db->query($sql);
 						if ($resql) {
 							$invoice = new FactureFournisseur($this->db);
@@ -345,7 +370,7 @@ class PaiementFourn extends Paiement
 			$this->total = $total;
 			$this->multicurrency_amount = $mtotal;
 			$this->db->commit();
-			dol_syslog('PaiementFourn::Create Ok Total = '.$this->total);
+			dol_syslog('PaiementFourn::Create Ok Total = '.$this->amount.', Total currency = '.$this->multicurrency_amount);
 			return $this->id;
 		} else {
 			$this->db->rollback();
