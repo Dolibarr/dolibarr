@@ -11285,6 +11285,11 @@ function getElementProperties($element_type)
 		$subelement = 'commande';
 	} elseif ($element_type == 'propal') {
 		$classpath = 'comm/propal/class';
+	} elseif ($element_type == 'shipping') {
+		$classpath = 'expedition/class';
+		$classfile = 'expedition';
+		$classname = 'Expedition';
+		$module = 'expedition';
 	} elseif ($element_type == 'supplier_proposal') {
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
@@ -11323,6 +11328,10 @@ function getElementProperties($element_type)
 		$classpath = 'comm/propal/class';
 		$module = 'propal';
 		$subelement = 'propaleligne';
+	} elseif ($element_type == 'opensurvey_sondage') {
+		$classpath = 'opensurvey/class';
+		$module = 'opensurvey';
+		$subelement = 'opensurveysondage';
 	} elseif ($element_type == 'order_supplier') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
@@ -11340,7 +11349,7 @@ function getElementProperties($element_type)
 	} elseif ($element_type == "service") {
 		$classpath = 'product/class';
 		$subelement = 'product';
-	} elseif ($objecttype == 'salary') {
+	} elseif ($element_type == 'salary') {
 		$classpath = 'salaries/class';
 		$module = 'salaries';
 	}
