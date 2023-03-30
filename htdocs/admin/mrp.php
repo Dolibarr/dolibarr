@@ -474,7 +474,7 @@ print '</form>';
 
 // Enable auto set remaining quantities to be consumed
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("MrpEnableAutoSetRemainingQuantitiesToBeConsumed").'</td>';
+print '<td>' . $langs->trans("MrpEnableAutoSetRemainingQuantitiesToBeConsumed") . '</td>';
 print '<td class="right">';
 print ajax_constantonoff("MRP_AUTO_SET_REMAINING_QUANTITIES_TO_BE_CONSUMED", array(), $conf->entity);
 print '</td>';
