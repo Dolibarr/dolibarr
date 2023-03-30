@@ -941,7 +941,7 @@ END;
 				// Definition of fields for lists
 				// Some fields are missing because they are not included in the database query
 				$arrayfields = array(
-					'pfp.datec'=>array('label'=>$langs->trans("AppliedPricesFrom"), 'checked'=>1, 'position'=>1),
+					'pfp.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>1, 'position'=>1),
 					's.nom'=>array('label'=>$langs->trans("Suppliers"), 'checked'=>1, 'position'=>2),
 					'pfp.fk_availability'=>array('label'=>$langs->trans("Availability"), 'enabled' => getDolGlobalInt('FOURN_PRODUCT_AVAILABILITY'), 'checked'=>0, 'position'=>4),
 					'pfp.quantity'=>array('label'=>$langs->trans("QtyMin"), 'checked'=>1, 'position'=>5),
@@ -954,7 +954,7 @@ END;
 					'pfp.barcode'=>array('label'=>$langs->trans("BarcodeValue"), 'enabled' => isModEnabled('barcode'), 'checked'=>0, 'position'=>16),
 					'pfp.packaging'=>array('label'=>$langs->trans("PackagingForThisProduct"), 'enabled' => getDolGlobalInt('PRODUCT_USE_SUPPLIER_PACKAGING'), 'checked'=>0, 'position'=>17),
 					'pfp.status'=>array('label'=>$langs->trans("Status"), 'enabled' => 1, 'checked'=>0, 'position'=>40),
-					'pfp.tms'=>array('label'=>$langs->trans("DateModification"), 'enabled' => isModEnabled('barcode'), 'checked'=>1, 'position'=>50),
+					'pfp.tms'=>array('label'=>$langs->trans("AppliedPricesFrom"), 'enabled' => isModEnabled('barcode'), 'checked'=>1, 'position'=>50),
 				);
 
 				// fetch optionals attributes and labels
@@ -999,7 +999,7 @@ END;
 
 				print '<tr class="liste_titre">';
 				if (!empty($arrayfields['pfp.datec']['checked'])) {
-					print_liste_field_titre("AppliedPricesFrom", $_SERVER["PHP_SELF"], "pfp.datec", "", $param, "", $sortfield, $sortorder, '', '', 1);
+					print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "pfp.datec", "", $param, "", $sortfield, $sortorder, '', '', 1);
 					$nbfields++;
 				}
 				if (!empty($arrayfields['s.nom']['checked'])) {
@@ -1067,7 +1067,7 @@ END;
 					$nbfields++;
 				}
 				if (!empty($arrayfields['pfp.tms']['checked'])) {
-					print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ', '', 1);
+					print_liste_field_titre("AppliedPricesFrom", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ', '', 1);
 					$nbfields++;
 				}
 
@@ -1111,7 +1111,7 @@ END;
 
 						// Date from
 						if (!empty($arrayfields['pfp.datec']['checked'])) {
-							print '<td>'.dol_print_date(($productfourn->fourn_date_creation ? $productfourn->fourn_date_creation : $productfourn->date_creation), 'dayhour').'</td>';
+							print '<td>'.dol_print_date(($productfourn->fourn_date_creation ? $productfourn->fourn_date_creation : $productfourn->date_creation), 'dayhour', 'tzuserrel').'</td>';
 						}
 
 						// Supplier
