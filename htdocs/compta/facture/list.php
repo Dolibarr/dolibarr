@@ -2430,7 +2430,7 @@ if ($resql) {
 					}
 				}
 				if (!empty($arrayfields['multicurrency_dynamount_payed']['checked'])) {
-					print '<td class="right nowraponall amount">'.(!empty($multicurrency_totalpay) ?price($multicurrency_totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
+					print '<td class="right nowraponall amount">'.(!empty($multicurrency_totalpay) ? price($multicurrency_totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
 					if (!$i) {
 						$totalarray['nbfield']++;
 					}
@@ -2440,7 +2440,7 @@ if ($resql) {
 				if (!empty($arrayfields['multicurrency_rtp']['checked'])) {
 					print '<td class="right nowraponall">';
 					print (!empty($multicurrency_remaintopay) ? price($multicurrency_remaintopay, 0, $langs) : '&nbsp;');
-					print '</td>'; // TODO Use a denormalized field
+					print '</td>'; // TODO Use a denormalized field ?
 					if (!$i) {
 						$totalarray['nbfield']++;
 					}
@@ -2448,14 +2448,14 @@ if ($resql) {
 
 				// Total buying or cost price
 				if (!empty($arrayfields['total_pa']['checked'])) {
-					print '<td class="right nowrap">'.price($marginInfo['pa_total']).'</td>';
+					print '<td class="right nowrap">'.price($marginInfo['pa_total'], 0, $langs, 1, -1, 'MT').'</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
 					}
 				}
 				// Total margin
 				if (!empty($arrayfields['total_margin']['checked'])) {
-					print '<td class="right nowrap">'.price($marginInfo['total_margin']).'</td>';
+					print '<td class="right nowrap">'.price($marginInfo['total_margin'], 0, $langs, 1, -1, 'MT').'</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
 					}
