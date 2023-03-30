@@ -591,8 +591,6 @@ class Facture extends CommonInvoice
 			// We do not add link to template invoice or next invoice will be linked to all generated invoices
 			//$this->linked_objects['facturerec'][0] = $this->fac_rec;
 
-			$forceduedate = $this->calculate_date_lim_reglement();
-
 			// For recurring invoices, update date and number of last generation of recurring template invoice, before inserting new invoice
 			if ($_facrec->frequency > 0) {
 				dol_syslog("This is a recurring invoice so we set date_last_gen and next date_when");
