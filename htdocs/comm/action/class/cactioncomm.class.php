@@ -172,14 +172,14 @@ class CActionComm
 		if ($morefilter) {
 			$sql .= " AND ".$morefilter;
 		}
-		$sql .= " ORDER BY position";
+		$sql .= " ORDER BY type, position, module";
 
 		dol_syslog(get_class($this)."::liste_array", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$nump = $this->db->num_rows($resql);
 			if ($nump) {
-				$idforallfornewmodule = 97;
+				$idforallfornewmodule = 96;
 				$i = 0;
 				while ($i < $nump) {
 					$obj = $this->db->fetch_object($resql);
@@ -277,6 +277,11 @@ class CActionComm
 								$repid[-98] = $langs->trans("ActionAC_AUTO");
 								$repcode['AC_ALL_AUTO'] = '-- '.$langs->trans("ActionAC_AUTO");
 							}
+							if($typecalendar == 'user') {
+								$label = '&nbsp;&nbsp; '.$label;
+								$repid[-97] = $langs->trans("ActionAC_USER");
+								$repcode['ActionAC_USER'] = '-- '.$langs->trans("ActionAC_USER");
+							}
 							if ($typecalendar == 'module') {
 								//TODO check if possible to push it between system and systemauto
 								if (preg_match('/@/', $obj->module)) {
@@ -291,6 +296,7 @@ class CActionComm
 								$repid[$idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($module));
 								$repcode['AC_ALL_'.strtoupper($module)] = '-- '.$langs->trans("Module").' '.ucfirst($module);
 							}
+
 						}
 						$repid[$obj->id] = $label;
 						$repcode[$obj->code] = $label;
