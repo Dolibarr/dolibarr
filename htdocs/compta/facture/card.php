@@ -2474,7 +2474,7 @@ if (empty($reshook)) {
 				$error++;
 				$result = -1;
 			}
-		} elseif ($progress < $percent) {
+		} elseif ($object->situation_cycle_ref > 0 && $progress < $percent) {
 			$mesg = '<div class="warning">'.$langs->trans("CantBeLessThanMinPercent").'</div>';
 			setEventMessages($mesg, null, 'warnings');
 			$error++;
