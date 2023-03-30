@@ -1916,8 +1916,8 @@ if ($resql) {
 
 
 			// Action column
-			if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-				print '<td class="nowrap" align="center">';
+			if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="nowrap center">';
 				if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 					$selected = 0;
 					if (in_array($obj->id, $arrayofselected)) {
@@ -2407,14 +2407,14 @@ if ($resql) {
 
 			// Total buying or cost price
 			if (!empty($arrayfields['total_pa']['checked'])) {
-				print '<td class="right nowrap">'.price($marginInfo['pa_total']).'</td>';
+				print '<td class="right nowrap">'.price($marginInfo['pa_total'], 0, $langs, 1, -1, 'MT').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			// Total margin
 			if (!empty($arrayfields['total_margin']['checked'])) {
-				print '<td class="right nowrap">'.price($marginInfo['total_margin']).'</td>';
+				print '<td class="right nowrap">'.price($marginInfo['total_margin'], 0, $langs, 1, -1, 'MT').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -2528,7 +2528,7 @@ if ($resql) {
 
 			// Action column (Show the massaction button only when this page is not opend from the Extended POS)
 
-			if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+			if (!getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="nowrap" align="center">';
 				if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 					$selected = 0;
