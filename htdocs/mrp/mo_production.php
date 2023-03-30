@@ -917,7 +917,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<tr>';
 						print '<td><span class="opacitymedium">'.$langs->trans("ToConsume").'</span></td>';
 						$preselected = (GETPOSTISSET('qty-'.$line->id.'-'.$i) ? GETPOST('qty-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyconsumed));
-						if ($action == 'consumeorproduce' && !GETPOSTISSET('qty-'.$line->id.'-'.$i)) {
+						if ($action == 'consumeorproduce' && empty($conf->global->MRP_AUTO_SET_REMAINING_QUANTITIES_TO_BE_CONSUMED) && !GETPOSTISSET('qty-'.$line->id.'-'.$i)) {
 							$preselected = 0;
 						}
 						print '<td class="right"><input type="text" class="width50 right" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
