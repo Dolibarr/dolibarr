@@ -277,7 +277,7 @@ class CActionComm
 								$repid[-98] = $langs->trans("ActionAC_AUTO");
 								$repcode['AC_ALL_AUTO'] = '-- '.$langs->trans("ActionAC_AUTO");
 							}
-							if($typecalendar == 'user') {
+							if ($typecalendar == 'user') {
 								$label = '&nbsp;&nbsp; '.$label;
 								$repid[-97] = $langs->trans("ActionAC_USER");
 								$repcode['ActionAC_USER'] = '-- '.$langs->trans("ActionAC_USER");
@@ -296,7 +296,6 @@ class CActionComm
 								$repid[$idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($module));
 								$repcode['AC_ALL_'.strtoupper($module)] = '-- '.$langs->trans("Module").' '.ucfirst($module);
 							}
-
 						}
 						$repid[$obj->id] = $label;
 						$repcode[$obj->code] = $label;
