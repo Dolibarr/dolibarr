@@ -1106,7 +1106,7 @@ END;
 
 						// Date from
 						if (!empty($arrayfields['pfp.datec']['checked'])) {
-							print '<td>'.dol_print_date(($productfourn->fourn_date_creation ? $productfourn->fourn_date_creation : $productfourn->date_creation), 'dayhour').'</td>';
+							print '<td>'.dol_print_date(($productfourn->fourn_date_creation ? $productfourn->fourn_date_creation : $productfourn->date_creation), 'dayhour', 'tzuserrel').'</td>';
 						}
 
 						// Supplier
