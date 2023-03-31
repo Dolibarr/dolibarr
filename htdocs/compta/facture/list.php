@@ -1952,7 +1952,7 @@ if ($resql) {
 
 				// Action column
 				if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-					print '<td class="nowrap" align="center">';
+					print '<td class="nowrap center">';
 					if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 						$selected = 0;
 						if (in_array($obj->id, $arrayofselected)) {
@@ -2570,7 +2570,7 @@ if ($resql) {
 				// Action column (Show the massaction button only when this page is not opend from the Extended POS)
 
 				if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-					print '<td class="nowrap" align="center">';
+					print '<td class="nowrap center">';
 					if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 						$selected = 0;
 						if (in_array($obj->id, $arrayofselected)) {
