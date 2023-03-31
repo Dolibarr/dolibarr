@@ -125,10 +125,13 @@ $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
+
 llxHeader($head, $langs->trans("SuggestForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
+
 
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
+
 print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="dopayment">'."\n";
@@ -185,18 +188,52 @@ if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT)) {
 print '<br>';
 
 
+print '<div align="center">';
+print '<div id="divsubscribe">';
+
+
 // Event summary
 print '<div class="center">';
-print '<span class="large">'.$project->title.'</span><br>';
-print img_picto('', 'calendar', 'class="pictofixedwidth"').$langs->trans("Date").': ';
-print dol_print_date($project->date_start, 'daytext');
-if ($project->date_end && $project->date_start != $project->date_end) {
-	print ' - '.dol_print_date($project->date_end, 'daytext');
-}
+print '<span class="eventlabel large">'.dol_escape_htmltag($project->title . ' '. $project->label).'</span><br>';
 print '<br><br>'."\n";
-print $langs->trans("EvntOrgRegistrationWelcomeMessage")."\n";
+print '<span class="opacitymedium">'.$langs->trans("EvntOrgRegistrationWelcomeMessage")."</span>\n";
 print $project->note_public."\n";
 //print img_picto('', 'map-marker-alt').$langs->trans("Location").': xxxx';
+print '</div>';
+
+
+// Help text
+print '<div class="center subscriptionformhelptext">';
+
+if ($project->date_start_event || $project->date_end_event) {
+	print '<br><span class="fa fa-calendar pictofixedwidth opacitymedium"></span>';
+}
+if ($project->date_start_event) {
+	$format = 'day';
+	$tmparray = dol_getdate($project->date_start_event, false, '');
+	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['minutes']) {
+		$format = 'dayhour';
+	}
+	print dol_print_date($project->date_start_event, $format);
+}
+if ($project->date_start_event && $project->date_end_event) {
+	print ' - ';
+}
+if ($project->date_end_event) {
+	$format = 'day';
+	$tmparray = dol_getdate($project->date_end_event, false, '');
+	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['minutes']) {
+		$format = 'dayhour';
+	}
+	print dol_print_date($project->date_end_event, $format);
+}
+if ($project->date_start_event || $project->date_end_event) {
+	print '<br>';
+}
+if ($project->location) {
+	print '<span class="fa fa-map-marked-alt pictofixedwidth opacitymedium"></span>'.dol_escape_htmltag($project->location).'<br>';
+}
+
 print '</div>';
 
 
@@ -246,9 +283,14 @@ print '</td></tr>'."\n";
 
 print '</table>'."\n";
 
+
+print '</div></div>';
+
+
 print '</form>'."\n";
 print '</div>'."\n";
 print '<br>';
+
 
 
 htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
