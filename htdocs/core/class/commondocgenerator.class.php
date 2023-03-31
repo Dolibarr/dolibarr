@@ -1567,17 +1567,21 @@ abstract class CommonDocGenerator
 						// set cell padding with column title definition
 						$pdf->setCellPaddings($colDef['title']['padding'][3], $colDef['title']['padding'][0], $colDef['title']['padding'][1], $colDef['title']['padding'][2]);
 					}
-
+					if (isset($colDef['title']['align'])) {
+						$align = $colDef['title']['align'];
+					} else {
+						$align = '';
+					}
 					$pdf->SetXY($colDef['xStartPos'], $tab_top);
 					$textWidth = $colDef['width'];
-					$pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);
+					$pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $align);
 
 					// Add variant of translation if $outputlangsbis is an object
 					if (is_object($outputlangsbis) && trim($colDef['title']['label'])) {
 						$pdf->setCellPaddings($colDef['title']['padding'][3], 0, $colDef['title']['padding'][1], $colDef['title']['padding'][2]);
 						$pdf->SetXY($colDef['xStartPos'], $pdf->GetY());
 						$textbis = $outputlangsbis->transnoentities($colDef['title']['textkey']);
-						$pdf->MultiCell($textWidth, 2, $textbis, '', $colDef['title']['align']);
+						$pdf->MultiCell($textWidth, 2, $textbis, '', $align);
 					}
 
 					$this->tabTitleHeight = max($pdf->GetY() - $tab_top, $this->tabTitleHeight);
