@@ -5199,7 +5199,7 @@ class Form
 						$more .= '<div class="tagtd">';
 						$addnowlink = (empty($input['datenow']) ? 0 : 1);
 						$h = $m = 0;
-						if ($input['type'] == 'datetime) {
+						if ($input['type'] == 'datetime') {
 							$h = isset($input['hours']) ? $input['hours'] : 1;
 							$m = isset($input['minutes']) ? $input['minutes'] : 1;
 						}
