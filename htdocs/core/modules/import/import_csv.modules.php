@@ -96,6 +96,8 @@ class ImportCsv extends ModeleImports
 	public function __construct($db, $datatoimport)
 	{
 		global $conf, $langs;
+
+		parent::__construct();
 		$this->db = $db;
 
 		$this->separator = (GETPOST('separator') ?GETPOST('separator') : (empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE));
@@ -870,6 +872,10 @@ class ImportCsv extends ModeleImports
 										$filters[] = $col.' = '.$data[$key];
 									}
 								}
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$where[] = "entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+									$filters[] = "entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+								}
 								$sqlSelect .= " WHERE ".implode(' AND ', $where);
 
 								$resql = $this->db->query($sqlSelect);
@@ -905,6 +911,10 @@ class ImportCsv extends ModeleImports
 									$keyfield = 'rowid';
 								}
 								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
+
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$sqlSelect .= " AND entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+								}
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
@@ -949,6 +959,10 @@ class ImportCsv extends ModeleImports
 
 								if ($is_table_category_link) {
 									$sqlend = " WHERE " . implode(' AND ', $where);
+								}
+
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$sqlend .= " AND entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
 								}
 
 								$sql = $sqlstart.$sqlend;
