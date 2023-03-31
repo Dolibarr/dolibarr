@@ -5206,15 +5206,20 @@ class Form
 						$more .= '<div class="tagtr"><div class="tagtd' . (empty($input['tdclass']) ? '' : (' ' . $input['tdclass'])) . '">' . $input['label'] . '</div>';
 						$more .= '<div class="tagtd">';
 						$addnowlink = (empty($input['datenow']) ? 0 : 1);
-						$more .= $this->selectDate($input['value'], $input['name'], ($input['type'] == 'datetime' ? 1 : 0), ($input['type'] == 'datetime' ? 1 : 0), 0, '', 1, $addnowlink);
-						$more .= '</div></div>' . "\n";
-						$formquestion[] = array('name' => $input['name'] . 'day');
-						$formquestion[] = array('name' => $input['name'] . 'month');
-						$formquestion[] = array('name' => $input['name'] . 'year');
-						$formquestion[] = array('name' => $input['name'] . 'hour');
-						$formquestion[] = array('name' => $input['name'] . 'min');
-					} elseif ($input['type'] == 'other') {    // can be 1 column or 2 depending if label is set or not
-						$more .= '<div class="tagtr"><div class="tagtd' . (empty($input['tdclass']) ? '' : (' ' . $input['tdclass'])) . '">';
+						$h = $m = 0;
+						if ($input['type'] == 'datetime') {
+							$h = isset($input['hours']) ? $input['hours'] : 1;
+							$m = isset($input['minutes']) ? $input['minutes'] : 1;
+						}
+						$more .= $this->selectDate($input['value'], $input['name'], $h, $m, 0, '', 1, $addnowlink);
+						$more .= '</div></div>'."\n";
+						$formquestion[] = array('name'=>$input['name'].'day');
+						$formquestion[] = array('name'=>$input['name'].'month');
+						$formquestion[] = array('name'=>$input['name'].'year');
+						$formquestion[] = array('name'=>$input['name'].'hour');
+						$formquestion[] = array('name'=>$input['name'].'min');
+					} elseif ($input['type'] == 'other') { // can be 1 column or 2 depending if label is set or not
+						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">';
 						if (!empty($input['label'])) {
 							$more .= $input['label'] . '</div><div class="tagtd">';
 						}
