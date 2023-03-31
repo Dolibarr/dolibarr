@@ -331,9 +331,11 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '</td></tr>';
 
 		// Progression
-		print '<tr><td>'.$langs->trans("Progression").'</td><td>';
-		print ($object->dao->progress > 0 ? dol_escape_htmltag($object->dao->progress) : '0').'%';
-		print '</td></tr>';
+		if (!empty($conf->global->TICKET_SHOW_PROGRESSION)) {
+			print '<tr><td>'.$langs->trans("Progression").'</td><td>';
+			print ($object->dao->progress > 0 ? dol_escape_htmltag($object->dao->progress) : '0').'%';
+			print '</td></tr>';
+		}
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
