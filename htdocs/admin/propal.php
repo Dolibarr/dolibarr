@@ -641,7 +641,25 @@ if (!empty($conf->use_javascript_ajax)) {
 print '</td>';
 print '</tr>';
 print '</form>';
-
+// default update descriptions on cloning a proposal
+print '<form method="post" action="' . $_SERVER["PHP_SELF"] . '">';
+print '<input type="hidden" name="token" value="' . newToken() .'">';
+print '<tr class="oddeven">';
+print '<td>' . $langs->trans('DefaultPuttingDescUpToDate').'</td>';
+print '<td></td>';
+print '<td class="right">';
+if (!empty($conf->use_javascript_ajax)) {
+	print ajax_constantonoff('PROPOSAL_CLONE_UPDATE_DESC', array(), $conf->entity, 0, 0, 1, 0);
+} else {
+	if (empty($conf->global->PROPOSAL_CLONE_UPDATE_DESC)) {
+		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_PROPOSAL_CLONE_UPDATE_DESC">' . img_picto($langs->trans('Disabled'), 'switch_off') . '</a>';
+	} else {
+		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_PROPOSAL_CLONE_UPDATE_DESC">' . img_picto($langs->trans('Enabled'), 'switch_on') . '</a>';
+	}
+}
+print '</td>';
+print '</tr>';
+print '</form>';
 /*
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
