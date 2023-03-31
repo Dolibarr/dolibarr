@@ -643,8 +643,11 @@ class FormProduct
 			$productIdList = implode(',', $productIdArray);
 
 			$batch_count = 0;
-			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
+			global $hookmanager;
+			if (empty($hookmanager)) {
+				include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
+				$hookmanager = new HookManager($this->db);
+			}
 			$hookmanager->initHooks(array('productdao'));
 			$parameters = array('productIdList' => $productIdList);
 			$reshook = $hookmanager->executeHooks('loadLotStock', $parameters, $this);
