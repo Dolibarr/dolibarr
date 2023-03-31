@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe-module instellen
-StripeDesc=Bied klanten een Stripe online betaalpagina voor betalingen met credit / cebit-kaarten via <a href="http://www.stripe.com" target="_blank">Stripe</a> . Dit kan worden gebruikt om uw klanten toe te staan ad-hocbetalingen te doen of voor betalingen met betrekking tot een bepaald Dolibarr-object (factuur, bestelling, ...)
+StripeDesc=Bied uw klanten een online betaalpagina voor betalingen met creditcards/betaalkaarten via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> Stripe </a> . Dit kan worden gebruikt om uw klanten ad-hoc betalingen te laten doen of voor betalingen met betrekking tot een bepaald Dolibarr-object (factuur, bestelling, ...)
 StripeOrCBDoPayment=Betaal met creditcard of Stripe
 FollowingUrlAreAvailableToMakePayments=De volgende URL's zijn beschikbaar om een pagina te bieden aan afnemers voor het doen van een betaling van Dolibarr objecten
 PaymentForm=Betalingsformulier
@@ -28,10 +28,10 @@ AccountParameter=Accountwaarden
 UsageParameter=Met gebruik van de waarden
 InformationToFindParameters=Hulp om uw %s accountinformatie te vinden
 STRIPE_CGI_URL_V2=URL van Stripe CGI-module voor betaling
-VendorName=Verkopersnaam
 CSSUrlForPaymentForm=URL van het CSS-stijlbestand voor het betalingsformulier
 NewStripePaymentReceived=Nieuwe Stripe-betaling ontvangen
 NewStripePaymentFailed=Nieuwe Stripe-betaling geprobeerd, maar mislukt
+FailedToChargeCard=Kan kaart niet gebruiken
 STRIPE_TEST_SECRET_KEY=Geheime testsleutel
 STRIPE_TEST_PUBLISHABLE_KEY=Publiceerbare testsleutel
 STRIPE_TEST_WEBHOOK_KEY=Webhook test sleutel
@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live sleutel
 ONLINE_PAYMENT_WAREHOUSE=Voorraad voor voorraadafname wanneer online betaling is voltooid <br> (TODO Wanneer optie om voorraad te verminderen wordt gedaan op een actie op factuur en de online betaling zelf de factuur genereert?)
 StripeLiveEnabled=Stripe live ingeschakeld (anders test / sandbox-modus)
 StripeImportPayment=Streepbetalingen importeren
-ExampleOfTestCreditCard=Voorbeeld van creditcard voor test: %s => geldig, %s => error CVC, %s => verlopen, %s => belasten mislukt
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect-client-ID (ca _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect-client-ID (ca _...)
@@ -61,6 +62,7 @@ DeleteACard=Kaart verwijderen
 ConfirmDeleteCard=Weet u zeker dat u deze creditcard of betaalpas wilt verwijderen?
 CreateCustomerOnStripe=Creëer klant op Stripe
 CreateCardOnStripe=Maak een kaart op Stripe
+CreateBANOnStripe=Create bank on Stripe
 ShowInStripe=Toon in streep
 StripeUserAccountForActions=Gebruikersaccount om te gebruiken voor e-mailmeldingen van sommige Stripe-evenementen (Stripe-uitbetalingen)
 StripePayoutList=Lijst met Stripe uitbetalingen
@@ -68,4 +70,9 @@ ToOfferALinkForTestWebhook=Link om Stripe WebHook in te stellen om de IPN te bel
 ToOfferALinkForLiveWebhook=Link om Stripe WebHook in te stellen om de IPN te bellen (live-modus)
 PaymentWillBeRecordedForNextPeriod=De betaling wordt geregistreerd voor de volgende periode.
 ClickHereToTryAgain=<a href="%s">Klik hier om het opnieuw te proberen ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authenticatin rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Vanwege de strenge regels voor klantauthenticatie moet het aanmaken van een kaart worden gedaan vanuit Stripe backoffice. U kunt hier klikken om Stripe-klantrecord in te schakelen: %s
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
+RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+

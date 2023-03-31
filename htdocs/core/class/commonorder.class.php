@@ -23,13 +23,57 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 
 /**
  *      Superclass for orders classes
  */
 abstract class CommonOrder extends CommonObject
 {
+	use CommonIncoterm;
 
+
+		/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs, $conf;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<div class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', 'order');
+		$return .= '</div>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+
+		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+			$return .= '<br><div class="info-box-ref opacitymedium tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
+		}
+		if (property_exists($this, 'total_ht')) {
+			$return .= '<div class="info-box-ref amount">'.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency).' '.$langs->trans('HT').'</div>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
+	}
+
+	/**
+	 * @var string code
+	 */
+	public $code = "";
 }
 
 /**
@@ -38,18 +82,18 @@ abstract class CommonOrder extends CommonObject
 abstract class CommonOrderLine extends CommonObjectLine
 {
 	/**
+	 * Custom label of line. Not used by default.
+	 * @deprecated
+	 */
+	public $label;
+
+	/**
 	 * Product ref
 	 * @var string
 	 * @deprecated Use product_ref
 	 * @see $product_ref
 	 */
 	public $ref;
-
-	/**
-	 * Product ref
-	 * @var string
-	 */
-	public $product_ref;
 
 	/**
 	 * Product label
@@ -60,16 +104,46 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $libelle;
 
 	/**
+	 * Product ref
+	 * @var string
+	 */
+	public $product_ref;
+
+	/**
 	 * Product label
 	 * @var string
 	 */
 	public $product_label;
 
 	/**
+	 * Boolean that indicates whether the product is available for sale '1' or not '0'
+	 * @var int
+	 */
+	public $product_tosell=0;
+
+	/**
+	 * Boolean that indicates whether the product is available for purchase '1' or not '0'
+	 * @var int
+	 */
+	public $product_tobuy=0;
+
+	/**
 	 * Product description
 	 * @var string
 	 */
-	public $product_desc;
+	 public $product_desc;
+
+	/**
+	 * Product use lot
+	 * @var string
+	 */
+	public $product_tobatch;
+
+	/**
+	 * Product barcode
+	 * @var string
+	 */
+	public $product_barcode;
 
 	/**
 	 * Quantity
@@ -82,7 +156,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * @deprecated
 	 * @see $subprice
 	 */
-    public $price;
+	public $price;
 
 	/**
 	 * Unit price before taxes
@@ -97,12 +171,6 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $product_type = 0;
 
 	/**
-	 * Description of the line
-	 * @var string
-	 */
-	public $desc;
-
-	/**
 	 * Id of corresponding product
 	 * @var int
 	 */
@@ -113,6 +181,12 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * @var float
 	 */
 	public $remise_percent;
+
+	/**
+	 * VAT code
+	 * @var string
+	 */
+	public $vat_src_code;
 
 	/**
 	 * VAT %
@@ -144,4 +218,11 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $info_bits = 0;
 
 	public $special_code = 0;
+
+	public $fk_multicurrency;
+	public $multicurrency_code;
+	public $multicurrency_subprice;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 }

@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=Forum/Wiki support
-EMailSupport=Emails support
-RemoteControlSupport=Online real time / remote support
-OtherSupport=Other support
-ToSeeListOfAvailableRessources=To contact/see available resources:
-HelpCenter=Help center
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
-TypeSupportCommunauty=Community (free)
+CommunitySupport=Dukungan Forum / Wiki
+EMailSupport=Dukungan email
+RemoteControlSupport=Dukungan real-time / remote online
+OtherSupport=Dukungan lain
+ToSeeListOfAvailableRessources=Untuk menghubungi / melihat sumber daya yang tersedia:
+HelpCenter=Pusat Bantuan
+DolibarrHelpCenter=Pusat Bantuan dan Dukungan Dolibarr
+ToGoBackToDolibarr=Jika tidak, <a href="%s"> klik di sini untuk terus menggunakan Dolibarr </a>.
+TypeOfSupport=Jenis dukungan
+TypeSupportCommunauty=Komunitas (gratis)
 TypeSupportCommercial=Komersil
-TypeOfHelp=Type
-NeedHelpCenter=Need help or support?
-Efficiency=Efficiency
-TypeHelpOnly=Help only
-TypeHelpDev=Help+Development
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
-PossibleLanguages=Supported languages
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+TypeOfHelp=Tipe
+NeedHelpCenter=Perlu bantuan atau dukungan?
+Efficiency=Efisiensi
+TypeHelpOnly=Hanya membantu
+TypeHelpDev=Bantuan + Pengembangan
+TypeHelpDevForm=Bantuan + Pengembangan + Pelatihan
+BackToHelpCenter=Jika tidak, <a href="%s"> kembali ke halaman awal pusat Bantuan </a>.
+LinkToGoldMember=Anda dapat menghubungi salah satu pelatih yang dipilih sebelumnya oleh Dolibarr untuk bahasa Anda (%s) dengan mengklik Widget mereka (status dan harga maksimum diperbarui secara otomatis):
+PossibleLanguages=Bahasa yang didukung
+SubscribeToFoundation=Bantu proyek Dolibarr, berlangganan yayasan
+SeeOfficalSupport=Untuk dukungan resmi Dolibarr dalam bahasa Anda: <br><b><a href="%s" target="_blank"> %s </a> </b>

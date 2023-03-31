@@ -2,18 +2,18 @@
 
 # top-most EditorConfig file
 root = true
+
 # Unix-style newlines with a newline ending every file
 [*]
 charset = utf-8
 end_of_line = lf
 insert_final_newline = true
 
-# PHP PSR-2 Coding Standards
-# http://www.php-fig.org/psr/psr-2/
 [*.php]
-indent_style = space
+indent_style = tab
 indent_size = 4
 trim_trailing_whitespace = true
+insert_final_newline = true
 [*.js]
 indent_style = tab
 [*.css]

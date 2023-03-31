@@ -1,0 +1,79 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = Perekrutan
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = Kelola dan ikuti kampanye perekrutan untuk posisi pekerjaan baru
+
+#
+# Admin page
+#
+RecruitmentSetup = Pengaturan perekrutan
+Settings = Pengaturan
+RecruitmentSetupPage = Masuk di sini pengaturan opsi utama untuk modul rekrutmen
+RecruitmentArea=Area perekrutan
+PublicInterfaceRecruitmentDesc=Halaman pekerjaan publik adalah URL publik untuk menunjukkan dan menjawab pekerjaan terbuka. Ada satu tautan berbeda untuk setiap pekerjaan terbuka, ditemukan di setiap catatan pekerjaan.
+EnablePublicRecruitmentPages=Aktifkan halaman publik dari pekerjaan terbuka
+
+#
+# About page
+#
+About = Tentang
+RecruitmentAbout = Tentang Rekrutmen
+RecruitmentAboutPage = Rekrutmen tentang halaman
+NbOfEmployeesExpected=Nb karyawan yang diharapkan
+JobLabel=Label posisi pekerjaan
+WorkPlace=Tempat kerja
+DateExpected=Tanggal yang diharapkan
+FutureManager=Manajer masa depan
+ResponsibleOfRecruitement=Bertanggung jawab atas perekrutan
+IfJobIsLocatedAtAPartner=Jika pekerjaan terletak di tempat mitra
+PositionToBeFilled=Posisi pekerjaan
+PositionsToBeFilled=Posisi pekerjaan
+ListOfPositionsToBeFilled=Daftar posisi pekerjaan
+NewPositionToBeFilled=Posisi pekerjaan baru
+
+JobOfferToBeFilled=Posisi pekerjaan yang harus diisi
+ThisIsInformationOnJobPosition=Informasi posisi pekerjaan yang akan diisi
+ContactForRecruitment=Kontak untuk perekrutan
+EmailRecruiter=Perekrut email
+ToUseAGenericEmail=Untuk menggunakan email umum. Jika tidak ditentukan, email dari penanggung jawab perekrutan akan digunakan
+NewCandidature=Aplikasi baru
+ListOfCandidatures=Daftar aplikasi
+Remuneration=Gaji
+RequestedRemuneration=Requested salary
+ProposedRemuneration=Proposed salary
+ContractProposed=Kontrak diusulkan
+ContractSigned=Kontrak telah ditandatangani
+ContractRefused=Kontrak ditolak
+RecruitmentCandidature=Aplikasi
+JobPositions=Posisi kerja
+RecruitmentCandidatures=Lamaran
+InterviewToDo=Contacts to follow
+AnswerCandidature=Jawaban lamaran
+YourCandidature=Lamaran Anda
+YourCandidatureAnswerMessage=Terima kasih atas lamaran Anda. <br> ...
+JobClosedTextCandidateFound=Posisi pekerjaan ditutup. Posisi sudah terisi.
+JobClosedTextCanceled=Posisi pekerjaan ditutup.
+ExtrafieldsJobPosition=Atribut pelengkap (posisi pekerjaan)
+ExtrafieldsApplication=Atribut pelengkap (lamaran kerja)
+MakeOffer=Buat sebuah penawaran
+WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
+NoPositionOpen=No positions open at the moment

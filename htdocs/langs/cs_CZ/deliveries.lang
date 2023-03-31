@@ -2,7 +2,7 @@
 Delivery=Dodávka
 DeliveryRef=Ref Doručení
 DeliveryCard=Příjmová karta
-DeliveryOrder=Delivery receipt
+DeliveryOrder=Potvrzení o doručení
 DeliveryDate=Termín dodání
 CreateDeliveryOrder=Generovat doklad o doručení
 DeliveryStateSaved=Stav doručení byl uložen
@@ -27,5 +27,7 @@ Recipient=Příjemce
 ErrorStockIsNotEnough=Dostatečné množství není skladem
 Shippable=Doručitelné
 NonShippable=Nedoručitelné
+ShowShippableStatus=Show shippable status
 ShowReceiving=Zobrazit potvrzení o doručení
 NonExistentOrder=Neexistující objednávka
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

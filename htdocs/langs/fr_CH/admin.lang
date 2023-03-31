@@ -1,0 +1,18 @@
+# Dolibarr language file - Source file is en_US - admin
+Foundation=Fondation
+VersionProgram=Version programme
+VersionLastInstall=Version d'installation initiale
+VersionLastUpgrade=Version de la dernière mise à jour
+VersionRecommanded=Recommandée
+FileCheckDesc=Cet outil vous permet to vérifier l'intégrité des fichiers et la configuration de votre application en comparant chaque fichier avec les fichiers officiels. La valeur de certaines constantes de configuration pourrait être vérifiée aussi. Vous pouvez utiliser cet outil pour déterminer si des fichiers ont été modifiés (ex: par un pirate informatique)
+LocalSignature=Signature locale intégrée (moins fiable)
+RemoteSignature=Signature sur le serveur distant (plus fiable)
+FileCheckDolibarr=Vérifier l'intégrité des fichiers de l'application
+Module310Name=Membres
+LDAPMembersSynchro=Membres
+LDAPMembersTypesSynchro=Types de membres
+MailToMember=Membres
+OperationParamDesc=Define the rules to use to extract or set values.<br>Example for operations that need to extract a name from email subject:<br>name=EXTRACT:SUBJECT:Message from company ([^\n]*)<br>Example for operations that create objects:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value including value of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+Recommended=Recommandée
+IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, you must enable also the first sale tax
+IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sale tax

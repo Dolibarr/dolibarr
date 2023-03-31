@@ -24,6 +24,7 @@
  *		\brief      Tab payment info
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
@@ -34,7 +35,7 @@ $langs->loadLangs(array('bills', 'trips'));
 
 $id = GETPOST('id');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 /*
@@ -51,12 +52,12 @@ $confirm = GETPOST('confirm', 'alpha');
 llxHeader('', $langs->trans("Payment"));
 
 $object = new PaymentExpenseReport($db);
-$object->fetch($id, $ref);
+$object->fetch($id);
 $object->info($object->id);
 
 $head = payment_expensereport_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("ExpenseReportPayment"), -1, 'payment');
+print dol_get_fiche_head($head, 'info', $langs->trans("ExpenseReportPayment"), -1, 'payment');
 
 
 //$linkback = '<a href="' . DOL_URL_ROOT . '/expensereport/payment/list.php">' . $langs->trans("BackToList") . '</a>';
@@ -75,7 +76,7 @@ print '</td></tr></table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

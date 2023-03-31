@@ -16,12 +16,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
+-- See also its child table llx_product_batch that contains details per lot
 -- ============================================================================
 
 create table llx_product_stock
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_product      integer NOT NULL,
   fk_entrepot     integer NOT NULL,
   reel            real,           			-- physical stock

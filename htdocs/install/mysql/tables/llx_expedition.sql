@@ -22,14 +22,13 @@
 create table llx_expedition
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
-  tms                   timestamp,
+  tms                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   ref                   varchar(30)        NOT NULL,
   entity                integer  DEFAULT 1 NOT NULL,	-- multi company id
   fk_soc                integer            NOT NULL,
   fk_projet  		integer  DEFAULT NULL,
   
   ref_ext               varchar(255),					-- reference into an external system (not used by dolibarr)
-  ref_int				varchar(255),					-- reference into an internal system (used by dolibarr to store extern id like paypal info)
   ref_customer          varchar(255),					-- customer number
   
   date_creation         datetime,						-- date de creation

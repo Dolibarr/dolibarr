@@ -7,5 +7,5 @@ DeleteEstablishment=Betrieb löschen
 ConfirmDeleteEstablishment=Willst du diesen Betrieb wirklich löschen?
 OpenEtablishment=Betrieb wählen
 CloseEtablishment=Betrieb schliessen
-DictionaryDepartment=Personalverwaltung - Abteilungsliste
-DictionaryFunction=Personalverwaltung - Funktionsliste
+Employee=Mitarbeiter
+HrmSetup=HRM Modul Einstellungen

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,52 +35,60 @@ function supplier_proposal_prepare_head($object)
 	global $db, $langs, $conf, $user;
 
 	// Load translation files required by the page
-    $langs->loadLangs(array("supplier_proposal", "compta"));
+	$langs->loadLangs(array("supplier_proposal", "compta"));
 
 	$h = 0;
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('SupplierProposalCard');
+	$head[$h][1] = $langs->trans('CommRequests');
 	$head[$h][2] = 'comm';
 	$h++;
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
-	{
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
-		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		if ($nbContact > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		}
 		$head[$h][2] = 'contact';
 		$h++;
 	}
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_proposal');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_proposal', 'add', 'core');
 
-    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
-    {
-    	$nbNote = 0;
-        if (!empty($object->note_private)) $nbNote++;
-		if (!empty($object->note_public)) $nbNote++;
-	    $head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/note.php?id='.$object->id;
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+		$nbNote = 0;
+		if (!empty($object->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
+		$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
 		$head[$h][2] = 'note';
 		$h++;
-    }
+	}
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->supplier_proposal->dir_output."/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    $nbLinks = Link::count($db, $object->element, $object->id);
+	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
 	$head[$h][2] = 'document';
 	$h++;
 
@@ -87,6 +96,8 @@ function supplier_proposal_prepare_head($object)
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
 	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_proposal', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_proposal', 'remove');
 
@@ -100,7 +111,11 @@ function supplier_proposal_prepare_head($object)
  */
 function supplier_proposal_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('supplier_proposal');
+	$extrafields->fetch_name_optionals_label('supplier_proposaldet');
 
 	$h = 0;
 	$head = array();
@@ -118,13 +133,21 @@ function supplier_proposal_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/admin/supplier_proposal_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
-    $head[$h][2] = 'attributes';
-    $h++;
+	$nbExtrafields = $extrafields->attributes['supplier_proposal']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
+	$head[$h][2] = 'attributes';
+	$h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/admin/supplier_proposaldet_extrafields.php';
-    $head[$h][1] = $langs->trans("ExtraFieldsLines");
-    $head[$h][2] = 'attributeslines';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/admin/supplier_proposaldet_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$nbExtrafields = $extrafields->attributes['supplier_proposaldet']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
+	$head[$h][2] = 'attributeslines';
+	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'supplier_proposal_admin', 'remove');
 

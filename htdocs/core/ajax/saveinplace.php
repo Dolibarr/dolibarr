@@ -17,14 +17,23 @@
 
 /**
  *       \file       htdocs/core/ajax/saveinplace.php
- *       \brief      File to save field value
+ *       \brief      File to load field value. used only when option "Edit In Place" is set (MAIN_USE_JQUERY_JEDITABLE).
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
@@ -32,6 +41,7 @@ $field = GETPOST('field', 'alpha', 2);
 $element = GETPOST('element', 'alpha', 2);
 $table_element = GETPOST('table_element', 'alpha', 2);
 $fk_element = GETPOST('fk_element', 'alpha', 2);
+$id = $fk_element;
 
 /* Example:
 field:editval_ref_customer (8 first chars will removed to know name of property)
@@ -45,6 +55,28 @@ savemethod:
 savemethodname:
 */
 
+// Load object according to $id and $element
+$object = fetchObjectByElement($id, $element);
+
+$module = $object->module;
+$element = $object->element;
+$usesublevelpermission = ($module != $element ? $element : '');
+if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+	$usesublevelpermission = '';
+}
+
+//print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
+
+// Security check
+$result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+if (!$result) {
+	httponly_accessforbidden('Not allowed by restrictArea');
+}
+
+if (!getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE')) {
+	httponly_accessforbidden('Can be used only when option MAIN_USE_JQUERY_JEDITABLE is set');
+}
+
 
 /*
  * View
@@ -56,119 +88,113 @@ top_httphead();
 //print_r($_POST);
 
 // Load original field value
-if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_element))
-{
+if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_element)) {
 	$ext_element = GETPOST('ext_element', 'alpha', 2);
-	$field				= substr($field, 8); // remove prefix val_
+	$field = substr($field, 8); // remove prefix val_
 	$type = GETPOST('type', 'alpha', 2);
-	$value				= ($type == 'ckeditor' ? GETPOST('value', '', 2) : GETPOST('value', 'alpha', 2));
-	$loadmethod			= GETPOST('loadmethod', 'alpha', 2);
-	$savemethod			= GETPOST('savemethod', 'alpha', 2);
+	$value = ($type == 'ckeditor' ? GETPOST('value', '', 2) : GETPOST('value', 'alpha', 2));
+	$loadmethod = GETPOST('loadmethod', 'alpha', 2);
+	$savemethod = GETPOST('savemethod', 'alpha', 2);
 	$savemethodname = (!empty($savemethod) ? $savemethod : 'setValueFrom');
-	$newelement			= $element;
+	$newelement = $element;
 
 	$view = '';
 	$format = 'text';
 	$return = array();
 	$error = 0;
 
-	if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i', $element, $regs))
-	{
+	if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {
 		$element = $regs[1];
 		$subelement = $regs[2];
 	}
 
-	if ($element == 'propal') $newelement = 'propale';
-	elseif ($element == 'fichinter') $newelement = 'ficheinter';
-	elseif ($element == 'product') $newelement = 'produit';
-	elseif ($element == 'member') $newelement = 'adherent';
-	elseif ($element == 'order_supplier') {
+	if ($element == 'propal') {
+		$newelement = 'propale';
+	} elseif ($element == 'fichinter') {
+		$newelement = 'ficheinter';
+	} elseif ($element == 'product') {
+		$newelement = 'produit';
+	} elseif ($element == 'member') {
+		$newelement = 'adherent';
+	} elseif ($element == 'order_supplier') {
 		$newelement = 'fournisseur';
 		$subelement = 'commande';
-	}
-	elseif ($element == 'invoice_supplier') {
+	} elseif ($element == 'invoice_supplier') {
 		$newelement = 'fournisseur';
 		$subelement = 'facture';
+	} else {
+		$newelement = $element;
 	}
-	else $newelement = $element;
 
 	$_POST['action'] = 'update'; // Hack so restrictarea will test permissions on write too
+
 	$feature = $newelement;
 	$feature2 = $subelement;
 	$object_id = $fk_element;
-	if ($feature == 'expedition' || $feature == 'shipping')
-	{
+	if ($feature == 'expedition' || $feature == 'shipping') {
 		$feature = 'commande';
 		$object_id = 0;
 	}
-	if ($feature == 'shipping') $feature = 'commande';
-	if ($feature == 'payment') { $feature = 'facture'; }
-	if ($feature == 'payment_supplier') { $feature = 'fournisseur'; $feature2 = 'facture'; }
+	if ($feature == 'shipping') {
+		$feature = 'commande';
+	}
+	if ($feature == 'payment') {
+		$feature = 'facture';
+	}
+	if ($feature == 'payment_supplier') {
+		$feature = 'fournisseur';
+		$feature2 = 'facture';
+	}
 	//var_dump(GETPOST('action','aZ09'));
 	//var_dump($newelement.'-'.$subelement."-".$feature."-".$object_id);
 	$check_access = restrictedArea($user, $feature, $object_id, '', $feature2);
 	//var_dump($user->rights);
 	/*
-	if (! empty($user->rights->$newelement->creer) || ! empty($user->rights->$newelement->create) || ! empty($user->rights->$newelement->write)
-		|| (isset($subelement) && (! empty($user->rights->$newelement->$subelement->creer) || ! empty($user->rights->$newelement->$subelement->write)))
+	if (!empty($user->rights->$newelement->creer) || !empty($user->rights->$newelement->create) || !empty($user->rights->$newelement->write)
+		|| (isset($subelement) && (!empty($user->rights->$newelement->$subelement->creer) || !empty($user->rights->$newelement->$subelement->write)))
 		|| ($element == 'payment' && $user->rights->facture->paiement)
 		|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->creer))
 	*/
 
-	if ($check_access)
-	{
+	if ($check_access) {
 		// Clean parameters
 		$newvalue = trim($value);
 
-		if ($type == 'numeric')
-		{
+		if ($type == 'numeric') {
 			$newvalue = price2num($newvalue);
 
 			// Check parameters
-			if (!is_numeric($newvalue))
-			{
+			if (!is_numeric($newvalue)) {
 				$error++;
 				$return['error'] = $langs->trans('ErrorBadValue');
 			}
-		}
-		elseif ($type == 'datepicker')
-		{
+		} elseif ($type == 'datepicker') {
 			$timestamp = GETPOST('timestamp', 'int', 2);
 			$format = 'date';
 			$newvalue = ($timestamp / 1000);
-		}
-		elseif ($type == 'select')
-		{
+		} elseif ($type == 'select') {
 			$loadmethodname = 'load_cache_'.$loadmethod;
 			$loadcachename = 'cache_'.$loadmethod;
 			$loadviewname = 'view_'.$loadmethod;
 
 			$form = new Form($db);
-			if (method_exists($form, $loadmethodname))
-			{
+			if (method_exists($form, $loadmethodname)) {
 				$ret = $form->$loadmethodname();
-				if ($ret > 0)
-				{
+				if ($ret > 0) {
 					$loadcache = $form->$loadcachename;
 					$value = $loadcache[$newvalue];
 
-					if (!empty($form->$loadviewname))
-					{
+					if (!empty($form->$loadviewname)) {
 						$loadview = $form->$loadviewname;
 						$view = $loadview[$newvalue];
 					}
-				}
-				else
-				{
+				} else {
 					$error++;
 					$return['error'] = $form->error;
 				}
-			}
-			else
-			{
+			} else {
 				$module = $subelement = $ext_element;
-				if (preg_match('/^([^_]+)_([^_]+)/i', $ext_element, $regs))
-				{
+				if (preg_match('/^([^_]+)_([^_]+)/i', $ext_element, $regs)) {
 					$module = $regs[1];
 					$subelement = $regs[2];
 				}
@@ -177,28 +203,25 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				$classname = 'Actions'.ucfirst($subelement);
 				$object = new $classname($db);
 				$ret = $object->$loadmethodname();
-				if ($ret > 0)
-				{
+				if ($ret > 0) {
 					$loadcache = $object->$loadcachename;
 					$value = $loadcache[$newvalue];
 
-					if (!empty($object->$loadviewname))
-					{
+					if (!empty($object->$loadviewname)) {
 						$loadview = $object->$loadviewname;
 						$view = $loadview[$newvalue];
 					}
-				}
-				else
-				{
+				} else {
 					$error++;
 					$return['error'] = $object->error;
 				}
 			}
 		}
 
-		if (!$error)
-		{
-			if ((isset($object) && !is_object($object)) || empty($savemethod)) $object = new GenericObject($db);
+		if (!$error) {
+			if ((isset($object) && !is_object($object)) || empty($savemethod)) {
+				$object = new GenericObject($db);
+			}
 
 			// Specific for add_object_linked()
 			// TODO add a function for variable treatment
@@ -208,24 +231,22 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 			$object->element = $element;
 
 			$ret = $object->$savemethodname($field, $newvalue, $table_element, $fk_element, $format);
-			if ($ret > 0)
-			{
-				if ($type == 'numeric') $value = price($newvalue);
-				elseif ($type == 'textarea') $value = dol_nl2br($newvalue);
+			if ($ret > 0) {
+				if ($type == 'numeric') {
+					$value = price($newvalue);
+				} elseif ($type == 'textarea') {
+					$value = dol_nl2br($newvalue);
+				}
 
 				$return['value'] = $value;
 				$return['view'] = (!empty($view) ? $view : $value);
-			}
-			else
-			{
+			} else {
 				$return['error'] = $object->error;
 			}
 		}
 
 		echo json_encode($return);
-	}
-	else
-	{
+	} else {
 		echo $langs->trans('NotEnoughPermissions');
 	}
 }

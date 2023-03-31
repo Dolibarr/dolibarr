@@ -1,0 +1,24 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Entrega
+DeliveryRef=Entrega de Ref
+DeliveryCard=Tarjeta de recibo
+DeliveryOrder=Recibo de entrega
+CreateDeliveryOrder=Generar recibo de entrega
+SetDeliveryDate=Establecer fecha de envío
+ValidateDeliveryReceipt=Validar recibo de entrega
+ValidateDeliveryReceiptConfirm=¿Seguro que quieres validar este recibo de entrega?
+DeleteDeliveryReceipt=Eliminar recibo de entrega
+DeleteDeliveryReceiptConfirm=¿Estás seguro de que deseas eliminar el recibo de entrega <b>%s</b>?
+DeliveryMethod=Método de entrega
+TrackingNumber=El número de rastreo
+DeliveryNotValidated=Entrega no validada
+StatusDeliveryCanceled=Cancelado
+NameAndSignature=Nombre y firma:
+ToAndDate=A___________________________________ el ____ / _____ / __________
+GoodStatusDeclaration=Han recibido los productos anteriores en buenas condiciones,
+Deliverer=Entregador:
+Sender=Remitente
+Recipient=Recipiente
+NonShippable=No se puede enviar
+ShowReceiving=Mostrar recibo de entrega
+NonExistentOrder=Orden inexistente

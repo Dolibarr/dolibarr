@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Marxe
+Margins=Marxes
+TotalMargin=Marxe total
+MarginOnProducts=Marxe / Produtos
+MarginOnServices=Marxe / Servizos
+MarginRate=Marxe sobre coste
+ModifyMarginRates=Modificar a narxe sobre custos
+MarkRate=Marxe sobre venda
+DisplayMarginRates=Amosar a marxe sobre costes
+DisplayMarkRates=Amosar a marxe sobre ventas
+InputPrice=Introducir un prezo
+margin=Xestión de marxes
+margesSetup=Configuración da xestión de marxes
+MarginDetails=Detalles de marxes realizados
+ProductMargins=Marxes por produto
+CustomerMargins=Marxes por cliente
+SalesRepresentativeMargins=Marxes por comercial
+ContactOfInvoice=Contacto da factura
+UserMargins=Marxes do usuario
+ProductService=Produto ou servizo
+AllProducts=Todos os produtos e servizos
+ChooseProduct/Service=Eescolla o produto ou servizo
+ForceBuyingPriceIfNull=Forzar prezo de compra/custo ao prezo de venda se non se define
+ForceBuyingPriceIfNullDetails=Se o prezo de compra/custo non se proporciona cando engadimos unha nova liña e esta opción está "ACTIVADA", a marxe será do 0 %% na nova liña (prezo de compra/custo=prezo de venda). Se esta opción está "DESACTIVADA" (recomendada), a marxe será igual ao valor suxerido por defecto (e pode ser do 100 %% se non se atopa ningún valor predeterminado). 
+MARGIN_METHODE_FOR_DISCOUNT=Método de xestión de descontos globais
+UseDiscountAsProduct=Como un produto
+UseDiscountAsService=Como un servizo
+UseDiscountOnTotal=Sobre o total
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Indica se un desconto global toma en conta como un produto, servizo ou so no total a hora de calcular os marxes.
+MARGIN_TYPE=Prezo compra/custo suxerido por defecto polo cálculo de marxes
+MargeType1=Marxe en Mellor Prezo Proveedor
+MargeType2=Marxe en Prezo Medio Ponderado (PMP)
+MargeType3=Marxe en Prezo de custo
+MarginTypeDesc=* Marxe en mellor prezo de compra = Prezo de venda - Mellor prezo de provedor definido na ficha do produto<br>* Marxe en Prezo promedio ponderado (PMP) = Prezo de venda - Prezo Medio Ponderado do produto (PMP), ou mellor prezo de provedor se PMP aínda non está definido <br > * Marxe en prezo de custo = Prezo de venda - prezo de custo definido na ficha do produto ou PMP se o prezo de custo non está definido, ou mellor prezo de provedor se PMP aínda non está definido
+CostPrice=Prezo de compra
+UnitCharges=Carga unitaria
+Charges=Cargas
+AgentContactType=Tipo de contacto comisionado
+AgentContactTypeDetails=Indique qué tipo de contacto (ligado ás facturas) será o utilizado para o informe de marxes de axentes comerciais
+rateMustBeNumeric=O marxe debe ser un valor numérico
+markRateShouldBeLesserThan100=O marxe ten que ser menor que 100
+ShowMarginInfos=Amosar info de marxes
+CheckMargins=Detalles de marxes
+MarginPerSaleRepresentativeWarning=O informe de marxe por usuario usa o ligazón entre terceiros e comerciais para calcular a marxe de cada usuario. Debido a que algúns terceiros poden non estar ligados a un comercial e algúns terceiros poden estar relacionados con varios usuarios, algunhas marxes poden noo aparecer neste informe ou poderá aparecer en varias liñas diferentes.

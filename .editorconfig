@@ -9,8 +9,6 @@ charset = utf-8
 end_of_line = lf
 insert_final_newline = true
 
-# PHP PSR-2 Coding Standards
-# http://www.php-fig.org/psr/psr-2/
 [*.php]
 indent_style = tab
 indent_size = 4

@@ -1,7 +1,29 @@
 <?php
+/* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *	\file       htdocs/debugbar/class/DataCollector/DolLogsCollector.php
+ *	\brief      Class for debugbar collection
+ *	\ingroup    debugbar
+ */
 
 use DebugBar\DataCollector\MessagesCollector;
 use Psr\Log\LogLevel;
+
 //use ReflectionClass;
 
 /**
@@ -20,6 +42,11 @@ class DolLogsCollector extends MessagesCollector
 	protected $maxnboflines;
 
 	/**
+	 * @var int number of lines
+	 */
+	protected $nboflines;
+
+	/**
 	 * Constructor
 	 *
 	 * @param string $path     Path
@@ -32,7 +59,7 @@ class DolLogsCollector extends MessagesCollector
 		parent::__construct($name);
 
 		$this->nboflines = 0;
-		$this->maxnboflines = empty($conf->global->DEBUGBAR_LOGS_LINES_NUMBER) ? 250 : $conf->global->DEBUGBAR_LOGS_LINES_NUMBER; // High number slows seriously output
+		$this->maxnboflines = getDolGlobalInt('DEBUGBAR_LOGS_LINES_NUMBER', 250); // High number slows seriously output
 
 		$this->path = $path ?: $this->getLogsFile();
 	}
@@ -72,28 +99,24 @@ class DolLogsCollector extends MessagesCollector
 	{
 		global $conf;
 
-		$uselogfile = $conf->global->DEBUGBAR_USE_LOGFILE;
+		$uselogfile =  getDolGlobalInt('DEBUGBAR_USE_LOG_FILE');
 
-		if ($uselogfile)
-		{
-    		$this->getStorageLogs($this->path);
-		}
-		else
-		{
-    	    $log_levels = $this->getLevels();
+		if ($uselogfile) {
+			$this->getStorageLogs($this->path);
+		} else {
+			$log_levels = $this->getLevels();
 
-    	    foreach ($conf->logbuffer as $line) {
-    	        if ($this->nboflines >= $this->maxnboflines)
-    	        {
-    	            break;
-    	        }
-    	        foreach ($log_levels as $level_key => $level) {
-    	            if (strpos(strtolower($line), strtolower($level_key)) == 20) {
-    	                $this->nboflines++;
-    	                $this->addMessage($line, $level, false);
-    	            }
-    	        }
-    	    }
+			foreach ($conf->logbuffer as $line) {
+				if ($this->nboflines >= $this->maxnboflines) {
+					break;
+				}
+				foreach ($log_levels as $level_key => $level) {
+					if (strpos(strtolower($line), strtolower($level_key)) == 20) {
+						$this->nboflines++;
+						$this->addMessage($line, $level, false);
+					}
+				}
+			}
 		}
 
 		return parent::collect();
@@ -106,29 +129,29 @@ class DolLogsCollector extends MessagesCollector
 	 */
 	public function getLogsFile()
 	{
-	    // default dolibarr log file
-	    $path = DOL_DATA_ROOT.'/dolibarr.log';
-	    return $path;
+		// default dolibarr log file
+		$path = DOL_DATA_ROOT.'/dolibarr.log';
+		return $path;
 	}
 
 	/**
 	 * Get logs
 	 *
-	 * @param string $path     Path
-	 * @return array
+	 * @param 	string 	$path     	Path
+	 * @return 	void
 	 */
 	public function getStorageLogs($path)
 	{
-	    if (!file_exists($path)) {
-	        return;
-	    }
+		if (!file_exists($path)) {
+			return;
+		}
 
-	    // Load the latest lines
-	    $file = implode("", $this->tailFile($path, $this->maxnboflines));
+		// Load the latest lines
+		$file = implode("", $this->tailFile($path, $this->maxnboflines));
 
-	    foreach ($this->getLogs($file) as $log) {
-	        $this->addMessage($log['line'], $log['level'], false);
-	    }
+		foreach ($this->getLogs($file) as $log) {
+			$this->addMessage($log['line'], $log['level'], false);
+		}
 	}
 
 	/**
@@ -140,32 +163,32 @@ class DolLogsCollector extends MessagesCollector
 	 */
 	protected function tailFile($file, $lines)
 	{
-	    $handle = fopen($file, "r");
-	    $linecounter = $lines;
-	    $pos = -2;
-	    $beginning = false;
-	    $text = array();
-	    while ($linecounter > 0) {
-	        $t = " ";
-	        while ($t != "\n") {
-	            if (fseek($handle, $pos, SEEK_END) == -1) {
-	                $beginning = true;
-	                break;
-	            }
-	            $t = fgetc($handle);
-	            $pos--;
-	        }
-	        $linecounter--;
-	        if ($beginning) {
-	            rewind($handle);
-	        }
-	        $text[$lines - $linecounter - 1] = fgets($handle);
-	        if ($beginning) {
-	            break;
-	        }
-	    }
-	    fclose($handle);
-	    return array_reverse($text);
+		$handle = fopen($file, "r");
+		$linecounter = $lines;
+		$pos = -2;
+		$beginning = false;
+		$text = array();
+		while ($linecounter > 0) {
+			$t = " ";
+			while ($t != "\n") {
+				if (fseek($handle, $pos, SEEK_END) == -1) {
+					$beginning = true;
+					break;
+				}
+				$t = fgetc($handle);
+				$pos--;
+			}
+			$linecounter--;
+			if ($beginning) {
+				rewind($handle);
+			}
+			$text[$lines - $linecounter - 1] = fgets($handle);
+			if ($beginning) {
+				break;
+			}
+		}
+		fclose($handle);
+		return array_reverse($text);
 	}
 
 	/**
@@ -176,21 +199,21 @@ class DolLogsCollector extends MessagesCollector
 	 */
 	public function getLogs($file)
 	{
-	    $pattern = "/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.*/";
-	    $log_levels = $this->getLevels();
-	    preg_match_all($pattern, $file, $matches);
-	    $log = array();
-	    foreach ($matches as $lines) {
-	        foreach ($lines as $line) {
-	            foreach ($log_levels as $level_key => $level) {
-	                if (strpos(strtolower($line), strtolower($level_key)) == 20) {
-	                    $log[] = array('level' => $level, 'line' => $line);
-	                }
-	            }
-	        }
-	    }
-	    $log = array_reverse($log);
-	    return $log;
+		$pattern = "/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.*/";
+		$log_levels = $this->getLevels();
+		preg_match_all($pattern, $file, $matches);
+		$log = array();
+		foreach ($matches as $lines) {
+			foreach ($lines as $line) {
+				foreach ($log_levels as $level_key => $level) {
+					if (strpos(strtolower($line), strtolower($level_key)) == 20) {
+						$log[] = array('level' => $level, 'line' => $line);
+					}
+				}
+			}
+		}
+		$log = array_reverse($log);
+		return $log;
 	}
 
 	/**

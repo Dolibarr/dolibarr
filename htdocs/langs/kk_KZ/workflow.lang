@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Жұмыс процесінің модулін орнату
+WorkflowDesc=Бұл модуль кейбір автоматты әрекеттерді қамтамасыз етеді. Әдепкі бойынша, жұмыс процесі ашық (сіз кез келген нәрсені өзіңіз жасай аласыз), бірақ мұнда сіз автоматты әрекеттерді белсендіре аласыз.
+ThereIsNoWorkflowToModify=Іске қосылған модульдермен жұмыс процесінің модификациясы жоқ.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Коммерциялық ұсынысқа қол қойылғаннан кейін автоматты түрде сату тапсырысын жасаңыз (жаңа тапсырыстың көлемі ұсыныспен бірдей болады)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Коммерциялық ұсынысқа қол қойылғаннан кейін клиенттің шот -фактурасын автоматты түрде жасаңыз (жаңа шот -фактурада ұсыныстың сомасы болады)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Келісім -шарт расталғаннан кейін клиенттің шот -фактурасын автоматты түрде жасаңыз
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Сату тапсырысы жабылғаннан кейін клиенттің шот -фактурасын автоматты түрде жасаңыз (жаңа шот -фактурада тапсырыспен бірдей сома болады)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=On ticket creation, automatically create an intervention.
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Байланыстырылған бастапқы ұсынысты сату тапсырысы есепке қойылған кезде шот ретінде жіктеңіз (және егер тапсырыс сомасы қол қойылған байланыстырылған ұсыныстың жалпы сомасына тең болса)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Байланыстырылған бастапқы ұсынысты клиенттің шот -фактурасы расталған кезде шот ретінде жіктеңіз (егер шот -фактураның сомасы қол қойылған байланыстырылған ұсыныстың жалпы сомасына тең болса)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Клиенттердің шот -фактурасы расталған кезде байланысқан бастапқы сату тапсырысын шот ретінде жіктеңіз (егер шот -фактураның сомасы байланыстырылған тапсырыстың жалпы сомасымен бірдей болса)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Байланысты бастапқы сату тапсырысын тұтынушы шот -фактурасы төленген күйге қойылған кезде шот ретінде жіктеңіз (егер шот -фактураның сомасы байланыстырылған тапсырыстың жалпы сомасымен бірдей болса)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Байланысты бастапқы сату тапсырысын жеткізілім расталған кезде жіберілген деп жіктеңіз (және егер барлық жөнелтімдердің саны жаңартылатын тәртіппен бірдей болса)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Байланысты бастапқы сату тапсырысын жеткізілім жабылған кезде жіберілген деп жіктеңіз (және егер барлық жөнелтімдер саны жаңартылатын тәртіппен бірдей болса)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Байланысты көзі бар жеткізуші ұсынысын жеткізуші шот -фактурасы расталған кезде шот ретінде жіктеңіз (егер шот -фактураның сомасы байланыстырылған ұсыныстың жалпы сомасына тең болса)
+# Autoclassify purchase order
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Сатып алушының шот -фактурасы расталған кезде байланысқан бастапқы сатып алу тапсырысын шот ретінде жіктеңіз (егер шот -фактураның сомасы байланыстырылған тапсырыстың жалпы сомасымен бірдей болса)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Classify linked source purchase order as received when a reception is validated (and if the quantity received by all receptions is the same as in the purchase order to update)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Classify linked source purchase order as received when a reception is closed (and if the quantity received by all rceptions is the same as in the purchase order to update)
+# Autoclassify purchase invoice
+descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=When creating a ticket, link available contracts of matching thirdparty
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking contracts, search among those of parents companies
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Билет жабылған кезде билетке байланысты барлық араласуларды жабыңыз
+AutomaticCreation=Автоматты түрде құру
+AutomaticClassification=Автоматты жіктеу
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
+AutomaticClosing=Automatic closing
+AutomaticLinking=Automatic linking

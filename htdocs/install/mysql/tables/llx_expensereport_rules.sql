@@ -4,7 +4,7 @@
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation; either version 2 of the License, or
+-- the Free Software Foundation; either version 3 of the License, or
 -- (at your option) any later version.
 --
 -- This program is distributed in the hope that it will be useful,
@@ -20,7 +20,7 @@
 CREATE TABLE llx_expensereport_rules (
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
   datec						datetime  DEFAULT NULL,
-  tms						timestamp,
+  tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   dates						datetime NOT NULL,
   datee						datetime NOT NULL,
   amount					double(24,8) NOT NULL,
@@ -31,4 +31,4 @@ CREATE TABLE llx_expensereport_rules (
   code_expense_rules_type	varchar(50) NOT NULL,
   is_for_all				tinyint DEFAULT 0,
   entity					integer DEFAULT 1
-) ENGINE=InnoDB;
+) ENGINE=innodb;

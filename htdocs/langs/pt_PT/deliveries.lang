@@ -2,7 +2,7 @@
 Delivery=Distribuição
 DeliveryRef=Ref. de entrega
 DeliveryCard=Ficha de recibo
-DeliveryOrder=Delivery receipt
+DeliveryOrder=Recibo de entrega
 DeliveryDate=Data da entrega
 CreateDeliveryOrder=Gerar recibo de entrega
 DeliveryStateSaved=Estado da entrega guardado
@@ -18,7 +18,7 @@ StatusDeliveryCanceled=Cancelada
 StatusDeliveryDraft=Rascunho
 StatusDeliveryValidated=Recebido
 # merou PDF model
-NameAndSignature=Name and Signature:
+NameAndSignature=Nome e assinatura:
 ToAndDate=Em___________________________________ a ____/_____/__________
 GoodStatusDeclaration=Recebi a mercadoria em bom estado,
 Deliverer=Deliverer:
@@ -27,5 +27,7 @@ Recipient=Destinatário
 ErrorStockIsNotEnough=Não existe stock suficiente
 Shippable= Transportável
 NonShippable=Não Transportável
+ShowShippableStatus=Show shippable status
 ShowReceiving=Mostrar recibo da entrega
 NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

@@ -74,8 +74,12 @@ class TicketTest extends PHPUnit\Framework\TestCase
 		print "\n";
 	}
 
-	// Static methods
-	public static function setUpBeforeClass()
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -83,8 +87,12 @@ class TicketTest extends PHPUnit\Framework\TestCase
 		print __METHOD__."\n";
 	}
 
-	// tear down after class
-	public static function tearDownAfterClass()
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -97,7 +105,7 @@ class TicketTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -112,7 +120,7 @@ class TicketTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -298,7 +306,7 @@ class TicketTest extends PHPUnit\Framework\TestCase
 		$user_id_to_assign = 1;
 
 		$result=$localobject->assignUser($user, $user_id_to_assign);
-        ;
+		;
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
 		$this->assertGreaterThan(0, $result);

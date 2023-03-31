@@ -18,7 +18,8 @@ CREATE TABLE llx_bom_bom(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	entity integer DEFAULT 1 NOT NULL,
-	ref varchar(128) NOT NULL, 
+	ref varchar(128) NOT NULL,
+	bomtype integer DEFAULT 0,                  -- 0 for a BOM to manufacture, 1 for a BOM to dismantle 
 	label varchar(255), 
 	fk_product integer, 
 	description text, 
@@ -30,7 +31,7 @@ CREATE TABLE llx_bom_bom(
 	duration double(24,8) DEFAULT NULL,
 	date_creation datetime NOT NULL,
 	date_valid datetime,
-	tms timestamp, 
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 	fk_user_creat integer NOT NULL,
 	fk_user_modif integer, 
 	fk_user_valid integer, 

@@ -1,0 +1,19 @@
+# Dolibarr language file - Source file is en_US - resource
+ConfirmDeleteResourceElement=Confirma eliminar el recurso para este elemento
+NoResourceLinked=Sin recursos vinculados
+ResourcePageIndex=Lista de recursos
+ResourceCard=Tarjeta de recursos
+AddResource=Crea un recurso
+ResourceFormLabel_ref=Nombre del recurso
+ResourceFormLabel_description=Descripción del recurso
+ResourcesLinkedToElement=Recursos vinculados al elemento
+ShowResource=Mostrar recurso
+ResourceElementPage=Recursos de elementos
+ResourceCreatedWithSuccess=Recurso creado con éxito
+RessourceLineSuccessfullyDeleted=La línea de recursos eliminó correctamente
+RessourceLineSuccessfullyUpdated=La línea de recursos se actualizó correctamente
+ResourceLinkedWithSuccess=Recurso vinculado con el éxito
+ConfirmDeleteResource=Confirmar para eliminar este recurso
+RessourceSuccessfullyDeleted=Recurso borrado con éxito
+IdResource=Recurso Id
+ResourceTypeCode=Código de tipo de recurso

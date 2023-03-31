@@ -23,10 +23,12 @@
  *      \brief      Fiche de notes sur un utilisateur Dolibarr
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
+// Get parameters
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'usernote'; // To manage different context of search
@@ -39,12 +41,19 @@ $object->fetch($id, '', '', 1);
 $object->getrights();
 
 // If user is not user read and no permission to read other users, we stop
-if (($object->id != $user->id) && (!$user->rights->user->user->lire)) accessforbidden();
+if (($object->id != $user->id) && (!$user->hasRight("user", "user", "read"))) {
+	accessforbidden();
+}
+
+// Permissions
+$permissionnote = $user->hasRight("user", "self", "write"); // Used by the include of actions_setnotes.inc.php
 
 // Security check
 $socid = 0;
-if ($user->socid > 0) $socid = $user->socid;
-$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+$feature2 = (($socid && $user->hasRight("user", "self", "write")) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
@@ -55,23 +64,13 @@ $hookmanager->initHooks(array('usercard', 'usernote', 'globalcard'));
 /*
  * Actions
  */
-
 $parameters = array('id'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 if (empty($reshook)) {
-	if ($action == 'update' && $user->rights->user->user->creer && !$_POST["cancel"]) {
-		$db->begin();
-
-		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private', 'none'), ENT_QUOTES));
-		if ($res < 0) {
-			$mesg = '<div class="error">'.$adh->error.'</div>';
-			$db->rollback();
-		} else {
-			$db->commit();
-		}
-	}
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
 }
 
 
@@ -83,79 +82,70 @@ llxHeader();
 
 $form = new Form($db);
 
-if ($id)
-{
+if ($id) {
 	$head = user_prepare_head($object);
 
 	$title = $langs->trans("User");
-	dol_fiche_head($head, 'note', $title, -1, 'user');
+	print dol_get_fiche_head($head, 'note', $title, -1, 'user');
 
 	$linkback = '';
 
-	if ($user->rights->user->user->lire || $user->admin) {
+	if ($user->hasRight("user", "user", "read") || $user->admin) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= '</a>';
 
-    print '<div class="underbanner clearboth"></div>';
+	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
+	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
-    print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
+	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
+
+	print '<div class="underbanner clearboth"></div>';
+
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	print '<div class="fichecenter">';
-    print '<table class="border centpercent tableforfield">';
+	print '<table class="border centpercent tableforfield">';
 
-    // Login
-    print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
-
-	// Note
-    print '<tr><td class="tdtop">'.$langs->trans("Note").'</td>';
-	print '<td class="sensiblehtmlcontent">';
-	if ($action == 'edit' && $user->rights->user->user->creer)
-	{
-		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
-		print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";
-	    // Editeur wysiwyg
-		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('note_private', $object->note_private, '', 280, 'dolibarr_notes', 'In', true, false, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_8, '90%');
-		$doleditor->Create();
+	// Login
+	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
+	if (!empty($object->ldap_sid) && $object->statut == 0) {
+		print '<td class="error">';
+		print $langs->trans("LoginAccountDisableInDolibarr");
+		print '</td>';
+	} else {
+		print '<td>';
+		$addadmin = '';
+		if (property_exists($object, 'admin')) {
+			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
+				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+			} elseif (!empty($object->admin)) {
+				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+			}
+		}
+		print showValueWithClipboardCPButton($object->login).$addadmin;
+		print '</td>';
 	}
-	else
-	{
-		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
-	}
-	print "</td></tr>";
+	print '</tr>';
 
-    print "</table>";
-    print '</div>';
+	print "</table>";
 
-	dol_fiche_end();
-
-	if ($action == 'edit')
-	{
-		print '<div class="center">';
-		print '<input type="submit" class="button" name="update" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
-	}
+	print '</div>';
 
 
-	/*
-     * Actions
-     */
+	//print '<br>';
 
-    print '<div class="tabsAction">';
+	//print '<div class="underbanner clearboth"></div>';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-    if ($user->rights->user->user->creer && $action != 'edit')
-    {
-        print "<a class=\"butAction\" href=\"note.php?id=".$object->id."&amp;action=edit\">".$langs->trans('Modify')."</a>";
-    }
-
-    print "</div>";
-
-	print "</form>\n";
+	print dol_get_fiche_end();
+} else {
+	$langs->load("errors");
+	print $langs->trans("ErrorRecordNotFound");
 }
 
 // End of page

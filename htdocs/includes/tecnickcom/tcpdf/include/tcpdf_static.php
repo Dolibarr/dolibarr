@@ -49,7 +49,8 @@
  * @version 1.1.1
  * @author Nicola Asuni - info@tecnick.com
  */
-class TCPDF_STATIC {
+class TCPDF_STATIC
+{
 
 	/**
 	 * Current TCPDF version.
@@ -114,7 +115,8 @@ class TCPDF_STATIC {
 	 * @since 5.9.012 (2010-11-10)
 	 * @public static
 	 */
-	public static function getTCPDFVersion() {
+	public static function getTCPDFVersion()
+	{
 		return self::$tcpdf_version;
 	}
 
@@ -124,7 +126,8 @@ class TCPDF_STATIC {
 	 * @since 6.0.000 (2013-03-16)
 	 * @public static
 	 */
-	public static function getTCPDFProducer() {
+	public static function getTCPDFProducer()
+	{
 		return "\x54\x43\x50\x44\x46\x20".self::getTCPDFVersion()."\x20\x28\x68\x74\x74\x70\x3a\x2f\x2f\x77\x77\x77\x2e\x74\x63\x70\x64\x66\x2e\x6f\x72\x67\x29";
 	}
 
@@ -134,7 +137,8 @@ class TCPDF_STATIC {
 	 * @since 4.6.025 (2009-08-17)
 	 * @public static
 	 */
-	public static function set_mqr($mqr) {
+	public static function set_mqr($mqr)
+	{
 		if (!defined('PHP_VERSION_ID')) {
 			$version = PHP_VERSION;
 			define('PHP_VERSION_ID', (($version[0] * 10000) + ($version[2] * 100) + $version[4]));
@@ -150,7 +154,8 @@ class TCPDF_STATIC {
 	 * @since 4.6.025 (2009-08-17)
 	 * @public static
 	 */
-	public static function get_mqr() {
+	public static function get_mqr()
+	{
 		if (!defined('PHP_VERSION_ID')) {
 			$version = PHP_VERSION;
 			define('PHP_VERSION_ID', (($version[0] * 10000) + ($version[2] * 100) + $version[4]));
@@ -168,9 +173,10 @@ class TCPDF_STATIC {
 	 * @since 5.9.204 (2013-01-28)
 	 * @public static
 	 */
-	public static function isValidURL($url) {
+	public static function isValidURL($url)
+	{
 		$headers = @get_headers($url);
-    	return (strpos($headers[0], '200') !== false);
+		return (strpos($headers[0], '200') !== false);
 	}
 
 	/**
@@ -190,7 +196,8 @@ class TCPDF_STATIC {
 	 * @since (4.5.019) 2009-02-28
 	 * @public static
 	 */
-	public static function removeSHY($txt='', $unicode=true) {
+	public static function removeSHY($txt = '', $unicode = true)
+	{
 		$txt = preg_replace('/([\\xc2]{1}[\\xad]{1})/', '', $txt);
 		if (!$unicode) {
 			$txt = preg_replace('/([\\xad]{1})/', '', $txt);
@@ -208,7 +215,8 @@ class TCPDF_STATIC {
 	 * @since 4.4.002 (2008-12-09)
 	 * @public static
 	 */
-	public static function getBorderMode($brd, $position='start', $opencell=true) {
+	public static function getBorderMode($brd, $position = 'start', $opencell = true)
+	{
 		if ((!$opencell) OR empty($brd)) {
 			return $brd;
 		}
@@ -280,7 +288,8 @@ class TCPDF_STATIC {
 	 * @since 4.5.044 (2009-04-16)
 	 * @public static
 	 */
-	public static function empty_string($str) {
+	public static function empty_string($str)
+	{
 		return (is_null($str) OR (is_string($str) AND (strlen($str) == 0)));
 	}
 
@@ -292,7 +301,8 @@ class TCPDF_STATIC {
 	 * @since 4.5.000 (2008-12-31)
 	 * @public static
 	 */
-	public static function getObjFilename($type='tmp', $file_id='') {
+	public static function getObjFilename($type = 'tmp', $file_id = '')
+	{
 		return tempnam(K_PATH_CACHE, '__tcpdf_'.$file_id.'_'.$type.'_'.md5(TCPDF_STATIC::getRandomSeed()).'_');
 	}
 
@@ -302,7 +312,8 @@ class TCPDF_STATIC {
 	 * @return string escaped string.
 	 * @public static
 	 */
-	public static function _escape($s) {
+	public static function _escape($s)
+	{
 		// the chr(13) substitution fixes the Bugs item #1421290.
 		return strtr($s, array(')' => '\\)', '(' => '\\(', '\\' => '\\\\', chr(13) => '\r'));
 	}
@@ -314,7 +325,8 @@ class TCPDF_STATIC {
 	* @since 5.9.121 (2011-09-28)
 	 * @public static
 	 */
-	public static function _escapeXML($str) {
+	public static function _escapeXML($str)
+	{
 		$replaceTable = array("\0" => '', '&' => '&amp;', '<' => '&lt;', '>' => '&gt;');
 		$str = strtr($str, $replaceTable);
 		return $str;
@@ -327,7 +339,8 @@ class TCPDF_STATIC {
 	 * @since 4.5.029 (2009-03-19)
 	 * @public static
 	 */
-	public static function objclone($object) {
+	public static function objclone($object)
+	{
 		if (($object instanceof Imagick) AND (version_compare(phpversion('imagick'), '3.0.1') !== 1)) {
 			// on the versions after 3.0.1 the clone() method was deprecated in favour of clone keyword
 			return @$object->clone();
@@ -342,7 +355,8 @@ class TCPDF_STATIC {
 	 * @since 5.9.086
 	 * @public static
 	 */
-	public static function sendOutputData($data, $length) {
+	public static function sendOutputData($data, $length)
+	{
 		if (!isset($_SERVER['HTTP_ACCEPT_ENCODING']) OR empty($_SERVER['HTTP_ACCEPT_ENCODING'])) {
 			// the content length may vary if the server is using compression
 			header('Content-Length: '.$length);
@@ -358,7 +372,8 @@ class TCPDF_STATIC {
 	 * @return replaced page content and updated $diff parameter as array.
 	 * @public static
 	 */
-	public static function replacePageNumAliases($page, $replace, $diff=0) {
+	public static function replacePageNumAliases($page, $replace, $diff = 0)
+	{
 		foreach ($replace as $rep) {
 			foreach ($rep[3] as $a) {
 				if (strpos($page, $a) !== false) {
@@ -377,7 +392,8 @@ class TCPDF_STATIC {
 	 * @since 5.9.152 (2012-03-23)
 	 * @public static
 	 */
-	public static function getTimestamp($date) {
+	public static function getTimestamp($date)
+	{
 		if (($date[0] == 'D') AND ($date[1] == ':')) {
 			// remove date prefix if present
 			$date = substr($date, 2);
@@ -392,7 +408,8 @@ class TCPDF_STATIC {
 	 * @since 5.9.152 (2012-03-23)
 	 * @public static
 	 */
-	public static function getFormattedDate($time) {
+	public static function getFormattedDate($time)
+	{
 		return substr_replace(date('YmdHisO', intval($time)), '\'', (0 - 2), 0).'\'';
 	}
 
@@ -404,7 +421,8 @@ class TCPDF_STATIC {
 	 * @since 5.9.006 (2010-10-19)
 	 * @public static
 	 */
-	public static function getRandomSeed($seed='') {
+	public static function getRandomSeed($seed = '')
+	{
 		$rnd = uniqid(rand().microtime(true), true);
 		if (function_exists('posix_getpid')) {
 			$rnd .= posix_getpid();
@@ -427,7 +445,8 @@ class TCPDF_STATIC {
 	 * @since 2.0.000 (2008-01-02)
 	 * @public static
 	 */
-	public static function _md5_16($str) {
+	public static function _md5_16($str)
+	{
 		return pack('H*', md5($str));
 	}
 
@@ -441,12 +460,13 @@ class TCPDF_STATIC {
 	 * @since 5.0.005 (2010-05-11)
 	 * @public static
 	 */
-	public static function _AES($key, $text) {
+	public static function _AES($key, $text)
+	{
 		// padding (RFC 2898, PKCS #5: Password-Based Cryptography Specification Version 2.0)
 		$padding = 16 - (strlen($text) % 16);
 		$text .= str_repeat(chr($padding), $padding);
 		if (extension_loaded('openssl')) {
-			$iv = openssl_random_pseudo_bytes (openssl_cipher_iv_length('aes-256-cbc'));
+			$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
 			$text = openssl_encrypt($text, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv);
 			return $iv.substr($text, 0, -16);
 		}
@@ -466,7 +486,8 @@ class TCPDF_STATIC {
 	 * @since TODO
 	 * @public static
 	 */
-	public static function _AESnopad($key, $text) {
+	public static function _AESnopad($key, $text)
+	{
 		if (extension_loaded('openssl')) {
 			$iv = str_repeat("\x00", openssl_cipher_iv_length('aes-256-cbc'));
 			$text = openssl_encrypt($text, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv);
@@ -489,7 +510,8 @@ class TCPDF_STATIC {
 	 * @author Klemen Vodopivec, Nicola Asuni
 	 * @public static
 	 */
-	public static function _RC4($key, $text, &$last_enc_key, &$last_enc_key_c) {
+	public static function _RC4($key, $text, &$last_enc_key, &$last_enc_key_c)
+	{
 		if (function_exists('mcrypt_encrypt') AND ($out = @mcrypt_encrypt(MCRYPT_ARCFOUR, $key, $text, MCRYPT_MODE_STREAM, ''))) {
 			// try to use mcrypt function if exist
 			return $out;
@@ -533,7 +555,8 @@ class TCPDF_STATIC {
 	 * @author Nicola Asuni
 	 * @public static
 	 */
-	public static function getUserPermissionCode($permissions, $mode=0) {
+	public static function getUserPermissionCode($permissions, $mode = 0)
+	{
 		$options = array(
 			'owner' => 2, // bit 2 -- inverted logic: cleared by default
 			'print' => 4, // bit 3
@@ -570,7 +593,8 @@ class TCPDF_STATIC {
 	 * @author Nicola Asuni
 	 * @public static
 	 */
-	public static function convertHexStringToString($bs) {
+	public static function convertHexStringToString($bs)
+	{
 		$string = ''; // string to be returned
 		$bslength = strlen($bs);
 		if (($bslength % 2) != 0) {
@@ -592,7 +616,8 @@ class TCPDF_STATIC {
 	 * @author Nicola Asuni
 	 * @public static
 	 */
-	public static function convertStringToHexString($s) {
+	public static function convertStringToHexString($s)
+	{
 		$bs = '';
 		$chars = preg_split('//', $s, -1, PREG_SPLIT_NO_EMPTY);
 		foreach ($chars as $c) {
@@ -609,7 +634,8 @@ class TCPDF_STATIC {
 	 * @author Nicola Asuni
 	 * @public static
 	 */
-	public static function getEncPermissionsString($protection) {
+	public static function getEncPermissionsString($protection)
+	{
 		$binprot = sprintf('%032b', $protection);
 		$str = chr(bindec(substr($binprot, 24, 8)));
 		$str .= chr(bindec(substr($binprot, 16, 8)));
@@ -626,7 +652,8 @@ class TCPDF_STATIC {
 	 * @since 5.9.097 (2011-06-23)
 	 * @public static
 	 */
-	public static function encodeNameObject($name) {
+	public static function encodeNameObject($name)
+	{
 		$escname = '';
 		$length = strlen($name);
 		for ($i = 0; $i < $length; ++$i) {
@@ -650,7 +677,8 @@ class TCPDF_STATIC {
 	 * @since 4.8.000 (2009-09-06)
 	 * @public static
 	 */
-	public static function getAnnotOptFromJSProp($prop, &$spot_colors, $rtl=false) {
+	public static function getAnnotOptFromJSProp($prop, &$spot_colors, $rtl = false)
+	{
 		if (isset($prop['aopt']) AND is_array($prop['aopt'])) {
 			// the annotation options area lready defined
 			return $prop['aopt'];
@@ -1016,8 +1044,9 @@ class TCPDF_STATIC {
 	 * @since 4.2.005 (2008-11-06)
 	 * @public static
 	 */
-	public static function formatPageNumber($num) {
-		return number_format((float)$num, 0, '', '.');
+	public static function formatPageNumber($num)
+	{
+		return number_format((float) $num, 0, '', '.');
 	}
 
 	/**
@@ -1028,8 +1057,9 @@ class TCPDF_STATIC {
 	 * @see addTOC(), addHTMLTOC()
 	 * @public static
 	 */
-	public static function formatTOCPageNumber($num) {
-		return number_format((float)$num, 0, '', '.');
+	public static function formatTOCPageNumber($num)
+	{
+		return number_format((float) $num, 0, '', '.');
 	}
 
 	/**
@@ -1040,7 +1070,8 @@ class TCPDF_STATIC {
 	 * @since 5.1.000 (2010-05-25)
 	 * @public static
 	 */
-	public static function extractCSSproperties($cssdata) {
+	public static function extractCSSproperties($cssdata)
+	{
 		if (empty($cssdata)) {
 			return array();
 		}
@@ -1136,7 +1167,8 @@ class TCPDF_STATIC {
 	 * @see setHtmlVSpace()
 	 * @public static
 	 */
-	public static function fixHTMLCode($html, $default_css='', $tagvs='', $tidy_options='', &$tagvspaces) {
+	public static function fixHTMLCode($html, $default_css = '', $tagvs = '', $tidy_options = '', &$tagvspaces)
+	{
 		// configure parameters for HTML Tidy
 		if ($tidy_options === '') {
 			$tidy_options = array (
@@ -1202,7 +1234,8 @@ class TCPDF_STATIC {
 	 * @since 5.1.000 (2010-05-25)
 	 * @public static
 	 */
-	public static function isValidCSSSelectorForTag($dom, $key, $selector) {
+	public static function isValidCSSSelectorForTag($dom, $key, $selector)
+	{
 		$valid = false; // value to be returned
 		$tag = $dom[$key]['value'];
 		$class = array();
@@ -1362,7 +1395,8 @@ class TCPDF_STATIC {
 	 * @since 5.1.000 (2010-05-25)
 	 * @public static
 	 */
-	public static function getCSSdataArray($dom, $key, $css) {
+	public static function getCSSdataArray($dom, $key, $css)
+	{
 		$cssarray = array(); // style to be returned
 		// get parent CSS selectors
 		$selectors = array();
@@ -1370,7 +1404,7 @@ class TCPDF_STATIC {
 			$selectors = $dom[($dom[$key]['parent'])]['csssel'];
 		}
 		// get all styles that apply
-		foreach($css as $selector => $style) {
+		foreach ($css as $selector => $style) {
 			$pos = strpos($selector, ' ');
 			// get specificity
 			$specificity = substr($selector, 0, $pos);
@@ -1407,7 +1441,8 @@ class TCPDF_STATIC {
 	 * @since 5.9.070 (2011-04-19)
 	 * @public static
 	 */
-	public static function getTagStyleFromCSSarray($css) {
+	public static function getTagStyleFromCSSarray($css)
+	{
 		$tagstyle = ''; // value to be returned
 		foreach ($css as $style) {
 			// split single css commands
@@ -1438,8 +1473,13 @@ class TCPDF_STATIC {
 	 * @since 4.4.004 (2008-12-10)
 	 * @public static
 	 */
-	public static function intToRoman($number) {
+	public static function intToRoman($number)
+	{
 		$roman = '';
+		if ($number >= 4000) {
+			// do not represent numbers above 4000 in Roman numerals
+			return strval($number);
+		}
 		while ($number >= 1000) {
 			$roman .= 'M';
 			$number -= 1000;
@@ -1504,7 +1544,8 @@ class TCPDF_STATIC {
 	 * @since 4.8.038 (2010-03-13)
 	 * @public static
 	 */
-	public static function revstrpos($haystack, $needle, $offset = 0) {
+	public static function revstrpos($haystack, $needle, $offset = 0)
+	{
 		$length = strlen($haystack);
 		$offset = ($offset > 0)?($length - $offset):abs($offset);
 		$pos = strpos(strrev($haystack), strrev($needle), $offset);
@@ -1519,7 +1560,8 @@ class TCPDF_STATIC {
 	 * @since 4.9.012 (2010-04-12)
 	 * @public static
 	 */
-	public static function getHyphenPatternsFromTEX($file) {
+	public static function getHyphenPatternsFromTEX($file)
+	{
 		// TEX patterns are available at:
 		// http://www.ctan.org/tex-archive/language/hyph-utf8/tex/generic/hyph-utf8/patterns/
 		$data = file_get_contents($file);
@@ -1533,7 +1575,7 @@ class TCPDF_STATIC {
 		$patterns_array = preg_split('/[\s]+/', $data);
 		// create new language array of patterns
 		$patterns = array();
-		foreach($patterns_array as $val) {
+		foreach ($patterns_array as $val) {
 			if (!TCPDF_STATIC::empty_string($val)) {
 				$val = trim($val);
 				$val = str_replace('\'', '\\\'', $val);
@@ -1547,27 +1589,28 @@ class TCPDF_STATIC {
 	/**
 	 * Get the Path-Painting Operators.
 	 * @param $style (string) Style of rendering. Possible values are:
-	 * <ul>
-	 *   <li>S or D: Stroke the path.</li>
-	 *   <li>s or d: Close and stroke the path.</li>
-	 *   <li>f or F: Fill the path, using the nonzero winding number rule to determine the region to fill.</li>
-	 *   <li>f* or F*: Fill the path, using the even-odd rule to determine the region to fill.</li>
-	 *   <li>B or FD or DF: Fill and then stroke the path, using the nonzero winding number rule to determine the region to fill.</li>
-	 *   <li>B* or F*D or DF*: Fill and then stroke the path, using the even-odd rule to determine the region to fill.</li>
-	 *   <li>b or fd or df: Close, fill, and then stroke the path, using the nonzero winding number rule to determine the region to fill.</li>
-	 *   <li>b or f*d or df*: Close, fill, and then stroke the path, using the even-odd rule to determine the region to fill.</li>
-	 *   <li>CNZ: Clipping mode using the even-odd rule to determine which regions lie inside the clipping path.</li>
-	 *   <li>CEO: Clipping mode using the nonzero winding number rule to determine which regions lie inside the clipping path</li>
-	 *   <li>n: End the path object without filling or stroking it.</li>
-	 * </ul>
+	 *               <ul>
+	 *               <li>S or D: Stroke the path.</li>
+	 *               <li>s or d: Close and stroke the path.</li>
+	 *               <li>f or F: Fill the path, using the nonzero winding number rule to determine the region to fill.</li>
+	 *               <li>f* or F*: Fill the path, using the even-odd rule to determine the region to fill.</li>
+	 *               <li>B or FD or DF: Fill and then stroke the path, using the nonzero winding number rule to determine the region to fill.</li>
+	 *               <li>B* or F*D or DF*: Fill and then stroke the path, using the even-odd rule to determine the region to fill.</li>
+	 *               <li>b or fd or df: Close, fill, and then stroke the path, using the nonzero winding number rule to determine the region to fill.</li>
+	 *               <li>b or f*d or df*: Close, fill, and then stroke the path, using the even-odd rule to determine the region to fill.</li>
+	 *               <li>CNZ: Clipping mode using the even-odd rule to determine which regions lie inside the clipping path.</li>
+	 *               <li>CEO: Clipping mode using the nonzero winding number rule to determine which regions lie inside the clipping path</li>
+	 *               <li>n: End the path object without filling or stroking it.</li>
+	 *               </ul>
 	 * @param $default (string) default style
 	 * @author Nicola Asuni
 	 * @since 5.0.000 (2010-04-30)
 	 * @public static
 	 */
-	public static function getPathPaintOperator($style, $default='S') {
+	public static function getPathPaintOperator($style, $default = 'S')
+	{
 		$op = '';
-		switch($style) {
+		switch ($style) {
 			case 'S':
 			case 'D': {
 				$op = 'S';
@@ -1644,7 +1687,8 @@ class TCPDF_STATIC {
 	 * @since 5.0.000 (2010-05-02)
 	 * @public static
 	 */
-	public static function getTransformationMatrixProduct($ta, $tb) {
+	public static function getTransformationMatrixProduct($ta, $tb)
+	{
 		$tm = array();
 		$tm[0] = ($ta[0] * $tb[0]) + ($ta[2] * $tb[1]);
 		$tm[1] = ($ta[1] * $tb[0]) + ($ta[3] * $tb[1]);
@@ -1663,7 +1707,8 @@ class TCPDF_STATIC {
 	 * @since 5.0.000 (2010-05-02)
 	 * @public static
 	 */
-	public static function getSVGTransformMatrix($attribute) {
+	public static function getSVGTransformMatrix($attribute)
+	{
 		// identity matrix
 		$tm = array(1, 0, 0, 1, 0, 0);
 		$transform = array();
@@ -1760,7 +1805,8 @@ class TCPDF_STATIC {
 	 * @since 5.0.000 (2010-05-04)
 	 * @public static
 	 */
-	public static function getVectorsAngle($x1, $y1, $x2, $y2) {
+	public static function getVectorsAngle($x1, $y1, $x2, $y2)
+	{
 		$dprod = ($x1 * $x2) + ($y1 * $y2);
 		$dist1 = sqrt(($x1 * $x1) + ($y1 * $y1));
 		$dist2 = sqrt(($x2 * $x2) + ($y2 * $y2));
@@ -1787,14 +1833,15 @@ class TCPDF_STATIC {
 	 * @since 6.0.023
 	 * @public static
 	 */
-	public static function pregSplit($pattern, $modifiers, $subject, $limit=NULL, $flags=NULL) {
+	public static function pregSplit($pattern, $modifiers, $subject, $limit = null, $flags = null)
+	{
 		// the bug only happens on PHP 5.2 when using the u modifier
-		if ((strpos($modifiers, 'u') === FALSE) OR (count(preg_split('//u', "\n\t", -1, PREG_SPLIT_NO_EMPTY)) == 2)) {
+		if ((strpos($modifiers, 'u') === false) OR (count(preg_split('//u', "\n\t", -1, PREG_SPLIT_NO_EMPTY)) == 2)) {
 			return preg_split($pattern.$modifiers, $subject, $limit, $flags);
 		}
 		// preg_split is bugged - try alternative solution
 		$ret = array();
-		while (($nl = strpos($subject, "\n")) !== FALSE) {
+		while (($nl = strpos($subject, "\n")) !== false) {
 			$ret = array_merge($ret, preg_split($pattern.$modifiers, substr($subject, 0, $nl), $limit, $flags));
 			$ret[] = "\n";
 			$subject = substr($subject, ($nl + 1));
@@ -1805,33 +1852,28 @@ class TCPDF_STATIC {
 		return $ret;
 	}
 
-    /**
-     * Wrapper to use fopen only with local files
-     * @param  string $filename The full path to the file to open
-     * @param  string $mode     Acceses type for the file ('r', 'r+', 'w', 'w+', 'a', 'a+', 'x', 'x+', 'c', 'c+' or 'e')
-     * @return resource         Returns a file pointer resource on success, or FALSE on error.
-     * @public static
-     */
-    public static function fopenLocal($filename, $mode)
-    {
-        if (strpos($filename, '//') === 0)
-        {
-            // Share folder on a (windows) server
-            // e.g.: "//[MyServerName]/[MySharedFolder]/"
-            //
-            // nothing to change
-        }
-        elseif (strpos($filename, '://') === false)
-        {
-            $filename = 'file://'.$filename;
-        }
-        elseif (stream_is_local($filename) !== true)
-        {
-            return false;
-        }
+	/**
+	 * Wrapper to use fopen only with local files
+	 * @param  string $filename The full path to the file to open
+	 * @param  string $mode     Acceses type for the file ('r', 'r+', 'w', 'w+', 'a', 'a+', 'x', 'x+', 'c', 'c+' or 'e')
+	 * @return resource         Returns a file pointer resource on success, or FALSE on error.
+	 * @public static
+	 */
+	public static function fopenLocal($filename, $mode)
+	{
+		if (strpos($filename, '//') === 0) {
+			// Share folder on a (windows) server
+			// e.g.: "//[MyServerName]/[MySharedFolder]/"
+			//
+			// nothing to change
+		} elseif (strpos($filename, '://') === false) {
+			$filename = 'file://'.$filename;
+		} elseif (stream_is_local($filename) !== true) {
+			return false;
+		}
 
-        return fopen($filename, $mode);
-    }
+		return fopen($filename, $mode);
+	}
 
 	/**
 	 * Check if the URL exist.
@@ -1839,7 +1881,8 @@ class TCPDF_STATIC {
 	 * @return Returns TRUE if the URL exists; FALSE otherwise.
 	 * @public static
 	 */
-	public static function url_exists($url) {
+	public static function url_exists($url)
+	{
 		$crs = curl_init();
 		curl_setopt($crs, CURLOPT_URL, $url);
 		curl_setopt($crs, CURLOPT_NOBODY, true);
@@ -1862,11 +1905,12 @@ class TCPDF_STATIC {
 	 * Wrapper for file_exists.
 	 * Checks whether a file or directory exists.
 	 * Only allows some protocols and local files.
-	 * @param filename (string) Path to the file or directory. 
-	 * @return Returns TRUE if the file or directory specified by filename exists; FALSE otherwise.  
+	 * @param filename (string) Path to the file or directory.
+	 * @return Returns TRUE if the file or directory specified by filename exists; FALSE otherwise.
 	 * @public static
 	 */
-	public static function file_exists($filename) {
+	public static function file_exists($filename)
+	{
 		if (preg_match('|^https?://|', $filename) == 1) {
 			return self::url_exists($filename);
 		}
@@ -1880,29 +1924,30 @@ class TCPDF_STATIC {
 	 * Reads entire file into a string.
 	 * The file can be also an URL.
 	 * @param $file (string) Name of the file or URL to read.
-	 * @return The function returns the read data or FALSE on failure. 
+	 * @return The function returns the read data or FALSE on failure.
 	 * @author Nicola Asuni
 	 * @since 6.0.025
 	 * @public static
 	 */
-	public static function fileGetContents($file) {
+	public static function fileGetContents($file)
+	{
 		$alt = array($file);
 		//
 		if ((strlen($file) > 1)
-		    && ($file[0] === '/')
-		    && ($file[1] !== '/')
-		    && !empty($_SERVER['DOCUMENT_ROOT'])
-		    && ($_SERVER['DOCUMENT_ROOT'] !== '/')
+			&& ($file[0] === '/')
+			&& ($file[1] !== '/')
+			&& !empty($_SERVER['DOCUMENT_ROOT'])
+			&& ($_SERVER['DOCUMENT_ROOT'] !== '/')
 		) {
-		    $findroot = strpos($file, $_SERVER['DOCUMENT_ROOT']);
-		    if (($findroot === false) || ($findroot > 1)) {
-			$alt[] = htmlspecialchars_decode(urldecode($_SERVER['DOCUMENT_ROOT'].$file));
-		    }
+			$findroot = strpos($file, $_SERVER['DOCUMENT_ROOT']);
+			if (($findroot === false) || ($findroot > 1)) {
+				$alt[] = htmlspecialchars_decode(urldecode($_SERVER['DOCUMENT_ROOT'].$file));
+			}
 		}
 		//
 		$protocol = 'http';
 		if (!empty($_SERVER['HTTPS']) && (strtolower($_SERVER['HTTPS']) != 'off')) {
-		    $protocol .= 's';
+			$protocol .= 's';
 		}
 		//
 		$url = $file;
@@ -1913,26 +1958,26 @@ class TCPDF_STATIC {
 		$alt[] = $url;
 		//
 		if (preg_match('%^(https?)://%', $url)
-		    && empty($_SERVER['HTTP_HOST'])
-		    && empty($_SERVER['DOCUMENT_ROOT'])
+			&& empty($_SERVER['HTTP_HOST'])
+			&& empty($_SERVER['DOCUMENT_ROOT'])
 		) {
 			$urldata = parse_url($url);
 			if (empty($urldata['query'])) {
 				$host = $protocol.'://'.$_SERVER['HTTP_HOST'];
 				if (strpos($url, $host) === 0) {
-				    // convert URL to full server path
-				    $tmp = str_replace($host, $_SERVER['DOCUMENT_ROOT'], $url);
-				    $alt[] = htmlspecialchars_decode(urldecode($tmp));
+					// convert URL to full server path
+					$tmp = str_replace($host, $_SERVER['DOCUMENT_ROOT'], $url);
+					$alt[] = htmlspecialchars_decode(urldecode($tmp));
 				}
 			}
 		}
 		//
 		if (isset($_SERVER['SCRIPT_URI'])
-		    && !preg_match('%^(https?|ftp)://%', $file)
-		    && !preg_match('%^//%', $file)
+			&& !preg_match('%^(https?|ftp)://%', $file)
+			&& !preg_match('%^//%', $file)
 		) {
-		    $urldata = @parse_url($_SERVER['SCRIPT_URI']);
-		    $alt[] = $urldata['scheme'].'://'.$urldata['host'].(($file[0] == '/') ? '' : '/').$file;
+			$urldata = @parse_url($_SERVER['SCRIPT_URI']);
+			$alt[] = $urldata['scheme'].'://'.$urldata['host'].(($file[0] == '/') ? '' : '/').$file;
 		}
 		//
 		$alt = array_unique($alt);
@@ -1942,7 +1987,7 @@ class TCPDF_STATIC {
 			}
 			$ret = @file_get_contents($path);
 			if ( $ret != false ) {
-			    return $ret;
+				return $ret;
 			}
 			// try to use CURL for URLs
 			if (!ini_get('allow_url_fopen')
@@ -1956,7 +2001,7 @@ class TCPDF_STATIC {
 				curl_setopt($crs, CURLOPT_FAILONERROR, true);
 				curl_setopt($crs, CURLOPT_RETURNTRANSFER, true);
 				if ((ini_get('open_basedir') == '') && (!ini_get('safe_mode'))) {
-				    curl_setopt($crs, CURLOPT_FOLLOWLOCATION, true);
+					curl_setopt($crs, CURLOPT_FOLLOWLOCATION, true);
 				}
 				curl_setopt($crs, CURLOPT_CONNECTTIMEOUT, 5);
 				curl_setopt($crs, CURLOPT_TIMEOUT, 30);
@@ -1982,7 +2027,8 @@ class TCPDF_STATIC {
 	 * @since 5.2.000 (2010-06-02)
 	 * @public static
 	 */
-	public static function _getULONG($str, $offset) {
+	public static function _getULONG($str, $offset)
+	{
 		$v = unpack('Ni', substr($str, $offset, 4));
 		return $v['i'];
 	}
@@ -1996,7 +2042,8 @@ class TCPDF_STATIC {
 	 * @since 5.2.000 (2010-06-02)
 	 * @public static
 	 */
-	public static function _getUSHORT($str, $offset) {
+	public static function _getUSHORT($str, $offset)
+	{
 		$v = unpack('ni', substr($str, $offset, 2));
 		return $v['i'];
 	}
@@ -2010,7 +2057,8 @@ class TCPDF_STATIC {
 	 * @since 5.2.000 (2010-06-02)
 	 * @public static
 	 */
-	public static function _getSHORT($str, $offset) {
+	public static function _getSHORT($str, $offset)
+	{
 		$v = unpack('si', substr($str, $offset, 2));
 		return $v['i'];
 	}
@@ -2024,7 +2072,8 @@ class TCPDF_STATIC {
 	 * @since 5.9.123 (2011-09-30)
 	 * @public static
 	 */
-	public static function _getFWORD($str, $offset) {
+	public static function _getFWORD($str, $offset)
+	{
 		$v = self::_getUSHORT($str, $offset);
 		if ($v > 0x7fff) {
 			$v -= 0x10000;
@@ -2041,7 +2090,8 @@ class TCPDF_STATIC {
 	 * @since 5.9.123 (2011-09-30)
 	 * @public static
 	 */
-	public static function _getUFWORD($str, $offset) {
+	public static function _getUFWORD($str, $offset)
+	{
 		$v = self::_getUSHORT($str, $offset);
 		return $v;
 	}
@@ -2055,7 +2105,8 @@ class TCPDF_STATIC {
 	 * @since 5.9.123 (2011-09-30)
 	 * @public static
 	 */
-	public static function _getFIXED($str, $offset) {
+	public static function _getFIXED($str, $offset)
+	{
 		// mantissa
 		$m = self::_getFWORD($str, $offset);
 		// fraction
@@ -2073,7 +2124,8 @@ class TCPDF_STATIC {
 	 * @since 5.2.000 (2010-06-02)
 	 * @public static
 	 */
-	public static function _getBYTE($str, $offset) {
+	public static function _getBYTE($str, $offset)
+	{
 		$v = unpack('Ci', substr($str, $offset, 1));
 		return $v['i'];
 	}
@@ -2087,7 +2139,8 @@ class TCPDF_STATIC {
 	 * @since 4.5.027 (2009-03-16)
 	 * @public static
 	 */
-	public static function rfread($handle, $length) {
+	public static function rfread($handle, $length)
+	{
 		$data = fread($handle, $length);
 		if ($data === false) {
 			return false;
@@ -2105,12 +2158,13 @@ class TCPDF_STATIC {
 	 * @return 4-byte integer
 	 * @public static
 	 */
-	public static function _freadint($f) {
+	public static function _freadint($f)
+	{
 		$a = unpack('Ni', fread($f, 4));
 		return $a['i'];
 	}
 
-	
+
 	/**
 	 * Array of page formats
 	 * measures are calculated in this way: (inches * 72) or (millimeters * 72 / 25.4)
@@ -2475,7 +2529,8 @@ class TCPDF_STATIC {
 	 * @since 5.0.010 (2010-05-17)
 	 * @public static
 	 */
-	public static function getPageSizeFromFormat($format) {
+	public static function getPageSizeFromFormat($format)
+	{
 		if (isset(self::$page_formats[$format])) {
 			return self::$page_formats[$format];
 		}
@@ -2497,7 +2552,8 @@ class TCPDF_STATIC {
 	 * @since 5.0.010 (2010-05-17)
 	 * @public static
 	 */
-	public static function setPageBoxes($page, $type, $llx, $lly, $urx, $ury, $points=false, $k, $pagedim=array()) {
+	public static function setPageBoxes($page, $type, $llx, $lly, $urx, $ury, $points = false, $k, $pagedim = array())
+	{
 		if (!isset($pagedim[$page])) {
 			// initialize array
 			$pagedim[$page] = array();
@@ -2523,7 +2579,8 @@ class TCPDF_STATIC {
 	 * @since 5.0.010 (2010-05-17)
 	 * @public static
 	 */
-	public static function swapPageBoxCoordinates($page, $pagedim) {
+	public static function swapPageBoxCoordinates($page, $pagedim)
+	{
 		foreach (self::$pageboxes as $type) {
 			// swap X and Y coordinates
 			if (isset($pagedim[$page][$type])) {
@@ -2544,7 +2601,8 @@ class TCPDF_STATIC {
 	 * @return (string) Canonical page layout name.
 	 * @public static
 	 */
-	public static function getPageLayoutMode($layout='SinglePage') {
+	public static function getPageLayoutMode($layout = 'SinglePage')
+	{
 		switch ($layout) {
 			case 'default':
 			case 'single':
@@ -2587,7 +2645,8 @@ class TCPDF_STATIC {
 	 * @return (string) Canonical page mode name.
 	 * @public static
 	 */
-	public static function getPageMode($mode='UseNone') {
+	public static function getPageMode($mode = 'UseNone')
+	{
 		switch ($mode) {
 			case 'UseNone': {
 				$page_mode = 'UseNone';
@@ -2619,8 +2678,6 @@ class TCPDF_STATIC {
 		}
 		return $page_mode;
 	}
-
-
 } // END OF TCPDF_STATIC CLASS
 
 //============================================================+

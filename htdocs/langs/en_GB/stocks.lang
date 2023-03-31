@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - stocks
 StocksArea=Warehouse area
-MassStockTransferShort=Bulk stock transfer
 QtyDispatchedShort=Quantity dispatched
 QtyToDispatchShort=Quantity to be dispatched
 OrderStatusNotReadyToDispatch=Order Status does not allow dispatching of products in stock warehouses.
@@ -8,7 +7,6 @@ NoPredefinedProductToDispatch=No predefined products for this object. So no disp
 IdWarehouse=Warehouse ID
 LieuWareHouse=Locality of warehouse
 EstimatedStockValueSellShort=Value of stock at selling price
-VirtualDiffersFromPhysical=According to stock movement options, physical stock (physical + current orders) and virtual stock may differ
 RuleForStockReplenishment=Rule for stock replenishment
 IsInPackage=Packaged
 ThisSerialAlreadyExistWithDifferentDate=This lot/serial number (<strong>%s</strong>) already exists but with different useby or sellby dates (found <strong>%s</strong> but you entered <strong>%s</strong>).

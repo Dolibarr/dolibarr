@@ -1,0 +1,13 @@
+# Dolibarr language file - Source file is en_US - margins
+MarginRate=Ratio de margen
+DisplayMarginRates=Mostrar ratios de margen
+InputPrice=Precio de entrada
+UserMargins=Margenes de usuario
+ProductService=Producto o Servicio
+AllProducts=Todos los Productos y Servicios
+ChooseProduct/Service=Escoge producto o servicio
+UseDiscountOnTotal=En subtotal
+CostPrice=Precio de costo
+UnitCharges=Cargos unitarios
+Charges=Cargos
+CheckMargins=Detalles de los márgenes

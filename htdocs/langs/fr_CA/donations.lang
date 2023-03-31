@@ -2,7 +2,6 @@
 Donor=Donneur
 DeleteADonation=Supprimer un don
 ConfirmDeleteADonation=Êtes-vous sûr de vouloir supprimer ce don?
-ShowDonation=Montrer le don
 DonationsArea=Domaine de donations
 DonationStatusPromiseNotValidated=Projet de promesse
 DonationStatusPaid=Dons reçus

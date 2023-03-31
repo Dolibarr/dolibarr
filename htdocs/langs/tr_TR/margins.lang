@@ -16,12 +16,13 @@ MarginDetails=Kar oranı ayrıntıları
 ProductMargins=Ürün kar oranları
 CustomerMargins=Müşteri kar oranları
 SalesRepresentativeMargins=Satış temsilcisi kar oranları
+ContactOfInvoice=Fatura kesen kişi
 UserMargins=Kullanıcı kar oranları
 ProductService=Ürün veya Hizmet
 AllProducts=Bütün ürünler ve hizmetler
 ChooseProduct/Service=Ürün veya hizmet seç
 ForceBuyingPriceIfNull=Eğer tanımlanmamışsa alış/maliyet fiyatını satış fiyatına zorla
-ForceBuyingPriceIfNullDetails=Eğer alış/maliyet fiyatı tanımlanmamışsa ve bu seçenek "AÇIK" ise satırda oran sıfır olacaktır (alış/maliyet fiyatı = satış fiyatı) aksi durumda ("KAPALI") ve oran önerilen varsayılana eşit olacaktır.
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=Genel indirimler için kar oranı yöntemi
 UseDiscountAsProduct=Ürün olarak
 UseDiscountAsService=Hizmet olarak
@@ -36,9 +37,9 @@ CostPrice=Maliyet fiyatı
 UnitCharges=Birim masrafları
 Charges=Masraflar
 AgentContactType=Ticari temsilci ilgili tipi
-AgentContactTypeDetails=Satış temsilcisine göre kar oranı raporu için kullanılacak kişi türünü (faturala bağlantılı) tanımla
+AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitely on the invoices.
 rateMustBeNumeric=Kar oran sayısal bir değer olmalı
 markRateShouldBeLesserThan100=Yayınlanmış kar oranı 100 den daha düşük olmalı
 ShowMarginInfos=Kar oranı bilgisi göster
 CheckMargins=Kar oranı ayrıntıları
-MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any dedicated sale representative and some third parties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).
+MarginPerSaleRepresentativeWarning=Kullanıcı başına kâr raporu, her bir satış temsilcisinin kârını hesaplamak için üçüncü partiler ve satış temsilcileri arasındaki bağlantıyı kullanır. Bazı üçüncü partilerin özel satış temsilcisi bulunmayabileceğinden ve bazı üçüncü partiler birkaç özel satış temsilcisine bağlı olabileceğinden, bazı tutarlar bu rapora dahil edilmeyebilir (satış temsilcisi yoksa) ve bazıları farklı satırlarda görünebilir (her satış temsilcisi için).

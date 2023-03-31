@@ -53,7 +53,7 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	public function info()
 	{
 		global $langs;
-	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
 	}
 
 
@@ -78,22 +78,24 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	{
 		global $conf, $langs, $db;
 
-		$payyymm = ''; $max = '';
+		$payyymm = '';
+		$max = '';
 
-		$posindice = 9;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$row = $db->fetch_row($resql);
-			if ($row) { $payyymm = substr($row[0], 0, 6); $max = $row[0]; }
+			if ($row) {
+				$payyymm = substr($row[0], 0, 6);
+				$max = $row[0];
+			}
 		}
-		if ($payyymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $payyymm))
-		{
+		if ($payyymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $payyymm)) {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
@@ -113,22 +115,22 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	{
 		global $db, $conf;
 
-		// D'abord on recupere la valeur max
-		$posindice = 9;
+		// First, we get the max value
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque";
 		$sql .= " WHERE ref like '".$db->escape($this->prefix)."____-%'";
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max = 0;
-		}
-		else
-		{
+			if ($obj) {
+				$max = intval($obj->max);
+			} else {
+				$max = 0;
+			}
+		} else {
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			return -1;
 		}
@@ -137,8 +139,11 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 		$date = $object->date_bordereau;
 		$yymm = strftime("%y%m", $date);
 
-		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s", $max + 1);
+		if ($max >= (pow(10, 4) - 1)) {
+			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+		} else {
+			$num = sprintf("%04s", $max + 1);
+		}
 
 		dol_syslog(__METHOD__." return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;

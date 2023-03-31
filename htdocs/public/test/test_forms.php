@@ -1,14 +1,23 @@
 <?php
-//define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-define('REQUIRE_JQUERY_MULTISELECT', 'select2');
+//define("NOLOGIN",1);		// This means this output page does not require to be logged.
+/*if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}*/
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+// Security
 if ($dolibarr_main_prod) {
-	accessforbidden();
+	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1');
 }
+
+
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -19,6 +28,7 @@ This page is a sample of page using Dolibarr HTML widget methods. It is designed
 - css (add parameter &amp;theme=newtheme to test another theme or edit css of current theme)<br>
 - jmobile (add parameter <a class="wordbreak" href="<?php echo $_SERVER["PHP_SELF"].'?dol_use_jmobile=1&dol_optimize_smallscreen=1'; ?>">dol_use_jmobile=1&amp;dol_optimize_smallscreen=1</a> and switch to small screen < 570 to enable with emulated jmobile)<br>
 - no javascript / usage for bind people (add parameter <a class="wordbreak" href="<?php echo $_SERVER["PHP_SELF"].'?nojs=1'; ?>">nojs=1</a> to force disable javascript)<br>
+- use with a text browser (add parameter <a class="wordbreak" href="<?php echo $_SERVER["PHP_SELF"].'?textbrowser=1'; ?>">textbrowser=1</a> to force detection of a text browser)<br>
 </h2>
 <br>
 
@@ -94,6 +104,75 @@ print "Test 5c: a multiselect<br>\n";
 $array = array(1=>'Value 1', 2=>'Value 2', 3=>'Value 3');
 $arrayselected = array(1, 3);
 print $form->multiselectarray('testmulti', $array, $arrayselected, '', 0, 'minwidth100');
+
+print '<br><br>'."\n";
+
+// Test6a: Upload of big files
+print "Test 6a: Upload of big files<br>\n";
+print "The file will be uploaded in the directory: documents/test/temp/<br>\n";
+
+if (is_file(DOL_DOCUMENT_ROOT.'/includes/flowjs/flow.js')) {
+	print '<button id="buttonbigupload" type="button">Browse...</button>';
+	print '&nbsp;<span id="filespan">No file selected.</span>';
+	print '<br><div class="progress-bar filepgbar taligncenter" role="progressbar" style="width:1%;display:none"><span class="small valigntop">0%</span></div>';
+	print '<br><button type="button" style="display:none;" data-fileidentifier="" class="btn green-haze btn-circle cancelfileinput" id="filecancel">Cancel</button>';
+	print '<script src="'.DOL_URL_ROOT.'/includes/flowjs/flow.js"></script>';
+	print '<script>
+	jQuery(document).ready(function() {
+		var flow = new Flow({
+			target:"'.DOL_URL_ROOT.'/core/ajax/flowjs-server.php", 
+			query:{module:"test", token:"'.newToken().'"},
+			testChunks:false
+		});
+		';
+		print 'if(flow.support){
+			flow.assignBrowse(document.getElementById("buttonbigupload"));
+			flow.on("fileAdded", function(file, event){
+				console.log("Trigger event file added", file, event);
+				$("#filespan").text(file.name);
+				$("#filecancel").data("fileidentifier", file.uniqueIdentifier)
+				$("#filecancel").show()
+				$(".filepgbar").show();
+				$(".filepgbar").attr("id",file.uniqueIdentifier+"pgbar")
+			});
+			flow.on("filesSubmitted", function(array,message){
+				console.log("Trigger event file submitted");
+				flow.upload()
+			});
+			flow.on("progress", function(){
+				console.log("progress",flow.files);
+				flow.files.forEach(function(element){
+					console.log(element.progress());
+					width = Math.round(element.progress()*100)
+					width = width.toString()
+					$("#"+element.uniqueIdentifier+"pgbar").width(width+"%")
+					$("#"+element.uniqueIdentifier+"pgbar").children("span").text(width+"%")
+				});
+			});
+			flow.on("fileSuccess", function(file,message){
+				console.log("The file has been uploaded successfully",file,message);
+			});
+			$(".cancelfileinput").on("click", function(){
+				filename = $(this).data("fileidentifier");
+				file = flow.getFromUniqueIdentifier(filename);
+				file.cancel();
+				$("#"+file.uniqueIdentifier+"pgbar").hide();
+				console.log("We remove file "+filename);
+				$("#filespan").text("No file selected.");
+				$(this).hide();
+			})
+			flow.on("fileError", function(file, message){
+				console.log("Error on file upload",file, message);
+				$("#"+file.uniqueIdentifier+"pgbar").width(20+"%");
+				$("#"+file.uniqueIdentifier+"pgbar").children("span").text("ERROR UPLOAD");
+			});
+		}
+	})
+	';
+	print '</script>';
+} else {
+	print "If this message displays, please add flow.js and flow.min.js files which can be found here: https://github.com/flowjs/flow.js and place the js lib in htdocs/includes/flowjs/<br>\n";
+}
 
 print '</div>';
 

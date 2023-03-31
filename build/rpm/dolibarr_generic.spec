@@ -46,7 +46,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 %if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version}
 Group: Applications/Productivity
-Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mysqli, php-adodb, php-nusoap, dejavu-sans-fonts, php-mbstring, php-xml
+Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mysqli, php-nusoap, dejavu-sans-fonts, php-mbstring, php-xml
 Requires: mysql-server, mysql
 BuildRequires: desktop-file-utils
 %else
@@ -54,11 +54,11 @@ BuildRequires: desktop-file-utils
 Group: Applications/Productivity
 Requires: apache-base, apache-mod_php, php-cgi, php-cli, php-bz2, php-gd, php-ldap, php-imap, php-mysqli, php-openssl, fonts-ttf-dejavu 
 Requires: mysql, mysql-client 
-%else%_datadir/dolibarr/htdocs/datapolicy
+%else
 %if 0%{?suse_version}
 # Voir http://en.opensuse.org/openSUSE:Packaging_Conventions_RPM_Macros
 Group: Productivity/Office/Management
-Requires: apache2, apache2-mod_php5, php5 >= 5.3.0, php5-gd, php5-ldap, php5-imap, php5-mysql, php5-openssl, dejavu
+Requires: apache2, apache2-mod_php, php >= 5.3.0, php-gd, php-ldap, php-imap, php-mysql, php-openssl, dejavu
 Requires: mysql-community-server, mysql-community-server-client 
 BuildRequires: update-desktop-files fdupes
 %else
@@ -68,6 +68,7 @@ Requires: mysql-server, mysql
 Requires: php-mysqli >= 4.1.0 
 %endif
 %endif
+
 %endif
 
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
@@ -124,7 +125,7 @@ cui hai bisogno ed essere facile da usare.
 
 %if 0%{?sles_version}
 %{__rm} -rf $RPM_BUILD_ROOT
-%{__mkdir} $RPM_BUILD_ROOT%_datadir/dolibarr/htdocs/datapolicy
+%{__mkdir} $RPM_BUILD_ROOT%
 %{__mkdir} $RPM_BUILD_ROOT%{_sysconfdir}
 %{__mkdir} $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 %else
@@ -150,7 +151,7 @@ cui hai bisogno ed essere facile da usare.
 %endif
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
-%{__install} -m 644 doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/%{name}.png
+%{__install} -m 644 doc/images/appicon_64.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/%{name}.png
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/applications
 %{__install} -m 644 build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/%{name}.desktop
 %if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version} || 0%{?mdkversion} || 0%{?suse_version}
@@ -168,7 +169,6 @@ cui hai bisogno ed essere facile da usare.
 %{__cp} -pr scripts $RPM_BUILD_ROOT%{_datadir}/%{name}
 %{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/ckeditor/_source  
 %if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version}
-%{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/adodbtime  
 %{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/nusoap
 %{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/fonts
 %else
@@ -245,8 +245,8 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/barcode
 %_datadir/dolibarr/htdocs/blockedlog
 %_datadir/dolibarr/htdocs/bookmarks
+%_datadir/dolibarr/htdocs/bookcal
 %_datadir/dolibarr/htdocs/bom
-%_datadir/dolibarr/htdocs/cashdesk
 %_datadir/dolibarr/htdocs/categories
 %_datadir/dolibarr/htdocs/collab
 %_datadir/dolibarr/htdocs/comm
@@ -261,9 +261,11 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/datapolicy
 %_datadir/dolibarr/htdocs/dav
 %_datadir/dolibarr/htdocs/debugbar
+%_datadir/dolibarr/htdocs/delivery
 %_datadir/dolibarr/htdocs/don
 %_datadir/dolibarr/htdocs/ecm
 %_datadir/dolibarr/htdocs/emailcollector
+%_datadir/dolibarr/htdocs/eventorganization
 %_datadir/dolibarr/htdocs/expedition
 %_datadir/dolibarr/htdocs/expensereport
 %_datadir/dolibarr/htdocs/exports
@@ -276,8 +278,9 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/imports
 %_datadir/dolibarr/htdocs/includes
 %_datadir/dolibarr/htdocs/install
+%_datadir/dolibarr/htdocs/intracommreport
+%_datadir/dolibarr/htdocs/knowledgemanagement
 %_datadir/dolibarr/htdocs/langs/HOWTO-Translation.txt
-%_datadir/dolibarr/htdocs/livraison
 %_datadir/dolibarr/htdocs/loan
 %_datadir/dolibarr/htdocs/mailmanspip
 %_datadir/dolibarr/htdocs/margin
@@ -285,12 +288,14 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/mrp
 %_datadir/dolibarr/htdocs/multicurrency
 %_datadir/dolibarr/htdocs/opensurvey
+%_datadir/dolibarr/htdocs/partnership
 %_datadir/dolibarr/htdocs/paybox
 %_datadir/dolibarr/htdocs/paypal
 %_datadir/dolibarr/htdocs/printing
 %_datadir/dolibarr/htdocs/product
 %_datadir/dolibarr/htdocs/projet
 %_datadir/dolibarr/htdocs/public
+%_datadir/dolibarr/htdocs/recruitment
 %_datadir/dolibarr/htdocs/reception
 %_datadir/dolibarr/htdocs/resource
 %_datadir/dolibarr/htdocs/salaries
@@ -303,8 +308,10 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/ticket
 %_datadir/dolibarr/htdocs/user
 %_datadir/dolibarr/htdocs/variants
+%_datadir/dolibarr/htdocs/webhook
 %_datadir/dolibarr/htdocs/webservices
 %_datadir/dolibarr/htdocs/website
+%_datadir/dolibarr/htdocs/workstation
 %_datadir/dolibarr/htdocs/zapier
 %_datadir/dolibarr/htdocs/*.ico
 %_datadir/dolibarr/htdocs/*.patch
@@ -418,12 +425,10 @@ if [ -s $config ] && grep -q "File generated by" $config
 then
   # File already exist. We add params not found.
   echo Add new params to overwrite path to use shared libraries/fonts
-  grep -q -c "dolibarr_lib_ADODB_PATH" $config     || [ ! -d "/usr/share/php/adodb" ]  || echo "<?php \$dolibarr_lib_ADODB_PATH='/usr/share/php/adodb'; ?>" >> $config
   grep -q -c "dolibarr_lib_FPDI_PATH" $config      || [ ! -d "/usr/share/php/fpdi" ]   || echo "<?php \$dolibarr_lib_FPDI_PATH='/usr/share/php/fpdi'; ?>" >> $config
   #grep -q -c "dolibarr_lib_GEOIP_PATH" $config    || echo "<?php \$dolibarr_lib_GEOIP_PATH=''; ?>" >> $config
   grep -q -c "dolibarr_lib_NUSOAP_PATH" $config    || [ ! -d "/usr/share/php/nusoap" ] || echo "<?php \$dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap'; ?>" >> $config
   grep -q -c "dolibarr_lib_ODTPHP_PATHTOPCLZIP" $config || [ ! -d "/usr/share/php/libphp-pclzip" ]  || echo "<?php \$dolibarr_lib_ODTPHP_PATHTOPCLZIP='/usr/share/php/libphp-pclzip'; ?>" >> $config
-  #grep -q -c "dolibarr_lib_PHPEXCEL_PATH" $config || echo "<?php \$dolibarr_lib_PHPEXCEL_PATH=''; ?>" >> $config
   #grep -q -c "dolibarr_lib_TCPDF_PATH" $config    || echo "<?php \$dolibarr_lib_TCPDF_PATH=''; ?>" >> $config
   grep -q -c "dolibarr_js_CKEDITOR" $config        || [ ! -d "/usr/share/javascript/ckeditor" ]  || echo "<?php \$dolibarr_js_CKEDITOR='/javascript/ckeditor'; ?>" >> $config
   grep -q -c "dolibarr_js_JQUERY" $config          || [ ! -d "/usr/share/javascript/jquery" ]    || echo "<?php \$dolibarr_js_JQUERY='/javascript/jquery'; ?>" >> $config

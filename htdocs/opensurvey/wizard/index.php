@@ -19,17 +19,23 @@
  */
 
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1');
+}
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/opensurvey/fonctions.php';
+require_once DOL_DOCUMENT_ROOT.'/opensurvey/lib/opensurvey.lib.php';
 
 // Security check
-if (!$user->rights->opensurvey->write) accessforbidden();
+if (!$user->rights->opensurvey->write) {
+	accessforbidden();
+}
 
 $langs->load("opensurvey");
+
 
 /*
  * View
@@ -39,7 +45,7 @@ $arrayofjs = array();
 $arrayofcss = array('/opensurvey/css/style.css');
 llxHeader('', $langs->trans("Survey"), '', "", 0, 0, $arrayofjs, $arrayofcss);
 
-print load_fiche_titre($langs->trans("CreatePoll"));
+print load_fiche_titre($langs->trans("CreatePoll"), '', 'poll');
 
 print '<form name="formulaire" action="create_survey.php" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -55,7 +61,7 @@ print '<div class="index_sondage">';
 print '<div><img class="opacity imgopensurveywizard" src="../img/sondage2.png" onclick="document.formulaire.autre.click()"></div>';
 print '<button id="autre" name="choix_sondage" value="autre" type="submit" class="button blue bigrounded"><img src="../img/chart-32.png" alt="'.dol_escape_htmltag($langs->trans("CreateSurveyStandard")).'" style="padding-right: 4px">'.dol_escape_htmltag($langs->trans("CreateSurveyStandard")).'</button>';
 print '</div>';
-print '<div style="clear:both;"></div>';
+print '<div class="clearboth"></div>';
 print '</div>';
 print '</div></form>';
 

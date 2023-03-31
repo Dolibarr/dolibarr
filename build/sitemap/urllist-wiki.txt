@@ -1,1 +1,1 @@
-http://wiki.dolibarr.org/
+https://wiki.dolibarr.org/

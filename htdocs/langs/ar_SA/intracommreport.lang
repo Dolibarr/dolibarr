@@ -1,0 +1,40 @@
+Module68000Name = تقرير إنتراكوم
+Module68000Desc = إدارة تقارير Intracomm (دعم تنسيق DEB / DES الفرنسي)
+IntracommReportSetup = إعداد وحدة Intracommreport
+IntracommReportAbout = حول التقرير الداخلي
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=النوع الفاعل
+INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les مقدمات
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
+
+INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+
+# Menu
+MenuIntracommReport=تقرير إنتراكوم
+MenuIntracommReportNew=إعلان جديد
+MenuIntracommReportList=قائمة
+
+# View
+NewDeclaration=إعلان جديد
+Declaration=إعلان
+AnalysisPeriod=فترة التحليل
+TypeOfDeclaration=نوع التصريح
+DEB=إقرار تبادل البضائع (DEB)
+DES=تصريح تبادل الخدمات (DES)
+
+# Export page
+IntracommReportTitle=تحضير ملف XML بتنسيق ProDouane
+
+# List
+IntracommReportList=قائمة الإعلانات التي تم إنشاؤها
+IntracommReportNumber=نوميرو من التصريح
+IntracommReportPeriod=فترة التحليل
+IntracommReportTypeDeclaration=نوع التصريح
+IntracommReportDownload=تنزيل ملف XML
+
+# Invoice
+IntracommReportTransportMode=وضع النقل

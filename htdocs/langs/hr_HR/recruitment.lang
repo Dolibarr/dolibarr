@@ -1,0 +1,79 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = Zapošljavanje
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = Upravljajte i pratite kampanje zapošljavanja za nova radna mjesta
+
+#
+# Admin page
+#
+RecruitmentSetup = Postavljanje zapošljavanja
+Settings = Postavke
+RecruitmentSetupPage = Ovdje unesite postavke glavnih opcija za modul za zapošljavanje
+RecruitmentArea=Područje za zapošljavanje
+PublicInterfaceRecruitmentDesc=Javne stranice poslova su javni URL-ovi za prikaz i odgovaranje na otvorene poslove. Postoji jedna različita poveznica za svaki otvoreni posao, koja se nalazi na svakom zapisu o poslu.
+EnablePublicRecruitmentPages=Omogućite javne stranice otvorenih poslova
+
+#
+# About page
+#
+About = O programu
+RecruitmentAbout = O zapošljavanju
+RecruitmentAboutPage = Zapošljavanje opisna stranica
+NbOfEmployeesExpected=Očekivani broj zaposlenih
+JobLabel=Oznaka radnog mjesta
+WorkPlace=Radno mjesto
+DateExpected=Očekivani datum
+FutureManager=Budući menadžer
+ResponsibleOfRecruitement=Odgovoran za zapošljavanje
+IfJobIsLocatedAtAPartner=Ako se posao nalazi na mjestu partnera
+PositionToBeFilled=Mjesto zaposlenja
+PositionsToBeFilled=Radna mjesta
+ListOfPositionsToBeFilled=Popis radnih mjesta
+NewPositionToBeFilled=Nova radna mjesta
+
+JobOfferToBeFilled=Radno mjesto koje treba popuniti
+ThisIsInformationOnJobPosition=Podaci o radnom mjestu koje treba popuniti
+ContactForRecruitment=Kontakt za zapošljavanje
+EmailRecruiter=E-mail regruter
+ToUseAGenericEmail=Za korištenje generičke e-pošte. Ako nije definirano, koristit će se e-mail odgovornog za zapošljavanje
+NewCandidature=Nova prijava
+ListOfCandidatures=Popis prijava
+Remuneration=Plaća
+RequestedRemuneration=Requested salary
+ProposedRemuneration=Proposed salary
+ContractProposed=Predložen ugovor
+ContractSigned=Ugovor potpisan
+ContractRefused=Ugovor odbijen
+RecruitmentCandidature=Prijava
+JobPositions=Radna mjesta
+RecruitmentCandidatures=Prijave
+InterviewToDo=Contacts to follow
+AnswerCandidature=Odgovor na prijavu
+YourCandidature=Vaša prijava
+YourCandidatureAnswerMessage=Hvala vam na vašoj prijavi. <br> ...
+JobClosedTextCandidateFound=Oglas za radno mjesto je zatvoren. Mjesto je popunjeno.
+JobClosedTextCanceled=Oglas za radno mjesto je zatvoren.
+ExtrafieldsJobPosition=Komplementarni atributi (radna mjesta)
+ExtrafieldsApplication=Komplementarni atributi (molbe za posao)
+MakeOffer=Dati ponudu
+WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
+NoPositionOpen=No positions open at the moment

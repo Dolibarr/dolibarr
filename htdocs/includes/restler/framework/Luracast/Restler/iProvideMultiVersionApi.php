@@ -5,7 +5,7 @@ namespace Luracast\Restler;
  * Interface iProvideMultiVersionApi
  * @package Luracast\Restler
  *
- * @version    3.0.0rc6
+ *
  */
 interface iProvideMultiVersionApi
 {

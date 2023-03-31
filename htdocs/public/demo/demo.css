@@ -3,14 +3,28 @@
 /*  Demo                                                                          */
 /* ============================================================================== */
 
+div.titre {
+	text-transform: none;	
+}
+
 a:hover {
 	text-decoration: none;
+}
+
+.CTable {
+	/* padding: 6px; */
+	font-weight: normal;
+	color: #444444 !important;
+
+	margin: 8px 2px 8px 2px;
+	max-width: 346px;
 }
 .demobox {
 	border: 1px solid #bbb;
 	border-radius: 8px;
 	-moz-border-radius: 8px;
 	min-height: 210px;
+	background: -webkit-linear-gradient(bottom, rgb(255,255,255) 85%, rgb(255,255,255) 100%);
 }
 .demobox:hover {
 	border: 1px solid #bbb;
@@ -18,32 +32,28 @@ a:hover {
 	-moz-border-radius: 8px;
 	box-shadow: 2px 2px 8px #BBB;
 }
-.CTable {
-	padding: 6px;
-	font-weight: normal;
-	color: #444444 !important;
-
-	margin: 8px 2px 8px 2px;
-
-	/*border: 1px solid #bbb;
-	border-radius: 8px;
-	-moz-border-radius: 8px;*/
-	background: -webkit-linear-gradient(bottom, rgb(255,255,255) 85%, rgb(255,255,255) 100%);
-
-	max-width: 346px;
-}
-.csscolumns {
-    margin-top: 6px;
-    margin-bottom: 5px;
-    -webkit-column-count: 2; /* Chrome, Safari, Opera */
-    -moz-column-count: 2; /* Firefox */
-    column-count: 2;
-    text-align: left;
-}
 .demomaxoveflow {
     max-width: 120px;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+@media only screen and (min-width: 641px)
+{
+	.csscolumns {
+	    margin-top: 6px;
+	    margin-bottom: 5px;
+	    -webkit-column-count: 3; /* Chrome, Safari, Opera */
+	    -moz-column-count: 3; /* Firefox */
+	    column-count: 3;
+	    text-align: left;
+	}
+	#divprofdemoall {
+		max-width: unset;		
+	}
+	
+	.demomaxoveflow {
+	    max-width: 200px;
+	}
 }
 @media only screen and (max-width: 840px)
 {
@@ -76,6 +86,9 @@ a:hover {
 	    column-count: 1;
         text-align: left;
 	}
+	.demomaxoveflow {
+	    max-width: 220px !important;
+	}
 }
 
 
@@ -105,8 +118,11 @@ img.demothumb {
     object-fit: contain;
     height: 140px;
     background-position-y: bottom;
+	background-position-x: right;
 }
-
+.demologo {
+	width: 200px;
+}
 
 @media only screen and (max-width: 767px)
 {

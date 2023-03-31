@@ -32,7 +32,7 @@ create table llx_const
   type        varchar(64) DEFAULT 'string', -- null or 'encrypted' if param has been encrypted 
   visible     tinyint DEFAULT 1 NOT NULL,
   note        text,
-  tms         timestamp
+  tms         timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=innodb;
 
 -- 

@@ -22,11 +22,16 @@
  *  \brief      Printing
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 
 // Load translation files required by the page
 $langs->load("printing");
+
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
@@ -54,7 +59,8 @@ foreach ($result as $driver) {
 	$classname = 'printing_'.$driver;
 	$langs->load($driver);
 	$printer = new $classname($db);
-	if ($conf->global->{$printer->active}) {
+	$keyforprinteractive = $printer->active;
+	if ($keyforprinteractive && getDolGlobalString($keyforprinteractive)) {
 		//$printer->listJobs('commande');
 		$result = $printer->listJobs();
 		print $printer->resprint;

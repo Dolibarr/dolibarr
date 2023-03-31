@@ -34,3 +34,6 @@ IdResource=Id kaynağı
 AssetNumber=Seri numarası
 ResourceTypeCode=Kaynak türü kodu
 ImportDataset_resource_1=Kaynaklar
+
+ErrorResourcesAlreadyInUse=Bazı kaynaklar kullanımda
+ErrorResourceUseInEvent=%s used in %s event

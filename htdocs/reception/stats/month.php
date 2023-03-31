@@ -22,10 +22,21 @@
  *    \brief      Page des stats receptions par mois
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+
+$year = GETPOST("year", 'int');
+$socid = GETPOST("socid", 'int');
+$userid = GETPOST("userid", 'int');
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'reception', 0, '');
 
 
 /*
@@ -39,10 +50,9 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mesg = '';
 
-print load_fiche_titre($langs->trans("StatisticsOfReceptions").' '.$_GET["year"], $mesg);
-
-$stats = new ReceptionStats($db);
-$data = $stats->getNbReceptionByMonth($_GET["year"]);
+print load_fiche_titre($langs->trans("StatisticsOfReceptions").' '.GETPOST("year", 'int'), $mesg);
+$stats = new ReceptionStats($db, $socid, '', ($userid > 0 ? $userid : 0));
+$data = $stats->getNbByMonth($year);
 
 dol_mkdir($conf->reception->dir_temp);
 
@@ -51,16 +61,15 @@ $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstats&file=reception
 
 $px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (!$mesg)
-{
-    $px->SetData($data);
-    $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetWidth($WIDTH);
-    $px->SetHeight($HEIGHT);
-    $px->SetYLabel($langs->trans("NbOfOrders"));
-    $px->SetShading(3);
+if (!$mesg) {
+	$px->SetData($data);
+	$px->SetMaxValue($px->GetCeilMaxValue());
+	$px->SetWidth($WIDTH);
+	$px->SetHeight($HEIGHT);
+	$px->SetYLabel($langs->trans("NbOfOrders"));
+	$px->SetShading(3);
 	$px->SetHorizTickIncrement(1);
-    $px->draw($filename, $fileurl);
+	$px->draw($filename, $fileurl);
 }
 
 print '<table class="border centpercent">';

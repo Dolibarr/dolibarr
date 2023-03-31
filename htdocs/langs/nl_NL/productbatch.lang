@@ -1,8 +1,10 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Gebruik lot / serienummer
-ProductStatusOnBatch=Ja (lot / serienummer vereist)
+ProductStatusOnBatch=Ja (lot vereist)
+ProductStatusOnSerial=Ja (uniek serienummer vereist)
 ProductStatusNotOnBatch=Nee (lot / serial niet gebruikt)
-ProductStatusOnBatchShort=Ja
+ProductStatusOnBatchShort=Lot
+ProductStatusOnSerialShort=Serienummer
 ProductStatusNotOnBatchShort=Nee
 Batch=Lot / Serienummer
 atleast1batchfield=Vervaldatum of uiterste verkoopdatum of Lot / Serienummer
@@ -22,3 +24,22 @@ ProductLotSetup=Module instellingen voor lot/serial
 ShowCurrentStockOfLot=Toon huidige voorraad voor product/lot paar
 ShowLogOfMovementIfLot=Toon bewegingslogboek voor product/lot paar
 StockDetailPerBatch=Voorraad details per lot
+SerialNumberAlreadyInUse=Serienummer %s wordt al gebruikt voor product %s
+TooManyQtyForSerialNumber=U kunt slechts één product %s hebben voor serienummer %s
+ManageLotMask=Aangepast masker
+CustomMasks=Optie om voor elk product een ander soort nummer te gebruiken
+BatchLotNumberingModules=Regel voor automatische generatie van het lot nummer
+BatchSerialNumberingModules=Regel voor de automatische generatie van het serienummer (alleen voor producten met een uniek serienummer per product)
+QtyToAddAfterBarcodeScan=Qty to %s for each barcode/lot/serial scanned
+LifeTime=Levensduur (in dagen)
+EndOfLife=Einde van het leven
+ManufacturingDate=Fabricage datum
+DestructionDate=Vernietigingsdatum:
+FirstUseDate=Datum eerste gebruik
+QCFrequency=Frequentie kwaliteitscontrole (in dagen)
+ShowAllLots=Toon alle kavels
+HideLots=Verberg kavels
+#Traceability - qc status
+OutOfOrder=Buiten gebruik
+InWorkingOrder=In werkende staat
+ToReplace=vervang

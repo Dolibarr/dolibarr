@@ -22,7 +22,7 @@ create table llx_user_rib
   fk_user        integer      NOT NULL,
   entity         integer DEFAULT 1 NOT NULL,	-- multi company id
   datec          datetime,
-  tms            timestamp,
+  tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   label          varchar(30),
   bank           varchar(255),  -- bank name
   code_banque    varchar(128),  -- bank code
@@ -33,5 +33,8 @@ create table llx_user_rib
   iban_prefix    varchar(34),	-- full iban. 34 according to ISO 13616
   domiciliation  varchar(255),
   proprio        varchar(60),
-  owner_address  varchar(255)
+  owner_address  varchar(255),
+  state_id       integer,
+  fk_country     integer,
+  currency_code  varchar(3)
 )ENGINE=innodb;

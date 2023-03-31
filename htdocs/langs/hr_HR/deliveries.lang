@@ -2,7 +2,7 @@
 Delivery=Dostava
 DeliveryRef=Ref. dostave
 DeliveryCard=Otpremnica
-DeliveryOrder=Delivery receipt
+DeliveryOrder=Otpremnica
 DeliveryDate=Datum dostave
 CreateDeliveryOrder=Izradi otpremnicu
 DeliveryStateSaved=Status dostave pohranjen
@@ -27,5 +27,7 @@ Recipient=Primatelj
 ErrorStockIsNotEnough=Nema dovoljno robe na skladištu
 Shippable=Isporuka moguća
 NonShippable=Isporuka nije moguća
+ShowShippableStatus=Show shippable status
 ShowReceiving=Prikaži dostavnu primku
 NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

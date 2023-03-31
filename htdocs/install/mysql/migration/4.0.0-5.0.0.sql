@@ -114,7 +114,7 @@ ALTER TABLE llx_societe_remise ADD COLUMN entity	integer DEFAULT 1 NOT NULL afte
 create table llx_expensereport_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -133,7 +133,7 @@ UPDATE llx_adherent_type SET subscription = '1' WHERE subscription = 'yes';
 CREATE TABLE llx_product_lot_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -145,7 +145,7 @@ ALTER TABLE llx_website_page MODIFY COLUMN content MEDIUMTEXT;
 CREATE TABLE llx_product_warehouse_properties
 (
   rowid           		integer AUTO_INCREMENT PRIMARY KEY,
-  tms             		timestamp,
+  tms             		timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_product      		integer NOT NULL,
   fk_entrepot     		integer NOT NULL,
   seuil_stock_alerte    integer DEFAULT 0,
@@ -156,7 +156,7 @@ CREATE TABLE llx_product_warehouse_properties
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN fk_user_modif     integer;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_creation		datetime;
-ALTER TABLE llx_accounting_bookkeeping ADD COLUMN tms               timestamp;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 -- VMYSQL4.3 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN numero_compte varchar(32) NOT NULL;
 -- VMYSQL4.3 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN code_journal varchar(32) NOT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_accounting_bookkeeping ALTER COLUMN numero_compte SET NOT NULL;
@@ -186,7 +186,7 @@ ALTER TABLE llx_entrepot ADD COLUMN fk_parent integer DEFAULT 0;
 create table llx_resource_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -222,7 +222,7 @@ create table llx_user_employment
   ref_ext			varchar(50),				-- reference into an external system (not used by dolibarr)
   fk_user			integer,
   datec             datetime,
-  tms               timestamp,
+  tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat     integer,
   fk_user_modif     integer,
   job				varchar(128),				-- job position. may be a dictionary

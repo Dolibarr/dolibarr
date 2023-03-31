@@ -34,15 +34,16 @@ CREATE TABLE llx_expensereport (
   date_approve		datetime,
   date_refuse 		datetime,
   date_cancel 		datetime,
-  tms 		 		timestamp,
+  tms 		 		timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_author 	integer NOT NULL,				-- not the user author but the user the expense report is for
+  fk_user_creat 	integer DEFAULT NULL,			-- the use author
   fk_user_modif 	integer DEFAULT NULL,
   fk_user_valid 	integer DEFAULT NULL,
   fk_user_validator integer DEFAULT NULL,
   fk_user_approve   integer DEFAULT NULL,
   fk_user_refuse 	integer DEFAULT NULL,
   fk_user_cancel 	integer DEFAULT NULL,
-  fk_statut			integer NOT NULL,				-- 1=brouillon, 2=validated (waiting approval), 4=canceled, 5=approved, 6=payed, 99=refused
+  fk_statut			integer NOT NULL,				-- 1=brouillon, 2=validated (waiting approval), 4=canceled, 5=approved, 6=paid, 99=refused
   fk_c_paiement 	integer DEFAULT NULL,			-- deprecated
   paid              smallint default 0 NOT NULL,	-- deprecated (status is used instead)
   note_public		text,
@@ -52,9 +53,10 @@ CREATE TABLE llx_expensereport (
   integration_compta integer DEFAULT NULL,			-- not used
   fk_bank_account 	integer DEFAULT NULL,
   model_pdf 		varchar(50) DEFAULT NULL,
+  last_main_doc		varchar(255),					-- relative filepath+filename of last main generated document
   
   fk_multicurrency        integer,
-  multicurrency_code      varchar(255),
+  multicurrency_code      varchar(3),
   multicurrency_tx        double(24,8) DEFAULT 1,
   multicurrency_total_ht  double(24,8) DEFAULT 0,
   multicurrency_total_tva double(24,8) DEFAULT 0,

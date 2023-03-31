@@ -23,5 +23,5 @@ CREATE TABLE llx_expeditiondet_batch (
   batch varchar(128) DEFAULT NULL,
   qty double NOT NULL DEFAULT '0',
   fk_origin_stock integer NOT NULL
-) ENGINE=InnoDB;
+) ENGINE=innodb;
 

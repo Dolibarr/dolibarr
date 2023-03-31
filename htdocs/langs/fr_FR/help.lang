@@ -20,4 +20,4 @@ BackToHelpCenter=Sinon, cliquez ici pour <a href="%s">retourner au centre d'assi
 LinkToGoldMember=Vous pouvez appeler immédiatement un des quelques accompagnateurs présélectionnés par Dolibarr pour votre langue (%s) en cliquant son Widget (disponibilité et tarif maximum sont rafraîchis automatiquement):
 PossibleLanguages=Langues disponibles
 SubscribeToFoundation=Aidez le projet Dolibarr, adhérez à l'association Dolibarr
-SeeOfficalSupport=Pour un accompagnement officiel Dolibarr dans votre langue : <br><b><a href="%s" target="_blank">%s</a></b>
+SeeOfficalSupport=Pour un accompagnement officiel Dolibarr dans votre langue : <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

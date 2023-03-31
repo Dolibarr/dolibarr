@@ -2,4 +2,7 @@
 StandingOrderPayment=Bankeinzug/Lastschrift
 WithdrawalReceipt=Bankeinzug / Lastschrift
 WithdrawalRefusedConfirm=Möchten Sie wirklich eine Abbuchungsablehnung zu diesem Geschäftspartner erstellen?
+StatusPaid=Verarbeitet
 StatusMotif4=Kundenbestellungen
+OrderWaiting=Wartend
+NumeroNationalEmetter=Nat. Überweisernummer

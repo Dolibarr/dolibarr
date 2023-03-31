@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - multicurrency
+MultiCurrency=چند واحدپولی
+ErrorAddRateFail=خطا در نرخ اضافه شده
+ErrorAddCurrencyFail=خطا در واحدپولی اضافه شده
+ErrorDeleteCurrencyFail=خطا، حذف مقدور نیست
+multicurrency_syncronize_error=خطای همگام‌سازی: %s
+MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=از تاریخ سند برای پیدا کردن نرخ واحد‌پولی به جای استفاده از آخرین نرخ معلوم استفاده شود
+multicurrency_useOriginTx=هنگامی که یک شیء از شیء دیگر ساخته شد، نرخ اصلی از شیء مبدأ حفظ شود (در غیر این‌صورت آخرین نرخ شناخته شده استفاده می‌شود)
+CurrencyLayerAccount=رابط‌برنامه‌نویسی کاربردی CurrencyLayer
+CurrencyLayerAccount_help_to_synchronize=برای استفاده از این قابلیت باید یک حساب‌کاربری روی سایت %s بسازید. <br> سپس <b>کلید API</b> خود را دریافت نمائید. <br> در صورتی که از حساب رایگان استفاده می‌کنید شما نمی‌توانید <b>واحدپولی مبدأ</b> (یعنی دلار به شکل پیش‌فرض) را تغییر دهید. <br> در صورتی که واحدپولی اصلی شما دلارآمریکا نیست، این برنامه به طور خودکار آن را محاسبه خواهد کرد. <br><br> شما در ماه محدود به 1000 همگام سازی هستید.
+multicurrency_appId=کلید API
+multicurrency_appCurrencySource=واحدپولی مبدأ
+multicurrency_alternateCurrencySource=واحدپولی جایگزین مبدأ
+CurrenciesUsed=واحدهای پولی استفاده شده
+CurrenciesUsed_help_to_add=واحدهای پولی مبدأ و نرخ مربوطه را که احتیاج دارید در <b>پیشنهادها</b>، <b>سفارش‌ها</b> و غیره استفاده شوند وارد کنید
+rate=نرخ
+MulticurrencyReceived=دریافت شد، نرخ اصلی
+MulticurrencyRemainderToTake=مقدار باقی‌مانده، واحد پولی اصلی
+MulticurrencyPaymentAmount=نرخ پرداختی، واحدپولی اصلی
+AmountToOthercurrency=مبلغ به (در واحدپولی حساب دریافت کننده)
+CurrencyRateSyncSucceed=Currency rate synchronization done successfuly
+MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Use the currency of the document for online payments

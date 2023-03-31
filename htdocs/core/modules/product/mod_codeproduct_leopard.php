@@ -33,10 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
 class mod_codeproduct_leopard extends ModeleProductCode
 {
 	/*
-	 * Attention ce module est utilise par defaut si aucun module n'a
-	 * ete definit dans la configuration
+	 * Please note this module is used by default if no module has been defined in the configuration
 	 *
-	 * Le fonctionnement de celui-ci doit donc rester le plus ouvert possible
+	 * Its operation must therefore remain as open as possible
 	 */
 
 	/**
@@ -60,9 +59,9 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	public $code_null; // Code facultatif
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
@@ -85,7 +84,7 @@ class mod_codeproduct_leopard extends ModeleProductCode
 
 
 	/**
-     *  Return description of module
+	 *  Return description of module
 	 *
 	 *  @param	Translate	$langs	Object langs
 	 *  @return string      		Description of module
@@ -100,7 +99,7 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	product		$objproduct		Object product
+	 * @param	Product		$objproduct		Object product
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return next value
 	 */
@@ -131,12 +130,9 @@ class mod_codeproduct_leopard extends ModeleProductCode
 		$result = 0;
 		$code = strtoupper(trim($code));
 
-		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))
-		{
+		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) {
 			$result = 0;
-		}
-		elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)))
-		{
+		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))) {
 			$result = -2;
 		}
 

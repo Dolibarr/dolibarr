@@ -89,11 +89,11 @@ class mod_ticket_simple extends ModeleNumRefTicket
 		$coyymm = '';
 		$max = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket";
 		$search = $this->prefix."____-%";
-		$sql .= " WHERE ref LIKE '".$search."'";
+		$sql .= " WHERE ref LIKE '".$db->escape($search)."'";
 		$sql .= " AND entity = ".$conf->entity;
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -115,21 +115,21 @@ class mod_ticket_simple extends ModeleNumRefTicket
 	/**
 	 *  Return next value
 	 *
-	 *  @param  Societe $objsoc    Object third party
-	 *  @param  Project $ticket Object ticket
-	 *  @return string                Value if OK, 0 if KO
+	 *  @param  Societe $objsoc    	Object third party
+	 *  @param  Ticket 	$ticket 	Object ticket
+	 *  @return string              Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $ticket)
 	{
 		global $db, $conf;
 
-		// D'abord on recupere la valeur max
-		$posindice = 8;
+		// First, we get the max value
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket";
 		$search = $this->prefix."____-%";
-		$sql .= " WHERE ref LIKE '".$search."'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " WHERE ref LIKE '".$db->escape($search)."'";
+		$sql .= " AND entity IN (".getEntity('ticketnumber', 1, $ticket).")";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -151,8 +151,8 @@ class mod_ticket_simple extends ModeleNumRefTicket
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1;
-		} // If counter > 9999, we do not format on 4 chars, we take number as it is
-		else {
+		} else {
+			// If counter > 9999, we do not format on 4 chars, we take number as it is
 			$num = sprintf("%04s", $max + 1);
 		}
 

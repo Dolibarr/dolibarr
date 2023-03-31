@@ -22,7 +22,7 @@ create table llx_localtax
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   entity          integer DEFAULT 1 NOT NULL,
   localtaxtype    tinyint,
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep           date,								-- date of payment
   datev           date,								-- date of value
   amount          double,

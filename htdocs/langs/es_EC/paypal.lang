@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalDesc=Este módulo permite el pago de los clientes a través de <a href="http://www.paypal.com" target="_blank">PayPal</a>. Esto se puede usar para un pago ad-hoc o para un pago relacionado con un objeto Dolibarr (factura, pedido, ...)
+PaypalOrCBDoPayment=Pague con PayPal (tarjeta o PayPal)
+PaypalDoPayment=Pagar con PayPal
+PAYPAL_API_SANDBOX=Modo de prueba/sandbox
+PAYPAL_API_USER=Nombre de usuario de API
+PAYPAL_API_PASSWORD=Contraseña de la API
+PAYPAL_API_SIGNATURE=Firma de la API
+PAYPAL_SSLVERSION=Curl Versión SSL
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Ofrecer pago "integral" (tarjeta de crédito + PayPal) o solo "PayPal"
+ThisIsTransactionId=Este es id de transacción: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Incluya la URL de pago de PayPal cuando envíe un documento por correo electrónico
+NewOnlinePaymentFailed=Nuevo pago en línea intentado pero fallo
+ONLINE_PAYMENT_SENDEMAIL=Dirección de correo electrónico para notificaciones después de cada intento de pago (para éxito y fracaso)
+ReturnURLAfterPayment=Volver URL después del pago
+ValidationOfOnlinePaymentFailed=No se pudo validar el pago en línea
+SetExpressCheckoutAPICallFailed=Falló la llamada a la API de SetExpressCheckout.
+DoExpressCheckoutPaymentAPICallFailed=Falló la llamada a la API de DoExpressCheckoutPayment.
+ShortErrorMessage=Mensaje de error corto
+ErrorSeverityCode=Código de error severo
+OnlinePaymentSystem=Sistema de pago en línea
+PaypalLiveEnabled=Modo "en vivo" de PayPal habilitado (de lo contrario, modo de prueba / sandbox)
+PaypalImportPayment=Importar pagos de PayPal
+PostActionAfterPayment=Publicar acciones después de los pagos
+ARollbackWasPerformedOnPostActions=Se realizó una reversión en todas las acciones de publicación. Debe completar las acciones de publicación manualmente si son necesarias.
+ValidationOfPaymentFailed=La validación del pago ha fallado
+PayPalBalance=Crédito de PayPal

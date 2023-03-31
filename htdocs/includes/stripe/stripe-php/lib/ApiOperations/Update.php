@@ -11,11 +11,13 @@ namespace Stripe\ApiOperations;
 trait Update
 {
     /**
-     * @param string $id The ID of the resource to update.
-     * @param array|null $params
-     * @param array|string|null $opts
+     * @param string $id the ID of the resource to update
+     * @param null|array $params
+     * @param null|array|string $opts
      *
-     * @return static The updated resource.
+     * @throws \Stripe\Exception\ApiErrorException if the request fails
+     *
+     * @return static the updated resource
      */
     public static function update($id, $params = null, $opts = null)
     {
@@ -25,22 +27,26 @@ trait Update
         list($response, $opts) = static::_staticRequest('post', $url, $params, $opts);
         $obj = \Stripe\Util\Util::convertToStripeObject($response->json, $opts);
         $obj->setLastResponse($response);
+
         return $obj;
     }
 
     /**
-     * @param array|string|null $opts
+     * @param null|array|string $opts
      *
-     * @return static The saved resource.
+     * @throws \Stripe\Exception\ApiErrorException if the request fails
+     *
+     * @return static the saved resource
      */
     public function save($opts = null)
     {
         $params = $this->serializeParameters();
-        if (count($params) > 0) {
+        if (\count($params) > 0) {
             $url = $this->instanceUrl();
             list($response, $opts) = $this->_request('post', $url, $params, $opts);
             $this->refreshFrom($response, $opts);
         }
+
         return $this;
     }
 }

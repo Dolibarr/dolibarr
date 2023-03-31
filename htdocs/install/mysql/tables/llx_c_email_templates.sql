@@ -27,11 +27,15 @@ create table llx_c_email_templates
   private         smallint DEFAULT 0 NOT NULL,    -- Template public or private
   fk_user         integer,                        -- Id user owner if template is private, or null
   datec           datetime,
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   label           varchar(180),					  -- Label of predefined email
   position        smallint,					      -- Position
   enabled         varchar(255) DEFAULT '1',		  -- Condition to have this module visible
   active          tinyint DEFAULT 1  NOT NULL,
+  email_from	  varchar(255),					  -- default email from
+  email_to		  varchar(255),					  -- default email to
+  email_tocc	  varchar(255),					  -- default email to cc
+  email_tobcc	  varchar(255),					  -- default email to bcc
   topic			  text,                           -- Predefined topic
   joinfiles		  text,                           -- Files to attach
   content         mediumtext,                     -- Predefined text

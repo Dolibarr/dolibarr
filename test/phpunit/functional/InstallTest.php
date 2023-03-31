@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2016  Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
  *
  * Install functional test using PHPUnit's Selenium
@@ -42,12 +41,12 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 		)
 	);
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return	void
-     */
-	public static function setUpBeforeClass()
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return	void
+	 */
+	public static function setUpBeforeClass(): void
 	{
 		// Make sure we backup and remove the configuration file to force new install.
 		@rename('htdocs/conf/conf.php', sys_get_temp_dir() . '/conf.php');
@@ -59,23 +58,23 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 		self::shareSession(true);
 	}
 
-    /**
-     * dropTestDatabase
-     *
-     * @return	void
-     */
+	/**
+	 * dropTestDatabase
+	 *
+	 * @return	void
+	 */
 	protected static function dropTestDatabase()
 	{
 		$mysqli = new mysqli(self::$db_host, self::$db_admin_user, self::$db_admin_pass);
 		$mysqli->query("DROP DATABASE " . self::$db_name);
 	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-	public static function tearDownAfterClass()
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass(): void
 	{
 		// Remove the generated configuration and restore the backed up file.
 		@unlink('htdocs/conf/conf.php');
@@ -85,11 +84,11 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 		self::dropTestDatabase();
 	}
 
-    /**
-     * setUp
-     *
-     * @return  void
-     */
+	/**
+	 * setUp
+	 *
+	 * @return  void
+	 */
 	public function setUp()
 	{
 		// Populating the database can take quite long.
@@ -97,32 +96,32 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 		$this->setBrowserUrl(self::$url);
 	}
 
-    /**
-     * testInstallRedirect
-     *
-     * @return  void
-     */
+	/**
+	 * testInstallRedirect
+	 *
+	 * @return  void
+	 */
 	public function testInstallRedirect()
 	{
 		$this->url('/');
 		$this->assertContains('/install/index.php', $this->url());
 	}
 
-    /**
-     * testInstallPageTitle
-     *
-     * @return  void
-     */
+	/**
+	 * testInstallPageTitle
+	 *
+	 * @return  void
+	 */
 	public function testInstallPageTitle()
 	{
 		$this->assertContains('Dolibarr', $this->title());
 	}
 
-    /**
-     * testInstallProcess
-     *
-     * @return  void
-     */
+	/**
+	 * testInstallProcess
+	 *
+	 * @return  void
+	 */
 	public function testInstallProcess()
 	{
 		// FIXME: the button itself should have an ID
@@ -130,11 +129,11 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 		$this->assertContains('/install/check.php', $this->url());
 	}
 
-    /**
-     * testCheckPage
-     *
-     * @return  void
-     */
+	/**
+	 * testCheckPage
+	 *
+	 * @return  void
+	 */
 	public function testCheckPage()
 	{
 		$unavailable_choices = $this->byId('navail_choices');
@@ -149,11 +148,11 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 		$this->assertContains('/install/fileconf.php', $this->url());
 	}
 
-    /**
-     * testForm
-     *
-     * @return  void
-     */
+	/**
+	 * testForm
+	 *
+	 * @return  void
+	 */
 	public function testForm()
 	{
 		$this->assertFalse($this->byClassName('hideroot')->displayed());
@@ -198,22 +197,22 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 		$this->byId('db_pass_root')->value('');
 	}
 
-    /**
-     * testFormSubmit
-     *
-     * @return  void
-     */
+	/**
+	 * testFormSubmit
+	 *
+	 * @return  void
+	 */
 	public function testFormSubmit()
 	{
 		$this->byName('forminstall')->submit();
 		$this->assertContains('/install/step1.php', $this->url());
 	}
 
-    /**
-     * testStep1
-     *
-     * @return  void
-     */
+	/**
+	 * testStep1
+	 *
+	 * @return  void
+	 */
 	public function testStep1()
 	{
 		$this->assertFalse($this->byId('pleasewait')->displayed());
@@ -225,11 +224,11 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 		$this->assertContains('/install/step2.php', $this->url());
 	}
 
-    /**
-     * testStep2
-     *
-     * @return  void
-     */
+	/**
+	 * testStep2
+	 *
+	 * @return  void
+	 */
 	public function testStep2()
 	{
 		$this->byName('forminstall')->submit();
@@ -238,11 +237,11 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 
 	// There is no step 3
 
-    /**
-     * testStep4
-     *
-     * @return  void
-     */
+	/**
+	 * testStep4
+	 *
+	 * @return  void
+	 */
 	public function testStep4()
 	{
 		// FIXME: should have an ID
@@ -256,11 +255,11 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 		$this->assertContains('/install/step5.php', $this->url());
 	}
 
-    /**
-     * testStep5
-     *
-     * @return  void
-     */
+	/**
+	 * testStep5
+	 *
+	 * @return  void
+	 */
 	public function testStep5()
 	{
 		// FIXME: this button should have an ID
@@ -268,11 +267,11 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 		$this->assertContains('/admin/index.php', $this->url());
 	}
 
-    /**
-     * testFirstLogin
-     *
-     * @return  void
-     */
+	/**
+	 * testFirstLogin
+	 *
+	 * @return  void
+	 */
 	public function testFirstLogin()
 	{
 		$this->assertEquals('login', $this->byTag('form')->attribute('id'));

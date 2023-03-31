@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file			htdocs/blockedlog/lib/blockedlog.lib.php
- *	\ingroup		system
- *  \brief			Library for common blockedlog functions
+ *    \file       htdocs/blockedlog/lib/blockedlog.lib.php
+ *    \ingroup    system
+ *    \brief      Library for common blockedlog functions
  */
 
 /**
@@ -44,9 +44,8 @@ function blockedlogadmin_prepare_head()
 
 	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 	$b = new BlockedLog($db);
-	if ($b->alreadyUsed())
-	{
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
+	if ($b->alreadyUsed()) {
+		$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">...</span>' : '');
 	}
 	$head[$h][2] = 'fingerprints';
 	$h++;

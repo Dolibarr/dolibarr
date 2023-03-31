@@ -1,0 +1,94 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModulePartnershipName=Партнерське управління
+PartnershipDescription=Модуль Управління партнерством
+PartnershipDescriptionLong= Модуль Управління партнерством
+Partnership=Партнерство
+AddPartnership=Додати партнерство
+CancelPartnershipForExpiredMembers=Партнерство: скасувати партнерство учасників із простроченими підписками
+PartnershipCheckBacklink=Партнерство: перевірте зворотне посилання
+
+#
+# Menu
+#
+NewPartnership=Нове партнерство
+ListOfPartnerships=Список партнерства
+
+#
+# Admin page
+#
+PartnershipSetup=Налаштування партнерства
+PartnershipAbout=Про партнерство
+PartnershipAboutPage=Партнерство про сторінку
+partnershipforthirdpartyormember=Статус партнера має бути встановлений як "третя сторона" або "член"
+PARTNERSHIP_IS_MANAGED_FOR=Партнерство керується для
+PARTNERSHIP_BACKLINKS_TO_CHECK=Зворотні посилання для перевірки
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Кількість днів до скасування статусу партнерства, коли закінчився термін дії підписки
+ReferingWebsiteCheck=Перевірка посилання на сайт
+ReferingWebsiteCheckDesc=Ви можете ввімкнути функцію, щоб перевірити, чи ваші партнери додали зворотне посилання на домени вашого веб-сайту на своєму власному веб-сайті.
+
+#
+# Object
+#
+DeletePartnership=Видалити партнерство
+PartnershipDedicatedToThisThirdParty=Партнерство, присвячене цій третьій стороні
+PartnershipDedicatedToThisMember=Партнерство, присвячене цьому учаснику
+DatePartnershipStart=Дата початку
+DatePartnershipEnd=Дата закінчення
+ReasonDecline=Причина відмови
+ReasonDeclineOrCancel=Причина відмови
+PartnershipAlreadyExist=Партнерство вже існує
+ManagePartnership=Керуйте партнерством
+BacklinkNotFoundOnPartnerWebsite=Зворотне посилання не знайдено на веб-сайті партнера
+ConfirmClosePartnershipAsk=Ви впевнені, що хочете скасувати це партнерство?
+PartnershipType=Тип партнерства
+PartnershipRefApproved=Партнерство %s затверджено
+KeywordToCheckInWebsite=Якщо ви хочете переконатися, що дане ключове слово є на веб-сайті кожного партнера, визначте це ключове слово тут
+
+#
+# Template Mail
+#
+SendingEmailOnPartnershipWillSoonBeCanceled=Партнерство скоро буде скасовано
+SendingEmailOnPartnershipRefused=Від партнерства відмовили
+SendingEmailOnPartnershipAccepted=Партнерство прийнято
+SendingEmailOnPartnershipCanceled=Партнерство скасовано
+
+YourPartnershipWillSoonBeCanceledTopic=Партнерство скоро буде скасовано
+YourPartnershipRefusedTopic=Від партнерства відмовили
+YourPartnershipAcceptedTopic=Партнерство прийнято
+YourPartnershipCanceledTopic=Партнерство скасовано
+
+YourPartnershipWillSoonBeCanceledContent=Повідомляємо, що ваше партнерство незабаром буде скасовано (Зворотне посилання не знайдено)
+YourPartnershipRefusedContent=Повідомляємо, що ваш запит на партнерство відхилено.
+YourPartnershipAcceptedContent=Повідомляємо, що ваш запит на партнерство прийнято.
+YourPartnershipCanceledContent=Повідомляємо, що ваше партнерство скасовано.
+
+CountLastUrlCheckError=Кількість помилок для останньої перевірки URL-адреси
+LastCheckBacklink=Дата останньої перевірки URL-адреси
+ReasonDeclineOrCancel=Причина відмови
+
+#
+# Status
+#
+PartnershipDraft=Проект
+PartnershipAccepted=Прийнято
+PartnershipRefused=Відмовився
+PartnershipCanceled=Скасовано
+PartnershipManagedFor=Партнери є
+

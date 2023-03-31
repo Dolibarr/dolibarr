@@ -26,7 +26,7 @@ create table llx_budget
   date_start	date,
   date_end		date,
   datec         datetime,
-  tms           timestamp,
+  tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat integer,
   fk_user_modif integer,
   import_key    integer  

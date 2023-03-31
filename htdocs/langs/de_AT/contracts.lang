@@ -25,6 +25,5 @@ DateStartPlannedShort=geplanter Start
 DateEndPlanned=geplantes Ende
 DateEndPlannedShort=geplantes Ende
 CloseService=Service schließen
-BoardRunningServices=Abgelaufene, aktive Services
 ServiceStatus=Service-Status
 DeleteContractLine=Lösche Vertragsposition

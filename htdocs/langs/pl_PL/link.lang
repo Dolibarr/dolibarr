@@ -8,3 +8,4 @@ LinkRemoved=Link %s został usunięty
 ErrorFailedToDeleteLink= Niemożna usunąc linku '<b>%s</b>'
 ErrorFailedToUpdateLink= Niemożna uaktualnić linku '<b>%s</b>'
 URLToLink=Adres URL linka
+OverwriteIfExists=Overwrite file if exists

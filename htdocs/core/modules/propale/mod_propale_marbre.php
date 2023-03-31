@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
 
 
 /**
- *	Class to manage customer order numbering rules Marbre
+ *	Class to manage business proposition rules Marbre
  */
 class mod_propale_marbre extends ModeleNumRefPropales
 {
@@ -47,7 +47,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom = 'Marbre';
 
@@ -65,7 +65,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	public function info()
 	{
 		global $langs;
-	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
 	}
 
 
@@ -90,27 +90,27 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	{
 		global $conf, $langs, $db;
 
-		$pryymm = ''; $max = '';
+		$pryymm = '';
+		$max = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$row = $db->fetch_row($resql);
-			if ($row) { $pryymm = substr($row[0], 0, 6); $max = $row[0]; }
+			if ($row) {
+				$pryymm = substr($row[0], 0, 6);
+				$max = $row[0];
+			}
 		}
 
-		if (!$pryymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $pryymm))
-		{
+		if (!$pryymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $pryymm)) {
 			return true;
-		}
-		else
-		{
+		} else {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
@@ -128,22 +128,22 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	{
 		global $db, $conf;
 
-		// D'abord on recupere la valeur max
-		$posindice = 8;
+		// First, we get the max value
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql .= " AND entity IN (".getEntity('proposalnumber', 1, $propal).")";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max = 0;
-		}
-		else
-		{
+			if ($obj) {
+				$max = intval($obj->max);
+			} else {
+				$max = 0;
+			}
+		} else {
 			dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 			return -1;
 		}
@@ -151,8 +151,11 @@ class mod_propale_marbre extends ModeleNumRefPropales
 		$date = time();
 		$yymm = strftime("%y%m", $date);
 
-		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s", $max + 1);
+		if ($max >= (pow(10, 4) - 1)) {
+			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+		} else {
+			$num = sprintf("%04s", $max + 1);
+		}
 
 		dol_syslog(get_class($this)."::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
