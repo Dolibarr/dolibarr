@@ -5,6 +5,7 @@ Tools=Tools
 TMenuTools=Tools
 ToolsDesc=All tools not included in other menu entries are grouped here.<br>All the tools can be accessed via the left menu.
 Birthday=Birthday
+BirthdayAlert=Birthday alert
 BirthdayAlertOn=birthday alert active
 BirthdayAlertOff=birthday alert inactive
 TransKey=Translation of the key TransKey

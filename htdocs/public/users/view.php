@@ -262,8 +262,8 @@ if ($showbarcode) {
 	$qrcodecontent = $output = $v->buildVCardString($object, $company, $langs);
 
 	print '<br>';
-	print '<div class="floatleft inline-block valignmiddle divphotoref">';
-	print '<img src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode&entity='.((int) $conf->entity).'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode($qrcodecontent).'">';
+	print '<div class="floatleft inline-block valignmiddle paddingleft paddingright">';
+	print '<img style="max-width: 100%" src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode&entity='.((int) $conf->entity).'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode($qrcodecontent).'">';
 	print '</div>';
 	print '<br>';
 }

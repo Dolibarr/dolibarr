@@ -257,6 +257,9 @@ if ($action == "view_ticketlist") {
 			//'t.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 		);
 
+		if (empty($conf->global->TICKET_SHOW_PROGRESSION))
+			unset($arrayfields['t.progress']);
+
 		// Extra fields
 		if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -340,7 +343,8 @@ if ($action == "view_ticketlist") {
 		$sql .= " t.message,";
 		$sql .= " t.fk_statut,";
 		$sql .= " t.resolution,";
-		$sql .= " t.progress,";
+		if (!empty($conf->global->TICKET_SHOW_PROGRESSION))
+			$sql .= " t.progress,";
 		$sql .= " t.timing,";
 		$sql .= " t.type_code,";
 		$sql .= " t.category_code,";
@@ -470,7 +474,7 @@ if ($action == "view_ticketlist") {
 					print '</td>';
 				}
 
-				if (!empty($arrayfields['t.progress']['checked'])) {
+				if ((!empty($conf->global->TICKET_SHOW_PROGRESSION)) && !empty($arrayfields['t.progress']['checked'])) {
 					print '<td class="liste_titre"></td>';
 				}
 
@@ -535,7 +539,7 @@ if ($action == "view_ticketlist") {
 				if (!empty($arrayfields['severity.code']['checked'])) {
 					print_liste_field_titre($arrayfields['severity.code']['label'], $url_page_current, 'severity.code', '', $param, '', $sortfield, $sortorder);
 				}
-				if (!empty($arrayfields['t.progress']['checked'])) {
+				if ((!empty($conf->global->TICKET_SHOW_PROGRESSION)) && !empty($arrayfields['t.progress']['checked'])) {
 					print_liste_field_titre($arrayfields['t.progress']['label'], $url_page_current, 't.progress', '', $param, '', $sortfield, $sortorder);
 				}
 				if (!empty($arrayfields['t.fk_user_create']['checked'])) {
@@ -627,7 +631,7 @@ if ($action == "view_ticketlist") {
 					}
 
 					// Progression
-					if (!empty($arrayfields['t.progress']['checked'])) {
+					if ((!empty($conf->global->TICKET_SHOW_PROGRESSION)) && !empty($arrayfields['t.progress']['checked'])) {
 						print '<td>';
 						print $obj->progress;
 						print '</td>';
@@ -758,7 +762,7 @@ if ($action == "view_ticketlist") {
 }
 
 // End of page
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix, $object);
+htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
 
 llxFooter('', 'public');
 

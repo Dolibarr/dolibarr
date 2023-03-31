@@ -346,7 +346,7 @@ if (empty($reshook)) {
 				$db->rollback();
 			}
 		} else {
-			$action = 'add_price';
+			$action = 'create_price';
 		}
 	}
 }
@@ -467,7 +467,7 @@ if ($id > 0 || $ref) {
 
 
 			// Form to add or update a price
-			if (($action == 'add_price' || $action == 'update_price') && $usercancreate) {
+			if (($action == 'create_price' || $action == 'update_price') && $usercancreate) {
 				$langs->load("suppliers");
 
 				print "<!-- form to add a supplier price -->\n";
@@ -507,7 +507,7 @@ if ($id > 0 || $ref) {
 					$reshook = $hookmanager->executeHooks('formCreateThirdpartyOptions', $parameters, $object, $action);
 					if (empty($reshook)) {
 						if (empty($form->result)) {
-							print '<a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&type=f&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$action).'">';
+							print '<a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&type=f&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action='.urlencode($action).($action == 'create_price' ? '&token='.newToken() : '')).'">';
 							print img_picto($langs->trans("CreateDolibarrThirdPartySupplier"), 'add', 'class="marginleftonly"');
 							print '</a>';
 						}
@@ -904,12 +904,12 @@ END;
 
 			print '<div class="tabsAction">'."\n";
 
-			if ($action != 'add_price' && $action != 'update_price') {
+			if ($action != 'create_price' && $action != 'update_price') {
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				if (empty($reshook)) {
 					if ($usercancreate) {
-						print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$object->id.'&action=add_price&token='.newToken().'">';
+						print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.((int) $object->id).'&action=create_price&token='.newToken().'">';
 						print $langs->trans("AddSupplierPrice").'</a>';
 					}
 				}
@@ -953,7 +953,8 @@ END;
 					'pfp.fk_barcode_type'=>array('label'=>$langs->trans("BarcodeType"), 'enabled' => isModEnabled('barcode'), 'checked'=>0, 'position'=>15),
 					'pfp.barcode'=>array('label'=>$langs->trans("BarcodeValue"), 'enabled' => isModEnabled('barcode'), 'checked'=>0, 'position'=>16),
 					'pfp.packaging'=>array('label'=>$langs->trans("PackagingForThisProduct"), 'enabled' => getDolGlobalInt('PRODUCT_USE_SUPPLIER_PACKAGING'), 'checked'=>0, 'position'=>17),
-					'pfp.tms'=>array('label'=>$langs->trans("DateModification"), 'enabled' => isModEnabled('barcode'), 'checked'=>1, 'position'=>18),
+					'pfp.status'=>array('label'=>$langs->trans("Status"), 'enabled' => 1, 'checked'=>0, 'position'=>40),
+					'pfp.tms'=>array('label'=>$langs->trans("DateModification"), 'enabled' => isModEnabled('barcode'), 'checked'=>1, 'position'=>50),
 				);
 
 				// fetch optionals attributes and labels
@@ -1058,7 +1059,11 @@ END;
 					$nbfields++;
 				}
 				if (!empty($arrayfields['pfp.packaging']['checked'])) {
-					print_liste_field_titre("PackagingForThisProduct", $_SERVER["PHP_SELF"], "pfp.packaging", "", $param, 'align="center"', $sortfield, $sortorder);
+					print_liste_field_titre("PackagingForThisProduct", $_SERVER["PHP_SELF"], "pfp.packaging", "", $param, '', $sortfield, $sortorder, 'center ');
+					$nbfields++;
+				}
+				if (!empty($arrayfields['pfp.status']['checked'])) {
+					print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "pfp.status", "", $param, '', $sortfield, $sortorder, 'center ', '', 1);
 					$nbfields++;
 				}
 				if (!empty($arrayfields['pfp.tms']['checked'])) {
@@ -1106,7 +1111,7 @@ END;
 
 						// Date from
 						if (!empty($arrayfields['pfp.datec']['checked'])) {
-							print '<td>'.dol_print_date(($productfourn->fourn_date_creation ? $productfourn->fourn_date_creation : $productfourn->date_creation), 'dayhour').'</td>';
+							print '<td>'.dol_print_date(($productfourn->fourn_date_creation ? $productfourn->fourn_date_creation : $productfourn->date_creation), 'dayhour', 'tzuserrel').'</td>';
 						}
 
 						// Supplier
@@ -1220,15 +1225,22 @@ END;
 
 						// Barcode
 						if (!empty($arrayfields['pfp.barcode']['checked'])) {
-							print '<td align="right">';
+							print '<td class="right">';
 							print $productfourn->supplier_barcode;
 							print '</td>';
 						}
 
 						// Packaging
 						if (!empty($arrayfields['pfp.packaging']['checked'])) {
-							print '<td align="center">';
+							print '<td class="center">';
 							print price2num($productfourn->packaging);
+							print '</td>';
+						}
+
+						// Status
+						if (!empty($arrayfields['pfp.status']['checked'])) {
+							print '<td class="center">';
+							print $productfourn->getLibStatut(3);
 							print '</td>';
 						}
 

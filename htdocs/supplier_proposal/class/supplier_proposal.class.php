@@ -2477,6 +2477,9 @@ class SupplierProposal extends CommonObject
 	public function getTooltipContentArray($params)
 	{
 		global $conf, $langs, $menumanager;
+
+		$langs->load('supplier_proposal');
+
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			return ['optimize' => $langs->trans("ShowSupplierProposal")];
 		}

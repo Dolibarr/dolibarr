@@ -741,7 +741,7 @@ class Cronjob extends CommonObject
 
 		// Check parameters
 		// Put here code to add a control on parameters values
-		if (dol_strlen($this->datenextrun) == 0) {
+		if (dol_strlen($this->datenextrun) == 0 && $this->status == self::STATUS_ENABLED) {
 			$this->errors[] = $langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronDtNextLaunch'));
 			$error++;
 		}

@@ -722,7 +722,7 @@ class modService extends DolibarrModules
 					'sp.quantity' => "QtyMin*",
 					'sp.tva_tx' => 'VATRate',
 					'sp.default_vat_code' => 'VATCode',
-					'sp.delivery_time_days' => 'DeliveryDelay',
+					'sp.delivery_time_days' => 'NbDaysToDelivery',
 					'sp.supplier_reputation' => 'SupplierReputation'
 				);
 				if (is_object($mysoc) && $usenpr) {

@@ -212,7 +212,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 
 			$html_id = !empty($object->id) ? $object->element.'_extras_'.$tmpkeyextra.'_'.$object->id : '';
 
-			print '<td id="'.$html_id.'" class="valuefield '.$object->element.'_extras_'.$tmpkeyextra.' wordbreak"'.(!empty($cols) ? ' colspan="'.$cols.'"' : '').'>';
+			print '<td id="' . $html_id . '" class="valuefield ' . $object->element . '_extras_' . $tmpkeyextra . ' wordbreakimp"' . (!empty($cols) ? ' colspan="' . $cols . '"' : '') . '>';
 
 			// Convert date into timestamp format
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('date'))) {
