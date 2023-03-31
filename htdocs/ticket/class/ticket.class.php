@@ -1295,7 +1295,7 @@ class Ticket extends CommonObject
 	public function LibStatut($status, $mode = 0, $notooltip = 0)
 	{
 		// phpcs:enable
-		global $langs;
+		global $langs, $hookmanager;
 
 		$labelStatus = $this->statuts[$status];
 		$labelStatusShort = $this->statuts_short[$status];
@@ -1321,6 +1321,18 @@ class Ticket extends CommonObject
 			$labelStatusShort = $langs->trans('Unknown');
 			$statusType = 'status0';
 			$mode = 0;
+		}
+
+		$parameters = array(
+			'status'          => $status,
+			'mode'            => $mode,
+		);
+
+		// Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this);
+
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
 		}
 
 		$params = array();

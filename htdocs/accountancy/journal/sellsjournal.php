@@ -107,6 +107,9 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 }
 
 $sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code, f.retained_warranty,";
+// Modification - Situation invoice - Begin
+$sql .= " f.total_ht AS invoice_total_ht, f.total_tva AS invoice_total_tva, f.localtax1 AS invoice_total_localtax1, f.localtax2 AS invoice_total_localtax2, f.total_ttc AS invoice_total_ttc,";
+// Modification - Situation invoice - End
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur,";
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
@@ -162,7 +165,7 @@ if ($in_bookkeeping == 'notyet') {
 	$sql .= " AND f.rowid NOT IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";
 	// $sql .= " AND fd.rowid NOT IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
 }
-$sql .= " ORDER BY f.datef";
+$sql .= " ORDER BY f.datef, f.ref";
 //print $sql; exit;
 
 dol_syslog('accountancy/journal/sellsjournal.php', LOG_DEBUG);
@@ -237,6 +240,14 @@ if ($result) {
 		$tabfac[$obj->rowid]["close_code"] = $obj->close_code; // close_code = 'replaced' for replacement invoices (not used in most european countries)
 		//$tabfac[$obj->rowid]["fk_facturedet"] = $obj->fdid;
 
+		// Modification - Situation invoice - Begin
+		$tabfac[$obj->rowid]["total_ht"] = $obj->invoice_total_ht;
+		$tabfac[$obj->rowid]["total_tva"] = $obj->invoice_total_tva;
+		$tabfac[$obj->rowid]["total_localtax1"] = $obj->invoice_total_localtax1;
+		$tabfac[$obj->rowid]["total_localtax2"] = $obj->invoice_total_localtax2;
+		$tabfac[$obj->rowid]["total_ttc"] = $obj->invoice_total_ttc;
+		// Modification - Situation invoice - End
+
 		// Avoid warnings
 		if (!isset($tabttc[$obj->rowid][$compta_soc])) {
 			$tabttc[$obj->rowid][$compta_soc] = 0;
@@ -280,6 +291,33 @@ if ($result) {
 } else {
 	dol_print_error($db);
 }
+
+// Modification - Situation invoice - Begin
+// Fix amount precision and gap
+$tab_list = array('tabht' => 'total_ht', 'tabtva' => 'total_tva', 'tablocaltax1' => 'total_localtax1', 'tablocaltax2' => 'total_localtax2', 'tabttc' => 'total_ttc');
+foreach ($tab_list as $tab_property => $total_property) {
+	foreach ($tabfac as $invoice_id => $invoice_info) {
+		// Fix HT
+		$total_amount = 0;
+		foreach (${$tab_property}[$invoice_id] as $compta_prod => $amount) {
+			// Fix precision
+			$amount = price2num($amount, 'MT');
+			$total_amount += $amount;
+			${$tab_property}[$invoice_id][$compta_prod] = $amount;
+		}
+		if (price2num($total_amount) != price2num($invoice_info[$total_property])) {
+			foreach (${$tab_property}[$invoice_id] as $compta_prod => $amount) {
+				if (!empty($amount)) {
+					// Fix gap
+					$amount += $invoice_info[$total_property] - $total_amount;
+					${$tab_property}[$invoice_id][$compta_prod] = $amount;
+					break;
+				}
+			}
+		}
+	}
+}
+// Modification - Situation invoice - End
 
 $errorforinvoice = array();
 
