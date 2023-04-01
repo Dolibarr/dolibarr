@@ -890,7 +890,9 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		print "<br>";
 	}
 } else {
+	print '<br><br>';
 	print $langs->trans("ConferenceIsNotConfirmed");
+	print '<br><br>';
 }
 
 print '</div></div>';

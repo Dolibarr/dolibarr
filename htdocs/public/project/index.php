@@ -128,6 +128,9 @@ $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 
 llxHeader($head, $langs->trans("SuggestForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
+//llxHeaderVierge($langs->trans("SuggestForm"));
+
+
 
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
@@ -154,7 +157,7 @@ if (!empty($conf->global->$paramlogo)) {
 } elseif (!empty($conf->global->ONLINE_PAYMENT_LOGO)) {
 	$logosmall = $conf->global->ONLINE_PAYMENT_LOGO;
 }
-//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
+//print '- Show logo (logosmall='.$logosmall.' logo='.$logo.') '."\n";
 // Define urllogo
 $urllogo = '';
 $urllogofull = '';
@@ -298,3 +301,61 @@ htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
 llxFooter('', 'public');
 
 $db->close();
+
+
+
+/**
+ * Show header for new member
+ *
+ * @param 	string		$title				Title
+ * @param 	string		$head				Head array
+ * @param 	int    		$disablejs			More content into html header
+ * @param 	int    		$disablehead		More content into html header
+ * @param 	array  		$arrayofjs			Array of complementary js files
+ * @param 	array  		$arrayofcss			Array of complementary css files
+ * @return	void
+ */
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
+{
+	global $user, $conf, $langs, $mysoc;
+
+	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
+
+	print '<body id="mainbody" class="publicnewmemberform">';
+
+	// Define urllogo
+	$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
+
+	if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
+	} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
+	} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
+		$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
+	}
+
+	print '<div class="center">';
+
+	// Output html code for logo
+	if ($urllogo) {
+		print '<div class="backgreypublicpayment">';
+		print '<div class="logopublicpayment">';
+		print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
+		print '>';
+		print '</div>';
+		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+		}
+		print '</div>';
+	}
+
+	if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_SUGGEST_CONFERENCE)) {
+		print '<div class="backimagepublicsuggestconference">';
+		print '<img id="idPROJECT_IMAGE_PUBLIC_SUGGEST_CONFERENCE" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_SUGGEST_CONFERENCE.'">';
+		print '</div>';
+	}
+
+	print '</div>';
+
+	print '<div class="divmainbodylarge">';
+}
