@@ -336,6 +336,7 @@ if ($action == 'createtask' && $user->rights->projet->creer) {
 			$task = new Task($db);
 
 			$task->fk_project = $projectid;
+			$task->entity = $object->entity; // Task have the same entity of project
 			$task->ref = $taskref;
 			$task->label = $label;
 			$task->description = $description;
