@@ -898,7 +898,7 @@ if ($search_status <> '') {
 	if ($search_status == -3) {	// To bill
 		//$sql.= ' AND c.fk_statut in (1,2,3)';
 		//$sql.= ' AND c.facture = 0'; // invoice not created
-		$sql .= ' AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))'; // validated, in process or closed but not billed
+		$sql .= ' AND (c.fk_statut IN (1,2,3))'; // validated, in process or closed
 	}
 	if ($search_status == -4) {	//  "validate and in progress"
 		$sql .= ' AND (c.fk_statut IN (1,2))'; // validated, in process
