@@ -367,7 +367,7 @@ if ($resql) {
 		print '<td>'.$langs->trans('Entity').'</td>';
 	}
 	//Add Margin
-	if (!empty($conf->margin->enabled)) {
+	if (!empty($conf->margin->enabled) && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT')) {
 		print '<td class="right">'.$langs->trans('Margin').'</td>';
 	}
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
@@ -386,7 +386,7 @@ if ($resql) {
 			$invoice->fetch($objp->facid);
 
 			// Add Margin
-			if (!empty($conf->margin->enabled)) {
+			if (!empty($conf->margin->enabled) && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT')) {
 				$formmargin = new FormMargin($db);
 				$marginInfo = array();
 				$invoice->fetch_lines();
@@ -420,7 +420,7 @@ if ($resql) {
 			}
 
 			// Add margin
-			if (!empty($conf->margin->enabled)) {
+			if (!empty($conf->margin->enabled) && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT')) {
 				print '<td class="right">'.price($marginInfo['total_margin']).'</td>';
 			}
 
