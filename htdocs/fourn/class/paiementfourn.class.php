@@ -362,6 +362,7 @@ class PaiementFourn extends Paiement
 								$newlang = '';
 								$outputlangs = $langs;
 								if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+									$invoice->fetch_thirdparty();
 									$newlang = $invoice->thirdparty->default_lang;
 								}
 								if (!empty($newlang)) {
