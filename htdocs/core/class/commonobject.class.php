@@ -735,6 +735,7 @@ abstract class CommonObject
 
 		$datas = $this->getTooltipContentArray($params);
 
+		// Add extrafields
 		if (!empty($extrafields->attributes[$this->table_element]['label'])) {
 			if (count($extrafields->attributes[$this->table_element]['label']) < $MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP) {
 				foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {

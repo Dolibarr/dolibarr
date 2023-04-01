@@ -696,14 +696,17 @@ class Entrepot extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
-	 * @since v18
-	 * @return array
+	 *
+	 * @param 	array 	$params 	Params to construct tooltip data
+	 * @since 	v18
+	 * @return 	array
 	 */
 	public function getTooltipContentArray($params)
 	{
 		global $conf, $langs, $user;
+
 		$langs->load('stocks');
+
 		$datas = [];
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			return ['optimize' => $langs->trans("Warehouse")];

@@ -399,6 +399,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	if ($features == 'product') {
 		$features = 'produit';
 	}
+	if ($features == 'productbatch') {
+		$features = 'produit';
+	}
 	if ($features == 'fournisseur') {	// When vendor invoice and pruchase order are into module 'fournisseur'
 		$features = 'fournisseur';
 		$feature2 = '';

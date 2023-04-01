@@ -11350,6 +11350,13 @@ function getElementProperties($element_type)
 	} elseif ($element_type == 'salary') {
 		$classpath = 'salaries/class';
 		$module = 'salaries';
+	} elseif ($element_type == 'productlot') {
+		$module = 'productbatch';
+		$classpath = 'product/stock/class';
+		$classfile = 'productlot';
+		$classname = 'Productlot';
+		$element = 'productlot';
+		$subelement = '';
 	}
 
 	if (empty($classfile)) {
