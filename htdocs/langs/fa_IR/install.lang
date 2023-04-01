@@ -8,6 +8,7 @@ ConfFileIsNotWritable=فایل پیکربندی <b>%s</b> قابل نوشتن ن
 ConfFileIsWritable=فایل پیکربندی <b>%s</b> قابل نوشتن است
 ConfFileMustBeAFileNotADir=فایل پیکربندی <b>%s</b>باید یک فایل باشد، نه یک پوشه. 
 ConfFileReload=بارگذاری مجدد مقادیر از فایل پیکربندی.
+NoReadableConfFileSoStartInstall=The configuration file <b>conf/conf.php</b> does not exists or is not readable. We will run the installation process to try to initialize it.
 PHPSupportPOSTGETOk=این PHP از قابلیت GET و POST متغیرها پشتیبانی می‌کند.
 PHPSupportPOSTGETKo=ممکن است برپاسازی PHP شما از قابلیت POST و یا GET متغیرها پشتیبانی نمی‌کند. در php.ini مقدار <b>variables_order</b> را بررسی کنید. 
 PHPSupportSessions=این PHP از قابلیت نشست‌ پشتیبانی می‌کند.
@@ -16,13 +17,6 @@ PHPMemoryOK=حداکثر حافظۀ اختصاص داده شده به نشست �
 PHPMemoryTooLow=حداکثر حافظۀ مورد استفاده در یک نشست در PHP شما در حد <b>%s</b> بایت تنظیم شده است. این میزان بسیار کمی است. فایل <b>php.ini</b> را ویرایش نموده و مقدار <b>memory_limit</b> را حداقل برابر <b>%s</b> بایت تنظیم کنید
 Recheck=برای یک آزمایش دقیق‌تر این‌جا کلیک کنید
 ErrorPHPDoesNotSupportSessions=نسخۀ PHP شما از نشست‌ها پشتیبانی نمی‌کند. این قابلیت برای فعالیت Dolibarr لازم است. تنظیمات و برپاسازی PHP و مجوزهای پوشۀ sessions را بررسی کنید.
-ErrorPHPDoesNotSupportGD=این نسخه از PHP از توابع گرافیکی GD پشتیبانی نمی‌کند. هیچ نموداری در دسترس نخواهد بود
-ErrorPHPDoesNotSupportCurl=نسخۀ PHP نصب شدۀ شما از Curl پشتیبانی نمی‌کند.
-ErrorPHPDoesNotSupportCalendar=Your PHP installation does not support php calendar extensions.
-ErrorPHPDoesNotSupportUTF8=نسخۀ PHP نصب شدۀ شما از توابع UTF8 پشتیبانی نمی‌کند. Dolibarr نمی‌تواند به درستی کار کند. قبل از نصب Dolibarr این مشکل را حل کنید.
-ErrorPHPDoesNotSupportIntl=نسخۀ نصب شدۀ PHP شما از توابع Intl پشتیبانی نمی‌کند.
-ErrorPHPDoesNotSupportMbstring=Your PHP installation does not support mbstring functions.
-ErrorPHPDoesNotSupportxDebug=Your PHP installation does not support extend debug functions.
 ErrorPHPDoesNotSupport=Your PHP installation does not support %s functions.
 ErrorDirDoesNotExists=پوشۀ %s وجود ندارد.
 ErrorGoBackAndCorrectParameters=به عقب برگردید و مقادیر را بررسی/اصلاح کنید.
@@ -30,9 +24,11 @@ ErrorWrongValueForParameter=ممکن است شما یک مقدار اشتباه 
 ErrorFailedToCreateDatabase=امکان ساخت پایگاه‌داده  '%s' وجود نداشت.
 ErrorFailedToConnectToDatabase=امکان اتصال به پایگاه‌داده '%s' وجود نداشت.
 ErrorDatabaseVersionTooLow=نسخۀ پایگاه داده (%s) بسیار قدیمی است. برای کار نسخۀ %s یا بالاتر احتیاج است
-ErrorPHPVersionTooLow=نسخۀ PHP بسیار قدیمی است. برای کار نسخۀ %s نیاز است.
+ErrorPHPVersionTooLow=PHP version too old. Version %s or higher is required.
+ErrorPHPVersionTooHigh=PHP version too high. Version %s or lower is required.
 ErrorConnectedButDatabaseNotFound=اتصال به سرویس‌دهنده با موفقیت انجام شد اما پایگاه داده  '%s'  پیدا نشد.
 ErrorDatabaseAlreadyExists=پایگاه دادۀ '%s' از قبل وجود دارد
+ErrorNoMigrationFilesFoundForParameters=No migration file found for the selected versions
 IfDatabaseNotExistsGoBackAndUncheckCreate=در صورتی که پایگاه داده وجود نداشته باشد، به عقب برگشته و گزینۀ "ساخت پایگاه داده" را کلیک نمائید.
 IfDatabaseExistsGoBackAndCheckCreate=در صورتی که پایگاه داده از قبل وجود داشته، به عقب بازگشته و گزینۀ "ساخت پایگاه داده" را از حالت تائید بردارید.
 WarningBrowserTooOld=نسخۀ مرورگر بسیار قدیمی است، ارتقای مرورگر به نسخه‌های اخیر فایرفاکس، کروم یا اپرا به شدت پیشنهاد می‌شود
@@ -55,7 +51,6 @@ DatabaseName=نام پایگاه‌داده
 DatabasePrefix=پیش‌شوند جداول پایگاه‌داده
 DatabasePrefixDescription=پیش‌وند جداول پایگاه داده، اگر خالی بگذارید برابر با llx_ خواهد بود
 AdminLogin=حساب کاربری برای صاحب پایگاه‌دادۀ Dolibarr. 
-PasswordAgain=تائید گذرواژه را دوباره‌نویسی کنید
 AdminPassword=گذرواژۀ صاحب پایگاه‌دادۀ Dolibarr.
 CreateDatabase=ساخت پایگاه‌داده
 CreateUser=ساخت حساب کاربری یا اعطای مجوز به حساب کاربری در پایگاه دادۀ Dolibarr
@@ -93,7 +88,7 @@ LoginAlreadyExists=قبلا وجود داشته است
 DolibarrAdminLogin=ورود کاربر مدیر به Dolibarr
 AdminLoginAlreadyExists=حساب مدیریت Dolibarr '<b>%s</b>' قبلا وجود داشته است. در صورتی که می‌خواهید یکی دیگر بسازید، به عقب برگردید.
 FailedToCreateAdminLogin=امکان ساخت حساب مدیریتی Dolibarr نبود
-WarningRemoveInstallDir=هشدار، به دلایل امنیتی، پس از آن‌که عملیات نصب یا ارتقا پایان یات، شما باید یک فایل با نام <b>install.lock</b> در پوشۀ document ساخته تا امکان استفادۀ تصادفی/نفوذی از ابزار نصب را ببندید.
+WarningRemoveInstallDir=Warning, for security reasons, once the installation process is complete, you must add a file called <b>install.lock</b> into the Dolibarr document directory in order to prevent the accidental/malicious use of the install tools again.
 FunctionNotAvailableInThisPHP=در این PHP فعال نیست
 ChoosedMigrateScript=یک برنامۀ مهاجرت انتخاب کنید
 DataMigration=مهاجرت پایگاه داده (داده‌ها)
@@ -213,7 +208,12 @@ HideNotAvailableOptions=پنهان کردن گزینه‌های خارج از د
 ErrorFoundDuringMigration=خطا(ها)ئی که در طول انجام انتقال گزارش می‌شوند و منجر به این می‌شوند گام بعدی فعال نباشد. برای نادیده گرفتن خطاها شما باید <a href="%s">اینجا کلیک کنید</a>، اما ممکن است برنامه یا برخی قابلیت‌ها تا زمانی که خطاها رفع نشود، کار نکند.
 YouTryInstallDisabledByDirLock=برنامه تلاش کرده است که خود را ارتقا دهد، اما صفحات نصب/ارتقا به دلایل امنیتی غیرفعال شده (پوشه با یک پسوند .lock پس‌وند گرفته است).<br>
 YouTryInstallDisabledByFileLock=برنامه تلاش کرده است خود را ارتقا دهد، اما صفحات نصب/ارتقا به دلایل امنیتی غیر فعال شده است ( چون فایل قفل <strong>install.lock</strong> در پوشۀ documents دلیبار وجود دارد).<br>
+YouTryUpgradeDisabledByMissingFileUnLock=The application tried to self-upgrade, but the upgrade process is currently not allowed.<br>
 ClickHereToGoToApp=برای مراجعه به برنامه این‌جا کلیک کنید
 ClickOnLinkOrRemoveManualy=If an upgrade is in progress, please wait. If not, click on the following link. If you always see this same page, you must remove/rename the file install.lock in the documents directory.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must create a file upgrade.unlock into the Dolibarr documents directory.
 Loaded=Loaded
 FunctionTest=Function test
+NodoUpgradeAfterDB=No action requested by external modules after upgrade of database
+NodoUpgradeAfterFiles=No action requested by external modules after upgrade of files or directories
+MigrationContractLineRank=Migrate Contract Line to use Rank (and enable Reorder)

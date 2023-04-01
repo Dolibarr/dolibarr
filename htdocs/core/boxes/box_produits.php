@@ -62,7 +62,7 @@ class box_produits extends ModeleBoxes
 		$this->db = $db;
 
 		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
-		$tmpentry = array('enabled'=>(!empty($conf->product->enabled) || !empty($conf->service->enabled)), 'perms'=>(!empty($user->rights->produit->lire) || !empty($user->rights->service->lire)), 'module'=>'product|service');
+		$tmpentry = array('enabled'=>(isModEnabled("product") || isModEnabled("service")), 'perms'=>(!empty($user->rights->produit->lire) || !empty($user->rights->service->lire)), 'module'=>'product|service');
 		$showmode = isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 		$this->hidden = ($showmode != 1);
 	}
@@ -119,7 +119,7 @@ class box_produits extends ModeleBoxes
 					$datem = $this->db->jdate($objp->tms);
 
 					// Multilangs
-					if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
+					if (getDolGlobalInt('MAIN_MULTILANGS')) { // si l'option est active
 						$sqld = "SELECT label";
 						$sqld .= " FROM ".MAIN_DB_PREFIX."product_lang";
 						$sqld .= " WHERE fk_product = ".((int) $objp->rowid);
@@ -148,6 +148,12 @@ class box_produits extends ModeleBoxes
 					$productstatic->accountancy_code_buy = $objp->accountancy_code_buy;
 					$productstatic->accountancy_code_buy_intra = $objp->accountancy_code_buy_intra;
 					$productstatic->accountancy_code_buy_export = $objp->accountancy_code_buy_export;
+					$productstatic->date_modification = $datem;
+
+					$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'read');
+					if ($productstatic->isService()) {
+						$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'read');
+					}
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
@@ -161,22 +167,26 @@ class box_produits extends ModeleBoxes
 					);
 					$price = '';
 					$price_base_type = '';
-					if (empty($conf->dynamicprices->enabled) || empty($objp->fk_price_expression)) {
-						$price_base_type = $langs->trans($objp->price_base_type);
-						$price = ($objp->price_base_type == 'HT') ?price($objp->price) : $price = price($objp->price_ttc);
-					} else {
-						//Parse the dynamic price
-						$productstatic->fetch($objp->rowid, '', '', 1);
-						$priceparser = new PriceParser($this->db);
-						$price_result = $priceparser->parseProduct($productstatic);
-						if ($price_result >= 0) {
-							if ($objp->price_base_type == 'HT') {
-								$price_base_type = $langs->trans("HT");
-							} else {
-								$price_result = $price_result * (1 + ($productstatic->tva_tx / 100));
-								$price_base_type = $langs->trans("TTC");
+					if ($usercancreadprice) {
+						if (!isModEnabled('dynamicprices') || empty($objp->fk_price_expression)) {
+							$price_base_type = $langs->trans($objp->price_base_type);
+							$price = ($objp->price_base_type == 'HT') ?price($objp->price) : $price = price($objp->price_ttc);
+						} else {
+							//Parse the dynamic price
+							$productstatic->fetch($objp->rowid, '', '', 1);
+
+							require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
+							$priceparser = new PriceParser($this->db);
+							$price_result = $priceparser->parseProduct($productstatic);
+							if ($price_result >= 0) {
+								if ($objp->price_base_type == 'HT') {
+									$price_base_type = $langs->trans("HT");
+								} else {
+									$price_result = $price_result * (1 + ($productstatic->tva_tx / 100));
+									$price_base_type = $langs->trans("TTC");
+								}
+								$price = price($price_result);
 							}
-							$price = price($price_result);
 						}
 					}
 					$this->info_box_contents[$line][] = array(
@@ -190,7 +200,7 @@ class box_produits extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center nowraponall"',
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 					);
 

@@ -23,6 +23,7 @@
  *	\brief      Page to managed related documents linked to a project
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -49,7 +50,7 @@ if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($ob
 }
 
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->projet->dir_output."/".dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->project->dir_output."/".dol_sanitizeFileName($object->ref);
 }
 
 // Get parameters
@@ -97,7 +98,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
-$title = $langs->trans('Project').' - '.$langs->trans('Document').' - '.$object->ref.' '.$object->name;
+$title = $langs->trans('Documents').' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans('Document');
 }
@@ -109,7 +110,7 @@ llxHeader('', $title, $help_url);
 $form = new Form($db);
 
 if ($object->id > 0) {
-	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
 	// To verify role of users
 	//$userAccess = $object->restrictedProjectArea($user,'read');
@@ -137,7 +138,7 @@ if ($object->id > 0) {
 	$morehtmlref .= $object->title;
 	// Thirdparty
 	if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
-		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
+		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
 

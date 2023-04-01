@@ -183,7 +183,7 @@ class FormCompany extends Form
 		if (!empty($htmlname) && $user->admin) {
 			print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		print '<input type="submit" class="button button-save valignmiddle" value="'.$langs->trans("Modify").'">';
+		print '<input type="submit" class="button button-save valignmiddle small" value="'.$langs->trans("Modify").'">';
 		print '</form>';
 	}
 
@@ -234,7 +234,7 @@ class FormCompany extends Form
 		if (!empty($htmlname) && $user->admin) {
 			print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		print '<input type="submit" class="button button-save valignmiddle" value="'.$langs->trans("Modify").'">';
+		print '<input type="submit" class="button button-save valignmiddle small" value="'.$langs->trans("Modify").'">';
 		print '</form>';
 	}
 
@@ -645,7 +645,7 @@ class FormCompany extends Form
 			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 
 			if (count($events)) {	// If there is some ajax events to run once selection is done, we add code here to run events
-				print '<script type="text/javascript">
+				print '<script nonce="'.getNonce().'" type="text/javascript">
 				jQuery(document).ready(function() {
 					$("#search_'.$htmlname.'").change(function() {
 						var obj = '.json_encode($events).';
@@ -690,7 +690,7 @@ class FormCompany extends Form
 								}
 							}
 						);
-					};
+					}
 				});
 				</script>';
 			}
@@ -825,13 +825,14 @@ class FormCompany extends Form
 	/**
 	 * showContactRoles on view and edit mode
 	 *
-	 * @param string $htmlname Html component name and id
-	 * @param Contact $contact Contact Obejct
-	 * @param string $rendermode view, edit
-	 * @param array $selected $key=>$val $val is selected Roles for input mode
-	 * @return string   String with contacts roles
+	 * @param 	string 		$htmlname 	Html component name and id
+	 * @param 	Contact 	$contact 	Contact Obejct
+	 * @param 	string 		$rendermode view, edit
+	 * @param 	array		$selected 	$key=>$val $val is selected Roles for input mode
+	 * @param	string		$morecss	More css
+	 * @return 	string   				String with contacts roles
 	 */
-	public function showRoles($htmlname, Contact $contact, $rendermode = 'view', $selected = array())
+	public function showRoles($htmlname, Contact $contact, $rendermode = 'view', $selected = array(), $morecss = 'minwidth500')
 	{
 		if ($rendermode === 'view') {
 			$toprint = array();
@@ -856,7 +857,7 @@ class FormCompany extends Form
 					$selected = $newselected;
 				}
 			}
-			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, 'minwidth500');
+			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, $morecss);
 		}
 
 		return 'ErrorBadValueForParameterRenderMode'; // Should not happened
@@ -907,7 +908,7 @@ class FormCompany extends Form
 	 *  @param  string  $morecss        More css
 	 *  @return	string					HTML string with prof id
 	 */
-	public function get_input_id_prof($idprof, $htmlname, $preselected, $country_code, $morecss = 'maxwidth100onsmartphone quatrevingtpercent')
+	public function get_input_id_prof($idprof, $htmlname, $preselected, $country_code, $morecss = 'maxwidth200')
 	{
 		// phpcs:enable
 		global $conf, $langs, $hookmanager;
@@ -988,15 +989,15 @@ class FormCompany extends Form
 		// phpcs:enable
 		$tax = get_localtax_by_third($local);
 
-		$num = $this->db->num_rows($tax);
-		$i = 0;
-		if ($num) {
+		if ($tax) {
 			$valors = explode(":", $tax);
+			$nbvalues = count($valors);
 
-			if (count($valors) > 1) {
+			if ($nbvalues > 1) {
 				//montar select
 				print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-				while ($i <= (count($valors)) - 1) {
+				$i = 0;
+				while ($i < $nbvalues) {
 					if ($selected == $valors[$i]) {
 						print '<option value="'.$valors[$i].'" selected>';
 					} else {
@@ -1006,7 +1007,7 @@ class FormCompany extends Form
 					print '</option>';
 					$i++;
 				}
-				print'</select>';
+				print '</select>';
 			}
 		}
 	}
@@ -1025,7 +1026,7 @@ class FormCompany extends Form
 	public function selectProspectCustomerType($selected, $htmlname = 'client', $htmlidname = 'customerprospect', $typeinput = 'form', $morecss = '', $allowempty = '')
 	{
 		global $conf, $langs;
-		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->fournisseur->enabled)) {
+		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && !isModEnabled('fournisseur')) {
 			return '' ;
 		}
 
@@ -1058,7 +1059,7 @@ class FormCompany extends Form
 			if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
 				$out .= '<option value="1,3"'.($selected == '1,3' ? ' selected' : '').'>'.$langs->trans('Customer').'</option>';
 			}
-			if (!empty($conf->fournisseur->enabled)) {
+			if (isModEnabled("fournisseur")) {
 				$out .= '<option value="4"'.($selected == '4' ? ' selected' : '').'>'.$langs->trans('Supplier').'</option>';
 			}
 			$out .= '<option value="0"'.($selected == '0' ? ' selected' : '').'>'.$langs->trans('Other').'</option>';

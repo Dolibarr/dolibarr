@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2020-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Note: This tool can be included into a list page with :
  * define('USE_CUSTOM_REPORT_AS_INCLUDE', 1);
@@ -93,19 +93,19 @@ $object = null;
 $ObjectClassName = '';
 // Objects available by default
 $arrayoftype = array(
-	'thirdparty' => array('label' => 'ThirdParties', 'ObjectClassName' => 'Societe', 'enabled' => $conf->societe->enabled, 'ClassPath' => "/societe/class/societe.class.php"),
-	'contact' => array('label' => 'Contacts', 'ObjectClassName' => 'Contact', 'enabled' => $conf->societe->enabled, 'ClassPath' => "/contact/class/contact.class.php"),
-	'proposal' => array('label' => 'Proposals', 'ObjectClassName' => 'Propal', 'enabled' => $conf->propal->enabled, 'ClassPath' => "/comm/propal/class/propal.class.php"),
-	'order' => array('label' => 'Orders', 'ObjectClassName' => 'Commande', 'enabled' => $conf->commande->enabled, 'ClassPath' => "/commande/class/commande.class.php"),
-	'invoice' => array('label' => 'Invoices', 'ObjectClassName' => 'Facture', 'enabled' => $conf->facture->enabled, 'ClassPath' => "/compta/facture/class/facture.class.php"),
-	'invoice_template'=>array('label' => 'PredefinedInvoices', 'ObjectClassName' => 'FactureRec', 'enabled' => $conf->facture->enabled, 'ClassPath' => "/compta/class/facturerec.class.php", 'langs'=>'bills'),
-	'contract' => array('label' => 'Contracts', 'ObjectClassName' => 'Contrat', 'enabled' => $conf->contrat->enabled, 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
-	'contractdet' => array('label' => 'ContractLines', 'ObjectClassName' => 'ContratLigne', 'enabled' => $conf->contrat->enabled, 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
-	'bom' => array('label' => 'BOM', 'ObjectClassName' => 'Bom', 'enabled' => $conf->bom->enabled),
-	'mo' => array('label' => 'MO', 'ObjectClassName' => 'Mo', 'enabled' => $conf->mrp->enabled, 'ClassPath' => "/mrp/class/mo.class.php"),
-	'ticket' => array('label' => 'Ticket', 'ObjectClassName' => 'Ticket', 'enabled' => $conf->ticket->enabled),
-	'member' => array('label' => 'Adherent', 'ObjectClassName' => 'Adherent', 'enabled' => $conf->adherent->enabled, 'ClassPath' => "/adherents/class/adherent.class.php", 'langs'=>'members'),
-	'cotisation' => array('label' => 'Subscriptions', 'ObjectClassName' => 'Subscription', 'enabled' => $conf->adherent->enabled, 'ClassPath' => "/adherents/class/subscription.class.php", 'langs'=>'members'),
+	'thirdparty' => array('langs'=>'companies', 'label' => 'ThirdParties', 'picto'=>'company', 'ObjectClassName' => 'Societe', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/societe/class/societe.class.php"),
+	'contact' => array('label' => 'Contacts', 'picto'=>'contact', 'ObjectClassName' => 'Contact', 'enabled' => isModEnabled('societ'), 'ClassPath' => "/contact/class/contact.class.php"),
+	'proposal' => array('label' => 'Proposals', 'picto'=>'proposal', 'ObjectClassName' => 'Propal', 'enabled' => isModEnabled('propal'), 'ClassPath' => "/comm/propal/class/propal.class.php"),
+	'order' => array('label' => 'Orders', 'picto'=>'order', 'ObjectClassName' => 'Commande', 'enabled' => isModEnabled('commande'), 'ClassPath' => "/commande/class/commande.class.php"),
+	'invoice' => array('langs'=>'facture', 'label' => 'Invoices', 'picto'=>'bill', 'ObjectClassName' => 'Facture', 'enabled' => isModEnabled('facture'), 'ClassPath' => "/compta/facture/class/facture.class.php"),
+	'invoice_template'=>array('label' => 'PredefinedInvoices', 'picto'=>'bill', 'ObjectClassName' => 'FactureRec', 'enabled' => isModEnabled('facture'), 'ClassPath' => "/compta/class/facturerec.class.php", 'langs'=>'bills'),
+	'contract' => array('label' => 'Contracts', 'picto'=>'contract', 'ObjectClassName' => 'Contrat', 'enabled' => isModEnabled('contrat'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
+	'contractdet' => array('label' => 'ContractLines', 'picto'=>'contract', 'ObjectClassName' => 'ContratLigne', 'enabled' => isModEnabled('contrat'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
+	'bom' => array('label' => 'BOM', 'picto'=>'bom', 'ObjectClassName' => 'Bom', 'enabled' => isModEnabled('bom')),
+	'mo' => array('label' => 'MO', 'picto'=>'mrp', 'ObjectClassName' => 'Mo', 'enabled' => isModEnabled('mrp'), 'ClassPath' => "/mrp/class/mo.class.php"),
+	'ticket' => array('label' => 'Ticket', 'picto'=>'ticket', 'ObjectClassName' => 'Ticket', 'enabled' => isModEnabled('ticket')),
+	'member' => array('label' => 'Adherent', 'picto'=>'member', 'ObjectClassName' => 'Adherent', 'enabled' => isModEnabled('adherent'), 'ClassPath' => "/adherents/class/adherent.class.php", 'langs'=>'members'),
+	'cotisation' => array('label' => 'Subscriptions', 'picto'=>'member', 'ObjectClassName' => 'Subscription', 'enabled' => isModEnabled('adherent'), 'ClassPath' => "/adherents/class/subscription.class.php", 'langs'=>'members'),
 );
 
 // Complete $arrayoftype by external modules
@@ -217,7 +217,7 @@ foreach ($arrayoftype as $key => $val) {
 	if (dol_eval($val['enabled'], 1, 1, '1')) {
 		$newarrayoftype[$key] = $arrayoftype[$key];
 	}
-	if ($val['langs']) {
+	if (!empty($val['langs'])) {
 		$langs->load($val['langs']);
 	}
 }
@@ -295,12 +295,7 @@ if (is_array($search_groupby) && count($search_groupby)) {
 		$sqlfilters = GETPOST('search_component_params_hidden', 'alphanohtml');
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (dolCheckFilters($sqlfilters, $errormessage)) {
-				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-				$sql .= " WHERE (".preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $sqlfilters).")";
-			} else {
-				print $errormessage;
-			}
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
 		}*/
 
 		$sql .= " LIMIT ".((int) ($MAXUNIQUEVALFORGROUP + 1));
@@ -363,17 +358,35 @@ if (is_array($search_groupby) && count($search_groupby)) {
 		// Add a protection/error to refuse the request if number of differentr values for the group by is higher than $MAXUNIQUEVALFORGROUP
 		if (count($arrayofvaluesforgroupby['g_'.$gkey]) > $MAXUNIQUEVALFORGROUP) {
 			$langs->load("errors");
-			if (strpos($fieldtocount, 'te.') === 0) {
+			if (strpos($fieldtocount, 'te.') === 0) {			// This is an extrafield
 				//if (!empty($extrafields->attributes[$object->table_element]['langfile'][$gvalwithoutprefix])) {
 				//      $langs->load($extrafields->attributes[$object->table_element]['langfile'][$gvalwithoutprefix]);
 				//}
 				$keyforlabeloffield = $extrafields->attributes[$object->table_element]['label'][$gvalwithoutprefix];
-			} else {
-				$keyforlabeloffield = $object->fields[$gvalwithoutprefix]['label'];
+				$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield);
+			} elseif (strpos($fieldtocount, 't__') === 0) {		// This is a field of a foreign key
+				$reg = array();
+				if (preg_match('/^(.*)\.(.*)/', $gvalwithoutprefix, $reg)) {
+					$gvalwithoutprefix = preg_replace('/\..*$/', '', $gvalwithoutprefix);
+					$gvalwithoutprefix = preg_replace('/t__/', '', $gvalwithoutprefix);
+					$keyforlabeloffield = $object->fields[$gvalwithoutprefix]['label'];
+					$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield).'-'.$reg[2];
+				} else {
+					$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield);
+				}
+			} else {											// This is a common field
+				$reg = array();
+				if (preg_match('/^(.*)\-(year|month|day)/', $gvalwithoutprefix, $reg)) {
+					$gvalwithoutprefix = preg_replace('/\-(year|month|day)/', '', $gvalwithoutprefix);
+					$keyforlabeloffield = $object->fields[$gvalwithoutprefix]['label'];
+					$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield).'-'.$reg[2];
+				} else {
+					$keyforlabeloffield = $object->fields[$gvalwithoutprefix]['label'];
+					$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield);
+				}
 			}
-			//var_dump($gkey.' '.$gval.' '.$gvalwithoutprefix);
-			$gvalwithoutprefix = preg_replace('/\-(year|month|day)/', '', $gvalwithoutprefix);
-			$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield);
+			//var_dump($gkey.' '.$gval.' '.$gvalwithoutprefix.' '.$fieldtocount.' '.$keyforlabeloffield);
+			//var_dump($object->fields);
 			setEventMessages($langs->trans("ErrorTooManyDifferentValueForSelectedGroupBy", $MAXUNIQUEVALFORGROUP, $labeloffield), null, 'warnings');
 			$search_groupby = array();
 		}
@@ -402,7 +415,7 @@ $viewmode = '';
 $viewmode .= '<div class="divadvancedsearchfield">';
 $arrayofgraphs = array('bars' => 'Bars', 'lines' => 'Lines'); // also 'pies'
 $viewmode .= '<div class="inline-block opacitymedium"><span class="fas fa-chart-area paddingright" title="'.$langs->trans("Graph").'"></span>'.$langs->trans("Graph").'</div> ';
-$viewmode .= $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 0, 'minwidth100', 1);
+$viewmode .= $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 0, '', 1, 0, 0, '', 'graphtype width100');
 $viewmode .= '</div>';
 
 $num = 0;
@@ -414,18 +427,21 @@ $limit = 0;
 print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
 
 
+foreach ($newarrayoftype as $tmpkey => $tmpval) {
+	$newarrayoftype[$tmpkey]['label'] = img_picto('', $tmpval['picto'], 'class="pictofixedwidth"').$langs->trans($tmpval['label']);
+}
 
-print '<div class="liste_titre liste_titre_bydiv centpercent">';
+print '<div class="liste_titre liste_titre_bydiv liste_titre_bydiv_inlineblock centpercent">';
 
 // Select object
 print '<div class="divadvancedsearchfield center floatnone">';
 print '<div class="inline-block"><span class="opacitymedium">'.$langs->trans("StatisticsOn").'</span></div> ';
-print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth200', 1);
+print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth200', 1, '', 0, 1);
 if (empty($conf->use_javascript_ajax)) {
 	print '<input type="submit" class="button buttongen button-save nomargintop" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
 } else {
 	print '<!-- js code to reload page with good object type -->
-	<script type="text/javascript">
+	<script nonce="'.getNonce().'" type="text/javascript">
         jQuery(document).ready(function() {
         	jQuery("#objecttype").change(function() {
         		console.log("Reload for "+jQuery("#objecttype").val());
@@ -450,7 +466,7 @@ $simplearrayofmesures = array();
 foreach ($arrayofmesures as $key => $val) {
 	$simplearrayofmesures[$key] = $arrayofmesures[$key]['label'];
 }
-print $form->multiselectarray('search_measures', $simplearrayofmesures, $search_measures, 0, 0, 'minwidth400', 1, 0, '', '', $langs->trans("Measures"));	// Fill the array $arrayofmeasures with possible fields
+print $form->multiselectarray('search_measures', $simplearrayofmesures, $search_measures, 0, 0, 'minwidth300', 1, 0, '', '', $langs->trans("Measures"));	// Fill the array $arrayofmeasures with possible fields
 print '</div>';
 
 // XAxis
@@ -458,14 +474,14 @@ $count = 0;
 print '<div class="divadvancedsearchfield">';
 print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span><span class="fas fa-caret-down caretdownaxis" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span></div>';
 //var_dump($arrayofxaxis);
-print $formother->selectXAxisField($object, $search_xaxis, $arrayofxaxis, $langs->trans("XAxis"));	// Fill the array $arrayofxaxis with possible fields
+print $formother->selectXAxisField($object, $search_xaxis, $arrayofxaxis, $langs->trans("XAxis"), 'minwidth300 maxwidth400');	// Fill the array $arrayofxaxis with possible fields
 print '</div>';
 
 // Group by
 $count = 0;
 print '<div class="divadvancedsearchfield">';
 print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("GroupBy")).'"></span></div>';
-print $formother->selectGroupByField($object, $search_groupby, $arrayofgroupby, 'minwidth200 maxwidth250', $langs->trans("GroupBy"));	// Fill the array $arrayofgroupby with possible fields
+print $formother->selectGroupByField($object, $search_groupby, $arrayofgroupby, 'minwidth250 maxwidth300', $langs->trans("GroupBy"));	// Fill the array $arrayofgroupby with possible fields
 print '</div>';
 
 
@@ -507,16 +523,16 @@ if ($mode == 'grid') {
 				);
 			}
 		}
-		// Add measure from extrafields
-		if ($object->isextrafieldmanaged) {
-			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
-					$arrayofyaxis['te.'.$key] = array(
-						'label' => $extrafields->attributes[$object->table_element]['label'][$key],
-						'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key],
-						'table' => $object->table_element
-					);
-				}
+	}
+	// Add measure from extrafields
+	if ($object->isextrafieldmanaged) {
+		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+			if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
+				$arrayofyaxis['te.'.$key] = array(
+					'label' => $extrafields->attributes[$object->table_element]['label'][$key],
+					'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key],
+					'table' => $object->table_element
+				);
 			}
 		}
 	}
@@ -663,11 +679,9 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 	$sqlfilters = $search_component_params_hidden;
 	if ($sqlfilters) {
 		$errormessage = '';
-		if (dolCheckFilters($sqlfilters, $errormessage)) {
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $sqlfilters).")";
-		} else {
-			print $errormessage;
+		$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+		if ($errormessage) {
+			print dol_escape_htmltag($errormessage);
 		}
 	}
 	$sql .= " GROUP BY ";
@@ -849,7 +863,7 @@ if ($sql) {
 				$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
 			}
 
-			$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->trans("Empty") : $langs->trans("NotDefined")));
+			$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->transnoentitiesnoconv("Empty") : $langs->transnoentitiesnoconv("NotDefined")));
 			$xarrayforallseries = array('label' => $labeltouse);
 			foreach ($search_measures as $key => $val) {
 				$fieldfory = 'y_'.$key;
@@ -874,14 +888,14 @@ if ($mode == 'grid') {
 
 if ($mode == 'graph') {
 	$WIDTH = '80%';
-	$HEIGHT = 200;
+	$HEIGHT = (empty($_SESSION['dol_screenheight']) ? 400 : $_SESSION['dol_screenheight'] - 500);
 
 	// Show graph
 	$px1 = new DolGraph();
 	$mesg = $px1->isGraphKo();
 	if (!$mesg) {
-		/*var_dump($legend);
-		var_dump($data);*/
+		//var_dump($legend);
+		//var_dump($data);
 		$px1->SetData($data);
 		unset($data);
 
@@ -970,31 +984,31 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 	// Add main fields of object
 	foreach ($object->fields as $key => $val) {
 		if (!empty($val['isameasure']) && (!isset($val['enabled']) || dol_eval($val['enabled'], 1, 1, '1'))) {
-			$position = (!empty($val['position']) ? $val['position'] : 0);
+			$position = (empty($val['position']) ? 0 : intVal($val['position']));
 			$arrayofmesures[$tablealias.'.'.$key.'-sum'] = array(
 				'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>',
-				'position' => ($position+($count * 100000)).'.1',
+				'position' => ($position + ($count * 100000)).'.1',
 				'table' => $object->table_element
 			);
 			$arrayofmesures[$tablealias.'.'.$key.'-average'] = array(
 				'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Average").')</span>',
-				'position' => ($position+($count * 100000)).'.2',
+				'position' => ($position + ($count * 100000)).'.2',
 				'table' => $object->table_element
 			);
 			$arrayofmesures[$tablealias.'.'.$key.'-min'] = array(
 				'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Minimum").')</span>',
-				'position' => ($position+($count * 100000)).'.3',
+				'position' => ($position + ($count * 100000)).'.3',
 				'table' => $object->table_element
 			);
 			$arrayofmesures[$tablealias.'.'.$key.'-max'] = array(
 				'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Maximum").')</span>',
-				'position' => ($position+($count * 100000)).'.4',
+				'position' => ($position + ($count * 100000)).'.4',
 				'table' => $object->table_element
 			);
 		}
 	}
 	// Add extrafields to Measures
-	if ($object->isextrafieldmanaged) {
+	if (!empty($object->isextrafieldmanaged)) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
 				$position = (!empty($val['position']) ? $val['position'] : 0);
@@ -1078,7 +1092,7 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 	foreach ($object->fields as $key => $val) {
 		if (empty($val['measure'])) {
 			if (in_array($key, array(
-				'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
+				'id', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
 				'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
 				continue;
 			}
@@ -1098,26 +1112,27 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 				continue;
 			}
 			if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-				$position = (!empty($val['position']) ? $val['position'] : 0);
+				$position = (empty($val['position']) ? 0 : intVal($val['position']));
 				$arrayofxaxis[$tablealias.'.'.$key.'-year'] = array(
 					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>',
-					'position' => ($position+($count * 100000)).'.1',
+					'position' => ($position + ($count * 100000)).'.1',
 					'table' => $object->table_element
 				);
 				$arrayofxaxis[$tablealias.'.'.$key.'-month'] = array(
 					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>',
-					'position' => ($position+($count * 100000)).'.2',
+					'position' => ($position + ($count * 100000)).'.2',
 					'table' => $object->table_element
 				);
 				$arrayofxaxis[$tablealias.'.'.$key.'-day'] = array(
 					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>',
-					'position' => ($position+($count * 100000)).'.3',
+					'position' => ($position + ($count * 100000)).'.3',
 					'table' => $object->table_element
 				);
 			} else {
+				$position = (empty($val['position']) ? 0 : intVal($val['position']));
 				$arrayofxaxis[$tablealias.'.'.$key] = array(
 					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']),
-					'position' => ($position+($count * 100000)),
+					'position' => ($position + ($count * 100000)),
 					'table' => $object->table_element
 				);
 			}
@@ -1125,7 +1140,7 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 	}
 
 	// Add extrafields to X-Axis
-	if ($object->isextrafieldmanaged) {
+	if (!empty($object->isextrafieldmanaged)) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') {
 				continue;
@@ -1196,9 +1211,9 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 
 	// Add main fields of object
 	foreach ($object->fields as $key => $val) {
-		if (!$val['isameasure']) {
+		if (empty($val['isameasure'])) {
 			if (in_array($key, array(
-				'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
+				'id', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
 				'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
 				continue;
 			}
@@ -1218,26 +1233,27 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 				continue;
 			}
 			if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-				$position = (!empty($val['position']) ? $val['position'] : 0);
+				$position = (empty($val['position']) ? 0 : intVal($val['position']));
 				$arrayofgroupby[$tablealias.'.'.$key.'-year'] = array(
 					'label' => img_picto('', $object->picto,
-					'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>', 'position' => ($position+($count * 100000)).'.1',
+					'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>', 'position' => ($position + ($count * 100000)).'.1',
 					'table' => $object->table_element
 				);
 				$arrayofgroupby[$tablealias.'.'.$key.'-month'] = array(
 					'label' => img_picto('', $object->picto,
-					'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>', 'position' => ($position+($count * 100000)).'.2',
+					'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>', 'position' => ($position + ($count * 100000)).'.2',
 					'table' => $object->table_element
 				);
 				$arrayofgroupby[$tablealias.'.'.$key.'-day'] = array(
 					'label' => img_picto('', $object->picto,
-					'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>', 'position' => ($position+($count * 100000)).'.3',
+					'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>', 'position' => ($position + ($count * 100000)).'.3',
 					'table' => $object->table_element
 				);
 			} else {
+				$position = (empty($val['position']) ? 0 : intVal($val['position']));
 				$arrayofgroupby[$tablealias.'.'.$key] = array(
 					'label' => img_picto('', $object->picto,
-					'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']), 'position' => ($position+($count * 100000)),
+					'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']), 'position' => ($position + ($count * 100000)),
 					'table' => $object->table_element
 				);
 			}
@@ -1245,7 +1261,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 	}
 
 	// Add extrafields to Group by
-	if ($object->isextrafieldmanaged) {
+	if (!empty($object->isextrafieldmanaged)) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') {
 				continue;

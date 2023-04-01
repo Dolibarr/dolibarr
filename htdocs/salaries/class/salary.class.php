@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2011-2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2011-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2021       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,8 +56,9 @@ class Salary extends CommonObject
 
 	public $datep;
 	public $datev;
-	public $amount;
 
+	public $salary;
+	public $amount;
 	/**
 	 * @var int ID
 	 */
@@ -79,6 +80,17 @@ class Salary extends CommonObject
 	public $fk_bank;
 
 	/**
+	 * @var int
+	 * @see $accountid
+	 */
+	public $fk_account;
+
+	/**
+	 * @var int
+	 */
+	public $accountid;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_user_author;
@@ -93,6 +105,10 @@ class Salary extends CommonObject
 	 */
 	public $user;
 
+	/**
+	 * 1 if salary paid COMPLETELY, 0 otherwise (do not use it anymore, use statut and close_code)
+	 */
+	public $paye;
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
@@ -217,8 +233,6 @@ class Salary extends CommonObject
 		$sql .= " s.fk_user_author,";
 		$sql .= " s.fk_user_modif,";
 		$sql .= " s.fk_account";
-		/*$sql .= " b.fk_type,";
-		$sql .= " b.rappro";*/
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
@@ -230,28 +244,27 @@ class Salary extends CommonObject
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id = $obj->rowid;
+				$this->id               = $obj->rowid;
 				$this->ref				= $obj->rowid;
 				$this->tms				= $this->db->jdate($obj->tms);
-				$this->fk_user = $obj->fk_user;
+				$this->fk_user          = $obj->fk_user;
 				$this->datep			= $this->db->jdate($obj->datep);
 				$this->datev			= $this->db->jdate($obj->datev);
-				$this->amount = $obj->amount;
-				$this->fk_project = $obj->fk_project;
-				$this->type_payment = $obj->fk_typepayment;
+				$this->amount           = $obj->amount;
+				$this->fk_project       = $obj->fk_project;
+				$this->type_payment     = $obj->fk_typepayment;
 				$this->label			= $obj->label;
 				$this->datesp			= $this->db->jdate($obj->datesp);
 				$this->dateep			= $this->db->jdate($obj->dateep);
 				$this->note				= $obj->note;
 				$this->paye 			= $obj->paye;
-				$this->fk_bank = $obj->fk_bank;
-				$this->fk_user_author = $obj->fk_user_author;
-				$this->fk_user_modif = $obj->fk_user_modif;
-				$this->fk_account = $this->accountid = $obj->fk_account;
-				$this->fk_type = $obj->fk_type;
-				$this->rappro = $obj->rappro;
+				$this->fk_bank          = $obj->fk_bank;
+				$this->fk_user_author   = $obj->fk_user_author;
+				$this->fk_user_modif    = $obj->fk_user_modif;
+				$this->fk_account = $obj->fk_account;
+				$this->accountid = $obj->fk_account;
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 			}
@@ -371,12 +384,12 @@ class Salary extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}
-		/* if (!empty($conf->banque->enabled) && (empty($this->accountid) || $this->accountid <= 0))
+		/* if (isModEnabled("banque") && (empty($this->accountid) || $this->accountid <= 0))
 		{
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
 			return -6;
 		}
-		if (!empty($conf->banque->enabled) && (empty($this->type_payment) || $this->type_payment <= 0))
+		if (isModEnabled("banque") && (empty($this->type_payment) || $this->type_payment <= 0))
 		{
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -7;
@@ -478,6 +491,25 @@ class Salary extends CommonObject
 		}
 	}
 
+	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+
+		$langs->loadLangs(['salaries']);
+
+		$datas = [];
+		$option = $params['option'] ?? '';
+		$datas['picto'] = '<u>'.$langs->trans("Salary").'</u>';
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+
+		return $datas;
+	}
 
 	/**
 	 *	Send name clicable (with possibly the picto)
@@ -498,27 +530,32 @@ class Salary extends CommonObject
 		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = " data-params='".json_encode($params)."'";
+			// $label = $langs->trans('Loading');
+		}
 
-		$label = '<u>'.$langs->trans("Salary").'</u>';
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		if ($this->label) {
-			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
-		}
-		if ($this->datesp && $this->dateep) {
-			$label .= '<br><b>'.$langs->trans('Period').':</b> '.dol_print_date($this->datesp, 'day').' - '.dol_print_date($this->dateep, 'day');
-		}
-		if (isset($this->amount)) {
-			$label .= '<br><b>'.$langs->trans('Amount').':</b> '.price($this->amount);
-		}
+		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/salaries/card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkclose = '';
@@ -528,23 +565,22 @@ class Salary extends CommonObject
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-			 $hookmanager->initHooks(array('myobjectdao'));
-			 $parameters=array('id'=>$this->id);
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			 */
-		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= $this->ref;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright pictofixedwidth"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.' pictofixedwidth"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
@@ -596,7 +632,7 @@ class Salary extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT ps.rowid, ps.datec, ps.tms, ps.fk_user_author, ps.fk_user_modif';
+		$sql = 'SELECT ps.rowid, ps.datec, ps.tms as datem, ps.fk_user_author, ps.fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'salary as ps';
 		$sql .= ' WHERE ps.rowid = '.((int) $id);
 
@@ -607,19 +643,11 @@ class Salary extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
 
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->tms);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 			$this->db->free($result);
 		} else {
@@ -713,5 +741,44 @@ class Salary extends CommonObject
 		if ($status == 1) $statusType = 'status6';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if (property_exists($this, 'fk_user')) {
+			$return .= ' | <span class="info-box-label">'.$this->fk_user.'</span>';
+		}
+		if (property_exists($this, 'type_payment')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("PaymentMode").'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
+		}
+		if (property_exists($this, 'amount')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
+		}
+		if (method_exists($this, 'LibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

@@ -18,10 +18,6 @@
 	/* font-size: <?php echo $topMenuFontSize; ?>; */
 }
 
-.fa-15x {
-	font-size: 1.5em;
-}
-
 div.mainmenu.menu {
 	background-image: none;
 }

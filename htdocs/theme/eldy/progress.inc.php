@@ -195,3 +195,7 @@ body[class*="colorblind-"] .progress-bar-red, body[class*="colorblind-"] .progre
 .progress-bar-consumed {
 	background-color: rgb(0, 0, 0, 0.15);
 }
+.progress-bar-consumed-late {
+	background-color: <?php echo colorAgressiveness($badgeDanger, -95, +70) ?>;
+}
+

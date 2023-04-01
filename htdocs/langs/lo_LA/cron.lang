@@ -26,7 +26,7 @@ CronCommand=ຄໍາສັ່ງ
 CronList=ວຽກທີ່ວາງແຜນໄວ້
 CronDelete=ລຶບວຽກທີ່ ກຳ ນົດເວລາໄວ້
 CronConfirmDelete=ເຈົ້າແນ່ໃຈບໍ່ວ່າເຈົ້າຕ້ອງການລຶບວຽກທີ່ ກຳ ນົດເວລາໄວ້ເຫຼົ່ານີ້?
-CronExecute=ເປີດວຽກທີ່ໄດ້ ກຳ ນົດໄວ້
+CronExecute=Launch now
 CronConfirmExecute=ເຈົ້າແນ່ໃຈບໍວ່າເຈົ້າຕ້ອງການປະຕິບັດວຽກທີ່ກໍານົດເວລາເຫຼົ່ານີ້ດຽວນີ້?
 CronInfo=ໂມດູນວຽກທີ່ ກຳ ນົດເວລາອະນຸຍາດໃຫ້ຈັດຕາຕະລາງວຽກເພື່ອປະຕິບັດພວກມັນໂດຍອັດຕະໂນມັດ. ວຽກຍັງສາມາດເລີ່ມດ້ວຍຕົນເອງໄດ້.
 CronTask=ວຽກ
@@ -58,7 +58,7 @@ CronNote=ຄໍາເຫັນ
 CronFieldMandatory=ຊ່ອງຂໍ້ມູນ %s ແມ່ນເປັນຂໍ້ບັງຄັບ
 CronErrEndDateStartDt=ວັນທີສິ້ນສຸດບໍ່ສາມາດແມ່ນກ່ອນວັນທີເລີ່ມຕົ້ນໄດ້
 StatusAtInstall=ສະຖານະການຕິດຕັ້ງໂມດູນ
-CronStatusActiveBtn=ຕາຕະລາງ
+CronStatusActiveBtn=Enable scheduling
 CronStatusInactiveBtn=ປິດການນຳໃຊ້
 CronTaskInactive=ວຽກນີ້ຖືກປິດການ ນຳ ໃຊ້ (ບໍ່ໄດ້ ກຳ ນົດເວລາ)
 CronId=ໄອດີ
@@ -82,10 +82,19 @@ UseMenuModuleToolsToAddCronJobs=ໄປທີ່ເມນູ "<a href="%s"> Home 
 JobDisabled=ປິດການໃຊ້ວຽກແລ້ວ
 MakeLocalDatabaseDumpShort=ການສໍາຮອງຖານຂໍ້ມູນທ້ອງຖິ່ນ
 MakeLocalDatabaseDump=ສ້າງການຖິ້ມຖານຂໍ້ມູນທ້ອງຖິ່ນ. ພາລາມິເຕີແມ່ນ: ການບີບອັດ ('gz' ຫຼື 'bz' ຫຼື 'ບໍ່ມີ'), ປະເພດການ ສຳ ຮອງຂໍ້ມູນ ('mysql', 'pgsql', 'auto'), 1, 'auto' ຫຼືຊື່ໄຟລ to ທີ່ຈະສ້າງ, ຈຳ ນວນຂອງໄຟລ backup ສຳ ຮອງເພື່ອຮັກສາ.
+MakeSendLocalDatabaseDumpShort=Send local database backup
+MakeSendLocalDatabaseDump=Send local database backup by email. Parameters are: to, from, subject, message, filename (Name of file sent), filter ('sql' for backup of database only)
+BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
+CleanUnfinishedCronjobShort=Clean unfinished cronjob
+CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
 WarningCronDelayed=ຄວາມເອົາໃຈໃສ່, ເພື່ອຈຸດປະສົງການປະຕິບັດ, ອັນໃດກໍ່ຕາມແມ່ນວັນຕໍ່ໄປຂອງການປະຕິບັດວຽກທີ່ເປີດໃຊ້ງານ, ວຽກຂອງເຈົ້າອາດຈະຖືກຊັກຊ້າເຖິງສູງສຸດ %s ຊົ່ວໂມງ, ກ່ອນຈະຖືກດໍາເນີນການ.
 DATAPOLICYJob=ຕົວເຮັດຄວາມສະອາດຂໍ້ມູນແລະຕົວລະບຸຕົວຕົນ
 JobXMustBeEnabled=ຕ້ອງເປີດການ ນຳ ໃຊ້ວຽກ %s
+EmailIfError=Email for warning on error
+ErrorInBatch=Error when running the job %s
+
 # Cron Boxes
 LastExecutedScheduledJob=ວຽກປະຕິບັດທີ່ ກຳ ນົດໄວ້ເທື່ອສຸດທ້າຍ
 NextScheduledJobExecute=ວຽກທີ່ໄດ້ວາງແຜນຕໍ່ໄປເພື່ອປະຕິບັດ
 NumberScheduledJobError=ຈຳ ນວນຂອງການນັດjobsາຍວຽກຜິດພາດ
+NumberScheduledJobNeverFinished=Number of scheduled jobs never finished

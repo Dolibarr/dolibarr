@@ -26,10 +26,11 @@
  *					  /externalsite/frames.php?keyforcontent=EXTERNAL_SITE_URL_abc to show URL defined into $conf->global->EXTERNAL_SITE_URL_abc
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 // Load translation files required by the page
-$langs->load("externalsite");
+$langs->load("other");
 
 
 $mainmenu = GETPOST('mainmenu', "aZ09");

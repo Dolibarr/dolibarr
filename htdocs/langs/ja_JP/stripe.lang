@@ -1,36 +1,36 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe モジュールの設定
-StripeDesc=<a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> Stripe</a>を介してクレジット/デビットカードで支払うためのオンライン支払いページを顧客に提供する。これを使用して、顧客が臨時の支払いや、特定のDolibarrオブジェクト（請求書、注文など）に関連する支払いの実行ができるようになる。
+StripeDesc=<a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> Stripe</a>を介してクレジット/デビットカードで支払うためのオンライン支払ページを顧客に提供する。これを使用して、顧客が臨時の支払や、特定のDolibarrオブジェクト（請求書、注文など）に関連する支払の実行ができるようになる。
 StripeOrCBDoPayment=クレジットカードまたはStripeで支払う
-FollowingUrlAreAvailableToMakePayments=以下のURLはDolibarrオブジェクト上で支払いをするために顧客にページを提供するために利用可能 
-PaymentForm=支払い形態
+FollowingUrlAreAvailableToMakePayments=以下のURLはDolibarrオブジェクト上で支払をするために顧客にページを提供するために利用可能 
+PaymentForm=支払形態
 WelcomeOnPaymentPage=オンライン決済サービスへようこそ
 ThisScreenAllowsYouToPay=この画面では、%sにオンライン決済を行うことができる。
-ThisIsInformationOnPayment=これは、実行する支払いに関する情報。
+ThisIsInformationOnPayment=これは、実行する支払に関する情報。
 ToComplete=完了する
 YourEMail=入金確定を受信する電子メール
-STRIPE_PAYONLINE_SENDEMAIL=支払い試行後の電子メール通知(成功または失敗)
+STRIPE_PAYONLINE_SENDEMAIL=支払試行後の電子メール通知(成功または失敗)
 Creditor=債権者
-PaymentCode=支払いコード
+PaymentCode=支払コード
 StripeDoPayment=Stripeで支払う
 YouWillBeRedirectedOnStripe=クレジットカード情報を入力するために、セキュリティで保護されたStripeページにリダイレクトされる
 Continue=次の
-ToOfferALinkForOnlinePayment=%s支払いのURL
-ToOfferALinkForOnlinePaymentOnOrder=受注の%sオンライン支払いページを提供するURL
-ToOfferALinkForOnlinePaymentOnInvoice=顧客の請求書に%sオンライン支払いページを提供するためのURL
-ToOfferALinkForOnlinePaymentOnContractLine=契約ラインの%sオンライン支払いページを提供するURL
-ToOfferALinkForOnlinePaymentOnFreeAmount=既存のオブジェクトのない任意の金額の%sオンライン支払いページを提供するURL
-ToOfferALinkForOnlinePaymentOnMemberSubscription=メンバーサブスクリプションの%sオンライン支払いページを提供するURL
-ToOfferALinkForOnlinePaymentOnDonation=寄付の支払いのために%sオンライン支払いページを提供するURL
-YouCanAddTagOnUrl=また、URLパラメーター<b>&tag=<i>value</i></b>をこれらのURLのいずれかに追加して(オブジェクトにリンクされていない支払いにのみ必須)、独自の支払いコメントタグを追加することもできる。 <br>既存のオブジェクトがない支払いのURLの場合、パラメーター<strong>&noidempotency=1</strong>を追加して、同じタグを持つ同じリンクを複数回使用できるようにすることもできる(一部の支払いモードでは、このパラメータがないと、異なるリンクごとに支払いが1に制限される場合がある)
-SetupStripeToHavePaymentCreatedAutomatically=Stripeによって検証されたときに支払いが自動的に作成されるように、URL <b> %s</b>を使用してStripeを設定する。
+ToOfferALinkForOnlinePayment=%s支払のURL
+ToOfferALinkForOnlinePaymentOnOrder=受注の%sオンライン支払ページを提供するURL
+ToOfferALinkForOnlinePaymentOnInvoice=顧客の請求書に%sオンライン支払ページを提供するためのURL
+ToOfferALinkForOnlinePaymentOnContractLine=契約ラインの%sオンライン支払ページを提供するURL
+ToOfferALinkForOnlinePaymentOnFreeAmount=既存のオブジェクトのない任意の金額の%sオンライン支払ページを提供するURL
+ToOfferALinkForOnlinePaymentOnMemberSubscription=構成員サブスクリプションの%sオンライン支払ページを提供するURL
+ToOfferALinkForOnlinePaymentOnDonation=寄付の支払のために%sオンライン支払ページを提供するURL
+YouCanAddTagOnUrl=また、URLパラメーター<b>&tag=<i>value</i></b>をこれらのURLのいずれかに追加して(オブジェクトにリンクされていない支払にのみ必須)、独自の支払コメントタグを追加することもできる。 <br>既存のオブジェクトがない支払のURLの場合、パラメーター<strong>&noidempotency=1</strong>を追加して、同じタグを持つ同じリンクを複数回使用できるようにすることもできる(一部の支払モードでは、このパラメータがないと、異なるリンクごとに支払が1に制限される場合がある)
+SetupStripeToHavePaymentCreatedAutomatically=Stripeによって検証済なら支払が自動的に作成されるように、URL <b> %s</b>を使用してStripeを設定する。
 AccountParameter=アカウントのパラメータ
 UsageParameter=使用パラメータ
 InformationToFindParameters=あなたの%sアカウント情報を見つけるのを助ける
-STRIPE_CGI_URL_V2=支払い用のStripe CGIモジュールのURL
-CSSUrlForPaymentForm=支払いフォームのCSSスタイルシートのURL
-NewStripePaymentReceived=新規Stripeの支払いを受け取りました
-NewStripePaymentFailed=新規Stripe支払いが試行されましたが、失敗した
+STRIPE_CGI_URL_V2=支払用のStripe CGIモジュールのURL
+CSSUrlForPaymentForm=支払フォームのCSSスタイルシートのURL
+NewStripePaymentReceived=新規Stripeの支払を受け取りました
+NewStripePaymentFailed=新規Stripe支払が試行されたが、失敗した
 FailedToChargeCard=カードのチャージに失敗した
 STRIPE_TEST_SECRET_KEY=秘密のテストキー
 STRIPE_TEST_PUBLISHABLE_KEY=公開可能なテストキー
@@ -38,19 +38,20 @@ STRIPE_TEST_WEBHOOK_KEY=Webhookテストキー
 STRIPE_LIVE_SECRET_KEY=秘密のライブキー
 STRIPE_LIVE_PUBLISHABLE_KEY=公開可能なライブキー
 STRIPE_LIVE_WEBHOOK_KEY=Webhookライブキー
-ONLINE_PAYMENT_WAREHOUSE=オンライン支払いが行われるときに在庫減少に使用する在庫<br>(TODO請求書のアクションで在庫を減らすオプションが実行され、オンライン支払いがそれ自体で請求書を生成する場合？)
+ONLINE_PAYMENT_WAREHOUSE=オンライン支払が行われるときに在庫減少に使用する在庫<br>(TODO請求書のアクションで在庫を減らすオプションが実行され、オンライン支払がそれ自体で請求書を生成する場合？)
 StripeLiveEnabled=Stripe ライブが有効(それ以外の場合はテスト/サンドボックスモード)
-StripeImportPayment=Stripe 支払いのインポート
-ExampleOfTestCreditCard=テスト用のクレジットカードの例：%s =>有効、%s =>エラーCVC、%s =>期限切れ、%s =>充電に失敗
+StripeImportPayment=Stripe 支払のインポート
+ExampleOfTestCreditCard=SEPA テストのクレジット カードの例: %s => 有効、%s => エラー CVC、%s => 有効期限切れ、%s => 請求失敗
+ExampleOfTestBankAcountForSEPA=口座振替テストの銀行口座 BAN の例: %s
 StripeGateways=Stripe ゲートウェイ
 OAUTH_STRIPE_TEST_ID=Stripe ConnectクライアントID(ca _...)
 OAUTH_STRIPE_LIVE_ID=Stripe ConnectクライアントID(ca _...)
-BankAccountForBankTransfer=資金支払いのための銀行口座
+BankAccountForBankTransfer=資金支払のための銀行口座
 StripeAccount=Stripe アカウント
 StripeChargeList=Stripe 料金のリスト
 StripeTransactionList=Stripeトランザクションのリスト
 StripeCustomerId=Stripe の顧客ID
-StripePaymentModes=Stripe 支払いモード
+StripePaymentModes=Stripe 支払モード
 LocalID=ローカルID
 StripeID=Stripe ID
 NameOnCard=カードの名前
@@ -61,11 +62,17 @@ DeleteACard=カードを削除
 ConfirmDeleteCard=このクレジットカードまたはデビットカードを削除してもよいか？
 CreateCustomerOnStripe=Stripeで顧客を作成する
 CreateCardOnStripe=Stripeでカードを作成する
+CreateBANOnStripe=Stripe で銀行を作成する
 ShowInStripe=Stripe で表示
-StripeUserAccountForActions=一部のStripeイベントの電子メール通知に使用するユーザーアカウント(Stripeペイアウト)
+StripeUserAccountForActions=一部のStripeイベントの電子メール通知に使用するユーザアカウント(Stripeペイアウト)
 StripePayoutList=Stripe ペイアウトのリスト
 ToOfferALinkForTestWebhook=IPNを呼び出すためのStripeWebHookの設定へのリンク(テストモード)
 ToOfferALinkForLiveWebhook=IPNを呼び出すためのStripeWebHookの設定へのリンク(ライブモード)
-PaymentWillBeRecordedForNextPeriod=支払いは次の期間に記録される。
+PaymentWillBeRecordedForNextPeriod=支払は次の期間に記録される。
 ClickHereToTryAgain= <a href="%s">ここをクリックして再試行すること... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=強力な顧客認証ルールにより、カードの作成はStripeバックオフィスから行う必要がある。 Stripeの顧客レコードをオンにするには、ここをクリックすること：%s
+STRIPE_CARD_PRESENT=ストライプ端末のカードプレゼント
+TERMINAL_LOCATION=Stripe 端末の場所 (アドレス)
+RequestDirectDebitWithStripe=Stripe で口座振替をリクエストする
+STRIPE_SEPA_DIRECT_DEBIT=Stripe による口座振替の支払いを有効にする
+

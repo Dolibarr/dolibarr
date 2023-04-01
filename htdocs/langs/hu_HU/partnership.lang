@@ -16,77 +16,81 @@
 #
 # Generic
 #
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+ModulePartnershipName=Partnerség kezelése
+PartnershipDescription=Partnerség modul kezelés
+PartnershipDescriptionLong= Partnerség modul kezelés
+Partnership=Partnerség
+Partnerships=Partnerships
+AddPartnership=Partnerség hozzáadása
+CancelPartnershipForExpiredMembers=Partnerség: A lejárt előfizetéssel rendelkező tagok partnerségének megszüntetése
+PartnershipCheckBacklink=Partnerség: Ellenőrizze a hivatkozási hivatkozást
 
 #
 # Menu
 #
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
+NewPartnership=Új partnerség
+NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
+ListOfPartnerships=A partnerségek listája
 
 #
 # Admin page
 #
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PartnershipSetup=Partnerség beállítása
+PartnershipAbout=A partnerségről
+PartnershipAboutPage=Partnerség az oldalról
+partnershipforthirdpartyormember=A partner státuszát „harmadik félre” vagy „tagra” kell állítani
+PARTNERSHIP_IS_MANAGED_FOR=Partnerség kezelve
+PARTNERSHIP_BACKLINKS_TO_CHECK=Visszamutató hivatkozások az ellenőrzéshez
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb napok a partnerség állapotának lemondása előtt, ha az előfizetés lejárt
+ReferingWebsiteCheck=A webhely hivatkozásának ellenőrzése
+ReferingWebsiteCheckDesc=Engedélyezhet egy funkciót, amellyel ellenőrizheti, hogy partnerei hozzáadtak-e egy visszamutató hivatkozást az Ön webhelyének domainjéhez a saját webhelyükön.
+PublicFormRegistrationPartnerDesc=A Dolibarr nyilvános URL-t/webhelyet tud Önnek biztosítani, amely lehetővé teszi a külső látogatók számára, hogy kérjék a partnerségi programban való részvételt.
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
-DatePartnershipStart=Kezdet dátuma
+DeletePartnership=Partnerség törlése
+PartnershipDedicatedToThisThirdParty=Ennek a harmadik félnek szentelt partnerség
+PartnershipDedicatedToThisMember=Ennek a tagnak szentelt partnerség
+DatePartnershipStart=Kezdő dátum
 DatePartnershipEnd=Befejezés dátuma
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
+ReasonDecline=Elutasítás oka
+ReasonDeclineOrCancel=Elutasítás oka
+PartnershipAlreadyExist=Már létezik partnerség
+ManagePartnership=Partnerség kezelése
+BacklinkNotFoundOnPartnerWebsite=A visszamutató hivatkozás nem található a partner webhelyén
+ConfirmClosePartnershipAsk=Biztosan felmondja ezt a partnerséget?
+PartnershipType=Partnerség típusa
+PartnershipRefApproved=%s partnerség jóváhagyva
+KeywordToCheckInWebsite=Ha ellenőrizni szeretné, hogy egy adott kulcsszó megtalálható-e az egyes partnerek weboldalán, akkor itt adja meg ezt a kulcsszót
+PartnershipDraft=Piszkozat
+PartnershipAccepted=Elfogadva
+PartnershipRefused=Elutasítva
+PartnershipCanceled=Megszakítva
+PartnershipManagedFor=A partnerek
 
 #
 # Template Mail
 #
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
+SendingEmailOnPartnershipWillSoonBeCanceled=A partnerség hamarosan megszűnik
+SendingEmailOnPartnershipRefused=A partnerség elutasítva
+SendingEmailOnPartnershipAccepted=Partnerség elfogadva
+SendingEmailOnPartnershipCanceled=Partnerség törölve
 
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
+YourPartnershipWillSoonBeCanceledTopic=A partnerség hamarosan megszűnik
+YourPartnershipRefusedTopic=A partnerség elutasítva
+YourPartnershipAcceptedTopic=Partnerség elfogadva
+YourPartnershipCanceledTopic=Partnerség törölve
 
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
+YourPartnershipWillSoonBeCanceledContent=Tájékoztatjuk, hogy partnerségét hamarosan megszüntetjük (a visszamutató hivatkozás nem található)
+YourPartnershipRefusedContent=Tájékoztatjuk, hogy partnerségi kérelmét elutasították.
+YourPartnershipAcceptedContent=Tájékoztatjuk, hogy partnerségi kérelmét elfogadtuk.
+YourPartnershipCanceledContent=Tájékoztatjuk, hogy a partnerségét megszüntettük.
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
+CountLastUrlCheckError=Az utolsó URL-ellenőrzés hibáinak száma
+LastCheckBacklink=Az utolsó URL-ellenőrzés dátuma
+ReasonDeclineOrCancel=Elutasítás oka
 
-#
-# Status
-#
-PartnershipDraft=Piszkozat
-PartnershipAccepted=Elfogadott
-PartnershipRefused=Visszautasított
-PartnershipCanceled=Visszavonva
-PartnershipManagedFor=Partners are
+NewPartnershipRequest=Új partnerségi kérelem
+NewPartnershipRequestDesc=Ez az űrlap lehetővé teszi, hogy kérjen részt partnerségi programunkban. Ha segítségre van szüksége az űrlap kitöltéséhez, kérjük, lépjen kapcsolatba e-mailben <b> %s </b> .
+

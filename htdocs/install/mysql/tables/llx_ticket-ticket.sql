@@ -26,7 +26,7 @@ CREATE TABLE llx_ticket
 	fk_user_create	integer,
 	fk_user_assign	integer,
 	subject	varchar(255),
-	message	text,
+	message	mediumtext,
 	fk_statut integer,
 	resolution integer,
 	progress integer DEFAULT 0,				-- progression 0 - 100 or null
@@ -34,12 +34,14 @@ CREATE TABLE llx_ticket
 	type_code varchar(32),
 	category_code varchar(32),
 	severity_code varchar(32),
-	datec datetime,
+	datec datetime,							-- date of creation of record
 	date_read datetime,
 	date_last_msg_sent datetime,
 	date_close datetime,
 	notify_tiers_at_create tinyint,
 	email_msgid varchar(255),				-- if ticket is created by email collector, we store here MSG ID
+	email_date datetime,					-- if ticket is created by email collector, we store here Date of message
+	ip varchar(250),
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     import_key        varchar(14)
 )ENGINE=innodb;

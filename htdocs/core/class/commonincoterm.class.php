@@ -64,7 +64,9 @@ trait CommonIncoterm
 			$result = $this->db->query($sql);
 			if ($result) {
 				$res = $this->db->fetch_object($result);
-				$out .= $res->code;
+				if ($res) {
+					$out .= $res->code;
+				}
 			}
 		}
 
@@ -76,7 +78,7 @@ trait CommonIncoterm
 	/**
 	 *    Return incoterms informations for pdf display
 	 *
-	 *    @return	string		incoterms info
+	 *    @return	string|boolean			Incoterms info or false
 	 */
 	public function getIncotermsForPDF()
 	{
@@ -86,7 +88,11 @@ trait CommonIncoterm
 			$num = $this->db->num_rows($resql);
 			if ($num > 0) {
 				$res = $this->db->fetch_object($resql);
-				return 'Incoterm : '.$res->code.' - '.$this->location_incoterms;
+				if ($res) {
+					return 'Incoterm : '.$res->code.' - '.$this->location_incoterms;
+				} else {
+					return $res;
+				}
 			} else {
 				return '';
 			}

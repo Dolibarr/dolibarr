@@ -73,7 +73,7 @@ class modAgenda extends DolibarrModules
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("companies");
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 
 		// Module parts
 		$this->module_parts = array();
@@ -211,8 +211,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/index.php',
 			'langs'=>'agenda',
 			'position'=>86,
-			'perms'=>'$user->rights->agenda->myactions->read',
-			'enabled'=>'$conf->agenda->enabled',
+			'perms'=>'$user->rights->agenda->myactions->read || $user->rights->resource->read',
+			'enabled'=>'$conf->agenda->enabled || $conf->resource->enabled',
 			'target'=>'',
 			'user'=>2,
 		);
@@ -241,7 +241,7 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/card.php?mainmenu=agenda&amp;leftmenu=agenda&amp;action=create',
 			'langs'=>'commercial',
 			'position'=>101,
-			'perms'=>'($user->rights->agenda->myactions->create||$user->rights->agenda->allactions->create)',
+			'perms'=>'($user->hasRight("agenda", "myactions", "create")||$user->hasRight("agenda", "allactions", "create"))',
 			'enabled'=>'$conf->agenda->enabled',
 			'target'=>'',
 			'user'=>2

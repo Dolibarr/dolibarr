@@ -118,11 +118,10 @@ class ExpenseReports extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -251,8 +250,8 @@ class ExpenseReports extends DolibarrApi
 
 	  $request_data = (object) $request_data;
 
-	  $request_data->desc = checkVal($request_data->desc, 'restricthtml');
-	  $request_data->label = checkVal($request_data->label);
+	  $request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+	  $request_data->label = sanitizeVal($request_data->label);
 
 	  $updateRes = $this->expensereport->addline(
 						$request_data->desc,
@@ -319,8 +318,8 @@ class ExpenseReports extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		$updateRes = $this->expensereport->updateline(
 						$lineid,

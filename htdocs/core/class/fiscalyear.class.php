@@ -415,7 +415,7 @@ class Fiscalyear extends CommonObject
 	public function info($id)
 	{
 		$sql = "SELECT fy.rowid, fy.datec, fy.fk_user_author, fy.fk_user_modif,";
-		$sql .= " fy.tms";
+		$sql .= " fy.tms as datem";
 		$sql .= " FROM ".$this->db->prefix()."accounting_fiscalyear as fy";
 		$sql .= " WHERE fy.rowid = ".((int) $id);
 
@@ -426,18 +426,10 @@ class Fiscalyear extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->tms);
+				$this->date_modification = $this->db->jdate($obj->datem);
 			}
 			$this->db->free($result);
 		} else {

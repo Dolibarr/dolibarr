@@ -100,6 +100,8 @@ class Deplacement extends CommonObject
 
 	public $statuts = array();
 	public $statuts_short = array();
+	public $statuts_logo = array();
+
 
 	/**
 	 * Draft status
@@ -121,12 +123,13 @@ class Deplacement extends CommonObject
 	 *
 	 * @param	DoliDB		$db		Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 
 		$this->statuts_short = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
 		$this->statuts = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
+		$this->statuts_logo = array(0 => 'status0', 1=>'status4', 2 => 'status1', 4 => 'status6', 5 => 'status4', 6 => 'status6', 99 => 'status5');
 	}
 
 	/**
@@ -310,12 +313,14 @@ class Deplacement extends CommonObject
 	/**
 	 *	Delete record
 	 *
-	 *	@param	int		$id		Id of record to delete
+	 *	@param	User	$user		USer that Delete
 	 *	@return	int				<0 if KO, >0 if OK
 	 */
-	public function delete($id)
+	public function delete($user)
 	{
 		$this->db->begin();
+
+		$id = $this->id;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = ".((int) $id);
 
@@ -356,43 +361,12 @@ class Deplacement extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		if ($mode == 0) {
-			return $langs->trans($this->statuts[$status]);
-		} elseif ($mode == 1) {
-			return $langs->trans($this->statuts_short[$status]);
-		} elseif ($mode == 2) {
-			if ($status == 0) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts_short[$status]);
-			} elseif ($status == 1) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts_short[$status]);
-			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts_short[$status]);
-			}
-		} elseif ($mode == 3) {
-			if ($status == 0 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0');
-			} elseif ($status == 1 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
-			} elseif ($status == 2 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
-			}
-		} elseif ($mode == 4) {
-			if ($status == 0 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts[$status]);
-			} elseif ($status == 1 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts[$status]);
-			} elseif ($status == 2 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]);
-			}
-		} elseif ($mode == 5) {
-			if ($status == 0 && !empty($this->statuts_short[$status])) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut0');
-			} elseif ($status == 1 && !empty($this->statuts_short[$status])) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
-			} elseif ($status == 2 && !empty($this->statuts_short[$status])) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
-			}
-		}
+		$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
+		$labelStatusShort = $langs->transnoentitiesnoconv($this->statuts_short[$status]);
+
+		$statusType = $this->statuts_logo[$status];
+
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}
 
 	/**
@@ -469,7 +443,7 @@ class Deplacement extends CommonObject
 	public function info($id)
 	{
 		$sql = 'SELECT c.rowid, c.datec, c.fk_user_author, c.fk_user_modif,';
-		$sql .= ' c.tms';
+		$sql .= ' c.tms as datem';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'deplacement as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 
@@ -480,18 +454,11 @@ class Deplacement extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
+
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->tms);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 			$this->db->free($result);
 		} else {

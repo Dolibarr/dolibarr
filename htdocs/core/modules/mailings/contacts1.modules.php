@@ -38,6 +38,8 @@ class mailing_contacts1 extends MailingTargets
 	public $require_module = array("societe"); // Module mailing actif si modules require_module actifs
 	public $require_admin = 0; // Module mailing actif pour user admin ou non
 
+	public $enabled = 'isModEnabled("societe")';
+
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
@@ -92,13 +94,11 @@ class mailing_contacts1 extends MailingTargets
 	 *	For example if this selector is used to extract 500 different
 	 *	emails from a text file, this function must return 500.
 	 *
-	 *  @param		string	$sql		Requete sql de comptage
-	 *	@return		int
+	 *  @param		string		$sql		Requete sql de comptage
+	 *  @return     int|string      		Nb of recipient, or <0 if error, or '' if NA
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
-		global $conf;
-
 		$sql = "SELECT count(distinct(c.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
@@ -120,7 +120,7 @@ class mailing_contacts1 extends MailingTargets
 	 */
 	public function formFilter()
 	{
-		global $langs;
+		global $conf,$langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("commercial", "companies", "suppliers", "categories"));
@@ -138,7 +138,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " ORDER BY sp.poste";
 		$resql = $this->db->query($sql);
 
-		$s .= '<select id="filter_jobposition_contact" name="filter_jobposition" class="flat" placeholder="'.dol_escape_htmltag($langs->trans("PostOrFunction")).'">';
+		$s .= '<select id="filter_jobposition_contact" name="filter_jobposition" class="flat maxwidth200" placeholder="'.dol_escape_htmltag($langs->trans("PostOrFunction")).'">';
 		$s .= '<option value="-1">'.$langs->trans("PostOrFunction").'</option>';
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -174,7 +174,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " ORDER BY c.label";
 		$resql = $this->db->query($sql);
 
-		$s .= '<select id="filter_category_contact" name="filter_category" class="flat">';
+		$s .= '<select id="filter_category_contact" name="filter_category" class="flat maxwidth200">';
 		$s .= '<option value="-1">'.$langs->trans("ContactCategoriesShort").'</option>';
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -196,7 +196,7 @@ class mailing_contacts1 extends MailingTargets
 		$s .= '<br>';
 
 		// Add prospect of a particular level
-		$s .= '<select id="filter_contact" name="filter" class="flat">';
+		$s .= '<select id="filter_contact" name="filter" class="flat maxwidth200">';
 		$sql = "SELECT code, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 		$sql .= " WHERE active > 0";
@@ -306,10 +306,12 @@ class mailing_contacts1 extends MailingTargets
 		$s .= ajax_combobox("filter_category_supplier_contact");
 
 		// Choose language
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-		$formadmin = new FormAdmin($this->db);
-		$s .= $langs->trans("DefaultLang").': ';
-		$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang', 0, 0, 1, 0, 0, '', 0, 0, 0, null, 1);
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+			$formadmin = new FormAdmin($this->db);
+			$s .= '<span class="opacitymedium">'.$langs->trans("DefaultLang").':</span> ';
+			$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang', 0, null, 1, 0, 0, '', 0, 0, 0, null, 1);
+		}
 
 		return $s;
 	}
@@ -386,6 +388,7 @@ class mailing_contacts1 extends MailingTargets
 		}
 		$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
 		$sql .= " AND sp.email <> ''";
+
 		$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = sp.email) = 0";
 		// Exclude unsubscribed email adresses
 		$sql .= " AND sp.statut = 1";
@@ -406,8 +409,8 @@ class mailing_contacts1 extends MailingTargets
 		}
 
 		// Filter on language
-		if ($filter_lang != '') {
-			$sql .= " AND sp.default_lang = '".$this->db->escape($filter_lang)."'";
+		if (!empty($filter_lang)) {
+			$sql .= " AND sp.default_lang LIKE '".$this->db->escape($filter_lang)."%'";
 		}
 
 		// Filter on nature
@@ -415,7 +418,7 @@ class mailing_contacts1 extends MailingTargets
 
 		//print "xx".$key;
 		if ($key == 'prospects') {
-			$sql .= " AND s.client=2";
+			$sql .= " AND s.client = 2";
 		}
 		foreach ($prospectlevel as $codelevel => $valuelevel) {
 			if ($key == 'prospectslevel'.$codelevel) {
@@ -423,10 +426,10 @@ class mailing_contacts1 extends MailingTargets
 			}
 		}
 		if ($key == 'customers') {
-			$sql .= " AND s.client=1";
+			$sql .= " AND s.client = 1";
 		}
 		if ($key == 'suppliers') {
-			$sql .= " AND s.fournisseur=1";
+			$sql .= " AND s.fournisseur = 1";
 		}
 
 		// Filter on job position
@@ -437,7 +440,6 @@ class mailing_contacts1 extends MailingTargets
 
 		$sql .= " ORDER BY sp.email";
 		// print "wwwwwwx".$sql;
-
 		// Stocke destinataires dans cibles
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -459,7 +461,7 @@ class mailing_contacts1 extends MailingTargets
 						'other' =>
 							($langs->transnoentities("ThirdParty").'='.$obj->companyname).';'.
 							($langs->transnoentities("UserTitle").'='.($obj->civility_id ? $langs->transnoentities("Civility".$obj->civility_id) : '')).';'.
-							($langs->transnoentities("JobPosition").'='.$obj->jobposition),
+							($langs->transnoentities("PostOrFunction").'='.$obj->jobposition),
 						'source_url' => $this->url($obj->id),
 						'source_id' => $obj->id,
 						'source_type' => 'contact'

@@ -26,6 +26,7 @@
  * \brief      List of products or services by popularity
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
@@ -68,6 +69,7 @@ restrictedArea($user, 'produit|service', 0, 'product&product', '', '');
  */
 
 $form = new Form($db);
+$tmpproduct = new Product($db);
 
 $helpurl = '';
 if ($type == '0') {
@@ -124,7 +126,7 @@ $infoprod = array();
 
 
 // Add lines for object
-$sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type as type, SUM(pd.qty) as c";
+$sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type as type, p.tobuy, p.tosell, p.tobatch, p.barcode, SUM(pd.qty) as c";
 $textforqty = 'Qty';
 if ($mode == 'facture') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as pd";
@@ -141,7 +143,10 @@ $sql .= " AND p.rowid = pd.fk_product";
 if ($type !== '') {
 	$sql .= " AND fk_product_type = ".((int) $type);
 }
-$sql .= " GROUP BY p.rowid, p.label, p.ref, p.fk_product_type";
+$sql .= " GROUP BY p.rowid, p.label, p.ref, p.fk_product_type, p.tobuy, p.tosell, p.tobatch, p.barcode";
+
+$num = 0;
+$totalnboflines = 0;
 
 if (!empty($mode) && $mode != '-1') {
 	$result = $db->query($sql);
@@ -160,7 +165,7 @@ if (!empty($mode) && $mode != '-1') {
 		while ($i < $num) {
 			$objp = $db->fetch_object($resql);
 
-			$infoprod[$objp->rowid] = array('type'=>$objp->type, 'ref'=>$objp->ref, 'label'=>$objp->label);
+			$infoprod[$objp->rowid] = array('type'=>$objp->type, 'ref'=>$objp->ref, 'label'=>$objp->label, 'tobuy'=>$objp->tobuy, 'tosell'=>$objp->tobuy, 'tobatch'=>$objp->tobatch, 'barcode'=>$objp->barcode);
 			$infoprod[$objp->rowid]['nbline'] = $objp->c;
 
 			$i++;
@@ -178,7 +183,7 @@ $arrayofmode = array(
 	'commande' => 'Orders',
 	'facture' => 'Facture'
 	);
-$title .= ' '.$form->selectarray('mode', $arrayofmode, $mode, 1);
+$title .= ' '.$form->selectarray('mode', $arrayofmode, $mode, 1, 0, 0, '', 1);
 $title .= ' <input type="submit" class="button small" name="refresh" value="'.$langs->trans("Refresh").'">';
 
 
@@ -209,7 +214,7 @@ print "</tr>\n";
 if ($mode && $mode != '-1') {
 	foreach ($infoprod as $prodid => $vals) {
 		// Multilangs
-		if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
+		if (getDolGlobalInt('MAIN_MULTILANGS')) { // si l'option est active
 			$sql = "SELECT label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 			$sql .= " WHERE fk_product = ".((int) $prodid);
@@ -225,23 +230,29 @@ if ($mode && $mode != '-1') {
 			}
 		}
 
+		$tmpproduct->id = $prodid;
+		$tmpproduct->ref = $vals['ref'];
+		$tmpproduct->label = $vals['label'];
+		$tmpproduct->type = $vals['type'];
+		$tmpproduct->status = $vals['tosell'];
+		$tmpproduct->status_buy = $vals['tobuy'];
+		$tmpproduct->status_batch = $vals['tobatch'];
+		$tmpproduct->barcode = $vals['barcode'];
+
 		print "<tr>";
-		print '<td><a href="'.DOL_URL_ROOT.'/product/stats/card.php?id='.$prodid.'">';
-		if ($vals['type'] == 1) {
-			print img_object($langs->trans("ShowService"), "service");
-		} else {
-			print img_object($langs->trans("ShowProduct"), "product");
-		}
-		print " ";
-		print $vals['ref'].'</a></td>';
 		print '<td>';
-		if ($vals['type'] == 1) {
-			print $langs->trans("Service");
-		} else {
-			print $langs->trans("Product");
-		}
+		print $tmpproduct->getNomUrl(1);
 		print '</td>';
-		print '<td>'.$vals['label'].'</td>';
+		print '<td>';
+		$s = '';
+		if ($vals['type'] == 1) {
+			$s .= img_picto($langs->trans("Service"), 'service', 'class="paddingleftonly paddingrightonly colorgrey"');
+		} else {
+			$s .= img_picto($langs->trans("Product"), 'product', 'class="paddingleftonly paddingrightonly colorgrey"');
+		}
+		print $s;
+		print '</td>';
+		print '<td>'.dol_escape_htmltag($vals['label']).'</td>';
 		print '<td class="right">'.$vals['nbline'].'</td>';
 		print "</tr>\n";
 		$i++;

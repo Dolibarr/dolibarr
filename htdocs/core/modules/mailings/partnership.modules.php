@@ -16,6 +16,8 @@
  *	\brief      Example file to provide a list of recipients for mailing module
  */
 
+
+// Load Dolibarr Environment
 include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 
 
@@ -24,9 +26,10 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
  */
 class mailing_partnership extends MailingTargets
 {
-	public $name = 'PartnershipThirdartiesOrMembers';
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	public $name = 'PartnershipThirdpartiesOrMembers';
 	public $desc = "Thirdparties or members included into a partnership program";
+
 	public $require_admin = 0;
 
 	public $require_module = array(); // This module allows to select by categories must be also enabled if category module is not activated
@@ -41,6 +44,8 @@ class mailing_partnership extends MailingTargets
 	 */
 	public $db;
 
+	public $enabled = 'isModEnabled("partnership")';
+
 
 	/**
 	 *	Constructor
@@ -50,7 +55,7 @@ class mailing_partnership extends MailingTargets
 	public function __construct($db)
 	{
 		global $conf, $langs;
-		$langs->load("companies");
+		$langs->load('companies');
 
 		$this->db = $db;
 	}
@@ -164,8 +169,8 @@ class mailing_partnership extends MailingTargets
 	 *	For example if this selector is used to extract 500 different
 	 *	emails from a text file, this function must return 500.
 	 *
-	 *  @param      string	$sql        Requete sql de comptage
-	 *	@return		int					Nb of recipients
+	 *  @param      string			$sql        Requete sql de comptage
+	 *  @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
@@ -185,8 +190,7 @@ class mailing_partnership extends MailingTargets
 
 		//print $sql;
 
-		// La requete doit retourner un champ "nb" pour etre comprise
-		// par parent::getNbOfRecipients
+		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
 
@@ -217,7 +221,7 @@ class mailing_partnership extends MailingTargets
 			$num = $this->db->num_rows($resql);
 
 			if (empty($conf->partnership->enabled)) {
-				$num = 0; // Force empty list if category module is not enabled
+				$num = 0;   // Force empty list if category module is not enabled
 			}
 
 			if ($num) {
@@ -252,7 +256,7 @@ class mailing_partnership extends MailingTargets
 	 */
 	public function url($id, $sourcetype = 'thirdparty')
 	{
-		if ($sourcetype == 'thirparty') {
+		if ($sourcetype == 'thirdparty') {
 			return '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $id).'">'.img_object('', "societe").'</a>';
 		}
 		if ($sourcetype == 'member') {

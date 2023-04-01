@@ -30,9 +30,13 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 $id = GETPOST('id', 'int');
+
+// Security check
+$result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account');
 
 
 /*

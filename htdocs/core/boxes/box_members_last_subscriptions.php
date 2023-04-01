@@ -67,7 +67,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !(!empty($conf->adherent->enabled) && $user->rights->adherent->lire);
+		$this->hidden = !(isModEnabled('adherent') && $user->rights->adherent->lire);
 	}
 
 	/**

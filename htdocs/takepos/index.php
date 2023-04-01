@@ -18,21 +18,16 @@
  */
 
 /**
- *	\file       htdocs/takepos/index.php
- *	\ingroup    takepos
- *	\brief      Main TakePOS screen
+ *    \file       htdocs/takepos/index.php
+ *    \ingroup    takepos
+ *    \brief      Main TakePOS screen
  */
 
-//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIRESOC'))	define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))	define('NOREQUIRETRAN','1');
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', '1');
-}
+// if (! defined('NOREQUIREUSER')) 		define('NOREQUIREUSER','1'); 		// Not disabled cause need to load personalized language
+// if (! defined('NOREQUIREDB')) 		define('NOREQUIREDB','1'); 			// Not disabled cause need to load personalized language
+// if (! defined('NOREQUIRESOC')) 		define('NOREQUIRESOC','1');
+// if (! defined('NOREQUIRETRAN')) 		define('NOREQUIRETRAN','1');
+
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
@@ -43,14 +38,16 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Load Dolibarr environment
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant or multiple sales
 $action = GETPOST('action', 'aZ09');
@@ -58,7 +55,7 @@ $setterminal = GETPOST('setterminal', 'int');
 $setcurrency = GETPOST('setcurrency', 'aZ09');
 
 if (empty($_SESSION["takeposterminal"])) {
-	if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") {
+	if (getDolGlobalInt('TAKEPOS_NUM_TERMINALS') == 1) {
 		$_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
 	} elseif (!empty($_COOKIE["takeposterminal"])) {
 		$_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
@@ -97,11 +94,11 @@ $MAXCATEG = (empty($conf->global->TAKEPOS_NB_MAXCATEG) ? $maxcategbydefaultforth
 $MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT) ? $maxproductbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXPRODUCT);
 
 /*
-$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
-$soc = new Societe($db);
-if ($invoice->socid > 0) $soc->fetch($invoice->socid);
-else $soc->fetch($conf->global->$constforcompanyid);
-*/
+ $constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
+ $soc = new Societe($db);
+ if ($invoice->socid > 0) $soc->fetch($invoice->socid);
+ else $soc->fetch($conf->global->$constforcompanyid);
+ */
 
 // Security check
 $result = restrictedArea($user, 'takepos', 0, '');
@@ -116,8 +113,13 @@ $form = new Form($db);
 
 $disablejs = 0;
 $disablehead = 0;
-$arrayofjs = array();
-$arrayofcss = array();
+$arrayofjs = array('/takepos/js/jquery.colorbox-min.js'); // TODO It seems we don't need this
+$arrayofcss = array('/takepos/css/pos.css.php', '/takepos/css/colorbox.css');
+
+if (getDolGlobalInt('TAKEPOS_COLOR_THEME') == 1) {
+	$arrayofcss[] =  '/takepos/css/colorful.css';
+}
+
 
 // Title
 $title = 'TakePOS - Dolibarr '.DOL_VERSION;
@@ -130,17 +132,7 @@ $head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
-?>
-<link rel="stylesheet" href="css/pos.css.php">
-<link rel="stylesheet" href="css/colorbox.css" type="text/css" media="screen" />
-<?php
-if (getDolGlobalInt('TAKEPOS_COLOR_THEME') == 1) {
-	print '<link rel="stylesheet" href="css/colorful.css">';
-}
-?>
-<script type="text/javascript" src="js/jquery.colorbox-min.js"></script>	<!-- TODO It seems we don't need this -->
-<script type="text/javascript">
-<?php
+
 $categories = $categorie->get_full_arbo('product', ((getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) ? getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') : 0), 1);
 
 
@@ -172,6 +164,9 @@ $maincategories = dol_sort_array($maincategories, 'label');
 $subcategories = dol_sort_array($subcategories, 'label');
 ?>
 
+<body class="bodytakepos" style="overflow: hidden;">
+
+<script>
 var categories = <?php echo json_encode($maincategories); ?>;
 var subcategories = <?php echo json_encode($subcategories); ?>;
 
@@ -205,6 +200,9 @@ if(localStorage.hasKeyboard) {
 function ClearSearch() {
 	console.log("ClearSearch");
 	$("#search").val('');
+	$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
+	$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
+	$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
 	<?php if ($conf->browser->layout == 'classic') { ?>
 	setFocusOnSearchField();
 	<?php } ?>
@@ -324,7 +322,12 @@ function LoadProducts(position, issubcat) {
 	});
 
 	idata=0; //product data counter
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&category='+currentcat, function(data) {
+	var limit = 0;
+	if (maxproduct >= 1) {
+		limit = maxproduct-1;
+	}
+	// Only show products for sale (tosell=1)
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&category='+currentcat+'&tosell=1&limit='+limit+'&offset=0', function(data) {
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat+" then loop on result to fill image thumbs");
 		console.log(data);
 		while (ishow < maxproduct) {
@@ -344,10 +347,7 @@ function LoadProducts(position, issubcat) {
 				$("#proprice"+ishow).html("");
 				$("#prodiv"+ishow).data("rowid","");
 				$("#prodiv"+ishow).attr("class","wrapper2 divempty");
-				$("#prowatermark"+ishow).hide();
-				ishow++; //Next product to show after print data product
-			}
-			else if ((data[idata]['status']) == "1") {		// Only show products with status=1 (for sell)
+			} else  {
 				<?php
 					$titlestring = "'".dol_escape_js($langs->transnoentities('Ref').': ')."' + data[idata]['ref']";
 					$titlestring .= " + ' - ".dol_escape_js($langs->trans("Barcode").': ')."' + data[idata]['barcode']";
@@ -369,13 +369,16 @@ function LoadProducts(position, issubcat) {
 				?>
 				if (data[parseInt(idata)]['price_formated']) {
 					$("#proprice"+ishow).attr("class", "productprice");
-					$("#proprice"+ishow).html(data[parseInt(idata)]['price_formated']);
+					$("#proprice"+ishow).html(data[parseInt(idata)]['price_ttc_formated']);
 				}
+				console.log("#prodiv"+ishow+".data(rowid)="+data[idata]['id']);
+				console.log($("#prodiv"+ishow));
+
 				$("#prodiv"+ishow).data("rowid", data[idata]['id']);
+				console.log($('#prodiv4').data('rowid'));
 				$("#prodiv"+ishow).data("iscat", 0);
 				$("#prodiv"+ishow).attr("class","wrapper2");
-				$("#prowatermark"+ishow).hide();
-				ishow++; //Next product to show after print data product
+
 				<?php
 				// Add js from hooks
 				$parameters=array();
@@ -384,7 +387,8 @@ function LoadProducts(position, issubcat) {
 				print $hookmanager->resPrint;
 				?>
 			}
-			//console.log("Hide the prowatermark for ishow="+ishow);
+			$("#prowatermark"+ishow).hide();
+			ishow++; //Next product to show after print data product
 			idata++; //Next data everytime
 		}
 	});
@@ -395,7 +399,9 @@ function LoadProducts(position, issubcat) {
 function MoreProducts(moreorless) {
 	console.log("MoreProducts");
 
-	if ($('#search_pagination').val() != '') return Search2('<?php echo $keyCodeForEnter; ?>', moreorless);
+	if ($('#search_pagination').val() != '') {
+		return Search2('<?php echo (isset($keyCodeForEnter) ? $keyCodeForEnter : ''); ?>', moreorless);
+	}
 
 	var maxproduct = <?php echo ($MAXPRODUCT - 2); ?>;
 
@@ -410,15 +416,22 @@ function MoreProducts(moreorless) {
 		if (pageproducts==0) return; //Return if no less pages
 		pageproducts=pageproducts-1;
 	}
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&category='+currentcat, function(data) {
+
+	ishow=0; //product to show counter
+	idata=0; //product data counter
+	var limit = 0;
+	if (maxproduct >= 1) {
+		limit = maxproduct-1;
+	}
+	var offset = <?php echo ($MAXPRODUCT - 2); ?> * pageproducts;
+	// Only show products for sale (tosell=1)
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&category='+currentcat+'&tosell=1&limit='+limit+'&offset='+offset, function(data) {
 		console.log("Call ajax.php (in MoreProducts) to get Products of category "+currentcat);
 
-		if (typeof (data[(maxproduct * pageproducts)]) == "undefined" && moreorless=="more"){ // Return if no more pages
+		if (typeof (data[0]) == "undefined" && moreorless=="more"){ // Return if no more pages
 			pageproducts=pageproducts-1;
 			return;
 		}
-		idata=<?php echo ($MAXPRODUCT - 2); ?> * pageproducts; //product data counter
-		ishow=0; //product to show counter
 
 		while (ishow < maxproduct) {
 			if (typeof (data[idata]) == "undefined") {
@@ -430,10 +443,7 @@ function MoreProducts(moreorless) {
 				$("#proprice"+ishow).html("");
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
-				ishow++; //Next product to show after print data product
-			}
-			else if ((data[idata]['status']) == "1") {
-				//Only show products with status=1 (for sell)
+			} else {
 				$("#prodivdesc"+ishow).show();
 				<?php
 				if (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 1) { ?>
@@ -445,14 +455,14 @@ function MoreProducts(moreorless) {
 				$("#probutton"+ishow).show();
 				if (data[parseInt(idata)]['price_formated']) {
 					$("#proprice"+ishow).attr("class", "productprice");
-					$("#proprice"+ishow).html(data[parseInt(idata)]['price_formated']);
+					$("#proprice"+ishow).html(data[parseInt(idata)]['price_ttc_formated']);
 				}
 				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
 				$("#prodiv"+ishow).data("iscat",0);
-				ishow++; //Next product to show after print data product
 			}
 			$("#prowatermark"+ishow).hide();
+			ishow++; //Next product to show after print data product
 			idata++; //Next data everytime
 		}
 	});
@@ -461,7 +471,7 @@ function MoreProducts(moreorless) {
 }
 
 function ClickProduct(position, qty = 1) {
-	console.log("ClickProduct");
+	console.log("ClickProduct at position"+position);
 	$('#proimg'+position).animate({opacity: '0.5'}, 1);
 	$('#proimg'+position).animate({opacity: '1'}, 100);
 	if ($('#prodiv'+position).data('iscat')==1){
@@ -469,6 +479,7 @@ function ClickProduct(position, qty = 1) {
 		LoadProducts(position, true);
 	}
 	else{
+		console.log($('#prodiv4').data('rowid'));
 		idproduct=$('#prodiv'+position).data('rowid');
 		console.log("Click on product at position "+position+" for idproduct "+idproduct+", qty="+qty);
 		if (idproduct=="") return;
@@ -484,7 +495,7 @@ function ClickProduct(position, qty = 1) {
 function ChangeThirdparty(idcustomer) {
 	 console.log("ChangeThirdparty");
 		// Call page list.php to change customer
-		$("#poslines").load("../societe/list.php?action=change&type=t&contextpage=poslist&idcustomer="+idcustomer+"&place="+place+"", function() {
+		$("#poslines").load("../societe/list.php?action=change&token=<?php echo newToken();?>&type=t&contextpage=poslist&idcustomer="+idcustomer+"&place="+place+"", function() {
 		});
 
 	ClearSearch();
@@ -534,7 +545,7 @@ function Floors() {
 
 function FreeZone() {
 	console.log("Open box to enter a free product");
-	$.colorbox({href:"freezone.php?action=freezone&place="+place, width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("FreeZone"); ?>"});
+	$.colorbox({href:"freezone.php?action=freezone&token=<?php echo newToken(); ?>&place="+place, width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("FreeZone"); ?>"});
 }
 
 function TakeposOrderNotes() {
@@ -556,7 +567,7 @@ function New() {
 
 	console.log("New with place = <?php echo $place; ?>, js place="+place+", invoiceid="+invoiceid);
 
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getInvoice&id='+invoiceid, function(data) {
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getInvoice&token=<?php echo newToken();?>&id='+invoiceid, function(data) {
 		var r;
 
 		if (parseInt(data['paye']) === 1) {
@@ -578,11 +589,14 @@ function New() {
 /**
  * Search products
  *
- * @param   {int}			keyCodeForEnter     Key code for "enter"
- * return   {void}
+ * @param   string			keyCodeForEnter     Key code for "enter" or '' if not
+ * @param   int				moreorless          ??
+ * return   void
  */
 function Search2(keyCodeForEnter, moreorless) {
-	console.log("Search2 Call ajax search to replace products keyCodeForEnter="+keyCodeForEnter);
+	var eventKeyCode = window.event.keyCode;
+
+	console.log("Search2 Call ajax search to replace products keyCodeForEnter="+keyCodeForEnter+", eventKeyCode="+eventKeyCode);
 
 	var search_term  = $('#search').val();
 	var search_start = 0;
@@ -592,27 +606,41 @@ function Search2(keyCodeForEnter, moreorless) {
 		search_start = $('#search_start_'+moreorless).val();
 	}
 
+	console.log("search_term="+search_term);
+
+	if (search_term == '') {
+		$("[id^=prowatermark]").html("");
+		$("[id^=prodesc]").text("");
+		$("[id^=probutton]").text("");
+		$("[id^=probutton]").hide();
+		$("[id^=proprice]").attr("class", "hidden");
+		$("[id^=proprice]").html("");
+		$("[id^=proimg]").attr("src", "genimg/empty.png");
+		$("[id^=prodiv]").data("rowid", "");
+		return;
+	}
+
 	var search = false;
-	var eventKeyCode = window.event.keyCode;
 	if (keyCodeForEnter == '' || eventKeyCode == keyCodeForEnter) {
 		search = true;
 	}
 
 	if (search === true) {
-
-		// temporization time to give time to type
+		// if a timer has been already started (search2_timer is a global js variable), we cancel it now
+		// we click onto another key, we will restart another timer just after
 		if (search2_timer) {
 			clearTimeout(search2_timer);
 		}
 
+		// temporization time to give time to type
 		search2_timer = setTimeout(function(){
-
 			pageproducts = 0;
 			jQuery(".wrapper2 .catwatermark").hide();
 			var nbsearchresults = 0;
-			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term=' + search_term + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
+			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo newToken();?>&term=' + search_term + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
 				for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 					if (typeof (data[i]) == "undefined") {
+						$("#prowatermark" + i).html("");
 						$("#prodesc" + i).text("");
 						$("#probutton" + i).text("");
 						$("#probutton" + i).hide();
@@ -638,7 +666,7 @@ function Search2(keyCodeForEnter, moreorless) {
 					$("#probutton" + i).show();
 					if (data[i]['price_formated']) {
 						$("#proprice" + i).attr("class", "productprice");
-						$("#proprice" + i).html(data[i]['price_formated']);
+						$("#proprice" + i).html(data[i]['price_ttc_formated']);
 					}
 					$("#proimg" + i).attr("title", titlestring);
 					if( undefined !== data[i]['img']) {
@@ -668,8 +696,8 @@ function Search2(keyCodeForEnter, moreorless) {
 						console.log("There is only 1 answer with barcode matching the search, so we change the thirdparty "+data[0]['rowid']);
 						ChangeThirdparty(data[0]['rowid']);
 					}
-					else if ('product' == data[0]['object']) {
-						console.log("There is only 1 answer matching the search, so we add the product in basket, qty="+data[0]['qty']);
+					else if ($('#search').val() == data[0]['barcode'] && 'product' == data[0]['object']) {
+						console.log("There is only 1 answer and we found search on a barcode, so we add the product in basket, qty="+data[0]['qty']);
 						ClickProduct(0, data[0]['qty']);
 					}
 				}
@@ -677,8 +705,8 @@ function Search2(keyCodeForEnter, moreorless) {
 					if (data.length == 0) {
 						$('#search').val('<?php
 						$langs->load('errors');
-						echo dol_escape_js($langs->trans("ErrorRecordNotFound"));
-						?>');
+						echo dol_escape_js($langs->transnoentitiesnoconv("ErrorRecordNotFoundShort"));
+						?> ('+search_term+')');
 						$('#search').select();
 					}
 					else ClearSearch();
@@ -707,8 +735,9 @@ function Search2(keyCodeForEnter, moreorless) {
 
 }
 
+/* Function called on an action into the PAD */
 function Edit(number) {
-	console.log("We click on PAD on number="+number);
+	console.log("We click on PAD on key="+number);
 
 	if (typeof(selectedtext) == "undefined") {
 		return;	// We click on an action on the number pad but there is no line selected
@@ -717,20 +746,19 @@ function Edit(number) {
 	var text=selectedtext+"<br> ";
 
 
-	if (number=='c'){
-		editnumber="";
+	if (number=='c') {
+		editnumber='';
 		Refresh();
-		$("#qty").html("<?php echo $langs->trans("Qty"); ?>");
-		$("#price").html("<?php echo $langs->trans("Price"); ?>");
-		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
+		$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
+		$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
+		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
 		return;
-	}
-	else if (number=='qty'){
-		if (editaction=='qty' && editnumber!=""){
-			$("#poslines").load("invoice.php?action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+	} else if (number=='qty') {
+		if (editaction=='qty' && editnumber != '') {
+			$("#poslines").load("invoice.php?action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
-				$("#qty").html("<?php echo $langs->trans("Qty"); ?>");
+				$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
 			});
 
 			setFocusOnSearchField();
@@ -739,13 +767,12 @@ function Edit(number) {
 		else {
 			editaction="qty";
 		}
-	}
-	else if (number=='p'){
-		if (editaction=='p' && editnumber!=""){
-			$("#poslines").load("invoice.php?action=updateprice&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+	} else if (number=='p') {
+		if (editaction=='p' && editnumber!="") {
+			$("#poslines").load("invoice.php?action=updateprice&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
-				$("#price").html("<?php echo $langs->trans("Price"); ?>");
+				$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
 			});
 
 			ClearSearch();
@@ -754,13 +781,12 @@ function Edit(number) {
 		else {
 			editaction="p";
 		}
-	}
-	else if (number=='r'){
-		if (editaction=='r' && editnumber!=""){
-			$("#poslines").load("invoice.php?action=updatereduction&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+	} else if (number=='r') {
+		if (editaction=='r' && editnumber!="") {
+			$("#poslines").load("invoice.php?action=updatereduction&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
-				$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
+				$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
 			});
 
 			ClearSearch();
@@ -775,21 +801,21 @@ function Edit(number) {
 	}
 	if (editaction=='qty'){
 		text=text+"<?php echo $langs->trans("Modify")." -> ".$langs->trans("Qty").": "; ?>";
-		$("#qty").html("OK");
-		$("#price").html("<?php echo $langs->trans("Price"); ?>");
-		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
+		$("#qty").html("OK").addClass("clicked");
+		$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
+		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
 	}
 	if (editaction=='p'){
 		text=text+"<?php echo $langs->trans("Modify")." -> ".$langs->trans("Price").": "; ?>";
-		$("#qty").html("<?php echo $langs->trans("Qty"); ?>");
-		$("#price").html("OK");
-		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
+		$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
+		$("#price").html("OK").addClass("clicked");
+		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
 	}
 	if (editaction=='r'){
 		text=text+"<?php echo $langs->trans("Modify")." -> ".$langs->trans("ReductionShort").": "; ?>";
-		$("#qty").html("<?php echo $langs->trans("Qty"); ?>");
-		$("#price").html("<?php echo $langs->trans("Price"); ?>");
-		$("#reduction").html("OK");
+		$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
+		$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
+		$("#reduction").html("OK").addClass("clicked");
 	}
 	$('#'+selectedline).find("td:first").html(text+editnumber);
 }
@@ -797,14 +823,14 @@ function Edit(number) {
 
 function TakeposPrintingOrder(){
 	console.log("TakeposPrintingOrder");
-	$("#poslines").load("invoice.php?action=order&place="+place, function() {
+	$("#poslines").load("invoice.php?action=order&token=<?php echo newToken();?>&place="+place, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
 
 function TakeposPrintingTemp(){
 	console.log("TakeposPrintingTemp");
-	$("#poslines").load("invoice.php?action=temp&place="+place, function() {
+	$("#poslines").load("invoice.php?action=temp&token=<?php echo newToken();?>&place="+place, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
@@ -826,11 +852,11 @@ function OpenDrawer(){
 }
 
 function DolibarrOpenDrawer() {
-	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&term=<?php print urlencode($_SESSION["takeposterminal"]); ?>");
+	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&token=<?php echo newToken();?>&term=<?php print urlencode($_SESSION["takeposterminal"]); ?>");
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
-		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=opendrawer&term='.urlencode($_SESSION["takeposterminal"]); ?>",
+		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=opendrawer&token='.newToken().'&term='.urlencode($_SESSION["takeposterminal"]); ?>",
 	});
 }
 
@@ -875,7 +901,7 @@ function ModalBox(ModalID)
 
 function DirectPayment(){
 	console.log("DirectPayment");
-	$("#poslines").load("invoice.php?place="+place+"&action=valid&pay=LIQ", function() {
+	$("#poslines").load("invoice.php?place="+place+"&action=valid&token=<?php echo newToken(); ?>&pay=LIQ", function() {
 	});
 }
 
@@ -891,7 +917,7 @@ function WeighingScale(){
 		url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/scale/index.php',
 	})
 	.done(function( editnumber ) {
-		$("#poslines").load("invoice.php?action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+		$("#poslines").load("invoice.php?&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 			});
 	});
@@ -922,10 +948,68 @@ $( document ).ready(function() {
 		}
 	}
 	?>
+
+	/* For Header Scroll */
+	var elem1 = $("#topnav-left")[0];
+	var elem2 = $("#topnav-right")[0];
+	var checkOverflow = function() {
+		if (scrollBars().horizontal) $("#topnav").addClass("overflow");
+		else  $("#topnav").removeClass("overflow");
+	}
+
+	var scrollBars = function(){
+		var container= $('#topnav')[0];
+		return {
+			vertical:container.scrollHeight > container.clientHeight,
+			horizontal:container.scrollWidth > container.clientWidth
+		}
+	}
+
+	$(window).resize(function(){
+		checkOverflow();
+	});
+
+	   let resizeObserver = new ResizeObserver(() => {
+		   checkOverflow();
+	   });
+		  resizeObserver.observe(elem1);
+	   resizeObserver.observe(elem2);
+	checkOverflow();
+
+	var pressTimer = [];
+	var direction = 1;
+	var step = 200;
+
+	$(".indicator").mousedown(function(){
+		direction = $(this).hasClass("left") ? -1 : 1;
+		scrollTo();
+		pressTimer.push(setInterval(scrollTo, 100));
+	});
+
+	$(".indicator").mouseup(function(){
+		pressTimer.forEach(clearInterval);
+	});
+
+	$("body").mouseup(function(){
+		pressTimer.forEach(clearInterval);
+		console.log("body");
+	});
+
+	function scrollTo(){
+		console.log("here");
+		var pos = $("#topnav").scrollLeft();
+		document.getElementById("topnav").scrollTo({ left: $("#topnav").scrollLeft() + direction * step, behavior: 'smooth' })
+	}
+
+	$("#topnav").scroll(function(){
+		if (($("#topnav").offsetWidth + $("#topnav").scrollLeft >= $("#topnav").scrollWidth)) {
+			console.log("end");
+		}
+	});
+	/* End Header Scroll */
 });
 </script>
 
-<body class="bodytakepos" style="overflow: hidden;">
 <?php
 $keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) > 0 ? getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) : '';
 ?>
@@ -935,25 +1019,20 @@ $keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION
 if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	?>
 	<div class="header">
-		<div class="topnav">
-			<div class="topnav-left">
+		<div id="topnav" class="topnav">
+			<div id="topnav-left" class="topnav-left">
 				<div class="inline-block valignmiddle">
 				<a class="topnav-terminalhour" onclick="ModalBox('ModalTerminal');">
 				<span class="fa fa-cash-register"></span>
 				<span class="hideonsmartphone">
-				<?php echo $langs->trans("Terminal"); ?>
+				<?php echo getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$_SESSION["takeposterminal"], $langs->trans("TerminalName", $_SESSION["takeposterminal"])); ?>
 				</span>
-				<?php echo " ";
-				if ($_SESSION["takeposterminal"] == "") {
-					echo "1";
-				} else {
-					echo $_SESSION["takeposterminal"];
-				}
+				<?php
 				echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "day").'</span>';
 				?>
 				</a>
 				<?php
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled('multicurrency')) {
 					print '<a class="valignmiddle tdoverflowmax100" id="multicurrency" onclick="ModalBox(\'ModalCurrency\');" title=""><span class="fas fa-coins paddingrightonly"></span>';
 					print '<span class="hideonsmartphone">'.$langs->trans("Currency").'</span>';
 					print '</a>';
@@ -967,7 +1046,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				<!-- More info about customer -->
 				<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="moreinfo"></div>
 				<?php
-				if (!empty($conf->stock->enabled)) {
+				if (isModEnabled('stock')) {
 					?>
 				<!-- More info about warehouse -->
 				<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="infowarehouse"></div>
@@ -975,7 +1054,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				}
 				?>
 			</div>
-			<div class="topnav-right">
+			<div id="topnav-right" class="topnav-right">
 				<div class="login_block_other">
 				<input type="text" id="search" name="search" class="input-search-takepos" onkeyup="Search2('<?php echo dol_escape_js($keyCodeForEnter); ?>', null);" placeholder="<?php echo dol_escape_htmltag($langs->trans("Search")); ?>" autofocus>
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
@@ -991,6 +1070,10 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				?>
 				</div>
 			</div>
+			<div class="arrows">
+				<span class="indicator left"><i class="fa fa-arrow-left"></i></span>
+				<span class="indicator right"><i class="fa fa-arrow-right"></i></span>
+			</div>
 		</div>
 	</div>
 	<?php
@@ -1005,11 +1088,11 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		<h3><?php print $langs->trans("TerminalSelect"); ?></h3>
 	</div>
 	<div class="modal-body">
-		<button type="button" class="block" onclick="location.href='index.php?setterminal=1'"><?php print $langs->trans("Terminal"); ?> 1</button>
+		<button type="button" class="block" onclick="location.href='index.php?setterminal=1'"><?php print getDolGlobalString("TAKEPOS_TERMINAL_NAME_1", $langs->trans("TerminalName", 1)); ?></button>
 		<?php
 		$nbloop = getDolGlobalInt('TAKEPOS_NUM_TERMINALS');
 		for ($i = 2; $i <= $nbloop; $i++) {
-			print '<button type="button" class="block" onclick="location.href=\'index.php?setterminal='.$i.'\'">'.$langs->trans("Terminal").' '.$i.'</button>';
+			print '<button type="button" class="block" onclick="location.href=\'index.php?setterminal='.$i.'\'">'.getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i, $langs->trans("TerminalName", $i)).'</button>';
 		}
 		?>
 	</div>
@@ -1017,7 +1100,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 </div>
 
 <!-- Modal multicurrency box -->
-<?php if (!empty($conf->multicurrency->enabled)) { ?>
+<?php if (isModEnabled('multicurrency')) { ?>
 <div id="ModalCurrency" class="modal">
 	<div class="modal-content">
 		<div class="modal-header">
@@ -1117,13 +1200,13 @@ if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
 
 			$constantforkey = "CASHDESK_ID_BANKACCOUNT_" . $paycode . $_SESSION["takeposterminal"];
 			//var_dump($constantforkey.' '.$conf->global->$constantforkey);
-			if ( ! empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) {
+			if ( !empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) {
 				array_push($paiementsModes, $obj);
 			}
 		}
 	}
 
-	if (empty($paiementsModes)) {
+	if (empty($paiementsModes) && isModEnabled("banque")) {
 		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
 		setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", $_SESSION["takeposterminal"]), null, 'errors');
@@ -1311,7 +1394,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 					echo '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em; cursor: pointer;"></span>';
 				} else {
 					if (!getDolGlobalString('TAKEPOS_HIDE_CATEGORY_IMAGES')) {
-						echo '<img class="imgwrapper" height="100%" id="catimg'.$count.'" />';
+						echo '<img class="imgwrapper" id="catimg'.$count.'" />';
 					}
 				}
 				?>
@@ -1335,7 +1418,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 	<?php
 	$count = 0;
 	while ($count < $MAXPRODUCT) {
-			print '<div class="wrapper2" id="prodiv'.$count.'"  ';
+			print '<div class="wrapper2 arrow" id="prodiv'.$count.'"  ';
 		?>
 				<?php if ($count == ($MAXPRODUCT - 2)) {
 					?> onclick="MoreProducts('less');" <?php
@@ -1356,7 +1439,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 							echo '<button type="button" id="probutton'.$count.'" class="productbutton" style="display: none;"></button>';
 						} else {
 							print '<div class="" id="proprice'.$count.'"></div>';
-							print '<img class="imgwrapper" height="100%" title="" id="proimg'.$count.'">';
+							print '<img class="imgwrapper" title="" id="proimg'.$count.'">';
 						}
 					}
 					?>

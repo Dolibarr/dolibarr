@@ -206,7 +206,7 @@ class PrestaShopWebservice
 	 */
 	public function printDebug($title, $content)
 	{
-		echo '<div style="display:table;background:#CCC;font-size:8pt;padding:7px"><h6 style="font-size:9pt;margin:0">'.$title.'</h6><pre>'.htmlentities($content).'</pre></div>';
+		echo '<div style="display:table;background:#CCC;font-size:8pt;padding:7px"><h6 style="font-size:9pt;margin:0">'.dol_escape_htmltag($title).'</h6><pre>'.dol_escape_htmltag($content).'</pre></div>';
 	}
 
 	/**

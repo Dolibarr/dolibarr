@@ -46,7 +46,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 	// Force master entity in transversal mode
 	$entity = $entitytotest;
-	if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 		$entity = 1;
 	}
 
@@ -61,7 +61,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		$langs->loadLangs(array('main', 'other'));
 
 		$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLDAPFunctionsAreDisabledOnThisPHP").' '.$langs->transnoentitiesnoconv("TryAnotherConnectionMode");
-		return;
+		return '';
 	}
 
 	if ($usertotest) {
@@ -77,7 +77,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		$ldapdn = $dolibarr_main_auth_ldap_dn;
 		$ldapadminlogin = $dolibarr_main_auth_ldap_admin_login;
 		$ldapadminpass = $dolibarr_main_auth_ldap_admin_pass;
-		$ldapdebug = (empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false" ? false : true);
+		$ldapdebug = ((empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false") ? false : true);
 
 		if ($ldapdebug) {
 			print "DEBUG: Logging LDAP steps<br>\n";
@@ -94,9 +94,9 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 		if ($ldapdebug) {
 			dol_syslog("functions_ldap::check_user_password_ldap Server:".join(',', $ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType);
-			dol_syslog("functions_ldap::check_user_password_ldap uid/samacountname=".$ldapuserattr.", dn=".$ldapdn.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword);
+			dol_syslog("functions_ldap::check_user_password_ldap uid/samaccountname=".$ldapuserattr.", dn=".$ldapdn.", Admin:".$ldap->searchUser.", Pass:".dol_trunc($ldap->searchPassword, 3));
 			print "DEBUG: Server:".join(',', $ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType."<br>\n";
-			print "DEBUG: uid/samacountname=".$ldapuserattr.", dn=".$ldapdn.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword."<br>\n";
+			print "DEBUG: uid/samaccountname=".$ldapuserattr.", dn=".$ldapdn.", Admin:".$ldap->searchUser.", Pass:".dol_trunc($ldap->searchPassword, 3)."<br>\n";
 		}
 
 		$resultFetchLdapUser = 0;
@@ -122,7 +122,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 						print "DEBUG: User ".$usertotest." must change password<br>\n";
 					}
 					$ldap->unbind();
-					sleep(1);
+					sleep(1); // Anti brut force protection. Must be same delay when user and password are not valid.
 					$langs->load('ldap');
 					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("YouMustChangePassNextLogon", $usertotest, $ldap->domainFQDN);
 					return '';
@@ -228,22 +228,24 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					unset($usertmp);
 				}
 
-				if (!empty($conf->multicompany->enabled)) {	// We must check entity (even if sync is not active)
+				if (isModEnabled('multicompany')) {	// We must check entity (even if sync is not active)
 					global $mc;
 
 					$usertmp = new User($db);
 					$usertmp->fetch('', $login);
-					$ret = $mc->checkRight($usertmp->id, $entitytotest);
-					if ($ret < 0) {
-						dol_syslog("functions_ldap::check_user_password_ldap Authentication KO entity '".$entitytotest."' not allowed for user id '".$usertmp->id."'", LOG_NOTICE);
-						$login = ''; // force authentication failure
+					if (is_object($mc)) {
+						$ret = $mc->checkRight($usertmp->id, $entitytotest);
+						if ($ret < 0) {
+							dol_syslog("functions_ldap::check_user_password_ldap Authentication KO entity '".$entitytotest."' not allowed for user id '".$usertmp->id."'", LOG_NOTICE);
+							$login = ''; // force authentication failure
+						}
+						unset($usertmp);
 					}
-					unset($usertmp);
 				}
 			}
 			if ($result == 1) {
 				dol_syslog("functions_ldap::check_user_password_ldap Authentication KO bad user/password for '".$usertotest."'", LOG_NOTICE);
-				sleep(1);
+				sleep(1); // Anti brut force protection. Must be same delay when user and password are not valid.
 
 				// Load translation files required by the page
 				$langs->loadLangs(array('main', 'other'));
@@ -265,7 +267,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 				$ldap->ldapErrorText = ldap_error($ldap->connection);
 				dol_syslog("functions_ldap::check_user_password_ldap ".$ldap->ldapErrorCode." ".$ldap->ldapErrorText);
 			}
-			sleep(2); // Anti brut force protection
+			sleep(1); // Anti brut force protection. Must be same delay when user and password are not valid.
 
 			// Load translation files required by the page
 			$langs->loadLangs(array('main', 'other', 'errors'));

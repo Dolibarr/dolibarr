@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -42,10 +42,10 @@ if (!empty($conf->categorie->enabled)) {
 $langs->loadLangs(array("companies", "compta", "accountancy", "products"));
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->bind->write)) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -194,7 +194,7 @@ if ($action == 'update') {
 				}
 				if ($result <= 0) {
 					// setEventMessages(null, $accounting->errors, 'errors');
-					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Product").' '.$productid.' '.$langs->trans("NotVentilatedinAccount").' : id='.$accounting_account_id.'<br> <pre>'.$sql.'</pre></span></div>';
+					$msg .= '<div><span class="error">'.$langs->trans("ErrorDB").' : '.$langs->trans("Product").' '.$productid.' '.$langs->trans("NotVentilatedinAccount").' : id='.$accounting_account_id.'<br> <pre>'.$sql.'</pre></span></div>';
 					$ko++;
 				} else {
 					$sql = '';
@@ -203,7 +203,7 @@ if ($action == 'update') {
 						$sql_exists .= " WHERE fk_product = " . ((int) $productid) . " AND entity = " . ((int) $conf->entity);
 						$resql_exists = $db->query($sql_exists);
 						if (!$resql_exists) {
-							$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Product").' '.$productid.' '.$langs->trans("NotVentilatedinAccount").' : id='.$accounting_account_id.'<br> <pre>'.$resql_exists.'</pre></span></div>';
+							$msg .= '<div><span class="error">'.$langs->trans("ErrorDB").' : '.$langs->trans("Product").' '.$productid.' '.$langs->trans("NotVentilatedinAccount").' : id='.$accounting_account_id.'<br> <pre>'.$resql_exists.'</pre></span></div>';
 							$ko++;
 						} else {
 							$nb_exists = $db->num_rows($resql_exists);
@@ -395,8 +395,8 @@ $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	$resql = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
@@ -406,9 +406,9 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog("/accountancy/admin/productaccount.php", LOG_DEBUG);
-$result = $db->query($sql);
-if ($result) {
-	$num = $db->num_rows($result);
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
 	$i = 0;
 
 	$param = '';
@@ -522,7 +522,7 @@ if ($result) {
 
 	// Filter on categories
 	$moreforfilter = '';
-	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+	if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
 		$categoriesProductArr = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', '', 64, 0, 1);
@@ -533,7 +533,7 @@ if ($result) {
 	}
 
 	//Show/hide child products. Hidden by default
-	if (!empty($conf->variants->enabled) && !empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
+	if (isModEnabled('variants') && !empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= '<input type="checkbox" id="search_show_childproducts" name="search_show_childproducts"'.($show_childproducts ? 'checked="checked"' : '').'>';
 		$moreforfilter .= ' <label for="search_show_childproducts">'.$langs->trans('ShowChildProducts').'</label>';
@@ -608,7 +608,7 @@ if ($result) {
 
 	$i = 0;
 	while ($i < min($num, $limit)) {
-		$obj = $db->fetch_object($result);
+		$obj = $db->fetch_object($resql);
 
 		// Ref produit as link
 		$product_static->ref = $obj->ref;
@@ -891,7 +891,7 @@ if ($result) {
 
 	print '</form>';
 
-	$db->free($result);
+	$db->free($resql);
 } else {
 	dol_print_error($db);
 }

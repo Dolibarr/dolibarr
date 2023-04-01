@@ -24,6 +24,7 @@
  *      \brief      Liste des contacts
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 // Load translation files required by the page

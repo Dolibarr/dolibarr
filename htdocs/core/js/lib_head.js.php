@@ -637,6 +637,18 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 					url = url + "?dol_resetcache=1";
 				}
 			}
+			var page_y = $(document).scrollTop();
+			url = url.replace(/page_y=\d+/g, '');
+			if (page_y > 0) {
+				if (url.indexOf('?') > -1) {
+					url = url + "&page_y="+page_y;
+				} else {
+					url = url + "?page_y="+page_y;
+				}
+			}
+			url = url.replace(/&&+/, '&');
+			console.log("url ro redirect = "+url);
+
 			window.location.href = url;
 			//location.reload();
 			return false;
@@ -718,6 +730,18 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 					url = url + "?dol_resetcache=1";
 				}
 			}
+			var page_y = $(document).scrollTop();
+			url = url.replace(/page_y=\d+/g, '');
+			if (page_y > 0) {
+				if (url.indexOf('?') > -1) {
+					url = url + "&page_y="+page_y;
+				} else {
+					url = url + "?page_y="+page_y;
+				}
+			}
+			url = url.replace(/&&+/, '&');
+			console.log("url ro redirect = "+url);
+
 			window.location.href = url;
 			//location.reload();
 			return false;

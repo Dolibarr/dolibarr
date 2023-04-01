@@ -61,12 +61,47 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
  */
 abstract class CommonStickerGenerator
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
 	public $code; // Code of format
 
 	/**
-	 * @var array format Array with informations
+	 * @var int page_largeur
+	 */
+	public $page_largeur;
+
+	/**
+	 * @var int page_hauteur
+	 */
+	public $page_hauteur;
+
+	/**
+	 * @var array format
 	 */
 	public $format;
+
+	/**
+	 * @var int marge_gauche
+	 */
+	public $marge_gauche;
+
+	/**
+	 * @var int marge_droite
+	 */
+	public $marge_droite;
+
+	/**
+	 * @var int marge_haute
+	 */
+	public $marge_haute;
+
+	/**
+	 * @var int marge_basse
+	 */
+	public $marge_basse;
 
 	// phpcs:disable PEAR.NamingConventions.ValidVariableName.PublicUnderscore
 	// protected
@@ -100,6 +135,8 @@ abstract class CommonStickerGenerator
 	protected $_COUNTY = 1;
 	protected $_First = 1;
 	public $Tformat;
+
+
 	// phpcs:enable
 	/**
 	 *	Constructor

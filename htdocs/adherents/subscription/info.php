@@ -22,6 +22,7 @@
  *      \brief      Page with information of subscriptions of a member
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -31,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "members", "bills", "users"));
 
-if (empty($user->rights->adherent->lire)) {
+if (!$user->hasRight('adherent', 'lire')) {
 	accessforbidden();
 }
 

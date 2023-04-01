@@ -88,7 +88,7 @@ class ActionsCardCompany extends ActionsCardCommon
 	{
 		// phpcs:enable
 		global $conf, $langs, $user, $mysoc;
-		global $form, $formadmin, $formcompany;
+		global $form, $formcompany;
 
 		$ret = $this->getObject($id, $ref);
 

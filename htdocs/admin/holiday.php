@@ -24,6 +24,7 @@
  *	\brief      Setup page of module Contracts
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -57,9 +58,9 @@ if (empty($conf->global->HOLIDAY_ADDON)) {
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconstholiday', 'alpha');
+	$maskconst = GETPOST('maskconstholiday', 'aZ09');
 	$maskvalue = GETPOST('maskholiday', 'alpha');
-	if ($maskconst) {
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -141,7 +142,7 @@ if ($action == 'updateMask') {
 	$draft = GETPOST('HOLIDAY_DRAFT_WATERMARK', 'alpha');
 	$res2 = dolibarr_set_const($db, "HOLIDAY_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
-	if (!$res1 > 0 || !$res2 > 0) {
+	if (!($res1 > 0) || !($res2 > 0)) {
 		$error++;
 	}
 
@@ -442,23 +443,23 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
-/*var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY);
-var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY);
-var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY);
-var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY);
-*/
+//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY);
+//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY);
+//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY);
+//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY);
+
 if (!isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY)) {
 	$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY = 1;
 }
 if (!isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY)) {
 	$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY = 1;
 }
-/*
-var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY);
-var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY);
-var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY);
-var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY);
-*/
+
+//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY);
+//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY);
+//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY);
+//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY);
+
 
 // Set working days
 print '<tr class="oddeven">';
@@ -538,10 +539,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	print '<br>';
 	$variablename = 'HOLIDAY_FREE_TEXT';
 	if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
-		print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+		print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 	} else {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
+		$doleditor = new DolEditor($variablename, getDolGlobalString($variablename), '', 80, 'dolibarr_notes');
 		print $doleditor->Create();
 	}
 	print '</td></tr>'."\n";
@@ -551,7 +552,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("WatermarkOnDraftHolidayCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 	print '</td><td>';
-	print '<input class="flat minwidth200" type="text" name="HOLIDAY_DRAFT_WATERMARK" value="'.$conf->global->HOLIDAY_DRAFT_WATERMARK.'">';
+	print '<input class="flat minwidth200" type="text" name="HOLIDAY_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('HOLIDAY_DRAFT_WATERMARK')).'">';
 	print '</td></tr>'."\n";
 }
 

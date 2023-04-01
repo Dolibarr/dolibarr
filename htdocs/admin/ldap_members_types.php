@@ -26,6 +26,7 @@
  *		\brief      Page to setup LDAP synchronization for members types
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -105,10 +106,10 @@ if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
-print dol_get_fiche_head($head, 'memberstypes', $langs->trans("LDAPSetup"), -1);
+print dol_get_fiche_head($head, 'memberstypes', '', -1);
 
 
-print $langs->trans("LDAPDescMembersTypes").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("LDAPDescMembersTypes").'</span><br>';
 print '<br>';
 
 

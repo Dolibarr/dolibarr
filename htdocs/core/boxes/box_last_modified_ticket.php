@@ -84,8 +84,8 @@ class box_last_modified_ticket extends ModeleBoxes
 			'text' => $langs->trans("BoxLastModifiedTicketContent"),
 		);
 
-		if ($user->rights->ticket->read) {
-			$sql = "SELECT t.rowid as id, t.ref, t.track_id, t.fk_soc, t.fk_user_create, t.fk_user_assign, t.subject, t.message, t.fk_statut, t.type_code, t.category_code, t.severity_code, t.datec, t.date_read, t.date_close, t.origin_email ";
+		if ($user->hasRight('ticket', 'read')) {
+			$sql = "SELECT t.rowid as id, t.ref, t.track_id, t.fk_soc, t.fk_user_create, t.fk_user_assign, t.subject, t.message, t.fk_statut, t.type_code, t.category_code, t.severity_code, t.datec, t.tms as datem, t.date_read, t.date_close, t.origin_email ";
 			$sql .= ", type.label as type_label, category.label as category_label, severity.label as severity_label";
 			$sql .= ", s.nom as company_name, s.email as socemail, s.client, s.fournisseur";
 			$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
@@ -113,6 +113,7 @@ class box_last_modified_ticket extends ModeleBoxes
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($resql);
 					$datec = $this->db->jdate($objp->datec);
+					$datem = $this->db->jdate($objp->datem);
 
 					$ticket = new Ticket($this->db);
 					$ticket->id = $objp->id;
@@ -120,6 +121,10 @@ class box_last_modified_ticket extends ModeleBoxes
 					$ticket->ref = $objp->ref;
 					$ticket->fk_statut = $objp->fk_statut;
 					$ticket->subject = $objp->subject;
+					$ticket->date_creation = $datec;
+					$ticket->date_modification = $datem;
+					$ticket->fk_statut = $objp->fk_statut;
+					$ticket->fk_statut = $objp->fk_statut;
 					if ($objp->fk_soc > 0) {
 						$thirdparty = new Societe($this->db);
 						$thirdparty->id = $objp->fk_soc;
@@ -161,8 +166,8 @@ class box_last_modified_ticket extends ModeleBoxes
 
 					// Date creation
 					$this->info_box_contents[$i][$r] = array(
-						'td' => 'class="right"',
-						'text' => dol_print_date($datec, 'dayhour', 'tzuserrel')
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
+						'text' => dol_print_date($datem, 'dayhour', 'tzuserrel')
 					);
 					$r++;
 
@@ -177,15 +182,15 @@ class box_last_modified_ticket extends ModeleBoxes
 				}
 
 				if ($num == 0) {
-					$this->info_box_contents[$i][0] = array('td' => 'class="center"', 'text'=>$langs->trans("BoxLastModifiedTicketNoRecordedTickets"));
+					$this->info_box_contents[$i][0] = array('td' => '', 'text'=>'<span class="opacitymedium">'.$langs->trans("BoxLastModifiedTicketNoRecordedTickets").'</span>');
 				}
 			} else {
 				dol_print_error($this->db);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed"),
+				'td' => '',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>',
 			);
 		}
 	}

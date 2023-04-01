@@ -30,7 +30,7 @@ ChartOfSubaccounts=Plan des comptes auxiliaires
 ChartOfIndividualAccountsOfSubsidiaryLedger=Plan des comptes auxiliaires
 CurrentDedicatedAccountingAccount=Compte dédié courant
 AssignDedicatedAccountingAccount=Nouveau compte à assigner
-InvoiceLabel=Description de la facture
+InvoiceLabel=Libellé de la facture
 OverviewOfAmountOfLinesNotBound=Vue des lignes non liées à un compte comptable
 OverviewOfAmountOfLinesBound=Vue des lignes déjà liées à un compte comptable
 OtherInfo=Autre information
@@ -48,8 +48,9 @@ CountriesNotInEEC=Pays hors CEE
 CountriesInEECExceptMe=Pays de la CEE sauf %s
 CountriesExceptMe=Tous les pays sauf %s
 AccountantFiles=Exporter les documents sources
-ExportAccountingSourceDocHelp=Avec cet outil, vous pouvez exporter les événements sources (liste en CSV et PDF) qui servent à générer votre comptabilité.
+ExportAccountingSourceDocHelp=Avec cet outil, vous pouvez rechercher et exporter les événements sources qui servent à générer votre comptabilité. <br> Le fichier ZIP exporté contiendra les listes des éléments demandés au format CSV, ainsi que leurs fichiers joints dans leur format d'origine (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Pour exporter vos journaux, utilisez l'entrée de menu %s - %s.
+ExportAccountingProjectHelp=Spécifiez un projet si vous avez besoin d'un rapport uniquement pour un projet spécifique. Les notes de frais et les remboursements de prêts ne sont pas inclus dans les rapports de projet.
 VueByAccountAccounting=Vue par comptes comptables
 VueBySubAccountAccounting=Affichage par compte auxiliaire
 
@@ -58,11 +59,12 @@ MainAccountForSuppliersNotDefined=Compte comptable général pour les fournisseu
 MainAccountForUsersNotDefined=Compte comptable général pour les utilisateurs non défini dans la configuration
 MainAccountForVatPaymentNotDefined=Compte comptable général pour les paiements de TVA non défini dans la configuration
 MainAccountForSubscriptionPaymentNotDefined=Le compte comptable général des paiements de cotisations n'est pas défini dans la configuration
+UserAccountNotDefined=Compte comptable pour l'utilisateur non défini dans la configuration
 
 AccountancyArea=Espace comptabilité
 AccountancyAreaDescIntro=L'utilisation du module de comptabilité se fait en plusieurs étapes:
 AccountancyAreaDescActionOnce=Les actions suivantes sont habituellement exécutées une seule fois, ou une fois par an ...
-AccountancyAreaDescActionOnceBis=Les prochaines étapes doivent être faites pour vous faire gagner du temps à l'avenir en vous proposant le bon compte comptable par défaut lors de la ventilation (écriture des enregistrements dans les journaux et grand livre)
+AccountancyAreaDescActionOnceBis=Les prochaines étapes doivent être faites pour vous faire gagner du temps à l'avenir en vous proposant le bon compte comptable par défaut lors de la ventilation (écrire des enregistrements dans les journaux et grand livre)
 AccountancyAreaDescActionFreq=Les actions suivantes sont habituellement exécutées chaque mois, semaine, ou jour pour les très grandes entreprises ...
 
 AccountancyAreaDescJournalSetup=Étape %s : Créer ou vérifier le contenu de la liste des journaux depuis le menu %s
@@ -71,7 +73,7 @@ AccountancyAreaDescChart=Étape %s : Sélectionnez et | ou complétez votre plan
 
 AccountancyAreaDescVat=Étape %s : Définissez les comptes comptables de chaque taux de TVA utilisé. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescDefault=Étape %s : Définir les comptes de comptabilité par défaut. Pour cela, utilisez l'entrée de menu %s.
-AccountancyAreaDescExpenseReport=Étape %s : Définissez les comptes comptables par défaut des dépenses des notes de frais. Pour cela, suivez le menu suivant %s.
+AccountancyAreaDescExpenseReport=Étape %s : Définissez les comptes comptables par défaut des dépenses des notes de frais. Pour cela, suivez le menu %s.
 AccountancyAreaDescSal=Étape %s : Définissez les comptes comptables de paiements de salaires. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescContrib=Étape %s : Définissez les comptes comptables des dépenses spéciales (taxes diverses). Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescDonation=Étape %s : Définissez le compte comptable par défaut des dons. Pour cela, suivez le menu suivant %s.
@@ -79,7 +81,7 @@ AccountancyAreaDescSubscription=Étape %s : définissez les comptes de comptabil
 AccountancyAreaDescMisc=Étape %s : Définissez le compte par défaut obligatoire et les comptes comptables par défaut pour les transactions diverses. Pour cela, utilisez l'entrée du menu suivant %s.
 AccountancyAreaDescLoan=Étape %s : Définissez les comptes comptables par défaut des emprunts. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescBank=Étape %s : Définissez les comptes comptables et les codes des journaux de chaque compte bancaire et financier. Vous pouvez commencer à partir de la page %s.
-AccountancyAreaDescProd=Étape %s : Définissez les comptes comptables sur vos produits/services. Pour cela, suivez le menu suivant %s.
+AccountancyAreaDescProd=Étape %s : Définissez les comptes comptables sur vos produits/services. Pour cela, utilisez la page suivante %s.
 
 AccountancyAreaDescBind=Étape %s : Vérifier que la liaison entre les %s lignes existantes et le compte comptable est faite, ainsi l'application sera capable d'inscrire les transaction dans le grand livre en un seul clic. Compléter les liaisons manquantes. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescWriteRecords=Étape %s: Ecrire les transactions dans le grand livre. Pour cela, suivez le menu <strong>%s</strong>, et cliquer sur le bouton <strong>%s</strong>.
@@ -99,7 +101,8 @@ ShowAccountingAccount=Afficher le compte comptable
 ShowAccountingJournal=Afficher le journal
 ShowAccountingAccountInLedger=Afficher le compte comptable dans le grand livre
 ShowAccountingAccountInJournals=Afficher le compte comptable dans les journaux
-AccountAccountingSuggest=Code comptable suggéré
+DataUsedToSuggestAccount=Données utilisées pour suggérer le compte comptable
+AccountAccountingSuggest=Compte comptable suggéré
 MenuDefaultAccounts=Comptes par défaut
 MenuBankAccounts=Comptes bancaires
 MenuVatAccounts=Comptes TVA
@@ -120,10 +123,11 @@ ExpenseReportsVentilation=Liaison notes de frais
 CreateMvts=Créer nouvelle transaction
 UpdateMvts=Modification d'une transaction
 ValidTransaction=Valider la transaction
-WriteBookKeeping=Enregistrer les écritures en comptabilité
+WriteBookKeeping=Enregistrer les transactions en comptabilité
 Bookkeeping=Grand livre
 BookkeepingSubAccount=Grand livre auxiliaire
 AccountBalance=Balance des comptes
+AccountBalanceSubAccount=Balance des comptes de tiers
 ObjectsRef=Référence de l'objet source
 CAHTF=Total achat fournisseur HT
 TotalExpenseReport=Total note de frais
@@ -161,41 +165,47 @@ BANK_DISABLE_DIRECT_INPUT=Désactiver la saisie directe de transactions en banqu
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Activer l'export brouillon sur les journaux comptables
 ACCOUNTANCY_COMBO_FOR_AUX=Activer la liste déroulante pour les comptes auxiliaires (des lenteurs peuvent être rencontrées si vous avez de nombreux tiers)
 ACCOUNTING_DATE_START_BINDING=Définissez une date pour commencer la liaison et le transfert en comptabilité. En dessous de cette date, les transactions ne seront jamais transférées à la comptabilité.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Choix de la période des factures pour le transfert en comptabilité
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Sur virement comptable, quelle est la période sélectionnée par défaut
 
-ACCOUNTING_SELL_JOURNAL=Journal des ventes
-ACCOUNTING_PURCHASE_JOURNAL=Journal des achats
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Journal des opérations diverses
-ACCOUNTING_EXPENSEREPORT_JOURNAL=Journal des notes de frais
-ACCOUNTING_SOCIAL_JOURNAL=Journal de paie
-ACCOUNTING_HAS_NEW_JOURNAL=Journal des A-nouveaux
+ACCOUNTING_SELL_JOURNAL=Ventes
+ACCOUNTING_PURCHASE_JOURNAL=Achats
+ACCOUNTING_BANK_JOURNAL=Banque
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Notes de frais
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Opérations diverses
+ACCOUNTING_HAS_NEW_JOURNAL=A-nouveaux
+ACCOUNTING_INVENTORY_JOURNAL=Inventaire
+ACCOUNTING_SOCIAL_JOURNAL=Paie
 
 ACCOUNTING_RESULT_PROFIT=Compte de résultat (Profit)
 ACCOUNTING_RESULT_LOSS=Compte de résultat (perte)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal de fermeture
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Compte comptable de transfert transitoire bancaire
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Compte comptable par défaut pour les virements internes
 TransitionalAccount=Compte transitoire de virement bancaire
 
-ACCOUNTING_ACCOUNT_SUSPENSE=Compte comptable d'attente
-DONATION_ACCOUNTINGACCOUNT=Compte comptable pour l'enregistrement des dons
-ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Compte comptable pour enregistrer les adhésions
+ACCOUNTING_ACCOUNT_SUSPENSE=Compte comptable par défaut pour les opérations en attente
+DONATION_ACCOUNTINGACCOUNT=Compte comptable pour la comptabilisation des dons
+ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Compte comptable par défaut pour les adhésions des adhérents (si l'adhésion est enregistrée sans facture)
 
-ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Compte comptable par défaut pour les acomptes clients
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Compte comptable par défaut pour enregistrer les acomptes client
+UseAuxiliaryAccountOnCustomerDeposit=Enregistrer le compte client comme compte individuel dans le grand livre auxiliaire pour les lignes d'acompte (si désactivé, le compte individuel pour les lignes d'acompte restera vide)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Compte comptable par défaut pour enregistrer l'acompte fournisseur
+UseAuxiliaryAccountOnSupplierDeposit=Utiliser le compte comptable auxiliaire fournisseur dans le grand livre auxiliaire pour les lignes d'acomptes fournisseurs (si désactivé, le compte comptable auxiliaire pour les lignes d'acompte restera vide)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Compte comptable par défaut pour l'enregistrement des retenues de garantie clients
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Compte comptable par défaut pour les produits achetés (utilisé si non défini dans la fiche produit)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Compte comptable par défaut pour les produits achetés  dans le même pays (utilisé si non défini dans la fiche produit)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Compte comptable par défaut pour les produits achetés dans la CEE (utilisé si non défini dans la fiche produit)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Compte comptable par défaut pour les produits achetés et importés hors de la CEE (utilisé si non défini dans la fiche produit)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Compte comptable par défaut pour les produits vendus (utilisé si non défini dans la fiche produit)
-ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Code comptable par défaut pour les produits vendus dans la CEE (utilisé si non définie dans la fiche produit)
-ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Code comptable par défaut pour les produits vendus et exportés hors de la CEE (utilisé si non définie dans la fiche produit)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Compte comptable par défaut pour les produits vendus dans la CEE (utilisé si non définie dans la fiche produit)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Compte comptable par défaut pour les produits vendus et exportés hors de la CEE (utilisé si non définie dans la fiche produit)
 
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Compte comptable par défaut pour les services achetés (utilisé si non défini dans la fiche service)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Compte comptable par défaut pour les services achetés dans le pays (utilisé si non défini dans la fiche service)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Compte comptable par défaut pour les services achetés dans la CEE (utilisé si non défini dans la fiche service)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Compte comptable par défaut pour les services achetés et importés hors de la CEE (utilisé si non défini dans la fiche service)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Compte comptable par défaut pour les services vendus (utilisé si non défini dans la fiche service)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Compte comptable par défaut pour les services vendus dans la CEE (utilisé si non défini dans la fiche service)
-ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Code comptable par défaut pour les services vendus et exportés hors de la CEE (utilisé si non définie dans la fiche produit)
+ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Compte comptable par défaut pour les services vendus et exportés hors de la CEE (utilisé si non définie dans la fiche produit)
 
 Doctype=Type de documents
 Docdate=Date
@@ -210,7 +220,8 @@ Codejournal=Journal
 JournalLabel=Libellé journal
 NumPiece=Numéro de pièce
 TransactionNumShort=Num. transaction
-AccountingCategory=Groupe comptable personnalisé
+AccountingCategory=Groupe de comptes personnalisé
+AccountingCategories=Groupes de comptes personnalisés
 GroupByAccountAccounting=Affichage par compte comptable
 GroupBySubAccountAccounting=Affichage par compte auxiliaire
 AccountingAccountGroupsDesc=Vous pouvez définir ici des groupes de comptes comptable. Il seront utilisés pour les reporting comptables personnalisés
@@ -219,14 +230,15 @@ ByPredefinedAccountGroups=Par groupes prédéfinis
 ByPersonalizedAccountGroups=Par groupes personnalisés
 ByYear=Par année
 NotMatch=Non défini
-DeleteMvt=Supprimer des lignes d'opérations de la comptabilité
+DeleteMvt=Supprimer certaines lignes de la comptabilité
 DelMonth=Mois à effacer
 DelYear=Année à supprimer
 DelJournal=Journal à supprimer
-ConfirmDeleteMvt=Cette action supprime les lignes des opérations pour l'année/mois et/ou pour le journal sélectionné (au moins un critère est requis). Vous devrez utiliser de nouveau la fonctionnalité '%s' pour retrouver vos écritures dans la comptabilité.
-ConfirmDeleteMvtPartial=Cette action supprime l'écriture de la comptabilité (toutes les lignes opérations liées à une même écriture seront effacées).
+ConfirmDeleteMvt=Cela supprimera toutes les lignes en comptabilité pour l'année/mois et/ou pour un journal spécifique (Au moins un critère est requis). Vous devrez réutiliser la fonctionnalité '%s' pour que l'enregistrement supprimé revienne dans le grand livre.
+ConfirmDeleteMvtPartial=Cela supprimera la transaction de la comptabilité (toutes les lignes liées à la même transaction seront supprimées)
 FinanceJournal=Journal de trésorerie
 ExpenseReportsJournal=Journal des notes de frais
+InventoryJournal=Journal d'inventaire
 DescFinanceJournal=Journal de trésorerie comprenant tous les types de paiements par compte bancaire / caisse
 DescJournalOnlyBindedVisible=Il s'agit d'une vue des éléments liés à un compte comptable et qui peuvent être enregistrés dans les journaux et le grand livre.
 VATAccountNotDefined=Compte de la TVA non défini
@@ -258,19 +270,20 @@ ShowSubtotalByGroup=Afficher le sous-total par niveau
 
 Pcgtype=Groupe de comptes comptables
 PcgtypeDesc=Les groupes de comptes sont utilisés comme critères de filtre et de regroupement prédéfinis pour certains rapports de comptabilité. Par exemple, «INCOME» ou «EXPENSE» sont utilisés en tant que groupes pour la comptabilité afin de générer le rapport dépenses / revenus.
+AccountingCategoriesDesc=Un groupe de comptes personnalisé peut être utilisé pour regrouper les comptes comptables en un seul nom afin de faciliter l'utilisation du filtre ou la création de rapports personnalisés.
 
-Reconcilable=Rapprochable
+Reconcilable=Lettrable
 
 TotalVente=Total chiffre affaires hors taxe
 TotalMarge=Total marge
 
-DescVentilCustomer=Consultez ici la liste des lignes de factures clients liées (ou non) à un compte comptable produit
-DescVentilMore=Dans la plupart des cas, si vous utilisez des produits ou des services prédéfinis et vous définissez le numéro de compte comptable sur la fiche produit/service, l'application sera en mesure de faire toute les liaisons entre vos lignes de facture et le compte comptable de votre plan comptable, juste en un clic avec le bouton <strong>"%s"</strong>. Si le compte n'a pas été mis sur les fiches produits/services ou si vous avez encore quelques lignes non liées à un compte, vous devrez faire une liaison manuelle à partir du menu <strong>"%s"</strong>.
+DescVentilCustomer=Consultez ici la liste des lignes de facture client lié (ou non) à un compte comptable produit ou service
+DescVentilMore=Dans la plupart des cas, si vous utilisez des produits ou services prédéfinis et que vous paramétrez le compte (du plan comptable) sur la fiche produit/service, l'application pourra faire toute la liaison entre vos lignes de facture et le compte comptable de votre plan comptable des comptes, juste en un clic avec le bouton <strong>"%s"</strong> . Si le compte n'a pas été défini sur les fiches produits/services ou s'il vous reste des lignes non liées à un compte, vous devrez effectuer une liaison manuelle depuis le menu "<strong>%s</strong>".
 DescVentilDoneCustomer=Consultez ici la liste des lignes de factures clients et leur compte comptable produits
-DescVentilTodoCustomer=Lier les lignes de factures non déjà liées à un compte comptable produits
-ChangeAccount=Modifier le compte comptable produit/service pour les lignes sélectionnées avec le compte comptable suivant:
+DescVentilTodoCustomer=Lier les lignes de factures non déjà liées à un compte comptable produit
+ChangeAccount=Modifiez le compte comptable de produit/service pour les lignes sélectionnées avec le compte suivant :
 Vide=-
-DescVentilSupplier=Consultez ici la liste des lignes de factures fournisseur liées ou pas encore liées à un compte comptable produit (seuls les enregistrements pas encore transférés en comptabilités sont visibles)
+DescVentilSupplier=Consultez ici la liste des lignes de factures fournisseur liées ou pas encore liées à un compte comptable produit/service (seuls les enregistrements pas encore transférés en comptabilités sont visibles)
 DescVentilDoneSupplier=Consultez ici la liste des lignes de factures fournisseurs et leur compte comptable
 DescVentilTodoExpenseReport=Lier les lignes de note de frais par encore liées à un compte comptable
 DescVentilExpenseReport=Consultez ici la liste des lignes de notes de frais liées (ou non) à un compte comptable
@@ -278,30 +291,32 @@ DescVentilExpenseReportMore=Si vous avez défini des comptes comptables au nivea
 DescVentilDoneExpenseReport=Consultez ici la liste des lignes des notes de frais et leur compte comptable
 
 Closure=Clôture annuelle
-DescClosure=Consultez ici le nombre de mouvements par mois non validés et les périodes fiscales déjà ouvertes
-OverviewOfMovementsNotValidated=Etape 1/ Aperçu des mouvements non validés. (Nécessaire pour clôturer un exercice comptable)
-AllMovementsWereRecordedAsValidated=Tous les mouvements ont été enregistrés et validés
-NotAllMovementsCouldBeRecordedAsValidated=Tous les mouvements n'ont pas pu être enregistrés et validés
-ValidateMovements=Valider les mouvements
+DescClosure=Consultez ici le nombre de mouvements par mois non encore validés & verrouillés
+OverviewOfMovementsNotValidated=Aperçu des mouvements non validés et verrouillés
+AllMovementsWereRecordedAsValidated=Tous les mouvements ont été enregistrés comme validés et ont été verrouillés
+NotAllMovementsCouldBeRecordedAsValidated=Certains mouvements n'ont pas pu être enregistrés comme validés et n'ont pas été verrouillés
+ValidateMovements=Valider et verrouiller les mouvements...
 DescValidateMovements=Toute modification ou suppression d'écriture, de lettrage et de suppression sera interdite. Toutes les entrées pour un exercice doivent être validées, sinon la fermeture ne sera pas possible
 
 ValidateHistory=Lier automatiquement
 AutomaticBindingDone=Liaisons automatiques effectuées (%s) - Liaison automatique impossible pour certains enregistrements (%s)
+DoManualBindingForFailedRecord=Vous devez réaliser un lettrage manuel pour la/les %s ligne·s non lettré·es automatiquement.
 
-ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas détruire de compte comptable car il est utilisé
-MvtNotCorrectlyBalanced=Mouvement non équilibré. Débit = %s| Crédit = %s
+ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas supprimer ou désactiver ce compte comptable car il est utilisé
+MvtNotCorrectlyBalanced=Mouvement non équilibré. Débit = %s & Crédit = %s
 Balancing=Équilibrage
 FicheVentilation=Fiche lien
 GeneralLedgerIsWritten=Les transactions sont enregistrées dans le grand livre
 GeneralLedgerSomeRecordWasNotRecorded=Certaines des opérations n'ont pu être journalisées. S'il n'y a pas d'autres messages, c'est probablement car elles sont déjà comptabilisées.
-NoNewRecordSaved=Plus d'enregistrements à journaliser
+NoNewRecordSaved=Aucune ligne à transférer
 ListOfProductsWithoutAccountingAccount=Liste des produits non liés à un compte comptable
 ChangeBinding=Changer les liens
 Accounted=En comptabilité
 NotYetAccounted=Pas encore transféré en comptabilité
 ShowTutorial=Afficher le tutoriel
-NotReconciled=Non rapproché
-WarningRecordWithoutSubledgerAreExcluded=Attention : toutes les opérations sans compte auxiliaire défini sont filtrées et exclues de cet écran
+NotReconciled=Non lettré
+WarningRecordWithoutSubledgerAreExcluded=Attention, toutes les lignes sans compte auxiliaire défini sont filtrées et exclues de cette vue
+AccountRemovedFromCurrentChartOfAccount=Compte comptable qui n'existe pas dans le plan comptable actuel
 
 ## Admin
 BindingOptions=Options de liaisons avec les codes comptables
@@ -317,9 +332,10 @@ AccountingJournalType1=Opérations diverses
 AccountingJournalType2=Ventes
 AccountingJournalType3=Achats
 AccountingJournalType4=Banque
-AccountingJournalType5=Note de frais
+AccountingJournalType5=Notes de frais
 AccountingJournalType8=Inventaire
 AccountingJournalType9=A-nouveaux
+GenerationOfAccountingEntries=Génération des écritures comptables
 ErrorAccountingJournalIsAlreadyUse=Le journal est déjà utilisé
 AccountingAccountForSalesTaxAreDefinedInto=Remarque: Le compte comptable pour la TVA est défini dans le menu <b> %s </b> - <b> %s </b>
 NumberOfAccountancyEntries=Nombre d'entrées
@@ -327,10 +343,15 @@ NumberOfAccountancyMovements=Nombre de mouvements
 ACCOUNTING_DISABLE_BINDING_ON_SALES=Désactiver la liaison et le transfert en comptabilité des factures de ventes (les factures clients ne seront pas prises en compte en comptabilité).
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Désactiver la liaison et le transfert en comptabilité des factures d'achats (les factures fournisseurs ne seront pas prises en compte en comptabilité).
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Désactiver la liaison et le transfert en comptabilité des notes de frais (les notes de frais ne seront pas prises en compte en comptabilité).
+ACCOUNTING_ENABLE_LETTERING=Activer la fonction de lettrage dans la comptabilité
+ACCOUNTING_ENABLE_AUTOLETTERING=Activer le lettrage automatique lors du transfert en comptabilité
 
 ## Export
-NotifiedExportDate=Marquer les lignes comme exportées (la modification des enregistrements ne sera pas possible)
-NotifiedValidationDate=Validation des enregistrements (la modification ou la suppression des enregistrements ne sera pas possible)
+NotExportLettering=Ne pas exporter le lettrage lors de la génération du fichier
+NotifiedExportDate=Marquer les lignes exportées comme Exportées <span class="warning"> (pour modifier une ligne, vous devrez supprimer toute la transaction et la retransférer en comptabilité) </span>
+NotifiedValidationDate=Validez et verrouillez les entrées exportées <span class="warning"> (même effet que la fonctionnalité "%s", la modification et la suppression des lignes ne seront définitivement plus possibles) </span>
+NotifiedExportFull=Exporter les documents sources ?
+DateValidationAndLock=Validation et verrouillage de la date
 ConfirmExportFile=Confirmation de la génération du fichier d'export comptable ?
 ExportDraftJournal=Exporter le journal brouillon
 Modelcsv=Modèle d'export
@@ -386,13 +407,33 @@ SaleLocal=Vente locale
 SaleExport=Vente export
 SaleEEC=Vente dans la CEE
 SaleEECWithVAT=Vente dans la CEE avec un taux de TVA non nul, on considère qu'il s'agit d'une vente intracommunutaire à un assujetti à la TVA et le compte comptable suggéré est le compte comptable de vente classique.
-SaleEECWithoutVATNumber=Vente dans la CEE avec un taux de TVA nul mais sans numéro de TVA intracommunutaire renseigné dans la fiche du tiers. Nous forçons ainsi le compte comptable de vente classique. Il est nécessaire de renseigner le numéro de TVA intracommunautaire dans la fiche du tiers ou changer le compte comptable de vente si nécessaire.
+SaleEECWithoutVATNumber=Vente dans la CEE sans TVA, mais le N° de TVA du tiers n'est pas défini. On se rabat sur le compte pour les ventes normales. Vous pouvez corriger le N° de TVA du tiers , ou changer le compte de produit associé si nécessaire.
 ForbiddenTransactionAlreadyExported=Interdit : La transaction a été validée et/ou exportée.
 ForbiddenTransactionAlreadyValidated=Interdit : La transaction a été validée.
 ## Dictionary
 Range=Plage de comptes
 Calculated=Calculé
 Formula=Formule
+
+## Reconcile
+LetteringAuto=Lettrage automatique
+LetteringManual=Lettrage manuel
+Unlettering=Annuler le lettrage
+UnletteringAuto=Annuler le lettrage automatique
+UnletteringManual=Annuler lettrage manuel
+AccountancyNoLetteringModified=Pas de lettrage modifié
+AccountancyOneLetteringModifiedSuccessfully=Un lettrage modifié avec succès
+AccountancyLetteringModifiedSuccessfully=%s lettrages modifiés avec succès
+AccountancyNoUnletteringModified=Aucune annulation de lettrage modifiée
+AccountancyOneUnletteringModifiedSuccessfully=Une annulation de lettrage modifiée avec succès
+AccountancyUnletteringModifiedSuccessfully=%s annulations de lettrage modifiées avec succès
+
+## Confirm box
+ConfirmMassUnletteringAuto=Confirmation de l'annulation du lettrage automatique
+ConfirmMassUnletteringManual=Confirmation de l'annulation du lettrage manuel
+ConfirmMassUnletteringQuestion=Voulez-vous vraiment annuler le lettrage des %s enregistrements sélectionnés ?
+ConfirmMassDeleteBookkeepingWriting=Confirmation de suppression en masse
+ConfirmMassDeleteBookkeepingWritingQuestion=Cela supprimera la transaction de la comptabilité (toutes les lignes liées à la même transaction seront supprimées). Êtes-vous sûr de vouloir supprimer le(s) %s enregistrement(s) sélectionné(s) ?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Certaines étapes obligatoires de la configuration n'ont pas été réalisées, merci de compléter cette dernière
@@ -406,6 +447,11 @@ Binded=Lignes liées
 ToBind=Lignes à lier
 UseMenuToSetBindindManualy=Lignes non encore liées, utilisez le menu <a href="%s"> %s </a> pour effectuer la liaison manuellement.
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Désolé ce module n'est pas compatible avec la fonctionnalité expérimentale des factures de situation
+AccountancyErrorMismatchLetterCode=Non-concordance dans le code de réconciliation
+AccountancyErrorMismatchBalanceAmount=Le solde (%s) n'est pas égal à 0
+AccountancyErrorLetteringBookkeeping=Des erreurs sont survenues concernant les transactions : %s
+ErrorAccountNumberAlreadyExists=Le code comptable %s existe déjà
+ErrorArchiveAddFile=Impossible de mettre le fichier "%s" dans l'archive
 
 ## Import
 ImportAccountingEntries=Écritures comptables
@@ -432,6 +478,7 @@ FECFormatMulticurrencyCode=Code multidevise (Idevise)
 DateExport=Date d'export
 WarningReportNotReliable=Attention : ce rapport n'est pas basé sur le grand livre et ne contient donc pas les écritures manuelles qui lui ont été ajoutées. Si votre journalisation est à jour, la vue depuis le grand livre sera plus précise.
 ExpenseReportJournal=Journal des notes de frais
-InventoryJournal=Journal d'inventaire
+DocsAlreadyExportedAreExcluded=Les documents déjà exportés sont exclus
+ClickToHideAlreadyExportedLines=Cliquer pour cacher les documents déjà exportés
 
 NAccounts=%s comptes

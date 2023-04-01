@@ -24,6 +24,7 @@
  *       \brief      Home page for emailing area
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -58,7 +59,7 @@ print load_fiche_titre($title);
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-//if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
+//if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 //{
 	// Search into emailings
 	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/mailing/list.php">';
@@ -100,7 +101,7 @@ if (is_resource($handle)) {
 
 				$qualified = 1;
 				foreach ($mailmodule->require_module as $key) {
-					if (!$conf->$key->enabled || (!$user->admin && $mailmodule->require_admin)) {
+					if (empty($conf->$key->enabled) || (!$user->admin && $mailmodule->require_admin)) {
 						$qualified = 0;
 						//print "Les pr�requis d'activation du module mailing ne sont pas respect�s. Il ne sera pas actif";
 						break;
@@ -175,7 +176,7 @@ if ($result) {
 
 			print '<tr class="oddeven">';
 			print '<td class="nowrap">'.$mailstatic->getNomUrl(1).'</td>';
-			print '<td>'.dol_trunc($obj->title, 38).'</td>';
+			print '<td>'.(!empty($obj->title) ? dol_trunc($obj->title, 38) : '').'</td>';
 			print '<td class="center">'.dol_print_date($db->jdate($obj->date_creat), 'day').'</td>';
 			print '<td class="center">'.($obj->nbemail ? $obj->nbemail : "0").'</td>';
 			print '<td class="right">'.$mailstatic->LibStatut($obj->statut, 5).'</td>';

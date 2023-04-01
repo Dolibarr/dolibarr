@@ -165,9 +165,10 @@ class FormWebsite
 	 *  @param  int		$useempty          	1=Add an empty value in list
 	 *  @param  string  $moreattrib         More attributes on HTML select tag
 	 *  @param	int		$addjscombo			Add js combo
+	 *  @param	string	$morecss			More css
 	 * 	@return	string						HTML select component with list of type of containers
 	 */
-	public function selectSampleOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '', $addjscombo = 0)
+	public function selectSampleOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '', $addjscombo = 0, $morecss = 'minwidth200')
 	{
 		global $langs, $conf, $user;
 
@@ -190,7 +191,7 @@ class FormWebsite
 		}
 
 		$out = '';
-		$out .= '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer minwidth200" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+		$out .= '<select id="select'.$htmlname.'" class="selectSampleOfContainer'.($morecss? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 
 		if ($useempty == 1 || $useempty == 2) {
 			$out .= '<option value="-1">&nbsp;</option>';
@@ -230,6 +231,8 @@ class FormWebsite
 	 */
 	public function selectContainer($website, $htmlname = 'pageid', $pageid = 0, $showempty = 0, $action = '', $morecss = 'minwidth200', $excludeids = null)
 	{
+		global $conf, $langs;
+
 		$this->num = 0;
 
 		$atleastonepage = (is_array($website->lines) && count($website->lines) > 0);
@@ -238,12 +241,17 @@ class FormWebsite
 		if ($atleastonepage && $action != 'editsource') {
 			$out .= '<select name="'.$htmlname.'" id="'.$htmlname.'" class="maxwidth300'.($morecss ? ' '.$morecss : '').'">';
 		} else {
-			$out .= '<select name="pageidbis" id="pageid" class="maxwidth300'.($morecss ? ' '.$morecss : '').'" disabled="disabled">';
+			$out .= '<select name="pageidbis" id="pageid" class="maxwidth300'.($morecss ? ' '.$morecss : '').'"'.($action == 'editsource' ? ' disabled="disabled"' : '').'>';
 		}
 
 		if ($showempty || !$atleastonepage) {
-			$out .= '<option value="-1">&nbsp;</option>';
+			$out .= '<option class="optiongrey" value="-1">'.(is_numeric($showempty) ? '&nbsp;' : $showempty).'</option>';
 		}
+
+		/*if (!empty($conf->use_javascript_ajax)) {
+			$valueoption = '<span class="classlink">'.img_picto('', 'add', 'class="paddingrightonly"').$langs->trans("AddPage").'</span>';
+			$out .= '<option value="-2" data-html="'.dol_escape_htmltag($valueoption).'">'.$valueoption.'</option>';
+		}*/
 
 		if ($atleastonepage) {
 			if (empty($pageid) && $action != 'createcontainer') {      // Page id is not defined, we try to take one

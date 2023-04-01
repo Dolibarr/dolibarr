@@ -1,0 +1,4 @@
+# Robot file. Generated with Dolibarr
+User-agent: *
+Allow: /public/
+Disallow: /administrator/

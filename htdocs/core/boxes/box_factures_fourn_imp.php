@@ -58,7 +58,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->fournisseur->facture->lire);
+		$this->hidden = !($user->hasRight('fournisseur', 'facture', 'lire'));
 	}
 
 	/**
@@ -132,6 +132,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 					$facturestatic->total_tva = $objp->total_tva;
 					$facturestatic->total_ttc = $objp->total_ttc;
 					$facturestatic->date_echeance = $datelimite;
+					$facturestatic->date = $date;
 					$facturestatic->statut = $objp->status;
 					$facturestatic->status = $objp->status;
 
@@ -175,7 +176,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateDue").': '.dol_print_date($datelimite, 'day', 'tzuserrel')).'"',
 						'text' => dol_print_date($datelimite, 'day', 'tzuserrel'),
 					);
 

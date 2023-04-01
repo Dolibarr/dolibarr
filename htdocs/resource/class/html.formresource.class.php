@@ -77,7 +77,7 @@ class FormResource
 	 *  @param	int		$limit			Limit number of answers
 	 *  @param	string	$morecss		More css
 	 * 	@param	bool	$multiple       add [] in the name of element and add 'multiple' attribut
-	 * 	@return	string					HTML string with
+	 * 	@return	string|array			HTML string with
 	 */
 	public function select_resource_list($selected = '', $htmlname = 'fk_resource', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $event = array(), $filterkey = '', $outputmode = 0, $limit = 20, $morecss = '', $multiple = false)
 	{
@@ -101,13 +101,6 @@ class FormResource
 		}
 
 		if ($resourcestat) {
-			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->RESOURCE_USE_SEARCH_TO_SELECT) && !$forcecombo) {
-				//$minLength = (is_numeric($conf->global->RESOURCE_USE_SEARCH_TO_SELECT)?$conf->global->RESOURCE_USE_SEARCH_TO_SELECT:2);
-				$out .= ajax_combobox($htmlname, $event, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
-			} else {
-				$out .= ajax_combobox($htmlname);
-			}
-
 			// Construct $out and $outarray
 			$out .= '<select id="'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').'>'."\n";
 			if ($showempty) {
@@ -146,6 +139,13 @@ class FormResource
 				}
 			}
 			$out .= '</select>'."\n";
+
+			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->RESOURCE_USE_SEARCH_TO_SELECT) && !$forcecombo) {
+				//$minLength = (is_numeric($conf->global->RESOURCE_USE_SEARCH_TO_SELECT)?$conf->global->RESOURCE_USE_SEARCH_TO_SELECT:2);
+				$out .= ajax_combobox($htmlname, $event, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
+			} else {
+				$out .= ajax_combobox($htmlname);
+			}
 
 			if ($outputmode != 2) {
 				$out .= '<input type="submit" class="button" value="'.$langs->trans("Search").'"> &nbsp; &nbsp; ';

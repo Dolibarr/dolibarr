@@ -161,31 +161,44 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 */
 	public function getExample($langs, $objsoc = 0, $type = -1)
 	{
+		$error = 0;
 		$examplecust = '';
 		$examplesup = '';
 		$errmsg = array(
 			"ErrorBadMask",
 			"ErrorCantUseRazIfNoYearInMask",
 			"ErrorCantUseRazInStartedYearIfNoYearMonthInMask",
+			"ErrorCounterMustHaveMoreThan3Digits",
+			"ErrorBadMaskBadRazMonth",
+			"ErrorCantUseRazWithYearOnOneDigit",
 		);
+
+		$cssforerror = (getDolGlobalString('SOCIETE_CODECLIENT_ADDON') == 'mod_codeclient_elephant' ? 'error' : 'opacitymedium');
+
 		if ($type != 1) {
 			$examplecust = $this->getNextValue($objsoc, 0);
-			if (!$examplecust) {
-				$examplecust = $langs->trans('NotConfigured');
+			if (!$examplecust && ($cssforerror == 'error' || $this->error != 'NotConfigured')) {
+				$langs->load("errors");
+				$examplecust = '<span class="'.$cssforerror.'">'.$langs->trans('ErrorBadMask').'</span>';
+				$error = 1;
 			}
 			if (in_array($examplecust, $errmsg)) {
 				$langs->load("errors");
-				$examplecust = $langs->trans($examplecust);
+				$examplecust = '<span class="'.$cssforerror.'">'.$langs->trans($examplecust).'</span>';
+				$error = 1;
 			}
 		}
 		if ($type != 0) {
 			$examplesup = $this->getNextValue($objsoc, 1);
-			if (!$examplesup) {
-				$examplesup = $langs->trans('NotConfigured');
+			if (!$examplesup && ($cssforerror == 'error' || $this->error != 'NotConfigured')) {
+				$langs->load("errors");
+				$examplesup = '<span class="'.$cssforerror.'">'.$langs->trans('ErrorBadMask').'</span>';
+				$error = 1;
 			}
 			if (in_array($examplesup, $errmsg)) {
 				$langs->load("errors");
-				$examplesup = $langs->trans($examplesup);
+				$examplesup = '<span class="'.$cssforerror.'">'.$langs->trans($examplesup).'</span>';
+				$error = 1;
 			}
 		}
 

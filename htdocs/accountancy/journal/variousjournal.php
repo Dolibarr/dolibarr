@@ -21,6 +21,7 @@
  * \brief		Page of a journal
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -43,17 +44,6 @@ if ($in_bookkeeping == '') {
 	$in_bookkeeping = 'notyet';
 }
 
-// Security check
-if (empty($conf->accounting->enabled)) {
-	accessforbidden();
-}
-if ($user->socid > 0) {
-	accessforbidden();
-}
-if (empty($user->rights->accounting->mouvements->lire)) {
-	accessforbidden();
-}
-
 // Get information of journal
 $object = new AccountingJournal($db);
 $result = $object->fetch($id_journal);
@@ -62,10 +52,10 @@ if ($result > 0) {
 } elseif ($result < 0) {
 	dol_print_error('', $object->error, $object->errors);
 } elseif ($result == 0) {
-	accessforbidden($langs->trans('ErrorRecordNotFound'));
+	accessforbidden('ErrorRecordNotFound');
 }
 
-$hookmanager->initHooks(array('globaljournal', $object->nature_text . 'journal'));
+$hookmanager->initHooks(array('globaljournal', $object->nature.'journal'));
 $parameters = array();
 
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
@@ -92,6 +82,18 @@ $journal_data = $object->getData($user, $data_type, $date_start, $date_end, $in_
 if (!is_array($journal_data)) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
+
+// Security check
+if (!isModEnabled('accounting')) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
@@ -163,22 +165,18 @@ if ($reload) {
 $form = new Form($db);
 
 if ($object->nature == 2) {
-	$title = $langs->trans("SellsJournal");
 	$some_mandatory_steps_of_setup_were_not_done = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1';
 	$account_accounting_not_defined = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1';
 } elseif ($object->nature == 3) {
-	$title = $langs->trans("PurchasesJournal");
 	$some_mandatory_steps_of_setup_were_not_done = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "" || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1';
 	$account_accounting_not_defined = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "" || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1';
 } elseif ($object->nature == 4) {
-	$title = $langs->trans("FinanceJournal");
 	$some_mandatory_steps_of_setup_were_not_done = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
 		|| $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "" || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1'
 		|| empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1';
 	$account_accounting_not_defined = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
 		|| $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "" || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1';
 } elseif ($object->nature == 5) {
-	$title = $langs->trans("ExpenseReportsJournal");
 	$some_mandatory_steps_of_setup_were_not_done = empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1';
 	$account_accounting_not_defined = empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1';
 } else {
@@ -187,8 +185,11 @@ if ($object->nature == 2) {
 	$account_accounting_not_defined = false;
 }
 
+$title = $langs->trans("GenerationOfAccountingEntries") . ' - ' . $object->getNomUrl(0, 2, 1, '', 1);
 
-$nom = $title . ' | ' . $object->getNomUrl(0, 1, 1, '', 1);
+llxHeader('', dol_string_nohtmltag($title));
+
+$nom = $title;
 $nomlink = '';
 $periodlink = '';
 $exportlink = '';
@@ -200,6 +201,9 @@ if ($object->nature == 2 || $object->nature == 3) {
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
 	}
+	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$description .= $langs->trans("SupplierDepositsAreNotIncluded");
+	}
 }
 
 $listofchoices = array('notyet' => $langs->trans("NotYetInGeneralLedger"), 'already' => $langs->trans("AlreadyInGeneralLedger"));
@@ -207,8 +211,6 @@ $period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 
 $period .= ' -  ' . $langs->trans("JournalizationInLedgerStatus") . ' ' . $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
 $varlink = 'id_journal=' . $id_journal;
-
-llxHeader('', $title);
 
 journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
@@ -235,7 +237,7 @@ if ($some_mandatory_steps_of_setup_were_not_done) {
 	print ' : ' . $langs->trans("AccountancyAreaDescMisc", 4, '<strong>' . $langs->transnoentitiesnoconv("MenuAccountancy") . '-' . $langs->transnoentitiesnoconv("Setup") . "-" . $langs->transnoentitiesnoconv("MenuDefaultAccounts") . '</strong>');
 	print '</div>';
 }
-print '<div class="tabsAction tabsActionNoBottom">';
+print '<div class="tabsAction tabsActionNoBottom centerimp">';
 if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') {
 	print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
 }
@@ -284,23 +286,25 @@ print '<td>' . $langs->trans("AccountAccounting") . '</td>';
 print '<td>' . $langs->trans("SubledgerAccount") . '</td>';
 print '<td>' . $langs->trans("LabelOperation") . '</td>';
 if ($object->nature == 4) print '<td class="center">' . $langs->trans("PaymentMode") . '</td>'; // bank
-print '<td class="right">' . $langs->trans("Debit") . '</td>';
-print '<td class="right">' . $langs->trans("Credit") . '</td>';
+print '<td class="right">' . $langs->trans("AccountingDebit") . '</td>';
+print '<td class="right">' . $langs->trans("AccountingCredit") . '</td>';
 print "</tr>\n";
 
-foreach ($journal_data as $element_id => $element) {
-	foreach ($element['blocks'] as $lines) {
-		foreach ($lines as $line) {
-			print '<tr class="oddeven">';
-			print '<td>' . $line['date'] . '</td>';
-			print '<td>' . $line['piece'] . '</td>';
-			print '<td>' . $line['account_accounting'] . '</td>';
-			print '<td>' . $line['subledger_account'] . '</td>';
-			print '<td>' . $line['label_operation'] . '</td>';
-			if ($object->nature == 4) print '<td class="center">' . $line['payment_mode'] . '</td>';
-			print '<td class="right nowraponall">' . $line['debit'] . '</td>';
-			print '<td class="right nowraponall">' . $line['credit'] . '</td>';
-			print '</tr>';
+if (is_array($journal_data) && !empty($journal_data)) {
+	foreach ($journal_data as $element_id => $element) {
+		foreach ($element['blocks'] as $lines) {
+			foreach ($lines as $line) {
+				print '<tr class="oddeven">';
+				print '<td>' . $line['date'] . '</td>';
+				print '<td>' . $line['piece'] . '</td>';
+				print '<td>' . $line['account_accounting'] . '</td>';
+				print '<td>' . $line['subledger_account'] . '</td>';
+				print '<td>' . $line['label_operation'] . '</td>';
+				if ($object->nature == 4) print '<td class="center">' . $line['payment_mode'] . '</td>';
+				print '<td class="right nowraponall">' . $line['debit'] . '</td>';
+				print '<td class="right nowraponall">' . $line['credit'] . '</td>';
+				print '</tr>';
+			}
 		}
 	}
 }

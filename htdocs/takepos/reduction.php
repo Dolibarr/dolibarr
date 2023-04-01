@@ -25,9 +25,6 @@
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN', '1');
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -41,6 +38,7 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Load Dolibarr environment
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
@@ -74,6 +72,7 @@ if ($invoiceid > 0) {
 	}
 }
 
+$head = '';
 $arrayofcss = array('/takepos/css/pos.css.php');
 $arrayofjs  = array();
 
@@ -186,13 +185,13 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->glob
 
 		if (reductionType === 'percent') {
 			var invoiceid = <?php echo ($invoiceid > 0 ? $invoiceid : 0); ?>;
-			parent.$("#poslines").load("invoice.php?action=update_reduction_global&place=<?php echo $place; ?>&number="+reductionNumber+"&invoiceid="+invoiceid, function() {
+			parent.$("#poslines").load("invoice.php?action=update_reduction_global&token=<?php echo newToken(); ?>&place=<?php echo $place; ?>&number="+reductionNumber+"&invoiceid="+invoiceid, function() {
 				Reset();
 				parent.$.colorbox.close();
 			});
 		} else if (reductionType === 'amount') {
 			var desc = "<?php echo dol_escape_js($langs->transnoentities('Reduction')); ?>";
-			parent.$("#poslines").load("invoice.php?action=freezone&place=<?php echo $place; ?>&number=-"+reductionNumber+"&desc="+desc, function() {
+			parent.$("#poslines").load("invoice.php?action=freezone&token=<?php echo newToken(); ?>&place=<?php echo $place; ?>&number=-"+reductionNumber+"&desc="+desc, function() {
 				Reset();
 				parent.$.colorbox.close();
 			});

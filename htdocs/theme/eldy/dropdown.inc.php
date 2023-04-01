@@ -183,7 +183,7 @@ div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 	border-top-left-radius: 0;
 	padding: 1px 0 0 0;
 	border-top-width: 0;
-	width: 300px;
+	width: 360px;
 }
 .topnav .user-menu .dropdown-menu {
 	top: 50px;
@@ -257,7 +257,7 @@ a.top-menu-dropdown-link {
 .dropdown-menu > .user-body, .dropdown-body {
 	padding: 15px;
 	border-bottom: 1px solid #f4f4f4;
-	border-top: 1px solid #dddddd;
+	border-top: 1px solid #f0f0f0;
 	white-space: normal;
 }
 
@@ -396,7 +396,7 @@ a.dropdown-item {
 	content: "\f35d";
 }
 
-.dropdown-item.active, .dropdown-item:hover, .dropdown-item:focus  {
+.dropdown-item.active, .dropdown-item:hover, .dropdown-item:hover span::before, .dropdown-item:focus  {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
 	text-decoration: none;
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
@@ -501,6 +501,43 @@ div.quickaddblock:focus {
 	background: <?php print $colorbacklinepair1; ?>;
 }
 
+
+/* for the dropdown on action buttons */
+dropdown-holder {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	z-index: 1;
+	width: 300px;
+	right:10px;	/* will be set with js */
+	background: #fff;
+	border: 1px solid #bbb;
+	text-align: <?php echo $left; ?>
+}
+
+.dropdown-content a {
+	margin-right: auto !important;
+	margin-left: auto !important;
+}
+.dropdown-content .butAction {
+	background: none;
+	color: #000 !important;
+}
+.dropdown-content .butAction:hover {
+	box-shadow: none;
+	text-decoration: underline;
+}
+
+.dropdown-holder.open .dropdown-content {
+	display: block;
+}
+
+
+
 /* smartphone */
 @media only screen and (max-width: 767px)
 {
@@ -522,6 +559,9 @@ div.quickaddblock:focus {
 		max-width: 360px;
 	}
 
+	.side-nav-vert .user-menu .dropdown-menu, .topnav .user-menu .dropdown-menu {
+		width: 300px;
+	}
 	.dropdown-menu {
 		border: none;
 		-webkit-box-shadow: none;

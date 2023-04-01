@@ -56,6 +56,8 @@ class EmailSenderProfile extends CommonObject
 	 */
 	public $picto = 'emailsenderprofile';
 
+	public $fk_user_creat;
+
 
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;
@@ -96,7 +98,7 @@ class EmailSenderProfile extends CommonObject
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>1),
 		'email' => array('type'=>'varchar(255)', 'label'=>'Email', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1),
 		'private' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'User', 'visible'=>-1, 'enabled'=>1, 'position'=>50, 'default'=>'0', 'notnull'=>1),
-		'signature' => array('type'=>'text', 'label'=>'Signature', 'visible'=>3, 'enabled'=>1, 'position'=>400, 'notnull'=>-1, 'index'=>1,),
+		'signature' => array('type'=>'html', 'label'=>'Signature', 'visible'=>3, 'enabled'=>1, 'position'=>400, 'notnull'=>-1, 'index'=>1,),
 		'position' => array('type'=>'integer', 'label'=>'Position', 'visible'=>1, 'enabled'=>1, 'position'=>405, 'notnull'=>-1, 'index'=>1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
@@ -147,7 +149,7 @@ class EmailSenderProfile extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled)) {
+		if (!isModEnabled('multicompany')) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 	}
