@@ -394,20 +394,19 @@ class pdf_espadon extends ModelePdfExpedition
 									$label .= $object->tracking_url;
 								}
 
-								$height_trackingnumber += 6;
+								$height_trackingnumber += 4;
 								$pdf->SetFont('', 'B', $default_font_size - 2);
 								$pdf->writeHTMLCell(60, $height_trackingnumber, $this->posxdesc - 1, $tab_top_alt, $label, 0, 1, false, true, 'L');
-
-								$tab_top = $pdf->GetY();
 							}
 						}
+						$tab_top = $pdf->GetY();
 					}
 
 
 					// Notes
 					$pagenb = $pdf->getPage();
 					if (!empty($notetoshow) || !empty($object->tracking_number)) {
-						$tab_top -= 2;
+						$tab_top -= 1;
 
 						$tab_width = $this->page_largeur - $this->marge_gauche - $this->marge_droite;
 						$pageposbeforenote = $pagenb;
@@ -476,7 +475,7 @@ class pdf_espadon extends ModelePdfExpedition
 										$height_note = $this->page_hauteur - ($tab_top_newpage + $heightforfooter) + $height_trackingnumber + 1;
 										$tab_top_newpage = $tab_topbeforetrackingnumber;
 									}
-									$pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
+									$pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 2);
 								} else {
 									if (empty($height_trackingnumber)) {
 										$height_note = $this->page_hauteur - ($tab_top + $heightforfooter);
@@ -484,7 +483,7 @@ class pdf_espadon extends ModelePdfExpedition
 										$height_note = $this->page_hauteur - ($tab_top + $heightforfooter)+ $height_trackingnumber + 1;
 										$tab_top = $tab_topbeforetrackingnumber;
 									}
-									$pdf->Rect($this->marge_gauche, $tab_top - 1, $tab_width, $height_note + 1);
+									$pdf->Rect($this->marge_gauche, $tab_top - 1, $tab_width, $height_note + 2);
 								}
 
 								// Add footer
@@ -510,7 +509,7 @@ class pdf_espadon extends ModelePdfExpedition
 								$height_note = $posyafter - $tab_top + $height_trackingnumber + 1;
 								$tab_top = $tab_topbeforetrackingnumber;
 							}
-							$pdf->Rect($this->marge_gauche, $tab_top - 1, $tab_width, $height_note + 1);
+							$pdf->Rect($this->marge_gauche, $tab_top - 1, $tab_width, $height_note + 2);
 
 
 							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + 20))) {
