@@ -3556,6 +3556,7 @@ class Commande extends CommonOrder
 	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *	@param		User	$user   Object user
+	 *	@param		String	$mode   Mode (toship, tobill, shippedtobill)
 	 *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
@@ -3579,7 +3580,11 @@ class Commande extends CommonOrder
 			$sql .= " AND c.fk_statut IN (" . self::STATUS_VALIDATED . "," . self::STATUS_SHIPMENTONPROCESS . ")";
 		}
 		if ($mode == 'tobill') {
-			// An order to bill is a delivered order not already billed
+			// An order to bill is an order not already billed
+			$sql .= " AND c.fk_statut IN (" . self::STATUS_VALIDATED . "," . self::STATUS_SHIPMENTONPROCESS . ", " . self::STATUS_CLOSED . ") AND c.facture = 0";
+		}
+		if ($mode == 'shippedtobill') {
+			// An order shipped and to bill is a delivered order not already billed
 			$sql .= " AND c.fk_statut IN (" . self::STATUS_CLOSED . ") AND c.facture = 0";
 		}
 		if ($user->socid) {
@@ -3588,19 +3593,23 @@ class Commande extends CommonOrder
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-
 			$delay_warning = 0;
 			$label = $labelShort = $url = '';
 			if ($mode == 'toship') {
 				$delay_warning = $conf->commande->client->warning_delay / 60 / 60 / 24;
-				$url = DOL_URL_ROOT.'/commande/list.php?search_status=-3&mainmenu=commercial&leftmenu=orders';
+				$url = DOL_URL_ROOT.'/commande/list.php?search_status=-2&mainmenu=commercial&leftmenu=orders';
 				$label = $langs->transnoentitiesnoconv("OrdersToProcess");
 				$labelShort = $langs->transnoentitiesnoconv("Opened");
 			}
 			if ($mode == 'tobill') {
-				$url = DOL_URL_ROOT.'/commande/list.php?search_status=3&search_billed=0&mainmenu=commercial&leftmenu=orders';
+				$url = DOL_URL_ROOT.'/commande/list.php?search_status=-3&search_billed=0&mainmenu=commercial&leftmenu=orders';
 				$label = $langs->trans("OrdersToBill"); // We set here bill but may be billed or ordered
 				$labelShort = $langs->trans("ToBill");
+			}
+			if ($mode == 'shippedtobill') {
+				$url = DOL_URL_ROOT.'/commande/list.php?search_status=3&search_billed=0&mainmenu=commercial&leftmenu=orders';
+				$label = $langs->trans("OrdersToBill"); // We set here bill but may be billed or ordered
+				$labelShort = $langs->trans("StatusOrderDelivered").' / '.$langs->trans("ToBill");
 			}
 
 			$response = new WorkboardResponse();

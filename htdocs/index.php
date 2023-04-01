@@ -205,8 +205,10 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 		$board = new Commande($db);
 		// Number of customer orders to be shipped (validated and in progress)
 		$dashboardlines[$board->element.'_toship'] = $board->load_board($user, 'toship');
-		// Number of customer orders to be billed (delivered but not billed)
+		// Number of customer orders to be billed
 		$dashboardlines[$board->element.'_tobill'] = $board->load_board($user, 'tobill');
+		// Number of customer orders to be billed (delivered but not billed)
+		$dashboardlines[$board->element.'_shippedtobill'] = $board->load_board($user, 'shippedtobill');
 	}
 
 	// Number of suppliers orders a deal
@@ -346,7 +348,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 				'groupName' => 'Orders',
 				'globalStatsKey' => 'orders',
 				'stats' =>
-					array('commande_toship', 'commande_tobill'),
+					array('commande_toship', 'commande_tobill', 'commande_shippedtobill'),
 			),
 		'facture' =>
 			array(
