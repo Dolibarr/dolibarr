@@ -600,7 +600,7 @@ if ($action == 'confirm_generateinvoice') {
 						} else {
 							$arrayoftasks[$object->timespent_id]['note'] = dol_concatdesc($arrayoftasks[$object->timespent_id]['note'], $langs->trans("Date") . ': ' . dol_print_date($object->timespent_date));
 						}
-						$arrayoftasks[$object->timespent_id]['note'] .= ' - ' . $langs->trans("Duration") . ': ' . convertSecondToTime($object->timespent_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+						$arrayoftasks[$object->timespent_id]['note'] = dol_concatdesc($arrayoftasks[$object->timespent_id]['note'], $langs->trans("Duration") . ': ' . convertSecondToTime($object->timespent_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY));
 					}
 					$arrayoftasks[$object->timespent_id]['user'] = $object->timespent_fk_user;
 					$arrayoftasks[$object->timespent_id]['fk_product'] = $object->timespent_fk_product;
