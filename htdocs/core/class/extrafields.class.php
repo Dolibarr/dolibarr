@@ -1083,6 +1083,11 @@ class ExtraFields
 					if ((string) $okey == '') {
 						continue;
 					}
+					
+					if (($pipepos = strpos ($val, '|')) > 0) {
+						// Select-Field depending on other field, remove extra data from value
+						$val = substr ($val, 0, $pipepos);
+					}
 
 					if ($langfile && $val) {
 						$options[$okey] = $langs->trans($val);
