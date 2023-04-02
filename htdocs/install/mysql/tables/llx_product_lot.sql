@@ -31,6 +31,8 @@ CREATE TABLE llx_product_lot (
   scrapping_date datetime NULL,                    -- date when we decided to scrap all products of this lot
   barcode       varchar(180) DEFAULT NULL,         -- barcode
   fk_barcode_type   integer DEFAULT NULL,          -- barcode type
+  model_pdf			varchar(255),
+  last_main_doc		varchar(255),				-- relative filepath+filename of last main generated document
   datec         datetime,
   tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat integer,

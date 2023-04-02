@@ -141,8 +141,23 @@ if (empty($reshook)) {
 	}
 
 	// Make payment with Direct Debit Stripe
-	if ($action == 'sepastripepayment' && $usercancreate) {
+	if ($action == 'sepastripedirectdebit' && $usercancreate) {
 		$result = $object->makeStripeSepaRequest($user, GETPOST('did', 'int'), 'direct-debit', 'facture');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		} else {
+			// We refresh object data
+			$ret = $object->fetch($id, $ref);
+			$isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
+			if ($ret > 0) {
+				$object->fetch_thirdparty();
+			}
+		}
+	}
+
+	// Make payment with Direct Debit Stripe
+	if ($action == 'sepastripecredittransfer' && $usercancreate) {
+		$result = $object->makeStripeSepaRequest($user, GETPOST('did', 'int'), 'bank-transfer', 'supplier_invoice');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
@@ -678,6 +693,16 @@ if ($object->id > 0) {
 
 	$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
+	// Hook to change amount for other reasons, e.g. apply cash discount for payment before agreed date
+	$parameters = array('remaintopay' => $resteapayer);
+	$reshook = $hookmanager->executeHooks('finalizeAmountOfSupplierInvoice', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook > 0) {
+		print $hookmanager->resPrint;
+		if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
+			$resteapayer = $remaintopay;
+		}
+	}
+
 	// TODO Replace this by an include with same code to show already done payment visible in invoice card
 	print '<tr><td>'.$langs->trans('RemainderToPay').'</td><td class="nowrap">'.price($resteapayer, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
 
@@ -820,7 +845,7 @@ if ($object->id > 0) {
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
 	$sql .= " pfd.date_traite as date_traite, pfd.amount, pfd.fk_prelevement_bons,";
-	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status,";
+	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.amount as pb_amount,";
 	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
@@ -881,17 +906,28 @@ if ($object->id > 0) {
 				$withdrawreceipt->date_creation = $db->jdate($obj->datec);
 				$withdrawreceipt->statut = $obj->status;
 				$withdrawreceipt->status = $obj->status;
+				$withdrawreceipt->amount = $obj->pb_amount;
 				//$withdrawreceipt->credite = $db->jdate($obj->credite);
 
 				print $withdrawreceipt->getNomUrl(1);
 			}
 
-			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
-				$langs->load("stripe");
-				if ($obj->fk_prelevement_bons > 0) {
-					print ' &nbsp; ';
+			if ($type != 'bank-transfer') {
+				if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+					$langs->load("stripe");
+					if ($obj->fk_prelevement_bons > 0) {
+						print ' &nbsp; ';
+					}
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripedirectdebit&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
 				}
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripepayment&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
+			} else {
+				if (!empty($conf->global->STRIPE_SEPA_CREDIT_TRANSFER)) {
+					$langs->load("stripe");
+					if ($obj->fk_prelevement_bons > 0) {
+						print ' &nbsp; ';
+					}
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
+				}
 			}
 			print '</td>';
 
@@ -917,7 +953,7 @@ if ($object->id > 0) {
 	// Past requests
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
-	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.fk_bank_account,";
+	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.fk_bank_account, pb.amount as pb_amount,";
 	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
@@ -978,6 +1014,7 @@ if ($object->id > 0) {
 				$withdrawreceipt->statut = $obj->status;
 				$withdrawreceipt->status = $obj->status;
 				$withdrawreceipt->fk_bank_account = $obj->fk_bank_account;
+				$withdrawreceipt->amount = $obj->pb_amount;
 				//$withdrawreceipt->credite = $db->jdate($obj->credite);
 
 				print $withdrawreceipt->getNomUrl(1);

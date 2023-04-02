@@ -419,7 +419,7 @@ class FormTicket
 				print $langs->trans('SubjectAnswerToTicket').' '.$this->topic_title;
 			} else {
 				if (isset($this->withreadid) && $this->withreadid > 0) {
-					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title.'';
+					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title;
 				} else {
 					$subject = GETPOST('subject', 'alpha');
 				}
@@ -436,7 +436,7 @@ class FormTicket
 		$toolbarname = 'dolibarr_notes';
 		if ($this->ispublic) {
 			$toolbarname = 'dolibarr_details';
-			print '<div class="warning">'.(getDolGlobalString("TICKET_PUBLIC_TEXT_HELP_MESSAGE", $langs->trans('TicketPublicPleaseBeAccuratelyDescribe'))).'</div>';
+			print '<div class="warning hideonsmartphone">'.(getDolGlobalString("TICKET_PUBLIC_TEXT_HELP_MESSAGE", $langs->trans('TicketPublicPleaseBeAccuratelyDescribe'))).'</div>';
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$uselocalbrowser = true;
@@ -464,7 +464,7 @@ class FormTicket
 
 			if (count($cate_arbo)) {
 				// Categories
-				print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+				print '<tr><td class="wordbreak">'.$langs->trans("Categories").'</td><td>';
 				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 			}
@@ -701,7 +701,7 @@ class FormTicket
 	{
 		global $langs, $user;
 
-		$selected = is_array($selected) ? $selected : (!empty($selected) ? array($selected) : array());
+		$selected = is_array($selected) ? $selected : (!empty($selected) ? explode(',', $selected) : array());
 		$ticketstat = new Ticket($this->db);
 
 		dol_syslog(get_class($this) . "::select_types_tickets " . implode(';', $selected) . ", " . $htmlname . ", " . $filtertype . ", " . $format . ", " . $multiselect, LOG_DEBUG);
@@ -1277,7 +1277,7 @@ class FormTicket
 		}
 
 		// Load translation files required by the page
-		$langs->loadLangs(array('other', 'mails'));
+		$langs->loadLangs(array('other', 'mails', 'ticket'));
 
 		// Clear temp files. Must be done at beginning, before call of triggers
 		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
@@ -1467,11 +1467,13 @@ class FormTicket
 			print '</td></tr>';
 
 			// Recipients / adressed-to
-			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients').'</td><td>';
+			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients');
+			print ' '.$form->textwithpicto('', $langs->trans("TicketMessageRecipientsHelp"), 1, 'help');
+			print '</td><td>';
 			if ($res) {
 				// Retrieve email of all contacts (internal and external)
-				$contacts = $ticketstat->getInfosTicketInternalContact();
-				$contacts = array_merge($contacts, $ticketstat->getInfosTicketExternalContact());
+				$contacts = $ticketstat->getInfosTicketInternalContact(1);
+				$contacts = array_merge($contacts, $ticketstat->getInfosTicketExternalContact(1));
 
 				$sendto = array();
 

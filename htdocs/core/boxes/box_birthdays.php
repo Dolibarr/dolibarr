@@ -85,19 +85,19 @@ class box_birthdays extends ModeleBoxes
 		if ($user->rights->user->user->lire) {
 			$tmparray = dol_getdate(dol_now(), true);
 
-			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth as datea, 'birth' as typea, u.email, u.statut as status";
+			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth as datea, date_format(u.birth, '%d') as daya, 'birth' as typea, u.email, u.statut as status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 			$sql .= " WHERE u.entity IN (".getEntity('user').")";
-			$sql .= " AND u.statut = 1";
+			$sql .= " AND u.statut = ".User::STATUS_ENABLED;
 			$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
 			$sql .= ' UNION ';
-			$sql .= "SELECT u.rowid, u.firstname, u.lastname, u.dateemployment as datea, 'employment' as typea, u.email, u.statut as status";
+			$sql .= "SELECT u.rowid, u.firstname, u.lastname, u.dateemployment as datea, date_format(u.dateemployment, '%d') as daya, 'employment' as typea, u.email, u.statut as status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 			$sql .= " WHERE u.entity IN (".getEntity('user').")";
-			$sql .= " AND u.statut = 1";
+			$sql .= " AND u.statut = ".User::STATUS_ENABLED;
 			$sql .= dolSqlDateFilter('u.dateemployment', 0, $tmparray['mon'], 0);
-
-			$sql .= " ORDER BY DAY(datea) ASC";
+			$sql .= " ORDER BY daya ASC";	// We want to have date of the month sorted by the day without taking into consideration the year
+			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
 			$result = $this->db->query($sql);

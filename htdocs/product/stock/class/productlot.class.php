@@ -98,6 +98,8 @@ class Productlot extends CommonObject
 		//'commissionning_date'        => array('type'=>'date', 'label'=>'FirstUseDate', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_TRACEABILITY)?0:1', 'visible'=>5, 'position'=>100),
 		//'qc_frequency'        => array('type'=>'varchar(6)', 'label'=>'QCFrequency', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_QUALITYCONTROL)?1:0', 'visible'=>5, 'position'=>110),
 		'eatby'         => array('type'=>'date', 'label'=>'EatByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_EATBY)?1:0', 'visible'=>5, 'position'=>62),
+		'model_pdf'		=> array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 215),
+		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => -1, 'position' => 310),
 		'datec'         => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500),
 		'tms'           => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>510, 'foreignkey'=>'llx_user.rowid'),
@@ -295,6 +297,8 @@ class Productlot extends CommonObject
 		$sql .= " t.scrapping_date,";
 		//$sql .= " t.commissionning_date,";
 		//$sql .= " t.qc_frequency,";
+		$sql .= " t.model_pdf,";
+		$sql .= " t.last_main_doc,";
 		$sql .= " t.datec,";
 		$sql .= " t.tms,";
 		$sql .= " t.fk_user_creat,";
@@ -329,6 +333,8 @@ class Productlot extends CommonObject
 				$this->scrapping_date = $this->db->jdate($obj->scrapping_date);
 				//$this->commissionning_date = $this->db->jdate($obj->commissionning_date);
 				//$this->qc_frequency = $obj->qc_frequency;
+				$this->model_pdf = $obj->model_pdf;
+				$this->last_main_doc = $obj->last_main_doc;
 
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->tms = $this->db->jdate($obj->tms);
@@ -871,9 +877,10 @@ class Productlot extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
-	 * @since v18
-	 * @return array
+	 *
+	 * @param 	array 	$params 	Params to construct tooltip data
+	 * @since 	v18
+	 * @return 	array
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -881,18 +888,19 @@ class Productlot extends CommonObject
 
 		$langs->loadLangs(['stocks', 'productbatch']);
 
-		$datas = [];
 		$option = $params['option'] ?? '';
-		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("Batch").'</u>';
-		$datas['divopen'] = '<div width="100%">';
-		$datas['batch'] = '<b>'.$langs->trans('Batch').':</b> '.$this->batch;
+
+		$datas = [];
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Batch").'</u>';
+		//$datas['divopen'] = '<div width="100%">';
+		$datas['batch'] = '<br><b>'.$langs->trans('Batch').':</b> '.$this->batch;
 		if ($this->eatby && empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 			$datas['eatby'] = '<br><b>'.$langs->trans('EatByDate').':</b> '.dol_print_date($this->eatby, 'day');
 		}
 		if ($this->sellby && empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 			$datas['sellby'] = '<br><b>'.$langs->trans('SellByDate').':</b> '.dol_print_date($this->sellby, 'day');
 		}
-		$datas['divclose'] = '</div>';
+		//$datas['divclose'] = '</div>';
 
 		return $datas;
 	}
@@ -999,9 +1007,14 @@ class Productlot extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		$this->id = 0;
+		global $conf;
 
-		$this->entity = null;
+		// Initialise parametres
+		$this->id = 0;
+		$this->ref = 'SPECIMEN';
+		$this->specimen = 1;
+
+		$this->entity = $conf->entity;
 		$this->fk_product = null;
 		$this->batch = '';
 		$this->eatby = '';
@@ -1011,5 +1024,38 @@ class Productlot extends CommonObject
 		$this->fk_user_creat = null;
 		$this->fk_user_modif = null;
 		$this->import_key = '';
+	}
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 * @param  string    $modele      Force model to use ('' to not force)
+	 * @param  Translate $outputlangs Object langs to use for output
+	 * @param  int       $hidedetails Hide details of lines
+	 * @param  int       $hidedesc    Hide description
+	 * @param  int       $hideref     Hide ref
+	 * @return int                         0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	{
+		global $conf, $user, $langs;
+
+		$langs->loadLangs(array('stocks', 'productbatch', "products"));
+		$outputlangs->loadLangs(array('stocks', 'productbatch', "products"));
+
+		// Positionne le modele sur le nom du modele a utiliser
+		if (!dol_strlen($modele)) {
+			$modele = '';
+
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (!empty($conf->global->PRODUCT_BATCH_ADDON_PDF)) {
+				$modele = $conf->global->PRODUCT_BATCH_ADDON_PDF;
+			}
+		}
+
+		$modelpath = "core/modules/product_batch/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 }

@@ -501,6 +501,43 @@ div.quickaddblock:focus {
 	background: <?php print $colorbacklinepair1; ?>;
 }
 
+
+/* for the dropdown on action buttons */
+dropdown-holder {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	z-index: 1;
+	width: 300px;
+	right:10px;	/* will be set with js */
+	background: #fff;
+	border: 1px solid #bbb;
+	text-align: <?php echo $left; ?>
+}
+
+.dropdown-content a {
+	margin-right: auto !important;
+	margin-left: auto !important;
+}
+.dropdown-content .butAction {
+	background: none;
+	color: #000 !important;
+}
+.dropdown-content .butAction:hover {
+	box-shadow: none;
+	text-decoration: underline;
+}
+
+.dropdown-holder.open .dropdown-content {
+	display: block;
+}
+
+
+
 /* smartphone */
 @media only screen and (max-width: 767px)
 {

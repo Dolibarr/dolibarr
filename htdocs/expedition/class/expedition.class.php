@@ -530,6 +530,7 @@ class Expedition extends CommonObject
 				foreach ($tab as $detbatch) {
 					if ($detbatch->entrepot_id == $stockLocation) {
 						if (!($detbatch->create($line_id) > 0)) {		// Create an ExpeditionLineBatch
+							$this->errors = $detbatch->errors;
 							$error++;
 						}
 					}
@@ -1833,7 +1834,8 @@ class Expedition extends CommonObject
 	{
 		global $conf, $langs;
 
-		$langs->load('shipping');
+		$langs->load('sendings');
+
 		$nofetch = !empty($params['nofetch']);
 
 		$datas = array();
@@ -1843,6 +1845,13 @@ class Expedition extends CommonObject
 		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
+		if (!$nofetch) {
+			$langs->load('companies');
+			if (empty($this->thirdparty)) {
+				$this->fetch_thirdparty();
+			}
+			$datas['customer'] = '<br><b>'.$langs->trans('Customer').':</b> '.$this->thirdparty->getNomUrl(1, '', 0, 1);
+		}
 
 		return $datas;
 	}
@@ -3020,7 +3029,7 @@ class ExpeditionLigne extends CommonObjectLine
 						$shipmentLot->qty = $this->detail_batch->qty;
 						$shipmentLot->fk_origin_stock = $batch_id;
 						if ($shipmentLot->create($this->id) < 0) {
-							$this->errors[] = $shipmentLot->errors;
+							$this->errors = $shipmentLot->errors;
 							$error++;
 						}
 					}

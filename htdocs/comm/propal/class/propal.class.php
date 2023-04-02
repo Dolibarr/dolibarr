@@ -871,6 +871,8 @@ class Propal extends CommonObject
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
+			// TODO Implement  if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES')) ?
+
 			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -1358,9 +1360,10 @@ class Propal extends CommonObject
 	 *		@param		int		$socid			Id of thirdparty
 	 *		@param		int		$forceentity	Entity id to force
 	 *		@param		bool	$update_prices	[=false] Update prices if true
+	 *		@param		bool	$update_desc	[=false] Update description if true
 	 * 	 	@return		int						New id of clone
 	 */
-	public function createFromClone(User $user, $socid = 0, $forceentity = null, $update_prices = false)
+	public function createFromClone(User $user, $socid = 0, $forceentity = null, $update_prices = false, $update_desc = false)
 	{
 		global $conf, $hookmanager, $mysoc;
 
@@ -1411,9 +1414,9 @@ class Propal extends CommonObject
 		}
 
 		// update prices
-		if ($update_prices === true) {
+		if ($update_prices === true || $update_desc === true) {
 			if ($objsoc->id > 0 && !empty($object->lines)) {
-				if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+				if ($update_prices === true && !empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 					// If price per customer
 					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 				}
@@ -1423,36 +1426,41 @@ class Propal extends CommonObject
 						$prod = new Product($this->db);
 						$res = $prod->fetch($line->fk_product);
 						if ($res > 0) {
-							$pu_ht = $prod->price;
-							$tva_tx = get_default_tva($mysoc, $objsoc, $prod->id);
-							$remise_percent = $objsoc->remise_percent;
+							if ($update_prices === true) {
+								$pu_ht = $prod->price;
+								$tva_tx = get_default_tva($mysoc, $objsoc, $prod->id);
+								$remise_percent = $objsoc->remise_percent;
 
-							if (!empty($conf->global->PRODUIT_MULTIPRICES) && $objsoc->price_level > 0) {
-								$pu_ht = $prod->multiprices[$objsoc->price_level];
-								if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {  // using this option is a bug. kept for backward compatibility
-									if (isset($prod->multiprices_tva_tx[$objsoc->price_level])) {
-										$tva_tx = $prod->multiprices_tva_tx[$objsoc->price_level];
+								if (!empty($conf->global->PRODUIT_MULTIPRICES) && $objsoc->price_level > 0) {
+									$pu_ht = $prod->multiprices[$objsoc->price_level];
+									if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {  // using this option is a bug. kept for backward compatibility
+										if (isset($prod->multiprices_tva_tx[$objsoc->price_level])) {
+											$tva_tx = $prod->multiprices_tva_tx[$objsoc->price_level];
+										}
 									}
-								}
-							} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
-								$prodcustprice = new Productcustomerprice($this->db);
-								$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $objsoc->id);
-								$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
-								if ($result) {
-									// If there is some prices specific to the customer
-									if (count($prodcustprice->lines) > 0) {
-										$pu_ht = price($prodcustprice->lines[0]->price);
-										$tva_tx = ($prodcustprice->lines[0]->default_vat_code ? $prodcustprice->lines[0]->tva_tx.' ('.$prodcustprice->lines[0]->default_vat_code.' )' : $prodcustprice->lines[0]->tva_tx);
-										if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
-											$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+								} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+									$prodcustprice = new Productcustomerprice($this->db);
+									$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $objsoc->id);
+									$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
+									if ($result) {
+										// If there is some prices specific to the customer
+										if (count($prodcustprice->lines) > 0) {
+											$pu_ht = price($prodcustprice->lines[0]->price);
+											$tva_tx = ($prodcustprice->lines[0]->default_vat_code ? $prodcustprice->lines[0]->tva_tx.' ('.$prodcustprice->lines[0]->default_vat_code.' )' : $prodcustprice->lines[0]->tva_tx);
+											if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
+												$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+											}
 										}
 									}
 								}
-							}
 
-							$line->subprice = $pu_ht;
-							$line->tva_tx = $tva_tx;
-							$line->remise_percent = $remise_percent;
+								$line->subprice = $pu_ht;
+								$line->tva_tx = $tva_tx;
+								$line->remise_percent = $remise_percent;
+							}
+							if ($update_desc === true) {
+								$line->desc = $prod->description;
+							}
 						}
 					}
 				}
@@ -3706,6 +3714,7 @@ class Propal extends CommonObject
 		global $conf, $langs, $user;
 
 		$datas = [];
+		$nofetch = !empty($params['nofetch']);
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			return ['optimize' => $langs->trans("Proposal")];
@@ -3718,8 +3727,24 @@ class Propal extends CommonObject
 			if (!empty($this->ref)) {
 				$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 			}
+			if (!$nofetch) {
+				$langs->load('companies');
+				if (empty($this->thirdparty)) {
+					$this->fetch_thirdparty();
+				}
+				$datas['customer'] = '<br><b>'.$langs->trans('Customer').':</b> '.$this->thirdparty->getNomUrl(1, '', 0, 1);
+			}
 			if (!empty($this->ref_client)) {
 				$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_client;
+			}
+			if (!$nofetch) {
+				$langs->load('project');
+				if (empty($this->project)) {
+					$res = $this->fetch_project();
+					if ($res > 0) {
+						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
+					}
+				}
 			}
 			if (!empty($this->total_ht)) {
 				$datas['amountht'] = '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
@@ -3765,6 +3790,7 @@ class Propal extends CommonObject
 			'id' => $this->id,
 			'objecttype' => $this->element,
 			'option' => $option,
+			'nofetch' => 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
@@ -3964,6 +3990,9 @@ class Propal extends CommonObject
 	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -3972,6 +4001,7 @@ class Propal extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'fk_project')) {
 			$return .= '<span class="info-box-ref"> | '.$this->fk_project.'</span>';
 		}

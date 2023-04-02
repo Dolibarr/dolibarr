@@ -81,9 +81,8 @@ class ActionsCardService
 	public function assign_values(&$action, $id = 0, $ref = '')
 	{
 		// phpcs:enable
-		global $limit, $offset, $sortfield, $sortorder;
 		global $conf, $langs, $user, $mysoc, $canvas;
-		global $form, $formproduct;
+		global $form;
 
 		$tmpobject = new Product($this->db);
 		if (!empty($id) || !empty($ref)) {

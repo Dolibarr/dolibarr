@@ -58,9 +58,10 @@ if (isModEnabled('paypal')) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
+
 // Hook to be used by external payment modules (ie Payzen, ...)
-include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager = new HookManager($db);
+
 $hookmanager->initHooks(array('newpayment'));
 
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal"));
@@ -174,12 +175,16 @@ dol_syslog("_SERVER[SERVER_ADDR] = ".(empty($_SERVER["SERVER_ADDR"]) ? '' : dol_
 
 $tracepost = "";
 foreach ($_POST as $k => $v) {
-	$tracepost .= "{$k} - {$v}\n";
+	if (is_scalar($k) && is_scalar($v)) {
+		$tracepost .= "{$k} - {$v}\n";
+	}
 }
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
 $tracesession = "";
 foreach ($_SESSION as $k => $v) {
-	$tracesession .= "{$k} - {$v}\n";
+	if (is_scalar($k) && is_scalar($v)) {
+		$tracesession .= "{$k} - {$v}\n";
+	}
 }
 dol_syslog("SESSION=".$tracesession, LOG_DEBUG, 0, '_payment');
 
@@ -354,7 +359,7 @@ if (empty($ipaddress)) {
 	$ipaddress       = $_SESSION['ipaddress'];
 }
 if (empty($TRANSACTIONID)) {
-	$TRANSACTIONID   = $_SESSION['TRANSACTIONID'];
+	$TRANSACTIONID   = $_SESSION['TRANSACTIONID'];	// pi_... or ch_...
 	if (empty($TRANSACTIONID) && GETPOST('payment_intent', 'alphanohtml')) {
 		// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2
 		$TRANSACTIONID   = GETPOST('payment_intent', 'alphanohtml');
@@ -856,7 +861,8 @@ if ($ispaymentok) {
 				$paiement->paiementid   = $paymentTypeId;
 				$paiement->num_payment = '';
 				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
-				$paiement->ext_payment_id = $TRANSACTIONID;
+				$paiement->ext_payment_id = $TRANSACTIONID;		// TODO LDR May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+				//$paiement->ext_payment_id = $TRANSACTIONID.':'.$customer->id.'@'.$stripearrayofkeysbyenv[$servicestatus]['publishable_key'];	// TODO LDR It would be better if we could store this. Do we have customer->id and publishable_key ?
 				$paiement->ext_payment_site = $service;
 
 				if (!$error) {
@@ -973,8 +979,8 @@ if ($ispaymentok) {
 						$paiement->paiementid = $paymentTypeId;
 						$paiement->num_payment = '';
 						$paiement->note_public = 'Online payment ' . dol_print_date($now, 'standard') . ' from ' . $ipaddress;
-						$paiement->ext_payment_id = $TRANSACTIONID;
-						$paiement->ext_payment_site = '';
+						$paiement->ext_payment_id = $TRANSACTIONID;		// pi_... for Stripe, ...
+						$paiement->ext_payment_site = $service;			// 'StripeLive' or 'Stripe', or ...
 
 						if (!$error) {
 							$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents
@@ -1797,7 +1803,7 @@ print "\n</div>\n";
 print "<!-- Info for payment: FinalPaymentAmt=".dol_escape_htmltag($FinalPaymentAmt)." paymentTypeId=".dol_escape_htmltag($paymentTypeId)." currencyCodeType=".dol_escape_htmltag($currencyCodeType)." -->\n";
 
 
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix);
+htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix);
 
 
 // Clean session variables to avoid duplicate actions if post is resent

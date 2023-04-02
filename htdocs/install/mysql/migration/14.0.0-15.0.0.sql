@@ -561,3 +561,6 @@ ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;
 
 ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN ref varchar(128);
 ALTER TABLE llx_facture_fourn_det MODIFY COLUMN ref varchar(128);
+
+UPDATE llx_c_tva SET localtax2 = '-19:-15:-9' WHERE localtax2 = '-19' AND localtax2_type = '5' AND fk_pays = 4 AND taux = 21;
+

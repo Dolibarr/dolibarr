@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2023	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
@@ -230,7 +230,10 @@ if ($action == 'install') {
 					// Now we install the module
 					if (!$error) {
 						@dol_delete_dir_recursive($dirins.'/'.$modulenameval); // delete the target directory
-						$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval;
+						$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulenameval;
+						if (!dol_is_dir($modulenamedir)) {
+							$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval;
+						}
 						dol_syslog("We copy now directory ".$submodulenamedir." into target dir ".$dirins.'/'.$modulenameval);
 						$result = dolCopyDir($submodulenamedir, $dirins.'/'.$modulenameval, '0444', 1);
 						if ($result <= 0) {
@@ -974,7 +977,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			}
 
 			// Picto + Name of module
-			print '  <td class="tdoverflowmax300" title="'.dol_escape_htmltag($objMod->getName()).'">';
+			print '  <td class="tdoverflowmax300 maxwidth300" title="'.dol_escape_htmltag($objMod->getName()).'">';
 			$alttext = '';
 			//if (is_array($objMod->need_dolibarr_version)) $alttext.=($alttext?' - ':'').'Dolibarr >= '.join('.',$objMod->need_dolibarr_version);
 			//if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
@@ -1181,7 +1184,11 @@ if ($mode == 'deploy') {
 	} else {
 		if (getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')) {
 			// Show clean message
-			$message = info_admin($langs->trans('InstallModuleFromWebHasBeenDisabledContactUs'));
+			if (!is_numeric('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')) {
+				$message = info_admin($langs->trans(getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')));
+			} else {
+				$message = info_admin($langs->trans('InstallModuleFromWebHasBeenDisabledContactUs'));
+			}
 		} else {
 			// Show technical message
 			$message = info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock'));

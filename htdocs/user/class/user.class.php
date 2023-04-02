@@ -35,8 +35,10 @@
  *  \ingroup	core
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+
 
 /**
  *	Class to manage Dolibarr users
@@ -509,7 +511,7 @@ class User extends CommonObject
 				$this->pass_indatabase_crypted = $obj->pass_crypted;
 				$this->pass = $obj->pass;
 				$this->pass_temp	= $obj->pass_temp;
-				$this->api_key = $obj->api_key;
+				$this->api_key = dolDecrypt($obj->api_key);
 
 				$this->address 		= $obj->address;
 				$this->zip 			= $obj->zip;
@@ -713,7 +715,8 @@ class User extends CommonObject
 			'skill@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
 			'job@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
 			'position@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
-			'facturerec' => 'facture'
+			'facturerec' => 'facture',
+			'margins' => 'margin',
 		);
 
 		if (!empty($moduletomoduletouse[$module])) {
@@ -885,6 +888,7 @@ class User extends CommonObject
 		}
 
 		// Add automatically other permission using the criteria whereforadd
+		// $whereforadd can be a SQL filter or the string 'allmodules'
 		if (!empty($whereforadd)) {
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
@@ -894,31 +898,37 @@ class User extends CommonObject
 				$sql .= " AND (".$whereforadd.")";	// Note: parenthesis are important because whereforadd can contains OR. Also note that $whereforadd is already sanitized
 			}
 
-			$result = $this->db->query($sql);
-			if ($result) {
-				$num = $this->db->num_rows($result);
-				$i = 0;
-				while ($i < $num) {
-					$obj = $this->db->fetch_object($result);
-
-					if ($obj) {
-						$nid = $obj->id;
-
-						$sql = "DELETE FROM ".$this->db->prefix()."user_rights WHERE fk_user = ".((int) $this->id)." AND fk_id = ".((int) $nid)." AND entity = ".((int) $entity);
-						if (!$this->db->query($sql)) {
-							$error++;
-						}
-						$sql = "INSERT INTO ".$this->db->prefix()."user_rights (entity, fk_user, fk_id) VALUES (".((int) $entity).", ".((int) $this->id).", ".((int) $nid).")";
-						if (!$this->db->query($sql)) {
-							$error++;
-						}
-					}
-
-					$i++;
-				}
-			} else {
+			$sqldelete = "DELETE FROM ".$this->db->prefix()."user_rights";
+			$sqldelete .= " WHERE fk_user = ".((int) $this->id)." AND fk_id IN (";
+			$sqldelete .= $sql;
+			$sqldelete .= ") AND entity = ".((int) $entity);
+			if (!$this->db->query($sqldelete)) {
 				$error++;
-				dol_print_error($this->db);
+			}
+
+			if (!$error) {
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$num = $this->db->num_rows($resql);
+					$i = 0;
+					while ($i < $num) {
+						$obj = $this->db->fetch_object($resql);
+
+						if ($obj) {
+							$nid = $obj->id;
+
+							$sql = "INSERT INTO ".$this->db->prefix()."user_rights (entity, fk_user, fk_id) VALUES (".((int) $entity).", ".((int) $this->id).", ".((int) $nid).")";
+							if (!$this->db->query($sql)) {
+								$error++;
+							}
+						}
+
+						$i++;
+					}
+				} else {
+					$error++;
+					dol_print_error($this->db);
+				}
 			}
 		}
 
@@ -1031,24 +1041,14 @@ class User extends CommonObject
 				$sql .= " AND id NOT IN (358)"; // user export
 			}
 
-			$result = $this->db->query($sql);
-			if ($result) {
-				$num = $this->db->num_rows($result);
-				$i = 0;
-				while ($i < $num) {
-					$obj = $this->db->fetch_object($result);
-					$nid = $obj->id;
+			$sqldelete = "DELETE FROM ".$this->db->prefix()."user_rights";
+			$sqldelete .= " WHERE fk_user = ".((int) $this->id)." AND fk_id IN (";
+			$sqldelete .= $sql;
+			$sqldelete .= ")";
+			$sqldelete .= " AND entity = ".((int) $entity);
 
-					$sql = "DELETE FROM ".$this->db->prefix()."user_rights";
-					$sql .= " WHERE fk_user = ".((int) $this->id)." AND fk_id = ".((int) $nid);
-					$sql .= " AND entity = ".((int) $entity);
-					if (!$this->db->query($sql)) {
-						$error++;
-					}
-
-					$i++;
-				}
-			} else {
+			$resql = $this->db->query($sqldelete);
+			if (!$resql) {
 				$error++;
 				dol_print_error($this->db);
 			}
@@ -1963,7 +1963,7 @@ class User extends CommonObject
 		$sql .= ", national_registration_number = '".$this->db->escape($this->national_registration_number)."'";
 		$sql .= ", employee = ".(int) $this->employee;
 		$sql .= ", login = '".$this->db->escape($this->login)."'";
-		$sql .= ", api_key = ".($this->api_key ? "'".$this->db->escape($this->api_key)."'" : "null");
+		$sql .= ", api_key = ".($this->api_key ? "'".$this->db->escape(dolEncrypt($this->api_key, '', '', 'dolibarr'))."'" : "null");
 		$sql .= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null"); // 'man' or 'woman'
 		$sql .= ", birth=".(strval($this->birth) != '' ? "'".$this->db->idate($this->birth, 'tzserver')."'" : 'null');
 		if (!empty($user->admin)) {
@@ -3063,6 +3063,8 @@ class User extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -3082,6 +3084,7 @@ class User extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'label')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
 		}
@@ -3864,9 +3867,10 @@ class User extends CommonObject
 	 * Return string with full Url to virtual card
 	 *
 	 * @param	string		$mode		Mode for link
+	 * @param	string		$typeofurl	'external' or 'internal'
 	 * @return	string				    Url string link
 	 */
-	public function getOnlineVirtualCardUrl($mode = '')
+	public function getOnlineVirtualCardUrl($mode = '', $typeofurl = 'external')
 	{
 		global $dolibarr_main_instance_unique_id, $dolibarr_main_url_root;
 		global $conf;
@@ -3881,6 +3885,10 @@ class User extends CommonObject
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+		if ($typeofurl == 'internal') {
+			$urlwithroot = DOL_URL_ROOT;
+		}
 
 		return $urlwithroot.'/public/users/view.php?id='.$this->id.'&securekey='.$encodedsecurekey.$entity_qr.($mode ? '&mode='.urlencode($mode) : '');
 	}

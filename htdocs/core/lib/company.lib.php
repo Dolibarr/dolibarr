@@ -703,10 +703,10 @@ function currency_name($code_iso, $withcode = '', $outputlangs = null)
 }
 
 /**
- *    Retourne le nom traduit de la forme juridique
+ *    Return the name translated of juridical status
  *
- *    @param      string	$code       Code de la forme juridique
- *    @return     string     			Nom traduit du pays
+ *    @param      string	$code       Code of juridical status
+ *    @return     string     			Value of the juridical status
  */
 function getFormeJuridiqueLabel($code)
 {
@@ -717,20 +717,24 @@ function getFormeJuridiqueLabel($code)
 	}
 
 	$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_forme_juridique";
-	$sql .= " WHERE code='".$db->escape($code)."'";
+	$sql .= " WHERE code = '".$db->escape($code)."'";
 
 	dol_syslog("Company.lib::getFormeJuridiqueLabel", LOG_DEBUG);
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
-
 		if ($num) {
 			$obj = $db->fetch_object($resql);
+
 			$label = ($obj->libelle != '-' ? $obj->libelle : '');
-			return $label;
+
+			return $langs->trans($label);
 		} else {
 			return $langs->trans("NotDefined");
 		}
+	} else {
+		return 'Error '.$db->lasterror();
 	}
 }
 
@@ -1494,7 +1498,7 @@ function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = '', $noprin
  */
 function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC', $module = '')
 {
-	global $user, $conf;
+	global $user, $conf, $hookmanager;
 	global $form;
 	global $param, $massactionbutton;
 
@@ -1541,8 +1545,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 	$sql = '';
 
 	if (isModEnabled('agenda')) {
-		require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-		$hookmanager = new HookManager($db);
 		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 		$hookmanager->initHooks(array('agendadao'));
 
@@ -1644,8 +1646,18 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Commande') {
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'order'";
+				if ($filterobj->id) {
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
+				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
+				if ($filterobj->id) {
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
+				}
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Facture') {
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'invoice'";
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
@@ -2228,8 +2240,7 @@ function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
  */
 function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
 {
-	global $conf, $db;
-	// Condition on actioncode
+	global $db;
 
 	if ($donetodo == 'todo') {
 		$sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
@@ -2256,12 +2267,10 @@ function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
  */
 function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 {
-	global $conf, $langs, $db;
-	// Add also event from emailings. TODO This should be replaced by an automatic event ? May be it's too much for very large emailing.
-	if (isModEnabled('mailing') && !empty($objcon->email)
-		&& (empty($actioncode) || $actioncode == 'AC_OTH_AUTO' || $actioncode == 'AC_EMAILING')) {
-		$langs->load("mails");
+	global $db;
 
+	// Add also event from emailings. TODO This should be replaced by an automatic event ? May be it's too much for very large emailing.
+	if (isModEnabled('mailing') && !empty($objcon->email) && (empty($actioncode) || $actioncode == 'AC_OTH_AUTO' || $actioncode == 'AC_EMAILING')) {
 		$sql2 = "SELECT m.rowid as id, m.titre as label, mc.date_envoi as dp, mc.date_envoi as dp2, '100' as percent, 'mailing' as type";
 		$sql2 .= ", null as fk_element, '' as elementtype, null as contact_id";
 		$sql2 .= ", 'AC_EMAILING' as acode, '' as alabel, '' as apicto";
@@ -2282,6 +2291,115 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 		$sql2 .= " AND mc.statut = 1";
 		$sql2 .= " AND u.rowid = m.fk_user_valid";
 		$sql2 .= " AND mc.fk_mailing=m.rowid";
+
 		return $sql2;
+	} else {
+		return '';
 	}
+}
+
+
+
+/**
+ * Show footer of company in HTML pages
+ *
+ * @param   Societe		$fromcompany	Third party
+ * @param   Translate	$langs			Output language
+ * @param	int			$addformmessage	Add the payment form message
+ * @param	string		$suffix			Suffix to use on constants
+ * @param	Object		$object			Object related to payment
+ * @return	void
+ */
+function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffix = '', $object = null)
+{
+	global $conf;
+
+	$reg = array();
+
+	// Juridical status
+	$line1 = "";
+	if ($fromcompany->forme_juridique_code) {
+		$line1 .= ($line1 ? " - " : "").getFormeJuridiqueLabel($fromcompany->forme_juridique_code);
+	}
+	// Capital
+	if ($fromcompany->capital) {
+		$line1 .= ($line1 ? " - " : "").$langs->transnoentities("CapitalOf", $fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
+	}
+	// Prof Id 1
+	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2)) {
+		$field = $langs->transcountrynoentities("ProfId1", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line1 .= ($line1 ? " - " : "").$field.": ".$fromcompany->idprof1;
+	}
+	// Prof Id 2
+	if ($fromcompany->idprof2) {
+		$field = $langs->transcountrynoentities("ProfId2", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line1 .= ($line1 ? " - " : "").$field.": ".$fromcompany->idprof2;
+	}
+
+	// Second line of company infos
+	$line2 = "";
+	// Prof Id 3
+	if ($fromcompany->idprof3) {
+		$field = $langs->transcountrynoentities("ProfId3", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line2 .= ($line2 ? " - " : "").$field.": ".$fromcompany->idprof3;
+	}
+	// Prof Id 4
+	if ($fromcompany->idprof4) {
+		$field = $langs->transcountrynoentities("ProfId4", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line2 .= ($line2 ? " - " : "").$field.": ".$fromcompany->idprof4;
+	}
+	// IntraCommunautary VAT
+	if ($fromcompany->tva_intra != '') {
+		$line2 .= ($line2 ? " - " : "").$langs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
+	}
+
+	print '<!-- htmlPrintOnlinePaymentFooter -->'."\n";
+
+	print '<footer class="center paddingleft paddingright opacitymedium">'."\n";
+	print '<br>';
+	if ($addformmessage) {
+		print '<!-- object = '.(empty($object) ? 'undefined' : $object->element).' -->';
+		print '<br>';
+
+		$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORM_'.$suffix;
+		if (!empty($conf->global->$parammessageform)) {
+			print $langs->transnoentities($conf->global->$parammessageform);
+		} elseif (!empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORM)) {
+			print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORM);
+		}
+
+		// Add other message if VAT exists
+		if (!empty($object->total_vat) || !empty($object->total_tva)) {
+			$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORMIFVAT_'.$suffix;
+			if (!empty($conf->global->$parammessageform)) {
+				print $langs->transnoentities($conf->global->$parammessageform);
+			} elseif (!empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT)) {
+				print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT);
+			}
+		}
+	}
+
+	print '<span style="font-size: 10px;"><br><hr>'."\n";
+	print $fromcompany->name.'<br>';
+	print $line1;
+	if (strlen($line1.$line2) > 50) {
+		print '<br>';
+	} else {
+		print ' - ';
+	}
+	print $line2;
+	print '</span>';
+	print '</footer>'."\n";
 }

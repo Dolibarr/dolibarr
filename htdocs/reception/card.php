@@ -1655,7 +1655,7 @@ if ($action == 'create') {
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="id" value="' . $object->id.'">';
 		}
-		print '<br>';
+		print '<br><br>';
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelines" class="noborder centpercent">';
@@ -1888,8 +1888,8 @@ if ($action == 'create') {
 						}
 					}
 				}
+				print '</td>';
 			}
-			print '</td>';
 
 			if ($action == 'editline' && $lines[$i]->id == $line_id) {
 				// edit mode
@@ -1904,7 +1904,7 @@ if ($action == 'create') {
 						print '<td>'.$formproduct->selectWarehouses($lines[$i]->fk_entrepot, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
 						// Batch number managment
 						if ($conf->productbatch->enabled && !empty($lines[$i]->product->status_batch)) {
-							print '<td class="nowraponall"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"><br>';
+							print '<td class="nowraponall left"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"><br>';
 							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 								print $langs->trans('SellByDate').' : ';
 								print $form->selectDate($lines[$i]->sellby, 'dlc'.$line_id, '', '', 1, "").'</br>';
@@ -1998,9 +1998,10 @@ if ($action == 'create') {
 
 
 			if ($action == 'editline' && $lines[$i]->id == $line_id) {
-				print '<td class="center" colspan="2" valign="middle">';
-				print '<input type="submit" class="button button-save" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'"><br>';
-				print '<input type="submit" class="button button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"><br>';
+				print '<td class="center valignmiddle" colspan="2">';
+				print '<input type="submit" class="button small button-save" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'"><br>';
+				print '<input type="submit" class="button small button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"><br>';
+				print '</td>';
 			} elseif ($object->statut == Reception::STATUS_DRAFT) {
 				// edit-delete buttons
 				print '<td class="linecoledit center">';
@@ -2024,7 +2025,10 @@ if ($action == 'create') {
 			// Display lines extrafields
 			$extralabelslines = $extrafields->attributes[$lines[$i]->table_element];
 			if (!empty($extralabelslines) && is_array($extralabelslines) && count($extralabelslines) > 0) {
-				$colspan = empty($conf->productbatch->enabled) ? 8 : 9;
+				$colspan = 8;
+				if (isModEnabled('stock')) { $colspan++; }
+				if (isModEnabled('productbatch')) { $colspan++; }
+
 				$line = new CommandeFournisseurDispatch($db);
 				$line->id = $lines[$i]->id;
 				$line->fetch_optionals();

@@ -421,6 +421,9 @@ class vCard
 
 		if (!empty($object->socialnetworks)) {
 			foreach ($object->socialnetworks as $key => $val) {
+				if (empty($val)) {	// Disacard social network if empty
+					continue;
+				}
 				$urlsn = '';
 				if ($key == 'linkedin') {
 					if (!preg_match('/^http/', $val)) {

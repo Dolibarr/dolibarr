@@ -106,7 +106,7 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
-$sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code, f.retained_warranty,";
+$sql = "SELECT f.rowid, f.ref, f.type, f.situation_cycle_ref, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code, f.retained_warranty,";
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code, fd.info_bits,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur,";
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
@@ -158,7 +158,7 @@ if ($in_bookkeeping == 'notyet') {
 	$sql .= " AND f.rowid NOT IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";
 	// $sql .= " AND fd.rowid NOT IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
 }
-$sql .= " ORDER BY f.datef";
+$sql .= " ORDER BY f.datef, f.ref";
 //print $sql; exit;
 
 dol_syslog('accountancy/journal/sellsjournal.php', LOG_DEBUG);
@@ -206,21 +206,23 @@ if ($result) {
 			$def_tva[$obj->rowid][$compta_tva][vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : '')] = (vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''));
 		}
 
-		if ($obj->type == Facture::TYPE_SITUATION) {
-			// Avoid divide by 0
-			if ($obj->situation_percent == 0) {
-				$situation_ratio = 0;
-			} else {
-				$line = new FactureLigne($db);
-				$line->fetch($obj->fdid);
+		// Create a compensation rate.
+		$situation_ratio = 1;
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+			if ($obj->situation_cycle_ref) {
+				// Avoid divide by 0
+				if ($obj->situation_percent == 0) {
+					$situation_ratio = 0;
+				} else {
+					$line = new FactureLigne($db);
+					$line->fetch($obj->fdid);
 
-				// Situation invoices handling
-				$prev_progress = $line->get_prev_progress($obj->rowid);
+					// Situation invoices handling
+					$prev_progress = $line->get_prev_progress($obj->rowid);
 
-				$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
+					$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
+				}
 			}
-		} else {
-			$situation_ratio = 1;
 		}
 
 		// Invoice lines
@@ -461,7 +463,15 @@ if ($action == 'writebookkeeping') {
 					if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && getDolGlobalInt('ACCOUNTING_ENABLE_AUTOLETTERING')) {
 						require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
 						$lettering_static = new Lettering($db);
+
 						$nb_lettering = $lettering_static->bookkeepingLettering(array($bookkeeping->id));
+
+						if ($nb_lettering < 0) {
+							$error++;
+							$errorforline++;
+							$errorforinvoice[$key] = 'other';
+							setEventMessages($lettering_static->error, $lettering_static->errors, 'errors');
+						}
 					}
 				}
 			}

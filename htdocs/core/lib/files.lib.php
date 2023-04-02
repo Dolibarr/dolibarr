@@ -5,6 +5,7 @@
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Lenin Rivas         <lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -707,12 +708,14 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
  * @param	string	$destfile			Destination file (can't be a directory)
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
+ * @param   int     $testvirus          Do an antivirus test. Move is canceled if a virus is found.
+ * @param	int		$indexdatabase		Index new file into database.
  * @return	int							<0 if error, 0 if nothing done (dest file already exists and overwriteifexists=0), >0 if OK
  * @see		dol_delete_file() dolCopyDir()
  */
-function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1)
+function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 0)
 {
-	global $conf;
+	global $conf, $db, $user;
 
 	dol_syslog("files.lib.php::dol_copy srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwriteifexists=".$overwriteifexists);
 
@@ -737,6 +740,17 @@ function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1)
 		dol_syslog("files.lib.php::dol_copy failed Permission denied to write into target directory ".$newdirdestfile, LOG_WARNING);
 		return -2;
 	}
+
+	// Check virus
+	$testvirusarray = array();
+	if ($testvirus) {
+		$testvirusarray = dolCheckVirus($srcfile);
+		if (count($testvirusarray)) {
+			dol_syslog("files.lib.php::dol_copy canceled because a virus was found into source file. we ignore the copy request.", LOG_WARNING);
+			return -3;
+		}
+	}
+
 	// Copy with overwriting if exists
 	$result = @copy($newpathofsrcfile, $newpathofdestfile);
 	//$result=copy($newpathofsrcfile, $newpathofdestfile);	// To see errors, remove @
@@ -754,7 +768,64 @@ function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1)
 
 	dolChmod($newpathofdestfile, $newmask);
 
-	return 1;
+	if ($result && $indexdatabase) {
+		// Add entry into ecm database
+		$rel_filetocopyafter = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $newpathofdestfile);
+		if (!preg_match('/([\\/]temp[\\/]|[\\/]thumbs|\.meta$)/', $rel_filetocopyafter)) {     // If not a tmp file
+			$rel_filetocopyafter = preg_replace('/^[\\/]/', '', $rel_filetocopyafter);
+			//var_dump($rel_filetorenamebefore.' - '.$rel_filetocopyafter);exit;
+
+			dol_syslog("Try to copy also entries in database for: ".$rel_filetocopyafter, LOG_DEBUG);
+			include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+
+			$ecmfiletarget = new EcmFiles($db);
+			$resultecmtarget = $ecmfiletarget->fetch(0, '', $rel_filetocopyafter);
+			if ($resultecmtarget > 0) {   // An entry for target name already exists for target, we delete it, a new one will be created.
+				dol_syslog("ECM dest file found, remove it", LOG_DEBUG);
+				$ecmfiletarget->delete($user);
+			} else {
+				dol_syslog("ECM dest file not found, create it", LOG_DEBUG);
+			}
+
+			$ecmSrcfile = new EcmFiles($db);
+			$resultecm  = $ecmSrcfile->fetch(0, '', $srcfile);
+			if ($resultecm) {
+				dol_syslog("Fetch src file ok", LOG_DEBUG);
+			} else {
+				dol_syslog("Fetch src file error", LOG_DEBUG);
+			}
+
+			$ecmfile = new EcmFiles($db);
+			$filename = basename($rel_filetocopyafter);
+			$rel_dir = dirname($rel_filetocopyafter);
+			$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+			$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+
+			$ecmfile->filepath = $rel_dir;
+			$ecmfile->filename = $filename;
+			$ecmfile->label = md5_file(dol_osencode($destfile)); // $destfile is a full path to file
+			$ecmfile->fullpath_orig = $srcfile;
+			$ecmfile->gen_or_uploaded = 'copy';
+			$ecmfile->description = $ecmSrcfile->description;
+			$ecmfile->keywords = $ecmSrcfile->keywords;
+			$resultecm = $ecmfile->create($user);
+			if ($resultecm < 0) {
+				dol_syslog("Create ECM file ok", LOG_DEBUG);
+				setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+			} else {
+				dol_syslog("Create ECM file error", LOG_DEBUG);
+				setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+			}
+
+			if ($resultecm > 0) {
+				$result = 1;
+			} else {
+				$result = -1;
+			}
+		}
+	}
+
+	return $result;
 }
 
 /**
@@ -2488,6 +2559,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	if ($modulepart == 'tva') {
 		$modulepart = 'tax-vat';
 	}
+	// Fix modulepart delivery
+	if ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
+		$modulepart = 'delivery';
+	}
 
 	//print 'dol_check_secure_access_document modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity;
 	dol_syslog('dol_check_secure_access_document modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity);
@@ -2970,14 +3045,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if ($fuser->hasRight('expedition', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->expedition->dir_output."/".(strpos('sending/', $original_file) === 0 ? '' : 'sending/').$original_file;
+		$original_file = $conf->expedition->dir_output."/".(strpos($original_file, 'sending/') === 0 ? '' : 'sending/').$original_file;
 		//$original_file = $conf->expedition->dir_output."/".$original_file;
 	} elseif (($modulepart == 'livraison' || $modulepart == 'delivery') && !empty($conf->expedition->dir_output)) {
 		// Delivery Note Wrapping
 		if ($fuser->hasRight('expedition', 'delivery', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->expedition->dir_output."/".(strpos('receipt/', $original_file) === 0 ? '' : 'receipt/').$original_file;
+		$original_file = $conf->expedition->dir_output."/".(strpos($original_file, 'receipt/') === 0 ? '' : 'receipt/').$original_file;
 	} elseif ($modulepart == 'actions' && !empty($conf->agenda->dir_output)) {
 		// Wrapping pour les actions
 		if ($fuser->hasRight('agenda', 'myactions', $read) || preg_match('/^specimen/i', $original_file)) {
@@ -3129,41 +3204,45 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		// Define $accessallowed
 		$reg = array();
 		if (preg_match('/^([a-z]+)_user_temp$/i', $modulepart, $reg)) {
-			if (empty($conf->{$reg[1]}->dir_temp)) {	// modulepart not supported
+			$tmpmodule = $reg[1];
+			if (empty($conf->$tmpmodule->dir_temp)) {	// modulepart not supported
 				dol_print_error('', 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
 				exit;
 			}
-			if ($fuser->rights->{$reg[1]}->{$lire} || $fuser->rights->{$reg[1]}->{$read} || ($fuser->rights->{$reg[1]}->{$download})) {
+			if ($fuser->hasRight($tmpmodule, $lire) || $fuser->hasRight($tmpmodule, $read) || $fuser->hasRight($tmpmodule, $download)) {
 				$accessallowed = 1;
 			}
 			$original_file = $conf->{$reg[1]}->dir_temp.'/'.$fuser->id.'/'.$original_file;
 		} elseif (preg_match('/^([a-z]+)_temp$/i', $modulepart, $reg)) {
-			if (empty($conf->{$reg[1]}->dir_temp)) {	// modulepart not supported
+			$tmpmodule = $reg[1];
+			if (empty($conf->$tmpmodule->dir_temp)) {	// modulepart not supported
 				dol_print_error('', 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
 				exit;
 			}
-			if ($fuser->rights->{$reg[1]}->{$lire} || $fuser->rights->{$reg[1]}->{$read} || ($fuser->rights->{$reg[1]}->{$download})) {
+			if ($fuser->hasRight($tmpmodule, $lire) || $fuser->hasRight($tmpmodule, $read) || $fuser->hasRight($tmpmodule, $download)) {
 				$accessallowed = 1;
 			}
-			$original_file = $conf->{$reg[1]}->dir_temp.'/'.$original_file;
+			$original_file = $conf->$tmpmodule->dir_temp.'/'.$original_file;
 		} elseif (preg_match('/^([a-z]+)_user$/i', $modulepart, $reg)) {
-			if (empty($conf->{$reg[1]}->dir_output)) {	// modulepart not supported
+			$tmpmodule = $reg[1];
+			if (empty($conf->$tmpmodule->dir_output)) {	// modulepart not supported
 				dol_print_error('', 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
 				exit;
 			}
-			if ($fuser->rights->{$reg[1]}->{$lire} || $fuser->rights->{$reg[1]}->{$read} || ($fuser->rights->{$reg[1]}->{$download})) {
+			if ($fuser->hasRight($tmpmodule, $lire) || $fuser->hasRight($tmpmodule, $read) || $fuser->hasRight($tmpmodule, $download)) {
 				$accessallowed = 1;
 			}
-			$original_file = $conf->{$reg[1]}->dir_output.'/'.$fuser->id.'/'.$original_file;
+			$original_file = $conf->$tmpmodule->dir_output.'/'.$fuser->id.'/'.$original_file;
 		} elseif (preg_match('/^massfilesarea_([a-z]+)$/i', $modulepart, $reg)) {
-			if (empty($conf->{$reg[1]}->dir_output)) {	// modulepart not supported
+			$tmpmodule = $reg[1];
+			if (empty($conf->$tmpmodule->dir_output)) {	// modulepart not supported
 				dol_print_error('', 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
 				exit;
 			}
-			if ($fuser->rights->{$reg[1]}->{$lire} || preg_match('/^specimen/i', $original_file)) {
+			if ($fuser->hasRight($tmpmodule, $lire) || preg_match('/^specimen/i', $original_file)) {
 				$accessallowed = 1;
 			}
-			$original_file = $conf->{$reg[1]}->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+			$original_file = $conf->$tmpmodule->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 		} else {
 			if (empty($conf->$modulepart->dir_output)) {	// modulepart not supported
 				dol_print_error('', 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.'). The module for this modulepart value may not be activated.');
@@ -3178,7 +3257,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 					$accessallowed = 1;
 				}
 			}
-			if (!empty($fuser->rights->$modulepart->{$lire}) || !empty($fuser->rights->$modulepart->{$read})) {
+			if ($fuser->hasRight($modulepart, $lire) || $fuser->hasRight($modulepart, $read)) {
 				$accessallowed = 1;
 			}
 
@@ -3315,4 +3394,88 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
 	}
 
 	return $file_list;
+}
+
+/**
+ * Function to manage the drag and drop of a file.
+ * We use global variable $object
+ *
+ * @param	string	$htmlname	The id of the component where we need to drag and drop
+ * @return  string				Js script to display
+ */
+function dragAndDropFileUpload($htmlname)
+{
+	global $object, $langs;
+
+	$out = "";
+	$out .= '<div id="'.$htmlname.'Message" class="dragDropAreaMessage hidden"><span>'.img_picto("", 'download').'<br>'.$langs->trans("DropFileToAddItToObject").'</span></div>';
+	$out .= "\n<!-- JS CODE TO ENABLE DRAG AND DROP OF FILE -->\n";
+	$out .= "<script>";
+	$out .= '
+		jQuery(document).ready(function() {
+			var enterTargetDragDrop = null;
+			$("#'.$htmlname.'").addClass("cssDragDropArea");
+			$(".cssDragDropArea").on("dragenter", function(ev) {
+				// Entering drop area. Highlight area
+				console.log("We add class highlightDragDropArea")
+				enterTargetDragDrop = ev.target;
+				$(this).addClass("highlightDragDropArea");
+				$("#'.$htmlname.'Message").removeClass("hidden");
+				ev.preventDefault();
+			});
+
+			$(".cssDragDropArea").on("dragleave", function(ev) {
+				// Going out of drop area. Remove Highlight
+				if (enterTargetDragDrop == ev.target){
+					console.log("We remove class highlightDragDropArea")
+					$("#'.$htmlname.'Message").addClass("hidden");
+					$(this).removeClass("highlightDragDropArea");
+				}
+			});
+
+			$(".cssDragDropArea").on("dragover", function(ev) {
+				ev.preventDefault();
+				return false;
+			});
+
+			$(".cssDragDropArea").on("drop", function(e) {
+				console.log("Trigger event file dropped. fk_element='.dol_escape_js($object->id).' element='.dol_escape_js($object->element).'");
+				e.preventDefault();
+				fd = new FormData();
+				fd.append("fk_element", "'.dol_escape_js($object->id).'");
+				fd.append("element", "'.dol_escape_js($object->element).'");
+				fd.append("token", "'.currentToken().'");
+				fd.append("action", "linkit");
+				var dataTransfer = e.originalEvent.dataTransfer;
+				if (dataTransfer.files && dataTransfer.files.length){
+					var droppedFiles = e.originalEvent.dataTransfer.files;
+					$.each(droppedFiles, function(index,file){
+						fd.append("files[]", file,file.name)
+					});
+				}
+				$(".cssDragDropArea").removeClass("highlightDragDropArea");
+				counterdragdrop = 0;
+				$.ajax({
+					url: "'.DOL_URL_ROOT.'/core/ajax/fileupload.php",
+					type: "POST",
+					processData: false,
+					contentType: false,
+					data: fd,
+					success:function() {
+						console.log("Uploaded.", arguments);
+						window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js($object->id).'&seteventmessages=UploadFileDragDropSuccess:mesgs";
+					},
+					error:function() {
+						console.log("Error Uploading.", arguments)
+						if (arguments[0].status == 403) {
+							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js($object->id).'&seteventmessages=ErrorUploadPermissionDenied:errors";
+						}
+						window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js($object->id).'&seteventmessages=ErrorUploadFileDragDropPermissionDenied:errors";
+					},
+				})
+			});
+		});
+	';
+	$out .= "</script>\n";
+	return $out;
 }

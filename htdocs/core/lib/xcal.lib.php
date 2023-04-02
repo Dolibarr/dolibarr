@@ -30,7 +30,7 @@
  *  @param      string  $desc               Description of export
  *  @param      array   $events_array       Array of events ("uid","startdate","duration","enddate","title","summary","category","email","url","desc","author")
  *  @param      string  $outputfile         Output file
- *  @return     int                         < 0 if ko, Nb of events in file if ok
+ *  @return     int                         < 0 if KO, Nb of events in file if OK
  */
 function build_calfile($format, $title, $desc, $events_array, $outputfile)
 {
@@ -42,6 +42,8 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 		// -1 = error
 		return -1;
 	}
+
+	$nbevents = 0;
 
 	// Note: A cal file is an UTF8 encoded file
 	$calfileh = fopen($outputfile, "w");
@@ -144,6 +146,8 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 			*/
 
 			if ($type === "event") {
+				$nbevents++;
+
 				fwrite($calfileh, "BEGIN:VEVENT\n");
 				fwrite($calfileh, "UID:".$uid."\n");
 
@@ -247,6 +251,8 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 
 			// Output the vCard/iCal VJOURNAL object
 			if ($type === "journal") {
+				$nbevents++;
+
 				fwrite($calfileh, "BEGIN:VJOURNAL\n");
 				fwrite($calfileh, "UID:".$uid."\n");
 
@@ -289,6 +295,8 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 		dol_syslog("xcal.lib.php::build_calfile Failed to open file ".$outputfile." for writing");
 		return -2;
 	}
+
+	return $nbevents;
 }
 
 /**
@@ -303,7 +311,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
  *  @param      string	$filter             (optional) Filter
  *  @param		string	$url				Url (If empty, forge URL for agenda RSS export)
  *  @param		string	$langcode			Language code to show in header
- *  @return     int                         < 0 if ko, Nb of events in file if ok
+ *  @return     int                         < 0 if KO, Nb of events in file if OK
  */
 function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filter = '', $url = '', $langcode = '')
 {
@@ -316,6 +324,8 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 		 // -1 = error
 		return -1;
 	}
+
+	$nbevents = 0;
 
 	$fichier = fopen($outputfile, "w");
 
@@ -362,6 +372,8 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 			}
 
 			if ($eventqualified) {
+				$nbevents++;
+
 				if (is_object($event) && get_class($event) == 'WebsitePage') {
 					// Convert object into an array
 					$tmpevent = array();
@@ -426,6 +438,8 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 		fclose($fichier);
 		dolChmod($outputfile);
 	}
+
+	return $nbevents;
 }
 
 /**
@@ -437,8 +451,6 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
  */
 function format_cal($format, $string)
 {
-	global $conf;
-
 	$newstring = $string;
 
 	if ($format === "vcal") {
