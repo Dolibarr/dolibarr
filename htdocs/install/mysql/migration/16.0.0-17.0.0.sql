@@ -403,4 +403,5 @@ ALTER TABLE llx_projet ADD COLUMN extraparams varchar(255);
 
 DELETE FROM llx_const WHERE name = 'TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST';
 
-
+-- Since v17, constant ACCOUNTING_REEXPORT is inverted, force to value 0 by default to avoid confusion
+INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('ACCOUNTING_REEXPORT', 1, 0, 'yesno', 0);
