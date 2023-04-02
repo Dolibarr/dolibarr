@@ -20,12 +20,11 @@
 
 /**
  *	\file       htdocs/core/boxes/box_dolibarr_state_board.php
- *	\ingroup
+ *	\ingroup	core
  *	\brief      Module Dolibarr state base
  */
 
 include_once DOL_DOCUMENT_ROOT . '/core/boxes/modules_boxes.php';
-include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 
 
 /**

@@ -39,6 +39,9 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 160);
 $id = GETPOST('account') ?GETPOST('account', 'alpha') : GETPOST('id');
 $ref = GETPOST('ref');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('bankannualreport', 'globalcard'));
+
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
@@ -460,7 +463,7 @@ if ($result < 0) {
 	print '</div></div><div class="fichehalfright"><div align="center">'; // do not use class="center" here, it will have no effect for the js graph inside.
 	print $show2;
 	print '</div></div></div>';
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 }
 
 

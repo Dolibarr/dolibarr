@@ -100,11 +100,10 @@ class Users extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -544,11 +543,10 @@ class Users extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -593,7 +591,7 @@ class Users extends DolibarrApi
 	 *
 	 * @param 	int 	$group ID of group
 	 * @param int       $load_members     Load members list or not {@min 0} {@max 1}
-	 * @return  array               Array of User objects
+	 * @return  object               object of User objects
 	 *
 	 * @throws RestException 401 Not allowed
 	 * @throws RestException 404 User not found
@@ -640,7 +638,17 @@ class Users extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->useraccount->oldcopy = clone $this->useraccount;
-		return $this->useraccount->delete(DolibarrApiAccess::$user);
+
+		if (!$this->useraccount->delete(DolibarrApiAccess::$user)) {
+			throw new RestException(500);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Ticket deleted'
+			)
+		);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -690,11 +698,6 @@ class Users extends DolibarrApi
 
 		unset($object->lines);
 		unset($object->model_pdf);
-
-		unset($object->skype);
-		unset($object->twitter);
-		unset($object->facebook);
-		unset($object->linkedin);
 
 		$canreadsalary = ((!empty($conf->salaries->enabled) && !empty(DolibarrApiAccess::$user->rights->salaries->read)) || (empty($conf->salaries->enabled)));
 

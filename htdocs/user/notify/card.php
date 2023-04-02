@@ -155,9 +155,12 @@ if ($result > 0) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
 	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
+
+	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
+	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
 	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref, '', 0, '', '', 0, '');
 
@@ -332,7 +335,8 @@ if ($result > 0) {
 				$userstatic->email = $obj->email;
 				$userstatic->statut = $obj->status;
 
-				print '<tr class="oddeven"><td>'.$userstatic->getNomUrl(1);
+				print '<tr class="oddeven">';
+				print '<td>'.$userstatic->getNomUrl(1);
 				if ($obj->type == 'email') {
 					if (isValidEmail($obj->email)) {
 						print ' &lt;'.$obj->email.'&gt;';
@@ -359,8 +363,9 @@ if ($result > 0) {
 				$i++;
 			}
 			$db->free($resql);
+		} else {
+			print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
-
 		// List of notifications enabled for fixed email
 		/*
 		foreach($conf->global as $key => $val) {

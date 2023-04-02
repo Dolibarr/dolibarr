@@ -40,7 +40,7 @@ function jobPrepareHead($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT."/hrm/job_card.php?id=".$object->id;
-	$head[$h][1] = $langs->trans("JobPosition");
+	$head[$h][1] = $langs->trans("JobProfile");
 	$head[$h][2] = 'job_card';
 	$h++;
 

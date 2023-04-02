@@ -131,7 +131,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
-	print_barre_liste($langs->trans("ListOfFees"), $page, $_SERVER["PHP_SELF"], "&socid=$socid", $sortfield, $sortorder, '', $num);
+	print_barre_liste($langs->trans("TripsAndExpenses"), $page, $_SERVER["PHP_SELF"], "&socid=$socid", $sortfield, $sortorder, '', $num);
 
 	$i = 0;
 	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";

@@ -402,7 +402,7 @@ class pdf_standard extends ModelePDFStock
 
 						// Label
 						$pdf->SetXY($this->posxlabel + 0.8, $curY);
-						$pdf->MultiCell($this->posxqty - $this->posxlabel - 0.8, 3, dol_trunc($objp->produit, 24), 0, 'L');
+						$pdf->MultiCell($this->posxqty - $this->posxlabel - 0.8, 3, dol_trunc($productstatic->label, 24), 0, 'L');
 
 						// Quantity
 						$valtoshow = price2num($objp->value, 'MS');
@@ -595,9 +595,7 @@ class pdf_standard extends ModelePDFStock
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 

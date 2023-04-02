@@ -1242,10 +1242,15 @@ if ($action == 'create') {
 				// Display lines for extrafields of the Reception line
 				// $line is a 'CommandeFournisseurLigne', $dispatchLines contains values of Reception lines so properties of CommandeFournisseurDispatch
 				if (!empty($extrafields)) {
-					//var_dump($line);
 					$colspan = 5;
 					if (isModEnabled('productbatch')) {
-						$colspan += 3;
+						$colspan += 2;
+						if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+							$colspan += 1;
+						}
+						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+							$colspan += 1;
+						}
 					}
 					$recLine = new CommandeFournisseurDispatch($db);
 
@@ -1389,7 +1394,7 @@ if ($action == 'create') {
 				if ($action != 'classify' && $permissiontoadd) {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 					$proj = new Project($db);
@@ -1650,7 +1655,7 @@ if ($action == 'create') {
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="id" value="' . $object->id.'">';
 		}
-		print '<br>';
+		print '<br><br>';
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelines" class="noborder centpercent">';
@@ -1883,8 +1888,8 @@ if ($action == 'create') {
 						}
 					}
 				}
+				print '</td>';
 			}
-			print '</td>';
 
 			if ($action == 'editline' && $lines[$i]->id == $line_id) {
 				// edit mode
@@ -1899,7 +1904,7 @@ if ($action == 'create') {
 						print '<td>'.$formproduct->selectWarehouses($lines[$i]->fk_entrepot, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
 						// Batch number managment
 						if ($conf->productbatch->enabled && !empty($lines[$i]->product->status_batch)) {
-							print '<td class="nowraponall"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"><br>';
+							print '<td class="nowraponall left"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"><br>';
 							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 								print $langs->trans('SellByDate').' : ';
 								print $form->selectDate($lines[$i]->sellby, 'dlc'.$line_id, '', '', 1, "").'</br>';
@@ -1946,23 +1951,27 @@ if ($action == 'create') {
 				if (isModEnabled('productbatch')) {
 					if (isset($lines[$i]->batch)) {
 						print '<!-- Detail of lot -->';
-						print '<td class="linecolbatch">';
-						$detail = '';
-						if ($lines[$i]->product->status_batch) {
-							$detail .= $langs->trans("Batch").': '.$lines[$i]->batch;
-							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
-								$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($lines[$i]->sellby, "day");
+						print '<td class="linecolbatch nowrap">';
+						$detail = $langs->trans("NA");
+						if ($lines[$i]->product->status_batch && $lines[$i]->fk_product > 0) {
+							require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+							$productlot = new Productlot($db);
+							$reslot = $productlot->fetch(0, $lines[$i]->fk_product, $lines[$i]->batch);
+							if ($reslot > 0) {
+								$detail = $productlot->getNomUrl(1);
+							} else {
+								// lot is not created and info is only in reception lines
+								$batchinfo = $langs->trans("Batch").': '.$lines[$i]->batch;
+								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+									$batchinfo .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($lines[$i]->sellby, "day");
+								}
+								if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+									$batchinfo .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($lines[$i]->eatby, "day");
+								}
+								$detail = $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"), $batchinfo);
 							}
-							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-								$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($lines[$i]->eatby, "day");
-							}
-							$detail .= '<br>';
-
-							print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"), $detail);
-						} else {
-							print $langs->trans("NA");
 						}
-						print '</td>';
+						print $detail . '</td>';
 					} else {
 						print '<td></td>';
 					}
@@ -1989,9 +1998,10 @@ if ($action == 'create') {
 
 
 			if ($action == 'editline' && $lines[$i]->id == $line_id) {
-				print '<td class="center" colspan="2" valign="middle">';
-				print '<input type="submit" class="button button-save" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'"><br>';
-				print '<input type="submit" class="button button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"><br>';
+				print '<td class="center valignmiddle" colspan="2">';
+				print '<input type="submit" class="button small button-save" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'"><br>';
+				print '<input type="submit" class="button small button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"><br>';
+				print '</td>';
 			} elseif ($object->statut == Reception::STATUS_DRAFT) {
 				// edit-delete buttons
 				print '<td class="linecoledit center">';
@@ -2015,7 +2025,10 @@ if ($action == 'create') {
 			// Display lines extrafields
 			$extralabelslines = $extrafields->attributes[$lines[$i]->table_element];
 			if (!empty($extralabelslines) && is_array($extralabelslines) && count($extralabelslines) > 0) {
-				$colspan = empty($conf->productbatch->enabled) ? 8 : 9;
+				$colspan = 8;
+				if (isModEnabled('stock')) { $colspan++; }
+				if (isModEnabled('productbatch')) { $colspan++; }
+
 				$line = new CommandeFournisseurDispatch($db);
 				$line->id = $lines[$i]->id;
 				$line->fetch_optionals();

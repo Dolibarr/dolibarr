@@ -18,37 +18,37 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Sistem za upravljanje znanja
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=Upravljajte bazo upravljanja znanja (KM) ali službe za pomoč uporabnikom
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Settings
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetup = Nastavitev sistema za upravljanje znanja
+Settings = nastavitve
+KnowledgeManagementSetupPage = Stran z nastavitvami sistema za upravljanje znanja
 
 
 #
 # About page
 #
 About = O programu
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
+KnowledgeManagementAbout = O upravljanju znanja
+KnowledgeManagementAboutPage = Upravljanje znanja o strani
 
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+KnowledgeManagementArea = Upravljanje znanja
+MenuKnowledgeRecord = Baza znanja
+ListKnowledgeRecord = Seznam člankov
+NewKnowledgeRecord = Nov članek
+ValidateReply = Potrdite rešitev
+KnowledgeRecords = Članki
 KnowledgeRecord = Artikel
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
+KnowledgeRecordExtraFields = Dodatna polja za člen
+GroupOfTicket=Skupina vstopnic
+YouCanLinkArticleToATicketCategory=Članek lahko povežete s skupino vstopnic (tako da bo članek označen na vseh vstopnicah v tej skupini)
+SuggestedForTicketsInGroup=Priporočeno pri ustvarjanju zahtevka
 
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+SetObsolete=Nastavi kot zastarelo
+ConfirmCloseKM=Ali potrjujete, da je ta članek zaprt kot zastarel?
+ConfirmReopenKM=Ali želite obnoviti ta članek v status "Potrjen"?

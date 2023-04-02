@@ -42,7 +42,7 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 $action = GETPOST('action', 'aZ09');
 $backtourl = GETPOST('backtourl', 'alpha');
 $keyforprovider = GETPOST('keyforprovider', 'aZ09');
-if (empty($keyforprovider) && !empty($_SESSION["oauthkeyforproviderbeforeoauthjump"]) && (GETPOST('code') || $action == 'delete')) {
+if (!GETPOSTISSET('keyforprovider') && !empty($_SESSION["oauthkeyforproviderbeforeoauthjump"]) && (GETPOST('code') || $action == 'delete')) {
 	// If we are coming from the Oauth page
 	$keyforprovider = $_SESSION["oauthkeyforproviderbeforeoauthjump"];
 }
@@ -137,7 +137,7 @@ if ($action == 'delete') {
 }
 
 if (GETPOST('code')) {     // We are coming from oauth provider page.
-	dol_syslog("We are coming from the oauth provider page keyforprovider=".$keyforprovider);
+	dol_syslog("We are coming from the oauth provider page keyforprovider=".$keyforprovider." code=".dol_trunc(GETPOST('code'), 5));
 
 	// We must validate that the $state is the same than the one into $_SESSION['oauthstateanticsrf'], return error if not.
 	if (isset($_SESSION['oauthstateanticsrf']) && $state != $_SESSION['oauthstateanticsrf']) {
@@ -146,7 +146,6 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 	} else {
 		// This was a callback request from service, get the token
 		try {
-			//var_dump($_GET['code']);
 			//var_dump($state);
 			//var_dump($apiService);      // OAuth\OAuth2\Service\Google
 
@@ -193,7 +192,7 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 		}
 	}
 } else {
-	// If we enter this page without 'code' parameter, we arrive here. this is the case when we want to get the redirect
+	// If we enter this page without 'code' parameter, we arrive here. This is the case when we want to get the redirect
 	// to the OAuth provider login page.
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
 	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
@@ -217,6 +216,8 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 	if (!preg_match('/^forlogin/', $state)) {
 		//$url .= 'hd=xxx';
 	}
+
+	//var_dump($url);exit;
 
 	// we go on oauth provider authorization page
 	header('Location: '.$url);

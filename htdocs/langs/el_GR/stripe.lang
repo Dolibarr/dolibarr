@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live key
 ONLINE_PAYMENT_WAREHOUSE=Απόθεμα προς χρήση για μείωση αποθεμάτων όταν πραγματοποιείται η ηλεκτρονική πληρωμή <br> (TODO Όταν η επιλογή μείωσης αποθεμάτων γίνεται σε μια ενέργεια στο τιμολόγιο και η ηλεκτρονική πληρωμή δημιουργεί από μόνη της το τιμολόγιο;)
 StripeLiveEnabled=Η λειτουργία Stripe live είναι ενεργοποιημένη (διαφορετικά η λειτουργία test / sandbox)
 StripeImportPayment=Εισαγωγή πληρωμών Stripe
-ExampleOfTestCreditCard=Παράδειγμα πιστωτικής κάρτας για δοκιμή: %s => έγκυρο, %s => σφάλμα CVC, %s => έληξε, %s => η χρέωση αποτυγχάνει
+ExampleOfTestCreditCard=Παράδειγμα πιστωτικής κάρτας για δοκιμή SEPA: %s => έγκυρο, %s => σφάλμα CVC, %s => έληξε, %s => η χρέωση αποτυγχάνει
+ExampleOfTestBankAcountForSEPA=Παράδειγμα BAN τραπεζικού λογαριασμού για δοκιμή πάγιας εντολής: %s
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Το αναγνωριστικό πελάτη Stripe Connect (ca _...)
 OAUTH_STRIPE_LIVE_ID=Το αναγνωριστικό πελάτη Stripe Connect (ca _...)
@@ -61,6 +62,7 @@ DeleteACard=Διαγραφή κάρτας
 ConfirmDeleteCard=Είστε σίγουροι ότι θέλετε να διαγράψετε αυτήν την πιστωτική ή χρεωστική κάρτα;
 CreateCustomerOnStripe=Δημιουργία πελάτη στο Stripe
 CreateCardOnStripe=Δημιουργία κάρτας στο Stripe
+CreateBANOnStripe=Δημιουργία τράπεζας στο Stripe
 ShowInStripe=Εμφάνιση στο Stripe
 StripeUserAccountForActions=Λογαριασμός χρήστη που θα χρησιμοποιηθεί για την ειδοποίηση μέσω ηλεκτρονικού ταχυδρομείου ορισμένων ενεργειών Stripe (πληρωμές Stripe)
 StripePayoutList=Λίστα των πληρωμών Stripe
@@ -69,4 +71,8 @@ ToOfferALinkForLiveWebhook=Σύνδεσμος για τη ρύθμιση του 
 PaymentWillBeRecordedForNextPeriod=Η πληρωμή θα καταγραφεί για την επόμενη περίοδο.
 ClickHereToTryAgain=<a href="%s">Κάντε κλικ εδώ για να δοκιμάσετε ξανά ...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Λόγω των κανόνων ισχυρού ελέγχου ταυτότητας πελατών, η δημιουργία κάρτας πρέπει να γίνει από την Stripe. Μπορείτε να κάνετε κλικ εδώ για να ενεργοποιήσετε την εγγραφή πελατών Stripe: %s
-TERMINAL_LOCATION=Τοποθεσία (διεύθυνση) για τερματικά
+STRIPE_CARD_PRESENT=Δώροκάρτα για τερματικά Stripe
+TERMINAL_LOCATION=Τοποθεσία (διεύθυνση) για Stripe Terminals
+RequestDirectDebitWithStripe=Άμεση Χρέωση με Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Ενεργοποιήστε τις πληρωμές άμεσης χρέωσης μέσω Stripe
+

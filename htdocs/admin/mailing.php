@@ -51,8 +51,19 @@ if ($action == 'setvalue') {
 	$mailerror = GETPOST('MAILING_EMAIL_ERRORSTO', 'alpha');
 	$checkread = GETPOST('value', 'alpha');
 	$checkread_key = GETPOST('MAILING_EMAIL_UNSUBSCRIBE_KEY', 'alpha');
-	$mailingdelay = GETPOST('MAILING_DELAY', 'int');
 	$contactbulkdefault = GETPOST('MAILING_CONTACT_DEFAULT_BULK_STATUS', 'int');
+	if (GETPOST('MAILING_DELAY', 'alpha') != '') {
+		$mailingdelay = price2num(GETPOST('MAILING_DELAY', 'alpha'), 3);		// Not less than 1 millisecond.
+	} else {
+		$mailingdelay = '';
+	}
+	// Clean data
+	if ((float) $mailingdelay > 10) {
+		$mailingdelay = 10;
+	}
+	if (GETPOST('MAILING_DELAY', 'alpha') != '' && GETPOST('MAILING_DELAY', 'alpha') != '0' && (float) $mailingdelay < 0.001) {
+		$mailingdelay = 0.001;
+	}
 
 	$res = dolibarr_set_const($db, "MAILING_EMAIL_FROM", $mailfrom, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
@@ -139,17 +150,17 @@ print '</tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MailingEMailError").'</td><td>';
-print '<input class="minwidth100" type="text" name="MAILING_EMAIL_ERRORSTO" value="'.$conf->global->MAILING_EMAIL_ERRORSTO.'">';
-if (!empty($conf->global->MAILING_EMAIL_ERRORSTO) && !isValidEmail($conf->global->MAILING_EMAIL_ERRORSTO)) {
+print '<input class="minwidth100" type="text" name="MAILING_EMAIL_ERRORSTO" value="'.getDolGlobalString('MAILING_EMAIL_ERRORSTO').'">';
+if (getDolGlobalString('MAILING_EMAIL_ERRORSTO') && !isValidEmail(getDolGlobalString('MAILING_EMAIL_ERRORSTO'))) {
 	print ' '.img_warning($langs->trans("BadEMail"));
 }
 print '</td>';
-print '<td class="hideonsmartphone"><span class="opacitymedium">webmaster@example.com></span></td>';
+print '<td class="hideonsmartphone"><span class="opacitymedium">'.dol_escape_htmltag('<webmaster@example.com>').'</span></td>';
 print '</tr>';
 
 print '<tr class="oddeven"><td>';
-print $langs->trans("MailingDelay").'</td><td>';
-print '<input class="width75" type="text" name="MAILING_DELAY" value="'.$conf->global->MAILING_DELAY.'">';
+print $form->textwithpicto($langs->trans("MailingDelay"), $langs->trans("IfDefinedUseAValueBeetween", '0.001', '10')).'</td><td>';
+print '<input class="width75" type="text" name="MAILING_DELAY" value="'.getDolGlobalString('MAILING_DELAY').'">';
 print '</td>';
 print '<td class="hideonsmartphone"></td>';
 print '</tr>';

@@ -71,7 +71,7 @@ if ($action == 'delete' && GETPOST('langtodelete', 'alpha')) {
 }
 
 // Add translation
-if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->adherent->configurer) {
+if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->hasRight('adherent', 'configurer')) {
 	$object = new AdherentType($db);
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
@@ -99,7 +99,7 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->ad
 }
 
 // Edit translation
-if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->rights->adherent->configurer) {
+if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->hasRight('adherent', 'configurer')) {
 	$object = new AdherentType($db);
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
@@ -125,7 +125,7 @@ if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->rights->a
 }
 
 // Delete translation
-if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && $user->rights->adherent->configurer) {
+if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && $user->hasRight('adherent', 'configurer')) {
 	$object = new AdherentType($db);
 	$object->fetch($id);
 	$langtodelete = GETPOST('langdel', 'alpha');

@@ -130,8 +130,12 @@ function dol_getImageSize($file, $url = false)
 
 	if ($filetoread) {
 		$infoImg = getimagesize($filetoread); // Recuperation des infos de l'image
-		$ret['width'] = $infoImg[0]; // Largeur de l'image
-		$ret['height'] = $infoImg[1]; // Hauteur de l'image
+		if ($infoImg) {
+			$ret['width'] = $infoImg[0]; // Largeur de l'image
+			$ret['height'] = $infoImg[1]; // Hauteur de l'image
+		} else {
+			$ret['width'] = $ret['height'] = '';
+		}
 	}
 
 	return $ret;
@@ -362,9 +366,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	}
 
 	// Set permissions on file
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($imgTargetName, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($imgTargetName);
 
 	// Free memory. This does not delete image.
 	imagedestroy($img);
@@ -761,9 +763,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	}
 
 	// Set permissions on file
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($imgThumbName, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($imgThumbName);
 
 	// Free memory. This does not delete image.
 	imagedestroy($img);

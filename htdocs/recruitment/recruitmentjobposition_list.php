@@ -213,7 +213,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= ", COUNT(rc.rowid) as nbapplications";
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
@@ -585,11 +585,16 @@ while ($i < $imaxinloop) {
 
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
+	$object->date_planned = $obj->date_planned;
+
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="'.$savnbfield.'">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
+		}
+		if ($massactionbutton || $massaction) {
+			$selected = 0;
 		}
 		// Output Kanban
 		print $object->getKanbanView('');

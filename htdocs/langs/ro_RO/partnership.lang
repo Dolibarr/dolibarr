@@ -20,6 +20,7 @@ ModulePartnershipName=Parteneriate
 PartnershipDescription=Modul Management parteneriate
 PartnershipDescriptionLong= Modul Management parteneriate
 Partnership=Parteneriat
+Partnerships=Parteneriate
 AddPartnership=Adăugare parteneriat
 CancelPartnershipForExpiredMembers=Parteneriat: Anulează parteneriatul membrilor cu adeziuni expirate
 PartnershipCheckBacklink=Parteneriat: Verificare backlink de referinţă
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Parteneriat: Verificare backlink de referinţă
 # Menu
 #
 NewPartnership=Parteneriat nou
+NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
 ListOfPartnerships=Listă parteneriate
 
 #

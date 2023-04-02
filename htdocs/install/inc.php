@@ -6,6 +6,7 @@
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021       Charlene Benke      	<charlene@patas-monkey.com>
+ * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
 *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,6 +71,92 @@ $conffiletoshow = "htdocs/conf/conf.php";
 //$conffile = "/etc/dolibarr/conf.php";
 //$conffiletoshow = "/etc/dolibarr/conf.php";
 
+$short_options = "c:h";
+$long_options = array(
+	"config:",
+	"help",
+);
+
+/**
+ * Print the usage when executing scripts from install/.
+ *
+ * Print the help text exposing the available options when executing
+ * update or install script (ie. from htdocs/install/) from CLI with
+ * the `php` executable. This function does not `exit` the program and
+ * the caller should then call `exit` themselves since they should
+ * determine whether it was an error or not.
+ *
+ * @param string $program the script that was originally run
+ * @param string $header  the message to signal to the user
+ * @return void
+ */
+function usage($program, $header)
+{
+	echo $header."\n";
+	echo "  php ".$program." [options] previous_version new_version [script options]\n";
+	echo "\n";
+	echo "Script options when using upgrade.php:\n";
+	echo "\n";
+	echo "  dirmodule:\n";
+	echo "      Specify dirmodule to provide a path for an external module\n";
+	echo "      so the migration is done using a script from a module.\n";
+	echo "\n";
+	echo "  ignoredbversion:\n";
+	echo "      Allow to run migration even if database version does\n";
+	echo "      not match start version of migration.\n";
+	echo "\n";
+	echo "Script options when using upgrade2.php:\n";
+	echo "\n";
+	echo "  MODULE_NAME1_TO_ENABLE,MODULE_NAME2_TO_ENABLE:\n";
+	echo "      Specify a list of module-name to enable, joined by comma.\n";
+	echo "\n";
+	echo "Options:\n";
+	echo "  -c, --config <filename>:\n";
+	echo "      Provide a different conf.php file to use.\n";
+	echo "\n";
+	echo "  -h, --help:\n";
+	echo "      Display this help message.\n";
+}
+
+if (php_sapi_name() === "cli") {
+	$rest_index = 0;
+	$opts = getopt($short_options, $long_options, $rest_index);
+
+	foreach ($opts as $opt => $arg) switch ($opt) {
+		case 'c':
+		case 'config':
+			$conffile = $arg;
+			$conffiletoshow = $arg;
+			break;
+		case 'h':
+		case 'help':
+			usage($argv[0], "Usage:");
+			exit(0);
+	}
+
+	// In the following test, only dash-prefixed arguments will trigger an
+	// error, given that scripts options can allow a variable number of
+	// additional non-prefixed argument and we mostly want to check for
+	// typo right now.
+	if ($rest_index < $argc && $argv[$rest_index][0] == "-") {
+		usage($argv[0], "Unknown option ".$argv[$rest_index]. ", usage:");
+		exit(1);
+	}
+
+	// Currently, scripts using inc.php will require addtional arguments,
+	// see help above for more details.
+	if ($rest_index > $argc - 2) {
+		usage($argv[0], "Missing mandatory arguments, usage:");
+		exit(1);
+	}
+
+	// Tricky argument list hack, should be removed someday.
+	// Reset argv to remove the argument that were parsed. This is needed
+	// currently because some install code, like in upgrade.php, are using
+	// $argv[] directly with fixed index to fetch some arguments.
+	$argv = array_merge(array($argv[0]), array_slice($argv, $rest_index));
+	$argc = count($argv);
+}
 
 // Load conf file if it is already defined
 if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) > 8) { // Test on filesize is to ensure that conf file is more that an empty template with just <?php in first line
@@ -180,33 +267,27 @@ if (!empty($dolibarr_main_document_root_alt)) {
 }
 
 
-// Security check (old method, when directory is renamed /install.lock)
-if (preg_match('/install\.lock/i', $_SERVER["SCRIPT_FILENAME"])) {
-	if (!is_object($langs)) {
-		$langs = new Translate('..', $conf);
-		$langs->setDefaultLang('auto');
-	}
-	$langs->load("install");
+// Check install.lock (for both install and upgrade)
 
-	header("X-Content-Type-Options: nosniff");
-	header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
-
-	print $langs->trans("YouTryInstallDisabledByDirLock");
-	if (!empty($dolibarr_main_url_root)) {
-		print 'Click on following link, <a href="'.$dolibarr_main_url_root.'/admin/index.php?mainmenu=home&leftmenu=setup'.(GETPOSTISSET("login") ? '&username='.urlencode(GETPOST("login")) : '').'">';
-		print $langs->trans("ClickHereToGoToApp");
-		print '</a>';
-	}
-	exit;
-}
-
-$lockfile = DOL_DATA_ROOT.'/install.lock';
+$lockfile = DOL_DATA_ROOT.'/install.lock';	// To lock all /install pages
+$lockfile2 = DOL_DOCUMENT_ROOT.'/install.lock';	// To lock all /install pages (recommended)
+$upgradeunlockfile = DOL_DATA_ROOT.'/upgrade.unlock';	// To unlock upgrade process
+$upgradeunlockfile2 = DOL_DOCUMENT_ROOT.'/upgrade.unlock';	// To unlock upgrade process
 if (constant('DOL_DATA_ROOT') === null) {
 	// We don't have a configuration file yet
 	// Try to detect any lockfile in the default documents path
 	$lockfile = '../../documents/install.lock';
+	$upgradeunlockfile = '../../documents/upgrade.unlock';
 }
-if (@file_exists($lockfile)) {
+$islocked=false;
+if (@file_exists($lockfile) || @file_exists($lockfile2)) {
+	if (!defined('ALLOWED_IF_UPGRADE_UNLOCK_FOUND') || (! @file_exists($upgradeunlockfile) && ! @file_exists($upgradeunlockfile2))) {
+		// If this is a dangerous install page (ALLOWED_IF_UPGRADE_UNLOCK_FOUND not defined) or
+		// if there is no upgrade unlock files, we lock the pages.
+		$islocked = true;
+	}
+}
+if ($islocked) {	// Pages are locked
 	if (!isset($langs) || !is_object($langs)) {
 		$langs = new Translate('..', $conf);
 		$langs->setDefaultLang('auto');
@@ -216,20 +297,31 @@ if (@file_exists($lockfile)) {
 	header("X-Content-Type-Options: nosniff");
 	header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
 
-	print $langs->trans("YouTryInstallDisabledByFileLock");
+	if (GETPOST('action') != 'upgrade') {
+		print $langs->trans("YouTryInstallDisabledByFileLock").'<br>';
+	} else {
+		print $langs->trans("YouTryUpgradeDisabledByMissingFileUnLock").'<br>';
+	}
 	if (!empty($dolibarr_main_url_root)) {
-		print $langs->trans("ClickOnLinkOrRemoveManualy").'<br>';
+		if (GETPOST('action') != 'upgrade') {
+			print $langs->trans("ClickOnLinkOrRemoveManualy").'<br>';
+		} else {
+			print $langs->trans("ClickOnLinkOrCreateUnlockFileManualy").'<br>';
+		}
 		print '<a href="'.$dolibarr_main_url_root.'/admin/index.php?mainmenu=home&leftmenu=setup'.(GETPOSTISSET("login") ? '&username='.urlencode(GETPOST("login")) : '').'">';
 		print $langs->trans("ClickHereToGoToApp");
 		print '</a>';
 	} else {
-		print 'If you always reach this page, you must remove install.lock file manually.<br>';
+		print 'If you always reach this page, you must remove the install.lock file manually.<br>';
 	}
 	exit;
 }
 
 
 // Force usage of log file for install and upgrades
+if (!isset($conf->syslog) || !is_object($conf->syslog)) {
+	$conf->syslog = new stdClass();
+}
 $conf->syslog->enabled = 1;
 $conf->global->SYSLOG_LEVEL = constant('LOG_DEBUG');
 if (!defined('SYSLOG_HANDLERS')) {
@@ -339,6 +431,9 @@ function conf($dolibarr_main_document_root)
 	$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
 	// Force usage of log file for install and upgrades
+	if (!isset($conf->syslog) || !is_object($conf->syslog)) {
+		$conf->syslog = new stdClass();
+	}
 	$conf->syslog->enabled = 1;
 	$conf->global->SYSLOG_LEVEL = constant('LOG_DEBUG');
 	if (!defined('SYSLOG_HANDLERS')) {

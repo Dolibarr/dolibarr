@@ -175,7 +175,6 @@ class box_project extends ModeleBoxes
 		$this->info_box_contents[$i][] = array(
 			'td' => 'class="liste_total"',
 			'text' => $langs->trans("Total")."&nbsp;".$textHead,
-			 'text' => "&nbsp;",
 		);
 		$this->info_box_contents[$i][] = array(
 			'td' => 'class="right liste_total" ',

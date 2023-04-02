@@ -23,7 +23,7 @@
 /**
  *     \file       htdocs/societe/societecontact.php
  *     \ingroup    societe
- *     \brief      Onglet de gestion des contacts additionnel d'une société
+ *     \brief      Tab to manage differently contact. Used when unstable feature MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES is on.
  */
 
 

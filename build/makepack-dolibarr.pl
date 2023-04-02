@@ -524,12 +524,13 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/ansible`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/codesniffer`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/codetemplates`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/dbmodel`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/examples/ldap`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/examples/zapier`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/initdata`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/initdemo`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/iso-normes`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/ldap`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/licence`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/resources/dbmodel`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/resources/iso-normes`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/resources/licence`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/mail`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/multitail`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/phpcheckstyle`;
@@ -678,7 +679,7 @@ if ($nboftargetok) {
 				mkdir($DESTI.'/standard');
 				if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; } 
 			}
-			
+
 			print "Remove target $FILENAMETGZ.tgz...\n";
 			unlink("$NEWDESTI/$FILENAMETGZ.tgz");
 
@@ -894,7 +895,7 @@ if ($nboftargetok) {
 
 			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp`;
 			$ret=`rm -fr $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build`;
-			
+
 			print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp\n";
 			$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp\"";
 			$ret=`$cmd`;
@@ -1064,7 +1065,8 @@ if ($nboftargetok) {
 			$ret=`mv $BUILDROOT/*_all.deb "$NEWDESTI/"`;
 			$ret=`mv $BUILDROOT/*.dsc "$NEWDESTI/"`;
 			$ret=`mv $BUILDROOT/*.orig.tar.gz "$NEWDESTI/"`;
-			$ret=`mv $BUILDROOT/*.debian.tar.xz "$NEWDESTI/"`;
+			#$ret=`mv $BUILDROOT/*.debian.tar.xz "$NEWDESTI/"`;		# xz file is generated when build/debian/sources/option 
+			$ret=`mv $BUILDROOT/*.debian.tar.gz "$NEWDESTI/"`;
 			$ret=`mv $BUILDROOT/*.changes "$NEWDESTI/"`;
 			next;
 		}
@@ -1146,7 +1148,8 @@ if ($nboftargetok) {
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'Dolibarr installer for Debian-Ubuntu (DoliDeb)',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_amd64.changes"=>'none',		# none means it won't be published on SF
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.dsc"=>'none',					# none means it won't be published on SF
-			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.xz"=>'none',		# none means it won't be published on SF
+			#"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.xz"=>'none',		# none means it won't be published on SF
+			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.gz"=>'none',		# none means it won't be published on SF
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'none',		# none means it won't be published on SF
 			"$DESTI/package_windows/$FILENAMEEXEDOLIWAMP.exe"=>'Dolibarr installer for Windows (DoliWamp)',
 			"$DESTI/standard/$FILENAMETGZ.tgz"=>'Dolibarr ERP-CRM',

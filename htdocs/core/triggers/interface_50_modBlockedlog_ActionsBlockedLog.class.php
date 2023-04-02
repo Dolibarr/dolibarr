@@ -64,9 +64,12 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		}
 
 		// Test if event/record is qualified
-		$listofqualifiedelement = array('facture', 'don', 'payment', 'payment_donation', 'subscription', 'payment_various', 'cashcontrol');
-		if (!in_array($object->element, $listofqualifiedelement)) {
-			return 1;
+		if (empty($conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED) || !in_array($action, explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED))) {
+			// If custom actions are not set or if action not into custom actions, we can exclude action if object->elementis not valid
+			$listofqualifiedelement = array('facture', 'don', 'payment', 'payment_donation', 'subscription', 'payment_various', 'cashcontrol');
+			if (!in_array($object->element, $listofqualifiedelement)) {
+				return 1;
+			}
 		}
 
 		dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
@@ -100,7 +103,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 				$amounts = (double) $object->amount;
 			} elseif ($action == 'CASHCONTROL_VALIDATE') {
 				$amounts = (double) $object->cash + (double) $object->cheque + (double) $object->card;
-			} else {
+			} elseif (property_exists($object, 'total_ttc')) {
 				$amounts = (double) $object->total_ttc;
 			}
 		}
@@ -132,7 +135,9 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 0; // not implemented action log
 		}
 
-		$result = $b->setObjectData($object, $action, $amounts, $user); // Set field date_object, ref_object, fk_object, element, object_data
+		// Set field date_object, ref_object, fk_object, element, object_data
+		$result = $b->setObjectData($object, $action, $amounts, $user);
+		//var_dump($b); exit;
 
 		if ($result < 0) {
 			$this->error = $b->error;

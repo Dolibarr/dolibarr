@@ -85,9 +85,9 @@ if (!empty($section)) {
 	}
 }
 
-$permtoread = $user->rights->ecm->read;
+$permissiontoread = $user->rights->ecm->read;
 
-if (!$permtoread) {
+if (!$permissiontoread) {
 	accessforbidden();
 }
 
@@ -175,7 +175,7 @@ print load_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("Search"));
 print $langs->trans("FeatureNotYetAvailable").'.<br><br>';
 
 // Tool bar
-$head = ecm_prepare_head_fm($ecmdir, $module, $section);
+$head = ecm_prepare_head_fm($ecmdir);
 //print dol_get_fiche_head($head, 'search_form', '', 1);
 
 

@@ -20,6 +20,7 @@ ModulePartnershipName=Xestión de Asociacións
 PartnershipDescription=Módulo de xestión de Asociacións
 PartnershipDescriptionLong= Módulo de xestión de Asociacións
 Partnership=Asociación
+Partnerships=Asociacións
 AddPartnership=Engade asociado
 CancelPartnershipForExpiredMembers=Asociación: cancela a asociación de membros con subscricións caducadas 
 PartnershipCheckBacklink=Asociación: comprobe a ligazón de retroceso referente 
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Asociación: comprobe a ligazón de retroceso referente
 # Menu
 #
 NewPartnership=Nova Asociación
+NewPartnershipbyWeb=A súa solicitude de asociación engadiuse correctamente. Podemos contactar con vostede en breve...
 ListOfPartnerships=Listaxe de Asociacións
 
 #

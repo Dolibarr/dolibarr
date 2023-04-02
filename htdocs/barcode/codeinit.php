@@ -48,7 +48,7 @@ $thirdpartytmp = new Societe($db);
 $modBarCodeProduct = '';
 $modBarCodeThirdparty = '';
 
-$maxperinit = 1000;
+$maxperinit = empty($conf->global->BARCODE_INIT_MAX) ? 1000 : $conf->global->BARCODE_INIT_MAX;
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
@@ -179,14 +179,16 @@ if (!empty($conf->global->BARCODE_PRODUCT_ADDON_NUM)) {
 				if (preg_match('/^mod_barcode_product_.*php$/', $file)) {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
-					try {
-						dol_include_once($dirroot.$file.'.php');
-					} catch (Exception $e) {
-						dol_syslog($e->getMessage(), LOG_ERR);
-					}
+					if ($file == $conf->global->BARCODE_PRODUCT_ADDON_NUM) {
+						try {
+							dol_include_once($dirroot.$file.'.php');
+						} catch (Exception $e) {
+							dol_syslog($e->getMessage(), LOG_ERR);
+						}
 
-					$modBarCodeProduct = new $file();
-					break;
+						$modBarCodeProduct = new $file();
+						break;
+					}
 				}
 			}
 			closedir($handle);

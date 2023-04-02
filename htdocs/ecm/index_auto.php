@@ -34,12 +34,6 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal", "bills", "contracts"));
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'ecm', 0);
-
 // Get parameters
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
@@ -86,6 +80,12 @@ $ecmdirstatic = new EcmDirectory($db);
 $userstatic = new User($db);
 
 $error = 0;
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'ecm', 0);
 
 
 /*
@@ -309,7 +309,7 @@ llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', '', '', $m
 // Add sections to manage
 $rowspan = 0;
 $sectionauto = array();
-if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
+if (empty($conf->global->ECM_AUTO_TREE_HIDEN)) {
 	if (isModEnabled("product") || isModEnabled("service")) {
 		$langs->load("products");
 		$rowspan++; $sectionauto[] = array('position'=>10, 'level'=>1, 'module'=>'product', 'test'=>(isModEnabled("product") || isModEnabled("service")), 'label'=>$langs->trans("ProductsAndServices"), 'desc'=>$langs->trans("ECMDocsByProducts"));
@@ -387,7 +387,7 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
 	}
 }
 
-$head = ecm_prepare_dasboard_head('');
+$head = ecm_prepare_dasboard_head(null);
 print dol_get_fiche_head($head, 'index_auto', '', -1, '');
 
 

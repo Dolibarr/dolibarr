@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2016  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -696,11 +697,12 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 /**
  * Prepare array with list of tabs
  *
- * @param	int		$nbofactivatedmodules	Number if activated modules
- * @param	int		$nboftotalmodules		Nb of total modules
- * @return  array							Array of tabs to show
+ * @param	int		$nbofactivatedmodules		Number if activated modules
+ * @param	int		$nboftotalmodules			Nb of total modules
+ * @param	int		$nbmodulesnotautoenabled	Nb of modules not auto enabled that are activated
+ * @return  array								Array of tabs to show
  */
-function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules)
+function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules, $nbmodulesnotautoenabled)
 {
 	global $langs, $conf, $user, $form;
 
@@ -711,7 +713,7 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules)
 	$head = array();
 	$mode = empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT;
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$mode;
-	if ($nbofactivatedmodules <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled)
+	if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled)
 		//$head[$h][1] = $form->textwithpicto($langs->trans("AvailableModules"), $desc);
 		$head[$h][1] = $langs->trans("AvailableModules");
 		$head[$h][1] .= $form->textwithpicto('', $langs->trans("YouMustEnableOneModule").'.<br><br><span class="opacitymedium">'.$desc.'</span>', 1, 'warning');
@@ -769,6 +771,11 @@ function ihm_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=login";
 	$head[$h][1] = $langs->trans("LoginPage");
 	$head[$h][2] = 'login';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=css";
+	$head[$h][1] = $langs->trans("CSSPage");
+	$head[$h][2] = 'css';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin');
@@ -1084,11 +1091,12 @@ function purgeSessions($mysessionid)
 /**
  *  Enable a module
  *
- *  @param      string		$value      Name of module to activate
- *  @param      int			$withdeps   Activate/Disable also all dependencies
- *  @return     array      			    array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
+ *  @param      string		$value      			Name of module to activate
+ *  @param      int			$withdeps  				Activate/Disable also all dependencies
+ * 	@param		int			$noconfverification		Remove verification of $conf variable for module
+ *  @return     array      			    			array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
  */
-function activateModule($value, $withdeps = 1)
+function activateModule($value, $withdeps = 1, $noconfverification = 0)
 {
 	global $db, $langs, $conf, $mysoc;
 
@@ -1144,8 +1152,10 @@ function activateModule($value, $withdeps = 1)
 	}
 
 	$const_name = $objMod->const_name;
-	if (!empty($conf->global->$const_name)) {
-		return $ret;
+	if ($noconfverification == 0) {
+		if (!empty($conf->global->$const_name)) {
+			return $ret;
+		}
 	}
 
 	$result = $objMod->init(); // Enable module
@@ -1706,7 +1716,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 
 			print '<tr class="oddeven">';
 
-			// Show constant
+			// Show label of parameter
 			print '<td>';
 			if (empty($strictw3c)) {
 				print '<input type="hidden" name="action" value="update">';
@@ -1715,8 +1725,11 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 			print '<input type="hidden" name="constname'.(empty($strictw3c) ? '' : '[]').'" value="'.$const.'">';
 			print '<input type="hidden" name="constnote_'.$obj->name.'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 			print '<input type="hidden" name="consttype_'.$obj->name.'" value="'.($obj->type ? $obj->type : 'string').'">';
-
-			print ($label ? $label : $langs->trans('Desc'.$const));
+			if (!empty($tableau[$key]['tooltip'])) {
+				print $form->textwithpicto($label ? $label : $langs->trans('Desc'.$const), $tableau[$key]['tooltip']);
+			} else {
+				print ($label ? $label : $langs->trans('Desc'.$const));
+			}
 
 			if ($const == 'ADHERENT_MAILMAN_URL') {
 				print '. '.$langs->trans("Example").': <a href="#" id="exampleclick1">'.img_down().'</a><br>';
@@ -1840,10 +1853,12 @@ function showModulesExludedForExternal($modules)
 	global $conf, $langs;
 
 	$text = $langs->trans("OnlyFollowingModulesAreOpenedToExternalUsers");
-	$listofmodules = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	$listofmodules = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);	// List of modules qualified for external user management
+
 	$i = 0;
 	if (!empty($modules)) {
-		foreach ($modules as $module) {
+		$tmpmodules = dol_sort_array($modules, 'module_position');
+		foreach ($tmpmodules as $module) {		// Loop on array of modules
 			$moduleconst = $module->const_name;
 			$modulename = strtolower($module->name);
 			//print 'modulename='.$modulename;
@@ -1860,9 +1875,16 @@ function showModulesExludedForExternal($modules)
 				$text .= ' ';
 			}
 			$i++;
-			$text .= $langs->trans('Module'.$module->numero.'Name');
+
+			$tmptext = $langs->trans('Module'.$module->numero.'Name');
+			if ($tmptext != 'Module'.$module->numero.'Name') {
+				$text .= $langs->trans('Module'.$module->numero.'Name');
+			} else {
+				$text .= $langs->trans($module->name);
+			}
 		}
 	}
+
 	return $text;
 }
 
@@ -2043,6 +2065,11 @@ function email_admin_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
 	$head[$h][1] = $langs->trans("EMailTemplates");
 	$head[$h][2] = 'templates';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/mails_ingoing.php";
+	$head[$h][1] = $langs->trans("InGoingEmailSetup", $langs->transnoentitiesnoconv("EMailing"));
+	$head[$h][2] = 'common_ingoing';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'email_admin', 'remove');

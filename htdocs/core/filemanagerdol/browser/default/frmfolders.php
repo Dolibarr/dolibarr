@@ -53,7 +53,7 @@ top_httphead();
 -->
 <?php
 //$arrayofjs=array('js/common.js');
-//echo top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
+//top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
 ?>
 <html>
 	<head>

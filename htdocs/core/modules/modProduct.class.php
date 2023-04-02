@@ -104,7 +104,7 @@ class modProduct extends DolibarrModules
 		// Boxes
 		$this->boxes = array(
 			0=>array('file'=>'box_produits.php', 'enabledbydefaulton'=>'Home'),
-			1=>array('file'=>'box_produits_alerte_stock.php', 'enabledbydefaulton'=>''),
+			1=>array('file'=>'box_produits_alerte_stock.php', 'enabledbydefaulton'=>'Home'),
 			2=>array('file'=>'box_graph_product_distribution.php', 'enabledbydefaulton'=>'Home')
 		);
 
@@ -233,7 +233,7 @@ class modProduct extends DolibarrModules
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('l.lang'=>'Language', 'l.label'=>'TranslatedLabel', 'l.description'=>'TranslatedDescription', 'l.note'=>'TranslatedNote'));
 		}
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->export_fields_array[$r]['p.fk_unit'] = 'Unit';
 		}
 		$this->export_TypeFields_array[$r] = array(
@@ -517,7 +517,7 @@ class modProduct extends DolibarrModules
 			'p.price_base_type' => "PriceBaseType", //price base: with-tax (TTC) or without (HT) tax. Displays accordingly in Product card
 			'p.tva_tx' => 'VATRate',
 			'p.datec' => 'DateCreation',
-			'p.cost_price' => "CostPrice",
+			'p.cost_price' => "CostPrice"
 		);
 
 		$this->import_convertvalue_array[$r] = array(
@@ -640,7 +640,7 @@ class modProduct extends DolibarrModules
 		if (isModEnabled('barcode')) {
 			$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('p.barcode'=>'BarCode'));
 		}
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->import_fields_array[$r]['p.fk_unit'] = 'Unit';
 		}
 
@@ -724,7 +724,7 @@ class modProduct extends DolibarrModules
 		if (isModEnabled('barcode')) {
 			$import_sample = array_merge($import_sample, array('p.barcode'=>''));
 		}
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$import_sample = array_merge(
 				$import_sample,
 				array(
@@ -748,6 +748,7 @@ class modProduct extends DolibarrModules
 			$this->import_updatekeys_array[$r] = array_merge($this->import_updatekeys_array[$r], array('p.barcode'=>'BarCode')); //only show/allow barcode as update key if Barcode module enabled
 		}
 
+
 		if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 			// Import suppliers prices (note: this code is duplicated in module Service)
 			$r++;
@@ -764,8 +765,9 @@ class modProduct extends DolibarrModules
 				'sp.quantity' => "QtyMin*",
 				'sp.tva_tx' => 'VATRate',
 				'sp.default_vat_code' => 'VATCode',
-				'sp.delivery_time_days' => 'DeliveryDelay',
-				'sp.supplier_reputation' => 'SupplierReputation'
+				'sp.delivery_time_days' => 'NbDaysToDelivery',
+				'sp.supplier_reputation' => 'SupplierReputation',
+				'sp.status' => 'Status'
 			);
 			if (is_object($mysoc) && $usenpr) {
 				$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('sp.recuperableonly'=>'VATNPR'));
@@ -827,7 +829,8 @@ class modProduct extends DolibarrModules
 				'sp.remise_percent'=>'0',
 				'sp.default_vat_code' => '',
 				'sp.delivery_time_days' => '5',
-				'sp.supplier_reputation' => 'FAVORITE / NOTTHGOOD / DONOTORDER'
+				'sp.supplier_reputation' => 'FAVORITE / NOTTHGOOD / DONOTORDER',
+				'sp.status' => '1'
 			);
 			if (is_object($mysoc) && $usenpr) {
 				$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array('sp.recuperableonly'=>''));
@@ -860,7 +863,7 @@ class modProduct extends DolibarrModules
 				));
 			}
 
-			$this->import_updatekeys_array[$r] = array('sp.fk_product'=>'ProductOrService', 'sp.ref_fourn'=>'SupplierRef', 'sp.fk_soc'=>'Supplier');
+			$this->import_updatekeys_array[$r] = array('sp.fk_product'=>'ProductOrService', 'sp.ref_fourn'=>'SupplierRef', 'sp.fk_soc'=>'Supplier', 'sp.quantity'=>"QtyMin");
 		}
 
 		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {

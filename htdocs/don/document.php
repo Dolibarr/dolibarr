@@ -49,13 +49,6 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'don', $id, '');
-
-
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -74,12 +67,19 @@ if (!$sortfield) {
 	$sortfield = "name";
 }
 
-
 $object = new Don($db);
-$object->fetch($id, $ref);
+if ($id > 0 || $ref) {
+	$object->fetch($id, $ref);
+}
 
 $upload_dir = $conf->don->dir_output.'/'.get_exdir($id, 0, 0, 0, $object, 'donation').'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'don';
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'don', $object->id);
 
 $permissiontoadd = $user->rights->don->creer;	// Used by the include of actions_dellink.inc.php
 
@@ -146,7 +146,7 @@ if ($object->id) {
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($object->fk_project)) {

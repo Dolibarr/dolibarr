@@ -26,7 +26,7 @@ CREATE TABLE llx_ticket
 	fk_user_create	integer,
 	fk_user_assign	integer,
 	subject	varchar(255),
-	message	text,
+	message	mediumtext,
 	fk_statut integer,
 	resolution integer,
 	progress integer DEFAULT 0,				-- progression 0 - 100 or null

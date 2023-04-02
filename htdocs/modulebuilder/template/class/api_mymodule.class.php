@@ -54,6 +54,8 @@ class MyModuleApi extends DolibarrApi
 		$this->myobject = new MyObject($this->db);
 	}
 
+	/*begin methods CRUD*/
+
 	/**
 	 * Get properties of a myobject object
 	 *
@@ -156,11 +158,10 @@ class MyModuleApi extends DolibarrApi
 		}
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -308,6 +309,31 @@ class MyModuleApi extends DolibarrApi
 	}
 
 
+	/**
+	 * Validate fields before create or update object
+	 *
+	 * @param	array		$data   Array of data to validate
+	 * @return	array
+	 *
+	 * @throws	RestException
+	 */
+	private function _validate($data)
+	{
+		$myobject = array();
+		foreach ($this->myobject->fields as $field => $propfield) {
+			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) {
+				continue; // Not a mandatory field
+			}
+			if (!isset($data[$field])) {
+				throw new RestException(400, "$field field missing");
+			}
+			$myobject[$field] = $data[$field];
+		}
+		return $myobject;
+	}
+
+	/*end methods CRUD*/
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
@@ -369,28 +395,5 @@ class MyModuleApi extends DolibarrApi
 		}
 
 		return $object;
-	}
-
-	/**
-	 * Validate fields before create or update object
-	 *
-	 * @param	array		$data   Array of data to validate
-	 * @return	array
-	 *
-	 * @throws	RestException
-	 */
-	private function _validate($data)
-	{
-		$myobject = array();
-		foreach ($this->myobject->fields as $field => $propfield) {
-			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) {
-				continue; // Not a mandatory field
-			}
-			if (!isset($data[$field])) {
-				throw new RestException(400, "$field field missing");
-			}
-			$myobject[$field] = $data[$field];
-		}
-		return $myobject;
 	}
 }

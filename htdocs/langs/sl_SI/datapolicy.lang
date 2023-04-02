@@ -1,0 +1,92 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Politika zasebnosti podatkov
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Modul za upravljanje zasebnosti podatkov (skladnost z GDPR)
+
+#
+# Administration page
+#
+datapolicySetup = Nastavitev pravilnika o zasebnosti podatkov modula
+Deletion = Izbris podatkov
+datapolicySetupPage = Odvisno od zakonov vaših držav (primer <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external"> člen 5 </a> GDPR) je treba osebne podatke hraniti toliko časa, kolikor je potrebno za namene, za katere so bili zbrani, razen za arhivske namene. <br> Brisanje bo izvedeno samodejno po določenem času brez dogodka (trajanje, ki ga boste navedli spodaj).
+NB_MONTHS = %s mesecev
+ONE_YEAR = 1 leto
+NB_YEARS = %s let
+DATAPOLICY_TIERS_CLIENT = Kupec
+DATAPOLICY_TIERS_PROSPECT = Potencialni kupec
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Potencialni kupec/kupec
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Niti potencialni kupec/niti kupec
+DATAPOLICY_TIERS_FOURNISSEUR = Dobavitelj
+DATAPOLICY_CONTACT_CLIENT = Kupec
+DATAPOLICY_CONTACT_PROSPECT = Potencialni kupec
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Potencialni kupec/kupec
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Niti potencialna stranka/niti stranka
+DATAPOLICY_CONTACT_FOURNISSEUR = Dobavitelj
+DATAPOLICY_ADHERENT = Član
+DATAPOLICY_Tooltip_SETUP = Vrsta stika – navedite svoje izbire za vsako vrsto.
+DATAPOLICYMail = Nastavitev e-pošte
+DATAPOLICYSUBJECTMAIL = Zadeva e-pošte
+DATAPOLICYCONTENTMAIL = Vsebina e-pošte
+DATAPOLICYSUBSITUTION = V svoji e-pošti lahko uporabite naslednje spremenljivke (LINKACCEPT omogoča ustvarjanje povezave, ki beleži strinjanje osebe, LINKREFUSED omogoča beleženje zavrnitve osebe):
+DATAPOLICYACCEPT = Sporočilo po dogovoru
+DATAPOLICYREFUSE = Sporočilo po nestrinjanju
+SendAgreementText = E-pošto GDPR lahko pošljete vsem svojim relevantnim kontaktom (ki še niso prejeli e-pošte in za katere niste registrirali ničesar o njihovi pogodbi GDPR). Če želite to narediti, uporabite naslednji gumb.
+SendAgreement = Pošlji e-pošto
+AllAgreementSend = Vsa e-poštna sporočila so bila poslana
+TXTLINKDATAPOLICYACCEPT = Besedilo za povezavo "pogodba"
+TXTLINKDATAPOLICYREFUSE = Besedilo za povezavo "disgreement"
+
+
+#
+# Extrafields
+#
+DATAPOLICY_BLOCKCHECKBOX = GDPR : Obdelava osebnih podatkov
+DATAPOLICY_consentement = Pridobljena privolitev za obdelavo osebnih podatkov
+DATAPOLICY_opposition_traitement = Nasprotuje obdelavi svojih osebnih podatkov
+DATAPOLICY_opposition_prospection = Nasprotuje obdelavi njegovih osebnih podatkov za namene iskanja
+
+#
+# Popup
+#
+DATAPOLICY_POPUP_ANONYME_TITLE = Anonimizirajte partnerja
+DATAPOLICY_POPUP_ANONYME_TEXTE = Tega stika ne morete izbrisati iz Dolibarra, ker so povezani elementi. V skladu z GDPR boste zaradi izpolnjevanja svojih obveznosti vse te podatke naredili anonimne. Bi radi nadaljevali?
+
+#
+# Button for portability
+#
+DATAPOLICY_PORTABILITE = Prenosljivost GDPR
+DATAPOLICY_PORTABILITE_TITLE = Iznos osebnih podatkov
+DATAPOLICY_PORTABILITE_CONFIRMATION = Želite izvoziti osebne podatke tega stika. Ali si prepričan ?
+
+#
+# Notes added during an anonymization
+#
+ANONYMISER_AT = Anonimiziral %s
+
+# V2
+DATAPOLICYReturn = Potrditev GDPR
+DATAPOLICY_date = Datum dogovora/odstopa od dogovora GDPR
+DATAPOLICY_send = Datum pošiljanja e-pošte s pogodbo
+DATAPOLICYReturn = Potrditev GDPR
+DATAPOLICY_SEND = Pošlji e-pošto GDPR
+MailSent = Email je bil poslan
+
+# ERROR
+ErrorSubjectIsRequired = Napaka: Zadeva e-pošte je obvezna. Navedite ga v nastavitvah modula
+=Zaradi tehnične težave nismo mogli prijaviti vaše izbire. Za to se opravičujemo. Pišite nam, da nam pošljete vašo izbiro.
+NUMBER_MONTH_BEFORE_DELETION = Število meseca pred izbrisom

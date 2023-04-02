@@ -55,6 +55,7 @@ $langs->loadLangs(array("trips", "bills", "mails"));
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 $id = GETPOST('id', 'int');
 $date_start = dol_mktime(0, 0, 0, GETPOST('date_debutmonth', 'int'), GETPOST('date_debutday', 'int'), GETPOST('date_debutyear', 'int'));
@@ -295,7 +296,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error && empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS)) {
-			$overlappingExpenseReportID = $object->periode_existe($fuser, $object->date_debut, $object->date_fin, true);
+			$overlappingExpenseReportID = $object->periode_existe($fuser, $object->date_debut, $object->date_fin);
 
 			if ($overlappingExpenseReportID > 0) {
 				$error++;
@@ -971,7 +972,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
-			setEventMessages("NOT_AUTHOR", '', 'errors');
+			setEventMessages("NOT_AUTHOR", null, 'errors');
 		}
 	}
 
@@ -1190,7 +1191,9 @@ if (empty($reshook)) {
 					$outputlangs = $langs;
 					$newlang = GETPOST('lang_id', 'alpha');
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-						$newlang = $object->thirdparty->default_lang;
+						$user = new User($db);
+						$user->fetch($object->fk_user_author);
+						$newlang = $user->lang;
 					}
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
@@ -1210,11 +1213,17 @@ if (empty($reshook)) {
 
 				unset($date);
 			} else {
+				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 
-		$action = '';
+		if (!$error) {
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id', 'int'));
+			exit;
+		} else {
+			$action = '';
+		}
 	}
 
 	if ($action == 'confirm_delete_line' && GETPOST("confirm", 'alpha') == "yes" && $user->rights->expensereport->creer) {
@@ -1399,6 +1408,7 @@ if ($action == 'create') {
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="post" name="create">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print dol_get_fiche_head('');
 
@@ -1537,6 +1547,7 @@ if ($action == 'create') {
 			print "<form name='update' action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip');
 
@@ -2019,6 +2030,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="action" value="'.$actiontouse.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="fk_expensereport" value="'.$object->id.'" />';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 			print '<div class="div-table-responsive-no-min">';
 			print '<table id="tablelines" class="noborder centpercent">';
@@ -2297,7 +2309,7 @@ if ($action == 'create') {
 							}
 						}
 
-						$tredited = 'tredited';
+						$tredited = 'tredited';	// Case the addfile and linkto file is used for edit (used by following tpl)
 						include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
 						include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
 
@@ -2427,12 +2439,14 @@ if ($action == 'create') {
                             } else {
                                 jQuery("input[name=\"senditdisabled\"]").prop("name", "sendit");
                             }
+							// TODO Switch css fa-chevron-dow and add fa-chevron-up
                             return false;
                         });
 				        $( ".aattachtodoc" ).click(function() {
 							console.log("We click on toggle of aattachtodoc");
 				            jQuery(".trattachnewfilenow").toggle();
                             jQuery(".truploadnewfilenow").hide();
+							// TODO Switch css fa-chevron-dow and add fa-chevron-up
                             return false;
                         });'."\n";
 				if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')) && $action != 'updateline') {
@@ -2455,6 +2469,7 @@ if ($action == 'create') {
 				print '</script>'."\n";
 				print '</td></tr>';
 
+				$tredited = '';	// Case the addfile and linkto file is used for edit (used by following tpl)
 				include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
 				include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
 
@@ -2517,6 +2532,7 @@ if ($action == 'create') {
 				print '<td class="right inputvat">';
 				$defaultvat = -1;
 				if (!empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) {
+					// If option to have no default VAT on expense report is on, we force MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS
 					$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
 				}
 				print $form->load_tva('vatrate', (!empty($vatrate) ? $vatrate : $defaultvat), $mysoc, '', 0, 0, '', false, 1);
@@ -2554,8 +2570,8 @@ if ($action == 'create') {
 
 			print '</table>';
 			print '</div>';
-			//var_dump($object);
-			print '<script javascript>
+
+			print '<script>
 
 			/* JQuery for product free or predefined select */
 			jQuery(document).ready(function() {
@@ -2571,6 +2587,10 @@ if ($action == 'create') {
 						jQuery("#value_unit_ht").val("");
 					}
 				});
+			';
+
+			if (! empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+				print '
 
                 /* unit price coéf calculation */
                 jQuery(".input_qty, #fk_c_type_fees, #select_fk_c_exp_tax_cat, #vatrate ").change(function(event) {
@@ -2616,6 +2636,10 @@ if ($action == 'create') {
 						jQuery("#value_unit_ht").val("");
 					}*/
 				});
+				';
+			}
+
+			print '
 
 			});
 

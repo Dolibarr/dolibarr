@@ -448,7 +448,7 @@ print '<td class="liste_titre center"><input type="text" class="width50" name="s
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre center">';
-print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Scheduled")), $search_status, 1);
+print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Scheduled")), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 print '</td><td class="liste_titre right">';
 $searchpicto = $form->showFilterButtons();
 print $searchpicto;
@@ -509,6 +509,9 @@ if ($num > 0) {
 		$object->datestart = $db->jdate($obj->datestart);
 		$object->dateend = $db->jdate($obj->dateend);
 		$object->module_name = $obj->module_name;
+		$object->params = $obj->params;
+		$object->datelastrun = $db->jdate($obj->datelastrun);
+		$object->datenextrun = $db->jdate($obj->datenextrun);
 
 		$datelastrun = $db->jdate($obj->datelastrun);
 		$datelastresult = $db->jdate($obj->datelastresult);

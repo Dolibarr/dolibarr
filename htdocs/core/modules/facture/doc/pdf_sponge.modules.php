@@ -10,6 +10,7 @@
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
+ * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,6 +160,11 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	public $cols;
 
+	/**
+	 * @var int Category of operation
+	 */
+	public $categoryOfOperation = -1; // unknown by default
+
 
 	/**
 	 *	Constructor
@@ -304,7 +310,7 @@ class pdf_sponge extends ModelePDFFactures
 						}
 
 						foreach ($objphoto->liste_photos($dir, 1) as $key => $obj) {
-							if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES)) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+							if (!getDolGlobalInt('CAT_HIGH_QUALITY_IMAGES')) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
 								if ($obj['photo_vignette']) {
 									$filename = $obj['photo_vignette'];
 								} else {
@@ -429,12 +435,37 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// Set $this->atleastonediscount if you have at least one discount
+				// and determine category of operation
+				$categoryOfOperation = 0;
+				$nbProduct = 0;
+				$nbService = 0;
 				for ($i = 0; $i < $nblines; $i++) {
 					if ($object->lines[$i]->remise_percent) {
 						$this->atleastonediscount++;
 					}
-				}
 
+					// determine category of operation
+					if ($categoryOfOperation < 2) {
+						$lineProductType = $object->lines[$i]->product_type;
+						if ($lineProductType == Product::TYPE_PRODUCT) {
+							$nbProduct++;
+						} elseif ($lineProductType == Product::TYPE_SERVICE) {
+							$nbService++;
+						}
+						if ($nbProduct > 0 && $nbService > 0) {
+							// mixed products and services
+							$categoryOfOperation = 2;
+						}
+					}
+				}
+				// determine category of operation
+				if ($categoryOfOperation <= 0) {
+					// only services
+					if ($nbProduct == 0 && $nbService > 0) {
+						$categoryOfOperation = 1;
+					}
+				}
+				$this->categoryOfOperation = $categoryOfOperation;
 
 				// Situation invoice handling
 				if ($object->situation_cycle_ref) {
@@ -894,7 +925,8 @@ class pdf_sponge extends ModelePDFFactures
 					$localtax1_type = $object->lines[$i]->localtax1_type;
 					$localtax2_type = $object->lines[$i]->localtax2_type;
 
-					if ($object->remise_percent) {
+					// TODO remise_percent is an obsolete field for object parent
+					/*if ($object->remise_percent) {
 						$tvaligne -= ($tvaligne * $object->remise_percent) / 100;
 					}
 					if ($object->remise_percent) {
@@ -902,7 +934,7 @@ class pdf_sponge extends ModelePDFFactures
 					}
 					if ($object->remise_percent) {
 						$localtax2ligne -= ($localtax2ligne * $object->remise_percent) / 100;
-					}
+					}*/
 
 					$vatrate = (string) $object->lines[$i]->tva_tx;
 
@@ -1027,9 +1059,7 @@ class pdf_sponge extends ModelePDFFactures
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -1241,6 +1271,21 @@ class pdf_sponge extends ModelePDFFactures
 			$posy = $pdf->GetY() + 3; // We need spaces for 2 lines payment conditions
 		}
 
+		// Show category of operations
+		if (getDolGlobalInt('INVOICE_CATEGORY_OF_OPERATION') == 2 && $this->categoryOfOperation >= 0) {
+			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetXY($this->marge_gauche, $posy);
+			$categoryOfOperationTitle = $outputlangs->transnoentities("MentionCategoryOfOperations").' : ';
+			$pdf->MultiCell($posxval - $this->marge_gauche, 4, $categoryOfOperationTitle, 0, 'L');
+
+			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetXY($posxval, $posy);
+			$categoryOfOperationLabel = $outputlangs->transnoentities("MentionCategoryOfOperations" . $this->categoryOfOperation);
+			$pdf->MultiCell($posxend - $posxval, 4, $categoryOfOperationLabel, 0, 'L');
+
+			$posy = $pdf->GetY() + 3; // for 2 lines
+		}
+
 		if ($object->type != 2) {
 			// Check a payment mode is defined
 			if (empty($object->mode_reglement_code)
@@ -1281,7 +1326,7 @@ class pdf_sponge extends ModelePDFFactures
 					$bac = new CompanyBankAccount($this->db);
 					$bac->fetch(0, $object->thirdparty->id);
 					$iban= $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
-					$lib_mode_reg .= $outputlangs->trans("PaymentTypePREdetails", dol_trunc($iban, 6, 'right', 'UTF-8', 1));
+					$lib_mode_reg .= ' '.$outputlangs->trans("PaymentTypePREdetails", dol_trunc($iban, 6, 'right', 'UTF-8', 1));
 				}
 
 				$pdf->MultiCell($posxend - $posxval, 5, $lib_mode_reg, 0, 'L');
@@ -1572,7 +1617,7 @@ class pdf_sponge extends ModelePDFFactures
 
 
 		// Get Total HT
-		$total_ht = (isModEnabled("multicurrency") && $object->mylticurrency_tx != 1 ? $object->multicurrency_total_ht : $object->total_ht);
+		$total_ht = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->multicurrency_total_ht : $object->total_ht);
 
 		// Total remise
 		$total_line_remise = 0;
@@ -1596,9 +1641,9 @@ class pdf_sponge extends ModelePDFFactures
 			// Show total NET before discount
 			if (!empty($conf->global->MAIN_SHOW_AMOUNT_BEFORE_DISCOUNT)) {
 				$pdf->SetFillColor(255, 255, 255);
-				$pdf->SetXY($col1x, $tab2_top + 0);
+				$pdf->SetXY($col1x, $tab2_top);
 				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHTBeforeDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHTBeforeDiscount") : ''), 0, 'L', 1);
-				$pdf->SetXY($col2x, $tab2_top + 0);
+				$pdf->SetXY($col2x, $tab2_top);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($total_line_remise + $total_ht, 0, $outputlangs), 0, 'R', 1);
 
 				$index++;
@@ -1967,6 +2012,13 @@ class pdf_sponge extends ModelePDFFactures
 		$pdf->SetFont('', '', $default_font_size - 2);
 
 		if (empty($hidetop)) {
+			// Show category of operations
+			if (getDolGlobalInt('INVOICE_CATEGORY_OF_OPERATION') == 1 && $this->categoryOfOperation >= 0) {
+				$categoryOfOperations = $outputlangs->transnoentities("MentionCategoryOfOperations") . ' : ' . $outputlangs->transnoentities("MentionCategoryOfOperations" . $this->categoryOfOperation);
+				$pdf->SetXY($this->marge_gauche, $tab_top - 4);
+				$pdf->MultiCell(($pdf->GetStringWidth($categoryOfOperations)) + 4, 2, $categoryOfOperations);
+			}
+
 			$titre = $outputlangs->transnoentities("AmountInCurrency", $outputlangs->transnoentitiesnoconv("Currency".$currency));
 			if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
 				$titre .= ' - '.$outputlangsbis->transnoentities("AmountInCurrency", $outputlangsbis->transnoentitiesnoconv("Currency".$currency));
@@ -2004,7 +2056,7 @@ class pdf_sponge extends ModelePDFFactures
 	 *  @param  int	    	$showaddress    0=no, 1=yes (usually set to 1 for first page, and 0 for next pages)
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	int							top shift of linked object lines
+	 *  @return	array							top shift of linked object lines
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
@@ -2031,13 +2083,13 @@ class pdf_sponge extends ModelePDFFactures
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
-		if (empty($conf->global->PDF_DISABLE_MYCOMPANY_LOGO)) {
+		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
 				if (!empty($conf->mycompany->multidir_output[$object->entity])) {
 					$logodir = $conf->mycompany->multidir_output[$object->entity];
 				}
-				if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO)) {
+				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
 				} else {
 					$logo = $logodir.'/logos/'.$this->emetteur->logo;
@@ -2074,7 +2126,8 @@ class pdf_sponge extends ModelePDFFactures
 			$title = $outputlangs->transnoentities("InvoiceProForma");
 		}
 		if ($this->situationinvoice) {
-			$title = $outputlangs->transnoentities("PDFInvoiceSituation");
+			$langs->loadLangs(array("other"));
+			$title = $outputlangs->transnoentities("PDFInvoiceSituation") . " " . $outputlangs->transnoentities("NumberingShort") . $object->situation_counter . " -";
 		}
 		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
 			$title .= ' - ';
@@ -2117,11 +2170,11 @@ class pdf_sponge extends ModelePDFFactures
 		$posy += 3;
 		$pdf->SetFont('', '', $default_font_size - 2);
 
-		if ($object->ref_client) {
+		if ($object->ref_customer) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".dol_trunc($outputlangs->convToOutputCharset($object->ref_client), 65), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".dol_trunc($outputlangs->convToOutputCharset($object->ref_customer), 65), '', 'R');
 		}
 
 		if (!empty($conf->global->PDF_SHOW_PROJECT_TITLE)) {
@@ -2332,12 +2385,13 @@ class pdf_sponge extends ModelePDFFactures
 
 				if (!empty($idaddressshipping)) {
 					$contactshipping = $object->fetch_Contact($idaddressshipping[0]);
-					$object->fetch_thirdparty($object->contact->fk_soc);
+					$companystatic = new Societe($this->db);
+					$companystatic->fetch($object->contact->fk_soc);
 					$carac_client_name_shipping=pdfBuildThirdpartyName($object->contact, $outputlangs);
-					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, $object->contact, $usecontact, 'target', $object);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, $usecontact, 'target', $object);
 				} else {
 					$carac_client_name_shipping=pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
-					$carac_client_shipping=pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);;
+					$carac_client_shipping=pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);
 				}
 				if (!empty($carac_client_shipping) && (isset($object->contact->socid) && $object->contact->socid != $object->socid)) {
 					$posy += $hautcadre;
@@ -2345,7 +2399,7 @@ class pdf_sponge extends ModelePDFFactures
 					// Show shipping frame
 					$pdf->SetXY($posx + 2, $posy - 5);
 					$pdf->SetFont('', '', $default_font_size - 2);
-					$pdf->MultiCell($widthrecbox, '', $langs->trans('ShippingTo'), 0, 'L', 0);
+					$pdf->MultiCell($widthrecbox, '', $outputlangs->transnoentities('ShippingTo'), 0, 'L', 0);
 					$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
 
 					// Show shipping name
@@ -2542,7 +2596,7 @@ class pdf_sponge extends ModelePDFFactures
 			),
 			'border-left' => true, // add left line separator
 		);
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->cols['unit']['status'] = true;
 		}
 

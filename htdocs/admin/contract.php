@@ -58,9 +58,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 $error=0;
 
 if ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconstcontract', 'alpha');
+	$maskconst = GETPOST('maskconstcontract', 'aZ09');
 	$maskvalue = GETPOST('maskcontract', 'alpha');
-	if ($maskconst) {
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -518,7 +518,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowOnlineSign").'</td>';
 print '<td class="center">';
-if ($conf->global->CONTRACT_ALLOW_ONLINESIGN) {
+if (getDolGlobalString('CONTRACT_ALLOW_ONLINESIGN')) {
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowonlinesign&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activited"), 'switch_on');
 	print '</a>';

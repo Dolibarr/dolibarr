@@ -1,0 +1,2 @@
+# Dolibarr language file - Source file is en_US - stripe
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
