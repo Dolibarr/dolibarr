@@ -91,7 +91,7 @@ class UserGroup extends CommonObject
 	 *
 	 * @var integer
 	 */
-	public $datem;
+	public $tms;
 
 	/**
 	 * @var string Description
@@ -931,7 +931,7 @@ class UserGroup extends CommonObject
 		$this->name = 'DOLIBARR GROUP SPECIMEN';
 		$this->note = 'This is a note';
 		$this->datec = time();
-		$this->datem = time();
+		$this->tms = time();
 
 		// Members of this group is just me
 		$this->members = array(
