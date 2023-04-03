@@ -11251,7 +11251,7 @@ function getElementProperties($element_type)
 	} elseif ($element_type == 'bank_account') {
 		$classpath = 'compta/bank/class';
 		$module = 'banque';
-		$classfile = 'Account';
+		$classfile = 'account';
 		$classname = 'Account';
 	} elseif ($element_type == 'category') {
 		$classpath = 'categories/class';
