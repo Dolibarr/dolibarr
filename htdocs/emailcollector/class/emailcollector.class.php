@@ -935,13 +935,13 @@ class EmailCollector extends CommonObject
 						if (preg_match('/'.$regexstring.'/'.$regexoptions, $sourcestring, $regforval)) {
 							// Overwrite param $tmpproperty
 							$valueextracted = isset($regforval[count($regforval) - 1]) ?trim($regforval[count($regforval) - 1]) : null;
-							if (strtolower($sourcefield) == 'header') {
+							if (strtolower($sourcefield) == 'header') {		// extract from HEADER
 								if (preg_match('/^options_/', $tmpproperty)) {
 									$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $this->decodeSMTPSubject($valueextracted);
 								} else {
 									$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
 								}
-							} else {
+							} else {	// extract from BODY
 								if (preg_match('/^options_/', $tmpproperty)) {
 									$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $this->decodeSMTPSubject($valueextracted);
 								} else {
@@ -1683,8 +1683,12 @@ class EmailCollector extends CommonObject
 				//print $messagetext;
 				//exit;
 
+				$fromstring = '';
+				$replytostring = '';
+
 				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 					$fromstring = $overview['from'];
+					//$replytostring = empty($overview['reply-to']) ? '' : $overview['reply-to'];
 
 					$sender = $overview['sender'];
 					$to = $overview['to'];
@@ -1695,6 +1699,7 @@ class EmailCollector extends CommonObject
 					$subject = $overview['subject'];
 				} else {
 					$fromstring = $overview[0]->from;
+					//$replytostring = empty($overview[0]->replyto) ? '' : $overview[0]->replyto;
 
 					$sender = $overview[0]->sender;
 					$to = $overview[0]->to;
@@ -1714,6 +1719,13 @@ class EmailCollector extends CommonObject
 				} else {
 					$from = $fromstring;
 					$fromtext = '';
+				}
+				if (preg_match('/^(.*)<(.*)>$/', $replytostring, $reg)) {
+					$replyto = $reg[2];
+					$replytotext = $reg[1];
+				} else {
+					$replyto = $replytostring;
+					$replytotext = '';
 				}
 				$fk_element_id = 0; $fk_element_type = '';
 
@@ -2011,6 +2023,7 @@ class EmailCollector extends CommonObject
 								$idtouseforthirdparty = '';
 								$nametouseforthirdparty = '';
 								$emailtouseforthirdparty = '';
+								$namealiastouseforthirdparty = '';
 
 								// $actionparam = 'param=SET:aaa' or 'param=EXTRACT:BODY:....'
 								$arrayvaluetouse = dolExplodeIntoArray($actionparam, ';', '=');
@@ -2048,16 +2061,23 @@ class EmailCollector extends CommonObject
 													$emailtouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
 
 													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Found propertytooverwrite='.dol_escape_htmltag($propertytooverwrite);
-												} else {
+												} elseif ($propertytooverwrite == 'name') {
 													$nametouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
 
 													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Found nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
+												} elseif ($propertytooverwrite == 'name_alias') {
+													$nametouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
+
+													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Found namealiastouseforthirdparty='.dol_escape_htmltag($namealiastouseforthirdparty);
+												} else {
+													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> We discard this, not used to search existing thirdparty';
 												}
 											} else {
 												// Regex not found
 												$idtouseforthirdparty = null;
 												$nametouseforthirdparty = null;
 												$emailtouseforthirdparty = null;
+												$namealiastouseforthirdparty = null;
 
 												$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Not found';
 											}
@@ -2071,6 +2091,7 @@ class EmailCollector extends CommonObject
 									} elseif (preg_match('/^(SET|SETIFEMPTY):(.*)$/', $valueforproperty, $reg)) {
 										//if (preg_match('/^options_/', $tmpproperty)) $object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $reg[1];
 										//else $object->$tmpproperty = $reg[1];
+										// Example: id=SETIFEMPTY:123
 										if ($propertytooverwrite == 'id') {
 											$idtouseforthirdparty = $reg[2];
 
@@ -2079,10 +2100,14 @@ class EmailCollector extends CommonObject
 											$emailtouseforthirdparty = $reg[2];
 
 											$operationslog .= '<br>We set property emailtouseforthrdparty='.dol_escape_htmltag($emailtouseforthirdparty);
-										} else {
+										} elseif ($propertytooverwrite == 'name') {
 											$nametouseforthirdparty = $reg[2];
 
 											$operationslog .= '<br>We set property nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
+										} elseif ($propertytooverwrite == 'name_alias') {
+											$namealiastouseforthirdparty = $reg[2];
+
+											$operationslog .= '<br>We set property namealiastouseforthirdparty='.dol_escape_htmltag($namealiastouseforthirdparty);
 										}
 									} else {
 										$errorforactions++;
@@ -2092,8 +2117,8 @@ class EmailCollector extends CommonObject
 									}
 								}
 
-								if (!$errorforactions && ($idtouseforthirdparty || $emailtouseforthirdparty || $nametouseforthirdparty)) {
-									$result = $thirdpartystatic->fetch($idtouseforthirdparty, $nametouseforthirdparty, '', '', '', '', '', '', '', '', $emailtouseforthirdparty);
+								if (!$errorforactions && ($idtouseforthirdparty || $emailtouseforthirdparty || $nametouseforthirdparty || $namealiastouseforthirdparty)) {
+									$result = $thirdpartystatic->fetch($idtouseforthirdparty, $nametouseforthirdparty, '', '', '', '', '', '', '', '', $emailtouseforthirdparty, $namealiastouseforthirdparty);
 									if ($result < 0) {
 										$errorforactions++;
 										$this->error = 'Error when getting thirdparty with name '.$nametouseforthirdparty.' (may be 2 record exists with same name ?)';
@@ -2101,21 +2126,25 @@ class EmailCollector extends CommonObject
 										break;
 									} elseif ($result == 0) {
 										if ($operation['type'] == 'loadthirdparty') {
-											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." was not found");
+											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found");
 
 											$errorforactions++;
 											$langs->load("errors");
-											$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, $emailtouseforthirdparty, $nametouseforthirdparty);
+											$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, $emailtouseforthirdparty, $nametouseforthirdparty, $namealiastouseforthirdparty);
 											$this->errors[] = $this->error;
 										} elseif ($operation['type'] == 'loadandcreatethirdparty') {
-											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." was not found. We try to create it.");
+											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found. We try to create it.");
 
 											// Create thirdparty
 											$thirdpartystatic->name = $nametouseforthirdparty;
-											if ($fromtext != $nametouseforthirdparty) {
-												$thirdpartystatic->name_alias = $fromtext;
+											if (!empty($namealiastouseforthirdparty)) {
+												if ($namealiastouseforthirdparty != $nametouseforthirdparty) {
+													$thirdpartystatic->name_alias = $namealiastouseforthirdparty;
+												}
+											} else {
+												$thirdpartystatic->name_alias = (empty($replytostring) ? (empty($fromtext) ? '': $fromtext) : $replytostring);
 											}
-											$thirdpartystatic->email = ($emailtouseforthirdparty ? $emailtouseforthirdparty : $from);
+											$thirdpartystatic->email = (empty($emailtouseforthirdparty) ? (empty($replyto) ? (empty($from) ? '' : $from) : $replyto) : $emailtouseforthirdparty);
 
 											// Overwrite values with values extracted from source email
 											$errorforthisaction = $this->overwritePropertiesOfObject($thirdpartystatic, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
