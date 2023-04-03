@@ -1495,7 +1495,7 @@ class EmailCollector extends CommonObject
 
 				$emailto = $this->decodeSMTPSubject($overview[0]->to);
 
-				$operationslog .= '<br>Process email '.dol_escape_htmltag($iforemailloop)." - References: ".dol_escape_htmltag($headers['References'])." - Subject: ".dol_escape_htmltag($headers['Subject']);
+				$operationslog .= '<br>** Process email '.dol_escape_htmltag($iforemailloop)." - References: ".dol_escape_htmltag($headers['References'])." - Subject: ".dol_escape_htmltag($headers['Subject']);
 				dol_syslog("** Process email ".$iforemailloop." References: ".$headers['References']." Subject: ".$headers['Subject']);
 
 
@@ -2056,21 +2056,21 @@ class EmailCollector extends CommonObject
 												if ($propertytooverwrite == 'id') {
 													$idtouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
 
-													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Found idtouseforthirdparty='.dol_escape_htmltag($idtouseforthirdparty);
+													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Found idtouseforthirdparty='.dol_escape_htmltag($idtouseforthirdparty);
 												} elseif ($propertytooverwrite == 'email') {
 													$emailtouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
 
-													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Found propertytooverwrite='.dol_escape_htmltag($propertytooverwrite);
+													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Found emailtouseforthirdparty='.dol_escape_htmltag($propertytooverwrite);
 												} elseif ($propertytooverwrite == 'name') {
 													$nametouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
 
-													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Found nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
+													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Found nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
 												} elseif ($propertytooverwrite == 'name_alias') {
 													$nametouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
 
-													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Found namealiastouseforthirdparty='.dol_escape_htmltag($namealiastouseforthirdparty);
+													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Found namealiastouseforthirdparty='.dol_escape_htmltag($namealiastouseforthirdparty);
 												} else {
-													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> We discard this, not used to search existing thirdparty';
+													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> We discard this, not used to search existing thirdparty';
 												}
 											} else {
 												// Regex not found
@@ -2079,7 +2079,7 @@ class EmailCollector extends CommonObject
 												$emailtouseforthirdparty = null;
 												$namealiastouseforthirdparty = null;
 
-												$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Not found';
+												$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Not found';
 											}
 											//var_dump($object->$tmpproperty);exit;
 										} else {
