@@ -620,6 +620,31 @@ class modProduct extends DolibarrModules
 		$this->import_updatekeys_array[$r] = array('p.ref'=>'Ref');
 		if (!empty($conf->barcode->enabled)) $this->import_updatekeys_array[$r] = array_merge($this->import_updatekeys_array[$r], array('p.barcode'=>'BarCode')); //only show/allow barcode as update key if Barcode module enabled
 
+		if(!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
+
+			// Import products limit and desired stock by product and warehouse
+			$r++;
+			$this->import_code[$r] = $this->rights_class.'_stock_by_warehouse';
+			$this->import_label[$r] = "ProductStockWarehouse"; // Translation key
+			$this->import_icon[$r] = $this->picto;
+			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r] = array('pwp'=>MAIN_DB_PREFIX.'product_warehouse_properties');
+			$this->import_fields_array[$r] = array('pwp.fk_product'=>"Product*",
+				'pwp.fk_entrepot'=>"Warehouse*", 'pwp.seuil_stock_alerte'=>"StockLimit",
+				'pwp.desiredstock'=>"DesiredStock");
+			$this->import_convertvalue_array[$r] = array(
+				'pwp.fk_product'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
+			,'pwp.fk_entrepot'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/stock/class/entrepot.class.php', 'class'=>'Entrepot', 'method'=>'fetch', 'element'=>'Entrepot')
+			);
+			$this->import_examplevalues_array[$r] = array('pwp.fk_product'=>"ref:PRODUCT_REF or id:123456",
+				'pwp.fk_entrepot'=>"ref:WAREHOUSE_REF or id:123456",
+				'pwp.seuil_stock_alerte'=>"100",
+				'pwp.desiredstock'=>"110"
+			);
+			$this->import_updatekeys_array[$r] = array('pwp.fk_product'=>'Product', 'pwp.fk_entrepot'=>'Warehouse');
+
+		}
+
 		if (!empty($conf->fournisseur->enabled))
 		{
 			// Import suppliers prices (note: this code is duplicated in module Service)

@@ -173,6 +173,7 @@ OptionMULTIPRICESIsOn=Option "several prices per segment" is on. It means a prod
 ProductStockWarehouseCreated=Stock limit for alert and desired optimal stock correctly created
 ProductStockWarehouseUpdated=Stock limit for alert and desired optimal stock correctly updated
 ProductStockWarehouseDeleted=Stock limit for alert and desired optimal stock correctly deleted
+ProductStockWarehouse=Stock limit for alert and desired optimal stock by product and warehouse
 AddNewProductStockWarehouse=Set new limit for alert and desired optimal stock
 AddStockLocationLine=Decrease quantity then click to add another warehouse for this product
 InventoryDate=Inventory date
