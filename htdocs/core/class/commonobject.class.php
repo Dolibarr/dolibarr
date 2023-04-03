@@ -4650,7 +4650,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 *  Function to check if an object is used by others.
+	 *  Function to check if an object is used by others (by children).
 	 *  Check is done into this->childtables. There is no check into llx_element_element.
 	 *
 	 *  @param	int		$id			Force id of object
@@ -4671,8 +4671,8 @@ abstract class CommonObject
 			return -1;
 		}
 
-		$arraytoscan = $this->childtables;
-		// For backward compatibility, we check if array is old format array('table1', 'table2', ...)
+		$arraytoscan = $this->childtables;		// array('tablename'=>array('fk_element'=>'parentfield'), ...) or array('tablename'=>array('parent'=>table_parent, 'parentkey'=>'nameoffieldforparentfkkey'), ...)
+		// For backward compatibility, we check if array is old format array('tablename1', 'tablename2', ...)
 		$tmparray = array_keys($this->childtables);
 		if (is_numeric($tmparray[0])) {
 			$arraytoscan = array_flip($this->childtables);
@@ -4688,7 +4688,11 @@ abstract class CommonObject
 			if (!empty($element['parent']) && !empty($element['parentkey'])) {
 				$sql.= ", ".$this->db->prefix().$element['parent']." as p";
 			}
-			$sql.= " WHERE c.".$this->fk_element." = ".((int) $id);
+			if (!empty($element['fk_element'])) {
+				$sql.= " WHERE c.".$element['fk_element']." = ".((int) $id);
+			} else {
+				$sql.= " WHERE c.".$this->fk_element." = ".((int) $id);
+			}
 			if (!empty($element['parent']) && !empty($element['parentkey'])) {
 				$sql.= " AND c.".$element['parentkey']." = p.rowid";
 			}
@@ -4702,6 +4706,7 @@ abstract class CommonObject
 					$sql.= " AND c.entity = ".((int) $entity);
 				}
 			}
+
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
@@ -9711,7 +9716,7 @@ abstract class CommonObject
 					return -1;
 				}
 			}
-		} elseif (!empty($this->fk_element) && !empty($this->childtables)) {	// If object has childs linked with a foreign key field, we check all child tables.
+		} elseif (!empty($this->childtables)) {	// If object has childs linked with a foreign key field, we check all child tables.
 			$objectisused = $this->isObjectUsed($this->id);
 			if (!empty($objectisused)) {
 				dol_syslog(get_class($this)."::deleteCommon Can't delete record as it has some child", LOG_WARNING);
