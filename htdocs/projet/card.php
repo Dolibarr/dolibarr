@@ -1213,8 +1213,8 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		$morehtmlref = '<div class="refidno">';
 		// Title
 		$morehtmlref .= dol_escape_htmltag($object->title);
-		// Thirdparty
 		$morehtmlref .= '<br>';
+		// Thirdparty
 		if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 			$morehtmlref .= $object->thirdparty->getNomUrl(1, 'project');
 		}
@@ -1232,7 +1232,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Usage
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
@@ -1302,15 +1302,6 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				}
 			}
 			print '</td></tr>';
-
-			// Opportunity Weighted Amount
-			/*
-			print '<tr><td>'.$langs->trans('OpportunityWeightedAmount').'</td><td>';
-			if (strcmp($object->opp_amount, '') && strcmp($object->opp_percent, '')) {
-				print '<span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span>';
-			}
-			print '</td></tr>';
-			*/
 		}
 
 		// Budget
