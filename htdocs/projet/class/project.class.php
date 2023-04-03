@@ -1385,6 +1385,7 @@ class Project extends CommonObject
 		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
+		$this->entity = $conf->entity;
 		$this->specimen = 1;
 		$this->socid = 1;
 		$this->date_c = $now;
