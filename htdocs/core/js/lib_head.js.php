@@ -1299,14 +1299,13 @@ $(document).ready(function() {
  *
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
-$(document).on('select2:open', () => {
-	console.log("Execute the focus (click on combo or use space when on component");
-	let allFound = document.querySelectorAll('.select2-container--open .select2-search__field');
-	$(this).one('mouseup keyup',()=>{
-		setTimeout(()=>{
-			allFound[allFound.length - 1].focus();
-		},0);
-	});
+$(document).on('select2:open', (e) => {
+	console.log ("Workaround for select2 issue");
+    const target = $(e.target);
+    if (target && target.length) {
+        const id = target[0].id || target[0].name;
+        document.querySelector(`input[aria-controls*='${id}']`).focus();
+    }
 });
 
 // End of lib_head.js.php
