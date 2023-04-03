@@ -748,8 +748,7 @@ class modProduct extends DolibarrModules
 			$this->import_updatekeys_array[$r] = array_merge($this->import_updatekeys_array[$r], array('p.barcode'=>'BarCode')); //only show/allow barcode as update key if Barcode module enabled
 		}
 
-		if(!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
-
+		if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
 			// Import products limit and desired stock by product and warehouse
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_stock_by_warehouse';
@@ -774,7 +773,6 @@ class modProduct extends DolibarrModules
 				'pwp.desiredstock'=>"110"
 			);
 			$this->import_updatekeys_array[$r] = array('pwp.fk_product'=>'Product', 'pwp.fk_entrepot'=>'Warehouse');
-
 		}
 
 		if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
