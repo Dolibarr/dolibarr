@@ -1301,11 +1301,11 @@ $(document).ready(function() {
  */
 $(document).on('select2:open', (e) => {
 	console.log ("Workaround for select2 issue");
-    const target = $(e.target);
-    if (target && target.length) {
-        const id = target[0].id || target[0].name;
-        document.querySelector(`input[aria-controls*='${id}']`).focus();
-    }
+	const target = $(e.target);
+	if (target && target.length) {
+		const id = target[0].id || target[0].name;
+		document.querySelector(`input[aria-controls*='${id}']`).focus();
+	}
 });
 
 // End of lib_head.js.php
