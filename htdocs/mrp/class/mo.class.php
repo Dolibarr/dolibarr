@@ -638,21 +638,21 @@ class Mo extends CommonObject
 
 		$oldQty = $this->oldQty;
 		$newQty = $this->qty;
-		if($newQty != $oldQty) {
+		if ($newQty != $oldQty) {
 			$sql = 'SELECT rowid FROM ' . MAIN_DB_PREFIX . 'mrp_production WHERE fk_mo = ' . $this->id;
 			$resql = $this->db->query($sql);
-			if($resql) {
+			if ($resql) {
 				while ($obj = $this->db->fetch_object($resql)) {
 					$moLine = new MoLine($this->db);
 					$res = $moLine->fetch($obj->rowid);
-					if(!$res) $error++;
+					if (!$res) $error++;
 
-					if($moLine->role == 'toconsume' || $moLine->role == 'toproduce') {
+					if ($moLine->role == 'toconsume' || $moLine->role == 'toproduce') {
 						if (empty($moLine->qty_frozen)) {
 							$qty = $newQty * $moLine->qty / $oldQty;
 							$moLine->qty = price2num($qty * (!empty($line->efficiency) ? $line->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and  more presition
 							$res = $moLine->update($user);
-							if(!$res) $error++;
+							if (!$res) $error++;
 						}
 					}
 				}
