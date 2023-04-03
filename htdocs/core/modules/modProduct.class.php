@@ -632,9 +632,13 @@ class modProduct extends DolibarrModules
 			$this->import_fields_array[$r] = array('pwp.fk_product'=>"Product*",
 				'pwp.fk_entrepot'=>"Warehouse*", 'pwp.seuil_stock_alerte'=>"StockLimit",
 				'pwp.desiredstock'=>"DesiredStock");
+			$this->import_regex_array[$r] = array(
+				'pwp.fk_product' => 'rowid@'.MAIN_DB_PREFIX.'product',
+				'pwp.fk_entrepot' => 'rowid@'.MAIN_DB_PREFIX.'entrepot',
+			);
 			$this->import_convertvalue_array[$r] = array(
 				'pwp.fk_product'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
-			,'pwp.fk_entrepot'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/stock/class/entrepot.class.php', 'class'=>'Entrepot', 'method'=>'fetch', 'element'=>'Entrepot')
+				,'pwp.fk_entrepot'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/stock/class/entrepot.class.php', 'class'=>'Entrepot', 'method'=>'fetch', 'element'=>'Entrepot')
 			);
 			$this->import_examplevalues_array[$r] = array('pwp.fk_product'=>"ref:PRODUCT_REF or id:123456",
 				'pwp.fk_entrepot'=>"ref:WAREHOUSE_REF or id:123456",
