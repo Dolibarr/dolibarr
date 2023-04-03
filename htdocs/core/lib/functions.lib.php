@@ -11357,6 +11357,12 @@ function getElementProperties($element_type)
 		$classname = 'Productlot';
 		$element = 'productlot';
 		$subelement = '';
+	} elseif ($element_type == 'websitepage') {
+		$classpath = 'website/class';
+		$classfile = 'websitepage';
+		$classname = 'Websitepage';
+		$module = 'website';
+		$subelement = 'websitepage';
 	}
 
 	if (empty($classfile)) {
@@ -11391,7 +11397,7 @@ function getElementProperties($element_type)
  */
 function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 {
-	global $conf, $db;
+	global $db;
 
 	$ret = 0;
 
