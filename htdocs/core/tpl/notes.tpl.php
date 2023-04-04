@@ -91,7 +91,7 @@ if ($module == 'propal') {
 } elseif ($module == 'shipping') {
 	$permission = $user->hasRight("expedition", "creer");
 } elseif ($module == 'product') {
-	$permission = $user->hasRight("produit", "creer");
+	$permission = $user->hasRight("product", "creer");
 } elseif ($module == 'service') {
 	$permission = $user->hasRight("service", "creer");
 } elseif ($module == 'ecmfiles') {

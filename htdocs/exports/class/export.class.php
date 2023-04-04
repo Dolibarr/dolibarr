@@ -175,21 +175,21 @@ class Export
 									$this->array_export_perms[$i] = $bool;
 									// Icon
 									$this->array_export_icon[$i] = (isset($module->export_icon[$r]) ? $module->export_icon[$r] : $module->picto);
-									// Code du dataset export
+									// Code of the export dataset / Code du dataset export
 									$this->array_export_code[$i] = $module->export_code[$r];
 									// Define a key for sort
 									$this->array_export_code_for_sort[$i] = $module->module_position.'_'.$module->export_code[$r]; // Add a key into the module
-									// Libelle du dataset export
+									// Export Dataset Label / Libelle du dataset export
 									$this->array_export_label[$i] = $module->getExportDatasetLabel($r);
-									// Tableau des champ a exporter (cle=champ, valeur=libelle)
+									// Table of fields to export / Tableau des champ a exporter (cle=champ, valeur=libelle)
 									$this->array_export_fields[$i] = $module->export_fields_array[$r];
-									// Tableau des champs a filtrer (cle=champ, valeur1=type de donnees) on verifie que le module a des filtres
+									// Table of fields to be filtered / Tableau des champs a filtrer (cle=champ, valeur1=type de donnees) on verifie que le module a des filtres
 									$this->array_export_TypeFields[$i] = (isset($module->export_TypeFields_array[$r]) ? $module->export_TypeFields_array[$r] : '');
-									// Tableau des entites a exporter (cle=champ, valeur=entite)
+									// Table of entities for export / Tableau des entites a exporter (cle=champ, valeur=entite)
 									$this->array_export_entities[$i] = $module->export_entities_array[$r];
 									// Tableau des entites qui requiert abandon du DISTINCT (cle=entite, valeur=champ id child records)
 									$this->array_export_dependencies[$i] = (!empty($module->export_dependencies_array[$r]) ? $module->export_dependencies_array[$r] : '');
-									// Tableau des operations speciales sur champ
+									// Table of special field operations / Tableau des operations speciales sur champ
 									$this->array_export_special[$i] = (!empty($module->export_special_array[$r]) ? $module->export_special_array[$r] : '');
 									// Array of examples
 									$this->array_export_examplevalues[$i] = (!empty($module->export_examplevalues_array[$r]) ? $module->export_examplevalues_array[$r] : null);
@@ -461,9 +461,9 @@ class Export
 				}
 				break;
 			case 'List':
-				// 0 : Type du champ
-				// 1 : Nom de la table
-				// 2 : Nom du champ contenant le libelle
+				// 0 : Type of the field / Type du champ
+				// 1 : Name of the table / Nom de la table
+				// 2 : Name of the field containing the label / Nom du champ contenant le libelle
 				// 3 : Name of field with key (if it is not "rowid"). Used this field as key for combo list.
 				// 4 : Name of element for getEntity().
 

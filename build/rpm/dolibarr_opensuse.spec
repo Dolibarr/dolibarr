@@ -67,7 +67,7 @@ Programmo web, progettato per poter fornire solo ciò di
 cui hai bisogno ed essere facile da usare.
 
 
-#---- prep
+#---- prepo
 %prep
 %setup -q
 %patch0 -p0 -b .patch
@@ -172,6 +172,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/barcode
 %_datadir/dolibarr/htdocs/blockedlog
 %_datadir/dolibarr/htdocs/bookmarks
+%_datadir/dolibarr/htdocs/bookcal
 %_datadir/dolibarr/htdocs/bom
 %_datadir/dolibarr/htdocs/categories
 %_datadir/dolibarr/htdocs/collab

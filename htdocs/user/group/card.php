@@ -209,6 +209,7 @@ if (empty($reshook)) {
 
 			$object->name = GETPOST("nom", 'alphanohtml');
 			$object->note = dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
+			$object->tms = dol_now();
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -247,6 +248,7 @@ if (empty($reshook)) {
 /*
  * View
  */
+
 $title = $object->name.' - '.$langs->trans("Card");
 if ($action == 'create') {
 	$title = $langs->trans("NewGroup");
@@ -309,8 +311,6 @@ if ($action == 'create') {
 	/*                                                                            */
 	/* ************************************************************************** */
 	if ($id) {
-		$res = $object->fetch_optionals();
-
 		$head = group_prepare_head($object);
 		$title = $langs->trans("Group");
 
@@ -447,6 +447,8 @@ if ($action == 'create') {
 				print '<td class="liste_titre right" width="5">&nbsp;</td>';
 				print "</tr>\n";
 
+				$object->fetch($object->id, '', true);	// true to force load of all users, member of the group
+
 				if (!empty($object->members)) {
 					foreach ($object->members as $useringroup) {
 						print '<tr class="oddeven">';
@@ -472,7 +474,7 @@ if ($action == 'create') {
 						print "</td></tr>\n";
 					}
 				} else {
-					print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+					print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 				}
 				print "</table>";
 				print '</div>';

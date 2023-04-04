@@ -28,7 +28,7 @@ CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with
 CantModifyInterestIfScheduleIsUsed = اگر آپ شیڈول استعمال کرتے ہیں تو آپ دلچسپی میں ترمیم نہیں کر سکتے
 # Admin
 ConfigLoan=ماڈیول قرض کی ترتیب
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=ڈیفالٹ کے حساب سے اکاؤنٹنگ کا سرمایہ
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=ڈیفالٹ کے حساب سے اکاؤنٹنگ سود
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=اکاؤنٹنگ اکاؤنٹ انشورنس بطور ڈیفالٹ
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
 CreateCalcSchedule=مالی وابستگی میں ترمیم کریں۔

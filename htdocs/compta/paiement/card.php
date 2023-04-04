@@ -36,6 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 if (isModEnabled("banque")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
+if (!empty($conf->margin->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies'));
@@ -46,6 +49,11 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
+$socid = GETPOST('socid', 'int');
+if ($socid < 0) {
+	$socid = 0;
+}
+
 $object = new Paiement($db);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('paymentcard', 'globalcard'));
@@ -53,7 +61,7 @@ $hookmanager->initHooks(array('paymentcard', 'globalcard'));
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-$result = restrictedArea($user, $object->element, $object->id, 'paiement');
+$result = restrictedArea($user, $object->element, $object->id, 'paiement');	// This also test permission on read invoice
 
 // Security check
 if ($user->socid) {
@@ -67,12 +75,11 @@ if ($socid && $socid != $object->thirdparty->id) {
 
 $error = 0;
 
-
 /*
  * Actions
  */
 
-if ($action == 'setnote' && $user->rights->facture->paiement) {
+if ($action == 'setnote' && $user->hasRight('facture', 'paiement')) {
 	$db->begin();
 
 	$result = $object->update_note(GETPOST('note', 'restricthtml'));
@@ -85,7 +92,7 @@ if ($action == 'setnote' && $user->rights->facture->paiement) {
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->paiement) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('facture', 'paiement')) {
 	$db->begin();
 
 	$result = $object->delete();
@@ -106,7 +113,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->
 	}
 }
 
-if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture->paiement) {
+if ($action == 'confirm_validate' && $confirm == 'yes' && $user->hasRight('facture', 'paiement')) {
 	$db->begin();
 
 	if ($object->validate($user) > 0) {
@@ -142,13 +149,13 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 						$invoice = new Facture($db);
 
 						if ($invoice->fetch($objp->facid) <= 0) {
-							$errors++;
+							$error++;
 							setEventMessages($invoice->error, $invoice->errors, 'errors');
 							break;
 						}
 
 						if ($invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref) < 0) {
-							$errors++;
+							$error++;
 							setEventMessages($invoice->error, $invoice->errors, 'errors');
 							break;
 						}
@@ -159,12 +166,12 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 
 				$db->free($resql);
 			} else {
-				$errors++;
+				$error++;
 				setEventMessages($db->error, $db->errors, 'errors');
 			}
 		}
 
-		if (! $errors) {
+		if (! $error) {
 			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
 			exit;
 		}
@@ -176,7 +183,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 	}
 }
 
-if ($action == 'setnum_paiement' && GETPOST('num_paiement')) {
+if ($action == 'setnum_paiement' && GETPOST('num_paiement') && $user->hasRight('facture', 'paiement')) {
 	$res = $object->update_num(GETPOST('num_paiement'));
 	if ($res === 0) {
 		setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
@@ -185,7 +192,7 @@ if ($action == 'setnum_paiement' && GETPOST('num_paiement')) {
 	}
 }
 
-if ($action == 'setdatep' && GETPOST('datepday')) {
+if ($action == 'setdatep' && GETPOST('datepday') && $user->hasRight('facture', 'paiement')) {
 	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
 	$res = $object->update_date($datepaye);
 	if ($res === 0) {
@@ -194,7 +201,8 @@ if ($action == 'setdatep' && GETPOST('datepday')) {
 		setEventMessages($langs->trans('PaymentDateUpdateFailed'), null, 'errors');
 	}
 }
-if ($action == 'createbankpayment' && !empty($user->rights->facture->paiement)) {
+
+if ($action == 'createbankpayment' && $user->hasRight('facture', 'paiement')) {
 	$db->begin();
 
 	// Create the record into bank for the amount of payment $object
@@ -239,7 +247,7 @@ $thirdpartystatic = new Societe($db);
 
 $result = $object->fetch($id, $ref);
 if ($result <= 0) {
-	dol_print_error($db, 'Payement '.$id.' not found in database');
+	dol_print_error($db, 'Payment '.$id.' not found in database');
 	exit;
 }
 
@@ -416,8 +424,6 @@ if ($resql) {
 	$i = 0;
 	$total = 0;
 
-	$moreforfilter = '';
-
 	print '<br>';
 
 	print '<div class="div-table-responsive">';
@@ -428,6 +434,10 @@ if ($resql) {
 	print '<td>'.$langs->trans('Company').'</td>';
 	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
 		print '<td>'.$langs->trans('Entity').'</td>';
+	}
+	//Add Margin
+	if (!empty($conf->margin->enabled) && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT')) {
+		print '<td class="right">'.$langs->trans('Margin').'</td>';
 	}
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
@@ -443,6 +453,14 @@ if ($resql) {
 
 			$invoice = new Facture($db);
 			$invoice->fetch($objp->facid);
+
+			// Add Margin
+			if (!empty($conf->margin->enabled) && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT')) {
+				$formmargin = new FormMargin($db);
+				$marginInfo = array();
+				$invoice->fetch_lines();
+				$marginInfo = $formmargin->getMarginInfosArray($invoice);
+			}
 
 			$paiement = $invoice->getSommePaiement();
 			$creditnotes = $invoice->getSumCreditNotesUsed();
@@ -469,6 +487,12 @@ if ($resql) {
 				print $mc->label;
 				print '</td>';
 			}
+
+			// Add margin
+			if (!empty($conf->margin->enabled) && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT')) {
+				print '<td class="right">'.price($marginInfo['total_margin']).'</td>';
+			}
+
 			// Expected to pay
 			print '<td class="right"><span class="amount">'.price($objp->total_ttc).'</span></td>';
 
@@ -512,9 +536,9 @@ if ($resql) {
 print '<div class="tabsAction">';
 
 if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
-	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '') {
+	if ($user->socid == 0 && $object->statut == 0 && $action == '') {
 		if ($user->rights->facture->paiement) {
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&facid='.$objp->facid.'&action=valide&token='.newToken().'">'.$langs->trans('Valid').'</a>';
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=valide&token='.newToken().'">'.$langs->trans('Valid').'</a>';
 		}
 	}
 }

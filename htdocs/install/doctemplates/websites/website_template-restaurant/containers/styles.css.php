@@ -11,44 +11,6 @@ header('Content-type: text/css');
 // END PHP ?>
 @charset "UTF-8";
 
-.bodywebsite {
-  /*!
- * Bootstrap  v5.2.1 (https://getbootstrap.com/)
- * Copyright 2011-2022 The Bootstrap Authors
- * Copyright 2011-2022 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
- */
-  /* rtl:raw:
-[type="tel"],
-[type="url"],
-[type="email"],
-[type="number"] {
-  direction: ltr;
-}
-*/
-  /* rtl:begin:ignore */
-  /* rtl:end:ignore */
-  /* rtl:begin:ignore */
-  /* rtl:end:ignore */
-  /* rtl:begin:ignore */
-  /* rtl:end:ignore */
-  /* rtl:begin:ignore */
-  /* rtl:end:ignore */
-  /* rtl:begin:ignore */
-  /* rtl:end:ignore */
-  /* rtl:options: {
-  "autoRename": true,
-  "stringMap":[ {
-    "name"    : "prev-next",
-    "search"  : "prev",
-    "replace" : "next"
-  } ]
-} */
-  /* rtl:begin:remove */
-  /* rtl:end:remove */
-  /*# sourceMappingURL=bootstrap.css.map */;
-}
-
 .bodywebsite :root {
 	--bs-blue: #0d6efd;
 	--bs-indigo: #6610f2;
@@ -141,6 +103,10 @@ header('Content-type: text/css');
 	background-color: var(--bs-body-bg);
 	-webkit-text-size-adjust: 100%;
 	-webkit-tap-highlight-color: transparent;
+}
+
+.bodywebsite .center {
+    text-align: center;
 }
 
 .bodywebsite hr {
@@ -8367,6 +8333,7 @@ header('Content-type: text/css');
 
 .bodywebsite .m-1 {
 	margin: 0.25rem !important;
+	padding-left: 0px !important;
 }
 
 .bodywebsite .m-2 {
@@ -12596,8 +12563,8 @@ body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }
 }
 
 .bodywebsite .section-padding {
-    padding-top: 8rem;
-    padding-bottom: 8rem;
+    padding-top: 6rem;
+    padding-bottom: 6rem;
 }
 
 .bodywebsite b,
@@ -13019,8 +12986,8 @@ body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    padding-top: 7rem;
-    padding-bottom: 7rem;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
     position: relative;
 }
 

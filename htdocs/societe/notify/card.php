@@ -306,7 +306,7 @@ if ($result > 0) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
-			$contactstatic->id = $obj->contact_id;
+			$contactstatic->id = $obj->contactid;
 			$contactstatic->lastname = $obj->lastname;
 			$contactstatic->firstname = $obj->firstname;
 

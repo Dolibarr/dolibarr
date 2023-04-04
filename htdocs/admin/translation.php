@@ -427,7 +427,7 @@ if ($mode == 'overwrite') {
 				print ' &nbsp; ';
 				print '<input type="submit" class="button buttongen button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 			} else {
-				print '<a class="reposition editfielda paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.urlencode($mode).'&action=edit&token='.newToken().''.((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_edit().'</a>';
+				print '<a class="reposition editfielda paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.urlencode($mode).'&action=edit&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_edit().'</a>';
 				print ' &nbsp; ';
 				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.urlencode($mode).'&action=delete&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
 			}

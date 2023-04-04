@@ -217,7 +217,7 @@ class CActionComm
 							$qualified = 1;
 						}
 						// For case module = 'myobject@eventorganization'
-						$tmparray = preg_split("/@/", $obj->module, -1);
+						$tmparray = explode("@", $obj->module);
 						if (count($tmparray) > 1 && $tmparray[1] == 'eventorganization' && isModEnabled('eventorganization')) {
 							$qualified = 1;
 						}

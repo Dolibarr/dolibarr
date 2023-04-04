@@ -75,7 +75,10 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			if (isModEnabled('commande') && !empty($conf->global->WORKFLOW_PROPAL_AUTOCREATE_ORDER)) {
 				$object->fetchObjectLinked();
 				if (!empty($object->linkedObjectsIds['commande'])) {
-					setEventMessages($langs->trans("OrderExists"), null, 'warnings');
+					if (empty($object->context['closedfromonlinesignature'])) {
+						$langs->load("orders");
+						setEventMessages($langs->trans("OrderExists"), null, 'warnings');
+					}
 					return $ret;
 				} else {
 					include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -90,6 +93,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						$this->error = $newobject->error;
 						$this->errors[] = $newobject->error;
 					}
+
+					$object->clearObjectLinkedCache();
+
 					return $ret;
 				}
 			}
@@ -111,6 +117,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					$this->error = $newobject->error;
 					$this->errors[] = $newobject->error;
 				}
+
+				$object->clearObjectLinkedCache();
+
 				return $ret;
 			}
 		}

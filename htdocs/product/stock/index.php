@@ -162,7 +162,7 @@ if ($resql) {
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
-	print "<tr class=\"liste_titre\">";
+	print '<tr class="liste_titre">';
 	print '<th>'.$langs->trans("LastMovements", min($num, $max)).'</th>';
 	print '<th>'.$langs->trans("Product").'</th>';
 	if (isModEnabled('productbatch')) {
@@ -202,7 +202,7 @@ if ($resql) {
 
 		print '<tr class="oddeven">';
 		print '<td class="nowraponall">'.img_picto($langs->trans("Ref").' '.$objp->mid, 'movement',  'class="pictofixedwidth"').dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
-		print '<td class="tdoverflowmax200">';
+		print '<td class="tdoverflowmax150">';
 		print $producttmp->getNomUrl(1);
 		print "</td>\n";
 		if (isModEnabled('productbatch')) {
@@ -216,7 +216,7 @@ if ($resql) {
 				print '<td>'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
 			}*/
 		}
-		print '<td class="tdoverflowmax200">';
+		print '<td class="tdoverflowmax150">';
 		print $warehouse->getNomUrl(1);
 		print "</td>\n";
 		print '<td class="right">';

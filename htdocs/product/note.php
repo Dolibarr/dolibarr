@@ -50,17 +50,17 @@ if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 }
 
-$permissionnote = $user->rights->produit->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = ($user->rights->produit->creer || $user->rights->service->creer); // Used by the include of actions_setnotes.inc.php
 
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
-		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
+		restrictedArea($user, 'product', $object->id, 'product&product', '', '');
 	}
 	if ($object->type == $object::TYPE_SERVICE) {
 		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
 	}
 } else {
-	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+	restrictedArea($user, 'product|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
 
 

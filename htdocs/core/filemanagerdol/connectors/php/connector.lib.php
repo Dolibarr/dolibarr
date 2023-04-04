@@ -286,8 +286,6 @@ function CreateFolder($resourceType, $currentFolder)
 	echo '<Error number="'.$sErrorNumber.'" />';
 }
 
-// @CHANGE
-//function FileUpload( $resourceType, $currentFolder, $sCommand )
 /**
  * FileUpload
  *
@@ -299,6 +297,8 @@ function CreateFolder($resourceType, $currentFolder)
  */
 function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 {
+	global $user;
+
 	if (!isset($_FILES)) {
 		global $_FILES;
 	}
@@ -328,26 +328,23 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 		$sExtension = substr($sFileName, (strrpos($sFileName, '.') + 1));
 		$sExtension = strtolower($sExtension);
 
-		//var_dump($Config);
-		/*
-		 if (isset($Config['SecureImageUploads'])) {
-		 if (($isImageValid = IsImageValid($oFile['tmp_name'], $sExtension)) === false) {
-		 $sErrorNumber = '202';
-		 }
-		 }
-
-		 if (isset($Config['HtmlExtensions'])) {
-		 if (!IsHtmlExtension($sExtension, $Config['HtmlExtensions']) &&
-		 ($detectHtml = DetectHtml($oFile['tmp_name'])) === true) {
-		 $sErrorNumber = '202';
-		 }
-		 }
-		 */
-
+		// Check permission
+		$permissiontouploadmediaisok = 1;
+		if (!empty($user->socid)) {
+			$permissiontouploadmediaisok = 0;
+		}
+		/*if (!$user->hasRight('website', 'write') && !$user->hasRight('mailing', 'write')) {
+			$permissiontouploadmediaisok = 0;
+		}*/
+		if (!$permissiontouploadmediaisok) {
+			dol_syslog("connector.lib.php Try to upload a file with no permission");
+			$sErrorNumber = '202';
+		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 		//var_dump($sFileName); var_dump(image_format_supported($sFileName));exit;
-		$isImageValid = (image_format_supported($sFileName) >= 0 ? true : false);
+		$imgsupported = image_format_supported($sFileName);
+		$isImageValid = ($imgsupported >= 0 ? true : false);
 		if (!$isImageValid) {
 			$sErrorNumber = '202';
 		}
@@ -391,7 +388,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 
 				if (file_exists($sFilePath)) {
 					//previous checks failed, try once again
-					if (isset($isImageValid) && $isImageValid === -1 && IsImageValid($sFilePath, $sExtension) === false) {
+					if (isset($isImageValid) && $imgsupported === -1 && IsImageValid($sFilePath, $sExtension) === false) {
 						dol_syslog("connector.lib.php IsImageValid is ko");
 						@unlink($sFilePath);
 						$sErrorNumber = '202';
@@ -558,12 +555,25 @@ function GetParentFolder($folderPath)
  */
 function CreateServerFolder($folderPath, $lastFolder = null)
 {
+	global $user;
 	global $Config;
+
 	$sParent = GetParentFolder($folderPath);
 
 	// Ensure the folder path has no double-slashes, or mkdir may fail on certain platforms
 	while (strpos($folderPath, '//') !== false) {
 		$folderPath = str_replace('//', '/', $folderPath);
+	}
+
+	$permissiontouploadmediaisok = 1;
+	if (!empty($user->socid)) {
+		$permissiontouploadmediaisok = 0;
+	}
+	/*if (!$user->hasRight('website', 'write') && !$user->hasRight('mailing', 'write')) {
+	 $permissiontouploadmediaisok = 0;
+	 }*/
+	if (!$permissiontouploadmediaisok) {
+		return 'Bad permissions to create a folder in media directory';
 	}
 
 	// Check if the parent exists, or create it.

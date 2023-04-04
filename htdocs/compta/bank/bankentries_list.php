@@ -175,7 +175,7 @@ $arrayfields = array(
 	'balance'=>array('label'=>$langs->trans("Balance"), 'checked'=>1, 'position'=>120),
 	'b.num_releve'=>array('label'=>$langs->trans("AccountStatement"), 'checked'=>1, 'position'=>130),
 	'b.conciliated'=>array('label'=>$langs->trans("BankLineReconciled"), 'enabled'=> $object->rappro, 'checked'=>($action == 'reconcile' ? 1 : 0), 'position'=>140),
-	'b.fk_bordereau'=>array('label'=>$langs->trans("ChequeReceipt"), 'checked'=>0, 'position'=>150),
+	'b.fk_bordereau'=>array('label'=>$langs->trans("ChequeNumber"), 'checked'=>0, 'position'=>150),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -1134,8 +1134,8 @@ if ($resql) {
 	}
 	// Conciliated
 	if (!empty($arrayfields['b.conciliated']['checked'])) {
-		print '<td class="liste_titre" align="center">';
-		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1, 1);
+		print '<td class="liste_titre center parentonrightofpage">';
+		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1, 1, 'search_status onrightofpage maxwidth75');
 		print '</td>';
 	}
 	// Bordereau
@@ -1561,6 +1561,7 @@ if ($resql) {
 
 			$companylinked_id = 0;
 			$userlinked_id = 0;
+			$type_link = "";
 
 			//payment line type to define user display and user or company linked
 			foreach ($links as $key => $value) {

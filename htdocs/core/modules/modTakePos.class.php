@@ -269,10 +269,15 @@ class modTakePos extends DolibarrModules
 
 		dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
 
-		$sql = array();
+		$result = $this->_load_tables('/install/mysql/', 'takepos');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
 
-		// Remove permissions and default values
+		// Clean before activation
 		$this->remove($options);
+
+		$sql = array();
 
 		return $this->_init($sql, $options);
 	}

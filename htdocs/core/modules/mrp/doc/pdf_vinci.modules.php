@@ -684,9 +684,7 @@ class pdf_vinci extends ModelePDFMo
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -816,11 +814,11 @@ class pdf_vinci extends ModelePDFMo
 
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
-		$pdf->SetXY($col1x, $tab2_top + 0);
+		$pdf->SetXY($col1x, $tab2_top);
 		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
 		$total_ht = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
-		$pdf->SetXY($col2x, $tab2_top + 0);
+		$pdf->SetXY($col2x, $tab2_top);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (!empty($object->remise) ? $object->remise : 0)), 0, 'R', 1);
 
 		// Show VAT by rates and total
@@ -1067,7 +1065,7 @@ class pdf_vinci extends ModelePDFMo
 	 *  @param  CommandeFournisseur		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -1085,9 +1083,9 @@ class pdf_vinci extends ModelePDFMo
 		//pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		//Affiche le filigrane brouillon - Print Draft Watermark
-		/*if($object->statut==0 && (!empty($conf->global->COMMANDE_DRAFT_WATERMARK)) )
+		/*if($object->statut==0 && getDolGlobalString('COMMANDE_DRAFT_WATERMARK'))
 		{
-			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->COMMANDE_DRAFT_WATERMARK);
+			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',getDolGlobalString('COMMANDE_DRAFT_WATERMARK'));
 		}*/
 		//Print content
 
@@ -1405,14 +1403,13 @@ class pdf_vinci extends ModelePDFMo
 		$rank = 0;
 		$this->cols['code'] = array(
 			'rank' => $rank,
-			'status' => false,
+			'status' => true,
 			'width' => 35, // in mm
 			'title' => array(
 				'textkey' => 'Ref'
 			),
 			'border-left' => true, // add left line separator
 		);
-		$this->cols['code']['status'] = true;
 
 		$rank = 1; // do not use negative rank
 		$this->cols['desc'] = array(
@@ -1455,14 +1452,13 @@ class pdf_vinci extends ModelePDFMo
 		$rank = $rank + 10;
 		$this->cols['dim'] = array(
 			'rank' => $rank,
-			'status' => false,
+			'status' => true,
 			'width' => 25, // in mm
 			'title' => array(
 				'textkey' => 'Size'
 			),
 			'border-left' => true, // add left line separator
 		);
-		$this->cols['dim']['status'] = true;
 
 		$rank = $rank + 10;
 		$this->cols['qty'] = array(
@@ -1474,7 +1470,6 @@ class pdf_vinci extends ModelePDFMo
 			),
 			'border-left' => true, // add left line separator
 		);
-		$this->cols['qty']['status'] = true;
 
 		$rank = $rank + 10;
 		$this->cols['qtytot'] = array(
@@ -1486,7 +1481,6 @@ class pdf_vinci extends ModelePDFMo
 			),
 			'border-left' => true, // add left line separator
 		);
-		$this->cols['qtytot']['status'] = true;
 
 		// Add extrafields cols
 		if (!empty($object->lines)) {

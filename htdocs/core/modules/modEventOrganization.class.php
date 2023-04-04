@@ -62,7 +62,7 @@ class modEventOrganization extends DolibarrModules
 		// Key used in llx_const table to save module status enabled/disabled (where EVENTORGANIZATION is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 
-		$this->picto = 'action';
+		$this->picto = 'conferenceorbooth';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
@@ -374,6 +374,11 @@ class modEventOrganization extends DolibarrModules
 		// Insert some vars
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($this->db);
+
+		include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+		if (!is_object($user)) {
+			$user = new User($this->db); // To avoid error during migration
+		}
 
 		$template = $formmail->getEMailTemplate($this->db, 'conferenceorbooth', $user, $langs, 0, 1, '(EventOrganizationEmailAskConf)');
 		if ($template->id > 0) {

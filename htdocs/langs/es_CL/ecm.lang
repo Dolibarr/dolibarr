@@ -6,7 +6,6 @@ ECMNbOfSubDir=Cantidad de subdirectorios
 ECMNbOfFilesInSubDir=Número de archivos en subdirectorios
 ECMArea=Área de DMS / ECM
 ECMAreaDesc=El área DMS / ECM (Sistema de gestión de documentos / gestión de contenido electrónico) le permite guardar, compartir y buscar rápidamente todo tipo de documentos en Dolibarr.
-ECMAreaDesc2=* Los directorios automáticos se rellenan automáticamente al agregar documentos desde la tarjeta de un elemento. <br> * Los directorios manuales se pueden usar para guardar documentos no vinculados a un elemento en particular.
 ECMSectionWasRemoved=El directorio <b>%s</b> ha sido borrado.
 ECMSectionWasCreated=El directorio <b>%s</b> ha sido creado.
 ECMNoDirectoryYet=Sin directorio creado

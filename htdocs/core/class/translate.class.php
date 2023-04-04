@@ -41,6 +41,9 @@ class Translate
 	public $cache_labels = array(); // Cache for labels return by getLabelFromKey method
 	public $cache_currencies = array(); // Cache to store currency symbols
 	private $cache_currencies_all_loaded = false;
+	public $origlang;
+	public $error;
+	public $errors = array();
 
 
 	/**
@@ -416,7 +419,7 @@ class Translate
 	 *
 	 *  Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
 	 *
-	 *  @param  Database    $db             Database handler
+	 *  @param  DoliDB    $db             Database handler
 	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 */
 	public function loadFromDatabase($db)
@@ -834,7 +837,6 @@ class Translate
 						'ja'=>'ja_JP',
 						'lo'=>'lo_LA',
 						'nb'=>'nb_NO',
-						'fa'=>'fa_IR',
 						'sq'=>'sq_AL',
 						'sr'=>'sr_RS',
 						'sv'=>'sv_SE',
@@ -933,8 +935,10 @@ class Translate
 			$fonc = 'numberwords';
 			if (file_exists($newdir.'/functions_'.$fonc.'.lib.php')) {
 				include_once $newdir.'/functions_'.$fonc.'.lib.php';
-				$newnumber = numberwords_getLabelFromNumber($this, $number, $isamount);
-				break;
+				if (function_exists('numberwords_getLabelFromNumber')) {
+					$newnumber = numberwords_getLabelFromNumber($this, $number, $isamount);
+					break;
+				}
 			}
 		}
 

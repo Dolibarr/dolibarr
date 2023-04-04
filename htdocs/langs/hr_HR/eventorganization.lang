@@ -54,12 +54,15 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = U obrascu za stvaranje/dodavanje sudion
 # Object
 #
 EventOrganizationConfOrBooth= Konferencija ili štand
+EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = Upravljajte organizacijom događaja
 ConferenceOrBooth = Konferencija ili štand
 ConferenceOrBoothTab = Konferencija ili štand
 AmountPaid = Uplaćeni iznos
 DateOfRegistration = Datum registracije
 ConferenceOrBoothAttendee = Sudionik konferencije ili štanda
+ApplicantOrVisitor=Applicant or visitor
+Speaker=Speaker
 
 #
 # Template Mail
@@ -112,15 +115,15 @@ EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest 
 EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
 EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
 ListOfSuggestedConferences = Popis predloženih konferencija
-ListOfSuggestedBooths = Popis predloženih štandova
-ListOfConferencesOrBooths=List of conferences or booths of event project
+ListOfSuggestedBooths=Suggested booths
+ListOfConferencesOrBooths=Conferences or booths of event project
 SuggestConference = Suggest a new conference
 SuggestBooth = Suggest a booth
 ViewAndVote = View and vote for suggested events
 PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
 PublicAttendeeSubscriptionPage = Public link for registration to this event only
 MissingOrBadSecureKey = The security key is invalid or missing
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event : <b>%s</b>
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event
 EvntOrgDuration = This conference starts on %s and ends on %s.
 ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
 BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
@@ -130,7 +133,7 @@ LabelOfconference=Conference label
 ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
 DateMustBeBeforeThan=%s must be before %s
 DateMustBeAfterThan=%s must be after %s
-
+MaxNbOfAttendeesReached=The maximum number of participants has been reached
 NewSubscription=Registracija
 OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
 OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
@@ -139,6 +142,7 @@ OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event re
 OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
 OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
 OrganizationEventLinkToThirdParty=Veza na treću stranu (kupac, dobavljač ili partner)
+OrganizationEvenLabelName=Public name of the conference or booth
 
 NewSuggestionOfBooth=Prijava za štand
 NewSuggestionOfConference=Prijava za konferenciju
@@ -154,7 +158,7 @@ VoteOk = Vaš glas je prihvaćen.
 AlreadyVoted = Već ste glasali za ovaj događaj.
 VoteError = Došlo je do pogreške tijekom glasanja, pokušajte ponovo.
 
-SubscriptionOk = Vaša registracija je potvrđena
+SubscriptionOk=Your registration has been recorded
 ConfAttendeeSubscriptionConfirmation = Potvrda vaše pretplate na događaj
 Attendee = Polaznik
 PaymentConferenceAttendee = Plaćanje sudionika konferencije
@@ -162,6 +166,7 @@ PaymentBoothLocation = Plaćanje lokacije štanda
 DeleteConferenceOrBoothAttendee=Ukloni sudionika
 RegistrationAndPaymentWereAlreadyRecorder=Registracija i uplata već su zabilježeni za e-mail <b> %s </b>
 EmailAttendee=E-mail sudionika
+EmailCompany=Company email
 EmailCompanyForInvoice=E-pošta tvrtke (za fakturu, ako se razlikuje od e-pošte sudionika)
 ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
 ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation

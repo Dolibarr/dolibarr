@@ -423,7 +423,7 @@ class FormFile
 		if (preg_match('/massfilesarea_/', $modulepart)) {
 			$out .= '<div id="show_files"><br></div>'."\n";
 			$title = $langs->trans("MassFilesArea").' <a href="" id="togglemassfilesarea" ref="shown">('.$langs->trans("Hide").')</a>';
-			$title .= '<script>
+			$title .= '<script nonce="'.getNonce().'">
 				jQuery(document).ready(function() {
 					jQuery(\'#togglemassfilesarea\').click(function() {
 						if (jQuery(\'#togglemassfilesarea\').attr(\'ref\') == "shown")
@@ -448,6 +448,19 @@ class FormFile
 		if (!empty($title)) {
 			$titletoshow = ($title == 'none' ? '' : $title);
 		}
+
+		$submodulepart = $modulepart;
+
+		// modulepart = 'nameofmodule' or 'nameofmodule:NameOfObject'
+		$tmp = explode(':', $modulepart);
+		if (!empty($tmp[1])) {
+			$modulepart = $tmp[0];
+			$submodulepart = $tmp[1];
+		}
+
+		$addcolumforpicto = ($delallowed || $printer || $morepicto);
+		$colspan = (4 + ($addcolumforpicto ? 1 : 0));
+		$colspanmore = 0;
 
 		// Show table
 		if ($genallowed) {
@@ -648,15 +661,6 @@ class FormFile
 					$modellist = ModelePDFUserGroup::liste_modeles($this->db);
 				}
 			} else {
-				$submodulepart = $modulepart;
-
-				// modulepart = 'nameofmodule' or 'nameofmodule:NameOfObject'
-				$tmp = explode(':', $modulepart);
-				if (!empty($tmp[1])) {
-					$modulepart = $tmp[0];
-					$submodulepart = $tmp[1];
-				}
-
 				// For normalized standard modules
 				$file = dol_buildpath('/core/modules/'.$modulepart.'/modules_'.strtolower($submodulepart).'.php', 0);
 				if (file_exists($file)) {
@@ -699,10 +703,6 @@ class FormFile
 			$out .= '<table class="liste formdoc noborder centpercent">';
 
 			$out .= '<tr class="liste_titre">';
-
-			$addcolumforpicto = ($delallowed || $printer || $morepicto);
-			$colspan = (4 + ($addcolumforpicto ? 1 : 0));
-			$colspanmore = 0;
 
 			$out .= '<th colspan="'.$colspan.'" class="formdoc liste_titre maxwidthonsmartphone center">';
 
@@ -837,7 +837,7 @@ class FormFile
 					}
 
 					// Show file name with link to download
-					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param);;
+					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param);
 
 					$out .= '<td class="minwidth200 tdoverflowmax300">';
 					if ($imgpreview) {
@@ -920,6 +920,9 @@ class FormFile
 					}
 
 					if (is_object($hookmanager)) {
+						$addcolumforpicto = ($delallowed || $printer || $morepicto);
+						$colspan = (4 + ($addcolumforpicto ? 1 : 0));
+						$colspanmore = 0;
 						$parameters = array('colspan'=>($colspan + $colspanmore), 'socid'=>(isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id'=>(isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'modulepart'=>$modulepart, 'relativepath'=>$relativepath);
 						$res = $hookmanager->executeHooks('formBuilddocLineOptions', $parameters, $file);
 						if (empty($res)) {
@@ -1138,7 +1141,7 @@ class FormFile
 
 		if ($disablecrop == -1) {
 			$disablecrop = 1;
-			// Values here must be supported by the photo_resize.php page.
+			// Values here must be supported by the photos_resize.php page.
 			if (in_array($modulepart, array('bank', 'bom', 'expensereport', 'facture', 'facture_fournisseur', 'holiday', 'medias', 'member', 'mrp', 'project', 'product', 'produit', 'propal', 'service', 'societe', 'tax', 'tax-vat', 'ticket', 'user'))) {
 				$disablecrop = 0;
 			}
@@ -1442,16 +1445,42 @@ class FormFile
 							if (in_array($modulepart, array('product', 'produit', 'service'))) {
 								$newmodulepart = 'produit|service';
 							}
-
+							if (image_format_supported($file['name']) > 0) {
+								if ($permtoeditline) {
+									$moreparaminurl = '';
+									if (!empty($object->id) && $object->id > 0) {
+										$moreparaminurl .= '&id='.$object->id;
+									} elseif (GETPOST('website', 'alpha')) {
+										$moreparaminurl .= '&website='.GETPOST('website', 'alpha');
+									}
+									// Set the backtourl
+									if ($modulepart == 'medias' && !GETPOST('website')) {
+										$moreparaminurl .= '&backtourl='.urlencode(DOL_URL_ROOT.'/ecm/index_medias.php?file_manager=1&modulepart='.$modulepart.'&section_dir='.$relativepath);
+									}
+									// Link to convert into webp
+									if (!preg_match('/\.webp$/i', $file['name'])) {
+										if ($modulepart == 'medias' && !GETPOST('website')) {
+											print '<a href="'.DOL_URL_ROOT.'/ecm/index_medias.php?action=confirmconvertimgwebp&token='.newToken().'&section_dir='.urlencode($relativepath).'&filetoregenerate='.urlencode($fileinfo['basename']).'&module='.$modulepart.$param.$moreparaminurl.'" title="'.dol_escape_htmltag($langs->trans("GenerateChosenImgWebp")).'">'.img_picto('', 'images', 'class="flip marginrightonly"').'</a>';
+										} elseif ($modulepart == 'medias' && GETPOST('website')) {
+											print '<a href="'.DOL_URL_ROOT.'/website/index.php?action=confirmconvertimgwebp&token='.newToken().'&section_dir='.urlencode($relativepath).'&filetoregenerate='.urlencode($fileinfo['basename']).'&module='.$modulepart.$param.$moreparaminurl.'" title="'.dol_escape_htmltag($langs->trans("GenerateChosenImgWebp")).'">'.img_picto('', 'images', 'class="flip marginrightonly"').'</a>';
+										}
+									}
+								}
+							}
 							if (!$disablecrop && image_format_supported($file['name']) > 0) {
 								if ($permtoeditline) {
 									// Link to resize
 									$moreparaminurl = '';
 									if (!empty($object->id) && $object->id > 0) {
-										$moreparaminurl = '&id='.$object->id;
+										$moreparaminurl .= '&id='.$object->id;
 									} elseif (GETPOST('website', 'alpha')) {
-										$moreparaminurl = '&website='.GETPOST('website', 'alpha');
+										$moreparaminurl .= '&website='.GETPOST('website', 'alpha');
 									}
+									// Set the backtourl
+									if ($modulepart == 'medias' && !GETPOST('website')) {
+										$moreparaminurl .= '&backtourl='.urlencode(DOL_URL_ROOT.'/ecm/index_medias.php?file_manager=1&modulepart='.$modulepart.'&section_dir='.$relativepath);
+									}
+									//var_dump($moreparaminurl);
 									print '<a class="editfielda" href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode($newmodulepart).$moreparaminurl.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" title="'.dol_escape_htmltag($langs->trans("ResizeOrCrop")).'">'.img_picto($langs->trans("ResizeOrCrop"), 'resize', 'class="paddingrightonly"').'</a>';
 								}
 							}
@@ -1461,6 +1490,7 @@ class FormFile
 								print '<a class="editfielda reposition editfilelink" href="'.(($useinecm == 1 || $useinecm == 5) ? '#' : ($url.'?action=editfile&token='.newToken().'&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" rel="'.$filepath.'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 							}
 						}
+						// Output link to delete file
 						if ($permonobject) {
 							$useajax = 1;
 							if (!empty($conf->dol_use_jmobile)) {
@@ -1494,8 +1524,8 @@ class FormFile
 					} else {
 						print '<td class="right">';
 						print '<input type="hidden" name="ecmfileid" value="'.$filearray[$key]['rowid'].'">';
-						print '<input type="submit" class="button button-save" name="renamefilesave" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
-						print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+						print '<input type="submit" class="button button-save smallpaddingimp" name="renamefilesave" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+						print '<input type="submit" class="button button-cancel smallpaddingimp" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 						print '</td>';
 						if (empty($disablemove) && count($filearray) > 1) {
 							print '<td class="right"></td>';

@@ -150,11 +150,10 @@ class Boms extends DolibarrApi
 		}
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -205,6 +204,9 @@ class Boms extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			$this->bom->$field = $value;
 		}
+
+		$this->checkRefNumbering();
+
 		if (!$this->bom->create(DolibarrApiAccess::$user)) {
 			throw new RestException(500, "Error creating BOM", array_merge(array($this->bom->error), $this->bom->errors));
 		}
@@ -240,6 +242,8 @@ class Boms extends DolibarrApi
 			}
 			$this->bom->$field = $value;
 		}
+
+		$this->checkRefNumbering();
 
 		if ($this->bom->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
@@ -365,7 +369,7 @@ class Boms extends DolibarrApi
 	 *
 	 * @url	PUT {id}/lines/{lineid}
 	 *
-	 * @return array|bool
+	 * @return object|bool
 	 */
 	public function putLine($id, $lineid, $request_data = null)
 	{
@@ -535,5 +539,28 @@ class Boms extends DolibarrApi
 				$myobject[$field] = $data[$field];
 		}
 		return $myobject;
+	}
+
+	/**
+	 * Validate the ref field and get the next Number if it's necessary.
+	 *
+	 * @return void
+	 */
+	private function checkRefNumbering(): void
+	{
+		$ref = substr($this->bom->ref, 1, 4);
+		if ($this->bom->status > 0 && $ref == 'PROV') {
+			throw new RestException(400, "Wrong naming scheme '(PROV%)' is only allowed on 'DRAFT' status. For automatic increment use 'auto' on the 'ref' field.");
+		}
+
+		if (strtolower($this->bom->ref) == 'auto') {
+			if (empty($this->bom->id) && $this->bom->status == 0) {
+				$this->bom->ref = ''; // 'ref' will auto incremented with '(PROV' + newID + ')'
+			} else {
+				$this->bom->fetch_product();
+				$numref = $this->bom->getNextNumRef($this->bom->product);
+				$this->bom->ref = $numref;
+			}
+		}
 	}
 }

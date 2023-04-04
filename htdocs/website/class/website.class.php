@@ -151,10 +151,10 @@ class Website extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  User $user      	User that creates
+	 * @param  bool $notrigger 	false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, Id of created object if OK
+	 * @return int 				<0 if KO, 0 if already exists, ID of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -282,8 +282,11 @@ class Website extends CommonObject
 		// Commit or rollback
 		if ($error) {
 			$this->db->rollback();
-
-			return -1 * $error;
+			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				return 0;
+			} else {
+				return -1 * $error;
+			}
 		} else {
 			$this->db->commit();
 
@@ -1129,9 +1132,7 @@ class Website extends CommonObject
 		fputs($fp, $line);
 
 		fclose($fp);
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($filesql, octdec($conf->global->MAIN_UMASK));
-		}
+		dolChmod($filesql);
 
 		// Build zip file
 		$filedir  = $conf->website->dir_temp.'/'.$website->ref.'/.';
@@ -1154,7 +1155,7 @@ class Website extends CommonObject
 	/**
 	 * Open a zip with all data of web site and load it into database.
 	 *
-	 * @param 	string		$pathtofile		Path of zip file
+	 * @param 	string		$pathtofile		Full path of zip file
 	 * @return  int							<0 if KO, Id of new website if OK
 	 */
 	public function importWebSite($pathtofile)
@@ -1162,6 +1163,8 @@ class Website extends CommonObject
 		global $conf, $mysoc;
 
 		$error = 0;
+
+		$pathtofile = dol_sanitizePathName($pathtofile);
 
 		$object = $this;
 		if (empty($object->ref)) {
@@ -1557,9 +1560,9 @@ class Website extends CommonObject
 			if ($countrycode == 'us') {
 				$label = preg_replace('/\s*\(.*\)/', '', $label);
 			}
-			$out .= '<a href="'.$url.substr($languagecodeselected, 0, 2).'"><li><img height="12px" src="/medias/image/common/flags/'.$countrycode.'.png" style="margin-right: 5px;"/><span class="websitecomponentlilang">'.$label.'</span>';
+			$out .= '<li><a href="'.$url.substr($languagecodeselected, 0, 2).'"><img height="12px" src="/medias/image/common/flags/'.$countrycode.'.png" style="margin-right: 5px;"/><span class="websitecomponentlilang">'.$label.'</span>';
 			$out .= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
-			$out .= '</li></a>';
+			$out .= '</a></li>';
 		}
 		$i = 0;
 		if (is_array($languagecodes)) {
@@ -1578,11 +1581,11 @@ class Website extends CommonObject
 				if ($countrycode == 'us') {
 					$label = preg_replace('/\s*\(.*\)/', '', $label);
 				}
-				$out .= '<a href="'.$url.substr($languagecode, 0, 2).'"><li><img height="12px" src="/medias/image/common/flags/'.$countrycode.'.png" style="margin-right: 5px;"/><span class="websitecomponentlilang">'.$label.'</span>';
+				$out .= '<li><a href="'.$url.substr($languagecode, 0, 2).'"><img height="12px" src="/medias/image/common/flags/'.$countrycode.'.png" style="margin-right: 5px;"/><span class="websitecomponentlilang">'.$label.'</span>';
 				if (empty($i) && empty($languagecodeselected)) {
 					$out .= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
 				}
-				$out .= '</li></a>';
+				$out .= '</a></li>';
 				$i++;
 			}
 		}

@@ -468,8 +468,4 @@ class CtyperesourceLine
 	public $label;
 
 	public $active;
-
-	/**
-	 * @var mixed Sample line property 2
-	 */
 }

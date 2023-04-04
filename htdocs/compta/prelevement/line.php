@@ -62,7 +62,7 @@ if ($sortfield == "") {
 	$sortfield = "pl.fk_soc";
 }
 
-$type = $object->type;
+
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
 } else {
@@ -312,7 +312,11 @@ if ($id) {
 			print img_object($langs->trans("ShowBill"), "bill");
 			print '</a>&nbsp;';
 
-			print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
+			if ($type == 'bank-transfer') {
+				print '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
+			} else {
+				print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
+			}
 
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
 			print img_object($langs->trans("ShowCompany"), "company").' '.$obj->name."</a></td>\n";

@@ -48,20 +48,30 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $langs->loadLangs(array('bills', 'companies', 'donations', 'users'));
 
 $id = GETPOST('rowid') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-
+$backtopage = GETPOST('backtopage', 'alpha');
+$socid = GETPOST('socid', 'int');
 $amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT');
 $donation_date = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 $public_donation = (int) GETPOST("public", 'int');
 
 $object = new Don($db);
-$extrafields = new ExtraFields($db);
+if ($id > 0 || $ref) {
+	$object->fetch($id, $ref);
+}
 
-// Security check
-$result = restrictedArea($user, 'don', $id);
+if (!empty($socid) && $socid > 0) {
+	$soc = new Societe($db);
+	if ($socid > 0) {
+		$soc->fetch($socid);
+	}
+}
+
+$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -71,6 +81,11 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 $hookmanager->initHooks(array('doncard', 'globalcard'));
 
 $upload_dir = $conf->don->dir_output;
+
+
+// Security check
+$result = restrictedArea($user, 'don', $object->id);
+
 $permissiontoadd = $user->rights->don->creer;
 
 
@@ -391,6 +406,7 @@ if ($action == 'create') {
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print dol_get_fiche_head('');
 
@@ -487,7 +503,8 @@ if ($action == 'create') {
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
 	$selected = GETPOST('modepayment', 'int');
-	$form->select_types_paiements($selected, 'modepayment', 'CRDT', 0, 1);
+	print img_picto('', 'payment', 'class="pictofixedwidth"');
+	print $form->select_types_paiements($selected, 'modepayment', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print "</td></tr>\n";
 
 	// Public note
@@ -516,7 +533,8 @@ if ($action == 'create') {
 
 	if (isModEnabled('project')) {
 		print "<tr><td>".$langs->trans("Project")."</td><td>";
-		$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
+		print img_picto('', 'project', 'class="pictofixedwidth"');
+		print $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 		print "</td></tr>\n";
 	}
 
@@ -563,7 +581,7 @@ if (!empty($id) && $action == 'edit') {
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 	print '<input type="hidden" name="amount" value="'.$object->amount.'">';
-
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print dol_get_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'donation');
 
@@ -716,11 +734,12 @@ if (!empty($id) && $action != 'edit') {
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+				$morehtmlref .= '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($object->fk_project)) {

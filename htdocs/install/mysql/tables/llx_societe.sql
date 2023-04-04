@@ -44,7 +44,7 @@ create table llx_societe
   town                     varchar(50),                         		-- town
   fk_departement           integer        DEFAULT 0,            		--
   fk_pays                  integer        DEFAULT 0,            		--
-  fk_account               integer        DEFAULT 0,            		--
+  fk_account               integer        DEFAULT 0,            		-- default bank account
   phone                    varchar(20),                         		-- phone number
   fax                      varchar(20),                         		-- fax number
   url                      varchar(255),                        		--

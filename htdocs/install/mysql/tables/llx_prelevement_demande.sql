@@ -36,6 +36,8 @@ create table llx_prelevement_demande
   code_guichet        varchar(6),
   number              varchar(255),
   cle_rib             varchar(5),
+  
+  type                varchar(12) DEFAULT '',
   ext_payment_id      varchar(255),
   ext_payment_site    varchar(128)
 )ENGINE=innodb;

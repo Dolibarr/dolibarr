@@ -150,6 +150,7 @@ class Thirdparties extends DolibarrApi
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields AS ef ON ef.fk_object = t.rowid";	// So we will be able to filter on extrafields
 		if ($category > 0) {
 			if ($mode != 4) {
 				$sql .= ", ".MAIN_DB_PREFIX."categorie_societe as c";
@@ -203,11 +204,10 @@ class Thirdparties extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -523,7 +523,7 @@ class Thirdparties extends DolibarrApi
 	 * Delete thirdparty
 	 *
 	 * @param int $id   Thirdparty ID
-	 * @return integer
+	 * @return array
 	 */
 	public function delete($id)
 	{
@@ -538,7 +538,20 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->company->oldcopy = clone $this->company;
-		return $this->company->delete($id);
+
+		$res = $this->company->delete($id);
+		if ($res < 0) {
+			throw new RestException(500, "Can't delete, error occurs");
+		} elseif ($res == 0) {
+			throw new RestException(409, "Can't delete, that product is probably used");
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Object deleted'
+			)
+		);
 	}
 
 	/**
@@ -1154,7 +1167,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getCompanyBankAccount($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->facture->lire) {
+		if (!DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
 		if (empty($id)) {
@@ -1340,7 +1353,7 @@ class Thirdparties extends DolibarrApi
 	 * @param int 		$id 			Thirdparty id
 	 * @param int 		$companybankid 	Companybank id
 	 * @param string 	$model 			Model of document to generate
-	 * @return void
+	 * @return array
 	 *
 	 * @url GET {id}/generateBankAccountDocument/{companybankid}/{model}
 	 */
@@ -1361,6 +1374,7 @@ class Thirdparties extends DolibarrApi
 		$this->company->setDocModel(DolibarrApiAccess::$user, $model);
 
 		$this->company->fk_bank = $this->company->fk_account;
+		$this->company->fk_account = $this->company->fk_account;
 
 		$outputlangs = $langs;
 		$newlang = '';
@@ -1810,16 +1824,6 @@ class Thirdparties extends DolibarrApi
 		unset($object->thirdparty);
 
 		unset($object->fk_delivery_address); // deprecated feature
-
-		unset($object->skype);
-		unset($object->twitter);
-		unset($object->facebook);
-		unset($object->linkedin);
-		unset($object->instagram);
-		unset($object->snapchat);
-		unset($object->googleplus);
-		unset($object->youtube);
-		unset($object->whatsapp);
 
 		return $object;
 	}

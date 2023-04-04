@@ -71,7 +71,7 @@ if ($action == 'delete' && GETPOST('langtodelete', 'alpha')) {
 }
 
 // Add translation
-if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->adherent->configurer) {
+if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->hasRight('adherent', 'configurer')) {
 	$object = new AdherentType($db);
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
@@ -99,7 +99,7 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->ad
 }
 
 // Edit translation
-if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->rights->adherent->configurer) {
+if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->hasRight('adherent', 'configurer')) {
 	$object = new AdherentType($db);
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
@@ -125,7 +125,7 @@ if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->rights->a
 }
 
 // Delete translation
-if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && $user->rights->adherent->configurer) {
+if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && $user->hasRight('adherent', 'configurer')) {
 	$object = new AdherentType($db);
 	$object->fetch($id);
 	$langtodelete = GETPOST('langdel', 'alpha');
@@ -190,7 +190,7 @@ print dol_get_fiche_end();
 print "\n<div class=\"tabsAction\">\n";
 
 if ($action == '') {
-	if ($user->rights->produit->creer || $user->rights->service->creer) {
+	if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=create&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("Add").'</a>';
 		if ($cnt_trans > 0) {
 			print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=edit&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("Update").'</a>';
@@ -271,7 +271,7 @@ if ($action == 'edit') {
  * Form to add a new translation
  */
 
-if ($action == 'create' && $user->rights->adherent->configurer) {
+if ($action == 'create' && $user->hasRight('adherent', 'configurer')) {
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 

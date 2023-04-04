@@ -46,9 +46,10 @@ if (GETPOST('actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
-$search_agenda_label = GETPOST('search_agenda_label');
+//$search_rowid = GETPOST('search_rowid');
+//$search_agenda_label = GETPOST('search_agenda_label');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -127,7 +128,7 @@ $form = new Form($db);
 if ($object->id > 0) {
 	$title = $langs->trans("Agenda");
 	//if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
-	$help_url = 'EN:Module_Agenda_En';
+	$help_url = 'EN:Module_Agenda_En|DE:Modul_Terminplanung';
 	llxHeader('', $title, $help_url);
 
 	if (isModEnabled('notification')) {
@@ -173,7 +174,7 @@ if ($object->id > 0) {
 		if (get_class($objthirdparty) == 'Societe') {
 			$out .= '&socid=' . urlencode($objthirdparty->id);
 		}
-		$out .= (!empty($objcon->id) ? '&contactid=' . urlencode($objcon->id) : '') . '&percentage=-1';
+		$out .= (!empty($objcon->id) ? '&contactid=' . urlencode($objcon->id) : '');
 		//$out.=$langs->trans("AddAnAction").' ';
 		//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
 		//$out.="</a>";
@@ -183,7 +184,7 @@ if ($object->id > 0) {
 	print '<div class="tabsAction">';
 
 	//  if (isModEnabled('agenda')) {
-	//      if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create)) {
+	//      if (!empty($user->rights->agenda->myactions->create) || $user->hasRight('agenda', 'allactions', 'create')) {
 	//          print '<a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create' . $out . '">' . $langs->trans("AddAction") . '</a>';
 	//      } else {
 	//          print '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans("AddAction") . '</a>';
@@ -207,6 +208,7 @@ if ($object->id > 0) {
 	//      // List of all actions
 	//      $filters = array();
 	//      $filters['search_agenda_label'] = $search_agenda_label;
+	//		$filters['search_rowid'] = $search_rowid;
 	//
 	//      // TODO Replace this with same code than into list.php
 	//      show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);

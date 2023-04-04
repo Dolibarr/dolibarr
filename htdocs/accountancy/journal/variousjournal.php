@@ -187,7 +187,7 @@ if ($object->nature == 2) {
 
 $title = $langs->trans("GenerationOfAccountingEntries") . ' - ' . $object->getNomUrl(0, 2, 1, '', 1);
 
-llxHeader('', $title);
+llxHeader('', dol_string_nohtmltag($title));
 
 $nom = $title;
 $nomlink = '';
@@ -286,8 +286,8 @@ print '<td>' . $langs->trans("AccountAccounting") . '</td>';
 print '<td>' . $langs->trans("SubledgerAccount") . '</td>';
 print '<td>' . $langs->trans("LabelOperation") . '</td>';
 if ($object->nature == 4) print '<td class="center">' . $langs->trans("PaymentMode") . '</td>'; // bank
-print '<td class="right">' . $langs->trans("Debit") . '</td>';
-print '<td class="right">' . $langs->trans("Credit") . '</td>';
+print '<td class="right">' . $langs->trans("AccountingDebit") . '</td>';
+print '<td class="right">' . $langs->trans("AccountingCredit") . '</td>';
 print "</tr>\n";
 
 if (is_array($journal_data) && !empty($journal_data)) {

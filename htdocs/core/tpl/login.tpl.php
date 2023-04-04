@@ -98,7 +98,7 @@ if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	$disablenofollow = 0;
 }
 
-print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 1, $disablenofollow);
+top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 1, $disablenofollow);
 
 
 $colorbackhmenu1 = '60,70,100'; // topmenu
@@ -133,8 +133,16 @@ $(document).ready(function () {
 </script>
 <?php } ?>
 
-<div class="login_center center"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND) ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));"' : '' ?>>
+<div class="login_center center"<?php
+if (empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
+	$backstyle = 'background: linear-gradient('.($conf->browser->layout == 'phone' ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
+	// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
+	$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
+	print empty($conf->global->MAIN_LOGIN_BACKGROUND) ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
+}
+?>>
 <div class="login_vertical_align">
+
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
 
@@ -438,7 +446,7 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 }
 
 // Google Analytics
-// TODO Add a hook here
+// TODO Remove this, and add content into hook getLoginPageExtraOptions() instead
 if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
 	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
 	foreach ($tmptagarray as $tmptag) {

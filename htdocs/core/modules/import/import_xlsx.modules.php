@@ -106,6 +106,8 @@ class ImportXlsx extends ModeleImports
 	public function __construct($db, $datatoimport)
 	{
 		global $conf, $langs;
+
+		parent::__construct();
 		$this->db = $db;
 
 		// this is used as an extension from the example file code, so we have to put xlsx here !!!
@@ -304,7 +306,7 @@ class ImportXlsx extends ModeleImports
 	/**
 	 * 	Return array of next record in input file.
 	 *
-	 * 	@return		Array		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
+	 * 	@return		array|boolean		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
 	 */
 	public function import_read_record()
 	{
@@ -624,7 +626,7 @@ class ImportXlsx extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsuppliercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$newval = $this->thirdpartyobject->get_codefournisseur(0, 1);
+										$this->thirdpartyobject->get_codefournisseur(0, 1);
 										$newval = $this->thirdpartyobject->code_fournisseur;
 										//print 'code_fournisseur='.$newval;
 									}
@@ -694,7 +696,7 @@ class ImportXlsx extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, $key));
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $key));
 									$newval = $res; 	// We get new value computed.
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
@@ -853,7 +855,7 @@ class ImportXlsx extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, $key));
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $key));
 									$fieldArr = explode('.', $fieldname);
 									if (count($fieldArr) > 0) {
 										$fieldname = $fieldArr[1];
@@ -908,13 +910,17 @@ class ImportXlsx extends ModeleImports
 										$stringtosearch = json_encode($socialnetwork).':'.json_encode($json->$socialnetwork);
 										//var_dump($stringtosearch);
 										//var_dump($this->db->escape($stringtosearch));	// This provide a value for sql string (but not for a like)
-										$where[] = $key." LIKE '%".$this->db->escapeforlike($this->db->escape($stringtosearch))."%'";
-										$filters[] = $col." LIKE '%".$this->db->escapeforlike($this->db->escape($stringtosearch))."%'";
+										$where[] = $key." LIKE '%".$this->db->escape($this->db->escapeforlike($stringtosearch))."%'";
+										$filters[] = $col." LIKE '%".$this->db->escape($this->db->escapeforlike($stringtosearch))."%'";
 										//var_dump($where[1]); // This provide a value for sql string inside a like
 									} else {
 										$where[] = $key.' = '.$data[$key];
 										$filters[] = $col.' = '.$data[$key];
 									}
+								}
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$where[] = "entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+									$filters[] = "entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
 								}
 								$sqlSelect .= " WHERE " . implode(' AND ', $where);
 
@@ -952,6 +958,10 @@ class ImportXlsx extends ModeleImports
 									$keyfield = 'rowid';
 								}
 								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
+
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$sqlSelect .= " AND entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+								}
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
@@ -998,6 +1008,10 @@ class ImportXlsx extends ModeleImports
 									$sqlend = " WHERE " . implode(' AND ', $where);
 								}
 
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$sqlend .= " AND entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+								}
+
 								$sql = $sqlstart . $sqlend;
 
 								// Run update request
@@ -1041,7 +1055,9 @@ class ImportXlsx extends ModeleImports
 							if ($sql) {
 								$resql = $this->db->query($sql);
 								if ($resql) {
-									$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
+									if (!$is_table_category_link) {
+										$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
+									}
 									$insertdone = true;
 								} else {
 									//print 'E';

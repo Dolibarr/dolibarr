@@ -153,7 +153,6 @@ $headerparams['date_startday'] = $date_startday;
 $headerparams['date_endyear'] = $date_endyear;
 $headerparams['date_endmonth'] = $date_endmonth;
 $headerparams['date_endday'] = $date_endday;
-$headerparams['q'] = $q;
 
 $tableparams = array();
 $tableparams['search_categ'] = $selected_cat;
@@ -168,6 +167,7 @@ $allparams = array_merge($commonparams, $headerparams, $tableparams);
 $headerparams = array_merge($commonparams, $headerparams);
 $tableparams = array_merge($commonparams, $tableparams);
 
+$paramslink = '';
 foreach ($allparams as $key => $value) {
 	$paramslink .= '&'.$key.'='.$value;
 }
@@ -230,6 +230,8 @@ if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 	$periodlink = '';
 }
 
+$exportlink = '';
+
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
@@ -247,9 +249,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " sum(f.total_ht) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2) {	// Without any category
-		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
+		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc";
 	} elseif ($selected_cat) { 	// Into a specific category
-		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
+		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_fournisseur as cs";
 	}
 	$sql .= " WHERE f.fk_statut in (1,2)";
 	$sql .= " AND f.type IN (0,2)";
@@ -274,9 +276,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= ", ".MAIN_DB_PREFIX."paiementfourn as p";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2) {	// Without any category
-		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
+		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc";
 	} elseif ($selected_cat) { 	// Into a specific category
-		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
+		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_fournisseur as cs";
 	}
 	$sql .= " WHERE p.rowid = pf.fk_paiementfourn";
 	$sql .= " AND pf.fk_facturefourn = f.rowid";
@@ -315,22 +317,29 @@ $sql .= " GROUP BY s.rowid, s.nom, s.zip, s.town, s.fk_pays";
 $sql .= " ORDER BY s.rowid";
 //echo $sql;
 
+$catotal_ht = 0;
+$catotal = 0;
+
 dol_syslog("supplier_turnover_by_thirdparty", LOG_DEBUG);
-$result = $db->query($sql);
-if ($result) {
-	$num = $db->num_rows($result);
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
 	$i = 0;
 	while ($i < $num) {
-		$obj = $db->fetch_object($result);
-			$amount_ht[$obj->socid] = $obj->amount;
-			$amount[$obj->socid] = $obj->amount_ttc;
-			$name[$obj->socid] = $obj->name.' '.$obj->firstname;
-			$address_zip[$obj->socid] = $obj->zip;
-			$address_town[$obj->socid] = $obj->town;
-			$address_pays[$obj->socid] = getCountry($obj->fk_pays);
-			$catotal_ht += $obj->amount;
-			$catotal += $obj->amount_ttc;
-			$i++;
+		$obj = $db->fetch_object($resql);
+
+		$amount_ht[$obj->socid] = (empty($obj->amount) ? 0 : $obj->amount);
+		$amount[$obj->socid] = $obj->amount_ttc;
+		//$name[$obj->socid] = $obj->name.' '.$obj->firstname;
+
+		$address_zip[$obj->socid] = $obj->zip;
+		$address_town[$obj->socid] = $obj->town;
+		$address_pays[$obj->socid] = getCountry($obj->fk_pays);
+
+		$catotal_ht +=  (empty($obj->amount) ? 0 : $obj->amount);
+		$catotal += $obj->amount_ttc;
+
+		$i++;
 	}
 } else {
 	dol_print_error($db);

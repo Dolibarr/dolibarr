@@ -100,11 +100,11 @@ if (empty($xmlremote)) {
 }
 if ($xmlremote && !preg_match('/^https?:\/\//', $xmlremote)) {
 	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorURLMustStartWithHttp", $xmlremote), '', 'errors');
+	setEventMessages($langs->trans("ErrorURLMustStartWithHttp", $xmlremote), null, 'errors');
 	$error++;
 } elseif ($xmlremote && !preg_match('/\.xml$/', $xmlremote)) {
 	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorURLMustEndWith", $xmlremote, '.xml'), '', 'errors');
+	setEventMessages($langs->trans("ErrorURLMustEndWith", $xmlremote, '.xml'), null, 'errors');
 	$error++;
 }
 

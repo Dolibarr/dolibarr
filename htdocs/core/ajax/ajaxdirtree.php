@@ -84,7 +84,7 @@ $fullpathselecteddir = '<none>';
 if ($modulepart == 'ecm') {
 	$fullpathselecteddir = $conf->ecm->dir_output.'/'.($selecteddir != '/' ? $selecteddir : '');
 	$fullpathpreopened = $conf->ecm->dir_output.'/'.($preopened != '/' ? $preopened : '');
-} elseif ($modulepart == 'medias') {
+} elseif ($modulepart == 'medias' || $modulepart == 'website') {
 	$fullpathselecteddir = $dolibarr_main_data_root.'/medias/'.($selecteddir != '/' ? $selecteddir : '');
 	$fullpathpreopened = $dolibarr_main_data_root.'/medias/'.($preopened != '/' ? $preopened : '');
 }
@@ -99,14 +99,26 @@ if (preg_match('/\.\./', $fullpathselecteddir) || preg_match('/[<>|]/', $fullpat
 	exit;
 }
 
-// Check permissions
+if (empty($modulepart)) {
+	$modulepart = $module;
+}
+
+// Security check
 if ($modulepart == 'ecm') {
-	if (!$user->rights->ecm->read) {
+	if (!$user->hasRight('ecm', 'read')) {
 		accessforbidden();
 	}
-} elseif ($modulepart == 'medias') {
+} elseif ($modulepart == 'medias' || $modulepart == 'website') {
 	// Always allowed
+} else {
+	accessforbidden();
 }
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*
@@ -143,7 +155,7 @@ if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_
 	// Enable jquery handlers on new generated HTML objects (same code than into lib_footer.js.php)
 	// Because the content is reloaded by ajax call, we must also reenable some jquery hooks
 	print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip (reload into ajaxdirtree) -->\n";
-	print '<script type="text/javascript">
+	print '<script nonce="'.getNonce().'" type="text/javascript">
 	            	jQuery(document).ready(function () {
 	            		jQuery(".classfortooltip").tooltip({
 							show: { collision: "flipfit", effect:\'toggle\', delay:50 },
@@ -157,7 +169,7 @@ if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_
 	            	</script>';
 
 	// This ajax service is called only when a directory $selecteddir is opened but not when closed.
-	//print '<script type="text/javascript">';
+	//print '<script nonce="'.getNonce().'" type="text/javascript">';
 	//print "loadandshowpreview('".dol_escape_js($selecteddir)."');";
 	//print '</script>';
 }

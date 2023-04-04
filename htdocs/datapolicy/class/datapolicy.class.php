@@ -44,7 +44,7 @@ class DataPolicy
 	/**
 	 * getAllContactNotInformed
 	 *
-	 * @return number
+	 * @return integer
 	 */
 	public function getAllContactNotInformed()
 	{
@@ -75,12 +75,14 @@ class DataPolicy
 			$this->error = $this->db->error();
 			return -1;
 		}
+
+		return 1;
 	}
 
 	/**
 	 * getAllCompaniesNotInformed
 	 *
-	 * @return number
+	 * @return integer
 	 */
 	public function getAllCompaniesNotInformed()
 	{
@@ -110,12 +112,14 @@ class DataPolicy
 			$this->error = $this->db->error();
 			return -1;
 		}
+
+		return 1;
 	}
 
 	/**
 	 * getAllAdherentsNotInformed
 	 *
-	 * @return number
+	 * @return integer
 	 */
 	public function getAllAdherentsNotInformed()
 	{
@@ -145,6 +149,8 @@ class DataPolicy
 			$this->error = $this->db->error();
 			return -1;
 		}
+
+		return 1;
 	}
 
 	/**

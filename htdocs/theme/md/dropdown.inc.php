@@ -435,6 +435,41 @@ a.dropdown-item {
 }
 
 
+/* for the dropdown on action buttons */
+dropdown-holder {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	z-index: 1;
+	width: 300px;
+	right:10px;	/* will be set with js */
+	background: #fff;
+	border: 1px solid #bbb;
+	text-align: <?php echo $left; ?>
+}
+
+.dropdown-content a {
+	margin-right: auto !important;
+	margin-left: auto !important;
+}
+.dropdown-content .butAction {
+	background: none;
+	color: #000 !important;
+}
+.dropdown-content .butAction:hover {
+	box-shadow: none;
+	text-decoration: underline;
+}
+
+.dropdown-holder.open .dropdown-content {
+	display: block;
+}
+
+
 /* smartphone */
 @media only screen and (max-width: 767px)
 {
@@ -447,18 +482,23 @@ a.dropdown-item {
 		max-width: 360px;
 	}
 
+	#topmenu-quickadd-dropdown a.login-dropdown-a,
 	#topmenu-bookmark-dropdown a.login-dropdown-a {
 		color: #000;
 	}
+	#topmenu-quickadd-dropdown .dropdown-menu,
 	#topmenu-bookmark-dropdown .dropdown-menu {
 		width: 230px;
 	}
 
+	div#topmenu-quickadd-dropdown,
 	div#topmenu-bookmark-dropdown {
 		position: unset;
 	}
 
-	div#topmenu-global-search-dropdown, div#topmenu-bookmark-dropdown {
+	div#topmenu-global-search-dropdown,
+	div#topmenu-quickadd-dropdown,
+	div#topmenu-bookmark-dropdown {
 		line-height: unset;
 	}
 

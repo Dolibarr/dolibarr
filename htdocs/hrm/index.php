@@ -54,6 +54,7 @@ if (isModEnabled('holiday')) {
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager = new HookManager($db);
+
 $hookmanager->initHooks('hrmindex');
 
 // Load translation files required by the page
@@ -134,7 +135,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is usel
 			if ($i == 0) {
 				print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
 			}
-			print '<tr '.$bc[false].'>';
+			print '<tr>';
 			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
 			if ($i == 0) {
 				print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
@@ -187,7 +188,7 @@ print '</div><div class="fichetwothirdright">';
 
 
 // Latest leave requests
-if (isModEnabled('holiday') && $user->rights->holiday->read) {
+if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.photo, u.statut as user_status,";
 	$sql .= " x.rowid, x.ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";

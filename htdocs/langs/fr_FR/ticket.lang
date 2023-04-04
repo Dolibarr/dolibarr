@@ -19,14 +19,16 @@
 #
 
 Module56000Name=Gestionnaire de tickets
-Module56000Desc=Gestionnaire de tickets d'assistance ou de gestion de demandes internes/clients/fournisseurs
+Module56000Desc=Gestionnaire de tickets ou de gestion de demandes internes/clients/fournisseurs
 
 Permission56001=Voir tickets
 Permission56002=Modifier des tickets
 Permission56003=Supprimer tickets
 Permission56004=Gérer les tickets
 Permission56005=Voir les tickets de tous les tiers (non effectif pour les utilisateurs externes, toujours limité au tiers dont ils dépendent)
+Permission56006=Exporter les tickets
 
+Tickets=Tickets
 TicketDictType=Ticket - Types
 TicketDictCategory=Ticket - Catégorisation du ticket
 TicketDictSeverity=Ticket - Sévérités
@@ -59,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Contributeur externe
 
 OriginEmail=Email demandeur
 Notify_TICKET_SENTBYMAIL=Envoi d'un message du ticket par e-mail
+
+ExportDataset_ticket_1=Tickets
 
 # Status
 Read=Lu
@@ -182,7 +186,7 @@ CreatedBy=Créé par
 NewTicket=Nouveau ticket
 SubjectAnswerToTicket=Réponse ticket
 TicketTypeRequest=Type de demande
-TicketCategory=Catégorisation du ticket
+TicketCategory=Ticket group
 SeeTicket=Voir le ticket
 TicketMarkedAsRead=Le ticket a été marqué comme lu
 TicketReadOn=Lu
@@ -194,8 +198,7 @@ TicketAssigned=Le ticket est à présent assigné
 TicketChangeType=Changer le type
 TicketChangeCategory=Changer le code analytique
 TicketChangeSeverity=Changer la sévérité
-TicketAddMessage=Ajouter un message
-AddMessage=Ajouter un message
+TicketAddMessage=Ajouter un message privé
 MessageSuccessfullyAdded=Ticket créé
 TicketMessageSuccessfullyAdded=Message ajouté avec succès
 TicketMessagesList=Liste des messages
@@ -242,6 +245,7 @@ TicketMessageMailIntroAutoNewPublicMessage=Un nouveau message a été posté sur
 TicketAssignedToYou=Ticket attribué
 TicketAssignedEmailBody=Vous avez été assigné au ticket #%s par %s
 MarkMessageAsPrivate=Marquer message comme privé
+TicketMessageSendEmailHelp=Un email sera envoyé à tous les contacts assignés (contacts internes, mais aussi contacts externes sauf si l'option "%s" est cochée)
 TicketMessagePrivateHelp=Ce message ne s'affichera pas pour les utilisateurs externes
 TicketEmailOriginIssuer=Émetteur à l'origine des tickets
 InitialMessage=Message initial

@@ -252,15 +252,98 @@ if (empty($reshook)) {
 					}
 				}
 			} else {
+				$cond_reglement_id = 0;
+				$mode_reglement_id = 0;
+				$fk_account = 0;
+				$remise_percent = 0;
+				$remise_absolue = 0;
+				$transport_mode_id = 0;
+				if (!empty($rcp->cond_reglement_id)) {
+					$cond_reglement_id = $rcp->cond_reglement_id;
+				}
+				if (!empty($rcp->mode_reglement_id)) {
+					$mode_reglement_id = $rcp->mode_reglement_id;
+				}
+				if (!empty($rcp->fk_account)) {
+					$fk_account = $rcp->fk_account;
+				}
+				if (!empty($rcp->remise_percent)) {
+					$remise_percent = $rcp->remise_percent;
+				}
+				if (!empty($rcp->remise_absolue)) {
+					$remise_absolue = $rcp->remise_absolue;
+				}
+				if (!empty($rcp->transport_mode_id)) {
+					$transport_mode_id = $rcp->transport_mode_id;
+				}
+
+				if (empty($cond_reglement_id)
+					|| empty($mode_reglement_id)
+					|| empty($fk_account)
+					|| empty($remise_percent)
+					|| empty($remise_absolue)
+					|| empty($transport_mode_id)
+				) {
+					if (!isset($rcp->supplier_order)) {
+						$rcp->fetch_origin();
+					}
+
+					// try to get from source of reception (supplier order)
+					if (!empty($rcp->commandeFournisseur)) {
+						$supplierOrder = $rcp->commandeFournisseur;
+						if (empty($cond_reglement_id) && !empty($supplierOrder->cond_reglement_id)) {
+							$cond_reglement_id = $supplierOrder->cond_reglement_id;
+						}
+						if (empty($mode_reglement_id) && !empty($supplierOrder->mode_reglement_id)) {
+							$mode_reglement_id = $supplierOrder->mode_reglement_id;
+						}
+						if (empty($fk_account) && !empty($supplierOrder->fk_account)) {
+							$fk_account = $supplierOrder->fk_account;
+						}
+						if (empty($remise_percent) && !empty($supplierOrder->remise_percent)) {
+							$remise_percent = $supplierOrder->remise_percent;
+						}
+						if (empty($remise_absolue) && !empty($supplierOrder->remise_absolue)) {
+							$remise_absolue = $supplierOrder->remise_absolue;
+						}
+						if (empty($transport_mode_id) && !empty($supplierOrder->transport_mode_id)) {
+							$transport_mode_id = $supplierOrder->transport_mode_id;
+						}
+					}
+
+					// try get from third-party of reception
+					if (!empty($rcp->thirdparty)) {
+						$soc = $rcp->thirdparty;
+						if (empty($cond_reglement_id) && !empty($soc->cond_reglement_supplier_id)) {
+							$cond_reglement_id = $soc->cond_reglement_supplier_id;
+						}
+						if (empty($mode_reglement_id) && !empty($soc->mode_reglement_supplier_id)) {
+							$mode_reglement_id = $soc->mode_reglement_supplier_id;
+						}
+						if (empty($fk_account) && !empty($soc->fk_account)) {
+							$fk_account = $soc->fk_account;
+						}
+						if (empty($remise_percent) && !empty($soc->remise_supplier_percent)) {
+							$remise_percent = $soc->remise_supplier_percent;
+						}
+						if (empty($remise_absolue) && !empty($soc->remise_absolue)) {
+							$remise_absolue = $soc->remise_absolue;
+						}
+						if (empty($transport_mode_id) && !empty($soc->transport_mode_id)) {
+							$transport_mode_id = $soc->transport_mode_id;
+						}
+					}
+				}
+
 				// If we want one invoice per reception or if there is no first invoice yet for this thirdparty.
 				$objecttmp->socid = $rcp->socid;
 				$objecttmp->type = $objecttmp::TYPE_STANDARD;
-				$objecttmp->cond_reglement_id	= $rcp->cond_reglement_id || $rcp->thirdparty->cond_reglement_supplier_id;
-				$objecttmp->mode_reglement_id	= $rcp->mode_reglement_id || $rcp->thirdparty->mode_reglement_supplier_id;
-
-				$objecttmp->fk_account = !empty($rcp->thirdparty->fk_account) ? $rcp->thirdparty->fk_account : 0;
-				$objecttmp->remise_percent 	= !empty($rcp->thirdparty->remise_percent) ? $rcp->thirdparty->remise_percent : 0;
-				$objecttmp->remise_absolue 	= !empty($rcp->thirdparty->remise_absolue) ? $rcp->thirdparty->remise_absolue : 0;
+				$objecttmp->cond_reglement_id = $cond_reglement_id;
+				$objecttmp->mode_reglement_id = $mode_reglement_id;
+				$objecttmp->fk_account = $fk_account;
+				$objecttmp->remise_percent = $remise_percent;
+				$objecttmp->remise_absolue = $remise_absolue;
+				$objecttmp->transport_mode_id = $transport_mode_id;
 
 				$objecttmp->fk_project			= $rcp->fk_project;
 				//$objecttmp->multicurrency_code = $rcp->multicurrency_code;
@@ -279,6 +362,11 @@ if (empty($reshook)) {
 				$objecttmp->date = $datefacture;
 				$objecttmp->origin    = 'reception';
 				$objecttmp->origin_id = $id_reception;
+
+				// Auto calculation of date due if not filled by user
+				if (empty($objecttmp->date_echeance)) {
+					$objecttmp->date_echeance = $objecttmp->calculate_date_lim_reglement();
+				}
 
 				$objecttmp->array_options = $rcp->array_options; // Copy extrafields
 
@@ -531,6 +619,9 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (e.rowid = ef.fk_object)";
@@ -614,12 +705,29 @@ $sql .= $hookmanager->resPrint;
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		$page = 0;
+		$offset = 0;
+	}
+	$db->free($resql);
 }
 
+// Complete request and execute it with limit
 $sql .= $db->order($sortfield, $sortorder);
-$sql .= $db->plimit($limit + 1, $offset);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 //print $sql;
 $resql = $db->query($sql);
@@ -907,7 +1015,7 @@ if (!empty($arrayfields['e.date_delivery']['checked'])) {
 if (!empty($arrayfields['l.ref']['checked'])) {
 	// Delivery ref
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="10" type="text" name="search_ref_liv" value="'.$search_ref_liv.'"';
+	print '<input class="flat" type="text" name="search_ref_liv" value="'.dol_escape_htmltag($search_ref_liv).'"';
 	print '</td>';
 }
 if (!empty($arrayfields['l.date_delivery']['checked'])) {
@@ -939,8 +1047,8 @@ if (!empty($arrayfields['e.tms']['checked'])) {
 }
 // Status
 if (!empty($arrayfields['e.fk_statut']['checked'])) {
-	print '<td class="liste_titre maxwidthonsmartphone right">';
-	print $form->selectarray('search_status', array('0'=>$langs->trans('StatusReceptionDraftShort'), '1'=>$langs->trans('StatusReceptionValidatedShort'), '2'=>$langs->trans('StatusReceptionProcessedShort')), $search_status, 1);
+	print '<td class="liste_titre right parentonrightofpage">';
+	print $form->selectarray('search_status', array('0'=>$langs->trans('StatusReceptionDraftShort'), '1'=>$langs->trans('StatusReceptionValidatedShort'), '2'=>$langs->trans('StatusReceptionProcessedShort')), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Status billed
@@ -1119,10 +1227,12 @@ while ($i < min($num, $limit)) {
 	// Type ent
 	if (!empty($arrayfields['typent.code']['checked'])) {
 		print '<td class="center">';
-		if (count($typenArray) == 0) {
+		if (!isset($typenArray) || empty($typenArray)) {
 			$typenArray = $formcompany->typent_array(1);
 		}
-		print $typenArray[$obj->typent_code];
+		if (isset($typenArray[$obj->typent_code])) {
+			print $typenArray[$obj->typent_code];
+		}
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

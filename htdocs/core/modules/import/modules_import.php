@@ -75,14 +75,53 @@ class ModeleImports
 
 	public $libversion = array();
 
+	/**
+	 * @var	array	Element mapping from table name
+	 */
+	public static $mapTableToElement = array(
+		'actioncomm' => 'agenda',
+		'adherent' => 'member',
+		'adherent_type' => 'member_type',
+		//'bank_account' => 'bank_account',
+		'categorie' => 'category',
+		//'commande' => 'commande',
+		//'commande_fournisseur' => 'commande_fournisseur',
+		'contrat' => 'contract',
+		'entrepot' => 'stock',
+		//'expensereport' => 'expensereport',
+		'facture' => 'invoice',
+		//'facture_fourn' => 'facture_fourn',
+		'fichinter' => 'intervention',
+		//'holiday' => 'holiday',
+		//'product' => 'product',
+		'product_price' => 'productprice',
+		'product_fournisseur_price' => 'productsupplierprice',
+		'projet'  => 'project',
+		//'propal' => 'propal',
+		//'societe' => 'societe',
+		'socpeople' => 'contact',
+		//'supplier_proposal' => 'supplier_proposal',
+		//'ticket' => 'ticket',
+	);
 
 	/**
 	 *  Constructor
 	 */
 	public function __construct()
 	{
-	}
+		global $hookmanager;
 
+		if (is_object($hookmanager)) {
+			$hookmanager->initHooks(array('import'));
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('constructModeleImports', $parameters, $this);
+			if ($reshook >= 0 && !empty($hookmanager->resArray)) {
+				foreach ($hookmanager->resArray as $mapList) {
+					self::$mapTableToElement[$mapList['table']] = $mapList['element'];
+				}
+			}
+		}
+	}
 
 	/**
 	 * getDriverId
@@ -155,18 +194,16 @@ class ModeleImports
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Charge en memoire et renvoie la liste des modeles actifs
+	 *  Load into memory list of available import format
 	 *
 	 *  @param	DoliDB	$db     			Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
 	 *  @return	array						List of templates
 	 */
-	public function liste_modeles($db, $maxfilenamelength = 0)
+	public function listOfAvailableImportFormat($db, $maxfilenamelength = 0)
 	{
-		// phpcs:enable
-		dol_syslog(get_class($this)."::liste_modeles");
+		dol_syslog(get_class($this)."::listOfAvailableImportFormat");
 
 		$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
 		$handle = opendir($dir);
@@ -268,5 +305,23 @@ class ModeleImports
 	public function getLibVersionForKey($key)
 	{
 		return $this->libversion[$key];
+	}
+
+	/**
+	 * Get element from table name with prefix
+	 *
+	 * @param 	string	$tableNameWithPrefix		Table name with prefix
+	 * @return 	string	Element name or table element as default
+	 */
+	public function getElementFromTableWithPrefix($tableNameWithPrefix)
+	{
+		$tableElement = preg_replace('/^'.preg_quote($this->db->prefix(), '/').'/', '', $tableNameWithPrefix);
+		$element = $tableElement;
+
+		if (isset(self::$mapTableToElement[$tableElement])) {
+			$element = self::$mapTableToElement[$tableElement];
+		}
+
+		return $element;
 	}
 }

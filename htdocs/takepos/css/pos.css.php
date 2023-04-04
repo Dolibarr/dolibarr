@@ -248,6 +248,9 @@ div.wrapper{
 	text-align: center;
 	box-sizing: border-box;
 	background-color:#fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 div.wrapper2{
@@ -262,10 +265,14 @@ div.wrapper2{
 	text-align: center;
 	box-sizing: border-box;
 	background-color:#fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 img.imgwrapper {
 	max-width: 100%;
+	max-height: 100%;
 }
 
 button:active{
@@ -337,7 +344,18 @@ div.paymentbordline
 	width: 100%;
 	height: 100%;
 	margin: 0 auto;
-	overflow: visible;
+	<?php
+	if (getDolGlobalString('TAKEPOS_USE_ARROW_ON_NAVBAR')) {
+		?>
+		overflow-x: hidden;
+		overfloy-y: scroll;
+		<?php
+	} else {
+		?>
+		overflow: visible;
+		<?php
+	}
+	?>
 	box-sizing: border-box;
 }
 
@@ -364,6 +382,7 @@ div.paymentbordline
 	margin: 0 auto;
 	width: 100%;
 	height: 55%;
+	overflow: hidden;
 }
 
 .div1{
@@ -714,9 +733,12 @@ div#moreinfo, div#infowarehouse {
 	}
 
 	button.actionbutton {
-		min-height: 60px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 		padding-left: 4px;
 		padding-right: 4px;
+		min-height: 30px;
 	}
 }
 
@@ -839,6 +861,7 @@ div#moreinfo, div#infowarehouse {
 	display: none;
 }
 
+
 @media screen and (max-width: 767px) {
 	.div4 {
 		height: auto;
@@ -911,6 +934,7 @@ div#moreinfo, div#infowarehouse {
 		display: inline-flex;
 		align-items: center;
 		padding: 10px;
+		justify-content: normal;
 	}
 
 	.div5 .wrapper2.divempty {
@@ -940,17 +964,29 @@ div#moreinfo, div#infowarehouse {
 	}
 }
 
+
+<?php
+if (!getDolGlobalString('TAKEPOS_USE_ARROW_ON_NAVBAR')) {
+	?>
+
 .arrows {
 	display: none;
-	position: absolute;
-	justify-content: space-between;
-	width: 100%;
 }
 
+<?php } else { ?>
 .indicator {
 	background: #00000042;
 	padding: 15px 5px;
 	cursor: pointer;
+	position:absolute;
+}
+
+.indicator.left {
+	left:0;
+}
+
+.indicator.right {
+	right:0;
 }
 
 .indicator:hover {
@@ -1042,3 +1078,5 @@ html {
 .topnav.overflow .arrows {
 	display: flex;
 }
+
+<?php } ?>

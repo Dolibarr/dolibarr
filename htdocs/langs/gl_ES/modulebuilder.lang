@@ -1,7 +1,8 @@
 # Dolibarr language file - Source file is en_US - loan
+IdModule= ID do módulo
 ModuleBuilderDesc=Esta ferramenta só debe ser utilizada por usuarios ou desenvolvedores experimentados. Ofrece utilidades para construír ou editar o seu propio módulo. A documentación para o desenvolvemento <a href="%s" target="_blank" rel="noopener noreferrer">manual alternativo está aquí</a>
 EnterNameOfModuleDesc=Introduza o nome do módulo/aplicación que quere crear sen espazos. Use maiúsculas para separar palabras (por exemplo: MeuMódulo, TendaComercioElectrónico, SincronizarMeuSistema...)
-EnterNameOfObjectDesc=Introduza o nome do obxecto a crear sen espazos. Use maiúsculas para separar palabras (Por exemplo: O meu obxecto, Alumno, Profesor...). Xeraranse o ficheiro de clase CRUD, pero tamén o ficheiro API, páxinas para listar/engadir/editar/eliminar obxectos e ficheiros SQL.
+EnterNameOfObjectDesc=Introduza o nome do obxecto a crear sen espazos. Use maiúsculas para separar palabras (Por exemplo: O meu obxecto, Alumno, Profesor...). Xerarase o ficheiro de clase CRUD, as páxinas para listar/engadir/editar/eliminar o obxecto e os ficheiros SQL.
 EnterNameOfDictionaryDesc=Introduce o nome do dicionario que queres crear sen espazos. Use maiúsculas para separar palabras (Por exemplo: MeuDico...). Xerarase o ficheiro de clase, pero tamén o ficheiro SQL.
 ModuleBuilderDesc2=Ruta onde se xeran/editan os módulos (primeiro directorio para módulos externos definidos en %s): <strong>%s </strong>
 ModuleBuilderDesc3=Atopáronse módulos xerados/editables: <strong>%s </strong>
@@ -9,6 +10,7 @@ ModuleBuilderDesc4=Detéctase un módulo como "editable" cando o ficheiro <stron
 NewModule=Novo
 NewObjectInModulebuilder=Novo obxecto
 NewDictionary=Novo dicionario
+ModuleName=Nome do módulo
 ModuleKey=Chave de módulo
 ObjectKey=Chave do obxecto
 DicKey=Chave do dicionario
@@ -48,11 +50,14 @@ PathToModulePackage=Ruta ao zip do paquete de módulo/aplicación
 PathToModuleDocumentation=Ruta ao ficheiro da documentación do módulo/aplicación (%s)
 SpaceOrSpecialCharAreNotAllowed=Non se permiten espazos nin caracteres especiais.
 FileNotYetGenerated=O ficheiro aínda non foi xerado
+GenerateCode=Xerar código
 RegenerateClassAndSql=Forzar a actualización dos ficheiros .class e .sql
 RegenerateMissingFiles=Xerar ficheiros que faltan
 SpecificationFile=Arquivo de documentación
 LanguageFile=Ficheiro para o idioma
 ObjectProperties=Propiedades do obxecto
+Property=Propiedade
+PropertyDesc=Unha propiedade é un atributo que caracteriza un obxecto. Este atributo ten un código, unha etiqueta e un tipo con varias opcións.
 ConfirmDeleteProperty=Está certo de que quere eliminar a propiedade <strong>%s </strong>? Isto cambiará o código na clase PHP pero tamén eliminará a columna da definición de obxecto da táboa.
 NotNull=Non NULO
 NotNullDesc=1=Establecer a base de datos como NON NULL, 0=Permitir valores nulos, -1=Permitir valores nulos forzando o valor a NULL se está baleiro ('' ou 0)
@@ -81,15 +86,16 @@ IsAMeasure=É unha medida
 DirScanned=Directorio analizado
 NoTrigger=Non hai trigger
 NoWidget=Non hai widget
-GoToApiExplorer=Explorador de API
+ApiExplorer=Explorador de API
 ListOfMenusEntries=Listaxe de entradas de menú
 ListOfDictionariesEntries=Listaxe de entradas de dicionarios
 ListOfPermissionsDefined=Listaxe de permisos definidos
 SeeExamples=Ver exemplos aquí
-EnabledDesc=Condición para ter activo este campo (Exemplos: 1 ou $ conf-> global-> MYMODULE_MYOPTION)
-VisibleDesc=¿É visible o campo? (Exemplos: 0= Nunca visible, 1= Visible na lista e crear/actualizar/ver formularios, 2= Visible só na lista, 3= Visible só na forma de crear/actualizar/ver (non lista), 4= Visible na lista e actualizar/ver formulario só (non crear), 5= Visible só no formulario de visualización final da lista (non crear, non actualizar). <br> <br> Usar un valor negativo significa que o campo non se amosa por defecto na lista, pero pódese seleccionar para ver). <br> <br> Pode ser unha expresión, por exemplo: <br> preg_match ('/ public /', $ _SERVER ['PHP_SELF'])?0:1 <br> ($ usuario-> dereitos->vacacións->definir_ vacacións?1:0)
-DisplayOnPdfDesc=Amosar este campo en documentos PDF compatibles, pode xestionar a posición co campo "Posición". <br>Actualmente, os modelos PDF compatibles coñecidos son: eratosteno (pedimento), espadón (envío), sponge (facturas), cian (orzamentos), cornas (pedimento a provedor)<br><br><strong> Paara o documento:</strong><br> 0= non amosado<br> 1=amosar <br>2= amosar só se non está baleiro<br><br><strong> Para as liñas do documento</strong><br>0= non amosado<br>1=amosar nunha columna<br>3=amosar na liña da columna de descrición despois da descrición<br>4= amosar na columna de descrición só despois da descrición se non está baleira
-DisplayOnPdf=Amosar en PDF
+EnabledDesc=Condición para ter este campo activo. <br> <br> Exemplos: <br> 1 <br> isModEnabled('MAIN_MODULE_MYMODULE') <br>getDolGlobalString('MYMODULE_OPTION')==2
+VisibleDesc=O campo é visible? (Exemplos: 0=Nunca visible, 1=Visible na listace e crear/actualizar/ver formularios, 2=Visible só na lista, 3=Visible só ao crear/actualizar/ver formulario (non na listaxe), 4=Visible na listaxe e actualizar/ver formulario só (non crear), 5=Visible só no formulario de visualización final da listaxe (non crear, non actualizar). <br> <br> Usar un valor negativo significa que o campo non se amosa por defecto na listaxe pero pode seleccionarse para ver).
+ItCanBeAnExpression=Pode ser unha expresión. Exemplo: <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1 <br> $user->hasRight('holiday', 'define_holiday')?1:5
+DisplayOnPdfDesc=Amosa este campo en documentos PDF compatibles, pode xestionar a posición co campo "Posición". <br>  <strong> Para documentos : </strong>  <br> 0 = non visualizar  <br> 1 = visualizar <br> 2 = visualizar se non está baleiro <br>  <br>  <strong> Para liñas de documentoss : </strong>  <br> 0 = non visualizar  <br> 1 = visuliazar na columna <br> 3 = visualizar na columna de descrición de liña despois da descrición <br> 4 = visualizar na columna de descrición despois da descrición só se non está baleira
+DisplayOnPdf=En PDF
 IsAMeasureDesc=¿Pódese acumular o valor do campo para obter un total na lista? (Exemplos: 1 ou 0)
 SearchAllDesc=¿O campo utilízase para facer unha procura desde a ferramenta de busca rápida? (Exemplos: 1 ou 0)
 SpecDefDesc=Introduza aquí toda a documentación que desexa proporcionar co seu módulo que non estexa xa definida por outras pestanas. Pode usar .md ou mellor, a rica sintaxe .asciidoc.
@@ -130,27 +136,40 @@ UseSpecificEditorURL = Usar unha URL de editor específico
 UseSpecificFamily = Usar unha familia específica
 UseSpecificAuthor = Usar un autor específico
 UseSpecificVersion = Usar unha versión inicial específica
-IncludeRefGeneration=A referencia do obxecto debe xerarse automaticamente mediante regras de numeración personalizadas
+IncludeRefGeneration=A referencia deste obxecto debe xerarse automaticamente mediante regras de numeración personalizadas
 IncludeRefGenerationHelp=Marque isto se quere incluír código para xestionar a xeración da referencia automaticamente mediante regras de numeración personalizadas
-IncludeDocGeneration=Quero xerar algúns documentos a partir de modelos para o obxecto
+IncludeDocGeneration=Quero que a función xere algúns documentos (PDF, ODT) a partir de modelos para este obxecto
 IncludeDocGenerationHelp=Se marca isto, xerarase algún código para engadir unha caixa "Xerar documento" no rexistro.
-ShowOnCombobox=Mostrar o valor en combobox
+ShowOnCombobox=Amosa o valor en caixas combinadas
 KeyForTooltip=Chave para a información sobre ferramentas
 CSSClass=CSS para editar/crear formulario
 CSSViewClass=CSS para formulario de lectura
 CSSListClass=CSS para a listaxe
 NotEditable=Non editable
 ForeignKey=Chave estranxeira
-TypeOfFieldsHelp=Tipo de campos: <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] <br> '1' significa que engadimos un botón + despois do combo para crear o rexistro <br> 'filter' é unha condición sql, exemplo: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+ForeignKeyDesc=Se hai que garantir que o valor deste campo exista noutra táboa. Introduza aquí un valor que coincida coa sintaxe: tablename.parentfieldtocheck
+TypeOfFieldsHelp=Exemplo: <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] <br> ' 1' significa que engadimos un botón + despois do combo para crear o rexistro <br> 'filtro' é unha condición sql, exemplo: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+TypeOfFieldsHelpIntro=Este é o tipo de campo/atributo.
 AsciiToHtmlConverter=Conversor de ascii a HTML
 AsciiToPdfConverter=Conversor de ascii a PDF
 TableNotEmptyDropCanceled=A táboa non está baleira. Cancelouse a eliminación.
 ModuleBuilderNotAllowed=O creador de módulos está dispoñible pero non permitido ao seu usuario.
 ImportExportProfiles=Importar e exportar perfís
-ValidateModBuilderDesc=Estableza isto en 1 se quere que o método $this->validateField() do obxecto sexa chamado para validar o contido do campo durante a inserción ou a actualización. Establece 0 se non se precisa validación.
+ValidateModBuilderDesc=Estableza isto en 1 se quere que o método $this->validateField() do obxecto sexa chamado para validar o contido do campo durante a inserción ou actualización. Estableza 0 se non se precisa validación.
 WarningDatabaseIsNotUpdated=Aviso: a base de datos non se actualiza automaticamente, debe eliminar as táboas e desactivar-habilitar o módulo para que as táboas se creen de novo
 LinkToParentMenu=Menú principal (fk_xxxxmenu)
 ListOfTabsEntries=Lista de entradas de pestanas
 TabsDefDesc=Defina aquí as pestanas que proporciona o seu módulo
 TabsDefDescTooltip=As pestanas proporcionadas polo seu módulo/aplicación defínense na matriz <strong> $this->tabs </strong> no ficheiro descritor do módulo. Pode editar este ficheiro manualmente ou usar o editor incorporado.
 BadValueForType=Valor incorrecto para o tipo %s
+DefinePropertiesFromExistingTable=Definir propiedades a partir dunha táboa existente
+DefinePropertiesFromExistingTableDesc=Se xa existe unha táboa na base de datos (para que o obxecto se cree), pode usala para definir as propiedades do obxecto.
+DefinePropertiesFromExistingTableDesc2=Mantéñase baleiro se a táboa aínda non existe. O xerador de código usará diferentes tipos de campos para construír un exemplo de táboa que pode editar máis tarde.
+GeneratePermissions=Quero engadir dereitos para este obxecto
+GeneratePermissionsHelp=xera dereitos predeterminados para este obxecto
+PermissionDeletedSuccesfuly=O permiso foi eliminado correctamente
+PermissionUpdatedSuccesfuly=O permiso actualizouse correctamente
+PermissionAddedSuccesfuly=O permiso engadiuse correctamente
+MenuDeletedSuccessfuly=O menú eliminouse correctamente
+MenuAddedSuccessfuly=O menú engadiuse correctamente
+MenuUpdatedSuccessfuly=O menú actualizouse correctamente

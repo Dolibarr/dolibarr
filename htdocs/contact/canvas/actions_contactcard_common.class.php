@@ -74,8 +74,10 @@ abstract class ActionsContactCardCommon
 		if (!empty($id)) {
 			$object->fetch($id);
 		}
-			$this->object = $object;
-		//}
+
+		$this->object = $object;
+
+		return $object;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -84,7 +86,7 @@ abstract class ActionsContactCardCommon
 	 *
 	 *  @param	string		$action    Type of action
 	 *  @param	int			$id			Id
-	 *  @return	string					HTML output
+	 *  @return	void
 	 */
 	public function assign_values(&$action, $id)
 	{

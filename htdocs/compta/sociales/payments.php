@@ -270,7 +270,7 @@ while ($i < min($num, $limit)) {
 
 	$payment_sc_static->id = $obj->pid;
 	$payment_sc_static->ref = $obj->pid;
-	$payment_sc_static->date = $db->jdate($obj->datep);
+	$payment_sc_static->datep = $db->jdate($obj->datep);
 
 	$socialcontrib->id = $obj->rowid;
 	$socialcontrib->ref = empty($obj->label_sc) ? $obj->type_label : $obj->label_sc;

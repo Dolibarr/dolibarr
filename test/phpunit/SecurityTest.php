@@ -221,6 +221,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=testSqlAndScriptInject($test, 1);
 		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for SQL2a. Should find an attack on GET param and did not.');
 
+		$test = "delete\nfrom";
+		$result=testSqlAndScriptInject($test, 1);
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for SQL2b. Should find an attack on GET param and did not.');
+
 		$test = 'action=update& ... set ... =';
 		$result=testSqlAndScriptInject($test, 1);
 		$this->assertEquals(0, $result, 'Error on testSqlAndScriptInject for SQL2b. Should not find an attack on GET param and did.');
@@ -332,7 +336,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$test="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)";
 		$result=testSqlAndScriptInject($test, 0);	// result must be 0
-		$this->assertEquals(0, $result, 'Error on testSqlAndScriptInject mmm');
+		$this->assertEquals(0, $result, 'Error on testSqlAndScriptInject mmm, result should be 0 and is not');
+
+		$test ='<a href="j&Tab;a&Tab;v&Tab;asc&NewLine;ri&Tab;pt:&lpar;a&Tab;l&Tab;e&Tab;r&Tab;t&Tab;(document.cookie)&rpar;">XSS</a>';
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject nnn, result should be >= 1 and is not');
 
 		$test="/dolibarr/htdocs/index.php/".chr('246')."abc";	// Add the char %F6 into the variable
 		$result=testSqlAndScriptInject($test, 2);
@@ -385,9 +393,8 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST["param16"]='<a style="z-index: 1000">abc</a>';
 		$_POST["param17"]='<span style="background-image: url(logout.php)">abc</span>';
 		$_POST["param18"]='<span style="background-image: url(...?...action=aaa)">abc</span>';
-		//$_POST["param13"]='javascript%26colon%26%23x3B%3Balert(1)';
-		//$_POST["param14"]='javascripT&javascript#x3a alert(1)';
-
+		$_POST["param19"]='<a href="j&Tab;a&Tab;v&Tab;asc&NewLine;ri&Tab;pt:&lpar;alert(document.cookie)&rpar;">XSS</a>';
+		//$_POST["param19"]='<a href="javascript:alert(document.cookie)">XSS</a>';
 
 		$result=GETPOST('id', 'int');              // Must return nothing
 		print __METHOD__." result=".$result."\n";
@@ -507,7 +514,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(trim($_POST["param11"]), $result, 'Test an email string with alphawithlgt');
 
-		// Test with restricthtml we must remove html open/close tag and content but not htmlentities (we can decode html entities for ascii chars like &#110;)
+		// Test with restricthtml: we must remove html open/close tag and content but not htmlentities (we can decode html entities for ascii chars like &#110;)
 
 		$result=GETPOST("param6", 'restricthtml');
 		print __METHOD__." result param6=".$result."\n";
@@ -537,16 +544,24 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)", $result, 'Test 14');
 
-		$result=GETPOST("param15", 'restricthtml');		// <img onerror<=alert(document.domain)> src=>0xbeefed
+		$result=GETPOST("param15", 'restricthtml');		// param15 = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("<img onerror=alert(document.domain) src=>0xbeefed", $result, 'Test 15');	// The GETPOST return a harmull string
 
-		// Test with restricthtml + MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES to test disabling of bad atrributes
+		$result=GETPOST("param19", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('<a href="&lpar;alert(document.cookie)&rpar;">XSS</a>', $result, 'Test 19');
+
+
+		// Test with restricthtml + MAIN_RESTRICTHTML_ONLY_VALID_HTML to test disabling of bad atrributes
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
 
-		$result=GETPOST("param15", 'restricthtml');
+
+		$result=GETPOST("param15", 'restricthtml');		// param15 = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('InvalidHTMLString', $result, 'Test 15b');
+		//$this->assertEquals('<img onerror> src=&gt;0xbeefed', $result, 'Test 15b');
+
 
 		unset($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML);
 
@@ -555,7 +570,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$result=GETPOST("param15", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('<img src="">0xbeefed', $result, 'Test 15b');
+		$this->assertEquals('<img src="">0xbeefed', $result, 'Test 15c');
 
 		$result=GETPOST('param16', 'restricthtml');
 		print __METHOD__." result=".$result."\n";
@@ -834,6 +849,36 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$test = '/javas:cript/google.com';
 		$result=dol_sanitizeUrl($test);
 		$this->assertEquals('google.com', $result, 'Test on dol_sanitizeUrl C');
+	}
+
+	/**
+	 * testDolSanitizeEmail
+	 *
+	 * @return void
+	 */
+	public function testDolSanitizeEmail()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$test = 'aaa@mycompany.com <My name>, bbb@mycompany.com <Another name>';
+		$result=dol_sanitizeEmail($test);
+		$this->assertEquals($test, $result, 'Test on dol_sanitizeEmail A');
+
+		$test = "aaa@mycompany.com <My name>,\nbbb@mycompany.com <Another name>";
+		$result=dol_sanitizeEmail($test);
+		$this->assertEquals('aaa@mycompany.com <My name>,bbb@mycompany.com <Another name>', $result, 'Test on dol_sanitizeEmail B');
+
+		$test = 'aaa@mycompany.com <My name>,\nbbb@mycompany.com <Another name>';
+		$result=dol_sanitizeEmail($test);
+		$this->assertEquals('aaa@mycompany.com <My name>,nbbb@mycompany.com <Another name>', $result, 'Test on dol_sanitizeEmail C');
+
+		$test = 'aaa@mycompany.com <My name>, "bcc:bbb"@mycompany.com <Another name>';
+		$result=dol_sanitizeEmail($test);
+		$this->assertEquals('aaa@mycompany.com <My name>, bccbbb@mycompany.com <Another name>', $result, 'Test on dol_sanitizeEmail D');
 	}
 
 	/**

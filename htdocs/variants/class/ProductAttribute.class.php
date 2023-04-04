@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
+ * Copyright (C) 2023       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,10 +105,37 @@ class ProductAttribute extends CommonObject
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'help'=>"", 'showoncombobox'=>'1',),
 		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'default'=>0, 'position'=>40, 'notnull'=>1,),
 	);
+
+	/**
+	 * @var int rowid
+	 */
 	public $id;
+
+	/**
+	 * @var string ref
+	 */
 	public $ref;
+
+	/**
+	 * @var string external ref
+	 */
 	public $ref_ext;
+
+	/**
+	 * @var string label
+	 */
 	public $label;
+
+	/**
+	 * @var int position
+	 * @deprecated
+	 * @see $position
+	 */
+	public $rang;
+
+	/**
+	 * @var int position
+	 */
 	public $position;
 
 	/**
@@ -118,6 +146,11 @@ class ProductAttribute extends CommonObject
 	 * @var ProductAttributeValue
 	 */
 	public $line;
+
+	/**
+	 * @var int		Number of product that use this attribute
+	 */
+	public $is_used_by_products;
 
 
 	/**
@@ -914,7 +947,7 @@ class ProductAttribute extends CommonObject
 			$parameters = array('rowid' => $rowid, 'position' => $position);
 			$action = '';
 			$reshook = $hookmanager->executeHooks('afterPositionOfAttributeUpdate', $parameters, $this, $action);
-			return 1;
+			return ($reshook >= 0 ? 1 : -1);
 		}
 	}
 
@@ -1272,11 +1305,13 @@ class ProductAttribute extends CommonObject
 	 *	@param	int			$selected		   	Object line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
 	 *  @param	string		$defaulttpldir		Directory where to find the template
+	 *  @param	int			$addcreateline		1=Add create line
 	 *	@return	void
 	 */
-	public function printObjectLines($action, $seller, $buyer, $selected = 0, $dateSelector = 0, $defaulttpldir = '/variants/tpl')
+	public function printObjectLines($action, $seller, $buyer, $selected = 0, $dateSelector = 0, $defaulttpldir = '/variants/tpl', $addcreateline = 0)
 	{
 		global $conf, $hookmanager, $langs, $user, $form, $object;
+		global $mysoc;
 		// TODO We should not use global var for this
 		global $disableedit, $disablemove, $disableremove;
 
@@ -1306,9 +1341,25 @@ class ProductAttribute extends CommonObject
 			}
 		}
 
+
+		if ($addcreateline) {
+			// Form to add new line
+			if ($action != 'selectlines') {
+				if ($action != 'editline') {
+					// Add products/services form
+
+					$parameters = array();
+					$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+					if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+					if (empty($reshook))
+						$object->formAddObjectLine(1, $mysoc, $buyer);
+				}
+			}
+		}
+
 		$i = 0;
 
-		print "<!-- begin printObjectLines() --><tbody>\n";
+		print "<!-- begin printObjectLines() -->\n";
 		foreach ($this->lines as $line) {
 			if (is_object($hookmanager)) {   // Old code is commented on preceding line.
 				$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'selected' => $selected, 'table_element_line' => $line->table_element);
@@ -1320,7 +1371,7 @@ class ProductAttribute extends CommonObject
 
 			$i++;
 		}
-		print "</tbody><!-- end printObjectLines() -->\n";
+		print "<!-- end printObjectLines() -->\n";
 	}
 
 	/**

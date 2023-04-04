@@ -540,11 +540,15 @@ class FormMail extends Form
 			// Substitution array/string
 			$helpforsubstitution = '';
 			if (is_array($this->substit) && count($this->substit)) {
-				$helpforsubstitution .= $langs->trans('AvailableVariables').' :<br>'."\n";
+				$helpforsubstitution .= $langs->trans('AvailableVariables').' :<br><br><span class="small">'."\n";
 			}
 			foreach ($this->substit as $key => $val) {
 				$helpforsubstitution .= $key.' -> '.$langs->trans(dol_string_nohtmltag(dolGetFirstLineOfText($val))).'<br>';
 			}
+			if (is_array($this->substit) && count($this->substit)) {
+				$helpforsubstitution .= '</span>';
+			}
+
 			if (!empty($this->withsubstit)) {	// Unset or set ->withsubstit=0 to disable this.
 				$out .= '<tr><td colspan="2" class="right">';
 				//$out.='<div class="floatright">';
@@ -793,7 +797,7 @@ class FormMail extends Form
 				if (is_numeric($this->withfile)) {
 					// TODO Trick to have param removedfile containing nb of file to delete. But this does not works without javascript
 					$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
-					$out .= '<script type="text/javascript">';
+					$out .= '<script nonce="'.getNonce().'" type="text/javascript">';
 					$out .= 'jQuery(document).ready(function () {';
 					$out .= '    jQuery(".removedfile").click(function() {';
 					$out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
@@ -1001,7 +1005,7 @@ class FormMail extends Form
 
 			// Disable enter key if option MAIN_MAILFORM_DISABLE_ENTERKEY is set
 			if (!empty($conf->global->MAIN_MAILFORM_DISABLE_ENTERKEY)) {
-				$out .= '<script type="text/javascript">';
+				$out .= '<script nonce="'.getNonce().'" type="text/javascript">';
 				$out .= 'jQuery(document).ready(function () {';
 				$out .= '	$(document).on("keypress", \'#mailform\', function (e) {		/* Note this is called at every key pressed ! */
 	    						var code = e.keyCode || e.which;
@@ -1279,7 +1283,7 @@ class FormMail extends Form
 	 *
 	 *  @param	DoliDB		$dbs			Database handler
 	 *  @param	string		$type_template	Get message for model/type=$type_template, type='all' also included.
-	 *  @param	User		$user			Get template public or limited to this user
+	 *  @param	User		$user			Get templates public + limited to this user
 	 *  @param	Translate	$outputlangs	Output lang object
 	 *  @param	int			$id				Id of template to get, or -1 for first found with position 0, or 0 for first found whatever is position (priority order depends on lang provided or not) or -2 for exact match with label (no answer if not found)
 	 *  @param  int         $active         1=Only active template, 0=Only disabled, -1=All
@@ -1320,10 +1324,10 @@ class FormMail extends Form
 			$sql .= " AND (lang = '".$dbs->escape($languagetosearch)."'".($languagetosearchmain ? " OR lang = '".$dbs->escape($languagetosearchmain)."'" : "")." OR lang IS NULL OR lang = '')";
 		}
 		if ($id > 0) {
-			$sql .= " AND rowid=".(int) $id;
+			$sql .= " AND rowid = ".(int) $id;
 		}
 		if ($id == -1) {
-			$sql .= " AND position=0";
+			$sql .= " AND position = 0";
 		}
 		if ($languagetosearch) {
 			$sql .= $dbs->order("position,lang,label", "ASC,DESC,ASC"); // We want line with lang set first, then with lang null or ''
@@ -1599,7 +1603,7 @@ class FormMail extends Form
 			$tmparray = getCommonSubstitutionArray($langs, 2, array('object', 'objectamount'), $object); // Note: On email templated edition, this is null because it is related to all type of objects
 			complete_substitutions_array($tmparray, $langs, null, $parameters);
 
-			// For mass emailing, we have different keys
+			// For mass emailing, we have different keys specific to the data into tagerts list
 			$tmparray['__ID__'] = 'IdRecord';
 			$tmparray['__THIRDPARTY_CUSTOMER_CODE__'] = 'CustomerCode';
 			$tmparray['__EMAIL__'] = 'EMailRecipient';
@@ -1611,10 +1615,6 @@ class FormMail extends Form
 			$tmparray['__OTHER3__'] = 'Other3';
 			$tmparray['__OTHER4__'] = 'Other4';
 			$tmparray['__OTHER5__'] = 'Other5';
-			$tmparray['__USER_SIGNATURE__'] = 'TagUserSignature';
-			$tmparray['__SENDEREMAIL_SIGNATURE__'] = 'TagEmailSenderSignature';
-			$tmparray['__CHECK_READ__'] = 'TagCheckMail';
-			$tmparray['__UNSUBSCRIBE__'] = 'TagUnsubscribe';
 			//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet in mass emailing
 
 			$onlinepaymentenabled = 0;
@@ -1646,7 +1646,7 @@ class FormMail extends Form
 						$tmparray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'SecureKeyPAYMENTUniquePerContractLine';
 					}
 
-					//Online payement link
+					//Online payment link
 					if (isModEnabled('adherent')) {
 						$tmparray['__ONLINEPAYMENTLINK_MEMBER__'] = 'OnlinePaymentLinkUniquePerMember';
 					}
