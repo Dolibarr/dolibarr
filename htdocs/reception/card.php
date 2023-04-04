@@ -1723,7 +1723,7 @@ if ($action == 'create') {
 				print $langs->trans("QtyReceived").' - ';
 			}
 			if (isModEnabled('stock')) {
-				print $langs->trans("WarehouseSource").' - ';
+				print $langs->trans("WarehouseTarget").' - ';
 			}
 			if (isModEnabled('productbatch')) {
 				print $langs->trans("Batch");
@@ -1743,7 +1743,7 @@ if ($action == 'create') {
 				print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
 			}
 			if (isModEnabled('stock')) {
-				print '<td class="left">'.$langs->trans("WarehouseSource").'</td>';
+				print '<td class="left">'.$langs->trans("WarehouseTarget").'</td>';
 			}
 
 			if (isModEnabled('productbatch')) {
