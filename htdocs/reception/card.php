@@ -93,6 +93,8 @@ if (GETPOST('modelselected')) {
 }
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 //PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -178,7 +180,29 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	/*
+	$backurlforlist = DOL_URL_ROOT.'/reception/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			 if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				 $backtopage = $backurlforlist;
+			 } else {
+				 $backtopage = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			 }
+		}
+	}
+	*/
+
 	if ($cancel) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		}
+
 		$action = '';
 	}
 
@@ -760,6 +784,8 @@ if ($action == 'create') {
 			print '<input type="hidden" name="action" value="add">';
 			print '<input type="hidden" name="origin" value="'.$origin.'">';
 			print '<input type="hidden" name="origin_id" value="'.$objectsrc->id.'">';
+			print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			if (GETPOST('entrepot_id', 'int')) {
 				print '<input type="hidden" name="entrepot_id" value="'.GETPOST('entrepot_id', 'int').'">';
 			}
