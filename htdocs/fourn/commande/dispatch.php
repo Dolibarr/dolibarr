@@ -486,6 +486,7 @@ if ($action == 'updateline' && $permissiontoreceive) {
 	}
 }
 
+
 /*
  * View
  */
@@ -616,6 +617,10 @@ if ($id > 0 || !empty($ref)) {
 		print '<br><span class="opacitymedium">'.$langs->trans("OrderStatusNotReadyToDispatch").'</span>';
 	}
 
+
+	print '<br>';
+
+
 	if ($object->statut == CommandeFournisseur::STATUS_ORDERSENT
 		|| $object->statut == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY
 		|| $object->statut == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
@@ -731,7 +736,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="right">'.$langs->trans("QtyOrdered").'</td>';
 				print '<td class="right">'.$langs->trans("QtyDispatchedShort").'</td>';
 				print ' <td class="right">'.$langs->trans("QtyToDispatchShort");
-				print '<br><a href="#" id="autoreset">'.$langs->trans("Reset").'</a></td>';
+				print '<br><a href="#" id="autoreset">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').$langs->trans("Reset").'</a></td>';
 				print '<td width="32"></td>';
 
 				if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
