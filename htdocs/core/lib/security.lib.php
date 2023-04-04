@@ -402,7 +402,6 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	}
 	if ($features == 'fournisseur') {	// When vendor invoice and pruchase order are into module 'fournisseur'
 		$features = 'fournisseur';
-		$feature2 = '';
 		if ($object->element == 'invoice_supplier') {
 			$feature2 = 'facture';
 		} elseif ($object->element == 'order_supplier') {
