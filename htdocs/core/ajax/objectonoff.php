@@ -45,64 +45,46 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
 $action = GETPOST('action', 'aZ09');
+
 $id = GETPOST('id', 'int');
-$value = GETPOST('value', 'int');
+$element = GETPOST('element', 'alpha');	// 'myobject' (myobject=mymodule) or 'myobject@mymodule' or 'myobject_mysubobject' (myobject=mymodule)
 $field = GETPOST('field', 'alpha');
-$element = GETPOST('element', 'alpha');
+$value = GETPOST('value', 'int');
 $format = 'int';
 
-$object = new GenericObject($db);
-
-$tmparray = explode('@', $element);
-if (empty($tmparray[1])) {
-	$subelement = '';
-
-	$object->module = $element;
-	$object->element = $element;
-	$object->table_element = $element;
-
-	// Special case for compatibility
-	if ($object->table_element == 'websitepage') {
-		$object->table_element = 'website_page';
-	}
-} else {
-	$element = $tmparray[0];
-	$subelement = $tmparray[1];
-
-	$object->module = $element;
-	$object->element = $subelement;
-	$object->table_element = $object->module.'_'.$object->element;
+// Load object according to $id and $element
+$object = fetchObjectByElement($id, $element);
+if (!is_object($object)) {
+	httponly_accessforbidden("Bad value for combination of parameters element/field: Object not found.");	// This includes the exit.
 }
-$object->id = $id;
+
 $object->fields[$field] = array('type' => $format, 'enabled' => 1);
 
 $module = $object->module;
 $element = $object->element;
+$usesublevelpermission = ($module != $element ? $element : '');
+if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+	$usesublevelpermission = '';
+}
 
-//var_dump($object->module); var_dump($object->element); var_dump($object->table_element);
+//print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
 
 // Security check
 if (!empty($user->socid)) {
 	$socid = $user->socid;
+	if (!empty($object->socid) && $socid != $object->socid) {
+		httponly_accessforbidden("Access on object not allowed for this external user.");	// This includes the exit.
+	}
 }
-
-//$user->hasRight('societe', 'lire') = 0;$user->rights->fournisseur->lire = 0;
-//restrictedArea($user, 'societe', $id);
 
 // We check permission.
 // Check is done on $user->rights->element->create or $user->rights->element->subelement->create (because $action = 'set')
 if (preg_match('/status$/', $field)) {
-	$module = $object->module;
-	$element = $object->element;
-	$usesublevelpermission = ($module != $element ? $element : '');
-	if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
-		$usesublevelpermission = '';
-	}
 	restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
 } elseif ($element == 'product' && in_array($field, array('tosell', 'tobuy', 'tobatch'))) {	// Special case for products
 	restrictedArea($user, 'produit|service', $object, 'product&product', '', '', 'rowid');
 } else {
-	httponly_accessforbidden("Bad value for combination of parameters element/field.");	// This includes the exit.
+	httponly_accessforbidden("Bad value for combination of parameters element/field: Field not supported.");	// This includes the exit.
 }
 
 

@@ -31,6 +31,14 @@ if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
+$object = new Societe($db);
+
+$usesublevelpermission = '';
+
+// Security check
+restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
 
 
 /*
@@ -54,9 +62,9 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn')) {
 	$return_arr = array();
 
 	// Define filter on text typed
-	$socid = $_GET['newcompany'] ? $_GET['newcompany'] : '';
-	if (!$socid) $socid = $_GET['socid'] ? $_GET['socid'] : '';
-	if (!$socid) $socid = $_GET['id_fourn'] ? $_GET['id_fourn'] : '';
+	$socid = GETPOST('newcompany');
+	if (!$socid) $socid = GETPOST('socid');
+	if (!$socid) $socid = GETPOST('id_fourn');
 
 	$sql = "SELECT s.rowid, s.nom, s.name_alias, s.code_client, s.code_fournisseur, s.address, s.zip, s.town, s.email, s.siren, s.siret, s.ape, s.idprof4, s.client, s.fournisseur, s.datec, s.logo";
 	$sql .= " , c.label as country, d.nom as departement";
@@ -68,16 +76,21 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn')) {
 		$sql .= " AND (";
 		// Add criteria on name/code
 		if (!empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE)) {   // Can use index
-			$sql .= "s.nom LIKE '".$db->escape($socid)."%'";
-			$sql .= " OR s.code_client LIKE '".$db->escape($socid)."%'";
-			$sql .= " OR s.code_fournisseur LIKE '".$db->escape($socid)."%'";
+			$sql .= "s.nom LIKE '".$db->escape($db->escapeforlike($socid))."%'";
+			$sql .= " OR s.code_client LIKE '".$db->escape($db->escapeforlike($socid))."%'";
+			$sql .= " OR s.code_fournisseur LIKE '".$db->escape($db->escapeforlike($socid))."%'";
 		} else {
-			$sql .= "s.nom LIKE '%".$db->escape($socid)."%'";
-			$sql .= " OR s.code_client LIKE '%".$db->escape($socid)."%'";
-			$sql .= " OR s.code_fournisseur LIKE '%".$db->escape($socid)."%'";
+			$sql .= "s.nom LIKE '%".$db->escape($db->escapeforlike($socid))."%'";
+			$sql .= " OR s.code_client LIKE '%".$db->escape($db->escapeforlike($socid))."%'";
+			$sql .= " OR s.code_fournisseur LIKE '%".$db->escape($db->escapeforlike($socid))."%'";
 		}
-		if (!empty($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID)) $sql .= " OR s.rowid = '".$db->escape($socid)."'";
+		if (!empty($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID)) {
+			$sql .= " OR s.rowid = ".((int) $socid);
+		}
 		$sql .= ")";
+	}
+	if ($user->socid > 0) {
+		$sql .= " AND s.rowid = ".((int) $user->socid);
 	}
 	//if (GETPOST("filter")) $sql.= " AND (".GETPOST("filter", "alpha").")"; // Add other filters
 	$sql .= " ORDER BY s.nom ASC";

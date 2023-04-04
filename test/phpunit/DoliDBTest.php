@@ -143,7 +143,7 @@ class DoliDBTest extends PHPUnit\Framework\TestCase
 		$savtype = '';
 		$savnull = '';
 		$resql = $db->DDLDescTable($db->prefix().'c_paper_format', 'code');
-		while ($obj = $resql->fetch_object()) {
+		while ($obj = $db->fetch_object($resql)) {
 			if ($obj->Field == 'code') {
 				$savtype = $obj->Type;
 				$savnull = $obj->Null;

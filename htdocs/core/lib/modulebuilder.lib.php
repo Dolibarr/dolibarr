@@ -620,3 +620,125 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 	}
 	return 1;
 }
+
+/**
+ * Search a string and return all lines needed from file
+ * @param  string  $file    file for searching
+ * @param  string  $start   start line if exist
+ * @param  string  $end     end line if exist
+ * @return string           return the content needed
+ */
+function getFromFile($file, $start, $end)
+{
+	$i = 1;
+	$keys = array();
+	$lines = file($file);
+	// Search for start and end lines
+	foreach ($lines as $i => $line) {
+		if (strpos($line, $start) !== false) {
+			// Copy lines until the end on array
+			while (($line = $lines[++$i]) !== false) {
+				if (strpos($line, $end) !== false) {
+					break;
+				}
+				$keys[] = $line;
+			}
+			break;
+		}
+	}
+	$content = implode("", $keys);
+	return $content;
+}
+
+/**
+ * Write all permissions of each object in AsciiDoc format
+ * @param  string   $file           path of the class
+ * @param  string   $destfile       file where write table of permissions
+ * @return int                      1 if OK, -1 if KO
+ */
+function writePermsInAsciiDoc($file, $destfile)
+{
+	global $langs;
+	//search and get all permssion in stirng
+	$start = '/* BEGIN MODULEBUILDER PERMISSIONS */';
+	$end = '/* END MODULEBUILDER PERMISSIONS */';
+	$content = getFromFile($file, $start, $end);
+	if (empty($content)) {
+		return -1;
+	}
+	//prepare table
+	$string = "[options='header',grid=rows,width=60%,caption=Organisation]\n";
+	$string .= "|===\n";
+	// header for table
+	$header = array($langs->trans('Objects'),$langs->trans('Permission'));
+	foreach ($header as $h) {
+		$string .= "|".$h;
+	}
+	$string .= "\n";
+	//content table
+	$array = explode(";", $content);
+	$indexIgnored = 15;
+	$permissions = array_slice($array, $indexIgnored, null, true);
+	// delete  occurrences "$r++" and ID
+	$permissions = str_replace('$r++', 1, $permissions);
+
+	$permsN = array();
+	foreach ($permissions as $i => $element) {
+		if ($element == 1) {
+			unset($permissions[$i]);
+		}
+		if (str_contains($element, '$this->numero')) {
+			unset($permissions[$i]);
+		}
+		if (str_contains($element, '$this->rights[$r][5]')) {
+			unset($permissions[$i]);
+		}
+	}
+	// cleaning the string on each element
+	foreach ($permissions as $key => $element) {
+		$element = str_replace(" '", '', $element);
+		$element = trim($element, "'");
+		$permsN[] = substr($element, strpos($element, "=")+1);
+	}
+	array_pop($permsN);
+
+	// Group permissions by Object and add it to string
+	$temp_array = [];
+	$final_array = [];
+	$countRights = count($permsN);
+	for ($i = 0; $i < $countRights ; $i++) {
+		// Add current element to temporary array
+		$temp_array[] = $permsN[$i];
+		//  add them to the final array and empty the temporary array
+		if (count($temp_array) == 2) {
+			$final_array[] = $temp_array;
+			$temp_array = [];
+		}
+	}
+	//  add it to the final array
+	if (count($temp_array) > 0) {
+		$final_array[] = $temp_array;
+	}
+
+	$result = array();
+	foreach ($final_array as $subarray) {
+		// found object
+		$key = $subarray[1];
+		// add sub array to object
+		$result[$key][] = $subarray;
+	}
+	foreach ($result as $i => $pems) {
+		$string .= "|*".$i."*|";
+		foreach ($pems as $tab) {
+			$string .= $tab[0]." , ";
+		}
+		$string .= "\n";
+	}
+	// end table
+	$string .= "\n|===\n";
+	$write = dolReplaceInFile($destfile, array('__DATA_PERMISSIONS__'=> $string));
+	if ($write<0) {
+		return -1;
+	}
+	return 1;
+}

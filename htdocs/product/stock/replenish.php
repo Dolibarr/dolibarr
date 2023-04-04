@@ -685,8 +685,10 @@ if (!empty($salert)) $param .= '&salert='.urlencode($salert);
 
 $stocklabel = $langs->trans('Stock');
 $stocklabelbis = $langs->trans('Stock');
+$stocktooltip = '';
 if ($usevirtualstock == 1) {
 	$stocklabel = $langs->trans('VirtualStock');
+	$stocktooltip = $langs->trans("VirtualStockDesc");
 }
 if ($usevirtualstock == 0) {
 	$stocklabel = $langs->trans('PhysicalStock');
@@ -699,7 +701,6 @@ $texte = $langs->trans('Replenishment');
 
 print '<br>';
 
-print '<div class="div-table-responsive-no-min">';
 
 if (!empty($conf->global->REPLENISH_ALLOW_VARIABLESIZELIST)) {
 	print_barre_liste(
@@ -733,6 +734,8 @@ if (!empty($conf->global->REPLENISH_ALLOW_VARIABLESIZELIST)) {
 	);
 }
 
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="liste centpercent">';
 
 // Fields title search
@@ -776,7 +779,7 @@ if (isModEnabled("service") && $type == 1) {
 }
 print_liste_field_titre('DesiredStock', $_SERVER["PHP_SELF"], 'p.desiredstock', $param, '', '', $sortfield, $sortorder, 'right ');
 print_liste_field_titre('StockLimitShort', $_SERVER["PHP_SELF"], 'p.seuil_stock_alerte', $param, '', '', $sortfield, $sortorder, 'right ');
-print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], 'stock_physique', $param, '', '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], 'stock_physique', $param, '', '', $sortfield, $sortorder, 'right ', $stocktooltip);
 if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
 	print_liste_field_titre($stocklabelbis, $_SERVER["PHP_SELF"], 'stock_real_warehouse', $param, '', '', $sortfield, $sortorder, 'right ');
 }

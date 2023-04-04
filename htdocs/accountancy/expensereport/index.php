@@ -112,7 +112,7 @@ if ($action == 'validatehistory') {
 	$sql1 = "SELECT erd.rowid, accnt.rowid as suggestedid";
 	$sql1 .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
 	$sql1 .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_fees as t ON erd.fk_c_type_fees = t.id";
-	$sql1 .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as accnt ON t.accountancy_code = accnt.account_number AND accnt.active = 1 AND accnt.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND accnt.entity =".((int) $conf->entity);
+	$sql1 .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as accnt ON t.accountancy_code = accnt.account_number AND accnt.active = 1 AND accnt.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND accnt.entity =".((int) $conf->entity).",";
 	$sql1 .= " ".MAIN_DB_PREFIX."expensereport as er";
 	$sql1 .= " WHERE erd.fk_expensereport = er.rowid AND er.entity = ".((int) $conf->entity);
 	$sql1 .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.") AND erd.fk_code_ventilation <= 0";

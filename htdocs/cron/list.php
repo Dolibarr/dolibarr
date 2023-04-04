@@ -509,6 +509,9 @@ if ($num > 0) {
 		$object->datestart = $db->jdate($obj->datestart);
 		$object->dateend = $db->jdate($obj->dateend);
 		$object->module_name = $obj->module_name;
+		$object->params = $obj->params;
+		$object->datelastrun = $db->jdate($obj->datelastrun);
+		$object->datenextrun = $db->jdate($obj->datenextrun);
 
 		$datelastrun = $db->jdate($obj->datelastrun);
 		$datelastresult = $db->jdate($obj->datelastresult);

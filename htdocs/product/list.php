@@ -43,6 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
@@ -69,6 +70,7 @@ $search_ref = GETPOST("search_ref", 'alpha');
 $search_ref_supplier = GETPOST("search_ref_supplier", 'alpha');
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
+$search_default_workstation = GETPOST("search_default_workstation", 'alpha');
 $search_type = GETPOST("search_type", 'int');
 $search_vatrate = GETPOST("search_vatrate", 'alpha');
 $searchCategoryProductOperator = 0;
@@ -233,6 +235,7 @@ $arrayfields = array(
 	'p.volume'=>array('label'=>'Volume', 'checked'=>0, 'enabled'=>(isModEnabled("product") && empty($conf->global->PRODUCT_DISABLE_VOLUME) && $type != '1'), 'position'=>30),
 	'p.volume_units'=>array('label'=>'VolumeUnits', 'checked'=>0, 'enabled'=>(isModEnabled("product") && empty($conf->global->PRODUCT_DISABLE_VOLUME) && $type != '1'), 'position'=>31),
 	'cu.label'=>array('label'=>"DefaultUnitToShow", 'checked'=>0, 'enabled'=>(isModEnabled("product") && !empty($conf->global->PRODUCT_USE_UNITS)), 'position'=>32),
+	'p.fk_default_workstation'=>array('label'=>'DefaultWorkstation', 'checked'=>0, 'enabled'=>isModEnabled('workstation') && $type == 1, 'position'=>33),
 	'p.sellprice'=>array('label'=>"SellingPrice", 'checked'=>1, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES), 'position'=>40),
 	'p.tva_tx'=>array('label'=>"VATRate", 'checked'=>0, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES), 'position'=>41),
 	'p.minbuyprice'=>array('label'=>"BuyingPriceMinShort", 'checked'=>1, 'enabled'=>(!empty($user->rights->fournisseur->lire)), 'position'=>42),
@@ -334,6 +337,7 @@ if (empty($reshook)) {
 		$search_ref = "";
 		$search_ref_supplier = "";
 		$search_label = "";
+		$search_default_workstation = "";
 		$search_barcode = "";
 		$searchCategoryProductOperator = 0;
 		$searchCategoryProductList = array();
@@ -413,7 +417,10 @@ if ($search_type != '' && $search_type != '-1') {
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.fk_product_type, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type, p.entity,';
 $sql .= ' p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
-$sql .= ' p.tobatch,';
+$sql .= ' p.tobatch, ';
+if (isModEnabled('workstation')) {
+	$sql .= ' p.fk_default_workstation, ws.status as status_workstation, ws.ref as ref_workstation, ';
+}
 if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
 } else {
@@ -442,6 +449,9 @@ $sql .= $hookmanager->resPrint;
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
+if (isModEnabled('workstation')) {
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "workstation_workstation ws ON (p.fk_default_workstation = ws.rowid)";
+}
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 }
@@ -496,6 +506,9 @@ if ($search_ref) {
 }
 if ($search_label) {
 	$sql .= natural_search('p.label', $search_label);
+}
+if ($search_default_workstation) {
+	$sql .= natural_search('ws.ref', $search_default_workstation);
 }
 if ($search_barcode) {
 	$sql .= natural_search('p.barcode', $search_barcode);
@@ -593,6 +606,9 @@ if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.fk_country, p.fk_state';
 if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	$sql .= ', p.fk_unit, cu.label';
+}
+if (isModEnabled('workstation')) {
+	$sql .= ', p.fk_default_workstation, ws.status, ws.ref ';
 }
 
 if (isModEnabled('variants') && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
@@ -708,6 +724,9 @@ if ($search_barcode) {
 }
 if ($search_label) {
 	$param .= "&search_label=".urlencode($search_label);
+}
+if ($search_default_workstation) {
+	$param .= "&search_default_workstation=".urlencode($search_default_workstation);
 }
 if ($search_tosell != '') {
 	$param .= "&search_tosell=".urlencode($search_tosell);
@@ -1030,6 +1049,13 @@ if (!empty($arrayfields['cu.label']['checked'])) {
 	print '</td>';
 }
 
+// Default workstation
+if (!empty($arrayfields['p.fk_default_workstation']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat width75" type="text" name="search_default_workstation" value="'.dol_escape_htmltag($search_default_workstation).'">';
+	print '</td>';
+}
+
 // Sell price
 if (!empty($arrayfields['p.sellprice']['checked'])) {
 	print '<td class="liste_titre right">';
@@ -1245,6 +1271,9 @@ if (!empty($arrayfields['p.volume_units']['checked'])) {
 if (!empty($arrayfields['cu.label']['checked'])) {
 	print_liste_field_titre($arrayfields['cu.label']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center ');
 }
+if (!empty($arrayfields['p.fk_default_workstation']['checked'])) {
+	print_liste_field_titre($arrayfields['p.fk_default_workstation']['label'], $_SERVER['PHP_SELF'], 'ws.ref', '', $param, '', $sortfield, $sortorder);
+}
 if (!empty($arrayfields['p.sellprice']['checked'])) {
 	print_liste_field_titre($arrayfields['p.sellprice']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
 }
@@ -1338,6 +1367,7 @@ print "</tr>\n";
 
 
 $product_static = new Product($db);
+$static_ws = new Workstation($db);
 $product_fourn = new ProductFournisseur($db);
 
 $i = 0;
@@ -1451,7 +1481,7 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Ref
+		// Rowid
 		if (!empty($arrayfields['p.rowid']['checked'])) {
 			print '<td class="nowraponall">';
 			print $product_static->id;
@@ -1689,6 +1719,22 @@ while ($i < $imaxinloop) {
 			print '<td align="center">';
 			if (!empty($obj->cu_label)) {
 				print $langs->trans($obj->cu_label);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Default Workstation
+		if (!empty($arrayfields['p.fk_default_workstation']['checked'])) {
+			print '<td align="left">';
+			if (!empty($obj->fk_default_workstation)) {
+				$static_ws->id = $obj->fk_default_workstation;
+				$static_ws->ref = $obj->ref_workstation;
+				$static_ws->status = $obj->status_workstation;
+
+				print $static_ws->getNomUrl(1);
 			}
 			print '</td>';
 			if (!$i) {
