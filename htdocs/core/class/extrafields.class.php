@@ -1084,10 +1084,8 @@ class ExtraFields
 						continue;
 					}
 
-					if (($pipepos = strpos($val, '|')) > 0) {
-						// Select-Field depending on other field, remove extra data from value
-						$val = substr($val, 0, $pipepos);
-					}
+					$valarray = explode('|', $val);
+					$val = $valarray[0];
 
 					if ($langfile && $val) {
 						$options[$okey] = $langs->trans($val);

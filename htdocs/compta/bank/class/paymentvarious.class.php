@@ -127,6 +127,22 @@ class PaymentVarious extends CommonObject
 
 
 	/**
+	 * @var	int		Type of bank account if the payment is on a bank account
+	 */
+	public $fk_type;
+
+	/**
+	 * @var int		1 if the payment is on a bank account line that is conciliated
+	 */
+	public $rappro;
+
+	/**
+	 * @var	string	ID of bank receipt
+	 */
+	public $bank_num_releve;
+
+
+	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
@@ -251,7 +267,6 @@ class PaymentVarious extends CommonObject
 	 */
 	public function fetch($id, $user = null)
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " v.rowid,";
 		$sql .= " v.tms,";
@@ -262,7 +277,7 @@ class PaymentVarious extends CommonObject
 		$sql .= " v.fk_typepayment,";
 		$sql .= " v.num_payment,";
 		$sql .= " v.label,";
-		$sql .= " v.note,";
+		$sql .= " v.note as note_private,";
 		$sql .= " v.accountancy_code,";
 		$sql .= " v.subledger_account,";
 		$sql .= " v.fk_projet as fk_project,";
@@ -271,7 +286,8 @@ class PaymentVarious extends CommonObject
 		$sql .= " v.fk_user_modif,";
 		$sql .= " b.fk_account,";
 		$sql .= " b.fk_type,";
-		$sql .= " b.rappro";
+		$sql .= " b.rappro,";
+		$sql .= " b.num_releve as bank_num_releve";
 		$sql .= " FROM ".MAIN_DB_PREFIX."payment_various as v";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON v.fk_bank = b.rowid";
 		$sql .= " WHERE v.rowid = ".((int) $id);
@@ -292,7 +308,8 @@ class PaymentVarious extends CommonObject
 				$this->type_payment         = $obj->fk_typepayment;
 				$this->num_payment          = $obj->num_payment;
 				$this->label                = $obj->label;
-				$this->note                 = $obj->note;
+				$this->note                 = $obj->note_private;	// For backward compatibility
+				$this->note_private         = $obj->note_private;
 				$this->subledger_account    = $obj->subledger_account;
 				$this->accountancy_code     = $obj->accountancy_code;
 				$this->fk_project           = $obj->fk_project;
@@ -302,6 +319,7 @@ class PaymentVarious extends CommonObject
 				$this->fk_account           = $obj->fk_account;
 				$this->fk_type              = $obj->fk_type;
 				$this->rappro               = $obj->rappro;
+				$this->bank_num_releve      = $obj->bank_num_releve;
 			}
 			$this->db->free($resql);
 

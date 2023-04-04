@@ -198,7 +198,7 @@ class Task extends CommonObjectLine
 		$sql .= ", progress";
 		$sql .= ", budget_amount";
 		$sql .= ") VALUES (";
-		$sql .= ((int) $conf->entity);
+		$sql .= (!empty($this->entity) ? (int) $this->entity : (int) $conf->entity);
 		$sql .= ", ".((int) $this->fk_project);
 		$sql .= ", ".(!empty($this->ref) ? "'".$this->db->escape($this->ref)."'" : 'null');
 		$sql .= ", ".((int) $this->fk_task_parent);
@@ -274,6 +274,7 @@ class Task extends CommonObjectLine
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.ref,";
+		$sql .= " t.entity,";
 		$sql .= " t.fk_projet as fk_project,";
 		$sql .= " t.fk_task_parent,";
 		$sql .= " t.label,";
@@ -318,6 +319,7 @@ class Task extends CommonObjectLine
 
 				$this->id = $obj->rowid;
 				$this->ref = $obj->ref;
+				$this->entity = $obj->entity;
 				$this->fk_project = $obj->fk_project;
 				$this->fk_task_parent = $obj->fk_task_parent;
 				$this->label = $obj->label;
@@ -811,9 +813,11 @@ class Task extends CommonObjectLine
 	 * @param   array   $search_array_options Array of search
 	 * @param   int     $loadextras         Fetch all Extrafields on each task
 	 * @param	int		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
+	 * @param	string	$sortfield			Sort field
+	 * @param	string	$sortorder			Sort order
 	 * @return 	array						Array of tasks
 	 */
-	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1)
+	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1, $sortfield = '', $sortorder = '')
 	{
 		global $conf, $hookmanager;
 
@@ -953,8 +957,11 @@ class Task extends CommonObjectLine
 			}
 		}
 
-
-		$sql .= " ORDER BY p.ref, t.rang, t.dateo";
+		if ($sortfield && $sortorder) {
+			$sql .= $this->db->order($sortfield, $sortorder);
+		} else {
+			$sql .= " ORDER BY p.ref, t.rang, t.dateo";
+		}
 
 		//print $sql;exit;
 		dol_syslog(get_class($this)."::getTasksArray", LOG_DEBUG);
