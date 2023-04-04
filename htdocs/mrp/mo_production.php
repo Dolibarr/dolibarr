@@ -1597,8 +1597,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		</script>
 
-		<?php
-	}
+	<?php
 }
 
 // End of page
