@@ -893,7 +893,7 @@ if ($search_status <> '') {
 	}
 	if ($search_status == -2) {	// "validated + in process"
 		//$sql.= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
-		$sql .= " AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))"; // If status is 2 and facture=1, it must be selected
+		$sql .= " AND (c.fk_statut IN (1,2))";
 	}
 	if ($search_status == -3) {	// "validated + in process + delivered"
 		//$sql.= ' AND c.fk_statut in (1,2,3)';
