@@ -672,7 +672,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			print '<div class="center'.(in_array($action, array('consumeorproduce', 'consumeandproduceall')) ? ' formconsumeproduce' : '').'">';
 			print '<div class="opacitymedium hideonsmartphone paddingbottom">'.$langs->trans("ConfirmProductionDesc", $langs->transnoentitiesnoconv("Confirm")).'<br></div>';
-			print '<span class="fieldrequired">'.$langs->trans("InventoryCode").':</span> <input type="text" class="minwidth200 maxwidth250" name="inventorycode" value="'.$defaultstockmovementcode.'"> &nbsp; ';
+			print '<span class="fieldrequired">'.$langs->trans("InventoryCode").':</span> <input type="text" class="minwidth150 maxwidth200" name="inventorycode" value="'.$defaultstockmovementcode.'"> &nbsp; ';
 			print '<span class="clearbothonsmartphone"></span>';
 			print $langs->trans("MovementLabel").': <input type="text" class="minwidth300" name="inventorylabel" value="'.$defaultstockmovementlabel.'"><br><br>';
 			print '<input type="checkbox" id="autoclose" name="autoclose" value="1"'.(GETPOSTISSET('inventorylabel') ? (GETPOST('autoclose') ? ' checked="checked"' : '') : ' checked="checked"').'> <label for="autoclose">'.$langs->trans("AutoCloseMO").'</label><br>';
@@ -1080,7 +1080,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							print '<td class="nowraponall">';
 							if ($tmpproduct->status_batch) {
 								$preselected = (GETPOSTISSET('batch-'.$line->id.'-'.$i) ? GETPOST('batch-'.$line->id.'-'.$i) : '');
-								print '<input type="text" class="width50" name="batch-'.$line->id.'-'.$i.'" value="'.$preselected.'" list="batch-'.$line->id.'-'.$i.'">';
+								print '<input type="text" class="width75" name="batch-'.$line->id.'-'.$i.'" value="'.$preselected.'" list="batch-'.$line->id.'-'.$i.'">';
 								print $formproduct->selectLotDataList('batch-'.$line->id.'-'.$i, 0, $line->fk_product, '', '');
 							}
 							print '</td>';
@@ -1458,7 +1458,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							print '<td>';
 							if ($tmpproduct->status_batch) {
 								$preselected = (GETPOSTISSET('batchtoproduce-'.$line->id.'-'.$i) ? GETPOST('batchtoproduce-'.$line->id.'-'.$i) : '');
-								print '<input type="text" class="width50" name="batchtoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'">';
+								print '<input type="text" class="width75" name="batchtoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'">';
 							}
 							print '</td>';
 							// Batch number in same column than the stock movement picto
@@ -1510,9 +1510,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			});
 
 			function updateselectbatchbywarehouse() {
-				var element = $("select[name*='idwarehouse']");
-
-				element.change(function () {
+				$(document).on('change', "select[name*='idwarehouse']", function () {
+					console.log("We change warehouse so we update the list of possible batch number");
 
 					var selectwarehouse = $(this);
 
@@ -1529,13 +1528,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							action: "updateselectbatchbywarehouse",
 							permissiontoproduce: <?php echo $permissiontoproduce ?>,
 							warehouse_id: $(this).val(),
+							token: '<?php echo currentToken(); ?>',
 							product_id: $("input[name='" + product_element_name + "']").val()
 						}
 					}).done(function (data) {
 
 						selectbatch.empty();
 
-						var data = JSON.parse(data);
+						if (typeof data == "object") {
+							console.log("data is already type object, no need to parse it");
+						} else {
+							console.log("data is type "+(typeof data));
+							data = JSON.parse(data);
+						}
 
 						selectbatch.append($('<option>', {
 							value: '',
@@ -1562,8 +1567,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			function updateselectwarehousebybatch() {
-
 				$(document).on('change', 'input[name*=batch]', function(){
+					console.log("We change batch so we update the list of possible warehouses");
 
 					var selectbatch = $(this);
 
@@ -1584,11 +1589,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							action: "updateselectwarehousebybatch",
 							permissiontoproduce: <?php echo $permissiontoproduce ?>,
 							batch: $(this).val(),
+							token: '<?php echo currentToken(); ?>',
 							product_id: $("input[name='" + product_element_name + "']").val()
 						}
 					}).done(function (data) {
 
-						var data = JSON.parse(data);
+						if (typeof data == "object") {
+							console.log("data is already type object, no need to parse it");
+						} else {
+							console.log("data is type "+(typeof data));
+							data = JSON.parse(data);
+						}
 
 						if(data != 0){
 							selectwarehouse.val(data).change();
