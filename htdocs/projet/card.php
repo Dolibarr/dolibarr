@@ -420,7 +420,7 @@ if (empty($reshook)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 			$langs->load("other");
-			$upload_dir = $conf->project->dir_output;
+			$upload_dir = $conf->project->multidir_output[$object->entity];
 			$file = $upload_dir.'/'.GETPOST('file');
 			$ret = dol_delete_file($file, 0, 0, 0, $object);
 			if ($ret) {
@@ -1219,8 +1219,8 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		$morehtmlref = '<div class="refidno">';
 		// Title
 		$morehtmlref .= dol_escape_htmltag($object->title);
-		// Thirdparty
 		$morehtmlref .= '<br>';
+		// Thirdparty
 		if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 			$morehtmlref .= $object->thirdparty->getNomUrl(1, 'project');
 		}
@@ -1238,7 +1238,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Usage
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
@@ -1308,15 +1308,6 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				}
 			}
 			print '</td></tr>';
-
-			// Opportunity Weighted Amount
-			/*
-			print '<tr><td>'.$langs->trans('OpportunityWeightedAmount').'</td><td>';
-			if (strcmp($object->opp_amount, '') && strcmp($object->opp_percent, '')) {
-				print '<span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span>';
-			}
-			print '</td></tr>';
-			*/
 		}
 
 		// Budget
@@ -1605,12 +1596,12 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		 * Generated documents
 		 */
 		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->project->dir_output."/".dol_sanitizeFileName($object->ref);
+		$filedir = $conf->project->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = ($user->rights->projet->lire && $userAccess > 0);
 		$delallowed = ($user->rights->projet->creer && $userWrite > 0);
 
-		print $formfile->showdocuments('project', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
+		print $formfile->showdocuments('project', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 0, 0, '', '', '', '', '', $object);
 
 		print '</div><div class="fichehalfright">';
 
@@ -1629,7 +1620,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	// Presend form
 	$modelmail = 'project';
 	$defaulttopic = 'SendProjectRef';
-	$diroutput = $conf->project->dir_output;
+	$diroutput = $conf->project->multidir_output[$object->entity];
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_PROJECT_TO'; // used to know the automatic BCC to add
 	$trackid = 'proj'.$object->id;
 

@@ -403,7 +403,7 @@ if ($projectid > 0) {
 
 	// Description
 	print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td><td class="valuefield">';
-	print nl2br($project->description);
+	print dol_htmlentitiesbr($project->description);
 	print '</td></tr>';
 
 	// Categories
