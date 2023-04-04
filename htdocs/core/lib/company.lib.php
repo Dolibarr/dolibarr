@@ -1380,7 +1380,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			// Birthday
 			if (!empty($arrayfields['t.birthday']['checked'])) {
 				print '<td>';
-				print dol_print_date($obj->birthday);
+				print dol_print_date($db->jdate($obj->birthday));
 				print '</td>';
 			}
 
