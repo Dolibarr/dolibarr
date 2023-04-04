@@ -19,7 +19,7 @@
  */
 
 /**
- *       \file       htdocs/multicompany_page.php
+ *       \file       htdocs/core/multicompany_page.php
  *       \brief      File to return a page with the list of all entities user can switch to
  */
 
@@ -41,7 +41,7 @@ if (!defined('NOREQUIREMENU')) {
 
 require_once '../main.inc.php';
 
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ');
 $entityid = GETPOST('entity', 'int');
 $backtourl = GETPOST('backtourl');
 if (empty($backtourl)) {
@@ -63,7 +63,7 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
  * Actions
  */
 
-if (GETPOST('acction', 'aZ') == 'switchentity') {
+if ($action == 'switchentity') {
 	if (is_object($mc)) {
 		$mc->switchEntity($entityid);
 	}
@@ -81,7 +81,7 @@ if (GETPOST('acction', 'aZ') == 'switchentity') {
 $title = $langs->trans("Multicompanies");
 
 // URL http://mydolibarr/core/multicompany_page?dol_use_jmobile=1 can be used for tests
-$head = '<!-- Multicompany access -->'."\n";
+$head = '<!-- Multicompany selection -->'."\n";	// This is used by DoliDroid to know page is a multicompany selection page
 $arrayofjs = array();
 $arrayofcss = array();
 top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
@@ -92,7 +92,7 @@ print '<div>';
 //print '<br>';
 
 
-if (empty($conf->multicompany->enabled)) {
+if (!isModEnabled('multicompany')) {
 	$langs->load("admin");
 	$bookmarkList .= '<br><span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("MultiCompany")).'</span>';
 	$bookmarkList .= '<br><br>';

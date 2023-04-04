@@ -19,6 +19,7 @@
 use Luracast\Restler\RestException;
 
 dol_include_once('/knowledgemanagement/class/knowledgerecord.class.php');
+dol_include_once('/categories/class/categorie.class.php');
 
 
 
@@ -69,7 +70,7 @@ class KnowledgeManagement extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->read) {
+		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 			throw new RestException(401);
 		}
 
@@ -85,31 +86,65 @@ class KnowledgeManagement extends DolibarrApi
 		return $this->_cleanObjectDatas($this->knowledgerecord);
 	}
 
+	/**
+	 * Get categories for a knowledgerecord object
+	 *
+	 * @param int    $id        ID of knowledgerecord object
+	 * @param string $sortfield Sort field
+	 * @param string $sortorder Sort order
+	 * @param int    $limit     Limit for list
+	 * @param int    $page      Page number
+	 *
+	 * @return mixed
+	 *
+	 * @url GET /knowledgerecords/{id}/categories
+	 */
+	public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	{
+		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
+			throw new RestException(401);
+		}
+
+		$categories = new Categorie($this->db);
+
+		$result = $categories->getListForItem($id, 'knowledgemanagement', $sortfield, $sortorder, $limit, $page);
+
+		if (empty($result)) {
+			throw new RestException(404, 'No category found');
+		}
+
+		if ($result < 0) {
+			throw new RestException(503, 'Error when retrieve category list : '.join(',', array_merge(array($categories->error), $categories->errors)));
+		}
+
+		return $result;
+	}
 
 	/**
 	 * List knowledgerecords
 	 *
 	 * Get a list of knowledgerecords
 	 *
-	 * @param string	       $sortfield	        Sort field
-	 * @param string	       $sortorder	        Sort order
-	 * @param int		       $limit		        Limit for list
-	 * @param int		       $page		        Page number
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string	       	$sortfield	        Sort field
+	 * @param string	       	$sortorder	        Sort order
+	 * @param int		       	$limit		        Limit for list
+	 * @param int		       	$page		        Page number
+	 * @param int				$category   		Use this param to filter list by category
+	 * @param string           	$sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException
 	 *
 	 * @url	GET /knowledgerecords/
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '')
 	{
 		global $db, $conf;
 
 		$obj_ret = array();
 		$tmpobject = new KnowledgeRecord($this->db);
 
-		if (!DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->read) {
+		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 			throw new RestException(401);
 		}
 
@@ -131,6 +166,9 @@ class KnowledgeManagement extends DolibarrApi
 
 		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+		}
+		if ($category > 0) {
+			$sql .= ", ".$this->db->prefix()."categorie_knowledgemanagement as c";
 		}
 		$sql .= " WHERE 1 = 1";
 
@@ -154,12 +192,17 @@ class KnowledgeManagement extends DolibarrApi
 		if ($restrictonsocid && $search_sale > 0) {
 			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
+		// Select products of given category
+		if ($category > 0) {
+			$sql .= " AND c.fk_categorie = ".((int) $category);
+			$sql .= " AND c.fk_knowledgemanagement = t.rowid";
+		}
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -205,7 +248,7 @@ class KnowledgeManagement extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->write) {
+		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'write')) {
 			throw new RestException(401);
 		}
 
@@ -217,7 +260,7 @@ class KnowledgeManagement extends DolibarrApi
 		}
 
 		// Clean data
-		// $this->knowledgerecord->abc = checkVal($this->knowledgerecord->abc, 'alphanohtml');
+		// $this->knowledgerecord->abc = sanitizeVal($this->knowledgerecord->abc, 'alphanohtml');
 
 		if ($this->knowledgerecord->create(DolibarrApiAccess::$user)<0) {
 			throw new RestException(500, "Error creating KnowledgeRecord", array_merge(array($this->knowledgerecord->error), $this->knowledgerecord->errors));
@@ -238,7 +281,7 @@ class KnowledgeManagement extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->write) {
+		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'write')) {
 			throw new RestException(401);
 		}
 
@@ -259,7 +302,7 @@ class KnowledgeManagement extends DolibarrApi
 		}
 
 		// Clean data
-		// $this->knowledgerecord->abc = checkVal($this->knowledgerecord->abc, 'alphanohtml');
+		// $this->knowledgerecord->abc = sanitizeVal($this->knowledgerecord->abc, 'alphanohtml');
 
 		if ($this->knowledgerecord->update(DolibarrApiAccess::$user, false) > 0) {
 			return $this->get($id);
@@ -280,7 +323,7 @@ class KnowledgeManagement extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->delete) {
+		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'delete')) {
 			throw new RestException(401);
 		}
 		$result = $this->knowledgerecord->fetch($id);

@@ -22,7 +22,7 @@ CREATE TABLE llx_hrm_skill(
 	label varchar(255), 
 	description text, 
 	date_creation datetime NOT NULL, 
-	tms timestamp, 
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	required_level integer NOT NULL, 

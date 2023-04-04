@@ -32,7 +32,7 @@ create table llx_paiement
   fk_paiement      integer NOT NULL,					-- type of payment in llx_c_paiement
   num_paiement     varchar(50),
   note             text,
-  ext_payment_id   varchar(128),						-- external id of payment (for example Stripe charge id)
+  ext_payment_id   varchar(255),						-- external id of payment (for example Stripe charge id)
   ext_payment_site varchar(128),						-- name of external paymentmode (for example 'stripe')
   fk_bank          integer NOT NULL DEFAULT 0,
   fk_user_creat    integer,								-- utilisateur qui a cree l'info

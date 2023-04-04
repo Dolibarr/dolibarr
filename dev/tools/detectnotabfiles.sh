@@ -10,6 +10,7 @@
 # Syntax
 if [ "x$1" != "xlist" -a "x$1" != "xfix" ]
 then
+	echo "Detect .sh and .spec files that does not contains any tab inside"
 	echo "Usage: fixnotabfiles.sh [list|fix]"
 fi
 

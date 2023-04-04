@@ -26,21 +26,29 @@
  *   \ingroup    societe
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-$action = GETPOST('action', 'aZ09');
 
+// Load translation files required by the page
 $langs->load("companies");
 
-$id = GETPOST('id') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
 
+// Get parameters
+$id = GETPOST('id') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
+$action = GETPOST('action', 'aZ09');
+
+
+// Initialize objects
 $object = new Societe($db);
 if ($id > 0) {
 	$object->fetch($id);
 }
 
-$permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
+// Permissions
+$permissionnote = $user->hasRight('societe', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartynote', 'globalcard'));
@@ -50,6 +58,7 @@ if ($user->socid > 0) {
 	unset($action);
 	$socid = $user->socid;
 }
+
 $result = restrictedArea($user, 'societe', $object->id, '&societe');
 
 
@@ -82,7 +91,7 @@ if ($object->id > 0) {
 	/*
 	 * Affichage onglets
 	 */
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 

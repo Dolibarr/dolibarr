@@ -22,7 +22,6 @@ ManageLotMask=Benutzerdefiniertes Schema
 CustomMasks=Option, um für jedes Produkt ein anderes Numerierungsschema zu verwenden
 BatchLotNumberingModules=Numerierungsschema für automatische Lot - Nr. Vergabe
 BatchSerialNumberingModules=Numerierungsschema für automatisch erzeugte Seriennummern (für Produkte mit aktivierter Option, Benutzerdefiniertes Schema)
-QtyToAddAfterBarcodeScan=Einzutragende Menge pro Strichcode / Lot / Seriennummer - Scan
 LifeTime=Gültigkeit (in Tagen)
 EndOfLife=Betriebsende (End of life)
 DestructionDate=Ablaufdatum

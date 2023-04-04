@@ -18,22 +18,24 @@
 --
 -- ===================================================================
 --
--- statut
--- 0 : actif
--- 1 : inactif
+-- state / statut
+-- 0 : active / actif
+-- 1 : inactive / inactif
+--
 
 create table llx_adherent_type
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  entity           integer DEFAULT 1 NOT NULL,
+  entity           integer DEFAULT 1 NOT NULL,             -- multi company id
   tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  statut           smallint NOT NULL DEFAULT 0,
-  libelle          varchar(50) NOT NULL,
-  morphy           varchar(3) NOT NULL,
-  duration         varchar(6) DEFAULT NULL,
-  subscription     varchar(3) NOT NULL DEFAULT '1',
-  amount           double(24,8) DEFAULT NULL,
-  vote             varchar(3) NOT NULL DEFAULT '1',
-  note             text,
-  mail_valid       text
+  statut           smallint NOT NULL DEFAULT 0,            -- state  0 = active ,  1 = inactive
+  libelle          varchar(50) NOT NULL,                   -- label
+  morphy           varchar(3) NOT NULL,                    -- moral and/or physical entity
+  duration         varchar(6) DEFAULT NULL,                -- (minimal) duration of membership
+  subscription     varchar(3) NOT NULL DEFAULT '1',        -- subscription with costs / fee or without / for free
+  amount           double(24,8) DEFAULT NULL,              -- membership fee
+  caneditamount    integer DEFAULT 0,                      -- can member edit the amount of subscription
+  vote             varchar(3) NOT NULL DEFAULT '1',        -- entitled to vote
+  note             text,                                   -- description / comment 
+  mail_valid       text                                    -- text for welcome email
 )ENGINE=innodb;

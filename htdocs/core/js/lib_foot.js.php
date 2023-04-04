@@ -65,38 +65,60 @@ if (empty($dolibarr_nocache)) {
 
 
 // Wrapper to show tooltips (html or onclick popup)
-print "\n/* JS CODE TO ENABLE Tooltips on all object with class classfortooltip */\n";
-print "jQuery(document).ready(function () {\n";
+print "\n/* JS CODE TO ENABLE Tooltips on all object with class classfortooltip */
+jQuery(document).ready(function () {\n";
 
 if (empty($conf->dol_no_mouse_hover)) {
-	print 'jQuery(".classfortooltip").tooltip({
+	print '
+	jQuery(".classfortooltip").tooltip({
 		show: { collision: "flipfit", effect:"toggle", delay:50, duration: 20 },
 		hide: { delay: 250, duration: 20 },
 		tooltipClass: "mytooltip",
 		content: function () {
-    		console.log("Return title for popup");
-            return $(this).prop("title");		/* To force to get title as is */
-   		}
-	});'."\n";
+			console.log("Return title for popup");
+			return $(this).prop("title");		/* To force to get title as is */
+		}
+	});
+	jQuery(".classforajaxtooltip").tooltip({
+		show: { collision: "flipfit", effect:"toggle", delay:50, duration: 20 },
+		hide: { delay: 250, duration: 20 },
+		tooltipClass: "mytooltip",
+		open: function (event, ui) {
+			var elem = $(this);
+			var params = JSON.parse($(this).attr("data-params"));
+			params.token = "'.currentToken().'";
+			$.ajax({
+				url:"' . dol_buildpath('/core/ajax/ajaxtooltip.php', 1) . '",
+				type: "post",
+				async: false,
+				data: params,
+				success: function(response){
+					// Setting content option
+					elem.tooltip("option","content",response);
+				}
+			});
+		}
+	});
+	';
 }
 
 print '
-jQuery(".classfortooltiponclicktext").dialog({
-    closeOnEscape: true, classes: { "ui-dialog": "highlight" },
-    maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max($_SESSION['dol_screenwidth'] - 20, 320) : 700).',
-    modal: true,
-    autoOpen: false
-    }).css("z-index: 5000");
-jQuery(".classfortooltiponclick").click(function () {
-    console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
-    if ($(this).attr(\'dolid\')) {
-        obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));		/* obj is a div component */
-        obj.dialog("open");
-        return false;
-    }
-});'."\n";
-
-print "});\n";
+	jQuery(".classfortooltiponclicktext").dialog({
+		closeOnEscape: true, classes: { "ui-dialog": "highlight" },
+		maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max($_SESSION['dol_screenwidth'] - 20, 320) : 700).',
+		modal: true,
+		autoOpen: false
+	}).css("z-index: 5000");
+	jQuery(".classfortooltiponclick").click(function () {
+		console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
+		if ($(this).attr(\'dolid\')) {
+			obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));		/* obj is a div component */
+			obj.dialog("open");
+			return false;
+		}
+	});
+});
+';
 
 
 // Wrapper to manage dropdown
@@ -110,6 +132,7 @@ if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {
                   	  console.log("toggle dropdown dt a");
 
                       //$(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
+                      $(".ulselectedfields").removeClass("open");
 					  $(this).parent().parent().find(\'dd ul\').toggleClass("open");
 
 					  if ($(this).parent().parent().find(\'dd ul\').hasClass("open")) {
@@ -230,34 +253,42 @@ print '
 					}
 				);
 
-				jQuery(\'.clipboardCPButton, .clipboardCPValueToPrint\').click(function() {
-					/* console.log(this.parentNode); */
+				jQuery(\'.clipboardCPValue, .clipboardCPButton, .clipboardCPValueToPrint\').click(function() {
 					console.log("We click on a clipboardCPButton or clipboardCPValueToPrint class and we want to copy content of clipboardCPValue class");
 
 					if (window.getSelection) {
-						range = document.createRange();
-
-						/* We select value to print using the parent. */
-						/* We should use the class clipboardCPValue but it may have several element with copy/paste so class to select is not enough */
-						range.selectNodeContents(this.parentNode.firstChild);
+						jqobj=$(this).parent().children(".clipboardCPValue");
+						console.log(jqobj.html());
 
 						selection = window.getSelection();	/* get the object used for selection */
 						selection.removeAllRanges();		/* clear current selection */
+
+						/* We select the value to print using the parentNode.firstChild */
+						/* We should use the class clipboardCPValue but it may have several element with copy/paste so class to select is not enough */
+						range = document.createRange();
+						range.selectNodeContents(this.parentNode.firstChild);
 						selection.addRange(range);			/* make the new selection with the value to copy */
+
+						/* copy selection into clipboard */
+						var succeed;
+					    try {
+							console.log("We set the style display to unset for the span so the copy will work");
+							jqobj.css("display", "unset");	/* Because copy does not work on "block" object */
+
+							succeed = document.execCommand(\'copy\');
+
+							console.log("We set the style display back to inline-block");
+							jqobj.css("display", "inline-block");
+					    } catch(e) {
+					        succeed = false;
+					    }
+
+						/* Remove the selection to avoid to see the hidden field to copy selected */
+						window.getSelection().removeAllRanges();
 					}
 
-					/* copy selection into clipboard */
-					var succeed;
-				    try {
-				    	succeed = document.execCommand(\'copy\');
-				    } catch(e) {
-				        succeed = false;
-				    }
-
-					/* Remove the selection to avoid to see the hidden field to copy selected */
-					window.getSelection().removeAllRanges();
-
 					/* Show message */
+					/* TODO Show message into a top left corner or center of screen */
 					var lastchild = this.parentNode.lastChild;		/* .parentNode is clipboardCP and last child is clipboardCPText */
 					var tmp = lastchild.innerHTML
 					if (succeed) {

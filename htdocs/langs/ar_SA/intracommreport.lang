@@ -1,40 +1,40 @@
-Module68000Name = Intracomm report
-Module68000Desc = Intracomm report management (Support for French DEB/DES format)
-IntracommReportSetup = Intracommreport module setup
-IntracommReportAbout = About intracommreport
+Module68000Name = تقرير إنتراكوم
+Module68000Desc = إدارة تقارير Intracomm (دعم تنسيق DEB / DES الفرنسي)
+IntracommReportSetup = إعداد وحدة Intracommreport
+IntracommReportAbout = حول التقرير الداخلي
 
 # Setup
 INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
+INTRACOMMREPORT_TYPE_ACTEUR=النوع الفاعل
 INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les مقدمات
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
 INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
 
 INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
 
 # Menu
-MenuIntracommReport=Intracomm report
-MenuIntracommReportNew=New declaration
+MenuIntracommReport=تقرير إنتراكوم
+MenuIntracommReportNew=إعلان جديد
 MenuIntracommReportList=قائمة
 
 # View
-NewDeclaration=New declaration
-Declaration=Declaration
-AnalysisPeriod=Analysis period
-TypeOfDeclaration=Type of declaration
-DEB=Goods exchange declaration (DEB)
-DES=Services exchange declaration (DES)
+NewDeclaration=إعلان جديد
+Declaration=إعلان
+AnalysisPeriod=فترة التحليل
+TypeOfDeclaration=نوع التصريح
+DEB=إقرار تبادل البضائع (DEB)
+DES=تصريح تبادل الخدمات (DES)
 
 # Export page
-IntracommReportTitle=Preparation of an XML file in ProDouane format
+IntracommReportTitle=تحضير ملف XML بتنسيق ProDouane
 
 # List
-IntracommReportList=List of generated declarations
-IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of nalysis
-IntracommReportTypeDeclaration=Type of declaration
-IntracommReportDownload=download XML file
+IntracommReportList=قائمة الإعلانات التي تم إنشاؤها
+IntracommReportNumber=نوميرو من التصريح
+IntracommReportPeriod=فترة التحليل
+IntracommReportTypeDeclaration=نوع التصريح
+IntracommReportDownload=تنزيل ملف XML
 
 # Invoice
-IntracommReportTransportMode=Transport mode
+IntracommReportTransportMode=وضع النقل

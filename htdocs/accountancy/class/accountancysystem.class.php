@@ -39,6 +39,11 @@ class AccountancySystem
 	public $error = '';
 
 	/**
+	 * @var string[] Array of Errors code (or messages)
+	 */
+	public $errors = array();
+
+	/**
 	 * @var int ID
 	 */
 	public $rowid;

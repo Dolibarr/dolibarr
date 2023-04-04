@@ -27,6 +27,7 @@ if (! defined('CSRFCHECK_WITH_TOKEN')) {
 	define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -127,7 +128,7 @@ $result = dol_mkdir($outputdir);
 
 $utils = new Utils($db);
 
-if ($export_type == 'externalmodule' && ! empty($what)) {
+if ($export_type == 'externalmodule' && !empty($what)) {
 	$fulldirtocompress = DOL_DOCUMENT_ROOT.'/custom/'.dol_sanitizeFileName($what);
 } else {
 	$fulldirtocompress = DOL_DATA_ROOT;
@@ -137,7 +138,8 @@ $dirtocompress = basename($fulldirtocompress);
 
 if ($compression == 'zip') {
 	$file .= '.zip';
-	$excludefiles = '/(\.back|\.old|\.log|[\/\\\]temp[\/\\\]|documents[\/\\\]admin[\/\\\]documents[\/\\\])/i';
+
+	$excludefiles = '/(\.back|\.old|\.log|\.pdf_preview-.*\.png|[\/\\\]temp[\/\\\]|[\/\\\]admin[\/\\\]documents[\/\\\])/i';
 
 	//var_dump($fulldirtocompress);
 	//var_dump($outputdir."/".$file);exit;
@@ -173,7 +175,7 @@ if ($compression == 'zip') {
 
 	// We also exclude '/temp/' dir and 'documents/admin/documents'
 	// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
-	$cmd = "tar -cf ".escapeshellcmd($outputdir."/".$file)." --exclude-vcs --exclude-caches-all --exclude='temp' --exclude='*.log' --exclude='documents/admin/documents' -C '".escapeshellcmd(dol_sanitizePathName($dirtoswitch))."' '".escapeshellcmd(dol_sanitizeFileName($dirtocompress))."'";
+	$cmd = "tar -cf '".escapeshellcmd($outputdir."/".$file)."' --exclude-vcs --exclude-caches-all --exclude='temp' --exclude='*.log' --exclude='*.pdf_preview-*.png' --exclude='documents/admin/documents' -C '".escapeshellcmd(dol_sanitizePathName($dirtoswitch))."' '".escapeshellcmd(dol_sanitizeFileName($dirtocompress))."'";
 
 	$result = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
@@ -204,7 +206,12 @@ if ($compression == 'zip') {
 	print $errormsg;
 }
 
+
+// Output export
+
 if ($export_type != 'externalmodule' || empty($what)) {
+	top_httphead();
+
 	if ($errormsg) {
 		setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
 	} else {
@@ -217,12 +224,15 @@ if ($export_type != 'externalmodule' || empty($what)) {
 	$returnto = 'dolibarr_export.php';
 
 	header("Location: ".$returnto);
+
 	exit();
 } else {
+	top_httphead('application/zip');
+
 	$zipname = $outputdir."/".$file;
 
 	// Then download the zipped file.
-	header('Content-Type: application/zip');
+
 	header('Content-disposition: attachment; filename='.basename($zipname));
 	header('Content-Length: '.filesize($zipname));
 	readfile($zipname);

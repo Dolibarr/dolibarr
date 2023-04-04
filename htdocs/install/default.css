@@ -32,12 +32,20 @@
     vertical-align: middle;
 }
 
+.right {
+	text-align: right;
+}
+
 .opacitymedium {
 	opacity: 0.5;
 }
 
 .inline-block {
 	display: inline-block;	
+}
+
+.no-bottom {
+	padding-bottom: 0;	
 }
 
 .small {
@@ -119,6 +127,10 @@ tr.trlineforchoice {
 }
 a.button.runupgrade {
     padding: 10px;
+}
+
+tr.title.tablesupport-title {
+    height: 100px;
 }
 
 /* Force values for small screen 570 */
@@ -456,7 +468,7 @@ table.login.tablesupport .title {
 }
 
 table.tablesupport {
-	min-height: 250px;
+	min-height: 300px;
 	border: 1px solid #E0E0E0;
     background: #FFF;
 }
@@ -474,6 +486,4 @@ table.tablesupport {
 		padding: 6px;
 		width: 100%;
 	}
-}
-	
 }

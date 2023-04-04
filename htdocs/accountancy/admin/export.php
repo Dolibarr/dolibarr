@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2017-2018 Frédéric France      <frederic.france@netlogic.fr>
+/* Copyright (C) 2013-2014  Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2022  Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2014	    Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2014	    Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2017-2018  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 /**
  * \file 		htdocs/accountancy/admin/export.php
  * \ingroup 	Accountancy (Double entries)
- * \brief 		Setup page to configure accounting expert module
+ * \brief 		Setup page to configure accounting export module
  */
 require '../../main.inc.php';
 
@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy"));
 
 // Security access
-if (empty($user->rights->accounting->chartofaccount)) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 
@@ -47,7 +47,8 @@ $main_option = array(
 	'ACCOUNTING_EXPORT_PREFIX_SPEC',
 );
 
-$configuration = AccountancyExport::getTypeConfig();
+$accountancyexport = new AccountancyExport($db);
+$configuration = $accountancyexport->getTypeConfig();
 
 $listparam = $configuration['param'];
 
@@ -117,7 +118,7 @@ if ($action == 'update') {
 
 	if (!$error) {
 		// reload
-		$configuration = AccountancyExport::getTypeConfig();
+		$configuration = $accountancyexport->getTypeConfig();
 		$listparam = $configuration['param'];
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -210,7 +211,7 @@ if ($num) {
 
 		// Value
 		print '<td>';
-		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 		print '</td></tr>';
 	}
 }
@@ -237,8 +238,8 @@ if (!$conf->use_javascript_ajax) {
 	print "</td>";
 } else {
 	print '<td>';
-	$listmodelcsv = AccountancyExport::getType();
-	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+	$listmodelcsv = $accountancyexport->getType();
+	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listmodelcsv, getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV'), 0, 0, 0, '', 0, 0, 0, '', '', 1);
 
 	print '</td>';
 }
@@ -268,9 +269,9 @@ if ($num2) {
 		// Value
 		print '<td>';
 		if (is_array($key['param'])) {
-			print $form->selectarray($label, $key['param'], $conf->global->$label, 0);
+			print $form->selectarray($label, $key['param'], getDolGlobalString($label), 0);
 		} else {
-			print '<input type="text" size="20" id="'.$label.'" name="'.$key['label'].'" value="'.$conf->global->$label.'">';
+			print '<input type="text" size="20" id="'.$label.'" name="'.$key['label'].'" value="'.getDolGlobalString($label).'">';
 		}
 
 		print '</td></tr>';

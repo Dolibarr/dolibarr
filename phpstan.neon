@@ -103,6 +103,7 @@ parameters:
 		- %currentWorkingDirectory%/htdocs/core/lib/donation.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/ecm.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/emailing.lib.php
+		#- %currentWorkingDirectory%/htdocs/core/lib/eventorganization.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/expedition.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/expensereport.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/fichinter.lib.php
@@ -110,13 +111,17 @@ parameters:
 		- %currentWorkingDirectory%/htdocs/core/lib/fiscalyear.lib.php
 		#- %currentWorkingDirectory%/htdocs/core/lib/format_cards.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/fourn.lib.php
+		#- %currentWorkingDirectory%/htdocs/core/lib/ftp.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/functions.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/functions2.lib.php
+		#- %currentWorkingDirectory%/htdocs/core/lib/functions_ch.lib.php
+		#- %currentWorkingDirectory%/htdocs/core/lib/functionsnumtoword.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/geturl.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/holiday.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/hrm.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/images.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/import.lib.php
+		#- %currentWorkingDirectory%/htdocs/core/lib/intracommreport.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/invoice.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/invoice2.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/json.lib.php
@@ -132,11 +137,13 @@ parameters:
 		- %currentWorkingDirectory%/htdocs/core/lib/parsemd.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/payments.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/pdf.lib.php
+		#- %currentWorkingDirectory%/htdocs/core/lib/phpsessionindb.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/prelevement.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/price.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/product.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/project.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/propal.lib.php
+		#- %currentWorkingDirectory%/htdocs/core/lib/receiptprinter.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/reception.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/report.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/resource.lib.php
@@ -155,6 +162,7 @@ parameters:
 		- %currentWorkingDirectory%/htdocs/core/lib/usergroups.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/vat.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/website.lib.php
+		#- %currentWorkingDirectory%/htdocs/core/lib/website2.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/ws.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/xcal.lib.php
 	featureToggles:

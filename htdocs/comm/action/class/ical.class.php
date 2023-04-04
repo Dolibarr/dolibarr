@@ -25,6 +25,7 @@
  *       \brief      File of class to parse ical calendars
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/xcal.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 
 /**
@@ -39,6 +40,7 @@ class ICal
 	public $todo_count; // Number of Todos
 	public $freebusy_count; // Number of Freebusy
 	public $last_key; //Help variable save last key (multiline string)
+	public $error;
 
 
 	/**
@@ -52,8 +54,8 @@ class ICal
 	/**
 	 *  Read text file, icalender text file
 	 *
-	 *  @param  string  $file       File
-	 *  @return string
+	 *  @param  string  		$file       File
+	 *  @return string|null					Content of remote file read or null if error
 	 */
 	public function read_file($file)
 	{
@@ -61,11 +63,15 @@ class ICal
 		$this->file = $file;
 		$file_text = '';
 
-		$tmparray = file($file);
-		if (is_array($tmparray)) {
-			$file_text = join("", $tmparray); //load file
-			$file_text = preg_replace("/[\r\n]{1,} /", "", $file_text);
+		$tmpresult = getURLContent($file, 'GET');
+		if ($tmpresult['http_code'] != 200) {
+			$file_text = null;
+			$this->error = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
+		} else {
+			$file_text = preg_replace("/[\r\n]{1,} /", "", $tmpresult['content']);
 		}
+		//var_dump($tmpresult);
+
 		return $file_text; // return all text
 	}
 
@@ -96,17 +102,40 @@ class ICal
 	/**
 	 * Translate Calendar
 	 *
-	 * @param	string 	$uri	Url
+	 * @param	string	 	$uri			Url
+	 * @param	string		$usecachefile	Full path of a cache file to use a cache file
+	 * @param	string		$delaycache		Delay in seconds for cache (by default 3600 secondes)
 	 * @return	array|string
 	 */
-	public function parse($uri)
+	public function parse($uri, $usecachefile = '', $delaycache = 3600)
 	{
 		$this->cal = array(); // new empty array
 
 		$this->event_count = -1;
+		$this->file_text = null;
+
+		// Save file into a cache
+		if ($usecachefile) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			$datefile = dol_filemtime($usecachefile);
+			$now = dol_now('gmt');
+			//print $datefile.' '.$now.' ...';
+			if ($datefile && $datefile > ($now - $delaycache)) {
+				// We reuse the cache file
+				$this->file_text = file_get_contents($usecachefile);
+			}
+		}
 
 		// read FILE text
-		$this->file_text = $this->read_file($uri);
+		if (is_null($this->file_text)) {
+			$this->file_text = $this->read_file($uri);
+
+			if ($usecachefile && !is_null($this->file_text)) {
+				// Save the file content into cache file
+				file_put_contents($usecachefile, $this->file_text, LOCK_EX);
+				dolChmod($usecachefile);
+			}
+		}
 
 		$this->file_text = preg_split("[\n]", $this->file_text);
 
@@ -396,19 +425,19 @@ class ICal
 	public function get_event_list()
 	{
 		// phpcs:enable
-		return (!empty($this->cal['VEVENT']) ? $this->cal['VEVENT'] : '');
+		return (empty($this->cal['VEVENT']) ? array() : $this->cal['VEVENT']);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return eventlist array (not sort eventlist array)
+	 * Return freebusy array (not sort eventlist array)
 	 *
 	 * @return array
 	 */
 	public function get_freebusy_list()
 	{
 		// phpcs:enable
-		return $this->cal['VFREEBUSY'];
+		return (empty($this->cal['VFREEBUSY']) ? array() : $this->cal['VFREEBUSY']);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

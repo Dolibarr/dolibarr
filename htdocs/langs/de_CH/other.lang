@@ -1,5 +1,7 @@
 # Dolibarr language file - Source file is en_US - other
 NumberingShort=Nr
+Tools=Hilfsprogramme
+TMenuTools=Hilfsprogramme
 ToolsDesc=Alle Werkzeuge, die nicht in anderen Menüeinträgen enthalten sind, werden hier gruppiert. <br> Alle Werkzeuge können über das linke Menü aufgerufen werden.
 Notify_COMPANY_CREATE=Durch Dritte erstellt
 Notify_COMPANY_SENTBYMAIL=Von Geschäftspartner-Karte gesendete Mails
@@ -29,3 +31,4 @@ WebsiteSetup=Einstellungen des Webseitenmoduls
 WEBSITE_PAGEURL=URL für Seite
 WEBSITE_TITLE=Titel
 WEBSITE_KEYWORDS=Stichworte
+CloseDialog =Schliessen

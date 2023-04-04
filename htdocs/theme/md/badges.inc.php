@@ -69,6 +69,7 @@ span.badgeneutral {
 	background-color: #e4e4e4;
 	color: #666;
 	border-radius: 10px;
+	white-space: nowrap;
 }
 
 

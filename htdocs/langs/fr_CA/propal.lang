@@ -35,5 +35,5 @@ AvailabilityTypeAV_NOW=Immédiatement
 TypeContact_propal_internal_SALESREPFOLL=Proposition de suivi représentative
 TypeContact_propal_external_BILLING=Contact client facturation
 TypeContact_propal_external_CUSTOMER=Proposition de suivi du contact client
-DefaultModelPropalCreate=Création de modèle par défaut
 DefaultModelPropalClosed=Modèle par défaut lors de la clôture d'une proposition commerciale (non facturé)
+DefaultModelPropalCreate=Création de modèle par défaut

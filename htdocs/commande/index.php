@@ -22,15 +22,22 @@
 /**
  *	\file       htdocs/commande/index.php
  *	\ingroup    commande
- *	\brief      Home page of customer order module
+ *	\brief      Home page of sales order module
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
+
+
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'bills'));
+
 
 if (!$user->rights->commande->lire) {
 	accessforbidden();
@@ -41,8 +48,6 @@ $hookmanager = new HookManager($db);
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('ordersindex'));
 
-// Load translation files required by the page
-$langs->loadLangs(array('orders', 'bills'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -87,7 +92,7 @@ if ($tmp) {
 /*
  * Draft orders
  */
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	$sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";
@@ -239,7 +244,7 @@ $max = 10;
 /*
  * Orders to process
  */
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, c.date_commande as date, s.nom as name, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";
@@ -328,7 +333,7 @@ if (!empty($conf->commande->enabled)) {
 /*
  * Orders that are in process
  */
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, c.date_commande as date, s.nom as name, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";

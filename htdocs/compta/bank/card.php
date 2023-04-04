@@ -6,7 +6,8 @@
  * Copyright (C) 2014-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,7 @@
  *		\brief      Page to create/view a bank account
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -35,24 +37,25 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("banks", "bills", "categories", "companies", "compta"));
+$langs->loadLangs(array("banks", "bills", "categories", "companies", "compta", "withdrawals"));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 $object = new Account($db);
 $extrafields = new ExtraFields($db);
@@ -65,7 +68,17 @@ $hookmanager->initHooks(array('bankcard', 'globalcard'));
 
 // Security check
 $id = GETPOST("id", 'int') ? GETPOST("id", 'int') : GETPOST('ref', 'alpha');
-$fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
+$fieldid = GETPOST("id", 'int') ? 'rowid' : 'ref';
+
+if (GETPOST("id", 'int') || GETPOST("ref")) {
+	if (GETPOST("id", 'int')) {
+		$object->fetch(GETPOST("id", 'int'));
+	}
+	if (GETPOST("ref")) {
+		$object->fetch(0, GETPOST("ref"));
+	}
+}
+
 $result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
 
@@ -123,10 +136,14 @@ if (empty($reshook)) {
 		$object->cle_rib = trim(GETPOST("cle_rib"));
 		$object->bic = trim(GETPOST("bic"));
 		$object->iban = trim(GETPOST("iban"));
-		$object->domiciliation = trim(GETPOST("domiciliation", "nohtml"));
+		$object->domiciliation = trim(GETPOST("domiciliation", "alphanohtml"));
+		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
 		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
-		$object->owner_address = trim(GETPOST("owner_address", 'nohtml'));
+		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
+		$object->owner_zip = trim(GETPOST("owner_zip", 'alphanohtml'));
+		$object->owner_town = trim(GETPOST("owner_town", 'alphanohtml'));
+		$object->owner_country_id = GETPOST("owner_country_id", 'int');
 
 		$object->ics = trim(GETPOST("ics", 'alpha'));
 		$object->ics_transfer = trim(GETPOST("ics_transfer", 'alpha'));
@@ -175,7 +192,7 @@ if (empty($reshook)) {
 		}
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 
 		if (!$error) {
 			$id = $object->create($user);
@@ -223,10 +240,14 @@ if (empty($reshook)) {
 		$object->cle_rib = trim(GETPOST("cle_rib"));
 		$object->bic = trim(GETPOST("bic"));
 		$object->iban = trim(GETPOST("iban"));
-		$object->domiciliation = trim(GETPOST("domiciliation", "nohtml"));
+		$object->domiciliation = trim(GETPOST("domiciliation", "alphanohtml"));
+		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
 		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
-		$object->owner_address = trim(GETPOST("owner_address", 'nohtml'));
+		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
+		$object->owner_zip = trim(GETPOST("owner_zip", 'alphanohtml'));
+		$object->owner_town = trim(GETPOST("owner_town", 'alphanohtml'));
+		$object->owner_country_id = GETPOST("owner_country_id", 'int');
 
 		$object->ics = trim(GETPOST("ics", 'alpha'));
 		$object->ics_transfer = trim(GETPOST("ics_transfer", 'alpha'));
@@ -283,7 +304,7 @@ if (empty($reshook)) {
 				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
 
-				$_GET["id"] = $_POST["id"]; // Force chargement page en mode visu
+				$_GET["id"] = GETPOST("id", 'int'); // Force chargement page en mode visu
 			} else {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -315,6 +336,7 @@ if (empty($reshook)) {
 	}
 }
 
+
 /*
  * View
  */
@@ -322,30 +344,28 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formbank = new FormBank($db);
 $formcompany = new FormCompany($db);
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
 
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-$title = $langs->trans("FinancialAccount")." - ".$langs->trans("Card");
-
 $help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:Módulo_Bancos_y_Cajas|DE:Modul_Banken_und_Barbestände';
-
+if ($action == 'create') {
+	$title = $langs->trans("NewFinancialAccount");
+} elseif (!empty($object->ref)) {
+	$title = $object->ref." - ".$langs->trans("Card");
+}
 llxHeader("", $title, $help_url);
 
-
 // Creation
-
 if ($action == 'create') {
-	$object = new Account($db);
-
 	print load_fiche_titre($langs->trans("NewFinancialAccount"), '', 'bank_account');
 
 	if ($conf->use_javascript_ajax) {
 		print "\n".'<script type="text/javascript">';
 		print 'jQuery(document).ready(function () {
-                    jQuery("#selecttype").change(function() {
+                    jQuery("#type").change(function() {
                         document.formsoc.action.value="create";
                         document.formsoc.submit();
                     });
@@ -361,6 +381,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="clos" value="0">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print dol_get_fiche_head('');
 
@@ -368,16 +389,16 @@ if ($action == 'create') {
 
 	// Ref
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-	print '<td><input size="8" type="text" class="flat" name="ref" value="'.dol_escape_htmltag(GETPOST("ref") ?GETPOST("ref", 'alpha') : $object->ref).'" maxlength="12" autofocus></td></tr>';
+	print '<td><input size="8" type="text" class="flat" name="ref" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST("ref", 'alpha') : $object->ref).'" maxlength="12" autofocus></td></tr>';
 
 	// Label
 	print '<tr><td class="fieldrequired">'.$langs->trans("LabelBankCashAccount").'</td>';
-	print '<td><input type="text" class="flat maxwidth150onsmartphone" name="label" value="'.dol_escape_htmltag(GETPOST("label", 'alpha')).'"></td></tr>';
+	print '<td><input type="text" class="flat maxwidth150onsmartphone" name="label" value="'.dol_escape_htmltag(GETPOST('label', 'alpha')).'"></td></tr>';
 
 	// Type
 	print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
 	print '<td>';
-	$formbank->selectTypeOfBankAccount(GETPOSTISSET("type") ? GETPOST("type") : Account::TYPE_CURRENT, "type");
+	$formbank->selectTypeOfBankAccount(GETPOSTISSET("type") ? GETPOST('type', 'int') : Account::TYPE_CURRENT, 'type');
 	print '</td></tr>';
 
 	// Currency
@@ -395,7 +416,7 @@ if ($action == 'create') {
 	// Status
 	print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
 	print '<td>';
-	print $form->selectarray("clos", $object->status, (GETPOST("clos", 'int') != '' ?GETPOST("clos", 'int') : $object->clos), 0, 0, 0, '', 0, 0, 0, '', 'maxwidth150onsmartphone');
+	print $form->selectarray("clos", $object->status, (GETPOST('clos', 'int') != '' ? GETPOST('clos', 'int') : $object->clos), 0, 0, 0, '', 0, 0, 0, '', 'maxwidth150onsmartphone');
 	print '</td></tr>';
 
 	// Country
@@ -409,7 +430,8 @@ if ($action == 'create') {
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("BankAccountCountry").'</td>';
 	print '<td>';
-	print img_picto('', 'country', 'class="pictofixedwidth"').$form->select_country($selectedcode, 'account_country_id');
+	print img_picto('', 'country', 'class="pictofixedwidth"');
+	print $form->select_country($selectedcode, 'account_country_id');
 	if ($user->admin) {
 		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	}
@@ -425,6 +447,14 @@ if ($action == 'create') {
 	}
 	print '</td></tr>';
 
+	$type = (GETPOSTISSET("type") ? GETPOST('type', 'int') : Account::TYPE_CURRENT); // add default value
+	if ($type == Account::TYPE_SAVINGS || $type == Account::TYPE_CURRENT) {
+		print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
+		print '<textarea class="flat quatrevingtpercent" name="domiciliation" rows="'.ROWS_2.'">';
+		print (GETPOSTISSET('domiciliation') ?GETPOST('domiciliation') : $object->domiciliation);
+		print "</textarea></td></tr>";
+	}
+
 	// Web
 	print '<tr><td>'.$langs->trans("Web").'</td>';
 	print '<td>';
@@ -433,7 +463,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Tags-Categories
-	if ($conf->categorie->enabled) {
+	if (isModEnabled('categorie')) {
 		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
 
@@ -454,7 +484,7 @@ if ($action == 'create') {
 	print '<td>';
 	// Editor wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('account_comment', (GETPOST("account_comment") ?GETPOST("account_comment") : $object->comment), '', 90, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_4, '90%');
+	$doleditor = new DolEditor('account_comment', (GETPOST("account_comment") ?GETPOST("account_comment") : $object->comment), '', 90, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_4, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -490,7 +520,7 @@ if ($action == 'create') {
 	print '</table>';
 	print '<br>';
 
-	$type = GETPOST('type');
+	$type = (GETPOSTISSET("type") ? GETPOST('type', 'int') : Account::TYPE_CURRENT); // add default value
 	if ($type == Account::TYPE_SAVINGS || $type == Account::TYPE_CURRENT) {
 		print '<table class="border centpercent">';
 
@@ -499,9 +529,24 @@ if ($action == 'create') {
 		print '<td><input type="text" class="flat minwidth150" name="bank" value="'.(GETPOST('bank') ?GETPOST('bank', 'alpha') : $object->bank).'"></td>';
 		print '</tr>';
 
+		$ibankey = FormBank::getIBANLabel($object);
+		$bickey = "BICNumber";
+		if ($object->getCountryCode() == 'IN') {
+			$bickey = "SWIFT";
+		}
+
+		// IBAN
+		print '<tr><td>'.$langs->trans($ibankey).'</td>';
+		print '<td><input maxlength="34" type="text" class="flat minwidth300" name="iban" value="'.(GETPOSTISSET('iban') ?GETPOST('iban', 'alpha') : $object->iban).'"></td></tr>';
+
+		// BIC
+		print '<tr><td>'.$langs->trans($bickey).'</td>';
+		print '<td><input maxlength="11" type="text" class="flat minwidth150" name="bic" value="'.(GETPOSTISSET('bic') ?GETPOST('bic', 'alpha') : $object->bic).'"></td></tr>';
+
 		// Show fields of bank account
 		$sizecss = '';
 		foreach ($object->getFieldsToShow() as $val) {
+			$content = '';
 			if ($val == 'BankCode') {
 				$name = 'code_banque';
 				$sizecss = 'minwidth100';
@@ -521,28 +566,20 @@ if ($action == 'create') {
 			}
 
 			print '<td>'.$langs->trans($val).'</td>';
-			print '<td><input type="text" class="flat '.$sizecss.'" name="'.$name.'" value="'.(GETPOST($name) ?GETPOST($name, 'alpha') : $content).'"></td>';
+			print '<td><input type="text" class="flat '.$sizecss.'" name="'.$name.'" value="'.(GETPOSTISSET($name) ? GETPOST($name, 'alpha') : $content).'"></td>';
 			print '</tr>';
 		}
-		$ibankey = FormBank::getIBANLabel($object);
-		$bickey = "BICNumber";
-		if ($object->getCountryCode() == 'IN') {
-			$bickey = "SWIFT";
+
+		if (isModEnabled('paymentbybanktransfer')) {
+			print '<tr><td>'.$form->textwithpicto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation"), $langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp")).'</td>';
+			print '<td><input type="checkbox" class="flat" name="pti_in_ctti"'. (empty(GETPOST('pti_in_ctti')) ? '' : ' checked ') . '>';
+			print '</td></tr>';
 		}
+		print '</table>';
+		print '<hr>';
 
-		// IBAN
-		print '<tr><td>'.$langs->trans($ibankey).'</td>';
-		print '<td><input maxlength="34" type="text" class="flat minwidth300" name="iban" value="'.(GETPOST('iban') ?GETPOST('iban', 'alpha') : $object->iban).'"></td></tr>';
-
-		print '<tr><td>'.$langs->trans($bickey).'</td>';
-		print '<td><input maxlength="11" type="text" class="flat minwidth150" name="bic" value="'.(GETPOST('bic') ?GETPOST('bic', 'alpha') : $object->bic).'"></td></tr>';
-
-		print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
-		print '<textarea class="flat quatrevingtpercent" name="domiciliation" rows="'.ROWS_2.'">';
-		print (GETPOST('domiciliation') ?GETPOST('domiciliation') : $object->domiciliation);
-		print "</textarea></td></tr>";
-
-		print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
+		print '<table class="border centpercent">';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("BankAccountOwner").'</td>';
 		print '<td><input type="text" class="flat minwidth300" name="proprio" value="'.(GETPOST('proprio') ?GETPOST('proprio', 'alpha') : $object->proprio).'">';
 		print '</td></tr>';
 
@@ -551,8 +588,22 @@ if ($action == 'create') {
 		print (GETPOST('owner_address') ?GETPOST('owner_address', 'alpha') : $object->owner_address);
 		print "</textarea></td></tr>";
 
+		print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerZip").'</td>';
+		print '<td><input type="text" class="flat maxwidth100" name="owner_zip" value="'.(GETPOST('owner_zip') ?GETPOST('owner_zip', 'alpha') : $object->owner_zip).'">';
+		print '</td></tr>';
+
+		print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerTown").'</td>';
+		print '<td><input type="text" class="flat maxwidth200" name="owner_town" value="'.(GETPOST('owner_town') ?GETPOST('owner_town', 'alpha') : $object->owner_town).'">';
+		print '</td></tr>';
+
+		print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerCountry").'</td>';
+		print '<td>';
+		print img_picto('', 'country', 'class="pictofixedwidth"');
+		print $form->select_country(GETPOST('owner_country_id') ?GETPOST('owner_country_id', 'alpha') : $object->owner_country_id, 'owner_country_id');
+		print '</td></tr>';
+
 		print '</table>';
-		print '<br>';
+		print '<hr>';
 	}
 
 	print '<table class="border centpercent">';
@@ -562,7 +613,7 @@ if ($action == 'create') {
 		$fieldrequired = 'fieldrequired ';
 	}
 
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
@@ -573,7 +624,7 @@ if ($action == 'create') {
 	}
 
 	// Accountancy journal
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
 		print '<td>';
 		print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
@@ -588,22 +639,8 @@ if ($action == 'create') {
 
 	print '</form>';
 } else {
-	/* ************************************************************************** */
-	/*                                                                            */
-	/* Visu et edition                                                            */
-	/*                                                                            */
-	/* ************************************************************************** */
-
+	// View and edit mode
 	if ((GETPOST("id", 'int') || GETPOST("ref")) && $action != 'edit') {
-		$object = new Account($db);
-		if (GETPOST("id", 'int')) {
-			$object->fetch(GETPOST("id", 'int'));
-		}
-		if (GETPOST("ref")) {
-			$object->fetch(0, GETPOST("ref"));
-			$_GET["id"] = $object->id;
-		}
-
 		// Show tabs
 		$head = bank_prepare_head($object);
 		print dol_get_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"), -1, 'account');
@@ -666,7 +703,7 @@ if ($action == 'create') {
 		// Accountancy code
 		print '<tr class="liste_titre_add"><td class="titlefield">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
-		if (!empty($conf->accounting->enabled)) {
+		if (isModEnabled('accounting')) {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch('', $object->account_number, 1);
 
@@ -677,7 +714,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Accountancy journal
-		if (!empty($conf->accounting->enabled)) {
+		if (isModEnabled('accounting')) {
 			print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
 			print '<td>';
 
@@ -703,7 +740,7 @@ if ($action == 'create') {
 		print '<table class="border tableforfield centpercent">';
 
 		// Categories
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($object->id, Categorie::TYPE_ACCOUNT, 1);
 			print "</td></tr>";
@@ -715,15 +752,46 @@ if ($action == 'create') {
 		print '</table>';
 
 		if ($object->type == Account::TYPE_SAVINGS || $object->type == Account::TYPE_CURRENT) {
-			print '<div class="underbanner clearboth"></div>';
-
 			print '<table class="border tableforfield centpercent">';
 
 			print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("BankName").'</td>';
 			print '<td>'.$object->bank.'</td></tr>';
 
+			$ibankey = FormBank::getIBANLabel($object);
+			$bickey = "BICNumber";
+			if ($object->getCountryCode() == 'IN') {
+				$bickey = "SWIFT";
+			}
+
+			// IBAN
+			print '<tr><td>'.$langs->trans($ibankey).'</td>';
+			print '<td>'.getIbanHumanReadable($object).'&nbsp;';
+			if (!empty($object->iban)) {
+				if (!checkIbanForAccount($object)) {
+					print img_picto($langs->trans("IbanNotValid"), 'warning');
+				} else {
+					print img_picto($langs->trans("IbanValid"), 'info');
+				}
+			}
+			print '</td></tr>';
+
+			// BIC
+			print '<tr><td>'.$langs->trans($bickey).'</td>';
+			print '<td>'.$object->bic.'&nbsp;';
+			if (!empty($object->bic)) {
+				if (!checkSwiftForAccount($object)) {
+					print img_picto($langs->trans("SwiftNotValid"), 'warning');
+				} else {
+					print img_picto($langs->trans("SwiftValid"), 'info');
+				}
+			}
+			print '</td></tr>';
+
+			// TODO Add a link "Show more..." for all ohter informations.
+
 			// Show fields of bank account
 			foreach ($object->getFieldsToShow() as $val) {
+				$content = '';
 				if ($val == 'BankCode') {
 					$content = $object->code_banque;
 				} elseif ($val == 'DeskCode') {
@@ -739,49 +807,22 @@ if ($action == 'create') {
 				print '</tr>';
 			}
 
-			$ibankey = FormBank::getIBANLabel($object);
-			$bickey = "BICNumber";
-			if ($object->getCountryCode() == 'IN') {
-				$bickey = "SWIFT";
-			}
-
-			print '<tr><td>'.$langs->trans($ibankey).'</td>';
-			print '<td>'.$object->iban.'&nbsp;';
-			if (!empty($object->iban)) {
-				if (!checkIbanForAccount($object)) {
-					print img_picto($langs->trans("IbanNotValid"), 'warning');
-				} else {
-					print img_picto($langs->trans("IbanValid"), 'info');
-				}
-			}
-			print '</td></tr>';
-
-			print '<tr><td>'.$langs->trans($bickey).'</td>';
-			print '<td>'.$object->bic.'&nbsp;';
-			if (!empty($object->bic)) {
-				if (!checkSwiftForAccount($object)) {
-					print img_picto($langs->trans("SwiftNotValid"), 'warning');
-				} else {
-					print img_picto($langs->trans("SwiftValid"), 'info');
-				}
-			}
-			print '</td></tr>';
-
-			if ($conf->prelevement->enabled) {
-				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("StandingOrder").')</td>';
+			if (isModEnabled('prelevement')) {
+				print '<tr><td>'.$form->textwithpicto($langs->trans("ICS"), $langs->trans("ICS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("StandingOrder")).')').'</td>';
 				print '<td>'.$object->ics.'</td>';
 				print '</tr>';
 			}
 
-			if ($conf->paymentbybanktransfer->enabled) {
-				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("BankTransfer").')</td>';
+			// TODO ICS is not used with bank transfer !
+			if (isModEnabled('paymentbybanktransfer')) {
+				print '<tr><td>'.$form->textwithpicto($langs->trans("IDS"), $langs->trans("IDS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("BankTransfer")).')').'</td>';
 				print '<td>'.$object->ics_transfer.'</td>';
 				print '</tr>';
-			}
 
-			print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
-			print nl2br($object->domiciliation);
-			print "</td></tr>\n";
+				print '<tr><td>'.$form->textwithpicto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation"), $langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp")).'</td><td>';
+				print (empty($object->pti_in_ctti) ? $langs->trans("No") : $langs->trans("Yes"));
+				print "</td></tr>\n";
+			}
 
 			print '<tr><td>'.$langs->trans("BankAccountOwner").'</td><td>';
 			print $object->proprio;
@@ -790,6 +831,22 @@ if ($action == 'create') {
 			print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
 			print nl2br($object->owner_address);
 			print "</td></tr>\n";
+
+			print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerZip").'</td>';
+			print '<td>'.$object->owner_zip;
+			print '</td></tr>';
+
+			print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerTown").'</td>';
+			print '<td>'.$object->owner_town;
+			print '</td></tr>';
+
+			print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerCountry").'</td>';
+			print '<td>';
+			$object->owner_country_code = dol_getIdFromCode($db, $object->owner_country_id, 'c_country', 'rowid', 'code');
+			$langs->load("dict");
+			print (empty($object->owner_country_code) ? '' : $langs->convToOutputCharset($langs->transnoentitiesnoconv("Country".$object->owner_country_code)));
+
+			print '</td></tr>';
 
 			print '</table>';
 		}
@@ -825,15 +882,12 @@ if ($action == 'create') {
 	/* ************************************************************************** */
 
 	if (GETPOST('id', 'int') && $action == 'edit' && $user->rights->banque->configurer) {
-		$object = new Account($db);
-		$object->fetch(GETPOST('id', 'int'));
-
 		print load_fiche_titre($langs->trans("EditFinancialAccount"), '', 'bank_account');
 
 		if ($conf->use_javascript_ajax) {
 			print "\n".'<script type="text/javascript">';
 			print 'jQuery(document).ready(function () {
-                        jQuery("#selecttype").change(function() {
+                        jQuery("#type").change(function() {
                             document.formsoc.action.value="edit";
                             document.formsoc.submit();
                         });
@@ -852,6 +906,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">'."\n\n";
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 		print dol_get_fiche_head(array(), 0, '', 0);
 
@@ -861,16 +916,16 @@ if ($action == 'create') {
 
 		// Ref
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-		print '<td><input type="text" class="flat maxwidth200" name="ref" value="'.dol_escape_htmltag(GETPOSTISSET("ref") ? GETPOST("ref") : $object->ref).'"></td></tr>';
+		print '<td><input type="text" class="flat maxwidth200" name="ref" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : $object->ref).'"></td></tr>';
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-		print '<td><input type="text" class="flat minwidth300" name="label" value="'.dol_escape_htmltag(GETPOSTISSET("label") ? GETPOST("label") : $object->label).'"></td></tr>';
+		print '<td><input type="text" class="flat minwidth300" name="label" value="'.dol_escape_htmltag(GETPOSTISSET('label') ? GETPOST('label', 'alpha') : $object->label).'"></td></tr>';
 
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
 		print '<td class="maxwidth200onsmartphone">';
-		$formbank->selectTypeOfBankAccount((GETPOSTISSET("type") ? GETPOST("type") : $object->type), "type");
+		$formbank->selectTypeOfBankAccount((GETPOSTISSET('type') ? GETPOST('type', 'int') : $object->type), 'type');
 		print '</td></tr>';
 
 		// Currency
@@ -891,7 +946,7 @@ if ($action == 'create') {
 		// Status
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
 		print '<td class="maxwidth200onsmartphone">';
-		print $form->selectarray("clos", $object->status, (GETPOSTISSET("clos") ? GETPOST("clos") : $object->clos));
+		print $form->selectarray("clos", $object->status, (GETPOSTISSET("clos") ? GETPOST("clos", "int") : $object->clos));
 		print '</td></tr>';
 
 		// Country
@@ -922,6 +977,14 @@ if ($action == 'create') {
 		}
 		print '</td></tr>';
 
+		$type = (GETPOSTISSET('type') ? GETPOST('type', 'int') : $object->type); // add default current value
+		if ($type == Account::TYPE_SAVINGS || $type == Account::TYPE_CURRENT) {
+			print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
+			print '<textarea class="flat quatrevingtpercent" name="domiciliation" rows="'.ROWS_2.'">';
+			print $object->domiciliation;
+			print "</textarea></td></tr>";
+		}
+
 		// Conciliable
 		print '<tr><td>'.$langs->trans("Conciliable").'</td>';
 		print '<td>';
@@ -931,7 +994,7 @@ if ($action == 'create') {
 		} elseif ($conciliate == -3) {
 			print $langs->trans("No").' ('.$langs->trans("Closed").')';
 		} else {
-			print '<input type="checkbox" class="flat" id="norappro" name="norappro"'.(($conciliate > 0) ? '' : ' checked="checked"').'"> <label for="norappro">'.$langs->trans("DisableConciliation").'</label>';
+			print '<input type="checkbox" class="flat" id="norappro" name="norappro"'.(($conciliate > 0) ? '' : ' checked="checked"').'"> <label for="norappro" class="opacitymedium">'.$langs->trans("DisableConciliation").'</label>';
 		}
 		print '</td></tr>';
 
@@ -950,7 +1013,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Tags-Categories
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
@@ -969,7 +1032,7 @@ if ($action == 'create') {
 		print '<td>';
 		// Editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('account_comment', (GETPOST("account_comment") ?GETPOST("account_comment") : $object->comment), '', 90, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_4, '95%');
+		$doleditor = new DolEditor('account_comment', (GETPOST("account_comment") ?GETPOST("account_comment") : $object->comment), '', 90, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_4, '95%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -982,7 +1045,7 @@ if ($action == 'create') {
 		}
 
 		print '</table>';
-		print '<br>';
+		print '<hr>';
 
 
 		//print '<div class="underbanner clearboth"></div>';
@@ -996,9 +1059,9 @@ if ($action == 'create') {
 			$tdextra = ' class="fieldrequired titlefieldcreate"';
 		}
 
-		print '<tr class="liste_titre_add"><td'.$tdextra.'>'.$langs->trans("AccountancyCode").'</td>';
+		print '<tr><td'.$tdextra.'>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
-		if (!empty($conf->accounting->enabled)) {
+		if (isModEnabled('accounting')) {
 			print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
 		} else {
 			print '<input type="text" name="account_number" value="'.(GETPOST("account_number") ? GETPOST("account_number") : $object->account_number).'">';
@@ -1006,7 +1069,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Accountancy journal
-		if (!empty($conf->accounting->enabled)) {
+		if (isModEnabled('accounting')) {
 			print '<tr><td class="fieldrequired">'.$langs->trans("AccountancyJournal").'</td>';
 			print '<td>';
 			print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
@@ -1015,42 +1078,16 @@ if ($action == 'create') {
 
 		print '</table>';
 
-		if (GETPOST("type") == Account::TYPE_SAVINGS || GETPOST("type") == Account::TYPE_CURRENT) {
+		$type = (GETPOSTISSET('type') ? GETPOST('type', 'int') : $object->type); // add default current value
+		if ($type == Account::TYPE_SAVINGS || $type == Account::TYPE_CURRENT) {
 			print '<br>';
-
-			//print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border centpercent">';
 
 			// If bank account
 			print '<tr class="liste_titre_add"><td class="titlefieldcreate">'.$langs->trans("BankName").'</td>';
-			print '<td><input size="30" type="text" class="flat" name="bank" value="'.$object->bank.'"></td>';
+			print '<td><input type="text" class="flat width300" name="bank" value="'.$object->bank.'"></td>';
 			print '</tr>';
-
-			// Show fields of bank account
-			foreach ($object->getFieldsToShow() as $val) {
-				if ($val == 'BankCode') {
-					$name = 'code_banque';
-					$size = 8;
-					$content = $object->code_banque;
-				} elseif ($val == 'DeskCode') {
-					$name = 'code_guichet';
-					$size = 8;
-					$content = $object->code_guichet;
-				} elseif ($val == 'BankAccountNumber') {
-					$name = 'number';
-					$size = 18;
-					$content = $object->number;
-				} elseif ($val == 'BankAccountNumberKey') {
-					$name = 'cle_rib';
-					$size = 3;
-					$content = $object->cle_rib;
-				}
-
-				print '<tr><td>'.$langs->trans($val).'</td>';
-				print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';
-				print '</tr>';
-			}
 
 			$ibankey = FormBank::getIBANLabel($object);
 			$bickey = "BICNumber";
@@ -1060,34 +1097,79 @@ if ($action == 'create') {
 
 			// IBAN
 			print '<tr><td>'.$langs->trans($ibankey).'</td>';
-			print '<td><input class="minwidth300 maxwidth200onsmartphone" maxlength="34" type="text" class="flat" name="iban" value="'.$object->iban.'"></td></tr>';
+			print '<td><input class="minwidth300 maxwidth200onsmartphone" maxlength="34" type="text" class="flat" name="iban" value="'.(GETPOSTISSET('iban') ? GETPOST('iban',  'alphanohtml') : $object->iban).'"></td></tr>';
 
+			// BIC
 			print '<tr><td>'.$langs->trans($bickey).'</td>';
-			print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="11" type="text" class="flat" name="bic" value="'.$object->bic.'"></td></tr>';
+			print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="11" type="text" class="flat" name="bic" value="'.(GETPOSTISSET('bic') ? GETPOST('bic',  'alphanohtml') : $object->bic).'"></td></tr>';
 
-			if ($conf->prelevement->enabled) {
-				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("StandingOrder").')</td>';
-				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics" value="'.$object->ics.'"></td></tr>';
+			// Show fields of bank account
+			foreach ($object->getFieldsToShow() as $val) {
+				$content = '';
+				if ($val == 'BankCode') {
+					$name = 'code_banque';
+					$css = 'with100';
+					$content = $object->code_banque;
+				} elseif ($val == 'DeskCode') {
+					$name = 'code_guichet';
+					$css = 'with100';
+					$content = $object->code_guichet;
+				} elseif ($val == 'BankAccountNumber') {
+					$name = 'number';
+					$css = 'with200';
+					$content = $object->number;
+				} elseif ($val == 'BankAccountNumberKey') {
+					$name = 'cle_rib';
+					$css = 'with50';
+					$content = $object->cle_rib;
+				}
+
+				print '<tr><td>'.$langs->trans($val).'</td>';
+				print '<td><input type="text" class="flat '.$css.'" name="'.$name.'" value="'.dol_escape_htmltag($content).'"></td>';
+				print '</tr>';
 			}
 
-			if ($conf->paymentbybanktransfer->enabled) {
-				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("BankTransfer").')</td>';
-				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics_transfer" value="'.$object->ics_transfer.'"></td></tr>';
+			if (isModEnabled('prelevement')) {
+				print '<tr><td>'.$form->textwithpicto($langs->trans("ICS"), $langs->trans("ICS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("StandingOrder")).')').'</td>';
+				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics" value="'.(GETPOSTISSET('ics') ? GETPOST('ics', 'alphanohtml') : $object->ics).'"></td></tr>';
 			}
 
-			print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
-			print '<textarea class="flat quatrevingtpercent" name="domiciliation" rows="'.ROWS_2.'">';
-			print $object->domiciliation;
-			print "</textarea></td></tr>";
+			if (isModEnabled('paymentbybanktransfer')) {
+				print '<tr><td>'.$form->textwithpicto($langs->trans("IDS"), $langs->trans("IDS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("BankTransfer")).')').'</td>';
+				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics_transfer" value="'.(GETPOSTISSET('ics_transfer') ? GETPOST('ics_transfer', 'alphanohtml') : $object->ics_transfer).'"></td></tr>';
+
+				print '<tr><td>'.$form->textwithpicto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation"), $langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp")).'</td>';
+				print '<td><input type="checkbox" class="flat" name="pti_in_ctti"'. ($object->pti_in_ctti ? ' checked ' : '') . '>';
+				print '</td></tr>';
+			}
 
 			print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
 			print '<td><input class="maxwidth200onsmartphone" type="text" class="flat" name="proprio" value="'.$object->proprio.'"></td>';
 			print '</tr>';
 
-			print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
+			print '</table>';
+			print '<hr>';
+
+			print '<table class="border centpercent">';
+
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
 			print '<textarea class="flat quatrevingtpercent" name="owner_address" rows="'.ROWS_2.'">';
 			print $object->owner_address;
 			print "</textarea></td></tr>";
+
+			print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerZip").'</td>';
+			print '<td><input type="text" class="flat maxwidth100" name="owner_zip" value="'.(GETPOST('owner_zip') ?GETPOST('owner_zip', 'alpha') : $object->owner_zip).'">';
+			print '</td></tr>';
+
+			print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerTown").'</td>';
+			print '<td><input type="text" class="flat maxwidth200" name="owner_town" value="'.(GETPOST('owner_town') ?GETPOST('owner_town', 'alpha') : $object->owner_town).'">';
+			print '</td></tr>';
+
+			print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerCountry").'</td>';
+			print '<td>';
+			print img_picto('', 'country', 'class="pictofixedwidth"');
+			print $form->select_country(GETPOST('owner_country_id') ?GETPOST('owner_country_id', 'alpha') : $object->owner_country_id, 'owner_country_id');
+			print '</td></tr>';
 
 			print '</table>';
 		}

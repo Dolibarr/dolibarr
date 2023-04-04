@@ -26,6 +26,7 @@
  *	\brief      Page to show a receipt.
  */
 
+// Includes
 if (!isset($action)) {
 	//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER', '1');	// Not disabled cause need to load personalized language
 	//if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
@@ -48,7 +49,7 @@ if (!isset($action)) {
 }
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-$langs->loadLangs(array("main", "cashdesk", "companies"));
+$langs->loadLangs(array("main", "bills", "cashdesk", "companies"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 
@@ -57,7 +58,7 @@ $facid = GETPOST('facid', 'int');
 $action = GETPOST('action', 'aZ09');
 $gift = GETPOST('gift', 'int');
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 
@@ -66,10 +67,10 @@ if (empty($user->rights->takepos->run)) {
  * View
  */
 
-top_httphead('text/html');
+top_httphead('text/html', 1);
 
 if ($place > 0) {
-	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
 	$resql = $db->query($sql);
 	$obj = $db->fetch_object($resql);
 	if ($obj) {
@@ -80,16 +81,16 @@ $object = new Facture($db);
 $object->fetch($facid);
 
 // Call to external receipt modules if exist
-$hookmanager->initHooks(array('takeposfrontend'), $facid);
+$parameters = array();
+$hookmanager->initHooks(array('takeposfrontend'));
 $reshook = $hookmanager->executeHooks('TakeposReceipt', $parameters, $object);
 if (!empty($hookmanager->resPrint)) {
 	print $hookmanager->resPrint;
-	exit;
+	return;	// Receipt page can be called by the takepos/send.php page that use ob_start/end so we must use return and not exit to stop page
 }
 
 // IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolute path.
 ?>
-<html>
 <body>
 <style>
 .right {
@@ -257,7 +258,7 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
 					  } ?></td>
 </tr>
 <?php
-if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
+if (isModEnabled('multicurrency') && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
 	//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 	include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 	$multicurrency = new MultiCurrency($db);
@@ -269,42 +270,57 @@ if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"
 	echo '</td></tr>';
 }
 
-if ($conf->global->TAKEPOS_PRINT_PAYMENT_METHOD) {
-	$sql = "SELECT p.pos_change as pos_change, p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,";
-	$sql .= " cp.code";
-	$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
-	$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".((int) $facid);
-	$sql .= " ORDER BY p.datep";
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
-		$i = 0;
-		while ($i < $num) {
-			$row = $db->fetch_object($resql);
-			echo '<tr>';
-			echo '<td class="right">';
-			echo $langs->transnoentitiesnoconv("PaymentTypeShort".$row->code);
-			echo '</td>';
-			echo '<td class="right">';
-			$amount_payment = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
-			if ($row->code == "LIQ") {
-				$amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
-			}
-			echo price($amount_payment, 1, '', 1, - 1, - 1, $conf->currency);
-			echo '</td>';
-			echo '</tr>';
-			if ($row->code == "LIQ" && $row->pos_change > 0) { // Print change only in cash payments
+if (getDolGlobalString('TAKEPOS_PRINT_PAYMENT_METHOD')) {
+	if (empty($facid)) {
+		// Case of specimen
+		echo '<tr>';
+		echo '<td class="right">';
+		echo $langs->transnoentitiesnoconv("PaymentTypeShortLIQ");
+		echo '</td>';
+		echo '<td class="right">';
+		$amount_payment = 0;
+		echo price($amount_payment, 1, '', 1, - 1, - 1, $conf->currency);
+		echo '</td>';
+		echo '</tr>';
+	} else {
+		$sql = "SELECT p.pos_change as pos_change, p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,";
+		$sql .= " cp.code";
+		$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
+		$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".((int) $facid);
+		$sql .= " ORDER BY p.datep";
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+
+			$i = 0;
+			while ($i < $num) {
+				$row = $db->fetch_object($resql);
 				echo '<tr>';
 				echo '<td class="right">';
-				echo $langs->trans("Change");
+				echo $langs->transnoentitiesnoconv("PaymentTypeShort".$row->code);
 				echo '</td>';
 				echo '<td class="right">';
-				echo price($row->pos_change, 1, '', 1, - 1, - 1, $conf->currency);
+				$amount_payment = (isModEnabled('multicurrency') && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
+				if ($row->code == "LIQ") {
+					$amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
+				}
+				echo price($amount_payment, 1, '', 1, - 1, - 1, $conf->currency);
 				echo '</td>';
 				echo '</tr>';
+				if ($row->code == "LIQ" && $row->pos_change > 0) { // Print change only in cash payments
+					echo '<tr>';
+					echo '<td class="right">';
+					echo $langs->trans("Change");
+					echo '</td>';
+					echo '<td class="right">';
+					echo price($row->pos_change, 1, '', 1, - 1, - 1, $conf->currency);
+					echo '</td>';
+					echo '</tr>';
+				}
+				$i++;
 			}
-			$i++;
 		}
 	}
 }
@@ -330,7 +346,9 @@ if (!empty($conf->global->TAKEPOS_FOOTER) || !empty($conf->global->{$constFreeTe
 ?>
 
 <script type="text/javascript">
-	window.print();
+	<?php
+	if ($facid) print 'window.print();'; //Avoid print when is specimen
+	?>
 </script>
 
 </body>

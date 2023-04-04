@@ -29,8 +29,8 @@ create table llx_product_price
   fk_product		integer NOT NULL,
   date_price		datetime NOT NULL,
   price_level		smallint NULL DEFAULT 1,
-  price				double(24,8) DEFAULT NULL,
-  price_ttc			double(24,8) DEFAULT NULL,
+  price				double(24,8) DEFAULT NULL,		-- price without tax
+  price_ttc			double(24,8) DEFAULT NULL,		-- price inc vat (but not localtax1 nor localtax2)
   price_min			double(24,8) default NULL,
   price_min_ttc		double(24,8) default NULL,
   price_base_type	varchar(3) DEFAULT 'HT',

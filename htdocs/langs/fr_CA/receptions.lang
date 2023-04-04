@@ -6,7 +6,6 @@ LastReceptions=Dernières %s réceptions
 ReceptionCard=Carte de réception
 QtyInOtherReceptions=Qtée dans d'autres réceptions
 OtherReceptionsForSameOrder=Autres réceptions sur cette commande
-StatusReceptionValidated=Validée (produits à envoyer ou déjà envoyé)
 StatusReceptionProcessed=Traité
 StatusReceptionValidatedShort=Validée
 StatusReceptionProcessedShort=Traité

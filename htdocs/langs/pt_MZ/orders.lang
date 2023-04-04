@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - orders
+Order=Pedido
+PdfOrderTitle=Pedido
+Orders=Pedidos
+SuppliersOrders=Pedidos de compra
+CustomersOrders=Pedidos de venda
+StatusOrderDraftShort=Minuta
+StatusOrderValidatedShort=Validada
+StatusOrderSentShort=Em andamento
+StatusOrderToProcessShort=A processar
+StatusOrderDraft=Rascunho (precisa ser validada)
+TypeContact_commande_external_BILLING=Contato de fatura de cliente
+TypeContact_commande_external_SHIPPING=Contato de envio de cliente
+TypeContact_order_supplier_external_BILLING=Contato da fatura do fornecedor
+TypeContact_order_supplier_external_SHIPPING=Contato de remessa do fornecedor
+OrderByEMail=E-mail
+StatusSupplierOrderDraftShort=Minuta
+StatusSupplierOrderValidatedShort=Validada
+StatusSupplierOrderSentShort=Em andamento
+StatusSupplierOrderToProcessShort=A processar
+StatusSupplierOrderDraft=Rascunho (precisa ser validada)
+StatusSupplierOrderValidated=Validada

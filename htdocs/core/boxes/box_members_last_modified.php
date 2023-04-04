@@ -28,7 +28,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last modofied members
+ * Class to manage the box to show last modified members
  */
 class box_members_last_modified extends ModeleBoxes
 {
@@ -67,7 +67,7 @@ class box_members_last_modified extends ModeleBoxes
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !(!empty($conf->adherent->enabled) && $user->rights->adherent->lire);
+		$this->hidden = !(isModEnabled('adherent') && $user->rights->adherent->lire);
 	}
 
 	/**
@@ -92,7 +92,7 @@ class box_members_last_modified extends ModeleBoxes
 
 		if ($user->rights->adherent->lire) {
 			$sql = "SELECT a.rowid, a.ref, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
-			$sql .= " a.datec, a.tms, a.statut as status, a.datefin as date_end_subscription,";
+			$sql .= " a.datec, a.tms as datem, a.statut as status, a.datefin as date_end_subscription,";
 			$sql .= ' a.photo, a.email, a.gender, a.morphy,';
 			$sql .= " t.rowid as typeid, t.subscription, t.libelle as label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as t";
@@ -109,7 +109,7 @@ class box_members_last_modified extends ModeleBoxes
 				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
 					$datec = $this->db->jdate($objp->datec);
-					$datem = $this->db->jdate($objp->tms);
+					$datem = $this->db->jdate($objp->datem);
 
 					$memberstatic->lastname = $objp->lastname;
 					$memberstatic->firstname = $objp->firstname;
@@ -121,6 +121,8 @@ class box_members_last_modified extends ModeleBoxes
 					$memberstatic->morphy = $objp->morphy;
 					$memberstatic->company = $objp->company;
 					$memberstatic->statut = $objp->status;
+					$memberstatic->date_creation = $datec;
+					$memberstatic->date_modification = $datem;
 					$memberstatic->need_subscription = $objp->subscription;
 					$memberstatic->datefin = $this->db->jdate($objp->date_end_subscription);
 					if (!empty($objp->fk_soc)) {
@@ -142,12 +144,17 @@ class box_members_last_modified extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+						'text' =>$memberstatic->company,
+					);
+
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
 						'text' => $statictype->getNomUrl(1, 32),
 						'asis' => 1,
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center nowraponall"',
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($datem, "day", 'tzuserrel'),
 					);
 

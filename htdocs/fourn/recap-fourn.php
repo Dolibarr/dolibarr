@@ -23,6 +23,7 @@
  *		\brief      Page de fiche recap supplier
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -63,7 +64,7 @@ if ($socid > 0) {
 	dol_banner_tab($societe, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 	print dol_get_fiche_end();
 
-	if ((!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) {
+	if ((isModEnabled("fournisseur") && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)) {
 		// Invoice list
 		print load_fiche_titre($langs->trans("SupplierPreview"));
 
@@ -92,8 +93,8 @@ if ($socid > 0) {
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 
-			if (!$num > 0) {
-				print '<tr><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
+			if ($num <= 0) {
+				print '<tr><td colspan="7"><span class="opacitymedium">'.$langs->trans("NoInvoice").'</span></td></tr>';
 			}
 
 			$solde = 0;
@@ -108,14 +109,14 @@ if ($socid > 0) {
 					print $fac->error."<br>";
 					continue;
 				}
-				$totalpaye = $fac->getSommePaiement();
+				$totalpaid = $fac->getSommePaiement();
 
 				print '<tr class="oddeven">';
 
-				print "<td class=\"center\">".dol_print_date($fac->date)."</td>\n";
+				print '<td class="center">'.dol_print_date($fac->date)."</td>\n";
 				print "<td><a href=\"facture/card.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"), "bill")." ".$fac->ref."</a></td>\n";
 
-				print '<td class="left">'.$fac->getLibStatut(2, $totalpaye).'</td>';
+				print '<td class="left">'.$fac->getLibStatut(2, $totalpaid).'</td>';
 				print '<td class="right">'.price($fac->total_ttc)."</td>\n";
 				$solde = $solde + $fac->total_ttc;
 

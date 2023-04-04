@@ -32,8 +32,11 @@
  * 				This script reads the conf file, init $lang, $db and and empty $user
  */
 
-// Declaration of variables. May have been already require by main.inc.php. But may not by scripts. So, here the require_once must be kept.
+// Include the conf.php and functions.lib.php and security.lib.php. This defined the constants like DOL_DOCUMENT_ROOT, DOL_DATA_ROOT, DOL_URL_ROOT...
+// This file may have been already required by main.inc.php. But may not by scripts. So, here the require_once must be kept.
 require_once 'filefunc.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 
 if (!function_exists('is_countable')) {
@@ -52,15 +55,13 @@ if (!function_exists('is_countable')) {
  * Create $conf object
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
-
 $conf = new Conf();
 
 // Set properties specific to database
-$conf->db->host = $dolibarr_main_db_host;
-$conf->db->port = $dolibarr_main_db_port;
-$conf->db->name = $dolibarr_main_db_name;
-$conf->db->user = $dolibarr_main_db_user;
+$conf->db->host = empty($dolibarr_main_db_host) ? '' : $dolibarr_main_db_host;
+$conf->db->port = empty($dolibarr_main_db_port) ? '' : $dolibarr_main_db_port;
+$conf->db->name = empty($dolibarr_main_db_name) ? '' : $dolibarr_main_db_name;
+$conf->db->user = empty($dolibarr_main_db_user) ? '' : $dolibarr_main_db_user;
 $conf->db->pass = empty($dolibarr_main_db_pass) ? '' : $dolibarr_main_db_pass;
 $conf->db->type = $dolibarr_main_db_type;
 $conf->db->prefix = $dolibarr_main_db_prefix;
@@ -74,9 +75,10 @@ if (defined('TEST_DB_FORCE_TYPE')) {
 
 // Set properties specific to conf file
 $conf->file->main_limit_users = $dolibarr_main_limit_users;
-$conf->file->mailing_limit_sendbyweb = $dolibarr_mailing_limit_sendbyweb;
-$conf->file->mailing_limit_sendbycli = $dolibarr_mailing_limit_sendbycli;
-$conf->file->main_authentication = empty($dolibarr_main_authentication) ? '' : $dolibarr_main_authentication; // Identification mode
+$conf->file->mailing_limit_sendbyweb = empty($dolibarr_mailing_limit_sendbyweb) ? 0 : $dolibarr_mailing_limit_sendbyweb;
+$conf->file->mailing_limit_sendbycli = empty($dolibarr_mailing_limit_sendbycli) ? 0 : $dolibarr_mailing_limit_sendbycli;
+$conf->file->mailing_limit_sendbyday = empty($dolibarr_mailing_limit_sendbyday) ? 0 : $dolibarr_mailing_limit_sendbyday;
+$conf->file->main_authentication = empty($dolibarr_main_authentication) ? 'dolibarr' : $dolibarr_main_authentication; // Identification mode
 $conf->file->main_force_https = empty($dolibarr_main_force_https) ? '' : $dolibarr_main_force_https; // Force https
 $conf->file->strict_mode = empty($dolibarr_strict_mode) ? '' : $dolibarr_strict_mode; // Force php strict mode (for debug)
 $conf->file->instance_unique_id = empty($dolibarr_main_instance_unique_id) ? (empty($dolibarr_main_cookie_cryptkey) ? '' : $dolibarr_main_cookie_cryptkey) : $dolibarr_main_instance_unique_id; // Unique id of instance
@@ -161,8 +163,9 @@ if (!defined('NOREQUIREDB')) {
 }
 
 // Now database connexion is known, so we can forget password
-//unset($dolibarr_main_db_pass); 	// We comment this because this constant is used in a lot of pages
+//unset($dolibarr_main_db_pass); 	// We comment this because this constant is used in some other pages
 unset($conf->db->pass); // This is to avoid password to be shown in memory/swap dump
+
 
 /*
  * Object $user
@@ -172,8 +175,13 @@ if (!defined('NOREQUIREUSER')) {
 }
 
 /*
+ * Create the global $hookmanager object
+ */
+$hookmanager = new HookManager($db);
+
+
+/*
  * Load object $conf
- * After this, all parameters conf->global->CONSTANTS are loaded
  */
 
 // By default conf->entity is 1, but we change this if we ask another value.
@@ -190,15 +198,12 @@ if (session_id() && !empty($_SESSION["dol_entity"])) {
 	// For public page with MultiCompany module
 	$conf->entity = constant('DOLENTITY');
 }
-
 // Sanitize entity
 if (!is_numeric($conf->entity)) {
 	$conf->entity = 1;
 }
-
-//print "We work with data into entity instance number '".$conf->entity."'";
-
 // Here we read database (llx_const table) and define $conf->global->XXX var.
+//print "We work with data into entity instance number '".$conf->entity."'";
 $conf->setValues($db);
 
 // Create object $mysoc (A thirdparty object that contains properties of companies managed by Dolibarr.
@@ -208,9 +213,25 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
 	$mysoc = new Societe($db);
 	$mysoc->setMysoc($conf);
 
-	// For some countries, we need to invert our address with customer address
+	// We set some specific default values according to country
+
 	if ($mysoc->country_code == 'DE' && !isset($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+		// For DE, we need to invert our address with customer address
 		$conf->global->MAIN_INVERT_SENDER_RECIPIENT = 1;
+	}
+	if ($mysoc->country_code == 'FR' && !isset($conf->global->MAIN_PROFID1_IN_ADDRESS)) {
+		// For FR, default value of option to show profid SIRET is on by default. Decret n°2099-1299 2022-10-07
+		$conf->global->MAIN_PROFID1_IN_ADDRESS = 1;
+	}
+	if ($mysoc->country_code == 'FR' && !isset($conf->global->INVOICE_CATEGORY_OF_OPERATION)) {
+		// For FR, default value of option to show category of operations is on by default. Decret n°2099-1299 2022-10-07
+		$conf->global->INVOICE_CATEGORY_OF_OPERATION = 1;
+	}
+
+	if ($mysoc->localtax1_assuj || $mysoc->localtax2_assuj) {
+		// For countries using the 2nd or 3rd tax, we disable input/edit of lines using the price including tax (because 2nb and 3rd tax not yet taken into account).
+		// Work In Progress to support all taxes into unit price entry when MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES is set.
+		$conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX = 1;
 	}
 }
 
@@ -225,12 +246,7 @@ if (!defined('NOREQUIRETRAN')) {
 }
 
 
-// Create the global $hookmanager object
-include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager = new HookManager($db);
-
 
 if (!defined('MAIN_LABEL_MENTION_NPR')) {
 	define('MAIN_LABEL_MENTION_NPR', 'NPR');
 }
-//if (! defined('PCLZIP_TEMPORARY_DIR')) define('PCLZIP_TEMPORARY_DIR', $conf->user->dir_temp);

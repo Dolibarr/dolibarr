@@ -38,12 +38,16 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+
+// Security check
+if (!isModEnabled('incoterm')) {
+	httponly_accessforbidden("Module incoterm not enabled");	// This includes the exit.
+}
+// There is no other permission on this component. Everybody connected can read content of the incoterm table
 
 
 /*
@@ -72,13 +76,12 @@ if (GETPOST('location_incoterms')) {
 	if (!empty($conf->global->MAIN_USE_LOCATION_INCOTERMS_DICTIONNARY)) {   // Use location_incoterms
 		$sql = "SELECT z.location as location_incoterms, z.label as label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_location_incoterms as z";
-		$sql .= " WHERE z.active = 1  AND UPPER(z.location) LIKE UPPER('%".$db->escape($location_incoterms)."%')";
+		$sql .= " WHERE z.active = 1 AND z.location LIKE '%".$db->escape($db->escapeforlike($location_incoterms))."%'";
 		$sql .= " ORDER BY z.location";
 		$sql .= $db->plimit(100); // Avoid pb with bad criteria
-	} else // Use table of commande
-	{
+	} else { // Use table of sale orders
 		$sql = "SELECT DISTINCT s.location_incoterms FROM ".MAIN_DB_PREFIX.'commande as s';
-		$sql .= " WHERE UPPER(s.location_incoterms) LIKE UPPER('%".$db->escape($location_incoterms)."%')";
+		$sql .= " WHERE s.location_incoterms LIKE '%".$db->escape($db->escapeforlike($location_incoterms))."%'";
 
 		//Todo: merge with data from table of supplier order
 		/*	$sql .=" UNION";

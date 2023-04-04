@@ -78,16 +78,12 @@ class modHoliday extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("holiday.php");
 
-
-		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
-		// $this->config_page_url = array("holiday.php?leftmenu=setup@holiday");
-
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("holiday");
 
@@ -140,7 +136,7 @@ class modHoliday extends DolibarrModules
 		$datestart = dol_mktime(4, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
 		$this->cronjobs = array(
 			0 => array(
-				'label' => 'HolidayBalanceMonthlyUpdate',
+				'label' => 'HolidayBalanceMonthlyUpdate:holiday',
 				'jobtype' => 'method',
 				'class' => 'holiday/class/holiday.class.php',
 				'objectname' => 'Holiday',
@@ -199,7 +195,7 @@ class modHoliday extends DolibarrModules
 		$this->rights[$r][0] = 20005; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/modify leave requests for everybody'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'writeall_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][4] = 'writeall'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
