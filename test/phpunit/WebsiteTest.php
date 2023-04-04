@@ -55,6 +55,7 @@ if (! defined("NOSESSION")) {
 require_once dirname(__FILE__).'/../../htdocs/main.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/website.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/website2.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/website/class/website.class.php';
 
 
 if (empty($user->id)) {
@@ -110,7 +111,7 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -123,7 +124,7 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -136,7 +137,7 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -152,7 +153,7 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -165,14 +166,16 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testGetPagesFromSearchCriterias()
 	{
-		global $db;
+		global $db, $website;
+
+		$website = new Website($db);	// $website must be defined globally for getPagesFromSearchCriterias()
 
 		$s = "123') OR 1=1-- \' xxx";
 		/*
-		var_dump($s);
-		var_dump($db->escapeforlike($s));
-		var_dump($db->escape($db->escapeforlike($s)));
-		*/
+		 var_dump($s);
+		 var_dump($db->escapeforlike($s));
+		 var_dump($db->escape($db->escapeforlike($s)));
+		 */
 
 		$res = getPagesFromSearchCriterias('page,blogpost', 'meta,content', $s, 2, 'date_creation', 'DESC', 'en');
 		//var_dump($res);
@@ -181,6 +184,23 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals($res['code'], 'KO');
 	}
 
+	/**
+	 * testDolStripPhpCode
+	 *
+	 * @return	void
+	 */
+	public function testDolStripPhpCode()
+	{
+		global $db;
+
+		$s = "abc\n<?php echo 'def'\n// comment\n ?>ghi";
+		$result = dolStripPhpCode($s);
+		$this->assertEquals("abc\n<span phptag></span>ghi", $result);
+
+		$s = "abc\n<?PHP echo 'def'\n// comment\n ?>ghi";
+		$result = dolStripPhpCode($s);
+		$this->assertEquals("abc\n<span phptag></span>ghi", $result);
+	}
 
 	/**
 	 * testCheckPHPCode

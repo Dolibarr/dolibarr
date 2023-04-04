@@ -225,7 +225,7 @@ class MyObject extends CommonObject
 	// /**
 	//  * @var array	List of child tables. To test if we can delete object.
 	//  */
-	// protected $childtables = array();
+	// protected $childtables = array('mychildtable' => array('name'=>'MyObject', 'fk_element'=>'fk_myobject'));
 
 	// /**
 	//  * @var array    List of child tables. To know object to delete on cascade.
@@ -803,10 +803,11 @@ class MyObject extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = " data-params='".json_encode($params)."'";
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$this->id;
 
@@ -827,7 +828,7 @@ class MyObject extends CommonObject
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');

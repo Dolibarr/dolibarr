@@ -54,6 +54,9 @@ $format = 'int';
 
 // Load object according to $id and $element
 $object = fetchObjectByElement($id, $element);
+if (!is_object($object)) {
+	httponly_accessforbidden("Bad value for combination of parameters element/field: Object not found.");	// This includes the exit.
+}
 
 $object->fields[$field] = array('type' => $format, 'enabled' => 1);
 
@@ -81,7 +84,7 @@ if (preg_match('/status$/', $field)) {
 } elseif ($element == 'product' && in_array($field, array('tosell', 'tobuy', 'tobatch'))) {	// Special case for products
 	restrictedArea($user, 'produit|service', $object, 'product&product', '', '', 'rowid');
 } else {
-	httponly_accessforbidden("Bad value for combination of parameters element/field.");	// This includes the exit.
+	httponly_accessforbidden("Bad value for combination of parameters element/field: Field not supported.");	// This includes the exit.
 }
 
 

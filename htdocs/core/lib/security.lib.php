@@ -270,9 +270,9 @@ function dol_verifyHash($chain, $hash, $type = '0')
 	if ($type == '0' && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_verify')) {
 		if (! empty($hash[0]) && $hash[0] == '$') {
 			return password_verify($chain, $hash);
-		} elseif (strlen($hash) == 32) {
+		} elseif (dol_strlen($hash) == 32) {
 			return dol_verifyHash($chain, $hash, '3'); // md5
-		} elseif (strlen($hash) == 40) {
+		} elseif (dol_strlen($hash) == 40) {
 			return dol_verifyHash($chain, $hash, '2'); // sha1md5
 		}
 
@@ -332,7 +332,7 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  *  This method check permission on module then call checkUserAccessToObject() for permission on object (according to entity and socid of user).
  *
  *	@param	User				$user      	  	User to check
- *	@param  string				$features	    Features to check (it must be module $object->element. Can be a 'or' check with 'levela|levelb'.
+ *	@param  string				$features	    Features to check (it must be module name or $object->element. Can be a 'or' check with 'levela|levelb'.
  *												Examples: 'societe', 'contact', 'produit&service', 'produit|service', ...)
  *												This is used to check permission $user->rights->features->...
  *	@param  int|string|object	$object      	Object or Object ID or list of Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
@@ -364,7 +364,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
 	//print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
 	//print ", dbtablename=".$tableandshare.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
-	//print ", perm: ".$features."->".$feature2."=".($user->rights->$features->$feature2->lire)."<br>";
+	//print ", perm: ".$features."->".$feature2."=".($user->hasRight($features, $feature2, 'lire'))."<br>";
 
 	$parentfortableentity = '';
 
@@ -388,15 +388,16 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$features = 'adherent';
 		$feature2 = 'cotisation';
 	}
-	if ($features == 'websitepage') {
-		$features = 'website';
-		$tableandshare = 'website_page';
+	if ($features == 'website' && is_object($object) && $object->element == 'websitepage') {
 		$parentfortableentity = 'fk_website@website';
 	}
 	if ($features == 'project') {
 		$features = 'projet';
 	}
 	if ($features == 'product') {
+		$features = 'produit';
+	}
+	if ($features == 'productbatch') {
 		$features = 'produit';
 	}
 	if ($features == 'fournisseur') {	// When vendor invoice and pruchase order are into module 'fournisseur'

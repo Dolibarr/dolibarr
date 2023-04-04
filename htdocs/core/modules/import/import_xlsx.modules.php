@@ -106,6 +106,8 @@ class ImportXlsx extends ModeleImports
 	public function __construct($db, $datatoimport)
 	{
 		global $conf, $langs;
+
+		parent::__construct();
 		$this->db = $db;
 
 		// this is used as an extension from the example file code, so we have to put xlsx here !!!
@@ -694,7 +696,7 @@ class ImportXlsx extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, $key));
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $key));
 									$newval = $res; 	// We get new value computed.
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
@@ -853,7 +855,7 @@ class ImportXlsx extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, $key));
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $key));
 									$fieldArr = explode('.', $fieldname);
 									if (count($fieldArr) > 0) {
 										$fieldname = $fieldArr[1];
@@ -916,6 +918,10 @@ class ImportXlsx extends ModeleImports
 										$filters[] = $col.' = '.$data[$key];
 									}
 								}
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$where[] = "entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+									$filters[] = "entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+								}
 								$sqlSelect .= " WHERE " . implode(' AND ', $where);
 
 								$resql = $this->db->query($sqlSelect);
@@ -952,6 +958,10 @@ class ImportXlsx extends ModeleImports
 									$keyfield = 'rowid';
 								}
 								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
+
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$sqlSelect .= " AND entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+								}
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
@@ -996,6 +1006,10 @@ class ImportXlsx extends ModeleImports
 
 								if ($is_table_category_link) {
 									$sqlend = " WHERE " . implode(' AND ', $where);
+								}
+
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$sqlend .= " AND entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
 								}
 
 								$sql = $sqlstart . $sqlend;

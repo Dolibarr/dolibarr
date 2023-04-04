@@ -223,6 +223,7 @@ class AllTests
 		require_once dirname(__FILE__).'/AccountingAccountTest.php';
 		$suite->addTestSuite('AccountingAccountTest');
 
+		// Rest
 		require_once dirname(__FILE__).'/RestAPIUserTest.php';
 		$suite->addTestSuite('RestAPIUserTest');
 		require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
@@ -273,6 +274,10 @@ class AllTests
 		// Email collector
 		require_once dirname(__FILE__).'/EmailCollectorTest.php';
 		$suite->addTestSuite('EmailCollectorTest');
+
+		// Website
+		require_once dirname(__FILE__).'/WebsiteTest.php';
+		$suite->addTestSuite('WebsiteTest');
 
 		return $suite;
 	}

@@ -1667,7 +1667,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	// Show information for lot
 	if (!empty($dbatch)) {
 		// $object is a shipment.
-		//var_dump($object->lines[$i]->details_entrepot);		// array from llx_expeditiondet (we can have seral lines for one fk_origin_line)
+		//var_dump($object->lines[$i]->details_entrepot);		// array from llx_expeditiondet (we can have several lines for one fk_origin_line)
 		//var_dump($object->lines[$i]->detail_batch);			// array from llx_expeditiondet_batch (each line with a lot is linked to llx_expeditiondet)
 
 		include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';

@@ -1409,13 +1409,15 @@ class Account extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
-	 * @since v18
-	 * @return array
+	 *
+	 * @param 	array 	$params 	Params to construct tooltip data
+	 * @since 	v18
+	 * @return 	array
 	 */
 	public function getTooltipContentArray($params)
 	{
 		global $langs;
+		$langs->loadLangs(['banks', 'compta']);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
 		$datas = array();
@@ -1474,11 +1476,15 @@ class Account extends CommonObject
 		];
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
-		$linkclose = '"'.$dataparams.' title="'.dol_escape_htmltag($label, 1).'" class="'.$classfortooltip.'">';
+		$linkclose = '';
+		$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+		$linkclose .= $dataparams.' class="'.$classfortooltip.'">';
 
 		$url = DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id;
 		if ($mode == 'transactions') {

@@ -581,7 +581,7 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&action=createtime&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'buttonnew'=>'AddTimeSpent',
 	'testnew'=>$user->hasRight('project', 'creer'),
-	'test'=>!empty($conf->project->enabled) && $user->hasRight('projet', 'lire') && !empty($conf->global->PROJECT_HIDE_TASKS)),
+	'test'=>!empty($conf->project->enabled) && $user->hasRight('projet', 'lire') && empty($conf->global->PROJECT_HIDE_TASKS)),
 'stock_mouvement'=>array(
 	'name'=>"MouvementStockAssociated",
 	'title'=>"ListMouvementStockProject",

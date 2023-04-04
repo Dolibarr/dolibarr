@@ -53,7 +53,7 @@ if (GETPOSTISSET('option')) {
 // Load object according to $element
 $object = fetchObjectByElement($id, $objecttype);
 if (empty($object->element)) {
-	httponly_accessforbidden('Failed to get object from objecttype='.$objecttype.' id='.$id);
+	httponly_accessforbidden('Failed to get object with fetchObjectByElement(id='.$id.', objectype='.$objecttype.')');
 }
 
 $module = $object->module;
@@ -79,7 +79,7 @@ top_httphead();
 $html = '';
 
 if (is_object($object)) {
-	if ($object->id > 0) {
+	if ($object->id > 0 || !empty($object->ref)) {
 		$html = $object->getTooltipContent($params);
 	} elseif ($res == 0) {
 		$html = $langs->trans('Deleted');

@@ -1513,7 +1513,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 
-		$arraydata = array('alreadypaid' => $paiement);
+		$arraydata = array('alreadypaid' => $paiement, 'thirdparty' => $thirdparty->getNomUrl(1, '', 12));
 		print $facturestatic->getKanbanView('', $arraydata);
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';

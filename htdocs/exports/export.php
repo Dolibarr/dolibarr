@@ -1180,7 +1180,8 @@ if ($step == 5 && $datatoexport) {
 	print '<br>';
 
 	// List of available export formats
-	$htmltabloflibs = '<table class="noborder centpercent">';
+	$htmltabloflibs = '<!-- Table with available export formats --><br>';
+	$htmltabloflibs .= '<table class="noborder centpercent nomarginbottom">';
 	$htmltabloflibs .= '<tr class="liste_titre">';
 	$htmltabloflibs .= '<td>'.$langs->trans("AvailableFormats").'</td>';
 	$htmltabloflibs .= '<td>'.$langs->trans("LibraryUsed").'</td>';
@@ -1204,7 +1205,7 @@ if ($step == 5 && $datatoexport) {
 		$htmltabloflibs .= '<td class="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';
 		$htmltabloflibs .= '</tr>'."\n";
 	}
-	$htmltabloflibs .= '</table>';
+	$htmltabloflibs .= '</table><br>';
 
 	print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NowClickToGenerateToBuildExportFile"), $htmltabloflibs, 1, 'help', '', 0, 2, 'helphonformat').'</span>';
 	//print $htmltabloflibs;
