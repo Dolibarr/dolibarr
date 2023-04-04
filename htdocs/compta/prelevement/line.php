@@ -321,7 +321,11 @@ if ($id) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
 			}
 
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
+			if ($type == 'bank-transfer') {
+				print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">';
+			} else {
+				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
+			}
 			print img_object($langs->trans("ShowCompany"), "company").' '.$obj->name."</a></td>\n";
 
 			print '<td class="right"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";
