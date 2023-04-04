@@ -888,19 +888,19 @@ if ($search_status <> '') {
 		if ($search_status == 1 && empty($conf->expedition->enabled)) {
 			$sql .= ' AND c.fk_statut IN (1,2)'; // If module expedition disabled, we include order with status 'sending in process' into 'validated'
 		} else {
-			$sql .= ' AND c.fk_statut = '.((int) $search_status); // brouillon, validee, en cours, annulee
+			$sql .= ' AND c.fk_statut = '.((int) $search_status); // draft, validated, in process or canceled
 		}
 	}
-	if ($search_status == -2) {	// To process
+	if ($search_status == -2) {	// "validated + in process"
 		//$sql.= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
 		$sql .= " AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))"; // If status is 2 and facture=1, it must be selected
 	}
-	if ($search_status == -3) {	// To bill
+	if ($search_status == -3) {	// "validated + in process + delivered"
 		//$sql.= ' AND c.fk_statut in (1,2,3)';
 		//$sql.= ' AND c.facture = 0'; // invoice not created
-		$sql .= ' AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))'; // validated, in process or closed but not billed
+		$sql .= ' AND (c.fk_statut IN (1,2,3))'; // validated, in process or closed
 	}
-	if ($search_status == -4) {	//  "validate and in progress"
+	if ($search_status == -4) {	//  "validate + in progress"
 		$sql .= ' AND (c.fk_statut IN (1,2))'; // validated, in process
 	}
 }
