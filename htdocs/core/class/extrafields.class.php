@@ -1124,6 +1124,9 @@ class ExtraFields
 						continue;
 					}
 
+					$valarray = explode('|', $val);
+					$val = $valarray[0];
+
 					if ($langfile && $val) {
 						$options[$okey] = $langs->trans($val);
 					} else {
