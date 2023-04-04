@@ -727,6 +727,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<table class="noborder noshadow centpercent nobottom">';
 
 		print '<tr class="liste_titre">';
+		// Product
 		print '<td>'.$langs->trans("Product").'</td>';
 		// Qty
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
@@ -745,13 +746,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 				$listwarehouses = $tmpwarehouse->list_array(1);
 				if (count($listwarehouses) > 1) {
-					print '<br><span class="opacitymedium">' . $langs->trans("ForceTo") . '</span> ' . $form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth300', 1);
+					print '<br>'.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, $langs->trans("ForceTo"), 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth200', 1);
 				} elseif (count($listwarehouses) == 1) {
-					print '<br><span class="opacitymedium">' . $langs->trans("ForceTo") . '</span> ' . $form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth300', 1);
+					print '<br>'.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth200', 1);
 				}
 			}
 		}
 		print '</td>';
+
 		if (isModEnabled('stock')) {
 			// Available
 			print '<td align="right">';
@@ -870,7 +872,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '<tr data-line-id="'.$line->id.'">';
 					// Product
 					print '<td>'.$tmpproduct->getNomUrl(1);
-					print '<br><span class="opacitymedium small">'.$tmpproduct->label.'</span>';
+					print '<br><div class="opacitymedium small tdoverflowmax150" title="'.dol_escape_htmltag($tmpproduct->label).'">'.$tmpproduct->label.'</div>';
 					print '</td>';
 					// Qty
 					print '<td class="right nowraponall">';
