@@ -23,15 +23,24 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
-global $db, $langs;
-
 require '../../main.inc.php'; // Load $user and permissions
 
 $warehouse_id = GETPOST('warehouse_id', 'int');
 $batch = GETPOST('batch', 'alphanohtml');
 $fk_product = GETPOST('product_id', 'int');
 $action = GETPOST('action', 'alphanohtml');
-$permissiontoproduce = GETPOST('permissiontoproduce', 'int');
+
+$result = restrictedArea($user, 'mrp');
+
+$permissiontoproduce = $user->rights->mrp->write;
+
+
+
+/*
+ * View
+ */
+
+top_httphead("application/json");
 
 if ($action == 'updateselectbatchbywarehouse' && $permissiontoproduce) {
 	$TRes = array();
@@ -57,7 +66,6 @@ if ($action == 'updateselectbatchbywarehouse' && $permissiontoproduce) {
 	}
 
 	echo json_encode($TRes);
-	exit();
 } elseif ($action == 'updateselectwarehousebybatch' && $permissiontoproduce) {
 	$res = 0;
 
@@ -79,5 +87,4 @@ if ($action == 'updateselectbatchbywarehouse' && $permissiontoproduce) {
 	}
 
 	echo json_encode($res);
-	exit();
 }
