@@ -340,7 +340,7 @@ print '<table class="border tableforfield centpercent">';
 
 // Description
 print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-print nl2br($object->description);
+print dol_htmlentitiesbr($object->description);
 print '</td></tr>';
 
 // Categories
