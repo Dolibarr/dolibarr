@@ -1032,12 +1032,12 @@ class pdf_azur extends ModelePDFPropales
 			// Show payment mode CHQ
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ') {
 				// Si mode reglement non force ou si force a CHQ
-				if (!empty($conf->global->FACTURE_CHQ_NUMBER)) {
+				if (getDolGlobalInt('FACTURE_CHQ_NUMBER')) {
 					$diffsizetitle = (empty($conf->global->PDF_DIFFSIZE_TITLE) ? 3 : $conf->global->PDF_DIFFSIZE_TITLE);
 
 					if ($conf->global->FACTURE_CHQ_NUMBER > 0) {
 						$account = new Account($this->db);
-						$account->fetch($conf->global->FACTURE_CHQ_NUMBER);
+						$account->fetch(getDolGlobalInt('FACTURE_CHQ_NUMBER'));
 
 						$pdf->SetXY($this->marge_gauche, $posy);
 						$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
