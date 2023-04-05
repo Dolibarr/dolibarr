@@ -273,7 +273,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa3 ON " . $alias_pr
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa4 ON " . $alias_societe_perentity . ".accountancy_code_sell = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".$conf->entity;
 
 $sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
-$sql .= " AND l.product_type <= 2 AND l.qty!=0 AND l.total_ht!=0";
+$sql .= " AND l.product_type <= 2 AND l.qty <> 0 AND l.total_ht <> 0";
 // Define begin binding date
 if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
 	$sql .= " AND f.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
