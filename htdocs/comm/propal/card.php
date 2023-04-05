@@ -2757,16 +2757,15 @@ if ($action == 'create') {
 	print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
 	print '<td class="nowrap amountcard">' . price($object->total_ht, '', $langs, 0, -1, -1, $conf->currency);
 	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-		print ' - ' . price($object->multicurrency_total_ht, '', $langs, 0, -1, -1, $object->multicurrency_code);
+		print '<td class="nowrap  amountcard">' . price($object->multicurrency_total_ht, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 	}
 	print '</td>';
-	print '';
 
-	print '';
+
 	print '<td class="titlefieldmiddle">' . $langs->trans('AmountVAT') . '</td>';
 	print '<td class="nowrap right amountcard">' . price($object->total_tva, '', $langs, 0, -1, -1, $conf->currency);
 	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-		print ' - ' . price($object->multicurrency_total_tva, '', $langs, 0, -1, -1, $object->multicurrency_code);
+		print '<td class="nowrap  amountcard">' . price($object->multicurrency_total_tva, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 	}
 	print '</td>';
 	print '</tr>';
@@ -2776,16 +2775,15 @@ if ($action == 'create') {
 		print '<td class="titlefieldmiddle">' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
 		print '<td class="nowrap  amountcard">' . price($object->total_localtax1, '', $langs, 0, -1, -1, $conf->currency);
 		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-			print ' - ' . price($object->total_localtax1, '', $langs, 0, -1, -1, $object->multicurrency_code);
+			print '<td class="nowrap  amountcard">' . price($object->total_localtax1, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 		}
 		print '</td>';
-		print '';
+
 		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) {
-			print '';
 			print '<td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
 			print '<td class="nowrap right amountcard">' . price($object->total_localtax2, '', $langs, 0, -1, -1, $conf->currency);
 			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-				print ' - ' . price($object->total_localtax2, '', $langs, 0, -1, -1, $object->multicurrency_code);
+				print '<td class="nowrap  amountcard">' . price($object->total_localtax2, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 			}
 			print '</td>';
 			print '</tr>';
@@ -2795,6 +2793,9 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td>' . $langs->trans('AmountTTC') . '</td>';
 	print '<td class="nowrap amountcard">' . price($object->total_ttc, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+		print '<td class="nowrap  amountcard">' . price($object->total_ttc, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+	}
 	print '</tr>';
 
 	print '</table>';
