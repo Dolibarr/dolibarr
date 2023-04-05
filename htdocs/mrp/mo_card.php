@@ -284,6 +284,7 @@ if ($action == 'create') {
 	?>
 	<script>
 		 $(document).ready(function () {
+             if (jQuery('#fk_bom').val() > 0) jQuery('#fk_product').prop('disabled', true);
 			 jQuery('#fk_bom').change(function() {
 				console.log('We change value of BOM with BOM of id '+jQuery('#fk_bom').val());
 				if (jQuery('#fk_bom').val() > 0)
