@@ -443,7 +443,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_thirdparty();
 	$res = $object->fetch_optionals();
 
-	if(!empty($conf->global->STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE) && $object->fk_warehouse > 0){
+	if (!empty($conf->global->STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE) && $object->fk_warehouse > 0) {
 		$tmpwarehouse->fetch($object->fk_warehouse);
 		$fk_default_warehouse = $object->fk_warehouse;
 	}
@@ -930,7 +930,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '</td>';
 					// Warehouse
 					print '<td>';
-					if(!empty($conf->global->STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE) && $tmpwarehouse->id > 0) {
+					if (!empty($conf->global->STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE) && $tmpwarehouse->id > 0) {
 						print img_picto('', $tmpwarehouse->picto)." ".$tmpwarehouse->label;
 					}
 					print '</td>';
@@ -941,17 +941,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							if (!$line->disable_stock_change && $tmpproduct->stock_reel < ($line->qty - $alreadyconsumed)) {
 								print img_warning($langs->trans('StockTooLow')) . ' ';
 							}
-							if(empty($conf->global->STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE) || empty($tmpwarehouse->id)) {
+							if (empty($conf->global->STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE) || empty($tmpwarehouse->id)) {
 								print price2num($tmpproduct->stock_reel, 'MS'); // Available
 							} else {
 								// Print only the stock in the selected warehouse
 								$tmpproduct->load_stock();
 								$wh_stock = $tmpproduct->stock_warehouse[$tmpwarehouse->id];
-								if(!empty($wh_stock)){
+								if (!empty($wh_stock)) {
 									print price2num($wh_stock->real, 'MS');
 								} else {
 									print "0";
-								}							
+								}
 							}
 						}
 						print '</td>';
@@ -1143,7 +1143,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			});
 		</script>';
 
-		if (in_array($action, array('consumeorproduce', 'consumeandproduceall')) && 
+		if (in_array($action, array('consumeorproduce', 'consumeandproduceall')) &&
 			!empty($conf->global->STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE)) {
 			print '<script>$(document).ready(function () {
 				$("#fk_default_warehouse").change();
