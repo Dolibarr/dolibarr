@@ -16,7 +16,7 @@
  */
 
 /**
- *       \file       htdocs/public/recruitment/view.php
+ *       \file       htdocs/public/recruitment/index.php
  *       \ingroup    recruitment
  *       \brief      Public file to show on job
  */
@@ -302,7 +302,7 @@ print '</div>'."\n";
 print '<br>';
 
 
-htmlPrintOnlinePaymentFooter($mysoc, $langs);
+htmlPrintOnlineFooter($mysoc, $langs);
 
 llxFooter('', 'public');
 

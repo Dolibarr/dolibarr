@@ -1481,7 +1481,7 @@ print '</div>';
 print "</form>";
 
 // Add number of product when there is a filter on period
-if (count($arrayofuniqueproduct) == 1 && is_numeric($year)) {
+if (count($arrayofuniqueproduct) == 1 && !empty($year) && is_numeric($year)) {
 	print "<br>";
 
 	$productidselected = 0;

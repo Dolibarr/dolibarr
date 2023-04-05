@@ -1314,8 +1314,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	if (empty($counter)) {
 		$counter = $maskoffset;
 	} elseif (preg_match('/[^0-9]/i', $counter)) {
-		$counter = 0;
 		dol_syslog("Error, the last counter found is '".$counter."' so is not a numeric value. We will restart to 1.", LOG_ERR);
+		$counter = 0;
 	} elseif ($counter < $maskoffset && empty($conf->global->MAIN_NUMBERING_OFFSET_ONLY_FOR_FIRST)) {
 		$counter = $maskoffset;
 	}
@@ -1936,14 +1936,14 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 	$sql .= " ORDER BY description DESC";
 
 	dol_syslog('/core/lib/function2.lib.php::getListOfModels', LOG_DEBUG);
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
+	$resql_models = $db->query($sql);
+	if ($resql_models) {
+		$num = $db->num_rows($resql_models);
 		$i = 0;
 		while ($i < $num) {
 			$found = 1;
 
-			$obj = $db->fetch_object($resql);
+			$obj = $db->fetch_object($resql_models);
 
 			// If this generation module needs to scan a directory, then description field is filled
 			// with the constant that contains list of directories to scan (COMPANY_ADDON_PDF_ODT_PATH, ...).

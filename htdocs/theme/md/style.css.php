@@ -1968,6 +1968,8 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.hideonsmartphone { display: none; }
 	.hideonsmartphoneimp { display: none !important; }
 
+	.margintoponsmartphone { margin-top: 6px; }
+
 	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth200imp, select.minwidth300 {
 		width: calc(100% - 40px) !important;
 		display: inline-block;
@@ -1988,13 +1990,13 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.smallonsmartphone {
 		font-size: 0.8em;
 	}
-	
+
 	.nopaddingtoponsmartphone {
 		padding-top: 0 !important;
 	}
 	.nopaddingbottomonsmartphone {
 		padding-bottom: 0 !important;
-	}	
+	}
 }
 
 /* Force values for small screen 570 */
@@ -7508,6 +7510,29 @@ div.clipboardCPValue.hidewithsize {
 	zoom: 0.20;
 }
 
+/* ============================================================================== */
+/* For drag and drop file feature                                                 */
+/* ============================================================================== */
+
+.cssDragDropArea{
+	position: relative;
+}
+.highlightDragDropArea{
+	border: 2px #000 dashed !important;
+	background-color: #eee !important;
+}
+.highlightDragDropArea * :not(.dragDropAreaMessage *){
+	opacity:0.8;
+	filter: blur(1px) grayscale(90%);
+}
+.dragDropAreaMessage {
+	position: absolute;
+	left:50%;
+	top:50%;
+	transform: translate(-50%, -50%);
+	text-align:center;
+	font-size: 2em;
+}
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */

@@ -517,7 +517,7 @@ class modProduct extends DolibarrModules
 			'p.price_base_type' => "PriceBaseType", //price base: with-tax (TTC) or without (HT) tax. Displays accordingly in Product card
 			'p.tva_tx' => 'VATRate',
 			'p.datec' => 'DateCreation',
-			'p.cost_price' => "CostPrice",
+			'p.cost_price' => "CostPrice"
 		);
 
 		$this->import_convertvalue_array[$r] = array(
@@ -748,6 +748,33 @@ class modProduct extends DolibarrModules
 			$this->import_updatekeys_array[$r] = array_merge($this->import_updatekeys_array[$r], array('p.barcode'=>'BarCode')); //only show/allow barcode as update key if Barcode module enabled
 		}
 
+		if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
+			// Import products limit and desired stock by product and warehouse
+			$r++;
+			$this->import_code[$r] = $this->rights_class.'_stock_by_warehouse';
+			$this->import_label[$r] = "ProductStockWarehouse"; // Translation key
+			$this->import_icon[$r] = $this->picto;
+			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r] = array('pwp'=>MAIN_DB_PREFIX.'product_warehouse_properties');
+			$this->import_fields_array[$r] = array('pwp.fk_product'=>"Product*",
+				'pwp.fk_entrepot'=>"Warehouse*", 'pwp.seuil_stock_alerte'=>"StockLimit",
+				'pwp.desiredstock'=>"DesiredStock");
+			$this->import_regex_array[$r] = array(
+				'pwp.fk_product' => 'rowid@'.MAIN_DB_PREFIX.'product',
+				'pwp.fk_entrepot' => 'rowid@'.MAIN_DB_PREFIX.'entrepot',
+			);
+			$this->import_convertvalue_array[$r] = array(
+				'pwp.fk_product'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
+				,'pwp.fk_entrepot'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/stock/class/entrepot.class.php', 'class'=>'Entrepot', 'method'=>'fetch', 'element'=>'Entrepot')
+			);
+			$this->import_examplevalues_array[$r] = array('pwp.fk_product'=>"ref:PRODUCT_REF or id:123456",
+				'pwp.fk_entrepot'=>"ref:WAREHOUSE_REF or id:123456",
+				'pwp.seuil_stock_alerte'=>"100",
+				'pwp.desiredstock'=>"110"
+			);
+			$this->import_updatekeys_array[$r] = array('pwp.fk_product'=>'Product', 'pwp.fk_entrepot'=>'Warehouse');
+		}
+
 		if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 			// Import suppliers prices (note: this code is duplicated in module Service)
 			$r++;
@@ -764,8 +791,9 @@ class modProduct extends DolibarrModules
 				'sp.quantity' => "QtyMin*",
 				'sp.tva_tx' => 'VATRate',
 				'sp.default_vat_code' => 'VATCode',
-				'sp.delivery_time_days' => 'DeliveryDelay',
-				'sp.supplier_reputation' => 'SupplierReputation'
+				'sp.delivery_time_days' => 'NbDaysToDelivery',
+				'sp.supplier_reputation' => 'SupplierReputation',
+				'sp.status' => 'Status'
 			);
 			if (is_object($mysoc) && $usenpr) {
 				$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('sp.recuperableonly'=>'VATNPR'));
@@ -827,7 +855,8 @@ class modProduct extends DolibarrModules
 				'sp.remise_percent'=>'0',
 				'sp.default_vat_code' => '',
 				'sp.delivery_time_days' => '5',
-				'sp.supplier_reputation' => 'FAVORITE / NOTTHGOOD / DONOTORDER'
+				'sp.supplier_reputation' => 'FAVORITE / NOTTHGOOD / DONOTORDER',
+				'sp.status' => '1'
 			);
 			if (is_object($mysoc) && $usenpr) {
 				$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array('sp.recuperableonly'=>''));

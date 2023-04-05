@@ -1952,7 +1952,7 @@ if ($resql) {
 
 				// Action column
 				if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-					print '<td class="nowrap" align="center">';
+					print '<td class="nowrap center">';
 					if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 						$selected = 0;
 						if (in_array($obj->id, $arrayofselected)) {
@@ -2430,7 +2430,7 @@ if ($resql) {
 					}
 				}
 				if (!empty($arrayfields['multicurrency_dynamount_payed']['checked'])) {
-					print '<td class="right nowraponall amount">'.(!empty($multicurrency_totalpay) ?price($multicurrency_totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
+					print '<td class="right nowraponall amount">'.(!empty($multicurrency_totalpay) ? price($multicurrency_totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
 					if (!$i) {
 						$totalarray['nbfield']++;
 					}
@@ -2440,7 +2440,7 @@ if ($resql) {
 				if (!empty($arrayfields['multicurrency_rtp']['checked'])) {
 					print '<td class="right nowraponall">';
 					print (!empty($multicurrency_remaintopay) ? price($multicurrency_remaintopay, 0, $langs) : '&nbsp;');
-					print '</td>'; // TODO Use a denormalized field
+					print '</td>'; // TODO Use a denormalized field ?
 					if (!$i) {
 						$totalarray['nbfield']++;
 					}
@@ -2448,14 +2448,14 @@ if ($resql) {
 
 				// Total buying or cost price
 				if (!empty($arrayfields['total_pa']['checked'])) {
-					print '<td class="right nowrap">'.price($marginInfo['pa_total']).'</td>';
+					print '<td class="right nowrap">'.price($marginInfo['pa_total'], 0, $langs, 1, -1, 'MT').'</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
 					}
 				}
 				// Total margin
 				if (!empty($arrayfields['total_margin']['checked'])) {
-					print '<td class="right nowrap">'.price($marginInfo['total_margin']).'</td>';
+					print '<td class="right nowrap">'.price($marginInfo['total_margin'], 0, $langs, 1, -1, 'MT').'</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
 					}
@@ -2570,7 +2570,7 @@ if ($resql) {
 				// Action column (Show the massaction button only when this page is not opend from the Extended POS)
 
 				if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-					print '<td class="nowrap" align="center">';
+					print '<td class="nowrap center">';
 					if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 						$selected = 0;
 						if (in_array($obj->id, $arrayofselected)) {

@@ -270,9 +270,9 @@ function dol_verifyHash($chain, $hash, $type = '0')
 	if ($type == '0' && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_verify')) {
 		if (! empty($hash[0]) && $hash[0] == '$') {
 			return password_verify($chain, $hash);
-		} elseif (strlen($hash) == 32) {
+		} elseif (dol_strlen($hash) == 32) {
 			return dol_verifyHash($chain, $hash, '3'); // md5
-		} elseif (strlen($hash) == 40) {
+		} elseif (dol_strlen($hash) == 40) {
 			return dol_verifyHash($chain, $hash, '2'); // sha1md5
 		}
 
@@ -332,7 +332,7 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  *  This method check permission on module then call checkUserAccessToObject() for permission on object (according to entity and socid of user).
  *
  *	@param	User				$user      	  	User to check
- *	@param  string				$features	    Features to check (it must be module $object->element. Can be a 'or' check with 'levela|levelb'.
+ *	@param  string				$features	    Features to check (it must be module name or $object->element. Can be a 'or' check with 'levela|levelb'.
  *												Examples: 'societe', 'contact', 'produit&service', 'produit|service', ...)
  *												This is used to check permission $user->rights->features->...
  *	@param  int|string|object	$object      	Object or Object ID or list of Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
@@ -340,7 +340,7 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  *	@param  string				$feature2		Feature to check, second level of permission (optional). Can be a 'or' check with 'sublevela|sublevelb'.
  *												This is used to check permission $user->rights->features->feature2...
  *  @param  string				$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional). Can use '' if NA.
- *  @param  string				$dbt_select     Field name for select if not "rowid". Not used if objectid is null (optional)
+ *  @param  string				$dbt_select     Field rowid name, for select into tableandshare if not "rowid". Not used if objectid is null (optional)
  *  @param	int					$isdraft		1=The object with id=$objectid is a draft
  *  @param	int					$mode			Mode (0=default, 1=return without dieing)
  * 	@return	int									If mode = 0 (default): Always 1, die process if not allowed. If mode = 1: Return 0 if access not allowed.
@@ -351,6 +351,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	global $db, $conf;
 	global $hookmanager;
 
+	// Define $objectid
 	if (is_object($object)) {
 		$objectid = $object->id;
 	} else {
@@ -363,12 +364,17 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
 	//print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
 	//print ", dbtablename=".$tableandshare.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
-	//print ", perm: ".$features."->".$feature2."=".($user->rights->$features->$feature2->lire)."<br>";
+	//print ", perm: ".$features."->".$feature2."=".($user->hasRight($features, $feature2, 'lire'))."<br>";
 
 	$parentfortableentity = '';
 
 	// Fix syntax of $features param
 	$originalfeatures = $features;
+	if ($features == 'agenda') {
+		$tableandshare = 'actioncomm&societe';
+		$feature2 = 'myactions|allactions';
+		$dbt_select = 'id';
+	}
 	if ($features == 'facturerec') {
 		$features = 'facture';
 	}
@@ -382,9 +388,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$features = 'adherent';
 		$feature2 = 'cotisation';
 	}
-	if ($features == 'websitepage') {
-		$features = 'website';
-		$tableandshare = 'website_page';
+	if ($features == 'website' && is_object($object) && $object->element == 'websitepage') {
 		$parentfortableentity = 'fk_website@website';
 	}
 	if ($features == 'project') {
@@ -393,6 +397,19 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	if ($features == 'product') {
 		$features = 'produit';
 	}
+	if ($features == 'productbatch') {
+		$features = 'produit';
+	}
+	if ($features == 'fournisseur') {	// When vendor invoice and pruchase order are into module 'fournisseur'
+		$features = 'fournisseur';
+		if ($object->element == 'invoice_supplier') {
+			$feature2 = 'facture';
+		} elseif ($object->element == 'order_supplier') {
+			$feature2 = 'commande';
+		}
+	}
+
+	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
 	// Get more permissions checks from hooks
 	$parameters = array('features'=>$features, 'originalfeatures'=>$originalfeatures, 'objectid'=>$objectid, 'dbt_select'=>$dbt_select, 'idtype'=>$dbt_select, 'isdraft'=>$isdraft);
@@ -485,7 +502,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$readok = 0;
 				$nbko++;
 			}
-		} elseif (!empty($feature2)) { 													// This is for permissions on 2 levels
+		} elseif (!empty($feature2)) { 													// This is for permissions on 2 levels (module->object->read)
 			$tmpreadok = 1;
 			foreach ($feature2 as $subfeature) {
 				if ($subfeature == 'user' && $user->id == $objectid) {
@@ -504,7 +521,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$readok = 0; // All tests are ko (we manage here the and, the or will be managed later using $nbko).
 				$nbko++;
 			}
-		} elseif (!empty($feature) && ($feature != 'user' && $feature != 'usergroup')) {		// This is permissions on 1 level
+		} elseif (!empty($feature) && ($feature != 'user' && $feature != 'usergroup')) {		// This is permissions on 1 level (module->read)
 			if (empty($user->rights->$feature->lire)
 				&& empty($user->rights->$feature->read)
 				&& empty($user->rights->$feature->run)) {
@@ -531,7 +548,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	// Check write permission from module (we need to know write permission to create but also to delete drafts record or to upload files)
 	$createok = 1;
 	$nbko = 0;
-	$wemustcheckpermissionforcreate = (GETPOST('sendit', 'alpha') || GETPOST('linkit', 'alpha') || in_array(GETPOST('action', 'aZ09'), array('create', 'update', 'add_element_resource', 'confirm_delete_linked_resource')) || GETPOST('roworder', 'alpha', 2));
+	$wemustcheckpermissionforcreate = (GETPOST('sendit', 'alpha') || GETPOST('linkit', 'alpha') || in_array(GETPOST('action', 'aZ09'), array('create', 'update', 'set', 'upload', 'add_element_resource', 'confirm_delete_linked_resource')) || GETPOST('roworder', 'alpha', 2));
 	$wemustcheckpermissionfordeletedraft = ((GETPOST("action", "aZ09") == 'confirm_delete' && GETPOST("confirm", "aZ09") == 'yes') || GETPOST("action", "aZ09") == 'delete');
 
 	if ($wemustcheckpermissionforcreate || $wemustcheckpermissionfordeletedraft) {
@@ -576,7 +593,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 					$createok = 0;
 					$nbko++;
 				}
-			} elseif (!empty($feature2)) {														// This is for permissions on one level
+			} elseif (!empty($feature2)) {													// This is for permissions on 2 levels (module->object->write)
 				foreach ($feature2 as $subfeature) {
 					if ($subfeature == 'user' && $user->id == $objectid && $user->rights->user->self->creer) {
 						continue; // User can edit its own card
@@ -599,7 +616,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 						break;
 					}
 				}
-			} elseif (!empty($feature)) {												// This is for permissions on 2 levels ('creer' or 'write')
+			} elseif (!empty($feature)) {												// This is for permissions on 1 levels (module->write)
 				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->creer.' write='.$user->rights->$feature->write; exit;
 				if (empty($user->rights->$feature->creer)
 				&& empty($user->rights->$feature->write)
@@ -1114,6 +1131,7 @@ function httponly_accessforbidden($message = 1, $http_response_code = 403, $stri
 function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
 {
 	global $conf, $db, $user, $langs, $hookmanager;
+	global $action, $object;
 
 	if (!is_object($langs)) {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
@@ -1139,12 +1157,13 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 	print '</div>';
 	print '<br>';
 	if (empty($showonlymessage)) {
-		global $action, $object;
 		if (empty($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
 			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 			$hookmanager->initHooks(array('main'));
 		}
+
 		$parameters = array('message'=>$message, 'params'=>$params);
 		$reshook = $hookmanager->executeHooks('getAccessForbiddenMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		print $hookmanager->resPrint;

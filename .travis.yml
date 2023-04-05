@@ -473,7 +473,7 @@ script:
 
 - |
   echo "Unit testing"
-  # Ensure we catch errors. Set this to +e if you want to go to the end to see dolibarr.log file.
+  # Ensure we catch errors. Set this to +e instead of -e if you want to go to the end to see dolibarr.log file.
   set -e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
   phpunitresult=$?
@@ -501,7 +501,7 @@ after_failure:
   # Show upgrade log files
   for ficlog in `ls $TRAVIS_BUILD_DIR/*.log`
   do
-    echo "Debugging informations for file $ficlog"
+    #echo "Debugging informations for file $ficlog"
     #cat $ficlog
   done
   # Show Apache log file

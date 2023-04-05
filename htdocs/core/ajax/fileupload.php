@@ -19,24 +19,25 @@
 /**
  *       \file       htdocs/core/ajax/fileupload.php
  *       \brief      File to return Ajax response on file upload
- *
- *       Option MAIN_USE_JQUERY_FILEUPLOAD must be enabled to have this feature working. Use is NOT secured !
  */
 
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', '1');
-}
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1'); // If there is no menu to show
 }
 if (!defined('NOREQUIREHTML')) {
 	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
 }
-
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
 
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/fileupload.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
 error_reporting(E_ALL | E_STRICT);
 
@@ -44,20 +45,41 @@ error_reporting(E_ALL | E_STRICT);
 //print_r($_GET);
 //print 'upload_dir='.GETPOST('upload_dir');
 
-$fk_element = GETPOST('fk_element', 'int');
-$element = GETPOST('element', 'alpha');
+$id = GETPOST('fk_element', 'int');
+$element = GETPOST('element', 'alpha');	// 'myobject' (myobject=mymodule) or 'myobject@mymodule' or 'myobject_mysubobject' (myobject=mymodule)
+$elementupload = $element;
 
-$upload_handler = new FileUpload(null, $fk_element, $element);
+// Load object according to $id and $element
+$object = fetchObjectByElement($id, $element);
 
-// Feature not enabled. Warning feature not used and not secured so disabled.
-if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
-	return;
+$module = $object->module;
+$element = $object->element;
+$usesublevelpermission = ($module != $element ? $element : '');
+if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+	$usesublevelpermission = '';
+}
+
+//print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
+
+// Security check
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+	if (!empty($object->socid) && $socid != $object->socid) {
+		httponly_accessforbidden("Access on object not allowed for this external user.");	// This includes the exit.
+	}
+}
+
+$result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+if (!$result) {
+	httponly_accessforbidden('Not allowed by restrictArea');
 }
 
 
 /*
  * View
  */
+
+$upload_handler = new FileUpload(null, $id, $elementupload);
 
 top_httphead();
 

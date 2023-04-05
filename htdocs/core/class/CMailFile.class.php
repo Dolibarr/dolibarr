@@ -641,7 +641,7 @@ class CMailFile
 	 */
 	public function sendfile()
 	{
-		global $conf, $db, $langs;
+		global $conf, $db, $langs, $hookmanager;
 
 		$errorlevel = error_reporting();
 		//error_reporting($errorlevel ^ E_WARNING);   // Desactive warnings
@@ -649,8 +649,10 @@ class CMailFile
 		$res = false;
 
 		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($db);
+			if (!is_object($hookmanager)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+				$hookmanager = new HookManager($db);
+			}
 			$hookmanager->initHooks(array('mail'));
 
 			$parameters = array();
@@ -686,6 +688,8 @@ class CMailFile
 					$this->error .= '<br>'.$langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS);
 					$this->errors[] = $langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS);
 				}
+
+				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_WARNING);
 				return false;
 			}
 
@@ -756,7 +760,7 @@ class CMailFile
 				// Use mail php function (default PHP method)
 				// ------------------------------------------
 				dol_syslog("CMailFile::sendfile addr_to=".$this->addr_to.", subject=".$this->subject, LOG_DEBUG);
-				dol_syslog("CMailFile::sendfile header=\n".$this->headers, LOG_DEBUG);
+				//dol_syslog("CMailFile::sendfile header=\n".$this->headers, LOG_DEBUG);
 				//dol_syslog("CMailFile::sendfile message=\n".$message);
 
 				// If Windows, sendmail_from must be defined
@@ -845,7 +849,7 @@ class CMailFile
 						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 
 						if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
-							$this->save_dump_mail_in_err();
+							$this->save_dump_mail_in_err('Mail with topic '.$this->subject);
 						}
 					} else {
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
@@ -995,7 +999,26 @@ class CMailFile
 						$this->dump_mail();
 					}
 
-					$result = $this->smtps->getErrors();
+					if (! $result) {
+						$smtperrorcode = $this->smtps->lastretval;	// SMTP error code
+						dol_syslog("CMailFile::sendfile: mail SMTP error code ".$smtperrorcode, LOG_WARNING);
+
+						if ($smtperrorcode == '421') {	// Try later
+							// TODO Add a delay and try again
+							/*
+							dol_syslog("CMailFile::sendfile: Try later error, so we wait and we retry");
+							sleep(2);
+
+							$result = $this->smtps->sendMsg();
+
+							if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+								$this->dump_mail();
+							}
+							*/
+						}
+					}
+
+					$result = $this->smtps->getErrors();	// applicative error code (not SMTP error code)
 					if (empty($this->error) && empty($result)) {
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 						$res = true;
@@ -1007,7 +1030,7 @@ class CMailFile
 						$res = false;
 
 						if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
-							$this->save_dump_mail_in_err();
+							$this->save_dump_mail_in_err('Mail smtp error '.$smtperrorcode.' with topic '.$this->subject);
 						}
 					}
 				}
@@ -1147,7 +1170,7 @@ class CMailFile
 					$res = false;
 
 					if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
-						$this->save_dump_mail_in_err();
+						$this->save_dump_mail_in_err('Mail with topic '.$this->subject);
 					}
 				} else {
 					dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
@@ -1258,16 +1281,40 @@ class CMailFile
 	 *  Save content if mail is in error
 	 *  Used for debugging.
 	 *
+	 *  @param	string		$message		Add also a message
 	 *  @return	void
 	 */
-	public function save_dump_mail_in_err()
+	public function save_dump_mail_in_err($message = '')
 	{
 		global $dolibarr_main_data_root;
 
 		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 			$srcfile = $dolibarr_main_data_root."/dolibarr_mail.log";
-			$destfile = $dolibarr_main_data_root."/dolibarr_mail.err";
 
+			// Add message to dolibarr_mail.log. We do not use dol_syslog() on purpose,
+			// to be sure to write into dolibarr_mail.log
+			if ($message) {
+				// Test constant SYSLOG_FILE_NO_ERROR (should stay a constant defined with define('SYSLOG_FILE_NO_ERROR',1);
+				if (defined('SYSLOG_FILE_NO_ERROR')) {
+					$filefd = @fopen($srcfile, 'a+');
+				} else {
+					$filefd = fopen($srcfile, 'a+');
+				}
+				if ($filefd) {
+					fwrite($filefd, $message."\n");
+					fclose($filefd);
+					dolChmod($srcfile);
+				}
+			}
+
+			// Move dolibarr_mail.log into a dolibarr_mail.err or dolibarr_mail.date.err
+			if (getDolGlobalString('MAIN_MAIL_DEBUG_ERR_WITH_DATE')) {
+				$destfile = $dolibarr_main_data_root."/dolibarr_mail.".dol_print_date(dol_now(), 'dayhourlog', 'gmt').".err";
+			} else {
+				$destfile = $dolibarr_main_data_root."/dolibarr_mail.err";
+			}
+
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_move($srcfile, $destfile, 0, 1, 0, 0);
 		}
 	}

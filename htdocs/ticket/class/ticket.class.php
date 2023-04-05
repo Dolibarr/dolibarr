@@ -1507,10 +1507,11 @@ class Ticket extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = " data-params='".json_encode($params)."'";
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/ticket/card.php?id='.$this->id;
 
@@ -1531,8 +1532,8 @@ class Ticket extends CommonObject
 				$label = $langs->trans("ShowTicket");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -1940,20 +1941,18 @@ class Ticket extends CommonObject
 	{
 		$contacts = array();
 
-		// Generation requete recherche
+		// Forge the search SQL
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople";
 		$sql .= " WHERE entity IN (".getEntity('contact').")";
 		if (!empty($socid)) {
-			$sql .= " AND fk_soc='".$this->db->escape($socid)."'";
+			$sql .= " AND fk_soc = ".((int) $socid);
 		}
-
 		if (!empty($email)) {
 			$sql .= " AND ";
-
 			if (!$case) {
-				$sql .= "email LIKE '".$this->db->escape($email)."'";
+				$sql .= "email = '".$this->db->escape($email)."'";
 			} else {
-				$sql .= "email LIKE BINARY '".$this->db->escape($email)."'";
+				$sql .= "email LIKE BINARY '".$this->db->escape($this->db->escapeforlike($email))."'";
 			}
 		}
 

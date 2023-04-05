@@ -41,7 +41,7 @@ class modFournisseur extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $user;
+		global $conf, $langs, $user;
 
 		$this->db = $db;
 		$this->numero = 40;
@@ -308,6 +308,8 @@ class modFournisseur extends DolibarrModules
 		// Exports
 		//--------
 		$r = 0;
+
+		$langs->loadLangs(array("suppliers", "multicurrency"));
 
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;

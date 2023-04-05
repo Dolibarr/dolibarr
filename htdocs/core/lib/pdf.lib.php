@@ -744,12 +744,13 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
  *	@param	Translate	$outputlangs	Output language
  *	@param	array       $exclude        Array of family keys we want to exclude. For example array('mycompany', 'object', 'date', 'user', ...)
  *	@param	Object      $object         Object
- *	@param	int         $onlykey       1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are truncated and html sanitized (to use for help tooltip)
+ *	@param	int         $onlykey       	1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are truncated and html sanitized (to use for help tooltip)
+ *  @param   array      $include        Array of family keys we want to include. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
  *	@return	array						Array of substitutions
  */
-function pdf_getSubstitutionArray($outputlangs, $exclude = null, $object = null, $onlykey = 0)
+function pdf_getSubstitutionArray($outputlangs, $exclude = null, $object = null, $onlykey = 0, $include = null)
 {
-	$substitutionarray = getCommonSubstitutionArray($outputlangs, $onlykey, $exclude, $object);
+	$substitutionarray = getCommonSubstitutionArray($outputlangs, $onlykey, $exclude, $object, $include);
 	$substitutionarray['__FROM_NAME__'] = '__FROM_NAME__';
 	$substitutionarray['__FROM_EMAIL__'] = '__FROM_EMAIL__';
 	return $substitutionarray;
@@ -1666,7 +1667,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	// Show information for lot
 	if (!empty($dbatch)) {
 		// $object is a shipment.
-		//var_dump($object->lines[$i]->details_entrepot);		// array from llx_expeditiondet (we can have seral lines for one fk_origin_line)
+		//var_dump($object->lines[$i]->details_entrepot);		// array from llx_expeditiondet (we can have several lines for one fk_origin_line)
 		//var_dump($object->lines[$i]->detail_batch);			// array from llx_expeditiondet_batch (each line with a lot is linked to llx_expeditiondet)
 
 		include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';

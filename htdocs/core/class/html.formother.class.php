@@ -1289,18 +1289,21 @@ class FormOther
 					containment: \'document\',
 	        		connectWith: \'#boxhalfleft, #boxhalfright\',
 	        		stop: function(event, ui) {
+		        		console.log("We moved box so we call updateBoxOrder with ajax actions");
 	        			updateBoxOrder(1);  /* 1 to avoid message after a move */
 	        		}
 	    		});
 
 	        	jQuery(".boxclose").click(function() {
 	        		var self = this;	// because JQuery can modify this
-	        		var boxid=self.id.substring(8);
-	        		var label=jQuery(\'#boxlabelentry\'+boxid).val();
-	        		console.log("We close box "+boxid);
-	        		jQuery(\'#boxto_\'+boxid).remove();
-	        		if (boxid > 0) jQuery(\'#boxcombo\').append(new Option(label, boxid));
-	        		updateBoxOrder(1);  /* 1 to avoid message after a remove */
+	        		var boxid = self.id.substring(8);
+					if (boxid > 0) {
+		        		var label = jQuery(\'#boxlabelentry\'+boxid).val();
+		        		console.log("We close box "+boxid);
+	    	    		jQuery(\'#boxto_\'+boxid).remove();
+	        			jQuery(\'#boxcombo\').append(new Option(label, boxid));
+	        			updateBoxOrder(1);  /* 1 to avoid message after a remove */
+					}
 	        	});
 
         	});'."\n";

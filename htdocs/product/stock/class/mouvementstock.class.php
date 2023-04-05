@@ -112,6 +112,9 @@ class MouvementStock extends CommonObject
 	public $inventorycode;
 	public $batch;
 
+	public $line_id_object_src;
+	public $line_id_object_origin;
+
 
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10, 'showoncombobox'=>1),
@@ -1012,13 +1015,17 @@ class MouvementStock extends CommonObject
 	 *
 	 * @param	string	$origin_element		Type of element
 	 * @param	int		$origin_id			Id of element
+	 * @param	int		$line_id_object_src	Id line of element Source
+	 * @param	int		$line_id_object_origin	Id line of element Origin
 	 *
 	 * @return	void
 	 */
-	public function setOrigin($origin_element, $origin_id)
+	public function setOrigin($origin_element, $origin_id, $line_id_object_src = 0, $line_id_object_origin = 0)
 	{
 		$this->origin_type = $origin_element;
 		$this->origin_id = $origin_id;
+		$this->line_id_oject_src = $line_id_object_src;
+		$this->line_id_oject_origin = $line_id_object_origin;
 		// For backward compatibility
 		$this->origintype = $origin_element;
 		$this->fk_origin = $origin_id;

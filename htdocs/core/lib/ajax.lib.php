@@ -696,8 +696,8 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
  *  @param  Object  $object     Object to set
  *  @param  string  $code       Name of property in object : 'status' or 'status_buy' for product by example
  *  @param  string  $field      Name of database field : 'tosell' or 'tobuy' for product by example
- *  @param  string  $text_on    Text if on
- *  @param  string  $text_off   Text if off
+ *  @param  string  $text_on    Text if on ('Text' or 'Text:css picto on')
+ *  @param  string  $text_off   Text if off ('Text' or 'Text:css picto on')
  *  @param  array   $input      Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
  *  @param	string	$morecss	More CSS
  *  @param	string	$htmlname	Name of HTML component. Keep '' or use a different value if you need to use this component several time on same page for same property.
@@ -710,6 +710,7 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
 	if (empty($htmlname)) {
 		$htmlname = $code;
 	}
+	//var_dump($object->module); var_dump($object->element);
 
 	$out = '<script>
         $(function() {
@@ -722,8 +723,8 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     action: \'set\',
                     field: \''.dol_escape_js($field).'\',
                     value: \'1\',
-                    element: \''.dol_escape_js($object->element).'\',
-                    id: \''.$object->id.'\',
+                    element: \''.dol_escape_js((empty($object->module) || $object->module == $object->element) ? $object->element : $object->element.'@'.$object->module).'\',
+                    id: \''.((int) $object->id).'\',
 					token: \''.currentToken().'\'
                 },
                 function() {
@@ -754,8 +755,8 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     action: \'set\',
                     field: \''.dol_escape_js($field).'\',
                     value: \'0\',
-                    element: \''.dol_escape_js($object->element).'\',
-                    id: \''.$object->id.'\',
+                    element: \''.dol_escape_js((empty($object->module) || $object->module == $object->element) ? $object->element : $object->element.'@'.$object->module).'\',
+                    id: \''.((int) $object->id).'\',
 					token: \''.currentToken().'\'
                 },
                 function() {
@@ -780,8 +781,22 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
             });
         });
     </script>';
-	$out .= '<span id="set_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_off), 'switch_off').'</span>';
-	$out .= '<span id="del_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_on), 'switch_on').'</span>';
+
+	$switchon = 'switch_on';
+	$switchoff = 'switch_off';
+	$tmparray = explode(':', $text_on);
+	if (!empty($tmparray[1])) {
+		$text_on = $tmparray[0];
+		$switchon = $tmparray[1];
+	}
+	$tmparray = explode(':', $text_off);
+	if (!empty($tmparray[1])) {
+		$text_off = $tmparray[0];
+		$switchoff = $tmparray[1];
+	}
+
+	$out .= '<span id="set_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_off), $switchoff).'</span>';
+	$out .= '<span id="del_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_on), $switchon).'</span>';
 
 	return $out;
 }
