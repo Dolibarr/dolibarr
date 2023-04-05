@@ -8550,7 +8550,7 @@ class Form
 						$tmpvalue = $value['label'];
 						$tmpcolor = $value['color'];
 						$tmppicto = $value['picto'];
-						$tmplabelhtml = $value['labelhtml'];
+						$tmplabelhtml = !empty($value['labelhtml']) ? $value['labelhtml'] : '';
 					}
 					$newval = ($translate ? $langs->trans($tmpvalue) : $tmpvalue);
 					$newval = ($key_in_label ? $tmpkey . ' - ' . $newval : $newval);

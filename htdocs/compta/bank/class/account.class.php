@@ -1463,6 +1463,7 @@ class Account extends CommonObject
 	public function getNomUrl($withpicto = 0, $mode = '', $option = '', $save_lastsearch_value = -1, $notooltip = 0)
 	{
 		global $conf, $langs, $user;
+
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
 		$result = '';
@@ -1504,7 +1505,7 @@ class Account extends CommonObject
 			}
 		}
 
-		$linkstart = '<a href="'.$url.$linkclose;
+		$linkstart = '<a href="'.$url.'"'.$linkclose;
 		$linkend = '</a>';
 
 		if ($option == 'nolink') {
