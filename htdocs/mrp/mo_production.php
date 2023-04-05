@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2019-2020 	Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2023 		Christian Humpel  <christian.humpel@gmail.com>
+ * Copyright (C) 2023 		Christian Humpel     <christian.humpel@gmail.com>
  * Copyright (C) 2023 		Vincent de Grandpré  <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
