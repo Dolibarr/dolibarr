@@ -81,7 +81,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 								$filepath = array();
 								$filename = array();
 								$mimetype = array();
-	
+
 								// Send email to assigned user
 								$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketAssignedToYou');
 								$message = '<p>'.$langs->transnoentities('TicketAssignedEmailBody', $object->track_id, dolGetFirstLastname($user->firstname, $user->lastname))."</p>";
@@ -95,16 +95,16 @@ class InterfaceTicketEmail extends DolibarrTriggers
 										$message .= '<li>'.$langs->trans($key).' : '.$value.'</li>';
 									}
 								}
-	
+
 								$message .= '</ul>';
 								$message .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
 								$message .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
-	
+
 								$sendto = $userstat->email;
 								$from = dolGetFirstLastname($user->firstname, $user->lastname).'<'.$user->email.'>';
-	
+
 								$message = dol_nl2br($message);
-	
+
 								if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
 									$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
 									$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
@@ -127,7 +127,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					}
 
 					// Send an email to the Customer to inform him that his ticket has been taken in charge.
-					if(!empty($conf->global->TICKET_NOTIFY_CUSTOMER_TICKET_ASSIGNED) && empty($object->oldcopy->fk_user_assign)) {
+					if (!empty($conf->global->TICKET_NOTIFY_CUSTOMER_TICKET_ASSIGNED) && empty($object->oldcopy->fk_user_assign)) {
 						$langs->load('ticket');
 
 						$subject_customer = 'TicketAssignedCustomerEmail';
