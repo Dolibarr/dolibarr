@@ -780,7 +780,7 @@ class FormOther
 	 *
 	 *  @param	string		$color				String with hex (FFFFFF) or comma RGB ('255,255,255')
 	 *  @param	string		$textifnotdefined	Text to show if color not defined
-	 *  @return	string							HTML code for color thumb
+	 *  @return	void							HTML code for color thumb
 	 *  @see selectColor()
 	 */
 	public static function showColor($color, $textifnotdefined = '')
