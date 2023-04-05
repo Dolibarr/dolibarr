@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2019-2020 	Laurent Destailleur  <eldy@users.sourceforge.net>
-/* Copyright (C) 2023 		Christian Humpel  <christian.humpel@gmail.com>
+ * Copyright (C) 2023 		Christian Humpel  <christian.humpel@gmail.com>
+ * Copyright (C) 2023 		Vincent de Grandpré  <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -441,6 +442,11 @@ $newToken = newToken();
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$res = $object->fetch_thirdparty();
 	$res = $object->fetch_optionals();
+
+	if(!empty($conf->global->STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE) && $object->fk_warehouse > 0){
+		$tmpwarehouse->fetch($object->fk_warehouse);
+		$fk_default_warehouse = $object->fk_warehouse;
+	}
 
 	$head = moPrepareHead($object);
 
@@ -924,6 +930,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '</td>';
 					// Warehouse
 					print '<td>';
+					if(!empty($conf->global->STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE) && $tmpwarehouse->id > 0) {
+						print img_picto('', $tmpwarehouse->picto)." ".$tmpwarehouse->label;
+					}
 					print '</td>';
 					// Stock
 					if (isModEnabled('stock')) {
@@ -932,7 +941,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							if (!$line->disable_stock_change && $tmpproduct->stock_reel < ($line->qty - $alreadyconsumed)) {
 								print img_warning($langs->trans('StockTooLow')) . ' ';
 							}
-							print price2num($tmpproduct->stock_reel, 'MS'); // Available
+							if(empty($conf->global->STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE) || empty($tmpwarehouse->id)) {
+								print price2num($tmpproduct->stock_reel, 'MS'); // Available
+							} else {
+								// Print only the stock in the selected warehouse
+								$tmpproduct->load_stock();
+								$wh_stock = $tmpproduct->stock_warehouse[$tmpwarehouse->id];
+								if(!empty($wh_stock)){
+									print price2num($wh_stock->real, 'MS');
+								} else {
+									print "0";
+								}							
+							}
 						}
 						print '</td>';
 					}
@@ -1123,6 +1143,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			});
 		</script>';
 
+		if (in_array($action, array('consumeorproduce', 'consumeandproduceall')) && 
+			!empty($conf->global->STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE)) {
+			print '<script>$(document).ready(function () {
+				$("#fk_default_warehouse").change();
+			});</script>';
+		}
 
 		// Lines to produce
 
