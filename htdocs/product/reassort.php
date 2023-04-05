@@ -196,7 +196,7 @@ if (empty($conf->global->PRODUCT_STOCK_LIST_SHOW_VIRTUAL_WITH_NO_PHYSICAL)) {
 			) IS NOT NULL
 			OR (
 				SELECT SUM(ed3.qty) as qty 
-				FROM llx_expeditiondet as ed3 
+				FROM ".MAIN_DB_PREFIX."expeditiondet as ed3 
 				LEFT JOIN ".MAIN_DB_PREFIX."expedition as e3 ON e3.rowid = ed3.fk_expedition 
 				LEFT JOIN ".MAIN_DB_PREFIX."commandedet as cd3 ON ed3.fk_origin_line = cd3.rowid 
 				LEFT JOIN ".MAIN_DB_PREFIX."commande as c3 ON c3.rowid = cd3.fk_commande 
