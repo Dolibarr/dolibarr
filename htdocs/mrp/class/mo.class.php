@@ -639,7 +639,7 @@ class Mo extends CommonObject
 		$oldQty = $this->oldQty;
 		$newQty = $this->qty;
 		if ($newQty != $oldQty && !empty($this->oldQty)) {
-			$sql = 'SELECT rowid FROM ' . MAIN_DB_PREFIX . 'mrp_production WHERE fk_mo = ' . (int) $this->id;
+			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "mrp_production WHERE fk_mo = " . (int) $this->id;
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				while ($obj = $this->db->fetch_object($resql)) {
