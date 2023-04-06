@@ -772,7 +772,7 @@ class Don extends CommonObject
 	 */
 	public function setPaid($id, $modepayment = 0)
 	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2, paid = 1";
 		if ($modepayment) {
 			$sql .= ", fk_payment = ".((int) $modepayment);
 		}
@@ -782,6 +782,7 @@ class Don extends CommonObject
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
 				$this->statut = 2;
+				$this->paid = 1;
 				return 1;
 			} else {
 				return 0;

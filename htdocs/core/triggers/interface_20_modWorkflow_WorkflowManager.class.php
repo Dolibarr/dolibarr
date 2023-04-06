@@ -90,6 +90,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						$this->error = $newobject->error;
 						$this->errors[] = $newobject->error;
 					}
+
+					$object->clearObjectLinkedCache();
+
 					return $ret;
 				}
 			}
@@ -111,6 +114,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					$this->error = $newobject->error;
 					$this->errors[] = $newobject->error;
 				}
+
+				$object->clearObjectLinkedCache();
+
 				return $ret;
 			}
 		}

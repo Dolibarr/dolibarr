@@ -1122,6 +1122,7 @@ DeleteFileText=Do you really want delete this file?
 ShowOtherLanguages=Show other languages
 SwitchInEditModeToAddTranslation=Switch in edit mode to add translations for this language
 NotUsedForThisCustomer=Not used for this customer
+NotUsedForThisVendor=Not used for this vendor
 AmountMustBePositive=Amount must be positive
 ByStatus=By status
 InformationMessage=Information

@@ -889,7 +889,7 @@ if ($action == 'create') {
 				if ($objectsrc->fetch_optionals() > 0) {
 					$recept->array_options = array_merge($recept->array_options, $objectsrc->array_options);
 				}
-				print $object->showOptionals($extrafields, 'create', $parameters);
+				print $recept->showOptionals($extrafields, 'create', $parameters);
 			}
 
 			// Incoterms

@@ -24,6 +24,6 @@ Method to encode/decode ZATCA string is available in test/phpunit/BarcodeTest.ph
 
 * FOR QR-Bill in switzerland
 ----------------------------
-Syntax of QR Code https://www.swiss-qr-invoice.org/fr/
+Syntax of QR Code - See file ig-qr-bill-v2.2-fr.pdf  (more doc on https://www.swiss-qr-invoice.org/downloads/)
 Syntax of complentary field named "structured information of invoice S1": https://www.swiss-qr-invoice.org/downloads/qr-bill-s1-syntax-fr.pdf
 To test/validate: https://www.swiss-qr-invoice.org/validator/

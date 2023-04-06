@@ -296,7 +296,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid'=>$socid, 'arrayfields'=>&$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -1703,11 +1703,11 @@ if ($resql) {
 
 		$with_margin_info = false;
 		if (isModEnabled('margin') && (
-				!empty($arrayfields['total_pa']['checked'])
-				|| !empty($arrayfields['total_margin']['checked'])
-				|| !empty($arrayfields['total_margin_rate']['checked'])
-				|| !empty($arrayfields['total_mark_rate']['checked'])
-			)
+			!empty($arrayfields['total_pa']['checked'])
+			|| !empty($arrayfields['total_margin']['checked'])
+			|| !empty($arrayfields['total_margin_rate']['checked'])
+			|| !empty($arrayfields['total_mark_rate']['checked'])
+		)
 		) {
 			$with_margin_info = true;
 		}

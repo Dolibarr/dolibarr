@@ -794,6 +794,9 @@ class Societe extends CommonObject
 	public $partnerships = array();
 
 
+	const STATUS_CEASED = 0;
+	const STATUS_INACTIVITY = 1;
+
 
 	/**
 	 * @var Account|string Default BAN account

@@ -316,12 +316,13 @@ class mailing_thirdparties extends MailingTargets
 		$s .= '</select>';
 		$s .= ajax_combobox("filter_status_thirdparties");
 
-		// Choose language
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-		$formadmin = new FormAdmin($this->db);
-		$s .= '<span class="opacitymedium">'.$langs->trans("DefaultLang").':</span> ';
-		$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang_thirdparties', 0, null, 1, 0, 0, '', 0, 0, 0, null, 1);
-
+		// Choose language if multilangue active
+		if (@$conf->global->MAIN_MULTILANGS==1) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+			$formadmin = new FormAdmin($this->db);
+			$s .= '<span class="opacitymedium">'.$langs->trans("DefaultLang").':</span> ';
+			$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang_thirdparties', 0, null, 1, 0, 0, '', 0, 0, 0, null, 1);
+		}
 		return $s;
 	}
 

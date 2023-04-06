@@ -797,6 +797,12 @@ if (!$error && $action == 'writebookkeeping') {
 								require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
 								$lettering_static = new Lettering($db);
 								$nb_lettering = $lettering_static->bookkeepingLetteringAll(array($bookkeeping->id));
+
+								if ($nb_lettering < 0) {
+									$error++;
+									$errorforline++;
+									setEventMessages($lettering_static->error, $lettering_static->errors, 'errors');
+								}
 							}
 						}
 					}

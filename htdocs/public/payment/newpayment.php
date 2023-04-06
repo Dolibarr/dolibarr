@@ -288,6 +288,11 @@ $parameters = [
 	'validpaymentmethod' => &$validpaymentmethod
 ];
 $reshook = $hookmanager->executeHooks('doValidatePayment', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+} elseif ($reshook > 0) {
+	print $hookmanager->resPrint;
+}
 
 // Check security token
 $tmpsource = $source;
@@ -2054,6 +2059,12 @@ if ($action != 'dopayment') {
 			'object' => $object
 		];
 		$reshook = $hookmanager->executeHooks('doCheckStatus', $parameters, $object, $action);
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		} elseif ($reshook > 0) {
+			print $hookmanager->resPrint;
+		}
+
 		if ($source == 'order' && $object->billed) {
 			print '<br><br><span class="amountpaymentcomplete size15x">'.$langs->trans("OrderBilled").'</span>';
 		} elseif ($source == 'invoice' && $object->paye) {
@@ -2075,6 +2086,12 @@ if ($action != 'dopayment') {
 				'paymentmethod' => $paymentmethod
 			];
 			$reshook = $hookmanager->executeHooks('doAddButton', $parameters, $object, $action);
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			} elseif ($reshook > 0) {
+				print $hookmanager->resPrint;
+			}
+
 			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && !empty($conf->paybox->enabled)) {
 				print '<div class="button buttonpayment" id="div_dopayment_paybox"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_paybox" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
 				print '<br>';
@@ -2678,8 +2695,12 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 		'dopayment' => GETPOST('dopayment', 'alpha')
 	];
 	$reshook = $hookmanager->executeHooks('doPayment', $parameters, $object, $action);
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	} elseif ($reshook > 0) {
+		print $hookmanager->resPrint;
+	}
 }
-
 
 htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
 

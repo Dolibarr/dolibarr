@@ -1280,6 +1280,8 @@ class Commande extends CommonOrder
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
+					$this->errors += $hookmanager->errors;
+					$this->error = $hookmanager->error;
 					$error++;
 				}
 			}
@@ -1309,6 +1311,7 @@ class Commande extends CommonOrder
 	{
 		global $conf, $hookmanager;
 
+		dol_include_once('/multicurrency/class/multicurrency.class.php');
 		dol_include_once('/core/class/extrafields.class.php');
 
 		$error = 0;
@@ -1384,6 +1387,29 @@ class Commande extends CommonOrder
 		$this->origin = $object->element;
 		$this->origin_id = $object->id;
 
+				// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
+		if (!empty($conf->multicurrency->enabled)) {
+			if (!empty($object->multicurrency_code)) {
+				$this->multicurrency_code = $object->multicurrency_code;
+			}
+			if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($object->multicurrency_tx)) {
+				$this->multicurrency_tx = $object->multicurrency_tx;
+			}
+
+			if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
+					$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date_commande);
+					$this->fk_multicurrency = $tmparray[0];
+					$this->multicurrency_tx = $tmparray[1];
+			} else {
+					$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
+			}
+			if (empty($this->fk_multicurrency)) {
+					$this->multicurrency_code = $conf->currency;
+					$this->fk_multicurrency = 0;
+					$this->multicurrency_tx = 1;
+			}
+		}
+
 		// get extrafields from original line
 		$object->fetch_optionals();
 
@@ -1411,6 +1437,8 @@ class Commande extends CommonOrder
 			$action = '';
 			$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 			if ($reshook < 0) {
+				$this->errors += $hookmanager->errors;
+				$this->error = $hookmanager->error;
 				$error++;
 			}
 
@@ -4572,6 +4600,9 @@ class OrderLine extends CommonOrderLine
 		}
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;
+		}
+		if (empty($this->remise)) {
+			$this->remise = 0;
 		}
 		if (empty($this->info_bits)) {
 			$this->info_bits = 0;

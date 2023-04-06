@@ -567,7 +567,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 					// Total HT line
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN)) {
-						$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs);
+						$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
 						$pdf->SetXY($this->postotalht, $curY);
 						$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
 					}

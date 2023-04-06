@@ -911,7 +911,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		?>
 
 		<?php
-		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {?>
+		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {?>
 		/* To process customer price per quantity (PRODUIT_CUSTOMER_PRICES_BY_QTY works only if combo product is not an ajax after x key pressed) */
 		var pbq = parseInt($('option:selected', this).attr('data-pbq'));				// When select is done from HTML select
 		if (isNaN(pbq)) { pbq = jQuery('#idprod').attr('data-pbq');	}					// When select is done from HTML input with autocomplete

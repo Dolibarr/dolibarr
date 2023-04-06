@@ -1940,6 +1940,7 @@ class pdf_cyan extends ModelePDFPropales
 
 		if (!empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE) && !empty($this->atleastonephoto)) {
 			$this->cols['photo']['status'] = true;
+			$this->cols['photo']['border-left'] = true;
 		}
 
 

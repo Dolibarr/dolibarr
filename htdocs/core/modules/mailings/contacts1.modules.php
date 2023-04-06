@@ -122,7 +122,7 @@ class mailing_contacts1 extends MailingTargets
 	 */
 	public function formFilter()
 	{
-		global $langs;
+		global $langs,$conf;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("commercial", "companies", "suppliers", "categories"));
@@ -307,11 +307,14 @@ class mailing_contacts1 extends MailingTargets
 
 		$s .= ajax_combobox("filter_category_supplier_contact");
 
-		// Choose language
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-		$formadmin = new FormAdmin($this->db);
-		$s .= '<span class="opacitymedium">'.$langs->trans("DefaultLang").':</span> ';
-		$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang', 0, 0, 1, 0, 0, '', 0, 0, 0, null, 1);
+		// Choose language if multilangue active
+
+		if (getDolGlobalInt('MAIN_MULTILANGS') == 1) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+			$formadmin = new FormAdmin($this->db);
+			$s .= '<span class="opacitymedium">'.$langs->trans("DefaultLang").':</span> ';
+			$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang', 0, 0, 1, 0, 0, '', 0, 0, 0, null, 1);
+		}
 
 		return $s;
 	}
@@ -408,8 +411,8 @@ class mailing_contacts1 extends MailingTargets
 		}
 
 		// Filter on language
-		if ($filter_lang != '') {
-			$sql .= " AND sp.default_lang = '".$this->db->escape($filter_lang)."'";
+		if (!empty($filter_lang)) {
+			$sql .= " AND sp.default_lang LIKE '".$this->db->escape($filter_lang)."%'";
 		}
 
 		// Filter on nature
@@ -439,7 +442,6 @@ class mailing_contacts1 extends MailingTargets
 
 		$sql .= " ORDER BY sp.email";
 		// print "wwwwwwx".$sql;
-
 		// Stocke destinataires dans cibles
 		$result = $this->db->query($sql);
 		if ($result) {

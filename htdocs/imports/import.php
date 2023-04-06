@@ -815,17 +815,21 @@ if ($step == 4 && $datatoimport) {
 		$array_match_file_to_database = array();
 	}
 
-	// Load source fields in input file
+	// Load the source fields from input file into variable $arrayrecord
 	$fieldssource = array();
 	$result = $obj->import_open_file($conf->import->dir_temp.'/'.$filetoimport, $langs);
 	if ($result >= 0) {
 		// Read first line
 		$arrayrecord = $obj->import_read_record();
-		// Put into array fieldssource starting with 1.
+
+		// Create array $fieldssource starting with 1 with values found of first line.
 		$i = 1;
 		foreach ($arrayrecord as $key => $val) {
 			if ($val["type"] != -1) {
 				$fieldssource[$i]['example1'] = dol_trunc($val['val'], 128);
+				$i++;
+			} else {
+				$fieldssource[$i]['example1'] = $langs->trans('Empty');
 				$i++;
 			}
 		}
@@ -1075,9 +1079,9 @@ if ($step == 4 && $datatoimport) {
 		$valforsourcefieldnb[$lefti] = $key;
 		$lefti++;
 
-		if ($lefti > count($fieldstarget)) {
+		/*if ($lefti > count($fieldstarget)) {
 			break; // Other fields are in the not imported area
-		}
+		}*/
 	}
 	//var_dump($valforsourcefieldnb);
 
@@ -1130,9 +1134,9 @@ if ($step == 4 && $datatoimport) {
 
 	print '<table class="nobordernopadding centpercent tableimport">';
 	foreach ($fieldssource as $code => $line) {	// $fieldssource is an array code=column num,  line=content on first line for column in source file.
-		if ($i == $minpos) {
+		/*if ($i == $minpos) {
 			break;
-		}
+		}*/
 		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
 		$entity = (!empty($objimport->array_import_entities[0][$code]) ? $objimport->array_import_entities[0][$code] : $objimport->array_import_icon[0]);
 

@@ -452,7 +452,7 @@ if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed
 	$sql .= " s.nom, s.rowid,";
 	$sql .= " t.datec, t.dateo, t.datee, t.tms,";
 	$sql .= " t.rowid, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress,t.budget_amount, t.fk_statut";
-	if ($search_categ) {
+	if ($search_categ > 0) {
 		$sql .= ", cs.fk_categorie, cs.fk_project";
 	}
 	// Add fields from extrafields
