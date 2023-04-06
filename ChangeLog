@@ -261,6 +261,7 @@ Following changes may create regressions for some external modules, but were nec
 * You must use "$objectoffield" to manipulate the current object inside the formulare of computed custom extrafields instead of $obj/$object.
 * Making a global search is sending the parameter using always the name search_all (instead of sometimes sall and search_all)
 * The property $url_last_version must be public if defined into module descriptor files;
+* Filters in class field definitions must be a Dolibarr filter syntax string.
 
 ***** ChangeLog for 16.0.5 compared to 16.0.4 *****
 
