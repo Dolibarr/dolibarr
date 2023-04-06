@@ -548,7 +548,7 @@ print '</table>';
 if ($mysoc->country_code == 'FR') {
 	print '<br>';
 
-// Advanced params
+	// Advanced params
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">' . $langs->trans('OptionsAdvanced') . '</td>';
