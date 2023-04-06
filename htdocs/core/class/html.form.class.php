@@ -8377,18 +8377,18 @@ class Form
 	 *  Return a HTML select string, built from an array of key+value, but content returned into select is defined into $array parameter.
 	 *  Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
 	 *
-	 * @param string $htmlname Name of html select area
-	 * @param array $array Array (key=>array('text'=>'A text', 'url'=>'An url'), ...)
-	 * @param string $id Preselected key
-	 * @param string $moreparam Add more parameters onto the select tag
-	 * @param int $disableFiltering If set to 1, results are not filtered with searched string
-	 * @param int $disabled Html select box is disabled
-	 * @param int $minimumInputLength Minimum Input Length
-	 * @param string $morecss Add more class to css styles
-	 * @param int $callurlonselect If set to 1, some code is added so an url return by the ajax is called when value is selected.
-	 * @param string $placeholder String to use as placeholder
-	 * @param integer $acceptdelayedhtml 1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
-	 * @return    string                        HTML select string
+	 * @param string 	$htmlname 				Name of html select area
+	 * @param array 	$array 					Array (key=>array('text'=>'A text', 'url'=>'An url'), ...)
+	 * @param string 	$id 					Preselected key
+	 * @param string 	$moreparam 				Add more parameters onto the select tag
+	 * @param int 		$disableFiltering 		If set to 1, results are not filtered with searched string
+	 * @param int 		$disabled 				Html select box is disabled
+	 * @param int 		$minimumInputLength 	Minimum Input Length
+	 * @param string 	$morecss 				Add more class to css styles
+	 * @param int 		$callurlonselect 		If set to 1, some code is added so an url return by the ajax is called when value is selected.
+	 * @param string 	$placeholder 			String to use as placeholder
+	 * @param integer 	$acceptdelayedhtml 		1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
+	 * @return	string      					HTML select string
 	 * @see selectArrayAjax(), ajax_combobox() in ajax.lib.php
 	 */
 	public static function selectArrayFilter($htmlname, $array, $id = '', $moreparam = '', $disableFiltering = 0, $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0)
