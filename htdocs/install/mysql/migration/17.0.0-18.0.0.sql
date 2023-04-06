@@ -386,3 +386,5 @@ ALTER TABLE llx_product_fournisseur_price_log ADD INDEX idx_product_fournisseur_
 
 ALTER TABLE llx_bordereau_cheque ADD COLUMN label varchar(255) AFTER ref;
 
+ALTER TABLE llx_societe ADD COLUMN vat_reverse_charge tinyint DEFAULT 0 AFTER tva_assuj;
+ALTER TABLE llx_facture_fourn ADD COLUMN vat_reverse_charge tinyint DEFAULT 0 AFTER close_note;
