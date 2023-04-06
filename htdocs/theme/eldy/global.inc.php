@@ -6546,7 +6546,7 @@ span#select2-boxbookmark-container {
 	font-weight: normal;
 }
 .select2-container-multi-dolibarr .select2-choices-dolibarr li {
-  float: left;
+  float: <?php echo $left; ?>;
   list-style: none;
 }
 .select2-container-multi-dolibarr .select2-choices-dolibarr {
