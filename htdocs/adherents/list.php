@@ -326,6 +326,7 @@ $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_M
 $morejs = array();
 $morecss = array();
 
+
 // Build and execute select
 // --------------------------------------------------------------------
 if ((!empty($search_categ) && $search_categ > 0) || !empty($catid)) {
