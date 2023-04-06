@@ -94,7 +94,7 @@ if (empty($conf->reception->enabled)) {
 }
 
 // $id is id of a purchase order.
-$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
+$result = restrictedArea($user, 'fournisseur', $object, 'commande_fournisseur', 'commande');
 
 if (!isModEnabled('stock')) {
 	accessforbidden();
@@ -978,7 +978,8 @@ if ($id > 0 || !empty($ref)) {
 
 						// Qty to dispatch
 						print '<td class="right">';
-						print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" class="width50 right" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0)).'">';
+						print '<a href="#" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
+						print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0)).'">';
 						print '</td>';
 
 						print '<td>';
@@ -1115,14 +1116,30 @@ if ($id > 0 || !empty($ref)) {
 					$("select[name^=entrepot_]").val(fk_default_warehouse).change();
                 });
 
-	            jQuery("#autoreset").click(function() {';
-	$i = 0;
-	while ($i < $nbproduct) {
-		print '           jQuery("#qty_0_'.$i.'").val("");';
-		$i++;
-	}
-	print '
+	            $("#autoreset").click(function() {
+					$(".qtydispatchinput").each(function(){
+						id = $(this).attr("id");
+						idtab = id.split("_");
+						if(idtab[1] == 0){
+							console.log(idtab);
+							$(this).val("");
+							$("#qty_dispatched_0_"+idtab[2]).val("0");
+						} else {
+							obj = $(this).parent().parent();
+							nameobj = obj.attr("name");
+							nametab = nameobj.split("_");
+							obj.remove();
+							$("tr[name^=\'"+nametab[0]+"_\'][name$=\'_"+nametab[2]+"\']:last .splitbutton").show();
+						}
+					});
                 });
+
+				$(".resetline").click(function(){
+					id = $(this).attr("id");
+					id = id.split("reset_");
+					console.log("Reset trigger for id = qty_"+id[1]);
+					$("#qty_"+id[1]).val("");
+				});
 			});
 		</script>';
 

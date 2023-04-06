@@ -133,6 +133,21 @@ function addDispatchLine(index, type, mode)
 		$("tr[name^='"+type+"_'][name$='_"+index+"'] .splitbutton").hide();
 		$("tr[name^='"+type+"_'][name$='_"+index+"']:last .splitbutton").show();
 
+		$("#reset_"+(nbrTrs)+"_"+index).click(function(){
+			id = $(this).attr("id");
+			id = id.split("reset_");
+			idrow = id[1];
+			idlast = $("tr[name^='"+type+"_'][name$='_"+index+"']:last .qtydispatchinput").attr("id");
+			if (idlast == $("#qty_"+idrow).attr("id")) {
+				console.log("Remove trigger for tr name = "+type+"_"+idrow);
+				$('tr[name="'+type+'_'+idrow+'"').remove();
+				$("tr[name^='"+type+"_'][name$='_"+index+"']:last .splitbutton").show();
+			} else {
+				console.log("Reset trigger for id = #qty_"+idrow);
+				$("#qty_"+idrow).val("");
+			}
+		});;
+
 		if (mode === 'lessone')
 		{
 			qty = 1; // keep 1 in old line
