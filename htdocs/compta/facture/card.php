@@ -1756,7 +1756,7 @@ if (empty($reshook)) {
 											$lines[$i]->pa_ht,
 											$label,
 											$array_options,
-											$lines[$i]->situation_percent,
+											isset($lines[$i]->situation_percent) ? $lines[$i]->situation_percent : 0,
 											$lines[$i]->fk_prev_id,
 											$lines[$i]->fk_unit,
 											0,
