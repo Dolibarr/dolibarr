@@ -772,13 +772,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if ($action == 'editoperation' && $ruleaction['id'] == $operationid) {
 			//print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.dol_escape_htmltag($ruleaction['actionparam']).'"><br>';
 			print '<textarea class="centpercent" name="operationparam2" rows="3">';
-			print dol_escape_htmltag($ruleaction['actionparam']);
+			print dol_escape_htmltag($ruleaction['actionparam'], 0, 1);
 			print '</textarea>';
 			print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'">';
 			print '<input type="submit" class="button small button-save" name="saveoperation2" value="'.$langs->trans("Save").'">';
 			print '<input type="submit" class="button small button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		} else {
-			print dol_escape_htmltag($ruleaction['actionparam']);
+			print dol_nl2br(dol_escape_htmltag($ruleaction['actionparam'], 0, 1));
 		}
 		print '</td>';
 		// Move up/down
