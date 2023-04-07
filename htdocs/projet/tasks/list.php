@@ -1132,8 +1132,8 @@ while ($i < $imaxinloop) {
 		}
 		// Output Kanban
 		$object->fk_statut = $projectstatic->getLibStatut(1);
-		$object->fk_project = $projectstatic->getNomUrl(1, 'task');
-		print $object->getKanbanView('');
+		$arraydata['projectlink'] = $projectstatic->getNomUrl(1);
+		print $object->getKanbanView('', $arraydata);
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
