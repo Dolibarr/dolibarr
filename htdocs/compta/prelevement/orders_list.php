@@ -159,7 +159,7 @@ if ($result) {
 		$param .= '&amp;type=bank-transfer';
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	$param .= "&statut=".urlencode($statut);
 
