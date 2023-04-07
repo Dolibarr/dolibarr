@@ -1467,8 +1467,8 @@ if (empty($reshook)) {
 						}
 					}
 
-					if (is_array($_POST['other_linked_objects']) && !empty($_POST['other_linked_objects'])) {
-						$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
+					if (GETPOST('other_linked_objects', 'array') && !empty(GETPOST('other_linked_objects', 'array'))) {
+						$object->linked_objects = array_merge($object->linked_objects, GETPOST('other_linked_objects', 'array'));
 					}
 
 					$id = $object->create($user); // This include class to add_object_linked() and add add_contact()
