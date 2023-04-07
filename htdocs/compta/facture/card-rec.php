@@ -1152,6 +1152,7 @@ if ($action == 'create') {
 
 		print '</td></tr>';
 
+		$flag_price_may_change = true;
 		if ($flag_price_may_change) {
 			print '<tr><td colspan="3" class="left">';
 			print '<select name="usenewprice" class="flat">';
