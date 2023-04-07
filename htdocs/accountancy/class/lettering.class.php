@@ -285,27 +285,27 @@ class Lettering extends BookKeeping
 	 * @param	boolean		$notrigger		no trigger
 	 * @return	int
 	 */
-	public function updateLettering($ids, $notrigger = false)
+	public function updateLettering($ids = array(), $notrigger = false)
 	{
 		$error = 0;
 		$lettre = 'AAA';
 
-		$sql = "SELECT DISTINCT ab2.lettering_code" .
-			" FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping As ab" .
-			" LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab2 ON ab2.subledger_account = ab.subledger_account" .
-			" WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")" .
-			" AND ab2.lettering_code != ''" .
-			" ORDER BY ab2.lettering_code DESC" .
-			" LIMIT 1 ";
+		$sql = "SELECT DISTINCT ab2.lettering_code";
+		$sql .=	" FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
+		$sql .=	" LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab2 ON ab2.subledger_account = ab.subledger_account";
+		$sql .=	" WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")";
+		$sql .=	" AND ab2.lettering_code != ''";
+		$sql .=	" ORDER BY ab2.lettering_code DESC";
+		$sql .=	" LIMIT 1 ";
 
-		$result = $this->db->query($sql);
-		if ($result) {
-			$obj = $this->db->fetch_object($result);
+		$resqla = $this->db->query($sql);
+		if ($resqla) {
+			$obj = $this->db->fetch_object($resqla);
 			$lettre = (empty($obj->lettering_code) ? $lettre : $obj->lettering_code);
 			if (!empty($obj->lettering_code)) {
 				$lettre++;
 			}
-			$this->db->free($result);
+			$this->db->free($resqla);
 		} else {
 			$this->errors[] = 'Error'.$this->db->lasterror();
 			$error++;
@@ -313,14 +313,14 @@ class Lettering extends BookKeeping
 
 		$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE ";
 		$sql .= " rowid IN (".$this->db->sanitize(implode(',', $ids)).") AND lettering_code IS NULL AND subledger_account != ''";
-		$result = $this->db->query($sql);
-		if ($result) {
-			$obj = $this->db->fetch_object($result);
+		$resqlb = $this->db->query($sql);
+		if ($resqlb) {
+			$obj = $this->db->fetch_object($resqlb);
 			if (!(round(abs($obj->deb), 2) === round(abs($obj->cred), 2))) {
 				$this->errors[] = 'Total not exacts '.round(abs($obj->deb), 2).' vs '.round(abs($obj->cred), 2);
 				$error++;
 			}
-			$this->db->free($result);
+			$this->db->free($resqlb);
 		} else {
 			$this->errors[] = 'Erreur sql'.$this->db->lasterror();
 			$error++;
@@ -329,11 +329,12 @@ class Lettering extends BookKeeping
 		// Update request
 
 		$now = dol_now();
+		$affected_rows = 0;
 
 		if (!$error) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping SET";
 			$sql .= " lettering_code='".$this->db->escape($lettre)."'";
-			$sql .= " , date_lettering = '".$this->db->idate($now)."'"; // todo correct date it's false
+			$sql .= ", date_lettering = '".$this->db->idate($now)."'"; // todo correct date it's false
 			$sql .= "  WHERE rowid IN (".$this->db->sanitize(implode(',', $ids)).") AND lettering_code IS NULL AND subledger_account != ''";
 
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -341,6 +342,8 @@ class Lettering extends BookKeeping
 			if (!$resql) {
 				$error++;
 				$this->errors[] = "Error ".$this->db->lasterror();
+			} else {
+				$affected_rows = $this->db->affected_rows($resql);
 			}
 		}
 
@@ -352,7 +355,7 @@ class Lettering extends BookKeeping
 			}
 			return -1 * $error;
 		} else {
-			return 1;
+			return $affected_rows;
 		}
 	}
 
@@ -368,7 +371,7 @@ class Lettering extends BookKeeping
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping SET";
 		$sql .= " lettering_code = NULL";
-		$sql .= " , date_lettering = NULL";
+		$sql .= ", date_lettering = NULL";
 		$sql .= " WHERE rowid IN (".$this->db->sanitize(implode(',', $ids)).")";
 		$sql .= " AND subledger_account != ''";
 
@@ -387,7 +390,7 @@ class Lettering extends BookKeeping
 			}
 			return -1 * $error;
 		} else {
-			return 1;
+			return $this->db->affected_rows($resql);
 		}
 	}
 
@@ -465,7 +468,7 @@ class Lettering extends BookKeeping
 						$group_error++;
 						break;
 					}
-					if (!isset($lettering_code)) $lettering_code = (string)$line_infos['lettering_code'];
+					if (!isset($lettering_code)) $lettering_code = (string) $line_infos['lettering_code'];
 					if (!empty($line_infos['lettering_code'])) $do_it = true;
 				} elseif (!empty($line_infos['lettering_code'])) $do_it = false;
 			}
@@ -482,7 +485,7 @@ class Lettering extends BookKeeping
 				else $result = $this->updateLettering($bookkeeping_lines);
 				if ($result < 0) {
 					$group_error++;
-				} else {
+				} elseif ($result > 0) {
 					$nb_lettering++;
 				}
 			}
@@ -509,7 +512,7 @@ class Lettering extends BookKeeping
 	 */
 	public function getLinkedLines($bookkeeping_ids, $only_has_subledger_account = true)
 	{
-		dol_syslog(__METHOD__ . " - bookkeeping_ids=".json_encode($bookkeeping_ids).", only_has_subledger_account=$only_has_subledger_account", LOG_DEBUG);
+		global $conf, $langs;
 		$this->errors = array();
 
 		// Clean parameters
@@ -518,18 +521,18 @@ class Lettering extends BookKeeping
 		// Get all bookkeeping lines
 		$sql = "SELECT DISTINCT ab.doc_type, ab.fk_doc";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
-		if (!empty($bookkeeping_ids)) {
-			// Get all bookkeeping lines of piece number
-			$sql .= " LEFT JOIN (";
-			$sql .= "   SELECT DISTINCT piece_num";
-			$sql .= "   FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
-			$sql .= "   WHERE entity IN (" . getEntity('accountancy') . ")";
-			$sql .= "   AND rowid IN (" . $this->db->sanitize(implode(',', $bookkeeping_ids)) . ")";
-			$sql .= " ) AS pn ON pn.piece_num = ab.piece_num";
-		}
 		$sql .= " WHERE ab.entity IN (" . getEntity('accountancy') . ")";
 		$sql .= " AND ab.fk_doc > 0";
-		if (!empty($bookkeeping_ids)) $sql .= " AND pn.piece_num IS NOT NULL";
+		if (!empty($bookkeeping_ids)) {
+			// Get all bookkeeping lines of piece number
+			$sql .= " AND EXISTS (";
+			$sql .= "  SELECT rowid";
+			$sql .= "  FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS pn";
+			$sql .= "  WHERE pn.entity IN (" . getEntity('accountancy') . ")";
+			$sql .= "  AND pn.rowid IN (" . $this->db->sanitize(implode(',', $bookkeeping_ids)) . ")";
+			$sql .= "  AND pn.piece_num = ab.piece_num";
+			$sql .= " )";
+		}
 		if ($only_has_subledger_account) $sql .= " AND ab.subledger_account != ''";
 
 		dol_syslog(__METHOD__ . " - Get all bookkeeping lines", LOG_DEBUG);
@@ -583,28 +586,27 @@ class Lettering extends BookKeeping
 				// Get all bookkeeping lines linked
 				$sql = "SELECT DISTINCT ab.rowid, ab.piece_num, ab.debit, ab.credit, ab.lettering_code";
 				$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
-				if (!empty($bank_ids)) {
-					$sql .= " LEFT JOIN (";
-					$sql .= "   SELECT DISTINCT ab.piece_num";
-					$sql .= "   FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
-					$sql .= "   WHERE ab.entity IN (" . getEntity('accountancy') . ")";
-					$sql .= "   AND ab.doc_type = 'bank'";
-					$sql .= "   AND ab.fk_doc IN (" . $this->db->sanitize(implode(',', $bank_ids)) . ")";
-					$sql .= " ) AS bpn ON bpn.piece_num = ab.piece_num";
-				}
-				$sql .= " LEFT JOIN (";
-				$sql .= "   SELECT DISTINCT ab.piece_num";
-				$sql .= "   FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
-				$sql .= "   WHERE ab.entity IN (" . getEntity('accountancy') . ")";
-				$sql .= "   AND ab.doc_type = '" . $this->db->escape($doc_type) . "'";
-				$sql .= "   AND ab.fk_doc IN (" . $this->db->sanitize(implode(',', $doc_ids)) . ")";
-				$sql .= " ) AS dpn ON dpn.piece_num = ab.piece_num";
 				$sql .= " WHERE ab.entity IN (" . getEntity('accountancy') . ")";
 				$sql .= " AND (";
 				if (!empty($bank_ids)) {
-					$sql .= "bpn.piece_num IS NOT NULL OR ";
+					$sql .= " EXISTS (";
+					$sql .= "  SELECT bpn.rowid";
+					$sql .= "  FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS bpn";
+					$sql .= "  WHERE bpn.entity IN (" . getEntity('accountancy') . ")";
+					$sql .= "  AND bpn.doc_type = 'bank'";
+					$sql .= "  AND bpn.fk_doc IN (" . $this->db->sanitize(implode(',', $bank_ids)) . ")";
+					$sql .= "  AND bpn.piece_num = ab.piece_num";
+					$sql .= " ) OR ";
 				}
-				$sql .= "dpn.piece_num IS NOT NULL)";
+				$sql .= " EXISTS (";
+				$sql .= "  SELECT dpn.rowid";
+				$sql .= "  FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS dpn";
+				$sql .= "  WHERE dpn.entity IN (" . getEntity('accountancy') . ")";
+				$sql .= "  AND dpn.doc_type = '" . $this->db->escape($doc_type) . "'";
+				$sql .= "  AND dpn.fk_doc IN (" . $this->db->sanitize(implode(',', $doc_ids)) . ")";
+				$sql .= "  AND dpn.piece_num = ab.piece_num";
+				$sql .= " )";
+				$sql .= ")";
 				if ($only_has_subledger_account) $sql .= " AND ab.subledger_account != ''";
 
 				dol_syslog(__METHOD__ . " - Get all bookkeeping lines linked", LOG_DEBUG);
@@ -794,10 +796,10 @@ class Lettering extends BookKeeping
 	/**
 	 * Get element ids grouped by link or element in common
 	 *
-	 * @param	array	&$link_by_element	List of payment ids by link key
-	 * @param	array	&$element_by_link	List of element ids by link key
+	 * @param	array	$link_by_element	List of payment ids by link key
+	 * @param	array	$element_by_link	List of element ids by link key
 	 * @param	string	$link_key			Link key (used for recursive function)
-	 * @param	array	&$current_group		Current group (used for recursive function)
+	 * @param	array	$current_group		Current group (used for recursive function)
 	 * @return	array						List of element ids grouped by link or element in common
 	 */
 	public function getGroupElements(&$link_by_element, &$element_by_link, $link_key = '', &$current_group = array())
@@ -842,7 +844,7 @@ class Lettering extends BookKeeping
 				$grouped_elements[] = $current_group;
 				$current_group = array();
 			}
-		} while(!empty($element_by_link) && empty($link_key));
+		} while (!empty($element_by_link) && empty($link_key));
 
 		if (empty($link_key)) {
 			// Restore list when is the begin of recursive function

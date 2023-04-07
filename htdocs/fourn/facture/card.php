@@ -1981,7 +1981,6 @@ if ($action == 'create') {
 	} else {
 		$cond_reglement_id = $societe->cond_reglement_supplier_id;
 		$mode_reglement_id = $societe->mode_reglement_supplier_id;
-		$vat_reverse_charge = $societe->vat_reverse_charge;
 		$transport_mode_id = $societe->transport_mode_supplier_id;
 		$fk_account = $societe->fk_account;
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
@@ -2357,7 +2356,7 @@ if ($action == 'create') {
 	if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
 		print '<tr><td>' . $langs->trans('VATReverseCharge') . '</td><td>';
 		// Try to propose to use VAT reverse charg even if the VAT reverse charge is not activated in the supplier card, if this corresponds to the context of use, the activation is proposed
-		if ($vat_reverse_charge == 1 || ($societe->country_code != 'FR' && isInEEC($societe) && !empty($societe->tva_intra))) {
+		if ($societe->vat_reverse_charge == 1 || ($societe->country_code != 'FR' && isInEEC($societe) && !empty($societe->tva_intra))) {
 			$vat_reverse_charge = 1;
 		} else {
 			$vat_reverse_charge = 0;
