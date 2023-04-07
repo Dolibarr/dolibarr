@@ -2239,7 +2239,7 @@ td.showDragHandle {
 	if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	} else { ?>
 	position: fixed;
-	top: 50px;
+	top: 75px;
 	<?php } ?>
 	z-index: 90;
 	-webkit-transform: translateZ(0);
@@ -2366,7 +2366,7 @@ div.backgroundsemitransparent {
 	z-index: 91;
 	background: var(--colorbackvmenu1);
 	border-right: 1px solid rgba(0,0,0,0.3);
-	padding-top: 20px;
+	/* padding-top: 20px; */
 	<?php
 	if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	top: 66px ! important;
@@ -3430,7 +3430,7 @@ a.vsmenu.addbookmarkpicto {
 }
 div.blockvmenufirst {
 	padding-top: 10px;
-/*	border-top: 1px solid #e0e0e0; */
+	border-top: 1px solid #e0e0e0;
 }
 div.blockvmenusearch, div.blockvmenubookmarks
 {
