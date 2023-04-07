@@ -895,7 +895,7 @@ class EmailCollector extends CommonObject
 
 		// Overwrite values with values extracted from source email
 		// $this->actionparam = 'opportunity_status=123;abc=EXTRACT:BODY:....'
-		$arrayvaluetouse = dolExplodeIntoArray($actionparam, ';', '=');
+		$arrayvaluetouse = dolExplodeIntoArray($actionparam, '(\n\r|\r|\n|;)', '=');
 		foreach ($arrayvaluetouse as $propertytooverwrite => $valueforproperty) {
 			$tmpclass = ''; $tmpproperty = '';
 			$tmparray = explode('.', $propertytooverwrite);
@@ -2050,7 +2050,7 @@ class EmailCollector extends CommonObject
 								$namealiastouseforthirdparty = '';
 
 								// $actionparam = 'param=SET:aaa' or 'param=EXTRACT:BODY:....'
-								$arrayvaluetouse = dolExplodeIntoArray($actionparam, ';', '=');
+								$arrayvaluetouse = dolExplodeIntoArray($actionparam, '(\n\r|\r|\n|;)', '=');
 								foreach ($arrayvaluetouse as $propertytooverwrite => $valueforproperty) {
 									$sourcestring = '';
 									$sourcefield = '';
