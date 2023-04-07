@@ -2169,6 +2169,8 @@ class EmailCollector extends CommonObject
 												}
 											}
 										}
+									} else {
+										dol_syslog("One and only one existing third party has been found");
 									}
 								}
 							}
@@ -2552,6 +2554,8 @@ class EmailCollector extends CommonObject
 										}
 									}
 								}
+							} else {
+								$operationslog .= '<br>Project already exists for msgid ='.dol_escape_htmltag($msgid);
 							}
 						} elseif ($operation['type'] == 'ticket') {
 							// Create ticket
