@@ -386,3 +386,4 @@ ALTER TABLE llx_product_fournisseur_price_log ADD INDEX idx_product_fournisseur_
 
 ALTER TABLE llx_bordereau_cheque ADD COLUMN label varchar(255) AFTER ref;
 
+ALTER TABLE llx_c_email_templates add COLUMN defaultfortype smallint DEFAULT 0;
