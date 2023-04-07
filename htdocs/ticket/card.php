@@ -894,8 +894,8 @@ if ($action == 'create' || $action == 'presend') {
 				$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, 'none', '', 1, 0, 0, array(), 1);
 			}
 			if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && !empty($object->socid)) {
-				$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/ticket/list.php?socid='.$object->socid.'&sortfield=t.datec&sortorder=desc">'.
-				img_picto($langs->trans("Tickets"), 'ticket', 'class="pictofixedwidth"').' '.$langs->trans("TicketHistory").'</a>';
+				$morehtmlref .= ' ( <a href="'.DOL_URL_ROOT.'/ticket/list.php?socid='.$object->socid.'&sortfield=t.datec&sortorder=desc">'.
+				$langs->trans("TicketHistory").'</a> )';
 			}
 		}
 
