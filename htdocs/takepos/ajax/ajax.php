@@ -58,13 +58,21 @@ if (empty($user->rights->takepos->run)) {
  */
 
 if ($action == 'getProducts') {
+	$tosell = GETPOSTISSET('tosell') ? GETPOST('tosell', 'int') : '';
+	$limit = GETPOSTISSET('limit') ? GETPOST('limit', 'int') : 0;
+	$offset = GETPOSTISSET('offset') ? GETPOST('offset', 'int') : 0;
+
 	$object = new Categorie($db);
 	if ($category == "supplements") {
 		$category = getDolGlobalInt('TAKEPOS_SUPPLEMENTS_CATEGORY');
 	}
 	$result = $object->fetch($category);
 	if ($result > 0) {
-		$prods = $object->getObjectsInCateg("product", 0, 0, 0, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD'), 'ASC');
+		$filter = array();
+		if ($tosell != '') {
+			$filter = array('customsql' => 'o.tosell = '.((int) $tosell));
+		}
+		$prods = $object->getObjectsInCateg("product", 0, $limit, $offset, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD'), 'ASC', $filter);
 		// Removed properties we don't need
 		if (is_array($prods) && count($prods) > 0) {
 			foreach ($prods as $prod) {

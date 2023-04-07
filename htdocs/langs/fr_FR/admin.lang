@@ -516,6 +516,7 @@ GoIntoTranslationMenuToChangeThis=Une traduction a été trouvée pour le code d
 WarningSettingSortOrder=Attention, le réglage d'un ordre de tri par défaut peut entraîner une erreur technique lorsque le champ est inconnu dans le listing. Si vous rencontrez une telle erreur, revenez à cette page pour supprimer l'ordre de tri par défaut et restaurer le comportement par défaut.
 Field=Champ
 ProductDocumentTemplates=Modèle de document pour la fiche produit
+ProductBatchDocumentTemplates=Modèle de document pour la fiche Lot/Série
 FreeLegalTextOnExpenseReports=Mention complémentaire sur les notes de frais
 WatermarkOnDraftExpenseReports=Filigrane sur les notes de frais
 ProjectIsRequiredOnExpenseReports=La saisie d'un projet est obligatoire pour saisir une note de frais
