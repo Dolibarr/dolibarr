@@ -1301,7 +1301,8 @@ if ($action == 'create') {
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($object->type != Facture::TYPE_CREDIT_NOTE) {
+		$invoice = new Facture($db);
+		if ($invoice->type != Facture::TYPE_CREDIT_NOTE) {
 			if ($action == 'editconditions') {
 				$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
 			} else {
