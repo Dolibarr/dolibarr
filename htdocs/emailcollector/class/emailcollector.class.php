@@ -1056,6 +1056,7 @@ class EmailCollector extends CommonObject
 		$searchfilternodoltrackid = 0;
 		$searchfilterisanswer = 0;
 		$searchfilterisnotanswer = 0;
+		$searchfilterreplyto = 0;
 		$operationslog = '';
 
 		$now = dol_now();
@@ -1205,64 +1206,81 @@ class EmailCollector extends CommonObject
 		}
 
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+			// Use PHPIMAP external library
 			$criteria = array(array('UNDELETED')); // Seems not supported by some servers
 			foreach ($this->filters as $rule) {
 				if (empty($rule['status'])) {
 					continue;
 				}
+
+				$not = '';
+				if (strpos($rule['rulevalue'], '!') === 0) {
+					// The value start with !, so we exclude the criteria
+					$not = 'NOT ';
+				}
+
+				if ($rule['type'] == 'from') {
+					$tmprulevaluearray = explode('*', $rule['rulevalue']);
+					if (count($tmprulevaluearray) >= 2) {
+						foreach ($tmprulevaluearray as $tmprulevalue) {
+							array_push($criteria, array($not."FROM" => $tmprulevalue));
+						}
+					} else {
+						array_push($criteria, array($not."FROM" => $rule['rulevalue']));
+					}
+				}
 				if ($rule['type'] == 'to') {
 					$tmprulevaluearray = explode('*', $rule['rulevalue']);
 					if (count($tmprulevaluearray) >= 2) {
 						foreach ($tmprulevaluearray as $tmprulevalue) {
-							array_push($criteria, array("TO" => $tmprulevalue));
+							array_push($criteria, array($not."TO" => $tmprulevalue));
 						}
 					} else {
-						array_push($criteria, array("TO" => $rule['rulevalue']));
+						array_push($criteria, array($not."TO" => $rule['rulevalue']));
 					}
 				}
 				if ($rule['type'] == 'bcc') {
-					array_push($criteria, array("BCC" => $rule['rulevalue']));
+					array_push($criteria, array($not."BCC" => $rule['rulevalue']));
 				}
 				if ($rule['type'] == 'cc') {
-					array_push($criteria, array("CC" => $rule['rulevalue']));
-				}
-				if ($rule['type'] == 'from') {
-					array_push($criteria, array("FROM" => $rule['rulevalue']));
+					array_push($criteria, array($not."CC" => $rule['rulevalue']));
 				}
 				if ($rule['type'] == 'subject') {
-					array_push($criteria, array("SUBJECT" => $rule['rulevalue']));
+					array_push($criteria, array($not."SUBJECT" => $rule['rulevalue']));
 				}
 				if ($rule['type'] == 'body') {
-					array_push($criteria, array("BODY" => $rule['rulevalue']));
+					array_push($criteria, array($not."BODY" => $rule['rulevalue']));
 				}
 				if ($rule['type'] == 'header') {
-					array_push($criteria, array("HEADER" => $rule['rulevalue']));
+					array_push($criteria, array($not."HEADER" => $rule['rulevalue']));
 				}
 
+				/* seems not used */
+				/*
 				if ($rule['type'] == 'notinsubject') {
-					array_push($criteria, array("SUBJECT NOT" => $rule['rulevalue']));
+					array_push($criteria, array($not."SUBJECT NOT" => $rule['rulevalue']));
 				}
 				if ($rule['type'] == 'notinbody') {
-					array_push($criteria, array("BODY NOT" => $rule['rulevalue']));
-				}
+					array_push($criteria, array($not."BODY NOT" => $rule['rulevalue']));
+				}*/
 
 				if ($rule['type'] == 'seen') {
-					array_push($criteria, array("SEEN"));
+					array_push($criteria, array($not."SEEN"));
 				}
 				if ($rule['type'] == 'unseen') {
-					array_push($criteria, array("UNSEEN"));
+					array_push($criteria, array($not."UNSEEN"));
 				}
 				if ($rule['type'] == 'unanswered') {
-					array_push($criteria, array("UNANSWERED"));
+					array_push($criteria, array($not."UNANSWERED"));
 				}
 				if ($rule['type'] == 'answered') {
-					array_push($criteria, array("ANSWERED"));
+					array_push($criteria, array($not."ANSWERED"));
 				}
 				if ($rule['type'] == 'smaller') {
-					array_push($criteria, array("SMALLER"));
+					array_push($criteria, array($not."SMALLER"));
 				}
 				if ($rule['type'] == 'larger') {
-					array_push($criteria, array("LARGER"));
+					array_push($criteria, array($not."LARGER"));
 				}
 
 				// Rules to filter after the search imap
@@ -1285,6 +1303,10 @@ class EmailCollector extends CommonObject
 				if ($rule['type'] == 'isnotanswer') {
 					$searchfilterisnotanswer++; $searchhead .= '! /References.*@.*/';
 				}
+
+				if ($rule['type'] == 'replyto') {
+					$searchfilterreplyto++; $searchhead .= '/Reply-To.*'.preg_quote($rule['rulevalue'], '/').'/';
+				}
 			}
 
 			if (empty($targetdir)) {	// Use last date as filter if there is no targetdir defined.
@@ -1302,6 +1324,7 @@ class EmailCollector extends CommonObject
 			dol_syslog("IMAP search string = ".var_export($criteria, true));
 			$search = var_export($criteria, true);
 		} else {
+			// Use native IMAP functions
 			$search = 'UNDELETED'; // Seems not supported by some servers
 			foreach ($this->filters as $rule) {
 				if (empty($rule['status'])) {
@@ -1317,6 +1340,16 @@ class EmailCollector extends CommonObject
 					$not = 'NOT ';
 				}
 
+				if ($rule['type'] == 'from') {
+					$tmprulevaluearray = explode('*', $rule['rulevalue']);	// Search on abc*def means searching on 'abc' and on 'def'
+					if (count($tmprulevaluearray) >= 2) {
+						foreach ($tmprulevaluearray as $tmprulevalue) {
+							$search .= ($search ? ' ' : '').$not.'FROM "'.str_replace('"', '', $tmprulevalue).'"';
+						}
+					} else {
+						$search .= ($search ? ' ' : '').$not.'FROM "'.str_replace('"', '', $rule['rulevalue']).'"';
+					}
+				}
 				if ($rule['type'] == 'to') {
 					$tmprulevaluearray = explode('*', $rule['rulevalue']);	// Search on abc*def means searching on 'abc' and on 'def'
 					if (count($tmprulevaluearray) >= 2) {
@@ -1333,9 +1366,6 @@ class EmailCollector extends CommonObject
 				if ($rule['type'] == 'cc') {
 					$search .= ($search ? ' ' : '').$not.'CC';
 				}
-				if ($rule['type'] == 'from') {
-					$search .= ($search ? ' ' : '').$not.'FROM "'.str_replace('"', '', $rule['rulevalue']).'"';
-				}
 				if ($rule['type'] == 'subject') {
 					$search .= ($search ? ' ' : '').$not.'SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
 				}
@@ -1347,12 +1377,13 @@ class EmailCollector extends CommonObject
 				}
 
 				/* seems not used */
+				/*
 				if ($rule['type'] == 'notinsubject') {
 					$search .= ($search ? ' ' : '').'NOT SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
 				}
 				if ($rule['type'] == 'notinbody') {
 					$search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
-				}
+				}*/
 
 				if ($rule['type'] == 'seen') {
 					$search .= ($search ? ' ' : '').$not.'SEEN';
@@ -1392,6 +1423,10 @@ class EmailCollector extends CommonObject
 				}
 				if ($rule['type'] == 'isnotanswer') {
 					$searchfilterisnotanswer++; $searchhead .= '! /References.*@.*/';
+				}
+
+				if ($rule['type'] == 'replyto') {
+					$searchfilterreplyto++; $searchhead .= '/Reply-To.*'.preg_quote($rule['rulevalue'], '/').'/';
 				}
 			}
 

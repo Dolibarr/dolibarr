@@ -615,13 +615,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		'to'=>array('label'=>'MailTo', 'data-placeholder'=>$langs->trans('SearchString')),
 		'cc'=>array('label'=>'Cc', 'data-placeholder'=>$langs->trans('SearchString')),
 		'bcc'=>array('label'=>'Bcc', 'data-placeholder'=>$langs->trans('SearchString')),
+		'replyto'=>array('label'=>'ReplyTo', 'data-placeholder'=>$langs->trans('SearchString')),
 		'subject'=>array('label'=>'Subject', 'data-placeholder'=>$langs->trans('SearchString')),
 		'body'=>array('label'=>'Body', 'data-placeholder'=>$langs->trans('SearchString')),
 		// disabled because PHP imap_search is not compatible IMAPv4, only IMAPv2
 		//'header'=>array('label'=>'Header', 'data-placeholder'=>'HeaderKey SearchString'),                // HEADER key value
 		//'X1'=>'---',
-		//'notinsubject'=>array('label'=>'SubjectNotIn', 'data-placeholder'=>'SearchString'),
-		//'notinbody'=>array('label'=>'BodyNotIn', 'data-placeholder'=>'SearchString'),
 		'X2'=>'---',
 		'seen'=>array('label'=>'AlreadyRead', 'data-noparam'=>1),
 		'unseen'=>array('label'=>'NotRead', 'data-noparam'=>1),
