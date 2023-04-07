@@ -461,9 +461,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 				$j -= 12;
 			}
 			$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
-			print '<td class="right" width="6%">'.price($totalpermonth[$j]).'</td>';
+			print '<td class="right" width="6%">'.price(empty($totalpermonth[$j]) ? 0 : $totalpermonth[$j]).'</td>';
 		}
-		print '<td class="right" width="6%"><b>'.price($totalpermonth['total']).'</b></td>';
+		print '<td class="right" width="6%"><b>'.price(empty($totalpermonth['total']) ? 0 : $totalpermonth['total']).'</b></td>';
 		print '</tr>';
 	} else {
 		print $db->lasterror(); // Show last sql error

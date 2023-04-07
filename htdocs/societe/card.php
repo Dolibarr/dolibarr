@@ -617,7 +617,7 @@ if (empty($reshook)) {
 
 				$result = $object->create($user);
 
-				if (empty($error) && !empty($conf->mailing->enabled) && !empty($object->email) && $object->no_email == 1) {
+				if (empty($error) && isModEnabled('mailing') && !empty($object->email) && $object->no_email == 1) {
 					// Add mass emailing flag into table mailing_unsubscribe
 					$result = $object->setNoEmail($object->no_email);
 					if ($result < 0) {
@@ -1632,8 +1632,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
 		print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="url" id="url" value="'.$object->url.'"></td></tr>';
 
-			// Unsubscribe
-		if (!empty($conf->mailing->enabled)) {
+		// Unsubscribe
+		if (isModEnabled('mailing')) {
 			if ($conf->use_javascript_ajax && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
 				print "\n".'<script type="text/javascript">'."\n";
 				print '$(document).ready(function () {
@@ -1663,21 +1663,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Social networks
 		if (isModEnabled('socialnetworks')) {
-			foreach ($socialnetworks as $key => $value) {
-				if ($value['active']) {
-					print '<tr>';
-					print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
-					print '<td colspan="3">';
-					if (!empty($value['icon'])) {
-						print '<span class="fa '.$value['icon'].' pictofixedwidth"></span>';
-					}
-					print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100 maxwidth300 widthcentpercentminusx" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alphanohtml') : (empty($object->socialnetworks[$key]) ? '' : $object->socialnetworks[$key])).'">';
-					print '</td>';
-					print '</tr>';
-				} elseif (!empty($object->socialnetworks[$key])) {
-					print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
-				}
-			}
+			$object->showSocialNetwork($socialnetworks, ($conf->browser->layout == 'phone' ? 2 : 4));
 		}
 
 		// Prof ids
@@ -1877,7 +1863,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr>';
 		print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
 		print '<td colspan="3" class="maxwidthonsmartphone">';
-		$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
+		$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'AND u.statut = 1', 0, '', '', 0, 2);
 		// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
 		$selected = (count(GETPOST('commercial', 'array')) > 0 ? GETPOST('commercial', 'array') : (GETPOST('commercial', 'int') > 0 ? array(GETPOST('commercial', 'int')) : (empty($user->rights->societe->client->voir) ? array($user->id) : array())));
 		print img_picto('', 'user').$form->multiselectarray('commercial', $userlist, $selected, null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
@@ -2358,7 +2344,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			// Unsubscribe
-			if (!empty($conf->mailing->enabled)) {
+			if (isModEnabled('mailing')) {
 				if ($conf->use_javascript_ajax && isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
 					print "\n".'<script type="text/javascript">'."\n";
 
@@ -2395,21 +2381,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Social network
 			if (isModEnabled('socialnetworks')) {
-				foreach ($socialnetworks as $key => $value) {
-					if ($value['active']) {
-						print '<tr>';
-						print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
-						print '<td colspan="3">';
-						if (!empty($value['icon'])) {
-							print '<span class="fa '.$value['icon'].' pictofixedwidth"></span>';
-						}
-						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100 maxwidth500 widthcentpercentminusx" maxlength="80" value="'.(empty($object->socialnetworks[$key]) ? '' : $object->socialnetworks[$key]).'">';
-						print '</td>';
-						print '</tr>';
-					} elseif (!empty($object->socialnetworks[$key])) {
-						print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
-					}
-				}
+				$object->showSocialNetwork($socialnetworks, ($conf->browser->layout == 'phone' ? 2 : 4));
 			}
 
 			// Prof ids
@@ -2646,7 +2618,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 				print '<table class="nobordernopadding">';
 				if ($object->logo) {
-					print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+					print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> <label for="photodelete">'.$langs->trans("Delete").'</photo><br><br></td></tr>';
 				}
 				//print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
 				print '<tr><td>';
@@ -3059,7 +3031,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Unsubscribe opt-out
-		if (!empty($conf->mailing->enabled)) {
+		if (isModEnabled('mailing')) {
 			$result = $object->getNoEmail();
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -3213,7 +3185,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</div>';
 
 		print '</div>';
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 
@@ -3326,6 +3298,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}
 }
+
+
 // End of page
 llxFooter();
 $db->close();

@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Fejl, parameter <b> %s </b> skal a
 ErrorLoginDateValidity=Fejl, dette login er uden for gyldighedsdatointervallet
 ErrorValueLength=Feltets længde '<b> %s </b>' skal være højere end '<b> %s </b>'
 ErrorReservedKeyword=Ordet '<b> %s </b>' er et forbeholdt nøgleord
+ErrorFilenameReserved=Filnavnet <b> %s </b> kan ikke bruges, da det er en reserveret og beskyttet kommando.
 ErrorNotAvailableWithThisDistribution=Ikke tilgængelig med denne distribution
 ErrorPublicInterfaceNotEnabled=Offentlig grænseflade var ikke aktiveret
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=Sprog for den nye side skal defineres, hvis det er indstillet som en oversættelse af en anden side
@@ -303,6 +304,12 @@ ErrorValueForTooLow=Værdien for <b> %s </b> er for lav
 ErrorValueCantBeNull=Værdien for <b> %s </b> kan ikke være 0
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Datoen for banktransaktionen må ikke være lavere end datoen for filoverførslen
 ErrorTooMuchFileInForm=For mange filer i form, det maksimale antal er %s fil(er)
+ErrorSessionInvalidatedAfterPasswordChange=Sessionen blev ugyldiggjort efter en ændring af adgangskode, status eller gyldighedsdatoer. Log venligst på igen.
+ErrorExistingPermission = Tilladelse <b> %s </b> for objekt <b> %s </b> findes allerede
+ErrorFieldExist=Værdien for <b> %s </b> findes allerede
+ErrorEqualModule=Modul ugyldigt i <b> %s </b>
+ErrorFieldValue=Værdien for <b> %s </b> er forkert
+ErrorCoherenceMenu= <b> %s </b> er påkrævet, når <b> %s a09a4b739f17left'0 er '
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Din PHP-parameter upload_max_filesize (%s) er højere end PHP-parameter post_max_size (%s). Dette er ikke en ensartet opsætning.
@@ -325,6 +332,7 @@ WarningPaymentDateLowerThanInvoiceDate=Betalingsdato (%s) er tidligere end faktu
 WarningTooManyDataPleaseUseMoreFilters=For mange data (mere end %s linjer). Brug venligst flere filtre eller indstil konstanten %s til en højere grænse.
 WarningSomeLinesWithNullHourlyRate=Nogle tidspunkter blev registreret af nogle brugere, mens deres timepris ikke var defineret. Der blev brugt en værdi på 0 %s pr. time, men dette kan resultere i forkert værdiansættelse af brugt tid.
 WarningYourLoginWasModifiedPleaseLogin=Dit login blev ændret. Af sikkerhedsmæssige årsager skal du logge ind med dit nye login før næste handling.
+WarningYourPasswordWasModifiedPleaseLogin=Din adgangskode blev ændret. Af sikkerhedsmæssige årsager skal du logge ind nu med din nye adgangskode.
 WarningAnEntryAlreadyExistForTransKey=Der findes allerede en post for oversættelsesnøglen for dette sprog
 WarningNumberOfRecipientIsRestrictedInMassAction=Advarsel, antallet af forskellige modtagere er begrænset til <b> %s</b>, når du bruger massehandlingerne på lister
 WarningDateOfLineMustBeInExpenseReportRange=Advarsel, datoen for linjen ligger ikke inden for udgiftsrapporten
@@ -340,6 +348,7 @@ WarningPaypalPaymentNotCompatibleWithStrict=Værdien 'Strict' gør, at onlinebet
 WarningThemeForcedTo=Advarsel, temaet er blevet tvunget til <b> %s </b> af skjult konstant MAIN_FORCETHEME
 WarningPagesWillBeDeleted=Advarsel, dette vil også slette alle eksisterende sider/containere på hjemmesiden. Du bør eksportere dit websted før, så du har en sikkerhedskopi til at genimportere det senere.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatisk validering er deaktiveret, når muligheden for at reducere lager er indstillet på "Fakturavalidering".
+WarningModuleNeedRefrech = Modul <b> %s </b> er blevet deaktiveret. Glem ikke at aktivere det
 
 # Validate
 RequireValidValue = Værdien er ikke gyldig

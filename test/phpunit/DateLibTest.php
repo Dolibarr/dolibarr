@@ -344,7 +344,7 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 
 		$result=convertSecondToTime(86400, 'all', 86400);
 		print __METHOD__." result=".$result."\n";
-		$this->assertSame('1 '.strtolower(dol_substr($langs->trans("Day"), 0, 1).'.'), $result);
+		$this->assertSame('1 '.$langs->trans("d"), $result);
 
 		return $result;
 	}

@@ -55,9 +55,6 @@ global $langs, $user;
 // Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once '../lib/mymodule.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-
-
 //require_once "../class/myclass.class.php";
 
 // Translations
@@ -163,7 +160,7 @@ $item->helpText = $langs->transnoentities('AnHelpMessage');
 //$item->fieldOutputOverride = false; // set this var to override field output
 
 
-$setupnotempty =+ count($formSetup->items);
+$setupnotempty += count($formSetup->items);
 
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);

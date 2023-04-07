@@ -201,11 +201,11 @@ class mailing_fraise extends MailingTargets
 		$s .= '</select>';
 
 
-		$s .= '<br>';
+		$s .= '<br><span class="opacitymedium">';
 		$s .= $langs->trans("DateEndSubscription").': &nbsp;';
-		$s .= $langs->trans("After").' > '.$form->selectDate(-1, 'subscriptionafter', 0, 0, 1, 'fraise', 1, 0, 0);
+		$s .= $langs->trans("After").' > </span>'.$form->selectDate(-1, 'subscriptionafter', 0, 0, 1, 'fraise', 1, 0, 0);
 		$s .= ' &nbsp; ';
-		$s .= $langs->trans("Before").' < '.$form->selectDate(-1, 'subscriptionbefore', 0, 0, 1, 'fraise', 1, 0, 0);
+		$s .= '<span class="opacitymedium">'.$langs->trans("Before").' < </span>'.$form->selectDate(-1, 'subscriptionbefore', 0, 0, 1, 'fraise', 1, 0, 0);
 
 		return $s;
 	}

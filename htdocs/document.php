@@ -31,6 +31,8 @@
  * 				DOL_URL_ROOT.'/document.php?hashp=sharekey'
  */
 
+define('MAIN_SECURITY_FORCECSP', "default-src: 'none'");
+
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 if (!defined('NOTOKENRENEWAL')) {
@@ -278,17 +280,14 @@ if (!file_exists($fullpath_original_file_osencoded)) {
 }
 
 // Hooks
-if (!is_object($hookmanager)) {
-	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-	$hookmanager = new HookManager($this->db);
-}
 $hookmanager->initHooks(array('document'));
 $parameters = array('ecmfile' => $ecmfile, 'modulepart' => $modulepart, 'original_file' => $original_file,
 	'entity' => $entity, 'refname' => $refname, 'fullpath_original_file' => $fullpath_original_file,
 	'filename' => $filename, 'fullpath_original_file_osencoded' => $fullpath_original_file_osencoded);
-$reshook = $hookmanager->executeHooks('downloadDocument', $parameters); // Note that $action and $object may have been
+$object = new stdClass();
+$reshook = $hookmanager->executeHooks('downloadDocument', $parameters, $object, $action); // Note that $action and $object may have been
 if ($reshook < 0) {
-	$errors = $hookmanager->error.(is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '').join($separator, $hookmanager->errors) : '');
+	$errors = $hookmanager->error.(is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '').join(', ', $hookmanager->errors) : '');
 	dol_syslog("document.php - Errors when executing the hook 'downloadDocument' : ".$errors);
 	print "ErrorDownloadDocumentHooks: ".$errors;
 	exit;

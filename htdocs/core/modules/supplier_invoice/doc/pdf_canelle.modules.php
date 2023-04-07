@@ -508,9 +508,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$localtax1ligne = $object->lines[$i]->total_localtax1;
 					$localtax2ligne = $object->lines[$i]->total_localtax2;
 
-					if (!empty($object->remise_percent)) {
+					// TODO remise_percent is an obsolete field for object parent
+					/*if (!empty($object->remise_percent)) {
 						$tvaligne -= ($tvaligne * $object->remise_percent) / 100;
-					}
+					}*/
 
 					$vatrate = (string) $object->lines[$i]->tva_tx;
 					$localtax1rate = (string) $object->lines[$i]->localtax1_tx;
@@ -622,9 +623,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 

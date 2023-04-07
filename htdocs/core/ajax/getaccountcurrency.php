@@ -35,6 +35,9 @@ require '../../main.inc.php';
 
 $id = GETPOST('id', 'int');
 
+// Security check
+$result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account');
+
 
 /*
  * View

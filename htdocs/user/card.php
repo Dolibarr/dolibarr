@@ -50,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-if (!empty($conf->ldap->enabled)) {
+if (isModEnabled('ldap')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 }
 if (isModEnabled('adherent')) {
@@ -63,6 +63,9 @@ if (isModEnabled('stock')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 }
 
+// Load translation files required by page
+$langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm', 'stocks', 'other'));
+
 $id = GETPOST('id', 'int');
 $action		= GETPOST('action', 'aZ09');
 $mode = GETPOST('mode', 'alpha');
@@ -71,47 +74,17 @@ $group = GETPOST("group", "int", 3);
 $cancel		= GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'useracard'; // To manage different context of search
 
+if (empty($id)) {
+	$id = $user->id;
+}
+
 $dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth', 'int'), GETPOST('dateemploymentday', 'int'), GETPOST('dateemploymentyear', 'int'));
 $dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
 $datestartvalidity = dol_mktime(0, 0, 0, GETPOST('datestartvaliditymonth', 'int'), GETPOST('datestartvalidityday', 'int'), GETPOST('datestartvalidityyear', 'int'));
 $dateendvalidity = dol_mktime(0, 0, 0, GETPOST('dateendvaliditymonth', 'int'), GETPOST('dateendvalidityday', 'int'), GETPOST('dateendvalidityyear', 'int'));
 $dateofbirth = dol_mktime(0, 0, 0, GETPOST('dateofbirthmonth', 'int'), GETPOST('dateofbirthday', 'int'), GETPOST('dateofbirthyear', 'int'));
 
-// Define value to know what current user can do on users
-$canadduser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
-$canreaduser = (!empty($user->admin) || $user->hasRight("user", "user", "read"));
-$canedituser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
-$candisableuser = (!empty($user->admin) || $user->hasRight("user", "user", "delete"));
-$canreadgroup = $canreaduser;
-$caneditgroup = $canedituser;
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$canreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
-	$caneditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write"));
-}
-
 $childids = $user->getAllChildIds(1);	// For later, test on salary visibility
-
-// Define value to know what current user can do on properties of edited user
-if ($id > 0) {
-	// $user is the current logged user, $id is the user we want to edit
-	$caneditfield = ((($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write")));
-	$caneditpassword = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")));
-}
-
-// Security check
-$socid = 0;
-if ($user->socid > 0) {
-	$socid = $user->socid;
-}
-$feature2 = 'user';
-$result = restrictedArea($user, 'user', $id, 'user', $feature2);
-
-if ($user->id != $id && !$canreaduser) {
-	accessforbidden();
-}
-
-// Load translation files required by page
-$langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm', 'stocks', 'other'));
 
 $object = new User($db);
 $extrafields = new ExtraFields($db);
@@ -128,6 +101,38 @@ $error = 0;
 
 $acceptlocallinktomedia = (acceptLocalLinktoMedia() > 0 ? 1 : 0);
 
+
+// Security check
+$socid = 0;
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+$feature2 = 'user';
+$result = restrictedArea($user, 'user', $id, 'user', $feature2);
+
+// Define value to know what current user can do on users
+$canadduser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
+$canreaduser = (!empty($user->admin) || $user->hasRight("user", "user", "read"));
+$canedituser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));	// edit other user
+$candisableuser = (!empty($user->admin) || $user->hasRight("user", "user", "delete"));
+$canreadgroup = $canreaduser;
+$caneditgroup = $canedituser;
+if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+	$canreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
+	$caneditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write"));
+}
+
+if ($user->id != $id && !$canreaduser) {
+	accessforbidden();
+}
+
+// Define value to know what current user can do on properties of edited user
+if ($id > 0) {
+	// $user is the current logged user, $id is the user we want to edit
+	$canedituser = (($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write"));
+	$caneditfield = ((($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write")));
+	$caneditpassword = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")));
+}
 
 
 /**
@@ -375,6 +380,7 @@ if (empty($reshook)) {
 			$editgroup->oldcopy = clone $editgroup;
 
 			$object->fetch($id);
+
 			if ($action == 'addgroup') {
 				$result = $object->SetInGroup($group, $editgroup->entity);
 			}
@@ -390,7 +396,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && !$cancel) {
+	if ($action == 'update' && $canedituser) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		if ($caneditfield) {    // Case we can edit all field
@@ -417,11 +423,25 @@ if (empty($reshook)) {
 				$object->civility_code = GETPOST("civility_code", 'aZ09');
 				$object->lastname = GETPOST("lastname", 'alphanohtml');
 				$object->firstname = GETPOST("firstname", 'alphanohtml');
-				$object->ref_employee = GETPOST("ref_employee", 'alphanohtml');
-				$object->national_registration_number = GETPOST("national_registration_number", 'alphanohtml');
+				/*
+				* Protection against deletion of ref_employee while the field is not present in the user tab
+				*/
+				if (GETPOSTISSET("ref_employee")) {
+					$object->ref_employee = GETPOST("ref_employee", 'alphanohtml');
+				}
+				/*
+				* Protection against deletion of national_registration_number while the field is not present in the user tab
+				*/
+				if (GETPOSTISSET("national_registration_number")) {
+					$object->national_registration_number = GETPOST("national_registration_number", 'alphanohtml');
+				}
 				$object->gender = GETPOST("gender", 'aZ09');
-				$object->pass = GETPOST("password", 'none');	// We can keep 'none' for password fields
-				$object->api_key = (GETPOST("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
+				if ($caneditpassword) {
+					$object->pass = GETPOST("password", 'none');	// We can keep 'none' for password fields
+				}
+				if ($caneditpassword || $user->hasRight("api", "apikey", "generate")) {
+					$object->api_key = (GETPOST("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
+				}
 				if (!empty($user->admin)) { 	// admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
 					$object->admin = GETPOST("admin", "int");
 				}
@@ -516,7 +536,14 @@ if (empty($reshook)) {
 				}
 
 				if (!$error) {
-					$ret = $object->update($user);
+					$passwordismodified = 0;
+					if (!empty($object->pass)) {
+						if ($object->pass != $object->pass_indatabase && !dol_verifyHash($object->pass, $object->pass_indatabase_crypted)) {
+							$passwordismodified = 1;
+						}
+					}
+
+					$ret = $object->update($user);		// This may include call to setPassword if password has changed
 					if ($ret < 0) {
 						$error++;
 						if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
@@ -609,6 +636,13 @@ if (empty($reshook)) {
 						$error++;
 						$langs->load("errors");
 						setEventMessages($langs->transnoentitiesnoconv("WarningYourLoginWasModifiedPleaseLogin"), null, 'warnings');
+					}
+					if ($passwordismodified && $object->login == $user->login) {    // Current user has changed its password
+						$error++;
+						$langs->load("errors");
+						setEventMessages($langs->transnoentitiesnoconv("WarningYourPasswordWasModifiedPleaseLogin"), null, 'warnings');
+						header("Location: ".DOL_URL_ROOT.'/user/card.php?id='.$object->id);
+						exit;
 					}
 				} else {
 					$db->rollback();
@@ -756,7 +790,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print "<br>";
 
 
-	if (!empty($conf->ldap->enabled) && (isset($conf->global->LDAP_SYNCHRO_ACTIVE) && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_LDAP_TO_DOLIBARR)) {
+	if (isModEnabled('ldap') && (isset($conf->global->LDAP_SYNCHRO_ACTIVE) && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_LDAP_TO_DOLIBARR)) {
 		// Show form to add an account from LDAP if sync LDAP -> Dolibarr is set
 		$ldap = new Ldap();
 		$result = $ldap->connect_bind();
@@ -859,7 +893,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		print '<input type="hidden" id="lastname" name="lastname" value="'.dol_escape_htmltag($ldap_lastname).'">';
 		print $ldap_lastname;
 	} else {
-		print '<input class="minwidth100 maxwidth150onsmartphone" type="text" id="lastname" name="lastname" value="'.dol_escape_htmltag(GETPOST('lastname', 'alphanohtml')).'">';
+		print '<input class="minwidth100 maxwidth150onsmartphone createloginauto" type="text" id="lastname" name="lastname" value="'.dol_escape_htmltag(GETPOST('lastname', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -870,7 +904,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		print '<input type="hidden" name="firstname" value="'.dol_escape_htmltag($ldap_firstname).'">';
 		print $ldap_firstname;
 	} else {
-		print '<input class="minwidth100 maxwidth150onsmartphone" type="text" name="firstname" value="'.dol_escape_htmltag(GETPOST('firstname', 'alphanohtml')).'">';
+		print '<input id="firstname" class="minwidth100 maxwidth150onsmartphone createloginauto" type="text" name="firstname" value="'.dol_escape_htmltag(GETPOST('firstname', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -884,9 +918,27 @@ if ($action == 'create' || $action == 'adduserldap') {
 		print '<input type="hidden" name="login" value="'.dol_escape_htmltag($ldap_loginsmb).'">';
 		print $ldap_loginsmb;
 	} else {
-		print '<input class="maxwidth200 maxwidth150onsmartphone" maxsize="24" type="text" name="login" value="'.dol_escape_htmltag(GETPOST('login', 'alphanohtml')).'">';
+		print '<input id="login" class="maxwidth200 maxwidth150onsmartphone" maxsize="24" type="text" name="login" value="'.dol_escape_htmltag(GETPOST('login', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
+
+	if (!empty($conf->use_javascript_ajax)) {
+		print '<script>
+			jQuery(document).ready(function() {
+				$(".createloginauto").on("change", function(){
+					lastname = $("#lastname").val();
+					firstname = $("#firstname").val();
+					if($(this).attr("id") == "firstname"){
+						firstname = firstname.toLowerCase();
+						firstname = firstname[0];
+					}
+					lastname = lastname.toLowerCase();
+					console.log("We create a login from firstname and lastname");
+					$("#login").val(firstname+lastname);
+				})
+			});
+		</script>';
+	}
 
 	$generated_password = '';
 	if (empty($ldap_sid)) {    // ldap_sid is for activedirectory
@@ -1012,13 +1064,16 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if (preg_match('/http/', $dolibarr_main_authentication)) {
 		$valuetoshow .= ($valuetoshow ? ' + ' : '').$langs->trans("HTTPBasicPassword");
 	}
-	if (preg_match('/dolibarr/', $dolibarr_main_authentication)) {
+	if (preg_match('/dolibarr/', $dolibarr_main_authentication) || preg_match('/forceuser/', $dolibarr_main_authentication)) {
 		if (!empty($ldap_pass)) {	// For very old system comaptibilty. Now clear password can't be viewed from LDAP read
 			$valuetoshow .= ($valuetoshow ? ' + ' : '').'<input type="hidden" name="password" value="'.dol_escape_htmltag($ldap_pass).'">'; // Dolibarr password is preffiled with LDAP known password
 			$valuetoshow .= preg_replace('/./i', '*', $ldap_pass);
 		} else {
 			// We do not use a field password but a field text to show new password to use.
-			$valuetoshow .= ($valuetoshow ? ' + '.$langs->trans("DolibarrPassword") : '').'<input maxsize="32" type="text" name="password" value="'.dol_escape_htmltag($password).'" autocomplete="new-password">';
+			$valuetoshow .= ($valuetoshow ? ' + '.$langs->trans("DolibarrPassword") : '').'<input class="minwidth300 maxwidth400 widthcentpercentminusx" maxlength="128" type="text" id="password" name="password" value="'.dol_escape_htmltag($password).'" autocomplete="new-password">';
+			if (!empty($conf->use_javascript_ajax)) {
+				$valuetoshow .= '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_password" class="linkobject"');
+			}
 		}
 	}
 
@@ -1039,7 +1094,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		//$generated_password = getRandomPassword(false);
 		print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 		print '<td>';
-		print '<input class="minwidth300 widthcentpercentminusx" maxsize="32" type="text" id="api_key" name="api_key" value="'.GETPOST('api_key', 'alphanohtml').'" autocomplete="off">';
+		print '<input class="minwidth300 maxwidth400 widthcentpercentminusx" maxlength="128" type="text" id="api_key" name="api_key" value="'.GETPOST('api_key', 'alphanohtml').'" autocomplete="off">';
 		if (!empty($conf->use_javascript_ajax)) {
 			print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
 		}
@@ -1186,10 +1241,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 		print "</td></tr>";
 	}
 
+	// Default language
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0, 'string', '', 0, 0, 'id', $langs->trans("WarningNotLangOfInterface", $langs->transnoentitiesnoconv("UserGUISetup"))).'</td>';
 		print '<td class="maxwidthonsmartphone">'."\n";
-		print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language(GETPOST('default_lang', 'alpha') ?GETPOST('default_lang', 'alpha') : ($object->lang ? $object->lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone widthcentpercentminusx');
+		print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language(GETPOST('default_lang', 'alpha') ?GETPOST('default_lang', 'alpha') : ($object->lang ? $object->lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth300 widthcentpercentminusx');
 		print '</td>';
 		print '</tr>';
 	}
@@ -1342,7 +1398,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 		// Connexion ldap
 		// pour recuperer passDoNotExpire et userChangePassNextLogon
-		if (!empty($conf->ldap->enabled) && !empty($object->ldap_sid)) {
+		if (isModEnabled('ldap') && !empty($object->ldap_sid)) {
 			$ldap = new Ldap();
 			$result = $ldap->connect_bind();
 			if ($result > 0) {
@@ -1432,7 +1488,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		if ($action != 'edit') {
 			print dol_get_fiche_head($head, 'user', $title, -1, 'user');
 
-			$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid" rel="noopener">';
+			$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener" rel="noopener">';
 			$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard").' ('.$langs->trans("AddToContacts").')', 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 			$morehtmlref .= '</a>';
 
@@ -1509,7 +1565,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				$huser = new User($db);
 				if ($object->fk_user > 0) {
 					$huser->fetch($object->fk_user);
-					print $huser->getNomUrl(1);
+					print $huser->getNomUrl(-1);
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 				}
@@ -1527,7 +1583,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if (!empty($object->fk_user_expense_validator)) {
 					$evuser = new User($db);
 					$evuser->fetch($object->fk_user_expense_validator);
-					print $evuser->getNomUrl(1);
+					print $evuser->getNomUrl(-1);
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -1543,7 +1599,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if (!empty($object->fk_user_holiday_validator)) {
 					$hvuser = new User($db);
 					$hvuser->fetch($object->fk_user_holiday_validator);
-					print $hvuser->getNomUrl(1);
+					print $hvuser->getNomUrl(-1);
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -1859,7 +1915,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</div>';
 
 			print '</div>';
-			print '<div style="clear:both"></div>';
+			print '<div class="clearboth"></div>';
 
 
 			print dol_get_fiche_end();
@@ -2063,7 +2119,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 								print "</td></tr>\n";
 							}
 						} else {
-							print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+							print '<tr class="oddeven"><td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 						}
 
 						print "</table>";
@@ -2080,7 +2136,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		/*
 		 * Card in edit mode
 		 */
-		if ($action == 'edit' && ($canedituser || $caneditfield || $caneditpassword || ($user->id == $object->id))) {
+		if ($action == 'edit' && ($canedituser || $caneditpassword)) {
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
@@ -2258,7 +2314,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<input type="hidden" name="fk_user" value="'.$object->fk_user.'">';
 				$huser = new User($db);
 				$huser->fetch($object->fk_user);
-				print $huser->getNomUrl(1);
+				print $huser->getNomUrl(-1);
 			}
 			print '</td>';
 			print "</tr>\n";
@@ -2276,7 +2332,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print '<input type="hidden" name="fk_user_expense_validator" value="'.$object->fk_user_expense_validator.'">';
 					$evuser = new User($db);
 					$evuser->fetch($object->fk_user_expense_validator);
-					print $evuser->getNomUrl(1);
+					print $evuser->getNomUrl(-1);
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -2295,7 +2351,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print '<input type="hidden" name="fk_user_holiday_validator" value="'.$object->fk_user_holiday_validator.'">';
 					$hvuser = new User($db);
 					$hvuser->fetch($object->fk_user_holiday_validator);
-					print $hvuser->getNomUrl(1);
+					print $hvuser->getNomUrl(-1);
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -2322,25 +2378,25 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 
 				if ($object->socid > 0 && !($object->contact_id > 0)) {	// external user but no link to a contact
-					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;');
+					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, null, 0, 'maxwidth300');
 					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					if ($object->ldap_sid) {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} elseif ($object->socid > 0 && $object->contact_id > 0) {	// external user with a link to a contact
-					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, null, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
 					print img_picto('', 'contact').$form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					if ($object->ldap_sid) {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} elseif (!($object->socid > 0) && $object->contact_id > 0) {	// internal user with a link to a contact
-					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;', 0, 0, null, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
 					print img_picto('', 'contact').$form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					if ($object->ldap_sid) {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} else {	// $object->socid is not > 0 here
-					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;', 0, 0, null, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
 					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 				}
 			}
@@ -2385,14 +2441,16 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if (preg_match('/http/', $dolibarr_main_authentication)) {
 				$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$form->textwithpicto($text, $langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless", $dolibarr_main_authentication), 1, 'warning');
 			}
-			if (preg_match('/dolibarr/', $dolibarr_main_authentication)) {
+			if (preg_match('/dolibarr/', $dolibarr_main_authentication) || preg_match('/forceuser/', $dolibarr_main_authentication)) {
 				if ($caneditpassword) {
-					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input maxlength="128" type="password" class="flat" name="password" value="'.dol_escape_htmltag($object->pass).'" autocomplete="new-password">';
+					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input maxlength="128" type="password" class="flat" id="password" name="password" value="'.dol_escape_htmltag($object->pass).'" autocomplete="new-password">';
+					if (!empty($conf->use_javascript_ajax)) {
+						$valuetoshow .= '&nbsp;'.img_picto((getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? $langs->trans('NoPasswordGenerationRuleConfigured') : $langs->trans('Generate')), 'refresh', 'id="generate_password" class="'.(getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? ' opacitymedium' : ' linkobject').'"');
+					}
 				} else {
 					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').preg_replace('/./i', '*', $object->pass);
 				}
 			}
-
 			// Other form for user password
 			$parameters = array('valuetoshow' => $valuetoshow, 'caneditpassword' => $caneditpassword);
 			$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -2406,12 +2464,14 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</td></tr>\n";
 
 			// API key
-			if (!empty($conf->api->enabled) && ($user->id == $id || $user->admin || $user->hasRight("api", "apikey", "generate"))) {
+			if (isModEnabled('api')) {
 				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
-				print '<input class="minwidth300" maxsize="32" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off">';
-				if (!empty($conf->use_javascript_ajax)) {
-					print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
+				if ($caneditpassword || $user->hasRight("api", "apikey", "generate")) {
+					print '<input class="minwidth300" maxsize="32" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off">';
+					if (!empty($conf->use_javascript_ajax)) {
+						print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
+					}
 				}
 				print '</td></tr>';
 			}
@@ -2464,6 +2524,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Country
 			print '<tr><td>'.$form->editfieldkey('Country', 'selectcounty_id', '', $object, 0).'</td><td>';
+			print img_picto('', 'country', 'class="pictofixedwidth"');
 			if ($caneditfield) {
 				print $form->select_country((GETPOST('country_id') != '' ?GETPOST('country_id') : $object->country_id), 'country_id');
 				if ($user->admin) {
@@ -2862,18 +2923,17 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</div></div>';
 		}
 
-		if (!empty($conf->ldap->enabled) && !empty($object->ldap_sid)) {
+		if (isModEnabled('ldap') && !empty($object->ldap_sid)) {
 			$ldap->unbind();
 		}
 	}
 }
 
-if (!empty($conf->api->enabled)) {
-	$constname = 'api_key';
-
-	// Add button to autosuggest a key
-	include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-	print dolJSToSetRandomPassword($constname, 'generate_api_key');
+// Add button to autosuggest a key
+include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+print dolJSToSetRandomPassword('password', 'generate_password', 0);
+if (isModEnabled('api')) {
+	print dolJSToSetRandomPassword('api_key', 'generate_api_key', 1);
 }
 
 // End of page

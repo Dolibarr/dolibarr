@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=வண்டி திரும்பும் வக�
 ACCOUNTING_EXPORT_PREFIX_SPEC=கோப்பு பெயருக்கான முன்னொட்டைக் குறிப்பிடவும்
 ThisService=இந்த சேவை
 ThisProduct=இந்த தயாரிப்பு
-DefaultForService=சேவைக்கான இயல்புநிலை
-DefaultForProduct=தயாரிப்புக்கான இயல்புநிலை
+DefaultForService=Default for services
+DefaultForProduct=Default for products
 ProductForThisThirdparty=இந்த மூன்றாம் தரப்பினருக்கான தயாரிப்பு
 ServiceForThisThirdparty=இந்த மூன்றாம் தரப்பினருக்கான சேவை
 CantSuggest=பரிந்துரைக்க முடியாது
@@ -101,7 +101,8 @@ ShowAccountingAccount=கணக்கியல் கணக்கைக் க�
 ShowAccountingJournal=கணக்கியல் பத்திரிகையைக் காட்டு
 ShowAccountingAccountInLedger=லெட்ஜரில் கணக்கியல் கணக்கைக் காட்டு
 ShowAccountingAccountInJournals=பத்திரிகைகளில் கணக்கியல் கணக்கைக் காட்டு
-AccountAccountingSuggest=கணக்கியல் கணக்கு பரிந்துரைக்கப்பட்டது
+DataUsedToSuggestAccount=Data used to suggest account
+AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=இயல்புநிலை கணக்குகள்
 MenuBankAccounts=வங்கி கணக்குகள்
 MenuVatAccounts=வாட் கணக்குகள்
@@ -126,6 +127,7 @@ WriteBookKeeping=Record transactions in accounting
 Bookkeeping=பேரேடு
 BookkeepingSubAccount=சப்லெட்ஜர்
 AccountBalance=கணக்கு இருப்பு
+AccountBalanceSubAccount=Sub-accounts balance
 ObjectsRef=மூல பொருள் குறிப்பு
 CAHTF=வரிக்கு முன் மொத்த கொள்முதல் விற்பனையாளர்
 TotalExpenseReport=மொத்த செலவு அறிக்கை
@@ -189,6 +191,7 @@ ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be us
 UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
 UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
@@ -218,6 +221,7 @@ JournalLabel=ஜர்னல் லேபிள்
 NumPiece=துண்டு எண்
 TransactionNumShort=எண் பரிவர்த்தனை
 AccountingCategory=Custom group of accounts
+AccountingCategories=Custom groups of accounts
 GroupByAccountAccounting=பொதுப் பேரேடு கணக்கின்படி குழுவாக்கவும்
 GroupBySubAccountAccounting=சப்லெட்ஜர் கணக்கு மூலம் குழு
 AccountingAccountGroupsDesc=கணக்கியல் கணக்கின் சில குழுக்களை நீங்கள் இங்கே வரையறுக்கலாம். தனிப்பயனாக்கப்பட்ட கணக்கியல் அறிக்கைகளுக்கு அவை பயன்படுத்தப்படும்.
@@ -265,6 +269,7 @@ ShowSubtotalByGroup=துணைத்தொகையை நிலை வார�
 
 Pcgtype=கணக்கு குழு
 PcgtypeDesc=கணக்கின் குழு சில கணக்கியல் அறிக்கைகளுக்கு முன் வரையறுக்கப்பட்ட 'வடிகட்டி' மற்றும் 'குழுப்படுத்துதல்' அளவுகோல்களாகப் பயன்படுத்தப்படுகிறது. எடுத்துக்காட்டாக, 'வருமானம்' அல்லது 'செலவு' என்பது செலவு/வருமான அறிக்கையை உருவாக்க தயாரிப்புகளின் கணக்கு கணக்குகளுக்கு குழுக்களாகப் பயன்படுத்தப்படுகிறது.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 
 Reconcilable=சமரசம் செய்யக்கூடியது
 
@@ -294,6 +299,7 @@ DescValidateMovements=எழுதுதல், எழுதுதல் மற�
 
 ValidateHistory=தானாக பிணைக்கவும்
 AutomaticBindingDone=தானியங்கி பிணைப்புகள் செய்யப்பட்டன (%s) - சில பதிவுகளுக்கு தானியங்கு பிணைப்பு சாத்தியமில்லை (%s)
+DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
@@ -337,11 +343,13 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=விற்பனையில் கணக�
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=வாங்குதல்களில் கணக்கியலில் பிணைப்பு & பரிமாற்றத்தை முடக்கு (கணக்கில் விற்பனையாளர் இன்வாய்ஸ்கள் கணக்கில் எடுத்துக்கொள்ளப்படாது)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=செலவு அறிக்கைகள் மீதான கணக்கியலில் பிணைப்பு மற்றும் பரிமாற்றத்தை முடக்கு (கணக்கில் செலவு அறிக்கைகள் கணக்கில் எடுத்துக்கொள்ளப்படாது)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
 NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
 NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportFull=Export documents ?
 DateValidationAndLock=Date validation and lock
 ConfirmExportFile=கணக்கியல் ஏற்றுமதி கோப்பின் தலைமுறையை உறுதிப்படுத்தவா?
 ExportDraftJournal=ஏற்றுமதி வரைவு இதழ்
@@ -398,7 +406,7 @@ SaleLocal=உள்ளூர் விற்பனை
 SaleExport=ஏற்றுமதி விற்பனை
 SaleEEC=EEC இல் விற்பனை
 SaleEECWithVAT=EEC இல் VAT இல் விற்பனையானது பூஜ்யமாக இல்லை, எனவே இது ஒரு உள்நாடு விற்பனை அல்ல, மேலும் பரிந்துரைக்கப்பட்ட கணக்கு நிலையான தயாரிப்புக் கணக்காகும்.
-SaleEECWithoutVATNumber=VAT இல்லா EEC இல் விற்பனை ஆனால் மூன்றாம் தரப்பினரின் VAT ஐடி வரையறுக்கப்படவில்லை. நிலையான விற்பனைக்கான தயாரிப்புக் கணக்கில் நாங்கள் திரும்புவோம். தேவைப்பட்டால் மூன்றாம் தரப்பினரின் VAT ஐடி அல்லது தயாரிப்பு கணக்கை நீங்கள் சரிசெய்யலாம்.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=தடைசெய்யப்பட்டது: பரிவர்த்தனை சரிபார்க்கப்பட்டது மற்றும்/அல்லது ஏற்றுமதி செய்யப்பட்டது.
 ForbiddenTransactionAlreadyValidated=தடைசெய்யப்பட்டது: பரிவர்த்தனை சரிபார்க்கப்பட்டது.
 ## Dictionary
@@ -442,6 +450,7 @@ AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
+ErrorArchiveAddFile=Can't put "%s" file in archive
 
 ## Import
 ImportAccountingEntries=கணக்கு பதிவுகள்
@@ -468,5 +477,7 @@ FECFormatMulticurrencyCode=மல்டிகரன்சி குறியீ�
 DateExport=தேதி ஏற்றுமதி
 WarningReportNotReliable=எச்சரிக்கை, இந்த அறிக்கை லெட்ஜரை அடிப்படையாகக் கொண்டது அல்ல, எனவே லெட்ஜரில் கைமுறையாக மாற்றப்பட்ட பரிவர்த்தனை இல்லை. உங்கள் ஜர்னலைசேஷன் புதுப்பித்த நிலையில் இருந்தால், புத்தக பராமரிப்பு பார்வை மிகவும் துல்லியமாக இருக்கும்.
 ExpenseReportJournal=செலவு அறிக்கை இதழ்
+DocsAlreadyExportedAreExcluded=Docs already exported are excluded
+ClickToHideAlreadyExportedLines=Click to hide already exported lines
 
 NAccounts=%s கணக்குகள்

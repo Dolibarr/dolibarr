@@ -250,9 +250,17 @@ class modHRM extends DolibarrModules
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->hrm->compare_advance->read)
 		$r++;
 
+		// Evaluation
+		$this->rights[$r][0] = 4029; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read all evaluations'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'evaluation';
+		$this->rights[$r][5] = 'readall'; // In php code, permission will be checked by test if ($user->rights->hrm->evaluation->read)
+		$r++;
+
 		// Read employee
 		$this->rights[$r][0] = 4031; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read personal information'; // Permission label
+		$this->rights[$r][1] = 'Read personal/HR information'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'read_personal_information';
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->hrm->read_personal_information->read)
@@ -260,18 +268,10 @@ class modHRM extends DolibarrModules
 
 		// Write employee
 		$this->rights[$r][0] = 4032; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Write personal information'; // Permission label
+		$this->rights[$r][1] = 'Write personal/HR information'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'write_personal_information';
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->hrm->write_personal_information->write)
-		$r++;
-
-		// Evaluation
-		$this->rights[$r][0] = 4033; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read all evaluations'; // Permission label
-		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'evaluation';
-		$this->rights[$r][5] = 'readall'; // In php code, permission will be checked by test if ($user->rights->hrm->evaluation->read)
 		$r++;
 	}
 

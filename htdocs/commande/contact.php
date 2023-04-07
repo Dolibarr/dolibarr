@@ -56,7 +56,7 @@ $object = new Commande($db);
  * Ajout d'un nouveau contact
  */
 
-if ($action == 'addcontact' && $user->rights->commande->creer) {
+if ($action == 'addcontact' && $user->hasRight('commande', 'creer')) {
 	$result = $object->fetch($id);
 
 	if ($result > 0 && $id > 0) {
@@ -76,14 +76,14 @@ if ($action == 'addcontact' && $user->rights->commande->creer) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-} elseif ($action == 'swapstatut' && $user->rights->commande->creer) {
+} elseif ($action == 'swapstatut' && $user->hasRight('commande', 'creer')) {
 	// bascule du statut d'un contact
 	if ($object->fetch($id)) {
 		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($action == 'deletecontact' && $user->rights->commande->creer) {
+} elseif ($action == 'deletecontact' && $user->hasRight('commande', 'creer')) {
 	// Efface un contact
 	$object->fetch($id);
 	$result = $object->delete_contact(GETPOST("lineid", 'int'));
@@ -143,7 +143,7 @@ if ($id > 0 || !empty($ref)) {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2015-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 /**
  *      \file       htdocs/core/ajax/selectsearchbox.php
  *      \ingroup    core
- *      \brief      This script returns content of possible search
+ *      \brief      This script returns json array of possible searches or just set the array if called by an include
  */
 
 // This script is called with a POST method or as an include.
@@ -43,6 +43,9 @@ if (!isset($usedbyinclude) || empty($usedbyinclude)) {
 
 	$res = @include '../../main.inc.php';
 
+	// Security check
+	// None. Beeing connected is enough.
+
 	top_httphead('application/json');
 
 	if ($res == 'ERROR_NOT_LOGGED') {
@@ -58,7 +61,6 @@ if (!isset($usedbyinclude) || empty($usedbyinclude)) {
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 
-//global $hookmanager;
 $hookmanager->initHooks(array('searchform'));
 
 $search_boxvalue = GETPOST('q', 'restricthtml');

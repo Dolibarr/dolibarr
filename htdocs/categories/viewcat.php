@@ -176,7 +176,7 @@ if ($elemid && $action == 'addintocategory' &&
 	 ($type == Categorie::TYPE_SUPPLIER && $user->rights->societe->creer) ||
 	 ($type == Categorie::TYPE_TICKET && $user->rights->ticket->write) ||
 	 ($type == Categorie::TYPE_PROJECT && $user->rights->projet->creer) ||
-	 ($type == Categorie::TYPE_MEMBER && $user->rights->projet->creer) ||
+	 ($type == Categorie::TYPE_MEMBER && $user->hasRight('adherent', 'creer')) ||
 	 ($type == Categorie::TYPE_CONTACT && $user->rights->societe->creer) ||
 	 ($type == Categorie::TYPE_USER && $user->rights->user->user->creer) ||
 	 ($type == Categorie::TYPE_ACCOUNT && $user->rights->banque->configurer)
@@ -571,7 +571,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 // List of customers
 if ($type == Categorie::TYPE_CUSTOMER) {
 	if ($user->hasRight("societe", "read")) {
-		$permission = $user->rights->societe->creer;
+		$permission = $user->hasRight('societe', 'creer');
 
 		$socs = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($socs < 0) {
@@ -651,7 +651,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 // List of suppliers
 if ($type == Categorie::TYPE_SUPPLIER) {
 	if ($user->hasRight("fournisseur", "read")) {
-		$permission = $user->rights->societe->creer;
+		$permission = $user->hasRight('societe', 'creer');
 
 		$socs = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($socs < 0) {
@@ -816,7 +816,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 // List of contacts
 if ($type == Categorie::TYPE_CONTACT) {
 	if ($user->hasRight("societe", "read")) {
-		$permission = $user->rights->societe->creer;
+		$permission = $user->hasRight('societe', 'creer');
 
 		$contacts = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if (is_numeric($contacts) && $contacts < 0) {
@@ -1005,7 +1005,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 				print '<input type="hidden" name="action" value="addintocategory">';
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
-				print $langs->trans("AddProjectIntoCategory").' &nbsp;';
+				print $langs->trans("AddObjectIntoCategory").' &nbsp;';
 				$form->selectProjects('', 'elemid');
 				print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';

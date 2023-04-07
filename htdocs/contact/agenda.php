@@ -83,6 +83,7 @@ if (GETPOST('actioncode', 'array')) {
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
+$search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
 // Security check
@@ -225,11 +226,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$objsoc = new Societe($db);
 			$objsoc->fetch($object->socid);
 			// Thirdparty
-			$morehtmlref .= $langs->trans('ThirdParty').' : ';
 			if ($objsoc->id > 0) {
 				$morehtmlref .= $objsoc->getNomUrl(1);
 			} else {
-				$morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+				$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("ContactNotLinkedToCompany").'</span>';
 			}
 		}
 		$morehtmlref .= '</div>';
@@ -288,6 +288,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// List of all actions
 			$filters = array();
 			$filters['search_agenda_label'] = $search_agenda_label;
+			$filters['search_rowid'] = $search_rowid;
 
 			show_actions_done($conf, $langs, $db, $objthirdparty, $object, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 		}

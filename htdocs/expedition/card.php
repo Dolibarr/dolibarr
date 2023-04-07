@@ -337,7 +337,7 @@ if (empty($reshook)) {
 			// Extrafields
 			$array_options[$i] = $extrafields->getOptionalsFromPost($object->table_element_line, $i);
 			// Unset extrafield
-			if (is_array($extrafields->attributes[$object->table_element_line]['label'])) {
+			if (isset($extrafields->attributes[$object->table_element_line]['label']) && is_array($extrafields->attributes[$object->table_element_line]['label'])) {
 				// Get extra fields
 				foreach ($extrafields->attributes[$object->table_element_line]['label'] as $key => $value) {
 					unset($_POST["options_".$key]);
@@ -614,6 +614,7 @@ if (empty($reshook)) {
 		$num_prod = count($lines);
 		for ($i = 0; $i < $num_prod; $i++) {
 			if ($lines[$i]->id == $line_id) {		// we have found line to update
+				$update_done = false;
 				$line = new ExpeditionLigne($db);
 				$line->fk_expedition = $object->id;
 
@@ -654,6 +655,8 @@ if (empty($reshook)) {
 								if ($line->update($user) < 0) {
 									setEventMessages($line->error, $line->errors, 'errors');
 									$error++;
+								} else {
+									$update_done=true;
 								}
 							} else {
 								setEventMessages($lotStock->error, $lotStock->errors, 'errors');
@@ -696,6 +699,8 @@ if (empty($reshook)) {
 									if ($line->update($user) < 0) {
 										setEventMessages($line->error, $line->errors, 'errors');
 										$error++;
+									} else {
+										$update_done=true;
 									}
 								} else {
 									setEventMessages($line->error, $line->errors, 'errors');
@@ -713,6 +718,8 @@ if (empty($reshook)) {
 								if ($object->create_line_batch($line, $line->array_options) < 0) {
 									setEventMessages($object->error, $object->errors, 'errors');
 									$error++;
+								} else {
+									$update_done=true;
 								}
 							}
 						} else {
@@ -750,6 +757,8 @@ if (empty($reshook)) {
 										if ($line->update($user) < 0) {
 											setEventMessages($line->error, $line->errors, 'errors');
 											$error++;
+										} else {
+											$update_done=true;
 										}
 									}
 									unset($_POST[$stockLocation]);
@@ -764,6 +773,8 @@ if (empty($reshook)) {
 							if ($line->update($user) < 0) {
 								setEventMessages($line->error, $line->errors, 'errors');
 								$error++;
+							} else {
+								$update_done=true;
 							}
 							unset($_POST[$qty]);
 						}
@@ -776,9 +787,16 @@ if (empty($reshook)) {
 						if ($line->update($user) < 0) {
 							setEventMessages($line->error, $line->errors, 'errors');
 							$error++;
+						} else {
+							$update_done=true;
 						}
 						unset($_POST[$qty]);
 					}
+				}
+
+				if (empty($update_done)) {
+					$line->id = $lines[$i]->id;
+					$line->insertExtraFields();
 				}
 			}
 		}
@@ -837,7 +855,7 @@ if ($action == 'create2') {
 }
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 
-llxHeader('', $title, 'Expedition', $help_url);
+llxHeader('', $title, $help_url);
 
 if (empty($action)) {
 	$action = 'view';
@@ -944,7 +962,7 @@ if ($action == 'create') {
 				$langs->load("projects");
 				print '<tr>';
 				print '<td>'.$langs->trans("Project").'</td><td colspan="2">';
-				print img_picto('', 'project');
+				print img_picto('', 'project', 'class="pictofixedwidth"');
 				$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
 				print ' <a class="paddingleft" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 				print '</td>';
@@ -954,6 +972,7 @@ if ($action == 'create') {
 			// Date delivery planned
 			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td colspan="3">';
+			print img_picto('', 'action', 'class="pictofixedwidth"');
 			$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date); // $date_delivery comes from GETPOST
 			print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 			print "</td>\n";
@@ -978,7 +997,9 @@ if ($action == 'create') {
 			// Weight
 			print '<tr><td>';
 			print $langs->trans("Weight");
-			print '</td><td colspan="3"><input name="weight" size="4" value="'.GETPOST('weight', 'int').'"> ';
+			print '</td><td colspan="3">';
+			print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
+			print '<input name="weight" size="4" value="'.GETPOST('weight', 'int').'"> ';
 			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units', 'int'), 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 			print $form->textwithpicto($text, $htmltext);
@@ -986,7 +1007,9 @@ if ($action == 'create') {
 			// Dim
 			print '<tr><td>';
 			print $langs->trans("Width").' x '.$langs->trans("Height").' x '.$langs->trans("Depth");
-			print ' </td><td colspan="3"><input name="sizeW" size="4" value="'.GETPOST('sizeW', 'int').'">';
+			print ' </td><td colspan="3">';
+			print img_picto('', 'fa-ruler', 'class="pictofixedwidth"');
+			print '<input name="sizeW" size="4" value="'.GETPOST('sizeW', 'int').'">';
 			print ' x <input name="sizeH" size="4" value="'.GETPOST('sizeH', 'int').'">';
 			print ' x <input name="sizeS" size="4" value="'.GETPOST('sizeS', 'int').'">';
 			print ' ';
@@ -999,6 +1022,7 @@ if ($action == 'create') {
 			print "<tr><td>".$langs->trans("DeliveryMethod")."</td>";
 			print '<td colspan="3">';
 			$expe->fetch_delivery_methods();
+			print img_picto('', 'dolly', 'class="pictofixedwidth"');
 			print $form->selectarray("shipping_method_id", $expe->meths, GETPOST('shipping_method_id', 'int'), 1, 0, 0, "", 1);
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -1008,6 +1032,7 @@ if ($action == 'create') {
 			// Tracking number
 			print "<tr><td>".$langs->trans("TrackingNumber")."</td>";
 			print '<td colspan="3">';
+			print img_picto('', 'barcode', 'class="pictofixedwidth"');
 			print '<input name="tracking_number" size="20" value="'.GETPOST('tracking_number', 'alpha').'">';
 			print "</td></tr>\n";
 
@@ -1030,6 +1055,7 @@ if ($action == 'create') {
 				print '<tr>';
 				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->label_incoterms, 1).'</label></td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
+				print img_picto('', 'incoterm', 'class="pictofixedwidth"');
 				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''));
 				print '</td></tr>';
 			}
@@ -1040,6 +1066,7 @@ if ($action == 'create') {
 			if (count($list) > 1) {
 				print "<tr><td>".$langs->trans("DefaultModel")."</td>";
 				print '<td colspan="3">';
+				print img_picto('', 'pdf', 'class="pictofixedwidth"');
 				print $form->selectarray('model', $list, $conf->global->EXPEDITION_ADDON_PDF);
 				print "</td></tr>\n";
 			}
@@ -1268,7 +1295,7 @@ if ($action == 'create') {
 										print '<!-- Show warehouse selection -->';
 
 										$stockMin = false;
-										if (empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) {
+										if (!getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
 											$stockMin = 0;
 										}
 										print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', '', 1, $stockMin, 'stock DESC, e.ref');
@@ -1768,7 +1795,7 @@ if ($action == 'create') {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 				$proj = new Project($db);
@@ -1831,7 +1858,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setdate_livraison">';
 		print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
-		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
+		print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
 		print $object->date_delivery ? dol_print_date($object->date_delivery, 'dayhour') : '&nbsp;';
@@ -1849,10 +1876,10 @@ if ($action == 'create') {
 		print '<input name="action" value="settrueWeight" type="hidden">';
 		print '<input name="id" value="'.$object->id.'" type="hidden">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input id="trueWeight" name="trueWeight" value="'.$object->trueWeight.'" type="text" class="width50">';
-		print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units, 0, 2);
-		print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
-		print ' <input class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+		print '<input id="trueWeight" name="trueWeight" value="'.$object->trueWeight.'" type="text" class="width50 valignmiddle">';
+		print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units, 0, 2, 'maxwidth125 valignmiddle');
+		print ' <input class="button smallpaddingimp valignmiddle" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
+		print ' <input class="button button-cancel smallpaddingimp valignmiddle" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 		print '</form>';
 	} else {
 		print $object->trueWeight;
@@ -1886,8 +1913,8 @@ if ($action == 'create') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input id="trueHeight" name="trueHeight" value="'.$object->trueHeight.'" type="text" class="width50">';
 		print $formproduct->selectMeasuringUnits("size_units", "size", $object->size_units, 0, 2);
-		print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
-		print ' <input class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+		print ' <input class="button smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
+		print ' <input class="button button-cancel smallpaddingimp" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 		print '</form>';
 	} else {
 		print $object->trueHeight;
@@ -1966,7 +1993,7 @@ if ($action == 'create') {
 		if ($user->admin) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
+		print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
 		if ($object->shipping_method_id > 0) {

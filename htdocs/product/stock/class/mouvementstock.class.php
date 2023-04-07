@@ -48,8 +48,16 @@ class MouvementStock extends CommonObject
 
 	/**
 	 * @var int ID warehouse
+	 * @deprecated
+	 * @see $warehouse_id
+	 */
+	public $entrepot_id;
+
+	/**
+	 * @var int ID warehouse
 	 */
 	public $warehouse_id;
+
 	public $qty;
 
 	/**
@@ -104,6 +112,9 @@ class MouvementStock extends CommonObject
 	public $inventorycode;
 	public $batch;
 
+	public $line_id_object_src;
+	public $line_id_object_origin;
+
 
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10, 'showoncombobox'=>1),
@@ -119,12 +130,12 @@ class MouvementStock extends CommonObject
 		'fk_origin' =>array('type'=>'integer', 'label'=>'Fk origin', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
 		'origintype' =>array('type'=>'varchar(32)', 'label'=>'Origintype', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>70),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>75),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>75),
 		'inventorycode' =>array('type'=>'varchar(128)', 'label'=>'InventoryCode', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'batch' =>array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'eatby' =>array('type'=>'date', 'label'=>'Eatby', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'sellby' =>array('type'=>'date', 'label'=>'Sellby', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
-		'fk_project' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk project', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
+		'fk_project' =>array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Fk project', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
 	);
 
 
@@ -360,6 +371,8 @@ class MouvementStock extends CommonObject
 					}
 				} else { // If not found, we add record
 					$productlot = new Productlot($this->db);
+					$productlot->origin = !empty($this->origin) ? (empty($this->origin->origin_type) ? $this->origin->element : $this->origin->origin_type) : '';
+					$productlot->origin_id = !empty($this->origin) ? $this->origin->id : 0;
 					$productlot->entity = $conf->entity;
 					$productlot->fk_product = $fk_product;
 					$productlot->batch = $batch;
@@ -383,7 +396,7 @@ class MouvementStock extends CommonObject
 
 		// Check if stock is enough when qty is < 0
 		// Note that qty should be > 0 with type 0 or 3, < 0 with type 1 or 2.
-		if ($movestock && $qty < 0 && empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) {
+		if ($movestock && $qty < 0 && !getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
 			if (isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				$foundforbatch = 0;
 				$qtyisnotenough = 0;
@@ -1002,13 +1015,17 @@ class MouvementStock extends CommonObject
 	 *
 	 * @param	string	$origin_element		Type of element
 	 * @param	int		$origin_id			Id of element
+	 * @param	int		$line_id_object_src	Id line of element Source
+	 * @param	int		$line_id_object_origin	Id line of element Origin
 	 *
 	 * @return	void
 	 */
-	public function setOrigin($origin_element, $origin_id)
+	public function setOrigin($origin_element, $origin_id, $line_id_object_src = 0, $line_id_object_origin = 0)
 	{
 		$this->origin_type = $origin_element;
 		$this->origin_id = $origin_id;
+		$this->line_id_oject_src = $line_id_object_src;
+		$this->line_id_oject_origin = $line_id_object_origin;
 		// For backward compatibility
 		$this->origintype = $origin_element;
 		$this->fk_origin = $origin_id;

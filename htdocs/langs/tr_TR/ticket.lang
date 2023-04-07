@@ -26,6 +26,7 @@ Permission56002=Destek bildirimini değiştir
 Permission56003=Destek bildirimlerini sil
 Permission56004=Destek bildirimlerini yönet
 Permission56005=See tickets of all third parties (not effective for external users, always be limited to the third party they depend on)
+Permission56006=Export tickets
 
 Tickets=Destek Bildirimleri
 TicketDictType=Destek Bildirimi - Türler
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=Dış iştirakçi
 
 OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Destek bildirimini e-posta ile gönderil
+
+ExportDataset_ticket_1=Destek Bildirimleri
 
 # Status
 Read=Okundu

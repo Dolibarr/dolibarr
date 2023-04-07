@@ -61,7 +61,7 @@ $permissiontoadd   = $user->rights->contrat->creer;     //  Used by the include 
  * Actions
  */
 
-if ($action == 'addcontact' && $user->rights->contrat->creer) {
+if ($action == 'addcontact' && $user->hasRight('contrat', 'creer')) {
 	$result = $object->fetch($id);
 
 	if ($result > 0 && $id > 0) {
@@ -86,7 +86,7 @@ if ($action == 'addcontact' && $user->rights->contrat->creer) {
 }
 
 // bascule du statut d'un contact
-if ($action == 'swapstatut' && $user->rights->contrat->creer) {
+if ($action == 'swapstatut' && $user->hasRight('contrat', 'creer')) {
 	if ($object->fetch($id)) {
 		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
@@ -95,7 +95,7 @@ if ($action == 'swapstatut' && $user->rights->contrat->creer) {
 }
 
 // Delete contact
-if ($action == 'deletecontact' && $user->rights->contrat->creer) {
+if ($action == 'deletecontact' && $user->hasRight('contrat', 'creer')) {
 	$object->fetch($id);
 	$result = $object->delete_contact(GETPOST("lineid", 'int'));
 
@@ -165,7 +165,7 @@ if ($id > 0 || !empty($ref)) {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);

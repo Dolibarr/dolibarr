@@ -6,7 +6,7 @@
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2009       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,6 +128,7 @@ class MailmanSpip
 	{
 		global $conf;
 
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		//Patterns that are going to be replaced with their original value
 		$patterns = array(
 			'%LISTE%',
@@ -139,7 +140,7 @@ class MailmanSpip
 			$list,
 			$object->email,
 			$object->pass,
-			$conf->global->ADHERENT_MAILMAN_ADMIN_PASSWORD
+			getDolGlobalString('ADHERENT_MAILMAN_ADMIN_PASSWORD')
 		);
 
 		$curl_url = str_replace($patterns, $replace, $url);

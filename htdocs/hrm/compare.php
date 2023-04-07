@@ -155,7 +155,7 @@ $fk_usergroup1 = GETPOST('fk_usergroup1');
 								$TJobs[$j->id] = $j->label;
 							}
 
-									print $form->selectarray('fk_job', $TJobs, $fk_job, 1);
+									print img_picto('', 'jobprofile', 'class="pictofixedwidth"').$form->selectarray('fk_job', $TJobs, $fk_job, 1);
 							?></td>
 						</tr>
 					</table>
@@ -188,7 +188,7 @@ $fk_usergroup1 = GETPOST('fk_usergroup1');
 
 				</div>
 
-				<div style="clear:both"></div>
+				<div class="clearboth"></div>
 
 			</div>
 

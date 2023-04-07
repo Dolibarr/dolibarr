@@ -172,3 +172,5 @@ ErrorSeveralCompaniesWithEmailContactUs=Au fost găsite mai multe companii cu ac
 ErrorSeveralCompaniesWithNameContactUs=Au fost găsite mai multe companii cu acest nume, nu putem valida automat înregistrarea dumneavoastră. Vă rugăm să ne contactați la %s pentru o validare manuală
 NoPublicActionsAllowedForThisEvent=Nu sunt acțiuni publice deschise pentru acest eveniment
 MaxNbOfAttendees=Număr maxim de participanți
+DateStartEvent=Dată start eveniment
+DateEndEvent=Dată sfârșit eveniment

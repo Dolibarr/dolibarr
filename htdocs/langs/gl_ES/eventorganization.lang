@@ -172,3 +172,5 @@ ErrorSeveralCompaniesWithEmailContactUs=Atopáronse varias empresas con este cor
 ErrorSeveralCompaniesWithNameContactUs=Atopáronse varias empresas con este nome polo que non podemos validar automaticamente a súa inscrición. Póñase en contacto connosco en %s para unha validación manual 
 NoPublicActionsAllowedForThisEvent=Non hai accións públicas abertas ao público para este evento 
 MaxNbOfAttendees=Número máximo de asistentes
+DateStartEvent=Data de inicio do evento
+DateEndEvent=Data de finalización do evento

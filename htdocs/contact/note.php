@@ -51,7 +51,7 @@ if ($user->socid > 0) {
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 
-$permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('societe', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 // $hookmanager->initHooks(array('contactcard')); -> Name conflict with product/card.php
@@ -106,11 +106,10 @@ if ($id > 0) {
 		$objsoc = new Societe($db);
 		$objsoc->fetch($object->socid);
 		// Thirdparty
-		$morehtmlref .= $langs->trans('ThirdParty').' : ';
 		if ($objsoc->id > 0) {
 			$morehtmlref .= $objsoc->getNomUrl(1);
 		} else {
-			$morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+			$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("ContactNotLinkedToCompany").'</span>';
 		}
 	}
 	$morehtmlref .= '</div>';

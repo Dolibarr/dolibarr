@@ -157,7 +157,7 @@ class modTicket extends DolibarrModules
 			'tabfieldvalue' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
 			'tabfieldinsert' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
 			'tabrowid' => array("rowid", "rowid", "rowid", "rowid"),
-			'tabcond' => array($conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled && !empty($conf->global->TICKET_ENABLE_RESOLUTION)),
+			'tabcond' => array($conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled && getDolGlobalString('TICKET_ENABLE_RESOLUTION')),
 			'tabhelp' => array(
 				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")),
 				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")),
@@ -207,6 +207,13 @@ class modTicket extends DolibarrModules
 		//$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'manage';
+
+		$r++;
+		$this->rights[$r][0] = 56006; // id de la permission
+		$this->rights[$r][1] = "Export ticket"; // libelle de la permission
+		//$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'export';
 
 		/* Seems not used and in conflict with societe->client->voir (see all thirdparties)
 		$r++;
@@ -317,6 +324,27 @@ class modTicket extends DolibarrModules
 			'perms' => '$user->rights->ticket->read',
 			'target' => '',
 			'user' => 0);
+		$r++;
+
+		// Exports
+		//--------
+		$r = 1;
+
+		// Export list of tickets and attributes
+		$langs->load("ticket");
+		$this->export_code[$r]=$this->rights_class.'_'.$r;
+		$this->export_label[$r]='ExportDataset_ticket_1';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_permission[$r] = array(array("ticket", "export"));
+		$this->export_icon[$r]='ticket';
+		$keyforclass = 'Ticket';$keyforclassfile='/ticket/class/ticket.class.php';$keyforelement='ticket';
+		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
+		$keyforselect='ticket'; $keyforaliasextra='extra'; $keyforelement='ticket';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+		$this->export_sql_start[$r]='SELECT DISTINCT ';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'ticket as t';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'ticket_extrafields as extra on (t.rowid = extra.fk_object)';
+		$this->export_sql_end[$r] .=' WHERE 1 = 1';
+		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('ticket').')';
 		$r++;
 	}
 

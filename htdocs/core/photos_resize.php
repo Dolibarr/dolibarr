@@ -453,7 +453,6 @@ if ($action == 'confirm_crop') {
 			if ($result < 0) {
 				setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
 			}
-			$result = $ecmfile->create($user);
 		}
 
 		if ($backtourl) {
@@ -601,7 +600,7 @@ if (!empty($conf->use_javascript_ajax)) {
 }
 
 /* Check that mandatory fields are filled */
-print '<script type="text/javascript">
+print '<script nonce="'.getNonce().'" type="text/javascript">
 jQuery(document).ready(function() {
 	$("#submitcrop").click(function(e) {
         console.log("We click on submitcrop");

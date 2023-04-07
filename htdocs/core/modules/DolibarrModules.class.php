@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -181,6 +181,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $error;
 
 	/**
+	 * @var string[] Array of Errors messages
+	 */
+	public $errors;
+
+	/**
 	 * @var string Module version
 	 * @see http://semver.org
 	 *
@@ -219,6 +224,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $descriptionlong;
 
+	/**
+	 * @var array dictionaries description
+	 */
+	public $dictionaries;
+
+	/**
+	 * @var array tabs description
+	 */
+	public $tabs;
 
 	// For exports
 
@@ -234,10 +248,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 	public $export_icon;
 
+	/**
+	 * @var array export enabled
+	 */
+	public $export_enabled;
 	public $export_permission;
 	public $export_fields_array;
 	public $export_TypeFields_array; // Array of key=>type where type can be 'Numeric', 'Date', 'Text', 'Boolean', 'Status', 'List:xxx:login:rowid'
 	public $export_entities_array;
+	public $export_examplevalues_array;
 	public $export_help_array;
 	public $export_special_array; // special or computed field
 	public $export_dependencies_array;
@@ -259,9 +278,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $import_label;
 
 	public $import_icon;
-
 	public $import_entities_array;
 	public $import_tables_array;
+	public $import_tables_creator_array;
 	public $import_fields_array;
 	public $import_fieldshidden_array;
 	public $import_convertvalue_array;
@@ -351,11 +370,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $phpmin;
 
+	public $phpmax;
+
 	/**
 	 * @var array Minimum version of Dolibarr required by module.
 	 * e.g.: Dolibarr ≥ 3.6 = array(3, 6)
 	 */
 	public $need_dolibarr_version;
+
+	public $enabled_bydefault;
 
 	/**
 	 * @var bool Whether to hide the module.
@@ -792,8 +815,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * For 'experimental' modules, gives 'experimental' translation
 	 * For 'dolibarr' modules, gives Dolibarr version
 	 *
-	 * @param  int $translated 1=Special version keys are translated, 0=Special version keys are not translated
-	 * @return string                  Module version
+	 * @param  int 		$translated 		1=Special version keys are translated, 0=Special version keys are not translated
+	 * @return string               		Module version
 	 */
 	public function getVersion($translated = 1)
 	{
@@ -976,8 +999,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$tmp = json_decode($obj->note, true);
 				}
 				return array(
-					'authorid' => $tmp['authorid'],
-					'ip' => $tmp['ip'],
+					'authorid' => empty($tmp['authorid']) ? '' : $tmp['authorid'],
+					'ip' => empty($tmp['ip']) ? '' : $tmp['ip'],
 					'lastactivationdate' => $this->db->jdate($obj->tms),
 					'lastactivationversion' => (!empty($tmp['lastactivationversion']) ? $tmp['lastactivationversion'] : 'unknown'),
 				);
@@ -1963,7 +1986,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public function insert_menus()
 	{
 		// phpcs:enable
-		global $user;
+		global $conf, $user;
 
 		if (!is_array($this->menu) || empty($this->menu)) {
 			return 0;
@@ -1974,6 +1997,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		dol_syslog(get_class($this)."::insert_menus", LOG_DEBUG);
 
 		$err = 0;
+
+		// Common module
+		$entity = ((!empty($this->always_enabled) || !empty($this->core_enabled)) ? 0 : $conf->entity);
 
 		$this->db->begin();
 
@@ -2026,6 +2052,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$menu->user = $this->menu[$key]['user'];
 			$menu->enabled = isset($this->menu[$key]['enabled']) ? $this->menu[$key]['enabled'] : 0;
 			$menu->position = $this->menu[$key]['position'];
+			$menu->entity = $entity;
 
 			if (!$err) {
 				$result = $menu->create($user); // Save menu entry into table llx_menu
@@ -2069,7 +2096,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
 		$sql .= " WHERE module = '".$this->db->escape($module)."'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity IN (0, ".$conf->entity.")";
 
 		dol_syslog(get_class($this)."::delete_menus", LOG_DEBUG);
 		$resql = $this->db->query($sql);
