@@ -33,6 +33,7 @@ create table llx_mailing
   body				mediumtext,
   bgcolor			varchar(8),                          -- Backgroud color of mailing
   bgimage			varchar(255),                        -- Backgroud image of mailing
+  evenunsubscribe   smallint       DEFAULT 0, 			 -- If 1, email will be send event if recipient has opt-out to emailings 
   cible				varchar(60),
   nbemail			integer,
   email_from		varchar(160),                        -- Email address of sender
