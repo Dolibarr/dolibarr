@@ -711,7 +711,7 @@ if ($object->fetch($id) >= 0) {
 				print '<td class="right">';
 				print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
 				if ($obj->statut == 0) {	// Not sent yet
-					if (!empty($user->rights->mailing->creer) && $allowaddtarget) {
+					if (!empty($user->rights->mailing->creer)) {
 						print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.$obj->rowid.$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
 					}
 				}
