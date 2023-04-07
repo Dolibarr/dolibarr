@@ -235,6 +235,11 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public $transport_mode_id;
 
+	/**
+	 * @var boolean VAT reverse charge can be used on the invoice
+	 */
+	public $vat_reverse_charge;
+
 	public $extraparams = array();
 
 	/**
