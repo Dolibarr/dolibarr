@@ -1187,6 +1187,7 @@ if ($action == 'create') {
 		}
 
 		// Call Hook formConfirm
+		$formconfirm = '';
 		$parameters = array('formConfirm' => $formconfirm);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
