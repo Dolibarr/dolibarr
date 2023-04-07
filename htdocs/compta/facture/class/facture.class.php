@@ -6440,7 +6440,7 @@ class FactureLigne extends CommonInvoiceLine
 			return -1;
 		}
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time';
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'element_time';
 		$sql .= ' SET invoice_id = NULL, invoice_line_id = NULL';
 		$sql .= ' WHERE invoice_line_id = '.((int) $this->id);
 		if (!$this->db->query($sql)) {
