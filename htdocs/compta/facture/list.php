@@ -2547,6 +2547,9 @@ if ($resql) {
 			$i++;
 		}
 
+		// Use correct digits number for totals
+		$totalarray['val']['total_margin'] = price2num($totalarray['val']['total_margin'], 'MT');
+
 		// Show total line
 		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 	}
