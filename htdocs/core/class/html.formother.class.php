@@ -429,7 +429,9 @@ class FormOther
 			if (!is_numeric($showempty)) {
 				$textforempty = $showempty;
 			}
-			$moreforfilter .= '<option class="optiongrey" value="'.($showempty < 0 ? $showempty : -1).'"'.($selected == $showempty ? ' selected' : '').' data-html="'.dol_escape_htmltag($textforempty).'">'.dol_escape_htmltag($textforempty).'</option>'."\n";
+			$moreforfilter .= '<option class="optiongrey" value="'.($showempty < 0 ? $showempty : -1).'"'.($selected == $showempty ? ' selected' : '');
+			//$moreforfilter .= ' data-html="'.dol_escape_htmltag($textforempty).'"';
+			$moreforfilter .= '>'.dol_escape_htmltag($textforempty).'</option>'."\n";
 		}
 
 		if (is_array($tab_categs)) {
