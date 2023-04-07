@@ -603,7 +603,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Filters
 	print '<div class="div-table-responsive-no-min">';
-	print '<table id="tablelineoffilters" class="noborder margintable noshadow">';
+	print '<table id="tablelineoffilters" class="noborder nobordertop noshadow">';
 	print '<tr class="liste_titre nodrag nodrop">';
 	print '<td>'.img_picto('', 'filter', 'class="pictofixedwidth opacitymedium"').$form->textwithpicto($langs->trans("Filters"), $langs->trans("EmailCollectorFilterDesc")).'</td><td></td><td></td>';
 	print '</tr>';
@@ -627,8 +627,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		'unseen'=>array('label'=>'NotRead', 'data-noparam'=>1),
 		'unanswered'=>array('label'=>'Unanswered', 'data-noparam'=>1),
 		'answered'=>array('label'=>'Answered', 'data-noparam'=>1),
-		'smaller'=>array('label'=>'SmallerThan', 'data-placeholder'=>$langs->trans('NumberOfBytes')),
-		'larger'=>array('label'=>'LargerThan', 'data-placeholder'=>$langs->trans('NumberOfBytes')),
+		'smaller'=>array('label'=>$langs->trans("Size").' ('.$langs->trans("SmallerThan").")", 'data-placeholder'=>$langs->trans('NumberOfBytes')),
+		'larger'=>array('label'=>$langs->trans("Size").' ('.$langs->trans("LargerThan").")", 'data-placeholder'=>$langs->trans('NumberOfBytes')),
 		'X3'=>'---',
 		'withtrackingid'=>array('label'=>'WithDolTrackingID', 'data-noparam'=>1),
 		'withouttrackingid'=>array('label'=>'WithoutDolTrackingID', 'data-noparam'=>1),
@@ -690,7 +690,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="div-table-responsive-no-min">';
 	print '<table id="tablelines" class="noborder noshadow">';
 	print '<tr class="liste_titre nodrag nodrop">';
-	print '<td>'.img_picto('', 'technic', 'class="pictofixedwidth"').$form->textwithpicto($langs->trans("EmailcollectorOperations"), $langs->trans("EmailcollectorOperationsDesc")).'</td><td></td><td></td><td></td>';
+	print '<td>'.img_picto('', 'technic', 'class="pictofixedwidth"').$form->textwithpicto($langs->trans("EmailcollectorOperations"), $langs->trans("EmailcollectorOperationsDesc")).'</td>';
+	print '<td>';
+	$htmltext = $langs->transnoentitiesnoconv("OperationParamDesc");
+	print $form->textwithpicto($langs->trans("Parameters"), $htmltext, 1, 'help', '', 0, 2, 'operationparamtt');
+	print '</td>';
+	print '<td></td>';
+	print '<td></td>';
 	print '</tr>';
 
 	$arrayoftypes = array(
@@ -730,9 +736,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<td>';
 	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'minwidth150 maxwidth300', 1);
 	print '</td><td>';
-	//print '<input type="text" name="operationparam">';
-	$htmltext = $langs->transnoentitiesnoconv("OperationParamDesc");
-	print $form->textwithpicto('<input type="text" name="operationparam">', $htmltext, 1, 'help', '', 0, 2, 'operationparamtt');
+	print '<textarea class="centpercent" name="operationparam" rows="3"></textarea>';
 	print '</td>';
 	print '<td>';
 	print '</td>';
@@ -766,7 +770,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</td>';
 		print '<td class="wordbreak minwidth300 small">';
 		if ($action == 'editoperation' && $ruleaction['id'] == $operationid) {
-			print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.dol_escape_htmltag($ruleaction['actionparam']).'"><br>';
+			//print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.dol_escape_htmltag($ruleaction['actionparam']).'"><br>';
+			print '<textarea class="centpercent" name="operationparam2" rows="3">';
+			print dol_escape_htmltag($ruleaction['actionparam']);
+			print '</textarea>';
 			print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'">';
 			print '<input type="submit" class="button small button-save" name="saveoperation2" value="'.$langs->trans("Save").'">';
 			print '<input type="submit" class="button small button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';

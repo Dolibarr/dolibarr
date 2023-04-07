@@ -1308,59 +1308,69 @@ class EmailCollector extends CommonObject
 					continue;
 				}
 
+				// Forge the IMAP search string.
+				// See https://www.rfc-editor.org/rfc/rfc3501
+
+				$not = '';
+				if (strpos($rule['rulevalue'], '!') === 0) {
+					// The value start with !, so we exclude the criteria
+					$not = 'NOT ';
+				}
+
 				if ($rule['type'] == 'to') {
-					$tmprulevaluearray = explode('*', $rule['rulevalue']);
+					$tmprulevaluearray = explode('*', $rule['rulevalue']);	// Search on abc*def means searching on 'abc' and on 'def'
 					if (count($tmprulevaluearray) >= 2) {
 						foreach ($tmprulevaluearray as $tmprulevalue) {
-							$search .= ($search ? ' ' : '').'TO "'.str_replace('"', '', $tmprulevalue).'"';
+							$search .= ($search ? ' ' : '').$not.'TO "'.str_replace('"', '', $tmprulevalue).'"';
 						}
 					} else {
-						$search .= ($search ? ' ' : '').'TO "'.str_replace('"', '', $rule['rulevalue']).'"';
+						$search .= ($search ? ' ' : '').$not.'TO "'.str_replace('"', '', $rule['rulevalue']).'"';
 					}
 				}
 				if ($rule['type'] == 'bcc') {
-					$search .= ($search ? ' ' : '').'BCC';
+					$search .= ($search ? ' ' : '').$not.'BCC';
 				}
 				if ($rule['type'] == 'cc') {
-					$search .= ($search ? ' ' : '').'CC';
+					$search .= ($search ? ' ' : '').$not.'CC';
 				}
 				if ($rule['type'] == 'from') {
-					$search .= ($search ? ' ' : '').'FROM "'.str_replace('"', '', $rule['rulevalue']).'"';
+					$search .= ($search ? ' ' : '').$not.'FROM "'.str_replace('"', '', $rule['rulevalue']).'"';
 				}
 				if ($rule['type'] == 'subject') {
-					$search .= ($search ? ' ' : '').'SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
+					$search .= ($search ? ' ' : '').$not.'SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
 				}
 				if ($rule['type'] == 'body') {
-					$search .= ($search ? ' ' : '').'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
+					$search .= ($search ? ' ' : '').$not.'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
 				}
 				if ($rule['type'] == 'header') {
-					$search .= ($search ? ' ' : '').'HEADER '.$rule['rulevalue'];
+					$search .= ($search ? ' ' : '').$not.'HEADER '.$rule['rulevalue'];
 				}
 
+				/* seems not used */
 				if ($rule['type'] == 'notinsubject') {
-					$search .= ($search ? ' ' : '').'SUBJECT NOT "'.str_replace('"', '', $rule['rulevalue']).'"';
+					$search .= ($search ? ' ' : '').'NOT SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
 				}
 				if ($rule['type'] == 'notinbody') {
-					$search .= ($search ? ' ' : '').'BODY NOT "'.str_replace('"', '', $rule['rulevalue']).'"';
+					$search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
 				}
 
 				if ($rule['type'] == 'seen') {
-					$search .= ($search ? ' ' : '').'SEEN';
+					$search .= ($search ? ' ' : '').$not.'SEEN';
 				}
 				if ($rule['type'] == 'unseen') {
-					$search .= ($search ? ' ' : '').'UNSEEN';
+					$search .= ($search ? ' ' : '').$not.'UNSEEN';
 				}
 				if ($rule['type'] == 'unanswered') {
-					$search .= ($search ? ' ' : '').'UNANSWERED';
+					$search .= ($search ? ' ' : '').$not.'UNANSWERED';
 				}
 				if ($rule['type'] == 'answered') {
-					$search .= ($search ? ' ' : '').'ANSWERED';
+					$search .= ($search ? ' ' : '').$not.'ANSWERED';
 				}
 				if ($rule['type'] == 'smaller') {
-					$search .= ($search ? ' ' : '').'SMALLER "'.str_replace('"', '', $rule['rulevalue']).'"';
+					$search .= ($search ? ' ' : '').$not.'SMALLER "'.str_replace('"', '', $rule['rulevalue']).'"';
 				}
 				if ($rule['type'] == 'larger') {
-					$search .= ($search ? ' ' : '').'LARGER "'.str_replace('"', '', $rule['rulevalue']).'"';
+					$search .= ($search ? ' ' : '').$not.'LARGER "'.str_replace('"', '', $rule['rulevalue']).'"';
 				}
 
 				// Rules to filter after the search imap
