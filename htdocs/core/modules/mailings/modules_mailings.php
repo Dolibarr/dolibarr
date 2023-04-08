@@ -53,6 +53,12 @@ class MailingTargets // This can't be abstract as it is used for some method
 	 */
 	public $sql;
 
+	public $desc;
+
+	public $name;
+
+	public $evenunsubscribe = 0;		// Set this to 1 if you want to flag you also want to include email in target that has opt-out.
+
 
 	/**
 	 *	Constructor
@@ -111,8 +117,11 @@ class MailingTargets // This can't be abstract as it is used for some method
 	{
 		$result = $this->db->query($sql);
 		if ($result) {
-			$obj = $this->db->fetch_object($result);
-			return $obj->nb;
+			$total = 0;
+			while ($obj = $this->db->fetch_object($result)) {
+				$total += $obj->nb;
+			}
+			return $total;
 		} else {
 			$this->error = $this->db->lasterror();
 			return -1;

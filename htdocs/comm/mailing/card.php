@@ -84,8 +84,12 @@ $listofmethods['smtps'] = 'SMTP/SMTPS socket library';
 if (empty($user->rights->mailing->lire) || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
 	accessforbidden();
 }
+if (empty($action) && empty($object->id)) {
+	accessforbidden('Object not found');
+}
 
 $upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+
 
 
 /*
@@ -748,6 +752,7 @@ llxHeader(
 	array()
 );
 
+
 if ($action == 'create') {
 	// EMailing in creation mode
 	print '<form name="new_mailing" action="'.$_SERVER['PHP_SELF'].'" method="POST">'."\n";
@@ -761,7 +766,7 @@ if ($action == 'create') {
 	$htmltext .= '</span></i>';
 
 
-	$availablelink = $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'help', '', 0, 2, 'availvar');
+	$availablelink = $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'help', '', 0, 2, 'availvar');
 	//print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$objMod->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto($langs->trans("ClickToShowDescription"), $imginfo).'</a>';
 
 
@@ -967,6 +972,14 @@ if ($action == 'create') {
 			}
 			print '</td></tr>';
 
+			print '</table>';
+			print '</div>';
+
+			print '<div class="fichehalfright">';
+			print '<div class="underbanner clearboth"></div>';
+
+			print '<table class="border centpercent tableforfield">';
+
 			// Number of distinct emails
 			print '<tr><td>';
 			print $langs->trans("TotalNbOfDistinctRecipients");
@@ -991,15 +1004,6 @@ if ($action == 'create') {
 				}
 			}
 			print '</td></tr>';
-
-			print '</table>';
-			print '</div>';
-
-
-			print '<div class="fichehalfright">';
-			print '<div class="underbanner clearboth"></div>';
-
-			print '<table class="border centpercent tableforfield">';
 
 			// Even if unsubscribe
 			print '<tr><td class="titlefield">';
@@ -1244,6 +1248,15 @@ if ($action == 'create') {
 			// To
 			print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1).'</td></tr>';
 
+			print '</table>';
+			print '</div>';
+
+
+			print '<div class="fichehalfright">';
+			print '<div class="underbanner clearboth"></div>';
+
+			print '<table class="border centpercent tableforfield">';
+
 			// Number of distinct emails
 			print '<tr><td>';
 			print $langs->trans("TotalNbOfDistinctRecipients");
@@ -1268,15 +1281,6 @@ if ($action == 'create') {
 				}
 			}
 			print '</td></tr>';
-
-			print '</table>';
-			print '</div>';
-
-
-			print '<div class="fichehalfright">';
-			print '<div class="underbanner clearboth"></div>';
-
-			print '<table class="border centpercent tableforfield">';
 
 			// Even if unsubscribe
 			print '<tr><td class="titlefield">';

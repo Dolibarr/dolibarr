@@ -99,14 +99,22 @@ if ($action == 'add' && $user->hasRight('mailing', 'creer')) {		// Add recipient
 		$classname = "mailing_".$module;
 
 		if (file_exists($file)) {
-			require_once $file;
+			include_once $file;
 
 			// Add targets into database
-			$obj = new $classname($db);
-			dol_syslog("Call add_to_target on class ".$classname);
-			$result = $obj->add_to_target($id);
+			dol_syslog("Call add_to_target() on class ".$classname." evenunsubscribe=".$object->evenunsubscribe);
 
-			$sqlmessage = $obj->sql;
+			if (class_exists($classname)) {
+				$obj = new $classname($db);
+				$obj->evenunsubscribe = $object->evenunsubscribe;
+
+				$result = $obj->add_to_target($id);
+
+				$sqlmessage = $obj->sql;
+			} else {
+				$result = -1;
+				break;
+			}
 		}
 	}
 	if ($result > 0) {
@@ -198,6 +206,38 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_dest_status = '';
 }
 
+// Action update description of emailing
+if ($action == 'settitle' || $action == 'setemail_from' || $action == 'setreplyto' || $action == 'setemail_errorsto' || $action == 'setevenunsubscribe') {
+	$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+
+	if ($action == 'settitle') {
+		$object->title = trim(GETPOST('title', 'alpha'));
+	} elseif ($action == 'setemail_from') {
+		$object->email_from = trim(GETPOST('email_from', 'alphawithlgt')); // Must allow 'name <email>'
+	} elseif ($action == 'setemail_replyto') {
+		$object->email_replyto = trim(GETPOST('email_replyto', 'alphawithlgt')); // Must allow 'name <email>'
+	} elseif ($action == 'setemail_errorsto') {
+		$object->email_errorsto = trim(GETPOST('email_errorsto', 'alphawithlgt')); // Must allow 'name <email>'
+	} elseif ($action == 'settitle' && empty($object->title)) {
+		$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
+	} elseif ($action == 'setfrom' && empty($object->email_from)) {
+		$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom"));
+	} elseif ($action == 'setevenunsubscribe') {
+		$object->evenunsubscribe = (GETPOST('evenunsubscribe') ? 1 : 0);
+	}
+
+	if (!$mesg) {
+		$result = $object->update($user);
+		if ($result >= 0) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+		$mesg = $object->error;
+	}
+
+	setEventMessages($mesg, null, 'errors');
+	$action = "";
+}
 
 
 /*
@@ -239,6 +279,7 @@ if ($object->fetch($id) >= 0) {
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
 	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border centpercent tableforfield">';
@@ -280,6 +321,15 @@ if ($object->fetch($id) >= 0) {
 	}
 	print '</td></tr>';
 
+	print '</table>';
+	print '</div>';
+
+
+	print '<div class="fichehalfright">';
+	print '<div class="underbanner clearboth"></div>';
+
+	print '<table class="border centpercent tableforfield">';
+
 	// Nb of distinct emails
 	print '<tr><td>';
 	print $langs->trans("TotalNbOfDistinctRecipients");
@@ -305,9 +355,21 @@ if ($object->fetch($id) >= 0) {
 	}
 	print '</td></tr>';
 
-	print '</table>';
+	// Even if unsubscribe
+	print '<tr><td class="titlefield">';
+	print $form->editfieldkey("EvenUnsubscribe", 'evenunsubscribe', $object->evenunsubscribe, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'checkbox');
+	print '</td><td>';
+	print $form->editfieldval("EvenUnsubscribe", 'evenunsubscribe', $object->evenunsubscribe, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'checkbox');
+	print '</td></tr>';
 
-	print "</div>";
+	// Other attributes. Fields from hook formObjectOptions and Extrafields.
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
+	print '</table>';
+	print '</div>';
+	print '</div>';
+
+	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
 
@@ -386,8 +448,9 @@ if ($object->fetch($id) >= 0) {
 					$var = !$var;
 
 					if ($allowaddtarget) {
-						print '<form '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&token='.newToken().'&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
+						print '<form '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.newToken().'">';
+						print '<input type="hidden" name="action" value="add">';
 						print '<input type="hidden" name="page_y" value="'.newToken().'">';
 					} else {
 						print '<div '.$bctag[$var].'>';
@@ -404,6 +467,8 @@ if ($object->fetch($id) >= 0) {
 					print '</div>';
 
 					try {
+						$obj->evenunsubscribe = $object->evenunsubscribe;	// Set flag to include/exclude email that has opt-out.
+
 						$nbofrecipient = $obj->getNbOfRecipients('');
 					} catch (Exception $e) {
 						dol_syslog($e->getMessage(), LOG_ERR);
@@ -470,8 +535,10 @@ if ($object->fetch($id) >= 0) {
 
 	// List of selected targets
 	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.tms,";
-	$sql .= " mc.source_url, mc.source_id, mc.source_type, mc.error_text";
+	$sql .= " mc.source_url, mc.source_id, mc.source_type, mc.error_text,";
+	$sql .= " COUNT(mu.rowid) as nb";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."mailing_unsubscribe as mu ON mu.email = mc.email";
 	$sql .= " WHERE mc.fk_mailing=".((int) $object->id);
 	$asearchcriteriahasbeenset = 0;
 	if ($search_lastname) {
@@ -494,7 +561,9 @@ if ($object->fetch($id) >= 0) {
 		$sql .= " AND mc.statut = ".((int) $search_dest_status);
 		$asearchcriteriahasbeenset++;
 	}
+	$sql .= ' GROUP BY mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.tms, mc.source_url, mc.source_id, mc.source_type, mc.error_text';
 	$sql .= $db->order($sortfield, $sortorder);
+
 
 	// Count total nb of records
 	$nbtotalofrecords = '';
@@ -656,10 +725,21 @@ if ($object->fetch($id) >= 0) {
 				$obj = $db->fetch_object($resql);
 
 				print '<tr class="oddeven">';
-				print '<td class="tdoverflowmax150">'.img_picto('$obj->email', 'email', 'class="paddingright"').dol_escape_htmltag($obj->email).'</td>';
+
+				print '<td class="tdoverflowmax150">';
+				print img_picto($obj->email, 'email', 'class="paddingright"');
+				if ($obj->nb > 0) {
+					print img_warning($langs->trans("EmailOptedOut"), 'warning', 'pictofixedwidth');
+				}
+				print dol_escape_htmltag($obj->email);
+				print '</td>';
+
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.dol_escape_htmltag($obj->lastname).'</td>';
+
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->firstname).'">'.dol_escape_htmltag($obj->firstname).'</td>';
+
 				print '<td><span class="small">'.dol_escape_htmltag($obj->other).'</small></td>';
+
 				print '<td class="center tdoverflowmax150">';
 				if (empty($obj->source_id) || empty($obj->source_type)) {
 					print empty($obj->source_url) ? '' : $obj->source_url; // For backward compatibility
