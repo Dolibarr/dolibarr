@@ -182,6 +182,7 @@ class Workstation extends CommonObject
 
 		$this->db = $db;
 
+		// TODO why getNextNumRef is call here ?
 		$this->fields['ref']['default'] = $this->getNextNumRef();
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
