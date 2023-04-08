@@ -186,9 +186,9 @@ if ($object->id > 0) {
 $hookmanager->initHooks(array('productcard', 'globalcard'));
 
 // Permissions
-$usercanread   = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
-$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
+$usercanread   = (($object->type == Product::TYPE_PRODUCT && $user->hasRight("produit", "lire")) || ($object->type == Product::TYPE_SERVICE && $user->hasRight("service", "lire")));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight("produit", "creer")) || ($object->type == Product::TYPE_SERVICE && $user->hasRight("service", "creer")));
+$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->hasRight("produit", "supprimer")) || ($object->type == Product::TYPE_SERVICE && $user->hasRight("service", "supprimer")));
 
 
 /*

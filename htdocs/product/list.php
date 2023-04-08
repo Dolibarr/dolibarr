@@ -43,7 +43,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
+if (isModEnabled('workstation')) {
+	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
+}
 if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
@@ -1351,8 +1353,10 @@ print "</tr>\n";
 
 
 $product_static = new Product($db);
-$static_ws = new Workstation($db);
 $product_fourn = new ProductFournisseur($db);
+if (isModEnabled('workstation')) {
+	$static_ws = new Workstation($db);
+}
 
 $i = 0;
 $totalarray = array();
