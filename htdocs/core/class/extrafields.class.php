@@ -1267,7 +1267,7 @@ class ExtraFields
 							$labeltoshow = '';
 							$obj = $this->db->fetch_object($resql);
 
-							// Several field into label (eq table:code|libelle:rowid)
+							// Several field into label (eq table:code|label:rowid)
 							$notrans = false;
 							$fields_label = explode('|', $InfoFieldList[1]);
 							if (is_array($fields_label) && count($fields_label) > 1) {
@@ -1487,7 +1487,7 @@ class ExtraFields
 							$obj = $this->db->fetch_object($resql);
 
 							$notrans = false;
-							// Several field into label (eq table:code|libelle:rowid)
+							// Several field into label (eq table:code|label:rowid)
 							$fields_label = explode('|', $InfoFieldList[1]);
 							if (is_array($fields_label)) {
 								$notrans = true;
@@ -1722,7 +1722,7 @@ class ExtraFields
 
 					$obj = $this->db->fetch_object($resql);
 
-					// Several field into label (eq table:code|libelle:rowid)
+					// Several field into label (eq table:code|label:rowid)
 					$fields_label = explode('|', $InfoFieldList[1]);
 
 					if (is_array($fields_label) && count($fields_label) > 1) {
@@ -1830,7 +1830,7 @@ class ExtraFields
 					$value = ''; // value was used, so now we reste it to use it to build final output
 					$toprint = array();
 					while ($obj = $this->db->fetch_object($resql)) {
-						// Several field into label (eq table:code|libelle:rowid)
+						// Several field into label (eq table:code|label:rowid)
 						$fields_label = explode('|', $InfoFieldList[1]);
 						if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
 							if (is_array($fields_label) && count($fields_label) > 1) {

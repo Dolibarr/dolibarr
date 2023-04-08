@@ -1383,7 +1383,8 @@ class Reception extends CommonObject
 		while ($xnbp < $nbp) {
 			$line = new CommandeFournisseurDispatch($this->db);
 			$line->desc = $langs->trans("Description")." ".$xnbp;
-			$line->libelle = $langs->trans("Description")." ".$xnbp;
+			$line->libelle = $langs->trans("Description")." ".$xnbp;	// deprecated
+			$line->label = $langs->trans("Description")." ".$xnbp;
 			$line->qty = 10;
 
 			$line->fk_product = $this->commande->lines[$xnbp]->fk_product;
