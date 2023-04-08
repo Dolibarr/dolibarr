@@ -167,7 +167,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 .info-box small {
 	font-size: 14px;
 }
-.info-box .progress {
+.info-box:not(.info-box-kanban) .progress {
 	background: rgba(0, 0, 0, 0.2);
 	margin: 5px -10px 5px -10px;
 	height: 2px;
@@ -177,7 +177,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	border-radius: 0;
 }
 
-.info-box .progress .progress-bar {
+.info-box:not(.info-box-kanban) .progress .progress-bar {
 		float: left;
 		width: 0;
 		height: 100%;

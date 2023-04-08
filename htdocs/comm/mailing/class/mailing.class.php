@@ -62,6 +62,11 @@ class Mailing extends CommonObject
 	public $body;
 
 	/**
+	 * @var	int		1=Email will be sent even to email that has opt-out
+	 */
+	public $evenunsubscribe;
+
+	/**
 	 * @var int number of email
 	 */
 	public $nbemail;
@@ -317,6 +322,7 @@ class Mailing extends CommonObject
 		$sql .= ", email_errorsto = '".$this->db->escape($this->email_errorsto)."'";
 		$sql .= ", bgcolor = '".($this->bgcolor ? $this->db->escape($this->bgcolor) : null)."'";
 		$sql .= ", bgimage = '".($this->bgimage ? $this->db->escape($this->bgimage) : null)."'";
+		$sql .= ", evenunsubscribe = ".((int) $this->evenunsubscribe);
 		$sql .= " WHERE rowid = ".(int) $this->id;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -357,7 +363,7 @@ class Mailing extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT m.rowid, m.titre as title, m.sujet, m.body, m.bgcolor, m.bgimage";
+		$sql = "SELECT m.rowid, m.titre as title, m.sujet, m.body, m.bgcolor, m.bgimage, m.evenunsubscribe";
 		$sql .= ", m.email_from, m.email_replyto, m.email_errorsto";
 		$sql .= ", m.statut, m.nbemail";
 		$sql .= ", m.fk_user_creat, m.fk_user_valid";
@@ -389,6 +395,7 @@ class Mailing extends CommonObject
 
 				$this->bgcolor = $obj->bgcolor;
 				$this->bgimage = $obj->bgimage;
+				$this->evenunsubscribe = $obj->evenunsubscribe;
 
 				$this->email_from = $obj->email_from;
 				$this->email_replyto = $obj->email_replyto;
@@ -454,6 +461,7 @@ class Mailing extends CommonObject
 			$object->body               = '';
 			$object->bgcolor            = '';
 			$object->bgimage            = '';
+			$object->evenunsubscribe    = 0;
 
 			//$object->email_from         = '';		// We do not reset from email because it is a mandatory value
 			$object->email_replyto      = '';

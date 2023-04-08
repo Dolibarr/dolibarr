@@ -334,7 +334,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 foreach ($search as $key => $val) {
 	if (is_array($search[$key]) && count($search[$key])) {
@@ -627,7 +627,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	print '<td class="nowrap center">';
 	$url = $_SERVER["PHP_SELF"].'?id='.$obj->rowid;
 	if ($limit) {
-		$url .= '&limit='.urlencode($limit);
+		$url .= '&limit='.((int) $limit);
 	}
 	if ($page) {
 		$url .= '&page='.urlencode($page);

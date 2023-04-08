@@ -3129,6 +3129,7 @@ div.login_block {
 	top: 0;
 	padding-top: 3px;
 	padding-bottom: 3px;
+	border-right: 1px solid rgba(0,0,0,0.2);
 	<?php print $left; ?>: 0;
 <?php if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	position: absolute;
