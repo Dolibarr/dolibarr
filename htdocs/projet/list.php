@@ -501,7 +501,6 @@ if ($search_opp_percent) {
 $sql .= dolSqlDateFilter('p.dateo', $search_sday, $search_smonth, $search_syear);
 $sql .= dolSqlDateFilter('p.datee', $search_eday, $search_emonth, $search_eyear);
 
-
 if ($search_date_start_start) {
 	$sql .= " AND p.dateo >= '".$db->idate($search_date_start_start)."'";
 }
