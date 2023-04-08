@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->load("mails");
+$langs->loadLangs(array("mails"));
 
 $id = (GETPOST('mailid', 'int') ? GETPOST('mailid', 'int') : GETPOST('id', 'int'));
 
@@ -48,20 +48,18 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
 $urlfrom = GETPOST('urlfrom');
+$backtopageforcancel = GETPOST('backtopageforcancel');
 
 // Initialize technical objects
 $object = new Mailing($db);
 $extrafields = new ExtraFields($db);
-
-if ($id > 0) {
-	$result = $object->fetch($id);
-}
+$hookmanager->initHooks(array('mailingcard', 'globalcard'));
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('mailingcard', 'globalcard'));
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 // Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
 $object->substitutionarray = FormMail::getAvailableSubstitKey('emailing');
@@ -567,7 +565,7 @@ if (empty($reshook)) {
 	}
 
 	// Action update description of emailing
-	if ($action == 'settitle' || $action == 'setemail_from' || $action == 'setreplyto' || $action == 'setemail_errorsto') {
+	if ($action == 'settitle' || $action == 'setemail_from' || $action == 'setreplyto' || $action == 'setemail_errorsto' || $action == 'setevenunsubscribe') {
 		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
 		if ($action == 'settitle') {
@@ -582,10 +580,13 @@ if (empty($reshook)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
 		} elseif ($action == 'setfrom' && empty($object->email_from)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom"));
+		} elseif ($action == 'setevenunsubscribe') {
+			$object->evenunsubscribe = (GETPOST('evenunsubscribe') ? 1 : 0);
 		}
 
 		if (!$mesg) {
-			if ($object->update($user) >= 0) {
+			$result = $object->update($user);
+			if ($result >= 0) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
 			}
@@ -753,11 +754,11 @@ if ($action == 'create') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
+	$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br><br><span class="small">';
 	foreach ($object->substitutionarray as $key => $val) {
 		$htmltext .= $key.' = '.$langs->trans($val).'<br>';
 	}
-	$htmltext .= '</i>';
+	$htmltext .= '</span></i>';
 
 
 	$availablelink = $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'help', '', 0, 2, 'availvar');
@@ -931,18 +932,9 @@ if ($action == 'create') {
 			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
 			print '<div class="fichecenter">';
+			print '<div class="fichehalfleft">';
 			print '<div class="underbanner clearboth"></div>';
-
-			print '<table class="border centpercent tableforfield">';
-
-			// Description
-			/*
-			print '<tr><td class="titlefield">';
-			print $form->editfieldkey("MailTitle", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string');
-			print '</td><td>';
-			print $form->editfieldval("MailTitle", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string');
-			print '</td></tr>';
-			*/
+			print '<table class="border centpercent tableforfield">'."\n";
 
 			// From
 			print '<tr><td class="titlefield">';
@@ -1000,12 +992,30 @@ if ($action == 'create') {
 			}
 			print '</td></tr>';
 
-			// Other attributes
+			print '</table>';
+			print '</div>';
+
+
+			print '<div class="fichehalfright">';
+			print '<div class="underbanner clearboth"></div>';
+
+			print '<table class="border centpercent tableforfield">';
+
+			// Even if unsubscribe
+			print '<tr><td class="titlefield">';
+			print $form->editfieldkey("EvenUnsubscribe", 'evenunsubscribe', $object->evenunsubscribe, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'checkbox');
+			print '</td><td>';
+			print $form->editfieldval("EvenUnsubscribe", 'evenunsubscribe', $object->evenunsubscribe, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'checkbox');
+			print '</td></tr>';
+
+			// Other attributes. Fields from hook formObjectOptions and Extrafields.
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 			print '</table>';
+			print '</div>';
+			print '</div>';
 
-			print "</div>";
+			print '<div class="clearboth"></div>';
 
 			print dol_get_fiche_end();
 
@@ -1022,11 +1032,8 @@ if ($action == 'create') {
 				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneEMailing', $object->ref), 'confirm_clone', $formquestion, 'yes', 2, 240);
 			}
 
-			/*
-			 * Actions Buttons
-			 */
-
-			if (GETPOST('cancel', 'alpha') || $confirm == 'no' || $action == '' || in_array($action, array('settodraft', 'valid', 'delete', 'sendall', 'clone', 'test'))) {
+			// Actions Buttons
+			if (GETPOST('cancel', 'alpha') || $confirm == 'no' || $action == '' || in_array($action, array('settodraft', 'valid', 'delete', 'sendall', 'clone', 'test', 'editevenunsubscribe'))) {
 				print "\n\n<div class=\"tabsAction\">\n";
 
 				if (($object->statut == 1) && ($user->hasRight('mailing', 'valider') || $object->user_validation == $user->id)) {
@@ -1198,17 +1205,32 @@ if ($action == 'create') {
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
+			$morehtmlref = '<div class="refidno">';
+			// Ref customer
+			$morehtmlref .= $form->editfieldkey("", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string', '', 0, 1);
+			$morehtmlref .= $form->editfieldval("", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string', '', null, null, '', 1);
+			$morehtmlref .= '</div>';
+
 			$morehtmlright = '';
-			if ($object->statut == 2) {
-				$morehtmlright .= ' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';
+			$nbtry = $nbok = 0;
+			if ($object->statut == 2 || $object->statut == 3) {
+				$nbtry = $object->countNbOfTargets('alreadysent');
+				$nbko  = $object->countNbOfTargets('alreadysentko');
+
+				$morehtmlright .= ' ('.$nbtry.'/'.$object->nbemail;
+				if ($nbko) {
+					$morehtmlright .= ' - '.$nbko.' '.$langs->trans("Error");
+				}
+				$morehtmlright .= ') &nbsp; ';
 			}
 
-			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
+			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
 			print '<div class="fichecenter">';
+			print '<div class="fichehalfleft">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border centpercent">';
+			print '<table class="border centpercent tableforfield">';
 
 			/*
 			print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
@@ -1217,8 +1239,6 @@ if ($action == 'create') {
 			print '</td></tr>';
 			*/
 
-			// Topic
-			print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->title.'</td></tr>';
 			// From
 			print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from, 0, 0, 0, 0, 1).'</td></tr>';
 			// To
@@ -1249,6 +1269,22 @@ if ($action == 'create') {
 			}
 			print '</td></tr>';
 
+			print '</table>';
+			print '</div>';
+
+
+			print '<div class="fichehalfright">';
+			print '<div class="underbanner clearboth"></div>';
+
+			print '<table class="border centpercent tableforfield">';
+
+			// Even if unsubscribe
+			print '<tr><td class="titlefield">';
+			print $form->editfieldkey("EvenUnsubscribe", 'evenunsubscribe', $object->evenunsubscribe, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'checkbox');
+			print '</td><td>';
+			print $form->editfieldval("EvenUnsubscribe", 'evenunsubscribe', $object->evenunsubscribe, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'checkbox');
+			print '</td></tr>';
+
 			// Other attributes
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -1259,30 +1295,32 @@ if ($action == 'create') {
 
 			print '</table>';
 			print '</div>';
+			print '</div>';
+
+			print '<div class="clearboth"></div>';
 
 			print dol_get_fiche_end();
 
 
-
-			print "<br>\n";
+			print "<br><br>\n";
 
 			print '<form name="edit_mailing" action="card.php" method="post" enctype="multipart/form-data">'."\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-			$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
+			$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br><br><span class="small">';
 			foreach ($object->substitutionarray as $key => $val) {
 				$htmltext .= $key.' = '.$langs->trans($val).'<br>';
 			}
-			$htmltext .= '</i>';
+			$htmltext .= '</span></i>';
 
 			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'generic');
+			print load_fiche_titre($langs->trans("EMail"), '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'generic');
 
 			print dol_get_fiche_head(null, '', '', -1);
 
-			print '<table class="bordernooddeven" width="100%">';
+			print '<table class="bordernooddeven centpercent">';
 
 			// Subject
 			print '<tr><td class="fieldrequired titlefield">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat quatrevingtpercent" type="text" name="sujet" value="'.$object->sujet.'"></td></tr>';
@@ -1335,6 +1373,7 @@ if ($action == 'create') {
 			print '</td></tr>';
 
 			print '</table>';
+
 
 			// Message
 			print '<div style="padding-top: 10px">';
