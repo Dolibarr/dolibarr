@@ -86,9 +86,10 @@ if (empty($conf->dol_no_mouse_hover)) {
 		open: function (event, ui) {
 			var elem = $(this);
 			var params = JSON.parse($(this).attr("data-params"));
-			params.token = "'.currentToken().'";
+			var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
+			params.token = currenttoken;
 			$.ajax({
-				url:"' . dol_buildpath('/core/ajax/ajaxtooltip.php', 1) . '",
+				url:"'. DOL_URL_ROOT.'/core/ajax/ajaxtooltip.php",
 				type: "post",
 				async: false,
 				data: params,
@@ -306,11 +307,12 @@ print '
 	jQuery(document).ready(function() {
 		jQuery(".cssforclicktodial").click(function() {
 			event.preventDefault();
-			console.log("We click on a cssforclicktodial class with url="+this.href);
+			var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
+			console.log("We click on a cssforclicktodial class with href="+this.href);
 			$.ajax({
 			  url: this.href,
 			  type: \'GET\',
-			  data: { token: \''.newToken().'\' }
+			  data: { token: currenttoken }
 			}).done(function(xhr, textStatus, errorThrown) {
 			    /* do nothing */
 			}).fail(function(xhr, textStatus, errorThrown) {

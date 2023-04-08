@@ -8523,21 +8523,28 @@ function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
  *
  *	@param	string|string[] $mesgs			Message string or array
  *  @param  string          $style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *  @param	int				$noduplicate	1 means we do not add the message if already present in session stack
  *  @return	void
  *  @see	dol_htmloutput_events()
  */
-function setEventMessage($mesgs, $style = 'mesgs')
+function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0)
 {
 	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);		This is not deprecated, it is used by setEventMessages function
 	if (!is_array($mesgs)) {
 		// If mesgs is a string
 		if ($mesgs) {
+			if (!empty($noduplicate) && isset($_SESSION['dol_events'][$style]) && in_array($mesgs, $_SESSION['dol_events'][$style])) {
+				return;
+			}
 			$_SESSION['dol_events'][$style][] = $mesgs;
 		}
 	} else {
 		// If mesgs is an array
 		foreach ($mesgs as $mesg) {
 			if ($mesg) {
+				if (!empty($noduplicate) && isset($_SESSION['dol_events'][$style]) && in_array($mesg, $_SESSION['dol_events'][$style])) {
+					return;
+				}
 				$_SESSION['dol_events'][$style][] = $mesg;
 			}
 		}
@@ -8552,13 +8559,14 @@ function setEventMessage($mesgs, $style = 'mesgs')
  *	@param	array|null	$mesgs			Message array
  *  @param  string		$style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
  *  @param	string		$messagekey		A key to be used to allow the feature "Never show this message again"
+ *  @param	int			$noduplicate	1 means we do not add the message if already present in session stack
  *  @return	void
  *  @see	dol_htmloutput_events()
  */
-function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '')
+function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '', $noduplicate = 0)
 {
 	if (empty($mesg) && empty($mesgs)) {
-		dol_syslog("Try to add a message in stack with empty message", LOG_WARNING);
+		dol_syslog("Try to add a message in stack, but value to add is empty message", LOG_WARNING);
 	} else {
 		if ($messagekey) {
 			// Complete message with a js link to set a cookie "DOLHIDEMESSAGE".$messagekey;
@@ -8570,12 +8578,12 @@ function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '')
 				dol_print_error('', 'Bad parameter style='.$style.' for setEventMessages');
 			}
 			if (empty($mesgs)) {
-				setEventMessage($mesg, $style);
+				setEventMessage($mesg, $style, $noduplicate);
 			} else {
 				if (!empty($mesg) && !in_array($mesg, $mesgs)) {
-					setEventMessage($mesg, $style); // Add message string if not already into array
+					setEventMessage($mesg, $style, $noduplicate); // Add message string if not already into array
 				}
-				setEventMessage($mesgs, $style);
+				setEventMessage($mesgs, $style, $noduplicate);
 			}
 		}
 	}
