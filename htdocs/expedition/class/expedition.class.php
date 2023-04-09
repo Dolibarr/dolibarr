@@ -1874,7 +1874,7 @@ class Expedition extends CommonObject
 	 *	Return status label
 	 *
 	 *	@param      int		$mode      	0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
-	 *	@return     string      		Libelle
+	 *	@return     string      		Label
 	 */
 	public function getLibStatut($mode = 0)
 	{

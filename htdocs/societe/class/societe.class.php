@@ -4643,7 +4643,7 @@ class Societe extends CommonObject
 	/**
 	 *	Return prostect level
 	 *
-	 *  @return     string        Libelle
+	 *  @return     string        Label of prospect status
 	 */
 	public function getLibProspLevel()
 	{
@@ -4673,9 +4673,9 @@ class Societe extends CommonObject
 	/**
 	 *  Return status of prospect
 	 *
-	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *  @param	int		$mode       0=label long, 1=label short, 2=Picto + Label short, 3=Picto, 4=Picto + Label long
 	 *  @param	string	$label		Label to use for status for added status
-	 *  @return string        		Libelle
+	 *  @return string        		Label
 	 */
 	public function getLibProspCommStatut($mode = 0, $label = '')
 	{
