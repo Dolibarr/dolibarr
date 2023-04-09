@@ -18,10 +18,10 @@
 -- ========================================================================
 
 
--- redaction : 0
--- valide    : 1
--- approuve  : 2
--- envoye    : 3
+-- draft     : 0
+-- valid     : 1
+-- approved  : 2
+-- sent      : 3
 
 create table llx_mailing
 (
@@ -37,6 +37,7 @@ create table llx_mailing
   cible				varchar(60),
   nbemail			integer,
   email_from		varchar(160),                        -- Email address of sender
+  name_from         varchar(128),                        -- Name to show of sender
   email_replyto		varchar(160),                        -- Email address for reply
   email_errorsto	varchar(160),                        -- Email addresse for errors
   tag				varchar(128) NULL,
