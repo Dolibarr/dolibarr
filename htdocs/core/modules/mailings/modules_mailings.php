@@ -158,7 +158,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 			$nb = $obj->nb;
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."mailing";
-			$sql .= " SET nbemail = ".$nb." WHERE rowid = ".((int) $mailing_id);
+			$sql .= " SET nbemail = ".((int) $nb)." WHERE rowid = ".((int) $mailing_id);
 			if (!$this->db->query($sql)) {
 				dol_syslog($this->db->error());
 				$this->error = $this->db->error();
@@ -171,11 +171,11 @@ class MailingTargets // This can't be abstract as it is used for some method
 	}
 
 	/**
-	 * Add a list of targets int the database
+	 * Add a list of targets into the database
 	 *
 	 * @param	int		$mailing_id    Id of emailing
 	 * @param   array	$cibles        Array with targets
-	 * @return  int      			   < 0 si erreur, nb ajout si ok
+	 * @return  int      			   < 0 if error, nb added if OK
 	 */
 	public function addTargetsToDatabase($mailing_id, $cibles)
 	{
@@ -241,16 +241,20 @@ class MailingTargets // This can't be abstract as it is used for some method
 		$result=$this->db->query($sql);
 		*/
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-		$sql .= " SET statut=3";
-		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND email IN (SELECT mu.email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe AS mu WHERE mu.entity IN ('".getEntity('mailing')."'))";
+		if (empty($this->evenunsubscribe)) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+			$sql .= " SET statut = 3";
+			$sql .= " WHERE fk_mailing = ".((int) $mailing_id);
+			$sql .= " AND EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = email and mu.entity = ".((int) $conf->entity).")";
 
-		dol_syslog(__METHOD__.":mailing update status to display emails that do not want to be contacted anymore", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if (!$result) {
-			dol_print_error($this->db);
+			dol_syslog(__METHOD__.":mailing update status to display emails that do not want to be contacted anymore", LOG_DEBUG);
+			$result = $this->db->query($sql);
+			if (!$result) {
+				dol_print_error($this->db);
+			}
 		}
 
+		// Update nb of recipient into emailing record
 		$this->update_nb($mailing_id);
 
 		$this->db->commit();

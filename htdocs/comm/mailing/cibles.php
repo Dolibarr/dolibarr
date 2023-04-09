@@ -265,7 +265,7 @@ if ($object->fetch($id) >= 0) {
 
 	$morehtmlright = '';
 	$nbtry = $nbok = 0;
-	if ($object->statut == 2 || $object->statut == 3) {
+	if ($object->statut == $object::STATUS_SENTPARTIALY || $object->statut == $object::STATUS_SENTCOMPLETELY) {
 		$nbtry = $object->countNbOfTargets('alreadysent');
 		$nbko  = $object->countNbOfTargets('alreadysentko');
 		$nbok = ($nbtry - $nbko);
@@ -767,7 +767,7 @@ if ($object->fetch($id) >= 0) {
 				print '</td>';
 
 				// Status of recipient sending email (Warning != status of emailing)
-				if ($obj->statut == 0) {
+				if ($obj->statut == $object::STATUS_DRAFT) {
 					// Date sent
 					print '<td align="center"></td>';
 

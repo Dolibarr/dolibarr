@@ -905,7 +905,7 @@ class Mailing extends CommonObject
 
 
 	/**
-	 *  Return the label of a given status  of a recipient
+	 *  Return the label of a given status of a recipient
 	 *  TODO Add class mailin_target.class.php
 	 *
 	 *  @param	int		$status        	Id status
