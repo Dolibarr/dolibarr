@@ -643,6 +643,14 @@ if ($object->fetch($id) >= 0) {
 
 		// Ligne des champs de filtres
 		print '<tr class="liste_titre_filter">';
+
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="liste_titre maxwidthsearch">';
+			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+			print $searchpicto;
+			print '</td>';
+		}
 		// EMail
 		print '<td class="liste_titre">';
 		print '<input class="flat maxwidth75" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'">';
@@ -679,10 +687,13 @@ if ($object->fetch($id) >= 0) {
 		print $formmailing->selectDestinariesStatus($search_dest_status, 'search_dest_status', 1);
 		print '</td>';
 		// Action column
-		print '<td class="liste_titre maxwidthsearch">';
-		$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
-		print $searchpicto;
-		print '</td>';
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="liste_titre maxwidthsearch">';
+			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+			print $searchpicto;
+			print '</td>';
+		}
+
 		print '</tr>';
 
 		if ($page) {
@@ -690,6 +701,10 @@ if ($object->fetch($id) >= 0) {
 		}
 
 		print '<tr class="liste_titre">';
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+		}
 		print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "mc.email", $param, "", "", $sortfield, $sortorder);
 		print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "mc.lastname", $param, "", "", $sortfield, $sortorder);
 		print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "mc.firstname", $param, "", "", $sortfield, $sortorder);
@@ -700,7 +715,10 @@ if ($object->fetch($id) >= 0) {
 		// Date sending
 		print_liste_field_titre("DateSending", $_SERVER["PHP_SELF"], "mc.date_envoi", $param, '', 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "mc.statut", $param, '', 'class="right"', $sortfield, $sortorder);
-		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+		}
 		print '</tr>';
 
 		$i = 0;
@@ -721,6 +739,22 @@ if ($object->fetch($id) >= 0) {
 				$obj = $db->fetch_object($resql);
 
 				print '<tr class="oddeven">';
+
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="center">';
+					print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
+					if ($obj->statut == $object::STATUS_DRAFT) {	// Not sent yet
+						if (!empty($user->rights->mailing->creer)) {
+							print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.((int) $obj->rowid).$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
+						}
+					}
+					/*if ($obj->statut == -1)	// Sent with error
+					 {
+					 print '<a href="'.$_SERVER['PHP_SELF'].'?action=retry&rowid='.$obj->rowid.$param.'">'.$langs->trans("Retry").'</a>';
+					 }*/
+					print '</td>';
+				}
 
 				print '<td class="tdoverflowmax150">';
 				print img_picto($obj->email, 'email', 'class="paddingright"');
@@ -783,19 +817,21 @@ if ($object->fetch($id) >= 0) {
 					print '</td>';
 				}
 
-				// Search Icon
-				print '<td class="right">';
-				print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
-				if ($obj->statut == 0) {	// Not sent yet
-					if (!empty($user->rights->mailing->creer)) {
-						print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.$obj->rowid.$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
+				// Action column
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="center">';
+					print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
+					if ($obj->statut == $object::STATUS_DRAFT) {	// Not sent yet
+						if (!empty($user->rights->mailing->creer)) {
+							print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.((int) $obj->rowid).$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
+						}
 					}
+					/*if ($obj->statut == -1)	// Sent with error
+					{
+						print '<a href="'.$_SERVER['PHP_SELF'].'?action=retry&rowid='.$obj->rowid.$param.'">'.$langs->trans("Retry").'</a>';
+					}*/
+					print '</td>';
 				}
-				/*if ($obj->statut == -1)	// Sent with error
-				{
-					print '<a href="'.$_SERVER['PHP_SELF'].'?action=retry&rowid='.$obj->rowid.$param.'">'.$langs->trans("Retry").'</a>';
-				}*/
-				print '</td>';
 				print '</tr>';
 
 				$i++;
