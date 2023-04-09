@@ -82,6 +82,7 @@ if (empty($conf->dol_no_mouse_hover)) {
 
 	var opendelay = 80;
 	var elemtostoretooltiptimer = jQuery("#dialogforpopup");
+	var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
 
 	target = jQuery(".classforajaxtooltip");
 	target.tooltip({
@@ -92,11 +93,11 @@ if (empty($conf->dol_no_mouse_hover)) {
 
 	target.off("mouseover mouseout");
 	target.on("mouseover", function(event) {
+console.log(this);
 		console.log("we will create timer for ajax call");
 		var params = JSON.parse($(this).attr("data-params"));
-		var elemfortooltip = $(this);
-		var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
 		params.token = currenttoken;
+		var elemfortooltip = $(this);
 
 	    event.stopImmediatePropagation();
 		clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
