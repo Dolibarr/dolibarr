@@ -2544,7 +2544,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
  */
 function top_menu_quickadd()
 {
-	global $langs;
+	global $conf, $langs;
 
 	$html = '';
 
@@ -2846,7 +2846,6 @@ function top_menu_bookmark()
 	                  }
 	            });
 
-
 	            var openBookMarkDropDown = function() {
 	                event.preventDefault();
 	                jQuery("#topmenu-bookmark-dropdown").toggleClass("open");
@@ -2991,12 +2990,15 @@ function top_menu_search()
 
         // Key map shortcut
         jQuery(document).keydown(function(e){
-              if( e.which === 70 && e.ctrlKey && e.shiftKey ){
+              if ( e.which === 70 && e.ctrlKey && e.shiftKey ) {
                  console.log(\'control + shift + f : trigger open global-search dropdown\');
                  openGlobalSearchDropDown();
               }
+              if ( e.which === 70 && e.alKey ) {
+                 console.log(\'alt + f : trigger open global-search dropdown\');
+                 openGlobalSearchDropDown();
+              }
         });
-
 
         var openGlobalSearchDropDown = function() {
             jQuery("#topmenu-global-search-dropdown").toggleClass("open");
@@ -3091,6 +3093,24 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
                 </script>' . "\n";
 				$searchform .= '</div>';
 			}
+
+			// Key map shortcut
+			$searchform .= '<script>
+				jQuery(document).keydown(function(e){
+					if( e.which === 70 && e.ctrlKey && e.shiftKey ){
+						console.log(\'control + shift + f : trigger open global-search dropdown\');
+		                openGlobalSearchDropDown();
+		            }
+		            if( (e.which === 83 || e.which === 115) && e.altKey ){
+		                console.log(\'alt + s : trigger open global-search dropdown\');
+		                openGlobalSearchDropDown();
+		            }
+		        });
+
+		        var openGlobalSearchDropDown = function() {
+		            jQuery("#searchselectcombo").select2(\'open\');
+		        }
+			</script>';
 		}
 
 		// Left column
