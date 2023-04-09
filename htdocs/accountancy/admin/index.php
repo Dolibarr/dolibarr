@@ -508,14 +508,20 @@ print '</tr>';
 print '</table>';
 print '<br>';
 
-// Lettering params
+
+// Show advanced options
+print '<br>';
+
+
+// Advanced params
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans('Options').' '.$langs->trans('Lettering').'</td>';
+print '<td colspan="2">' . $langs->trans('OptionsAdvanced') . '</td>';
 print "</tr>\n";
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("ACCOUNTING_ENABLE_LETTERING").'</td>';
+print '<td>';
+print $form->textwithpicto($langs->trans("ACCOUNTING_ENABLE_LETTERING"), $langs->trans("ACCOUNTING_ENABLE_LETTERING_DESC", $langs->transnoentitiesnoconv("NumMvts")).'<br>'.$langs->trans("EnablingThisFeatureIsNotNecessary")).'</td>';
 if (!empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
 	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setenablelettering&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
@@ -529,7 +535,8 @@ print '</tr>';
 
 if (!empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
 	print '<tr class="oddeven">';
-	print '<td>' . $langs->trans("ACCOUNTING_ENABLE_AUTOLETTERING") . '</td>';
+	print '<td>';
+	print $form->textwithpicto($langs->trans("ACCOUNTING_ENABLE_AUTOLETTERING"), $langs->trans("ACCOUNTING_ENABLE_AUTOLETTERING_DESC")) . '</td>';
 	if (!empty($conf->global->ACCOUNTING_ENABLE_AUTOLETTERING)) {
 		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setenableautolettering&value=0">';
 		print img_picto($langs->trans("Activated"), 'switch_on');
@@ -542,33 +549,22 @@ if (!empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
 	print '</tr>';
 }
 
+print '<tr class="oddeven">';
+print '<td>';
+print $form->textwithpicto($langs->trans("ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE"), $langs->trans("ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC", $langs->transnoentities("MenuDefaultAccounts"))).'</td>';
+if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+	print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setenablevatreversecharge&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setenablevatreversecharge&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
 print '</table>';
 
-// Show specific accountancy FR option
-if ($mysoc->country_code == 'FR') {
-	print '<br>';
-
-	// Advanced params
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<td colspan="2">' . $langs->trans('OptionsAdvanced') . '</td>';
-	print "</tr>\n";
-
-	print '<tr class="oddeven">';
-	print '<td>' . $langs->trans("ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE") . '</td>';
-	if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
-		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setenablevatreversecharge&value=0">';
-		print img_picto($langs->trans("Activated"), 'switch_on');
-		print '</a></td>';
-	} else {
-		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setenablevatreversecharge&value=1">';
-		print img_picto($langs->trans("Disabled"), 'switch_off');
-		print '</a></td>';
-	}
-	print '</tr>';
-
-	print '</table>';
-}
 
 print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
 
