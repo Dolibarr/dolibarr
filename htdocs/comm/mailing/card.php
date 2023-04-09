@@ -981,9 +981,9 @@ if ($action == 'create') {
 			print '<table class="border centpercent tableforfield">';
 
 			// Number of distinct emails
-			print '<tr><td>';
+			print '<tr><td class="titlefield">';
 			print $langs->trans("TotalNbOfDistinctRecipients");
-			print '</td><td colspan="3">';
+			print '</td><td>';
 			$nbemail = ($object->nbemail ? $object->nbemail : 0);
 			if (is_numeric($nbemail)) {
 				$text = '';

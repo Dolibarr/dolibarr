@@ -285,9 +285,7 @@ if ($object->fetch($id) >= 0) {
 
 	print '<table class="border centpercent tableforfield">';
 
-	//print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->title.'</td></tr>';
-
-	print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td colspan="3">';
+	print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td>';
 	$emailarray = CMailFile::getArrayAddress($object->email_from);
 	foreach ($emailarray as $email => $name) {
 		if ($name && $name != $email) {
@@ -306,7 +304,7 @@ if ($object->fetch($id) >= 0) {
 	print '</td></tr>';
 
 	// Errors to
-	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
 	$emailarray = CMailFile::getArrayAddress($object->email_errorsto);
 	foreach ($emailarray as $email => $name) {
 		if ($name != $email) {
@@ -331,10 +329,10 @@ if ($object->fetch($id) >= 0) {
 
 	print '<table class="border centpercent tableforfield">';
 
-	// Nb of distinct emails
-	print '<tr><td>';
+	// Number of distinct emails
+	print '<tr><td class="titlefield">';
 	print $langs->trans("TotalNbOfDistinctRecipients");
-	print '</td><td colspan="3">';
+	print '</td><td>';
 	$nbemail = ($object->nbemail ? $object->nbemail : 0);
 	if (is_numeric($nbemail)) {
 		$text = '';
