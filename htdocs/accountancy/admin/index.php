@@ -66,12 +66,7 @@ $error = 0;
  * Actions
  */
 
-if (in_array($action, array(
-	'setBANK_DISABLE_DIRECT_INPUT',
-	'setACCOUNTANCY_COMBO_FOR_AUX',
-	'setACCOUNTING_MANAGE_ZERO',
-	'setACCOUNTING_LIST_SORT_VENTILATION_TODO',
-	'setACCOUNTING_LIST_SORT_VENTILATION_DONE'))) {
+if (in_array($action, array('setBANK_DISABLE_DIRECT_INPUT', 'setACCOUNTANCY_COMBO_FOR_AUX', 'setACCOUNTING_MANAGE_ZERO'))) {
 	$constname = preg_replace('/^set/', '', $action);
 	$constvalue = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, $constname, $constvalue, 'yesno', 0, '', $conf->entity);
@@ -118,34 +113,6 @@ if ($action == 'update') {
 
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-}
-
-if ($action == 'setlistsorttodo') {
-	$setlistsorttodo = GETPOST('value', 'int');
-	$res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_TODO", $setlistsorttodo, 'yesno', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	if (!$error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'mesgs');
-	}
-}
-
-if ($action == 'setlistsortdone') {
-	$setlistsortdone = GETPOST('value', 'int');
-	$res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_DONE", $setlistsortdone, 'yesno', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	if (!$error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'mesgs');
 	}
 }
 
@@ -416,33 +383,6 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans('BindingOptions').'</td>';
 print "</tr>\n";
-
-// TO DO Mutualize code for yes/no constants
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO").'</td>';
-if (!empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTING_LIST_SORT_VENTILATION_TODO&value=0">';
-	print img_picto($langs->trans("Activated"), 'switch_on');
-	print '</a></td>';
-} else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTING_LIST_SORT_VENTILATION_TODO&value=1">';
-	print img_picto($langs->trans("Disabled"), 'switch_off');
-	print '</a></td>';
-}
-print '</tr>';
-
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE").'</td>';
-if (!empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTING_LIST_SORT_VENTILATION_DONE&value=0">';
-	print img_picto($langs->trans("Activated"), 'switch_on');
-	print '</a></td>';
-} else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTING_LIST_SORT_VENTILATION_DONE&value=1">';
-	print img_picto($langs->trans("Disabled"), 'switch_off');
-	print '</a></td>';
-}
-print '</tr>';
 
 // Param a user $user->rights->accounting->chartofaccount can access
 foreach ($list_binding as $key) {

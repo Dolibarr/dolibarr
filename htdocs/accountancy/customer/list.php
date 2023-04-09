@@ -91,6 +91,8 @@ if (!$sortfield) {
 if (!$sortorder) {
 	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) {
 		$sortorder = "DESC";
+	} else {
+		$sortorder = "ASC";
 	}
 }
 
@@ -208,6 +210,11 @@ if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 	}
 }
 
+if (GETPOST('sortfield') == 'f.datef, f.ref, l.rowid') {
+	$value = (GETPOST('sortorder') == 'asc,asc,asc' ? 0 : 1);
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+	$res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_TODO", $value, 'yesno', 0, '', $conf->entity);
+}
 
 
 /*

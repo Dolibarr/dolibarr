@@ -5329,7 +5329,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			$options = '&'.$options;
 		}
 
-		if (!$sortorder || $field1 != $sortfield1) {
+		if (!$sortorder || ($field1 != $sortfield1)) {
 			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
 		} else {
