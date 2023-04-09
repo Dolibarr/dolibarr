@@ -1005,13 +1005,6 @@ if ($action == 'create') {
 			}
 			print '</td></tr>';
 
-			// Even if unsubscribe
-			print '<tr><td class="titlefield">';
-			print $form->editfieldkey("EvenUnsubscribe", 'evenunsubscribe', $object->evenunsubscribe, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'checkbox');
-			print '</td><td>';
-			print $form->editfieldval("EvenUnsubscribe", 'evenunsubscribe', $object->evenunsubscribe, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'checkbox');
-			print '</td></tr>';
-
 			// Other attributes. Fields from hook formObjectOptions and Extrafields.
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
@@ -1280,13 +1273,6 @@ if ($action == 'create') {
 					print $nbemail;
 				}
 			}
-			print '</td></tr>';
-
-			// Even if unsubscribe
-			print '<tr><td class="titlefield">';
-			print $form->editfieldkey("EvenUnsubscribe", 'evenunsubscribe', $object->evenunsubscribe, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'checkbox');
-			print '</td><td>';
-			print $form->editfieldval("EvenUnsubscribe", 'evenunsubscribe', $object->evenunsubscribe, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'checkbox');
 			print '</td></tr>';
 
 			// Other attributes

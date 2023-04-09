@@ -357,9 +357,10 @@ class Mailing extends CommonObject
 	 *	Get object from database
 	 *
 	 *	@param	int		$rowid      Id of emailing
+	 *	@param	string	$ref		Title to search from title
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	public function fetch($rowid)
+	public function fetch($rowid, $ref = '')
 	{
 		global $conf;
 
@@ -372,7 +373,12 @@ class Mailing extends CommonObject
 		$sql .= ", m.date_envoi";
 		$sql .= ", m.extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
-		$sql .= " WHERE m.rowid = ".(int) $rowid;
+		$sql .= " WHERE entity IN (".getEntity('mailing').")";
+		if ($ref) {
+			$sql .= " AND m.titre = '".$this->db->escape($ref)."'";
+		} else {
+			$sql .= " AND m.rowid = ".(int) $rowid;
+		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);

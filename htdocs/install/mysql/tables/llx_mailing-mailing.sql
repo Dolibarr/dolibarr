@@ -46,6 +46,7 @@ create table llx_mailing
   date_envoi		datetime,                            -- date d'envoi
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  
   fk_user_creat		integer,                             -- user creator
+  fk_user_modif		integer,                             -- user of last modification
   fk_user_valid		integer,                             -- user validator
   fk_user_appro		integer,                             -- not used
   extraparams		varchar(255),						 -- for stock other parameters with json format

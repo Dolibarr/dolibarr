@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 
 // Load translation files required by the page
 $langs->load("mails");
@@ -345,7 +346,7 @@ if ($object->fetch($id) >= 0) {
 			}
 		}
 		if (empty($nbemail)) {
-			$nbemail .= ' '.img_warning('');//.' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
+			$nbemail .= ' '.img_warning($langs->trans('ToAddRecipientsChooseHere'));//.' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
 		}
 		if ($text) {
 			print $form->textwithpicto($nbemail, $text, 1, 'warning');
@@ -353,13 +354,6 @@ if ($object->fetch($id) >= 0) {
 			print $nbemail;
 		}
 	}
-	print '</td></tr>';
-
-	// Even if unsubscribe
-	print '<tr><td class="titlefield">';
-	print $form->editfieldkey("EvenUnsubscribe", 'evenunsubscribe', $object->evenunsubscribe, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'checkbox');
-	print '</td><td>';
-	print $form->editfieldval("EvenUnsubscribe", 'evenunsubscribe', $object->evenunsubscribe, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'checkbox');
 	print '</td></tr>';
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
@@ -376,7 +370,7 @@ if ($object->fetch($id) >= 0) {
 	print '<br>';
 
 
-	$allowaddtarget = ($object->statut == 0);
+	$allowaddtarget = ($object->statut == $object::STATUS_DRAFT);
 
 	// Show email selectors
 	if ($allowaddtarget && $user->rights->mailing->creer) {
@@ -389,7 +383,11 @@ if ($object->fetch($id) >= 0) {
 		print '<div class="tagtd"></div>';
 		print '<div class="tagtd">'.$langs->trans("RecipientSelectionModules").'</div>';
 		print '<div class="tagtd" align="center">'.$langs->trans("NbOfUniqueEMails").'</div>';
-		print '<div class="tagtd left">'.$langs->trans("Filter").'</div>';
+		print '<div class="tagtd left">'.$langs->trans("Filters");
+		print ' &nbsp; &nbsp; <div class="floatright">'.$langs->trans("EvenUnsubscribe").' ';
+		print ajax_object_onoff($object, 'evenunsubscribe', 'evenunsubscribe', 'EvenUnsubscribe:switch_on:warning', 'EvenUnsubscribe', array(), 'small valignmiddle', '', 1);
+		print '</div>';
+		print '</div>';
 		print '<div class="tagtd">&nbsp;</div>';
 		print '</div>';	// End tr
 
