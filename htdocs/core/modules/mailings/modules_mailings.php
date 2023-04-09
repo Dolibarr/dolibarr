@@ -195,15 +195,15 @@ class MailingTargets // This can't be abstract as it is used for some method
 				$sql .= " lastname, firstname, email, other, source_url, source_id,";
 				$sql .= " tag,";
 				$sql .= " source_type)";
-				$sql .= " VALUES (".$mailing_id.",";
-				$sql .= (empty($targetarray['fk_contact']) ? '0' : "'".$this->db->escape($targetarray['fk_contact'])."'").",";
+				$sql .= " VALUES (".((int) $mailing_id).",";
+				$sql .= (empty($targetarray['fk_contact']) ? '0' : (int) $targetarray['fk_contact']).",";
 				$sql .= "'".$this->db->escape($targetarray['lastname'])."',";
 				$sql .= "'".$this->db->escape($targetarray['firstname'])."',";
 				$sql .= "'".$this->db->escape($targetarray['email'])."',";
 				$sql .= "'".$this->db->escape($targetarray['other'])."',";
 				$sql .= "'".$this->db->escape($targetarray['source_url'])."',";
 				$sql .= (empty($targetarray['source_id']) ? 'null' : "'".$this->db->escape($targetarray['source_id'])."'").",";
-				$sql .= "'".$this->db->escape(dol_hash($dolibarr_main_instance_unique_id.";".$targetarray['email'].";".$targetarray['lastname'].";".$mailing_id.";".$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY, 'md5'))."',";
+				$sql .= "'".$this->db->escape(dol_hash($dolibarr_main_instance_unique_id.";".$targetarray['email'].";".$targetarray['lastname'].";".((int) $mailing_id).";".getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY'), 'md5'))."',";
 				$sql .= "'".$this->db->escape($targetarray['source_type'])."')";
 				dol_syslog(__METHOD__, LOG_DEBUG);
 				$result = $this->db->query($sql);
@@ -242,10 +242,10 @@ class MailingTargets // This can't be abstract as it is used for some method
 		*/
 
 		if (empty($this->evenunsubscribe)) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-			$sql .= " SET statut = 3";
-			$sql .= " WHERE fk_mailing = ".((int) $mailing_id);
-			$sql .= " AND EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = email and mu.entity = ".((int) $conf->entity).")";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles as mc";
+			$sql .= " SET mc.statut = 3";
+			$sql .= " WHERE mc.fk_mailing = ".((int) $mailing_id);
+			$sql .= " AND EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = mc.email and mu.entity = ".((int) $conf->entity).")";
 
 			dol_syslog(__METHOD__.":mailing update status to display emails that do not want to be contacted anymore", LOG_DEBUG);
 			$result = $this->db->query($sql);
