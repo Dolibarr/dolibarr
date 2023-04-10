@@ -1510,7 +1510,7 @@ if (!empty($arrayfields['s.import_key']['checked'])) {
 }
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print_liste_field_titre(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
+	print_liste_field_titre(($mode != 'kanban' ? $selectedfields : ''), $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
 	$totalarray['nbfield']++;	// For the column action
 }
 print '</tr>'."\n";
