@@ -2305,11 +2305,11 @@ class Project extends CommonObject
 
 
 	/**
-	 * 	Create an array of tasks of current project
+	 * Create an array of tasks of current project
 	 *
-	 *  @param  User	$user       		Object user we want project allowed to
+	 * @param	User	$user       		Object user we want project allowed to
 	 * @param	int		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
-	 * 	@return int							>0 if OK, <0 if KO
+	 * @return 	int							>0 if OK, <0 if KO
 	 */
 	public function getLinesArray($user, $loadRoleMode = 1)
 	{
