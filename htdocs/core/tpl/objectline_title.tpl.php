@@ -134,14 +134,14 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 	if (!empty($user->rights->margins->creer)) {
 		if ($conf->global->MARGIN_TYPE == "1") {
-			print '<th class="linecolmargin1 margininfos right" style="width: 80px">'.$langs->trans('BuyingPrice').'</th>';
+			print '<th class="linecolmargin1 margininfos right width75">'.$langs->trans('BuyingPrice').'</th>';
 		} else {
-			print '<th class="linecolmargin1 margininfos right" style="width: 80px">'.$langs->trans('CostPrice').'</th>';
+			print '<th class="linecolmargin1 margininfos right width75">'.$langs->trans('CostPrice').'</th>';
 		}
 	}
 
 	if (!empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) {
-		print '<th class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarginRate');
+		print '<th class="linecolmargin2 margininfos right width75">'.$langs->trans('MarginRate');
 		if ($user->hasRight("propal", "creer")) {
 			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=marginforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickmarginforalllines opacitymedium paddingleft cursorpointer"').'</a>';
 			if (GETPOST('mode', 'aZ09') == 'marginforalllines') {
@@ -154,7 +154,7 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 		print '</th>';
 	}
 	if (!empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {
-		print '<th class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarkRate').'</th>';
+		print '<th class="linecolmargin2 margininfos right width75">'.$langs->trans('MarkRate').'</th>';
 	}
 }
 
