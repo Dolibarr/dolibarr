@@ -1739,6 +1739,11 @@ if ($action == 'create') {
 		}
 
 		$text = $langs->trans("ConfirmValidateSending", $numref);
+		if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
+			$text .= ' '.$langs->trans("StockMovementWillBeRecorded").'.';
+		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
+			$text .= ' '.$langs->trans("StockMovementNotYetRecorded").'.';
+		}
 
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
