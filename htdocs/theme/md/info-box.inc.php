@@ -234,7 +234,11 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	max-width: 55%;
 }
 
-.info-box-icon-text{
+.info-box-line {
+	line-height: 1.2em;
+}
+
+.info-box-icon-text {
 	box-sizing: border-box;
 	display: block;
 	position: absolute;
