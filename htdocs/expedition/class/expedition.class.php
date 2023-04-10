@@ -2209,8 +2209,8 @@ class Expedition extends CommonObject
 		$sql = "SELECT cd.fk_product, cd.subprice,";
 		$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 		$sql .= " e.ref,";
-		$sql .= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
-		$sql .= " ,cd.rowid as cdid, ed.rowid as edid";
+		$sql .= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock,";
+		$sql .= " cd.rowid as cdid, ed.rowid as edid";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "commandedet as cd,";
 		$sql .= " " . MAIN_DB_PREFIX . "expeditiondet as ed";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
@@ -2264,8 +2264,8 @@ class Expedition extends CommonObject
 
 				// If some stock lines are now 0, we can remove entry into llx_product_stock, but only if there is no child lines into llx_product_batch (detail of batch, because we can imagine
 				// having a lot1/qty=X and lot2/qty=-X, so 0 but we must not loose repartition of different lot.
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM ".MAIN_DB_PREFIX."product_batch as pb)";
-				$resql = $this->db->query($sql);
+				$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM ".MAIN_DB_PREFIX."product_batch as pb)";
+				$resqldelete = $this->db->query($sqldelete);
 				// We do not test error, it can fails if there is child in batch details
 			}
 		} else {
