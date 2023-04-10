@@ -246,12 +246,12 @@ $arrayfields = array(
 	's.fax'=>array('label'=>"Fax", 'position'=>28, 'checked'=>0),
 	'typent.code'=>array('label'=>"ThirdPartyType", 'position'=>29, 'checked'=>$checkedtypetiers),
 	'staff.code'=>array('label'=>"Workforce", 'position'=>31, 'checked'=>0),
-	's.siren'=>array('label'=>"ProfId1Short", 'position'=>40, 'checked'=>$checkedprofid1),
-	's.siret'=>array('label'=>"ProfId2Short", 'position'=>41, 'checked'=>$checkedprofid2),
-	's.ape'=>array('label'=>"ProfId3Short", 'position'=>42, 'checked'=>$checkedprofid3),
-	's.idprof4'=>array('label'=>"ProfId4Short", 'position'=>43, 'checked'=>$checkedprofid4),
-	's.idprof5'=>array('label'=>"ProfId5Short", 'position'=>44, 'checked'=>$checkedprofid5),
-	's.idprof6'=>array('label'=>"ProfId6Short", 'position'=>45, 'checked'=>$checkedprofid6),
+	's.siren'=>array('label'=>"ProfId1" . $mysoc->country_code, 'position'=>40, 'checked'=>$checkedprofid1),
+	's.siret'=>array('label'=>"ProfId2" . $mysoc->country_code, 'position'=>41, 'checked'=>$checkedprofid2),
+	's.ape'=>array('label'=>"ProfId3" . $mysoc->country_code, 'position'=>42, 'checked'=>$checkedprofid3),
+	's.idprof4'=>array('label'=>"ProfId4" . $mysoc->country_code, 'position'=>43, 'checked'=>$checkedprofid4),
+	's.idprof5'=>array('label'=>"ProfId5" . $mysoc->country_code, 'position'=>44, 'checked'=>$checkedprofid5),
+	's.idprof6'=>array('label'=>"ProfId6" . $mysoc->country_code, 'position'=>45, 'checked'=>$checkedprofid6),
 	's.tva_intra'=>array('label'=>"VATIntraShort", 'position'=>50, 'checked'=>0),
 	'customerorsupplier'=>array('label'=>'NatureOfThirdParty', 'position'=>61, 'checked'=>1),
 	's.fk_prospectlevel'=>array('label'=>"ProspectLevel", 'position'=>62, 'checked'=>$checkprospectlevel),
@@ -1443,27 +1443,27 @@ if (!empty($arrayfields['s.url']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.siren']['checked'])) {
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId1Short"), $textprofid[1], 1, 0), $_SERVER["PHP_SELF"], "s.siren", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId1Short" . $mysoc->country_code), $textprofid[1], 1, 0), $_SERVER["PHP_SELF"], "s.siren", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.siret']['checked'])) {
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId2Short"), $textprofid[2], 1, 0), $_SERVER["PHP_SELF"], "s.siret", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId2Short" . $mysoc->country_code), $textprofid[2], 1, 0), $_SERVER["PHP_SELF"], "s.siret", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.ape']['checked'])) {
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId3Short"), $textprofid[3], 1, 0), $_SERVER["PHP_SELF"], "s.ape", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId3Short" . $mysoc->country_code), $textprofid[3], 1, 0), $_SERVER["PHP_SELF"], "s.ape", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.idprof4']['checked'])) {
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId4Short"), $textprofid[4], 1, 0), $_SERVER["PHP_SELF"], "s.idprof4", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId4Short" . $mysoc->country_code), $textprofid[4], 1, 0), $_SERVER["PHP_SELF"], "s.idprof4", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.idprof5']['checked'])) {
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId5Short"), $textprofid[5], 1, 0), $_SERVER["PHP_SELF"], "s.idprof5", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId5Short" . $mysoc->country_code), $textprofid[5], 1, 0), $_SERVER["PHP_SELF"], "s.idprof5", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.idprof6']['checked'])) {
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId6Short"), $textprofid[6], 1, 0), $_SERVER["PHP_SELF"], "s.idprof6", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId6Short" . $mysoc->country_code), $textprofid[6], 1, 0), $_SERVER["PHP_SELF"], "s.idprof6", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.tva_intra']['checked'])) {
