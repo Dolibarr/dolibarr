@@ -136,7 +136,8 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 a.info-box-text.info-box-text-a {
-	display: table-cell;
+	/* display: table-cell; */
+	display: contents;
 }
 a.info-box-text-a i.fa.fa-exclamation-triangle {
 	font-size: 0.9em;
@@ -197,7 +198,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	overflow: hidden;
 	float: left;
 	/* height: 90px; */
-	width: 90px;
+	width: 86px;
 	text-align: center;
 	font-size: 45px;
 	line-height: 90px;
@@ -334,7 +335,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	width: calc(100% - 20px);
 }
 .info-box-text{
-	font-size: 0.92em;
+	font-size: 0.90em;
 }
 .info-box-text:first-letter{text-transform: uppercase}
 a.info-box-text{ text-decoration: none;}

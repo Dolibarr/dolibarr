@@ -135,7 +135,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 }
 
 a.info-box-text.info-box-text-a {
-	display: table-cell;
+	/* display: table-cell; */
+	display: contents;
 }
 a.info-box-text-a i.fa.fa-exclamation-triangle {
 	font-size: 0.9em;
