@@ -1157,9 +1157,9 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		if (!empty($object->usage_task) && !empty($object->lines)) {
 			print ' <span id="divreportdate" class="hidden">&nbsp; &nbsp; <input type="checkbox" class="valignmiddle" id="reportdate" name="reportdate" value="yes" ';
 			if ($comefromclone) {
-				print ' checked ';
+				print 'checked ';
 			}
-			print '/><label for="reportdate" class="opacitymedium">'.$langs->trans("ProjectReportDate").'</label></span>';
+			print '/><label for="reportdate" class="valignmiddle opacitymedium">'.$langs->trans("ProjectReportDate").'</label></span>';
 		}
 		print '</td></tr>';
 
