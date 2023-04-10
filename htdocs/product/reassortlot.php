@@ -532,7 +532,6 @@ print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 
 /*
 if ($search_categ > 0) {
-	var_dump($search_categ);
 	print "<div id='ways'>";
 	$c = new Categorie($db);
 	$c->fetch($search_categ);
