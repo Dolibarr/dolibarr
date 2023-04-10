@@ -2285,6 +2285,8 @@ if ($action == 'create') {
 			// Qty in other shipments (with shipment and warehouse used)
 			if ($origin && $origin_id > 0) {
 				print '<td class="linecolqtyinothershipments center nowrap">';
+				$htmltooltip = '';
+				$qtyalreadysent = 0;
 				foreach ($alreadysent as $key => $val) {
 					if ($lines[$i]->fk_origin_line == $key) {
 						$j = 0;
@@ -2295,20 +2297,23 @@ if ($action == 'create') {
 
 							$j++;
 							if ($j > 1) {
-								print '<br>';
+								$htmltooltip .= '<br>';
 							}
 							$shipment_static->fetch($shipmentline_var['shipment_id']);
-							print $shipment_static->getNomUrl(1);
-							print ' - '.$shipmentline_var['qty_shipped'];
-							$htmltext = $langs->trans("DateValidation").' : '.(empty($shipmentline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($shipmentline_var['date_valid'], 'dayhour'));
-							if (isModEnabled('stock') && $shipmentline_var['warehouse'] > 0) {
+							$htmltooltip .= $shipment_static->getNomUrl(1, '', 0, 0, 1);
+							$htmltooltip .= ' - '.$shipmentline_var['qty_shipped'];
+							$htmltooltip .= ' - '.$langs->trans("DateValidation").' : '.(empty($shipmentline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($shipmentline_var['date_valid'], 'dayhour'));
+							/*if (isModEnabled('stock') && $shipmentline_var['warehouse'] > 0) {
 								$warehousestatic->fetch($shipmentline_var['warehouse']);
 								$htmltext .= '<br>'.$langs->trans("FromLocation").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
-							}
-							print ' '.$form->textwithpicto('', $htmltext, 1);
+							}*/
+							//print ' '.$form->textwithpicto('', $htmltext, 1);
+
+							$qtyalreadysent += $shipmentline_var['qty_shipped'];
 						}
 					}
 				}
+				print $form->textwithpicto($qtyalreadysent, $htmltooltip, 1, 'info', '', 0, 3, 'tooltip'.$lines[$i]->id);
 				print '</td>';
 			}
 
