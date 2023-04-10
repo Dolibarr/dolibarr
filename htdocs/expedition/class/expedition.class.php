@@ -2319,6 +2319,23 @@ class Expedition extends CommonObject
 	}
 
 	/**
+	 *	Set draft status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						<0 if KO, >0 if OK
+	 */
+	public function setDraft($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->statut <= self::STATUS_DRAFT) {
+			return 0;
+		}
+
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'SHIPMENT_UNVALIDATE');
+	}
+
+	/**
 	 *	Classify the shipping as validated/opened
 	 *
 	 *	@return     int     <0 if KO, 0 if already open, >0 if OK
@@ -2338,7 +2355,7 @@ class Expedition extends CommonObject
 
 		$oldbilled = $this->billed;
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=1';
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut = 1';
 		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);

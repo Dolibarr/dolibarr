@@ -157,6 +157,14 @@ if (empty($reshook)) {
 	$upload_dir = $conf->expedition->dir_output.'/sending';
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
+	// Back to draft
+	if ($action == 'setdraft' && $user->rights->expedition->creer) {
+		$object->fetch($id);
+		$result = $object->setDraft($user, 0);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
 	// Reopen
 	if ($action == 'reopen' && $user->rights->expedition->creer) {
 		$object->fetch($id);
@@ -1740,9 +1748,9 @@ if ($action == 'create') {
 
 		$text = $langs->trans("ConfirmValidateSending", $numref);
 		if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
-			$text .= ' '.$langs->trans("StockMovementWillBeRecorded").'.';
+			$text .= '<br>'.$langs->trans("StockMovementWillBeRecorded").'.';
 		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
-			$text .= ' '.$langs->trans("StockMovementNotYetRecorded").'.';
+			$text .= '<br>'.$langs->trans("StockMovementNotYetRecorded").'.';
 		}
 
 		if (isModEnabled('notification')) {
@@ -1752,7 +1760,7 @@ if ($action == 'create') {
 			$text .= $notify->confirmMessage('SHIPPING_VALIDATE', $object->socid, $object);
 		}
 
-		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ValidateSending'), $text, 'confirm_valid', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ValidateSending'), $text, 'confirm_valid', '', 0, 1, 250);
 	}
 	// Confirm cancelation
 	if ($action == 'cancel') {
@@ -2540,13 +2548,20 @@ if ($action == 'create') {
 				}
 			}
 
-			// TODO add alternative status
-			// 0=draft, 1=validated, 2=billed, we miss a status "delivered" (only available on order)
-			if ($object->statut == Expedition::STATUS_CLOSED && $user->rights->expedition->creer) {
-				if (isModEnabled('facture') && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
-					print dolGetButtonAction('', $langs->trans('ClassifyUnbilled'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
-				} else {
-					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
+			// 0=draft, 1=validated/delivered, 2=closed/delivered
+			// If WORKFLOW_BILL_ON_SHIPMENT: 0=draft, 1=validated, 2=billed (no status delivered)
+			if ($object->statut == Expedition::STATUS_VALIDATED && !getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
+				if ($user->hasRight('expedition', 'creer')) {
+					print dolGetButtonAction('', $langs->trans('SetToDraft'), 'default', $_SERVER["PHP_SELF"].'?action=setdraft&token='.newToken().'&id='.$object->id, '');
+				}
+			}
+			if ($object->statut == Expedition::STATUS_CLOSED) {
+				if ($user->hasRight('expedition', 'creer')) {
+					if (isModEnabled('facture') && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
+						print dolGetButtonAction('', $langs->trans('ClassifyUnbilled'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
+					} else {
+						print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
+					}
 				}
 			}
 
