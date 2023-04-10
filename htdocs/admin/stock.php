@@ -181,16 +181,25 @@ $formproduct = new FormProduct($db);
 
 $disabled = '';
 if (isModEnabled('productbatch')) {
+	// If module lot/serial enabled, we force the inc/dec mode to STOCK_CALCULATE_ON_SHIPMENT_CLOSE and STOCK_CALCULATE_ON_RECEPTION_CLOSE
 	$langs->load("productbatch");
 	$disabled = ' disabled';
-	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced"));
+
+	// STOCK_CALCULATE_ON_SHIPMENT_CLOSE
+	$descmode = $langs->trans('DeStockOnShipmentOnClosing');
+	if (!isModEnabled('reception')) {
+		// STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER
+		$incmode = $langs->trans('ReStockOnDispatchOrder');
+	} else {
+		// STOCK_CALCULATE_ON_RECEPTION_CLOSE
+		$incmode = $langs->trans('StockOnReceptionOnClosing');
+	}
+	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced", $descmode, $incmode));
 }
 
-//if (!empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
-//{
+
 print info_admin($langs->trans("IfYouUsePointOfSaleCheckModule"));
 print '<br>';
-//}
 
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
