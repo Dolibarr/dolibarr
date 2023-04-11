@@ -2777,7 +2777,7 @@ if ($action == 'create') {
 			print '<td class="nowrap  amountcard">' . price($object->total_localtax1, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 		}
 		print '</tr>';
-		
+
 		print '<tr>';
 		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) {
 			print '<td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
