@@ -2342,7 +2342,7 @@ if ($action == 'create') {
 					print '<!-- case edit 1 -->';
 					$line = new ExpeditionLigne($db);
 					foreach ($lines[$i]->detail_batch as $detail_batch) {
-						if ($detail_batch->fk_origin_stock == 0) continue;												
+						if ($detail_batch->fk_origin_stock == 0) continue;
 						print '<tr>';
 						// Qty to ship or shipped
 						print '<td><input class="qtyl" name="qtyl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->id.'" id="qtyl'.$line_id.'_'.$detail_batch->id.'" type="text" size="4" value="'.$detail_batch->qty.'"></td>';
