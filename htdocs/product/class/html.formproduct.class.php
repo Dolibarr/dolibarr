@@ -791,6 +791,8 @@ class FormProduct
 	 */
 	public function selectLotDataList($htmlname = 'batch_id', $empty = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array())
 	{
+		global $langs;
+
 		dol_syslog(get_class($this)."::selectLotDataList $htmlname, $empty, $fk_product, $fk_entrepot", LOG_DEBUG);
 
 		$out = '';
@@ -825,7 +827,7 @@ class FormProduct
 					if (empty($fk_entrepot) || $fk_entrepot == $arraytypes['entrepot_id']) {
 						$label = $arraytypes['entrepot_label'] . ' - ';
 						$label .= $arraytypes['batch'];
-						$out .= '<option data-warehouse="'.dol_escape_htmltag($label).'">' . $arraytypes['batch'] . '</option>';
+						$out .= '<option data-warehouse="'.dol_escape_htmltag($label).'" value="' . $arraytypes['batch'] . '">(' . $langs->trans('Stock Total') . ': ' . $arraytypes['qty'] . ')</option>';
 					}
 				}
 			}

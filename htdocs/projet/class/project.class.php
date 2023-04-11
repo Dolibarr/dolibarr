@@ -291,7 +291,7 @@ class Project extends CommonObject
 		'date_close' =>array('type'=>'datetime', 'label'=>'DateClosing', 'enabled'=>1, 'visible'=>0, 'position'=>105),
 		'fk_user_close' =>array('type'=>'integer', 'label'=>'UserClosing', 'enabled'=>1, 'visible'=>0, 'position'=>110),
 		'opp_amount' =>array('type'=>'double(24,8)', 'label'=>'OpportunityAmountShort', 'enabled'=>1, 'visible'=>'getDolGlobalString("PROJECT_USE_OPPORTUNITIES")', 'position'=>115),
-		'budget_amount' =>array('type'=>'double(24,8)', 'label'=>'Budget', 'enabled'=>1, 'visible'=>1, 'position'=>119),
+		'budget_amount' =>array('type'=>'double(24,8)', 'label'=>'Budget', 'enabled'=>1, 'visible'=>-1, 'position'=>119),
 		'usage_bill_time' =>array('type'=>'integer', 'label'=>'UsageBillTimeShort', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
 		'usage_opportunity' =>array('type'=>'integer', 'label'=>'UsageOpportunity', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
 		'usage_task' =>array('type'=>'integer', 'label'=>'UsageTasks', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
@@ -1383,7 +1383,7 @@ class Project extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $picto, ($notooltip ? (($withpicto != 2) ? 'class="pictofixedwidth"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'pictofixedwidth ' : '').$classfortooltip.' pictofixedwidth em088"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $picto, 'class="pictofixedwidth em088"', 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -1422,6 +1422,7 @@ class Project extends CommonObject
 		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
+		$this->entity = $conf->entity;
 		$this->specimen = 1;
 		$this->socid = 1;
 		$this->date_c = $now;
@@ -2343,11 +2344,11 @@ class Project extends CommonObject
 
 
 	/**
-	 * 	Create an array of tasks of current project
+	 * Create an array of tasks of current project
 	 *
-	 *  @param  User	$user       		Object user we want project allowed to
+	 * @param	User	$user       		Object user we want project allowed to
 	 * @param	int		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
-	 * 	@return int							>0 if OK, <0 if KO
+	 * @return 	int							>0 if OK, <0 if KO
 	 */
 	public function getLinesArray($user, $loadRoleMode = 1)
 	{

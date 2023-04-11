@@ -24,6 +24,6 @@ CREATE TABLE llx_expeditiondet_batch (
   sellby date DEFAULT NULL,
   batch varchar(128) DEFAULT NULL,
   qty double NOT NULL DEFAULT '0',
-  fk_origin_stock integer NOT NULL			-- id into table llx_product_batch (may be renamed into llx_product_stock_batch in another version). TODO We should add and use instead a fk_warehouse field
+  fk_origin_stock integer NOT NULL			-- id into table llx_product_batch (llx_product_batch may be renamed into llx_product_stock_batch in another version). TODO We should add and use instead a fk_warehouse field
 ) ENGINE=innodb;
 

@@ -222,11 +222,8 @@ print dol_get_fiche_end();
 
 $disable_delete = 0;
 $sql = 'SELECT f.rowid as scid, f.label as label, f.paye, f.amount as tva_amount, pf.amount';
-//$sql .= ', pc.libelle as sc_type';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_vat as pf,'.MAIN_DB_PREFIX.'tva as f';
-//$sql .= ', '.MAIN_DB_PREFIX.'c_chargesociales as pc';
 $sql .= ' WHERE pf.fk_tva = f.rowid';
-//$sql .= ' AND f.fk_type = pc.id';
 $sql .= ' AND f.entity = '.$conf->entity;
 $sql .= ' AND pf.rowid = '.((int) $object->id);
 

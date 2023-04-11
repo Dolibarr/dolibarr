@@ -91,7 +91,7 @@ class UserGroup extends CommonObject
 	 *
 	 * @var integer
 	 */
-	public $datem;
+	public $tms;
 
 	/**
 	 * @var string Description
@@ -698,9 +698,9 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *  Return label of status of user (active, inactive)
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
@@ -710,11 +710,11 @@ class UserGroup extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string 			       	Label of status
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -932,7 +932,7 @@ class UserGroup extends CommonObject
 		$this->name = 'DOLIBARR GROUP SPECIMEN';
 		$this->note = 'This is a note';
 		$this->datec = time();
-		$this->datem = time();
+		$this->tms = time();
 
 		// Members of this group is just me
 		$this->members = array(

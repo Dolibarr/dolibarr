@@ -46,6 +46,13 @@ require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 $idbom = GETPOST('idbom', 'alpha');
 //$action = GETPOST('action', 'aZ09');
 
+$object = new BOM($db);
+$result = $object->fetch($idbom);
+
+// Security check
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'bom', $object, $object->table_element, '', '', 'rowid', $isdraft);
+
 
 /*
  * View
@@ -53,8 +60,6 @@ $idbom = GETPOST('idbom', 'alpha');
 
 top_httphead('application/json');
 
-$object = new BOM($db);
-$result = $object->fetch($idbom);
 if ($result > 0) {
 	// We remove properties we don't need in answer
 	unset($object->fields);
