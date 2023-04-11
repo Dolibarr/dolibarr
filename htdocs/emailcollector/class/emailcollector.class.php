@@ -868,7 +868,7 @@ class EmailCollector extends CommonObject
 	/**
 	 * overwitePropertiesOfObject
 	 *
-	 * @param	object	$object			Current object
+	 * @param	object	$object			Current object we will set ->properties
 	 * @param	string	$actionparam	Action parameters
 	 * @param	string	$messagetext	Body
 	 * @param	string	$subject		Subject
@@ -883,8 +883,13 @@ class EmailCollector extends CommonObject
 		// Overwrite values with values extracted from source email
 		// $this->actionparam = 'opportunity_status=123;abc=EXTRACT:BODY:....'
 		$arrayvaluetouse = dolExplodeIntoArray($actionparam, ';', '=');
+
+		$tmp = array();
+
+		// Loop on each property set into actionparam
 		foreach ($arrayvaluetouse as $propertytooverwrite => $valueforproperty) {
-			$tmpclass = ''; $tmpproperty = '';
+			$tmpclass = '';
+			$tmpproperty = '';
 			$tmparray = explode('.', $propertytooverwrite);
 			if (count($tmparray) == 2) {
 				$tmpclass = $tmparray[0];
@@ -939,13 +944,21 @@ class EmailCollector extends CommonObject
 								if (preg_match('/^options_/', $tmpproperty)) {
 									$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $this->decodeSMTPSubject($valueextracted);
 								} else {
-									$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
+									if (property_exists($object, $tmpproperty)) {
+										$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
+									} else {
+										$tmp[$tmpproperty] = $this->decodeSMTPSubject($valueextracted);
+									}
 								}
 							} else {	// extract from BODY
 								if (preg_match('/^options_/', $tmpproperty)) {
 									$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $this->decodeSMTPSubject($valueextracted);
 								} else {
-									$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
+									if (property_exists($object, $tmpproperty)) {
+										$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
+									} else {
+										$tmp[$tmpproperty] = $this->decodeSMTPSubject($valueextracted);
+									}
 								}
 							}
 							if (preg_match('/^options_/', $tmpproperty)) {
@@ -955,7 +968,11 @@ class EmailCollector extends CommonObject
 							}
 						} else {
 							// Regex not found
-							$object->$tmpproperty = null;
+							if (property_exists($object, $tmpproperty)) {
+								$object->$tmpproperty = null;
+							} else {
+								$tmp[$tmpproperty] = null;
+							}
 
 							$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> not found, so property '.dol_escape_htmltag($tmpproperty).' is set to null.';
 						}
@@ -970,7 +987,11 @@ class EmailCollector extends CommonObject
 					if (preg_match('/^options_/', $tmpproperty)) {
 						$valuecurrent = $object->array_options[preg_replace('/^options_/', '', $tmpproperty)];
 					} else {
-						$valuecurrent = $object->$tmpproperty;
+						if (property_exists($object, $tmpproperty)) {
+							$valuecurrent = $object->$tmpproperty;
+						} else {
+							$valuecurrent = $tmp[$tmpproperty];
+						}
 					}
 
 					if ($regforregex[1] == 'SET' || empty($valuecurrent)) {
@@ -979,24 +1000,38 @@ class EmailCollector extends CommonObject
 						$matcharray = array();
 						preg_match_all('/__([a-z0-9]+(?:_[a-z0-9]+)?)__/i', $valuetouse, $matcharray);
 						//var_dump($tmpproperty.' - '.$object->$tmpproperty.' - '.$valuetouse); var_dump($matcharray);
-						if (is_array($matcharray[1])) {    // $matcharray[1] is array with list of substitution key found without the __
+						if (is_array($matcharray[1])) {    // $matcharray[1] is an array with the list of substitution key found without the __X__ syntax into the SET entry
 							foreach ($matcharray[1] as $keytoreplace) {
-								if ($keytoreplace && isset($object->$keytoreplace)) {
-									$substitutionarray['__'.$keytoreplace.'__'] = $object->$keytoreplace;
+								if ($keytoreplace) {
+									if (preg_match('/^options_/', $keytoreplace)) {
+										$substitutionarray['__'.$keytoreplace.'__'] = $object->array_options[preg_replace('/^options_/', '', $keytoreplace)];
+									} else {
+										if (property_exists($object, $keytoreplace)) {
+											$substitutionarray['__'.$keytoreplace.'__'] = $object->$keytoreplace;
+										} else {
+											$substitutionarray['__'.$keytoreplace.'__'] = $tmp[$keytoreplace];
+										}
+									}
 								}
 							}
 						}
 						//var_dump($substitutionarray);
-						dol_syslog(var_export($substitutionarray, true));
+						dol_syslog('substitutionarray='.var_export($substitutionarray, true));
 						//var_dump($substitutionarray);
 						$valuetouse = make_substitutions($valuetouse, $substitutionarray);
 						if (preg_match('/^options_/', $tmpproperty)) {
 							$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $valuetouse;
-						} else {
-							$object->$tmpproperty = $valuetouse;
-						}
 
-						$operationslog .= '<br>Set value '.dol_escape_htmltag($valuetouse).' into variable '.dol_escape_htmltag($tmpproperty);
+							$operationslog .= '<br>Set value '.dol_escape_htmltag($valuetouse).' into object->array_options['.dol_escape_htmltag(preg_replace('/^options_/', '', $tmpproperty)).']';
+						} else {
+							if (property_exists($object, $tmpproperty)) {
+								$object->$tmpproperty = $valuetouse;
+							} else {
+								$tmp[$tmpproperty] = $valuetouse;
+							}
+
+							$operationslog .= '<br>Set value '.dol_escape_htmltag($valuetouse).' into object->'.dol_escape_htmltag($tmpproperty);
+						}
 					}
 				} else {
 					$errorforthisaction++;
@@ -1411,6 +1446,9 @@ class EmailCollector extends CommonObject
 
 			try {
 				//var_dump($Query->count());
+				if ($mode > 0) {
+					$Query->leaveUnread();
+				}
 				$arrayofemail = $Query->limit($this->maxemailpercollect)->setFetchOrder("asc")->get();
 				//var_dump($arrayofemail);
 			} catch (Exception $e) {
@@ -1957,6 +1995,7 @@ class EmailCollector extends CommonObject
 					$result = $contactstatic->fetch(0, null, '', $from);
 
 					if ($result > 0) {
+						dol_syslog("We found a contact with the email ".$from);
 						$contactid = $contactstatic->id;
 						$contactfoundby = 'email of contact ('.$from.')';
 						if (empty($thirdpartyid) && $contactstatic->socid > 0) {
@@ -1972,12 +2011,44 @@ class EmailCollector extends CommonObject
 				if (empty($thirdpartyid)) {		// Try to find thirdparty using email
 					$result = $thirdpartystatic->fetch(0, '', '', '', '', '', '', '', '', '', $from);
 					if ($result > 0) {
+						dol_syslog("We found a thirdparty with the email ".$from);
+						$thirdpartyid = $thirdpartystatic->id;;
 						$thirdpartyfoundby = 'email ('.$from.')';
 					}
 				}
 
-				// Do operations
-				if ($mode < 2) {
+				/*
+				if ($replyto) {
+					if (empty($contactid)) {		// Try to find contact using email
+						$result = $contactstatic->fetch(0, null, '', $replyto);
+
+						if ($result > 0) {
+							dol_syslog("We found a contact with the email ".$replyto);
+							$contactid = $contactstatic->id;
+							$contactfoundby = 'email of contact ('.$replyto.')';
+							if (empty($thirdpartyid) && $contactstatic->socid > 0) {
+								$result = $thirdpartystatic->fetch($contactstatic->socid);
+								if ($result > 0) {
+									$thirdpartyid = $thirdpartystatic->id;
+									$thirdpartyfoundby = 'email of contact ('.$replyto.')';
+								}
+							}
+						}
+					}
+
+					if (empty($thirdpartyid)) {		// Try to find thirdparty using email
+						$result = $thirdpartystatic->fetch(0, '', '', '', '', '', '', '', '', '', $replyto);
+						if ($result > 0) {
+							dol_syslog("We found a thirdparty with the email ".$replyto);
+							$thirdpartyid = $thirdpartystatic->id;;
+							$thirdpartyfoundby = 'email ('.$replyto.')';
+						}
+					}
+				}
+				*/
+
+				// Do operations (extract variables and creating data)
+				if ($mode < 2) {	// 0=Mode production, 1=Mode test (read IMAP and try SQL update then rollback), 2=Mode test with no SQL updates
 					foreach ($this->actions as $operation) {
 						$errorforthisaction = 0;
 
@@ -2118,6 +2189,23 @@ class EmailCollector extends CommonObject
 								}
 
 								if (!$errorforactions && ($idtouseforthirdparty || $emailtouseforthirdparty || $nametouseforthirdparty || $namealiastouseforthirdparty)) {
+									// We make another search on thirdparty
+									//$namealiastouseforthirdparty
+
+									$tmpobject = new stdClass();
+									$tmpobject->element == 'generic';
+									$tmpobject->id = $idtouseforthirdparty;
+									$tmpobject->name = $nametouseforthirdparty;
+									$tmpobject->name_alias = $namealiastouseforthirdparty;
+									$tmpobject->email = $emailtouseforthirdparty;
+
+									$this->overwritePropertiesOfObject($tmpobject, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
+
+									$idtouseforthirdparty = $tmpobject->id;
+									$nametouseforthirdparty = $tmpobject->name;
+									$namealiastouseforthirdparty = $tmpobject->name_alias;
+									$emailtouseforthirdparty = $tmpobject->name_alias;
+
 									$result = $thirdpartystatic->fetch($idtouseforthirdparty, $nametouseforthirdparty, '', '', '', '', '', '', '', '', $emailtouseforthirdparty, $namealiastouseforthirdparty);
 									if ($result < 0) {
 										$errorforactions++;
@@ -2555,6 +2643,8 @@ class EmailCollector extends CommonObject
 									}
 								}
 							} else {
+								dol_syslog("Project already exists for msgid = ".dol_escape_htmltag($msgid).", so we do not recreate it.");
+
 								$operationslog .= '<br>Project already exists for msgid ='.dol_escape_htmltag($msgid);
 							}
 						} elseif ($operation['type'] == 'ticket') {
@@ -2824,9 +2914,9 @@ class EmailCollector extends CommonObject
 
 				// Error for email or not ?
 				if (!$errorforactions) {
-					if ($targetdir && empty($mode)) {
+					if (!empty($targetdir) && empty($mode)) {
 						if (empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
-							dol_syslog("EmailCollector::doCollectOneCollector move message ".$imapemail." to ".$connectstringtarget, LOG_DEBUG);
+							dol_syslog("EmailCollector::doCollectOneCollector move message ".((string) $imapemail)." to ".$connectstringtarget, LOG_DEBUG);
 							$res = imap_mail_move($connection, $imapemail, $targetdir, 0);
 							if ($res == false) {
 								$errorforemail++;
@@ -2835,7 +2925,9 @@ class EmailCollector extends CommonObject
 								dol_syslog(imap_last_error());
 							}
 						} else {
-							// TODO Move mail using PHP-IMAP
+							// Move mail using PHP-IMAP
+							dol_syslog("EmailCollector::doCollectOneCollector move message ".($imapemail->getHeader()->get('subject'))." to ".$targetdir, LOG_DEBUG);
+							$imapemail->move($targetdir);
 						}
 					} else {
 						if (empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
