@@ -1066,7 +1066,7 @@ class EmailCollector extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
 		}
 
-		dol_syslog("EmailCollector::doCollectOneCollector start for id=".$this->id." - ".$this->ref, LOG_DEBUG);
+		dol_syslog("EmailCollector::doCollectOneCollector start for id=".$this->id." - ".$this->ref, LOG_INFO);
 
 		$langs->loadLangs(array("project", "companies", "mails", "errors", "ticket", "agenda", "commercial"));
 
@@ -2994,6 +2994,7 @@ class EmailCollector extends CommonObject
 			$client->disconnect();
 		} else {
 			if (empty($mode) && empty($error)) {
+				dol_syslog("Expunge", LOG_DEBUG);
 				imap_expunge($connection); // To validate any move
 			}
 			imap_close($connection);
@@ -3022,7 +3023,7 @@ class EmailCollector extends CommonObject
 			$this->update($user);
 		}
 
-		dol_syslog("EmailCollector::doCollectOneCollector end", LOG_DEBUG);
+		dol_syslog("EmailCollector::doCollectOneCollector end", LOG_INFO);
 
 		return $error ? -1 : 1;
 	}
