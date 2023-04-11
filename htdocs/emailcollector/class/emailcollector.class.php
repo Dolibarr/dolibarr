@@ -2888,7 +2888,7 @@ class EmailCollector extends CommonObject
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 			$client->disconnect();
 		} else {
-			if (empty($mode)) {
+			if (empty($mode) && empty($error)) {
 				imap_expunge($connection); // To validate any move
 			}
 			imap_close($connection);
