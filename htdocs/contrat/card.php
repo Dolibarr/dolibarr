@@ -2028,7 +2028,7 @@ if ($action == 'create') {
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 			if (empty($reshook)) {
-				$params = array(
+				$commonButtonParams = array(
 					'attr' => array(
 						'title' => '',
 						'class' => 'classfortooltip'
@@ -2038,63 +2038,81 @@ if ($action == 'create') {
 				// Send
 				if (empty($user->socid)) {
 					if ($object->statut == 1) {
+						$sendButtonParams = $commonButtonParams;
 						if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->contrat->creer)) {
-							print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle', '', true, $params);
+							print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle', '', true, $sendButtonParams);
 						} else {
-							print dolGetButtonAction($langs->trans('SendMail'), '', 'default', '#', '', false, $params);
+							$sendButtonParams['attr']['title'] = $langs->trans("NotEnoughPermissions");
+							print dolGetButtonAction($langs->trans('SendMail'), '', 'default', '#', '', false, $sendButtonParams);
 						}
 					}
 				}
 
+				// Validate
 				if ($object->statut == 0 && $nbofservices) {
+					$validateButtonParams = $commonButtonParams;
 					if ($user->rights->contrat->creer) {
-						print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid&amp;token='.newToken(), '', true, $params);
+						print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid&amp;token='.newToken(), '', true, $validateButtonParams);
 					} else {
-						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
-						print dolGetButtonAction($langs->trans('Validate'), '', 'default', '#', '', false, $params);
-					}
-				}
-				if ($object->statut == 1) {
-					if ($user->rights->contrat->creer) {
-						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken(), '', true, $params);
-					} else {
-						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
-						print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $params);
+						$validateButtonParams['attr']['title'] = $langs->trans("NotEnoughPermissions");
+						print dolGetButtonAction($langs->trans('Validate'), '', 'default', '#', '', false, $validateButtonParams);
 					}
 				}
 
+				// Modify
+				if ($object->statut == 1) {
+					$modifyButtonParams = $commonButtonParams;
+					if ($user->rights->contrat->creer) {
+						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken(), '', true, $modifyButtonParams);
+					} else {
+						$modifyButtonParams['attr']['title'] = $langs->trans("NotEnoughPermissions");
+						print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $modifyButtonParams);
+					}
+				}
+
+				// Create order
 				if (!empty($conf->commande->enabled) && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices) {
+					$createOrderButtonParams = $commonButtonParams;
 					$langs->load("orders");
 					if ($user->rights->commande->creer) {
-						print dolGetButtonAction($langs->trans('CreateOrder'), '', 'default', DOL_URL_ROOT.'/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id, '', true, $params);
+						print dolGetButtonAction($langs->trans('CreateOrder'), '', 'default', DOL_URL_ROOT.'/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id, '', true, $createOrderButtonParams);
 					} else {
-						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
-						print dolGetButtonAction($langs->trans('CreateOrder'), '', 'default', '#', '', false, $params);
+						$createOrderButtonParams['attr']['title'] = $langs->trans("NotEnoughPermissions");
+						print dolGetButtonAction($langs->trans('CreateOrder'), '', 'default', '#', '', false, $createOrderButtonParams);
 					}
 				}
 
+				// Create invoice
 				if (isModEnabled('facture') && $object->statut > 0) {
+					$createInvoiceButtonParams = $commonButtonParams;
 					$langs->load("bills");
 					if ($user->rights->facture->creer) {
-						print dolGetButtonAction($langs->trans('CreateBill'), '', 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id, '', true, $params);
+						print dolGetButtonAction($langs->trans('CreateBill'), '', 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id, '', true, $createInvoiceButtonParams);
 					} else {
-						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
-						print dolGetButtonAction($langs->trans('CreateBill'), '', 'default', '#', '', false, $params);
+						$createInvoiceButtonParams['attr']['title'] = $langs->trans("NotEnoughPermissions");
+						print dolGetButtonAction($langs->trans('CreateBill'), '', 'default', '#', '', false, $createInvoiceButtonParams);
 					}
 				}
 
+				// Activate services
 				if ($object->nbofservicesclosed > 0 || $object->nbofserviceswait > 0) {
+					$activateButtonParams = $commonButtonParams;
 					if ($user->rights->contrat->activer) {
-						print dolGetButtonAction($langs->trans('ActivateAllContracts'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate&amp;token='.newToken(), '', true, $params);
+						print dolGetButtonAction($langs->trans('ActivateAllContracts'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate&amp;token='.newToken(), '', true, $activateButtonParams);
 					} else {
-						print dolGetButtonAction($langs->trans('ActivateAllContracts'), '', 'default', '#', '', false, $params);
+						$activateButtonParams['attr']['title'] = $langs->trans("NotEnoughPermissions");
+						print dolGetButtonAction($langs->trans('ActivateAllContracts'), '', 'default', '#', '', false, $activateButtonParams);
 					}
 				}
+
+				// Disable services
 				if ($object->nbofservicesclosed < $nbofservices) {
+					$disableButtonParams = $commonButtonParams;
 					if ($user->rights->contrat->desactiver) {
-						print dolGetButtonAction($langs->trans('CloseAllContracts'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close&amp;token='.newToken(), '', true, $params);
+						print dolGetButtonAction($langs->trans('CloseAllContracts'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close&amp;token='.newToken(), '', true, $disableButtonParams);
 					} else {
-						print dolGetButtonAction($langs->trans('CloseAllContracts'), '', 'default', '#', '', false, $params);
+						$disableButtonParams['attr']['title'] = $langs->trans("NotEnoughPermissions");
+						print dolGetButtonAction($langs->trans('CloseAllContracts'), '', 'default', '#', '', false, $disableButtonParams);
 					}
 
 					//if (! $numactive)
@@ -2106,6 +2124,7 @@ if ($action == 'create') {
 					//}
 				}
 
+				// Show closed services
 				if (!empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT) && $object->nbofservicesclosed > 0) {
 					if ($action == 'showclosedlines') {
 						print '<div class="inline-block divButAction"><a class="butAction" id="btnhideclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=hideclosedlines">'.$langs->trans("HideClosedServices").'</a></div>';
@@ -2116,17 +2135,18 @@ if ($action == 'create') {
 
 				// Clone
 				if ($user->rights->contrat->creer) {
-					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;token='.newToken(), '', true, $params);
+					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;token='.newToken(), '', true, $commonButtonParams);
 				}
 
+				$deleteButtonParams = $commonButtonParams;
 				// On peut supprimer entite si
 				// - Droit de creer + mode brouillon (erreur creation)
 				// - Droit de supprimer
 				if (($user->rights->contrat->creer && $object->statut == $object::STATUS_DRAFT) || $user->rights->contrat->supprimer) {
-					print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', true, $params);
+					print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', true, $deleteButtonParams);
 				} else {
-					$params['attr']['title'] = $langs->trans("NotAllowed");
-					print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', false, $params);
+					$deleteButtonParams['attr']['title'] = $langs->trans("NotAllowed");
+					print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', false, $deleteButtonParams);
 				}
 			}
 

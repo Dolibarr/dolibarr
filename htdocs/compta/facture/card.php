@@ -5386,14 +5386,16 @@ if ($action == 'create') {
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
-			$params = array(
+			$commonButtonParams = array(
 				'attr' => array(
 					'title' => '',
 					'class' => 'classfortooltip'
 				)
 			);
+
 			// Editer une facture deja validee, sans paiement effectue et pas exporte en compta
 			if ($object->statut == Facture::STATUS_VALIDATED) {
+				$modifyButtonParams = $commonButtonParams;
 				// We check if lines of invoice are not already transfered into accountancy
 				$ventilExportCompta = $object->getVentilExportCompta();
 
@@ -5401,22 +5403,22 @@ if ($action == 'create') {
 					if (!empty($conf->global->INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE) || ($resteapayer == price2num($object->total_ttc, 'MT', 1) && empty($object->paye))) {
 						if (!$objectidnext && $object->is_last_in_cycle()) {
 							if ($usercanunvalidate) {
-								print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=modif&token='.newToken(), '', true, $params);
+								print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=modif&token='.newToken(), '', true, $modifyButtonParams);
 							} else {
-								$params['attr']['title'] = $langs->trans('NotEnoughPermissions');
-								print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=modif&token='.newToken(), '', false, $params);
+								$modifyButtonParams['attr']['title'] = $langs->trans('NotEnoughPermissions');
+								print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=modif&token='.newToken(), '', false, $modifyButtonParams);
 							}
 						} elseif (!$object->is_last_in_cycle()) {
-							$params['attr']['title'] = $langs->trans('NotLastInCycle');
-							print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $params);
+							$modifyButtonParams['attr']['title'] = $langs->trans('NotLastInCycle');
+							print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $modifyButtonParams);
 						} else {
-							$params['attr']['title'] = $langs->trans('DisabledBecauseReplacedInvoice');
-							print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $params);
+							$modifyButtonParams['attr']['title'] = $langs->trans('DisabledBecauseReplacedInvoice');
+							print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $modifyButtonParams);
 						}
 					}
 				} else {
-					$params['attr']['title'] = $langs->trans('DisabledBecauseDispatchedInBookkeeping');
-					print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $params);
+					$modifyButtonParams['attr']['title'] = $langs->trans('DisabledBecauseDispatchedInBookkeeping');
+					print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $modifyButtonParams);
 				}
 			}
 
@@ -5430,11 +5432,12 @@ if ($action == 'create') {
 				|| ($object->type == Facture::TYPE_SITUATION && empty($discount->id)))
 				&& ($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED || ($object->statut == 1 && $object->paye == 1))   // Condition ($object->statut == 1 && $object->paye == 1) should not happened but can be found due to corrupted data
 				&& ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || $usercanreopen)) {				// A paid invoice (partially or completely)
+				$reopenButtonParams = $commonButtonParams;
 				if ($object->close_code != 'replaced' || (!$objectidnext)) { 				// Not replaced by another invoice or replaced but the replacement invoice has been deleted
-					print dolGetButtonAction($langs->trans('ReOpen'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=reopen&token='.newToken(), '', true, $params);
+					print dolGetButtonAction($langs->trans('ReOpen'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=reopen&token='.newToken(), '', true, $reopenButtonParams);
 				} else {
-					$params['attr']['title'] = $langs->trans("DisabledBecauseReplacedInvoice");
-					print dolGetButtonAction($langs->trans('ReOpen'), '', 'default', '#', '', false, $params);
+					$reopenButtonParams['attr']['title'] = $langs->trans("DisabledBecauseReplacedInvoice");
+					print dolGetButtonAction($langs->trans('ReOpen'), '', 'default', '#', '', false, $reopenButtonParams);
 				}
 			}
 
@@ -5452,20 +5455,22 @@ if ($action == 'create') {
 			// Validate
 			if ($object->statut == Facture::STATUS_DRAFT && count($object->lines) > 0 && ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION) && (!empty($conf->global->FACTURE_ENABLE_NEGATIVE) || $object->total_ttc >= 0)) || ($object->type == Facture::TYPE_CREDIT_NOTE && $object->total_ttc <= 0))) {
 				if ($usercanvalidate) {
-					print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=valid&token='.newToken(), '', true, $params);
+					print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=valid&token='.newToken(), '', true, $commonButtonParams);
 				}
 			}
 
 			// Send by mail
 			if (empty($user->socid)) {
 				if (($object->statut == Facture::STATUS_VALIDATED || $object->statut == Facture::STATUS_CLOSED) || !empty($conf->global->FACTURE_SENDBYEMAIL_FOR_ALL_STATUS)) {
+					$sendButtonParams = $commonButtonParams;
 					if ($objectidnext) {
 						print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendMail').'</span>';
 					} else {
 						if ($usercansend) {
-							print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', '', true, $params);
+							print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', '', true, $sendButtonParams);
 						} else {
-							print dolGetButtonAction($langs->trans('SendMail'), '', 'default', '#', '', false, $params);
+							$sendButtonParams['attr']['title'] = $langs->trans("NotEnoughPermissions");
+							print dolGetButtonAction($langs->trans('SendMail'), '', 'default', '#', '', false, $sendButtonParams);
 						}
 					}
 				}
@@ -5500,14 +5505,15 @@ if ($action == 'create') {
 				if ($objectidnext) {
 					print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('DoPayment').'</span>';
 				} else {
+					$paymentButtonParams = $commonButtonParams;
 					if ($object->type == Facture::TYPE_DEPOSIT && $resteapayer == 0) {
 						// For down payment, we refuse to receive more than amount to pay.
-						$params['attr']['title'] = $langs->trans('DisabledBecauseRemainderToPayIsZero');
-						print dolGetButtonAction($langs->trans('DoPayment'), '', 'default', '#', '', false, $params);
+						$paymentButtonParams['attr']['title'] = $langs->trans('DisabledBecauseRemainderToPayIsZero');
+						print dolGetButtonAction($langs->trans('DoPayment'), '', 'default', '#', '', false, $paymentButtonParams);
 					} else {
 						// Sometimes we can receive more, so we accept to enter more and will offer a button to convert into discount (but it is not a credit note, just a prepayment done)
 						//print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/paiement.php?facid='.$object->id.'&amp;action=create&amp;accountid='.$object->fk_account.'">'.$langs->trans('DoPayment').'</a>';
-						print dolGetButtonAction($langs->trans('DoPayment'), '', 'default', DOL_URL_ROOT.'/compta/paiement.php?facid='.$object->id.'&amp;action=create&amp;accountid='.$object->fk_account, '', true, $params);
+						print dolGetButtonAction($langs->trans('DoPayment'), '', 'default', DOL_URL_ROOT.'/compta/paiement.php?facid='.$object->id.'&amp;action=create&amp;accountid='.$object->fk_account, '', true, $paymentButtonParams);
 					}
 				}
 			}
@@ -5554,12 +5560,13 @@ if ($action == 'create') {
 					($object->type == Facture::TYPE_DEPOSIT && $object->total_ttc > 0)
 				)
 			) {
+				$classifyPaidButtonParams = $commonButtonParams;
 				if ($object->type == Facture::TYPE_DEPOSIT && price2num($object->total_ttc, 'MT') != price2num($sumofpaymentall, 'MT')) {
 					// We can close a down payment only if paid amount is same than amount of down payment (by definition)
-					$params['attr']['title'] = $langs->trans('AmountPaidMustMatchAmountOfDownPayment');
-					print dolGetButtonAction($langs->trans('ClassifyPaid'), '', 'default', '#', '', false, $params);
+					$classifyPaidButtonParams['attr']['title'] = $langs->trans('AmountPaidMustMatchAmountOfDownPayment');
+					print dolGetButtonAction($langs->trans('ClassifyPaid'), '', 'default', '#', '', false, $classifyPaidButtonParams);
 				} else {
-					print dolGetButtonAction($langs->trans('ClassifyPaid'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid', '', true, $params);
+					print dolGetButtonAction($langs->trans('ClassifyPaid'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid', '', true, $classifyPaidButtonParams);
 				}
 			}
 
@@ -5604,13 +5611,13 @@ if ($action == 'create') {
 
 			// Clone
 			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $usercancreate) {
-				print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=clone&amp;object=invoice', '', true, $params);
+				print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=clone&amp;object=invoice', '', true, $commonButtonParams);
 			}
 
 			// Clone as predefined / Create template
 			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $object->statut == 0 && $usercancreate) {
 				if (!$objectidnext && count($object->lines) > 0) {
-					print dolGetButtonAction($langs->trans('ChangeIntoRepeatableInvoice'), '', 'default', DOL_URL_ROOT.'/compta/facture/card-rec.php?facid='.$object->id.'&amp;action=create', '', true, $params);
+					print dolGetButtonAction($langs->trans('ChangeIntoRepeatableInvoice'), '', 'default', DOL_URL_ROOT.'/compta/facture/card-rec.php?facid='.$object->id.'&amp;action=create', '', true, $commonButtonParams);
 				}
 			}
 
@@ -5643,35 +5650,30 @@ if ($action == 'create') {
 
 			// Delete
 			$isErasable = $object->is_erasable();
-			$params = array(
-				'attr' => array(
-					'title' => '',
-					'class' => 'classfortooltip'
-				)
-			);
+			$deleteButtonParams = $commonButtonParams;
 			if ($usercandelete || ($usercancreate && $isErasable == 1)) {	// isErasable = 1 means draft with temporary ref (draft can always be deleted with no need of permissions)
 				$enableDelete = false;
 				$deleteHref = '#';
 				if ($isErasable == -4) {
-					$params['attr']['title'] = $langs->trans('DisabledBecausePayments');
+					$deleteButtonParams['attr']['title'] = $langs->trans('DisabledBecausePayments');
 				} elseif ($isErasable == -3) {
-					$params['attr']['title'] = $langs->trans('DisabledBecauseNotLastSituationInvoice');
+					$deleteButtonParams['attr']['title'] = $langs->trans('DisabledBecauseNotLastSituationInvoice');
 				} elseif ($isErasable == -2) {
-					$params['attr']['title'] = $langs->trans('DisabledBecauseNotLastInvoice');
+					$deleteButtonParams['attr']['title'] = $langs->trans('DisabledBecauseNotLastInvoice');
 				} elseif ($isErasable == -1) {
-					$params['attr']['title'] = $langs->trans('DisabledBecauseDispatchedInBookkeeping');
+					$deleteButtonParams['attr']['title'] = $langs->trans('DisabledBecauseDispatchedInBookkeeping');
 				} elseif ($isErasable <= 0) {	// Any other cases
-					$params['attr']['title'] = $langs->trans('DisabledBecauseNotErasable');
+					$deleteButtonParams['attr']['title'] = $langs->trans('DisabledBecauseNotErasable');
 				} elseif ($objectidnext) {
-					$params['attr']['title'] = $langs->trans('DisabledBecauseReplacedInvoice');
+					$deleteButtonParams['attr']['title'] = $langs->trans('DisabledBecauseReplacedInvoice');
 				} else {
 					$deleteHref = $_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=delete&token='.newToken();
 					$enableDelete = true;
 				}
-				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $deleteHref, '', $enableDelete, $params);
+				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $deleteHref, '', $enableDelete, $deleteButtonParams);
 			} else {
-				$params['attr']['title'] = $langs->trans('NotAllowed');
-				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', '#', '', false, $params);
+				$deleteButtonParams['attr']['title'] = $langs->trans('NotAllowed');
+				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', '#', '', false, $deleteButtonParams);
 			}
 		}
 		print '</div>';
