@@ -109,6 +109,24 @@ class Conf
 
 	public $tzuserinputkey = 'tzserver';		// Use 'tzuserrel' to always store date in GMT and show date in time zone of user.
 
+	// TODO Remove this part.
+	public $fournisseur;
+	public $product;
+	public $service;
+	public $contrat;
+	public $actions;
+	public $agenda;
+	public $commande;
+	public $propal;
+	public $facture;
+	public $user;
+	public $adherent;
+	public $bank;
+	public $notification;
+	public $expensereport;
+	public $productbatch;
+
+
 
 	/**
 	 * Constructor
@@ -165,7 +183,6 @@ class Conf
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
 		$this->facture = new stdClass();
-		$this->contrat = new stdClass();
 		$this->user	= new stdClass();
 		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
