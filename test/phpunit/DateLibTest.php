@@ -85,7 +85,7 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -98,7 +98,7 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -111,7 +111,7 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -126,7 +126,7 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -265,9 +265,9 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 		$db=$this->savdb;
 
 		// With same hours - Tuesday/Wednesday jan 2013
-		$date1=dol_mktime(0, 0, 0, 1, 1, 2013, 'gmt');
-		$date2=dol_mktime(0, 0, 0, 1, 2, 2013, 'gmt');
-		$date3=dol_mktime(0, 0, 0, 1, 3, 2013, 'gmt');
+		$date1=dol_mktime(0, 0, 0, 1, 1, 2013, 'gmt');	// tuesday
+		$date2=dol_mktime(0, 0, 0, 1, 2, 2013, 'gmt');	// wednesday
+		$date3=dol_mktime(0, 0, 0, 1, 3, 2013, 'gmt');	// thursday
 
 		$result=num_open_day($date1, $date2, 0, 1, 0, 'FR');
 		print __METHOD__." result=".$result."\n";
@@ -282,8 +282,8 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals(2, $result, 'NumOpenDay Wednesday 2 - Thursday 3 jan 2013 for FR');   // 2 opened days
 
 		// With same hours - Friday/Sunday jan 2013
-		$date1=dol_mktime(0, 0, 0, 1, 4, 2013, 'gmt');
-		$date2=dol_mktime(0, 0, 0, 1, 6, 2013, 'gmt');
+		$date1=dol_mktime(0, 0, 0, 1, 4, 2013, 'gmt');	// friday
+		$date2=dol_mktime(0, 0, 0, 1, 6, 2013, 'gmt');	// sunday
 
 		$result=num_open_day($date1, $date2, 0, 1, 0, 'FR');
 		print __METHOD__." result=".$result."\n";
@@ -292,6 +292,17 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 		$result=num_open_day($date1, $date2, 'XX', 1);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(1, $result, 'NumOpenDay for XX');   // 1 opened day, 2 closes (even if country unknown)
+
+		// Test option MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY and MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY
+		$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY = 0;
+		$result=num_open_day($date1, $date2, 0, 1, 0, 'FR');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(2, $result, 'NumOpenDay for FR when saturday is a working day');   //2 opened day, 1 closed
+
+		$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY = 0;
+		$result=num_open_day($date1, $date2, 'XX', 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(3, $result, 'NumOpenDay for XX when saturday + sunday are working days');   // 3 opened day, 0 closes (even if country unknown)
 	}
 
 	/**
@@ -333,7 +344,7 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 
 		$result=convertSecondToTime(86400, 'all', 86400);
 		print __METHOD__." result=".$result."\n";
-		$this->assertSame('1 '.strtolower(dol_substr($langs->trans("Day"), 0, 1).'.'), $result);
+		$this->assertSame('1 '.$langs->trans("d"), $result);
 
 		return $result;
 	}
@@ -352,9 +363,20 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 		$db=$this->savdb;
 
 		// Check %Y-%m-%d %H:%M:%S format
+		$result=dol_print_date('1970-01-01', '%Y-%m-%d %H:%M:%S', true);	// A case for compatibility check
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('1970-01-01 00:00:00', $result);
+
+
+		// Check %Y-%m-%d %H:%M:%S format
 		$result=dol_print_date(0, '%Y-%m-%d %H:%M:%S', true);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('1970-01-01 00:00:00', $result);
+
+		// Same with T and Z
+		$result=dol_print_date(0, '%Y-%m-%dT%H:%M:%SZ', true);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('1970-01-01T00:00:00Z', $result);
 
 		// Check %Y-%m-%d %H:%M:%S format
 		$result=dol_print_date(16725225600, '%Y-%m-%d %H:%M:%S', true);	// http://www.epochconverter.com/
@@ -525,6 +547,28 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 		$result = dol_get_first_hour($now, 'gmt');
 		print __METHOD__." now = ".$now.", dol_print_date(now, 'dayhourrfc', 'gmt') = ".dol_print_date($now, 'dayhourrfc', 'gmt').", result = ".$result.", dol_print_date(result, 'dayhourrfc', 'gmt') = ".dol_print_date($result, 'dayhourrfc', 'gmt')."\n";
 		$this->assertEquals('1970-01-11T00:00:00Z', dol_print_date($result, 'dayhourrfc', 'gmt'));		// monday for month 2, year 2014 is the 2
+
+		return 1;
+	}
+
+	/**
+	 * testDolSqlDateFilter
+	 *
+	 * @return int
+	 */
+	public function testDolSqlDateFilter()
+	{
+		global $conf;
+
+		$result = dolSqlDateFilter('field1', 0, 0, 1970, 0);
+		print __METHOD__." result = ".$result."\n";
+		$this->assertEquals(" AND field1 BETWEEN '1970-01-01 00:00:00' AND '1970-12-31 23:59:59'", $result, 'Test dolSqlDateFilter 1');
+
+		/* If server/company is in TZ America/Bahia, and we need range with a date set in GMT
+		$result = dolSqlDateFilter('field1', 0, 0, 1970, 0, 'gmt');
+		print __METHOD__." result = ".$result."\n";
+		$this->assertEquals(" AND field1 BETWEEN '1969-12-31 21:00:00' AND '1970-12-31 20:59:59'", $result, 'Test dolSqlDateFilter 2');
+		*/
 
 		return 1;
 	}

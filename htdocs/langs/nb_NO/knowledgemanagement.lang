@@ -18,38 +18,37 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Kunnskapsstyringssystem
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=Administrer en Knowledge Management (KM) eller Help-Desk-base
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
+KnowledgeManagementSetup = Oppsett av Kunnskapsstyringssystem
 Settings = Innstillinger
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetupPage = Kunnskapsstyringssystemets oppsettside
 
 
 #
 # About page
 #
 About = Om
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
+KnowledgeManagementAbout = Om kunnskapsadministrasjon
+KnowledgeManagementAboutPage = Om Kunnskapsadministrasjon side
 
-#
-# Sample page
-#
-KnowledgeManagementArea = Knowledge Management
-
-
-#
-# Menu
-#
-MenuKnowledgeRecord = Knowledge base
-ListOfArticles = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+KnowledgeManagementArea = Kunnskapsadministrasjon
+MenuKnowledgeRecord = Kunnskapsbase
+ListKnowledgeRecord = Liste over artikler
+NewKnowledgeRecord = Ny artikkel
+ValidateReply = Valider løsningen
+KnowledgeRecords = Artikler
 KnowledgeRecord = Artikkel
-KnowledgeRecordExtraFields = Extrafields for Article
+KnowledgeRecordExtraFields = Ekstra felt for artikkel
+GroupOfTicket=Billettgrupper
+YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
+SuggestedForTicketsInGroup=Foreslått for billetter når gruppen er
+
+SetObsolete=Angi som foreldet
+ConfirmCloseKM=Bekrefter du at avslutningen av denne artikkelen som foreldet?
+ConfirmReopenKM=Vil du gjenopprette denne artikkelen til status "Validert"?

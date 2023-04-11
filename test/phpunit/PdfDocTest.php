@@ -81,7 +81,7 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -94,7 +94,7 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -107,7 +107,7 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -122,7 +122,7 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -141,13 +141,13 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 		$db=$this->savdb;
 
 		$localproduct=new Product($this->savdb);
-		$result = $localproduct->fetch(0, 'PIDRESS');
+		$result = $localproduct->fetch(0, 'PINKDRESS');
 		if ($result < 0) {
-			print "\n".__METHOD__." Failed to make the fetch of product PIDRESS. ".$localproduct->error; die(1);
+			print "\n".__METHOD__." Failed to make the fetch of product PINKDRESS. ".$localproduct->error; die(1);
 		}
 		$product_id = $localproduct->id;
 		if ($product_id <= 0) {
-			print "\n".__METHOD__." A product with ref PIDRESS must exists into database"; die(1);
+			print "\n".__METHOD__." A product with ref PINKDRESS must exists into database. Create it manually before running the test"; die(1);
 		}
 
 		$localobject=new Facture($this->savdb);
@@ -160,11 +160,11 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 
 		$result=pdf_getlinedesc($localobject, 0, $langs);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, "PIDRESS - Label 1<br>This is a description with a &eacute; accent<br>(Country of origin: France)");
+		$this->assertEquals("PINKDRESS - Label 1<br>This is a description with a &eacute; accent<br>(Country of origin: France)", $result);
 
 		$result=doc_getlinedesc($localobject->lines[0], $langs);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, "PIDRESS - Label 1\nThis is a description with a é accent\n(Country of origin: France)");
+		$this->assertEquals("PINKDRESS - Label 1\nThis is a description with a é accent\n(Country of origin: France)", $result);
 	}
 
 	/**

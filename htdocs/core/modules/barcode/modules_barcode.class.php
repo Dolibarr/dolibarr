@@ -75,7 +75,7 @@ abstract class ModeleNumRefBarCode
 	 */
 	public function getNom($langs)
 	{
-		return empty($this->name) ? $this->nom : $this->name;
+		return empty($this->name) ? get_class($this) : $this->name;
 	}
 
 	/**     Return a numbering example
@@ -138,7 +138,7 @@ abstract class ModeleNumRefBarCode
 	{
 		global $conf;
 
-		$langs->load("admin");
+		$langs->loadLangs(array("admin", "companies"));
 
 		$s = '';
 		$s .= $langs->trans("Name").': <b>'.$this->name.'</b><br>';

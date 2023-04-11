@@ -55,6 +55,12 @@ class Import
 	 */
 	public $errors = array();
 
+	// To store import templates
+	public $hexa; // List of fields in the export profile
+	public $datatoimport;
+	public $model_name; // Name of export profile
+	public $fk_user;
+
 
 	/**
 	 *    Constructor
@@ -156,9 +162,9 @@ class Import
 						$this->array_import_perms[$i] = $user->rights->import->run;
 						// Icon
 						$this->array_import_icon[$i] = (isset($module->import_icon[$r]) ? $module->import_icon[$r] : $module->picto);
-						// Code du dataset export
+						// Code of dataset export
 						$this->array_import_code[$i] = $module->import_code[$r];
-						// Libelle du dataset export
+						// Label of dataset export
 						$this->array_import_label[$i] = $module->getImportDatasetLabel($r);
 						// Array of tables to import (key=alias, value=tablename)
 						$this->array_import_tables[$i] = $module->import_tables_array[$r];
@@ -266,11 +272,18 @@ class Import
 		$this->db->begin();
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'import_model (';
-		$sql .= 'fk_user, label, type, field';
+		$sql .= 'fk_user,';
+		$sql .= ' label,';
+		$sql .= ' type,';
+		$sql .= ' field';
 		$sql .= ')';
-		$sql .= " VALUES (".($user->id > 0 ? $user->id : 0).", '".$this->db->escape($this->model_name)."', '".$this->db->escape($this->datatoimport)."', '".$this->db->escape($this->hexa)."')";
+		$sql .= " VALUES (";
+		$sql .= (isset($this->fk_user) ? (int) $this->fk_user : 'null').",";
+		$sql .= " '".$this->db->escape($this->model_name)."',";
+		$sql .= " '".$this->db->escape($this->datatoimport)."',";
+		$sql .= " '".$this->db->escape($this->hexa)."'";
+		$sql .= ")";
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->db->commit();

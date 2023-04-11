@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Configuración del módulo de PayPal
+PaypalOrCBDoPayment=Pagar con PayPal (tarjeta o PayPal)
+PaypalDoPayment=Pagar con PayPal
+PAYPAL_API_SANDBOX=Prueba de modo / caja de arena
+PAYPAL_API_USER=Nombre de usuario de la API
+PAYPAL_API_PASSWORD=Contraseña de API
+PAYPAL_API_SIGNATURE=Firma de API
+PAYPAL_SSLVERSION=Versión SSL de Curl
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferta de pago "integral" (tarjeta de crédito + PayPal) o solo "PayPal"
+PaypalModeOnlyPaypal=PayPal solamente
+ThisIsTransactionId=Esta es la identificación de la transacción: <b> %s </b>
+PAYPAL_ADD_PAYMENT_URL=Incluya la URL de pago de PayPal cuando envíe un documento por correo electrónico
+NewOnlinePaymentFailed=Nuevo pago en línea intentado pero fallido
+ONLINE_PAYMENT_SENDEMAIL=Dirección de correo electrónico para notificaciones después de cada intento de pago (para el éxito y el fracaso)
+ReturnURLAfterPayment=Devolver URL después del pago
+ValidationOfOnlinePaymentFailed=Error en la validación del pago en línea
+PaymentSystemConfirmPaymentPageWasCalledButFailed=El sistema de pago llamó a la página de confirmación de pago y devolvió un error
+SetExpressCheckoutAPICallFailed=Error en la llamada a la API SetExpressCheckout.
+DoExpressCheckoutPaymentAPICallFailed=Error en la llamada a la API de DoExpressCheckoutPayment.
+ShortErrorMessage=Mensaje de error corto
+ErrorSeverityCode=Código de gravedad del error
+PaypalLiveEnabled=Modo "en vivo" de PayPal habilitado (de lo contrario, modo de prueba / sandbox)
+PaypalImportPayment=Importar pagos de PayPal
+PostActionAfterPayment=Publicar acciones después de los pagos
+ARollbackWasPerformedOnPostActions=Se realizó una reversión en todas las acciones de Publicación. Debe completar las acciones de publicación manualmente si son necesarias.
+ValidationOfPaymentFailed=La validación del pago ha fallado.

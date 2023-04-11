@@ -41,6 +41,8 @@ class mailing_fraise extends MailingTargets
 
 	public $require_module = array('adherent');
 
+	public $enabled = 'isModEnabled("adherent")';
+
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
@@ -91,17 +93,19 @@ class mailing_fraise extends MailingTargets
 	 *    For example if this selector is used to extract 500 different
 	 *    emails from a text file, this function must return 500.
 	 *
-	 *  @param    string    $sql        Requete sql de comptage
-	 *    @return        int            Nb of recipients
+	 *    @param      string    	$sql        Requete sql de comptage
+	 *    @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
 		$sql  = "SELECT count(distinct(a.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql .= " WHERE (a.email IS NOT NULL AND a.email != '') AND a.entity IN (".getEntity('member').")";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = a.email and mu.entity = ".((int) $conf->entity).")";
+		}
 
-		// La requete doit retourner un champ "nb" pour etre comprise
-		// par parent::getNbOfRecipients
+		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
 
@@ -123,16 +127,16 @@ class mailing_fraise extends MailingTargets
 		$s = '';
 
 		// Status
-		$s .= $langs->trans("Status").': ';
-		$s .= '<select name="filter" class="flat">';
-		$s .= '<option value="none">&nbsp;</option>';
-		$s .= '<option value="-1">'.$langs->trans("MemberStatusDraft").'</option>';
+		$s .= '<select id="filter_fraise" name="filter" class="flat">';
+		$s .= '<option value="-1">'.$langs->trans("Status").'</option>';
+		$s .= '<option value="draft">'.$langs->trans("MemberStatusDraft").'</option>';
 		$s .= '<option value="1a">'.$langs->trans("MemberStatusActiveShort").' ('.$langs->trans("MemberStatusPaidShort").')</option>';
 		$s .= '<option value="1b">'.$langs->trans("MemberStatusActiveShort").' ('.$langs->trans("MemberStatusActiveLateShort").')</option>';
 		$s .= '<option value="0">'.$langs->trans("MemberStatusResiliatedShort").'</option>';
 		$s .= '</select> ';
-		$s .= $langs->trans("Type").': ';
-		$s .= '<select name="filter_type" class="flat">';
+		$s .= ajax_combobox("filter_fraise");
+
+		$s .= '<select id="filter_type_fraise" name="filter_type" class="flat">';
 		$sql = "SELECT rowid, libelle as label, statut";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type";
 		$sql .= " WHERE entity IN (".getEntity('member_type').")";
@@ -141,7 +145,7 @@ class mailing_fraise extends MailingTargets
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			$s .= '<option value="0">&nbsp;</option>';
+			$s .= '<option value="-1">'.$langs->trans("Type").'</option>';
 			if (!$num) {
 				$s .= '<option value="0" disabled="disabled">'.$langs->trans("NoCategoriesDefined").'</option>';
 			}
@@ -154,16 +158,17 @@ class mailing_fraise extends MailingTargets
 				$s .= '</option>';
 				$i++;
 			}
+			$s .= ajax_combobox("filter_type");
 		} else {
 			dol_print_error($this->db);
 		}
 
 		$s .= '</select>';
+		$s .= ajax_combobox("filter_type_fraise");
 
 		$s .= ' ';
 
-		$s .= $langs->trans("Category").': ';
-		$s .= '<select name="filter_category" class="flat">';
+		$s .= '<select id="filter_category_fraise" name="filter_category" class="flat">';
 
 		// Show categories
 		$sql = "SELECT rowid, label, type, visible";
@@ -178,7 +183,7 @@ class mailing_fraise extends MailingTargets
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			$s .= '<option value="0">&nbsp;</option>';
+			$s .= '<option value="-1">'.$langs->trans("Category").'</option>';
 			if (!$num) {
 				$s .= '<option value="0" disabled>'.$langs->trans("NoCategoriesDefined").'</option>';
 			}
@@ -191,6 +196,7 @@ class mailing_fraise extends MailingTargets
 				$s .= '</option>';
 				$i++;
 			}
+			$s .= ajax_combobox("filter_category_fraise");
 		} else {
 			dol_print_error($this->db);
 		}
@@ -198,11 +204,11 @@ class mailing_fraise extends MailingTargets
 		$s .= '</select>';
 
 
-		$s .= '<br>';
+		$s .= '<br><span class="opacitymedium">';
 		$s .= $langs->trans("DateEndSubscription").': &nbsp;';
-		$s .= $langs->trans("After").' > '.$form->selectDate(-1, 'subscriptionafter', 0, 0, 1, 'fraise', 1, 0, 0);
+		$s .= $langs->trans("After").' > </span>'.$form->selectDate(-1, 'subscriptionafter', 0, 0, 1, 'fraise', 1, 0, 0);
 		$s .= ' &nbsp; ';
-		$s .= $langs->trans("Before").' < '.$form->selectDate(-1, 'subscriptionbefore', 0, 0, 1, 'fraise', 1, 0, 0);
+		$s .= '<span class="opacitymedium">'.$langs->trans("Before").' < </span>'.$form->selectDate(-1, 'subscriptionbefore', 0, 0, 1, 'fraise', 1, 0, 0);
 
 		return $s;
 	}
@@ -246,24 +252,21 @@ class mailing_fraise extends MailingTargets
 		$sql .= " a.lastname, a.firstname,";
 		$sql .= " a.datefin, a.civility as civility_id, a.login, a.societe"; // Other fields
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
-		if (GETPOST('filter_category')) {
+		if (GETPOST('filter_category', 'int') > 0) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie_member as cm ON cm.fk_member = a.rowid";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = cm.fk_categorie AND c.rowid = ".((int) GETPOST('filter_category', 'int'));
 		}
 		$sql .= " , ".MAIN_DB_PREFIX."adherent_type as ta";
 		$sql .= " WHERE a.entity IN (".getEntity('member').") AND a.email <> ''"; // Note that null != '' is false
-		$sql .= " AND a.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$this->db->escape($mailing_id).")";
+		$sql .= " AND a.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		// Filter on status
-		if (GETPOST("filter") == '-1') {
-			$sql .= " AND a.statut=-1";
-		}
-		if (GETPOST("filter", 'aZ09') == '1a') {
+		if (GETPOST("filter", 'aZ09') == 'draft') {
+			$sql .= " AND a.statut = -1";
+		} elseif (GETPOST("filter", 'aZ09') == '1a') {
 			$sql .= " AND a.statut=1 AND (a.datefin >= '".$this->db->idate($now)."' OR ta.subscription = 0)";
-		}
-		if (GETPOST("filter", 'aZ09') == '1b') {
+		} elseif (GETPOST("filter", 'aZ09') == '1b') {
 			$sql .= " AND a.statut=1 AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND ta.subscription = 1)";
-		}
-		if (GETPOST("filter", 'aZ09') === '0') {
+		} elseif (GETPOST("filter", 'aZ09') === '0') {
 			$sql .= " AND a.statut=0";
 		}
 		// Filter on date
@@ -276,7 +279,10 @@ class mailing_fraise extends MailingTargets
 		$sql .= " AND a.fk_adherent_type = ta.rowid";
 		// Filter on type
 		if (GETPOST('filter_type', 'int') > 0) {
-			$sql .= " AND ta.rowid='".$this->db->escape(GETPOST('filter_type', 'int'))."'";
+			$sql .= " AND ta.rowid = ".((int) GETPOST('filter_type', 'int'));
+		}
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = a.email and mu.entity = ".((int) $conf->entity).")";
 		}
 		$sql .= " ORDER BY a.email";
 		//print $sql;

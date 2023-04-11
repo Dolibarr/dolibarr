@@ -13,6 +13,7 @@ descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Класифициране на св
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Класифициране на свързана клиентска поръчка - първоизточник като фактурирана след валидиране на клиентска фактура (и ако стойността на фактурата е същата като общата сума на свързаната поръчка)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Класифициране на свързана клиентска поръчка - първоизточник като фактурирана след плащане на клиентска фактура (и ако стойността на фактурата е същата като общата сума на свързаната поръчка)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Класифициране на свързана клиентска поръчка - първоизточник като изпратена след валидиране на доставка (и ако количеството, изпратено, чрез всички пратки е същото като в поръчката за актуализиране)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Класифициране на свързаното за запитване към доставчик - първоизточник като фактурираното след валидиране на доставната фактура (и ако стойността на фактурата е същата като общата сума на свързаното запитване)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Класифициране на свързаната поръчка за покупка - първоизточник като фактурирана след валидиране на доставна фактура (и ако стойността на фактурата е същата като общата сума на свързаната поръчка)

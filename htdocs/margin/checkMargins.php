@@ -106,8 +106,8 @@ if (empty($reshook)) {
 					$invoicedet_id = $tmp_array[1];
 					if (!empty($invoicedet_id)) {
 						$sql = 'UPDATE '.MAIN_DB_PREFIX.'facturedet';
-						$sql .= ' SET buy_price_ht=\''.price2num($value).'\'';
-						$sql .= ' WHERE rowid='.$invoicedet_id;
+						$sql .= " SET buy_price_ht = ".((float) price2num($value));
+						$sql .= ' WHERE rowid = '.((int) $invoicedet_id);
 						$result = $db->query($sql);
 						if (!$result) {
 							setEventMessages($db->lasterror, null, 'errors');
@@ -176,7 +176,8 @@ if ($optioncss != '') {
 }
 
 // Show tabs
-$head = marges_prepare_head($user);
+$head = marges_prepare_head();
+
 $picto = 'margin';
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';

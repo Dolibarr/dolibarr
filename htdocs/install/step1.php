@@ -199,6 +199,14 @@ if (!empty($main_url) && substr($main_url, dol_strlen($main_url) - 1) == "/") {
 	$main_url = substr($main_url, 0, dol_strlen($main_url) - 1);
 }
 
+if (!dol_is_dir($main_dir.'/core/db/')) {
+	print '<div class="error">'.$langs->trans("ErrorBadValueForParameter", $main_dir, $langs->transnoentitiesnoconv("WebPagesDirectory")).'</div>';
+	print '<br>';
+	//print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
+	print $langs->trans("ErrorGoBackAndCorrectParameters");
+	$error++;
+}
+
 // Test database connection
 if (!$error) {
 	$result = @include_once $main_dir."/core/db/".$db_type.'.class.php';
@@ -261,6 +269,7 @@ if (!$error) {
 				$error++;
 			}
 		}
+
 		// If we need simple access
 		if (!$error && (empty($db_create_database) && empty($db_create_user))) {
 			$db = getDoliDBInstance($db_type, $db_host, $db_user, $db_pass, $db_name, $db_port);
@@ -531,39 +540,48 @@ if (!$error && $db->connected && $action == "set") {
 				if ($db->connected) {
 					$resultbis = 1;
 
-					// Create user
-					$result = $db->DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
-
-					// Create user bis
-					if ($databasefortest == 'mysql') {
-						if (!in_array($dolibarr_main_db_host, array('127.0.0.1', '::1', 'localhost', 'localhost.local'))) {
-							$resultbis = $db->DDLCreateUser('%', $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
-						}
-					}
-
-					if ($result > 0 && $resultbis > 0) {
+					if (empty($dolibarr_main_db_pass)) {
+						dolibarr_install_syslog("step1: failed to create user, password is empty", LOG_ERR);
 						print '<tr><td>';
 						print $langs->trans("UserCreation").' : ';
 						print $dolibarr_main_db_user;
 						print '</td>';
-						print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
+						print '<td>'.$langs->trans("Error").": A password for database user is mandatory.</td></tr>";
 					} else {
-						if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS'
-						|| $db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
-						|| $db->errno() == 'DB_ERROR_USER_ALREADY_EXISTS') {
-							dolibarr_install_syslog("step1: user already exists");
+						// Create user
+						$result = $db->DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
+
+						// Create user bis
+						if ($databasefortest == 'mysql') {
+							if (!in_array($dolibarr_main_db_host, array('127.0.0.1', '::1', 'localhost', 'localhost.local'))) {
+								$resultbis = $db->DDLCreateUser('%', $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
+							}
+						}
+
+						if ($result > 0 && $resultbis > 0) {
 							print '<tr><td>';
 							print $langs->trans("UserCreation").' : ';
 							print $dolibarr_main_db_user;
 							print '</td>';
-							print '<td>'.$langs->trans("LoginAlreadyExists").'</td></tr>';
+							print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
 						} else {
-							dolibarr_install_syslog("step1: failed to create user", LOG_ERR);
-							print '<tr><td>';
-							print $langs->trans("UserCreation").' : ';
-							print $dolibarr_main_db_user;
-							print '</td>';
-							print '<td>'.$langs->trans("Error").': '.$db->errno().' '.$db->error().($db->error ? '. '.$db->error : '')."</td></tr>";
+							if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS'
+							|| $db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
+							|| $db->errno() == 'DB_ERROR_USER_ALREADY_EXISTS') {
+								dolibarr_install_syslog("step1: user already exists");
+								print '<tr><td>';
+								print $langs->trans("UserCreation").' : ';
+								print $dolibarr_main_db_user;
+								print '</td>';
+								print '<td>'.$langs->trans("LoginAlreadyExists").'</td></tr>';
+							} else {
+								dolibarr_install_syslog("step1: failed to create user", LOG_ERR);
+								print '<tr><td>';
+								print $langs->trans("UserCreation").' : ';
+								print $dolibarr_main_db_user;
+								print '</td>';
+								print '<td>'.$langs->trans("Error").': '.$db->errno().' '.$db->error().($db->error ? '. '.$db->error : '')."</td></tr>";
+							}
 						}
 					}
 
@@ -807,7 +825,7 @@ function write_conf_file($conffile)
 	global $dolibarr_main_distrib;
 	global $db_host, $db_port, $db_name, $db_user, $db_pass, $db_type, $db_character_set, $db_collation;
 	global $conffile, $conffiletoshow, $conffiletoshowshort;
-	global $force_dolibarr_lib_ADODB_PATH, $force_dolibarr_lib_NUSOAP_PATH;
+	global $force_dolibarr_lib_NUSOAP_PATH;
 	global $force_dolibarr_lib_TCPDF_PATH, $force_dolibarr_lib_FPDI_PATH;
 	global $force_dolibarr_lib_GEOIP_PATH;
 	global $force_dolibarr_lib_ODTPHP_PATH, $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP;
@@ -890,7 +908,7 @@ function write_conf_file($conffile)
 		fputs($fp, '$dolibarr_main_force_https=\''.$main_force_https.'\';');
 		fputs($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_restrict_os_commands=\'mysqldump, mysql, pg_dump, pgrestore\';');
+		fputs($fp, '$dolibarr_main_restrict_os_commands=\'mysqldump, mysql, pg_dump, pgrestore, clamdscan, clamscan.exe\';');
 		fputs($fp, "\n");
 
 		fputs($fp, '$dolibarr_nocsrfcheck=\'0\';');
@@ -900,6 +918,8 @@ function write_conf_file($conffile)
 		fputs($fp, "\n");
 
 		fputs($fp, '$dolibarr_mailing_limit_sendbyweb=\'0\';');
+		fputs($fp, "\n");
+		fputs($fp, '$dolibarr_mailing_limit_sendbycli=\'0\';');
 		fputs($fp, "\n");
 
 		// Write params to overwrites default lib path
@@ -923,11 +943,6 @@ function write_conf_file($conffile)
 			fputs($fp, '//'); $force_dolibarr_lib_TCPDI_PATH = '';
 		}
 		fputs($fp, '$dolibarr_lib_TCPDI_PATH=\''.$force_dolibarr_lib_TCPDI_PATH.'\';');
-		fputs($fp, "\n");
-		if (empty($force_dolibarr_lib_ADODB_PATH)) {
-			fputs($fp, '//'); $force_dolibarr_lib_ADODB_PATH = '';
-		}
-		fputs($fp, '$dolibarr_lib_ADODB_PATH=\''.$force_dolibarr_lib_ADODB_PATH.'\';');
 		fputs($fp, "\n");
 		if (empty($force_dolibarr_lib_GEOIP_PATH)) {
 			fputs($fp, '//'); $force_dolibarr_lib_GEOIP_PATH = '';

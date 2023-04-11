@@ -27,6 +27,7 @@
  *	\brief      Page to setup accountancy module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -146,7 +147,7 @@ print "</tr>\n";
 print '<tr class="oddeven"><td width="200"><input type="radio" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode != 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeTrue').'</td>';
 print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'));
 // Write info on way to count VAT
-//if (! empty($conf->global->MAIN_MODULE_COMPTABILITE))
+//if (!empty($conf->global->MAIN_MODULE_COMPTABILITE))
 //{
 //	//	print "<br>\n";
 //	//	print nl2br($langs->trans('OptionModeTrueInfoModuleComptabilite'));
@@ -179,7 +180,7 @@ foreach ($list as $key) {
 
 	// Value
 	print '<td>';
-	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	print '</td></tr>';
 }
 
@@ -199,7 +200,7 @@ print '</td></tr>';
 
 print "</table>\n";
 
-print '<br><br><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+print '<br><br><div style="text-align:center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
 print '</form>';
 
 // End of page

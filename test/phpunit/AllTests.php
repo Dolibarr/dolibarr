@@ -41,11 +41,11 @@ if (empty($conf->adherent->enabled)) {
 	print "Error: Module member must be enabled to have significant results.\n";
 	exit(1);
 }
-if (! empty($conf->ldap->enabled)) {
+if (isModEnabled('ldap')) {
 	print "Error: LDAP module should not be enabled.\n";
 	exit(1);
 }
-if (! empty($conf->google->enabled)) {
+if (!empty($conf->google->enabled)) {
 	print "Warning: Google module should not be enabled.\n";
 }
 if (empty($user->id)) {
@@ -104,12 +104,16 @@ class AllTests
 		$suite->addTestSuite('XCalLibTest');
 
 		// Rules into source files content
+		require_once dirname(__FILE__).'/RepositoryTest.php';
+		$suite->addTestSuite('RepositoryTest');
 		require_once dirname(__FILE__).'/LangTest.php';
 		$suite->addTestSuite('LangTest');
 		require_once dirname(__FILE__).'/CodingSqlTest.php';
 		$suite->addTestSuite('CodingSqlTest');
 		require_once dirname(__FILE__).'/CodingPhpTest.php';
 		$suite->addTestSuite('CodingPhpTest');
+		require_once dirname(__FILE__).'/DoliDBTest.php';
+		$suite->addTestSuite('DoliDBTest');
 
 		require_once dirname(__FILE__).'/SecurityTest.php';
 		$suite->addTestSuite('SecurityTest');
@@ -173,6 +177,8 @@ class AllTests
 		require_once dirname(__FILE__).'/CommandeFournisseurTest.php';
 		$suite->addTestSuite('CommandeFournisseurTest');
 
+		require_once dirname(__FILE__).'/CommonInvoiceTest.php';
+		$suite->addTestSuite('CommonInvoiceTest');
 		require_once dirname(__FILE__).'/FactureTest.php';
 		$suite->addTestSuite('FactureTest');
 		require_once dirname(__FILE__).'/FactureRecTest.php';
@@ -202,13 +208,22 @@ class AllTests
 		$suite->addTestSuite('EntrepotTest');
 		require_once dirname(__FILE__).'/MouvementStockTest.php';
 		$suite->addTestSuite('MouvementStockTest');
+		require_once dirname(__FILE__).'/InventoryTest.php';
+		$suite->addTestSuite('InventoryTest');
 
 		require_once dirname(__FILE__).'/CategorieTest.php';
 		$suite->addTestSuite('CategorieTest');
 
+		require_once dirname(__FILE__).'/ProjectTest.php';
+		$suite->addTestSuite('ProjectTest');
+
+		require_once dirname(__FILE__).'/KnowledgeRecordTest.php';
+		$suite->addTestSuite('KnowledgeRecordTest');
+
 		require_once dirname(__FILE__).'/AccountingAccountTest.php';
 		$suite->addTestSuite('AccountingAccountTest');
 
+		// Rest
 		require_once dirname(__FILE__).'/RestAPIUserTest.php';
 		$suite->addTestSuite('RestAPIUserTest');
 		require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
@@ -255,6 +270,14 @@ class AllTests
 		$suite->addTestSuite('PaypalTest');
 		require_once dirname(__FILE__).'/StripeTest.php';
 		$suite->addTestSuite('StripeTest');
+
+		// Email collector
+		require_once dirname(__FILE__).'/EmailCollectorTest.php';
+		$suite->addTestSuite('EmailCollectorTest');
+
+		// Website
+		require_once dirname(__FILE__).'/WebsiteTest.php';
+		$suite->addTestSuite('WebsiteTest');
 
 		return $suite;
 	}

@@ -46,24 +46,37 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
 $includecustom=0;
 $includeconstants=array();
+$buildzip=0;
 
 if (empty($argv[1])) {
-	print "Usage:   ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
+	print "Usage:   ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value] [buildzip=1]\n";
 	print "Example: ".$script_file." release=6.0.0 includecustom=1 includeconstant=FR:INVOICE_CAN_ALWAYS_BE_REMOVED:0 includeconstant=all:MAILING_NO_USING_PHPMAIL:1\n";
 	exit -1;
 }
 
-parse_str($argv[1]);
 
 $i=0;
+$result = array();
 while ($i < $argc) {
-	if (! empty($argv[$i])) {
-		parse_str($argv[$i]);
+	if (!empty($argv[$i])) {
+		parse_str($argv[$i], $result);	// set all params $release, $includecustom, $includeconstant, $buildzip ...
 	}
-	if (preg_match('/includeconstant=/', $argv[$i])) {
-		$tmp=explode(':', $includeconstant, 3);			// $includeconstant has been set with previous parse_str()
+	if (!empty($result["release"])) {
+		$release = $result["release"];
+	}
+	if (!empty($result["includecustom"])) {
+		$includecustom = $result["includecustom"];
+	}
+	if (!empty($result["includeconstant"])) {
+		$includeconstants[$i] = $result["includeconstant"];
+	}
+	if (!empty($result["buildzip"])) {
+		$buildzip=1;
+	}
+	if (preg_match('/includeconstant=/', strval($argv[$i]))) {
+		$tmp=explode(':', $result['includeconstant'], 3);			// $includeconstant has been set with previous parse_str()
 		if (count($tmp) != 3) {
-			print "Error: Bad parameter includeconstant=".$includeconstant."\n";
+			print "Error: Bad parameter includeconstant=".$result['includeconstant'] ."\n";
 			exit -1;
 		}
 		$includeconstants[$tmp[0]][$tmp[1]] = $tmp[2];
@@ -72,7 +85,7 @@ while ($i < $argc) {
 }
 
 if (empty($release)) {
-	print "Error: Missing release paramater\n";
+	print "Error: Missing release parameter\n";
 	print "Usage: ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
 	exit -1;
 }
@@ -125,8 +138,8 @@ print "\n";
 
 //$outputfile=dirname(__FILE__).'/../htdocs/install/filelist-'.$release.'.xml';
 $outputdir=dirname(dirname(__FILE__)).'/htdocs/install';
-print 'Delete current files '.$outputdir.'/filelist*.xml'."\n";
-dol_delete_file($outputdir.'/filelist*.xml', 0, 1, 1);
+print 'Delete current files '.$outputdir.'/filelist*.xml*'."\n";
+dol_delete_file($outputdir.'/filelist*.xml*', 0, 1, 1);
 
 $checksumconcat=array();
 
@@ -237,6 +250,22 @@ fputs($fp, '</dolibarr_script_dir_checksum>'."\n");
 fputs($fp, '</checksum_list>'."\n");
 fclose($fp);
 
-print "File ".$outputfile." generated\n";
+if (empty($buildzip)) {
+	print "File ".$outputfile." generated\n";
+} else {
+	if ($buildzip == '1' || $buildzip == 'zip') {
+		$result = dol_compress_file($outputfile, $outputfile.'.zip', 'zip');
+		if ($result > 0) {
+			dol_delete_file($outputfile);
+			print "File ".$outputfile.".zip generated\n";
+		}
+	} elseif ($buildzip == '2' || $buildzip == 'gz') {
+		$result = dol_compress_file($outputfile, $outputfile.'.gz', 'gz');
+		if ($result > 0) {
+			dol_delete_file($outputfile);
+			print "File ".$outputfile.".gz generated\n";
+		}
+	}
+}
 
 exit(0);

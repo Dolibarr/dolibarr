@@ -80,7 +80,7 @@ class CommandeFournisseurTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
@@ -93,7 +93,7 @@ class CommandeFournisseurTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -106,7 +106,7 @@ class CommandeFournisseurTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -122,7 +122,7 @@ class CommandeFournisseurTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -145,9 +145,9 @@ class CommandeFournisseurTest extends PHPUnit\Framework\TestCase
 		$societe=new Societe($db);
 		$societe->fetch($socid);
 		$product=new ProductFournisseur($db);
-		$product->fetch(0, 'PIDRESS');
+		$product->fetch(0, 'PINKDRESS');
 		if ($product->id <= 0) {
-			print "\n".__METHOD__." A product with ref PIDRESS must exists into database"; die(1);
+			print "\n".__METHOD__." A product with ref PINKDRESS must exists into database"; die(1);
 		}
 
 		$quantity=10;

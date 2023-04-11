@@ -30,3 +30,4 @@ NonShippable=Niet verzendbaar
 ShowShippableStatus=Toon verzendstatus
 ShowReceiving=Toon afleverbon
 NonExistentOrder=Niet bestaande order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Hoeveelheid al toegekend in vorige regels

@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - admin
+BoldRefAndPeriodOnPDF=Imprimir en PDF referencia y período de producto
+BoldLabelOnPDF=Imprimir etiqueta del producto en Negrita en el PDF
+VersionProgram=Versión del programa
+VersionLastInstall=Versión inicial instalada
+VersionLastUpgrade=Actualizar a la versión más reciente

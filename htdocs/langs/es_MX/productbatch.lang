@@ -18,3 +18,5 @@ ProductLotSetup=Configuración del módulo lote/serie
 ShowCurrentStockOfLot=Mostrar las existencias actuales para la relación producto/lote
 ShowLogOfMovementIfLot=Mostrar el registro de los movimientos para la  relación producto/lote
 StockDetailPerBatch=Detalle de las existencias por lote
+SerialNumberAlreadyInUse=El número de serie %s ya se encuentra utilizado por el producto %s
+EndOfLife=Vida útil

@@ -30,6 +30,10 @@ function mymoduleAdminPrepareHead()
 {
 	global $langs, $conf;
 
+	// global $db;
+	// $extrafields = new ExtraFields($db);
+	// $extrafields->fetch_name_optionals_label('myobject');
+
 	$langs->load("mymodule@mymodule");
 
 	$h = 0;
@@ -43,6 +47,10 @@ function mymoduleAdminPrepareHead()
 	/*
 	$head[$h][0] = dol_buildpath("/mymodule/admin/myobject_extrafields.php", 1);
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = is_countable($extrafields->attributes['myobject']['label']) ? count($extrafields->attributes['myobject']['label']) : 0;
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= ' <span class="badge">' . $nbExtrafields . '</span>';
+	}
 	$head[$h][2] = 'myobject_extrafields';
 	$h++;
 	*/
@@ -60,7 +68,9 @@ function mymoduleAdminPrepareHead()
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'mymodule');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'mymodule@mymodule');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'mymodule@mymodule', 'remove');
 
 	return $head;
 }

@@ -20,7 +20,7 @@
 
 /**
  *	\file       htdocs/core/lib/barcode.lib.php
- *	\brief      Set of functions used for barcode generation
+ *	\brief      Set of functions used for barcode generation (internal lib, also code 'phpbarcode')
  *	\ingroup    core
  */
 
@@ -59,7 +59,10 @@ if (empty($font_loc)) {
 if (defined('PHP-BARCODE_PATH_COMMAND')) {
 	$genbarcode_loc = constant('PHP-BARCODE_PATH_COMMAND');
 } else {
-	$genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
+	$genbarcode_loc = '';
+	if (!empty($conf->global->GENBARCODE_LOCATION)) {
+		$genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
+	}
 }
 
 
@@ -69,7 +72,7 @@ if (defined('PHP-BARCODE_PATH_COMMAND')) {
  * Print barcode
  *
  * @param	string	       $code		Code
- * @param	string	       $encoding	Encoding
+ * @param	string	       $encoding	Encoding ('EAN13', 'ISBN', 'C128', 'UPC', 'CBR', 'QRCODE', 'DATAMATRIX', 'ANY'...)
  * @param	integer	       $scale		Scale
  * @param	string	       $mode		'png' or 'jpg' ...
  * @return	array|string   $bars		array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info) or string with error message
@@ -149,11 +152,9 @@ function barcode_encode($code, $encoding)
 		dol_syslog("barcode.lib.php::barcode_encode Use genbarcode ".$genbarcode_loc." code=".$code." encoding=".$encoding);
 		$bars = barcode_encode_genbarcode($code, $encoding);
 	} else {
-		print "barcode_encode needs an external programm for encodings other then EAN/ISBN (code=".$code.", encoding=".$encoding.")<BR>\n";
+		print "barcode_encode needs an external program for encodings other then EAN/ISBN (code=".dol_escape_htmltag($code).", encoding=".dol_escape_htmltag($encoding).")<BR>\n";
 		print "<UL>\n";
 		print "<LI>download gnu-barcode from <A href=\"https://www.gnu.org/software/barcode/\">www.gnu.org/software/barcode/</A>\n";
-		print "<LI>compile and install them\n";
-		print "<LI>download genbarcode from <A href=\"http://www.ashberg.de/bar/\">www.ashberg.de/bar/</A>\n";
 		print "<LI>compile and install them\n";
 		print "<LI>specify path the genbarcode in barcode module setup\n";
 		print "</UL>\n";
@@ -333,7 +334,7 @@ function barcode_encode_upc($upc, $encoding = "UPC")
  */
 function barcode_encode_genbarcode($code, $encoding)
 {
-	global $genbarcode_loc;
+	global $conf, $db, $genbarcode_loc;
 
 	// Clean parameters
 	if (preg_match("/^ean$/i", $encoding) && strlen($code) == 13) {
@@ -342,27 +343,34 @@ function barcode_encode_genbarcode($code, $encoding)
 	if (!$encoding) {
 		$encoding = "ANY";
 	}
-	$encoding = preg_replace("/[\\\|]/", "_", $encoding);
-	$code = preg_replace("/[\\\|]/", "_", $code);
+	$encoding = dol_string_nospecial($encoding, '_');
+	$code = dol_string_nospecial($code, "_");
 
 	$command = escapeshellarg($genbarcode_loc);
-	//$paramclear=" \"".str_replace("\"", "\\\"",$code)."\" \"".str_replace("\"", "\\\"",strtoupper($encoding))."\"";
 	$paramclear = " ".escapeshellarg($code)." ".escapeshellarg(strtoupper($encoding));
 
 	$fullcommandclear = $command." ".$paramclear." 2>&1";
 	//print $fullcommandclear."<br>\n";exit;
 
 	dol_syslog("Run command ".$fullcommandclear);
-	$fp = popen($fullcommandclear, "r");
-	if ($fp) {
-		$bars = fgets($fp, 1024);
-		$text = fgets($fp, 1024);
-		$encoding = fgets($fp, 1024);
-		pclose($fp);
+
+	$outputfile = $conf->user->dir_temp.'/genbarcode.tmp'; // File used with popen method
+
+	// Execute a CLI
+	include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+	$utils = new Utils($db);
+	$result = $utils->executeCLI($fullcommandclear, $outputfile);
+
+	if (!empty($result['output'])) {
+		$tmparr = explode("\n", $result['output']);
+		$bars = $tmparr[0];
+		$text = $tmparr[1];
+		$encoding = $tmparr[2];
 	} else {
-		dol_syslog("barcode.lib.php::barcode_encode_genbarcode failed to run popen ".$fullcommandclear, LOG_ERR);
+		dol_syslog("barcode.lib.php::barcode_encode_genbarcode failed to run ".$fullcommandclear, LOG_ERR);
 		return false;
 	}
+
 	//var_dump($bars);
 	$ret = array(
 		"bars" => trim($bars),

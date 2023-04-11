@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,7 @@
  *	   \brief	   Page reporting TO by Products & Services
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
@@ -39,10 +41,10 @@ $socid = GETPOST('socid', 'int');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-if (!empty($conf->comptabilite->enabled)) {
+if (isModEnabled('comptabilite')) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
 
@@ -52,8 +54,8 @@ if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }
 
-$sortorder = GETPOST("sortorder", 'aZ09');
-$sortfield = GETPOST("sortfield", 'aZ09');
+$sortorder = GETPOST("sortorder", 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'aZ09comma');
 if (!$sortorder) {
 	$sortorder = "asc";
 }
@@ -186,7 +188,9 @@ if (!empty($year)) {
 if (!empty($month)) {
 	$headerparams['month'] = $month;
 }
-$headerparams['q'] = $q;
+if (!empty($q)) {
+	$headerparams['q'] = $q;
+}
 
 $tableparams = array();
 if (!empty($selected_cat)) {
@@ -205,6 +209,7 @@ $allparams = array_merge($commonparams, $headerparams, $tableparams);
 $headerparams = array_merge($commonparams, $headerparams);
 $tableparams = array_merge($commonparams, $tableparams);
 
+$paramslink="";
 foreach ($allparams as $key => $value) {
 	$paramslink .= '&'.$key.'='.$value;
 }
@@ -227,6 +232,9 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	$modecompta = "RECETTES-DEPENSES";
 }
 
+$exportlink="";
+$namelink="";
+
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("Turnover").', '.$langs->trans("ByProductsAndServices");
@@ -239,7 +247,6 @@ if ($modecompta == "CREANCES-DETTES") {
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
 	}
-
 	$builddate = dol_now();
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("TurnoverCollected").', '.$langs->trans("ByProductsAndServices");
@@ -265,7 +272,7 @@ if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 
 report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
-if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
+if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
@@ -295,8 +302,6 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
 	if ($selected_cat === -2) {	// Without any category
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
-	} elseif ($selected_cat) { 	// Into a specific category
-		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_product as cp";
 	}
 
 	$parameters = array();
@@ -319,7 +324,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 	if ($selected_cat === -2) {	// Without any category
 		$sql .= " AND cp.fk_product is null";
-	} elseif ($selected_cat) {	// Into a specific category
+	} elseif ($selected_cat > 0) {	// Into a specific category
 		if ($subcat) {
 			$TListOfCats = $categorie->get_full_arbo('product', $selected_cat, 1);
 
@@ -391,7 +396,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 	// Category filter
 	print '<tr class="liste_titre">';
 	print '<td>';
-	print $langs->trans("Category").': '.$formother->select_categories(Categorie::TYPE_PRODUCT, $selected_cat, 'search_categ', true);
+	print img_picto('', 'category', 'class="paddingrightonly"');
+	print $formother->select_categories(Categorie::TYPE_PRODUCT, $selected_cat, 'search_categ', 0, $langs->trans("Category"));
 	print ' ';
 	print $langs->trans("SubCats").'? ';
 	print '<input type="checkbox" name="subcat" value="yes"';
@@ -406,7 +412,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 	//select thirdparty
 	print '</br>';
-	print $langs->trans("ThirdParty").': '.$form->select_thirdparty_list($selected_soc, 'search_soc', '', 1);
+	print img_picto('', 'company', 'class="paddingrightonly"');
+	print $form->select_thirdparty_list($selected_soc, 'search_soc', '', $langs->trans("ThirdParty"));
 	print '</td>';
 
 	print '<td colspan="5" class="right">';
@@ -455,7 +462,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$_SERVER["PHP_SELF"],
 		"amount",
 		"",
-		$classslink,
+		$paramslink,
 		'class="right"',
 		$sortfield,
 		$sortorder

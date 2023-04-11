@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2021 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@
  *
  * @param	string	$usertotest		Login
  * @param	string	$passwordtotest	Password
- * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
+ * @param   int		$entitytotest   Numero of instance (always 1 if module multicompany not enabled)
  * @return	string					Login if OK, '' if KO
  */
 function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
@@ -45,7 +46,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 	// Force master entity in transversal mode
 	$entity = $entitytotest;
-	if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 		$entity = 1;
 	}
 
@@ -59,8 +60,8 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		// Load translation files required by the page
 		$langs->loadLangs(array('main', 'other'));
 
-		$_SESSION["dol_loginmesg"] = $langs->trans("ErrorLDAPFunctionsAreDisabledOnThisPHP").' '.$langs->trans("TryAnotherConnectionMode");
-		return;
+		$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLDAPFunctionsAreDisabledOnThisPHP").' '.$langs->transnoentitiesnoconv("TryAnotherConnectionMode");
+		return '';
 	}
 
 	if ($usertotest) {
@@ -76,7 +77,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		$ldapdn = $dolibarr_main_auth_ldap_dn;
 		$ldapadminlogin = $dolibarr_main_auth_ldap_admin_login;
 		$ldapadminpass = $dolibarr_main_auth_ldap_admin_pass;
-		$ldapdebug = (empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false" ? false : true);
+		$ldapdebug = ((empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false") ? false : true);
 
 		if ($ldapdebug) {
 			print "DEBUG: Logging LDAP steps<br>\n";
@@ -93,9 +94,9 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 		if ($ldapdebug) {
 			dol_syslog("functions_ldap::check_user_password_ldap Server:".join(',', $ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType);
-			dol_syslog("functions_ldap::check_user_password_ldap uid/samacountname=".$ldapuserattr.", dn=".$ldapdn.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword);
+			dol_syslog("functions_ldap::check_user_password_ldap uid/samaccountname=".$ldapuserattr.", dn=".$ldapdn.", Admin:".$ldap->searchUser.", Pass:".dol_trunc($ldap->searchPassword, 3));
 			print "DEBUG: Server:".join(',', $ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType."<br>\n";
-			print "DEBUG: uid/samacountname=".$ldapuserattr.", dn=".$ldapdn.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword."<br>\n";
+			print "DEBUG: uid/samaccountname=".$ldapuserattr.", dn=".$ldapdn.", Admin:".$ldap->searchUser.", Pass:".dol_trunc($ldap->searchPassword, 3)."<br>\n";
 		}
 
 		$resultFetchLdapUser = 0;
@@ -108,9 +109,9 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 			$userSearchFilter = str_replace('%1%', $usertotest, $dolibarr_main_auth_ldap_filter);
 		}
 
-		// If admin login provided
+		// If admin login or ldap auth filter provided
 		// Code to get user in LDAP from an admin connection (may differ from user connection, done later)
-		if ($ldapadminlogin) {
+		if ($ldapadminlogin || $dolibarr_main_auth_ldap_filter) {
 			$result = $ldap->connect_bind();
 			if ($result > 0) {
 				$resultFetchLdapUser = $ldap->fetch($usertotest, $userSearchFilter);
@@ -120,10 +121,10 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					if ($ldapdebug) {
 						print "DEBUG: User ".$usertotest." must change password<br>\n";
 					}
-					$ldap->close();
-					sleep(1);
+					$ldap->unbind();
+					sleep(1); // Anti brut force protection. Must be same delay when user and password are not valid.
 					$langs->load('ldap');
-					$_SESSION["dol_loginmesg"] = $langs->trans("YouMustChangePassNextLogon", $usertotest, $ldap->domainFQDN);
+					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("YouMustChangePassNextLogon", $usertotest, $ldap->domainFQDN);
 					return '';
 				}
 			} else {
@@ -131,7 +132,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					print "DEBUG: ".$ldap->error."<br>\n";
 				}
 			}
-			$ldap->close();
+			$ldap->unbind();
 		}
 
 		// Forge LDAP user and password to test with them
@@ -151,10 +152,13 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		if ($result > 0) {
 			if ($result == 2) {	// Connection is ok for user/pass into LDAP
 				$login = $usertotest;
-				if (!empty($conf->global->LDAP_FIELD_LOGIN)) {
-					$login = $ldap->login;
-				}
 				dol_syslog("functions_ldap::check_user_password_ldap $login authentication ok");
+				// For the case, we search the user id using a search key without the login (but using other fields like id),
+				// we need to get the real login to use in the ldap answer.
+				if (!empty($conf->global->LDAP_FIELD_LOGIN) && !empty($ldap->login)) {
+					$login = $ldap->login;
+					dol_syslog("functions_ldap::check_user_password_ldap login is now $login (LDAP_FIELD_LOGIN=".getDolGlobalString('LDAP_FIELD_LOGIN').")");
+				}
 
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -163,22 +167,22 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 				$now = dol_now();
 				if ($tmpuser->datestartvalidity && $db->jdate($tmpuser->datestartvalidity) >= $now) {
-					$ldap->close();
+					$ldap->unbind();
 					// Load translation files required by the page
 					$langs->loadLangs(array('main', 'errors'));
-					$_SESSION["dol_loginmesg"] = $langs->trans("ErrorLoginDateValidity");
+					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
 					return '--bad-login-validity--';
 				}
 				if ($tmpuser->dateendvalidity && $db->jdate($tmpuser->dateendvalidity) <= dol_get_first_hour($now)) {
-					$ldap->close();
+					$ldap->unbind();
 					// Load translation files required by the page
 					$langs->loadLangs(array('main', 'errors'));
-					$_SESSION["dol_loginmesg"] = $langs->trans("ErrorLoginDateValidity");
+					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
 					return '--bad-login-validity--';
 				}
 
 				// ldap2dolibarr synchronisation
-				if ($login && !empty($conf->ldap->enabled) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr') {	// ldap2dolibarr synchronisation
+				if ($login && !empty($conf->ldap->enabled) && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') == Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {	// ldap2dolibarr synchronization
 					dol_syslog("functions_ldap::check_user_password_ldap Sync ldap2dolibarr");
 
 					// On charge les attributs du user ldap
@@ -207,7 +211,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					}
 
 					$usertmp = new User($db);
-					$resultFetchUser = $usertmp->fetch('', $login, $sid);
+					$resultFetchUser = $usertmp->fetch('', $login, $sid, 1, ($entitytotest > 0 ? $entitytotest : -1));
 					if ($resultFetchUser > 0) {
 						dol_syslog("functions_ldap::check_user_password_ldap Sync user found user id=".$usertmp->id);
 						// On verifie si le login a change et on met a jour les attributs dolibarr
@@ -215,7 +219,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 						if ($usertmp->login != $ldap->login && $ldap->login) {
 							$usertmp->login = $ldap->login;
 							$usertmp->update($usertmp);
-							// TODO Que faire si update echoue car on update avec un login deja existant.
+							// TODO Que faire si update echoue car on update avec un login deja existant pour un autre compte.
 						}
 
 						//$resultUpdate = $usertmp->update_ldap2dolibarr($ldap);
@@ -224,27 +228,29 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					unset($usertmp);
 				}
 
-				if (!empty($conf->multicompany->enabled)) {	// We must check entity (even if sync is not active)
+				if (isModEnabled('multicompany')) {	// We must check entity (even if sync is not active)
 					global $mc;
 
 					$usertmp = new User($db);
 					$usertmp->fetch('', $login);
-					$ret = $mc->checkRight($usertmp->id, $entitytotest);
-					if ($ret < 0) {
-						dol_syslog("functions_ldap::check_user_password_ldap Authentication KO entity '".$entitytotest."' not allowed for user '".$usertmp->id."'", LOG_NOTICE);
-						$login = ''; // force authentication failure
+					if (is_object($mc)) {
+						$ret = $mc->checkRight($usertmp->id, $entitytotest);
+						if ($ret < 0) {
+							dol_syslog("functions_ldap::check_user_password_ldap Authentication KO entity '".$entitytotest."' not allowed for user id '".$usertmp->id."'", LOG_NOTICE);
+							$login = ''; // force authentication failure
+						}
+						unset($usertmp);
 					}
-					unset($usertmp);
 				}
 			}
 			if ($result == 1) {
 				dol_syslog("functions_ldap::check_user_password_ldap Authentication KO bad user/password for '".$usertotest."'", LOG_NOTICE);
-				sleep(1);
+				sleep(1); // Anti brut force protection. Must be same delay when user and password are not valid.
 
 				// Load translation files required by the page
 				$langs->loadLangs(array('main', 'other'));
 
-				$_SESSION["dol_loginmesg"] = $langs->trans("ErrorBadLoginPassword");
+				$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorBadLoginPassword");
 			}
 		} else {
 			/* Login failed. Return false, together with the error code and text from
@@ -256,19 +262,19 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 			 ** 53 - Account inactive (manually locked out by administrator)
 			 */
 			dol_syslog("functions_ldap::check_user_password_ldap Authentication KO failed to connect to LDAP for '".$usertotest."'", LOG_NOTICE);
-			if (is_resource($ldap->connection)) {    // If connection ok but bind ko
+			if (is_resource($ldap->connection) || is_object($ldap->connection)) {    // If connection ok but bind ko
 				$ldap->ldapErrorCode = ldap_errno($ldap->connection);
 				$ldap->ldapErrorText = ldap_error($ldap->connection);
 				dol_syslog("functions_ldap::check_user_password_ldap ".$ldap->ldapErrorCode." ".$ldap->ldapErrorText);
 			}
-			sleep(2); // Anti brut force protection
+			sleep(1); // Anti brut force protection. Must be same delay when user and password are not valid.
 
 			// Load translation files required by the page
 			$langs->loadLangs(array('main', 'other', 'errors'));
-			$_SESSION["dol_loginmesg"] = ($ldap->error ? $ldap->error : $langs->trans("ErrorBadLoginPassword"));
+			$_SESSION["dol_loginmesg"] = ($ldap->error ? $ldap->error : $langs->transnoentitiesnoconv("ErrorBadLoginPassword"));
 		}
 
-		$ldap->close();
+		$ldap->unbind();
 	}
 
 	return $login;

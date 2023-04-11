@@ -10,6 +10,11 @@ To run phpcs:
 > cd dolibarrgitrepo
 > phpcs --standard=dev/setup/codesniffer/ruleset.xml --extensions=php --parallel=8 .
 
+To fix with phpcbf:
+> cd dolibarrgitrepo
+> phpcbf --standard=dev/setup/codesniffer/ruleset.xml --extensions=php --parallel=8 .
+
+
 Note with Eclipse: You must setup the PTI plugin of Eclipse into PHPCodeSniffer menu with:
 * tab value to 4
 * path of code sniffer standard to dev/codesniffer 

@@ -57,7 +57,7 @@ $shmoffset = 1000; // Max number of entries found into a language file. If too l
 
 
 /**
- * 	Save data into a memory area shared by all users, all sessions on server
+ * 	Save data into a memory area shared by all users, all sessions on server. Note: MAIN_CACHE_COUNT must be set.
  *
  *  @param	string      $memoryid		Memory id of shared area
  * 	@param	mixed		$data			Data to save. It must not be a null value.
@@ -68,6 +68,7 @@ $shmoffset = 1000; // Max number of entries found into a language file. If too l
 function dol_setcache($memoryid, $data, $expire = 0)
 {
 	global $conf;
+
 	$result = 0;
 
 	if (strpos($memoryid, 'count_') === 0) {	// The memoryid key start with 'count_...'
@@ -76,7 +77,7 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		}
 	}
 
-	if (!empty($conf->memcached->enabled) &&  class_exists('Memcached')) {
+	if (!empty($conf->memcached->enabled) && class_exists('Memcached')) {
 		// Using a memcached server
 		global $dolmemcache;
 		if (empty($dolmemcache) || !is_object($dolmemcache)) {
@@ -88,12 +89,12 @@ function dol_setcache($memoryid, $data, $expire = 0)
 			}
 		}
 
-		$memoryid = session_name() . '_' . $memoryid;
+		$memoryid = session_name().'_'.$memoryid;
 		//$dolmemcache->setOption(Memcached::OPT_COMPRESSION, false);
 		$dolmemcache->add($memoryid, $data, $expire); // This fails if key already exists
 		$rescode = $dolmemcache->getResultCode();
 		if ($rescode == 0) {
-			return is_countable($data) ? count($data) : 0;
+			return is_array($data) ? count($data) : (is_scalar($data) ? strlen($data) : 0);
 		} else {
 			return -$rescode;
 		}
@@ -109,17 +110,21 @@ function dol_setcache($memoryid, $data, $expire = 0)
 			}
 		}
 
-		$memoryid = session_name() . '_' . $memoryid;
+		$memoryid = session_name().'_'.$memoryid;
 		//$dolmemcache->setOption(Memcached::OPT_COMPRESSION, false);
 		$result = $dolmemcache->add($memoryid, $data, false, $expire); // This fails if key already exists
 		if ($result) {
-			return is_countable($data) ? count($data) : 0;
+			return is_array($data) ? count($data) : (is_scalar($data) ? strlen($data) : 0);
 		} else {
 			return -1;
 		}
 	} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using shmop
 		$result = dol_setshmop($memoryid, $data, $expire);
+	} else {
+		// No intersession cache system available, we use at least the perpage cache
+		$conf->cache['cachememory_'.$memoryid] = $data;
+		$result = is_array($data) ? count($data) : (is_scalar($data) ? strlen($data) : 0);
 	}
 
 	return $result;
@@ -154,7 +159,7 @@ function dol_getcache($memoryid)
 			}
 		}
 
-		$memoryid = session_name() . '_' . $memoryid;
+		$memoryid = session_name().'_'.$memoryid;
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
 		//print "Get memoryid=".$memoryid;
 		$data = $m->get($memoryid);
@@ -179,7 +184,7 @@ function dol_getcache($memoryid)
 			}
 		}
 
-		$memoryid = session_name() . '_' . $memoryid;
+		$memoryid = session_name().'_'.$memoryid;
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
 		$data = $m->get($memoryid);
 		//print "memoryid=".$memoryid." - rescode=".$rescode." - data=".count($data)."\n<br>";
@@ -187,12 +192,17 @@ function dol_getcache($memoryid)
 		if ($data) {
 			return $data;
 		} else {
-			return null;		// There is no way to make a difference between NOTFOUND and error when using Memcache. So do not use it, use Memcached instead.
+			return null; // There is no way to make a difference between NOTFOUND and error when using Memcache. So do not use it, use Memcached instead.
 		}
 	} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using shmop
 		$data = dol_getshmop($memoryid);
 		return $data;
+	} else {
+		// No intersession cache system available, we use at least the perpage cache
+		if (isset($conf->cache['cachememory_'.$memoryid])) {
+			return $conf->cache['cachememory_'.$memoryid];
+		}
 	}
 
 	return null;
@@ -252,7 +262,7 @@ function dol_setshmop($memoryid, $data, $expire)
 	}
 	$shmkey = dol_getshmopaddress($memoryid);
 	if (empty($shmkey)) {
-		return 0;	// No key reserved for this memoryid, we can't cache this memoryid
+		return 0; // No key reserved for this memoryid, we can't cache this memoryid
 	}
 
 	$newdata = serialize($data);
@@ -268,7 +278,7 @@ function dol_setshmop($memoryid, $data, $expire)
 		shmop_close($handle);
 		return ($shm_bytes_written1 + $shm_bytes_written2);
 	} else {
-		print 'Error in shmop_open for memoryid=' . $memoryid . ' shmkey=' . $shmkey . ' 6+size=6+' . $size;
+		print 'Error in shmop_open for memoryid='.$memoryid.' shmkey='.$shmkey.' 6+size=6+'.$size;
 		return -1;
 	}
 }
@@ -290,7 +300,7 @@ function dol_getshmop($memoryid)
 	}
 	$shmkey = dol_getshmopaddress($memoryid);
 	if (empty($shmkey)) {
-		return null;		// No key reserved for this memoryid, we can't cache this memoryid
+		return null; // No key reserved for this memoryid, we can't cache this memoryid
 	}
 
 	//print 'dol_getshmop memoryid='.$memoryid." shmkey=".$shmkey."<br>\n";
@@ -304,7 +314,7 @@ function dol_getshmop($memoryid)
 		}
 		shmop_close($handle);
 	} else {
-		return null;	// Can't open existing block, so we suppose it was not created, so nothing were cached yet for the memoryid
+		return null; // Can't open existing block, so we suppose it was not created, so nothing were cached yet for the memoryid
 	}
 	return $data;
 }

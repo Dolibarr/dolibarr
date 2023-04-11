@@ -260,13 +260,13 @@ class Cchargesociales
 		// Update request
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
 		$sql .= ' libelle = '.(isset($this->libelle) ? "'".$this->db->escape($this->libelle)."'" : "null").',';
-		$sql .= ' deductible = '.(isset($this->deductible) ? $this->deductible : "null").',';
-		$sql .= ' active = '.(isset($this->active) ? $this->active : "null").',';
+		$sql .= ' deductible = '.(isset($this->deductible) ? ((int) $this->deductible) : "null").',';
+		$sql .= ' active = '.(isset($this->active) ? ((int) $this->active) : "null").',';
 		$sql .= ' code = '.(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").',';
-		$sql .= ' fk_pays = '.(isset($this->fk_pays) ? $this->fk_pays : "null").',';
+		$sql .= ' fk_pays = '.((isset($this->fk_pays) && $this->fk_pays > 0) ? ((int) $this->fk_pays) : "null").',';
 		$sql .= ' module = '.(isset($this->module) ? "'".$this->db->escape($this->module)."'" : "null").',';
 		$sql .= ' accountancy_code = '.(isset($this->accountancy_code) ? "'".$this->db->escape($this->accountancy_code)."'" : "null");
-		$sql .= ' WHERE id='.$this->id;
+		$sql .= ' WHERE id='.((int) $this->id);
 
 		$this->db->begin();
 
@@ -329,7 +329,7 @@ class Cchargesociales
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE id='.$this->id;
+			$sql .= ' WHERE id = '.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -441,9 +441,9 @@ class Cchargesociales
 	}
 
 	/**
-	 *  Retourne le libelle du status d'un user (actif, inactif)
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
@@ -453,11 +453,11 @@ class Cchargesociales
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un status donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string 			       	Label of status
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{

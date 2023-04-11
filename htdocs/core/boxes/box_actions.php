@@ -34,7 +34,7 @@ class box_actions extends ModeleBoxes
 {
 	public $boxcode = "lastactions";
 	public $boximg = "object_action";
-	public $boxlabel = "BoxLastActions";
+	public $boxlabel = "BoxOldestActions";
 	public $depends = array("agenda");
 
 	/**
@@ -62,7 +62,7 @@ class box_actions extends ModeleBoxes
 
 		$this->enabled = $conf->agenda->enabled;
 
-		$this->hidden = !($user->rights->agenda->myactions->read);
+		$this->hidden = !($user->hasRight('agenda', 'myactions', 'read'));
 	}
 
 	/**
@@ -82,7 +82,7 @@ class box_actions extends ModeleBoxes
 		$societestatic = new Societe($this->db);
 		$actionstatic = new ActionComm($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastActionsToDo", $max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestActionsToDo", $max));
 
 		if ($user->rights->agenda->myactions->read) {
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage";
@@ -92,23 +92,23 @@ class box_actions extends ModeleBoxes
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ".MAIN_DB_PREFIX."actioncomm AS a";
-			if (!$user->rights->societe->client->voir && !$user->socid) {
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 			}
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 			$sql .= " WHERE a.fk_action = ta.id";
 			$sql .= " AND a.entity IN (".getEntity('actioncomm').")";
 			$sql .= " AND a.percent >= 0 AND a.percent < 100";
-			if (!$user->rights->societe->client->voir && !$user->socid) {
-				$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 			}
 			if ($user->socid) {
-				$sql .= " AND s.rowid = ".$user->socid;
+				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
-			if (!$user->rights->agenda->allactions->read) {
-				$sql .= " AND (a.fk_user_author = ".$user->id." OR a.fk_user_action = ".$user->id." OR a.fk_user_done = ".$user->id.")";
+			if (empty($user->rights->agenda->allactions->read)) {
+				$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id).")";
 			}
-			$sql .= " ORDER BY a.datec DESC";
+			$sql .= " ORDER BY a.datep ASC";
 			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
@@ -148,21 +148,21 @@ class box_actions extends ModeleBoxes
 					$label = empty($objp->label) ? $objp->type_label : $objp->label;
 
 					$this->info_box_contents[$line][0] = array(
-						'td' => '',
+						'td' => 'class="tdoverflowmax200"',
 						'text' => $actionstatic->getNomUrl(1),
 						'text2'=> $late,
 						'asis' => 1
 					);
 
 					$this->info_box_contents[$line][1] = array(
-						'td' => '',
+						'td' => 'class="tdoverflowmax100"',
 						'text' => ($societestatic->id > 0 ? $societestatic->getNomUrl(1) : ''),
 						'asis' => 1
 					);
 
 					$this->info_box_contents[$line][2] = array(
-						'td' => 'class="nowrap left"',
-						'text' => dol_print_date($datelimite, "dayhour"),
+						'td' => 'class="center nowraponall"',
+						'text' => $datelimite ? dol_print_date($datelimite, "dayhour", 'tzuserrel') : '',
 						'asis' => 1
 					);
 
@@ -220,7 +220,9 @@ class box_actions extends ModeleBoxes
 		if (!empty($conf->global->SHOW_DIALOG_HOMEPAGE)) {
 			$actioncejour = false;
 			$contents = $this->info_box_contents;
-			$nblines = count($contents);
+			if (is_countable($contents) && count($contents) > 0) {
+				$nblines = count($contents);
+			}
 			if ($contents[0][0]['text'] != $langs->trans("NoActionsToDo")) {
 				$out .= '<div id="dialogboxaction" title="'.$nblines." ".$langs->trans("ActionsToDo").'">';
 				$out .= '<table width=100%>';
@@ -254,7 +256,7 @@ class box_actions extends ModeleBoxes
 			}
 			$out .= '</div>';
 			if ($actioncejour) {
-				$out .= '<script>';
+				$out .= '<script nonce="'.getNonce().'">';
 				$out .= '$("#dialogboxaction").dialog({ autoOpen: true });';
 				if ($conf->global->SHOW_DIALOG_HOMEPAGE > 1) {    // autoclose after this delay
 					$out .= 'setTimeout(function(){';
@@ -263,7 +265,7 @@ class box_actions extends ModeleBoxes
 				}
 				$out .= '</script>';
 			} else {
-				$out .= '<script>';
+				$out .= '<script nonce="'.getNonce().'">';
 				$out .= '$("#dialogboxaction").dialog({ autoOpen: false });';
 				$out .= '</script>';
 			}

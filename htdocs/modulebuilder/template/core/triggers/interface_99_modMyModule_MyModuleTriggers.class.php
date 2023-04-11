@@ -28,8 +28,6 @@
  *      - interface_99_all_MyTrigger.class.php
  * - The file must stay in core/triggers
  * - The class name must be InterfaceMytrigger
- * - The constructor method must be named InterfaceMytrigger
- * - The name property name must be MyTrigger
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
@@ -109,7 +107,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			);
 
 			return call_user_func($callback, $action, $object, $user, $langs, $conf);
-		};
+		}
 
 		// Or you can execute some code here
 		switch ($action) {
@@ -119,8 +117,6 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'USER_NEW_PASSWORD':
 			//case 'USER_ENABLEDISABLE':
 			//case 'USER_DELETE':
-			//case 'USER_SETINGROUP':
-			//case 'USER_REMOVEFROMGROUP':
 
 			// Actions
 			//case 'ACTION_MODIFY':
@@ -159,7 +155,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'MYECMDIR_MODIFY':
 			//case 'MYECMDIR_DELETE':
 
-			// Customer orders
+			// Sales orders
 			//case 'ORDER_CREATE':
 			//case 'ORDER_MODIFY':
 			//case 'ORDER_VALIDATE':
@@ -181,7 +177,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'ORDER_SUPPLIER_REFUSE':
 			//case 'ORDER_SUPPLIER_CANCEL':
 			//case 'ORDER_SUPPLIER_SENTBYMAIL':
-			//case 'ORDER_SUPPLIER_DISPATCH':
+			//case 'ORDER_SUPPLIER_RECEIVE':
 			//case 'LINEORDER_SUPPLIER_DISPATCH':
 			//case 'LINEORDER_SUPPLIER_CREATE':
 			//case 'LINEORDER_SUPPLIER_UPDATE':
@@ -318,7 +314,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			// and more...
 
 			default:
-				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+				dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 				break;
 		}
 

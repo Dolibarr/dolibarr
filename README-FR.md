@@ -56,17 +56,21 @@ Vous pouvez aussi utiliser un serveur Web et une base de données prise en charg
 
 Pour mettre à jour Dolibarr depuis une vieille version vers celle ci:
 
+- Faites une sauvegarde de votre instance [voir ce tutorial](https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr)
+
+- Vérifiez que la nouvelle version est compatible avec la version PHP de votre serveur [voir PHP support](https://wiki.dolibarr.org/index.php/Releases).
+
 - Ecrasez les vieux fichiers dans le vieux répertoire 'dolibarr' par les fichiers
   fournis dans ce nouveau package.
 
 - Au prochain accès, Dolibarr proposera la page de "mise à jour" des données (si nécessaire).
   Si un fichier install.lock existe pour verrouiller le processus de mise à jour, il sera demandé de le supprimer manuellement (vous devriez trouver le fichier install.lock dans le répertoire utilisé pour stocker les documents générés ou transférés sur le serveur. Dans la plupart des cas, c'est le répertoire appelé "documents")
 
-*Note: Le processus de migration peut être lancé manuellement et plusieurs fois, sans risque, en appelant la page /install/*
+Note: *Le processus de migration peut être lancé manuellement et plusieurs fois, sans risque, en appelant la page /install/*
 
 ## CE QUI EST NOUVEAU
 
-Voir fichier ChangeLog.
+See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog) file.
 
 ## CE QUE DOLIBARR PEUT FAIRE
 
@@ -82,15 +86,17 @@ Voir fichier ChangeLog.
 - Calendrier/Agenda partagé (avec export ical, vcal)
 - Suivi des opportunités et/ou projets (suivi de rentabilité incluant les factures, notes de frais, temps consommé valorisé, ...)
 - Gestion de contrats de services
-- Gestion de stock
+- Gestion de stock et inventaires
 - Gestion des expéditions
 - Gestion des demandes de congès
 - Gestion des notes de frais
+- Gestion de recrutement
 - GED (Gestion Electronique de Documents)
 - EMailings de masse
 - Réalisation de sondages
+- Gestion d'adhérents
 - Point de vente/Caisse enregistreuse
-- …
+- … (près de 100 modules disponibles en standard, près de 1000 autre sur la place de marché d'extensions)
 
 ### Autres modules
 
@@ -115,7 +121,7 @@ Voir fichier ChangeLog.
 - Peux être multi-société par ajout du module externe multi-société.
 - Plusieurs thèmes visuels.
 - Application simple à utiliser.
-- Requiert PHP et MariaDb, Mysql ou Postgresql (Voir versions exactes sur https://wiki.dolibarr.org/index.php/Prérequis).
+- Requiert PHP et MariaDb, Mysql ou Postgresql (Voir versions exactes sur [https://wiki.dolibarr.org/index.php/Prérequis](https://wiki.dolibarr.org/index.php/Prérequis)).
 - Compatible avec toutes les offres Cloud du marché respectant les prérequis de base de données et PHP.
 - APIs.
 - Génération PDF et ODT des éléments (factures, propositions commerciales, commandes, bons expéditions, etc...)
@@ -139,7 +145,7 @@ Dolibarr peut aussi être étendu à volonté avec l'ajout de module/application
 
 Voici un liste de fonctionnalités pas encore gérées par Dolibarr:
 
-- Dolibarr ne contient pas de module de Gestion de la paie.
+- Dolibarr ne contient pas de module de génération de feuille de paie.
 - Les tâches du module de gestion de projets n'ont pas de dépendances entre elle.
 - Dolibarr n'embarque pas de Webmail intégré nativement.
 - Dolibarr ne fait pas le café (pas encore).
@@ -152,7 +158,7 @@ La documentation utilisateur, développeur et traducteur est disponible sous for
 
 Ce projet existe grâce à ses nombreux contributeurs [[Contribuer](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)].
 
-<a href="https://github.com/Dolibarr/dolibarr/graphs/contributors"><img src="https://opencollective.com/dolibarr/contributors.svg?width=890&button=false" /></a>
+[![Dolibarr](https://opencollective.com/dolibarr/contributors.svg?width=890&button=false)](https://github.com/Dolibarr/dolibarr/graphs/contributors)
 
 ## CREDITS
 

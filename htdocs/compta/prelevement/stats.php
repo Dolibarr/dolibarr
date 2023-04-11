@@ -24,6 +24,7 @@
  *      \brief      Page with statistics on withdrawals
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -31,14 +32,18 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
+$type = GETPOST('type', 'aZ09');
+
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'prelevement', '', '', 'bons');
-
-$type = GETPOST('type', 'aZ09');
+if ($type == 'bank-transfer') {
+	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+} else {
+	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
+}
 
 
 /*
@@ -139,7 +144,8 @@ if ($resql) {
 	print price($total);
 	print '</td><td class="right">&nbsp;</td>';
 	print "</tr></table>";
-	$db->free();
+
+	$db->free($resql);
 } else {
 	dol_print_error($db);
 }

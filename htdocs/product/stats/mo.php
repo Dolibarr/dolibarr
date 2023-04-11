@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2023	   Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,10 +24,12 @@
  *       \brief      Page of MO referring product
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'products', 'companies'));
@@ -40,17 +43,14 @@ $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('productstatscontract'));
-
-$mesg = '';
+$hookmanager->initHooks(array('productstatsmo'));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -65,6 +65,16 @@ if (!$sortfield) {
 	$sortfield = "c.date_valid";
 }
 
+$search_month = GETPOST('search_month', 'int');
+$search_year = GETPOST('search_year', 'int');
+
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	$search_month = '';
+	$search_year = '';
+}
+
+$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+
 
 /*
  * View
@@ -74,6 +84,7 @@ $staticmo = new Mo($db);
 $staticmoligne = new MoLine($db);
 
 $form = new Form($db);
+$formother = new FormOther($db);
 
 if ($id > 0 || !empty($ref)) {
 	$product = new Product($db);
@@ -120,7 +131,7 @@ if ($id > 0 || !empty($ref)) {
 		print "</table>";
 
 		print '</div>';
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 
@@ -128,17 +139,23 @@ if ($id > 0 || !empty($ref)) {
 		$now = dol_now();
 
 		$sql = "SELECT";
-		$sql .= ' sum('.$db->ifsql("cd.role='toconsume'", "cd.qty", 0).') as nb_toconsume,';
-		$sql .= ' sum('.$db->ifsql("cd.role='consumed'", "cd.qty", 0).') as nb_consumed,';
-		$sql .= ' sum('.$db->ifsql("cd.role='toproduce'", "cd.qty", 0).') as nb_toproduce,';
-		$sql .= ' sum('.$db->ifsql("cd.role='produced'", "cd.qty", 0).') as nb_produced,';
+		$sql .= " sum(".$db->ifsql("cd.role='toconsume'", "cd.qty", 0).') as nb_toconsume,';
+		$sql .= " sum(".$db->ifsql("cd.role='consumed'", "cd.qty", 0).') as nb_consumed,';
+		$sql .= " sum(".$db->ifsql("cd.role='toproduce'", "cd.qty", 0).') as nb_toproduce,';
+		$sql .= " sum(".$db->ifsql("cd.role='produced'", "cd.qty", 0).') as nb_produced,';
 		$sql .= " c.rowid as rowid, c.ref, c.date_valid, c.status";
 		//$sql .= " s.nom as name, s.rowid as socid, s.code_client";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as c";
 		$sql .= ", ".MAIN_DB_PREFIX."mrp_production as cd";
 		$sql .= " WHERE c.rowid = cd.fk_mo";
 		$sql .= " AND c.entity IN (".getEntity('mo').")";
-		$sql .= " AND cd.fk_product =".$product->id;
+		$sql .= " AND cd.fk_product = ".((int) $product->id);
+		if (!empty($search_month)) {
+			$sql .= ' AND MONTH(c.date_valid) IN ('.$db->sanitize($search_month).')';
+		}
+		if (!empty($search_year)) {
+			$sql .= ' AND YEAR(c.date_valid) IN ('.$db->sanitize($search_year).')';
+		}
 		if ($socid) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}
@@ -163,11 +180,10 @@ if ($id > 0 || !empty($ref)) {
 		if ($result) {
 			$num = $db->num_rows($result);
 
+			$option = '&id='.$product->id;
+
 			if ($limit > 0 && $limit != $conf->liste_limit) {
-				$option .= '&limit='.urlencode($limit);
-			}
-			if (!empty($id)) {
-				$option .= '&id='.$product->id;
+				$option .= '&limit='.((int) $limit);
 			}
 			if (!empty($search_month)) {
 				$option .= '&search_month='.urlencode($search_month);
@@ -177,6 +193,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 
 			print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			if (!empty($sortfield)) {
 				print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
 			}
@@ -184,11 +201,23 @@ if ($id > 0 || !empty($ref)) {
 				print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 			}
 
-			print_barre_liste($langs->trans("Mos"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
+			print_barre_liste($langs->trans("MOs"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
 			if (!empty($page)) {
 				$option .= '&page='.urlencode($page);
 			}
+
+			print '<div class="liste_titre liste_titre_bydiv centpercent">';
+			print '<div class="divsearchfield">';
+			print $langs->trans('Period').' ('.$langs->trans("DateCreation").') - ';
+			print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.$search_month.'"> ';
+			print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
+			print '<div style="vertical-align: middle; display: inline-block">';
+			print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+			print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+			print '</div>';
+			print '</div>';
+			print '</div>';
 
 			$i = 0;
 			print '<div class="div-table-responsive">';
@@ -203,6 +232,7 @@ if ($id > 0 || !empty($ref)) {
 			print_liste_field_titre("QtyAlreadyConsumed", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'center ');
 			print_liste_field_titre("QtyToProduce", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'center ');
 			print_liste_field_titre("QtyAlreadyProduced", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'center ');
+			print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "b.status", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'right ');
 			print "</tr>\n";
 
 			$motmp = new Mo($db);
@@ -213,6 +243,7 @@ if ($id > 0 || !empty($ref)) {
 
 					$motmp->id = $objp->rowid;
 					$motmp->ref = $objp->ref;
+					$motmp->status = $objp->status;
 
 					print '<tr class="oddeven">';
 					print '<td>';
@@ -227,6 +258,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<td class="center">'.($objp->nb_toproduce > 0 ? $objp->nb_toproduce : '').'</td>';
 					print '<td class="center">'.($objp->nb_produced > 0 ? $objp->nb_produced : '').'</td>';
 					//$mostatic->LibStatut($objp->statut,5).'</td>';
+					print '<td class="right">'.$motmp->getLibStatut(2).'</td>';
 					print "</tr>\n";
 					$i++;
 				}

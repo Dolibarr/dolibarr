@@ -1,4 +1,4 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Utilitza el número de lot/sèrie
 ProductStatusOnBatch=Sí (es requereix lot)
 ProductStatusOnSerial=Sí (es requereix un número de sèrie únic)
@@ -24,12 +24,22 @@ ProductLotSetup=Configuració del mòdul lot/sèries
 ShowCurrentStockOfLot=Mostra l'estoc actual de la parella producte/lot
 ShowLogOfMovementIfLot=Mostra el registre de moviments de la parella producte/lot
 StockDetailPerBatch=Detall d’estoc per lot
-SerialNumberAlreadyInUse=Serial number %s is already used for product %s
-TooManyQtyForSerialNumber=You can only have one product %s for serial number %s
-BatchLotNumberingModules=Options for automatic generation of batch products managed by lots
-BatchSerialNumberingModules=Options for automatic generation of batch products managed by serial numbers
-ManageLotMask=Custom mask
-CustomMasks=Adds an option to define mask in the product card
-LotProductTooltip=Adds an option in the product card to define a dedicated batch number mask
-SNProductTooltip=Adds an option in the product card to define a dedicated serial number mask
-QtyToAddAfterBarcodeScan=Qty to add for each barcode/lot/serial scanned
+SerialNumberAlreadyInUse=El número de sèrie %s ja s’utilitza per al producte %s
+TooManyQtyForSerialNumber=Només podeu tenir un producte %s per al número de sèrie %s
+ManageLotMask=Màscara personalitzada
+CustomMasks=Opció per definir una màscara de numeració diferent per a cada producte
+BatchLotNumberingModules=Regla de numeració per a la generació automàtica del número de lot
+BatchSerialNumberingModules=Regla de numeració per a la generació automàtica de número de sèrie (per a productes amb la propietat 1 lot / sèrie únic per a cada producte)
+QtyToAddAfterBarcodeScan=Quantitat a %s per a cada codi de barres/lot/sèrie escanejat
+LifeTime=Vida útil (en dies)
+EndOfLife=Final de la vida
+ManufacturingDate=Data de fabricació
+DestructionDate=Data de destrucció
+FirstUseDate=Data del primer ús
+QCFrequency=Freqüència de control de qualitat (en dies)
+ShowAllLots=Mostra tots els lots
+HideLots=Amaga molts
+#Traceability - qc status
+OutOfOrder=No funciona
+InWorkingOrder=En procés
+ToReplace=Substitueix

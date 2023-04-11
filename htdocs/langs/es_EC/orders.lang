@@ -9,6 +9,7 @@ OrderLine=Fila para ordenar
 OrderDateShort=Fecha de orden
 OrderToProcess=Orden para procesar
 NewOrder=Nueva orden
+NewSupplierOrderShort=Nueva orden
 NewOrderSupplier=Nueva orden de compra
 ToOrder=Hacer orden
 MakeOrder=Hacer orden

@@ -20,6 +20,7 @@
  *		\brief      Page with web server system information
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -70,9 +71,14 @@ if ($labeluser && $labelgroup) {
 if (function_exists('exec')) {
 	$arrayout = array(); $varout = 0;
 	exec('id', $arrayout, $varout);
+	print '<tr><td>'.$langs->trans("WebUserGroup")." (real, 'id' command)</td><td>";
 	if (empty($varout)) {	// Test command is ok. Work only on Linux OS.
-		print '<tr><td>'.$langs->trans("WebUserGroup")." (real, 'id' command)</td><td>".join(',', $arrayout)."</td></tr>\n";
+		print join(',', $arrayout);
+	} else {
+		$langs->load("errors");
+		print '<span class="opacitymedium">'.$langs->trans("ErrorExecIdFailed").'</span>';
 	}
+	print "</td></tr>\n";
 }
 print '</table>';
 print '</div>';

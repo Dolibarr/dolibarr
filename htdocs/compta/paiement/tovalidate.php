@@ -22,6 +22,7 @@
  * 	\brief      Page list payment to validate. Visible in menu when option BILL_ADD_PAYMENT_VALIDATION is on.
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Load translation files required by the page
@@ -78,7 +79,7 @@ if ($socid) {
 }
 $sql .= " WHERE p.entity IN (".getEntity('invoice').')';
 if ($socid) {
-	$sql .= " AND f.fk_soc = ".$socid;
+	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
 $sql .= " AND p.statut = 0";
 

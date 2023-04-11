@@ -32,3 +32,4 @@ DONATION_ART238=Perlihatkan artikel 238 dari CGI jika Anda khawatir
 DONATION_ART885=Perlihatkan artikel 885 dari CGI jika Anda khawatir
 DonationPayment=Pembayaran donasi
 DonationValidated=Donasi %s divalidasi
+DonationUseThirdparties=Gunakan pihak ketiga yang ada sebagai koordinat donatur

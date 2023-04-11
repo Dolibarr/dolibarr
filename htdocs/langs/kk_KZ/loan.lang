@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Қарыз
+Loans=Несиелер
+NewLoan=Жаңа несие
+ShowLoan=Несие көрсету
+PaymentLoan=Несие бойынша төлем
+LoanPayment=Несие бойынша төлем
+ShowLoanPayment=Несие бойынша төлемді көрсету
+LoanCapital=Капитал
+Insurance=Сақтандыру
+Interest=Қызығушылық
+Nbterms=Терминдер саны
+Term=Мерзімі
+LoanAccountancyCapitalCode=Бухгалтерлік есеп капиталы
+LoanAccountancyInsuranceCode=Бухгалтерлік есепті сақтандыру
+LoanAccountancyInterestCode=Бухгалтерлік есеп бойынша пайыздар
+ConfirmDeleteLoan=Бұл несиені жоюды растаңыз
+LoanDeleted=Несие сәтті жойылды
+ConfirmPayLoan=Бұл несиенің төленгенін жіктеуді растаңыз
+LoanPaid=Несие төленді
+ListLoanAssociatedProject=Жобамен байланысты несие тізімі
+AddLoan=Несие құру
+FinancialCommitment=Қаржылық міндеттеме
+InterestAmount=Қызығушылық
+CapitalRemain=Капитал қалады
+TermPaidAllreadyPaid = Бұл мерзім толығымен төленген
+CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+CantModifyInterestIfScheduleIsUsed = Егер сіз кестені қолдансаңыз, қызығушылықты өзгерте алмайсыз
+# Admin
+ConfigLoan=Кредиттік модульді конфигурациялау
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
+CreateCalcSchedule=Қаржылық міндеттемені өңдеу

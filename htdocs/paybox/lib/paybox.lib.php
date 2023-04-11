@@ -218,12 +218,12 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 
 
 	print "\n";
-	print '<script type="text/javascript" language="javascript">'."\n";
+	print '<script type="text/javascript">'."\n";
 	print '	document.Submit.submit();'."\n";
 	print '</script>'."\n";
 	print "\n";
 	print '</body></html>'."\n";
 	print "\n";
 
-	return;
+	return 1;
 }

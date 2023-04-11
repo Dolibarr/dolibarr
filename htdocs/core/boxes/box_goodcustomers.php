@@ -69,7 +69,7 @@ class box_goodcustomers extends ModeleBoxes
 			$this->enabled = 0; // not enabled by default. Very slow on large database
 		}
 
-		$this->hidden = !($user->rights->societe->lire);
+		$this->hidden = !$user->hasRight('societe', 'lire');
 	}
 
 	/**
@@ -90,7 +90,7 @@ class box_goodcustomers extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleGoodCustomers", $max));
 
-		if ($user->rights->societe->lire) {
+		if ($user->hasRight('societe', 'lire')) {
 			$sql = "SELECT s.rowid, s.nom as name, s.logo, s.code_client, s.code_fournisseur, s.client, s.fournisseur, s.tms as datem, s.status as status,";
 			$sql .= " count(*) as nbfact, sum(".$this->db->ifsql('f.paye=1', '1', '0').") as nbfactpaye";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
@@ -120,14 +120,14 @@ class box_goodcustomers extends ModeleBoxes
 					$nbimpaye = $objp->nbfact - $objp->nbfactpaye;
 
 					$this->info_box_contents[$line][] = array(
-						'td' => '',
+						'td' => 'class="tdoverflowmax150"',
 						'text' => $thirdpartystatic->getNomUrl(1),
 						'asis' => 1,
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => dol_print_date($datem, "day")
+						'td' => 'class="center nowraponall"',
+						'text' => dol_print_date($datem, "day", 'tzuserrel')
 					);
 
 					$this->info_box_contents[$line][] = array(

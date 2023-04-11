@@ -80,7 +80,7 @@ class CashControl extends CommonObject
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 	public $fields = array(
-	'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>10),
+	'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>10),
 	'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>15),
 	'ref' =>array('type'=>'varchar(64)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>18),
 	'posmodule' =>array('type'=>'varchar(30)', 'label'=>'Module', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>19),
@@ -93,11 +93,13 @@ class CashControl extends CommonObject
 	'year_close' =>array('type'=>'integer', 'label'=>'Year close', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>50, 'css'=>'center'),
 	'month_close' =>array('type'=>'integer', 'label'=>'Month close', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'css'=>'center'),
 	'day_close' =>array('type'=>'integer', 'label'=>'Day close', 'enabled'=>1, 'visible'=>1, 'position'=>60, 'css'=>'center'),
-	'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>490),
 	'date_creation' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+	'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>502),
 	'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>505),
-	'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>0, 'position'=>510),
-	'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Validated')),
+	'fk_user_creat' =>array('type'=>'integer:User', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>600),
+	'fk_user_valid' =>array('type'=>'integer:User', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>602),
+	'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>0, 'position'=>700),
+	'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated')),
 	);
 
 	/**
@@ -116,19 +118,22 @@ class CashControl extends CommonObject
 	public $card;
 
 	/**
-	 * @var integer|string $date_valid
-	 */
-	public $date_valid;
-
-	/**
 	 * @var integer|string date_creation
 	 */
 	public $date_creation;
+	public $fk_user_creat;
 
 	/**
 	 * @var integer|string $date_modification
 	 */
 	public $date_modification;
+
+	/**
+	 * @var integer|string $date_valid
+	 */
+	public $date_valid;
+	public $fk_user_valid;
+
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -187,18 +192,18 @@ class CashControl extends CommonObject
 		$sql .= ", card";
 		$sql .= ") VALUES (";
 		//$sql .= "'(PROV)', ";
-		$sql .= $conf->entity;
-		$sql .= ", ".(is_numeric($this->opening) ? $this->opening : 0);
+		$sql .= ((int) $conf->entity);
+		$sql .= ", ".(is_numeric($this->opening) ? price2num($this->opening, 'MT') : 0);
 		$sql .= ", 0"; // Draft by default
 		$sql .= ", '".$this->db->idate(dol_now())."'";
 		$sql .= ", '".$this->db->escape($this->posmodule)."'";
 		$sql .= ", '".$this->db->escape($this->posnumber)."'";
 		$sql .= ", ".($this->day_close > 0 ? $this->day_close : "null");
 		$sql .= ", ".($this->month_close > 0 ? $this->month_close : "null");
-		$sql .= ", ".$this->year_close;
-		$sql .= ", ".$this->cash;
-		$sql .= ", ".$this->cheque;
-		$sql .= ", ".$this->card;
+		$sql .= ", ".((int) $this->year_close);
+		$sql .= ", ".price2num($this->cash, 'MT');
+		$sql .= ", ".price2num($this->cheque, 'MT');
+		$sql .= ", ".price2num($this->card, 'MT');
 		$sql .= ")";
 
 		$this->db->begin();
@@ -253,7 +258,7 @@ class CashControl extends CommonObject
 
 		/*
 		 $posmodule = $this->posmodule;
-		 if (! empty($user->rights->$posmodule->use))
+		 if (!empty($user->rights->$posmodule->use))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -373,10 +378,10 @@ class CashControl extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[0] = $langs->trans('Draft');
-			$this->labelStatus[1] = $langs->trans('Closed');
-			$this->labelStatusShort[0] = $langs->trans('Draft');
-			$this->labelStatusShort[1] = $langs->trans('Closed');
+			$this->labelStatus[0] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[1] = $langs->transnoentitiesnoconv('Closed');
+			$this->labelStatusShort[0] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[1] = $langs->transnoentitiesnoconv('Closed');
 		}
 
 		$statusType = 'status0';
@@ -409,7 +414,7 @@ class CashControl extends CommonObject
 
 		$newref = ($this->ref ? $this->ref : $this->id);
 
-		$label = '<u>'.$langs->trans("CashFence").'</u>';
+		$label = '<u>'.$langs->trans("CashControl").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.($this->ref ? $this->ref : $this->id);
 
@@ -434,13 +439,6 @@ class CashControl extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-			 $hookmanager->initHooks(array('myobjectdao'));
-			 $parameters=array('id'=>$this->id);
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			 */
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -461,7 +459,7 @@ class CashControl extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('cashfencedao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -470,5 +468,42 @@ class CashControl extends CommonObject
 		}
 
 		return $result;
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		//var_dump($this->fields['rowid']);exit;
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1, 1) : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if (property_exists($this, 'posmodule')) {
+			$return .= '<br><span class="opacitymedium">'.substr($langs->trans("Module/Application"), 0, 12).'</span> : <span class="info-box-label">'.$this->posmodule.'</span>';
+		}
+		if (property_exists($this, 'year_close')) {
+			$return .= '<br><span class="info-box-label opacitymedium" >'.$langs->trans("Year").'</span> : <span>'.$this->year_close.'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

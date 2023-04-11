@@ -22,7 +22,7 @@ ProductService=Proizvod ili Usluga
 AllProducts=Svi proizvodi i usluge
 ChooseProduct/Service=Izaberi proizvod ili uslugu
 ForceBuyingPriceIfNull=Frsiraj nabavnu cenu na prodajnu cenu ukoliko nije definisana
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=Metoda marže za globalne popuste
 UseDiscountAsProduct=Kao proizvod
 UseDiscountAsService=Kao usluga

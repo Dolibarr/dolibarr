@@ -24,6 +24,7 @@
  *		\brief      Home page of propest area
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
@@ -59,7 +60,7 @@ print load_fiche_titre($langs->trans("ProspectionArea"));
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	$var = false;
 	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/card.php">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -77,17 +78,17 @@ if (!empty($conf->propal->enabled)) {
  *
  */
 
-$sql = "SELECT count(*) as cc, st.libelle, st.picto, st.id";
+$sql = "SELECT count(*) as cc, st.libelle as stcomm, st.picto, st.id";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st ";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE s.fk_stcomm = st.id";
 $sql .= " AND s.client IN (2, 3)";
 $sql .= " AND s.entity IN (".getEntity($companystatic->element).")";
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " GROUP BY st.id";
 $sql .= " ORDER BY st.id";
@@ -118,18 +119,18 @@ if ($resql) {
 /*
  * Liste des propal brouillons
  */
-if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
+if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 	$sql = "SELECT p.rowid, p.ref, p.price, s.nom as sname";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE p.fk_statut = 0";
 	$sql .= " AND p.fk_soc = s.rowid";
 	$sql .= " AND p.entity IN (".getEntity('propal').")";
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
 	$resql = $db->query($sql);
@@ -163,35 +164,34 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
 }
 
 
-//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 /*
  * Actions commerciales a faire
  */
-if (!empty($conf->agenda->enabled)) {
+if (isModEnabled('agenda')) {
 	show_array_actions_to_do(10);
 }
 
 /*
  * Dernieres propales ouvertes
  */
-if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
+if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 	$sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas,";
 	$sql .= " p.rowid as propalid, p.total_ttc, p.ref, p.datep as dp, c.label as statut, c.id as statutid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."propal as p";
 	$sql .= ", ".MAIN_DB_PREFIX."c_propalst as c";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE p.fk_soc = s.rowid";
 	$sql .= " AND p.fk_statut = c.id";
 	$sql .= " AND p.fk_statut = 1";
 	$sql .= " AND p.entity IN (".getEntity('propal').")";
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
@@ -244,13 +244,13 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
  */
 $sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE s.fk_stcomm = 1";
 $sql .= " AND s.entity IN (".getEntity($companystatic->element).")";
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " ORDER BY s.tms ASC";
 $sql .= $db->plimit(15, 0);
@@ -280,8 +280,7 @@ if ($resql) {
 }
 
 
-//print '</td></tr></table>';
-print '</div></div></div>';
+print '</div></div>';
 
 // End of page
 llxFooter();

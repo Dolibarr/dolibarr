@@ -77,15 +77,15 @@ class BankAccounts extends DolibarrApi
 		$sql .= ' WHERE t.entity IN ('.getEntity('bank_account').')';
 		// Select accounts of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".$this->db->escape($category)." AND c.fk_account = t.rowid ";
+			$sql .= " AND c.fk_categorie = ".((int) $category)." AND c.fk_account = t.rowid";
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -121,8 +121,8 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Get account by ID.
 	 *
-	 * @param int    $id    ID of account
-	 * @return array Account object
+	 * @param 	int	$id    						ID of account
+	 * @return  	Object              		Object with cleaned properties
 	 *
 	 * @throws RestException
 	 */
@@ -249,7 +249,7 @@ class BankAccounts extends DolibarrApi
 		}
 
 		// Clean data
-		$description = checkVal($description, 'alphanohtml');
+		$description = sanitizeVal($description, 'alphanohtml');
 
 
 		/**
@@ -312,9 +312,9 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Update account
 	 *
-	 * @param int    $id              ID of account
-	 * @param array  $request_data    data
-	 * @return int
+	 * @param 	int    $id              ID of account
+	 * @param 	array  $request_data    data
+	 * @return	Object              	Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -438,11 +438,11 @@ class BankAccounts extends DolibarrApi
 
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= " ORDER BY rowid";
@@ -469,7 +469,7 @@ class BankAccounts extends DolibarrApi
 	 * Add a line to an account
 	 *
 	 * @param int    $id               ID of account
-	 * @param int    $date             Payment date (timestamp) {@from body} {@type timestamp}
+	 * @param string $date             Payment date (timestamp) {@from body} {@type timestamp}
 	 * @param string $type             Payment mode (TYP,VIR,PRE,LIQ,VAD,CB,CHQ...) {@from body}
 	 * @param string $label            Label {@from body}
 	 * @param float  $amount           Amount (may be 0) {@from body}
@@ -478,7 +478,7 @@ class BankAccounts extends DolibarrApi
 	 * @param string $cheque_writer    Name of cheque writer {@from body}
 	 * @param string $cheque_bank      Bank of cheque writer {@from body}
 	 * @param string $accountancycode  Accountancy code {@from body}
-	 * @param int    $datev            Payment date value (timestamp) {@from body} {@type timestamp}
+	 * @param string $datev            Payment date value (timestamp) {@from body} {@type timestamp}
 	 * @param string $num_releve       Bank statement numero {@from body}
 	 * @return int  				   ID of line
 	 *
@@ -496,13 +496,13 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(404, 'account not found');
 		}
 
-		$type = checkVal($type);
-		$label = checkVal($label);
-		$cheque_number = checkVal($cheque_number);
-		$cheque_writer = checkVal($cheque_writer);
-		$cheque_bank = checkVal($cheque_bank);
-		$accountancycode = checkVal($accountancycode);
-		$num_releve = checkVal($num_releve);
+		$type = sanitizeVal($type);
+		$label = sanitizeVal($label);
+		$cheque_number = sanitizeVal($cheque_number);
+		$cheque_writer = sanitizeVal($cheque_writer);
+		$cheque_bank = sanitizeVal($cheque_bank);
+		$accountancycode = sanitizeVal($accountancycode);
+		$num_releve = sanitizeVal($num_releve);
 
 		$result = $account->addline(
 			$date,
@@ -555,9 +555,9 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(404, 'account line not found');
 		}
 
-		$url = checkVal($url);
-		$label = checkVal($label);
-		$type = checkVal($type);
+		$url = sanitizeVal($url);
+		$label = sanitizeVal($label);
+		$type = sanitizeVal($type);
 
 		$result = $account->add_url_line($line_id, $url_id, $url, $label, $type);
 		if ($result < 0) {

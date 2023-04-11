@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - other
+Tools=Gereedschap
+TMenuTools=Gereedschap
 Notify_COMPANY_CREATE=Third party aangemaakt
 FileIsTooBig=Bestanden zijn te groot
 WebsiteSetup=Setup van de module website

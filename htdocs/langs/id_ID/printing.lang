@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=Pencetakan Langsung
-Module64000Desc=Aktifkan Sistem Pencetakan Langsung
-PrintingSetup=Pengaturan Sistem Pencetakan Langsung
-PrintingDesc=Modul ini menambahkan tombol Cetak ke berbagai modul untuk memungkinkan dokumen dicetak langsung ke printer tanpa perlu membuka dokumen di aplikasi lain.
-MenuDirectPrinting=Pekerjaan Pencetakan Langsung
-DirectPrint=Cetak langsung
+Module64000Name=One click Printing
+Module64000Desc=Enable One click Printing System
+PrintingSetup=Setup of One click Printing System
+PrintingDesc=This module adds a Print button to various modules to allow documents to be printed directly to a printer with no need to open the document into another application.
+MenuDirectPrinting=One click Printing jobs
+DirectPrint=One click Print
 PrintingDriverDesc=Variabel konfigurasi untuk driver pencetakan.
 ListDrivers=Daftar driver
 PrintTestDesc=Daftar Printer.

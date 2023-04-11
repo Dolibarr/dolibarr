@@ -79,12 +79,13 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 // Security check
 if (empty($conf->agenda->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Agenda not enabled');
 }
 
 // Not older than
@@ -96,9 +97,9 @@ if (!isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) {
 $format = 'ical';
 $type = 'event';
 if (GETPOST("format", 'alpha')) {
-	$format = GETPOST("format", 'apha');
+	$format = GETPOST("format", 'alpha');
 }
-if (GETPOST("type", 'apha')) {
+if (GETPOST("type", 'alpha')) {
 	$type = GETPOST("type", 'alpha');
 }
 
@@ -115,27 +116,32 @@ if (GETPOST("idfrom", 'int')) {
 if (GETPOST("idto", 'int')) {
 	$filters['idto'] = GETPOST("idto", 'int');
 }
-if (GETPOST("project", 'apha')) {
-	$filters['project'] = GETPOST("project", 'apha');
+if (GETPOST("project", 'alpha')) {
+	$filters['project'] = GETPOST("project", 'alpha');
 }
-if (GETPOST("logina", 'apha')) {
-	$filters['logina'] = GETPOST("logina", 'apha');
+if (GETPOST("logina", 'alpha')) {
+	$filters['logina'] = GETPOST("logina", 'alpha');
 }
-if (GETPOST("logint", 'apha')) {
-	$filters['logint'] = GETPOST("logint", 'apha');
+if (GETPOST("logint", 'alpha')) {
+	$filters['logint'] = GETPOST("logint", 'alpha');
 }
-if (GETPOST("notactiontype", 'apha')) {
-	$filters['notactiontype'] = GETPOST("notactiontype", 'apha');
+if (GETPOST("notactiontype", 'alpha')) {
+	$filters['notactiontype'] = GETPOST("notactiontype", 'alpha');
 }
-if (GETPOST("actiontype", 'apha')) {
-	$filters['actiontype'] = GETPOST("actiontype", 'apha');
+if (GETPOST("actiontype", 'alpha')) {
+	$filters['actiontype'] = GETPOST("actiontype", 'alpha');
 }
 if (GETPOST("notolderthan", 'int')) {
 	$filters['notolderthan'] = GETPOST("notolderthan", "int");
 } else {
 	$filters['notolderthan'] = $conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY;
 }
-
+if (GETPOST("module", 'alpha')) {
+	$filters['module'] = GETPOST("module", 'alpha');
+}
+if (GETPOST("status", 'int')) {
+	$filters['status'] = GETPOST("status", 'int');
+}
 // Check config
 if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY)) {
 	$user->getrights();
@@ -201,6 +207,15 @@ foreach ($filters as $key => $value) {
 	if ($key == 'notactiontype') {
 		$filename .= '-notactiontype'.$value;
 	}
+	if ($key == 'actiontype') {
+		$filename .= '-actiontype'.$value;
+	}
+	if ($key == 'module') {
+		$filename .= '-module'.$value;
+	}
+	if ($key == 'status') {
+		$filename .= '-status'.$value;
+	}
 }
 // Add extension
 if ($format == 'vcal') {
@@ -212,9 +227,7 @@ if ($format == 'ical') {
 if ($format == 'rss') {
 	$shortfilename .= '.rss'; $filename .= '.rss';
 }
-
 if ($shortfilename == 'dolibarrcalendar') {
-	$langs->load("main");
 	$langs->load("errors");
 	llxHeaderVierge();
 	print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX", 'format').'</div>';

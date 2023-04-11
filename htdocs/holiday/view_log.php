@@ -24,6 +24,7 @@
  *  \ingroup    holiday
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 // Security check (access forbidden for external user too)
@@ -74,11 +75,6 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-// Si l'utilisateur n'a pas le droit de lire cette page
-if (!$user->rights->holiday->readall) {
-	accessforbidden();
-}
-
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'other', 'holiday'));
 
@@ -92,12 +88,12 @@ $arrayfields = array();
 $arrayofmassactions = array();
 
 if (empty($conf->holiday->enabled)) {
-	llxHeader('', $langs->trans('CPTitreMenu'));
-	print '<div class="tabBar">';
-	print '<span style="color: #FF0000;">'.$langs->trans('NotActiveModCP').'</span>';
-	print '</div>';
-	llxFooter();
-	exit();
+	accessforbidden('Module not enabled');
+}
+
+// Si l'utilisateur n'a pas le droit de lire cette page
+if (!$user->rights->holiday->readall) {
+	accessforbidden();
 }
 
 
@@ -133,7 +129,7 @@ if (empty($reshook)) {
 		$search_type = '';
 		$search_prev_solde = '';
 		$search_new_solde = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 
@@ -159,15 +155,15 @@ if (empty($reshook)) {
 
 // Definition of fields for lists
 $arrayfields = array(
-	'cpl.rowid'=>array('label'=>$langs->trans("ID"), 'checked'=>1),
-	'cpl.date_action'=>array('label'=>$langs->trans("Date"), 'checked'=>1),
-	'cpl.fk_user_action'=>array('label'=>$langs->trans("ActionByCP"), 'checked'=>1),
-	'cpl.fk_user_update'=>array('label'=>$langs->trans("UserUpdateCP"), 'checked'=>1),
-	'cpl.type_action'=>array('label'=>$langs->trans("Description"), 'checked'=>1),
-	'cpl.fk_type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
-	'cpl.prev_solde'=>array('label'=>$langs->trans("PrevSoldeCP"), 'checked'=>1),
-	'variation'=>array('label'=>$langs->trans("Variation"), 'checked'=>1),
-	'cpl.new_solde'=>array('label'=>$langs->trans("NewSoldeCP"), 'checked'=>1),
+	'cpl.rowid'=>array('label'=>"ID", 'checked'=>1),
+	'cpl.date_action'=>array('label'=>"Date", 'checked'=>1),
+	'cpl.fk_user_action'=>array('label'=>"ActionByCP", 'checked'=>1),
+	'cpl.fk_user_update'=>array('label'=>"UserUpdateCP", 'checked'=>1),
+	'cpl.type_action'=>array('label'=>"Description", 'checked'=>1),
+	'cpl.fk_type'=>array('label'=>"Type", 'checked'=>1),
+	'cpl.prev_solde'=>array('label'=>"PrevSoldeCP", 'checked'=>1),
+	'variation'=>array('label'=>"Variation", 'checked'=>1),
+	'cpl.new_solde'=>array('label'=>"NewSoldeCP", 'checked'=>1),
 );
 
 
@@ -180,7 +176,8 @@ $formother = new FormOther($db);
 $holidaylogstatic = new stdClass();
 $alltypeleaves = $object->getTypes(1, -1); // To have labels
 
-llxHeader('', $langs->trans('CPTitreMenu'));
+$title = $langs->trans('CPTitreMenu');
+llxHeader('', $title);
 
 $sqlwhere = '';
 
@@ -244,7 +241,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if (!empty($search_id)) {
 	$param .= '&search_statut='.urlencode($search_statut);
@@ -286,7 +283,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=request', '', $user->rights->holiday->write);
+$newcardbutton = dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create', '', $user->rights->holiday->write);
 print_barre_liste($langs->trans('LogCP'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_hrm', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 print '<div class="info">'.$langs->trans('LastUpdateCP').': ';
@@ -305,6 +302,9 @@ print '</div>';
 print '<br>';
 
 $moreforfilter = '';
+$morefilter = '';
+$disabled = 0;
+$include = '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = '';
@@ -333,11 +333,10 @@ if (!empty($arrayfields['cpl.date_action']['checked'])) {
 if (!empty($arrayfields['cpl.fk_user_action']['checked'])) {
 	$validator = new UserGroup($db);
 	$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
-	$valideurobjects = $validator->listUsersForGroup($excludefilter);
+	$valideurobjects = $validator->listUsersForGroup($excludefilter, 1);
 	$valideurarray = array();
-
 	foreach ($valideurobjects as $val) {
-		$valideurarray[$val->id] = $val->id;
+		$valideurarray[$val] = $val;
 	}
 
 	print '<td class="liste_titre">';
@@ -373,7 +372,7 @@ if (!empty($arrayfields['cpl.fk_type']['checked'])) {
 
 // Filter: Previous balance
 if (!empty($arrayfields['cpl.prev_solde']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre right">';
 	print '<input type="text" class="maxwidth50" name="search_prev_solde" value="'.$search_prev_solde.'">';
 	print '</td>';
 }
@@ -385,7 +384,7 @@ if (!empty($arrayfields['variation']['checked'])) {
 
 // Filter: New Balance
 if (!empty($arrayfields['cpl.new_solde']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre right">';
 	print '<input type="text" class="maxwidth50" name="search_new_solde" value="'.$search_new_solde.'">';
 	print '</td>';
 }
@@ -399,7 +398,7 @@ print '</tr>';
 
 print '<tr class="liste_titre">';
 if (!empty($arrayfields['cpl.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['cpl.rowid']['label'], $_SERVER["PHP_SELF"], 'rowid', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cpl.rowid']['label'], $_SERVER["PHP_SELF"], 'cpl.rowid', '', '', '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cpl.date_action']['checked'])) {
 	print_liste_field_titre($arrayfields['cpl.date_action']['label'], $_SERVER["PHP_SELF"], 'date_action', '', '', '', $sortfield, $sortorder, 'center ');
@@ -428,12 +427,20 @@ if (!empty($arrayfields['cpl.new_solde']['checked'])) {
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print '</tr>';
 
-// TODO: $i = 0;
-$i = 1;
 
+$j = 0;
+while ($j < ($page * $limit)) {
+	$obj = next($object->logs);
+	$j++;
+}
+
+$i = 0;
 while ($i < min($num, $limit)) {
 	//TODO: $obj = $db->fetch_object($resql);
-	$obj = next($object->logs);
+	$obj = current($object->logs);
+	if (empty($obj)) {
+		break;
+	}
 
 	$holidaylogstatic->id = $obj['rowid'];
 	$holidaylogstatic->date = $obj['date_action'];
@@ -472,15 +479,18 @@ while ($i < min($num, $limit)) {
 
 	// Description
 	if (!empty($arrayfields['cpl.type_action']['checked'])) {
-		print '<td>'.$holidaylogstatic->description.'</td>';
+		print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($holidaylogstatic->description).'">'.dol_escape_htmltag($holidaylogstatic->description).'</td>';
 	}
 
 	// Type
 	if (!empty($arrayfields['cpl.fk_type']['checked'])) {
-		if ($alltypeleaves[$holidaylogstatic->type]['code'] && $langs->trans($alltypeleaves[$holidaylogstatic->type]['code']) != $alltypeleaves[$holidaylogstatic->type]['code']) {
-			$label = $langs->trans($alltypeleaves[$holidaylogstatic->type]['code']);
-		} else {
-			$label = $alltypeleaves[$holidaylogstatic->type]['label'];
+		$label = '';
+		if (!empty($alltypeleaves[$holidaylogstatic->type])) {
+			if ($alltypeleaves[$holidaylogstatic->type]['code'] && $langs->trans($alltypeleaves[$holidaylogstatic->type]['code']) != $alltypeleaves[$holidaylogstatic->type]['code']) {
+				$label = $langs->trans($alltypeleaves[$holidaylogstatic->type]['code']);
+			} else {
+				$label = $alltypeleaves[$holidaylogstatic->type]['label'];
+			}
 		}
 
 		print '<td>';
@@ -496,8 +506,13 @@ while ($i < min($num, $limit)) {
 	// Variation
 	if (!empty($arrayfields['variation']['checked'])) {
 		$delta = price2num($holidaylogstatic->balance_new - $holidaylogstatic->balance_previous, 5);
-		$detasign = ($delta > 0 ? '+' : '');
-		print '<td style="text-align: right;">'.$detasign.$delta.'</td>';
+		print '<td style="text-align: right;">';
+		if ($delta > 0) {
+			print '<span class="stockmovemententry fontsizeunset">+'.$delta.'</span>';
+		} else {
+			print '<span class="stockmovementexit fontsizeunset">'.$delta.'</span>';
+		}
+		print '</td>';
 	}
 
 	// New Balance
@@ -511,6 +526,7 @@ while ($i < min($num, $limit)) {
 	print '</tr>';
 
 	$i++;
+	next($object->logs);
 }
 
 if ($log_holiday == '2') {

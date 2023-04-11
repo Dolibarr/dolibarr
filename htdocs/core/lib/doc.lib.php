@@ -57,7 +57,7 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 	if ($idprod) {
 		$prodser->fetch($idprod);
 		// If a predefined product and multilang and on other lang, we renamed label with label translated
-		if (!empty($conf->global->MAIN_MULTILANGS) && ($outputlangs->defaultlang != $langs->defaultlang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && ($outputlangs->defaultlang != $langs->defaultlang)) {
 			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["label"]) && $label == $prodser->label) {
 				$label = $prodser->multilangs[$outputlangs->defaultlang]["label"];
 			}
@@ -78,12 +78,12 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 		if ($desc == '(CREDIT_NOTE)' && $line->fk_remise_except) {
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
-			$sourceref = !empty($discount->discount_type) ? $discount->ref_invoive_supplier_source : $discount->ref_facture_source;
+			$sourceref = !empty($discount->discount_type) ? $discount->ref_invoice_supplier_source : $discount->ref_facture_source;
 			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromCreditNote", $sourceref);
 		} elseif ($desc == '(DEPOSIT)' && $line->fk_remise_except) {
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
-			$sourceref = !empty($discount->discount_type) ? $discount->ref_invoive_supplier_source : $discount->ref_facture_source;
+			$sourceref = !empty($discount->discount_type) ? $discount->ref_invoice_supplier_source : $discount->ref_facture_source;
 			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromDeposit", $sourceref);
 			// Add date of deposit
 			if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) {
@@ -128,11 +128,9 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 				} else {
 					$ref_prodserv = $prodser->ref; // Show local ref only
 				}
-
-				$ref_prodserv .= " - ";
 			}
 
-			$libelleproduitservice = $prefix_prodserv.$ref_prodserv.$libelleproduitservice;
+			$libelleproduitservice = $prefix_prodserv.$ref_prodserv.($libelleproduitservice ? " - " : "").$libelleproduitservice;
 		}
 	}
 

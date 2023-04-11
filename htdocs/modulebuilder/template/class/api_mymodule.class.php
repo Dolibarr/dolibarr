@@ -49,10 +49,12 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 		$this->db = $db;
 		$this->myobject = new MyObject($this->db);
 	}
+
+	/*begin methods CRUD*/
 
 	/**
 	 * Get properties of a myobject object
@@ -69,7 +71,7 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->mymodule->read) {
+		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->read) {
 			throw new RestException(401);
 		}
 
@@ -145,21 +147,21 @@ class MyModuleApi extends DolibarrApi
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if ($restrictonsocid && $socid) {
-			$sql .= " AND t.fk_soc = ".$socid;
+			$sql .= " AND t.fk_soc = ".((int) $socid);
 		}
 		if ($restrictonsocid && $search_sale > 0) {
 			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 		}
 		// Insert sale filter
 		if ($restrictonsocid && $search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".$search_sale;
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -205,7 +207,7 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->mymodule->write) {
+		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->write) {
 			throw new RestException(401);
 		}
 
@@ -217,7 +219,7 @@ class MyModuleApi extends DolibarrApi
 		}
 
 		// Clean data
-		// $this->myobject->abc = checkVal($this->myobject->abc, 'alphanohtml');
+		// $this->myobject->abc = sanitizeVal($this->myobject->abc, 'alphanohtml');
 
 		if ($this->myobject->create(DolibarrApiAccess::$user)<0) {
 			throw new RestException(500, "Error creating MyObject", array_merge(array($this->myobject->error), $this->myobject->errors));
@@ -238,7 +240,7 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->mymodule->write) {
+		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->write) {
 			throw new RestException(401);
 		}
 
@@ -259,7 +261,7 @@ class MyModuleApi extends DolibarrApi
 		}
 
 		// Clean data
-		// $this->myobject->abc = checkVal($this->myobject->abc, 'alphanohtml');
+		// $this->myobject->abc = sanitizeVal($this->myobject->abc, 'alphanohtml');
 
 		if ($this->myobject->update(DolibarrApiAccess::$user, false) > 0) {
 			return $this->get($id);
@@ -280,7 +282,7 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->mymodule->delete) {
+		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->delete) {
 			throw new RestException(401);
 		}
 		$result = $this->myobject->fetch($id);
@@ -292,7 +294,9 @@ class MyModuleApi extends DolibarrApi
 			throw new RestException(401, 'Access to instance id='.$this->myobject->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->myobject->delete(DolibarrApiAccess::$user)) {
+		if ($this->myobject->delete(DolibarrApiAccess::$user) == 0) {
+			throw new RestException(409, 'Error when deleting MyObject : '.$this->myobject->error);
+		} elseif ($this->myobject->delete(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error when deleting MyObject : '.$this->myobject->error);
 		}
 
@@ -304,6 +308,31 @@ class MyModuleApi extends DolibarrApi
 		);
 	}
 
+
+	/**
+	 * Validate fields before create or update object
+	 *
+	 * @param	array		$data   Array of data to validate
+	 * @return	array
+	 *
+	 * @throws	RestException
+	 */
+	private function _validate($data)
+	{
+		$myobject = array();
+		foreach ($this->myobject->fields as $field => $propfield) {
+			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) {
+				continue; // Not a mandatory field
+			}
+			if (!isset($data[$field])) {
+				throw new RestException(400, "$field field missing");
+			}
+			$myobject[$field] = $data[$field];
+		}
+		return $myobject;
+	}
+
+	/*end methods CRUD*/
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
@@ -366,28 +395,5 @@ class MyModuleApi extends DolibarrApi
 		}
 
 		return $object;
-	}
-
-	/**
-	 * Validate fields before create or update object
-	 *
-	 * @param	array		$data   Array of data to validate
-	 * @return	array
-	 *
-	 * @throws	RestException
-	 */
-	private function _validate($data)
-	{
-		$myobject = array();
-		foreach ($this->myobject->fields as $field => $propfield) {
-			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) {
-				continue; // Not a mandatory field
-			}
-			if (!isset($data[$field])) {
-				throw new RestException(400, "$field field missing");
-			}
-			$myobject[$field] = $data[$field];
-		}
-		return $myobject;
 	}
 }

@@ -72,7 +72,7 @@ class modProductBatch extends DolibarrModules
 		$this->depends = array("modProduct", "modStock", "modExpedition", "modFournisseur"); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("productbatch");
 
@@ -84,14 +84,14 @@ class modProductBatch extends DolibarrModules
 		$this->const[$r][0] = "PRODUCTBATCH_LOT_ADDON";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "mod_lot_free";
-		$this->const[$r][3] = 'Module to control product codes';
+		$this->const[$r][3] = 'Module to control lot number';
 		$this->const[$r][4] = 0;
 		$r++;
 
 		$this->const[$r][0] = "PRODUCTBATCH_SN_ADDON";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "mod_sn_free";
-		$this->const[$r][3] = 'Module to control product codes';
+		$this->const[$r][3] = 'Module to control serial number';
 		$this->const[$r][4] = 0;
 		$r++;
 

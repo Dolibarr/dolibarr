@@ -54,11 +54,12 @@ class Export
 	public $array_export_examplevalues = array(); // array with examples for fields
 	public $array_export_help = array(); // array with tooltip help for fields
 
-	// To store export modules
+	// To store export templates
 	public $hexa; // List of fields in the export profile
 	public $hexafiltervalue; // List of search criteria in the export profile
 	public $datatoexport;
 	public $model_name; // Name of export profile
+	public $fk_user;
 
 	public $sqlusedforexport;
 
@@ -174,21 +175,21 @@ class Export
 									$this->array_export_perms[$i] = $bool;
 									// Icon
 									$this->array_export_icon[$i] = (isset($module->export_icon[$r]) ? $module->export_icon[$r] : $module->picto);
-									// Code du dataset export
+									// Code of the export dataset / Code du dataset export
 									$this->array_export_code[$i] = $module->export_code[$r];
 									// Define a key for sort
-									$this->array_export_code_for_sort[$i] = $module->module_position.'_'.$module->export_code[$r];	// Add a key into the module
-									// Libelle du dataset export
+									$this->array_export_code_for_sort[$i] = $module->module_position.'_'.$module->export_code[$r]; // Add a key into the module
+									// Export Dataset Label / Libelle du dataset export
 									$this->array_export_label[$i] = $module->getExportDatasetLabel($r);
-									// Tableau des champ a exporter (cle=champ, valeur=libelle)
+									// Table of fields to export / Tableau des champ a exporter (cle=champ, valeur=libelle)
 									$this->array_export_fields[$i] = $module->export_fields_array[$r];
-									// Tableau des champs a filtrer (cle=champ, valeur1=type de donnees) on verifie que le module a des filtres
+									// Table of fields to be filtered / Tableau des champs a filtrer (cle=champ, valeur1=type de donnees) on verifie que le module a des filtres
 									$this->array_export_TypeFields[$i] = (isset($module->export_TypeFields_array[$r]) ? $module->export_TypeFields_array[$r] : '');
-									// Tableau des entites a exporter (cle=champ, valeur=entite)
+									// Table of entities for export / Tableau des entites a exporter (cle=champ, valeur=entite)
 									$this->array_export_entities[$i] = $module->export_entities_array[$r];
 									// Tableau des entites qui requiert abandon du DISTINCT (cle=entite, valeur=champ id child records)
 									$this->array_export_dependencies[$i] = (!empty($module->export_dependencies_array[$r]) ? $module->export_dependencies_array[$r] : '');
-									// Tableau des operations speciales sur champ
+									// Table of special field operations / Tableau des operations speciales sur champ
 									$this->array_export_special[$i] = (!empty($module->export_special_array[$r]) ? $module->export_special_array[$r] : '');
 									// Array of examples
 									$this->array_export_examplevalues[$i] = (!empty($module->export_examplevalues_array[$r]) ? $module->export_examplevalues_array[$r] : null);
@@ -267,7 +268,7 @@ class Export
 					continue;
 				}
 				if ($value != '') {
-					$sqlWhere .= " and ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
+					$sqlWhere .= " AND ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
 				}
 			}
 			$sql .= $sqlWhere;
@@ -296,20 +297,23 @@ class Export
 	 *      @param		string	$TypeField		Type of Field to filter
 	 *      @param		string	$NameField		Name of the field to filter
 	 *      @param		string	$ValueField		Value of the field for filter. Must not be ''
-	 *      @return		string					sql string of then field ex : "field='xxx'>"
+	 *      @return		string					SQL string of then field ex : "field='xxx'"
 	 */
 	public function build_filterQuery($TypeField, $NameField, $ValueField)
 	{
 		// phpcs:enable
+		$NameField = sanitizeVal($NameField, 'aZ09');
+		$szFilterQuery = '';
+
 		//print $TypeField." ".$NameField." ".$ValueField;
 		$InfoFieldList = explode(":", $TypeField);
 		// build the input field on depend of the type of file
 		switch ($InfoFieldList[0]) {
 			case 'Text':
 				if (!(strpos($ValueField, '%') === false)) {
-					$szFilterQuery .= " ".$NameField." LIKE '".$ValueField."'";
+					$szFilterQuery = " ".$NameField." LIKE '".$this->db->escape($ValueField)."'";
 				} else {
-					$szFilterQuery .= " ".$NameField." = '".$ValueField."'";
+					$szFilterQuery = " ".$NameField." = '".$this->db->escape($ValueField)."'";
 				}
 				break;
 			case 'Date':
@@ -329,32 +333,39 @@ class Export
 			case 'Duree':
 				break;
 			case 'Numeric':
-				// si le signe -
+				// if there is a signe +
 				if (strpos($ValueField, "+") > 0) {
 					// mode plage
 					$ValueArray = explode("+", $ValueField);
-					$szFilterQuery = "(".$NameField.">=".$ValueArray[0];
-					$szFilterQuery .= " AND ".$NameField."<=".$ValueArray[1].")";
+					$szFilterQuery = "(".$NameField." >= ".((float) $ValueArray[0]);
+					$szFilterQuery .= " AND ".$NameField." <= ".((float) $ValueArray[1]).")";
 				} else {
 					if (is_numeric(substr($ValueField, 0, 1))) {
-						$szFilterQuery = " ".$NameField."=".$ValueField;
+						$szFilterQuery = " ".$NameField." = ".((float) $ValueField);
 					} else {
-						$szFilterQuery = " ".$NameField.substr($ValueField, 0, 1).substr($ValueField, 1);
+						$szFilterQuery = " ".$NameField.substr($ValueField, 0, 1).((float) substr($ValueField, 1));
 					}
 				}
 				break;
 			case 'Boolean':
 				$szFilterQuery = " ".$NameField."=".(is_numeric($ValueField) ? $ValueField : ($ValueField == 'yes' ? 1 : 0));
 				break;
+			case 'FormSelect':
+				if (is_numeric($ValueField) && $ValueField > 0) {
+					$szFilterQuery = " ".$NameField." = ".((float) $ValueField);
+				} else {
+					$szFilterQuery = " 1=1";	// Test always true
+				}
+				break;
 			case 'Status':
 			case 'List':
 				if (is_numeric($ValueField)) {
-					$szFilterQuery = " ".$NameField."=".$ValueField;
+					$szFilterQuery = " ".$NameField." = ".((float) $ValueField);
 				} else {
 					if (!(strpos($ValueField, '%') === false)) {
-						$szFilterQuery = " ".$NameField." LIKE '".$ValueField."'";
+						$szFilterQuery = " ".$NameField." LIKE '".$this->db->escape($ValueField)."'";
 					} else {
-						$szFilterQuery = " ".$NameField." = '".$ValueField."'";
+						$szFilterQuery = " ".$NameField." = '".$this->db->escape($ValueField)."'";
 					}
 				}
 				break;
@@ -375,13 +386,13 @@ class Export
 	 */
 	public function conditionDate($Field, $Value, $Sens)
 	{
-		// TODO date_format is forbidden, not performant and not portable. Use instead BETWEEN
+		// TODO date_format is forbidden, not performant and not portable. Use instead $Value to forge the range date.
 		if (strlen($Value) == 4) {
-			$Condition = " date_format(".$Field.",'%Y') ".$Sens." '".$Value."'";
+			$Condition = " date_format(".$Field.",'%Y') ".$Sens." '".$this->db->escape($Value)."'";
 		} elseif (strlen($Value) == 6) {
-			$Condition = " date_format(".$Field.",'%Y%m') ".$Sens." '".$Value."'";
+			$Condition = " date_format(".$Field.",'%Y%m') ".$Sens." '".$this->db->escape($Value)."'";
 		} else {
-			$Condition = " date_format(".$Field.",'%Y%m%d') ".$Sens." ".$Value;
+			$Condition = " date_format(".$Field.",'%Y%m%d') ".$Sens." '".$this->db->escape($Value)."'";
 		}
 		return $Condition;
 	}
@@ -398,7 +409,7 @@ class Export
 	public function build_filterField($TypeField, $NameField, $ValueField)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $conf, $langs, $form;
 
 		$szFilterField = '';
 		$InfoFieldList = explode(":", $TypeField);
@@ -412,7 +423,7 @@ class Export
 			case 'Duree':
 			case 'Numeric':
 			case 'Number':
-				// Must be a string text to allow to use comparison strings like "<= 999"
+				// Must be a string text to allow to use comparison strings like "<= 99.9"
 				$szFilterField = '<input type="text" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
 				break;
 			case 'Status':
@@ -439,10 +450,20 @@ class Export
 				$szFilterField .= ' value="0">'.yn(0).'</option>';
 				$szFilterField .= "</select>";
 				break;
+			case 'FormSelect':
+				//var_dump($NameField);
+				if ($InfoFieldList[1] == 'select_company') {
+					$szFilterField .= $form->select_company('', $NameField, '', 1);
+				} elseif ($InfoFieldList[1] == 'selectcontacts') {
+					$szFilterField .= $form->selectcontacts(0, '', $NameField, '&nbsp;');
+				} elseif ($InfoFieldList[1] == 'select_dolusers') {
+					$szFilterField .= $form->select_dolusers('', $NameField, 1);
+				}
+				break;
 			case 'List':
-				// 0 : Type du champ
-				// 1 : Nom de la table
-				// 2 : Nom du champ contenant le libelle
+				// 0 : Type of the field / Type du champ
+				// 1 : Name of the table / Nom de la table
+				// 2 : Name of the field containing the label / Nom du champ contenant le libelle
 				// 3 : Name of field with key (if it is not "rowid"). Used this field as key for combo list.
 				// 4 : Name of element for getEntity().
 
@@ -451,14 +472,14 @@ class Export
 				} else {
 					$keyList = 'rowid';
 				}
-				$sql = 'SELECT '.$keyList.' as rowid, '.$InfoFieldList[2].' as label'.(empty($InfoFieldList[3]) ? '' : ', '.$InfoFieldList[3].' as code');
+				$sql = "SELECT ".$keyList." as rowid, ".$InfoFieldList[2]." as label".(empty($InfoFieldList[3]) ? "" : ", ".$InfoFieldList[3]." as code");
 				if ($InfoFieldList[1] == 'c_stcomm') {
-					$sql = 'SELECT id as id, '.$keyList.' as rowid, '.$InfoFieldList[2].' as label'.(empty($InfoFieldList[3]) ? '' : ', '.$InfoFieldList[3].' as code');
+					$sql = "SELECT id as id, ".$keyList." as rowid, ".$InfoFieldList[2]." as label".(empty($InfoFieldList[3]) ? "" : ", ".$InfoFieldList[3].' as code');
 				}
 				if ($InfoFieldList[1] == 'c_country') {
-					$sql = 'SELECT '.$keyList.' as rowid, '.$InfoFieldList[2].' as label, code as code';
+					$sql = "SELECT ".$keyList." as rowid, ".$InfoFieldList[2]." as label, code as code";
 				}
-				$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[1];
+				$sql .= " FROM ".MAIN_DB_PREFIX.$InfoFieldList[1];
 				if (!empty($InfoFieldList[4])) {
 					$sql .= ' WHERE entity IN ('.getEntity($InfoFieldList[4]).')';
 				}
@@ -611,6 +632,9 @@ class Export
 			} else {
 				$filename = "export_".$datatoexport;
 			}
+			if (!empty($conf->global->EXPORT_NAME_WITH_DT)) {
+				$filename .= dol_print_date(dol_now(), '%Y%m%d%_%H%M');
+			}
 			$filename .= '.'.$objmodel->getDriverExtension();
 			$dirname = $conf->export->dir_temp.'/'.$user->id;
 
@@ -676,7 +700,7 @@ class Export
 								// Export of compute field does not work. $obj contains $obj->alias_field and formula may contains $obj->field
 								// Also the formula may contains objects of class that are not loaded.
 								$computestring = $this->array_export_special[$indice][$key];
-								//$tmp = dol_eval($computestring, 1, 0);
+								//$tmp = dol_eval($computestring, 1, 0, '1');
 								//$obj->$alias = $tmp;
 
 								$this->error = "ERROPNOTSUPPORTED. Operation ".$computestring." not supported. Export of 'computed' extrafields is not yet supported, please remove field.";
@@ -720,8 +744,6 @@ class Export
 
 		$this->db->begin();
 
-		$filter = '';
-
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'export_model (';
 		$sql .= 'label,';
 		$sql .= 'type,';
@@ -732,11 +754,10 @@ class Export
 		$sql .= "'".$this->db->escape($this->model_name)."',";
 		$sql .= " '".$this->db->escape($this->datatoexport)."',";
 		$sql .= " '".$this->db->escape($this->hexa)."',";
-		$sql .= ' '.($user->id > 0 ? $user->id : 'null').",";
+		$sql .= ' '.(isset($this->fk_user) ? (int) $this->fk_user : 'null').",";
 		$sql .= " '".$this->db->escape($this->hexafiltervalue)."'";
 		$sql .= ")";
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->db->commit();

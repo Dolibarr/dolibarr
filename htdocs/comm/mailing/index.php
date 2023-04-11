@@ -21,9 +21,10 @@
 /**
  *       \file       htdocs/comm/mailing/index.php
  *       \ingroup    mailing
- *       \brief      Page accueil de la zone mailing
+ *       \brief      Home page for emailing area
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -34,8 +35,9 @@ $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('mailingindex'));
 
 // Load translation files required by the page
-$langs->loadLangs(array('commercial', 'orders'));
+$langs->loadLangs(array('commercial', 'orders', 'mails'));
 
+$object = new Mailing($db);
 
 // Security check
 $result = restrictedArea($user, 'mailing');
@@ -46,16 +48,18 @@ $result = restrictedArea($user, 'mailing');
  */
 
 $help_url = 'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
-llxHeader('', 'EMailing', $help_url);
+$title = $langs->trans('MailingArea');
 
-print load_fiche_titre($langs->trans("MailingArea"));
+llxHeader('', $title, $help_url);
+
+print load_fiche_titre($title);
 
 //print '<table class="notopnoleftnoright" width="100%">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-//if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
+//if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 //{
 	// Search into emailings
 	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/mailing/list.php">';
@@ -97,7 +101,7 @@ if (is_resource($handle)) {
 
 				$qualified = 1;
 				foreach ($mailmodule->require_module as $key) {
-					if (!$conf->$key->enabled || (!$user->admin && $mailmodule->require_admin)) {
+					if (empty($conf->$key->enabled) || (!$user->admin && $mailmodule->require_admin)) {
 						$qualified = 0;
 						//print "Les pr�requis d'activation du module mailing ne sont pas respect�s. Il ne sera pas actif";
 						break;
@@ -138,8 +142,7 @@ if (is_resource($handle)) {
 print "</table><br>";
 
 
-//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 /*
@@ -173,7 +176,7 @@ if ($result) {
 
 			print '<tr class="oddeven">';
 			print '<td class="nowrap">'.$mailstatic->getNomUrl(1).'</td>';
-			print '<td>'.dol_trunc($obj->title, 38).'</td>';
+			print '<td>'.(!empty($obj->title) ? dol_trunc($obj->title, 38) : '').'</td>';
 			print '<td class="center">'.dol_print_date($db->jdate($obj->date_creat), 'day').'</td>';
 			print '<td class="center">'.($obj->nbemail ? $obj->nbemail : "0").'</td>';
 			print '<td class="right">'.$mailstatic->LibStatut($obj->statut, 5).'</td>';
@@ -181,7 +184,7 @@ if ($result) {
 			$i++;
 		}
 	} else {
-		print '<tr><td class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+		print '<tr><td><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 	print "</table></div><br>";
 	$db->free($result);
@@ -190,18 +193,8 @@ if ($result) {
 }
 
 
-//print '</td></tr></table>';
-print '</div></div></div>';
+print '</div></div>';
 
-
-if ($langs->file_exists("html/spam.html", 0)) {
-	print "<br><br><br><br>".$langs->trans("Note")."<br>";
-	print '<div style="padding: 4px; background: #FAFAFA; border: 1px solid #BBBBBB;" >';
-	dol_print_file($langs, "html/spam.html", 0);
-	print '</div>';
-
-	print '<br>';
-}
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardEmailings', $parameters, $object); // Note that $action and $object may have been modified by hook

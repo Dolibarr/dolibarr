@@ -23,6 +23,8 @@
  *       \brief      Show page to select language. This is done only for a first installation.
  *					 For a reinstall this page redirect to page check.php
  */
+
+define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
 include_once '../core/class/html.form.class.php';
 include_once '../core/class/html.formadmin.class.php';
@@ -44,9 +46,15 @@ $langs->load("admin");
  * View
  */
 
-$formadmin = new FormAdmin(''); // Note: $db does not exist yet but we don't need it, so we put ''.
+$formadmin = new FormAdmin(null); // Note: $db does not exist yet but we don't need it, so we put ''.
 
 pHeader("", "check"); // Next step = check
+
+
+if (!is_readable($conffile)) {
+	print '<br>';
+	print '<span class="opacitymedium">'.$langs->trans("NoReadableConfFileSoStartInstall").'</span>';
+}
 
 
 // Ask installation language
@@ -61,7 +69,9 @@ print '</tr>';
 
 print '</table></div>';
 
-print '<br><br><span class="opacitymedium">'.$langs->trans("SomeTranslationAreUncomplete").'</span>';
+
+
+//print '<br><br><span class="opacitymedium">'.$langs->trans("SomeTranslationAreUncomplete").'</span>';
 
 // If there's no error, we display the next step button
 if ($err == 0) {

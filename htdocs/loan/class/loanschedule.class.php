@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017       Florian HENRY           <florian.henry@atm-consulting.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,12 +177,12 @@ class LoanSchedule extends CommonObject
 			$sql .= " fk_typepayment, fk_user_creat, fk_bank)";
 			$sql .= " VALUES (".$this->fk_loan.", '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datep)."',";
-			$sql .= " ".$this->amount_capital.",";
-			$sql .= " ".$this->amount_insurance.",";
-			$sql .= " ".$this->amount_interest.",";
-			$sql .= " ".$this->fk_typepayment.", ";
-			$sql .= " ".$user->id.",";
-			$sql .= " ".$this->fk_bank.")";
+			$sql .= " ".price2num($this->amount_capital).",";
+			$sql .= " ".price2num($this->amount_insurance).",";
+			$sql .= " ".price2num($this->amount_interest).",";
+			$sql .= " ".price2num($this->fk_typepayment).", ";
+			$sql .= " ".((int) $user->id).",";
+			$sql .= " ".((int) $this->fk_bank).")";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -334,10 +334,10 @@ class LoanSchedule extends CommonObject
 		$sql .= " num_payment=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
-		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
-		$sql .= " fk_payment_loan=".(isset($this->fk_payment_loan) ? $this->fk_payment_loan : "null").",";
-		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").",";
-		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null")."";
+		$sql .= " fk_bank=".(isset($this->fk_bank) ? ((int) $this->fk_bank) : "null").",";
+		$sql .= " fk_payment_loan=".(isset($this->fk_payment_loan) ? ((int) $this->fk_payment_loan) : "null").",";
+		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? ((int) $this->fk_user_creat) : "null").",";
+		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? ((int) $this->fk_user_modif) : "null");
 
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -498,7 +498,7 @@ class LoanSchedule extends CommonObject
 		$toinsert = array();
 
 		$sql = "SELECT l.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."loan as l ";
+		$sql .= " FROM ".MAIN_DB_PREFIX."loan as l";
 		$sql .= " WHERE l.paid = 0";
 		$resql = $this->db->query($sql);
 
@@ -511,7 +511,8 @@ class LoanSchedule extends CommonObject
 						$this->db->begin();
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_loan ";
 						$sql .= "(fk_loan,datec,tms,datep,amount_capital,amount_insurance,amount_interest,fk_typepayment,num_payment,note_private,note_public,fk_bank,fk_user_creat,fk_user_modif) ";
-						$sql .= "SELECT fk_loan,datec,tms,datep,amount_capital,amount_insurance,amount_interest,fk_typepayment,num_payment,note_private,note_public,fk_bank,fk_user_creat,fk_user_modif FROM ".MAIN_DB_PREFIX."loan_schedule WHERE rowid =".$echid;
+						$sql .= "SELECT fk_loan,datec,tms,datep,amount_capital,amount_insurance,amount_interest,fk_typepayment,num_payment,note_private,note_public,fk_bank,fk_user_creat,fk_user_modif";
+						$sql .= " FROM ".MAIN_DB_PREFIX."loan_schedule WHERE rowid =".((int) $echid);
 						$res = $this->db->query($sql);
 						if ($res) {
 							$this->db->commit();

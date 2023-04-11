@@ -34,6 +34,8 @@ services:
         build: .
         environment:
             HOST_USER_ID: $HOST_USER_ID
+            PHP_INI_DATE_TIMEZONE: $PHP_INI_DATE_TIMEZONE
+            PHP_INI_MEMORY_LIMIT: $PHP_INI_MEMORY_LIMIT
         volumes:
             - ../../htdocs:/var/www/html/
             - ../../documents:/var/documents
@@ -46,6 +48,9 @@ services:
         networks:
             - internal-pod
             - external-pod
+        extra_hosts:
+            - "localhost.localdomain:127.0.0.1"
+            - "host.docker.internal:host-gateway"
 
     mail:
         image: maildev/maildev

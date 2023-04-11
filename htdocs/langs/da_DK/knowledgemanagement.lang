@@ -18,7 +18,7 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Videnstyringssystem
+ModuleKnowledgeManagementName = Videnstyrings system
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Administrer en Knowledge Management (KM) eller Help-Desk base
 
@@ -35,21 +35,20 @@ KnowledgeManagementSetupPage = Knowledge Management System opsætningsside
 #
 About = Om
 KnowledgeManagementAbout = Om Knowledge Management
-KnowledgeManagementAboutPage = Videnstyring om side
+KnowledgeManagementAboutPage = Videnstyring infoside
 
-#
-# Sample page
-#
 KnowledgeManagementArea = Videnshåndtering
-
-
-#
-# Menu
-#
 MenuKnowledgeRecord = Videnbase
-ListOfArticles = Liste over artikler
+ListKnowledgeRecord = Liste over artikler
 NewKnowledgeRecord = Ny artikel
 ValidateReply = Valider løsning
 KnowledgeRecords = Artikler
 KnowledgeRecord = Artikel
 KnowledgeRecordExtraFields = Ekstra felter til artikel
+GroupOfTicket=Gruppe af billetter
+YouCanLinkArticleToATicketCategory=Du kan linke artiklen til en billetgruppe (så artiklen vil blive fremhævet på alle billetter i denne gruppe)
+SuggestedForTicketsInGroup=Foreslås til opgave når gruppen er
+
+SetObsolete=Angivet som forældet
+ConfirmCloseKM=Bekræfter du lukningen af denne artikel som forældet?
+ConfirmReopenKM=Vil du gendanne denne artikel til status "Valideret"?

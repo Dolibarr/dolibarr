@@ -18,11 +18,13 @@
  */
 
 /**
- *	\file       htdocs/blockedlog/admin/blockedlog_list.php
- *  \ingroup    blockedlog
- *  \brief      Page setup for blockedlog module
+ *    \file       htdocs/blockedlog/admin/blockedlog_list.php
+ *    \ingroup    blockedlog
+ *    \brief      Page setup for blockedlog module
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
@@ -31,27 +33,35 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "other", "blockedlog", "bills"));
+$langs->loadLangs(array('admin', 'bills', 'blockedlog', 'other'));
 
-if ((!$user->admin && !$user->rights->blockedlog->read) || empty($conf->blockedlog->enabled)) {
+// Access Control
+if ((!$user->admin && empty($user->rights->blockedlog->read)) || empty($conf->blockedlog->enabled)) {
 	accessforbidden();
 }
 
-$action = GETPOST('action', 'aZ09');
+// Get Parameters
+$action      = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'blockedloglist'; // To manage different context of search
-$backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
-$optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$backtopage  = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
+$optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $search_showonlyerrors = GETPOST('search_showonlyerrors', 'int');
 if ($search_showonlyerrors < 0) {
 	$search_showonlyerrors = 0;
 }
 
+$search_startyear = GETPOST('search_startyear', 'int');
+$search_startmonth = GETPOST('search_startmonth', 'int');
+$search_startday = GETPOST('search_startday', 'int');
+$search_endyear = GETPOST('search_endyear', 'int');
+$search_endmonth = GETPOST('search_endmonth', 'int');
+$search_endday = GETPOST('search_endday', 'int');
 $search_id = GETPOST('search_id', 'alpha');
 $search_fk_user = GETPOST('search_fk_user', 'intcomma');
 $search_start = -1;
-if (GETPOST('search_startyear') != '') {
-	$search_start = dol_mktime(0, 0, 0, GETPOST('search_startmonth'), GETPOST('search_startday'), GETPOST('search_startyear'));
+if ($search_startyear != '') {
+	$search_start = dol_mktime(0, 0, 0, $search_startmonth, $search_startday, $search_startyear);
 }
 $search_end = -1;
 if (GETPOST('search_endyear') != '') {
@@ -89,7 +99,7 @@ $block_static->loadTrackedEvents();
 
 $result = restrictedArea($user, 'blockedlog', 0, '');
 
-
+// Execution Time
 $max_execution_time_for_importexport = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
 $max_time = @ini_get("max_execution_time");
 if ($max_time && $max_time < $max_execution_time_for_importexport) {
@@ -112,7 +122,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_ref = '';
 	$search_amount = '';
 	$search_showonlyerrors = 0;
-	$toselect = '';
+	$toselect = array();
 	$search_array_options = array();
 }
 
@@ -166,9 +176,9 @@ if ($action === 'downloadblockchain') {
 
 	if (!$error) {
 		// Now restart request with all data = no limit(1) in sql request
-		$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
+		$sql = "SELECT rowid, date_creation, tms, user_fullname, action, amounts, element, fk_object, date_object, ref_object, signature, fk_user, object_data, object_version";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 		if (GETPOST('monthtoexport', 'int') > 0 || GETPOST('yeartoexport', 'int') > 0) {
 			$dates = dol_get_first_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int') ?GETPOST('monthtoexport', 'int') : 1);
 			$datee = dol_get_last_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int') ?GETPOST('monthtoexport', 'int') : 12);
@@ -194,6 +204,7 @@ if ($action === 'downloadblockchain') {
 				.';'.$langs->transnoentities('Fingerprint')
 				.';'.$langs->transnoentities('Status')
 				.';'.$langs->transnoentities('Note')
+				.';'.$langs->transnoentities('Version')
 				.';'.$langs->transnoentities('FullData')
 				."\n";
 
@@ -216,6 +227,7 @@ if ($action === 'downloadblockchain') {
 				$block_static->fk_user = $obj->fk_user;
 				$block_static->signature = $obj->signature;
 				$block_static->object_data = $block_static->dolDecodeBlockedData($obj->object_data);
+				$block_static->object_version = $obj->object_version;
 
 				$checksignature = $block_static->checkSignature($previoushash); // If $previoushash is not defined, checkSignature will search it
 
@@ -247,6 +259,7 @@ if ($action === 'downloadblockchain') {
 				print ';'.$obj->signature;
 				print ';'.$statusofrecord;
 				print ';'.$statusofrecordnote;
+				print ';'.$obj->object_version;
 				print ';"'.str_replace('"', '""', $obj->object_data).'"';
 				print "\n";
 
@@ -275,8 +288,9 @@ if (GETPOST('withtab', 'alpha')) {
 } else {
 	$title = $langs->trans("BrowseBlockedLog");
 }
+$help_url="EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
 
-llxHeader('', $langs->trans("BrowseBlockedLog"));
+llxHeader('', $title, $help_url);
 
 $MAXLINES = 10000;
 
@@ -311,7 +325,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($search_id != '') {
 	$param .= '&search_id='.urlencode($search_id);
@@ -320,22 +334,22 @@ if ($search_fk_user > 0) {
 	$param .= '&search_fk_user='.urlencode($search_fk_user);
 }
 if ($search_startyear > 0) {
-	$param .= '&search_startyear='.urlencode(GETPOST('search_startyear', 'int'));
+	$param .= '&search_startyear='.urlencode($search_startyear);
 }
 if ($search_startmonth > 0) {
-	$param .= '&search_startmonth='.urlencode(GETPOST('search_startmonth', 'int'));
+	$param .= '&search_startmonth='.urlencode($search_startmonth);
 }
 if ($search_startday > 0) {
-	$param .= '&search_startday='.urlencode(GETPOST('search_startday', 'int'));
+	$param .= '&search_startday='.urlencode($search_startday);
 }
 if ($search_endyear > 0) {
-	$param .= '&search_endyear='.urlencode(GETPOST('search_endyear', 'int'));
+	$param .= '&search_endyear='.urlencode($search_endyear);
 }
 if ($search_endmonth > 0) {
-	$param .= '&search_endmonth='.urlencode(GETPOST('search_endmonth', 'int'));
+	$param .= '&search_endmonth='.urlencode($search_endmonth);
 }
 if ($search_endday > 0) {
-	$param .= '&search_endday='.urlencode(GETPOST('search_endday', 'int'));
+	$param .= '&search_endday='.urlencode($search_endday);
 }
 if ($search_showonlyerrors > 0) {
 	$param .= '&search_showonlyerrors='.urlencode($search_showonlyerrors);
@@ -437,8 +451,8 @@ print '<td class="liste_titre"></td>';
 
 // Status
 print '<td class="liste_titre">';
-$array = array("1"=>$langs->trans("OnlyNonValid"));
-print $form->selectarray('search_showonlyerrors', $array, $search_showonlyerrors, 1);
+$array = array("1" => "OnlyNonValid");
+print $form->selectarray('search_showonlyerrors', $array, $search_showonlyerrors, 1, 0, 0, '', 1, 0, 0, 'ASC', 'search_status maxwidth200 onrightofpage', 1);
 print '</td>';
 
 // Status note
@@ -516,19 +530,19 @@ if (is_array($blocks)) {
 			print '<tr class="oddeven">';
 
 			// ID
-			print '<td>'.$block->id.'</td>';
+			print '<td>'.dol_escape_htmltag($block->id).'</td>';
 
 			// Date
-			print '<td>'.dol_print_date($block->date_creation, 'dayhour').'</td>';
+			print '<td class="nowraponall">'.dol_print_date($block->date_creation, 'dayhour').'</td>';
 
 			// User
 			print '<td>';
 			//print $block->getUser()
-			print $block->user_fullname;
+			print dol_escape_htmltag($block->user_fullname);
 			print '</td>';
 
 			// Action
-			print '<td>'.$langs->trans('log'.$block->action).'</td>';
+			print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($langs->trans('log'.$block->action)).'">'.$langs->trans('log'.$block->action).'</td>';
 
 			// Ref
 			print '<td class="nowraponall">';
@@ -613,8 +627,10 @@ jQuery(document).ready(function () {
 		var fk_block = $(this).attr("data-blockid");
 
 		$.ajax({
-			url:"../ajax/block-info.php?id="+fk_block
-			,dataType:"html"
+			method: "GET",
+			data: { token: \''.currentToken().'\' },
+			url: "'.DOL_URL_ROOT.'/blockedlog/ajax/block-info.php?id="+fk_block,
+			dataType: "html"
 		}).done(function(data) {
 			jQuery("#dialogforpopup").html(data);
 		});
@@ -630,10 +646,11 @@ if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->glob
 		<script type="text/javascript">
 
 			$.ajax({
-				url : "<?php echo dol_buildpath('/blockedlog/ajax/check_signature.php', 1) ?>"
-				,dataType:"html"
+				method: "GET",
+				data: { token: '<?php echo currentToken() ?>' },
+				url: '<?php echo DOL_URL_ROOT.'/blockedlog/ajax/check_signature.php' ?>',
+				dataType: 'html'
 			}).done(function(data) {
-
 				if(data == 'hashisok') {
 					$('#blockchainstatus').html('<?php echo $langs->trans('AuthorityReconizeFingerprintConformity').' '.img_picto($langs->trans('SignatureOK'), 'on') ?>');
 				}

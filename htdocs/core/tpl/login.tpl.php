@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009-2015 Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2021 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2022 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 // Need global variable $urllogo, $title and $titletruedolibarrversion to be defined by caller (like dol_loginfunction in security2.lib.php)
 // Caller can also set 	$morelogincontent = array(['options']=>array('js'=>..., 'table'=>...);
-
+// $titletruedolibarrversion must be defined
 
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', 1);
@@ -30,8 +30,15 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
+// DDOS protection
+$size = (empty($_SERVER['CONTENT_LENGTH']) ? 0 : (int) $_SERVER['CONTENT_LENGTH']);
+if ($size > 10000) {
+	$langs->loadLangs(array("errors", "install"));
+	httponly_accessforbidden('<center>'.$langs->trans("ErrorRequestTooLarge").'.<br><a href="'.DOL_URL_ROOT.'">'.$langs->trans("ClickHereToGoToApp").'</a></center>', 413, 1);
+}
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
 
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
@@ -57,11 +64,17 @@ if (!empty($conf->dol_use_jmobile)) {
 	$conf->use_javascript_ajax = 1;
 }
 
-$php_self = dol_escape_htmltag($_SERVER['PHP_SELF']);
+$php_self = empty($php_self) ? dol_escape_htmltag($_SERVER['PHP_SELF']) : $php_self;
 $php_self .= dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '';
 if (!preg_match('/mainmenu=/', $php_self)) {
 	$php_self .= (preg_match('/\?/', $php_self) ? '&' : '?').'mainmenu=home';
 }
+if (preg_match('/'.preg_quote('core/modules/oauth', '/').'/', $php_self)) {
+	$php_self = DOL_URL_ROOT.'/index.php?mainmenu=home';
+}
+$php_self = preg_replace('/(\?|&amp;|&)action=[^&]+/', '\1', $php_self);
+$php_self = preg_replace('/(\?|&amp;|&)massaction=[^&]+/', '\1', $php_self);
+$php_self = preg_replace('/(\?|&amp;|&)token=[^&]+/', '\1', $php_self);
 
 // Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
 $arrayofjs = array(
@@ -85,7 +98,7 @@ if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	$disablenofollow = 0;
 }
 
-print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 0, $disablenofollow);
+top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 1, $disablenofollow);
 
 
 $colorbackhmenu1 = '60,70,100'; // topmenu
@@ -120,14 +133,24 @@ $(document).ready(function () {
 </script>
 <?php } ?>
 
-<div class="login_center center"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND) ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));"' : '' ?>>
+<div class="login_center center"<?php
+if (empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
+	$backstyle = 'background: linear-gradient('.($conf->browser->layout == 'phone' ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
+	// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
+	$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
+	print empty($conf->global->MAIN_LOGIN_BACKGROUND) ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
+}
+?>>
 <div class="login_vertical_align">
 
+
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
+
 <input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 <input type="hidden" name="actionlogin" value="login">
 <input type="hidden" name="loginfunction" value="loginfunction" />
-<!-- Add fields to send local user information -->
+<input type="hidden" name="backtopage" value="<?php echo GETPOST('backtopage'); ?>" />
+<!-- Add fields to store and send local user information. This fields are filled by the core/js/dst.js -->
 <input type="hidden" name="tz" id="tz" value="" />
 <input type="hidden" name="tz_string" id="tz_string" value="" />
 <input type="hidden" name="dst_observed" id="dst_observed" value="" />
@@ -147,7 +170,7 @@ $(document).ready(function () {
 <div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
 <?php
 if ($disablenofollow) {
-	echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
+	echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank" rel="noopener noreferrer external">';
 }
 echo dol_escape_htmltag($title);
 if ($disablenofollow) {
@@ -180,7 +203,7 @@ if ($disablenofollow) {
 } ?>
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user"></span>
-<input type="text" id="username" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
+<input type="text" id="username" maxlength="255" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
 </div>
 </div>
 
@@ -192,11 +215,11 @@ if ($disablenofollow) {
 } ?>
 <!--<span class="span-icon-password">-->
 <span class="fa fa-key"></span>
-<input id="password" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password minwidth150" type="password" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo empty($conf->global->MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE) ? 'off' : 'on'; ?>" />
+<input type="password" id="password" maxlength="128" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password minwidth150" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo empty($conf->global->MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE) ? 'off' : 'on'; ?>" />
 </div></div>
 
 <?php
-if ($captcha) {
+if (!empty($captcha)) {
 	// Add a variable param to force not using cache (jmobile)
 	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
 	if (preg_match('/\?/', $php_self)) {
@@ -208,11 +231,11 @@ if ($captcha) {
 	?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
-	<div class="tagtd none valignmiddle tdinputlogin">
+	<div class="tagtd none valignmiddle tdinputlogin nowrap">
 
 	<span class="fa fa-unlock"></span>
 	<span class="span-icon-security inline-block">
-	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" autocomplete="off" />
+	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width125" type="text" maxlength="5" name="code" tabindex="3" autocomplete="off" />
 	</span>
 	<span class="nowrap inline-block">
 	<img class="inline-block valignmiddle" src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />
@@ -291,7 +314,7 @@ if ($forgetpasslink || $helpcenterlink) {
 		if (!empty($conf->global->MAIN_HELPCENTER_LINKTOUSE)) {
 			$url = $conf->global->MAIN_HELPCENTER_LINKTOUSE;
 		}
-		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'" target="_blank">';
+		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'" target="_blank" rel="noopener noreferrer">';
 		echo $langs->trans('NeedHelpCenter');
 		echo '</a>';
 	}
@@ -301,7 +324,7 @@ if ($forgetpasslink || $helpcenterlink) {
 if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication)) {
 	$langs->load("users");
 
-	//if (! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $url=
+	//if (!empty($conf->global->MAIN_OPENIDURL_PERUSER)) $url=
 	echo '<br>';
 	echo '<div class="center" style="margin-top: 4px;">';
 
@@ -310,12 +333,38 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 		print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
 	} else {
 		$langs->load("errors");
-		print '<font class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</font>';
+		print '<span class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</span>';
 	}
 
 	echo '</div>';
 }
 
+if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->file->main_authentication)) {
+	$langs->load("users");
+
+	global $dolibarr_main_url_root;
+
+	// Define $urlwithroot
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+	echo '<br>';
+	echo '<div class="center" style="margin-top: 4px;">';
+
+	//$shortscope = 'userinfo_email,userinfo_profile';
+	$shortscope = 'openid,email,profile';	// For openid connect
+
+	$oauthstateanticsrf = bin2hex(random_bytes(128/8));
+	$_SESSION['oauthstateanticsrf'] = $shortscope.'-'.$oauthstateanticsrf;
+	$urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state=forlogin-'.$shortscope.'-'.$oauthstateanticsrf;
+
+	$url = $urltorenew;
+
+	print img_picto('', 'google', 'class="pictofixedwidth"').'<a class="alogin" href="'.$url.'">'.$langs->trans("LoginWith", "Google").'</a>';
+
+	echo '</div>';
+}
 
 ?>
 
@@ -331,9 +380,19 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 // Show error message if defined
 if (!empty($_SESSION['dol_loginmesg'])) {
 	?>
-	<div class="center login_main_message"><div class="error">
-	<?php echo $_SESSION['dol_loginmesg']; ?>
-	</div></div>
+	<div class="center login_main_message">
+	<?php
+	$message = $_SESSION['dol_loginmesg'];	// By default this is an error message
+	if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
+		$message = str_replace('<!-- warning -->', '', $message);
+		print '<div class="warning">';
+	} else {
+		print '<div class="error">';
+	}
+	print dol_escape_htmltag($message);
+	print '</div>';
+	?>
+	</div>
 	<?php
 }
 
@@ -346,7 +405,7 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
 		$resgetcommitstrip = getURLContent("https://www.commitstrip.com/en/feed/");
 	}
 	if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200') {
-		$xml = simplexml_load_string($resgetcommitstrip['content']);
+		$xml = simplexml_load_string($resgetcommitstrip['content'], 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
 		$little = $xml->channel->item[0]->children('content', true);
 		print preg_replace('/width="650" height="658"/', '', $little->encoded);
 	}
@@ -356,7 +415,7 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
 
 <?php if ($main_home) {
 	?>
-	<div class="center login_main_home paddingtopbottom <?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent'; ?>" style="max-width: 70%">
+	<div class="center login_main_home paddingtopbottom <?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow'; ?>" style="max-width: 70%">
 	<?php echo $main_home; ?>
 	</div><br>
 	<?php
@@ -387,7 +446,7 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 }
 
 // Google Analytics
-// TODO Add a hook here
+// TODO Remove this, and add content into hook getLoginPageExtraOptions() instead
 if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
 	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
 	foreach ($tmptagarray as $tmptag) {

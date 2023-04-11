@@ -137,45 +137,47 @@ class LignePrelevement
 			return $langs->trans($this->statuts[$status]);
 		} elseif ($mode == 1) {
 			if ($status == 0) {
-				return img_picto($langs->trans($this->statuts[$status]), 'statut1').' '.$langs->trans($this->statuts[$status]); // Waiting
+				return img_picto($langs->trans($this->statuts[$status]), 'statut1', 'class="valignmiddle"').' '.$langs->transnoentitiesnoconv($this->statuts[$status]); // Waiting
 			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->statuts[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]); // Credited
+				return img_picto($langs->trans($this->statuts[$status]), 'statut6', 'class="valignmiddle"').' '.$langs->transnoentitiesnoconv($this->statuts[$status]); // Credited
 			} elseif ($status == 3) {
-				return img_picto($langs->trans($this->statuts[$status]), 'statut8').' '.$langs->trans($this->statuts[$status]); // Refused
+				return img_picto($langs->trans($this->statuts[$status]), 'statut8', 'class="valignmiddle"').' '.$langs->transnoentitiesnoconv($this->statuts[$status]); // Refused
 			}
 		} elseif ($mode == 2) {
 			if ($status == 0) {
-				return img_picto($langs->trans($this->statuts[$status]), 'statut1');
+				return img_picto($langs->trans($this->statuts[$status]), 'statut1', 'class="valignmiddle"');
 			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->statuts[$status]), 'statut6');
+				return img_picto($langs->trans($this->statuts[$status]), 'statut6', 'class="valignmiddle"');
 			} elseif ($status == 3) {
-				return img_picto($langs->trans($this->statuts[$status]), 'statut8');
+				return img_picto($langs->trans($this->statuts[$status]), 'statut8', 'class="valignmiddle"');
 			}
 		} elseif ($mode == 3) {
 			if ($status == 0) {
-				return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut1');
+				return $langs->trans($this->statuts[$status]).' '.img_picto($langs->transnoentitiesnoconv($this->statuts[$status]), 'statut1', 'class="valignmiddle"');
 			} elseif ($status == 2) {
-				return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut6');
+				return $langs->trans($this->statuts[$status]).' '.img_picto($langs->transnoentitiesnoconv($this->statuts[$status]), 'statut6', 'class="valignmiddle"');
 			} elseif ($status == 3) {
-				return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut8');
+				return $langs->trans($this->statuts[$status]).' '.img_picto($langs->transnoentitiesnoconv($this->statuts[$status]), 'statut8', 'class="valignmiddle"');
 			}
 		}
+
+		//return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'prelevement_lignes'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 }

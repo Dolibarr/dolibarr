@@ -39,7 +39,9 @@ $conf = new stdClass(); // instantiate $conf explicitely
 $conf->global	= new stdClass();
 $conf->file = new stdClass();
 $conf->db = new stdClass();
-$conf->syslog	= new stdClass();
+if (!isset($conf->syslog) || !is_object($conf->syslog)) {
+	$conf->syslog = new stdClass();
+}
 
 // Force $_REQUEST["logtohtml"]
 $_REQUEST["logtohtml"] = 1;
@@ -229,24 +231,25 @@ function conf($dolibarr_main_document_root)
  */
 function pHeader($soutitre, $next, $action = 'none')
 {
-	global $conf;
-	global $langs;
-	$langs->load("main");
-	$langs->load("admin");
+	global $conf, $langs;
+
+	$langs->loadLangs(array("main", "admin"));
 
 	// On force contenu dans format sortie
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
+
+	// Security options
 	header("X-Content-Type-Options: nosniff");
+	header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
 
 	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
-	print '<html manifest="'.DOL_URL_ROOT.'/cache.manifest">'."\n";
 	print '<head>'."\n";
 	print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
 	print '<meta name="robots" content="index,follow">'."\n";
 	print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
 	print '<meta name="keywords" content="help, center, dolibarr, doliwamp">'."\n";
 	print '<meta name="description" content="Dolibarr help center">'."\n";
-	print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
+	print '<link rel="stylesheet" type="text/css" href="../install/default.css">'."\n";
 	print '<title>'.$langs->trans("DolibarrHelpCenter").'</title>'."\n";
 	print '</head>'."\n";
 

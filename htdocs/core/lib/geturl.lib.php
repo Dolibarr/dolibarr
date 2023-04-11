@@ -24,7 +24,9 @@
 /**
  * Function to get a content from an URL (use proxy if proxy defined).
  * Support Dolibarr setup for timeout and proxy.
- * Enhancement of CURL to add an anti SSRF protection.
+ * Enhancement of CURL to add an anti SSRF protection:
+ * - you can set MAIN_SECURITY_ANTI_SSRF_SERVER_IP to set static ip of server
+ * - common local lookup ips like 127.*.*.* are automatically added
  *
  * @param	string	  $url 				    URL to call.
  * @param	string    $postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'DELETE'
@@ -33,9 +35,10 @@
  * @param	string[]  $addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
  * @param	string[]  $allowedschemes		List of schemes that are allowed ('http' + 'https' only by default)
  * @param	int		  $localurl				0=Only external URL are possible, 1=Only local URL, 2=Both external and local URL are allowed.
- * @return	array						    Returns an associative array containing the response from the server array('content'=>response, 'curl_error_no'=>errno, 'curl_error_msg'=>errmsg...)
+ * @param	int		  $ssl_verifypeer		-1=Auto (no ssl check on dev, check on prod), 0=No ssl check, 1=Always ssl check
+ * @return	array						    Returns an associative array containing the response from the server array('http_code'=>http response code, 'content'=>response, 'curl_error_no'=>errno, 'curl_error_msg'=>errmsg...)
  */
-function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0)
+function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1)
 {
 	//declaring of global variables
 	global $conf;
@@ -73,9 +76,18 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	}
 	//curl_setopt($ch, CURLOPT_SSLVERSION, 6); for tls 1.2
 
+	// Turning on or off the ssl target certificate
+	if ($ssl_verifypeer < 0) {
+		global $dolibarr_main_prod;
+		$ssl_verifypeer =  ($dolibarr_main_prod ? true : false);
+	}
+	if (!empty($conf->global->MAIN_CURL_DISABLE_VERIFYPEER)) {
+		$ssl_verifypeer = 0;
+	}
+
 	// Turning off the server and peer verification(TrustManager Concept).
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, ($ssl_verifypeer ? true : false));
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, ($ssl_verifypeer ? true : false));
 
 	// Restrict use to some protocols only
 	$protocols = 0;
@@ -94,6 +106,15 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT);
 	curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
+
+	// limit size of downloaded files. TODO Add MAIN_SECURITY_MAXFILESIZE_DOWNLOADED
+	$maxsize = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
+	if ($maxsize && defined('CURLOPT_MAXFILESIZE_LARGE')) {
+		curl_setopt($ch, CURLOPT_MAXFILESIZE_LARGE, $maxsize);
+	}
+	if ($maxsize && defined('CURLOPT_MAXFILESIZE')) {
+		curl_setopt($ch, CURLOPT_MAXFILESIZE, $maxsize);
+	}
 
 	//curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);	// PHP 5.5
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // We want response
@@ -199,28 +220,39 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 				}
 			}
 			if ($localurl == 1) {	// Only local url allowed (dangerous, may allow to get metadata on server or make internal port scanning)
+				// Deny ips NOT like 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 0.0.0.0/8, 169.254.0.0/16, 127.0.0.0/8 et 240.0.0.0/4, ::1/128, ::/128, ::ffff:0:0/96, fe80::/10...
 				if (filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
 					$info['http_code'] = 400;
 					$info['content'] = 'Error bad hostname '.$iptocheck.'. Must be a local URL.';
 					break;
 				}
-				if (!empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) && !in_array($iptocheck, explode(',', '127.0.0.1,::1,'.$conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
+				if (!empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) && !in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
 					$info['http_code'] = 400;
 					$info['content'] = 'Error bad hostname IP (IP is not a local IP defined into list MAIN_SECURITY_SERVER_IP). Must be a local URL in allowed list.';
 					break;
 				}
 			}
 
-			// Common check (local and external)
-			if (in_array($iptocheck, array('100.100.100.200'))) {
-				$info['http_code'] = 400;
-				$info['content'] = 'Error bad hostname IP (Used by Alibaba metadata). Must be an external URL.';
-				break;
+			// Common check on ip (local and external)
+			// See list on https://tagmerge.com/gist/a7b9d57ff8ec11d63642f8778609a0b8
+			// Not evasive url that ar enot IP are excluded by test on IP v4/v6 validity.
+			$arrayofmetadataserver = array(
+				'100.100.100.200' => 'Alibaba',
+				'192.0.0.192' => 'Oracle',
+				'192.80.8.124' => 'Packet',
+				'100.88.222.5' => 'Tencent cloud',
+			);
+			foreach ($arrayofmetadataserver as $ipofmetadataserver => $nameofmetadataserver) {
+				if ($iptocheck == $ipofmetadataserver) {
+					$info['http_code'] = 400;
+					$info['content'] = 'Error bad hostname IP (Used by '.$nameofmetadataserver.' metadata server). This IP is forbidden.';
+					break 2;	// exit the foreach and the do...
+				}
 			}
 
 			// Set CURLOPT_CONNECT_TO so curl will not try another resolution that may give a different result. Possible only on PHP v7+
 			if (defined('CURLOPT_CONNECT_TO')) {
-				$connect_to = array(sprintf("%s:%d:%s:%d", $newUrlArray['host'], $newUrlArray['port'], $iptocheck, $newUrlArray['port']));
+				$connect_to = array(sprintf("%s:%d:%s:%d", $newUrlArray['host'], empty($newUrlArray['port'])?'':$newUrlArray['port'], $iptocheck, empty($newUrlArray['port'])?'':$newUrlArray['port']));
 				//var_dump($newUrlArray);
 				//var_dump($connect_to);
 				curl_setopt($ch, CURLOPT_CONNECT_TO, $connect_to);
@@ -238,15 +270,18 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			$maxRedirection--;
 			// TODO Use $info['local_ip'] and $info['primary_ip'] ?
 			continue;
-		} else {
-			$http_code = 0;
 		}
+
+		$http_code = 0;
 	} while ($http_code);
 
 	$request = curl_getinfo($ch, CURLINFO_HEADER_OUT); // Reading of request must be done after sending request
 
 	dol_syslog("getURLContent request=".$request);
-	//dol_syslog("getURLContent response =".response);	// This may contains binary data, so we dont output it
+	if (!empty($conf->global->MAIN_GETURLCONTENT_OUTPUT_RESPONSE)) {
+		// This may contains binary data, so we dont output reponse by default.
+		dol_syslog("getURLContent response =".$response);
+	}
 	dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we dont output it
 
 	$rep = array();

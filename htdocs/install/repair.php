@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,8 +95,8 @@ print 'Option repair_link_dispatch_lines_supplier_order_lines, (\'test\' or \'co
 // Init data
 print 'Option set_empty_time_spent_amount (\'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount', 'alpha') ?GETPOST('set_empty_time_spent_amount', 'alpha') : 'undefined').'<br>'."\n";
 // Structure
-print 'Option force_utf8_on_tables, for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha') ?GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
-print "Option force_utf8mb4_on_tables (EXPERIMENTAL!), for mysql/mariadb only ('test' or 'confirmed') is ".(GETPOST('force_utf8mb4_on_tables', 'alpha') ? GETPOST('force_utf8mb4_on_tables', 'alpha') : 'undefined')."<br>\n";
+print 'Option force_utf8_on_tables (force utf8 + row=dynamic), for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha') ?GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
+print "Option force_utf8mb4_on_tables (force utf8mb4 + row=dynamic, EXPERIMENTAL!), for mysql/mariadb only ('test' or 'confirmed') is ".(GETPOST('force_utf8mb4_on_tables', 'alpha') ? GETPOST('force_utf8mb4_on_tables', 'alpha') : 'undefined')."<br>\n";
 // Rebuild sequence
 print 'Option rebuild_sequences, for postgresql only (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_sequences', 'alpha') ?GETPOST('rebuild_sequences', 'alpha') : 'undefined').'<br>'."\n";
 print '<br>';
@@ -176,7 +177,8 @@ $oneoptionset = 0;
 $oneoptionset = (GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos', 'alpha') || GETPOST('clean_linked_elements', 'alpha') || GETPOST('clean_menus', 'alpha')
 	|| GETPOST('clean_orphelin_dir', 'alpha') || GETPOST('clean_product_stock_batch', 'alpha') || GETPOST('set_empty_time_spent_amount', 'alpha') || GETPOST('rebuild_product_thumbs', 'alpha')
 	|| GETPOST('clean_perm_table', 'alpha')
-	|| GETPOST('force_disable_of_modules_not_found', 'alpha') || GETPOST('force_utf8_on_tables', 'alpha')
+	|| GETPOST('force_disable_of_modules_not_found', 'alpha')
+	|| GETPOST('force_utf8_on_tables', 'alpha') || GETPOST('force_utf8mb4_on_tables', 'alpha')
 	|| GETPOST('rebuild_sequences', 'alpha'));
 
 if ($ok && $oneoptionset) {
@@ -366,20 +368,20 @@ if ($ok && GETPOST('standard', 'alpha')) {
 					$sql2 = "SELECT COUNT(*) as nb";
 					$sql2 .= " FROM ".MAIN_DB_PREFIX."const as c";
 					$sql2 .= " WHERE name = 'MAIN_MODULE_".$name."'";
-					$sql2 .= " AND entity = ".$obj->entity;
+					$sql2 .= " AND entity = ".((int) $obj->entity);
 					$resql2 = $db->query($sql2);
 					if ($resql2) {
 						$obj2 = $db->fetch_object($resql2);
 						if ($obj2 && $obj2->nb == 0) {
 							// Module not found, so we can remove entry
-							$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$db->escape($obj->name)."' AND entity = ".$obj->entity;
+							$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$db->escape($obj->name)."' AND entity = ".((int) $obj->entity);
 
 							if (GETPOST('standard', 'alpha') == 'confirmed') {
 								$db->query($sqldelete);
 
-								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.$obj->entity.', we delete record</td></tr>';
+								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.((int) $obj->entity).', we delete record</td></tr>';
 							} else {
-								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
+								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.((int) $obj->entity).', we should delete record (not done, mode test)</td></tr>';
 							}
 						} else {
 							//print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module found in entity '.$obj->entity.', we keep record</td></tr>';
@@ -424,23 +426,23 @@ if ($ok && GETPOST('standard', 'alpha')) {
 					$sql2 = "SELECT COUNT(*) as nb";
 					$sql2 .= " FROM ".MAIN_DB_PREFIX."const as c";
 					$sql2 .= " WHERE name = 'MAIN_MODULE_".strtoupper($module)."'";
-					$sql2 .= " AND entity = ".$obj->entity;
+					$sql2 .= " AND entity = ".((int) $obj->entity);
 					$sql2 .= " AND value <> 0";
 					$resql2 = $db->query($sql2);
 					if ($resql2) {
 						$obj2 = $db->fetch_object($resql2);
 						if ($obj2 && $obj2->nb == 0) {
 							// Module not found, so we canremove entry
-							$sqldeletea = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE entity = ".$obj->entity." AND box_id IN (SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$db->escape($obj->file)."' AND entity = ".$obj->entity.")";
-							$sqldeleteb = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$db->escape($obj->file)."' AND entity = ".$obj->entity;
+							$sqldeletea = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE entity = ".((int) $obj->entity)." AND box_id IN (SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$db->escape($obj->file)."' AND entity = ".((int) $obj->entity).")";
+							$sqldeleteb = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$db->escape($obj->file)."' AND entity = ".((int) $obj->entity);
 
 							if (GETPOST('standard', 'alpha') == 'confirmed') {
 								$db->query($sqldeletea);
 								$db->query($sqldeleteb);
 
-								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we delete record</td></tr>';
+								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.((int) $obj->entity).', we delete record</td></tr>';
 							} else {
-								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
+								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.((int) $obj->entity).', we should delete record (not done, mode test)</td></tr>';
 							}
 						} else {
 							//print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module found in entity '.$obj->entity.', we keep record</td></tr>';
@@ -565,7 +567,7 @@ if ($ok && GETPOST('restore_user_pictures', 'alpha')) {
 				$filetotestsmall = $dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/thumbs/'.$name.'_small'.$ext;
 				$filetotestmini = $dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/thumbs/'.$name.'_mini'.$ext;
 				$exists = dol_is_file($filetotest);
-				print 'Check user '.$obj->rowid.' lastname='.$obj->lastname.' fistname='.$obj->firstname.' photo='.$obj->photo.' file '.$filetotest." exists=".$exists."<br>\n";
+				print 'Check user '.$obj->rowid.' lastname='.$obj->lastname.' firstname='.$obj->firstname.' photo='.$obj->photo.' file '.$filetotest." exists=".$exists."<br>\n";
 				if ($exists) {
 					$filetarget = $dolibarr_main_data_root.'/users/'.$obj->rowid.'/'.$name.$ext;
 					$filetargetsmall = $dolibarr_main_data_root.'/users/'.$obj->rowid.'/thumbs/'.$name.'_small'.$ext;
@@ -902,9 +904,8 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 	$sql = "SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb ON ps.rowid = pb.fk_product_stock";
 	$sql .= " WHERE p.rowid = ps.fk_product";
-	$sql .= " AND p.tobatch > 0";
 	$sql .= " GROUP BY p.rowid, p.ref, p.tobatch, ps.rowid, ps.fk_entrepot, ps.reel";
-	$sql .= " HAVING reel != SUM(pb.qty) or SUM(pb.qty) IS NULL";
+	$sql .= " HAVING (SUM(pb.qty) IS NOT NULL AND reel != SUM(pb.qty)) OR (SUM(pb.qty) IS NULL AND p.tobatch > 0)";
 	print $sql;
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -914,53 +915,73 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 			$i = 0;
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
-				print '<tr><td>Product '.$obj->rowid.'-'.$obj->ref.' in warehose '.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' (product_stock.reel) != '.($obj->reelbatch ? $obj->reelbatch : '0').' (sum product_batch)';
+				print '<tr><td>Product '.$obj->rowid.'-'.$obj->ref.' in warehouse id='.$obj->fk_entrepot.' (product_stock.id='.$obj->psrowid.'): '.$obj->reel.' (Stock product_stock.reel) != '.($obj->reelbatch ? $obj->reelbatch : '0').' (Stock batch sum product_batch)';
 
-				// Fix
+				// Fix is required
 				if ($obj->reel != $obj->reelbatch) {
-					if ($methodtofix == 'updatebatch') {
-						// Method 1
-						print ' -> Insert qty '.($obj->reel - $obj->reelbatch).' with lot 000000 linked to fk_product_stock='.$obj->psrowid;
+					if (empty($obj->tobatch)) {
+						// If product is not a product that support batches, we can clean stock by deleting the product batch lines
+						print ' -> Delete qty '.$obj->reelbatch.' for any lot linked to fk_product_stock='.$obj->psrowid;
+						$sql2 = "DELETE FROM ".MAIN_DB_PREFIX."product_batch";
+						$sql2 .= " WHERE fk_product_stock = ".((int) $obj->psrowid);
+						print '<br>'.$sql2;
+
 						if (GETPOST('clean_product_stock_batch') == 'confirmed') {
-							$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_batch(fk_product_stock, batch, qty)";
-							$sql2 .= "VALUES(".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
 							$resql2 = $db->query($sql2);
 							if (!$resql2) {
-								// TODO If it fails, we must make update
-								//$sql2 ="UPDATE ".MAIN_DB_PREFIX."product_batch";
-								//$sql2.=" SET ".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
-								//$sql2.=" WHERE fk_product_stock = ".$obj->psrowid"
-							}
-						}
-					}
-					if ($methodtofix == 'updatestock') {
-						// Method 2
-						print ' -> Update qty of product_stock with qty = '.($obj->reelbatch ? ((float) $obj->reelbatch) : '0').' for ps.rowid = '.((int) $obj->psrowid);
-						if (GETPOST('clean_product_stock_batch') == 'confirmed') {
-							$error = 0;
-
-							$db->begin();
-
-							$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_stock";
-							$sql2 .= " SET reel = ".($obj->reelbatch ? ((float) $obj->reelbatch) : '0')." WHERE rowid = ".((int) $obj->psrowid);
-							$resql2 = $db->query($sql2);
-							if ($resql2) {
-								// We update product_stock, so we must fill p.stock into product too.
-								$sql3 = 'UPDATE '.MAIN_DB_PREFIX.'product p SET p.stock= (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid)';
-								$resql3 = $db->query($sql3);
-								if (!$resql3) {
-									$error++;
-									dol_print_error($db);
-								}
-							} else {
 								$error++;
 								dol_print_error($db);
 							}
+						}
+					} else {
+						if ($methodtofix == 'updatebatch') {
+							// Method 1
+							print ' -> Insert qty '.($obj->reel - $obj->reelbatch).' with lot 000000 linked to fk_product_stock='.$obj->psrowid;
+							$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_batch(fk_product_stock, batch, qty)";
+							$sql2 .= "VALUES(".((int) $obj->psrowid).", '000000', ".((float) ($obj->reel - $obj->reelbatch)).")";
+							print '<br>'.$sql2;
 
-							if (!$error) {
-								$db->commit();
-							} else {
-								$db->rollback();
+							if (GETPOST('clean_product_stock_batch') == 'confirmed') {
+								$resql2 = $db->query($sql2);
+								if (!$resql2) {
+									// TODO If it fails, we must make update
+									//$sql2 ="UPDATE ".MAIN_DB_PREFIX."product_batch";
+									//$sql2.=" SET ".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
+									//$sql2.=" WHERE fk_product_stock = ".((int) $obj->psrowid)
+								}
+							}
+						}
+						if ($methodtofix == 'updatestock') {
+							// Method 2
+							print ' -> Update qty of product_stock with qty = '.($obj->reelbatch ? ((float) $obj->reelbatch) : '0').' for ps.rowid = '.((int) $obj->psrowid);
+							$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_stock";
+							$sql2 .= " SET reel = ".($obj->reelbatch ? ((float) $obj->reelbatch) : '0')." WHERE rowid = ".((int) $obj->psrowid);
+							print '<br>'.$sql2;
+
+							if (GETPOST('clean_product_stock_batch') == 'confirmed') {
+								$error = 0;
+
+								$db->begin();
+
+								$resql2 = $db->query($sql2);
+								if ($resql2) {
+									// We update product_stock, so we must fill p.stock into product too.
+									$sql3 = 'UPDATE '.MAIN_DB_PREFIX.'product p SET p.stock= (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid)';
+									$resql3 = $db->query($sql3);
+									if (!$resql3) {
+										$error++;
+										dol_print_error($db);
+									}
+								} else {
+									$error++;
+									dol_print_error($db);
+								}
+
+								if (!$error) {
+									$db->commit();
+								} else {
+									$db->rollback();
+								}
 							}
 						}
 					}
@@ -1010,7 +1031,7 @@ if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha')) {
 	print '<tr><td colspan="2"><br>*** Set value of time spent without amount</td></tr>';
 
 	$sql = "SELECT COUNT(ptt.rowid) as nb, u.rowid as user_id, u.login, u.thm as user_thm";
-	$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as ptt, ".MAIN_DB_PREFIX."user as u";
+	$sql .= " FROM ".MAIN_DB_PREFIX."element_time as ptt, ".MAIN_DB_PREFIX."user as u";
 	$sql .= " WHERE ptt.fk_user = u.rowid";
 	$sql .= " AND ptt.thm IS NULL and u.thm > 0";
 	$sql .= " GROUP BY u.rowid, u.login, u.thm";
@@ -1028,7 +1049,7 @@ if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha')) {
 				$db->begin();
 
 				if (GETPOST('set_empty_time_spent_amount') == 'confirmed') {
-					$sql2 = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
+					$sql2 = "UPDATE ".MAIN_DB_PREFIX."element_time";
 					$sql2 .= " SET thm = ".$obj->user_thm." WHERE thm IS NULL AND fk_user = ".((int) $obj->user_id);
 					$resql2 = $db->query($sql2);
 					if (!$resql2) {
@@ -1082,7 +1103,7 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
 					$constantname = $obj->name; // Name of constant for hook or js or css declaration
 
 					print '<tr><td>';
-					print $constantname;
+					print dol_escape_htmltag($constantname);
 
 					$db->begin();
 
@@ -1106,7 +1127,8 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
 							if ($key == 'css') {
 								$value = $obj->value;
 								$valuearray = json_decode($value);
-								if ($value && count($valuearray) == 0) {
+								if ($value && (!is_array($valuearray) || count($valuearray) == 0)) {
+									$valuearray = array();
 									$valuearray[0] = $value; // If value was not a json array but a string
 								}
 								$reloffile = preg_replace('/^\//', '', $valuearray[0]);
@@ -1117,9 +1139,10 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
 								try {
 									$result = dol_buildpath($reloffile, 0, 2);
 								} catch (Exception $e) {
-									// No catch yet
-									$result = 'found'; // If error, we force lke if we found to avoid any deletion
+									$result = 'found'; // If error, we force like if we found to avoid any deletion
 								}
+							} else {
+								$result = 'found';	//
 							}
 
 							if (!$result) {
@@ -1178,9 +1201,11 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 
 	$listofmods = '';
 	foreach ($conf->modules as $key => $val) {
-		$listofmods .= ($listofmods ? ',' : '')."'".$val."'";
+		$listofmods .= ($listofmods ? ',' : '')."'".$db->escape($val)."'";
 	}
-	$sql = 'SELECT id, libelle as label, module from '.MAIN_DB_PREFIX.'rights_def WHERE module NOT IN ('.$db->sanitize($listofmods).') AND id > 100000';
+
+	$sql = "SELECT id, libelle as label, module from ".MAIN_DB_PREFIX."rights_def WHERE module NOT IN (".$db->sanitize($listofmods, 1).") AND id > 100000";
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -1191,7 +1216,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 				if ($obj->id > 0) {
 					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->label.'" of module "'.$obj->module.'" to delete';
 					if (GETPOST('clean_perm_table', 'alpha') == 'confirmed') {
-						$sqldelete = 'DELETE FROM '.MAIN_DB_PREFIX.'rights_def WHERE id = '.$obj->id;
+						$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE id = ".((int) $obj->id);
 						$resqldelete = $db->query($sqldelete);
 						if (!$resqldelete) {
 							dol_print_error($db);
@@ -1214,7 +1239,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 
 // force utf8 on tables
 if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
-	print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8/utf8_unicode_ci (for mysql/mariadb only)</td></tr>';
+	print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8/utf8_unicode_ci and row_format=dynamic (for mysql/mariadb only)</td></tr>';
 
 	if ($db->type == "mysql" || $db->type == "mysqli") {
 		$force_utf8_on_tables = GETPOST('force_utf8_on_tables', 'alpha');
@@ -1236,11 +1261,18 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 
 			print '<tr><td colspan="2">';
 			print $table;
-			$sql = 'ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci';
-			print '<!-- '.$sql.' -->';
+			$sql1 = "ALTER TABLE ".$table." ROW_FORMAT=dynamic";
+			$sql2 = "ALTER TABLE ".$table." CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+			print '<!-- '.$sql1.' -->';
+			print '<!-- '.$sql2.' -->';
 			if ($force_utf8_on_tables == 'confirmed') {
-				$resql = $db->query($sql);
-				print ' - Done ('.($resql ? 'OK' : 'KO').')';
+				$resql1 = $db->query($sql1);
+				if ($resql1) {
+					$resql2 = $db->query($sql2);
+				} else {
+					$resql2 = false;
+				}
+				print ' - Done ('.(($resql1 && $resql2) ? 'OK' : 'KO').')';
 			} else {
 				print ' - Disabled';
 			}
@@ -1282,8 +1314,8 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 
 			print '<tr><td colspan="2">';
 			print $table;
-			$sql1 = 'ALTER TABLE '.$table.' ROW_FORMAT=dynamic;';
-			$sql2 = 'ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';
+			$sql1 = "ALTER TABLE ".$table." ROW_FORMAT=dynamic";
+			$sql2 = "ALTER TABLE ".$table." CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
 			print '<!-- '.$sql1.' -->';
 			print '<!-- '.$sql2.' -->';
 			if ($force_utf8mb4_on_tables == 'confirmed') {
@@ -1407,25 +1439,25 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 					$first_iteration = false;
 				} else {
 					$sql_attach_values = array(
-						$obj_dispatch->fk_commande,
-						$obj_dispatch->fk_product,
-						$obj_line->rowid,
-						$qty_for_line,
-						$obj_dispatch->fk_entrepot,
-						$obj_dispatch->fk_user,
-						$obj_dispatch->datec ? '"'.$db->escape($obj_dispatch->datec).'"' : 'NULL',
-						$obj_dispatch->comment ? '"'.$db->escape($obj_dispatch->comment).'"' : 'NULL',
-						$obj_dispatch->status ?: 'NULL',
-						$obj_dispatch->tms ? '"'.$db->escape($obj_dispatch->tms).'"' : 'NULL',
-						$obj_dispatch->batch ?: 'NULL',
-						$obj_dispatch->eatby ? '"'.$db->escape($obj_dispatch->eatby).'"' : 'NULL',
-						$obj_dispatch->sellby ? '"'.$db->escape($obj_dispatch->sellby).'"' : 'NULL'
+						((int) $obj_dispatch->fk_commande),
+						((int) $obj_dispatch->fk_product),
+						((int) $obj_line->rowid),
+						((float) $qty_for_line),
+						((int) $obj_dispatch->fk_entrepot),
+						((int) $obj_dispatch->fk_user),
+						$obj_dispatch->datec ? "'".$db->idate($db->jdate($obj_dispatch->datec))."'" : 'NULL',
+						$obj_dispatch->comment ? "'".$db->escape($obj_dispatch->comment)."'" : 'NULL',
+						$obj_dispatch->status ? ((int) $obj_dispatch->status) : 'NULL',
+						$obj_dispatch->tms ? "'".$db->idate($db->jdate($obj_dispatch->tms))."'" : 'NULL',
+						$obj_dispatch->batch ? "'".$db->escape($obj_dispatch->batch)."'" : 'NULL',
+						$obj_dispatch->eatby ? "'".$db->escape($obj_dispatch->eatby)."'" : 'NULL',
+						$obj_dispatch->sellby ? "'".$db->escape($obj_dispatch->sellby)."'" : 'NULL'
 					);
 					$sql_attach_values = join(', ', $sql_attach_values);
 
 					$sql_attach = 'INSERT INTO '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
 					$sql_attach .= ' (fk_commande, fk_product, fk_commandefourndet, qty, fk_entrepot, fk_user, datec, comment, status, tms, batch, eatby, sellby)';
-					$sql_attach .= ' VALUES ('.$sql_attach_values.')';
+					$sql_attach .= " VALUES (".$sql_attach_values.")";
 				}
 
 				if ($repair_link_dispatch_lines_supplier_order_lines == 'confirmed') {

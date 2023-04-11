@@ -88,7 +88,7 @@ class ActionsCardCompany extends ActionsCardCommon
 	{
 		// phpcs:enable
 		global $conf, $langs, $user, $mysoc;
-		global $form, $formadmin, $formcompany;
+		global $form, $formcompany;
 
 		$ret = $this->getObject($id, $ref);
 
@@ -103,7 +103,7 @@ class ActionsCardCompany extends ActionsCardCommon
 
 		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLEVATCHECK)) {
 			$js = "\n";
-			$js .= '<script language="JavaScript" type="text/javascript">';
+			$js .= '<script type="text/javascript">';
 			$js .= "function CheckVAT(a) {\n";
 			$js .= "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,230);\n";
 			$js .= "}\n";

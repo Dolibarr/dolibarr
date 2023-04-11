@@ -21,6 +21,7 @@
  *		\brief      Page with statistics on members
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -29,7 +30,7 @@ $graphwidth = 700;
 $mapratio = 0.5;
 $graphheight = round($graphwidth * $mapratio);
 
-$mode = GETPOST('mode') ?GETPOST('mode') : '';
+$mode = GETPOST('mode') ? GETPOST('mode') : '';
 
 
 // Security check
@@ -39,8 +40,8 @@ if ($user->socid > 0) {
 }
 $result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 
-$year = strftime("%Y", time());
-$startyear = $year - 2;
+$year = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
 
 // Load translation files required by the page
@@ -69,7 +70,7 @@ $sql .= " d.morphy as code";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
 $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-$sql .= " AND d.statut != -1"; // Not draft
+$sql .= " AND d.statut <> ".Adherent::STATUS_DRAFT;
 $sql .= " GROUP BY d.morphy";
 $foundphy = $foundmor = 0;
 
@@ -104,7 +105,7 @@ $sql .= " d.morphy as code";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
 $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-$sql .= " AND d.statut >= 1"; // Active (not draft=-1, not resiliated=0)
+$sql .= " AND d.statut >= 1"; // Active (not excluded=-2, not draft=-1, not resiliated=0)
 $sql .= " GROUP BY d.morphy";
 $foundphy = $foundmor = 0;
 

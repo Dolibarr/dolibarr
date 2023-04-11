@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021 SuperAdmin
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  * 	\defgroup   knowledgemanagement     Module KnowledgeManagement
  *  \brief      KnowledgeManagement module descriptor.
  *
- *  \file       htdocs/knowledgemanagement/core/modules/modKnowledgeManagement.class.php
+ *  \file       htdocs/core/modules/modKnowledgeManagement.class.php
  *  \ingroup    knowledgemanagement
  *  \brief      Description and activation file for module KnowledgeManagement
  */
@@ -68,7 +68,7 @@ class modKnowledgeManagement extends DolibarrModules
 		$this->descriptionlong = "Manage a Knowledge Management (KM) or Help-Desk base";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'development';
+		$this->version = 'dolibarr';
 		// Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
@@ -140,7 +140,7 @@ class modKnowledgeManagement extends DolibarrModules
 		$this->langfiles = array("knowledgemanagement");
 
 		// Prerequisites
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
 
 		// Messages at activation
@@ -184,7 +184,7 @@ class modKnowledgeManagement extends DolibarrModules
 		// 'invoice_supplier' to add a tab in supplier invoice view
 		// 'member'           to add a tab in fundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
+		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view
@@ -197,39 +197,18 @@ class modKnowledgeManagement extends DolibarrModules
 
 		// Dictionaries
 		$this->dictionaries = array();
-		/* Example:
-		$this->dictionaries=array(
-			'langs'=>'knowledgemanagement@knowledgemanagement',
-			// List of tables we want to see into dictonnary editor
-			'tabname'=>array(MAIN_DB_PREFIX."table1", MAIN_DB_PREFIX."table2", MAIN_DB_PREFIX."table3"),
-			// Label of tables
-			'tablib'=>array("Table1", "Table2", "Table3"),
-			// Request to select fields
-			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f', 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f', 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),
-			// Sort order
-			'tabsqlsort'=>array("label ASC", "label ASC", "label ASC"),
-			// List of fields (result of select to show dictionary)
-			'tabfield'=>array("code,label", "code,label", "code,label"),
-			// List of fields (list of fields to edit a record)
-			'tabfieldvalue'=>array("code,label", "code,label", "code,label"),
-			// List of fields (list of fields for insert)
-			'tabfieldinsert'=>array("code,label", "code,label", "code,label"),
-			// Name of columns with primary key (try to always name it 'rowid')
-			'tabrowid'=>array("rowid", "rowid", "rowid"),
-			// Condition to show each dictionary
-			'tabcond'=>array($conf->knowledgemanagement->enabled, $conf->knowledgemanagement->enabled, $conf->knowledgemanagement->enabled)
-		);
-		*/
 
 		// Boxes/Widgets
 		// Add here list of php file(s) stored in knowledgemanagement/core/boxes that contains a class to show a widget.
 		$this->boxes = array(
-			//  0 => array(
-			//      'file' => 'knowledgemanagementwidget1.php@knowledgemanagement',
-			//      'note' => 'Widget provided by KnowledgeManagement',
-			//      'enabledbydefaulton' => 'Home',
-			//  ),
-			//  ...
+			0 => array(
+				'file' => 'box_last_knowledgerecord.php',
+				'enabledbydefaulton' => 'ticketindex',
+			),
+			1 => array(
+				'file' => 'box_last_modified_knowledgerecord.php',
+				'enabledbydefaulton' => 'ticketindex',
+			),
 		);
 
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
@@ -261,17 +240,17 @@ class modKnowledgeManagement extends DolibarrModules
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
 		$this->rights[$r][0] = $this->numero + $r + 1; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read objects of Knowledge Management'; // Permission label
+		$this->rights[$r][1] = 'Read articles'; // Permission label
 		$this->rights[$r][4] = 'knowledgerecord'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r + 1; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/Update objects of Knowledge Management'; // Permission label
+		$this->rights[$r][1] = 'Create/Update articles'; // Permission label
 		$this->rights[$r][4] = 'knowledgerecord'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r + 1; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Delete objects of Knowledge Management'; // Permission label
+		$this->rights[$r][1] = 'Delete articles'; // Permission label
 		$this->rights[$r][4] = 'knowledgerecord'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
 		$r++;
@@ -282,6 +261,7 @@ class modKnowledgeManagement extends DolibarrModules
 		$r = 0;
 		// Add here entries to declare new menus
 		/* BEGIN MODULEBUILDER TOPMENU */
+		/*
 		$this->menu[$r++] = array(
 			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'top', // This is a Top menu entry
@@ -293,64 +273,21 @@ class modKnowledgeManagement extends DolibarrModules
 			'langs'=>'knowledgemanagement', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->knowledgemanagement->enabled', // Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled.
-			'perms'=>'1', // Use 'perms'=>'$user->rights->knowledgemanagement->knowledgerecord->read' if you want your menu with a permission rules
+			'perms'=>'1', // Use 'perms'=>'$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
-		/* END MODULEBUILDER TOPMENU */
-		/* BEGIN MODULEBUILDER LEFTMENU KNOWLEDGERECORD
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=knowledgemanagement',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',                          // This is a Top menu entry
-			'titre'=>'KnowledgeRecord',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
-			'mainmenu'=>'knowledgemanagement',
-			'leftmenu'=>'knowledgerecord',
-			'url'=>'/knowledgemanagement/knowledgemanagementindex.php',
-			'langs'=>'knowledgemanagement@knowledgemanagement',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->knowledgemanagement->enabled',  // Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->knowledgemanagement->knowledgerecord->read',			                // Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=knowledgemanagement,fk_leftmenu=knowledgerecord',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'List_KnowledgeRecord',
-			'mainmenu'=>'knowledgemanagement',
-			'leftmenu'=>'knowledgemanagement_knowledgerecord_list',
-			'url'=>'/knowledgemanagement/knowledgerecord_list.php',
-			'langs'=>'knowledgemanagement@knowledgemanagement',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->knowledgemanagement->enabled',  // Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->knowledgemanagement->knowledgerecord->read',			                // Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=knowledgemanagement,fk_leftmenu=knowledgerecord',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'New_KnowledgeRecord',
-			'mainmenu'=>'knowledgemanagement',
-			'leftmenu'=>'knowledgemanagement_knowledgerecord_new',
-			'url'=>'/knowledgemanagement/knowledgerecord_card.php?action=create',
-			'langs'=>'knowledgemanagement@knowledgemanagement',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->knowledgemanagement->enabled',  // Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->knowledgemanagement->knowledgerecord->write',			                // Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
 		*/
+		/* END MODULEBUILDER TOPMENU */
 
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=knowledgemanagement',
+			'fk_menu'=>'fk_mainmenu=ticket',
 			// This is a Left menu entry
 			'type'=>'left',
 			'titre'=>'MenuKnowledgeRecord',
-			'mainmenu'=>'knowledgemanagement',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
+			'mainmenu'=>'ticket',
 			'leftmenu'=>'knowledgemanagement_knowledgerecord',
 			'url'=>'/knowledgemanagement/knowledgerecord_list.php',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -359,18 +296,18 @@ class modKnowledgeManagement extends DolibarrModules
 			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled'=>'$conf->knowledgemanagement->enabled',
 			// Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'perms'=>'1',
+			'perms'=>'$user->rights->knowledgemanagement->knowledgerecord->read',
 			'target'=>'',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user'=>2,
 		);
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=knowledgemanagement,fk_leftmenu=knowledgemanagement_knowledgerecord',
+			'fk_menu'=>'fk_mainmenu=ticket,fk_leftmenu=knowledgemanagement_knowledgerecord',
 			// This is a Left menu entry
 			'type'=>'left',
 			'titre'=>'ListKnowledgeRecord',
-			'mainmenu'=>'knowledgemanagement',
+			'mainmenu'=>'ticket',
 			'leftmenu'=>'knowledgemanagement_list',
 			'url'=>'/knowledgemanagement/knowledgerecord_list.php',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -379,18 +316,18 @@ class modKnowledgeManagement extends DolibarrModules
 			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled'=>'$conf->knowledgemanagement->enabled',
 			// Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'perms'=>'1',
+			'perms'=>'$user->rights->knowledgemanagement->knowledgerecord->read',
 			'target'=>'',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user'=>2,
 		);
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=knowledgemanagement,fk_leftmenu=knowledgemanagement_knowledgerecord',
+			'fk_menu'=>'fk_mainmenu=ticket,fk_leftmenu=knowledgemanagement_knowledgerecord',
 			// This is a Left menu entry
 			'type'=>'left',
 			'titre'=>'NewKnowledgeRecord',
-			'mainmenu'=>'knowledgemanagement',
+			'mainmenu'=>'ticket',
 			'leftmenu'=>'knowledgemanagement_new',
 			'url'=>'/knowledgemanagement/knowledgerecord_card.php?action=create',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -399,13 +336,27 @@ class modKnowledgeManagement extends DolibarrModules
 			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled'=>'$conf->knowledgemanagement->enabled',
 			// Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'perms'=>'1',
+			'perms'=>'$user->hasRight("knowledgemanagement", "knowledgerecord", "write")',
 			'target'=>'',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user'=>2
 		);
+		$this->menu[$r++] = array(
+			'fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=knowledgemanagement_knowledgerecord',
+			'type' => 'left',
+			'titre' => 'Categories',
+			'mainmenu' => 'ticket',
+			'url' => '/categories/index.php?type=13',
+			'langs' => 'knowledgemanagement',
+			'position' => 112,
+			'enabled' => '$conf->knowledgemanagement->enabled',
+			'perms' => '$user->rights->knowledgemanagement->knowledgerecord->read',
+			'target' => '',
+			'user' => 0
+		);
 
 		/* END MODULEBUILDER LEFTMENU KNOWLEDGERECORD */
+
 		// Exports profiles provided by this module
 		$r = 1;
 		/* BEGIN MODULEBUILDER EXPORT KNOWLEDGERECORD */
@@ -470,7 +421,7 @@ class modKnowledgeManagement extends DolibarrModules
 	{
 		global $conf, $langs;
 
-		$result = $this->_load_tables('/knowledgemanagement/sql/');
+		$result = $this->_load_tables('/install/mysql/', 'knowledgemanagement');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}
@@ -515,10 +466,10 @@ class modKnowledgeManagement extends DolibarrModules
 				}
 
 				$sql = array_merge($sql, array(
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".$conf->entity,
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."','".strtolower($myTmpObjectKey)."',".$conf->entity.")",
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".$conf->entity,
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".strtolower($myTmpObjectKey)."', ".$conf->entity.")"
+					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".((int) $conf->entity),
+					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."','".strtolower($myTmpObjectKey)."',".((int) $conf->entity).")",
+					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".((int) $conf->entity),
+					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".strtolower($myTmpObjectKey)."', ".((int) $conf->entity).")"
 				));
 			}
 		}

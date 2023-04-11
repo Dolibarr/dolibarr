@@ -69,6 +69,7 @@ span.badgeneutral {
 	background-color: #e4e4e4;
 	color: #666;
 	border-radius: 10px;
+	white-space: nowrap;
 }
 
 
@@ -261,9 +262,9 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 		print $cssPrefix.".badge-status".$statusName." {\n";
 		print "        color: ".$thisBadgeTextColor." !important;\n";
 		if (in_array((string) $statusName, $TBadgeBorderOnly)) {
-			print "        border-color: ".$thisBadgeBorderColor.";\n";
+			print "        border-color: ".$thisBadgeBorderColor." !important;\n";
 		}
-		print "        background-color: ".$thisBadgeBackgroundColor.";\n";
+		print "        background-color: ".$thisBadgeBackgroundColor." !important;\n";
 		print "}\n";
 
 		print $cssPrefix.".font-status".$statusName." {\n";
@@ -272,14 +273,14 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 
 		print $cssPrefix.".badge-status".$statusName.".focus, ".$cssPrefix.".badge-status".$statusName.":focus {\n";
 		print "    outline: 0;\n";
-		print "    box-shadow: 0 0 0 0.2rem ".colorHexToRgb($thisBadgeBackgroundColor, 0.5).";\n";
+		print "    box-shadow: 0 0 0 0.2rem ".colorHexToRgb($thisBadgeBackgroundColor, 0.5)." !important;\n";
 		print "}\n";
 
 		print $cssPrefix.".badge-status".$statusName.":focus, ".$cssPrefix.".badge-status".$statusName.":hover {\n";
 		print "    color: ".$thisBadgeTextColor." !important;\n";
 		//print "    background-color: ".colorDarker($thisBadgeBackgroundColor, 10).";\n";
 		if (in_array((string) $statusName, $TBadgeBorderOnly)) {
-			print "        border-color: ".colorDarker($thisBadgeBorderColor, 10).";\n";
+			print "        border-color: ".colorDarker($thisBadgeBorderColor, 10)." !important;\n";
 		}
 		print "}\n";
 	}

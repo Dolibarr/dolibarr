@@ -66,10 +66,12 @@ class GoogleAPI
 		$i = 0;
 
 		// Desired address
-		$urladdress = "https://maps.google.com/maps/geo?q=".urlencode($address)."&output=xml&key=".$this->key;
+		$urladdress = "https://maps.google.com/maps/geo?q=".urlencode($address)."&output=xml&key=".urlencode($this->key);
 
 		// Retrieve the URL contents
-		$page = file_get_contents($urladdress);
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+		$pagearray = getURLContent($urladdress, 'GET');
+		$page = $pagearray['content'];
 
 		$code = strstr($page, '<coordinates>');
 		$code = strstr($code, '>');

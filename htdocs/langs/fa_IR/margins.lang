@@ -22,7 +22,7 @@ ProductService=محصولات و خدمات
 AllProducts=همۀ محصولات و خدمات
 ChooseProduct/Service=انتخاب محصول و یا خدمات
 ForceBuyingPriceIfNull=الزام مبلغ خرید/هزینه به قیمت فروش، در صورتی که تعریف نشده باشد
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=روش حاشیه برای تخفیف‌های سراسری
 UseDiscountAsProduct=به عنوان یک محصول
 UseDiscountAsService=به عنوان خدمات

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Pārdevēja komerciālie priekšlikumi
-supplier_proposalDESC=Manage price requests to suppliers
+supplier_proposalDESC=Pārvaldiet cenu pieprasījumus piegādātājiem
 SupplierProposalNew=Jauns cenas pieprasījums
 CommRequest=Cenas pieprasījums
 CommRequests=Cenas pieprasījumi
@@ -13,6 +13,7 @@ SupplierProposalArea=Pārdevēju piedāvājumu apgabals
 SupplierProposalShort=Pārdevēja piedāvājums
 SupplierProposals=Pārdevēja priekšlikumi
 SupplierProposalsShort=Pārdevēja priekšlikumi
+AskPrice=Cenas pieprasījums
 NewAskPrice=Jauns cenas pieprasījums
 ShowSupplierProposal=Rādīt cenas pieprasījumu
 AddSupplierProposal=Izveidot cenas pieprasījumu
@@ -52,3 +53,6 @@ SupplierProposalsToClose=Pārdevēja priekšlikumi slēgt
 SupplierProposalsToProcess=Pārdevēja priekšlikumi apstrādāt
 LastSupplierProposals=Jaunākie %s cenu pieprasījumi
 AllPriceRequests=Visi pieprasījumi
+TypeContact_supplier_proposal_external_SHIPPING=Piegādes gadījumā sazinieties ar pārdevēja kontaktu
+TypeContact_supplier_proposal_external_BILLING=Pārdevēja kontaktpersona norēķinu veikšanai
+TypeContact_supplier_proposal_external_SERVICE=Pārstāvis turpinot darboties priekšlikums

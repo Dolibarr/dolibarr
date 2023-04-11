@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=பேபால் தொகுதி அமைவு
+PaypalDesc=இந்த தொகுதி வாடிக்கையாளர்கள் <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> வழியாக பணம் செலுத்த அனுமதிக்கிறது. இது தற்காலிக கட்டணத்திற்கு அல்லது டோலிபார் பொருள் தொடர்பான கட்டணத்திற்கு (விலைப்பட்டியல், ஆர்டர், ...) பயன்படுத்தப்படலாம்.
+PaypalOrCBDoPayment=பேபால் (அட்டை அல்லது பேபால்) மூலம் பணம் செலுத்துங்கள்
+PaypalDoPayment=பேபால் மூலம் பணம் செலுத்துங்கள்
+PAYPAL_API_SANDBOX=முறை சோதனை/சாண்ட்பாக்ஸ்
+PAYPAL_API_USER=API பயனர்பெயர்
+PAYPAL_API_PASSWORD=API கடவுச்சொல்
+PAYPAL_API_SIGNATURE=API கையொப்பம்
+PAYPAL_SSLVERSION=கர்ல் SSL பதிப்பு
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY="ஒருங்கிணைந்த" கட்டணம் (கிரெடிட் கார்டு+பேபால்) அல்லது "பேபால்" மட்டும்
+PaypalModeIntegral=ஒருங்கிணைந்த
+PaypalModeOnlyPaypal=பேபால் மட்டும்
+ONLINE_PAYMENT_CSS_URL=ஆன்லைன் கட்டணப் பக்கத்தில் CSS ஸ்டைல்ஷீட்டின் விருப்ப URL
+ThisIsTransactionId=இது பரிவர்த்தனையின் ஐடி: <b> %s </b>
+PAYPAL_ADD_PAYMENT_URL=மின்னஞ்சல் மூலம் ஆவணத்தை அனுப்பும்போது PayPal கட்டண urlஐச் சேர்க்கவும்
+NewOnlinePaymentReceived=புதிய ஆன்லைன் கட்டணம் பெறப்பட்டது
+NewOnlinePaymentFailed=புதிய ஆன்லைன் பேமெண்ட் முயற்சி தோல்வியடைந்தது
+ONLINE_PAYMENT_SENDEMAIL=ஒவ்வொரு கட்டண முயற்சிக்குப் பிறகும் அறிவிப்புகளுக்கான மின்னஞ்சல் முகவரி (வெற்றி மற்றும் தோல்விக்கு)
+ReturnURLAfterPayment=பணம் செலுத்திய பிறகு URL ஐத் திருப்பி அனுப்பவும்
+ValidationOfOnlinePaymentFailed=ஆன்லைன் கட்டணத்தைச் சரிபார்க்க முடியவில்லை
+PaymentSystemConfirmPaymentPageWasCalledButFailed=கட்டண முறைமையால் பேமெண்ட் உறுதிப்படுத்தல் பக்கம் அழைக்கப்பட்டது பிழை ஏற்பட்டது
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API அழைப்பு தோல்வியடைந்தது.
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API அழைப்பு தோல்வியடைந்தது.
+DetailedErrorMessage=விரிவான பிழைச் செய்தி
+ShortErrorMessage=சுருக்கமான பிழைச் செய்தி
+ErrorCode=பிழை குறியீடு
+ErrorSeverityCode=பிழை தீவிரம் குறியீடு
+OnlinePaymentSystem=ஆன்லைன் கட்டண முறை
+PaypalLiveEnabled=பேபால் "லைவ்" பயன்முறை இயக்கப்பட்டது (இல்லையெனில் சோதனை/சாண்ட்பாக்ஸ் பயன்முறை)
+PaypalImportPayment=PayPal கட்டணங்களை இறக்குமதி செய்யவும்
+PostActionAfterPayment=பணம் செலுத்திய பிறகு செயல்களை இடுகையிடவும்
+ARollbackWasPerformedOnPostActions=எல்லாப் போஸ்ட் செயல்களிலும் திரும்பப்பெறுதல் செய்யப்பட்டது. இடுகைச் செயல்கள் தேவைப்பட்டால் அவற்றை நீங்கள் கைமுறையாக முடிக்க வேண்டும்.
+ValidationOfPaymentFailed=கட்டணச் சரிபார்ப்பு தோல்வியடைந்தது
+CardOwner=அட்டை வைத்திருப்பவர்
+PayPalBalance=பேபால் கடன்

@@ -23,6 +23,7 @@
  *      \brief      Page to manage resource objects
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 
@@ -32,13 +33,14 @@ $langs->loadLangs(array("resource", "companies", "other"));
 // Get parameters
 $id             = GETPOST('id', 'int');
 $action         = GETPOST('action', 'alpha');
+$massaction     = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 
 $lineid         = GETPOST('lineid', 'int');
 $element        = GETPOST('element', 'alpha');
 $element_id     = GETPOST('element_id', 'int');
 $resource_id    = GETPOST('resource_id', 'int');
 
-$sortorder      = GETPOST('sortorder', 'alpha');
+$sortorder      = GETPOST('sortorder', 'aZ09comma');
 $sortfield      = GETPOST('sortfield', 'aZ09comma');
 $optioncss = GETPOST('optioncss', 'alpha');
 
@@ -61,49 +63,7 @@ $search_type = GETPOST("search_type", 'alpha');
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 
-
 $filter = array();
-
-$param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-	$param .= '&amp;contextpage='.urlencode($contextpage);
-}
-if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&amp;limit='.urlencode($limit);
-}
-
-if ($search_ref != '') {
-	$param .= '&search_ref='.urlencode($search_ref);
-	$filter['t.ref'] = $search_ref;
-}
-if ($search_type != '') {
-	$param .= '&search_type='.urlencode($search_type);
-	$filter['ty.label'] = $search_type;
-}
-
-// Add $param from extra fields
-foreach ($search_array_options as $key => $val) {
-	$crit = $val;
-	$tmpkey = preg_replace('/search_options_/', '', $key);
-	$typ = $extrafields->attributes[$object->table_element]['type'][$tmpkey];
-	if ($val != '') {
-		$param .= '&search_options_'.$tmpkey.'='.urlencode($val);
-	}
-	$mode_search = 0;
-	if (in_array($typ, array('int', 'double', 'real'))) {
-		$mode_search = 1; // Search on a numeric
-	}
-	if (in_array($typ, array('sellist', 'link')) && $crit != '0' && $crit != '-1') {
-		$mode_search = 2; // Search on a foreign key int
-	}
-	if ($crit != '' && (!in_array($typ, array('select', 'sellist')) || $crit != '0') && (!in_array($typ, array('link')) || $crit != '-1')) {
-		$filter['ef.'.$tmpkey] = natural_search('ef.'.$tmpkey, $crit, $mode_search);
-	}
-}
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-	$param .= '&contextpage='.urlencode($contextpage);
-}
-
 
 $hookmanager->initHooks(array('resourcelist'));
 
@@ -126,9 +86,6 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (!$user->rights->resource->read) {
-		accessforbidden();
-}
 $arrayfields = array(
 		't.ref' => array(
 				'label' => $langs->trans("Ref"),
@@ -156,10 +113,22 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$filter = array();
 }
 
+if (empty($user->rights->resource->read)) {
+	accessforbidden();
+}
+
 
 /*
- * Action
+ * Actions
  */
+
+if (GETPOST('cancel', 'alpha')) {
+	$action = 'list';
+	$massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+	$massaction = '';
+}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -174,8 +143,42 @@ if ($reshook < 0) {
 
 $form = new Form($db);
 
-$pagetitle = $langs->trans('ResourcePageIndex');
-llxHeader('', $pagetitle, '');
+//$help_url="EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
+$help_url = '';
+$title = $langs->trans('Resources');
+llxHeader('', $title, $help_url);
+
+
+$sql = '';
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+
+$param = '';
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	$param .= '&contextpage='.urlencode($contextpage);
+}
+if ($limit > 0 && $limit != $conf->liste_limit) {
+	$param .= '&limit='.((int) $limit);
+}
+
+if ($search_ref != '') {
+	$param .= '&search_ref='.urlencode($search_ref);
+	$filter['t.ref'] = $search_ref;
+}
+if ($search_type != '') {
+	$param .= '&search_type='.urlencode($search_type);
+	$filter['ty.label'] = $search_type;
+}
+
+// Including the previous script generate the correct SQL filter for all the extrafields
+// we are playing with the behaviour of the Dolresource::fetchAll() by generating a fake
+// extrafields filter key to make it works
+$filter['ef.resource'] = $sql;
+
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+
+// Add $param from extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
 
 // Confirmation suppression resource line
 if ($action == 'delete_resource') {
@@ -183,7 +186,8 @@ if ($action == 'delete_resource') {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));
+
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') {
@@ -197,7 +201,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$ret = $object->fetch_all('', '', 0, 0, $filter);
+	$ret = $object->fetchAll('', '', 0, 0, $filter);
 	if ($ret == -1) {
 		dol_print_error($db, $object->error);
 		exit;
@@ -207,7 +211,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 }
 
 // Load object list
-$ret = $object->fetch_all($sortorder, $sortfield, $limit, $offset, $filter);
+$ret = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
 if ($ret == -1) {
 	dol_print_error($db, $object->error);
 	exit;
@@ -217,7 +221,7 @@ if ($ret == -1) {
 		$newcardbutton .= dolGetButtonTitle($langs->trans('MenuResourceAdd'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/resource/card.php?action=create');
 	}
 
-	print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret + 1, $nbtotalofrecords, 'object_resource', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret + 1, $nbtotalofrecords, 'object_resource', 0, $newcardbutton, '', $limit, 0, 0, 1);
 }
 
 $moreforfilter = '';
@@ -226,6 +230,13 @@ print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 print '<tr class="liste_titre_filter">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
+	print '</td>';
+}
 if (!empty($arrayfields['t.ref']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="6">';
@@ -239,13 +250,19 @@ if (!empty($arrayfields['ty.label']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 // Action column
-print '<td class="liste_titre maxwidthsearch">';
-$searchpicto = $form->showFilterAndCheckAddButtons(0);
-print $searchpicto;
-print '</td>';
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
+	print '</td>';
+}
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 if (!empty($arrayfields['t.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], "t.ref", "", $param, "", $sortfield, $sortorder);
 }
@@ -254,13 +271,29 @@ if (!empty($arrayfields['ty.label']['checked'])) {
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+// Action column
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 print "</tr>\n";
 
 
 if ($ret) {
 	foreach ($object->lines as $resource) {
 		print '<tr class="oddeven">';
+
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="center">';
+			print '<a class="editfielda" href="./card.php?action=edit&token='.newToken().'&id='.$resource->id.'">';
+			print img_edit();
+			print '</a>';
+			print '&nbsp;';
+			print '<a href="./card.php?action=delete&token='.newToken().'&id='.$resource->id.'">';
+			print img_delete('', 'class="marginleftonly"');
+			print '</a>';
+			print '</td>';
+		}
 
 		if (!empty($arrayfields['t.ref']['checked'])) {
 			print '<td>';
@@ -283,15 +316,18 @@ if ($ret) {
 		$obj = (Object) $resource->array_options;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
-		print '<td class="center">';
-		print '<a class="editfielda" href="./card.php?action=edit&token='.newToken().'&id='.$resource->id.'">';
-		print img_edit();
-		print '</a>';
-		print '&nbsp;';
-		print '<a href="./card.php?action=delete&token='.newToken().'&id='.$resource->id.'">';
-		print img_delete('', 'class="marginleftonly"');
-		print '</a>';
-		print '</td>';
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="center">';
+			print '<a class="editfielda" href="./card.php?action=edit&token='.newToken().'&id='.$resource->id.'">';
+			print img_edit();
+			print '</a>';
+			print '&nbsp;';
+			print '<a href="./card.php?action=delete&token='.newToken().'&id='.$resource->id.'">';
+			print img_delete('', 'class="marginleftonly"');
+			print '</a>';
+			print '</td>';
+		}
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

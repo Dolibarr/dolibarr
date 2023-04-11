@@ -24,6 +24,7 @@
  *  \brief      Page to check Dolibarr files integrity
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
@@ -53,8 +54,8 @@ print '<span class="opacitymedium">'.$langs->trans("FileCheckDesc").'</span><br>
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
-print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
-print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastUpgrade").'</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastInstall").'</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'</td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastUpgrade").'</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionProgram").'</td><td>'.DOL_VERSION;
 // If current version differs from last upgrade
 if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE)) {
@@ -79,7 +80,12 @@ $file_list = array('missing' => array(), 'updated' => array());
 
 // Local file to compare to
 $xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST('xmlshortfile', 'alpha') : 'filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(empty($conf->global->MAIN_FILECHECK_LOCAL_EXT) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT));
+
 $xmlfile = DOL_DOCUMENT_ROOT.'/install/'.$xmlshortfile;
+if (!preg_match('/\.zip$/i', $xmlfile) && dol_is_file($xmlfile.'.zip')) {
+	$xmlfile = $xmlfile.'.zip';
+}
+
 // Remote file to compare to
 $xmlremote = GETPOST('xmlremote', 'alphanohtml');
 if (empty($xmlremote) && !empty($conf->global->MAIN_FILECHECK_URL)) {
@@ -94,7 +100,11 @@ if (empty($xmlremote)) {
 }
 if ($xmlremote && !preg_match('/^https?:\/\//', $xmlremote)) {
 	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorURLMustStartWithHttp", $xmlremote), '', 'errors');
+	setEventMessages($langs->trans("ErrorURLMustStartWithHttp", $xmlremote), null, 'errors');
+	$error++;
+} elseif ($xmlremote && !preg_match('/\.xml$/', $xmlremote)) {
+	$langs->load("errors");
+	setEventMessages($langs->trans("ErrorURLMustEndWith", $xmlremote, '.xml'), null, 'errors');
 	$error++;
 }
 
@@ -114,17 +124,17 @@ if (dol_is_file($xmlfile)) {
 	print '<input name="xmlshortfile" class="flat minwidth400" value="'.dol_escape_htmltag($xmlshortfile).'">';
 	print '<br>';
 } else {
-	print '<input type="radio" name="target" value="local"> '.$langs->trans("LocalSignature").' = ';
+	print '<input type="radio" name="target" id="checkboxlocal" value="local"> <label for="checkboxlocal">'.$langs->trans("LocalSignature").' = ';
 	print '<input name="xmlshortfile" class="flat minwidth400" value="'.dol_escape_htmltag($xmlshortfile).'">';
-	print ' <span class="warning">('.$langs->trans("AvailableOnlyOnPackagedVersions").')</span>';
+	print ' <span class="warning">('.$langs->trans("AvailableOnlyOnPackagedVersions").')</span></label>';
 	print '<br>';
 }
 print '<!-- for a remote target=remote&xmlremote=... -->'."\n";
 if ($enableremotecheck) {
 	print '<input type="radio" name="target" id="checkboxremote" value="remote"'.(GETPOST('target') == 'remote' ? 'checked="checked"' : '').'> <label for="checkboxremote">'.$langs->trans("RemoteSignature").'</label> = ';
-	print '<input name="xmlremote" class="flat minwidth400" value="'.dol_escape_htmltag($xmlremote).'"><br>';
+	print '<input name="xmlremote" class="flat minwidth500" value="'.dol_escape_htmltag($xmlremote).'"><br>';
 } else {
-	print '<input type="radio" name="target" value="remote" disabled="disabled"> '.$langs->trans("RemoteSignature").' = '.dol_escape_htmltag($xmlremote);
+	print '<input type="radio" name="target" id="checkboxremote" value="remote" disabled="disabled"> '.$langs->trans("RemoteSignature").' = '.dol_escape_htmltag($xmlremote);
 	if (!GETPOST('xmlremote')) {
 		print ' <span class="warning">('.$langs->trans("FeatureAvailableOnlyOnStable").')</span>';
 	}
@@ -150,6 +160,10 @@ if (GETPOST('target') == 'local') {
 			}
 		}
 		$xml = simplexml_load_file($xmlfile);
+		if ($xml === false) {
+			print '<div class="warning">'.$langs->trans('XmlCorrupted').': '.$xmlfile.'</span>';
+			$error++;
+		}
 	} else {
 		print '<div class="warning">'.$langs->trans('XmlNotFound').': '.$xmlfile.'</span>';
 		$error++;
@@ -162,7 +176,7 @@ if (GETPOST('target') == 'remote') {
 	if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != '400' && $xmlarray['http_code'] != '404') {
 		$xmlfile = $xmlarray['content'];
 		//print "xmlfilestart".$xmlfile."xmlfileend";
-		$xml = simplexml_load_string($xmlfile);
+		$xml = simplexml_load_string($xmlfile, 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
 	} else {
 		$errormsg = $langs->trans('XmlNotFound').': '.$xmlremote.' - '.$xmlarray['http_code'].(($xmlarray['http_code'] == 400 && $xmlarray['content']) ? ' '.$xmlarray['content'] : '').' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
 		setEventMessages($errormsg, null, 'errors');
@@ -171,7 +185,7 @@ if (GETPOST('target') == 'remote') {
 }
 
 
-if (!$error && $xml) {
+if (empty($error) && !empty($xml)) {
 	$checksumconcat = array();
 	$file_list = array();
 	$out = '';
@@ -196,8 +210,8 @@ if (!$error && $xml) {
 			$constvalue = (empty($constvalue) ? '0' : $constvalue);
 			// Value found
 			$value = '';
-			if ($constname && $conf->global->$constname != '') {
-				$value = $conf->global->$constname;
+			if ($constname && getDolGlobalString($constname) != '') {
+				$value = getDolGlobalString($constname);
 			}
 			$valueforchecksum = (empty($value) ? '0' : $value);
 
@@ -379,7 +393,9 @@ if (!$error && $xml) {
 		$out .= '</table>';
 		$out .= '</div>';
 	} else {
-		print 'Error: Failed to found dolibarr_htdocs_dir into XML file '.$xmlfile;
+		print '<div class="error">';
+		print 'Error: Failed to found <b>dolibarr_htdocs_dir</b> into content of XML file:<br>'.dol_escape_htmltag(dol_trunc($xmlfile, 500));
+		print '</div><br>';
 		$error++;
 	}
 
@@ -398,16 +414,16 @@ if (!$error && $xml) {
 	$checksumget = md5(join(',', $checksumconcat));
 	$checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
 
-	/*var_dump(count($file_list['added']));
-	var_dump($checksumget);
-	var_dump($checksumtoget);
-	var_dump($checksumget == $checksumtoget);*/
+	//var_dump(count($file_list['added']));
+	//var_dump($checksumget);
+	//var_dump($checksumtoget);
+	//var_dump($checksumget == $checksumtoget);
 
 	$resultcomment = '';
 
 	$outexpectedchecksum = ($checksumtoget ? $checksumtoget : $langs->trans("Unknown"));
 	if ($checksumget == $checksumtoget) {
-		if (count($file_list['added'])) {
+		if (is_array($file_list['added']) && count($file_list['added'])) {
 			$resultcode = 'warning';
 			$resultcomment = 'FileIntegrityIsOkButFilesWereAdded';
 			$outcurrentchecksum = $checksumget.' - <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';

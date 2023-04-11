@@ -24,6 +24,7 @@
  *		\brief      Tab for notifications of third party
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -34,8 +35,8 @@ $langs->loadLangs(array("companies", "mails", "admin", "other", "errors"));
 
 $socid     = GETPOST("socid", 'int');
 $action    = GETPOST('action', 'aZ09');
-$contactid = GETPOST('contactid'); // May be an int or 'thirdparty'
-$actionid  = GETPOST('actionid');
+$contactid = GETPOST('contactid', 'alpha'); // May be an int or 'thirdparty'
+$actionid  = GETPOST('actionid', 'int');
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 // Security check
@@ -45,8 +46,8 @@ if ($user->socid) {
 $result = restrictedArea($user, 'societe', '', '');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortorder) {
 	$sortorder = "DESC";
@@ -98,10 +99,10 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-			$sql .= " WHERE fk_soc=".$socid." AND fk_contact=".$contactid." AND fk_action=".$actionid;
+			$sql .= " WHERE fk_soc=".((int) $socid)." AND fk_contact=".((int) $contactid)." AND fk_action=".((int) $actionid);
 			if ($db->query($sql)) {
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_soc, fk_contact, fk_action)";
-				$sql .= " VALUES ('".$db->idate($now)."',".$socid.",".$contactid.",".$actionid.")";
+				$sql .= " VALUES ('".$db->idate($now)."',".((int) $socid).",".((int) $contactid).",".((int) $actionid).")";
 
 				if (!$db->query($sql)) {
 					$error++;
@@ -162,6 +163,11 @@ if ($result > 0) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
+	// Type Prospect/Customer/Supplier
+	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+	print $object->getTypeUrl(1);
+	print '</td></tr>';
+
 	// Prefix
 	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
@@ -173,18 +179,18 @@ if ($result > 0) {
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
 		$tmpcheck = $object->check_codeclient();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+			print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 		}
 		print '</td></tr>';
 	}
 
-	if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
+	if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
 		print '<tr><td class="titlefield">';
 		print $langs->trans('SupplierCode').'</td><td colspan="3">';
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
 		$tmpcheck = $object->check_codefournisseur();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+			print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
 		}
 		print '</td></tr>';
 	}
@@ -196,7 +202,7 @@ if ($result > 0) {
 	$tmparray = $notify->getNotificationsArray('', $object->id, null, 0, array('thirdparty'));
 	foreach($tmparray as $tmpkey => $tmpval)
 	{
-		if (! empty($tmpkey)) $nbofrecipientemails++;
+		if (!empty($tmpkey)) $nbofrecipientemails++;
 	}
 	print $nbofrecipientemails;
 	print '</td></tr>';*/
@@ -230,7 +236,7 @@ if ($result > 0) {
 	$sql .= " ".MAIN_DB_PREFIX."socpeople c";
 	$sql .= " WHERE a.rowid = n.fk_action";
 	$sql .= " AND c.rowid = n.fk_contact";
-	$sql .= " AND c.fk_soc = ".$object->id;
+	$sql .= " AND c.fk_soc = ".((int) $object->id);
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -283,7 +289,7 @@ if ($result > 0) {
 		$type = array('email'=>$langs->trans("EMail"));
 		print $form->selectarray("typeid", $type, '', 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 		print '</td>';
-		print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+		print '<td class="right"><input type="submit" class="button button-add" value="'.$langs->trans("Add").'"></td>';
 		print '</tr>';
 	} else {
 		print '<tr class="oddeven"><td colspan="4" class="opacitymedium">';
@@ -300,7 +306,7 @@ if ($result > 0) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
-			$contactstatic->id = $obj->contact_id;
+			$contactstatic->id = $obj->contactid;
 			$contactstatic->lastname = $obj->lastname;
 			$contactstatic->firstname = $obj->firstname;
 
@@ -399,7 +405,7 @@ if ($result > 0) {
 	$sql .= " ".MAIN_DB_PREFIX."notify as n ";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as c ON n.fk_contact = c.rowid";
 	$sql .= " WHERE a.rowid = n.fk_action";
-	$sql .= " AND n.fk_soc = ".$object->id;
+	$sql .= " AND n.fk_soc = ".((int) $object->id);
 	$sql .= $db->order($sortfield, $sortorder);
 
 	// Count total nb of records

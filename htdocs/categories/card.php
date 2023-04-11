@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005		Matthieu Valleton	<mv@seeschloss.org>
- * Copyright (C) 2006-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2021	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2007		Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
@@ -27,6 +27,7 @@
  *		\brief      Page to create a new category
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -246,7 +247,7 @@ if ($user->rights->categorie->creer) {
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('description', $description, '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_5, '90%');
+		$doleditor = new DolEditor('description', $description, '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -257,6 +258,7 @@ if ($user->rights->categorie->creer) {
 
 		// Parent category
 		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
+		print img_picto($langs->trans("ParentCategory"), 'category', 'class="pictofixedwidth"');
 		print $form->select_all_categories($type, $catorigin, 'parent');
 		print ajax_combobox('parent');
 		print '</td></tr>';
@@ -265,7 +267,7 @@ if ($user->rights->categorie->creer) {
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		if (empty($reshook)) {
-			print $object->showOptionals($extrafields, 'edit', $parameters);
+			print $object->showOptionals($extrafields, 'create', $parameters);
 		}
 
 		print '</table>';
@@ -273,7 +275,7 @@ if ($user->rights->categorie->creer) {
 		print dol_get_fiche_end('');
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" />';
+		print '<input type="submit" class="button b" value="'.$langs->trans("CreateThisCat").'" name="creation" />';
 		print '&nbsp; &nbsp; &nbsp;';
 		print '<input type="submit" class="button button-cancel" value="'.$langs->trans("Cancel").'" name="cancel" />';
 		print '</div>';

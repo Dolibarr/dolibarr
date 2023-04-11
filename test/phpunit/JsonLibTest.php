@@ -101,7 +101,7 @@ class JsonLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		//$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -114,7 +114,7 @@ class JsonLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		//$db->rollback();
@@ -127,7 +127,7 @@ class JsonLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -142,7 +142,7 @@ class JsonLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -160,6 +160,15 @@ class JsonLibTest extends PHPUnit\Framework\TestCase
 		$this->savuser=$user;
 		$this->savlangs=$langs;
 		$this->savdb=$db;
+
+		// Try to decode a string encoded with serialize
+		$encoded = 'a:1:{s:7:"options";a:3:{s:3:"app";s:11:"Application";s:6:"system";s:6:"System";s:6:"option";s:6:"Option";}}';
+		$decoded=json_decode($encoded, true);
+		$this->assertEquals(null, $decoded, 'test to json_decode() a string that was encoded with serialize()');
+
+		$encoded = 'rubishstring!aa{bcd';
+		$decoded=json_decode($encoded, true);
+		$this->assertEquals(null, $decoded, 'test to json_decode() a string that was encoded with serialize()');
 
 		// Do a test with an array starting with 0
 		$arraytotest=array(0=>array('key'=>1,'value'=>'PRODREF','label'=>'Product ref with é and special chars \\ \' "'));
