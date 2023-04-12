@@ -285,6 +285,7 @@ SetRevenuStamp=Set revenue stamp
 Billed=Billed
 RecurringInvoices=Recurring invoices
 RecurringInvoice=Recurring invoice
+RecurringInvoiceSource=Recurring invoice ar source
 RepeatableInvoice=Template invoice
 RepeatableInvoices=Template invoices
 RecurringInvoicesJob=Generation of recurring invoices (sales invoices)

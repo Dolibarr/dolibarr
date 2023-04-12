@@ -157,10 +157,21 @@ if (empty($reshook)) {
 	$upload_dir = $conf->expedition->dir_output.'/sending';
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
+	// Back to draft
+	if ($action == 'setdraft' && $user->rights->expedition->creer) {
+		$object->fetch($id);
+		$result = $object->setDraft($user, 0);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
 	// Reopen
 	if ($action == 'reopen' && $user->rights->expedition->creer) {
 		$object->fetch($id);
 		$result = $object->reOpen();
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Set incoterm
@@ -349,6 +360,7 @@ if (empty($reshook)) {
 		if ($totalqty > 0 && !$error) {		// There is at least one thing to ship and no error
 			for ($i = 0; $i < $num; $i++) {
 				$qty = "qtyl".$i;
+
 				if (!isset($batch_line[$i])) {
 					// not batch mode
 					if (isset($stockLine[$i])) {
@@ -400,7 +412,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				$ret = $object->create($user); // This create shipment (like Odoo picking) and lines of shipments. Stock movement will be done when validating shipment.
+				$ret = $object->create($user); // This create shipment (like Odoo picking) and lines of shipments. Stock movement will be done when validating or closing shipment.
 				if ($ret <= 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
@@ -614,6 +626,7 @@ if (empty($reshook)) {
 		$num_prod = count($lines);
 		for ($i = 0; $i < $num_prod; $i++) {
 			if ($lines[$i]->id == $line_id) {		// we have found line to update
+				$update_done = false;
 				$line = new ExpeditionLigne($db);
 				$line->fk_expedition = $object->id;
 
@@ -654,6 +667,8 @@ if (empty($reshook)) {
 								if ($line->update($user) < 0) {
 									setEventMessages($line->error, $line->errors, 'errors');
 									$error++;
+								} else {
+									$update_done=true;
 								}
 							} else {
 								setEventMessages($lotStock->error, $lotStock->errors, 'errors');
@@ -696,6 +711,8 @@ if (empty($reshook)) {
 									if ($line->update($user) < 0) {
 										setEventMessages($line->error, $line->errors, 'errors');
 										$error++;
+									} else {
+										$update_done=true;
 									}
 								} else {
 									setEventMessages($line->error, $line->errors, 'errors');
@@ -713,6 +730,8 @@ if (empty($reshook)) {
 								if ($object->create_line_batch($line, $line->array_options) < 0) {
 									setEventMessages($object->error, $object->errors, 'errors');
 									$error++;
+								} else {
+									$update_done=true;
 								}
 							}
 						} else {
@@ -750,6 +769,8 @@ if (empty($reshook)) {
 										if ($line->update($user) < 0) {
 											setEventMessages($line->error, $line->errors, 'errors');
 											$error++;
+										} else {
+											$update_done=true;
 										}
 									}
 									unset($_POST[$stockLocation]);
@@ -764,6 +785,8 @@ if (empty($reshook)) {
 							if ($line->update($user) < 0) {
 								setEventMessages($line->error, $line->errors, 'errors');
 								$error++;
+							} else {
+								$update_done=true;
 							}
 							unset($_POST[$qty]);
 						}
@@ -776,9 +799,16 @@ if (empty($reshook)) {
 						if ($line->update($user) < 0) {
 							setEventMessages($line->error, $line->errors, 'errors');
 							$error++;
+						} else {
+							$update_done=true;
 						}
 						unset($_POST[$qty]);
 					}
+				}
+
+				if (empty($update_done)) {
+					$line->id = $lines[$i]->id;
+					$line->insertExtraFields();
 				}
 			}
 		}
@@ -1717,6 +1747,11 @@ if ($action == 'create') {
 		}
 
 		$text = $langs->trans("ConfirmValidateSending", $numref);
+		if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
+			$text .= '<br>'.$langs->trans("StockMovementWillBeRecorded").'.';
+		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
+			$text .= '<br>'.$langs->trans("StockMovementNotYetRecorded").'.';
+		}
 
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
@@ -1725,7 +1760,7 @@ if ($action == 'create') {
 			$text .= $notify->confirmMessage('SHIPPING_VALIDATE', $object->socid, $object);
 		}
 
-		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ValidateSending'), $text, 'confirm_valid', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ValidateSending'), $text, 'confirm_valid', '', 0, 1, 250);
 	}
 	// Confirm cancelation
 	if ($action == 'cancel') {
@@ -2250,6 +2285,8 @@ if ($action == 'create') {
 			// Qty in other shipments (with shipment and warehouse used)
 			if ($origin && $origin_id > 0) {
 				print '<td class="linecolqtyinothershipments center nowrap">';
+				$htmltooltip = '';
+				$qtyalreadysent = 0;
 				foreach ($alreadysent as $key => $val) {
 					if ($lines[$i]->fk_origin_line == $key) {
 						$j = 0;
@@ -2260,20 +2297,23 @@ if ($action == 'create') {
 
 							$j++;
 							if ($j > 1) {
-								print '<br>';
+								$htmltooltip .= '<br>';
 							}
 							$shipment_static->fetch($shipmentline_var['shipment_id']);
-							print $shipment_static->getNomUrl(1);
-							print ' - '.$shipmentline_var['qty_shipped'];
-							$htmltext = $langs->trans("DateValidation").' : '.(empty($shipmentline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($shipmentline_var['date_valid'], 'dayhour'));
-							if (isModEnabled('stock') && $shipmentline_var['warehouse'] > 0) {
+							$htmltooltip .= $shipment_static->getNomUrl(1, '', 0, 0, 1);
+							$htmltooltip .= ' - '.$shipmentline_var['qty_shipped'];
+							$htmltooltip .= ' - '.$langs->trans("DateValidation").' : '.(empty($shipmentline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($shipmentline_var['date_valid'], 'dayhour'));
+							/*if (isModEnabled('stock') && $shipmentline_var['warehouse'] > 0) {
 								$warehousestatic->fetch($shipmentline_var['warehouse']);
 								$htmltext .= '<br>'.$langs->trans("FromLocation").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
-							}
-							print ' '.$form->textwithpicto('', $htmltext, 1);
+							}*/
+							//print ' '.$form->textwithpicto('', $htmltext, 1);
+
+							$qtyalreadysent += $shipmentline_var['qty_shipped'];
 						}
 					}
 				}
+				print $form->textwithpicto($qtyalreadysent, $htmltooltip, 1, 'info', '', 0, 3, 'tooltip'.$lines[$i]->id);
 				print '</td>';
 			}
 
@@ -2372,7 +2412,7 @@ if ($action == 'create') {
 							if ($detail_entrepot->entrepot_id > 0) {
 								$entrepot = new Entrepot($db);
 								$entrepot->fetch($detail_entrepot->entrepot_id);
-								$detail .= $langs->trans("DetailWarehouseFormat", $entrepot->libelle, $detail_entrepot->qty_shipped).'<br>';
+								$detail .= $langs->trans("DetailWarehouseFormat", $entrepot->label, $detail_entrepot->qty_shipped).'<br>';
 							}
 						}
 						print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans("DetailWarehouseNumber"), $detail);
@@ -2513,13 +2553,20 @@ if ($action == 'create') {
 				}
 			}
 
-			// TODO add alternative status
-			// 0=draft, 1=validated, 2=billed, we miss a status "delivered" (only available on order)
-			if ($object->statut == Expedition::STATUS_CLOSED && $user->rights->expedition->creer) {
-				if (isModEnabled('facture') && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
-					print dolGetButtonAction('', $langs->trans('ClassifyUnbilled'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
-				} else {
-					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
+			// 0=draft, 1=validated/delivered, 2=closed/delivered
+			// If WORKFLOW_BILL_ON_SHIPMENT: 0=draft, 1=validated, 2=billed (no status delivered)
+			if ($object->statut == Expedition::STATUS_VALIDATED && !getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
+				if ($user->hasRight('expedition', 'creer')) {
+					print dolGetButtonAction('', $langs->trans('SetToDraft'), 'default', $_SERVER["PHP_SELF"].'?action=setdraft&token='.newToken().'&id='.$object->id, '');
+				}
+			}
+			if ($object->statut == Expedition::STATUS_CLOSED) {
+				if ($user->hasRight('expedition', 'creer')) {
+					if (isModEnabled('facture') && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
+						print dolGetButtonAction('', $langs->trans('ClassifyUnbilled'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
+					} else {
+						print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
+					}
 				}
 			}
 

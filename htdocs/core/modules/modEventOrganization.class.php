@@ -375,6 +375,11 @@ class modEventOrganization extends DolibarrModules
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($this->db);
 
+		include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+		if (!is_object($user)) {
+			$user = new User($this->db); // To avoid error during migration
+		}
+
 		$template = $formmail->getEMailTemplate($this->db, 'conferenceorbooth', $user, $langs, 0, 1, '(EventOrganizationEmailAskConf)');
 		if ($template->id > 0) {
 			dolibarr_set_const($this->db, 'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF', $template->id, 'chaine', 0, '', $conf->entity);

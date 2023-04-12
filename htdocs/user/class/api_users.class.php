@@ -747,7 +747,7 @@ class Users extends DolibarrApi
 			unset($cleanObject->clicktodial_loaded);
 
 			unset($cleanObject->datec);
-			unset($cleanObject->datem);
+			unset($cleanObject->tms);
 			unset($cleanObject->members);
 			unset($cleanObject->note);
 			unset($cleanObject->note_private);

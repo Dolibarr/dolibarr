@@ -693,6 +693,16 @@ if ($object->id > 0) {
 
 	$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
+	// Hook to change amount for other reasons, e.g. apply cash discount for payment before agreed date
+	$parameters = array('remaintopay' => $resteapayer);
+	$reshook = $hookmanager->executeHooks('finalizeAmountOfSupplierInvoice', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook > 0) {
+		print $hookmanager->resPrint;
+		if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
+			$resteapayer = $remaintopay;
+		}
+	}
+
 	// TODO Replace this by an include with same code to show already done payment visible in invoice card
 	print '<tr><td>'.$langs->trans('RemainderToPay').'</td><td class="nowrap">'.price($resteapayer, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
 

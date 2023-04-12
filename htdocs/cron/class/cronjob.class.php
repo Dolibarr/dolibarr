@@ -741,7 +741,7 @@ class Cronjob extends CommonObject
 
 		// Check parameters
 		// Put here code to add a control on parameters values
-		if (dol_strlen($this->datenextrun) == 0) {
+		if (dol_strlen($this->datenextrun) == 0 && $this->status == self::STATUS_ENABLED) {
 			$this->errors[] = $langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronDtNextLaunch'));
 			$error++;
 		}
@@ -995,16 +995,27 @@ class Cronjob extends CommonObject
 		if (isset($this->status)) {
 			$label .= ' '.$this->getLibStatut(5);
 		}
-		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.dol_escape_htmltag($this->ref);
 		$label .= '<br><b>'.$langs->trans('Title').':</b> '.$langs->trans($this->label);
 		if ($this->label != $langs->trans($this->label)) {
 			$label .= ' <span class="opacitymedium">('.$this->label.')</span>';
 		}
+		if (!empty($this->params)) {
+			$label .= '<br><b>'.$langs->trans('Parameters').':</b> '.dol_escape_htmltag($this->params);
+		}
+		$label .= '<br>';
+
 		if (!empty($this->datestart)) {
 			$label .= '<br><b>'.$langs->trans('CronDtStart').':</b> '.dol_print_date($this->datestart, 'dayhour', 'tzuserrel');
 		}
 		if (!empty($this->dateend)) {
 			$label .= '<br><b>'.$langs->trans('CronDtEnd').':</b> '.dol_print_date($this->dateend, 'dayhour', 'tzuserrel');
+		}
+		if (!empty($this->datelastrun)) {
+			$label .= '<br><b>'.$langs->trans('CronDtLastLaunch').':</b> '.dol_print_date($this->datelastrun, 'dayhour', 'tzuserrel');
+		}
+		if (!empty($this->datenextrun)) {
+			$label .= '<br><b>'.$langs->trans('CronDtNextLaunch').':</b> '.dol_print_date($this->datenextrun, 'dayhour', 'tzuserrel');
 		}
 
 		$url = DOL_URL_ROOT.'/cron/card.php?id='.$this->id;
@@ -1468,7 +1479,7 @@ class Cronjob extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return label of a giver status
 	 *
 	 *  @param	int		$status        	Id statut
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto

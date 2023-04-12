@@ -163,13 +163,13 @@ $title = $langs->trans("BackupDumpWizard");
 
 print load_fiche_titre($title);
 
-print '<table class="liste nohover centpercent noborderbottom">';
-print '<tr class="liste_titre">';
-print '<td class="liste_titre">';
-print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
-print '</td>';
-print '</tr>';
-print '<tr class="oddeven nohover"><td class="nohover">';
+//print '<table class="liste nohover centpercent noborderbottom">';
+//print '<tr class="liste_titre">';
+//print '<td class="liste_titre">';
+print '<span class="opacitymedium">'.$langs->trans("DatabaseName").' : </span><b>'.$dolibarr_main_db_name.'</b><br><br>';
+//print '</td>';
+//print '</tr>';
+//print '<tr class="oddeven nohover"><td class="nohover">';
 
 print '<table class="centpercent noborderbottom">';
 
@@ -589,8 +589,8 @@ if (!empty($_SESSION["commandbackuptorun"])) {
 
 print "</div> <!-- end div center button -->\n";
 
-print '</td></tr>';
-print '</table>';
+//print '</td></tr>';
+//print '</table>';
 
 print "</div> 	<!-- end div fichehalfleft -->\n";
 
@@ -598,7 +598,7 @@ print "</div> 	<!-- end div fichehalfleft -->\n";
 print '<div id="backupdatabaseright" class="fichehalfright">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
-$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:480px; overflow: auto;"');
+$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
 print '<br>';
 
 print '</div>';
@@ -652,12 +652,12 @@ foreach ($filecompression as $key => $val) {
 		if ($key == 'gz') {
 			$checked = ' checked';
 		}
-		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'"'.$checked.'>';
-		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
+		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'2"'.$checked.'>';
+		print ' <label for="'.$val['id'].'2">'.$val['label'].'</label>';
 	} else // Disabled export format
 	{
-		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled>';
-		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
+		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'2" disabled>';
+		print ' <label for="'.$val['id'].'2">'.$val['label'].'</label>';
 		print ' <span class="opacitymedium">('.$langs->trans("NotAvailable").')</span>';
 	}
 	print ' &nbsp; &nbsp; ';
@@ -685,6 +685,8 @@ print '</div>';
 
 print '</fieldset>';
 print '</form>';
+
+print '<br>';
 
 // End of page
 llxFooter();

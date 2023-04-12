@@ -190,7 +190,7 @@ if ($id > 0) {
 	$param .= '&id='.urlencode($id);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 foreach ($search as $key => $val) {
 	$param .= '&search_'.$key.'='.urlencode($search[$key]);

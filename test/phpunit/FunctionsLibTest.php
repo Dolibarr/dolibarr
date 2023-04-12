@@ -588,6 +588,9 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$input='This is a text with accent &eacute;';
 		$after=dol_textishtml($input);
 		$this->assertTrue($after, 'Test with a &eacute;');
+		$input='<i class="abc">xxx</i>';
+		$after=dol_textishtml($input);
+		$this->assertTrue($after, 'Test with i tag and class;');
 
 		// False
 		$input='xxx < br>';
@@ -1378,6 +1381,12 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 		print __METHOD__." tmp=".json_encode($tmp)."\n";
 		$this->assertEquals('{"AA":"B\/B","CC":"","EE":"FF","HH":"GG;"}', json_encode($tmp));
+
+		$stringtoexplode="AA=B/B;CC=\n\rEE=FF\nHH=GG;;;\nII=JJ\n";
+		$tmp=dolExplodeIntoArray($stringtoexplode, "(\r\n|\n|\r|;)", '=');
+
+		print __METHOD__." tmp=".json_encode($tmp)."\n";
+		$this->assertEquals('{"AA":"B\/B","CC":"","EE":"FF","HH":"GG","II":"JJ"}', json_encode($tmp));
 	}
 
 	/**

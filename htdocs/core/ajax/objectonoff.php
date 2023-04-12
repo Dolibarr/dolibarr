@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2015-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 /**
  *       \file       htdocs/core/ajax/objectonoff.php
- *       \brief      File to set status for an object
+ *       \brief      File to set status for an object. Called when ajax_object_onoff() is used.
  *       			 This Ajax service is oftenly called when option MAIN_DIRECT_STATUS_UPDATE is set.
  */
 
@@ -45,21 +45,30 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
 $action = GETPOST('action', 'aZ09');
+$backtopage = GETPOST('backtopage');
 
 $id = GETPOST('id', 'int');
-$element = GETPOST('element', 'alpha');	// 'module' or 'myobject@mymodule' or 'mymodule_myobject'
+$element = GETPOST('element', 'alpha');	// 'myobject' (myobject=mymodule) or 'myobject@mymodule' or 'myobject_mysubobject' (myobject=mymodule)
 $field = GETPOST('field', 'alpha');
 $value = GETPOST('value', 'int');
 $format = 'int';
 
-// Load object according to $element
+// Load object according to $id and $element
 $object = fetchObjectByElement($id, $element);
+if (!is_object($object)) {
+	httponly_accessforbidden("Bad value for combination of parameters element/field: Object not found.");	// This includes the exit.
+}
 
 $object->fields[$field] = array('type' => $format, 'enabled' => 1);
 
 $module = $object->module;
 $element = $object->element;
-//var_dump($object->module); var_dump($object->element); var_dump($object->table_element);
+$usesublevelpermission = ($module != $element ? $element : '');
+if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+	$usesublevelpermission = '';
+}
+
+//print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
 
 // Security check
 if (!empty($user->socid)) {
@@ -71,18 +80,12 @@ if (!empty($user->socid)) {
 
 // We check permission.
 // Check is done on $user->rights->element->create or $user->rights->element->subelement->create (because $action = 'set')
-if (preg_match('/status$/', $field)) {
-	$module = $object->module;
-	$element = $object->element;
-	$usesublevelpermission = ($module != $element ? $element : '');
-	if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
-		$usesublevelpermission = '';
-	}
+if (preg_match('/status$/', $field) || ($field == 'evenunsubscribe' && $object->table_element == 'mailing')) {
 	restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
 } elseif ($element == 'product' && in_array($field, array('tosell', 'tobuy', 'tobatch'))) {	// Special case for products
 	restrictedArea($user, 'produit|service', $object, 'product&product', '', '', 'rowid');
 } else {
-	httponly_accessforbidden("Bad value for combination of parameters element/field.");	// This includes the exit.
+	httponly_accessforbidden("Bad value for combination of parameters element/field: Field not supported.");	// This includes the exit.
 }
 
 
@@ -110,6 +113,11 @@ if (($action == 'set') && !empty($id)) {
 	if ($result < 0) {
 		print $object->error;
 		http_response_code(500);
+		exit;
+	}
+
+	if ($backtopage) {
+		header('Location: '.$backtopage);
 		exit;
 	}
 }

@@ -464,7 +464,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 		$param .= '&contextpage=' . urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit=' . urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	foreach ($search as $key => $val) {
 		if (is_array($search[$key]) && count($search[$key])) {
@@ -1020,24 +1020,24 @@ function DisplayPositionList()
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
-	$param = 'fk_job=' . $fk_job;
+	$param = 'fk_job='.$fk_job;
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-		$param .= '&contextpage=' . urlencode($contextpage);
+		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit=' . urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	foreach ($search as $key => $val) {
 		if (is_array($search[$key]) && count($search[$key])) {
 			foreach ($search[$key] as $skey) {
-				$param .= '&search_' . $key . '[]=' . urlencode($skey);
+				$param .= '&search_'.$key.'[]='.urlencode($skey);
 			}
 		} else {
-			$param .= '&search_' . $key . '=' . urlencode($search[$key]);
+			$param .= '&search_'.$key.'='.urlencode($search[$key]);
 		}
 	}
 	if ($optioncss != '') {
-		$param .= '&optioncss=' . urlencode($optioncss);
+		$param .= '&optioncss='.urlencode($optioncss);
 	}
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_search_param.tpl.php';

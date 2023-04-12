@@ -289,7 +289,7 @@ $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.((int) $limit);
 foreach ($search as $key => $val) {
 	if (is_array($search[$key]) && count($search[$key])) foreach ($search[$key] as $skey) $param .= '&search_'.$key.'[]='.urlencode($skey);
 	else $param .= '&search_'.$key.'='.urlencode($search[$key]);

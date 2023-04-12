@@ -210,7 +210,8 @@ function getEntity($element, $shared = 1, $currentobject = null)
 {
 	global $conf, $mc, $hookmanager, $object, $action, $db;
 
-	if (! is_object($hookmanager)) {
+	if (!is_object($hookmanager)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 		$hookmanager = new HookManager($db);
 	}
 
@@ -535,6 +536,7 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *                               'alphanohtml'=check there is no html content and no " and no ../
  *                               'aZ'=check it's a-z only
  *                               'aZ09'=check it's simple alpha string (recommended for keys)
+ *                               'aZ09arobase'=check it's a string for an element type
  *                               'aZ09comma'=check it's a string for a sortfield or sortorder
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
  *                               'nohtml'=check there is no html content
@@ -617,7 +619,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 				}
 			}
 			if (!empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) {
-				if (!empty($_GET['action']) && (preg_match('/^create/', $_GET['action']) || preg_match('/^presend/', $_GET['action'])) && !isset($_GET[$paramname]) && !isset($_POST[$paramname])) {
+				if (!empty($_GET['action']) && (preg_match('/^create|^add_price|^make/', $_GET['action']) || preg_match('/^presend/', $_GET['action'])) && !isset($_GET[$paramname]) && !isset($_POST[$paramname])) {
 					// Now search in setup to overwrite default values
 					if (!empty($user->default_values)) {		// $user->default_values defined from menu 'Setup - Default values'
 						if (isset($user->default_values[$relativepathstring]['createform'])) {
@@ -930,6 +932,14 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			if (!is_array($out)) {
 				$out = trim($out);
 				if (preg_match('/[^a-z0-9_\-\.]+/i', $out)) {
+					$out = '';
+				}
+			}
+			break;
+		case 'aZ09arobase':		// great to sanitize objecttype parameter
+			if (!is_array($out)) {
+				$out = trim($out);
+				if (preg_match('/[^a-z0-9_\-\.@]+/i', $out)) {
 					$out = '';
 				}
 			}
@@ -1651,7 +1661,7 @@ function dol_ucwords($string, $encoding = "UTF-8")
  *												On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
  *												On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_NOTICE=5, LOG_INFO=6, LOG_DEBUG=7
  *  @param	int			$ident					1=Increase ident of 1 (after log), -1=Decrease ident of 1 (before log)
- *  @param	string		$suffixinfilename		When output is a file, append this suffix into default log filename.
+ *  @param	string		$suffixinfilename		When output is a file, append this suffix into default log filename. Example '_stripe', '_mail'
  *  @param	string		$restricttologhandler	Force output of log only to this log handler
  *  @param	array|null	$logcontext				If defined, an array with extra informations (can be used by some log handlers)
  *  @return	void
@@ -1890,9 +1900,10 @@ function dol_fiche_head($links = array(), $active = '0', $title = '', $notab = 0
  *  @param	string	$morecss			More CSS on the link <a>
  *  @param	int		$limittoshow		Limit number of tabs to show. Use 0 to use automatic default value.
  *  @param	string	$moretabssuffix		A suffix to use when you have several dol_get_fiche_head() in same page
+ *  @param	int     $dragdropfile       0 (default) or 1. 1 enable a drop zone for file to be upload, 0 disable it
  * 	@return	string
  */
-function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab = 0, $picto = '', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limittoshow = 0, $moretabssuffix = '')
+function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab = 0, $picto = '', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limittoshow = 0, $moretabssuffix = '', $dragdropfile = 0)
 {
 	global $conf, $langs, $hookmanager;
 
@@ -2058,9 +2069,11 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	}
 
 	if (!$notab || $notab == -1 || $notab == -2 || $notab == -3) {
-		$out .= "\n".'<div class="tabBar'.($notab == -1 ? '' : ($notab == -2 ? ' tabBarNoTop' : (($notab == -3 ? ' noborderbottom' : '').' tabBarWithBottom'))).'">'."\n";
+		$out .= "\n".'<div id="dragDropAreaTabBar" class="tabBar'.($notab == -1 ? '' : ($notab == -2 ? ' tabBarNoTop' : (($notab == -3 ? ' noborderbottom' : '').' tabBarWithBottom'))).'">'."\n";
 	}
-
+	if (!empty($dragdropfile)) {
+		$out .= dragAndDropFileUpload("dragDropAreaTabBar");
+	}
 	$parameters = array('tabname' => $active, 'out' => $out);
 	$reshook = $hookmanager->executeHooks('printTabsHead', $parameters); // This hook usage is called just before output the head of tabs. Take also a look at "completeTabsHead"
 	if ($reshook > 0) {
@@ -4118,9 +4131,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
-				'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'briefcase-medical', 'bug', 'building',
+				'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'birthday-cake', 'bookmark', 'bom', 'briefcase-medical', 'bug', 'building',
 				'card', 'calendarlist', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
-				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cubes',
+				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cross', 'cubes',
 				'currency', 'multicurrency',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
 				'edit', 'ellipsis-h', 'email', 'entity', 'envelope', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt', 'eye',
@@ -4166,7 +4179,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'billr'=>'file-invoice-dollar', 'billd'=>'file-medical',
 				'supplier_invoice'=>'file-invoice-dollar', 'supplier_invoicea'=>'file-excel', 'supplier_invoicer'=>'file-invoice-dollar', 'supplier_invoiced'=>'file-medical',
 				'bom'=>'shapes',
-				'card'=>'address-card', 'chart'=>'chart-line', 'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'collab'=>'people-arrows', 'conversation'=>'comments', 'country'=>'globe-americas', 'cron'=>'business-time',
+				'card'=>'address-card', 'chart'=>'chart-line', 'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'collab'=>'people-arrows', 'conversation'=>'comments', 'country'=>'globe-americas', 'cron'=>'business-time', 'cross'=>'times',
 				'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
 				'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
 				'accounting'=>'search-dollar', 'category'=>'tag', 'dollyrevert'=>'dolly',
@@ -5316,7 +5329,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			$options = '&'.$options;
 		}
 
-		if (!$sortorder || $field1 != $sortfield1) {
+		if (!$sortorder || ($field1 != $sortfield1)) {
 			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
 		} else {
@@ -5727,8 +5740,8 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0,
  *		@param	integer				$form			Type of format, HTML or not (not by default)
  *		@param	Translate|string	$outlangs		Object langs for output. '' use default lang. 'none' use international separators.
  *		@param	int					$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accurancy) before beeing inserted into database or after a computation, so this parameter should be useless.
- *		@param	int					$rounding		MINIMUM number of decimal to show. 0=no change, -1=we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
- *		@param	int|string			$forcerounding	Force the MAXIMUM of decimal to forcerounding decimal (-1=no change, 'MU' or 'MT' or numeric to round to MU or MT or to a given number of decimal)
+ *		@param	int					$rounding		MINIMUM number of decimal to show: 0=no change, -1=we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
+ *		@param	int|string			$forcerounding	MAXIMUM number of decimal to forcerounding decimal: -1=no change, 'MU' or 'MT' or numeric to round to MU or MT or to a given number of decimal
  *		@param	string				$currency_code	To add currency symbol (''=add nothing, 'auto'=Use default currency, 'XXX'=add currency symbols for XXX currency)
  *		@return	string								String with formated amount
  *
@@ -5743,7 +5756,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 		$amount = 0; // To have a numeric value if amount not defined or = ''
 	}
 	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
-	if ($rounding < 0) {
+	if ($rounding == -1) {
 		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
 	}
 	$nbdecimal = $rounding;
@@ -7564,7 +7577,7 @@ function dol_textishtml($msg, $option = 0)
 			return true;
 		} elseif (preg_match('/<\/textarea/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<(b|em|i|u)>/i', $msg)) {
+		} elseif (preg_match('/<(b|em|i|u)(\s+[^>]+)?>/i', $msg)) {
 			return true;
 		} elseif (preg_match('/<br/i', $msg)) {
 			return true;
@@ -7579,7 +7592,7 @@ function dol_textishtml($msg, $option = 0)
 			return true;
 		} elseif (preg_match('/<\/textarea/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<(b|em|i|u)>/i', $msg)) {
+		} elseif (preg_match('/<(b|em|i|u)(\s+[^>]+)?>/i', $msg)) {
 			return true;
 		} elseif (preg_match('/<br\/>/i', $msg)) {
 			return true;
@@ -7642,16 +7655,17 @@ function dol_concatdesc($text1, $text2, $forxml = false, $invert = false)
  * @param   int         $onlykey        1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are trunc and html sanitized (to use for help tooltip)
  * @param   array       $exclude        Array of family keys we want to exclude. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
  * @param   Object      $object         Object for keys on object
+ * @param   array       $include        Array of family keys we want to include. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
  * @return	array						Array of substitutions
  * @see setSubstitFromObject()
  */
-function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null, $object = null)
+function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null, $object = null, $include = null)
 {
 	global $db, $conf, $mysoc, $user, $extrafields;
 
 	$substitutionarray = array();
 
-	if (empty($exclude) || !in_array('user', $exclude)) {
+	if ((empty($exclude) || !in_array('user', $exclude)) && (empty($include) || in_array('user', $include))) {
 		// Add SIGNATURE into substitutionarray first, so, when we will make the substitution,
 		// this will include signature content first and then replace var found into content of signature
 		//var_dump($onlykey);
@@ -7680,7 +7694,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				));
 		}
 	}
-	if ((empty($exclude) || !in_array('mycompany', $exclude)) && is_object($mysoc)) {
+	if ((empty($exclude) || !in_array('mycompany', $exclude)) && is_object($mysoc) && (empty($include) || in_array('mycompany', $include))) {
 		$substitutionarray = array_merge($substitutionarray, array(
 			'__MYCOMPANY_NAME__'    => $mysoc->name,
 			'__MYCOMPANY_EMAIL__'   => $mysoc->email,
@@ -7704,7 +7718,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		));
 	}
 
-	if (($onlykey || is_object($object)) && (empty($exclude) || !in_array('object', $exclude))) {
+	if (($onlykey || is_object($object)) && (empty($exclude) || !in_array('object', $exclude)) && (empty($include) || in_array('object', $include))) {
 		if ($onlykey) {
 			$substitutionarray['__ID__'] = '__ID__';
 			$substitutionarray['__REF__'] = '__REF__';
@@ -7738,7 +7752,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = '__THIRDPARTY_NOTE_PUBLIC__';
 				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = '__THIRDPARTY_NOTE_PRIVATE__';
 			}
-			if (isModEnabled('adherent') && (!is_object($object) || $object->element == 'adherent')) {
+			if (isModEnabled('adherent') && (!is_object($object) || $object->element == 'adherent') && (empty($exclude) || !in_array('member', $exclude)) && (empty($include) || in_array('member', $include))) {
 				$substitutionarray['__MEMBER_ID__'] = '__MEMBER_ID__';
 				$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
@@ -7748,7 +7762,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__MEMBER_NOTE_PRIVATE__'] = '__MEMBER_NOTE_PRIVATE__';*/
 			}
 			// add variables subtitutions ticket
-			if (isModEnabled('ticket') && (!is_object($object) || $object->element == 'ticket')) {
+			if (isModEnabled('ticket') && (!is_object($object) || $object->element == 'ticket') && (empty($exclude) || !in_array('ticket', $exclude)) && (empty($include) || in_array('ticket', $include))) {
 				$substitutionarray['__TICKET_TRACKID__'] = '__TICKET_TRACKID__';
 				$substitutionarray['__TICKET_SUBJECT__'] = '__TICKET_SUBJECT__';
 				$substitutionarray['__TICKET_TYPE__'] = '__TICKET_TYPE__';
@@ -7760,28 +7774,28 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__TICKET_USER_ASSIGN__'] = '__TICKET_USER_ASSIGN__';
 			}
 
-			if (isModEnabled('recruitment') && (!is_object($object) || $object->element == 'recruitmentcandidature')) {
+			if (isModEnabled('recruitment') && (!is_object($object) || $object->element == 'recruitmentcandidature') && (empty($exclude) || !in_array('recruitment', $exclude)) && (empty($include) || in_array('recruitment', $include))) {
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = '__CANDIDATE_FULLNAME__';
 				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = '__CANDIDATE_FIRSTNAME__';
 				$substitutionarray['__CANDIDATE_LASTNAME__'] = '__CANDIDATE_LASTNAME__';
 			}
-			if (isModEnabled('project')) {		// Most objects
+			if (isModEnabled('project') && (empty($exclude) || !in_array('project', $exclude)) && (empty($include) || in_array('project', $include))) {		// Most objects
 				$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
 				$substitutionarray['__PROJECT_REF__'] = '__PROJECT_REF__';
 				$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_NAME__';
 				/*$substitutionarray['__PROJECT_NOTE_PUBLIC__'] = '__PROJECT_NOTE_PUBLIC__';
 				$substitutionarray['__PROJECT_NOTE_PRIVATE__'] = '__PROJECT_NOTE_PRIVATE__';*/
 			}
-			if (isModEnabled('contrat') && (!is_object($object) || $object->element == 'contract')) {
+			if (isModEnabled('contrat') && (!is_object($object) || $object->element == 'contract') && (empty($exclude) || !in_array('contract', $exclude)) && (empty($include) || in_array('contract', $include))) {
 				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = 'Highest date planned for a service start';
 				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = 'Highest date and hour planned for service start';
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'Lowest data for planned expiration of service';
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = 'Lowest date and hour for planned expiration of service';
 			}
-			if (isModEnabled("propal") && (!is_object($object) || $object->element == 'propal')) {
+			if (isModEnabled("propal") && (!is_object($object) || $object->element == 'propal') && (empty($exclude) || !in_array('propal', $exclude)) && (empty($include) || in_array('propal', $include))) {
 				$substitutionarray['__ONLINE_SIGN_URL__'] = 'ToOfferALinkForOnlineSignature';
 			}
-			if (isModEnabled("ficheinter") && (!is_object($object) || $object->element == 'fichinter')) {
+			if (isModEnabled("ficheinter") && (!is_object($object) || $object->element == 'fichinter') && (empty($exclude) || !in_array('intervention', $exclude)) && (empty($include) || in_array('intervention', $include))) {
 				$substitutionarray['__ONLINE_SIGN_FICHINTER_URL__'] = 'ToOfferALinkForOnlineSignature';
 			}
 			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
@@ -8026,6 +8040,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				// Set the online payment url link into __ONLINE_PAYMENT_URL__ key
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 				$outputlangs->loadLangs(array('paypal', 'other'));
+
+				$amounttouse = 0;
 				$typeforonlinepayment = 'free';
 				if (is_object($object) && $object->element == 'commande') {
 					$typeforonlinepayment = 'order';
@@ -8035,6 +8051,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				if (is_object($object) && $object->element == 'member') {
 					$typeforonlinepayment = 'member';
+					if (!empty($object->last_subscription_amount)) {
+						$amounttouse = $object->last_subscription_amount;
+					}
 				}
 				if (is_object($object) && $object->element == 'contrat') {
 					$typeforonlinepayment = 'contract';
@@ -8042,7 +8061,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if (is_object($object) && $object->element == 'fichinter') {
 					$typeforonlinepayment = 'ficheinter';
 				}
-				$url = getOnlinePaymentUrl(0, $typeforonlinepayment, $substitutionarray['__REF__']);
+
+				$url = getOnlinePaymentUrl(0, $typeforonlinepayment, $substitutionarray['__REF__'], $amounttouse);
 				$paymenturl = $url;
 			}
 
@@ -8050,14 +8070,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = ($paymenturl ?str_replace('\n', "\n", $outputlangs->trans("PredefinedMailContentLink", $paymenturl)) : '');
 				$substitutionarray['__ONLINE_PAYMENT_URL__'] = $paymenturl;
 
-				if (is_object($object) && $object->element == 'propal') {
-					require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
-					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'proposal', $object->ref);
-				}
-				if (is_object($object) && $object->element == 'fichinter') {
-					require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
-					$substitutionarray['__ONLINE_SIGN_FICHINTER_URL__'] = getOnlineSignatureUrl(0, 'fichinter', $object->ref);
-				}
 				if (!empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'propal') {
 					$substitutionarray['__DIRECTDOWNLOAD_URL_PROPOSAL__'] = $object->getLastMainDocLink($object->element);
 				} else {
@@ -8091,6 +8103,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 				if (is_object($object) && $object->element == 'propal') {
 					$substitutionarray['__URL_PROPOSAL__'] = DOL_MAIN_URL_ROOT."/comm/propal/card.php?id=".$object->id;
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'proposal', $object->ref);
 				}
 				if (is_object($object) && $object->element == 'commande') {
 					$substitutionarray['__URL_ORDER__'] = DOL_MAIN_URL_ROOT."/commande/card.php?id=".$object->id;
@@ -8100,9 +8114,13 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				if (is_object($object) && $object->element == 'contrat') {
 					$substitutionarray['__URL_CONTRACT__'] = DOL_MAIN_URL_ROOT."/contrat/card.php?id=".$object->id;
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'contract', $object->ref);
 				}
 				if (is_object($object) && $object->element == 'fichinter') {
 					$substitutionarray['__URL_FICHINTER__'] = DOL_MAIN_URL_ROOT."/fichinter/card.php?id=".$object->id;
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+					$substitutionarray['__ONLINE_SIGN_FICHINTER_URL__'] = getOnlineSignatureUrl(0, 'fichinter', $object->ref);
 				}
 				if (is_object($object) && $object->element == 'supplier_proposal') {
 					$substitutionarray['__URL_SUPPLIER_PROPOSAL__'] = DOL_MAIN_URL_ROOT."/supplier_proposal/card.php?id=".$object->id;
@@ -8119,7 +8137,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			}
 		}
 	}
-	if (empty($exclude) || !in_array('objectamount', $exclude)) {
+	if ((empty($exclude) || !in_array('objectamount', $exclude)) && (empty($include) || in_array('objectamount', $include))) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
 
 		$substitutionarray['__DATE_YMD__']        = is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : null) : '';
@@ -8175,7 +8193,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 	}
 
 	//var_dump($substitutionarray['__AMOUNT_FORMATED__']);
-	if (empty($exclude) || !in_array('date', $exclude)) {
+	if ((empty($exclude) || !in_array('date', $exclude)) && (empty($include) || in_array('date', $include))) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 		$now = dol_now();
@@ -8212,7 +8230,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 	if (isModEnabled('multicompany')) {
 		$substitutionarray = array_merge($substitutionarray, array('__ENTITY_ID__' => $conf->entity));
 	}
-	if (empty($exclude) || !in_array('system', $exclude)) {
+	if ((empty($exclude) || !in_array('system', $exclude)) && (empty($include) || in_array('user', $include))) {
 		$substitutionarray['__DOL_MAIN_URL_ROOT__'] = DOL_MAIN_URL_ROOT;
 		$substitutionarray['__(AnyTranslationKey)__'] = $outputlangs->trans('TranslationOfKey');
 		$substitutionarray['__(AnyTranslationKey|langfile)__'] = $outputlangs->trans('TranslationOfKey').' (load also language file before)';
@@ -8505,21 +8523,28 @@ function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
  *
  *	@param	string|string[] $mesgs			Message string or array
  *  @param  string          $style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *  @param	int				$noduplicate	1 means we do not add the message if already present in session stack
  *  @return	void
  *  @see	dol_htmloutput_events()
  */
-function setEventMessage($mesgs, $style = 'mesgs')
+function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0)
 {
 	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);		This is not deprecated, it is used by setEventMessages function
 	if (!is_array($mesgs)) {
 		// If mesgs is a string
 		if ($mesgs) {
+			if (!empty($noduplicate) && isset($_SESSION['dol_events'][$style]) && in_array($mesgs, $_SESSION['dol_events'][$style])) {
+				return;
+			}
 			$_SESSION['dol_events'][$style][] = $mesgs;
 		}
 	} else {
 		// If mesgs is an array
 		foreach ($mesgs as $mesg) {
 			if ($mesg) {
+				if (!empty($noduplicate) && isset($_SESSION['dol_events'][$style]) && in_array($mesg, $_SESSION['dol_events'][$style])) {
+					return;
+				}
 				$_SESSION['dol_events'][$style][] = $mesg;
 			}
 		}
@@ -8534,13 +8559,14 @@ function setEventMessage($mesgs, $style = 'mesgs')
  *	@param	array|null	$mesgs			Message array
  *  @param  string		$style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
  *  @param	string		$messagekey		A key to be used to allow the feature "Never show this message again"
+ *  @param	int			$noduplicate	1 means we do not add the message if already present in session stack
  *  @return	void
  *  @see	dol_htmloutput_events()
  */
-function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '')
+function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '', $noduplicate = 0)
 {
 	if (empty($mesg) && empty($mesgs)) {
-		dol_syslog("Try to add a message in stack with empty message", LOG_WARNING);
+		dol_syslog("Try to add a message in stack, but value to add is empty message", LOG_WARNING);
 	} else {
 		if ($messagekey) {
 			// Complete message with a js link to set a cookie "DOLHIDEMESSAGE".$messagekey;
@@ -8552,12 +8578,12 @@ function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '')
 				dol_print_error('', 'Bad parameter style='.$style.' for setEventMessages');
 			}
 			if (empty($mesgs)) {
-				setEventMessage($mesg, $style);
+				setEventMessage($mesg, $style, $noduplicate);
 			} else {
 				if (!empty($mesg) && !in_array($mesg, $mesgs)) {
-					setEventMessage($mesg, $style); // Add message string if not already into array
+					setEventMessage($mesg, $style, $noduplicate); // Add message string if not already into array
 				}
-				setEventMessage($mesgs, $style);
+				setEventMessage($mesgs, $style, $noduplicate);
 			}
 		}
 	}
@@ -9787,13 +9813,21 @@ function printCommonFooter($zone = 'private')
  * For example: "A=1;B=2;C=2" is exploded into array('A'=>1,'B'=>2,'C'=>3)
  *
  * @param 	string	$string		String to explode
- * @param 	string	$delimiter	Delimiter between each couple of data
+ * @param 	string	$delimiter	Delimiter between each couple of data. Example: ';' or '[\n;]+' or '(\n\r|\r|\n|;)'
  * @param 	string	$kv			Delimiter between key and value
  * @return	array				Array of data exploded
  */
 function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 {
-	if ($a = explode($delimiter, $string)) {
+	if (preg_match('/^\[.*\]$/sm', $delimiter) || preg_match('/^\(.*\)$/sm', $delimiter)) {
+		// This is a regex string
+		$newdelimiter = $delimiter;
+	} else {
+		// This is a simple string
+		$newdelimiter = preg_quote($delimiter, '/');
+	}
+
+	if ($a = preg_split('/'.$newdelimiter.'/', $string)) {
 		$ka = array();
 		foreach ($a as $s) { // each part
 			if ($s) {
@@ -9806,6 +9840,7 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 		}
 		return $ka;
 	}
+
 	return array();
 }
 
@@ -9849,10 +9884,10 @@ function dol_getmypid()
  *                                      like "keyword1 keyword2" = We want record field like keyword1 AND field like keyword2
  *                                      or like "keyword1|keyword2" = We want record field like keyword1 OR field like keyword2
  *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < -1000"
- *                             			If param $mode is 2, can contains a list of int id separated by comma like "1,3,4"
- *                             			If param $mode is 3, can contains a list of string separated by comma like "a,b,c"
- * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of ID separated with comma (Example '1,3,4')
- * 										3=value is list of string separated with comma (Example 'text 1,text 2'), 4=value is a list of ID separated with comma (Example '2,7') to be used to search into a multiselect string '1,2,3,4'
+ *                             			If param $mode is 2 or -2, can contains a list of int id separated by comma like "1,3,4"
+ *                             			If param $mode is 3 or -3, can contains a list of string separated by comma like "a,b,c".
+ * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of ID separated with comma (Example '1,3,4'), -2 is for exclude list,
+ * 										3=value is list of string separated with comma (Example 'text 1,text 2'), -3 if for exclude list, 4=value is a list of ID separated with comma (Example '2,7') to be used to search into a multiselect string '1,2,3,4'
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  * @see dolSqlDateFilter()
@@ -9867,7 +9902,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 		$value = preg_replace('/\*/', '%', $value); // Replace * with %
 	}
 	if ($mode == 1) {
-		$value = preg_replace('/([!<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"), '/').'\-])/', '\1\2', $value); // Clean string '< 10' into '<10' so we can the explode on space to get all tests to do
+		$value = preg_replace('/([!<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"), '/').'\-])/', '\1\2', $value); // Clean string '< 10' into '<10' so we can then explode on space to get all tests to do
 	}
 
 	$value = preg_replace('/\s*\|\s*/', '|', $value);
@@ -9878,16 +9913,15 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 		$fields = array($fields);
 	}
 
-	$j = 0;
-	foreach ($crits as $crit) {
+	$i1 = 0;	// count the nb of and criteria added (all fields / criterias)
+	foreach ($crits as $crit) {		// Loop on each AND criteria
 		$crit = trim($crit);
-		$i = 0;
-		$i2 = 0;
+		$i2 = 0;	// count the nb of valid criteria added for this this first criteria
 		$newres = '';
 		foreach ($fields as $field) {
 			if ($mode == 1) {
 				$tmpcrits = explode('|', $crit);
-				$i3 = 0;	// count the nb of valid criteria added for this field
+				$i3 = 0;	// count the nb of valid criteria added for this current field
 				foreach ($tmpcrits as $tmpcrit) {
 					if ($tmpcrit !== '0' && empty($tmpcrit)) {
 						continue;
@@ -9914,7 +9948,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 						$i3++; // a criteria was added to string
 					}
 				}
-				$i2++;
+				$i2++; // a criteria for 1 more field was added to string
 			} elseif ($mode == 2 || $mode == -2) {
 				$crit = preg_replace('/[^0-9,]/', '', $crit); // ID are always integer
 				$newres .= ($i2 > 0 ? ' OR ' : '').$field." ".($mode == -2 ? 'NOT ' : '');
@@ -9922,7 +9956,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				if ($mode == -2) {
 					$newres .= ' OR '.$field.' IS NULL';
 				}
-				$i2++; // a criteria was added to string
+				$i2++; // a criteria for 1 more field was added to string
 			} elseif ($mode == 3 || $mode == -3) {
 				$tmparray = explode(',', $crit);
 				if (count($tmparray)) {
@@ -9935,7 +9969,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 						}
 					}
 					$newres .= ($i2 > 0 ? ' OR ' : '').$field." ".($mode == -3 ? 'NOT ' : '')."IN (".$db->sanitize($listofcodes, 1).")";
-					$i2++; // a criteria was added to string
+					$i2++; // a criteria for 1 more field was added to string
 				}
 				if ($mode == -3) {
 					$newres .= ' OR '.$field.' IS NULL';
@@ -9952,20 +9986,20 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 							$newres .= ' OR '.$field." LIKE '%,".$db->escape($val)."'";
 							$newres .= ' OR '.$field." LIKE '%,".$db->escape($val).",%'";
 							$newres .= ')';
-							$i2++;
+							$i2++; // a criteria for 1 more field was added to string (we can add several citeria for the same field as it is a multiselect search criteria)
 						}
 					}
 				}
 			} else { // $mode=0
 				$tmpcrits = explode('|', $crit);
-				$i3 = 0;	// count the nb of valid criteria added for this field
-				foreach ($tmpcrits as $tmpcrit) {
+				$i3 = 0;	// count the nb of valid criteria added for the current couple criteria/field
+				foreach ($tmpcrits as $tmpcrit) {	// loop on each OR criteria
 					if ($tmpcrit !== '0' && empty($tmpcrit)) {
 						continue;
 					}
 					$tmpcrit = trim($tmpcrit);
 
-					if ($tmpcrit == '^$') {	// If we search empty, we must combined different fields with AND
+					if ($tmpcrit == '^$' || strpos($crit, '!') === 0) {	// If we search empty, we must combined different OR fields with AND
 						$newres .= (($i2 > 0 || $i3 > 0) ? ' AND ' : '');
 					} else {
 						$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
@@ -10011,15 +10045,15 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 
 					$i3++;
 				}
-				$i2++; // a criteria was added to string
+
+				$i2++; // a criteria for 1 more field was added to string
 			}
-			$i++;
 		}
 
 		if ($newres) {
 			$res = $res.($res ? ' AND ' : '').($i2 > 1 ? '(' : '').$newres.($i2 > 1 ? ')' : '');
 		}
-		$j++;
+		$i1++;
 	}
 	$res = ($nofirstand ? "" : " AND ")."(".$res.")";
 
@@ -11194,7 +11228,10 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 /**
  * Get an array with properties of an element.
  *
- * @param   string 	$element_type 	Element type (Value of $object->element). Example: 'action', 'facture', 'project_task', 'myobject@mymodule' or 'mymodule_myobject' ...
+ * @param   string 	$element_type 	Element type (Value of $object->element). Example:
+ * 									'action', 'facture', 'project_task',
+ * 									'myobject@mymodule' or
+ * 									'myobject_mysubobject' (where mymodule = myobject, like 'project_task')
  * @return  array					(module, classpath, element, subelement, classfile, classname)
  * @see fetchObjectByElement()
  */
@@ -11204,102 +11241,162 @@ function getElementProperties($element_type)
 
 	$classfile = $classname = $classpath = '';
 
-	// Parse element/subelement (ex: project_task)
+	// Parse element/subelement
 	$module = $element_type;
 	$element = $element_type;
 	$subelement = $element_type;
 
-	// If we ask an resource form external module (instead of default path)
-	if (preg_match('/^([^@]+)@([^@]+)$/i', $element_type, $regs)) {
+	// If we ask a resource form external module (instead of default path)
+	if (preg_match('/^([^@]+)@([^@]+)$/i', $element_type, $regs)) {	// 'myobject@mymodule'
 		$element = $subelement = $regs[1];
 		$module = $regs[2];
 	}
 
-	//print '<br>1. element : '.$element.' - module : '.$module .'<br>';
-	if (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {
+	// If we ask a resource for a string with an element and a subelement
+	// Example 'project_task'
+	if (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {	// 'myobject_mysubobject' with myobject=mymodule
 		$module = $element = $regs[1];
 		$subelement = $regs[2];
 	}
 
-	// For compat
+	// For compat and To work with non standard path
 	if ($element_type == "action") {
 		$classpath = 'comm/action/class';
 		$subelement = 'Actioncomm';
 		$module = 'agenda';
-	}
-
-	// To work with non standard path
-	if ($element_type == 'facture' || $element_type == 'invoice') {
+	} elseif ($element_type == 'adherent_type') {
+		$classpath = 'adherents/class';
+		$classfile = 'adherent_type';
+		$module = 'adherent';
+		$subelement = 'adherent_type';
+		$classname = 'AdherentType';
+	} elseif ($element_type == 'bank_account') {
+		$classpath = 'compta/bank/class';
+		$module = 'banque';
+		$classfile = 'account';
+		$classname = 'Account';
+	} elseif ($element_type == 'category') {
+		$classpath = 'categories/class';
+		$module = 'categorie';
+		$subelement = 'categorie';
+	} elseif ($element_type == 'contact') {
+		$classpath = 'contact/class';
+		$classfile = 'contact';
+		$module = 'societe';
+		$subelement = 'contact';
+	} elseif ($element_type == 'stock') {
+		$classpath = 'product/stock/class';
+		$classfile = 'entrepot';
+		$classname = 'Entrepot';
+	} elseif ($element_type == 'project') {
+		$classpath = 'projet/class';
+		$module = 'projet';
+	} elseif ($element_type == 'project_task') {
+		$classpath = 'projet/class';
+		$module = 'projet';
+		$subelement = 'task';
+	} elseif ($element_type == 'facture' || $element_type == 'invoice') {
 		$classpath = 'compta/facture/class';
 		$module = 'facture';
 		$subelement = 'facture';
-	}
-	if ($element_type == 'commande' || $element_type == 'order') {
+	} elseif ($element_type == 'commande' || $element_type == 'order') {
 		$classpath = 'commande/class';
 		$module = 'commande';
 		$subelement = 'commande';
-	}
-	if ($element_type == 'propal') {
+	} elseif ($element_type == 'propal') {
 		$classpath = 'comm/propal/class';
-	}
-	if ($element_type == 'supplier_proposal') {
+	} elseif ($element_type == 'shipping') {
+		$classpath = 'expedition/class';
+		$classfile = 'expedition';
+		$classname = 'Expedition';
+		$module = 'expedition';
+	} elseif ($element_type == 'supplier_proposal') {
 		$classpath = 'supplier_proposal/class';
-	}
-	if ($element_type == 'shipping') {
+		$module = 'supplier_proposal';
+		$element = 'supplierproposal';
+		$classfile = 'supplier_proposal';
+		$subelement = 'supplierproposal';
+	} elseif ($element_type == 'shipping') {
 		$classpath = 'expedition/class';
 		$subelement = 'expedition';
 		$module = 'expedition_bon';
-	}
-	if ($element_type == 'delivery') {
+	} elseif ($element_type == 'delivery') {
 		$classpath = 'delivery/class';
 		$subelement = 'delivery';
 		$module = 'delivery_note';
-	}
-	if ($element_type == 'contract') {
+	} elseif ($element_type == 'contract') {
 		$classpath = 'contrat/class';
 		$module = 'contrat';
 		$subelement = 'contrat';
-	}
-	if ($element_type == 'member') {
+	} elseif ($element_type == 'mailing') {
+		$classpath = 'comm/mailing/class';
+		$module = 'mailing';
+		$classfile = 'mailing';
+		$classname = 'Mailing';
+		$subelement = '';
+	} elseif ($element_type == 'member') {
 		$classpath = 'adherents/class';
 		$module = 'adherent';
 		$subelement = 'adherent';
-	}
-	if ($element_type == 'cabinetmed_cons') {
+	} elseif ($element_type == 'mo') {
+		$classpath = 'mrp/class';
+		$classfile = 'mo';
+		$classname = 'Mo';
+		$module = 'mrp';
+		$subelement = '';
+	} elseif ($element_type == 'cabinetmed_cons') {
 		$classpath = 'cabinetmed/class';
 		$module = 'cabinetmed';
 		$subelement = 'cabinetmedcons';
-	}
-	if ($element_type == 'fichinter') {
+	} elseif ($element_type == 'fichinter') {
 		$classpath = 'fichinter/class';
 		$module = 'ficheinter';
 		$subelement = 'fichinter';
-	}
-	if ($element_type == 'dolresource' || $element_type == 'resource') {
+	} elseif ($element_type == 'dolresource' || $element_type == 'resource') {
 		$classpath = 'resource/class';
 		$module = 'resource';
 		$subelement = 'dolresource';
-	}
-	if ($element_type == 'propaldet') {
+	} elseif ($element_type == 'propaldet') {
 		$classpath = 'comm/propal/class';
 		$module = 'propal';
 		$subelement = 'propaleligne';
-	}
-	if ($element_type == 'order_supplier') {
+	} elseif ($element_type == 'opensurvey_sondage') {
+		$classpath = 'opensurvey/class';
+		$module = 'opensurvey';
+		$subelement = 'opensurveysondage';
+	} elseif ($element_type == 'order_supplier') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
-		$subelement = 'commandefournisseur';
 		$classfile = 'fournisseur.commande';
-	}
-	if ($element_type == 'invoice_supplier') {
+		$element = 'commande';
+		$subelement = '';
+		$classname = 'CommandeFournisseur';
+	} elseif ($element_type == 'invoice_supplier') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
-		$subelement = 'facturefournisseur';
 		$classfile = 'fournisseur.facture';
-	}
-	if ($element_type == "service") {
+		$element = 'facture';
+		$subelement = '';
+		$classname = 'FactureFournisseur';
+	} elseif ($element_type == "service") {
 		$classpath = 'product/class';
 		$subelement = 'product';
+	} elseif ($element_type == 'salary') {
+		$classpath = 'salaries/class';
+		$module = 'salaries';
+	} elseif ($element_type == 'productlot') {
+		$module = 'productbatch';
+		$classpath = 'product/stock/class';
+		$classfile = 'productlot';
+		$classname = 'Productlot';
+		$element = 'productlot';
+		$subelement = '';
+	} elseif ($element_type == 'websitepage') {
+		$classpath = 'website/class';
+		$classfile = 'websitepage';
+		$classname = 'Websitepage';
+		$module = 'website';
+		$subelement = 'websitepage';
 	}
 
 	if (empty($classfile)) {
@@ -11334,11 +11431,12 @@ function getElementProperties($element_type)
  */
 function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 {
-	global $conf, $db;
+	global $db;
 
 	$ret = 0;
 
 	$element_prop = getElementProperties($element_type);
+	//var_dump($element_prop);
 
 	if (is_array($element_prop) && isModEnabled($element_prop['module'])) {
 		dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
@@ -11348,6 +11446,10 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 			$objecttmp = new $classname($db);
 			$ret = $objecttmp->fetch($element_id, $element_ref);
 			if ($ret >= 0) {
+				if (empty($objecttmp->module)) {
+					$objecttmp->module = $element_prop['module'];
+				}
+
 				return $objecttmp;
 			}
 		} else {
@@ -11377,6 +11479,7 @@ function isAFileWithExecutableContent($filename)
  * Return the value of token currently saved into session with name 'newtoken'.
  * This token must be send by any POST as it will be used by next page for comparison with value in session.
  *
+ * @since Dolibarr v10.0.7
  * @return  string
  */
 function newToken()
@@ -11388,6 +11491,7 @@ function newToken()
  * Return the value of token currently saved into session with name 'token'.
  * For ajax call, you must use this token as a parameter of the call into the js calling script (the called ajax php page must also set constant NOTOKENRENEWAL).
  *
+ * @since Dolibarr v10.0.7
  * @return  string
  */
 function currentToken()

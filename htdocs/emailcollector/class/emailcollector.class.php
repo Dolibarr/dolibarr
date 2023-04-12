@@ -865,7 +865,7 @@ class EmailCollector extends CommonObject
 	/**
 	 * overwitePropertiesOfObject
 	 *
-	 * @param	object	$object			Current object
+	 * @param	object	$object			Current object we will set ->properties
 	 * @param	string	$actionparam	Action parameters
 	 * @param	string	$messagetext	Body
 	 * @param	string	$subject		Subject
@@ -895,9 +895,14 @@ class EmailCollector extends CommonObject
 
 		// Overwrite values with values extracted from source email
 		// $this->actionparam = 'opportunity_status=123;abc=EXTRACT:BODY:....'
-		$arrayvaluetouse = dolExplodeIntoArray($actionparam, ';', '=');
+		$arrayvaluetouse = dolExplodeIntoArray($actionparam, '(\n\r|\r|\n|;)', '=');
+
+		$tmp = array();
+
+		// Loop on each property set into actionparam
 		foreach ($arrayvaluetouse as $propertytooverwrite => $valueforproperty) {
-			$tmpclass = ''; $tmpproperty = '';
+			$tmpclass = '';
+			$tmpproperty = '';
 			$tmparray = explode('.', $propertytooverwrite);
 			if (count($tmparray) == 2) {
 				$tmpclass = $tmparray[0];
@@ -948,27 +953,43 @@ class EmailCollector extends CommonObject
 						if (preg_match('/'.$regexstring.'/'.$regexoptions, $sourcestring, $regforval)) {
 							// Overwrite param $tmpproperty
 							$valueextracted = isset($regforval[count($regforval) - 1]) ?trim($regforval[count($regforval) - 1]) : null;
-							if (strtolower($sourcefield) == 'header') {
+							if (strtolower($sourcefield) == 'header') {		// extract from HEADER
 								if (preg_match('/^options_/', $tmpproperty)) {
 									$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $this->decodeSMTPSubject($valueextracted);
 								} else {
-									$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
+									if (property_exists($object, $tmpproperty)) {
+										$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
+									} else {
+										$tmp[$tmpproperty] = $this->decodeSMTPSubject($valueextracted);
+									}
 								}
-							} else {
+							} else {	// extract from BODY
 								if (preg_match('/^options_/', $tmpproperty)) {
 									$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $this->decodeSMTPSubject($valueextracted);
 								} else {
-									$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
+									if (property_exists($object, $tmpproperty)) {
+										$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
+									} else {
+										$tmp[$tmpproperty] = $this->decodeSMTPSubject($valueextracted);
+									}
 								}
 							}
 							if (preg_match('/^options_/', $tmpproperty)) {
 								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($object->array_options[preg_replace('/^options_/', '', $tmpproperty)], 128));
 							} else {
-								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($object->$tmpproperty, 128));
+								if (property_exists($object, $tmpproperty)) {
+									$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($object->$tmpproperty, 128));
+								} else {
+									$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($tmp[$tmpproperty], 128));
+								}
 							}
 						} else {
 							// Regex not found
-							$object->$tmpproperty = null;
+							if (property_exists($object, $tmpproperty)) {
+								$object->$tmpproperty = null;
+							} else {
+								$tmp[$tmpproperty] = null;
+							}
 
 							$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> not found, so property '.dol_escape_htmltag($tmpproperty).' is set to null.';
 						}
@@ -983,7 +1004,11 @@ class EmailCollector extends CommonObject
 					if (preg_match('/^options_/', $tmpproperty)) {
 						$valuecurrent = $object->array_options[preg_replace('/^options_/', '', $tmpproperty)];
 					} else {
-						$valuecurrent = $object->$tmpproperty;
+						if (property_exists($object, $tmpproperty)) {
+							$valuecurrent = $object->$tmpproperty;
+						} else {
+							$valuecurrent = $tmp[$tmpproperty];
+						}
 					}
 
 					if ($regforregex[1] == 'SET' || empty($valuecurrent)) {
@@ -993,24 +1018,38 @@ class EmailCollector extends CommonObject
 						$matcharray = array();
 						preg_match_all('/__([a-z0-9]+(?:_[a-z0-9]+)?)__/i', $valuetouse, $matcharray);
 						//var_dump($tmpproperty.' - '.$object->$tmpproperty.' - '.$valuetouse); var_dump($matcharray);
-						if (is_array($matcharray[1])) {    // $matcharray[1] is array with list of substitution key found without the __
+						if (is_array($matcharray[1])) {    // $matcharray[1] is an array with the list of substitution key found without the __X__ syntax into the SET entry
 							foreach ($matcharray[1] as $keytoreplace) {
-								if ($keytoreplace && isset($object->$keytoreplace)) {
-									$substitutionarray['__'.$keytoreplace.'__'] = $object->$keytoreplace;
+								if ($keytoreplace) {
+									if (preg_match('/^options_/', $keytoreplace)) {
+										$substitutionarray['__'.$keytoreplace.'__'] = $object->array_options[preg_replace('/^options_/', '', $keytoreplace)];
+									} else {
+										if (property_exists($object, $keytoreplace)) {
+											$substitutionarray['__'.$keytoreplace.'__'] = $object->$keytoreplace;
+										} else {
+											$substitutionarray['__'.$keytoreplace.'__'] = $tmp[$keytoreplace];
+										}
+									}
 								}
 							}
 						}
 						//var_dump($substitutionarray);
-						dol_syslog(var_export($substitutionarray, true));
+						dol_syslog('substitutionarray='.var_export($substitutionarray, true));
 						//var_dump($substitutionarray);
 						$valuetouse = make_substitutions($valuetouse, $substitutionarray);
 						if (preg_match('/^options_/', $tmpproperty)) {
 							$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $valuetouse;
-						} else {
-							$object->$tmpproperty = $valuetouse;
-						}
 
-						$operationslog .= '<br>Set value '.dol_escape_htmltag($valuetouse).' into variable '.dol_escape_htmltag($tmpproperty);
+							$operationslog .= '<br>Set value '.dol_escape_htmltag($valuetouse).' into object->array_options['.dol_escape_htmltag(preg_replace('/^options_/', '', $tmpproperty)).']';
+						} else {
+							if (property_exists($object, $tmpproperty)) {
+								$object->$tmpproperty = $valuetouse;
+							} else {
+								$tmp[$tmpproperty] = $valuetouse;
+							}
+
+							$operationslog .= '<br>Set value '.dol_escape_htmltag($valuetouse).' into object->'.dol_escape_htmltag($tmpproperty);
+						}
 					}
 				} else {
 					$errorforthisaction++;
@@ -1041,7 +1080,7 @@ class EmailCollector extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
 		}
 
-		dol_syslog("EmailCollector::doCollectOneCollector start for id=".$this->id." - ".$this->ref, LOG_DEBUG);
+		dol_syslog("EmailCollector::doCollectOneCollector start for id=".$this->id." - ".$this->ref, LOG_INFO);
 
 		$langs->loadLangs(array("project", "companies", "mails", "errors", "ticket", "agenda", "commercial"));
 
@@ -1056,6 +1095,7 @@ class EmailCollector extends CommonObject
 		$searchfilternodoltrackid = 0;
 		$searchfilterisanswer = 0;
 		$searchfilterisnotanswer = 0;
+		$searchfilterreplyto = 0;
 		$operationslog = '';
 
 		$now = dol_now();
@@ -1205,64 +1245,81 @@ class EmailCollector extends CommonObject
 		}
 
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+			// Use PHPIMAP external library
 			$criteria = array(array('UNDELETED')); // Seems not supported by some servers
 			foreach ($this->filters as $rule) {
 				if (empty($rule['status'])) {
 					continue;
 				}
+
+				$not = '';
+				if (strpos($rule['rulevalue'], '!') === 0) {
+					// The value start with !, so we exclude the criteria
+					$not = 'NOT ';
+				}
+
+				if ($rule['type'] == 'from') {
+					$tmprulevaluearray = explode('*', $rule['rulevalue']);
+					if (count($tmprulevaluearray) >= 2) {
+						foreach ($tmprulevaluearray as $tmprulevalue) {
+							array_push($criteria, array($not."FROM" => $tmprulevalue));
+						}
+					} else {
+						array_push($criteria, array($not."FROM" => $rule['rulevalue']));
+					}
+				}
 				if ($rule['type'] == 'to') {
 					$tmprulevaluearray = explode('*', $rule['rulevalue']);
 					if (count($tmprulevaluearray) >= 2) {
 						foreach ($tmprulevaluearray as $tmprulevalue) {
-							array_push($criteria, array("TO" => $tmprulevalue));
+							array_push($criteria, array($not."TO" => $tmprulevalue));
 						}
 					} else {
-						array_push($criteria, array("TO" => $rule['rulevalue']));
+						array_push($criteria, array($not."TO" => $rule['rulevalue']));
 					}
 				}
 				if ($rule['type'] == 'bcc') {
-					array_push($criteria, array("BCC" => $rule['rulevalue']));
+					array_push($criteria, array($not."BCC" => $rule['rulevalue']));
 				}
 				if ($rule['type'] == 'cc') {
-					array_push($criteria, array("CC" => $rule['rulevalue']));
-				}
-				if ($rule['type'] == 'from') {
-					array_push($criteria, array("FROM" => $rule['rulevalue']));
+					array_push($criteria, array($not."CC" => $rule['rulevalue']));
 				}
 				if ($rule['type'] == 'subject') {
-					array_push($criteria, array("SUBJECT" => $rule['rulevalue']));
+					array_push($criteria, array($not."SUBJECT" => $rule['rulevalue']));
 				}
 				if ($rule['type'] == 'body') {
-					array_push($criteria, array("BODY" => $rule['rulevalue']));
+					array_push($criteria, array($not."BODY" => $rule['rulevalue']));
 				}
 				if ($rule['type'] == 'header') {
-					array_push($criteria, array("HEADER" => $rule['rulevalue']));
+					array_push($criteria, array($not."HEADER" => $rule['rulevalue']));
 				}
 
+				/* seems not used */
+				/*
 				if ($rule['type'] == 'notinsubject') {
-					array_push($criteria, array("SUBJECT NOT" => $rule['rulevalue']));
+					array_push($criteria, array($not."SUBJECT NOT" => $rule['rulevalue']));
 				}
 				if ($rule['type'] == 'notinbody') {
-					array_push($criteria, array("BODY NOT" => $rule['rulevalue']));
-				}
+					array_push($criteria, array($not."BODY NOT" => $rule['rulevalue']));
+				}*/
 
 				if ($rule['type'] == 'seen') {
-					array_push($criteria, array("SEEN"));
+					array_push($criteria, array($not."SEEN"));
 				}
 				if ($rule['type'] == 'unseen') {
-					array_push($criteria, array("UNSEEN"));
+					array_push($criteria, array($not."UNSEEN"));
 				}
 				if ($rule['type'] == 'unanswered') {
-					array_push($criteria, array("UNANSWERED"));
+					array_push($criteria, array($not."UNANSWERED"));
 				}
 				if ($rule['type'] == 'answered') {
-					array_push($criteria, array("ANSWERED"));
+					array_push($criteria, array($not."ANSWERED"));
 				}
 				if ($rule['type'] == 'smaller') {
-					array_push($criteria, array("SMALLER"));
+					array_push($criteria, array($not."SMALLER"));
 				}
 				if ($rule['type'] == 'larger') {
-					array_push($criteria, array("LARGER"));
+					array_push($criteria, array($not."LARGER"));
 				}
 
 				// Rules to filter after the search imap
@@ -1284,6 +1341,10 @@ class EmailCollector extends CommonObject
 				}
 				if ($rule['type'] == 'isnotanswer') {
 					$searchfilterisnotanswer++; $searchhead .= '! /References.*@.*/';
+				}
+
+				if ($rule['type'] == 'replyto') {
+					$searchfilterreplyto++; $searchhead .= '/Reply-To.*'.preg_quote($rule['rulevalue'], '/').'/';
 				}
 			}
 
@@ -1302,65 +1363,84 @@ class EmailCollector extends CommonObject
 			dol_syslog("IMAP search string = ".var_export($criteria, true));
 			$search = var_export($criteria, true);
 		} else {
+			// Use native IMAP functions
 			$search = 'UNDELETED'; // Seems not supported by some servers
 			foreach ($this->filters as $rule) {
 				if (empty($rule['status'])) {
 					continue;
 				}
 
-				if ($rule['type'] == 'to') {
-					$tmprulevaluearray = explode('*', $rule['rulevalue']);
+				// Forge the IMAP search string.
+				// See https://www.rfc-editor.org/rfc/rfc3501
+
+				$not = '';
+				if (strpos($rule['rulevalue'], '!') === 0) {
+					// The value start with !, so we exclude the criteria
+					$not = 'NOT ';
+				}
+
+				if ($rule['type'] == 'from') {
+					$tmprulevaluearray = explode('*', $rule['rulevalue']);	// Search on abc*def means searching on 'abc' and on 'def'
 					if (count($tmprulevaluearray) >= 2) {
 						foreach ($tmprulevaluearray as $tmprulevalue) {
-							$search .= ($search ? ' ' : '').'TO "'.str_replace('"', '', $tmprulevalue).'"';
+							$search .= ($search ? ' ' : '').$not.'FROM "'.str_replace('"', '', $tmprulevalue).'"';
 						}
 					} else {
-						$search .= ($search ? ' ' : '').'TO "'.str_replace('"', '', $rule['rulevalue']).'"';
+						$search .= ($search ? ' ' : '').$not.'FROM "'.str_replace('"', '', $rule['rulevalue']).'"';
+					}
+				}
+				if ($rule['type'] == 'to') {
+					$tmprulevaluearray = explode('*', $rule['rulevalue']);	// Search on abc*def means searching on 'abc' and on 'def'
+					if (count($tmprulevaluearray) >= 2) {
+						foreach ($tmprulevaluearray as $tmprulevalue) {
+							$search .= ($search ? ' ' : '').$not.'TO "'.str_replace('"', '', $tmprulevalue).'"';
+						}
+					} else {
+						$search .= ($search ? ' ' : '').$not.'TO "'.str_replace('"', '', $rule['rulevalue']).'"';
 					}
 				}
 				if ($rule['type'] == 'bcc') {
-					$search .= ($search ? ' ' : '').'BCC';
+					$search .= ($search ? ' ' : '').$not.'BCC';
 				}
 				if ($rule['type'] == 'cc') {
-					$search .= ($search ? ' ' : '').'CC';
-				}
-				if ($rule['type'] == 'from') {
-					$search .= ($search ? ' ' : '').'FROM "'.str_replace('"', '', $rule['rulevalue']).'"';
+					$search .= ($search ? ' ' : '').$not.'CC';
 				}
 				if ($rule['type'] == 'subject') {
-					$search .= ($search ? ' ' : '').'SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
+					$search .= ($search ? ' ' : '').$not.'SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
 				}
 				if ($rule['type'] == 'body') {
-					$search .= ($search ? ' ' : '').'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
+					$search .= ($search ? ' ' : '').$not.'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
 				}
 				if ($rule['type'] == 'header') {
-					$search .= ($search ? ' ' : '').'HEADER '.$rule['rulevalue'];
+					$search .= ($search ? ' ' : '').$not.'HEADER '.$rule['rulevalue'];
 				}
 
+				/* seems not used */
+				/*
 				if ($rule['type'] == 'notinsubject') {
-					$search .= ($search ? ' ' : '').'SUBJECT NOT "'.str_replace('"', '', $rule['rulevalue']).'"';
+					$search .= ($search ? ' ' : '').'NOT SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
 				}
 				if ($rule['type'] == 'notinbody') {
-					$search .= ($search ? ' ' : '').'BODY NOT "'.str_replace('"', '', $rule['rulevalue']).'"';
-				}
+					$search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
+				}*/
 
 				if ($rule['type'] == 'seen') {
-					$search .= ($search ? ' ' : '').'SEEN';
+					$search .= ($search ? ' ' : '').$not.'SEEN';
 				}
 				if ($rule['type'] == 'unseen') {
-					$search .= ($search ? ' ' : '').'UNSEEN';
+					$search .= ($search ? ' ' : '').$not.'UNSEEN';
 				}
 				if ($rule['type'] == 'unanswered') {
-					$search .= ($search ? ' ' : '').'UNANSWERED';
+					$search .= ($search ? ' ' : '').$not.'UNANSWERED';
 				}
 				if ($rule['type'] == 'answered') {
-					$search .= ($search ? ' ' : '').'ANSWERED';
+					$search .= ($search ? ' ' : '').$not.'ANSWERED';
 				}
 				if ($rule['type'] == 'smaller') {
-					$search .= ($search ? ' ' : '').'SMALLER "'.str_replace('"', '', $rule['rulevalue']).'"';
+					$search .= ($search ? ' ' : '').$not.'SMALLER "'.str_replace('"', '', $rule['rulevalue']).'"';
 				}
 				if ($rule['type'] == 'larger') {
-					$search .= ($search ? ' ' : '').'LARGER "'.str_replace('"', '', $rule['rulevalue']).'"';
+					$search .= ($search ? ' ' : '').$not.'LARGER "'.str_replace('"', '', $rule['rulevalue']).'"';
 				}
 
 				// Rules to filter after the search imap
@@ -1382,6 +1462,10 @@ class EmailCollector extends CommonObject
 				}
 				if ($rule['type'] == 'isnotanswer') {
 					$searchfilterisnotanswer++; $searchhead .= '! /References.*@.*/';
+				}
+
+				if ($rule['type'] == 'replyto') {
+					$searchfilterreplyto++; $searchhead .= '/Reply-To.*'.preg_quote($rule['rulevalue'], '/').'/';
 				}
 			}
 
@@ -1425,6 +1509,9 @@ class EmailCollector extends CommonObject
 
 			try {
 				//var_dump($Query->count());
+				if ($mode > 0) {
+					$Query->leaveUnread();
+				}
 				$arrayofemail = $Query->limit($this->maxemailpercollect)->setFetchOrder("asc")->get();
 				//var_dump($arrayofemail);
 			} catch (Exception $e) {
@@ -1509,7 +1596,7 @@ class EmailCollector extends CommonObject
 
 				$emailto = $this->decodeSMTPSubject($overview[0]->to);
 
-				$operationslog .= '<br>Process email '.dol_escape_htmltag($iforemailloop)." - References: ".dol_escape_htmltag($headers['References'])." - Subject: ".dol_escape_htmltag($headers['Subject']);
+				$operationslog .= '<br>** Process email '.dol_escape_htmltag($iforemailloop)." - References: ".dol_escape_htmltag($headers['References'])." - Subject: ".dol_escape_htmltag($headers['Subject']);
 				dol_syslog("** Process email ".$iforemailloop." References: ".$headers['References']." Subject: ".$headers['Subject']);
 
 
@@ -1697,8 +1784,12 @@ class EmailCollector extends CommonObject
 				//print $messagetext;
 				//exit;
 
+				$fromstring = '';
+				$replytostring = '';
+
 				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 					$fromstring = $overview['from'];
+					//$replytostring = empty($overview['reply-to']) ? '' : $overview['reply-to'];
 
 					$sender = $overview['sender'];
 					$to = $overview['to'];
@@ -1709,6 +1800,7 @@ class EmailCollector extends CommonObject
 					$subject = $overview['subject'];
 				} else {
 					$fromstring = $overview[0]->from;
+					//$replytostring = empty($overview[0]->replyto) ? '' : $overview[0]->replyto;
 
 					$sender = $overview[0]->sender;
 					$to = $overview[0]->to;
@@ -1728,6 +1820,13 @@ class EmailCollector extends CommonObject
 				} else {
 					$from = $fromstring;
 					$fromtext = '';
+				}
+				if (preg_match('/^(.*)<(.*)>$/', $replytostring, $reg)) {
+					$replyto = $reg[2];
+					$replytotext = $reg[1];
+				} else {
+					$replyto = $replytostring;
+					$replytotext = '';
 				}
 				$fk_element_id = 0; $fk_element_type = '';
 
@@ -1959,6 +2058,7 @@ class EmailCollector extends CommonObject
 					$result = $contactstatic->fetch(0, null, '', $from);
 
 					if ($result > 0) {
+						dol_syslog("We found a contact with the email ".$from);
 						$contactid = $contactstatic->id;
 						$contactfoundby = 'email of contact ('.$from.')';
 						if (empty($thirdpartyid) && $contactstatic->socid > 0) {
@@ -1974,12 +2074,44 @@ class EmailCollector extends CommonObject
 				if (empty($thirdpartyid)) {		// Try to find thirdparty using email
 					$result = $thirdpartystatic->fetch(0, '', '', '', '', '', '', '', '', '', $from);
 					if ($result > 0) {
+						dol_syslog("We found a thirdparty with the email ".$from);
+						$thirdpartyid = $thirdpartystatic->id;;
 						$thirdpartyfoundby = 'email ('.$from.')';
 					}
 				}
 
-				// Do operations
-				if ($mode < 2) {
+				/*
+				if ($replyto) {
+					if (empty($contactid)) {		// Try to find contact using email
+						$result = $contactstatic->fetch(0, null, '', $replyto);
+
+						if ($result > 0) {
+							dol_syslog("We found a contact with the email ".$replyto);
+							$contactid = $contactstatic->id;
+							$contactfoundby = 'email of contact ('.$replyto.')';
+							if (empty($thirdpartyid) && $contactstatic->socid > 0) {
+								$result = $thirdpartystatic->fetch($contactstatic->socid);
+								if ($result > 0) {
+									$thirdpartyid = $thirdpartystatic->id;
+									$thirdpartyfoundby = 'email of contact ('.$replyto.')';
+								}
+							}
+						}
+					}
+
+					if (empty($thirdpartyid)) {		// Try to find thirdparty using email
+						$result = $thirdpartystatic->fetch(0, '', '', '', '', '', '', '', '', '', $replyto);
+						if ($result > 0) {
+							dol_syslog("We found a thirdparty with the email ".$replyto);
+							$thirdpartyid = $thirdpartystatic->id;;
+							$thirdpartyfoundby = 'email ('.$replyto.')';
+						}
+					}
+				}
+				*/
+
+				// Do operations (extract variables and creating data)
+				if ($mode < 2) {	// 0=Mode production, 1=Mode test (read IMAP and try SQL update then rollback), 2=Mode test with no SQL updates
 					foreach ($this->actions as $operation) {
 						$errorforthisaction = 0;
 
@@ -1989,6 +2121,8 @@ class EmailCollector extends CommonObject
 						if (empty($operation['status'])) {
 							continue;
 						}
+
+						$operationslog .= '<br>* Process operation '.$operation['type'];
 
 						// Make Operation
 						dol_syslog("Execute action ".$operation['type']." actionparam=".$operation['actionparam'].' thirdpartystatic->id='.$thirdpartystatic->id.' contactstatic->id='.$contactstatic->id.' projectstatic->id='.$projectstatic->id);
@@ -2025,9 +2159,12 @@ class EmailCollector extends CommonObject
 								$idtouseforthirdparty = '';
 								$nametouseforthirdparty = '';
 								$emailtouseforthirdparty = '';
+								$namealiastouseforthirdparty = '';
+
+								$operationslog .= '<br>Loop on each property to set into actionparam';
 
 								// $actionparam = 'param=SET:aaa' or 'param=EXTRACT:BODY:....'
-								$arrayvaluetouse = dolExplodeIntoArray($actionparam, ';', '=');
+								$arrayvaluetouse = dolExplodeIntoArray($actionparam, '(\n\r|\r|\n|;)', '=');
 								foreach ($arrayvaluetouse as $propertytooverwrite => $valueforproperty) {
 									$sourcestring = '';
 									$sourcefield = '';
@@ -2057,23 +2194,30 @@ class EmailCollector extends CommonObject
 												if ($propertytooverwrite == 'id') {
 													$idtouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
 
-													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Found idtouseforthirdparty='.dol_escape_htmltag($idtouseforthirdparty);
+													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Found idtouseforthirdparty='.dol_escape_htmltag($idtouseforthirdparty);
 												} elseif ($propertytooverwrite == 'email') {
 													$emailtouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
 
-													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Found propertytooverwrite='.dol_escape_htmltag($propertytooverwrite);
-												} else {
+													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Found emailtouseforthirdparty='.dol_escape_htmltag($emailtouseforthirdparty);
+												} elseif ($propertytooverwrite == 'name') {
 													$nametouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
 
-													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Found nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
+													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Found nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
+												} elseif ($propertytooverwrite == 'name_alias') {
+													$namealiastouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
+
+													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Found namealiastouseforthirdparty='.dol_escape_htmltag($namealiastouseforthirdparty);
+												} else {
+													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> We discard this, not used to search existing thirdparty';
 												}
 											} else {
 												// Regex not found
 												$idtouseforthirdparty = null;
 												$nametouseforthirdparty = null;
 												$emailtouseforthirdparty = null;
+												$namealiastouseforthirdparty = null;
 
-												$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Not found';
+												$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Not found';
 											}
 											//var_dump($object->$tmpproperty);exit;
 										} else {
@@ -2085,18 +2229,23 @@ class EmailCollector extends CommonObject
 									} elseif (preg_match('/^(SET|SETIFEMPTY):(.*)$/', $valueforproperty, $reg)) {
 										//if (preg_match('/^options_/', $tmpproperty)) $object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $reg[1];
 										//else $object->$tmpproperty = $reg[1];
+										// Example: id=SETIFEMPTY:123
 										if ($propertytooverwrite == 'id') {
 											$idtouseforthirdparty = $reg[2];
 
-											$operationslog .= '<br>We set property idtouseforthrdparty='.dol_escape_htmltag($idtouseforthirdparty);
+											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.'We set property idtouseforthrdparty='.dol_escape_htmltag($idtouseforthirdparty);
 										} elseif ($propertytooverwrite == 'email') {
 											$emailtouseforthirdparty = $reg[2];
 
-											$operationslog .= '<br>We set property emailtouseforthrdparty='.dol_escape_htmltag($emailtouseforthirdparty);
-										} else {
+											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.'We set property emailtouseforthrdparty='.dol_escape_htmltag($emailtouseforthirdparty);
+										} elseif ($propertytooverwrite == 'name') {
 											$nametouseforthirdparty = $reg[2];
 
-											$operationslog .= '<br>We set property nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
+											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.'We set property nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
+										} elseif ($propertytooverwrite == 'name_alias') {
+											$namealiastouseforthirdparty = $reg[2];
+
+											$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.'We set property namealiastouseforthirdparty='.dol_escape_htmltag($namealiastouseforthirdparty);
 										}
 									} else {
 										$errorforactions++;
@@ -2106,8 +2255,27 @@ class EmailCollector extends CommonObject
 									}
 								}
 
-								if (!$errorforactions && ($idtouseforthirdparty || $emailtouseforthirdparty || $nametouseforthirdparty)) {
-									$result = $thirdpartystatic->fetch($idtouseforthirdparty, $nametouseforthirdparty, '', '', '', '', '', '', '', '', $emailtouseforthirdparty);
+								if (!$errorforactions && ($idtouseforthirdparty || $emailtouseforthirdparty || $nametouseforthirdparty || $namealiastouseforthirdparty)) {
+									// We make another search on thirdparty
+									$operationslog .= '<br>We have this data to search thirdparty: '.$idtouseforthirdparty.' '.$emailtouseforthirdparty.' '.$nametouseforthirdparty.' '.$namealiastouseforthirdparty;
+
+									$tmpobject = new stdClass();
+									$tmpobject->element == 'generic';
+									$tmpobject->id = $idtouseforthirdparty;
+									$tmpobject->name = $nametouseforthirdparty;
+									$tmpobject->name_alias = $namealiastouseforthirdparty;
+									$tmpobject->email = $emailtouseforthirdparty;
+
+									$this->overwritePropertiesOfObject($tmpobject, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
+
+									$idtouseforthirdparty = $tmpobject->id;
+									$nametouseforthirdparty = $tmpobject->name;
+									$namealiastouseforthirdparty = $tmpobject->name_alias;
+									$emailtouseforthirdparty = $tmpobject->email;
+
+									$operationslog .= '<br>We try to search existing thirdparty with '.$idtouseforthirdparty.' '.$emailtouseforthirdparty.' '.$nametouseforthirdparty.' '.$namealiastouseforthirdparty;
+
+									$result = $thirdpartystatic->fetch($idtouseforthirdparty, $nametouseforthirdparty, '', '', '', '', '', '', '', '', $emailtouseforthirdparty, $namealiastouseforthirdparty);
 									if ($result < 0) {
 										$errorforactions++;
 										$this->error = 'Error when getting thirdparty with name '.$nametouseforthirdparty.' (may be 2 record exists with same name ?)';
@@ -2115,21 +2283,26 @@ class EmailCollector extends CommonObject
 										break;
 									} elseif ($result == 0) {
 										if ($operation['type'] == 'loadthirdparty') {
-											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." was not found");
+											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found");
 
 											$errorforactions++;
 											$langs->load("errors");
-											$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, $emailtouseforthirdparty, $nametouseforthirdparty);
+											$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, $emailtouseforthirdparty, $nametouseforthirdparty, $namealiastouseforthirdparty);
 											$this->errors[] = $this->error;
 										} elseif ($operation['type'] == 'loadandcreatethirdparty') {
-											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." was not found. We try to create it.");
+											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found. We try to create it.");
 
 											// Create thirdparty
+											$thirdpartystatic = new Societe($db);
 											$thirdpartystatic->name = $nametouseforthirdparty;
-											if ($fromtext != $nametouseforthirdparty) {
-												$thirdpartystatic->name_alias = $fromtext;
+											if (!empty($namealiastouseforthirdparty)) {
+												if ($namealiastouseforthirdparty != $nametouseforthirdparty) {
+													$thirdpartystatic->name_alias = $namealiastouseforthirdparty;
+												}
+											} else {
+												$thirdpartystatic->name_alias = (empty($replytostring) ? (empty($fromtext) ? '': $fromtext) : $replytostring);
 											}
-											$thirdpartystatic->email = ($emailtouseforthirdparty ? $emailtouseforthirdparty : $from);
+											$thirdpartystatic->email = (empty($emailtouseforthirdparty) ? (empty($replyto) ? (empty($from) ? '' : $from) : $replyto) : $emailtouseforthirdparty);
 
 											// Overwrite values with values extracted from source email
 											$errorforthisaction = $this->overwritePropertiesOfObject($thirdpartystatic, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
@@ -2154,6 +2327,10 @@ class EmailCollector extends CommonObject
 												}
 											}
 										}
+									} else {
+										dol_syslog("One and only one existing third party has been found");
+
+										$operationslog .= '<br>Thirdparty already exists with id = '.dol_escape_htmltag($thirdpartystatic->id);
 									}
 								}
 							}
@@ -2649,6 +2826,10 @@ class EmailCollector extends CommonObject
 										}
 									}
 								}
+							} else {
+								dol_syslog("Project already exists for msgid = ".dol_escape_htmltag($msgid).", so we do not recreate it.");
+
+								$operationslog .= '<br>Project already exists for msgid ='.dol_escape_htmltag($msgid);
 							}
 						} elseif ($operation['type'] == 'ticket') {
 							// Create ticket
@@ -2917,9 +3098,9 @@ class EmailCollector extends CommonObject
 
 				// Error for email or not ?
 				if (!$errorforactions) {
-					if ($targetdir && empty($mode)) {
+					if (!empty($targetdir) && empty($mode)) {
 						if (empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
-							dol_syslog("EmailCollector::doCollectOneCollector move message ".$imapemail." to ".$connectstringtarget, LOG_DEBUG);
+							dol_syslog("EmailCollector::doCollectOneCollector move message ".((string) $imapemail)." to ".$connectstringtarget, LOG_DEBUG);
 							$res = imap_mail_move($connection, $imapemail, $targetdir, 0);
 							if ($res == false) {
 								$errorforemail++;
@@ -2928,7 +3109,9 @@ class EmailCollector extends CommonObject
 								dol_syslog(imap_last_error());
 							}
 						} else {
-							// TODO Move mail using PHP-IMAP
+							// Move mail using PHP-IMAP
+							dol_syslog("EmailCollector::doCollectOneCollector move message ".($imapemail->getHeader()->get('subject'))." to ".$targetdir, LOG_DEBUG);
+							$imapemail->move($targetdir);
 						}
 					} else {
 						if (empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
@@ -2981,7 +3164,8 @@ class EmailCollector extends CommonObject
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 			$client->disconnect();
 		} else {
-			if (empty($mode)) {
+			if (empty($mode) && empty($error)) {
+				dol_syslog("Expunge", LOG_DEBUG);
 				imap_expunge($connection); // To validate any move
 			}
 			imap_close($connection);
@@ -3010,7 +3194,7 @@ class EmailCollector extends CommonObject
 			$this->update($user);
 		}
 
-		dol_syslog("EmailCollector::doCollectOneCollector end", LOG_DEBUG);
+		dol_syslog("EmailCollector::doCollectOneCollector end", LOG_INFO);
 
 		return $error ? -1 : 1;
 	}

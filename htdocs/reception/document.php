@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'other'));
+$langs->loadLangs(array('receptions', 'companies', 'other'));
 
 $action		= GETPOST('action', 'aZ09');
 $confirm	= GETPOST('confirm');

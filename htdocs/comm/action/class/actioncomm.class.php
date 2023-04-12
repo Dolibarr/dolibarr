@@ -1319,15 +1319,17 @@ class ActionComm extends CommonObject
 	 */
 	public function getActions($socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$resarray = array();
 
 		dol_syslog(get_class()."::getActions", LOG_DEBUG);
 
-		require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-		$hookmanager = new HookManager($this->db);
 		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($db);
+		}
 		$hookmanager->initHooks(array('agendadao'));
 
 		$sql = "SELECT a.id";
@@ -1664,7 +1666,7 @@ class ActionComm extends CommonObject
 		}
 
 		$canread = 0;
-		if (!empty($user->rights->agenda->myactions->read) && $this->authorid == $user->id) {
+		if ($user->hasRight('agenda', 'myactions', 'read') && ($this->authorid == $user->id || $this->userownerid == $user->id)) {
 			$canread = 1; // Can read my event
 		}
 		if (!empty($user->rights->agenda->myactions->read) && array_key_exists($user->id, $this->userassigned)) {
@@ -1744,8 +1746,8 @@ class ActionComm extends CommonObject
 				'nofetch' => 1,
 			];
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$tooltip = '';
 		}
 		//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
 		//	$linkclose = ' style="background-color:#'.$this->type_color.'"';
@@ -1755,7 +1757,7 @@ class ActionComm extends CommonObject
 				$label = $langs->trans("ShowAction");
 				$linkclose .= ' alt="'.dol_escape_htmltag($tooltip, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($tooltip, 1, 0, '', 1).'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classname.' '.$classfortooltip.'"';
 		} else {
 			$linkclose .= ' class="'.$classname.'"';
