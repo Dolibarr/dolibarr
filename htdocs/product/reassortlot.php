@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2019       Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2021       Noé Cendrier			<noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('products', 'stocks', 'productbatch'));
+$langs->loadLangs(array('products', 'stocks', 'productbatch', 'categories'));
 
 $action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -48,7 +49,7 @@ $mode       = GETPOST('mode', 'aZ');
 
 $sref = GETPOST("sref", 'alpha');
 $snom = GETPOST("snom", 'alpha');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $type = GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT;
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_warehouse = GETPOST('search_warehouse', 'alpha');
@@ -82,6 +83,7 @@ if (GETPOSTISSET('catid')) {
 } else {
 	$search_categ = GETPOST('search_categ', 'int');
 }
+$search_warehouse_categ = GETPOST('search_warehouse_categ', 'int');
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -173,11 +175,12 @@ if (empty($reshook)) {
 		$search['eatby_dtend'] = '';
 		$sref = "";
 		$snom = "";
-		$sall = "";
+		$search_all = "";
 		$tosell = "";
 		$tobuy = "";
 		$search_sale = "";
 		$search_categ = "";
+		$search_warehouse_categ = "";
 		$search_toolowstock = '';
 		$search_subjecttolotserial = '';
 		$search_batch = '';
@@ -255,8 +258,24 @@ if (!empty($search_categ) && $search_categ != '-1') {
 	}
 	$sql .= ")";
 }
-if ($sall) {
-	$sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
+if (!empty($search_warehouse_categ) && $search_warehouse_categ != '-1') {
+	$sql .= " AND ";
+	if ($search_warehouse_categ == -2) {
+		$sql .= " NOT EXISTS ";
+	} else {
+		$sql .= " EXISTS ";
+	}
+	$sql .= "(";
+	$sql .= " SELECT cp.fk_categorie, cp.fk_warehouse";
+	$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_warehouse as cp";
+	$sql .= " WHERE cp.fk_warehouse = e.rowid"; // Join for the needed table to filter by categ
+	if ($search_warehouse_categ > 0) {
+		$sql .= " AND cp.fk_categorie = " . ((int) $search_warehouse_categ);
+	}
+	$sql .= ")";
+}
+if ($search_all) {
+	$sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $search_all);
 }
 // if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($type)) {
@@ -402,7 +421,7 @@ $num = $db->num_rows($resql);
 
 $i = 0;
 
-if ($num == 1 && GETPOST('autojumpifoneonly') && ($sall or $snom or $sref)) {
+if ($num == 1 && GETPOST('autojumpifoneonly') && ($search_all or $snom or $sref)) {
 	$objp = $db->fetch_object($resql);
 	header("Location: card.php?id=$objp->rowid");
 	exit;
@@ -427,7 +446,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 foreach ($search as $key => $val) {
 	if (is_array($search[$key]) && count($search[$key])) {
@@ -443,8 +462,8 @@ foreach ($search as $key => $val) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
-if ($sall) {
-	$param .= "&sall=".urlencode($sall);
+if ($search_all) {
+	$param .= "&search_all=".urlencode($search_all);
 }
 if ($tosell) {
 	$param .= "&tosell=".urlencode($tosell);
@@ -485,6 +504,9 @@ if ($search_sale) {
 if (!empty($search_categ) && $search_categ != '-1') {
 	$param .= "&search_categ=".urlencode($search_categ);
 }
+if (!empty($search_warehouse_categ) && $search_warehouse_categ != '-1') {
+	$param .= "&search_warehouse_categ=".urlencode($search_warehouse_categ);
+}
 if ($search_stock_physique) {
 	$param .= '&search_stock_physique=' . urlencode($search_stock_physique);
 }
@@ -508,7 +530,7 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'product', 0, '', '', $limit, 0, 0, 1);
 
-
+/*
 if ($search_categ > 0) {
 	print "<div id='ways'>";
 	$c = new Categorie($db);
@@ -517,16 +539,26 @@ if ($search_categ > 0) {
 	print " &gt; ".$ways[0]."<br>\n";
 	print "</div><br>";
 }
+*/
 
 // Filter on categories
 $moreforfilter = '';
 if (isModEnabled('categorie')) {
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
-	$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1);
+	$moreforfilter .= img_picto($langs->trans('ProductsCategoriesShort'), 'category', 'class="pictofixedwidth"');
+	$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1, $langs->trans("ProductsCategoryShort"), 'maxwidth400');
 	$moreforfilter .= '</div>';
 }
+// Filter on warehouse categories
+if (isModEnabled('categorie')) {
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= img_picto($langs->trans('StockCategoriesShort'), 'category', 'class="pictofixedwidth"');
+	$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_WAREHOUSE, $search_warehouse_categ, 'search_warehouse_categ', 1, $langs->trans("StockCategoriesShort"), 'maxwidth400');
+	$moreforfilter .= '</div>';
+}
+
 $moreforfilter.='<label for="search_subjecttolotserial">'.$langs->trans("SubjectToLotSerialOnly").' </label><input type="checkbox" id="search_subjecttolotserial" name="search_subjecttolotserial" value="1"'.($search_subjecttolotserial?' checked':'').'>';
+
 
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';

@@ -148,8 +148,6 @@ if (empty($reshook)) {
 
 /*
  * View
- *
- * Put here all code to build page
  */
 
 $form = new Form($db);
@@ -190,6 +188,9 @@ llxHeader('', $title, $help_url);
 
 // Part to create
 if ($action == 'create') {
+	// Set default value of the property ref
+	$object->fields['ref']['default'] = $object->getNextNumRef();
+
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Workstation")), '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

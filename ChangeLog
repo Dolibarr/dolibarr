@@ -17,12 +17,63 @@ Following changes may create regressions for some external modules, but were nec
 * Revert default type of hooks. Default is now 'addreplace' hooks (and exception become 'output' hooks, that become deprecated).
 * Deprecated property libelle removed from entrepot class.
 * The type 'text' in ->fields property dos not accept html content anymore. Use the type 'html' for that.
+* The module for WebService SOAP API have been deprecated. Use instead the Webservice REST API module.
+* The method htmlPrintOnlinePaymentFooter() used for public footer pages has been renamed into htmlPrintOnlineFooter() and moved into company.lib.php
 
 
 
 ***** ChangeLog for 17.0.1 compared to 17.0.0 *****
 
-TODO
+FIX: 17.0 PHP Warning invalid argument supplied for foreach
+FIX: #[23799] - External users are not able to create events - correction
+FIX: #23966 Error "Param dbt_keyfield is required but not defined
+FIX: #24138 Fix box_birthdays SQL for postgres
+FIX: #24201 Upload of external module fails to copy from incorrectly generated temp source dir
+FIX: #24240 Dolibarr V17.0.0 PHP8 fatal error
+FIX: accountancy lettering: better error management
+FIX: accountancy lettering: correctly calculated number of lettering operations done
+FIX: accountancy lettering: error management and prevention
+FIX: accountancy lettering: prevent null results when fetching link with payments
+FIX: action delete card fac rec
+FIX: Add bookmark with search fields that are arrays (backport 4157263cb898f1847cfcfc22dee6007c01b13a4d)
+FIX: Add missing hook on LibStatut
+FIX: Add more context for selectForFormsListWhere Hook
+FIX: Autofill / clear qty in inventory page
+FIX: avoid php8 warnings
+FIX: avoid phpunit error
+FIX: can not show all csv fields (a reason for that ?)
+FIX: change date on select date input when prefix is used
+FIX: dol_textishtml() function
+FIX: expense report accountancy: sql syntax error when performing automatic linking
+FIX: Extrafields in Notes to unify with orders or invoices.
+FIX: fatal error when margin enable (missing check on element), fix User::hasRight() when checking a margin right
+FIX: feedbacks
+FIX: FILTER_VALIDATE_EMAIL param is not a string
+FIX: #24298 No error or 0.00 instead of NULL in database anymore when emptying an extrafield of type price on a propal card
+FIX: full group by handle
+FIX: holiday counter massaction: ErrorBadValueForParamNotAString and PHP 8 warning when no approval user right
+FIX: installation superadmin creation: PHP 8 warning
+FIX: invoices order on sells journal
+FIX: it was not possible to update extrafields of expedition lines with batch without editing batch value
+FIX: limit after order in get objects in category
+FIX: method dolGetGlobalString not defined with saphir
+FIX: missing column default workstation
+FIX: missing drop foreign key before modify field
+FIX: missing "multidir_output" for project sharing (Multicompany)
+FIX: missing protection on ajax public ticket page for valid email
+FIX: ODT management inverted between purchase invoice and order
+FIX: PDF Espadon => display extrafields
+FIX: PDF Espadon Expedition : notes and tracking number
+FIX: Phpunit Rename WebsiteTest.class.php to WebsiteTest.php
+FIX: project referent elements list: conf to hide tasks was flipped
+FIX: Protection on agenda view for a thirdparty id that does not exist
+FIX: search_project_user
+FIX: societe list: regression to redirection to customer card when single result of search filters
+FIX: SQL error "unknown column p.fk_soc" because ANSI-92 joins take precedence over ANSI-89 joins
+FIX: task have the same entity of project
+FIX: token error when closing ticket from public interface
+FIX: Warning on purchase order + Property fk_commande not defined
+
 
 
 ***** ChangeLog for 17.0.0 compared to 16.0.0 *****
@@ -229,6 +280,7 @@ Following changes may create regressions for some external modules, but were nec
 * You must use "$objectoffield" to manipulate the current object inside the formulare of computed custom extrafields instead of $obj/$object.
 * Making a global search is sending the parameter using always the name search_all (instead of sometimes sall and search_all)
 * The property $url_last_version must be public if defined into module descriptor files;
+* Filters in class field definitions must be a Dolibarr filter syntax string.
 
 ***** ChangeLog for 16.0.5 compared to 16.0.4 *****
 

@@ -192,7 +192,7 @@ if ($socid > 0) {
 			$param .= '&contextpage='.urlencode($contextpage);
 		}
 		if ($limit > 0 && $limit != $conf->liste_limit) {
-			$param .= '&limit='.urlencode($limit);
+			$param .= '&limit='.((int) $limit);
 		}
 
 		// Try to know count of actioncomm from cache

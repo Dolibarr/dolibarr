@@ -1986,7 +1986,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public function insert_menus()
 	{
 		// phpcs:enable
-		global $user;
+		global $conf, $user;
 
 		if (!is_array($this->menu) || empty($this->menu)) {
 			return 0;
@@ -1997,6 +1997,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		dol_syslog(get_class($this)."::insert_menus", LOG_DEBUG);
 
 		$err = 0;
+
+		// Common module
+		$entity = ((!empty($this->always_enabled) || !empty($this->core_enabled)) ? 0 : $conf->entity);
 
 		$this->db->begin();
 
@@ -2049,6 +2052,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$menu->user = $this->menu[$key]['user'];
 			$menu->enabled = isset($this->menu[$key]['enabled']) ? $this->menu[$key]['enabled'] : 0;
 			$menu->position = $this->menu[$key]['position'];
+			$menu->entity = $entity;
 
 			if (!$err) {
 				$result = $menu->create($user); // Save menu entry into table llx_menu
@@ -2092,7 +2096,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
 		$sql .= " WHERE module = '".$this->db->escape($module)."'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity IN (0, ".$conf->entity.")";
 
 		dol_syslog(get_class($this)."::delete_menus", LOG_DEBUG);
 		$resql = $this->db->query($sql);

@@ -301,7 +301,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($actioncode != '') {
 	if (is_array($actioncode)) {
@@ -934,6 +934,7 @@ while ($i < $imaxinloop) {
 	$actionstatic->datep = $db->jdate($obj->dp);
 	$actionstatic->percentage = $obj->percent;
 	$actionstatic->authorid = $obj->fk_user_author;
+	$actionstatic->userownerid = $obj->fk_user_action;
 
 	// Initialize $this->userassigned && this->socpeopleassigned array && this->userownerid
 	// but only if we need it

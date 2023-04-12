@@ -1214,6 +1214,8 @@ if (empty($action) || $action == 'view') {
 				print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 				print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 				print "</tr>";
+
+				$i++;
 			}
 		}
 
@@ -1339,6 +1341,8 @@ if (empty($action) || $action == 'view') {
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 
 					print "</tr>";
+
+					$i++;
 				}
 			}
 		} else {	// Waiting account
@@ -1376,9 +1380,16 @@ if (empty($action) || $action == 'view') {
 					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 					print "</tr>";
+
+					$i++;
 				}
 			}
 		}
+	}
+
+	if (!$i) {
+		$colspan = 8;
+		print '<tr class="oddeven"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	print "</table>";

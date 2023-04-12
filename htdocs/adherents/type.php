@@ -433,7 +433,7 @@ if ($action == 'create') {
 	print $form->selectarray("morphy", $morphys, GETPOSTISSET("morphy") ? GETPOST("morphy", 'aZ09') : 'morphy');
 	print "</td></tr>";
 
-	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
+	print '<tr><td>'.$form->textwithpicto($langs->trans("SubscriptionRequired"), $langs->trans("SubscriptionRequiredDesc")).'</td><td>';
 	print $form->selectyesno("subscription", 1, 1);
 	print '</td></tr>';
 
@@ -509,7 +509,7 @@ if ($rowid > 0) {
 		print '<tr><td>'.$langs->trans("MembersNature").'</td><td class="valeur" >'.$object->getmorphylib($object->morphy).'</td>';
 		print '</tr>';
 
-		print '<tr><td class="titlefield">'.$langs->trans("SubscriptionRequired").'</td><td>';
+		print '<tr><td>'.$form->textwithpicto($langs->trans("SubscriptionRequired"), $langs->trans("SubscriptionRequiredDesc")).'</td><td>';
 		print yn($object->subscription);
 		print '</tr>';
 

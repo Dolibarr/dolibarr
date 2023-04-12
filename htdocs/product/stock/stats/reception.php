@@ -261,7 +261,7 @@ if ($id > 0 || !empty($ref)) {
 				$option .= '&id='.$object->id;
 
 				if ($limit > 0 && $limit != $conf->liste_limit) {
-					$option .= '&limit='.urlencode($limit);
+					$option .= '&limit='.((int) $limit);
 				}
 				if (!empty($search_month)) {
 					$option .= '&search_month='.urlencode($search_month);

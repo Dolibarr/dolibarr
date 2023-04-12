@@ -719,7 +719,7 @@ if (count($tasksarray) > 0) {
 	$totalforeachday = array();
 	foreach ($listofdistinctprojectid as $tmpprojectid) {
 		$projectstatic->id = $tmpprojectid;
-		$projectstatic->loadTimeSpent($daytoparse, 0, $usertoprocess->id); // Load time spent from table projet_task_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
+		$projectstatic->loadTimeSpent($daytoparse, 0, $usertoprocess->id); // Load time spent from table element_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
 		for ($idw = 0; $idw < 7; $idw++) {
 			$tmpday = dol_time_plus_duree($daytoparse, $idw, 'd');
 			$totalforeachday[$tmpday] += $projectstatic->weekWorkLoad[$tmpday];

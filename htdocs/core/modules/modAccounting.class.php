@@ -124,18 +124,6 @@ class modAccounting extends DolibarrModules
 				"",
 				"", 0, 'current', 0
 		);
-		$this->const[9] = array(
-				"ACCOUNTING_LIST_SORT_VENTILATION_TODO",
-				"yesno",
-				"1",
-				"", 0, 'current', 0
-		);
-		$this->const[10] = array(
-				"ACCOUNTING_LIST_SORT_VENTILATION_DONE",
-				"yesno",
-				"1",
-				"", 0, 'current', 0
-		);
 		$this->const[11] = array(
 				"ACCOUNTING_EXPORT_DATE",
 				"chaine",

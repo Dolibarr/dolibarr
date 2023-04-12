@@ -416,7 +416,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($searchCategoryProductOperator == 1) {
 		$param .= "&search_category_product_operator=".urlencode($searchCategoryProductOperator);

@@ -5,6 +5,7 @@
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Lenin Rivas         <lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2558,6 +2559,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	if ($modulepart == 'tva') {
 		$modulepart = 'tax-vat';
 	}
+	// Fix modulepart delivery
+	if ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
+		$modulepart = 'delivery';
+	}
 
 	//print 'dol_check_secure_access_document modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity;
 	dol_syslog('dol_check_secure_access_document modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity);
@@ -2971,7 +2976,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->commande->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('order').")";
-	} elseif ($modulepart == 'project' && !empty($conf->project->dir_output)) {
+	} elseif ($modulepart == 'project' && !empty($conf->project->multidir_output[$entity])) {
 		// Wrapping pour les projets
 		if ($fuser->hasRight('projet', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
@@ -2983,9 +2988,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				$accessallowed = checkUserAccessToObject($user, array('projet'), $tmpproject->id, 'projet&project', '', '', 'rowid', '');
 			}
 		}
-		$original_file = $conf->project->dir_output.'/'.$original_file;
+		$original_file = $conf->project->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";
-	} elseif ($modulepart == 'project_task' && !empty($conf->project->dir_output)) {
+	} elseif ($modulepart == 'project_task' && !empty($conf->project->multidir_output[$entity])) {
 		if ($fuser->hasRight('projet', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 			// If we known $id of project, call checkUserAccessToObject to check permission on properties and contact of project
@@ -2996,7 +3001,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet_task&project', '', '', 'rowid', '');
 			}
 		}
-		$original_file = $conf->project->dir_output.'/'.$original_file;
+		$original_file = $conf->project->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";
 	} elseif (($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier') && !empty($conf->fournisseur->commande->dir_output)) {
 		// Wrapping pour les commandes fournisseurs
@@ -3040,14 +3045,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if ($fuser->hasRight('expedition', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->expedition->dir_output."/".(strpos('sending/', $original_file) === 0 ? '' : 'sending/').$original_file;
+		$original_file = $conf->expedition->dir_output."/".(strpos($original_file, 'sending/') === 0 ? '' : 'sending/').$original_file;
 		//$original_file = $conf->expedition->dir_output."/".$original_file;
 	} elseif (($modulepart == 'livraison' || $modulepart == 'delivery') && !empty($conf->expedition->dir_output)) {
 		// Delivery Note Wrapping
 		if ($fuser->hasRight('expedition', 'delivery', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->expedition->dir_output."/".(strpos('receipt/', $original_file) === 0 ? '' : 'receipt/').$original_file;
+		$original_file = $conf->expedition->dir_output."/".(strpos($original_file, 'receipt/') === 0 ? '' : 'receipt/').$original_file;
 	} elseif ($modulepart == 'actions' && !empty($conf->agenda->dir_output)) {
 		// Wrapping pour les actions
 		if ($fuser->hasRight('agenda', 'myactions', $read) || preg_match('/^specimen/i', $original_file)) {

@@ -294,7 +294,7 @@ print '</table>'."\n";
 
 $object = null;
 
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
+htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
 
 llxFooter('', 'public');
 

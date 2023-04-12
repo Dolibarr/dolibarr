@@ -741,7 +741,7 @@ class Cronjob extends CommonObject
 
 		// Check parameters
 		// Put here code to add a control on parameters values
-		if (dol_strlen($this->datenextrun) == 0) {
+		if (dol_strlen($this->datenextrun) == 0 && $this->status == self::STATUS_ENABLED) {
 			$this->errors[] = $langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronDtNextLaunch'));
 			$error++;
 		}
@@ -1479,7 +1479,7 @@ class Cronjob extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return label of a giver status
 	 *
 	 *  @param	int		$status        	Id statut
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto

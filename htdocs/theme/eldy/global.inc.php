@@ -565,10 +565,13 @@ input:-moz-placeholder { color: #ccc; }
 
 input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
 fieldset {
-	border: 1px solid #AAAAAA !important;
+	border: 1px solid #aaa !important;
 	padding-inline-start: 2em;
 	padding-inline-end: 2em;
 	min-inline-size: auto;
+}
+#div_container_exportoptions fieldset, #div_container_sub_exportoptions fieldset {
+	border: 1px solid #ccc !important;
 }
 .legendforfieldsetstep { padding-bottom: 10px; }
 input#onlinepaymenturl, input#directdownloadlink {
@@ -1314,7 +1317,7 @@ select.flat.selectlimit {
 }
 /* using a tdoverflowxxx make the min-width not working */
 .tdnooverflowimp {
-   text-overflow: none;
+   text-overflow: unset;
 }
 .tdoverflow {
 	max-width: 0;
@@ -1740,6 +1743,8 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	.hideonsmartphone { display: none; }
 	.hideonsmartphoneimp { display: none !important; }
+
+	.margintoponsmartphone { margin-top: 6px; }
 
 	span.pictotitle {
 		margin-<?php echo $left; ?>: 0 !important;
@@ -6541,7 +6546,7 @@ span#select2-boxbookmark-container {
 	font-weight: normal;
 }
 .select2-container-multi-dolibarr .select2-choices-dolibarr li {
-  float: left;
+  float: <?php echo $left; ?>;
   list-style: none;
 }
 .select2-container-multi-dolibarr .select2-choices-dolibarr {
