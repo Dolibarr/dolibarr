@@ -2413,8 +2413,7 @@ class Adherent extends CommonObject
 			}
 			// Only picto
 			if ($withpictoimg > 0) {
-				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">'.
-					img_object('', 'user', $paddafterimage.' '.($notooltip ? '' : $dataparams.' class="'.$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1).'</span>';
+				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip ? '' : $dataparams), 0, 0, $notooltip ? 0 : 1).'</span>';
 			} else {
 				// Picto must be a photo
 				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>';

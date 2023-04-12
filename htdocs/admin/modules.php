@@ -231,7 +231,7 @@ if ($action == 'install') {
 					if (!$error) {
 						@dol_delete_dir_recursive($dirins.'/'.$modulenameval); // delete the target directory
 						$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulenameval;
-						if (!dol_is_dir($modulenamedir)) {
+						if (!dol_is_dir($submodulenamedir)) {
 							$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval;
 						}
 						dol_syslog("We copy now directory ".$submodulenamedir." into target dir ".$dirins.'/'.$modulenameval);
@@ -476,7 +476,7 @@ foreach ($modulesdir as $dir) {
 								dol_syslog("Module ".get_class($objMod)." not qualified");
 							}
 						} else {
-							print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
+							print "admin/modules.php Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
 						}
 					} catch (Exception $e) {
 						 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);

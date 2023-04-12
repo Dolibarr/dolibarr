@@ -871,6 +871,7 @@ class Product extends CommonObject
 					$langs->load("products");
 					$error++;
 					$this->error = "ErrorProductAlreadyExists";
+					dol_syslog(get_class($this)."::Create fails, ref ".$this->ref." already exists");
 				}
 			} else {
 				$error++;
@@ -5207,10 +5208,10 @@ class Product extends CommonObject
 		$result .= $linkstart;
 		if ($withpicto) {
 			if ($this->type == Product::TYPE_PRODUCT) {
-				$result .= (img_object(($notooltip ? '' : $label), 'product', ($notooltip ? 'class="paddingright"' : $dataparams.' class="paddingright '.$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1));
+				$result .= (img_object(($notooltip ? '' : $label), 'product', 'class="paddingright"', 0, 0, $notooltip ? 0 : 1));
 			}
 			if ($this->type == Product::TYPE_SERVICE) {
-				$result .= (img_object(($notooltip ? '' : $label), 'service', ($notooltip ? 'class="paddingright"' : $dataparams.' class="paddingright '.$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1));
+				$result .= (img_object(($notooltip ? '' : $label), 'service', 'class="paddingright"', 0, 0, $notooltip ? 0 : 1));
 			}
 		}
 		$result .= dol_escape_htmltag($newref);

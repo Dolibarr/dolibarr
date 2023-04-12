@@ -394,7 +394,7 @@ if ($resql) {
 	if ($othernb) {
 		print '<tr class="oddeven">';
 		print '<td class="nowrap">';
-		print '<span class="opacitymedium">...</span>';
+		print '<span class="opacitymedium">'.$langs->trans("More").'...</span>';
 		print '</td>';
 		print '<td class="nowrap right">';
 		print $othernb;

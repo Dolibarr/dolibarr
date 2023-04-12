@@ -259,11 +259,12 @@ class CategorieTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject->note='New note after update';
+		$localobject->note_private ='New note after update';
 		$result=$localobject->update($user);
 
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertGreaterThan(0, $result);
+
 		return $localobject;
 	}
 
@@ -288,8 +289,6 @@ class CategorieTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 		*/
-		$localobject2=new Categorie($db);
-		$localobject2->initAsSpecimen();
 
 		$retarray=$localobject->liste_photos('/');
 		print __METHOD__." retarray size=".count($retarray)."\n";

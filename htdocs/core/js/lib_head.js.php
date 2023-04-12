@@ -1305,7 +1305,7 @@ $(document).on('select2:open', (e) => {
 	const target = $(e.target);
 	if (target && target.length) {
 		const id = target[0].id || target[0].name;
-		document.querySelector(`input[aria-controls*='${id}']`).focus();
+		document.querySelector('input[aria-controls*='+id+']').focus();
 	}
 });
 

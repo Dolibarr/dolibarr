@@ -1159,11 +1159,14 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print $form->selectDate($object->date_start ? $object->date_start : -1, 'projectstart', 0, 0, 0, '', 1, 0);
 		print ' <span class="opacitymedium"> '.$langs->trans("to").' </span> ';
 		print $form->selectDate($object->date_end ? $object->date_end : -1, 'projectend', 0, 0, 0, '', 1, 0);
-		print ' &nbsp; &nbsp; <input type="checkbox" class="valignmiddle" id="reportdate" name="reportdate" value="yes" ';
-		if ($comefromclone) {
-			print ' checked ';
+		$object->getLinesArray(null, 0);
+		if (!empty($object->usage_task) && !empty($object->lines)) {
+			print ' <span id="divreportdate" class="hidden">&nbsp; &nbsp; <input type="checkbox" class="valignmiddle" id="reportdate" name="reportdate" value="yes" ';
+			if ($comefromclone) {
+				print 'checked ';
+			}
+			print '/><label for="reportdate" class="valignmiddle opacitymedium">'.$langs->trans("ProjectReportDate").'</label></span>';
 		}
-		print '/><label for="reportdate" class="opacitymedium">'.$langs->trans("ProjectReportDate").'</label>';
 		print '</td></tr>';
 
 		if (isModEnabled('eventorganization')) {
@@ -1385,6 +1388,11 @@ if ($action == 'create' && $user->rights->projet->creer) {
                     jQuery("#usage_task").prop("checked", true);
                 }
         	});
+
+			jQuery("#projectstart").change(function() {
+				console.log("We modify the start date");
+				jQuery("#divreportdate").show();
+			});
         });
         </script>';
 

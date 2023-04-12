@@ -109,6 +109,24 @@ class Conf
 
 	public $tzuserinputkey = 'tzserver';		// Use 'tzuserrel' to always store date in GMT and show date in time zone of user.
 
+	// TODO Remove this part.
+	public $fournisseur;
+	public $product;
+	public $service;
+	public $contrat;
+	public $actions;
+	public $agenda;
+	public $commande;
+	public $propal;
+	public $facture;
+	public $user;
+	public $adherent;
+	public $bank;
+	public $notification;
+	public $expensereport;
+	public $productbatch;
+
+
 
 	/**
 	 * Constructor
@@ -165,7 +183,6 @@ class Conf
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
 		$this->facture = new stdClass();
-		$this->contrat = new stdClass();
 		$this->user	= new stdClass();
 		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
@@ -635,18 +652,19 @@ class Conf
 				unset($this->global->PROJECT_USE_SEARCH_TO_SELECT);
 			}
 
-			if (!empty($this->productbatch->enabled)) {
+			if (isModEnabled('productbatch')) {
+				// If module lot/serial enabled, we force the inc/dec mode to STOCK_CALCULATE_ON_SHIPMENT_CLOSE and STOCK_CALCULATE_ON_RECEPTION_CLOSE
 				$this->global->STOCK_CALCULATE_ON_BILL = 0;
 				$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER = 0;
-				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) $this->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
 				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT)) $this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE = 1;
+				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) $this->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
 				$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL = 0;
 				$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER = 0;
-				if (empty($this->reception->enabled)) {
+				if (!isModEnabled('reception')) {
 					$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER = 1;
 				} else {
-					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) $this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
 					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION)) $this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE = 1;
+					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) $this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
 				}
 			}
 

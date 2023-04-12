@@ -231,7 +231,7 @@ if ($db->type != 'pgsql')
 	$sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql.= " , ".MAIN_DB_PREFIX."projet_task as t";
-	$sql.= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
+	$sql.= " , ".MAIN_DB_PREFIX."element_time as tt";
 	$sql.= " WHERE t.fk_projet = p.rowid";
 	$sql.= " AND p.entity = ".((int) $conf->entity);
 	$sql.= " AND tt.fk_task = t.rowid";

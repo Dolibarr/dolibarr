@@ -79,25 +79,48 @@ if (empty($conf->dol_no_mouse_hover)) {
 			return $(this).prop("title");		/* To force to get title as is */
 		}
 	});
-	jQuery(".classforajaxtooltip").tooltip({
-		show: { collision: "flipfit", effect:"toggle", delay:50, duration: 20 },
-		hide: { delay: 250, duration: 20 },
+
+	var opendelay = 80;
+	var elemtostoretooltiptimer = jQuery("#dialogforpopup");
+	var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
+
+	target = jQuery(".classforajaxtooltip");
+	target.tooltip({
 		tooltipClass: "mytooltip",
-		open: function (event, ui) {
-			var elem = $(this);
-			var params = JSON.parse($(this).attr("data-params"));
-			params.token = "'.currentToken().'";
+		show: { collision: "flipfit", effect:"toggle", delay: 0, duration: 20 },
+		hide: { delay: 250, duration: 20 }
+	});
+
+	target.off("mouseover mouseout");
+	target.on("mouseover", function(event) {
+		console.log("we will create timer for ajax call");
+		var params = JSON.parse($(this).attr("data-params"));
+		params.token = currenttoken;
+		var elemfortooltip = $(this);
+
+	    event.stopImmediatePropagation();
+		clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
+	    elemtostoretooltiptimer.data("openTimeoutId", setTimeout(function() {
+			target.tooltip("close");
 			$.ajax({
-				url:"' . dol_buildpath('/core/ajax/ajaxtooltip.php', 1) . '",
-				type: "post",
-				async: false,
-				data: params,
-				success: function(response){
-					// Setting content option
-					elem.tooltip("option","content",response);
-				}
-			});
-		}
+					url:"'. DOL_URL_ROOT.'/core/ajax/ajaxtooltip.php",
+					type: "post",
+					async: true,
+					data: params,
+					success: function(response){
+						// Setting content option
+						console.log("ajax success");
+						elemfortooltip.tooltip("option","content",response);
+						elemfortooltip.tooltip("open");
+					}
+				});
+			 }, opendelay));
+	});
+	target.on("mouseout", function(event) {
+		console.log("mouse out");
+	    event.stopImmediatePropagation();
+	    clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
+	    target.tooltip("close");
 	});
 	';
 }
@@ -306,11 +329,12 @@ print '
 	jQuery(document).ready(function() {
 		jQuery(".cssforclicktodial").click(function() {
 			event.preventDefault();
-			console.log("We click on a cssforclicktodial class with url="+this.href);
+			var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
+			console.log("We click on a cssforclicktodial class with href="+this.href);
 			$.ajax({
 			  url: this.href,
 			  type: \'GET\',
-			  data: { token: \''.newToken().'\' }
+			  data: { token: currenttoken }
 			}).done(function(xhr, textStatus, errorThrown) {
 			    /* do nothing */
 			}).fail(function(xhr, textStatus, errorThrown) {

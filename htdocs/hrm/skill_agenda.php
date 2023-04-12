@@ -210,7 +210,7 @@ if ($object->id > 0) {
 			$param .= '&contextpage='.urlencode($contextpage);
 		}
 		if ($limit > 0 && $limit != $conf->liste_limit) {
-			$param .= '&limit='.urlencode($limit);
+			$param .= '&limit='.((int) $limit);
 		}
 
 

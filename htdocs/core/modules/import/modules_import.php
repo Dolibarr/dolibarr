@@ -253,7 +253,7 @@ class ModeleImports
 	}
 
 	/**
-	 *  Renvoi libelle d'un driver import
+	 *  Return label of driver import
 	 *
 	 *	@param	string	$key	Key
 	 *	@return	string
@@ -264,7 +264,7 @@ class ModeleImports
 	}
 
 	/**
-	 *  Renvoi la description d'un driver import
+	 *  Return description of import drivervoi la description d'un driver import
 	 *
 	 *	@param	string	$key	Key
 	 *	@return	string

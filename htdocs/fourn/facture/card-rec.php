@@ -947,7 +947,7 @@ if ($action == 'create') {
 		}
 		$htmltext .= '</i>';
 
-		// Libelle
+		// Label
 		print '<tr><td class="titlefieldcreate">' . $langs->trans("Label") . '</td><td>';
 		print '<input class="flat quatrevingtpercent" type="text" name="libelle" value="' . $object->label . '">';
 		print '</td></tr>';
