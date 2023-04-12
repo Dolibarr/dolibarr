@@ -76,7 +76,7 @@ if ($action == 'add') {
 		$errori[$i] = 0;
 
 		$tabnum[$i] = 0;
-		if (!empty($label[$i]) || !empty($type[$i]) || !($amount[$i] <= 0) || !($accountfrom[$i] < 0) || !($accountto[$i]  < 0)) {
+		if (!empty($label[$i]) || !($amount[$i] <= 0) || !($accountfrom[$i] < 0) || !($accountto[$i]  < 0)) {
 			$tabnum[$i] = 1;
 		}
 		$i++;
@@ -114,17 +114,17 @@ if ($action == 'add') {
 			if (!$errori[$n]) {
 				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-				$accountfrom = new Account($db);
-				$accountfrom->fetch(GETPOST($n.'_account_from', 'int'));
+				$tmpaccountfrom = new Account($db);
+				$tmpaccountfrom->fetch(GETPOST($n.'_account_from', 'int'));
 
-				$accountto = new Account($db);
-				$accountto->fetch(GETPOST($n.'_account_to', 'int'));
+				$tmpaccountto = new Account($db);
+				$tmpaccountto->fetch(GETPOST($n.'_account_to', 'int'));
 
-				if ($accountto->currency_code == $accountfrom->currency_code) {
+				if ($tmpaccountto->currency_code == $tmpaccountfrom->currency_code) {
 					$amountto[$n] = $amount[$n];
 				} else {
 					if (!$amountto[$n]) {
-						$error[$n]++;
+						$errori[$n]++;
 						setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AmountTo")).' #'.$n, null, 'errors');
 					}
 				}
@@ -133,7 +133,7 @@ if ($action == 'add') {
 					setEventMessages($langs->trans("AmountMustBePositive").' #'.$n, null, 'errors');
 				}
 
-				if ($accountto->id == $accountfrom->id) {
+				if ($tmpaccountto->id == $tmpaccountfrom->id) {
 					$errori[$n]++;
 					setEventMessages($langs->trans("ErrorFromToAccountsMustDiffers").' #'.$n, null, 'errors');
 				}
@@ -149,45 +149,45 @@ if ($action == 'add') {
 				// By default, electronic transfert from bank to bank
 				$typefrom = $type[$n];
 				$typeto = $type[$n];
-				if ($accountto->courant == Account::TYPE_CASH || $accountfrom->courant == Account::TYPE_CASH) {
+				if ($tmpaccountto->courant == Account::TYPE_CASH || $tmpaccountfrom->courant == Account::TYPE_CASH) {
 					// This is transfer of change
 					$typefrom = 'LIQ';
 					$typeto = 'LIQ';
 				}
 
 				if (!$errori[$n]) {
-					$bank_line_id_from = $accountfrom->addline($dateo[$n], $typefrom, $label[$n], price2num(-1 * $amount[$n]), '', '', $user);
+					$bank_line_id_from = $tmpaccountfrom->addline($dateo[$n], $typefrom, $label[$n], price2num(-1 * $amount[$n]), '', '', $user);
 				}
 				if (!($bank_line_id_from > 0)) {
 					$errori[$n]++;
 				}
 				if (!$errori[$n]) {
-					$bank_line_id_to = $accountto->addline($dateo[$n], $typeto, $label[$n], $amountto[$n], '', '', $user);
+					$bank_line_id_to = $tmpaccountto->addline($dateo[$n], $typeto, $label[$n], $amountto[$n], '', '', $user);
 				}
 				if (!($bank_line_id_to > 0)) {
 					$errori[$n]++;
 				}
 
 				if (!$errori[$n]) {
-					$result = $accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
+					$result = $tmpaccountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
 				}
 				if (!($result > 0)) {
-					$errori++;
+					$errori[$n]++;
 				}
 				if (!$errori[$n]) {
-					$result = $accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
+					$result = $tmpaccountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
 				}
 				if (!($result > 0)) {
 					$errori[$n]++;
 				}
 				if (!$errori[$n]) {
 					$mesgs = $langs->trans("TransferFromToDone", '{s1}', '{s2}', $amount[$n], $langs->transnoentitiesnoconv("Currency".$conf->currency));
-					$mesgs = str_replace('{s1}', '<a href="bankentries_list.php?id='.$accountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$accountfrom->label.'</a>', $mesgs);
-					$mesgs = str_replace('{s2}', '<a href="bankentries_list.php?id='.$accountto->id.'">'.$accountto->label.'</a>', $mesgs);
+					$mesgs = str_replace('{s1}', '<a href="bankentries_list.php?id='.$tmpaccountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$tmpaccountfrom->label.'</a>', $mesgs);
+					$mesgs = str_replace('{s2}', '<a href="bankentries_list.php?id='.$tmpaccountto->id.'">'.$tmpaccountto->label.'</a>', $mesgs);
 					setEventMessages($mesgs, null, 'mesgs');
 					$db->commit();
 				} else {
-					setEventMessages($accountfrom->error.' '.$accountto->error, null, 'errors');
+					setEventMessages($tmpaccountfrom->error.' '.$tmpaccountto->error, null, 'errors');
 					$db->rollback();
 				}
 			}
@@ -211,68 +211,38 @@ llxHeader('', $title, $help_url);
 print '		<script type="text/javascript">
         	$(document).ready(function () {
     	  		$(".selectbankaccount").change(function() {
-						console.log("We change bank account");
-						init_page();
+						console.log("We change bank account. We check if currency differs. If yes, we show multicurrency field");
+						i = $(this).attr("name").replace("_account_to", "").replace("_account_from", "");
+						console.log(i);
+						init_page(i);
 				});
 
-				function init_page() {
-					console.log("Set fields according to currency");
-        			var account1 = $("#selectaccount_from").val();
-        			var account2 = $("#selectaccount_to").val();
-        			var currencycode1="";
-        			var currencycode2="";
+				function init_page(i) {
+					// TODO Scan all line i and set atleast2differentcurrency if there is 2 different values among all lines
+        			var account1 = $("#select"+i+"_account_from").val();
+        			var account2 = $("#select"+i+"_account_to").val();
+					var currencycode1 = $("#select"+i+"_account_from option:selected").attr("data-currency-code");
+					var currencycode2 = $("#select"+i+"_account_to option:selected").attr("data-currency-code");
+					console.log("Set fields according to currencycode found currencycode1="+currencycode1+" currencycode2="+currencycode2);
+
+					var atleast2differentcurrency = (currencycode2!==currencycode1 && currencycode1 !== undefined && currencycode2 !== undefined && currencycode2!=="" && currencycode1!=="");
+
+					if (atleast2differentcurrency) {
+						console.log("We show multucurrency field");
+        				$(".multicurrency").show();
+        			} else {
+						console.log("We hide multucurrency field");
+						$(".multicurrency").hide();
+					}
 
 					$("select").each(function() {
 						if( $(this).attr("view")){
-						$(this).closest("tr").removeClass("hidejs").removeClass("hideobject");
+							$(this).closest("tr").removeClass("hidejs").removeClass("hideobject");
 						}
-					});
-
-
-					$.get("'.DOL_URL_ROOT.'/core/ajax/getaccountcurrency.php", {id: account1})
-						.done(function( data ) {
-							if (data != null)
-							{
-								var item= $.parseJSON(data);
-								if (item.num==-1) {
-									console.error("Error: "+item.error);
-								} else if (item.num!==0) {
-									currencycode1 = item.value;
-								}
-
-								$.get("'.DOL_URL_ROOT.'/core/ajax/getaccountcurrency.php", {id: account2})
-									.done(function( data ) {
-										if (data != null)
-										{
-											var item=$.parseJSON(data);
-											if (item.num==-1) {
-												console.error("Error: "+item.error);
-											} else if (item.num!==0) {
-												currencycode2 = item.value;
-											}
-
-											if (currencycode2!==currencycode1 && currencycode2!=="" && currencycode1!=="") {
-						        				$(".multicurrency").show();
-						        			} else {
-												$(".multicurrency").hide();
-											}
-										}
-									else {
-										console.error("Error: Ajax url has returned an empty page. Should be an empty json array.");
-									}
-			        			}).fail(function( data ) {
-									console.error("Error: has returned an empty page. Should be an empty json array.");
-								});
-							}
-							else {
-								console.error("Error: has returned an empty page. Should be an empty json array.");
-							}
-    	        	}).fail(function( data ) {
-						console.error("Error: has returned an empty page. Should be an empty json array.");
 					});
         		}
 
-				init_page();
+				init_page(1);
         	});
     		</script>';
 
@@ -298,16 +268,18 @@ print '<th>'.$langs->trans("Type").'</th>';
 print '<th>'.$langs->trans("Date").'</th>';
 print '<th>'.$langs->trans("Description").'</th>';
 print '<th class="right">'.$langs->trans("Amount").'</th>';
-//print '<td class="hideobject" class="multicurrency">'.$langs->trans("AmountToOthercurrency").'</td>';
+print '<td class="hideobject multicurrency right">'.$langs->trans("AmountToOthercurrency").'</td>';
 print '</tr>';
 
 for ($i = 1 ; $i < $MAXLINES; $i++) {
 	$label = '';
 	$amount = '';
+	$amounto = '';
 
 	if ($errori[$i]) {
 		$label = GETPOST($i.'_label', 'alpha');
 		$amount = GETPOST($i.'_amount', 'alpha');
+		$amountto = GETPOST($i.'_amountto', 'alpha');
 	}
 
 	if ($i == 1) {
@@ -339,11 +311,14 @@ for ($i = 1 ; $i < $MAXLINES; $i++) {
 	print $form->selectDate((!empty($dateo[$i]) ? $dateo[$i] : ''), $i.'_', '', '', '', 'add');
 	print "</td>\n";
 
+	// Description
 	print '<td><input name="'.$i.'_label" class="flat quatrevingtpercent selectjs" type="text" value="'.dol_escape_htmltag($label).'"></td>';
 
+	// Amount
 	print '<td class="right"><input name="'.$i.'_amount" class="flat right selectjs" type="text" size="6" value="'.dol_escape_htmltag($amount).'"></td>';
 
-	print '<td class="hideobject" class="multicurrency"><input name="'.$i.'_amountto" class="flat" type="text" size="6" value="'.dol_escape_htmltag($amountto).'"></td>';
+	// AmountToOthercurrency
+	print '<td class="hideobject multicurrency right"><input name="'.$i.'_amountto" class="flat" type="text" size="6" value="'.dol_escape_htmltag($amountto).'"></td>';
 
 	print '</tr>';
 }
@@ -352,7 +327,7 @@ print '</table>';
 print '</div>';
 print '</div>';
 print '<div id="btncont" style="display: flex; align-items: center">';
-print '<a id="btnincrement" style="margin-left:35%" class="btnTitle btnTitlePlus" onclick="increment()" title="Ajouter écriture">
+print '<a id="btnincrement" style="margin-left:35%" class="btnTitle btnTitlePlus" onclick="increment()" title="'.dol_escape_htmltag($langs->trans("Add")).'">
 		<span class="fa fa-plus-circle valignmiddle btnTitle-icon">
 		</span>
 	   </a>';
