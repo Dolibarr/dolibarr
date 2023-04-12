@@ -117,6 +117,7 @@ $search_price_registration = GETPOST("search_price_registration", 'alpha');
 $search_price_booth = GETPOST("search_price_booth", 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_import_key = GETPOST('search_import_key', 'alpha');
+$search_current_entity = GETPOST('search_current_entity', 'alpha');
 $searchCategoryCustomerOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryCustomerOperator = GETPOST('search_category_customer_operator', 'int');
@@ -473,7 +474,7 @@ if ($search_project_contact > 0) {
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= " WHERE p.entity IN (".getEntity('project').')';
+$sql .= " WHERE p.entity IN (".getEntity('project', $search_current_entity ? 0 : 1).')';
 if (empty($user->rights->projet->all->lire)) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 }
