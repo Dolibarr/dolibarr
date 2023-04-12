@@ -5087,21 +5087,21 @@ class Form
 	 *       print '});'."\n";
 	 *       print '</script>'."\n";
 	 *
-	 * @param string $page Url of page to call if confirmation is OK. Can contains parameters (param 'action' and 'confirm' will be reformated)
-	 * @param string $title Title
-	 * @param string $question Question
-	 * @param string $action Action
-	 * @param array|string $formquestion An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>'autofocus' or 'style=...'))
-	 *                                   'type' can be 'text', 'password', 'checkbox', 'radio', 'date', 'datetime', 'select', 'multiselect', 'morecss',
-	 *                                   'other', 'onecolumn' or 'hidden'...
-	 * @param int|string $selectedchoice '' or 'no', or 'yes' or '1', 1, '0' or 0
-	 * @param int|string $useajax 0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
-	 * @param int|string $height Force height of box (0 = auto)
-	 * @param int $width Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
-	 * @param int $disableformtag 1=Disable form tag. Can be used if we are already inside a <form> section.
-	 * @param string $labelbuttonyes Label for Yes
-	 * @param string $labelbuttonno Label for No
-	 * @return    string                            HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
+	 * @param string 		$page 				Url of page to call if confirmation is OK. Can contains parameters (param 'action' and 'confirm' will be reformated)
+	 * @param string 		$title 				Title
+	 * @param string 		$question 			Question
+	 * @param string 		$action 			Action
+	 * @param array|string 	$formquestion 		An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>'autofocus' or 'style=...'))
+	 *                                   		'type' can be 'text', 'password', 'checkbox', 'radio', 'date', 'datetime', 'select', 'multiselect', 'morecss',
+	 *                                   		'other', 'onecolumn' or 'hidden'...
+	 * @param int|string 	$selectedchoice 	'' or 'no', or 'yes' or '1', 1, '0' or 0
+	 * @param int|string 	$useajax 			0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
+	 * @param int|string 	$height 			Force height of box (0 = auto)
+	 * @param int 			$width 				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
+	 * @param int 			$disableformtag 	1=Disable form tag. Can be used if we are already inside a <form> section.
+	 * @param string 		$labelbuttonyes 	Label for Yes
+	 * @param string 		$labelbuttonno 		Label for No
+	 * @return string                        	HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
 	 */
 	public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 500, $disableformtag = 0, $labelbuttonyes = 'Yes', $labelbuttonno = 'No')
 	{
