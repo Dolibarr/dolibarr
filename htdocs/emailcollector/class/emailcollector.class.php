@@ -440,15 +440,15 @@ class EmailCollector extends CommonObject
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
 	/*
-	public function fetchLines()
-	{
-		$this->lines=array();
+	 public function fetchLines()
+	 {
+	 $this->lines=array();
 
-		// Load lines with object EmailCollectorLine
+	 // Load lines with object EmailCollectorLine
 
-		return count($this->lines)?1:0;
-	}
-	*/
+	 return count($this->lines)?1:0;
+	 }
+	 */
 
 	/**
 	 * Fetch all account and load objects into an array
@@ -1096,6 +1096,8 @@ class EmailCollector extends CommonObject
 		$searchfilterisanswer = 0;
 		$searchfilterisnotanswer = 0;
 		$searchfilterreplyto = 0;
+		$searchfilterexcludebody = '';
+		$searchfilterexcludesubject = '';
 		$operationslog = '';
 
 		$now = dol_now();
@@ -1154,7 +1156,7 @@ class EmailCollector extends CommonObject
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_ID'),
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_SECRET'),
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_URLAUTHORIZE')
-						);
+							);
 						$serviceFactory = new \OAuth\ServiceFactory();
 						$oauthname = explode('-', $OAUTH_SERVICENAME);
 						// ex service is Google-Emails we need only the first part Google
@@ -1285,10 +1287,20 @@ class EmailCollector extends CommonObject
 					array_push($criteria, array($not."CC" => $rule['rulevalue']));
 				}
 				if ($rule['type'] == 'subject') {
-					array_push($criteria, array($not."SUBJECT" => $rule['rulevalue']));
+					if (strpos($rule['rulevalue'], '!') === 0) {
+						//array_push($criteria, array("NOT SUBJECT" => $rule['rulevalue']));
+						$searchfilterexcludesubject = preg_replace('/^!/', '', $rule['rulevalue']);
+					} else {
+						array_push($criteria, array("SUBJECT" => $rule['rulevalue']));
+					}
 				}
 				if ($rule['type'] == 'body') {
-					array_push($criteria, array($not."BODY" => $rule['rulevalue']));
+					if (strpos($rule['rulevalue'], '!') === 0) {
+						//array_push($criteria, array("NOT BODY" => $rule['rulevalue']));
+						$searchfilterexcludebody = preg_replace('/^!/', '', $rule['rulevalue']);
+					} else {
+						array_push($criteria, array("BODY" => $rule['rulevalue']));
+					}
 				}
 				if ($rule['type'] == 'header') {
 					array_push($criteria, array($not."HEADER" => $rule['rulevalue']));
@@ -1296,12 +1308,12 @@ class EmailCollector extends CommonObject
 
 				/* seems not used */
 				/*
-				if ($rule['type'] == 'notinsubject') {
-					array_push($criteria, array($not."SUBJECT NOT" => $rule['rulevalue']));
-				}
-				if ($rule['type'] == 'notinbody') {
-					array_push($criteria, array($not."BODY NOT" => $rule['rulevalue']));
-				}*/
+				 if ($rule['type'] == 'notinsubject') {
+				 array_push($criteria, array($not."SUBJECT NOT" => $rule['rulevalue']));
+				 }
+				 if ($rule['type'] == 'notinbody') {
+				 array_push($criteria, array($not."BODY NOT" => $rule['rulevalue']));
+				 }*/
 
 				if ($rule['type'] == 'seen') {
 					array_push($criteria, array($not."SEEN"));
@@ -1406,10 +1418,20 @@ class EmailCollector extends CommonObject
 					$search .= ($search ? ' ' : '').$not.'CC';
 				}
 				if ($rule['type'] == 'subject') {
-					$search .= ($search ? ' ' : '').$not.'SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
+					if (strpos($rule['rulevalue'], '!') === 0) {
+						//$search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
+						$searchfilterexcludesubject = preg_replace('/^!/', '', $rule['rulevalue']);
+					} else {
+						$search .= ($search ? ' ' : '').'SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
+					}
 				}
 				if ($rule['type'] == 'body') {
-					$search .= ($search ? ' ' : '').$not.'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
+					if (strpos($rule['rulevalue'], '!') === 0) {
+						//$search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
+						$searchfilterexcludebody = preg_replace('/^!/', '', $rule['rulevalue']);
+					} else {
+						$search .= ($search ? ' ' : '').'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
+					}
 				}
 				if ($rule['type'] == 'header') {
 					$search .= ($search ? ' ' : '').$not.'HEADER '.$rule['rulevalue'];
@@ -1417,12 +1439,12 @@ class EmailCollector extends CommonObject
 
 				/* seems not used */
 				/*
-				if ($rule['type'] == 'notinsubject') {
-					$search .= ($search ? ' ' : '').'NOT SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
-				}
-				if ($rule['type'] == 'notinbody') {
-					$search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
-				}*/
+				 if ($rule['type'] == 'notinsubject') {
+				 $search .= ($search ? ' ' : '').'NOT SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
+				 }
+				 if ($rule['type'] == 'notinbody') {
+				 $search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
+				 }*/
 
 				if ($rule['type'] == 'seen') {
 					$search .= ($search ? ' ' : '').$not.'SEEN';
@@ -1538,19 +1560,19 @@ class EmailCollector extends CommonObject
 		if (!$error && !empty($arrayofemail) && count($arrayofemail) > 0) {
 			// Loop to get part html and plain
 			/*
-			0 multipart/mixed
-			1 multipart/alternative
-			1.1 text/plain
-			1.2 text/html
-			2 message/rfc822
-			2 multipart/mixed
-			2.1 multipart/alternative
-			2.1.1 text/plain
-			2.1.2 text/html
-			2.2 message/rfc822
-			2.2 multipart/alternative
-			2.2.1 text/plain
-			2.2.2 text/html
+			 0 multipart/mixed
+			 1 multipart/alternative
+			 1.1 text/plain
+			 1.2 text/html
+			 2 message/rfc822
+			 2 multipart/mixed
+			 2.1 multipart/alternative
+			 2.1.1 text/plain
+			 2.1.2 text/html
+			 2.2 message/rfc822
+			 2.2 multipart/alternative
+			 2.2.1 text/plain
+			 2.2.2 text/html
 			 */
 			dol_syslog("Start of loop on email", LOG_INFO, 1);
 
@@ -1684,8 +1706,6 @@ class EmailCollector extends CommonObject
 				$ticketfoundby = '';
 				$candidaturefoundby = '';
 
-				$this->db->begin();
-
 
 				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 					dol_syslog("msgid=".$overview['message_id']." date=".dol_print_date($overview['date'], 'dayrfc', 'gmt')." from=".$overview['from']." to=".$overview['to']." subject=".$overview['subject']);
@@ -1719,7 +1739,7 @@ class EmailCollector extends CommonObject
 						$attachments = [];
 					}
 				} else {
-					$this->getmsg($connection, $imapemail);
+					$this->getmsg($connection, $imapemail);	// This set global var $charset, $htmlmsg, $plainmsg, $attachments
 				}
 				//print $plainmsg;
 				//var_dump($plainmsg); exit;
@@ -1728,6 +1748,15 @@ class EmailCollector extends CommonObject
 				$messagetext = $plainmsg ? $plainmsg : dol_string_nohtmltag($htmlmsg, 0);
 				// Removed emojis
 				$messagetext = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $messagetext);
+
+				if ($searchfilterexcludebody) {
+					if (preg_match('/'.preg_quote($searchfilterexcludebody, '/').'/ms', $messagetext)) {
+						$nbemailprocessed++;
+						$operationslog .= '<br>Discarded - Email body contains string '.$searchfilterexcludebody;
+						dol_syslog(" Discarded - Email body contains string ".$searchfilterexcludebody);
+						continue; // Exclude email
+					}
+				}
 
 				//var_dump($plainmsg);
 				//var_dump($htmlmsg);
@@ -1738,45 +1767,45 @@ class EmailCollector extends CommonObject
 
 				// Parse IMAP email structure
 				/*
-				$structure = imap_fetchstructure($connection, $imapemail, 0);
+				 $structure = imap_fetchstructure($connection, $imapemail, 0);
 
-				$partplain = $parthtml = -1;
-				$encodingplain = $encodinghtml = '';
+				 $partplain = $parthtml = -1;
+				 $encodingplain = $encodinghtml = '';
 
-				$result = createPartArray($structure, '');
+				 $result = createPartArray($structure, '');
 
-				foreach($result as $part)
-				{
-					// $part['part_object']->type seems 0 for content
-					// $part['part_object']->type seems 5 for attachment
-					if (empty($part['part_object'])) continue;
-					if ($part['part_object']->subtype == 'HTML')
-					{
-						$parthtml=$part['part_number'];
-						if ($part['part_object']->encoding == 4)
-						{
-							$encodinghtml = 'aaa';
-						}
-					}
-					if ($part['part_object']->subtype == 'PLAIN')
-					{
-						$partplain=$part['part_number'];
-						if ($part['part_object']->encoding == 4)
-						{
-							$encodingplain = 'rr';
-						}
-					}
-				}
-				//var_dump($result);
-				//var_dump($partplain);
-				//var_dump($parthtml);
+				 foreach($result as $part)
+				 {
+				 // $part['part_object']->type seems 0 for content
+				 // $part['part_object']->type seems 5 for attachment
+				 if (empty($part['part_object'])) continue;
+				 if ($part['part_object']->subtype == 'HTML')
+				 {
+				 $parthtml=$part['part_number'];
+				 if ($part['part_object']->encoding == 4)
+				 {
+				 $encodinghtml = 'aaa';
+				 }
+				 }
+				 if ($part['part_object']->subtype == 'PLAIN')
+				 {
+				 $partplain=$part['part_number'];
+				 if ($part['part_object']->encoding == 4)
+				 {
+				 $encodingplain = 'rr';
+				 }
+				 }
+				 }
+				 //var_dump($result);
+				 //var_dump($partplain);
+				 //var_dump($parthtml);
 
-				//var_dump($structure);
-				//var_dump($parthtml);
-				//var_dump($partplain);
+				 //var_dump($structure);
+				 //var_dump($parthtml);
+				 //var_dump($partplain);
 
-				$messagetext = imap_fetchbody($connection, $imapemail, ($parthtml != '-1' ? $parthtml : ($partplain != '-1' ? $partplain : 1)), FT_PEEK);
-				*/
+				 $messagetext = imap_fetchbody($connection, $imapemail, ($parthtml != '-1' ? $parthtml : ($partplain != '-1' ? $partplain : 1)), FT_PEEK);
+				 */
 
 				//var_dump($messagetext);
 				//var_dump($structure->parts[0]->parts);
@@ -1812,6 +1841,14 @@ class EmailCollector extends CommonObject
 					//var_dump($msgid);exit;
 				}
 
+				if ($searchfilterexcludesubject) {
+					if (preg_match('/'.preg_quote($searchfilterexcludesubject, '/').'/ms', $subject)) {
+						$nbemailprocessed++;
+						$operationslog .= '<br>Discarded - Email subject contains string '.$searchfilterexcludesubject;
+						dol_syslog(" Discarded - Email subject contains string ".$searchfilterexcludesubject);
+						continue; // Exclude email
+					}
+				}
 
 				$reg = array();
 				if (preg_match('/^(.*)<(.*)>$/', $fromstring, $reg)) {
@@ -1830,6 +1867,7 @@ class EmailCollector extends CommonObject
 				}
 				$fk_element_id = 0; $fk_element_type = '';
 
+				$this->db->begin();
 
 				$contactid = 0; $thirdpartyid = 0; $projectid = 0; $ticketid = 0;
 
@@ -1918,11 +1956,11 @@ class EmailCollector extends CommonObject
 								$objectemail = new Adherent($this->db);
 							}
 							/*if ($reg[1] == 'leav') {   // Leave / Holiday
-								$objectemail = new Holiday($db);
-							}
-							if ($reg[1] == 'exp') {   // ExpenseReport
-								$objectemail = new ExpenseReport($db);
-							}*/
+							 $objectemail = new Holiday($db);
+							 }
+							 if ($reg[1] == 'exp') {   // ExpenseReport
+							 $objectemail = new ExpenseReport($db);
+							 }*/
 						} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
 							// This is an external reference, we check if we have it in our database
 							if (!is_object($objectemail)) {
@@ -2081,34 +2119,34 @@ class EmailCollector extends CommonObject
 				}
 
 				/*
-				if ($replyto) {
-					if (empty($contactid)) {		// Try to find contact using email
-						$result = $contactstatic->fetch(0, null, '', $replyto);
+				 if ($replyto) {
+				 if (empty($contactid)) {		// Try to find contact using email
+				 $result = $contactstatic->fetch(0, null, '', $replyto);
 
-						if ($result > 0) {
-							dol_syslog("We found a contact with the email ".$replyto);
-							$contactid = $contactstatic->id;
-							$contactfoundby = 'email of contact ('.$replyto.')';
-							if (empty($thirdpartyid) && $contactstatic->socid > 0) {
-								$result = $thirdpartystatic->fetch($contactstatic->socid);
-								if ($result > 0) {
-									$thirdpartyid = $thirdpartystatic->id;
-									$thirdpartyfoundby = 'email of contact ('.$replyto.')';
-								}
-							}
-						}
-					}
+				 if ($result > 0) {
+				 dol_syslog("We found a contact with the email ".$replyto);
+				 $contactid = $contactstatic->id;
+				 $contactfoundby = 'email of contact ('.$replyto.')';
+				 if (empty($thirdpartyid) && $contactstatic->socid > 0) {
+				 $result = $thirdpartystatic->fetch($contactstatic->socid);
+				 if ($result > 0) {
+				 $thirdpartyid = $thirdpartystatic->id;
+				 $thirdpartyfoundby = 'email of contact ('.$replyto.')';
+				 }
+				 }
+				 }
+				 }
 
-					if (empty($thirdpartyid)) {		// Try to find thirdparty using email
-						$result = $thirdpartystatic->fetch(0, '', '', '', '', '', '', '', '', '', $replyto);
-						if ($result > 0) {
-							dol_syslog("We found a thirdparty with the email ".$replyto);
-							$thirdpartyid = $thirdpartystatic->id;;
-							$thirdpartyfoundby = 'email ('.$replyto.')';
-						}
-					}
-				}
-				*/
+				 if (empty($thirdpartyid)) {		// Try to find thirdparty using email
+				 $result = $thirdpartystatic->fetch(0, '', '', '', '', '', '', '', '', '', $replyto);
+				 if ($result > 0) {
+				 dol_syslog("We found a thirdparty with the email ".$replyto);
+				 $thirdpartyid = $thirdpartystatic->id;;
+				 $thirdpartyfoundby = 'email ('.$replyto.')';
+				 }
+				 }
+				 }
+				 */
 
 				// Do operations (extract variables and creating data)
 				if ($mode < 2) {	// 0=Mode production, 1=Mode test (read IMAP and try SQL update then rollback), 2=Mode test with no SQL updates
@@ -2549,98 +2587,98 @@ class EmailCollector extends CommonObject
 									$this->errors[] = 'User Not allowed to add documents';
 								}
 								$arrayobject = array(
-								'propale' => array('table' => 'propal',
-									'fields' => array('ref'),
-									'class' => 'comm/propal/class/propal.class.php',
-									'object' => 'Propal'),
-								'holiday' => array('table' => 'holiday',
-									'fields' => array('ref'),
-									'class' => 'holiday/class/holiday.class.php',
-									'object' => 'Holiday'),
-								'expensereport' => array('table' => 'expensereport',
-									'fields' => array('ref'),
-									'class' => 'expensereport/class/expensereport.class.php',
-									'object' => 'ExpenseReport'),
-								'recruitment/recruitmentjobposition' => array('table' => 'recruitment_recruitmentjobposition',
-									'fields' => array('ref'),
-									'class' => 'recruitment/class/recruitmentjobposition.class.php',
-									'object' => 'RecruitmentJobPosition'),
-								'recruitment/recruitmentcandidature' => array('table' => 'recruitment_recruitmentcandidature',
-									'fields' => array('ref'),
-									'class' => 'recruitment/class/recruitmentcandidature.class.php',
-									'object' => ' RecruitmentCandidature'),
-								'societe' => array('table' => 'societe',
-									'fields' => array('code_client', 'code_fournisseur'),
-									'class' => 'societe/class/societe.class.php',
-									'object' => 'Societe'),
-								'commande' => array('table' => 'commande',
-									'fields' => array('ref'),
-									'class' => 'commande/class/commande.class.php',
-									'object' => 'Commande'),
-								'expedition' => array('table' => 'expedition',
-									'fields' => array('ref'),
-									'class' => 'expedition/class/expedition.class.php',
-									'object' => 'Expedition'),
-								'contract' => array('table' => 'contrat',
-									'fields' => array('ref'),
-									'class' => 'contrat/class/contrat.class.php',
-									'object' => 'Contrat'),
-								'fichinter' => array('table' => 'fichinter',
-									'fields' => array('ref'),
-									'class' => 'fichinter/class/fichinter.class.php',
-									'object' => 'Fichinter'),
-								'ticket' => array('table' => 'ticket',
-									'fields' => array('ref'),
-									'class' => 'ticket/class/ticket.class.php',
-									'object' => 'Ticket'),
-								'knowledgemanagement' => array('table' => 'knowledgemanagement_knowledgerecord',
-									'fields' => array('ref'),
-									'class' => 'knowledgemanagement/class/knowledgemanagement.class.php',
-									'object' => 'KnowledgeRecord'),
-								'supplier_proposal' => array('table' => 'supplier_proposal',
-									'fields' => array('ref'),
-									'class' => 'supplier_proposal/class/supplier_proposal.class.php',
-									'object' => 'SupplierProposal'),
-								'fournisseur/commande' => array('table' => 'commande_fournisseur',
-									'fields' => array('ref', 'ref_supplier'),
-									'class' => 'fourn/class/fournisseur.commande.class.php',
-									'object' => 'SupplierProposal'),
-								'facture' => array('table' => 'facture',
-									'fields' => array('ref'),
-									'class' => 'compta/facture/class/facture.class.php',
-									'object' => 'Facture'),
-								'fournisseur/facture' => array('table' => 'facture_fourn',
-									'fields' => array('ref', 'ref_client'),
-									'class' => 'fourn/class/fournisseur.facture.class.php',
-									'object' => 'FactureFournisseur'),
-								'produit' => array('table' => 'product',
-									'fields' => array('ref'),
-									'class' => 'product/class/product.class.php',
-									'object' => 'Product'),
-								'productlot' => array('table' => 'product_lot',
-									'fields' => array('batch'),
-									'class' => 'product/stock/class/productlot.class.php',
-									'object' => 'Productlot'),
-								'projet' => array('table' => 'projet',
-									'fields' => array('ref'),
-									'class' => 'projet/class/projet.class.php',
-									'object' => 'Project'),
-								'projet_task' => array('table' => 'projet_task',
-									'fields' => array('ref'),
-									'class' => 'projet/class/task.class.php',
-									'object' => 'Task'),
-								'ressource' => array('table' => 'resource',
-									'fields' => array('ref'),
-									'class' => 'ressource/class/dolressource.class.php',
-									'object' => 'Dolresource'),
-								'bom' => array('table' => 'bom_bom',
-									'fields' => array('ref'),
-									'class' => 'bom/class/bom.class.php',
-									'object' => 'BOM'),
-								'mrp' => array('table' => 'mrp_mo',
-									'fields' => array('ref'),
-									'class' => 'mrp/class/mo.class.php',
-									'object' => 'Mo'),
+									'propale' => array('table' => 'propal',
+										'fields' => array('ref'),
+										'class' => 'comm/propal/class/propal.class.php',
+										'object' => 'Propal'),
+									'holiday' => array('table' => 'holiday',
+										'fields' => array('ref'),
+										'class' => 'holiday/class/holiday.class.php',
+										'object' => 'Holiday'),
+									'expensereport' => array('table' => 'expensereport',
+										'fields' => array('ref'),
+										'class' => 'expensereport/class/expensereport.class.php',
+										'object' => 'ExpenseReport'),
+									'recruitment/recruitmentjobposition' => array('table' => 'recruitment_recruitmentjobposition',
+										'fields' => array('ref'),
+										'class' => 'recruitment/class/recruitmentjobposition.class.php',
+										'object' => 'RecruitmentJobPosition'),
+									'recruitment/recruitmentcandidature' => array('table' => 'recruitment_recruitmentcandidature',
+										'fields' => array('ref'),
+										'class' => 'recruitment/class/recruitmentcandidature.class.php',
+										'object' => ' RecruitmentCandidature'),
+									'societe' => array('table' => 'societe',
+										'fields' => array('code_client', 'code_fournisseur'),
+										'class' => 'societe/class/societe.class.php',
+										'object' => 'Societe'),
+									'commande' => array('table' => 'commande',
+										'fields' => array('ref'),
+										'class' => 'commande/class/commande.class.php',
+										'object' => 'Commande'),
+									'expedition' => array('table' => 'expedition',
+										'fields' => array('ref'),
+										'class' => 'expedition/class/expedition.class.php',
+										'object' => 'Expedition'),
+									'contract' => array('table' => 'contrat',
+										'fields' => array('ref'),
+										'class' => 'contrat/class/contrat.class.php',
+										'object' => 'Contrat'),
+									'fichinter' => array('table' => 'fichinter',
+										'fields' => array('ref'),
+										'class' => 'fichinter/class/fichinter.class.php',
+										'object' => 'Fichinter'),
+									'ticket' => array('table' => 'ticket',
+										'fields' => array('ref'),
+										'class' => 'ticket/class/ticket.class.php',
+										'object' => 'Ticket'),
+									'knowledgemanagement' => array('table' => 'knowledgemanagement_knowledgerecord',
+										'fields' => array('ref'),
+										'class' => 'knowledgemanagement/class/knowledgemanagement.class.php',
+										'object' => 'KnowledgeRecord'),
+									'supplier_proposal' => array('table' => 'supplier_proposal',
+										'fields' => array('ref'),
+										'class' => 'supplier_proposal/class/supplier_proposal.class.php',
+										'object' => 'SupplierProposal'),
+									'fournisseur/commande' => array('table' => 'commande_fournisseur',
+										'fields' => array('ref', 'ref_supplier'),
+										'class' => 'fourn/class/fournisseur.commande.class.php',
+										'object' => 'SupplierProposal'),
+									'facture' => array('table' => 'facture',
+										'fields' => array('ref'),
+										'class' => 'compta/facture/class/facture.class.php',
+										'object' => 'Facture'),
+									'fournisseur/facture' => array('table' => 'facture_fourn',
+										'fields' => array('ref', 'ref_client'),
+										'class' => 'fourn/class/fournisseur.facture.class.php',
+										'object' => 'FactureFournisseur'),
+									'produit' => array('table' => 'product',
+										'fields' => array('ref'),
+										'class' => 'product/class/product.class.php',
+										'object' => 'Product'),
+									'productlot' => array('table' => 'product_lot',
+										'fields' => array('batch'),
+										'class' => 'product/stock/class/productlot.class.php',
+										'object' => 'Productlot'),
+									'projet' => array('table' => 'projet',
+										'fields' => array('ref'),
+										'class' => 'projet/class/projet.class.php',
+										'object' => 'Project'),
+									'projet_task' => array('table' => 'projet_task',
+										'fields' => array('ref'),
+										'class' => 'projet/class/task.class.php',
+										'object' => 'Task'),
+									'ressource' => array('table' => 'resource',
+										'fields' => array('ref'),
+										'class' => 'ressource/class/dolressource.class.php',
+										'object' => 'Dolresource'),
+									'bom' => array('table' => 'bom_bom',
+										'fields' => array('ref'),
+										'class' => 'bom/class/bom.class.php',
+										'object' => 'BOM'),
+									'mrp' => array('table' => 'mrp_mo',
+										'fields' => array('ref'),
+										'class' => 'mrp/class/mo.class.php',
+										'object' => 'Mo'),
 								);
 
 								if (!is_object($hookmanager)) {
@@ -2997,43 +3035,43 @@ class EmailCollector extends CommonObject
 
 								// Set candidature ref if not yet defined
 								/*if (empty($candidaturetocreate->ref))				We do not need this because we create object in draft status
-								{
-								// Get next Ref
-								$defaultref = '';
-								$modele = empty($conf->global->CANDIDATURE_ADDON) ? 'mod_candidature_simple' : $conf->global->CANDIDATURE_ADDON;
+								 {
+								 // Get next Ref
+								 $defaultref = '';
+								 $modele = empty($conf->global->CANDIDATURE_ADDON) ? 'mod_candidature_simple' : $conf->global->CANDIDATURE_ADDON;
 
-								// Search template files
-								$file = ''; $classname = ''; $filefound = 0; $reldir = '';
-								$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-								foreach ($dirmodels as $reldir)
-								{
-									$file = dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
-									if (file_exists($file)) {
-										$filefound = 1;
-										$classname = $modele;
-										break;
-									}
-								}
+								 // Search template files
+								 $file = ''; $classname = ''; $filefound = 0; $reldir = '';
+								 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+								 foreach ($dirmodels as $reldir)
+								 {
+								 $file = dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
+								 if (file_exists($file)) {
+								 $filefound = 1;
+								 $classname = $modele;
+								 break;
+								 }
+								 }
 
-								if ($filefound) {
-									if ($savesocid > 0) {
-										if ($savesocid != $candidaturetocreate->socid) {
-											$errorforactions++;
-											setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$candidaturetocreate->socid.') by setting socid in operation with a different value', null, 'errors');
-										}
-									} else {
-										if ($candidaturetocreate->socid > 0)
-										{
-											$thirdpartystatic->fetch($candidaturetocreate->socid);
-										}
-									}
+								 if ($filefound) {
+								 if ($savesocid > 0) {
+								 if ($savesocid != $candidaturetocreate->socid) {
+								 $errorforactions++;
+								 setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$candidaturetocreate->socid.') by setting socid in operation with a different value', null, 'errors');
+								 }
+								 } else {
+								 if ($candidaturetocreate->socid > 0)
+								 {
+								 $thirdpartystatic->fetch($candidaturetocreate->socid);
+								 }
+								 }
 
-									$result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
-									$modModuleToUseForNextValue = new $classname;
-									$defaultref = $modModuleToUseForNextValue->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $tickettocreate);
-								}
-								$candidaturetocreate->ref = $defaultref;
-								}*/
+								 $result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
+								 $modModuleToUseForNextValue = new $classname;
+								 $defaultref = $modModuleToUseForNextValue->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $tickettocreate);
+								 }
+								 $candidaturetocreate->ref = $defaultref;
+								 }*/
 
 								if ($errorforthisaction) {
 									$errorforactions++;
