@@ -114,13 +114,13 @@ if ($action == 'add') {
 			if (!$errori[$n]) {
 				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-				$accountfrom = new Account($db);
-				$accountfrom->fetch(GETPOST($n.'_account_from', 'int'));
+				$tmpaccountfrom = new Account($db);
+				$tmpaccountfrom->fetch(GETPOST($n.'_account_from', 'int'));
 
-				$accountto = new Account($db);
-				$accountto->fetch(GETPOST($n.'_account_to', 'int'));
+				$tmpaccountto = new Account($db);
+				$tmpaccountto->fetch(GETPOST($n.'_account_to', 'int'));
 
-				if ($accountto->currency_code == $accountfrom->currency_code) {
+				if ($tmpaccountto->currency_code == $tmpaccountfrom->currency_code) {
 					$amountto[$n] = $amount[$n];
 				} else {
 					if (!$amountto[$n]) {
@@ -133,7 +133,7 @@ if ($action == 'add') {
 					setEventMessages($langs->trans("AmountMustBePositive").' #'.$n, null, 'errors');
 				}
 
-				if ($accountto->id == $accountfrom->id) {
+				if ($tmpaccountto->id == $tmpaccountfrom->id) {
 					$errori[$n]++;
 					setEventMessages($langs->trans("ErrorFromToAccountsMustDiffers").' #'.$n, null, 'errors');
 				}
@@ -149,45 +149,45 @@ if ($action == 'add') {
 				// By default, electronic transfert from bank to bank
 				$typefrom = $type[$n];
 				$typeto = $type[$n];
-				if ($accountto->courant == Account::TYPE_CASH || $accountfrom->courant == Account::TYPE_CASH) {
+				if ($tmpaccountto->courant == Account::TYPE_CASH || $tmpaccountfrom->courant == Account::TYPE_CASH) {
 					// This is transfer of change
 					$typefrom = 'LIQ';
 					$typeto = 'LIQ';
 				}
 
 				if (!$errori[$n]) {
-					$bank_line_id_from = $accountfrom->addline($dateo[$n], $typefrom, $label[$n], price2num(-1 * $amount[$n]), '', '', $user);
+					$bank_line_id_from = $tmpaccountfrom->addline($dateo[$n], $typefrom, $label[$n], price2num(-1 * $amount[$n]), '', '', $user);
 				}
 				if (!($bank_line_id_from > 0)) {
 					$errori[$n]++;
 				}
 				if (!$errori[$n]) {
-					$bank_line_id_to = $accountto->addline($dateo[$n], $typeto, $label[$n], $amountto[$n], '', '', $user);
+					$bank_line_id_to = $tmpaccountto->addline($dateo[$n], $typeto, $label[$n], $amountto[$n], '', '', $user);
 				}
 				if (!($bank_line_id_to > 0)) {
 					$errori[$n]++;
 				}
 
 				if (!$errori[$n]) {
-					$result = $accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
+					$result = $tmpaccountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
 				}
 				if (!($result > 0)) {
 					$errori++;
 				}
 				if (!$errori[$n]) {
-					$result = $accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
+					$result = $tmpaccountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
 				}
 				if (!($result > 0)) {
 					$errori[$n]++;
 				}
 				if (!$errori[$n]) {
 					$mesgs = $langs->trans("TransferFromToDone", '{s1}', '{s2}', $amount[$n], $langs->transnoentitiesnoconv("Currency".$conf->currency));
-					$mesgs = str_replace('{s1}', '<a href="bankentries_list.php?id='.$accountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$accountfrom->label.'</a>', $mesgs);
-					$mesgs = str_replace('{s2}', '<a href="bankentries_list.php?id='.$accountto->id.'">'.$accountto->label.'</a>', $mesgs);
+					$mesgs = str_replace('{s1}', '<a href="bankentries_list.php?id='.$tmpaccountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$tmpaccountfrom->label.'</a>', $mesgs);
+					$mesgs = str_replace('{s2}', '<a href="bankentries_list.php?id='.$tmpaccountto->id.'">'.$tmpaccountto->label.'</a>', $mesgs);
 					setEventMessages($mesgs, null, 'mesgs');
 					$db->commit();
 				} else {
-					setEventMessages($accountfrom->error.' '.$accountto->error, null, 'errors');
+					setEventMessages($tmpaccountfrom->error.' '.$tmpaccountto->error, null, 'errors');
 					$db->rollback();
 				}
 			}
