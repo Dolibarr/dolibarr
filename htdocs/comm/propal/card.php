@@ -1238,7 +1238,7 @@ if (empty($reshook)) {
 
 			// Prepare a price equivalent for minimum price check
 			$pu_equivalent = $pu_ht;
-			$pu_equivalent_ttc = $pu_ttc;
+			//$pu_equivalent_ttc = $pu_ttc;
 			$currency_tx = $object->multicurrency_tx;
 
 			// Check if we have a foreing currency
