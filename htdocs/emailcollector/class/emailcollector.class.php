@@ -1589,6 +1589,8 @@ class EmailCollector extends CommonObject
 					$header = $imapemail->getHeader()->raw;
 					$overview = $imapemail->getAttributes();
 				} else {
+					$operationslog .= '<br>email = '.((string) $imapemail);
+
 					//$header = imap_headerinfo($connection, $imapemail);
 					$header = imap_fetchheader($connection, $imapemail, 0);
 					$overview = imap_fetch_overview($connection, $imapemail, 0);
@@ -3139,11 +3141,16 @@ class EmailCollector extends CommonObject
 					if (!empty($targetdir) && empty($mode)) {
 						if (empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 							dol_syslog("EmailCollector::doCollectOneCollector move message ".((string) $imapemail)." to ".$connectstringtarget, LOG_DEBUG);
+							$operationslog .= '<br>Move mail '.((string) $imapemail);
+
 							$res = imap_mail_move($connection, $imapemail, $targetdir, 0);
 							if ($res == false) {
 								$errorforemail++;
 								$this->error = imap_last_error();
 								$this->errors[] = $this->error;
+
+								$operationslog .= '<br>Error in move '.$this->error;
+
 								dol_syslog(imap_last_error());
 							}
 						} else {
@@ -3199,6 +3206,7 @@ class EmailCollector extends CommonObject
 			$output = $langs->trans('NoNewEmailToProcess');
 		}
 
+		// Disconnect
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 			$client->disconnect();
 		} else {
