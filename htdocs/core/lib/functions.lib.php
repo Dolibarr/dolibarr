@@ -5329,7 +5329,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			$options = '&'.$options;
 		}
 
-		if (!$sortorder || $field1 != $sortfield1) {
+		if (!$sortorder || ($field1 != $sortfield1)) {
 			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
 		} else {
@@ -8040,6 +8040,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				// Set the online payment url link into __ONLINE_PAYMENT_URL__ key
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 				$outputlangs->loadLangs(array('paypal', 'other'));
+
+				$amounttouse = 0;
 				$typeforonlinepayment = 'free';
 				if (is_object($object) && $object->element == 'commande') {
 					$typeforonlinepayment = 'order';
@@ -8049,7 +8051,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				if (is_object($object) && $object->element == 'member') {
 					$typeforonlinepayment = 'member';
-					$amounttouse = 0;
 					if (!empty($object->last_subscription_amount)) {
 						$amounttouse = $object->last_subscription_amount;
 					}
@@ -8522,21 +8523,28 @@ function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
  *
  *	@param	string|string[] $mesgs			Message string or array
  *  @param  string          $style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *  @param	int				$noduplicate	1 means we do not add the message if already present in session stack
  *  @return	void
  *  @see	dol_htmloutput_events()
  */
-function setEventMessage($mesgs, $style = 'mesgs')
+function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0)
 {
 	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);		This is not deprecated, it is used by setEventMessages function
 	if (!is_array($mesgs)) {
 		// If mesgs is a string
 		if ($mesgs) {
+			if (!empty($noduplicate) && isset($_SESSION['dol_events'][$style]) && in_array($mesgs, $_SESSION['dol_events'][$style])) {
+				return;
+			}
 			$_SESSION['dol_events'][$style][] = $mesgs;
 		}
 	} else {
 		// If mesgs is an array
 		foreach ($mesgs as $mesg) {
 			if ($mesg) {
+				if (!empty($noduplicate) && isset($_SESSION['dol_events'][$style]) && in_array($mesg, $_SESSION['dol_events'][$style])) {
+					return;
+				}
 				$_SESSION['dol_events'][$style][] = $mesg;
 			}
 		}
@@ -8551,13 +8559,14 @@ function setEventMessage($mesgs, $style = 'mesgs')
  *	@param	array|null	$mesgs			Message array
  *  @param  string		$style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
  *  @param	string		$messagekey		A key to be used to allow the feature "Never show this message again"
+ *  @param	int			$noduplicate	1 means we do not add the message if already present in session stack
  *  @return	void
  *  @see	dol_htmloutput_events()
  */
-function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '')
+function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '', $noduplicate = 0)
 {
 	if (empty($mesg) && empty($mesgs)) {
-		dol_syslog("Try to add a message in stack with empty message", LOG_WARNING);
+		dol_syslog("Try to add a message in stack, but value to add is empty message", LOG_WARNING);
 	} else {
 		if ($messagekey) {
 			// Complete message with a js link to set a cookie "DOLHIDEMESSAGE".$messagekey;
@@ -8569,12 +8578,12 @@ function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '')
 				dol_print_error('', 'Bad parameter style='.$style.' for setEventMessages');
 			}
 			if (empty($mesgs)) {
-				setEventMessage($mesg, $style);
+				setEventMessage($mesg, $style, $noduplicate);
 			} else {
 				if (!empty($mesg) && !in_array($mesg, $mesgs)) {
-					setEventMessage($mesg, $style); // Add message string if not already into array
+					setEventMessage($mesg, $style, $noduplicate); // Add message string if not already into array
 				}
-				setEventMessage($mesgs, $style);
+				setEventMessage($mesgs, $style, $noduplicate);
 			}
 		}
 	}
@@ -9804,13 +9813,21 @@ function printCommonFooter($zone = 'private')
  * For example: "A=1;B=2;C=2" is exploded into array('A'=>1,'B'=>2,'C'=>3)
  *
  * @param 	string	$string		String to explode
- * @param 	string	$delimiter	Delimiter between each couple of data
+ * @param 	string	$delimiter	Delimiter between each couple of data. Example: ';' or '[\n;]+' or '(\n\r|\r|\n|;)'
  * @param 	string	$kv			Delimiter between key and value
  * @return	array				Array of data exploded
  */
 function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 {
-	if ($a = explode($delimiter, $string)) {
+	if (preg_match('/^\[.*\]$/sm', $delimiter) || preg_match('/^\(.*\)$/sm', $delimiter)) {
+		// This is a regex string
+		$newdelimiter = $delimiter;
+	} else {
+		// This is a simple string
+		$newdelimiter = preg_quote($delimiter, '/');
+	}
+
+	if ($a = preg_split('/'.$newdelimiter.'/', $string)) {
 		$ka = array();
 		foreach ($a as $s) { // each part
 			if ($s) {
@@ -9823,6 +9840,7 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 		}
 		return $ka;
 	}
+
 	return array();
 }
 
@@ -9866,10 +9884,10 @@ function dol_getmypid()
  *                                      like "keyword1 keyword2" = We want record field like keyword1 AND field like keyword2
  *                                      or like "keyword1|keyword2" = We want record field like keyword1 OR field like keyword2
  *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < -1000"
- *                             			If param $mode is 2, can contains a list of int id separated by comma like "1,3,4"
- *                             			If param $mode is 3, can contains a list of string separated by comma like "a,b,c"
- * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of ID separated with comma (Example '1,3,4')
- * 										3=value is list of string separated with comma (Example 'text 1,text 2'), 4=value is a list of ID separated with comma (Example '2,7') to be used to search into a multiselect string '1,2,3,4'
+ *                             			If param $mode is 2 or -2, can contains a list of int id separated by comma like "1,3,4"
+ *                             			If param $mode is 3 or -3, can contains a list of string separated by comma like "a,b,c".
+ * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of ID separated with comma (Example '1,3,4'), -2 is for exclude list,
+ * 										3=value is list of string separated with comma (Example 'text 1,text 2'), -3 if for exclude list, 4=value is a list of ID separated with comma (Example '2,7') to be used to search into a multiselect string '1,2,3,4'
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  * @see dolSqlDateFilter()
@@ -9884,7 +9902,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 		$value = preg_replace('/\*/', '%', $value); // Replace * with %
 	}
 	if ($mode == 1) {
-		$value = preg_replace('/([!<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"), '/').'\-])/', '\1\2', $value); // Clean string '< 10' into '<10' so we can the explode on space to get all tests to do
+		$value = preg_replace('/([!<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"), '/').'\-])/', '\1\2', $value); // Clean string '< 10' into '<10' so we can then explode on space to get all tests to do
 	}
 
 	$value = preg_replace('/\s*\|\s*/', '|', $value);
@@ -9895,16 +9913,15 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 		$fields = array($fields);
 	}
 
-	$j = 0;
-	foreach ($crits as $crit) {
+	$i1 = 0;	// count the nb of and criteria added (all fields / criterias)
+	foreach ($crits as $crit) {		// Loop on each AND criteria
 		$crit = trim($crit);
-		$i = 0;
-		$i2 = 0;
+		$i2 = 0;	// count the nb of valid criteria added for this this first criteria
 		$newres = '';
 		foreach ($fields as $field) {
 			if ($mode == 1) {
 				$tmpcrits = explode('|', $crit);
-				$i3 = 0;	// count the nb of valid criteria added for this field
+				$i3 = 0;	// count the nb of valid criteria added for this current field
 				foreach ($tmpcrits as $tmpcrit) {
 					if ($tmpcrit !== '0' && empty($tmpcrit)) {
 						continue;
@@ -9931,7 +9948,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 						$i3++; // a criteria was added to string
 					}
 				}
-				$i2++;
+				$i2++; // a criteria for 1 more field was added to string
 			} elseif ($mode == 2 || $mode == -2) {
 				$crit = preg_replace('/[^0-9,]/', '', $crit); // ID are always integer
 				$newres .= ($i2 > 0 ? ' OR ' : '').$field." ".($mode == -2 ? 'NOT ' : '');
@@ -9939,7 +9956,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				if ($mode == -2) {
 					$newres .= ' OR '.$field.' IS NULL';
 				}
-				$i2++; // a criteria was added to string
+				$i2++; // a criteria for 1 more field was added to string
 			} elseif ($mode == 3 || $mode == -3) {
 				$tmparray = explode(',', $crit);
 				if (count($tmparray)) {
@@ -9952,7 +9969,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 						}
 					}
 					$newres .= ($i2 > 0 ? ' OR ' : '').$field." ".($mode == -3 ? 'NOT ' : '')."IN (".$db->sanitize($listofcodes, 1).")";
-					$i2++; // a criteria was added to string
+					$i2++; // a criteria for 1 more field was added to string
 				}
 				if ($mode == -3) {
 					$newres .= ' OR '.$field.' IS NULL';
@@ -9969,20 +9986,20 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 							$newres .= ' OR '.$field." LIKE '%,".$db->escape($val)."'";
 							$newres .= ' OR '.$field." LIKE '%,".$db->escape($val).",%'";
 							$newres .= ')';
-							$i2++;
+							$i2++; // a criteria for 1 more field was added to string (we can add several citeria for the same field as it is a multiselect search criteria)
 						}
 					}
 				}
 			} else { // $mode=0
 				$tmpcrits = explode('|', $crit);
-				$i3 = 0;	// count the nb of valid criteria added for this field
-				foreach ($tmpcrits as $tmpcrit) {
+				$i3 = 0;	// count the nb of valid criteria added for the current couple criteria/field
+				foreach ($tmpcrits as $tmpcrit) {	// loop on each OR criteria
 					if ($tmpcrit !== '0' && empty($tmpcrit)) {
 						continue;
 					}
 					$tmpcrit = trim($tmpcrit);
 
-					if ($tmpcrit == '^$') {	// If we search empty, we must combined different fields with AND
+					if ($tmpcrit == '^$' || strpos($crit, '!') === 0) {	// If we search empty, we must combined different OR fields with AND
 						$newres .= (($i2 > 0 || $i3 > 0) ? ' AND ' : '');
 					} else {
 						$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
@@ -10028,15 +10045,15 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 
 					$i3++;
 				}
-				$i2++; // a criteria was added to string
+
+				$i2++; // a criteria for 1 more field was added to string
 			}
-			$i++;
 		}
 
 		if ($newres) {
 			$res = $res.($res ? ' AND ' : '').($i2 > 1 ? '(' : '').$newres.($i2 > 1 ? ')' : '');
 		}
-		$j++;
+		$i1++;
 	}
 	$res = ($nofirstand ? "" : " AND ")."(".$res.")";
 
@@ -11311,10 +11328,22 @@ function getElementProperties($element_type)
 		$classpath = 'contrat/class';
 		$module = 'contrat';
 		$subelement = 'contrat';
+	} elseif ($element_type == 'mailing') {
+		$classpath = 'comm/mailing/class';
+		$module = 'mailing';
+		$classfile = 'mailing';
+		$classname = 'Mailing';
+		$subelement = '';
 	} elseif ($element_type == 'member') {
 		$classpath = 'adherents/class';
 		$module = 'adherent';
 		$subelement = 'adherent';
+	} elseif ($element_type == 'mo') {
+		$classpath = 'mrp/class';
+		$classfile = 'mo';
+		$classname = 'Mo';
+		$module = 'mrp';
+		$subelement = '';
 	} elseif ($element_type == 'cabinetmed_cons') {
 		$classpath = 'cabinetmed/class';
 		$module = 'cabinetmed';

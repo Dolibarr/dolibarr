@@ -993,7 +993,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($sall) {
 		$param .= '&sall='.urlencode($sall);
@@ -2589,6 +2589,9 @@ if ($resql) {
 
 			$i++;
 		}
+
+		// Use correct digits number for totals
+		$totalarray['val']['total_margin'] = price2num($totalarray['val']['total_margin'], 'MT');
 
 		// Show total line
 		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';

@@ -85,6 +85,9 @@ class mailing_eventorganization extends MailingTargets
 		$sql .= " AND p.entity IN (".getEntity('project').")";
 		$sql .= " AND e.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		$sql .= " AND e.fk_project = ".((int) GETPOST('filter_eventorganization', 'int'));
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = e.email and mu.entity = ".((int) $conf->entity).")";
+		}
 		$sql .= " ORDER BY e.email";
 
 		// Stock recipients emails into targets table
@@ -159,14 +162,15 @@ class mailing_eventorganization extends MailingTargets
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
-		global $conf;
-
 		$sql = "SELECT COUNT(DISTINCT(e.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee as e, ";
 		$sql .= " ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " WHERE e.email <> ''";
 		$sql .= " AND e.fk_project = p.rowid";
 		$sql .= " AND p.entity IN (".getEntity('project').")";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = e.email and mu.entity = ".((int) $conf->entity).")";
+		}
 
 		//print $sql;
 

@@ -43,6 +43,9 @@ if (isModEnabled('adherent')) {
 if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
+if (!empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+}
 
 // Load translation files required by page
 $langs->loadLangs(array(
@@ -269,6 +272,15 @@ if ($object->id > 0) {
 		print yn($object->localtax2_assuj);
 		print '</td></tr>';
 	}
+
+	// VAT reverse-charge by default on supplier invoice or not
+	print '<tr>';
+	print '<td class="titlefield">';
+	print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc'));
+	print '</td><td>';
+	print '<input type="checkbox" name="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').' disabled>';
+	print '</td>';
+	print '</tr>';
 
 	// TVA Intra
 	print '<tr><td class="nowrap">';

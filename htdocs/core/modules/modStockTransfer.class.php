@@ -61,7 +61,7 @@ class modStockTransfer extends DolibarrModules
 		// Module description, used if translation string 'ModuleStockTransferDesc' not found (StockTransfer is name of module).
 		$this->description = $langs->trans("ModuleStockTransferDesc");
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "StockTransfer description (Long)";
+		$this->descriptionlong = "Advanced management of stock transfer orders with generation of stock transfer sheets";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = 'experimental';
 		// Url to the file with your last numberversion of this module

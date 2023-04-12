@@ -187,12 +187,12 @@ function getValidOnlinePaymentMethods($paymentmethod = '')
 /**
  * Return string with full online payment Url
  *
- * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'member' ...)
- * @param	string	$ref		Ref of object
- * @param	int		$amount		Amount of money to request for
- * @return	string				Url string
+ * @param   string		$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'member' ...)
+ * @param	string		$ref		Ref of object
+ * @param	int|float	$amount		Amount of money to request for
+ * @return	string					Url string
  */
-function showOnlinePaymentUrl($type, $ref, $amount = '9.99')
+function showOnlinePaymentUrl($type, $ref, $amount = 0)
 {
 	global $langs;
 
@@ -213,13 +213,13 @@ function showOnlinePaymentUrl($type, $ref, $amount = '9.99')
 /**
  * Return string with HTML link for online payment
  *
- * @param	string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'member' ...)
- * @param	string	$ref		Ref of object
- * @param	string	$label		Text or HTML tag to display, if empty it display the URL
- * @param	int		$amount		Amount of money to request for
- * @return	string			Url string
+ * @param	string		$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'member' ...)
+ * @param	string		$ref		Ref of object
+ * @param	string		$label		Text or HTML tag to display, if empty it display the URL
+ * @param	int|float	$amount		Amount of money to request for
+ * @return	string					Url string
  */
-function getHtmlOnlinePaymentLink($type, $ref, $label = '', $amount = '9.99')
+function getHtmlOnlinePaymentLink($type, $ref, $label = '', $amount = 0)
 {
 	$url = getOnlinePaymentUrl(0, $type, $ref, $amount);
 	$label = $label ? $label : $url;
@@ -230,15 +230,15 @@ function getHtmlOnlinePaymentLink($type, $ref, $label = '', $amount = '9.99')
 /**
  * Return string with full Url
  *
- * @param   int		$mode		      0=True url, 1=Url formated with colors
- * @param   string	$type		      Type of URL ('free', 'order', 'invoice', 'contractline', 'member', 'boothlocation', ...)
- * @param	string	$ref		      Ref of object
- * @param	int		$amount		      Amount of money to request for
- * @param	string	$freetag	      Free tag (required and used for $type='free' only)
- * @param   string  $localorexternal  0=Url for browser, 1=Url for external access
- * @return	string				      Url string
+ * @param   int			$mode		      0=True url, 1=Url formated with colors
+ * @param   string		$type		      Type of URL ('free', 'order', 'invoice', 'contractline', 'member', 'boothlocation', ...)
+ * @param	string		$ref		      Ref of object
+ * @param	int|float	$amount		      Amount of money to request for
+ * @param	string		$freetag	      Free tag (required and used for $type='free' only)
+ * @param   string  	$localorexternal  0=Url for browser, 1=Url for external access
+ * @return	string					      Url string
  */
-function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_tag', $localorexternal = 1)
+function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'your_tag', $localorexternal = 1)
 {
 	global $conf, $dolibarr_main_url_root;
 
