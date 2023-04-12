@@ -2683,7 +2683,7 @@ class Form
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "product_stock as ps on ps.fk_product = p.rowid";
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "entrepot as e on ps.fk_entrepot = e.rowid AND e.entity IN (" . getEntity('stock') . ")";
 			if (count($warehouseStatusArray) == 1 && is_numeric($warehouseStatusArray[0])) {
-				$sql .= ' AND e.rowid = ' . $this->db->sanitize($warehouseStatusArray[0]); // Return line if product is inside the selected warehouse.
+				$sql .= ' AND e.rowid IN ('.$this->db->sanitize($warehouseStatusArray[0]).')'; // Return line if product is inside the selected warehouse.
 			} else {
 				$sql .= ' AND e.statut IN ('.$this->db->sanitize($this->db->escape(implode(',', $warehouseStatusArray))).')'; // Return line if product is inside the selected stock. If not, an empty line will be returned so we will count 0.
 			}
