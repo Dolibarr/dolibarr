@@ -1089,7 +1089,7 @@ class FormOther
 	 *  @param	string		$option			Option
 	 *  @param	string		$morecss		More CSS
 	 *  @param  bool		$addjscombo		Add js combo
-	 *  @return	string
+	 *  @return	void
 	 *  @deprecated
 	 */
 	public function select_year($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp', $addjscombo = false)
