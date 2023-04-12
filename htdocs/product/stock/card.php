@@ -806,18 +806,18 @@ if ($action == 'create') {
 				// Total
 				print '<tr class="liste_total"><td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
 
-                $parameters = array();
-                // Note that $action and $object may have been modified by hook
-                $reshook = $hookmanager->executeHooks('printFieldListTotal', $parameters, $object);
+				$parameters = array();
+				// Note that $action and $object may have been modified by hook
+				$reshook = $hookmanager->executeHooks('printFieldListTotal', $parameters, $object);
 
-                if ($reshook < 0) {
-                    dol_print_error($db, $hookmanager->error, $hookmanager->errors);
-                    llxFooter();
-                    $db->close();
-                    exit;
-                }
+				if ($reshook < 0) {
+					dol_print_error($db, $hookmanager->error, $hookmanager->errors);
+					llxFooter();
+					$db->close();
+					exit;
+				}
 
-                print $hookmanager->resPrint;
+				print $hookmanager->resPrint;
 
 				print '<td class="liste_total right">';
 				$valtoshow = price2num($totalunit, 'MS');
