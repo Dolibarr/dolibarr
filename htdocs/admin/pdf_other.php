@@ -175,9 +175,11 @@ if (isModEnabled('facture')) {
 	print $form->selectarray("INVOICE_CATEGORY_OF_OPERATION", $arrval, $conf->global->INVOICE_CATEGORY_OF_OPERATION, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td></tr>';
 
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING").'</td><td>';
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("INVOICE_SHOW_SHIPPING_ADDRESS"), $langs->trans("INVOICE_SHOW_SHIPPING_ADDRESSMore"));
+	print '</td><td>';
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING');
+		print ajax_constantonoff('INVOICE_SHOW_SHIPPING_ADDRESS');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 		print $form->selectarray("INVOICE_SHOW_SHIPPING_ADDRESS", $arrval, $conf->global->INVOICE_SHOW_SHIPPING_ADDRESS);
