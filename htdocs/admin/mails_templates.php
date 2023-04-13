@@ -93,7 +93,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 if (empty($sortfield)) {
-	$sortfield = 'type_template, lang, position, label';
+	$sortfield = 'type_template,lang,position,label';
 }
 if (empty($sortorder)) {
 	$sortorder = 'ASC';
@@ -1011,7 +1011,7 @@ foreach ($fieldlist as $field => $value) {
 		}
 		$sortfieldtouse = ($sortable ? $fieldlist[$field] : '');
 		if ($sortfieldtouse == 'type_template') {
-			$sortfieldtouse.= ',label';
+			$sortfieldtouse.= 'type_template,lang,position,label';
 		}
 		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], $sortfieldtouse, ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, $align.' ');
 	}
