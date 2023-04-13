@@ -36,9 +36,15 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 {
 	global $db, $conf, $langs;
 
-	dol_syslog("functions_openid_connect::check_user_password_openid_connect");
+	// Force master entity in transversal mode
+	$entity = $entitytotest;
+	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+		$entity = 1;
+	}
 
 	$login = '';
+
+	dol_syslog("functions_openid_connect::check_user_password_openid_connect usertotest=".$usertotest." passwordtotest=".preg_replace('/./', '*', $passwordtotest)." entitytotest=".$entitytotest);
 
 	// Step 1 is done by user: request an authorization code
 
@@ -80,7 +86,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 				// Success: retrieve claim to return to Dolibarr as login
 				$sql = 'SELECT login, entity, datestartvalidity, dateendvalidity';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'user';
-				$sql .= " WHERE login = '".$userinfo_content->$login_claim."'";
+				$sql .= " WHERE login = '".$db->escape($userinfo_content->$login_claim)."'";
 				$sql .= ' AND entity IN (0,'.(array_key_exists('dol_entity', $_SESSION) ? ((int) $_SESSION["dol_entity"]) : 1).')';
 
 				dol_syslog("functions_openid::check_user_password_openid", LOG_DEBUG);
