@@ -143,7 +143,7 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new AccountingAccount($this->savdb);
+		$localobject=new AccountingAccount($db);
 		$localobject->fk_pcg_version = 'PCG99-ABREGE';
 		$localobject->account_category = 0;
 		$localobject->pcg_type = 'XXXXX';
@@ -177,7 +177,7 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new AccountingAccount($this->savdb);
+		$localobject=new AccountingAccount($db);
 		$result=$localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -229,7 +229,7 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new AccountingAccount($this->savdb);
+		$localobject=new AccountingAccount($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

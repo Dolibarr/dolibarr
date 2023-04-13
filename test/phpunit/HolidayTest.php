@@ -140,7 +140,7 @@ class HolidayTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Holiday($this->savdb);
+		$localobject=new Holiday($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -166,7 +166,7 @@ class HolidayTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Holiday($this->savdb);
+		$localobject=new Holiday($db);
 		$result=$localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -224,7 +224,7 @@ class HolidayTest extends PHPUnit\Framework\TestCase
 		$this->assertLessThan($result, 0, 'Holiday::update_note (public) error');
 
 
-		$newobject=new Holiday($this->savdb);
+		$newobject=new Holiday($db);
 		$result=$newobject->fetch($localobject->id);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0, 'Holiday::fetch error');
@@ -286,7 +286,7 @@ class HolidayTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Holiday($this->savdb);
+		$localobject=new Holiday($db);
 		$result=$localobject->fetch($id);
 
 		$result=$localobject->delete(0);
@@ -310,7 +310,7 @@ class HolidayTest extends PHPUnit\Framework\TestCase
 		$db=$this->savdb;
 
 		// Create a leave request the 1st morning only
-		$localobjecta=new Holiday($this->savdb);
+		$localobjecta=new Holiday($db);
 		$localobjecta->initAsSpecimen();
 		$localobjecta->date_debut = dol_mktime(0, 0, 0, 1, 1, 2020);
 		$localobjecta->date_fin = dol_mktime(0, 0, 0, 1, 1, 2020);
@@ -318,7 +318,7 @@ class HolidayTest extends PHPUnit\Framework\TestCase
 		$result=$localobjecta->create($user);
 
 		// Create a leave request the 2 afternoon only
-		$localobjectb=new Holiday($this->savdb);
+		$localobjectb=new Holiday($db);
 		$localobjectb->initAsSpecimen();
 		$localobjectb->date_debut = dol_mktime(0, 0, 0, 1, 2, 2020);
 		$localobjectb->date_fin = dol_mktime(0, 0, 0, 1, 2, 2020);
@@ -328,7 +328,7 @@ class HolidayTest extends PHPUnit\Framework\TestCase
 		$date_debut = dol_mktime(0, 0, 0, 1, 1, 2020);
 		$date_fin = dol_mktime(0, 0, 0, 1, 2, 2020);
 
-		$localobjectc=new Holiday($this->savdb);
+		$localobjectc=new Holiday($db);
 
 		$result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_debut, 0);
 		$this->assertFalse($result, 'result should be false, there is overlapping, full day is not available.');
@@ -362,7 +362,9 @@ class HolidayTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testUpdateBalance()
 	{
-		$localobjecta=new Holiday($this->savdb);
+		global $db;
+
+		$localobjecta=new Holiday($db);
 
 		$localobjecta->updateConfCP('lastUpdate', '20100101120000');
 		$result = $localobjecta->updateBalance();

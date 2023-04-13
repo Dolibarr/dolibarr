@@ -138,7 +138,7 @@ class LoanTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Loan($this->savdb);
+		$localobject=new Loan($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -164,7 +164,7 @@ class LoanTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Loan($this->savdb);
+		$localobject=new Loan($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -213,7 +213,7 @@ class LoanTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Loan($this->savdb);
+		$localobject=new Loan($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

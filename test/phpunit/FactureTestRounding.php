@@ -143,7 +143,7 @@ class FactureTestRounding extends PHPUnit\Framework\TestCase
 
 		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=0;
 
-		$localobject=new Facture($this->savdb);
+		$localobject=new Facture($db);
 		$localobject->initAsSpecimen();
 		$localobject->lines=array();
 		unset($localobject->total_ht);
@@ -156,7 +156,7 @@ class FactureTestRounding extends PHPUnit\Framework\TestCase
 			$localobject->addline('Description '.$i, 1.24, 1, 10);
 		}
 
-		$newlocalobject=new Facture($this->savdb);
+		$newlocalobject=new Facture($db);
 		$newlocalobject->fetch($result);
 		//var_dump($newlocalobject);
 
@@ -185,7 +185,7 @@ class FactureTestRounding extends PHPUnit\Framework\TestCase
 
 		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=0;
 
-		$localobject=new Facture($this->savdb);
+		$localobject=new Facture($db);
 		$localobject->initAsSpecimen();
 		$localobject->lines=array();
 		unset($localobject->total_ht);
@@ -198,7 +198,7 @@ class FactureTestRounding extends PHPUnit\Framework\TestCase
 			$localobject->addline('Description '.$i, 1.24, 1, 10);
 		}
 
-		$newlocalobject=new Facture($this->savdb);
+		$newlocalobject=new Facture($db);
 		$newlocalobject->fetch($result);
 		//var_dump($newlocalobject);
 
@@ -225,7 +225,7 @@ class FactureTestRounding extends PHPUnit\Framework\TestCase
 		// With option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 0
 		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=0;
 
-		$localobject1a=new Facture($this->savdb);
+		$localobject1a=new Facture($db);
 		$localobject1a->initAsSpecimen('nolines');
 		$facid=$localobject1a->create($user);
 		$localobject1a->addline('Line 1', 6.36, 15, 21);	// This include update_price
@@ -237,7 +237,7 @@ class FactureTestRounding extends PHPUnit\Framework\TestCase
 		// With option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 1
 		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=1;
 
-		$localobject1b=new Facture($this->savdb);
+		$localobject1b=new Facture($db);
 		$localobject1b->initAsSpecimen('nolines');
 		$facid=$localobject1b->create($user);
 		$localobject1b->addline('Line 1', 6.36, 15, 21);	// This include update_price
@@ -266,7 +266,7 @@ class FactureTestRounding extends PHPUnit\Framework\TestCase
 		// With option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 0
 		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=0;
 
-		$localobject2=new Facture($this->savdb);
+		$localobject2=new Facture($db);
 		$localobject2->initAsSpecimen('nolines');
 		$facid=$localobject2->create($user);
 		$localobject2->addline('Line 1', 6.36, 5, 21);
@@ -280,7 +280,7 @@ class FactureTestRounding extends PHPUnit\Framework\TestCase
 		// With option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 1
 		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=1;
 
-		$localobject2=new Facture($this->savdb);
+		$localobject2=new Facture($db);
 		$localobject2->initAsSpecimen('nolines');
 		$facid=$localobject2->create($user);
 		$localobject2->addline('Line 1', 6.36, 5, 21);
@@ -311,7 +311,7 @@ class FactureTestRounding extends PHPUnit\Framework\TestCase
 		// With option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 0
 		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=0;
 
-		$localobject3=new Facture($this->savdb);
+		$localobject3=new Facture($db);
 		$localobject3->initAsSpecimen('nolines');
 		$facid=$localobject3->create($user);
 		$localobject3->addline('Line 1', 6.36, 3, 21);
@@ -327,7 +327,7 @@ class FactureTestRounding extends PHPUnit\Framework\TestCase
 		// With option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 1
 		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=1;
 
-		$localobject3=new Facture($this->savdb);
+		$localobject3=new Facture($db);
 		$localobject3->initAsSpecimen('nolines');
 		$facid=$localobject3->create($user);
 		$localobject3->addline('Line 1', 6.36, 3, 21);

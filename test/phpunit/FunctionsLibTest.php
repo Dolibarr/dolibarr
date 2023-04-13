@@ -205,18 +205,20 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolClone()
 	{
-		$newproduct1 = new Product($this->savdb);
+		global $db;
 
-		print __METHOD__." this->savdb has type ".(is_resource($this->savdb->db) ? get_resource_type($this->savdb->db) : (is_object($this->savdb->db) ? 'object' : 'unknown'))."\n";
+		$newproduct1 = new Product($db);
+
+		print __METHOD__." this->savdb has type ".(is_resource($db->db) ? get_resource_type($db->db) : (is_object($db->db) ? 'object' : 'unknown'))."\n";
 		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
-		$this->assertEquals($this->savdb->connected, 1, 'Savdb is connected');
+		$this->assertEquals($db->connected, 1, 'Savdb is connected');
 		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
 
 		$newproductcloned1 = dol_clone($newproduct1);
 
-		print __METHOD__." this->savdb has type ".(is_resource($this->savdb->db) ? get_resource_type($this->savdb->db) : (is_object($this->savdb->db) ? 'object' : 'unknown'))."\n";
+		print __METHOD__." this->savdb has type ".(is_resource($db->db) ? get_resource_type($db->db) : (is_object($db->db) ? 'object' : 'unknown'))."\n";
 		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
-		$this->assertEquals($this->savdb->connected, 1, 'Savdb is connected');
+		$this->assertEquals($db->connected, 1, 'Savdb is connected');
 		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
 
 		$newproductcloned2 = dol_clone($newproduct1, 2);
