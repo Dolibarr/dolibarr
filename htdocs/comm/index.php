@@ -517,7 +517,7 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
  * Draft interventions
  */
 if (isModEnabled('ficheinter')) {
-	$sql = "SELECT f.rowid, f.ref, s.nom as name, f.fk_statut";
+	$sql = "SELECT f.rowid, f.ref, s.nom as name, f.fk_statut, f.duree as duration";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
@@ -572,12 +572,16 @@ if (isModEnabled('ficheinter')) {
 				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowraponall tdoverflowmax100">';
+				print '<td class="tdoverflowmax100">';
 				print $fichinterstatic->getNomUrl(1);
 				print "</td>";
-				print '<td class="nowrap tdoverflowmax100">';
+				print '<td class="tdoverflowmax100">';
 				print $companystatic->getNomUrl(1, 'customer');
-				print '</td></tr>';
+				print '</td>';
+				print '<td class="nowraponall tdoverflowmax100 right">';
+				print convertSecondToTime($obj->duration);
+				print '</td>';
+				print '</tr>';
 				$i++;
 			}
 		}
