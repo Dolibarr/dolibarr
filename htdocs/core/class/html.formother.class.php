@@ -1207,7 +1207,7 @@ class FormOther
 				if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone') {
 					$label = $label.' <span class="fa fa-bar-chart"></span>';
 				}
-				$arrayboxtoactivatelabel[$box->id] = $label; // We keep only boxes not shown for user, to show into combo list
+				$arrayboxtoactivatelabel[$box->id] = array('label'=>$label, 'data-html'=>img_picto('', $box->boximg, 'class="pictofixedwidth"').$langs->trans($label)); // We keep only boxes not shown for user, to show into combo list
 			}
 			foreach ($boxidactivatedforuser as $boxid) {
 				if (empty($boxorder)) {
@@ -1226,7 +1226,7 @@ class FormOther
 			$selectboxlist .= '<input type="hidden" name="userid" value="'.$user->id.'">';
 			$selectboxlist .= '<input type="hidden" name="areacode" value="'.$areacode.'">';
 			$selectboxlist .= '<input type="hidden" name="boxorder" value="'.$boxorder.'">';
-			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone hideonprint', 0, 'hidden selected', 0, 1);
+			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone hideonprint', 0, 'hidden selected', 0, 0);
 			if (empty($conf->use_javascript_ajax)) {
 				$selectboxlist .= ' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
 			}
