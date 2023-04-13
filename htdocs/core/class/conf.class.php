@@ -967,6 +967,10 @@ class Conf
 				$this->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA = 1;
 			}
 
+			if (!isset($this->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
+				$this->global->MAIL_SMTP_USE_FROM_FOR_HELO = 2;
+			}
+
 			if (!defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
 				if (defined('MAIN_ANTIVIRUS_COMMAND')) {
 					$this->global->MAIN_ANTIVIRUS_COMMAND = constant('MAIN_ANTIVIRUS_COMMAND');
