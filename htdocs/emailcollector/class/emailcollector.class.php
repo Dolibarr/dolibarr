@@ -1544,7 +1544,8 @@ class EmailCollector extends CommonObject
 			}
 		} else {
 			// Scan IMAP inbox
-			$arrayofemail = imap_search($connection, $search, null, $charset);
+			$arrayofemail = imap_search($connection, $search, SE_UID, $charset);
+
 			if ($arrayofemail === false) {
 				// Nothing found or search string not understood
 				$mapoferrrors = imap_errors();
@@ -1555,6 +1556,8 @@ class EmailCollector extends CommonObject
 				}
 			}
 		}
+
+		$arrayofemailtodelete = array();	// Track email to delete to make the deletion at end.
 
 		// Loop on each email found
 		if (!$error && !empty($arrayofemail) && count($arrayofemail) > 0) {
@@ -1589,11 +1592,8 @@ class EmailCollector extends CommonObject
 					$header = $imapemail->getHeader()->raw;
 					$overview = $imapemail->getAttributes();
 				} else {
-					$operationslog .= '<br>email = '.((string) $imapemail);
-
-					//$header = imap_headerinfo($connection, $imapemail);
-					$header = imap_fetchheader($connection, $imapemail, 0);
-					$overview = imap_fetch_overview($connection, $imapemail, 0);
+					$header = imap_fetchheader($connection, $imapemail, FT_UID);
+					$overview = imap_fetch_overview($connection, $imapemail, FT_UID);
 				}
 
 				$header = preg_replace('/\r\n\s+/m', ' ', $header); // When a header line is on several lines, merge lines
@@ -1620,7 +1620,7 @@ class EmailCollector extends CommonObject
 
 				$emailto = $this->decodeSMTPSubject($overview[0]->to);
 
-				$operationslog .= '<br>** Process email '.dol_escape_htmltag($iforemailloop)." - References: ".dol_escape_htmltag($headers['References'])." - Subject: ".dol_escape_htmltag($headers['Subject']);
+				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop)." - ".dol_escape_htmltag((string) $imapemail)." - References: ".dol_escape_htmltag($headers['References'])." - Subject: ".dol_escape_htmltag($headers['Subject']);
 				dol_syslog("** Process email ".$iforemailloop." References: ".$headers['References']." Subject: ".$headers['Subject']);
 
 
@@ -1769,7 +1769,7 @@ class EmailCollector extends CommonObject
 
 				// Parse IMAP email structure
 				/*
-				 $structure = imap_fetchstructure($connection, $imapemail, 0);
+				 $structure = imap_fetchstructure($connection, $imapemail, FT_UID);
 
 				 $partplain = $parthtml = -1;
 				 $encodingplain = $encodinghtml = '';
@@ -1806,7 +1806,7 @@ class EmailCollector extends CommonObject
 				 //var_dump($parthtml);
 				 //var_dump($partplain);
 
-				 $messagetext = imap_fetchbody($connection, $imapemail, ($parthtml != '-1' ? $parthtml : ($partplain != '-1' ? $partplain : 1)), FT_PEEK);
+				 $messagetext = imap_fetchbody($connection, $imapemail, ($parthtml != '-1' ? $parthtml : ($partplain != '-1' ? $partplain : 1)), FT_PEEK|FTP_UID);
 				 */
 
 				//var_dump($messagetext);
@@ -3138,31 +3138,24 @@ class EmailCollector extends CommonObject
 
 				// Error for email or not ?
 				if (!$errorforactions) {
-					if (!empty($targetdir) && empty($mode)) {
-						if (empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
-							dol_syslog("EmailCollector::doCollectOneCollector move message ".((string) $imapemail)." to ".$connectstringtarget, LOG_DEBUG);
-							$operationslog .= '<br>Move mail '.((string) $imapemail);
-
-							$res = imap_mail_move($connection, $imapemail, $targetdir, 0);
-							if ($res == false) {
-								$errorforemail++;
-								$this->error = imap_last_error();
-								$this->errors[] = $this->error;
-
-								$operationslog .= '<br>Error in move '.$this->error;
-
-								dol_syslog(imap_last_error());
-							}
-						} else {
+					if (!empty($targetdir)) {
+						if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 							// Move mail using PHP-IMAP
 							dol_syslog("EmailCollector::doCollectOneCollector move message ".($imapemail->getHeader()->get('subject'))." to ".$targetdir, LOG_DEBUG);
-							$imapemail->move($targetdir);
+							if (empty($mode)) {
+								$imapemail->move($targetdir);
+							}
+						} else {
+							dol_syslog("EmailCollector::doCollectOneCollector move message ".((string) $imapemail)." to ".$connectstringtarget, LOG_DEBUG);
+							$operationslog .= '<br>Move mail '.((string) $imapemail).' - '.$msgid;
+
+							$arrayofemailtodelete[$imapemail] = $msgid;
 						}
 					} else {
-						if (empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
-							dol_syslog("EmailCollector::doCollectOneCollector message ".((string) $imapemail)." to ".$connectstringtarget." was set to read", LOG_DEBUG);
-						} else {
+						if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 							dol_syslog("EmailCollector::doCollectOneCollector message '".($imapemail->getHeader()->get('subject'))."' using this->host=".$this->host.", this->access_type=".$this->acces_type." was set to read", LOG_DEBUG);
+						} else {
+							dol_syslog("EmailCollector::doCollectOneCollector message ".((string) $imapemail)." to ".$connectstringtarget." was set to read", LOG_DEBUG);
 						}
 					}
 				} else {
@@ -3210,9 +3203,30 @@ class EmailCollector extends CommonObject
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 			$client->disconnect();
 		} else {
+			foreach ($arrayofemailtodelete as $imapemail => $msgid) {
+				dol_syslog("EmailCollect::doCollectOneCollector delete email ".$imapemail." ".$msgid);
+
+				$operationslog .= "<br> delete email ".$imapemail." ".$msgid;
+
+				if (empty($mode) && empty($error)) {
+					$res = imap_mail_move($connection, $imapemail, $targetdir, CP_UID);
+					if ($res == false) {
+						$errorforemail++;
+						$this->error = imap_last_error();
+						$this->errors[] = $this->error;
+
+						$operationslog .= '<br>Error in move '.$this->error;
+
+						dol_syslog(imap_last_error());
+					}
+				}
+			}
+
 			if (empty($mode) && empty($error)) {
 				dol_syslog("Expunge", LOG_DEBUG);
-				imap_expunge($connection); // To validate any move
+				$operationslog .= "<br>Expunge";
+
+				imap_expunge($connection); // To validate all moves
 			}
 			imap_close($connection);
 		}
@@ -3253,7 +3267,7 @@ class EmailCollector extends CommonObject
 	 * getmsg
 	 *
 	 * @param 	Object $mbox     	Structure
-	 * @param 	string $mid		    prefix
+	 * @param 	string $mid		    UID email
 	 * @param 	string $destdir	    Target dir for attachments
 	 * @return 	array				Array with number and object
 	 */
@@ -3270,7 +3284,8 @@ class EmailCollector extends CommonObject
 		// add code here to get date, from, to, cc, subject...
 
 		// BODY
-		$s = imap_fetchstructure($mbox, $mid);
+		$s = imap_fetchstructure($mbox, $mid, FT_UID);
+
 
 		if (!$s->parts) {
 			// simple
@@ -3316,8 +3331,8 @@ class EmailCollector extends CommonObject
 
 		// DECODE DATA
 		$data = ($partno) ?
-		imap_fetchbody($mbox, $mid, $partno) : // multipart
-		imap_body($mbox, $mid); // simple
+		imap_fetchbody($mbox, $mid, $partno, FT_UID) : // multipart
+		imap_body($mbox, $mid, FT_UID); // simple
 		// Any part may be encoded, even plain text messages, so check everything.
 		if ($p->encoding == 4) {
 			$data = quoted_printable_decode($data);
