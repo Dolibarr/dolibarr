@@ -3196,6 +3196,7 @@ class EmailCollector extends CommonObject
 
 			dol_syslog("End of loop on emails", LOG_INFO, -1);
 		} else {
+			$langs->load("admin");
 			$output = $langs->trans('NoNewEmailToProcess');
 		}
 
