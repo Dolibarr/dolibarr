@@ -1020,8 +1020,8 @@ class EmailCollector extends CommonObject
 							}
 						}
 						//var_dump($substitutionarray);
-						dol_syslog('substitutionarray='.var_export($substitutionarray, true));
-						//var_dump($substitutionarray);
+						//dol_syslog('substitutionarray='.var_export($substitutionarray, true));
+
 						$valuetouse = make_substitutions($valuetouse, $substitutionarray);
 						if (preg_match('/^options_/', $tmpproperty)) {
 							$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $valuetouse;
