@@ -20,6 +20,9 @@
  *      \file       htdocs/core/login/functions_openid.php
  *      \ingroup    core
  *      \brief      Authentication functions for OpenId mode
+ *
+ *     This authentication method is based on "OpenID v2" and is deprecated.
+ *     Use instead the method "OpenID Connect".
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/openid.class.php';

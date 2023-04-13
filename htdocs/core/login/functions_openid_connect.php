@@ -96,6 +96,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
 					if ($obj) {
+						// TODO I think we can remove this because this is done now natively by core after calling check_user_password_openid_connect()
 						$now = dol_now();
 						if ($obj->datestartvalidity && $db->jdate($obj->datestartvalidity) > $now) {
 							// Load translation files required by the page
