@@ -724,6 +724,9 @@ if ($project->date_start_event || $project->date_end_event) {
 if ($project->location) {
 	print '<span class="fa fa-map-marked-alt pictofixedwidth opacitymedium"></span>'.dol_escape_htmltag($project->location).'<br>';
 }
+if ($project->note_public) {
+	print '<br><span class="opacitymedium">'.dol_escape_htmltag($project->note_public).'</span><br>';
+}
 
 print '</div>';
 
