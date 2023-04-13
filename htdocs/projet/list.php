@@ -1861,7 +1861,9 @@ while ($i < $imaxinloop) {
 			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->email_msgid).'">';
 			print dol_escape_htmltag($obj->email_msgid);
 			print '</td>';
-			if (!$i) $totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Import key
 		if (!empty($arrayfields['p.import_key']['checked'])) {
