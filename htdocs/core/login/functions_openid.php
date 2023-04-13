@@ -70,7 +70,7 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 			$sql = "SELECT login, entity, datestartvalidity, dateendvalidity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."user";
 			$sql .= " WHERE openid = '".$db->escape(GETPOST('openid_identity'))."'";
-			$sql .= " AND entity IN (0,".($_SESSION["dol_entity"] ? ((int) $_SESSION["dol_entity"]) : 1).")";
+			$sql .= " AND entity IN (0,".(!empty($_SESSION["dol_entity"]) ? ((int) $_SESSION["dol_entity"]) : 1).")";
 
 			dol_syslog("functions_openid::check_user_password_openid", LOG_DEBUG);
 			$resql = $db->query($sql);

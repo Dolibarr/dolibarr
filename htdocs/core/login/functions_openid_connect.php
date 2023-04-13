@@ -19,6 +19,8 @@
  *      \file       htdocs/core/login/functions_openid_connect.php
  *      \ingroup    core
  *      \brief      OpenID Connect: Authorization Code flow authentication
+ *
+ *      See https://github.com/Dolibarr/dolibarr/issues/22740 for more information about setup openid_connect
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
