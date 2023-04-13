@@ -9,6 +9,7 @@
  * Copyright (C) 2015-2016  Abbes Bahfir            <bafbes@gmail.com>
  * Copyright (C) 2018-2022 	Philippe Grand       	<philippe.grand@atoo-net.com>
  * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Benjamin Grembi         <benjamin@oarces.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1275,9 +1276,13 @@ if ($action == 'create') {
 	print '<table class="border tableforfield centpercent">';
 
 	if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
-		// Duration
-		print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
+		// Duration in time
+		print '<tr><td class="titlefield">'.$langs->trans("TotalDurationTime").'</td>';
 		print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+		print '</tr>';
+		// Duration in hour format
+		print '<tr><td class="titlefield">'.$langs->trans("TotalDurationHour").'</td>';
+		print '<td>'.convertDurationtoHour($object->duration, "s").' '.$langs->trans("h").'</td>';
 		print '</tr>';
 	}
 
