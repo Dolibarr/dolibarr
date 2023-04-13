@@ -2381,3 +2381,5 @@ MAIN_IMAP_USE_PHPIMAP=Use the PHP-IMAP library for IMAP instead of native PHP IM
 MAIN_CHECKBOX_LEFT_COLUMN=Show the column for field and line selection on the left (on the right by default)
 NotAvailableByDefaultEnabledOnModuleActivation=Not created by default. Created on module activation only.
 CSSPage=CSS Style
+Defaultfortype=Default
+DefaultForTypeDesc=Template used by default when creating a new email for the template type
