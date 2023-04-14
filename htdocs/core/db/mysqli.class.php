@@ -718,6 +718,38 @@ class DoliDBMysqli extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
+	 *  List tables into a database
+	 *
+	 *  @param	string		$database	Name of database
+	 *  @param	string		$table		Nmae of table filter ('xxx%')
+	 *  @return	array					List of tables in an array
+	 */
+	public function DDLListTablesFull($database, $table = '')
+	{
+		// phpcs:enable
+		$listtables = array();
+
+		$like = '';
+		if ($table) {
+			$tmptable = preg_replace('/[^a-z0-9\.\-\_%]/i', '', $table);
+
+			$like = "LIKE '".$this->escape($tmptable)."'";
+		}
+		$tmpdatabase = preg_replace('/[^a-z0-9\.\-\_]/i', '', $database);
+
+		$sql = "SHOW FULL TABLES FROM `".$tmpdatabase."` ".$like.";";
+
+		$result = $this->query($sql);
+		if ($result) {
+			while ($row = $this->fetch_row($result)) {
+				$listtables[] = $row;
+			}
+		}
+		return $listtables;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
 	 *	List information of columns into a table.
 	 *
 	 *	@param	string	$table		Name of table
