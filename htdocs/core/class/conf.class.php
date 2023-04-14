@@ -358,11 +358,12 @@ class Conf
 								if ($modulename == 'supplierproposal') {
 									$modulename = 'supplier_proposal';
 								}
+								$this->modules[$modulename] = $modulename; // Add this module in list of enabled modules
+								// deprecated
 								if (!isset($this->$modulename) || !is_object($this->$modulename)) {
 									$this->$modulename = new stdClass();
 								}
 								$this->$modulename->enabled = true;
-								$this->modules[] = $modulename; // Add this module in list of enabled modules
 							}
 						}
 					}

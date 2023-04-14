@@ -166,7 +166,9 @@ function getDolUserInt($key, $default = 0, $tmpuser = null)
 function isModEnabled($module)
 {
 	global $conf;
-	return !empty($conf->$module->enabled);
+
+	return !empty($conf->modules[$module]);
+	//return !empty($conf->$module->enabled);
 }
 
 /**
