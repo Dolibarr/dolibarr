@@ -18,6 +18,7 @@
  * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
  * Copyright (C) 2022		ButterflyOfFire         <butterflyoffire+dolibarr@protonmail.com>
+ * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -930,8 +931,12 @@ class Societe extends CommonObject
 		// Check more parameters (including mandatory setup
 		// If error, this->errors[] is filled
 		$result = $this->verify();
+		if ($result < 0) {
+			$this->db->rollback();
+			dol_syslog(get_class($this)."::Create fails verify ".join(',', $this->errors), LOG_WARNING);
+			return -3;
+		}
 
-		if ($result >= 0) {
 			$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (";
@@ -1048,11 +1053,6 @@ class Societe extends CommonObject
 				$this->db->rollback();
 				return $result;
 			}
-		} else {
-			$this->db->rollback();
-			dol_syslog(get_class($this)."::Create fails verify ".join(',', $this->errors), LOG_WARNING);
-			return -3;
-		}
 	}
 
 
