@@ -996,7 +996,7 @@ class DoliDBPgsql extends DoliDB
 
 			$escapedlike = " AND table_name LIKE '".$this->escape($tmptable)."'";
 		}
-		$result = pg_query($this->db, "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'".$escapedlike." ORDER BY table_name");
+		$result = pg_query($this->db, "SELECT table_name, table_type FROM information_schema.tables WHERE table_schema = 'public'".$escapedlike." ORDER BY table_name");
 		if ($result) {
 			while ($row = $this->fetch_row($result)) {
 				$listtables[] = $row;
