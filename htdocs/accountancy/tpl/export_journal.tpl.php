@@ -18,7 +18,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// $formatexportset ùust be defined
+// $formatexportset must be defined
+// $downloadMode 	=0 for direct download or =1 to download after writing files or =-1 not to download files
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -35,7 +36,7 @@ $siren = $conf->global->MAIN_INFO_SIREN;
 $date_export = "_".dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 $endaccountingperiod = dol_print_date(dol_now(), '%Y%m%d');
 
-if (empty($withAttachment)) {
+if (empty($downloadMode)) {
 	header('Content-Type: text/csv');
 }
 
@@ -70,6 +71,6 @@ if (($accountancyexport->getFormatCode($formatexportset) == 'fec' || $accountanc
 	$completefilename = ($code ? $code."_" : "").($prefix ? $prefix."_" : "").$filename.($nodateexport ? "" : $date_export).".".$format;
 }
 
-if (empty($withAttachment)) {
+if (empty($downloadMode)) {
 	header('Content-Disposition: attachment;filename=' . $completefilename);
 }

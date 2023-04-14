@@ -1437,24 +1437,28 @@ class FichinterLigne extends CommonObjectLine
 	 */
 	public function fetch($rowid)
 	{
+		dol_syslog("FichinterLigne::fetch", LOG_DEBUG);
+
 		$sql = 'SELECT ft.rowid, ft.fk_fichinter, ft.description, ft.duree, ft.rang,';
 		$sql .= ' ft.date as datei';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 		$sql .= ' WHERE ft.rowid = '.((int) $rowid);
 
-		dol_syslog("FichinterLigne::fetch", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result) {
-			$objp = $this->db->fetch_object($result);
-			$this->rowid          	= $objp->rowid;
-			$this->id = $objp->rowid;
-			$this->fk_fichinter   	= $objp->fk_fichinter;
-			$this->datei = $this->db->jdate($objp->datei);
-			$this->desc           	= $objp->description;
-			$this->duration       	= $objp->duree;
-			$this->rang           	= $objp->rang;
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$objp               = $this->db->fetch_object($resql);
+			$this->rowid        = $objp->rowid;
+			$this->id           = $objp->rowid;
+			$this->fk_fichinter = $objp->fk_fichinter;
+			$this->datei        = $this->db->jdate($objp->datei);
+			$this->desc         = $objp->description;
+			$this->duration     = $objp->duree;
+			$this->rang         = $objp->rang;
 
-			$this->db->free($result);
+			$this->db->free($resql);
+
+			$this->fetch_optionals();
+			
 			return 1;
 		} else {
 			$this->error = $this->db->error().' sql='.$sql;
