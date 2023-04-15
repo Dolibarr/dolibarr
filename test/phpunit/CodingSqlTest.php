@@ -170,10 +170,12 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$a = 'abc"\'def';
-		print $a;
-		$result = $db->escape($a);	// $result must be abc\"\'def
-		$this->assertEquals('abc\"\\\'def', $result);
+		if ($db->type == 'mysqli') {
+			$a = 'abc"\'def';
+			print $a;
+			$result = $db->escape($a);	// $result must be abc\"\'def with mysql
+			$this->assertEquals('abc\"\\\'def', $result);
+		}
 	}
 
 	/**
@@ -191,7 +193,7 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 
 		$a = 'abc"\'def_ghi%klm\\nop';
 		//print $a;
-		$result = $db->escapeforlike($a);	// $result must be abc"'def\_ghi\%klm\\nop
+		$result = $db->escapeforlike($a);	// $result must be abc"'def\_ghi\%klm\\nop with mysql
 		$this->assertEquals('abc"\'def\_ghi\%klm\\\\nop', $result);
 	}
 
