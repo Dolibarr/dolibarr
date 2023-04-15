@@ -167,6 +167,12 @@ function isModEnabled($module)
 {
 	global $conf;
 
+	// Fix special cases
+	$arrayconv = array('project' => 'projet');
+	if (!empty($arrayconv[$module])) {
+		$module = $arrayconv[$module];
+	}
+
 	return !empty($conf->modules[$module]);
 	//return !empty($conf->$module->enabled);
 }

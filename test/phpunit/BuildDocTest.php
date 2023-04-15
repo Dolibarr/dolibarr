@@ -121,7 +121,7 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 		if (!isModEnabled('propal')) {
 			print __METHOD__." propal module not enabled\n"; die(1);
 		}
-		if (!isModEnabled('project')) {
+		if (!isModEnabled('projet')) {
 			print __METHOD__." project module not enabled\n"; die(1);
 		}
 		if (!isModEnabled('expedition')) {
