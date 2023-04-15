@@ -158,6 +158,44 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
+	 * testEscape
+	 *
+	 * @return string
+	 */
+	public function testEscape()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$a = 'abc"\'def';
+		print $a;
+		$result = $db->escape($a);	// $result must be abc\"\'def
+		$this->assertEquals('abc\"\\\'def', $result);
+	}
+
+	/**
+	 * testEscapeForLike
+	 *
+	 * @return string
+	 */
+	public function testEscapeForLike()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$a = 'abc"\'def_ghi%klm\\nop';
+		//print $a;
+		$result = $db->escapeforlike($a);	// $result must be abc"'def\_ghi\%klm\\nop
+		$this->assertEquals('abc"\'def\_ghi\%klm\\\\nop', $result);
+	}
+
+	/**
 	 * testSql
 	 *
 	 * @return string

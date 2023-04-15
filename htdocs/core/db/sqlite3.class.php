@@ -657,7 +657,7 @@ class DoliDBSqlite3 extends DoliDB
 	 */
 	public function escapeforlike($stringtoencode)
 	{
-		return str_replace(array('_', '\\', '%'), array('\_', '\\\\', '\%'), (string) $stringtoencode);
+		return str_replace(array('\\', '_', '%'), array('\\\\', '\_', '\%'), (string) $stringtoencode);
 	}
 
 	/**
