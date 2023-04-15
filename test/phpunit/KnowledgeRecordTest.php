@@ -86,7 +86,7 @@ class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 		global $conf, $user, $langs, $db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-		if (empty($conf->knowledgemanagement->enabled)) {
+		if (!isModEnabled('knowledgemanagement')) {
 			print __METHOD__." module knowledgemanagement must be enabled.\n"; die(1);
 		}
 	}

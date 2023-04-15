@@ -257,6 +257,12 @@ class User extends CommonObject
 	 */
 	public $clicktodial_poste;
 
+	/**
+	 * @var string 	0 by default, 1 if click to dial data were already loaded for this user
+	 */
+	public $clicktodial_loaded;
+
+
 	public $datelastlogin;
 	public $datepreviouslogin;
 	public $flagdelsessionsbefore;

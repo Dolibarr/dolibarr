@@ -95,13 +95,7 @@ $now = dol_now();
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".$userlogin." - ".dol_print_date($now, 'dayhourrfc')." - ".gethostname()." *****\n";
 
 // Check module cron is activated
-if (empty($conf->cron->enabled)) {
-	print "Error: module Scheduled jobs (cron) not activated\n";
-	exit(-1);
-}
-
-// Check module cron is activated
-if (empty($conf->cron->enabled)) {
+if (!isModEnabled('cron')) {
 	print "Error: module Scheduled jobs (cron) not activated\n";
 	exit(-1);
 }

@@ -82,7 +82,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 
-		if (empty($conf->produit->enabled)) {
+		if (!isModEnabled('produit')) {
 			print __METHOD__." Module Product must be enabled.\n"; die(1);
 		}
 
