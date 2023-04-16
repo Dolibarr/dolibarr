@@ -2035,4 +2035,4 @@ INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-77
 INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-78',22106,'Karabük');
 INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-79',22105,'Kilis');
 INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-80',22104,'Osmaniye');
-INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-81',22106,'Düzce);
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-81',22106,'Düzce');
