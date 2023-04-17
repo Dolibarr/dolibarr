@@ -185,6 +185,7 @@ class Orders extends DolibarrApi
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande as t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commandedet as cd ON t.rowid = cd.fk_commande"; // So we will be able to filter on lines
 
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
