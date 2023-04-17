@@ -185,11 +185,13 @@ if (empty($conf->global->PAYPAL_API_SANDBOX)) {
 }
 print '</td></tr>';
 
-print '<tr class="oddeven"><td class="fieldrequired">';
-print $langs->trans("PAYPAL_API_USER").'</td><td>';
-print '<input size="32" type="text" name="PAYPAL_API_USER" value="'.$conf->global->PAYPAL_API_USER.'">';
-print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': admin-facilitator_api1.example.com, paypal_api1.mywebsite.com</span>';
-print '</td></tr>';
+if (isset($conf->global->PAYPAL_API_USER)) {
+    print '<tr class="oddeven"><td class="fieldrequired">';
+    print $langs->trans("PAYPAL_API_USER").'</td><td>';
+    print '<input size="32" type="text" name="PAYPAL_API_USER" value="'.$conf->global->PAYPAL_API_USER.'">';
+    print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': admin-facilitator_api1.example.com, paypal_api1.mywebsite.com</span>';
+    print '</td></tr>';
+}
 
 
 print '<tr class="oddeven"><td class="fieldrequired">';
