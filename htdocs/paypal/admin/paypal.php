@@ -194,10 +194,12 @@ if (isset($conf->global->PAYPAL_API_USER)) {
 }
 
 
-print '<tr class="oddeven"><td class="fieldrequired">';
-print $langs->trans("PAYPAL_API_PASSWORD").'</td><td>';
-print '<input size="32" type="text" name="PAYPAL_API_PASSWORD" value="'.$conf->global->PAYPAL_API_PASSWORD.'">';
-print '</td></tr>';
+if (isset($conf->global->PAYPAL_API_PASSWORD)) {
+	print '<tr class="oddeven"><td class="fieldrequired">';
+	print $langs->trans("PAYPAL_API_PASSWORD").'</td><td>';
+	print '<input size="32" type="text" name="PAYPAL_API_PASSWORD" value="'.$conf->global->PAYPAL_API_PASSWORD.'">';
+	print '</td></tr>';
+}
 
 
 print '<tr class="oddeven"><td class="fieldrequired">';
