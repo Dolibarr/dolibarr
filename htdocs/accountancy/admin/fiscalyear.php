@@ -143,6 +143,7 @@ if ($result) {
 		while ($i < $num && $i < $max) {
 			$obj = $db->fetch_object($result);
 
+			$fiscalyearstatic->ref = $obj->rowid;
 			$fiscalyearstatic->id = $obj->rowid;
 
 			print '<tr class="oddeven">';
