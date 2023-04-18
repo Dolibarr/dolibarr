@@ -135,7 +135,7 @@ class modService extends DolibarrModules
 		 'url'=>'/product/admin/product_tools.php?mainmenu=home&leftmenu=admintools',
 		 'langs'=>'products',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 		 'position'=>300,
-		 'enabled'=>'$conf->product->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu)',   // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+		 'enabled'=>'isModEnabled("product") && preg_match(\'/^(admintools|all)/\',$leftmenu)',   // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 		 'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 		 'target'=>'',
 		 'user'=>0);				                // 0=Menu for internal users, 1=external users, 2=both
@@ -284,7 +284,7 @@ class modService extends DolibarrModules
 			$this->export_sql_order[$r] = ' GROUP BY p.rowid'; // FIXME The group by used a generic value to say "all fields in select except function fields"
 		}
 
-		if (empty($conf->product->enabled)) {	// We enable next import templates only if module product not already enabled (to avoid duplicate entries)
+		if (!isModEnabled("product")) {	// We enable next import templates only if module product not already enabled (to avoid duplicate entries)
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 				// Exports product multiprice
 				$r++;
@@ -705,7 +705,7 @@ class modService extends DolibarrModules
 			$this->import_updatekeys_array[$r] = array_merge($this->import_updatekeys_array[$r], array('p.barcode'=>'BarCode')); //only show/allow barcode as update key if Barcode module enabled
 		}
 
-		if (empty($conf->product->enabled)) {	// We enable next import templates only if module product not already enabled (to avoid duplicate entries)
+		if (!isModEnabled("product")) {	// We enable next import templates only if module product not already enabled (to avoid duplicate entries)
 			if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 				// Import suppliers prices (note: this code is duplicated in module Service)
 				$r++;

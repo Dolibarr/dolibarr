@@ -462,7 +462,7 @@ class pdf_beluga extends ModelePDFProjects
 						'table'=>'actioncomm',
 						'datefieldname'=>'datep',
 						'disableamount'=>1,
-						'test'=>$conf->agenda->enabled && $user->rights->agenda->allactions->read,
+						'test'=> isModEnabled('agenda') && $user->rights->agenda->allactions->read,
 						'lang'=>'agenda')
 				);
 
