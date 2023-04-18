@@ -212,7 +212,7 @@ class modAgenda extends DolibarrModules
 			'langs'=>'agenda',
 			'position'=>86,
 			'perms'=>'$user->rights->agenda->myactions->read || $user->rights->resource->read',
-			'enabled'=>'isModEnabled("agenda") || $conf->resource->enabled',
+			'enabled'=>'isModEnabled("agenda") || isModEnabled("resource")',
 			'target'=>'',
 			'user'=>2,
 		);
