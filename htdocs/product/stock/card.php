@@ -403,9 +403,7 @@ if ($action == 'create') {
 			exit;
 		}
 
-		/*
-		 * Affichage fiche
-		 */
+		// View mode
 		if ($action <> 'edit' && $action <> 're-edit') {
 			$head = stock_prepare_head($object);
 
@@ -593,12 +591,11 @@ if ($action == 'create') {
 			print "</div>";
 
 
-			/* ************************************************************************** */
-			/*                                                                            */
-			/* Affichage de la liste des produits de l'entrepot                           */
-			/*                                                                            */
-			/* ************************************************************************** */
+			// Show list of products into warehouse
 			print '<br>';
+
+
+			// TODO Create $arrayfields with all fields to show
 
 			print '<table class="noborder centpercent">';
 			print "<tr class=\"liste_titre\">";
@@ -687,8 +684,6 @@ if ($action == 'create') {
 				$num = $db->num_rows($resql);
 				$i = 0;
 				$sameunits = true;
-
-				// TODO Create $arrayfields with all fields to show
 
 				while ($i < $num) {
 					$objp = $db->fetch_object($resql);
@@ -847,9 +842,7 @@ if ($action == 'create') {
 		}
 
 
-		/*
-		 * Edition fiche
-		 */
+		// Edit mode
 		if ($action == 'edit' || $action == 're-edit') {
 			$langs->trans("WarehouseEdit");
 
