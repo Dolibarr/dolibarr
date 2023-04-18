@@ -36,10 +36,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
 $type = GETPOST("type", 'int');
-if ($type == '' && empty($user->rights->produit->lire)) {
+if ($type == '' && !$user->hasRight('produit', 'lire') && $user->hasRight('service', 'lire')) {
 	$type = '1'; // Force global page on service page only
 }
-if ($type == '' && empty($user->rights->service->lire)) {
+if ($type == '' && !$user->hasRight('service', 'lire') && $user->hasRight('produit', 'lire')) {
 	$type = '0'; // Force global page on product page only
 }
 
@@ -58,7 +58,7 @@ if ($type == '0') {
 } elseif ($type == '1') {
 	$result = restrictedArea($user, 'service');
 } else {
-	$result = restrictedArea($user, 'produit|service|expedition');
+	$result = restrictedArea($user, 'produit|service|expedition|reception');
 }
 
 

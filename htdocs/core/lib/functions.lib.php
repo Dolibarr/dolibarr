@@ -168,7 +168,13 @@ function isModEnabled($module)
 	global $conf;
 
 	// Fix special cases
-	$arrayconv = array('project' => 'projet');
+	$arrayconv = array(
+		'project' => 'projet'
+	);
+	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+		$arrayconv['supplier_order'] = 'fournisseur';
+		$arrayconv['supplier_invoice'] = 'fournisseur';
+	}
 	if (!empty($arrayconv[$module])) {
 		$module = $arrayconv[$module];
 	}
