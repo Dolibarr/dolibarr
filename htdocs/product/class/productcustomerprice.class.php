@@ -66,6 +66,7 @@ class Productcustomerprice extends CommonObject
 	public $price_min;
 	public $price_min_ttc;
 	public $price_base_type;
+	public $default_vat_code;
 	public $tva_tx;
 	public $recuperableonly;
 	public $localtax1_type;
@@ -78,6 +79,9 @@ class Productcustomerprice extends CommonObject
 	 */
 	public $fk_user;
 
+	/**
+	 * @var PriceByCustomerLine[]
+	 */
 	public $lines = array();
 
 
