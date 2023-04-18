@@ -511,7 +511,7 @@ if (empty($reshook)) {
 							if ($result > 0) {
 								$lineid = $result;
 								if (!empty($createbills_onebythird)) //increment rang to keep order
-									$TFactThirdNbLines[$rcp->socid]++;
+									$TFactThirdNbLines[$cmd->socid]++;
 							} else {
 								$lineid = 0;
 								$error++;
@@ -1741,8 +1741,9 @@ if ($resql) {
 			Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
 			Commande::STATUS_SHIPMENTONPROCESS=>$langs->trans("StatusOrderSentShort"),
 			Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
+			-4=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
 			-3=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
-			-2=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
+			-2=>$langs->trans("StatusOrderToProcessShort"),
 			Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
 		);
 		print $form->selectarray('search_status', $liststatus, $search_status, -5, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage', 1);
