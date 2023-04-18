@@ -440,7 +440,7 @@ if ($usevirtualstock) {
 		$sqlExpeditionsCli = '0';
 	}
 
-	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
+	if (isModEnabled("supplier_order")) {
 		$sqlCommandesFourn = "(SELECT ".$db->ifsql("SUM(cd3.qty) IS NULL", "0", "SUM(cd3.qty)")." as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
 		$sqlCommandesFourn .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd3,";
 		$sqlCommandesFourn .= " ".MAIN_DB_PREFIX."commande_fournisseur as c3";

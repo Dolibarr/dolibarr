@@ -2005,7 +2005,7 @@ if ($action == 'create') {
 				}
 
 				// Create an order
-				if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) && $object->statut == SupplierProposal::STATUS_SIGNED) {
+				if (isModEnabled("supplier_order") && $object->statut == SupplierProposal::STATUS_SIGNED) {
 					if ($usercancreateorder) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'&amp;token='.newToken().'">'.$langs->trans("AddSupplierOrderShort").'</a></div>';
 					}

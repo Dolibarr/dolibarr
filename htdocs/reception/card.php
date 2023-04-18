@@ -130,7 +130,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 
 	// Linked documents
-	if ($origin == 'order_supplier' && $object->$typeobject->id && (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order"))) {
+	if ($origin == 'order_supplier' && $object->$typeobject->id && isModEnabled("supplier_order")) {
 		$origin_id = $object->$typeobject->id;
 		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->$typeobject->id);
@@ -800,7 +800,7 @@ if ($action == 'create') {
 
 			// Ref
 			print '<tr><td class="titlefieldcreate fieldrequired">';
-			if ($origin == 'supplierorder' && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order"))) {
+			if ($origin == 'supplierorder' && isModEnabled("supplier_order")) {
 				print $langs->trans("RefOrder").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/fourn/commande/card.php?id='.$objectsrc->id.'">'.img_object($langs->trans("ShowOrder"), 'order').' '.$objectsrc->ref;
 			}
 			if ($origin == 'propal' && isModEnabled("propal")) {
@@ -1405,7 +1405,7 @@ if ($action == 'create') {
 			$objectsrc = new Propal($db);
 			$objectsrc->fetch($object->$typeobject->id);
 		}
-		if ($typeobject == 'CommandeFournisseur' && $object->$typeobject->id && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order"))) {
+		if ($typeobject == 'CommandeFournisseur' && $object->$typeobject->id && isModEnabled("supplier_order")) {
 			$objectsrc = new CommandeFournisseur($db);
 			$objectsrc->fetch($object->$typeobject->id);
 		}
@@ -2139,7 +2139,7 @@ if ($action == 'create') {
 			}
 
 			// Create bill
-			if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")) && ($object->statut == Reception::STATUS_VALIDATED || $object->statut == Reception::STATUS_CLOSED)) {
+			if (isModEnabled("supplier_invoice") && ($object->statut == Reception::STATUS_VALIDATED || $object->statut == Reception::STATUS_CLOSED)) {
 				if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
 					// TODO show button only   if (!empty($conf->global->WORKFLOW_BILL_ON_RECEPTION))
 					// If we do that, we must also make this option official.
@@ -2153,7 +2153,7 @@ if ($action == 'create') {
 				if ($user->rights->reception->creer && $object->statut > 0 && !$object->billed) {
 					$label = "Close"; $paramaction = 'classifyclosed'; // = Transferred/Received
 					// Label here should be "Close" or "ClassifyBilled" if we decided to make bill on receptions instead of orders
-					if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) && !empty($conf->global->WORKFLOW_BILL_ON_RECEPTION)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
+					if (isModEnabled("supplier_order")) && !empty($conf->global->WORKFLOW_BILL_ON_RECEPTION)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
 						$label = "ClassifyBilled";
 						$paramaction = 'classifybilled';
 					}
