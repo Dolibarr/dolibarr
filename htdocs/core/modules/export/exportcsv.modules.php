@@ -16,7 +16,7 @@
  */
 
 /**
- *		\file       htdocs/core/modules/export/export_csv.modules.php
+ *		\file       htdocs/core/modules/export/exportcsv.modules.php
  *		\ingroup    export
  *		\brief      File of class to build exports with CSV format
  */
