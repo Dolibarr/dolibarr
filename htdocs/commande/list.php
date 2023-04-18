@@ -511,7 +511,7 @@ if (empty($reshook)) {
 							if ($result > 0) {
 								$lineid = $result;
 								if (!empty($createbills_onebythird)) //increment rang to keep order
-									$TFactThirdNbLines[$rcp->socid]++;
+									$TFactThirdNbLines[$cmd->socid]++;
 							} else {
 								$lineid = 0;
 								$error++;
