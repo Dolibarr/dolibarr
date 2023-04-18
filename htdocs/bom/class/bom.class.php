@@ -217,6 +217,11 @@ class BOM extends CommonObject
 	public $lines = array();
 
 	/**
+	 * @var BOMLine     Bom line
+	 */
+	public $line;
+
+	/**
 	 * @var int		Calculated cost for the BOM
 	 */
 	public $total_cost = 0;
