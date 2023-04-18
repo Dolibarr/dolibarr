@@ -688,6 +688,8 @@ if ($action == 'create') {
 				$i = 0;
 				$sameunits = true;
 
+				// TODO Create $arrayfields with all fields to show
+
 				while ($i < $num) {
 					$objp = $db->fetch_object($resql);
 
@@ -734,6 +736,7 @@ if ($action == 'create') {
 					$productstatic->accountancy_code_buy_intra = $objp->accountancy_code_buy_intra;
 					$productstatic->accountancy_code_buy_export = $objp->accountancy_code_buy_export;
 
+					// Ref
 					print "<td>";
 					print $productstatic->getNomUrl(1, 'stock', 16);
 					print '</td>';
@@ -741,6 +744,7 @@ if ($action == 'create') {
 					// Label
 					print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objp->produit).'">'.dol_escape_htmltag($objp->produit).'</td>';
 
+					// Value
 					print '<td class="right">';
 					$valtoshow = price(price2num($objp->value, 'MS'), 0, '', 0, 0); // TODO replace with a qty() function
 					print empty($valtoshow) ? '0' : $valtoshow;
@@ -756,6 +760,7 @@ if ($action == 'create') {
 						print $langs->trans($productstatic->getLabelOfUnit());
 						print '</td>';
 					}
+
 					// Price buy PMP
 					print '<td class="right nowraponall">'.price(price2num($objp->ppmp, 'MU')).'</td>';
 
@@ -776,6 +781,7 @@ if ($action == 'create') {
 					}
 					$totalvaluesell += price2num($pricemin * $objp->value, 'MT');
 
+					// Link to transfer
 					if ($user->rights->stock->mouvement->creer) {
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print img_picto($langs->trans("TransferStock"), 'add', 'class="hideonsmartphone pictofixedwidth" style="color: #a69944"');
@@ -783,6 +789,7 @@ if ($action == 'create') {
 						print "</a></td>";
 					}
 
+					// Link to stock
 					if ($user->rights->stock->creer) {
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print img_picto($langs->trans("CorrectStock"), 'add', 'class="hideonsmartphone pictofixedwidth" style="color: #a69944"');
@@ -790,6 +797,11 @@ if ($action == 'create') {
 						print "</a></td>";
 					}
 
+					print "</tr>";
+
+					$i++;
+
+					// Define $unit and $sameunits
 					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 						if ($i == 0) {
 							$units = $productstatic->fk_unit;
@@ -797,9 +809,6 @@ if ($action == 'create') {
 							$sameunits = false;
 						}
 					}
-
-					print "</tr>";
-					$i++;
 				}
 				$db->free($resql);
 
