@@ -1277,12 +1277,8 @@ if ($action == 'create') {
 
 	if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
 		// Duration in time
-		print '<tr><td class="titlefield">'.$langs->trans("TotalDurationTime").'</td>';
-		print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
-		print '</tr>';
-		// Duration in hour format
-		print '<tr><td class="titlefield">'.$langs->trans("TotalDurationHour").'</td>';
-		print '<td>'.convertDurationtoHour($object->duration, "s").' '.$langs->trans("h").'</td>';
+		print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
+		print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).' ('.convertDurationtoHour($object->duration, "s").' '.$langs->trans("h").')</td>';
 		print '</tr>';
 	}
 
