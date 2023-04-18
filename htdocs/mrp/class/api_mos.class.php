@@ -345,10 +345,10 @@ class Mos extends DolibarrApi
 		}
 
 		if (empty($labelmovement)) {
-			throw new RestException(500, "Field inventorylabel not prodivded");
+			throw new RestException(500, "Field inventorylabel not provided");
 		}
 		if (empty($codemovement)) {
-			throw new RestException(500, "Field inventorycode not prodivded");
+			throw new RestException(500, "Field inventorycode not provided");
 		}
 
 		// Code for consume and produce...

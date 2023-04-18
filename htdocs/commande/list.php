@@ -2045,7 +2045,9 @@ if ($resql) {
 
 			// Ref customer
 			if (!empty($arrayfields['c.ref_client']['checked'])) {
-				print '<td class="nowrap tdoverflowmax200">'.$obj->ref_client.'</td>';
+				print '<td class="nowrap tdoverflowmax150" title="'.dol_escape_htmltag($obj->ref_client).'">';
+				print dol_escape_htmltag($obj->ref_client);
+				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -2350,7 +2352,7 @@ if ($resql) {
 
 			// Author
 			if (!empty($arrayfields['u.login']['checked'])) {
-				print '<td class="tdoverflowmax200">';
+				print '<td class="tdoverflowmax150">';
 				if ($userstatic->id) {
 					print $userstatic->getNomUrl(-1);
 				} else {
