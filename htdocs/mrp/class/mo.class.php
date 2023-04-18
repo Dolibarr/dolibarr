@@ -1744,6 +1744,11 @@ class MoLine extends CommonObjectLine
 	public $import_key;
 	public $fk_parent_line;
 
+    /*
+	 * Service Workstation
+	 */
+    public $fk_default_workstation;
+
 	/**
 	 * Constructor
 	 *
