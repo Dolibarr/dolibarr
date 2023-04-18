@@ -1895,6 +1895,8 @@ if ($action == 'create') {
 			// Qty in other receptions (with reception and warehouse used)
 			if ($origin && $origin_id > 0) {
 				print '<td class="center nowrap linecolqtyinotherreceptions">';
+				$htmltooltip = '';
+				$qtyalreadyreceived = 0;
 				if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
 					foreach ($alreadysent as $key => $val) {
 						if ($lines[$i]->fk_commandefourndet == $key) {
@@ -1906,22 +1908,25 @@ if ($action == 'create') {
 
 								$j++;
 								if ($j > 1) {
-									print '<br>';
+									$htmltooltip .= '<br>';
 								}
 								$reception_static->fetch($receptionline_var['reception_id']);
-								print $reception_static->getNomUrl(1);
-								print ' - '.$receptionline_var['qty'];
+								$htmltooltip .= $reception_static->getNomUrl(1, 0, 0, 0, 1);
+								$htmltooltip .= ' - '.$receptionline_var['qty'];
 
 								$htmltext = $langs->trans("DateValidation").' : '.(empty($receptionline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($receptionline_var['date_valid'], 'dayhour'));
 								if (isModEnabled('stock') && $receptionline_var['warehouse'] > 0) {
 									$warehousestatic->fetch($receptionline_var['warehouse']);
 									$htmltext .= '<br>'.$langs->trans("From").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
 								}
-								print ' '.$form->textwithpicto('', $htmltext, 1);
+								$htmltooltip .= ' '.$form->textwithpicto('', $htmltext, 1);
+
+								$qtyalreadyreceived += $receptionline_var['qty'];
 							}
 						}
 					}
 				}
+				print $form->textwithpicto($qtyalreadyreceived, $htmltooltip, 1, 'info', '', 0, 3, 'tooltip'.$lines[$i]->id);
 				print '</td>';
 			}
 

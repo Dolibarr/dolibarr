@@ -1873,6 +1873,7 @@ if ($action == 'create') {
 	}
 	print "</form>\n";
 } elseif (!empty($object->id)) {
+	// view
 	$result = $object->fetch($id, $ref);
 	$object->fetch_thirdparty();
 
