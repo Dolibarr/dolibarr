@@ -809,16 +809,12 @@ if ($action == 'create') {
 				$parameters = array();
 				// Note that $action and $object may have been modified by hook
 				$reshook = $hookmanager->executeHooks('printFieldListTotal', $parameters, $object);
-
 				if ($reshook < 0) {
-					dol_print_error($db, $hookmanager->error, $hookmanager->errors);
-					llxFooter();
-					$db->close();
-					exit;
+					setEventMessages($hookmanager->error, $hookmanager->errors);
+				} else {
+					print $hookmanager->resPrint;
 				}
-
-				print $hookmanager->resPrint;
-
+				
 				print '<td class="liste_total right">';
 				$valtoshow = price2num($totalunit, 'MS');
 				if (empty($conf->global->PRODUCT_USE_UNITS) || $sameunits) {
