@@ -4142,7 +4142,7 @@ abstract class CommonObject
 					} elseif ($objecttype == 'shipping') {
 						$classpath = 'expedition/class';
 						$subelement = 'expedition';
-						$module = 'expedition_bon';
+						$module = 'expedition';
 					} elseif ($objecttype == 'delivery') {
 						$classpath = 'delivery/class';
 						$subelement = 'delivery';
