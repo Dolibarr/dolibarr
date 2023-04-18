@@ -814,7 +814,7 @@ if ($action == 'create') {
 				} else {
 					print $hookmanager->resPrint;
 				}
-				
+
 				print '<td class="liste_total right">';
 				$valtoshow = price2num($totalunit, 'MS');
 				if (empty($conf->global->PRODUCT_USE_UNITS) || $sameunits) {
