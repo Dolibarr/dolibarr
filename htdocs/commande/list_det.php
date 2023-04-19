@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-if (!empty($conf->margin->enabled)) {
+if (isModEnabled('margin')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -203,10 +203,10 @@ $arrayfields = array(
 	'c.fk_warehouse'=>array('label'=>'Warehouse', 'checked'=>0, 'enabled'=>(empty($conf->stock->enabled) && empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER) ? 0 : 1), 'position'=>110),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>115),
 	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>0, 'position'=>116),
-	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
-	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
-	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
-	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
+	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous ? 0 : 1)),
+	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous ? 0 : 1)),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
 	'c.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>120),
 	'c.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>125),
 	'c.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>130),
@@ -338,7 +338,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formmargin = null;
-if (!empty($conf->margin->enabled)) {
+if (isModEnabled('margin')) {
 	$formmargin = new FormMargin($db);
 }
 $companystatic = new Societe($db);
@@ -1402,7 +1402,7 @@ if ($resql) {
 	$i = 0;
 
 	$with_margin_info = false;
-	if (!empty($conf->margin->enabled) && (
+	if (isModEnabled('margin') && (
 			!empty($arrayfields['total_pa']['checked'])
 			|| !empty($arrayfields['total_margin']['checked'])
 			|| !empty($arrayfields['total_margin_rate']['checked'])
