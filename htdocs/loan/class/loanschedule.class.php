@@ -461,6 +461,7 @@ class LoanSchedule extends CommonObject implements \JsonSerializable
 		$sql .= " t.fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		$sql .= " WHERE t.fk_loan = ".((int) $loanid);
+		$sql.= " ORDER BY t.datep, t.rowid";
 
 		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
 		$resql = $this->db->query($sql);
