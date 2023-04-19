@@ -682,7 +682,7 @@ print '</form>';
 // Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
 // TODO Must be implemented by PDF templates
 // Ask for payment bank during order
-if ($conf->banque->enabled) {
+if (isModEnabled("banque")) {
 
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">';

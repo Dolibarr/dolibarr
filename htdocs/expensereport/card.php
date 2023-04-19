@@ -2768,8 +2768,8 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	}
 
 	// If bank module is not used
-	if (($user->rights->expensereport->to_paid || empty($conf->banque->enabled)) && $object->status == ExpenseReport::STATUS_APPROVED) {
-		//if ((round($remaintopay) == 0 || empty($conf->banque->enabled)) && $object->paid == 0)
+	if (($user->rights->expensereport->to_paid || empty(isModEnabled("banque"))) && $object->status == ExpenseReport::STATUS_APPROVED) {
+		//if ((round($remaintopay) == 0 || !isModEnabled("banque")) && $object->paid == 0)
 		if ($object->paid == 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=set_paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
