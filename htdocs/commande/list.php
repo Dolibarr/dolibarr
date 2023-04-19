@@ -890,7 +890,7 @@ if ($search_billed != '' && $search_billed >= 0) {
 }
 if ($search_status <> '') {
 	if ($search_status <= 3 && $search_status >= -1) {	// status from -1 to 3 are real status (other are virtual combination)
-		if ($search_status == 1 && empty($conf->expedition->enabled)) {
+		if ($search_status == 1 && !isModEnabled('expedition')) {
 			$sql .= ' AND c.fk_statut IN (1,2)'; // If module expedition disabled, we include order with status 'sending in process' into 'validated'
 		} else {
 			$sql .= ' AND c.fk_statut = '.((int) $search_status); // draft, validated, in process or canceled
@@ -1116,7 +1116,7 @@ if ($resql) {
 		$title .= ' - '.$langs->trans('StatusOrderToProcessShort');
 	}
 	if ($search_status == -3) {
-		$title .= ' - '.$langs->trans('StatusOrderValidated').', '.(empty($conf->expedition->enabled) ? '' : $langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
+		$title .= ' - '.$langs->trans('StatusOrderValidated').', '.(!isModEnabled('expedition') ? '' : $langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
 	}
 	if ($search_status == -4) {
 		$title .= ' - '.$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort");
