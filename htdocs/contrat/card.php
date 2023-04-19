@@ -744,12 +744,22 @@ if (empty($reshook)) {
 
 			$fk_unit = GETPOST('unit', 'alpha');
 
+			// update price_ht with discount
+			// TODO Use object->updateline instead objedtline->update
+
+			$price_ht =  price2num(GETPOST('elprice'), 'MU');
+			$remise_percent = price2num(GETPOST('elremise_percent'), 2);
+			if ($remise_percent > 0) {
+				$remise = round(($price_ht * $remise_percent / 100), 2);
+				$price_ht = ($price_ht - $remise);
+			}
+
 			$objectline->fk_product = GETPOST('idprod', 'int');
 			$objectline->description = GETPOST('product_desc', 'restricthtml');
-			$objectline->price_ht = price2num(GETPOST('elprice'), 'MU');
+			$objectline->price_ht = $price_ht;
 			$objectline->subprice = price2num(GETPOST('elprice'), 'MU');
 			$objectline->qty = price2num(GETPOST('elqty'), 'MS');
-			$objectline->remise_percent = price2num(GETPOST('elremise_percent'), 2);
+			$objectline->remise_percent = $remise_percent;
 			$objectline->tva_tx = ($txtva ? $txtva : 0); // Field may be disabled, so we use vat rate 0
 			$objectline->vat_src_code = $vat_src_code;
 			$objectline->localtax1_tx = is_numeric($localtax1_tx) ? $localtax1_tx : 0;
@@ -941,15 +951,8 @@ if (empty($reshook)) {
 				$old_filedir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($old_ref);
 				$new_filedir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 
-				$files = dol_dir_list($old_filedir);
-				if (!empty($files)) {
-					if (!is_dir($new_filedir)) {
-						dol_mkdir($new_filedir);
-					}
-					foreach ($files as $file) {
-						dol_move($file['fullname'], $new_filedir.'/'.$file['name']);
-					}
-				}
+				// Rename directory of contract with new name
+				dol_move_dir($old_filedir, $new_filedir);
 
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;

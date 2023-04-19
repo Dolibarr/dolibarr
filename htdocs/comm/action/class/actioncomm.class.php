@@ -1590,7 +1590,7 @@ class ActionComm extends CommonObject
 		}
 
 		$canread = 0;
-		if (!empty($user->rights->agenda->myactions->read) && $this->authorid == $user->id) {
+		if ($user->hasRight('agenda', 'myactions', 'read') && ($this->authorid == $user->id || $this->userownerid == $user->id)) {
 			$canread = 1; // Can read my event
 		}
 		if (!empty($user->rights->agenda->myactions->read) && array_key_exists($user->id, $this->userassigned)) {
@@ -2203,7 +2203,7 @@ class ActionComm extends CommonObject
 			}
 
 			if ($result >= 0) {
-				if (dol_move($outputfiletmp, $outputfile, 0, 1)) {
+				if (dol_move($outputfiletmp, $outputfile, 0, 1, 0, 0)) {
 					$result = 1;
 				} else {
 					$this->error = 'Failed to rename '.$outputfiletmp.' into '.$outputfile;

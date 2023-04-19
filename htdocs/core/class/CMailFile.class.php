@@ -32,6 +32,7 @@
 
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
+
 /**
  *	Class to send emails (with attachments or not)
  *  Usage: $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc,$deliveryreceipt,$msgishtml,$errors_to,$css,$trackid,$moreinheader,$sendcontext,$replyto);
@@ -170,6 +171,10 @@ class CMailFile
 	{
 		global $conf, $dolibarr_main_data_root, $user;
 
+		dol_syslog("CMailFile::CMailfile: charset=".$conf->file->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to, replyto=$replyto trackid=$trackid sendcontext=$sendcontext", LOG_DEBUG);
+		dol_syslog("CMailFile::CMailfile: subject=".$subject.", deliveryreceipt=".$deliveryreceipt.", msgishtml=".$msgishtml, LOG_DEBUG);
+
+
 		// Clean values of $mimefilename_list
 		if (is_array($mimefilename_list)) {
 			foreach ($mimefilename_list as $key => $val) {
@@ -213,9 +218,6 @@ class CMailFile
 		// On defini alternative_boundary
 		$this->alternative_boundary = 'mul_'.dol_hash(uniqid("dolibarr3"), 3); // Force md5 hash (does not contains special chars)
 
-		dol_syslog("CMailFile::CMailfile: sendmode=".$this->sendmode." charset=".$conf->file->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to, replyto=$replyto trackid=$trackid sendcontext=$sendcontext upload_dir_tmp=$upload_dir_tmp", LOG_DEBUG);
-		dol_syslog("CMailFile::CMailfile: subject=".$subject.", deliveryreceipt=".$deliveryreceipt.", msgishtml=".$msgishtml, LOG_DEBUG);
-
 		if (empty($subject)) {
 			dol_syslog("CMailFile::CMailfile: Try to send an email with empty subject");
 			$this->error = 'ErrorSubjectIsRequired';
@@ -255,12 +257,14 @@ class CMailFile
 			$this->html = $msg;
 
 			$findimg = 0;
-			if (!empty($conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS)) {
+			if (!empty($conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS)) {	// Off by default
 				// Search into the body for <img tags of links in medias files to replace them with an embedded file
 				// Note because media links are public, this should be useless, except avoid blocking images with email browser.
 				// This convert an embedd file with src="/viewimage.php?modulepart... into a cid link
+				// TODO Exclude viewimage used for the read tracker ?
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
 			}
+
 			if (!empty($conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA)) {
 				// Search into the body for <img src="data:image/ext;base64,..." to replace them with an embedded file
 				// This convert an embedded file with src="data:image... into a cid link + attached file
@@ -363,6 +367,8 @@ class CMailFile
 				$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_'.$smtpContextKey;
 			}
 		}
+
+		dol_syslog("CMailFile::CMailfile: sendmode=".$this->sendmode." addr_bcc=$addr_bcc, replyto=$replyto", LOG_DEBUG);
 
 		// We set all data according to choosed sending method.
 		// We also set a value for ->msgid
@@ -836,6 +842,10 @@ class CMailFile
 						$this->error .= ".<br>";
 						$this->error .= $langs->trans("ErrorPhpMailDelivery");
 						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+
+						if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+							$this->save_dump_mail_in_err();
+						}
 					} else {
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 					}
@@ -900,6 +910,7 @@ class CMailFile
 
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+
 					$keyforsupportedoauth2array = $conf->global->$keyforsmtpoauthservice;
 					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
 						$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
@@ -981,7 +992,26 @@ class CMailFile
 						$this->dump_mail();
 					}
 
-					$result = $this->smtps->getErrors();
+					if (! $result) {
+						$smtperrorcode = $this->smtps->lastretval;	// SMTP error code
+						dol_syslog("CMailFile::sendfile: mail SMTP error code ".$smtperrorcode, LOG_WARNING);
+
+						if ($smtperrorcode == '421') {	// Try later
+							// TODO Add a delay and try again
+							/*
+							dol_syslog("CMailFile::sendfile: Try later error, so we wait and we retry");
+							sleep(2);
+
+							$result = $this->smtps->sendMsg();
+
+							if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+								$this->dump_mail();
+							}
+							*/
+						}
+					}
+
+					$result = $this->smtps->getErrors();	// applicative error code (not SMTP error code)
 					if (empty($this->error) && empty($result)) {
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 						$res = true;
@@ -991,6 +1021,10 @@ class CMailFile
 						}
 						dol_syslog("CMailFile::sendfile: mail end error with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport." - ".$this->error, LOG_ERR);
 						$res = false;
+
+						if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+							$this->save_dump_mail_in_err();
+						}
 					}
 				}
 			} elseif ($this->sendmode == 'swiftmailer') {
@@ -1026,6 +1060,7 @@ class CMailFile
 				}
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+
 					$keyforsupportedoauth2array = getDolGlobalString($keyforsmtpoauthservice);
 					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
 						$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
@@ -1106,6 +1141,7 @@ class CMailFile
 					$this->mailer->registerPlugin(new Swift_Plugins_LoggerPlugin($this->logger));
 				}
 				// send mail
+				$failedRecipients = array();
 				try {
 					$result = $this->mailer->send($this->message, $failedRecipients);
 				} catch (Exception $e) {
@@ -1122,6 +1158,10 @@ class CMailFile
 					}
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
+
+					if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+						$this->save_dump_mail_in_err();
+					}
 				} else {
 					dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 				}
@@ -1209,7 +1249,7 @@ class CMailFile
 
 		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 			$outputfile = $dolibarr_main_data_root."/dolibarr_mail.log";
-			$fp = fopen($outputfile, "w");
+			$fp = fopen($outputfile, "w");	// overwrite
 
 			if ($this->sendmode == 'mail') {
 				fputs($fp, $this->headers);
@@ -1225,6 +1265,29 @@ class CMailFile
 			if (!empty($conf->global->MAIN_UMASK)) {
 				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 			}
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Save content if mail is in error
+	 *  Used for debugging.
+	 *
+	 *  @return	void
+	 */
+	public function save_dump_mail_in_err()
+	{
+		global $dolibarr_main_data_root;
+
+		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
+			$srcfile = $dolibarr_main_data_root."/dolibarr_mail.log";
+			if (getDolGlobalString('MAIN_MAIL_DEBUG_ERR_WITH_DATE')) {
+				$destfile = $dolibarr_main_data_root."/dolibarr_mail.".dol_print_date(dol_now(), 'dayhourlog', 'gmt').".err";
+			} else {
+				$destfile = $dolibarr_main_data_root."/dolibarr_mail.err";
+			}
+
+			dol_move($srcfile, $destfile, 0, 1, 0, 0);
 		}
 	}
 
@@ -1708,7 +1771,7 @@ class CMailFile
 							$this->html_images[$i]["content_type"] = $this->image_types[$ext];
 						}
 						// cid
-						$this->html_images[$i]["cid"] = dol_hash(uniqid(time()), 3); // Force md5 hash (does not contains special chars)
+						$this->html_images[$i]["cid"] = dol_hash($this->html_images[$i]["fullpath"], 'md5'); // Force md5 hash (does not contains special chars)
 						// type
 						$this->html_images[$i]["type"] = 'cidfromurl';
 
@@ -1800,17 +1863,22 @@ class CMailFile
 			foreach ($matches[1] as $key => $ext) {
 				// We save the image to send in disk
 				$filecontent = $matches[2][$key];
-				$cid = 'cid000'.dol_hash($this->html, 'md5');		// The id must not change if image is same
+
+				$cid = 'cid000'.dol_hash($filecontent, 'md5');		// The id must not change if image is same
+
 				$destfiletmp = $images_dir.'/'.$cid.'.'.$ext;
 
-				$fhandle = @fopen($destfiletmp, 'w');
-				if ($fhandle) {
-					$nbofbyteswrote = fwrite($fhandle, base64_decode($filecontent));
-					fclose($fhandle);
-					@chmod($destfiletmp, octdec($conf->global->MAIN_UMASK));
-				} else {
-					$this->errors[] = "Failed to open file '".$destfiletmp."' for write";
-					return -1;
+				if (!dol_is_file($destfiletmp)) {	// If file does not exist yet (this is the case for the first email sent with a data:image inside)
+					dol_syslog("write the cid file ".$destfiletmp);
+					$fhandle = @fopen($destfiletmp, 'w');
+					if ($fhandle) {
+						$nbofbyteswrote = fwrite($fhandle, base64_decode($filecontent));
+						fclose($fhandle);
+						@chmod($destfiletmp, octdec($conf->global->MAIN_UMASK));
+					} else {
+						$this->errors[] = "Failed to open file '".$destfiletmp."' for write";
+						return -1;
+					}
 				}
 
 				if (file_exists($destfiletmp)) {

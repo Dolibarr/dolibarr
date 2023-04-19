@@ -104,8 +104,8 @@ class Partnership extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>'1', 'position'=>15, 'notnull'=>1, 'visible'=>-2, 'default'=>'1', 'index'=>1,),
-		'fk_type' => array('type'=>'integer:PartnershipType:partnership/class/partnership_type.class.php:0:active=1', 'label'=>'Type', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'csslist'=>'tdoverflowmax100'),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax125',),
+		'fk_type' => array('type'=>'integer:PartnershipType:partnership/class/partnership_type.class.php:0:(active:=:1)', 'label'=>'Type', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'csslist'=>'tdoverflowmax100'),
+		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax125',),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
@@ -197,7 +197,7 @@ class Partnership extends CommonObject
 		if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 			$this->fields['fk_member'] = array('type'=>'integer:Adherent:adherents/class/adherent.class.php:1', 'label'=>'Member', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'member', 'csslist'=>'tdoverflowmax150');
 		} else {
-			$this->fields['fk_soc'] = array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'company', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax150');
+			$this->fields['fk_soc'] = array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'company', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax150');
 		}
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
@@ -372,7 +372,7 @@ class Partnership extends CommonObject
 		$sql = 'SELECT p.rowid, p.ref, p.fk_type, p.fk_soc, p.fk_member, p.status';
 		$sql .= ', p.entity, p.date_partnership_start, p.date_partnership_end, p.date_creation';
 		$sql .= ', p.fk_user_creat, p.tms, p.fk_user_modif, p.fk_user_modif';
-		$sql .= ', p.note_private, p.note_public';
+		$sql .= ', p.note_private, p.note_public, p.url_to_check';
 		$sql .= ', p.last_main_doc, p.count_last_url_check_error, p.last_check_backlink, p.reason_decline_or_cancel';
 		$sql .= ', p.import_key, p.model_pdf';
 		$sql .= ', pt.code as type_code, pt.label as type_label';
@@ -380,7 +380,7 @@ class Partnership extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_partnership_type as pt ON p.fk_type = pt.rowid';
 
 		if ($id) {
-			$sql .= " WHERE p.rowid=".((int) $id);
+			$sql .= " WHERE p.rowid = ".((int) $id);
 		} else {
 			$sql .= " WHERE p.entity IN (0,".getEntity('partnership').")"; // Dont't use entity if you use rowid
 		}
@@ -427,6 +427,7 @@ class Partnership extends CommonObject
 				$this->reason_decline_or_cancel 	= $obj->reason_decline_or_cancel;
 				$this->import_key 					= $obj->import_key;
 				$this->model_pdf 					= $obj->model_pdf;
+				$this->url_to_check 				= $obj->url_to_check;
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -552,6 +553,9 @@ class Partnership extends CommonObject
 		if ($this->fk_soc <= 0 && $this->fk_member <= 0) {
 			$this->error[] = "ErrorThirpdartyOrMemberidIsMandatory";
 			return -1;
+		}
+		if (empty($this->fk_user_creat)) {	// For the case the object was created with empty user (from public page).
+			$this->fk_user_creat = $user->id;
 		}
 
 		return $this->updateCommon($user, $notrigger);

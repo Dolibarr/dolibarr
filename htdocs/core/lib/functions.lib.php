@@ -588,7 +588,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 				}
 			}
 			if (!empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) {
-				if (!empty($_GET['action']) && (preg_match('/^create/', $_GET['action']) || preg_match('/^presend/', $_GET['action'])) && !isset($_GET[$paramname]) && !isset($_POST[$paramname])) {
+				if (!empty($_GET['action']) && (preg_match('/^create|^add_price|^make/', $_GET['action']) || preg_match('/^presend/', $_GET['action'])) && !isset($_GET[$paramname]) && !isset($_POST[$paramname])) {
 					// Now search in setup to overwrite default values
 					if (!empty($user->default_values)) {		// $user->default_values defined from menu 'Setup - Default values'
 						if (isset($user->default_values[$relativepathstring]['createform'])) {
@@ -1488,7 +1488,7 @@ function dol_escape_json($stringtoescape)
  *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape. TODO Does not works yet when there is attributes into tag.
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
  *  @return     string     				 			Escaped string
- *  @see		dol_string_nohtmltag(), dol_string_nospecial(), dol_string_unaccent()
+ *  @see		dol_string_nohtmltag(), dol_string_nospecial(), dol_string_unaccent(), dol_htmlentitiesbr()
  */
 function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0)
 {
@@ -6150,30 +6150,30 @@ function isOnlyOneLocalTax($local)
 /**
  * Get values of localtaxes (1 or 2) for company country for the common vat with the highest value
  *
- * @param	int		$local 	LocalTax to get
- * @return	number			Values of localtax
+ * @param	int				$local 		LocalTax to get
+ * @return	string						Values of localtax (Can be '20', '-19:-15:-9')
  */
 function get_localtax_by_third($local)
 {
 	global $db, $mysoc;
-	$sql = "SELECT t.localtax1, t.localtax2 ";
-	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=t.fk_pays";
-	$sql .= " WHERE c.code = '".$db->escape($mysoc->country_code)."' AND t.active = 1 AND t.taux=(";
-	$sql .= "  SELECT max(tt.taux) FROM ".MAIN_DB_PREFIX."c_tva as tt inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=tt.fk_pays";
-	$sql .= "  WHERE c.code = '".$db->escape($mysoc->country_code)."' AND tt.active = 1";
-	$sql .= "  )";
+
+	$sql  = " SELECT t.localtax".$local." as localtax";
+	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t INNER JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = t.fk_pays";
+	$sql .= " WHERE c.code = '".$db->escape($mysoc->country_code)."' AND t.active = 1 AND t.taux = (";
+	$sql .= "SELECT MAX(tt.taux) FROM ".MAIN_DB_PREFIX."c_tva as tt INNER JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = tt.fk_pays";
+	$sql .= " WHERE c.code = '".$db->escape($mysoc->country_code)."' AND tt.active = 1)";
+	$sql .= " AND t.localtax".$local."_type <> '0'";
+	$sql .= " ORDER BY t.rowid DESC";
 
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
-		if ($local == 1) {
-			return $obj->localtax1;
-		} elseif ($local == 2) {
-			return $obj->localtax2;
-		}
+		return $obj->localtax;
+	} else {
+		return 'Error';
 	}
 
-	return 0;
+	return '0';
 }
 
 
@@ -6282,10 +6282,12 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 		}
 
 		$sql .= ", ".MAIN_DB_PREFIX."c_country as c";
-		if ($mysoc->country_code == 'ES') {
-			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($buyer->country_code)."'"; // local tax in spain use the buyer country ??
+		if (!empty($mysoc) && $mysoc->country_code == 'ES') {
+			$countrycodetouse = ((empty($buyer) || empty($buyer->country_code)) ? $mysoc->country_code : $buyer->country_code);
+			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($countrycodetouse)."'"; // local tax in spain use the buyer country ??
 		} else {
-			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape(empty($seller->country_code) ? $mysoc->country_code : $seller->country_code)."'";
+			$countrycodetouse = ((empty($seller) || empty($seller->country_code)) ? $mysoc->country_code : $seller->country_code);
+			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($countrycodetouse)."'";
 		}
 		$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
 		if ($vatratecode) {
@@ -7483,7 +7485,7 @@ function dol_textishtml($msg, $option = 0)
 			return true;
 		} elseif (preg_match('/<\/textarea/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<(b|em|i|u)>/i', $msg)) {
+		} elseif (preg_match('/<(b|em|i|u)(\s+[^>]+)?>/i', $msg)) {
 			return true;
 		} elseif (preg_match('/<br/i', $msg)) {
 			return true;
@@ -7498,7 +7500,7 @@ function dol_textishtml($msg, $option = 0)
 			return true;
 		} elseif (preg_match('/<\/textarea/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<(b|em|i|u)>/i', $msg)) {
+		} elseif (preg_match('/<(b|em|i|u)(\s+[^>]+)?>/i', $msg)) {
 			return true;
 		} elseif (preg_match('/<br\/>/i', $msg)) {
 			return true;
@@ -7942,6 +7944,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				// Set the online payment url link into __ONLINE_PAYMENT_URL__ key
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 				$outputlangs->loadLangs(array('paypal', 'other'));
+
+				$amounttouse = 0;
 				$typeforonlinepayment = 'free';
 				if (is_object($object) && $object->element == 'commande') {
 					$typeforonlinepayment = 'order';
@@ -7951,6 +7955,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				if (is_object($object) && $object->element == 'member') {
 					$typeforonlinepayment = 'member';
+					if (!empty($object->last_subscription_amount)) {
+						$amounttouse = $object->last_subscription_amount;
+					}
 				}
 				if (is_object($object) && $object->element == 'contrat') {
 					$typeforonlinepayment = 'contract';
@@ -7958,7 +7965,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if (is_object($object) && $object->element == 'fichinter') {
 					$typeforonlinepayment = 'ficheinter';
 				}
-				$url = getOnlinePaymentUrl(0, $typeforonlinepayment, $substitutionarray['__REF__']);
+
+				$url = getOnlinePaymentUrl(0, $typeforonlinepayment, $substitutionarray['__REF__'], $amounttouse);
 				$paymenturl = $url;
 			}
 
@@ -8963,6 +8971,9 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 				}
 			}
 		}
+		if (is_array($s) || $s === 'Array') {
+			return 'Bad string syntax to evaluate (value is Array) '.var_export($s, true);
+		}
 		if (strpos($s, '::') !== false) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (double : char is forbidden): '.$s;
@@ -9030,11 +9041,9 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			}
 		}
 	} catch (Error $e) {
-		$error = 'Caught error : ';
+		$error = 'dol_eval try/catch error : ';
 		$error .= $e->getMessage();
-		//$error .= ', Trace : ';
-		//$error .= json_encode($e->getTrace());
-		error_log($error, 1);
+		dol_syslog($error);
 	}
 	if ($returnvalue) {
 		return '';
@@ -9756,10 +9765,10 @@ function dol_getmypid()
  *                                      like "keyword1 keyword2" = We want record field like keyword1 AND field like keyword2
  *                                      or like "keyword1|keyword2" = We want record field like keyword1 OR field like keyword2
  *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < -1000"
- *                             			If param $mode is 2, can contains a list of int id separated by comma like "1,3,4"
- *                             			If param $mode is 3, can contains a list of string separated by comma like "a,b,c"
- * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of ID separated with comma (Example '1,3,4')
- * 										3=value is list of string separated with comma (Example 'text 1,text 2'), 4=value is a list of ID separated with comma (Example '2,7') to be used to search into a multiselect string '1,2,3,4'
+ *                             			If param $mode is 2 or -2, can contains a list of int id separated by comma like "1,3,4"
+ *                             			If param $mode is 3 or -3, can contains a list of string separated by comma like "a,b,c".
+ * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of ID separated with comma (Example '1,3,4'), -2 is for exclude list,
+ * 										3=value is list of string separated with comma (Example 'text 1,text 2'), -3 if for exclude list, 4=value is a list of ID separated with comma (Example '2,7') to be used to search into a multiselect string '1,2,3,4'
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  * @see dolSqlDateFilter()
@@ -9774,7 +9783,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 		$value = preg_replace('/\*/', '%', $value); // Replace * with %
 	}
 	if ($mode == 1) {
-		$value = preg_replace('/([!<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"), '/').'\-])/', '\1\2', $value); // Clean string '< 10' into '<10' so we can the explode on space to get all tests to do
+		$value = preg_replace('/([!<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"), '/').'\-])/', '\1\2', $value); // Clean string '< 10' into '<10' so we can then explode on space to get all tests to do
 	}
 
 	$value = preg_replace('/\s*\|\s*/', '|', $value);
@@ -9785,16 +9794,15 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 		$fields = array($fields);
 	}
 
-	$j = 0;
-	foreach ($crits as $crit) {
+	$i1 = 0;	// count the nb of and criteria added (all fields / criterias)
+	foreach ($crits as $crit) {		// Loop on each AND criteria
 		$crit = trim($crit);
-		$i = 0;
-		$i2 = 0;
+		$i2 = 0;	// count the nb of valid criteria added for this this first criteria
 		$newres = '';
 		foreach ($fields as $field) {
 			if ($mode == 1) {
 				$tmpcrits = explode('|', $crit);
-				$i3 = 0;	// count the nb of valid criteria added for this field
+				$i3 = 0;	// count the nb of valid criteria added for this current field
 				foreach ($tmpcrits as $tmpcrit) {
 					if ($tmpcrit !== '0' && empty($tmpcrit)) {
 						continue;
@@ -9821,7 +9829,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 						$i3++; // a criteria was added to string
 					}
 				}
-				$i2++;
+				$i2++; // a criteria for 1 more field was added to string
 			} elseif ($mode == 2 || $mode == -2) {
 				$crit = preg_replace('/[^0-9,]/', '', $crit); // ID are always integer
 				$newres .= ($i2 > 0 ? ' OR ' : '').$field." ".($mode == -2 ? 'NOT ' : '');
@@ -9829,7 +9837,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				if ($mode == -2) {
 					$newres .= ' OR '.$field.' IS NULL';
 				}
-				$i2++; // a criteria was added to string
+				$i2++; // a criteria for 1 more field was added to string
 			} elseif ($mode == 3 || $mode == -3) {
 				$tmparray = explode(',', $crit);
 				if (count($tmparray)) {
@@ -9842,7 +9850,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 						}
 					}
 					$newres .= ($i2 > 0 ? ' OR ' : '').$field." ".($mode == -3 ? 'NOT ' : '')."IN (".$db->sanitize($listofcodes, 1).")";
-					$i2++; // a criteria was added to string
+					$i2++; // a criteria for 1 more field was added to string
 				}
 				if ($mode == -3) {
 					$newres .= ' OR '.$field.' IS NULL';
@@ -9859,20 +9867,20 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 							$newres .= ' OR '.$field." LIKE '%,".$db->escape($val)."'";
 							$newres .= ' OR '.$field." LIKE '%,".$db->escape($val).",%'";
 							$newres .= ')';
-							$i2++;
+							$i2++; // a criteria for 1 more field was added to string (we can add several citeria for the same field as it is a multiselect search criteria)
 						}
 					}
 				}
 			} else { // $mode=0
 				$tmpcrits = explode('|', $crit);
-				$i3 = 0;	// count the nb of valid criteria added for this field
-				foreach ($tmpcrits as $tmpcrit) {
+				$i3 = 0;	// count the nb of valid criteria added for the current couple criteria/field
+				foreach ($tmpcrits as $tmpcrit) {	// loop on each OR criteria
 					if ($tmpcrit !== '0' && empty($tmpcrit)) {
 						continue;
 					}
 					$tmpcrit = trim($tmpcrit);
 
-					if ($tmpcrit == '^$') {	// If we search empty, we must combined different fields with AND
+					if ($tmpcrit == '^$' || strpos($crit, '!') === 0) {	// If we search empty, we must combined different OR fields with AND
 						$newres .= (($i2 > 0 || $i3 > 0) ? ' AND ' : '');
 					} else {
 						$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
@@ -9918,15 +9926,15 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 
 					$i3++;
 				}
-				$i2++; // a criteria was added to string
+
+				$i2++; // a criteria for 1 more field was added to string
 			}
-			$i++;
 		}
 
 		if ($newres) {
 			$res = $res.($res ? ' AND ' : '').($i2 > 1 ? '(' : '').$newres.($i2 > 1 ? ')' : '');
 		}
-		$j++;
+		$i1++;
 	}
 	$res = ($nofirstand ? "" : " AND ")."(".$res.")";
 
@@ -11522,17 +11530,35 @@ function jsonOrUnserialize($stringtodecode)
 }
 
 
+/**
+ * forgeSQLFromUniversalSearchCriteria
+ *
+ * @param 	string		$filter		String with universal search string
+ * @param	string		$error		Error message
+ * @return	string					Return forged SQL string
+ */
+function forgeSQLFromUniversalSearchCriteria($filter, &$error = '')
+{
+	$regexstring = '\(([a-zA-Z0-9_\.]+:[<>!=insotlke]+:[^\(\)]+)\)';	// Must be  (aaa:bbb:...) with aaa is a field name (with alias or not) and bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'
+
+	if (!dolCheckFilters($filter, $error)) {
+		return '1 = 2';		// Bad balance of parenthesis, we force a SQL not found
+	}
+
+	// Test the filter syntax
+	$t = preg_replace_callback('/'.$regexstring.'/i', 'dolForgeDummyCriteriaCallback', $filter);
+	$t = str_replace(array('and','or','AND','OR',' '), '', $t);		// Remove the only strings allowed between each () criteria
+	// If the string result contains something else than '()', the syntax was wrong
+	if (preg_match('/[^\(\)]/', $t)) {
+		$error = 'Bad syntax of the search string, filter criteria is inhalited';
+		return '1 = 3';		// Bad syntax of the search string, we force a SQL not found
+	}
+
+	return " AND (".preg_replace_callback('/'.$regexstring.'/i', 'dolForgeCriteriaCallback', $filter).")";
+}
 
 /**
- * Return if a $sqlfilters parameter is valid and will pass the preg_replace_callback() to replace Generic filter string with SQL filter string
- * Example of usage:
- * if ($sqlfilters) {
- *	 $errormessage = '';
- *   if (dolCheckFilters($sqlfilters, $errormessage)) {
- *	   $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
- *	   $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $sqlfilters).")";
- *   }
- * }
+ * Return if a $sqlfilters parameter has a valid balance of parenthesis
  *
  * @param	string  		$sqlfilters     sqlfilter string
  * @param	string			$error			Error message
@@ -11553,7 +11579,7 @@ function dolCheckFilters($sqlfilters, &$error = '')
 			$counter--;
 		}
 		if ($counter < 0) {
-			$error = "Bad sqlfilters=".$sqlfilters;
+			$error = "Wrond balance of parenthesis in sqlfilters=".$sqlfilters;
 			dol_syslog($error, LOG_WARNING);
 			return false;
 		}
@@ -11563,58 +11589,95 @@ function dolCheckFilters($sqlfilters, &$error = '')
 }
 
 /**
- * Function to forge a SQL criteria from a Generic filter string.
- * Example of usage:
- * if ($sqlfilters) {
- *	 $errormessage = '';
- *   if (dolCheckFilters($sqlfilters, $errormessage)) {
- *	   $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
- *	   $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $sqlfilters).")";
- *   }
- * }
+ * Function to forge a SQL criteria from a Dolibarr filter syntax string.
+ * This method is called by forgeSQLFromUniversalSearchCriteria()
  *
- * @param  array    $matches    Array of found string by regex search.
- * 								Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
- * @return string               Forged criteria. Example: "t.field like 'abc%'"
+ * @param  array    $matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.nature:is:NULL"
+ * @return string                  Forged criteria. Example: "t.field like 'abc%'"
+ */
+function dolForgeDummyCriteriaCallback($matches)
+{
+	//dol_syslog("Convert matches ".$matches[1]);
+	if (empty($matches[1])) {
+		return '';
+	}
+	$tmp = explode(':', $matches[1]);
+	if (count($tmp) < 3) {
+		return '';
+	}
+
+	return '()';	// An empty criteria
+}
+
+/**
+ * Function to forge a SQL criteria from a Dolibarr filter syntax string.
+ * This method is called by forgeSQLFromUniversalSearchCriteria()
+ *
+ * @param  array    $matches       	Array of found string by regex search.
+ * 									Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
+ * @return string                  	Forged criteria. Example: "t.field like 'abc%'"
  */
 function dolForgeCriteriaCallback($matches)
 {
 	global $db;
 
-	dol_syslog("Convert matches ".$matches[1]);
+	//dol_syslog("Convert matches ".$matches[1]);
 	if (empty($matches[1])) {
 		return '';
 	}
-	$tmp = explode(':', $matches[1], 3);
-
+	$tmp = explode(':', $matches[1]);
 	if (count($tmp) < 3) {
 		return '';
 	}
 
 	$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
 
-	$operator = strtoupper(preg_replace('/[^a-z<>=]/i', '', trim($tmp[1])));
+	$operator = strtoupper(preg_replace('/[^a-z<>!=]/i', '', trim($tmp[1])));
+
 	if ($operator == 'NOTLIKE') {
 		$operator = 'NOT LIKE';
 	}
+	if ($operator == 'ISNOT') {
+		$operator = 'IS NOT';
+	}
+	if ($operator == '!=') {
+		$operator = '<>';
+	}
 
-	$tmpescaped = trim($tmp[2]);
+	$tmpescaped = $tmp[2];
 	$regbis = array();
-	if ($operator == 'IN') {
-		$tmpescaped = "(".$db->sanitize($tmpescaped, 1).")";
+
+	if ($operator == 'IN') {	// IN is allowed for list of ID or code only
+		//if (!preg_match('/^\(.*\)$/', $tmpescaped)) {
+			$tmpescaped = '('.$db->escape($db->sanitize($tmpescaped, 1, 0)).')';
+		//} else {
+		//	$tmpescaped = $db->escape($db->sanitize($tmpescaped, 1));
+		//}
+	} elseif ($operator == 'LIKE' || $operator == 'NOT LIKE') {
+		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
+			$tmpescaped = $regbis[1];
+		}
+		//$tmpescaped = "'".$db->escapeforlike($db->escape($regbis[1]))."'";
+		$tmpescaped = "'".$db->escape($tmpescaped)."'";	// We do not escape the _ and % so the like will works
 	} elseif (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 		$tmpescaped = "'".$db->escape($regbis[1])."'";
 	} else {
-		$tmpescaped = $db->sanitize($db->escape($tmpescaped));
+		if (strtoupper($tmpescaped) == 'NULL') {
+			$tmpescaped = 'NULL';
+		} elseif (is_int($tmpescaped)) {
+			$tmpescaped = (int) $tmpescaped;
+		} else {
+			$tmpescaped = (float) $tmpescaped;
+		}
 	}
 
-	return $db->escape($operand).' '.$db->escape($operator)." ".$tmpescaped;
+	return $db->escape($operand).' '.strtoupper($operator).' '.$tmpescaped;
 }
-
 
 
 /**
  * Get timeline icon
+ *
  * @param ActionComm $actionstatic actioncomm
  * @param array $histo histo
  * @param int $key key

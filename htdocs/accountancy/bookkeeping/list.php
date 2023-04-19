@@ -694,7 +694,7 @@ if (!empty($sortfield)) {
 // Export into a file with format defined into setup (FEC, CSV, ...)
 // Must be after definition of $sql
 if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements', 'export')) {
-	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). It consumes too much memory on large export.
+	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). It currently consumes too much memory on large export.
 	// Replace this with the query($sql) and loop on each line to export them.
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', (empty($conf->global->ACCOUNTING_REEXPORT) ? 0 : 1));
 
@@ -817,6 +817,15 @@ $formconfirm = '';
 if ($action == 'export_file') {
 	$form_question = array();
 
+	$form_question['notexportlettering'] = array(
+		'name' => 'notexportlettering',
+		'type' => 'other',
+		'label' => '',		// TODO  Use Selectmodelcsv and show a select combo
+		'value' => $langs->trans('Modelcsv').' : <b>'.$listofformat[$formatexportset].'</b>'
+	);
+
+	$form_question['separator0'] = array('name'=>'separator0', 'type'=>'separator');
+
 	if (getDolGlobalInt("ACCOUNTING_ENABLE_LETTERING")) {
 		// If 1, we check by default.
 		$checked = !empty($conf->global->ACCOUNTING_DEFAULT_NOT_EXPORT_LETTERING) ? 'true' : 'false';
@@ -827,7 +836,7 @@ if ($action == 'export_file') {
 			'value' => $checked,
 		);
 
-		$form_question['separator'] = array('name'=>'separator', 'type'=>'separator');
+		$form_question['separator1'] = array('name'=>'separator1', 'type'=>'separator');
 	}
 
 	// If 1 or not set, we check by default.
@@ -854,7 +863,7 @@ if ($action == 'export_file') {
 		$form_question['separator3'] = array('name'=>'separator3', 'type'=>'separator');
 	}
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 350, 600);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").'...', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 350, 600);
 }
 
 //if ($action == 'delbookkeepingyear') {
@@ -957,7 +966,7 @@ if (empty($reshook)) {
 		$newcardbutton .= '<span class="valignmiddle marginrightonly paddingleft">'.$langs->trans("ClickToHideAlreadyExportedLines").'</span>';
 		$newcardbutton .= '</a>';
 	} else {
-		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("DocsAlreadyExportedAreExcluded"), 'switch_on', 'class="warning size15x valignmiddle"').'';
+		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("DocsAlreadyExportedAreExcluded"), 'switch_on', 'class="warning size15x valignmiddle"');
 		$newcardbutton .= '<span class="valignmiddle marginrightonly paddingleft">'.$langs->trans("DocsAlreadyExportedAreExcluded").'</span>';
 		$newcardbutton .= '</a>';
 	}
@@ -1303,7 +1312,7 @@ while ($i < min($num, $limit)) {
 		$accountingjournal = new AccountingJournal($db);
 		$result = $accountingjournal->fetch('', $line->code_journal);
 		$journaltoshow = (($result > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
-		print '<td class="center">'.$journaltoshow.'</td>';
+		print '<td class="center tdoverflowmax150">'.$journaltoshow.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1451,7 +1460,7 @@ while ($i < min($num, $limit)) {
 
 	// Creation operation date
 	if (!empty($arrayfields['t.date_creation']['checked'])) {
-		print '<td class="center">'.dol_print_date($line->date_creation, 'dayhour').'</td>';
+		print '<td class="center">'.dol_print_date($line->date_creation, 'dayhour', 'tzuserrel').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1459,7 +1468,7 @@ while ($i < min($num, $limit)) {
 
 	// Modification operation date
 	if (!empty($arrayfields['t.tms']['checked'])) {
-		print '<td class="center">'.dol_print_date($line->date_modification, 'dayhour').'</td>';
+		print '<td class="center">'.dol_print_date($line->date_modification, 'dayhour', 'tzuserrel').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1467,7 +1476,7 @@ while ($i < min($num, $limit)) {
 
 	// Exported operation date
 	if (!empty($arrayfields['t.date_export']['checked'])) {
-		print '<td class="center nowraponall">'.dol_print_date($line->date_export, 'dayhour').'</td>';
+		print '<td class="center nowraponall">'.dol_print_date($line->date_export, 'dayhour', 'tzuserrel').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1475,7 +1484,7 @@ while ($i < min($num, $limit)) {
 
 	// Validated operation date
 	if (!empty($arrayfields['t.date_validated']['checked'])) {
-		print '<td class="center nowraponall">'.dol_print_date($line->date_validation, 'dayhour').'</td>';
+		print '<td class="center nowraponall">'.dol_print_date($line->date_validation, 'dayhour', 'tzuserrel').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

@@ -553,12 +553,12 @@ if (empty($conf->global->MAIN_EXEC_USE_POPEN)) {
 	print $conf->global->MAIN_EXEC_USE_POPEN;
 }
 if ($execmethod == 1) {
-	print '<span class="opacitymedium">, "exec" PHP method will be used for shell commands';
+	print '<span class="opacitymedium"> &nbsp; &nbsp; "exec" PHP method will be used for shell commands';
 	print ' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 1)';
 	print '</span>';
 }
 if ($execmethod == 2) {
-	print '<span class="opacitymedium">, "popen" PHP method will be used for shell commands';
+	print '<span class="opacitymedium"> &nbsp; &nbsp; "popen" PHP method will be used for shell commands';
 	print ' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 1)';
 	print '</span>';
 }
@@ -574,13 +574,21 @@ print '<br>';
 print '<strong>MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL</strong> = '.(empty($conf->global->MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>' : $conf->global->MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL)."<br>";
 print '<br>';
 
-print '<strong>MAIN_SECURITY_FORCECSP</strong> = '.(empty($conf->global->MAIN_SECURITY_FORCECSP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_FORCECSP).' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"frame-ancestors 'self'; default-src *; img-src * data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';\")</span><br>";
+$examplecsprule = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
+print '<strong>MAIN_SECURITY_FORCECSPRO</strong> = '.(empty($conf->global->MAIN_SECURITY_FORCECSPRO) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_FORCECSPRO).' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "'.$examplecsprule.'")</span><br>';
+print '<br>';
+
+$examplecsprule = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
+print '<strong>MAIN_SECURITY_FORCECSP</strong> = '.(empty($conf->global->MAIN_SECURITY_FORCECSP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_FORCECSP).' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "'.$examplecsprule.'")</span><br>';
 print '<br>';
 
 print '<strong>MAIN_SECURITY_FORCERP</strong> = '.(empty($conf->global->MAIN_SECURITY_FORCERP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_FORCERP).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or")." \"same-origin\" so browser doesn't send any referrer when going into another web site domain)</span><br>";
 print '<br>';
 
-print '<strong>WEBSITE_MAIN_SECURITY_FORCECSP</strong> = '.(empty($conf->global->WEBSITE_MAIN_SECURITY_FORCECSP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->WEBSITE_MAIN_SECURITY_FORCECSP).' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"frame-ancestors 'self'; default-src 'self' 'unsafe-inline'; style-src https://cdnjs.cloudflare.com https://fonts.googleapis.com; script-src https://cdn.transifex.com https://www.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src * data:;\")</span><br>";
+print '<strong>WEBSITE_MAIN_SECURITY_FORCECSPRO</strong> = '.(empty($conf->global->WEBSITE_MAIN_SECURITY_FORCECSPRO) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->WEBSITE_MAIN_SECURITY_FORCECSPRO).' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"frame-ancestors 'self'; default-src 'self' 'unsafe-inline'; style-src https://cdnjs.cloudflare.com *.googleapis.com; script-src *.transifex.com *.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src * data:;\")</span><br>";
+print '<br>';
+
+print '<strong>WEBSITE_MAIN_SECURITY_FORCECSP</strong> = '.(empty($conf->global->WEBSITE_MAIN_SECURITY_FORCECSP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->WEBSITE_MAIN_SECURITY_FORCECSP).' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"frame-ancestors 'self'; default-src 'self' 'unsafe-inline'; style-src https://cdnjs.cloudflare.com *.googleapis.com; script-src *.transifex.com *.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src * data:;\")</span><br>";
 print '<br>';
 
 print '<strong>WEBSITE_MAIN_SECURITY_FORCERP</strong> = '.(empty($conf->global->WEBSITE_MAIN_SECURITY_FORCERP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->WEBSITE_MAIN_SECURITY_FORCERP).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or")." \"strict-origin-when-cross-origin\")</span><br>";

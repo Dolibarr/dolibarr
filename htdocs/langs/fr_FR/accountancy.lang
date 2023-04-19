@@ -167,27 +167,27 @@ ACCOUNTANCY_COMBO_FOR_AUX=Activer la liste déroulante pour les comptes auxiliai
 ACCOUNTING_DATE_START_BINDING=Définissez une date pour commencer la liaison et le transfert en comptabilité. En dessous de cette date, les transactions ne seront jamais transférées à la comptabilité.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Sur virement comptable, quelle est la période sélectionnée par défaut
 
-ACCOUNTING_SELL_JOURNAL=Journal des ventes (ventes et retours)
-ACCOUNTING_PURCHASE_JOURNAL=Journal des achats (achats et retours)
-ACCOUNTING_BANK_JOURNAL=Journal de trésorerie (encaissements et décaissements)
-ACCOUNTING_EXPENSEREPORT_JOURNAL=Journal des notes de frais
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Journal des opérations diverses
-ACCOUNTING_HAS_NEW_JOURNAL=Journal des A-nouveaux
-ACCOUNTING_INVENTORY_JOURNAL=Journal d'inventaire
-ACCOUNTING_SOCIAL_JOURNAL=Journal de paie
+ACCOUNTING_SELL_JOURNAL=Ventes
+ACCOUNTING_PURCHASE_JOURNAL=Achats
+ACCOUNTING_BANK_JOURNAL=Banque
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Notes de frais
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Opérations diverses
+ACCOUNTING_HAS_NEW_JOURNAL=A-nouveaux
+ACCOUNTING_INVENTORY_JOURNAL=Inventaire
+ACCOUNTING_SOCIAL_JOURNAL=Paie
 
 ACCOUNTING_RESULT_PROFIT=Compte de résultat (Profit)
 ACCOUNTING_RESULT_LOSS=Compte de résultat (perte)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal de fermeture
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Compte comptable de virement interne
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Compte comptable par défaut pour les virements internes
 TransitionalAccount=Compte transitoire de virement bancaire
 
-ACCOUNTING_ACCOUNT_SUSPENSE=Compte comptable d'attente
+ACCOUNTING_ACCOUNT_SUSPENSE=Compte comptable par défaut pour les opérations en attente
 DONATION_ACCOUNTINGACCOUNT=Compte comptable pour la comptabilisation des dons
-ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Compte comptable pour la comptabilisation des adhésions des adhérents
+ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Compte comptable par défaut pour les adhésions des adhérents (si l'adhésion est enregistrée sans facture)
 
-ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Compte (du plan comptable) à utiliser comme compte par défaut pour enregistrer les acomptes client
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Compte comptable par défaut pour enregistrer les acomptes client
 UseAuxiliaryAccountOnCustomerDeposit=Enregistrer le compte client comme compte individuel dans le grand livre auxiliaire pour les lignes d'acompte (si désactivé, le compte individuel pour les lignes d'acompte restera vide)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Compte comptable par défaut pour enregistrer l'acompte fournisseur
 UseAuxiliaryAccountOnSupplierDeposit=Utiliser le compte comptable auxiliaire fournisseur dans le grand livre auxiliaire pour les lignes d'acomptes fournisseurs (si désactivé, le compte comptable auxiliaire pour les lignes d'acompte restera vide)
@@ -238,6 +238,7 @@ ConfirmDeleteMvt=Cela supprimera toutes les lignes en comptabilité pour l'anné
 ConfirmDeleteMvtPartial=Cela supprimera la transaction de la comptabilité (toutes les lignes liées à la même transaction seront supprimées)
 FinanceJournal=Journal de trésorerie
 ExpenseReportsJournal=Journal des notes de frais
+InventoryJournal=Journal d'inventaire
 DescFinanceJournal=Journal de trésorerie comprenant tous les types de paiements par compte bancaire / caisse
 DescJournalOnlyBindedVisible=Il s'agit d'une vue des éléments liés à un compte comptable et qui peuvent être enregistrés dans les journaux et le grand livre.
 VATAccountNotDefined=Compte de la TVA non défini
@@ -271,7 +272,7 @@ Pcgtype=Groupe de comptes comptables
 PcgtypeDesc=Les groupes de comptes sont utilisés comme critères de filtre et de regroupement prédéfinis pour certains rapports de comptabilité. Par exemple, «INCOME» ou «EXPENSE» sont utilisés en tant que groupes pour la comptabilité afin de générer le rapport dépenses / revenus.
 AccountingCategoriesDesc=Un groupe de comptes personnalisé peut être utilisé pour regrouper les comptes comptables en un seul nom afin de faciliter l'utilisation du filtre ou la création de rapports personnalisés.
 
-Reconcilable=Rapprochable
+Reconcilable=Lettrable
 
 TotalVente=Total chiffre affaires hors taxe
 TotalMarge=Total marge
@@ -299,7 +300,7 @@ DescValidateMovements=Toute modification ou suppression d'écriture, de lettrage
 
 ValidateHistory=Lier automatiquement
 AutomaticBindingDone=Liaisons automatiques effectuées (%s) - Liaison automatique impossible pour certains enregistrements (%s)
-DoManualBindingForFailedRecord=Vous devez réaliser un rapprochement manuel pour la/les %s ligne·s non rapproché·es automatiquement.
+DoManualBindingForFailedRecord=Vous devez réaliser un lettrage manuel pour la/les %s ligne·s non lettré·es automatiquement.
 
 ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas supprimer ou désactiver ce compte comptable car il est utilisé
 MvtNotCorrectlyBalanced=Mouvement non équilibré. Débit = %s & Crédit = %s
@@ -313,7 +314,7 @@ ChangeBinding=Changer les liens
 Accounted=En comptabilité
 NotYetAccounted=Pas encore transféré en comptabilité
 ShowTutorial=Afficher le tutoriel
-NotReconciled=Non rapproché
+NotReconciled=Non lettré
 WarningRecordWithoutSubledgerAreExcluded=Attention, toutes les lignes sans compte auxiliaire défini sont filtrées et exclues de cette vue
 AccountRemovedFromCurrentChartOfAccount=Compte comptable qui n'existe pas dans le plan comptable actuel
 
@@ -415,22 +416,22 @@ Calculated=Calculé
 Formula=Formule
 
 ## Reconcile
-LetteringAuto=Rapprocher automatiquement
-LetteringManual=Rapprocher manuel
-Unlettering=Annuler le rapprochement
-UnletteringAuto=Annuler le rapprochement automatique
-UnletteringManual=Annuler rapprochement manuel
-AccountancyNoLetteringModified=Pas de rapprochement modifié
-AccountancyOneLetteringModifiedSuccessfully=Un rapprochement modifié avec succès
-AccountancyLetteringModifiedSuccessfully=%s rapprochements modifiés avec succès
-AccountancyNoUnletteringModified=Aucune annulation de rapprochement modifiée
-AccountancyOneUnletteringModifiedSuccessfully=Une annulation de rapprochement modifiée avec succès
-AccountancyUnletteringModifiedSuccessfully=%s annulations de rapprochement modifiées avec succès
+LetteringAuto=Lettrage automatique
+LetteringManual=Lettrage manuel
+Unlettering=Annuler le lettrage
+UnletteringAuto=Annuler le lettrage automatique
+UnletteringManual=Annuler lettrage manuel
+AccountancyNoLetteringModified=Pas de lettrage modifié
+AccountancyOneLetteringModifiedSuccessfully=Un lettrage modifié avec succès
+AccountancyLetteringModifiedSuccessfully=%s lettrages modifiés avec succès
+AccountancyNoUnletteringModified=Aucune annulation de lettrage modifiée
+AccountancyOneUnletteringModifiedSuccessfully=Une annulation de lettrage modifiée avec succès
+AccountancyUnletteringModifiedSuccessfully=%s annulations de lettrage modifiées avec succès
 
 ## Confirm box
-ConfirmMassUnletteringAuto=Confirmation d'annulation de rapprochement automatique
-ConfirmMassUnletteringManual=Confirmation de dé-rapprochement manuel
-ConfirmMassUnletteringQuestion=Voulez-vous vraiment annuler le rapprochement des %s enregistrements sélectionnés ?
+ConfirmMassUnletteringAuto=Confirmation de l'annulation du lettrage automatique
+ConfirmMassUnletteringManual=Confirmation de l'annulation du lettrage manuel
+ConfirmMassUnletteringQuestion=Voulez-vous vraiment annuler le lettrage des %s enregistrements sélectionnés ?
 ConfirmMassDeleteBookkeepingWriting=Confirmation de suppression en masse
 ConfirmMassDeleteBookkeepingWritingQuestion=Cela supprimera la transaction de la comptabilité (toutes les lignes liées à la même transaction seront supprimées). Êtes-vous sûr de vouloir supprimer le(s) %s enregistrement(s) sélectionné(s) ?
 

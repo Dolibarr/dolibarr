@@ -264,6 +264,7 @@ if (empty($reshook) && $action == 'add') {
 				$company->zip         = GETPOST('zipcode');
 				$company->town        = GETPOST('town');
 				$company->email       = GETPOST('email');
+				$company->url         = GETPOST('url');
 				$company->country_id  = GETPOST('country_id', 'int');
 				$company->state_id    = GETPOST('state_id', 'int');
 				$company->name_alias  = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
@@ -297,12 +298,16 @@ if (empty($reshook) && $action == 'add') {
 			if (empty($company->email)) {
 				$company->email = GETPOST('email');
 			}
+			if (empty($company->url)) {
+				$company->url = GETPOST('url');
+			}
 			if (empty($company->state_id)) {
 				$company->state_id = GETPOST('state_id', 'int');
 			}
 			if (empty($company->name_alias)) {
 				$company->name_alias = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
 			}
+
 			$company->update(0);
 		}
 
@@ -610,6 +615,20 @@ print '<tr><td>'.$langs->trans("Firstname").' <span style="color: red">*</span><
 print '<tr><td>'.$langs->trans("Email").' <span style="color:red;">*</span></td><td>';
 //print img_picto('', 'email', 'class="pictofixedwidth"');
 print '<input type="text" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+// Url
+print '<tr><td>'.$langs->trans("Url").' <span style="color:red;">*</span></td><td>';
+print '<input type="text" name="url" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('url')).'">';
+if (getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK')) {
+	$listofkeytocheck = explode('|', getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK'));
+	$i = 0;
+	$s = '';
+	foreach ($listofkeytocheck as $val) {
+		$i++;
+		$s .= ($s ? ($i == count($listofkeytocheck) ? ' '.$langs->trans("or").' ' : ', ') : '').$val;
+	}
+	print '<br><span class="opacitymedium small">'.$langs->trans("ThisUrlMustContainsAtLeastOneLinkToWebsite", $s).'</small>';
+}
+print '</td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";

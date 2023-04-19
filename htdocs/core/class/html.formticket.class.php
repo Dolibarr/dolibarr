@@ -410,7 +410,7 @@ class FormTicket
 				print $langs->trans('SubjectAnswerToTicket').' '.$this->topic_title;
 			} else {
 				if (isset($this->withreadid) && $this->withreadid > 0) {
-					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title.'';
+					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title;
 				} else {
 					$subject = GETPOST('subject', 'alpha');
 				}
@@ -427,7 +427,7 @@ class FormTicket
 		$toolbarname = 'dolibarr_notes';
 		if ($this->ispublic) {
 			$toolbarname = 'dolibarr_details';
-			print '<div class="warning">'.(getDolGlobalString("TICKET_PUBLIC_TEXT_HELP_MESSAGE", $langs->trans('TicketPublicPleaseBeAccuratelyDescribe'))).'</div>';
+			print '<div class="warning hideonsmartphone">'.(getDolGlobalString("TICKET_PUBLIC_TEXT_HELP_MESSAGE", $langs->trans('TicketPublicPleaseBeAccuratelyDescribe'))).'</div>';
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$uselocalbrowser = true;
@@ -455,7 +455,7 @@ class FormTicket
 
 			if (count($cate_arbo)) {
 				// Categories
-				print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+				print '<tr><td class="wordbreak">'.$langs->trans("Categories").'</td><td>';
 				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 			}
@@ -692,7 +692,7 @@ class FormTicket
 	{
 		global $langs, $user;
 
-		$selected = is_array($selected) ? $selected : (!empty($selected) ? array($selected) : array());
+		$selected = is_array($selected) ? $selected : (!empty($selected) ? explode(',', $selected) : array());
 		$ticketstat = new Ticket($this->db);
 
 		dol_syslog(get_class($this) . "::select_types_tickets " . implode(';', $selected) . ", " . $htmlname . ", " . $filtertype . ", " . $format . ", " . $multiselect, LOG_DEBUG);
@@ -1423,7 +1423,7 @@ class FormTicket
 			$res = $ticketstat->fetch('', '', $this->track_id);
 
 			print '<tr><td></td><td>';
-			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : ($conf->global->TICKETS_MESSAGE_FORCE_MAIL?'checked':''));
+			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : (getDolGlobalInt('TICKETS_MESSAGE_FORCE_MAIL')?'checked':''));
 			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
 			print '<label for="send_msg_email">'.$langs->trans('SendMessageByEmail').'</label>';
 			$texttooltip = $langs->trans("TicketMessageSendEmailHelp", '{s1}');
@@ -1455,7 +1455,7 @@ class FormTicket
 
 			// Subject
 			print '<tr class="email_line"><td>'.$langs->trans('Subject').'</td>';
-			print '<td><input type="text" class="text minwidth500" name="subject" value="['.$conf->global->MAIN_INFO_SOCIETE_NOM.' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
+			print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
 			print '</td></tr>';
 
 			// Recipients / adressed-to
@@ -1489,8 +1489,8 @@ class FormTicket
 					}
 				}
 
-				if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS) {
-					$sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO.' <small class="opacitymedium">(generic email)</small>';
+				if (getDolGlobalInt('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS')) {
+					$sendto[] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO').' <small class="opacitymedium">(generic email)</small>';
 				}
 
 				// Print recipient list

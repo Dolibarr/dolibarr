@@ -35,8 +35,10 @@
  *  \ingroup	core
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+
 
 /**
  *	Class to manage Dolibarr users
@@ -526,7 +528,7 @@ class User extends CommonObject
 				$this->pass_indatabase_crypted = $obj->pass_crypted;
 				$this->pass = $obj->pass;
 				$this->pass_temp	= $obj->pass_temp;
-				$this->api_key = $obj->api_key;
+				$this->api_key = dolDecrypt($obj->api_key);
 
 				$this->address 		= $obj->address;
 				$this->zip 			= $obj->zip;
@@ -730,7 +732,8 @@ class User extends CommonObject
 			'skill@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
 			'job@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
 			'position@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
-			'facturerec' => 'facture'
+			'facturerec' => 'facture',
+			'margins' => 'margin',
 		);
 
 		if (!empty($moduletomoduletouse[$module])) {
@@ -1977,7 +1980,7 @@ class User extends CommonObject
 		$sql .= ", national_registration_number = '".$this->db->escape($this->national_registration_number)."'";
 		$sql .= ", employee = ".(int) $this->employee;
 		$sql .= ", login = '".$this->db->escape($this->login)."'";
-		$sql .= ", api_key = ".($this->api_key ? "'".$this->db->escape($this->api_key)."'" : "null");
+		$sql .= ", api_key = ".($this->api_key ? "'".$this->db->escape(dolEncrypt($this->api_key, '', '', 'dolibarr'))."'" : "null");
 		$sql .= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null"); // 'man' or 'woman'
 		$sql .= ", birth=".(strval($this->birth) != '' ? "'".$this->db->idate($this->birth, 'tzserver')."'" : 'null');
 		if (!empty($user->admin)) {
@@ -2042,7 +2045,7 @@ class User extends CommonObject
 				if ($this->pass != $this->pass_indatabase && !dol_verifyHash($this->pass, $this->pass_indatabase_crypted)) {
 					// If a new value for password is set and different than the one crypted into database
 					$result = $this->setPassword($user, $this->pass, 0, $notrigger, $nosyncmemberpass, 0, 1);
-					if ($result < 0) {
+					if (is_numeric($result) && $result < 0) {
 						return -5;
 					}
 				}
@@ -2330,7 +2333,7 @@ class User extends CommonObject
 
 						if ($result >= 0) {
 							$result = $adh->setPassword($user, $this->pass, (empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1), 1); // Cryptage non gere dans module adherent
-							if ($result < 0) {
+							if (is_numeric($result) && $result < 0) {
 								$this->error = $adh->error;
 								dol_syslog(get_class($this)."::setPassword ".$this->error, LOG_ERR);
 								$error++;

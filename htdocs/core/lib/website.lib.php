@@ -35,8 +35,10 @@ function dolStripPhpCode($str, $replacewith = '')
 
 	$newstr = '';
 
-	//split on each opening tag
-	$parts = explode('<?php', $str);
+	// Split on each opening tag
+	//$parts = explode('<?php', $str);
+	$parts = preg_split('/'.preg_quote('<?php', '/').'/i', $str);
+
 	if (!empty($parts)) {
 		$i = 0;
 		foreach ($parts as $part) {
@@ -77,8 +79,10 @@ function dolKeepOnlyPhpCode($str)
 
 	$newstr = '';
 
-	//split on each opening tag
-	$parts = explode('<?php', $str);
+	// Split on each opening tag
+	//$parts = explode('<?php', $str);
+	$parts = preg_split('/'.preg_quote('<?php', '/').'/i', $str);
+
 	if (!empty($parts)) {
 		$i = 0;
 		foreach ($parts as $part) {

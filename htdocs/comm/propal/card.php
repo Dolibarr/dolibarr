@@ -923,6 +923,8 @@ if (empty($reshook)) {
 		$price_ttc = '';
 		$price_ttc_devise = '';
 
+		// TODO Implement  if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES'))
+
 		if (GETPOST('price_ht') !== '') {
 			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
 		}
@@ -1363,6 +1365,9 @@ if (empty($reshook)) {
 		$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 
 		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
+		if (empty($remise_percent)) {
+			$remise_percent = 0;
+		}
 
 		// Prepare a price equivalent for minimum price check
 		$pu_equivalent = $pu_ht;
@@ -1560,7 +1565,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 		if (!$error) {
-			$result = $object->updateExtraField(GETPOST('attribute', 'restricthtml'), 'PROPAL_MODIFY', $user);
+			$result = $object->insertExtraFields('PROPAL_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;

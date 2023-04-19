@@ -11,6 +11,7 @@
  * Copyright (C) 2019      Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019      Tim Otte			    <otte@meuser.it>
  * Copyright (C) 2020      Pierre Ardoin        <mapiolca@me.com>
+ * Copyright (C) 2023	   Joachim Kueter		<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -769,6 +770,15 @@ END;
 					print '</td></tr>';
 				}
 
+				// Option to define a transport cost on supplier price
+				if (!empty($conf->global->PRODUCT_CHARGES)) {
+					print '<tr>';
+					print '<td>'.$langs->trans("Charges").'</td>';
+					print '<td><input class="flat" name="charges" size="8" value="'.(GETPOST('charges') ? price(GETPOST('charges')) : (isset($object->fourn_charges) ? price($object->fourn_charges) : '')).'">';
+					print '</td>';
+					print '</tr>';
+				}
+
 				// Discount qty min
 				print '<tr><td>'.$langs->trans("DiscountQtyMin").'</td>';
 				print '<td><input class="flat" name="remise_percent" size="4" value="'.(GETPOSTISSET('remise_percent') ? vatrate(price2num(GETPOST('remise_percent'), '', 2)) : (isset($object->fourn_remise_percent) ?vatrate($object->fourn_remise_percent) : '')).'"> %';
@@ -798,17 +808,6 @@ END;
 					print $formbarcode->selectBarcodeType((GETPOSTISSET('fk_barcode_type') ? GETPOST('fk_barcode_type', 'int') : ($rowid ? $object->supplier_fk_barcode_type : getDolGlobalint("PRODUIT_DEFAULT_BARCODE_TYPE"))), 'fk_barcode_type', 1);
 					print ' <input class="flat" name="barcode"  value="'.(GETPOSTISSET('barcode') ? GETPOST('barcode') : ($rowid ? $object->supplier_barcode : '')).'"></td>';
 					print '</tr>';
-				}
-
-				// Option to define a transport cost on supplier price
-				if (!empty($conf->global->PRODUCT_CHARGES)) {
-					if (isModEnabled('margin')) {
-						print '<tr>';
-						print '<td>'.$langs->trans("Charges").'</td>';
-						print '<td><input class="flat width75" name="charges" value="'.(GETPOST('charges') ? price(GETPOST('charges')) : (isset($object->fourn_charges) ? price($object->fourn_charges) : '')).'">';
-						print '</td>';
-						print '</tr>';
-					}
 				}
 
 				// Product description of the supplier
@@ -948,6 +947,7 @@ END;
 					'pfp.quantity'=>array('label'=>$langs->trans("QtyMin"), 'checked'=>1, 'position'=>5),
 					'pfp.unitprice'=>array('label'=>$langs->trans("UnitPriceHT"), 'checked'=>1, 'position'=>9),
 					'pfp.multicurrency_unitprice'=>array('label'=>$langs->trans("UnitPriceHTCurrency"), 'enabled' => isModEnabled('multicurrency'), 'checked'=>0, 'position'=>10),
+					'pfp.charges'=>array('label'=>$langs->trans("Charges"), 'enabled' => !empty($conf->global->PRODUCT_CHARGES), 'checked'=>0, 'position'=>11),
 					'pfp.delivery_time_days'=>array('label'=>$langs->trans("NbDaysToDelivery"), 'checked'=>-1, 'position'=>13),
 					'pfp.supplier_reputation'=>array('label'=>$langs->trans("ReputationForThisProduct"), 'checked'=>-1, 'position'=>14),
 					'pfp.fk_barcode_type'=>array('label'=>$langs->trans("BarcodeType"), 'enabled' => isModEnabled('barcode'), 'checked'=>0, 'position'=>15),
@@ -1035,6 +1035,10 @@ END;
 					print_liste_field_titre("Currency", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
 					$nbfields++;
 				}
+				if (!empty($arrayfields['pfp.charges']['checked'])) {
+					print_liste_field_titre("Charges", $_SERVER["PHP_SELF"], "pfp.charges", "", $param, '', $sortfield, $sortorder, 'right ');
+					$nbfields++;
+				}
 				print_liste_field_titre("DiscountQtyMin", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 				$nbfields++;
 				if (!empty($arrayfields['pfp.delivery_time_days']['checked'])) {
@@ -1102,7 +1106,7 @@ END;
 
 						// Date from
 						if (!empty($arrayfields['pfp.datec']['checked'])) {
-							print '<td>'.dol_print_date(($productfourn->fourn_date_creation ? $productfourn->fourn_date_creation : $productfourn->date_creation), 'dayhour').'</td>';
+							print '<td>'.dol_print_date(($productfourn->fourn_date_creation ? $productfourn->fourn_date_creation : $productfourn->date_creation), 'dayhour', 'tzuserrel').'</td>';
 						}
 
 						// Supplier
@@ -1174,6 +1178,13 @@ END;
 						if (isModEnabled("multicurrency")) {
 							print '<td class="right nowraponall">';
 							print $productfourn->fourn_multicurrency_code ? currency_name($productfourn->fourn_multicurrency_code) : '';
+							print '</td>';
+						}
+
+						// Charges
+						if (!empty($arrayfields['pfp.charges']['checked'])) {
+							print '<td class="right">';
+							print price($productfourn->fourn_charges);
 							print '</td>';
 						}
 

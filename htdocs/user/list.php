@@ -360,6 +360,7 @@ $morehtmlright = "";
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.office_phone, u.user_mobile, u.email, u.api_key, u.accountancy_code, u.gender, u.employee, u.photo,";
+$sql .= " u.fk_user,";
 $sql .= " u.job, u.salary, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.ldap_sid, u.statut as status, u.entity,";
 $sql .= " u.tms as date_update, u.datec as date_creation,";
@@ -1127,10 +1128,13 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['u.api_key']['checked'])) {
-			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->api_key).'">';
-			if ($obj->api_key) {
+			$api_key = dolDecrypt($obj->api_key);
+			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($api_key).'">';
+			if ($api_key) {
 				if ($canreadsecretapi) {
-					print dol_escape_htmltag($obj->api_key);
+					print '<span class="opacitymedium">';
+					print showValueWithClipboardCPButton($object->api_key, 1, dol_trunc($api_key, 3));		// TODO Add an option to also reveal the hash, not only copy paste
+					print '</span>';
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
 				}
@@ -1160,13 +1164,14 @@ while ($i < $imaxinloop) {
 		// Multicompany enabled
 		if (isModEnabled('multicompany') && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			if (!empty($arrayfields['u.entity']['checked'])) {
-				print '<td>';
 				if (!$obj->entity) {
-					print $langs->trans("AllEntities");
+					$labeltouse = $langs->trans("AllEntities");
 				} else {
 					$mc->getInfo($obj->entity);
-					print $mc->label;
+					$labeltouse = $mc->label;
 				}
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labeltouse).'">';
+				print $labeltouse;
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

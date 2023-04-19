@@ -49,6 +49,9 @@ $track_id = GETPOST('track_id', 'alpha');
 $action   = GETPOST('action', 'alpha');
 $confirm  = GETPOST('confirm', 'alpha');
 
+// Store current page url
+$url_page_current = DOL_URL_ROOT.'/ticket/document.php';
+
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');

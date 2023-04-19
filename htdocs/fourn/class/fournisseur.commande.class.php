@@ -219,7 +219,7 @@ class CommandeFournisseur extends CommonOrder
 		'ref' =>array('type'=>'varchar(255)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'showoncombobox'=>1, 'position'=>25, 'searchall'=>1),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>35),
 		'ref_supplier' =>array('type'=>'varchar(255)', 'label'=>'RefOrderSupplierShort', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'searchall'=>1),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>45),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>45),
 		'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
 		'date_approve' =>array('type'=>'datetime', 'label'=>'DateApprove', 'enabled'=>1, 'visible'=>-1, 'position'=>62),
 		'date_approve2' =>array('type'=>'datetime', 'label'=>'DateApprove2', 'enabled'=>1, 'visible'=>3, 'position'=>64),
@@ -489,7 +489,7 @@ class CommandeFournisseur extends CommonOrder
 
 		$this->lines = array();
 
-		$sql = "SELECT l.rowid, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
+		$sql = "SELECT l.rowid, l.fk_commande, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
 		$sql .= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice,";
 		$sql .= " l.localtax1_tx, l. localtax2_tx, l.localtax1_type, l. localtax2_type, l.total_localtax1, l.total_localtax2,";
 		$sql .= " l.total_ht, l.total_tva, l.total_ttc, l.special_code, l.fk_parent_line, l.rang,";
@@ -519,6 +519,7 @@ class CommandeFournisseur extends CommonOrder
 				$line = new CommandeFournisseurLigne($this->db);
 
 				$line->id                  = $objp->rowid;
+				$line->fk_commande         = $objp->fk_commande;
 				$line->desc                = $objp->description;
 				$line->description         = $objp->description;
 				$line->qty                 = $objp->qty;
@@ -3929,8 +3930,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result > 0) {
+		$resql = $this->db->query($sql);
+		if ($resql) {
 			if (!$error) {
 				$result = $this->insertExtraFields();
 				if ($result < 0) {
@@ -3939,7 +3940,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
 			}
 
 			if (!$error && !$notrigger) {
-				global $user;
 				// Call trigger
 				$result = $this->call_trigger('LINEORDER_SUPPLIER_MODIFY', $user);
 				if ($result < 0) {

@@ -41,11 +41,8 @@ if (isModEnabled('categorie')) {
 
 global $dolibarr_main_url_root;
 
-// for other modules
-//dol_include_once('/othermodule/class/otherobject.class.php');
-
 // Load translation files required by the page
-$langs->loadLangs(array("eventorganization", "other", "projects"));
+$langs->loadLangs(array("eventorganization", "other", "projects", "bills"));
 
 // Get Paramters
 $action      = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';   // The action 'add', 'create', 'edit', 'update', 'view', ...

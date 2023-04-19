@@ -194,6 +194,10 @@ if (!empty($triggers)) {
 			if ($trigger['code'] == 'FICHINTER_CLASSIFY_UNBILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) {
 				continue;
 			}
+			if ($trigger['code'] == 'ACTION_CREATE') {
+				// This is the trigger to add an event, enabling it will create infinite loop
+				continue;
+			}
 
 			if ($search_event === '' || preg_match('/'.preg_quote($search_event, '/').'/i', $trigger['code'])) {
 				print '<!-- '.$trigger['position'].' -->';

@@ -35,8 +35,6 @@ include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectorfilter.class
 include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectoraction.class.php';
 include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 
-// use Webklex\PHPIMAP;
-require DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
 use Webklex\PHPIMAP\ClientManager;
 use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
 use Webklex\PHPIMAP\Exceptions\InvalidWhereQueryCriteriaException;
@@ -403,6 +401,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if ($action == 'scan') {
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+			require_once DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
+
 			if ($object->acces_type == 1) {
 				// Mode OAUth2 with PHP-IMAP
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
@@ -448,8 +448,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						// We have to save the token because Google give it only once
 						$refreshtoken = $tokenobj->getRefreshToken();
+
 						//var_dump($tokenobj);
-						$tokenobj = $apiService->refreshAccessToken($tokenobj);
+						try {
+							$tokenobj = $apiService->refreshAccessToken($tokenobj);
+						} catch (Exception $e) {
+							throw new Exception("Failed to refresh access token: ".$e->getMessage());
+						}
 
 						$tokenobj->setRefreshToken($refreshtoken);
 						$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
@@ -496,6 +501,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					'authentication' => "login",
 				]);
 			}
+
 			if (!$error) {
 				try {
 					// To emulate the command connect, you can run
@@ -571,7 +577,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$morehtml .= '<a class="flat" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=scan&token='.newToken().'">'.img_picto('', 'refresh', 'class="paddingrightonly"').$langs->trans("Refresh").'</a>';
 	}
 
-	$morehtml .= $form->textwithpicto('', 'connect string '.$connectstringserver);
+	$morehtml .= $form->textwithpicto('', 'Connect string = '.$connectstringserver.'<br>Option MAIN_IMAP_USE_PHPIMAP = '.getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP'));
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref.'<div class="refidno">'.$morehtml.'</div>', '', 0, '', '', 0, '');
 
@@ -679,18 +685,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</table>';
 	print '</div>';
 
-	print '<div class="clearboth"></div><br>';
+	print '<div class="clearboth"></div><br><br>';
 
 	// Operations
-	print '<div class="div-table-responsive">';
-	print '<table id="tablelines" class="noborder margintable noshadow">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table id="tablelines" class="noborder noshadow">';
 	print '<tr class="liste_titre nodrag nodrop">';
 	print '<td>'.img_picto('', 'technic', 'class="pictofixedwidth"').$form->textwithpicto($langs->trans("EmailcollectorOperations"), $langs->trans("EmailcollectorOperationsDesc")).'</td><td></td><td></td><td></td>';
 	print '</tr>';
 
 	$arrayoftypes = array(
-		'loadthirdparty' => $langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName")),
-		'loadandcreatethirdparty' => $langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName")),
+		'loadthirdparty' => $langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName").'/'.$langs->transnoentities("AliasNameShort").'/'.$langs->transnoentities("Email").'/'.$langs->transnoentities("ID")),
+		'loadandcreatethirdparty' => $langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName").'/'.$langs->transnoentities("AliasNameShort").'/'.$langs->transnoentities("Email").'/'.$langs->transnoentities("ID")),
 		'recordjoinpiece' => 'AttachJoinedDocumentsToObject',
 		'recordevent' => 'RecordEvent'
 	);

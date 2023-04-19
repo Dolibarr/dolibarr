@@ -229,8 +229,8 @@ $arrayfields = array(
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>75),
 	'f.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>1, 'position'=>80),
 	'f.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>1, 'position'=>85),
-	'f.module_source'=>array('label'=>"POSModule", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>90),
-	'f.pos_source'=>array('label'=>"POSTerminal", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>91),
+	'f.module_source'=>array('label'=>"POSModule", 'langs'=>'cashdesk', 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>90),
+	'f.pos_source'=>array('label'=>"POSTerminal", 'langs'=>'cashdesk', 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>91),
 	'f.total_ht'=>array('label'=>"AmountHT", 'checked'=>1, 'position'=>95),
 	'f.total_tva'=>array('label'=>"AmountVAT", 'checked'=>0, 'position'=>100),
 	'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax1_assuj == "1"), 'position'=>110),
@@ -238,8 +238,6 @@ $arrayfields = array(
 	'f.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0, 'position'=>130),
 	'dynamount_payed'=>array('label'=>"Received", 'checked'=>0, 'position'=>140),
 	'rtp'=>array('label'=>"Rest", 'checked'=>0, 'position'=>150), // Not enabled by default because slow
-	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>165),
-	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>0, 'position'=>166),
 	'f.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>280),
 	'f.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>285),
 	'f.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>290),
@@ -252,10 +250,16 @@ $arrayfields = array(
 	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || empty($user->rights->margins->liretous) || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
 	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || empty($user->rights->margins->liretous) || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
 	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>502),
-	'f.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
-	'f.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>511, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
-	'f.fk_fac_rec_source'=>array('label'=>'GeneratedFromTemplate', 'checked'=>0, 'position'=>520, 'enabled'=>'1'),
+	'f.tms' =>array('type'=>'timestamp', 'label'=>'DateModificationShort', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>502),
+	'u.login'=>array('label'=>"UserAuthor", 'checked'=>1, 'position'=>504),
+	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>0, 'position'=>506),
+	//'f.fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>506),
+	//'f.fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'notnull'=>-1, 'position'=>508),
+	//'f.fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>510),
+	//'f.fk_user_closing' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserClosing', 'enabled'=>1, 'visible'=>-1, 'position'=>512),
+	'f.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>520, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
+	'f.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>521, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
+	'f.fk_fac_rec_source'=>array('label'=>'GeneratedFromTemplate', 'checked'=>0, 'position'=>530, 'enabled'=>'1'),
 	'f.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 
@@ -265,10 +269,11 @@ if (getDolGlobalString("INVOICE_USE_SITUATION") && !empty($conf->global->INVOICE
 // Overwrite $arrayfields from columns into ->fields (transition before removal of $arrayoffields)
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
+
 	if (!empty($val['visible'])) {
 		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$newkey = '';
-		if (array_key_exists($key, $arrayfields)) { $newkey = $key; } elseif (array_key_exists('t.'.$key, $arrayfields)) { $newkey = 't.'.$key; } elseif (array_key_exists('f.'.$key, $arrayfields)) { $newkey = 'f.'.$key; } elseif (array_key_exists('s.'.$key, $arrayfields)) { $newkey = 's.'.$key; }
+		if (array_key_exists($key, $arrayfields)) { $newkey = $key; } elseif (array_key_exists('f.'.$key, $arrayfields)) { $newkey = 'f.'.$key; } elseif (array_key_exists('f.'.$key, $arrayfields)) { $newkey = 'f.'.$key; } elseif (array_key_exists('s.'.$key, $arrayfields)) { $newkey = 's.'.$key; }
 		if ($newkey) {
 			$arrayfields[$newkey] = array(
 				'label'=>$val['label'],
@@ -1911,8 +1916,8 @@ if ($resql) {
 
 
 			// Action column
-			if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-				print '<td class="nowrap" align="center">';
+			if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="nowrap center">';
 				if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 					$selected = 0;
 					if (in_array($obj->id, $arrayofselected)) {
@@ -2402,14 +2407,14 @@ if ($resql) {
 
 			// Total buying or cost price
 			if (!empty($arrayfields['total_pa']['checked'])) {
-				print '<td class="right nowrap">'.price($marginInfo['pa_total']).'</td>';
+				print '<td class="right nowrap">'.price($marginInfo['pa_total'], 0, $langs, 1, -1, 'MT').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			// Total margin
 			if (!empty($arrayfields['total_margin']['checked'])) {
-				print '<td class="right nowrap">'.price($marginInfo['total_margin']).'</td>';
+				print '<td class="right nowrap">'.price($marginInfo['total_margin'], 0, $langs, 1, -1, 'MT').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -2523,7 +2528,7 @@ if ($resql) {
 
 			// Action column (Show the massaction button only when this page is not opend from the Extended POS)
 
-			if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+			if (!getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="nowrap" align="center">';
 				if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 					$selected = 0;
@@ -2541,6 +2546,9 @@ if ($resql) {
 
 			$i++;
 		}
+
+		// Use correct digits number for totals
+		$totalarray['val']['total_margin'] = price2num($totalarray['val']['total_margin'], 'MT');
 
 		// Show total line
 		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';

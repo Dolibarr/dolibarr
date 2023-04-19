@@ -464,7 +464,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 }*/
 	// Author
 	if (!empty($object->email_msgid)) {
-		$morehtmlref .= $langs->trans("CreatedBy").' : ';
+		$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' ';
 
 		if ($object->fk_user_creat > 0) {
 			$fuser = new User($db);
