@@ -171,10 +171,10 @@ if (empty($reshook)) {
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
 		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
 
-		if(!empty($idprod)){
+		if (!empty($idprod)) {
 			$product = new Product($db);
 			$res = $product->fetch($idprod);
-			if($res > 0 && $product->type == Product::TYPE_SERVICE) $fk_default_workstation = $product->fk_default_workstation;
+			if ($res > 0 && $product->type == Product::TYPE_SERVICE) $fk_default_workstation = $product->fk_default_workstation;
 		}
 
 		if ($qty == '') {
