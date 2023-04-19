@@ -61,6 +61,7 @@ if (GETPOST('actioncode', 'array')) {
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
+$search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
 $hookmanager->initHooks(array('projectcardinfo'));
@@ -180,7 +181,7 @@ if (!empty($object->id)) {
 	$morehtmlcenter .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
 
 	// Show link to change view in agenda
-	$messagingUrl = DOL_URL_ROOT.'/projet/info.php?id='.$object->id;
+	$messagingUrl = DOL_URL_ROOT.'/projet/agenda.php?id='.$object->id;
 	$morehtmlcenter .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
 
 
@@ -213,6 +214,8 @@ if (!empty($object->id)) {
 	// List of all actions
 	$filters = array();
 	$filters['search_agenda_label'] = $search_agenda_label;
+	$filters['search_rowid'] = $search_rowid;
+
 	show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 }
 

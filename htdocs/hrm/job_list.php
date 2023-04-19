@@ -207,7 +207,7 @@ $now = dol_now();
 
 //$help_url="EN:Module_Job|FR:Module_Job_FR|ES:Módulo_Job";
 $help_url = '';
-$title = $langs->trans("JobsPosition");
+$title = $langs->trans("JobsProfiles");
 $morejs = array();
 $morecss = array();
 

@@ -244,7 +244,7 @@ $arrayfields = array(
 	's.phone'=>array('label'=>"Phone", 'position'=>27, 'checked'=>1),
 	's.fax'=>array('label'=>"Fax", 'position'=>28, 'checked'=>0),
 	'typent.code'=>array('label'=>"ThirdPartyType", 'position'=>29, 'checked'=>$checkedtypetiers),
-	'staff.code'=>array('label'=>"Staff", 'position'=>31, 'checked'=>0),
+	'staff.code'=>array('label'=>"Workforce", 'position'=>31, 'checked'=>0),
 	's.siren'=>array('label'=>"ProfId1Short", 'position'=>40, 'checked'=>$checkedprofid1),
 	's.siret'=>array('label'=>"ProfId2Short", 'position'=>41, 'checked'=>$checkedprofid2),
 	's.ape'=>array('label'=>"ProfId3Short", 'position'=>42, 'checked'=>$checkedprofid3),
@@ -776,7 +776,7 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && (
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	if (!empty($conf->global->SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD)) {
-		if ($companystatic->client > 0) {
+		if ($obj->client > 0) {
 			header("Location: ".DOL_URL_ROOT.'/comm/card.php?socid='.$id);
 			exit;
 		}
@@ -945,11 +945,11 @@ if ($user->hasRight("societe", "creer")) {
 if ($user->hasRight("societe", "creer")) {
 	$arrayofmassactions['presetcommercial'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("AllocateCommercial");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
-	$arrayofmassactions = array();
-}
 if ($user->hasRight('societe', 'supprimer')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+}
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
+	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 

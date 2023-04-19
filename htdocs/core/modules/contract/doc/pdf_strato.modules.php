@@ -46,6 +46,11 @@ class pdf_strato extends ModelePDFContract
 	public $db;
 
 	/**
+	 * @var int The environment ID when using a multicompany module
+	 */
+	public $entity;
+
+	/**
 	 * @var string model name
 	 */
 	public $name;
@@ -114,7 +119,7 @@ class pdf_strato extends ModelePDFContract
 
 	/**
 	 * Issuer
-	 * @var Societe
+	 * @var Societe		Object that emits
 	 */
 	public $emetteur;
 
@@ -138,7 +143,7 @@ class pdf_strato extends ModelePDFContract
 		$this->description = $langs->trans("StandardContractsTemplate");
 		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
-		// Page size for A4 format
+		// Dimension page
 		$this->type = 'pdf';
 		$formatarray = pdf_getFormat();
 
@@ -160,7 +165,7 @@ class pdf_strato extends ModelePDFContract
 		// Get source company
 		$this->emetteur = $mysoc;
 		if (empty($this->emetteur->country_code)) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if not defined
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
 		}
 
 		// Define position of columns
@@ -182,7 +187,7 @@ class pdf_strato extends ModelePDFContract
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
-		global $user, $langs, $conf, $hookmanager, $mysoc;
+		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblines;
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -192,15 +197,30 @@ class pdf_strato extends ModelePDFContract
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
-		// Load traductions files required by page
+		// Load translation files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "contracts"));
 
-		if ($conf->contrat->dir_output) {
+		// Show Draft Watermark
+		if ($object->statut == $object::STATUS_DRAFT && (!empty($conf->global->CONTRACT_DRAFT_WATERMARK))) {
+			$this->watermark = $conf->global->CONTRACT_DRAFT_WATERMARK;
+		}
+
+		global $outputlangsbis;
+		$outputlangsbis = null;
+		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
+			$outputlangsbis = new Translate('', $conf);
+			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
+			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
+		}
+
+		$nblines = count($object->lines);
+
+		if ($conf->contract->multidir_output[$conf->entity]) {
 			$object->fetch_thirdparty();
 
 			// Definition of $dir and $file
 			if ($object->specimen) {
-				$dir = $conf->contrat->dir_output;
+				$dir = $conf->contract->multidir_output[$conf->entity];
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
@@ -210,7 +230,7 @@ class pdf_strato extends ModelePDFContract
 
 			if (!file_exists($dir)) {
 				if (dol_mkdir($dir) < 0) {
-					$this->error = $outputlangs->trans("ErrorCanNotCreateDir", $dir);
+					$this->error = $langs->trans("ErrorCanNotCreateDir", $dir);
 					return 0;
 				}
 			}
@@ -226,15 +246,20 @@ class pdf_strato extends ModelePDFContract
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
+				// Set nblines with the new command lines content after hook
+				$nblines = count($object->lines);
+
+				// Create pdf instance
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
+				$pdf->SetAutoPageBreak(1, 0);
+
 				$heightforinfotot = 50; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
-				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
+				$heightforfooter = $this->marge_basse + 9; // Height reserved to output the footer (value include bottom margin)
 				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
 					$heightforfooter += 6;
 				}
-				$pdf->SetAutoPageBreak(1, 0);
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -243,7 +268,11 @@ class pdf_strato extends ModelePDFContract
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
 				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+					$logodir = $conf->mycompany->dir_output;
+					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
+						$logodir = $conf->mycompany->multidir_output[$object->entity];
+					}
+					$pagecount = $pdf->setSourceFile($logodir.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -252,10 +281,10 @@ class pdf_strato extends ModelePDFContract
 				$pdf->SetDrawColor(128, 128, 128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-				$pdf->SetSubject($outputlangs->transnoentities("ContractCard"));
+				$pdf->SetSubject($outputlangs->transnoentities("Contract"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("ContractCard")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Contract")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
@@ -268,7 +297,7 @@ class pdf_strato extends ModelePDFContract
 					$pdf->useTemplate($tplidx);
 				}
 				$pagenb++;
-				$this->_pagehead($pdf, $object, 1, $outputlangs);
+				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs, (is_object($outputlangsbis) ? $outputlangsbis : null));
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
@@ -383,7 +412,6 @@ class pdf_strato extends ModelePDFContract
 							$pdf->writeHTMLCell(0, 0, $curX, $curY, dol_concatdesc($txtpredefinedservice, dol_concatdesc($txt, $desc)), 0, 1, 0);
 							$pageposafter = $pdf->getPage();
 							$posyafter = $pdf->GetY();
-
 							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
 								if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
 									$pdf->AddPage('', '', true);
@@ -409,6 +437,7 @@ class pdf_strato extends ModelePDFContract
 						{
 							$pdf->commitTransaction();
 						}
+						$posYAfterDescription = $pdf->GetY();
 
 						$nexY = $pdf->GetY() + 2;
 						$pageposafter = $pdf->getPage();
@@ -418,7 +447,7 @@ class pdf_strato extends ModelePDFContract
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 
 						// We suppose that a too long description is moved completely on next page
-						if ($pageposafter > $pageposbefore) {
+						if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
 							$pdf->setPage($pageposafter);
 							$curY = $tab_top_newpage;
 						}
@@ -437,6 +466,9 @@ class pdf_strato extends ModelePDFContract
 							$pagenb++;
 							$pdf->setPage($pagenb);
 							$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+								$this->_pagehead($pdf, $object, 0, $outputlangs);
+							}
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
@@ -459,6 +491,7 @@ class pdf_strato extends ModelePDFContract
 					}
 				}
 
+
 				// Show square
 				if ($pagenb == 1) {
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
@@ -480,10 +513,6 @@ class pdf_strato extends ModelePDFContract
 				$pdf->Output($file, 'F');
 
 				// Add pdfgeneration hook
-				if (!is_object($hookmanager)) {
-					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-					$hookmanager = new HookManager($this->db);
-				}
 				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
 				global $action;
@@ -499,13 +528,13 @@ class pdf_strato extends ModelePDFContract
 
 				$this->result = array('fullpath'=>$file);
 
-				return 1;
+				return 1; // No error
 			} else {
-				$this->error = $langs->trans("ErrorCanNotCreateDir", $dir);
+				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
 		} else {
-			$this->error = $langs->trans("ErrorConstantNotDefined", "CONTRACT_OUTPUTDIR");
+			$this->error = $langs->transnoentities("ErrorConstantNotDefined", "CONTRACT_OUTPUTDIR");
 			return 0;
 		}
 	}
@@ -533,7 +562,9 @@ class pdf_strato extends ModelePDFContract
 			$hidetop = -1;
 		}
 
+		$currency = !empty($currency) ? $currency : $conf->currency;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
+
 		/*
 		$pdf->SetXY($this->marge_gauche, $tab_top);
 		$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
@@ -599,76 +630,97 @@ class pdf_strato extends ModelePDFContract
 	 *  @param  Contrat		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @param  Translate	$outputlangsbis	Object lang for output bis
+	 *  @param	string		$titlekey		Translation key to show as title of document
+	 *  @return	int                         Return topshift value
 	 */
-	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null, $titlekey = "Contract")
 	{
-		global $conf, $langs;
+		// phpcs:enable
+		global $conf, $langs, $hookmanager;
 
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
+		$ltrdirection = 'L';
+		if ($outputlangs->trans("DIRECTION") == 'rtl') {
+			$ltrdirection = 'R';
+		}
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "contract", "companies"));
 
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
-		//Affiche le filigrane brouillon - Print Draft Watermark
-		if ($object->statut == 0 && (!empty($conf->global->CONTRACT_DRAFT_WATERMARK))) {
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->CONTRACT_DRAFT_WATERMARK);
-		}
-
-		//Prepare next
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 
-		$posx = $this->page_largeur - $this->marge_droite - 100;
+		$w = 100;
+
 		$posy = $this->marge_haute;
+		$posx = $this->page_largeur - $this->marge_droite - $w;
 
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
-		$logo = $conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
-		if ($this->emetteur->logo) {
-			if (is_readable($logo)) {
-				$height = pdf_getHeightForLogo($logo);
-				$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
+		if (empty($conf->global->PDF_DISABLE_MYCOMPANY_LOGO)) {
+			if ($this->emetteur->logo) {
+				$logodir = $conf->mycompany->dir_output;
+				if (!empty($conf->mycompany->multidir_output[$object->entity])) {
+					$logodir = $conf->mycompany->multidir_output[$object->entity];
+				}
+				if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO)) {
+					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
+				} else {
+					$logo = $logodir.'/logos/'.$this->emetteur->logo;
+				}
+				if (is_readable($logo)) {
+					$height = pdf_getHeightForLogo($logo);
+					$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
+				} else {
+					$pdf->SetTextColor(200, 0, 0);
+					$pdf->SetFont('', 'B', $default_font_size - 2);
+					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
+					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
+				}
 			} else {
-				$pdf->SetTextColor(200, 0, 0);
-				$pdf->SetFont('', 'B', $default_font_size - 2);
-				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
-				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
+				$text = $this->emetteur->name;
+				$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
 			}
-		} else {
-			$text = $this->emetteur->name;
-			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$title = $outputlangs->transnoentities("ContractCard");
-		$pdf->MultiCell(100, 4, $title, '', 'R');
+		$title = $outputlangs->transnoentities($titlekey);
+		$title .= ' '.$outputlangs->convToOutputCharset($object->ref);
+		if ($object->statut == $object::STATUS_DRAFT) {
+			$pdf->SetTextColor(128, 0, 0);
+			$title .= ' - '.$outputlangs->transnoentities("NotValidated");
+		}
+		$pdf->MultiCell($w, 3, $title, '', 'R');
 
-		$pdf->SetFont('', 'B', $default_font_size + 2);
+		$pdf->SetFont('', 'B', $default_font_size);
 
+		/*
 		$posy += 5;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref), '', 'R');
+		*/
 
-		$posy += 1;
-		$pdf->SetFont('', '', $default_font_size);
+		$posy += 3;
+		$pdf->SetFont('', '', $default_font_size - 1);
 
 		$posy += 4;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date_contrat, "day", false, $outputlangs, true), '', 'R');
+		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date_contrat, "day", false, $outputlangs, true), '', 'R');
 
 		if (empty($conf->global->MAIN_PDF_HIDE_CUSTOMER_CODE) && $object->thirdparty->code_client) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
 		}
 
 		if ($showaddress) {
@@ -699,6 +751,7 @@ class pdf_strato extends ModelePDFContract
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetFillColor(230, 230, 230);
 				$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+				$pdf->SetTextColor(0, 0, 60);
 			}
 
 			// Show sender name
@@ -706,13 +759,13 @@ class pdf_strato extends ModelePDFContract
 				$pdf->SetXY($posx + 2, $posy + 3);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->SetFont('', 'B', $default_font_size);
-				$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 				$posy = $pdf->getY();
 			}
 
 			// Show sender information
-			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetXY($posx + 2, $posy);
+			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
 
@@ -735,14 +788,16 @@ class pdf_strato extends ModelePDFContract
 
 			$this->recipient->name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (isset($object->contact) ? $object->contact : ''), $usecontact, 'target', $object);
+			$mode = 'target';
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (isset($object->contact) ? $object->contact : ''), $usecontact, $mode, $object);
 
 			// Show recipient
-			$widthrecbox = 100;
+			$widthrecbox = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 100;
 			if ($this->page_largeur < 210) {
 				$widthrecbox = 84; // To work with US executive format
 			}
-			$posy = 42;
+			$posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
+			$posy += $top_shift;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
 			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
 				$posx = $this->marge_gauche;
@@ -760,15 +815,18 @@ class pdf_strato extends ModelePDFContract
 			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell($widthrecbox, 4, $this->recipient->name, 0, 'L');
+			$pdf->MultiCell($widthrecbox, 4, $this->recipient->name, 0, $ltrdirection);
 
 			$posy = $pdf->getY();
 
 			// Show recipient information
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetXY($posx + 2, $posy);
-			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
+			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, $ltrdirection);
 		}
+
+		$pdf->SetTextColor(0, 0, 0);
+		return $top_shift;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -784,6 +842,6 @@ class pdf_strato extends ModelePDFContract
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
-		return pdf_pagefoot($pdf, $outputlangs, 'CONTRACT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
+		return pdf_pagefoot($pdf, $outputlangs, 'CONTRACT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext, $this->page_largeur, $this->watermark);
 	}
 }

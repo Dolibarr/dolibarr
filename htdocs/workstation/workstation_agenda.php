@@ -31,7 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 
-
 // Load translation files required by the page
 $langs->loadLangs(array('workstation', 'other'));
 
@@ -51,6 +50,7 @@ if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 
+$search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
 // Load variables for pagination
@@ -247,6 +247,7 @@ if ($object->id > 0) {
 		// List of all actions
 		$filters = array();
 		$filters['search_agenda_label'] = $search_agenda_label;
+		$filters['search_rowid'] = $search_rowid;
 
 		// TODO Replace this with same code than into list.php
 		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);

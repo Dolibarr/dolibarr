@@ -86,7 +86,7 @@ print '<p style="text-align: center">'.(getDolGlobalString("TICKET_PUBLIC_TEXT_H
 print '<br>';
 
 print '<div class="ticketform">';
-print '<a href="create_ticket.php?action=create'.(!empty($entity) && isModEnabled('multicompany')?'&entity='.$entity:'').'" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_create bigrounded"><span class="fa fa-15 fa-plus-circle valignmiddle btnTitle-icon"></span><br>'.dol_escape_htmltag($langs->trans("CreateTicket")).'</div></a>';
+print '<a href="'.DOL_URL_ROOT.'/public/ticket/create_ticket.php?action=create'.(!empty($entity) && isModEnabled('multicompany')?'&entity='.$entity:'').'" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_create bigrounded"><span class="fa fa-15 fa-plus-circle valignmiddle btnTitle-icon"></span><br>'.dol_escape_htmltag($langs->trans("CreateTicket")).'</div></a>';
 print '<a href="list.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_display bigrounded"><span class="fa fa-15 fa-list-alt valignmiddle btnTitle-icon"></span><br>'.dol_escape_htmltag($langs->trans("ViewMyTicketList")).'</div></a>';
 print '<a href="view.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_display bigrounded">'.img_picto('', 'ticket', 'class="fa-15"').'<br>'.dol_escape_htmltag($langs->trans("ShowTicketWithTrackId")).'</div></a>';
 print '<div style="clear:both;"></div>';

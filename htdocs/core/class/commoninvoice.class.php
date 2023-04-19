@@ -131,8 +131,8 @@ abstract class CommonInvoice extends CommonObject
 	 * 	Return amount of payments already done. This must include ONLY the record into the payment table.
 	 *  Payments dones using discounts, credit notes, etc are not included.
 	 *
-	 *  @param 		int 		$multicurrency 		Return multicurrency_amount instead of amount
-	 *	@return		float|int						Amount of payment already done, <0 and set ->error if KO
+	 *  @param 		int 			$multicurrency 		Return multicurrency_amount instead of amount. -1=Return both.
+	 *	@return		float|int|array						Amount of payment already done, <0 and set ->error if KO
 	 */
 	public function getSommePaiement($multicurrency = 0)
 	{
@@ -156,7 +156,11 @@ abstract class CommonInvoice extends CommonObject
 			$this->db->free($resql);
 
 			if ($obj) {
-				if ($multicurrency) {
+				if ($multicurrency < 0) {
+					$this->sumpayed = $obj->amount;
+					$this->sumpayed_multicurrency = $obj->multicurrency_amount;
+					return array('alreadypaid'=>(float) $obj->amount, 'alreadypaid_multicurrency'=>(float) $obj->multicurrency_amount);
+				} elseif ($multicurrency) {
 					$this->sumpayed_multicurrency = $obj->multicurrency_amount;
 					return (float) $obj->multicurrency_amount;
 				} else {
@@ -659,7 +663,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  conditions and billing date.
 	 *
 	 *	@param      integer	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
-	 *  @return     integer    			       	Date limite de reglement si ok, <0 si ko
+	 *  @return     integer    			       	Date limit of payment if OK, <0 if KO
 	 */
 	public function calculate_date_lim_reglement($cond_reglement = 0)
 	{
@@ -669,6 +673,9 @@ abstract class CommonInvoice extends CommonObject
 		}
 		if (!$cond_reglement) {
 			$cond_reglement = $this->cond_reglement_id;
+		}
+		if (!$cond_reglement) {
+			return $this->date;
 		}
 
 		$cdr_nbjour = 0;

@@ -224,6 +224,7 @@ if (empty($reshook) && $action == 'add') {
 			} else {
 				$thirdparty->name = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
 			}
+			$thirdparty->email = GETPOST('email');
 			$thirdparty->address = GETPOST('address');
 			$thirdparty->zip = GETPOST('zip');
 			$thirdparty->town = GETPOST('town');
@@ -416,7 +417,6 @@ if (empty($reshook) && $action == 'add') {
 }
 
 // Action called after a submitted was send and member created successfully
-// If MEMBER_URL_REDIRECT_SUBSCRIPTION is set to url we never go here because a redirect was done to this url.
 // backtopage parameter with an url was set on member submit page, we never go here because a redirect was done to this url.
 if (empty($reshook) && $action == 'added') {
 	llxHeaderVierge($langs->trans("NewLeadForm"));
@@ -451,7 +451,7 @@ print load_fiche_titre($langs->trans("NewContact"), '', '', 0, 0, 'center');
 print '<div align="center">';
 print '<div id="divsubscribe">';
 
-print '<div class="center subscriptionformhelptext justify">';
+print '<div class="center subscriptionformhelptext opacitymedium justify">';
 if (!empty($conf->global->PROJECT_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->PROJECT_NEWFORM_TEXT)."<br>\n";
 } else {
@@ -537,7 +537,7 @@ if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 }
 
 // Other attributes
-$tpl_context = 'public'; // define template context to public
+$parameters['tpl_context']='public';	// define template context to public
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // Comments
 print '<tr>';

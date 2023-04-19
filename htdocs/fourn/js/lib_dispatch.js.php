@@ -93,8 +93,8 @@ function addDispatchLine(index, type, mode)
 	}
 	console.log("qtyDispatched="+qtyDispatched+" qtyOrdered="+qtyOrdered);
 
-	if (qtyOrdered <= 1) {
-		window.alert("Quantity can't be split");
+	if (qtyDispatched >= qtyOrdered || qtyOrdered <= 1) {
+		window.alert("Remain quantity to dispatch is too low to be split");
 	} else if (qtyDispatched < qtyOrdered) {
 		//replace tr suffix nbr
 		$row.html($row.html().replace(/_0_/g,"_"+nbrTrs+"_"));

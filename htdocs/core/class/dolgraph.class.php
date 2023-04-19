@@ -112,6 +112,11 @@ class DolGraph
 		$this->datacolor = array(array(120, 130, 150), array(160, 160, 180), array(190, 190, 220));
 		$this->bgcolor = array(235, 235, 224);
 
+		// For small screen, we prefer a default with of 300
+		if (!empty($conf->dol_optimize_smallscreen)) {
+			$this->width = 300;
+		}
+
 		// Load color of the theme
 		$color_file = DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/theme_vars.inc.php';
 		if (is_readable($color_file)) {
@@ -1417,7 +1422,7 @@ class DolGraph
 
 					//var_dump($iinstack);
 					if ($iinstack) {
-						// Change color with offset of $$iinstack
+						// Change color with offset of $iinstack
 						//var_dump($newcolor);
 						if ($iinstack % 2) {	// We increase agressiveness of reference color for color 2, 4, 6, ...
 							$ratio = min(95, 10 + 10 * $iinstack); // step of 20

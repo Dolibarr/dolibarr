@@ -90,7 +90,8 @@ if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed.$type.$ref.(!isModEnable
 top_httphead();
 
 if ($action == "importSignature") {
-	if (!empty($signature) && $signature[0] == "image/png;base64") {
+	$issignatureok = (!empty($signature) && $signature[0] == "image/png;base64");
+	if ($issignatureok) {
 		$signature = $signature[1];
 		$data = base64_decode($signature);
 
@@ -143,7 +144,6 @@ if ($action == "importSignature") {
 							$pdf->SetCompression(false);
 						}
 
-
 						//$pdf->Open();
 						$pagecount = $pdf->setSourceFile($sourcefile);		// original PDF
 
@@ -155,7 +155,7 @@ if ($action == "importSignature") {
 								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
 								$pdf->useTemplate($tppl);
 							} catch (Exception $e) {
-								dol_syslog("Error when manipulating some PDF by onlineSign: ".$e->getMessage(), LOG_ERR);
+								dol_syslog("Error when manipulating the PDF ".$sourcefile." by onlineSign: ".$e->getMessage(), LOG_ERR);
 								$response = $e->getMessage();
 								$error++;
 							}
@@ -207,9 +207,6 @@ if ($action == "importSignature") {
 				}
 
 				if (!$error) {
-					$db->commit();
-					$response = "success";
-					setEventMessages("PropalSigned", null, 'warnings');
 					if (method_exists($object, 'call_trigger')) {
 						//customer is not a user !?! so could we use same user as validation ?
 						$user = new User($db);
@@ -218,12 +215,24 @@ if ($action == "importSignature") {
 						$result = $object->call_trigger('PROPAL_CLOSE_SIGNED', $user);
 						if ($result < 0) {
 							$error++;
+							$response = "error in trigger ".$object->error;
+						} else {
+							$response = "success";
 						}
+					} else {
+						$response = "success";
 					}
 				} else {
-					$db->rollback();
 					$error++;
 					$response = "error sql";
+				}
+
+				if (!$error) {
+					$db->commit();
+					$response = "success";
+					setEventMessages("PropalSigned", null, 'warnings');
+				} else {
+					$db->rollback();
 				}
 			}
 		} elseif ($mode == 'contract') {

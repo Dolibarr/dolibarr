@@ -78,7 +78,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 dol_include_once('/mymodule/class/myobject.class.php');
 dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
 
-
 // Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule", "other"));
 
@@ -97,6 +96,7 @@ if (GETPOST('actioncode', 'array')) {
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
+$search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -276,20 +276,25 @@ if ($object->id > 0) {
 		//$out.="</a>";
 	}
 
+	$morehtmlright = '';
 
-	print '<div class="tabsAction">';
+	//$messagingUrl = DOL_URL_ROOT.'/societe/messaging.php?socid='.$object->id;
+	//$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+	//$messagingUrl = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
+	//$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
 
 	if (isModEnabled('agenda')) {
 		if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create)) {
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
+			$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
 		} else {
-			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
+			$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', 0);
 		}
 	}
 
-	print '</div>';
 
 	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+		print '<br>';
+
 		$param = '&id='.$object->id.(!empty($socid) ? '&socid='.$socid : '');
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 			$param .= '&contextpage='.urlencode($contextpage);
@@ -298,12 +303,13 @@ if ($object->id > 0) {
 			$param .= '&limit='.urlencode($limit);
 		}
 
-
 		//print load_fiche_titre($langs->trans("ActionsOnMyObject"), '', '');
+		print_barre_liste($langs->trans("ActionsOnMyObject"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
 
 		// List of all actions
 		$filters = array();
 		$filters['search_agenda_label'] = $search_agenda_label;
+		$filters['search_rowid'] = $search_rowid;
 
 		// TODO Replace this with same code than into list.php
 		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);

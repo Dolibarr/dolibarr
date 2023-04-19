@@ -80,8 +80,6 @@ if (isModEnabled('margin')) {
 }
 
 // General $Variables
-$projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : 0);
-
 $id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int'));    // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
@@ -100,6 +98,7 @@ $fac_rec = GETPOST('fac_rec', 'int');
 $facid = GETPOST('facid', 'int');
 $ref_client = GETPOST('ref_client', 'int');
 $rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
+$projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : 0);
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -1305,7 +1304,8 @@ if (empty($reshook)) {
 				$object->date_pointoftax = $date_pointoftax;
 				$object->note_public = trim(GETPOST('note_public', 'restricthtml'));
 				$object->note_private    = trim(GETPOST('note_private', 'restricthtml'));
-				$object->ref_client      = GETPOST('ref_client');
+				$object->ref_customer    = GETPOST('ref_client');
+				$object->ref_client      = $object->ref_customer;
 				$object->model_pdf = GETPOST('model');
 				$object->fk_project = GETPOST('projectid', 'int');
 				$object->cond_reglement_id	= (GETPOST('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
@@ -2154,7 +2154,7 @@ if (empty($reshook)) {
 				$pu_ht = $datapriceofproduct['pu_ht'];
 				$pu_ttc = $datapriceofproduct['pu_ttc'];
 				$price_min = $datapriceofproduct['price_min'];
-				$price_min_ttc = $datapriceofproduct['price_min_ttc'];
+				$price_min_ttc = (isset($datapriceofproduct['price_min_ttc'])) ? $datapriceofproduct['price_min_ttc'] : null;
 				$price_base_type = $datapriceofproduct['price_base_type'];
 
 				$tva_tx = $datapriceofproduct['tva_tx'];
@@ -3119,7 +3119,11 @@ if ($action == 'create') {
 	}
 
 	// when bank account is empty (means not override by payment mode form a other object, like third-party), try to use default value
-	$fk_account = GETPOSTISSET("fk_account") ? GETPOST("fk_account", 'int') : $fk_account;
+	if ($socid > 0 && $fk_account) {	// A company has already been set and it has a default fk_account
+		$fk_account = GETPOSTISSET('fk_account') ? GETPOST("fk_account", 'int') : $fk_account;	// The GETPOST is used only if form was posted to avoid to take default value, because in such case, the default must be the one of the company
+	} else {	// No company forced
+		$fk_account = GETPOST("fk_account", 'int');
+	}
 
 	if (!empty($soc->id)) {
 		$absolute_discount = $soc->getAvailableDiscounts();
@@ -3146,7 +3150,7 @@ if ($action == 'create') {
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST" id="formtocreate" name="formtocreate">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="action" id="formtocreateaction" value="add">';
 	if ($soc->id > 0) {
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	}
@@ -3186,7 +3190,7 @@ if ($action == 'create') {
 		$arrayoutstandingbills = $soc->getOutstandingBills();
 		$outstandingBills = $arrayoutstandingbills['opened'];
 		print ' - <span class="opacitymedium">'.$langs->trans('CurrentOutstandingBill').':</span> ';
-		print price($outstandingBills, '', $langs, 0, 0, -1, $conf->currency);
+		print '<span class="amount">'.price($outstandingBills, '', $langs, 0, 0, -1, $conf->currency).'</span>';
 		if ($soc->outstanding_limit != '') {
 			if ($outstandingBills > $soc->outstanding_limit) {
 				print img_warning($langs->trans("OutstandingBillReached"));
@@ -3212,11 +3216,10 @@ if ($action == 'create') {
 					$(\'input[name="force_fk_account"]\').val(\'1\');
 					$("#formtocreate").submit(); */
 
-   					// For company change, we must reuse data of comany, not input already done, so we call a GET with action=create, not a POST submit.
-					console.log("We have changed the company - Reload page");
-					var socid = $(this).val();
-			        var fac_rec = $(\'#fac_rec\').val();
-        			window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
+   					// For company change, we must submit page with action=create instead of action=add
+					console.log("We have changed the company - Resubmit page");
+					jQuery("#formtocreateaction").val("create");
+					jQuery("#formtocreate").submit();
 				});
 			});
 			</script>';
@@ -3306,7 +3309,7 @@ if ($action == 'create') {
 	print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 	$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOST('type', 'int') ? '' : ' checked').'> ';
 	$tmp  = $tmp.'<label for="radio_standard" >'.$langs->trans("InvoiceStandardAsk").'</label>';
-	$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3);
+	$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3, 'standardonsmartphone');
 	print '<table class="nobordernopadding"><tr>';
 	print '<td>';
 	print $desc;
@@ -3345,7 +3348,7 @@ if ($action == 'create') {
 					jQuery("#radio_deposit").prop("checked", true);
 					setRadioForTypeOfIncoice();
 				});
-    			jQuery("#radio_standard, #radio_deposit, #radio_replacement, #radio_template").change(function() {
+    			jQuery("#radio_standard, #radio_deposit, #radio_replacement, #radio_creditnote, #radio_template").change(function() {
 					setRadioForTypeOfIncoice();
 				});
 				function setRadioForTypeOfIncoice() {
@@ -3361,10 +3364,10 @@ if ($action == 'create') {
     		});
     		</script>';
 
-			$tmp  = $tmp.'<label for="radio_deposit" >'.$langs->trans("InvoiceDeposit").'</label>';
-			$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceDepositDesc"), 1, 'help', '', 0, 3);
 			print '<table class="nobordernopadding"><tr>';
 			print '<td>';
+			$tmp  = $tmp.'<label for="radio_deposit">'.$langs->trans("InvoiceDeposit").'</label>';
+			$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceDepositDesc"), 1, 'help', '', 0, 3, 'depositonsmartphone');
 			print $desc;
 			print '</td>';
 			if (($origin == 'propal') || ($origin == 'commande')) {
@@ -3403,7 +3406,7 @@ if ($action == 'create') {
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp = '<input id="radio_situation" type="radio" name="type" value="5"'.(GETPOST('type') == 5 ? ' checked' : '').'> ';
 			$tmp  = $tmp.'<label for="radio_situation" >'.$langs->trans("InvoiceFirstSituationAsk").'</label>';
-			$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
+			$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3, 'firstsituationonsmartphone');
 			print $desc;
 			print '</div></div>';
 
@@ -3416,7 +3419,7 @@ if ($action == 'create') {
 				$tmp .= ' disabled';
 			}
 			$tmp .= '> ';
-			$text = '<label>'.$tmp.$langs->trans("InvoiceSituationAsk").'</label> ';
+			$text = $tmp.'<label>'.$langs->trans("InvoiceSituationAsk").'</label> ';
 			$text .= '<select class="flat" id="situations" name="situations"';
 			if ($opt == ('<option value ="0" selected>'.$langs->trans('NoSituations').'</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande')) {
 				$text .= ' disabled';
@@ -3464,7 +3467,7 @@ if ($action == 'create') {
     			});
     		});
     		</script>';
-			$text = '<label>'.$tmp.$langs->trans("InvoiceReplacementAsk").'</label>';
+			$text = $tmp.'<label for="radio_replacement">'.$langs->trans("InvoiceReplacementAsk").'</label>';
 			$text .= '<select class="flat" name="fac_replacement" id="fac_replacement"';
 			if (!$options || $invoice_predefined->id > 0) {
 				$text .= ' disabled';
@@ -3485,26 +3488,18 @@ if ($action == 'create') {
 		if (!empty($conf->global->INVOICE_USE_SITUATION)) {
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp = '<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
-			$text = '<label>'.$tmp.$langs->trans("InvoiceFirstSituationAsk").'</label> ';
+			$text = $tmp.'<label>'.$langs->trans("InvoiceSituationAsk").'</label> ';
 			$text .= '<span class="opacitymedium">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
-			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
-			print $desc;
-			print '</div></div>';
-
-			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-			$tmp = '<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
-			$text = '<label>'.$tmp.$langs->trans("InvoiceSituationAsk").'</label> ';
-			$text .= '<span class="opacitymedium">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
-			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
+			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3, 'firstsituationonsmartphone');
 			print $desc;
 			print '</div></div>';
 		}
 
 		print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 		$tmp = '<input type="radio" name="type" id="radio_replacement" value="0" disabled> ';
-		$text = '<label>'.$tmp.$langs->trans("InvoiceReplacement").'</label> ';
-		$text .= '<span class="opacitymedium">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
-		$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceReplacementDesc"), 1, 'help', '', 0, 3);
+		$text = $tmp.'<label for="radio_replacement" class="opacitymedium">'.$langs->trans("InvoiceReplacement").'</label> ';
+		//$text .= '<span class="opacitymedium hideonsmartphone">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
+		$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceReplacementDesc").'<br><br>'.$langs->trans("YouMustCreateInvoiceFromThird"), 1, 'help', '', 0, 3, 'replacementonsmartphone');
 		print $desc;
 		print '</div></div>';
 	}
@@ -3564,7 +3559,6 @@ if ($action == 'create') {
     			});
     			</script>';
 				$text = '<label>'.$tmp.$langs->transnoentities("InvoiceAvoirAsk").'</label> ';
-				// $text.='<input type="text" value="">';
 				$text .= '<select class="flat valignmiddle" name="fac_avoir" id="fac_avoir"';
 				if (!$optionsav || $invoice_predefined->id > 0) {
 					$text .= ' disabled';
@@ -3580,7 +3574,7 @@ if ($action == 'create') {
 				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
 				print $desc;
 
-				print '<div id="credit_note_options" class="clearboth">';
+				print '<div id="credit_note_options" class="clearboth paddingtop marginbottomonly">';
 				print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="$(\'#credit_note_options input[type=checkbox]\').not(this).prop(\'checked\', false);" '.(GETPOST('invoiceAvoirWithLines', 'int') > 0 ? 'checked' : '').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
 				print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="$(\'#credit_note_options input[type=checkbox]\').not(this).prop(\'checked\', false);" '.(GETPOST('invoiceAvoirWithPaymentRestAmount', 'int') > 0 ? 'checked' : '').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
 				print '</div>';
@@ -3594,9 +3588,9 @@ if ($action == 'create') {
 			} else {
 				$tmp = '<input type="radio" name="type" id="radio_creditnote" value="2" > ';
 			}
-			$text = '<label>'.$tmp.$langs->trans("InvoiceAvoir").'</label> ';
-			$text .= '<span class="opacitymedium">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
-			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
+			$text = $tmp.'<label class="opacitymedium" for="radio_creditnote">'.$langs->trans("InvoiceAvoir").'</label> ';
+			//$text .= '<span class="opacitymedium hideonsmartphone">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
+			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc").'<br><br>'.$langs->trans("YouMustCreateInvoiceFromThird"), 1, 'help', '', 0, 3, 'creditnoteonsmartphone');
 			print $desc;
 			print '</div></div>'."\n";
 		}
@@ -3605,9 +3599,8 @@ if ($action == 'create') {
 	// Template invoice
 	print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 	$tmp = '<input type="radio" name="type" id="radio_template" value="0" disabled> ';
-	$text = '<label>'.$tmp.$langs->trans("RepeatableInvoice").'</label> ';
-	//$text.= '('.$langs->trans("YouMustCreateStandardInvoiceFirst").') ';
-	$desc = $form->textwithpicto($text, $langs->transnoentities("YouMustCreateStandardInvoiceFirstDesc"), 1, 'help', '', 0, 3);
+	$text = $tmp.'<label class="opacitymedium" for="radio_template">'.$langs->trans("RepeatableInvoice").'</label> ';
+	$desc = $form->textwithpicto($text, $langs->transnoentities("YouMustCreateStandardInvoiceFirstDesc"), 1, 'help', '', 0, 3, 'templateonsmartphone');
 	print $desc;
 	print '</div></div>';
 
@@ -3628,7 +3621,8 @@ if ($action == 'create') {
         		$(document).ready(function() {
                     var listType = {'.$jsListType.'};
         			$("[name=\'type\'").change(function() {
-        				if($( this ).prop("checked"))
+						console.log("change name=type");
+        				if ($( this ).prop("checked"))
                         {
                             if(($( this ).val() in listType))
                             {
@@ -3907,7 +3901,7 @@ if ($action == 'create') {
 		print $objectsrc->getNomUrl(1);
 		// We check if Origin document (id and type is known) has already at least one invoice attached to it
 		$objectsrc->fetchObjectLinked($originid, $origin, '', 'facture');
-		if (is_array($objectsrc->linkedObjects['facture']) && count($objectsrc->linkedObjects['facture']) >= 1) {
+		if (isset($objectsrc->linkedObjects['facture']) && is_array($objectsrc->linkedObjects['facture']) && count($objectsrc->linkedObjects['facture']) >= 1) {
 			setEventMessages('WarningBillExist', null, 'warnings');
 			echo ' - '.$langs->trans('LatestRelatedBill').' '.end($objectsrc->linkedObjects['facture'])->getNomUrl(1);
 		}
@@ -4323,7 +4317,7 @@ if ($action == 'create') {
 			array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company($object->socid, 'socid', '(s.client=1 OR s.client=2 OR s.client=3)', 1)),
 			array('type' => 'date', 'name' => 'newdate', 'label' => $langs->trans("Date"), 'value' => dol_now())
 		);
-		// Ask confirmatio to clone
+		// Request confirmation to clone
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);
 	}
 

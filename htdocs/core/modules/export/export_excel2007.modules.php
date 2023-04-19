@@ -464,6 +464,7 @@ class ExportExcel2007 extends ModeleExports
 			return '';
 		}
 
+		$letter = '';
 		while ($c != 0) {
 			$p = ($c - 1) % 26;
 			$c = intval(($c - $p) / 26);

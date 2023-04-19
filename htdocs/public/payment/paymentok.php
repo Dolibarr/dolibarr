@@ -173,12 +173,16 @@ dol_syslog("_SERVER[SERVER_ADDR] = ".(empty($_SERVER["SERVER_ADDR"]) ? '' : dol_
 
 $tracepost = "";
 foreach ($_POST as $k => $v) {
-	$tracepost .= "{$k} - {$v}\n";
+	if (is_scalar($k) && is_scalar($v)) {
+		$tracepost .= "{$k} - {$v}\n";
+	}
 }
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
 $tracesession = "";
 foreach ($_SESSION as $k => $v) {
-	$tracesession .= "{$k} - {$v}\n";
+	if (is_scalar($k) && is_scalar($v)) {
+		$tracesession .= "{$k} - {$v}\n";
+	}
 }
 dol_syslog("SESSION=".$tracesession, LOG_DEBUG, 0, '_payment');
 
@@ -441,7 +445,7 @@ if ($ispaymentok) {
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
 				// Security protection:
-				if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {	// If we didn't allow members to choose their membership amount (if free amount is allowed, no need to check)
+				if (empty($adht->caneditamount)) {	// If we didn't allow members to choose their membership amount (if the amount is allowed in edit mode, no need to check)
 					if ($object->status == $object::STATUS_DRAFT) {		// If the member is not yet validated, we check that the amount is the same as expected.
 						$typeid = $object->typeid;
 

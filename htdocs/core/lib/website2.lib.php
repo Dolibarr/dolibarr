@@ -678,6 +678,7 @@ function showWebsiteTemplates(Website $website)
  * @param	string		$phpfullcodestringold		PHP old string
  * @param	string		$phpfullcodestring			PHP new string
  * @return	int										Error or not
+ * @see dolKeepOnlyPhpCode()
  */
 function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 {
@@ -730,6 +731,7 @@ function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 		if (!$error) {
 			$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 			$allowimportsite = true;
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
 				$allowimportsite = false;
 			}

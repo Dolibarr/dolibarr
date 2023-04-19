@@ -45,8 +45,12 @@ error_reporting(E_ALL | E_STRICT);
 $fk_element = GETPOST('fk_element', 'int');
 $element = GETPOST('element', 'alpha');
 
-
 $upload_handler = new FileUpload(null, $fk_element, $element);
+
+// Feature not enabled. Warning feature not used and not secured so disabled.
+if (!getDolGlobalInt('MAIN_USE_JQUERY_FILEUPLOAD')) {
+	return;
+}
 
 
 /*

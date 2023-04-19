@@ -885,8 +885,12 @@ if (empty($reshook)) {
 						$totalcreditnotes = $facture_source->getSumCreditNotesUsed();
 						$totaldeposits = $facture_source->getSumDepositsUsed();
 						$remain_to_pay = abs($facture_source->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits);
+						$desc = $langs->trans('invoiceAvoirLineWithPaymentRestAmount');
+						$retAddLine = $object->addline($desc, $remain_to_pay, 0, 0, 0, 1, 0, 0, '', '', 0, '', 'TTC');
 
-						$object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'), $remain_to_pay, 0, 0, 0, 1, 0, 0, '', '', 'TTC');
+						if ($retAddLine < 0) {
+							$error++;
+						}
 					}
 				}
 			}
@@ -2099,13 +2103,14 @@ if ($action == 'create') {
 	} else {
 		print img_picto('', 'company').$form->select_company(empty($societe->id) ? 0 : $societe->id, 'socid', '(s.fournisseur = 1 AND s.status = 1)', 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 widthcentpercentminusxx maxwidth500');
 		// reload page to retrieve supplier informations
-		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
+		if (empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE_DISABLED)) {
 			print '<script type="text/javascript">
 			$(document).ready(function() {
 				$("#socid").change(function() {
-					var socid = $(this).val();
-                    var fac_rec = $(\'#fac_rec\').val();
-        			window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
+					console.log("We have changed the company - Reload page");
+					// reload page
+					$("input[name=action]").val("create");
+					$("form[name=add]").submit();
 				});
 			});
 			</script>';
@@ -2168,10 +2173,9 @@ if ($action == 'create') {
         			$(document).ready(function() {
         				$("#fac_rec").change(function() {
 							console.log("We have changed the template invoice - Reload page");
-        					var fac_rec = $(this).val();
-        			        var socid = $(\'#socid\').val();
-        					// For template invoice change, we must reuse data of template, not input already done, so we call a GET with action=create, not a POST submit.
-        					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
+							// reload page
+							$("input[name=action]").val("create");
+							$("form[name=add]").submit();
         				});
         			});
         			</script>';
@@ -2199,7 +2203,7 @@ if ($action == 'create') {
 	// Standard invoice
 	print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 	$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOST('type', 'int')? '' : 'checked').'> ';
-	$desc = $form->textwithpicto($tmp.$langs->trans("InvoiceStandardAsk"), $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3);
+	$desc = $form->textwithpicto($tmp.'<label for="radio_standard">'.$langs->trans("InvoiceStandardAsk").'</label>', $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3);
 	print $desc;
 	print '</div></div>';
 
@@ -2377,7 +2381,7 @@ if ($action == 'create') {
    					});
    				});
    				</script>';
-				$text = $tmp.$langs->transnoentities("InvoiceAvoirAsk").' ';
+				$text = $tmp.'<label for="radio_creditnote">'.$langs->transnoentities("InvoiceAvoirAsk").'</label> ';
 				// $text.='<input type="text" value="">';
 				$text .= '<select class="flat valignmiddle" name="fac_avoir" id="fac_avoir"';
 				if (!$optionsav) {
@@ -2442,14 +2446,14 @@ if ($action == 'create') {
 	print $form->selectDate($dateinvoice, '', '', '', '', "add", 1, 1);
 	print '</td></tr>';
 
-	// Due date
-	print '<tr><td>'.$langs->trans('DateMaxPayment').'</td><td>';
-	print $form->selectDate($datedue, 'ech', '', '', '', "add", 1, 1);
-	print '</td></tr>';
-
 	// Payment term
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print $form->getSelectConditionsPaiements(GETPOSTISSET('cond_reglement_id') ?GETPOST('cond_reglement_id', 'int') : $cond_reglement_id, 'cond_reglement_id');
+	print '</td></tr>';
+
+	// Due date
+	print '<tr><td>'.$langs->trans('DateMaxPayment').'</td><td>';
+	print $form->selectDate($datedue, 'ech', '', '', '', "add", 1, 1);
 	print '</td></tr>';
 
 	// Payment mode

@@ -117,7 +117,7 @@ if ($setnewpassword && $username && $passworduidhash) {
 
 
 ?>
-<!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
+<!-- BEGIN PHP TEMPLATE PASSWORDRESET.TPL.PHP -->
 
 <body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
 
@@ -133,7 +133,14 @@ $(document).ready(function () {
 <?php } ?>
 
 
-<div class="login_center center"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND) ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));"' : '' ?>>
+<div class="login_center center"<?php
+if (empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
+	$backstyle = 'background: linear-gradient('.($conf->browser->layout == 'phone' ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
+	// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
+	$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
+	print empty($conf->global->MAIN_LOGIN_BACKGROUND) ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
+}
+?>>
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="POST" action="<?php echo $php_self; ?>">
@@ -271,21 +278,23 @@ if (!empty($morelogincontent)) {
 </form>
 
 
-<div class="center login_main_home divpasswordmessagedesc paddingtopbottom<?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow'; ?>" style="max-width: 70%">
 <?php
 if ($mode == 'dolibarr' || !$disabled) {
 	if (empty($message)) {
+		print '<div class="center login_main_home divpasswordmessagedesc paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'" style="max-width: 70%">';
 		print '<span class="passwordmessagedesc opacitymedium">';
 		print $langs->trans('EnterNewPasswordHere');
 		print '</span>';
+		print '</div>';
 	}
 } else {
+	print '<div class="center login_main_home divpasswordmessagedesc paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'" style="max-width: 70%">';
 	print '<div class="warning center">';
 	print $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode);
 	print '</div>';
+	print '</div>';
 }
 ?>
-</div>
 
 
 <br>

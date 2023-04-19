@@ -287,14 +287,14 @@ class Project extends CommonObject
 		'date_close' =>array('type'=>'datetime', 'label'=>'DateClosing', 'enabled'=>1, 'visible'=>0, 'position'=>105),
 		'fk_user_close' =>array('type'=>'integer', 'label'=>'UserClosing', 'enabled'=>1, 'visible'=>0, 'position'=>110),
 		'opp_amount' =>array('type'=>'double(24,8)', 'label'=>'OpportunityAmountShort', 'enabled'=>1, 'visible'=>'getDolGlobalString("PROJECT_USE_OPPORTUNITIES")', 'position'=>115),
-		'budget_amount' =>array('type'=>'double(24,8)', 'label'=>'Budget', 'enabled'=>1, 'visible'=>1, 'position'=>119),
+		'budget_amount' =>array('type'=>'double(24,8)', 'label'=>'Budget', 'enabled'=>1, 'visible'=>-1, 'position'=>119),
 		'usage_bill_time' =>array('type'=>'integer', 'label'=>'UsageBillTimeShort', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
 		'usage_opportunity' =>array('type'=>'integer', 'label'=>'UsageOpportunity', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
 		'usage_task' =>array('type'=>'integer', 'label'=>'UsageTasks', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
 		'usage_organize_event' =>array('type'=>'integer', 'label'=>'UsageOrganizeEvent', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
 		// Properties for event organization
-		'date_start_event' =>array('type'=>'date', 'label'=>'DateStartEvent', 'enabled'=>1, 'visible'=>1, 'position'=>200),
-		'date_end_event' =>array('type'=>'date', 'label'=>'DateEndEvent', 'enabled'=>1, 'visible'=>1, 'position'=>201),
+		'date_start_event' =>array('type'=>'date', 'label'=>'DateStartEvent', 'enabled'=>"isModEnabled('eventorganization')", 'visible'=>1, 'position'=>200),
+		'date_end_event' =>array('type'=>'date', 'label'=>'DateEndEvent', 'enabled'=>"isModEnabled('eventorganization')", 'visible'=>1, 'position'=>201),
 		'location' =>array('type'=>'text', 'label'=>'Location', 'enabled'=>1, 'visible'=>3, 'position'=>55, 'searchall'=>202),
 		'accept_conference_suggestions' =>array('type'=>'integer', 'label'=>'AllowUnknownPeopleSuggestConf', 'enabled'=>1, 'visible'=>-1, 'position'=>210),
 		'accept_booth_suggestions' =>array('type'=>'integer', 'label'=>'AllowUnknownPeopleSuggestBooth', 'enabled'=>1, 'visible'=>-1, 'position'=>211),
@@ -307,7 +307,7 @@ class Project extends CommonObject
 		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>410),
 		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModification', 'enabled'=>1, 'visible'=>0, 'position'=>415),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'position'=>420),
-		'email_msgid'=>array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'enabled'=>1, 'visible'=>-1, 'position'=>450, 'help'=>'EmailMsgIDWhenSourceisEmail'),
+		'email_msgid'=>array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'enabled'=>1, 'visible'=>-1, 'position'=>450, 'help'=>'EmailMsgIDWhenSourceisEmail', 'csslist'=>'tdoverflowmax125'),
 		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500),
 	);
 	// END MODULEBUILDER PROPERTIES
@@ -498,7 +498,7 @@ class Project extends CommonObject
 			}
 		}
 
-		if (!$error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS)) {
+		if (!$error && (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_PROJECT'))) {
 			$res = $this->setValid($user);
 			if ($res < 0) {
 				$error++;
@@ -1098,7 +1098,7 @@ class Project extends CommonObject
 	 *
 	 * 		@param		User	$user		   User that validate
 	 *      @param      int     $notrigger     1=Disable triggers
-	 * 		@return		int					   <0 if KO, >0 if OK
+	 * 		@return		int					   <0 if KO, 0=Nothing done, >0 if KO
 	 */
 	public function setValid($user, $notrigger = 0)
 	{
@@ -1106,47 +1106,51 @@ class Project extends CommonObject
 
 		$error = 0;
 
-		if ($this->statut != 1) {
-			// Check parameters
-			if (preg_match('/^'.preg_quote($langs->trans("CopyOf").' ').'/', $this->title)) {
-				$this->error = $langs->trans("ErrorFieldFormat", $langs->transnoentities("Label")).'. '.$langs->trans('RemoveString', $langs->transnoentitiesnoconv("CopyOf"));
-				return -1;
+		// Protection
+		if ($this->status == self::STATUS_VALIDATED) {
+			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
+			return 0;
+		}
+
+		// Check parameters
+		if (preg_match('/^'.preg_quote($langs->trans("CopyOf").' ').'/', $this->title)) {
+			$this->error = $langs->trans("ErrorFieldFormat", $langs->transnoentities("Label")).'. '.$langs->trans('RemoveString', $langs->transnoentitiesnoconv("CopyOf"));
+			return -1;
+		}
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
+		$sql .= " SET fk_statut = ".self::STATUS_VALIDATED;
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		//$sql .= " AND entity = ".((int) $conf->entity);	// Disabled, when we use the ID for the where, we must not add any other search condition
+
+		dol_syslog(get_class($this)."::setValid", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			// Call trigger
+			if (empty($notrigger)) {
+				$result = $this->call_trigger('PROJECT_VALIDATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
 			}
 
-			$this->db->begin();
-
-			$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
-			$sql .= " SET fk_statut = 1";
-			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= " AND entity = ".((int) $conf->entity);
-
-			dol_syslog(get_class($this)."::setValid", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				// Call trigger
-				if (empty($notrigger)) {
-					$result = $this->call_trigger('PROJECT_VALIDATE', $user);
-					if ($result < 0) {
-						$error++;
-					}
-					// End call triggers
-				}
-
-				if (!$error) {
-					$this->statut = 1;
-					$this->db->commit();
-					return 1;
-				} else {
-					$this->db->rollback();
-					$this->error = join(',', $this->errors);
-					dol_syslog(get_class($this)."::setValid ".$this->error, LOG_ERR);
-					return -1;
-				}
+			if (!$error) {
+				$this->statut = 1;
+				$this->db->commit();
+				return 1;
 			} else {
 				$this->db->rollback();
-				$this->error = $this->db->lasterror();
+				$this->error = join(',', $this->errors);
+				dol_syslog(get_class($this)."::setValid ".$this->error, LOG_ERR);
 				return -1;
 			}
+		} else {
+			$this->db->rollback();
+			$this->error = $this->db->lasterror();
+			return -1;
 		}
 	}
 
@@ -1381,6 +1385,7 @@ class Project extends CommonObject
 		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
+		$this->entity = $conf->entity;
 		$this->specimen = 1;
 		$this->socid = 1;
 		$this->date_c = $now;
@@ -2300,11 +2305,11 @@ class Project extends CommonObject
 
 
 	/**
-	 * 	Create an array of tasks of current project
+	 * Create an array of tasks of current project
 	 *
-	 *  @param  User	$user       		Object user we want project allowed to
+	 * @param	User	$user       		Object user we want project allowed to
 	 * @param	int		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
-	 * 	@return int							>0 if OK, <0 if KO
+	 * @return 	int							>0 if OK, <0 if KO
 	 */
 	public function getLinesArray($user, $loadRoleMode = 1)
 	{

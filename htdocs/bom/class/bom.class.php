@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2019  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2019	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2023	Benjamin Falière	<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1365,7 +1366,11 @@ class BOM extends CommonObject
 						$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
 						if (empty($line->unit_cost)) {
 							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
-								$line->unit_cost = $productFournisseur->fourn_unitprice;
+								if ($productFournisseur->fourn_remise_percent != "0") {
+									$line->unit_cost = $productFournisseur->fourn_unitprice_with_discount;
+								} else {
+									$line->unit_cost = $productFournisseur->fourn_unitprice;
+								}
 							}
 						}
 

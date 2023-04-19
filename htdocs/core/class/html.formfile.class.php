@@ -449,6 +449,10 @@ class FormFile
 			$titletoshow = ($title == 'none' ? '' : $title);
 		}
 
+		$addcolumforpicto = ($delallowed || $printer || $morepicto);
+		$colspan = (4 + ($addcolumforpicto ? 1 : 0));
+		$colspanmore = 0;
+
 		// Show table
 		if ($genallowed) {
 			$modellist = array();
@@ -700,10 +704,6 @@ class FormFile
 
 			$out .= '<tr class="liste_titre">';
 
-			$addcolumforpicto = ($delallowed || $printer || $morepicto);
-			$colspan = (4 + ($addcolumforpicto ? 1 : 0));
-			$colspanmore = 0;
-
 			$out .= '<th colspan="'.$colspan.'" class="formdoc liste_titre maxwidthonsmartphone center">';
 
 			// Model
@@ -920,6 +920,9 @@ class FormFile
 					}
 
 					if (is_object($hookmanager)) {
+						$addcolumforpicto = ($delallowed || $printer || $morepicto);
+						$colspan = (4 + ($addcolumforpicto ? 1 : 0));
+						$colspanmore = 0;
 						$parameters = array('colspan'=>($colspan + $colspanmore), 'socid'=>(isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id'=>(isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'modulepart'=>$modulepart, 'relativepath'=>$relativepath);
 						$res = $hookmanager->executeHooks('formBuilddocLineOptions', $parameters, $file);
 						if (empty($res)) {

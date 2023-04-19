@@ -217,7 +217,7 @@ $morecss = array();
 $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
 $sql .= ' p.fk_product_type, p.tms as datem,';
 $sql .= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock, p.stock, p.tosell, p.tobuy, p.tobatch,';
-$sql .= ' ps.fk_entrepot,';
+$sql .= ' ps.fk_entrepot, ps.reel,';
 $sql .= ' e.ref as warehouse_ref, e.lieu as warehouse_lieu, e.fk_parent as warehouse_parent,';
 $sql .= ' pb.batch, pb.eatby as oldeatby, pb.sellby as oldsellby,';
 $sql .= ' pl.rowid as lotid, pl.eatby, pl.sellby,';
@@ -319,7 +319,7 @@ foreach ($search as $key => $val) {
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
 $sql .= " p.fk_product_type, p.tms,";
 $sql .= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock, p.stock, p.tosell, p.tobuy, p.tobatch,";
-$sql .= " ps.fk_entrepot,";
+$sql .= " ps.fk_entrepot, ps.reel,";
 $sql .= " e.ref, e.lieu, e.fk_parent,";
 $sql .= " pb.batch, pb.eatby, pb.sellby,";
 $sql .= " pl.rowid, pl.eatby, pl.sellby";
@@ -328,7 +328,7 @@ if ($search_toolowstock) {
 	$sql_having .= " HAVING SUM(".$db->ifsql('ps.reel IS NULL', '0', 'ps.reel').") < p.seuil_stock_alerte"; // Not used yet
 }
 if ($search_stock_physique != '') {
-	$natural_search_physique = natural_search('SUM(' . $db->ifsql('pb.qty IS NULL', '0', 'pb.qty') . ')', $search_stock_physique, 1, 1);
+	$natural_search_physique = natural_search('SUM(' . $db->ifsql('pb.qty IS NULL', $db->ifsql('ps.reel IS NULL', '0', 'ps.reel'), 'pb.qty') . ')', $search_stock_physique, 1, 1);
 	$natural_search_physique = " " . substr($natural_search_physique, 1, -1); // remove first "(" and last ")" characters
 	if (!empty($sql_having)) {
 		$sql_having .= " AND";
@@ -717,7 +717,15 @@ while ($i < $imaxinloop) {
 
 	print '<td class="right">';
 	//if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
-	print $objp->stock_physique;
+	if (is_null($objp->stock_physique)) {
+		if (!empty($objp->reel)) {
+			print price2num($objp->reel, 'MS');
+		}
+	} else {
+		if (!empty($objp->stock_physique)) {
+			print price2num($objp->stock_physique, 'MS');
+		}
+	}
 	print '</td>';
 
 	print '<td class="right">';

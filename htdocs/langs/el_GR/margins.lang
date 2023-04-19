@@ -6,6 +6,7 @@ TotalMargin=Συνολικό Περιθώριο
 MarginOnProducts=Περιθώριο / Προϊόντα
 MarginOnServices=Περιθώριο / Υπηρεσίες
 MarginRate=Ποσοστό περιθωρίου επί της %%
+ModifyMarginRates=Τροποποίηση ποσοστών περιθωρίου
 MarkRate=Ποσοστό Κέρδους
 DisplayMarginRates=Εμφάνιση ποσοστών περιθωρίου
 DisplayMarkRates=Εμφάνιση ποσοστών κέρδους

@@ -73,7 +73,7 @@ if (isset($_GET['connect'])) {
 	}
 }
 
-if (empty($conf->stripe->enabled)) {
+if (!isModEnabled('stripe')) {
 	httponly_accessforbidden('Module Stripe not enabled');
 }
 

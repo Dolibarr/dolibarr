@@ -331,12 +331,8 @@ class Facture extends CommonInvoice
 		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'LT2', 'enabled'=>1, 'visible'=>-1, 'position'=>120, 'isameasure'=>1),
 		'revenuestamp' =>array('type'=>'double(24,8)', 'label'=>'RevenueStamp', 'enabled'=>1, 'visible'=>-1, 'position'=>115, 'isameasure'=>1),
 		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'AmountTTC', 'enabled'=>1, 'visible'=>1, 'position'=>130, 'isameasure'=>1),
-		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
-		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>166),
-		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>167),
-		'fk_user_closing' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserClosing', 'enabled'=>1, 'visible'=>-1, 'position'=>168),
 		'fk_facture_source' =>array('type'=>'integer', 'label'=>'SourceInvoice', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
 		'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
 		'fk_currency' =>array('type'=>'varchar(3)', 'label'=>'CurrencyCode', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>190),
@@ -365,7 +361,11 @@ class Facture extends CommonInvoice
 		'module_source' =>array('type'=>'varchar(32)', 'label'=>'POSModule', 'enabled'=>1, 'visible'=>-1, 'position'=>315),
 		'pos_source' =>array('type'=>'varchar(32)', 'label'=>'POSTerminal', 'enabled'=>1, 'visible'=>-1, 'position'=>320),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModificationShort', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModificationShort', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>502),
+		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>506),
+		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'notnull'=>-1, 'position'=>508),
+		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>510),
+		'fk_user_closing' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserClosing', 'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
 		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Paid', 3=>'Abandonned')),
 	);
@@ -569,6 +569,7 @@ class Facture extends CommonInvoice
 				$this->type = self::TYPE_STANDARD;
 			}
 			$this->ref_client = trim($this->ref_client);
+			$this->ref_customer = trim($this->ref_customer);
 			$this->note_public = trim($this->note_public);
 			$this->note_private = trim($this->note_private);
 			$this->note_private = dol_concatdesc($this->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->ref));
@@ -585,8 +586,6 @@ class Facture extends CommonInvoice
 			$this->linked_objects = $_facrec->linkedObjectsIds;
 			// We do not add link to template invoice or next invoice will be linked to all generated invoices
 			//$this->linked_objects['facturerec'][0] = $this->fac_rec;
-
-			$forceduedate = $this->calculate_date_lim_reglement();
 
 			// For recurring invoices, update date and number of last generation of recurring template invoice, before inserting new invoice
 			if ($_facrec->frequency > 0) {
@@ -1261,7 +1260,7 @@ class Facture extends CommonInvoice
 		$object->ref_client         = '';
 		$object->close_code         = '';
 		$object->close_note         = '';
-		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING == 1) {
+		if (getDolGlobalInt('MAIN_DONT_KEEP_NOTE_ON_CLONING') == 1) {
 			$object->note_private = '';
 			$object->note_public = '';
 		}
@@ -3538,6 +3537,7 @@ class Facture extends CommonInvoice
 
 	/**
 	 *  Add an invoice line into database (linked to product/service or not).
+	 *  Note: ->thirdparty must be defined.
 	 *  Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
 	 *  de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
 	 *  par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
@@ -5424,10 +5424,10 @@ class Facture extends CommonInvoice
 
 
 	/**
-	 *  Send reminders by emails for ivoices that are due
+	 *  Send reminders by emails for invoices that are due
 	 *  CAN BE A CRON TASK
 	 *
-	 *  @param	int			$nbdays				Delay after due date (or before if delay is negative)
+	 *  @param	int			$nbdays				Delay before due date (or after if delay is negative)
 	 *  @param	string		$paymentmode		'' or 'all' by default (no filter), or 'LIQ', 'CHQ', CB', ...
 	 *  @param	int|string	$template			Name (or id) of email template (Must be a template of type 'facture_send')
 	 *  @param	string		$forcerecipient		Force email of recipient (for example to send the email to an accountant supervisor instead of the customer)
@@ -5712,6 +5712,7 @@ class Facture extends CommonInvoice
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql .= " WHERE type = " . (int) $this->type ;
 		$sql .= " AND date_valid IS NOT NULL";
+		$sql .= " AND entity IN (".getEntity('invoice').")";
 		$sql .= " ORDER BY datef DESC LIMIT 1";
 
 		$result = $this->db->query($sql);
@@ -6404,14 +6405,15 @@ class FactureLigne extends CommonInvoiceLine
 	 * Returns situation_percent of the previous line.
 	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
 	 *
-	 * @param  int     $invoiceid      Invoice id
+	 * @param  int     $invoiceid      			Invoice id
 	 * @param  bool    $include_credit_note		Include credit note or not
-	 * @return int                     >= 0
+	 * @return int                     			>= 0
 	 */
 	public function get_prev_progress($invoiceid, $include_credit_note = true)
 	{
 		// phpcs:enable
 		global $invoicecache;
+
 		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {
 			return 0;
 		} else {

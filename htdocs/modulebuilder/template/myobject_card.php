@@ -511,7 +511,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Send
 			if (empty($user->socid)) {
-				print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&token='.newToken().'#formmailbeforetitle');
+				print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
 			}
 
 			// Back to draft

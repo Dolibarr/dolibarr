@@ -1590,7 +1590,7 @@ class ActionComm extends CommonObject
 		}
 
 		$canread = 0;
-		if (!empty($user->rights->agenda->myactions->read) && $this->authorid == $user->id) {
+		if ($user->hasRight('agenda', 'myactions', 'read') && ($this->authorid == $user->id || $this->userownerid == $user->id)) {
 			$canread = 1; // Can read my event
 		}
 		if (!empty($user->rights->agenda->myactions->read) && array_key_exists($user->id, $this->userassigned)) {
@@ -2203,7 +2203,7 @@ class ActionComm extends CommonObject
 			}
 
 			if ($result >= 0) {
-				if (dol_move($outputfiletmp, $outputfile, 0, 1)) {
+				if (dol_move($outputfiletmp, $outputfile, 0, 1, 0, 0)) {
 					$result = 1;
 				} else {
 					$this->error = 'Failed to rename '.$outputfiletmp.' into '.$outputfile;
@@ -2463,7 +2463,7 @@ class ActionComm extends CommonObject
 						}
 
 						// Sender
-						$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
+						$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 						if (empty($from)) {
 							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
 							$error++;
@@ -2471,7 +2471,7 @@ class ActionComm extends CommonObject
 
 						if (!$error) {
 							// Errors Recipient
-							$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
+							$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
 
 							// Mail Creation
 							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');

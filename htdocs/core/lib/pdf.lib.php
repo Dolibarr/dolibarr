@@ -2471,10 +2471,12 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefSending");
 					if (!empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] .= ' / ';
 					$linkedobjects[$objecttype]['ref_value'] .= $outputlangs->transnoentities($elementobject->ref);
+					$linkedobjects[$objecttype]['date_value'] = dol_print_date(empty($elementobject->date_shipping) ? $elementobject->date_delivery : $elementobject->date_shipping, 'day', '', $outputlangs);
 				} else {
 					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending");
 					if (empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] = $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
 					$linkedobjects[$objecttype]['ref_value'] .= ' / '.$outputlangs->transnoentities($elementobject->ref);
+					$linkedobjects[$objecttype]['date_value'] = dol_print_date(empty($elementobject->date_shipping) ? $elementobject->date_delivery : $elementobject->date_shipping, 'day', '', $outputlangs);
 				}
 			}
 		}
@@ -2508,6 +2510,8 @@ function pdf_getSizeForImage($realpath)
 	$maxheight = (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT) ? 32 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT);
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$tmp = dol_getImageSize($realpath);
+	$width = 0;
+	$height = 0;
 	if ($tmp['height']) {
 		$width = (int) round($maxheight * $tmp['width'] / $tmp['height']); // I try to use maxheight
 		if ($width > $maxwidth) {	// Pb with maxheight, so i use maxwidth

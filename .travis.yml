@@ -73,10 +73,6 @@ jobs:
       php: '8.1'
       env: DB=mysql
     - stage: PHP Dev
-      if: type = push AND branch = develop
-      php: nightly
-      env: DB=mysql
-    - stage: PHP Dev
       if: type = push AND branch = 17.0
       php: nightly
       env: DB=mysql

@@ -21,6 +21,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -709,7 +710,7 @@ class Form
 	 *  @param  string	$extracss           Add a CSS style to td, div or span tag
 	 *  @param  int		$noencodehtmltext   Do not encode into html entity the htmltext
 	 *  @param	int		$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
-	 *  @param  string  $tooltiptrigger     ''=Tooltip on hover, 'abc'=Tooltip on click (abc is a unique key, clickable link is on image or on link if param $type='none' or on both if $type='xxxclickable')
+	 *  @param  string  $tooltiptrigger     ''=Tooltip on hover and hidden on smartphone, 'abconsmartphone'=Tooltip on hover and on click on smartphone, 'abc'=Tooltip on click (abc is a unique key, clickable link is on image or on link if param $type='none' or on both if $type='xxxclickable')
 	 *  @param	int		$forcenowrap		Force no wrap between text and picto (works with notabs=2 only)
 	 * 	@return	string						HTML code of text, picto, tooltip
 	 */
@@ -717,16 +718,20 @@ class Form
 	{
 		global $conf, $langs;
 
-		$alt = '';
-		if ($tooltiptrigger) {
-			$alt = $langs->transnoentitiesnoconv("ClickToShowHelp");
-		}
-
 		//For backwards compatibility
 		if ($type == '0') {
 			$type = 'info';
 		} elseif ($type == '1') {
 			$type = 'help';
+		}
+
+		if (preg_match('/onsmartphone$/', $tooltiptrigger) && empty($conf->dol_no_mouse_hover)) {
+			$tooltiptrigger = preg_replace('/^.*onsmartphone$/', '', $tooltiptrigger);
+		}
+
+		$alt = '';
+		if ($tooltiptrigger) {
+			$alt = $langs->transnoentitiesnoconv("ClickToShowHelp");
 		}
 
 		// If info or help with no javascript, show only text
@@ -1483,7 +1488,7 @@ class Form
 					}
 
 					if (!empty($conf->global->SOCIETE_SHOW_VAT_IN_LIST) && !empty($obj->tva_intra)) {
-						$label .= ' - '.$obj->tva_intra.'';
+						$label .= ' - '.$obj->tva_intra;
 					}
 
 					$labelhtml = $label;
@@ -2499,6 +2504,7 @@ class Form
 			$error++;
 			dol_print_error($db);
 		}
+		$out .= '</select>';
 		if (empty($nooutput)) {
 			print $out;
 		} else {
@@ -4123,7 +4129,7 @@ class Form
 	public function select_conditions_paiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '', $deposit_percent = -1)
 	{
 		// phpcs:enable
-		print $this->getSelectConditionsPaiements($selected, $htmlname, $filtertype, $addempty, $noinfoadmin, $morecss, $deposit_percent = -1);
+		print $this->getSelectConditionsPaiements($selected, $htmlname, $filtertype, $addempty, $noinfoadmin, $morecss, $deposit_percent);
 	}
 
 
@@ -5115,10 +5121,12 @@ class Form
 						$i = 0;
 						foreach ($input['values'] as $selkey => $selval) {
 							$more .= '<div class="tagtr">';
-							if ($i == 0) {
-								$more .= '<div class="tagtd'.(empty($input['tdclass']) ? ' tdtop' : (' tdtop '.$input['tdclass'])).'">'.$input['label'].'</div>';
-							} else {
-								$more .= '<div clas="tagtd'.(empty($input['tdclass']) ? '' : (' "'.$input['tdclass'])).'">&nbsp;</div>';
+							if (isset($input['label'])) {
+								if ($i == 0) {
+									$more .= '<div class="tagtd'.(empty($input['tdclass']) ? ' tdtop' : (' tdtop '.$input['tdclass'])).'">'.$input['label'].'</div>';
+								} else {
+									$more .= '<div clas="tagtd'.(empty($input['tdclass']) ? '' : (' "'.$input['tdclass'])).'">&nbsp;</div>';
+								}
 							}
 							$more .= '<div class="tagtd'.($i == 0 ? ' tdtop' : '').'"><input type="radio" class="flat'.$morecss.'" id="'.dol_escape_htmltag($input['name'].$selkey).'" name="'.dol_escape_htmltag($input['name']).'" value="'.$selkey.'"'.$moreattr;
 							if (!empty($input['disabled'])) {
@@ -5348,7 +5356,7 @@ class Form
 
 			// Line title
 			$formconfirm .= '<tr class="validtitre"><td class="validtitre" colspan="2">';
-			$formconfirm .= img_picto('', 'recent').' '.$title;
+			$formconfirm .= img_picto('', 'pictoconfirm').' '.$title;
 			$formconfirm .= '</td></tr>'."\n";
 
 			// Line text
@@ -6652,7 +6660,7 @@ class Form
 					}
 
 					// Zone de saisie manuelle de la date
-					$retstring .= '<div class="nowrap inline-block divfordateinput">';
+					$retstring .= '<div class="nowraponall inline-block divfordateinput">';
 					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidthdate" maxlength="11" value="'.$formated_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ($placeholder ? ' placeholder="'.dol_escape_htmltag($placeholder).'"' : '');
@@ -6912,7 +6920,11 @@ class Form
 			if (empty($labeladddateof)) {
 				$labeladddateof = $langs->trans("DateInvoice");
 			}
-			$retstring .= ' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="console.log(\'Click on now link\'); jQuery(\'#re\').val(\''.dol_print_date($adddateof, 'dayinputnoreduce').'\');jQuery(\'#reday\').val(\''.$tmparray['mday'].'\');jQuery(\'#remonth\').val(\''.$tmparray['mon'].'\');jQuery(\'#reyear\').val(\''.$tmparray['year'].'\');">'.$labeladddateof.'</a>';
+			$reset_scripts = 'jQuery(\'#'.$prefix.'\').val(\''.dol_print_date($adddateof, 'dayinputnoreduce').'\');';
+			$reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(\''.$tmparray['mday'].'\');';
+			$reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(\''.$tmparray['mon'].'\');';
+			$reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.$tmparray['year'].'\');';
+			$retstring .= ' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="'.$reset_scripts.'">'.$labeladddateof.'</a>';
 		}
 
 		return $retstring;
@@ -7763,40 +7775,6 @@ class Form
 		return $out;
 	}
 
-	/**
-	 * Function to forge a SQL criteria from a Dolibarr filter syntax string.
-	 *
-	 * @param  array    $matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.nature:is:NULL"
-	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
-	 */
-	protected static function forgeCriteriaCallback($matches)
-	{
-		global $db;
-
-		//dol_syslog("Convert matches ".$matches[1]);
-		if (empty($matches[1])) {
-			return '';
-		}
-		$tmp = explode(':', $matches[1]);
-		if (count($tmp) < 3) {
-			return '';
-		}
-
-		$tmpescaped = $tmp[2];
-		$regbis = array();
-
-		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
-			$tmpescaped = "'".$db->escape($regbis[1])."'";
-		} else {
-			$tmpescaped = $db->escape($tmpescaped);
-		}
-
-		if ($tmp[1] == '!=') {
-			$tmp[1] = '<>';
-		}
-
-		return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;
-	}
 
 	/**
 	 * Output html form to select an object.
@@ -7879,7 +7857,13 @@ class Form
 		}
 
 		// Add where from hooks
-		$parameters = array();
+		$parameters = array(
+			'object' => $objecttmp,
+			'htmlname' => $htmlname,
+			'filter' => $filter,
+			'searchkey' => $searchkey
+		);
+
 		$reshook = $hookmanager->executeHooks('selectForFormsListWhere', $parameters); // Note that $action and $object may have been modified by hook
 		if (!empty($hookmanager->resPrint)) {
 			$sql .= $hookmanager->resPrint;
@@ -7910,12 +7894,11 @@ class Form
 			}
 
 			if ($filter) {	 // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-				/*if (! DolibarrApi::_checkFilters($filter))
-				{
-					throw new RestException(503, 'Error when validating parameter sqlfilters '.$filter);
-				}*/
-				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-				$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'Form::forgeCriteriaCallback', $filter).")";
+				$errormessage = '';
+				$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+				if ($errormessage) {
+					return 'Error forging a SQL request from an universal criteria: '.$errormessage;
+				}
 			}
 		}
 		$sql .= $this->db->order($sortfield ? $sortfield : $fieldstoshow, "ASC");
@@ -8408,8 +8391,13 @@ class Form
 			}
 		}
 
-		// Try also magic suggest
-		$out .= '<select id="'.$htmlname.'" class="multiselect'.($morecss ? ' '.$morecss : '').'" multiple name="'.$htmlname.'[]"'.($moreattrib ? ' '.$moreattrib : '').($width ? ' style="width: '.(preg_match('/%/', $width) ? $width : $width.'px').'"' : '').'>'."\n";
+		$useenhancedmultiselect = 0;
+		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')) {
+			$useenhancedmultiselect = 1;
+		}
+
+		// Output select component
+		$out .= '<select id="'.$htmlname.'" class="multiselect'.($useenhancedmultiselect ? ' multiselectononeline' : '').($morecss ? ' '.$morecss : '').'" multiple name="'.$htmlname.'[]"'.($moreattrib ? ' '.$moreattrib : '').($width ? ' style="width: '.(preg_match('/%/', $width) ? $width : $width.'px').'"' : '').'>'."\n";
 		if (is_array($array) && !empty($array)) {
 			if ($value_as_key) {
 				$array = array_combine($array, $array);
@@ -8521,6 +8509,9 @@ class Form
 		global $conf, $langs, $user, $extrafields;
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			return '';
+		}
+		if (empty($array)) {
 			return '';
 		}
 
@@ -8883,8 +8874,7 @@ class Form
 					'perms'=>1,
 					'label'=>'LinkToContract',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_customer as ref_client, t.ref_supplier, SUM(td.total_ht) as total_ht
-							FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."contrat as t, ".$this->db->prefix()."contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('contract').') GROUP BY s.rowid, s.nom, s.client, t.rowid, t.ref, t.ref_customer, t.ref_supplier'
-				),
+							FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."contrat as t, ".$this->db->prefix()."contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('contract').') GROUP BY s.rowid, s.nom, s.client, t.rowid, t.ref, t.ref_customer, t.ref_supplier'),
 				'fichinter'=>array(
 					'enabled'=>isModEnabled('ficheinter'),
 					'perms'=>1,
@@ -8915,6 +8905,12 @@ class Form
 					'label'=>'LinkToMo',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.rowid, '0' as total_ht FROM ".$this->db->prefix()."societe as s INNER JOIN ".$this->db->prefix()."mrp_mo as t ON t.fk_soc = s.rowid  WHERE  t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('mo').')')
 			);
+		}
+
+		if ($object->table_element == 'commande_fournisseur') {
+			$possiblelinks['mo']['sql'] = "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.rowid, '0' as total_ht FROM ".$this->db->prefix()."societe as s INNER JOIN ".$this->db->prefix().'mrp_mo as t ON t.fk_soc = s.rowid  WHERE t.entity IN ('.getEntity('mo').')';
+		} elseif ($object->table_element == 'mrp_mo') {
+			$possiblelinks['order_supplier']['sql'] = "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix().'commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.entity IN ('.getEntity('commande_fournisseur').')';
 		}
 
 		if (!empty($listofidcompanytoscan)) {  // If empty, we don't have criteria to scan the object we can link to
@@ -8953,7 +8949,9 @@ class Form
 					print '<table class="noborder">';
 					print '<tr>';
 					print '<td>' . $langs->trans("Ref") . '</td>';
-					print '<td><input type="text" name="reftolinkto" value="' . dol_escape_htmltag(GETPOST('reftolinkto', 'alpha')) . '">&nbsp;<input type="submit" class="button valignmiddle" value="' . $langs->trans('ToLink') . '">&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></td>';
+					print '<td><input type="text" name="reftolinkto" value="' . dol_escape_htmltag(GETPOST('reftolinkto', 'alpha')) . '">&nbsp;';
+					print '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans('ToLink') . '">&nbsp;';
+					print '<input type="submit" class="button smallpaddingimp" name="cancel" value="' . $langs->trans('Cancel') . '"></td>';
 					print '</tr>';
 					print '</table>';
 					print '</form>';
@@ -10261,14 +10259,12 @@ class Form
 				$search_component_params_hidden .= '('.$search_component_params_hidden.')';
 			}
 			$errormessage = '';
-			if (!dolCheckFilters($search_component_params_hidden, $errormessage)) {
-				print 'ERROR in parsing search string';
+			$searchtags = forgeSQLFromUniversalSearchCriteria($search_component_params_hidden, $errormessage);
+			if ($errormessage) {
+				print 'ERROR in parsing search string: '.dol_escape_htmltag($errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			//var_dump($search_component_params_hidden);
-			$htmltags = preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $search_component_params_hidden);
-			//var_dump($htmltags);
-			$ret .= '<span class="marginleftonlyshort valignmiddle tagsearch"><span class="tagsearchdelete select2-selection__choice__remove">x</span> '.$htmltags.'</span>';
+			//var_dump($searchtags);
+			$ret .= '<span class="marginleftonlyshort valignmiddle tagsearch"><span class="tagsearchdelete select2-selection__choice__remove">x</span> '.dol_escape_htmltag($searchtags).'</span>';
 		}
 
 		//$ret .= '<button type="submit" class="liste_titre button_search paddingleftonly" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';

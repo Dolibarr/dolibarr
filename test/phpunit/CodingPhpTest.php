@@ -544,6 +544,16 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			$this->assertTrue($ok, 'Found a preg_grep with a param that is a $var but without preg_quote in file '.$file['relativename'].'.');
 
 
+			// Test we don't have "if ($resql >"
+			$ok=true;
+			$matches=array();
+			preg_match_all('/if \(\$resql >/', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$ok=false;
+				break;
+			}
+			$this->assertTrue($ok, 'Found a if $resql with a > operator (when $resql is a boolean or resource) in file '.$file['relativename'].'. Please remove the > ... part.');
+
 			// Test we don't have empty($user->hasRight
 			$ok=true;
 			$matches=array();

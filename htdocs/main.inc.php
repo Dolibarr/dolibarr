@@ -173,16 +173,20 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)\s*=/i', $val);
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)\s*=/i', $val);
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)\s*=/i', $val);
+	// More not into the previous list
+	$inj += preg_match('/on(repeat|begin|finish|beforeinput)\s*=/i', $val);
 
 	// We refuse html into html because some hacks try to obfuscate evil strings by inserting HTML into HTML. Example: <img on<a>error=alert(1) to bypass test on onerror
 	$tmpval = preg_replace('/<[^<]+>/', '', $val);
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers
-	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)([a-z]*)\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
+	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)([a-z]*)\s*=/i', $tmpval); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
 	$inj += preg_match('/on(abort|afterprint|animation|auxclick|beforecopy|beforecut|beforeprint|beforeunload|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)\s*=/i', $tmpval);
 	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)\s*=/i', $tmpval);
 	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)\s*=/i', $tmpval);
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)\s*=/i', $tmpval);
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)\s*=/i', $tmpval);
+	// More not into the previous list
+	$inj += preg_match('/on(repeat|begin|finish|beforeinput)\s*=/i', $tmpval);
 
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val); // refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
@@ -662,7 +666,7 @@ if (!defined('NOLOGIN')) {
 	} else {
 		// Authentication mode
 		if (empty($dolibarr_main_authentication)) {
-			$dolibarr_main_authentication = 'http,dolibarr';
+			$dolibarr_main_authentication = 'dolibarr';
 		}
 		// Authentication mode: forceuser
 		if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) {
@@ -1458,13 +1462,21 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 	// X-XSS-Protection
 	//header("X-XSS-Protection: 1");      		// XSS filtering protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
 
-	// Content-Security-Policy
-	if (!defined('MAIN_SECURITY_FORCECSP')) {
+	// Content-Security-Policy-Report-Only
+	if (!defined('MAIN_SECURITY_FORCECSPRO')) {
 		// If CSP not forced from the page
 
 		// A default security policy that keep usage of js external component like ckeditor, stripe, google, working
-		//	$contentsecuritypolicy = "font-src *; img-src *; style-src * 'unsafe-inline' 'unsafe-eval'; default-src 'self' *.stripe.com 'unsafe-inline' 'unsafe-eval'; script-src 'self' *.stripe.com 'unsafe-inline' 'unsafe-eval'; frame-src 'self' *.stripe.com; connect-src 'self';";
-		$contentsecuritypolicy = getDolGlobalString('MAIN_SECURITY_FORCECSP');
+		// For example: to restrict to only local resources, except for css (cloudflare+google), and js (transifex + google tags) and object/iframe (youtube)
+		// default-src 'self'; style-src: https://cdnjs.cloudflare.com https://fonts.googleapis.com; script-src: https://cdn.transifex.com https://www.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src: *;
+		// For example, to restrict everything to itself except img that can be on other servers:
+		// default-src 'self'; img-src *;
+		// Pre-existing site that uses too much js code to fix but wants to ensure resources are loaded only over https and disable plugins:
+		// default-src https: 'unsafe-inline' 'unsafe-eval'; object-src 'none'
+		//
+		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
+		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; font-src *; default-src *; script-src 'self' 'unsafe-inline' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com; style-src 'self' 'unsafe-inline'; connect-src 'self';";
+		$contentsecuritypolicy = getDolGlobalString('MAIN_SECURITY_FORCECSPRO');
 
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -1472,7 +1484,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		}
 		$hookmanager->initHooks(array("main"));
 
-		$parameters = array('contentsecuritypolicy'=>$contentsecuritypolicy);
+		$parameters = array('contentsecuritypolicy'=>$contentsecuritypolicy, 'mode'=>'reportonly');
 		$result = $hookmanager->executeHooks('setContentSecurityPolicy', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($result > 0) {
 			$contentsecuritypolicy = $hookmanager->resPrint; // Replace CSP
@@ -1481,14 +1493,43 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		}
 
 		if (!empty($contentsecuritypolicy)) {
-			// For example, to restrict 'script', 'object', 'frames' or 'img' to some domains:
-			// script-src https://api.google.com https://anotherhost.com; object-src https://youtube.com; frame-src https://youtube.com; img-src: https://static.example.com
-			// For example, to restrict everything to one domain, except 'object', ...:
-			// default-src https://cdn.example.net; object-src 'none'
-			// For example, to restrict everything to itself except img that can be on other servers:
-			// default-src 'self'; img-src *;
-			// Pre-existing site that uses too much js code to fix but wants to ensure resources are loaded only over https and disable plugins:
-			// default-src https: 'unsafe-inline' 'unsafe-eval'; object-src 'none'
+			header("Content-Security-Policy-Report-Only: ".$contentsecuritypolicy);
+		}
+	} else {
+		header("Content-Security-Policy: ".constant('MAIN_SECURITY_FORCECSPRO'));
+	}
+
+	// Content-Security-Policy
+	if (!defined('MAIN_SECURITY_FORCECSP')) {
+		// If CSP not forced from the page
+
+		// A default security policy that keep usage of js external component like ckeditor, stripe, google, working
+		// For example: to restrict to only local resources, except for css (cloudflare+google), and js (transifex + google tags) and object/iframe (youtube)
+		// default-src 'self'; style-src: https://cdnjs.cloudflare.com https://fonts.googleapis.com; script-src: https://cdn.transifex.com https://www.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src: *;
+		// For example, to restrict everything to itself except img that can be on other servers:
+		// default-src 'self'; img-src *;
+		// Pre-existing site that uses too much js code to fix but wants to ensure resources are loaded only over https and disable plugins:
+		// default-src https: 'unsafe-inline' 'unsafe-eval'; object-src 'none'
+		//
+		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
+		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; font-src *; default-src *; script-src 'self' 'unsafe-inline' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com; style-src 'self' 'unsafe-inline'; connect-src 'self';";
+		$contentsecuritypolicy = getDolGlobalString('MAIN_SECURITY_FORCECSP');
+
+		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($db);
+		}
+		$hookmanager->initHooks(array("main"));
+
+		$parameters = array('contentsecuritypolicy'=>$contentsecuritypolicy, 'mode'=>'active');
+		$result = $hookmanager->executeHooks('setContentSecurityPolicy', $parameters); // Note that $action and $object may have been modified by some hooks
+		if ($result > 0) {
+			$contentsecuritypolicy = $hookmanager->resPrint; // Replace CSP
+		} else {
+			$contentsecuritypolicy .= $hookmanager->resPrint; // Concat CSP
+		}
+
+		if (!empty($contentsecuritypolicy)) {
 			header("Content-Security-Policy: ".$contentsecuritypolicy);
 		}
 	} else {
@@ -2732,7 +2773,7 @@ function top_menu_search()
 	$buttonList .= '</div>';
 
 
-	$searchInput = '<input name="sall" id="top-global-search-input" class="dropdown-search-input" placeholder="'.$langs->trans('Search').'" autocomplete="off" >';
+	$searchInput = '<input name="search_all" id="top-global-search-input" class="dropdown-search-input" placeholder="'.$langs->trans('Search').'" autocomplete="off" >';
 
 	$dropDownHtml = '<form id="top-menu-action-search" name="actionsearch" method="GET" action="'.$defaultAction.'" >';
 
@@ -2870,14 +2911,9 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 
 	if (empty($conf->dol_hide_leftmenu) && (!defined('NOREQUIREMENU') || !constant('NOREQUIREMENU'))) {
 		// Instantiate hooks for external modules
-		$hookmanager->initHooks(array('searchform', 'leftblock'));
+		$hookmanager->initHooks(array('leftblock'));
 
 		print "\n".'<!-- Begin side-nav id-left -->'."\n".'<div class="side-nav"><div id="id-left">'."\n";
-
-		if ($conf->browser->layout == 'phone') {
-			$conf->global->MAIN_USE_OLD_SEARCH_FORM = 1; // Select into select2 is awfull on smartphone. TODO Is this still true with select2 v4 ?
-		}
-
 		print "\n";
 
 		if (!is_object($form)) {
@@ -2885,9 +2921,14 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		}
 		$selected = -1;
 		if (empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) {
+			// Select into select2 is awfull on smartphone. TODO Is this still true with select2 v4 ?
+			if ($conf->browser->layout == 'phone') {
+				$conf->global->MAIN_USE_OLD_SEARCH_FORM = 1;
+			}
+
 			$usedbyinclude = 1;
 			$arrayresult = null;
-			include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php'; // This set $arrayresult
+			include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php'; // This make initHooks('searchform') then set $arrayresult
 
 			if ($conf->use_javascript_ajax && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM)) {
 				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, '', 1, 0, (empty($conf->global->MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY) ? 1 : 0), 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);

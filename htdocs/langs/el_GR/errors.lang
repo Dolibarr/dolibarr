@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Σφάλμα, η παράμετρ�
 ErrorLoginDateValidity=Σφάλμα, αυτή η σύνδεση είναι εκτός του εύρους ημερομηνιών εγκυρότητας
 ErrorValueLength=Το μήκος του πεδίου ' <b> %s </b> ' πρέπει να είναι μεγαλύτερο από το ' <b> %s </b>'
 ErrorReservedKeyword=Η λέξη "<b> %s </b>" είναι μια δεσμευμένη λέξη-κλειδί
+ErrorFilenameReserved=Το όνομα αρχείου <b> %s </b> δεν μπορεί να χρησιμοποιηθεί καθώς είναι μια δεσμευμένη και προστατευμένη εντολή.
 ErrorNotAvailableWithThisDistribution=Δεν διατίθεται με αυτήν τη διανομή
 ErrorPublicInterfaceNotEnabled=Η δημόσια διεπαφή δεν ενεργοποιήθηκε
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=Η γλώσσα της νέας σελίδας πρέπει να οριστεί εάν είναι μετάφραση άλλης σελίδας
@@ -304,6 +305,11 @@ ErrorValueCantBeNull=Η τιμή για <b> %s </b> δεν μπορεί να ε�
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Η ημερομηνία της τραπεζικής συναλλαγής δεν μπορεί να είναι παλαιότερη από την ημερομηνία αποστολής του αρχείου
 ErrorTooMuchFileInForm=Πάρα πολλά αρχεία στην φόρμα, ο μέγιστος αριθμός είναι %s αρχεία 
 ErrorSessionInvalidatedAfterPasswordChange=Η συνεδρία ακυρώθηκε μετά από αλλαγή κωδικού πρόσβασης, κατάστασης ή ημερομηνιών εγκυρότητας. Παρακαλώ συνδεθείτε ξανά.
+ErrorExistingPermission = Η άδεια <b> %s </b> για το αντικείμενο <b> %s </b> υπάρχει ήδη
+ErrorFieldExist=Η τιμή για <b> %s </b> υπάρχει ήδη
+ErrorEqualModule=Μη έγκυρη ενότητα στο <b> %s </b>
+ErrorFieldValue=Η τιμή για <b> %s </b> είναι λανθασμένη
+ErrorCoherenceMenu= <b> %s </b> απαιτείται όταν το <b> %s </b> είναι 'αριστερά'
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Η παράμετρος PHP upload_max_filesize (%s) είναι υψηλότερη από την παράμετρο PHP post_max_size (%s). Αυτή δεν είναι μια συνεπής ρύθμιση.
@@ -342,6 +348,7 @@ WarningPaypalPaymentNotCompatibleWithStrict=Η τιμή "Αυστηρή" κάν�
 WarningThemeForcedTo=Προειδοποίηση, έχει γίνει επιβολή του θέματος<b> %s </b> από την κρυφή σταθερά MAIN_FORCETEME
 WarningPagesWillBeDeleted=Προειδοποίηση, αυτό θα διαγράψει επίσης όλες τις υπάρχουσες σελίδες/container του ιστότοπου. Θα πρέπει να εξάγετε τον ιστότοπό σας νωρίτερα, ώστε να έχετε ένα αντίγραφο ασφαλείας για να μπορείτε να τον εισάγετε ξανά αργότερα αν χρειαστει.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Η αυτόματη επικύρωση είναι απενεργοποιημένη όταν η επιλογή μείωσης του αποθέματος έχει οριστεί στην "Επικύρωση τιμολογίου".
+WarningModuleNeedRefrech = Η ενότητα <b> %s </b> έχει απενεργοποιηθεί. Μην ξεχάσετε να την ενεργοποιήσετε
 
 # Validate
 RequireValidValue = Η τιμή δεν είναι έγκυρη

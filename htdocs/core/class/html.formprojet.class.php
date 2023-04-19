@@ -378,7 +378,7 @@ class FormProjets
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
 				$out .= $comboenhancement;
-				$morecss .= ' minwidth200 maxwidth500';
+				$morecss .= ' minwidth150';
 			}
 
 			if (empty($option_only)) {

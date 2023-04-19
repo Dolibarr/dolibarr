@@ -4240,7 +4240,7 @@ class Product extends CommonObject
 			$sql = "SELECT MAX(rang) as max_rank FROM ".$this->db->prefix()."product_association";
 			$sql .= " WHERE fk_product_pere  = ".((int) $id_pere);
 			$resql = $this->db->query($sql);
-			if ($resql > 0) {
+			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
 				$rank = $obj->max_rank + 1;
 				//Addition of a product with the highest rank +1

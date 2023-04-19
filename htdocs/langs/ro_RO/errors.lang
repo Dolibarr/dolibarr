@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Eroare, parametrul <b>%s</b> trebu
 ErrorLoginDateValidity=Eroare, această conectare se află în afara intervalului temporal valabil
 ErrorValueLength=Lungimea câmpului '<b>%s</b>' trebuie să fie mai mare de '<b>%s</b>'
 ErrorReservedKeyword=Cuvântul '<b>%s</b>' este un cuvânt cheie rezervat
+ErrorFilenameReserved=The filename <b>%s</b> can't be used as it is a reserved and protected command.
 ErrorNotAvailableWithThisDistribution=Nu este disponibil cu această distribuție
 ErrorPublicInterfaceNotEnabled=Interfaţa publică nu a fost activată
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=Limba noii pagini trebuie definită dacă este setată ca traducere a altei pagini
@@ -304,6 +305,11 @@ ErrorValueCantBeNull=Valoarea pentru <b>%s</b> nu poate fi nulă
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Data tranzacției bancare nu poate fi anterioară datei de transmitere a fișierului
 ErrorTooMuchFileInForm=Prea multe fișiere în formular, numărul maxim de fișier(e) este %s
 ErrorSessionInvalidatedAfterPasswordChange=Sesiunea a fost invalidată în urma unei modificări a parolei, a stării sau a datelor de valabilitate. Reconectează-te.
+ErrorExistingPermission = Permisiunea <b>%s</b> pentru obiectul <b>%s</b> există deja
+ErrorFieldExist=Valoarea pentru <b>%s</b> există deja
+ErrorEqualModule=Modul invalid în <b>%s</b>
+ErrorFieldValue=Valoarea pentru <b>%s</b> este incorectă
+ErrorCoherenceMenu=<b>%s</b> is required when <b>%s</b> is 'left'
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Parametrul tău PHP upload_max_filesize (%s) este mai mare decât paramentrul PHP post_max_size (%s). Aceasta nu este o configuraţie consistentă.
@@ -342,6 +348,7 @@ WarningPaypalPaymentNotCompatibleWithStrict=Valoarea 'Strictă' face ca funcții
 WarningThemeForcedTo=Atenție, tema <b>%s</b> a fost forțată de constanta ascunsă MAIN_FORCETHEME 
 WarningPagesWillBeDeleted=Atenție, acest lucru va șterge și toate paginile/containerele existente ale site-ului. Ar trebui să exporți site-ul înainte, astfel încât să ai o copie de rezervă pentru a-l reimporta mai târziu. 
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Validarea automată este dezactivată când opțiunea de scădere a stocului este setată pe "Validare factură".
+WarningModuleNeedRefrech = Modulul <b>%s</b> a fost dezavtivat. Nu uita să-l activezi
 
 # Validate
 RequireValidValue = Valoare invalidă

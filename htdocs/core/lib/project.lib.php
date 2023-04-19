@@ -288,7 +288,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	} else {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-		$upload_dir = $conf->project->dir_output."/".dol_sanitizeFileName($project->ref);
+		$upload_dir = $conf->project->multidir_output[$project->entity]."/".dol_sanitizeFileName($project->ref);
 		$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 		$nbLinks = Link::count($db, $project->element, $project->id);
 		$totalAttached = $nbFiles + $nbLinks;
@@ -416,7 +416,7 @@ function task_prepare_head($object)
 	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.(GETPOST('withproject') ? '&withproject=1' : '');
-	$filesdir = $conf->project->dir_output."/".dol_sanitizeFileName($object->project->ref).'/'.dol_sanitizeFileName($object->ref);
+	$filesdir = $conf->project->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->project->ref).'/'.dol_sanitizeFileName($object->ref);
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$nbFiles = count(dol_dir_list($filesdir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
@@ -2192,12 +2192,15 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
  * @param	int		$status				-1=No filter on statut, 0 or 1 = Filter on status
  * @param	array	$listofoppstatus	List of opportunity status
  * @param   array   $hiddenfields       List of info to not show ('projectlabel', 'declaredprogress', '...', )
+ * @param	int		$max				Max nb of record to show in HTML list
  * @return	void
  */
-function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks = 0, $status = -1, $listofoppstatus = array(), $hiddenfields = array())
+function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks = 0, $status = -1, $listofoppstatus = array(), $hiddenfields = array(), $max = 0)
 {
 	global $langs, $conf, $user;
 	global $theme_datacolor;
+
+	$maxofloop = (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
 
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
@@ -2228,8 +2231,6 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	if (strcmp($status, '') && $status >= 0) {
 		$title = $langs->trans("Projects").' '.$langs->trans($projectstatic->statuts_long[$status]);
 	}
-
-	$arrayidtypeofcontact = array();
 
 	print '<!-- print_projecttasks_array -->';
 	print '<div class="div-table-responsive-no-min">';
@@ -2309,11 +2310,15 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 	$resql = $db->query($sql2);
 	if ($resql) {
+		$othernb = 0;
 		$total_task = 0;
 		$total_opp_amount = 0;
 		$ponderated_opp_amount = 0;
+		$total_plannedworkload = 0;
+		$total_declaredprogressworkload = 0;
 
 		$num = $db->num_rows($resql);
+		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 		$i = 0;
 
 		print '<tr class="liste_titre">';
@@ -2340,10 +2345,22 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		}
 		print "</tr>\n";
 
-		$total_plannedworkload = 0;
-		$total_declaredprogressworkload = 0;
-		while ($i < $num) {
+		while ($i < $nbofloop) {
 			$objp = $db->fetch_object($resql);
+
+			if ($max && $i >= $max) {
+				$othernb++;
+				$i++;
+				$total_task += $objp->nb;
+				$total_opp_amount += $objp->opp_amount;
+				$opp_weighted_amount = $objp->opp_percent * $objp->opp_amount / 100;
+				$ponderated_opp_amount += price2num($opp_weighted_amount);
+				$plannedworkload = $objp->planned_workload;
+				$total_plannedworkload += $plannedworkload;
+				$declaredprogressworkload = $objp->declared_progess_workload;
+				$total_declaredprogressworkload += $declaredprogressworkload;
+				continue;
+			}
 
 			$projectstatic->id = $objp->projectid;
 			$projectstatic->user_author_id = $objp->fk_user_creat;
@@ -2451,11 +2468,19 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 				print "</tr>\n";
 
-				$total_task = $total_task + $objp->nb;
-				$total_opp_amount = $total_opp_amount + $objp->opp_amount;
+				$total_task += $objp->nb;
+				$total_opp_amount += $objp->opp_amount;
 			}
 
 			$i++;
+		}
+
+		if ($othernb) {
+			print '<tr class="oddeven">';
+			print '<td class="nowrap" colspan="5">';
+			print '<span class="opacitymedium">'.$langs->trans("More").'...'.($othernb < $maxofloop ? ' ('.$othernb.')' : '').'</span>';
+			print '</td>';
+			print "</tr>\n";
 		}
 
 		print '<tr class="liste_total">';

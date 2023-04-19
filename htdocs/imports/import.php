@@ -1082,9 +1082,9 @@ if ($step == 4 && $datatoimport) {
 		$valforsourcefieldnb[$lefti] = $key;
 		$lefti++;
 
-		if ($lefti > count($fieldstarget)) {
+		/*if ($lefti > count($fieldstarget)) {
 			break; // Other fields are in the not imported area
-		}
+		}*/
 	}
 	//var_dump($valforsourcefieldnb);
 
@@ -1138,9 +1138,9 @@ if ($step == 4 && $datatoimport) {
 
 	print '<table class="nobordernopadding centpercent tableimport">';
 	foreach ($fieldssource as $code => $line) {	// $fieldssource is an array code=column num,  line=content on first line for column in source file.
-		if ($i == $minpos) {
+		/*if ($i == $minpos) {
 			break;
-		}
+		}*/
 		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
 		$entity = (!empty($objimport->array_import_entities[0][$code]) ? $objimport->array_import_entities[0][$code] : $objimport->array_import_icon[0]);
 
@@ -2407,8 +2407,7 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 			} else {
 				print ' - ';
 			}
-			//print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ExampleOnFirstLine").': </span>';
-			print '<i class="opacitymedium">'.$example.'</i>';
+			print '<i class="opacitymedium">'.dol_escape_htmltag($example).'</i>';
 		}
 		print '</td>';
 		print '</tr>';
