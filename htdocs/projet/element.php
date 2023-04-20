@@ -1260,7 +1260,7 @@ foreach ($listofreferent as $key => $value) {
 						print ' - '.$element->ref_customer;
 					}
 					// Compatibility propale
-					if (empty($element->ref_customer) && !empty($element->ref_client)){
+					if (empty($element->ref_customer) && !empty($element->ref_client)) {
 						print ' - '.$element->ref_client;
 					}
 				}
