@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,6 +136,73 @@ if (empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
 		print $message.'<br>';
 		//$message.='<br>';
 		//print info_admin($langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
+	}
+}
+
+$version = DOL_VERSION;
+if (preg_match('/[a-z]+/i', $version)) {
+	$version = 'develop'; // If version contains text, it is not an official tagged version, so we use the full change log.
+}
+
+if ($user->admin && !getDolGlobalInt('MAIN_REMOVE_VERSION_WARNING') && $version != 'develop') {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+	$langs->loadLangs(array("errors", "admin"));
+
+	/*
+	*	Actions
+	*/
+	$changelog = '';
+	$sfurl = '';
+	$version = '0.0';
+	$newversion = '';
+	$messageversion = '';
+	$conf->global->MAIN_USE_RESPONSE_TIMEOUT = 10;
+
+	$result = getURLContent('https://sourceforge.net/projects/dolibarr/rss');
+	//var_dump($result['content']);
+	if (function_exists('simplexml_load_string')) {
+		$sfurl = simplexml_load_string($result['content'], 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
+	} else {
+		setEventMessages($langs->trans("ErrorPHPDoesNotSupport", "xml"), null, 'errors');
+	}
+	if (function_exists('curl_init')) {
+		if ($sfurl) {
+			$i = 0;
+			while (!empty($sfurl->channel[0]->item[$i]->title) && $i < 10000) {
+				$title = $sfurl->channel[0]->item[$i]->title;
+				$reg = array();
+				if (preg_match('/([0-9]+\.([0-9\.]+))/', $title, $reg)) {
+					$newversion = $reg[1];
+					$newversionarray = explode('.', $newversion);
+					$versionarray = explode('.', $version);
+					//var_dump($newversionarray);var_dump($versionarray);
+					if (versioncompare($newversionarray, $versionarray) > 0) {
+						$version = $newversion;
+					}
+				}
+				$i++;
+			}
+			// Show version
+			// print $langs->trans("LastStableVersion").' : <b>'.(($version != '0.0') ? $version : $langs->trans("Unknown")).'</b>';
+			if ($version != '0.0') {
+				$changelog = ' &nbsp; <a href="https://raw.githubusercontent.com/Dolibarr/dolibarr/'.$version.'/ChangeLog" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeChangeLog").'</a>';
+			}
+		} else {
+			setEventMessages($langs->trans("UpdateServerOffline"), null, 'errors');
+		}
+	}
+
+	if ($version < DOL_VERSION) {
+		$messageversion = info_admin($langs->trans("CurrentVersion").' ('.$langs->trans("Programs").') : '.DOL_VERSION
+		.' '.$langs->trans("LastStableVersion").' : <b>'.(($version != '0.0') ? $version : $langs->trans("Unknown")).'</b> '.$changelog
+		.'<br>'.img_warning($langs->trans("VersionSécurityVulnerability")).' '.$langs->trans("RunningUpdateProcessMayBeImperative", DOL_VERSION)
+		.'. '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+
+
+		if ($message) {
+			print $messageversion.'<br>';
+		}
 	}
 }
 
