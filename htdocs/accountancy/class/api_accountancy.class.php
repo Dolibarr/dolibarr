@@ -234,44 +234,41 @@ class Accountancy extends DolibarrApi
 				}
 			}
 
-			// export and only write file without downloading
-			$result = $accountancyexport->export($bookkeeping->lines, $format_number,0, -1, 2);
-
 			$error = 0;
-			if ($result < 0) {
-				$error++;
-			} else {
-				if (empty($notnotifiedasexport)) {
-					if (is_array($bookkeeping->lines)) {
-						$this->db->begin();
+			$this->db->begin();
 
-						foreach ($bookkeeping->lines as $movement) {
-							$now = dol_now();
+			if (empty($notnotifiedasexport)) {
+				if (is_array($bookkeeping->lines)) {
+					foreach ($bookkeeping->lines as $movement) {
+						$now = dol_now();
 
-							$sql = " UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping";
-							$sql .= " SET date_export = '" . $this->db->idate($now) . "'";
-							$sql .= " WHERE rowid = " . ((int)$movement->id);
+						$sql = " UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+						$sql .= " SET date_export = '" . $this->db->idate($now) . "'";
+						$sql .= " WHERE rowid = " . ((int)$movement->id);
 
-							$result = $this->db->query($sql);
-							if (!$result) {
-								$error++;
-								break;
-							}
-						}
-
-						if (!$error) {
-							$this->db->commit();
-						} else {
-							$error++;
+						$result = $this->db->query($sql);
+						if (!$result) {
 							$accountancyexport->errors[] = $langs->trans('NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated');
-							$this->db->rollback();
+							$error++;
+							break;
 						}
 					}
 				}
 			}
 
+			// export and only write file without downloading
+			if (!$error) {
+				$result = $accountancyexport->export($bookkeeping->lines, $format_number, 0, 1, 2);
+				if ($result < 0) {
+					$error++;
+				}
+			}
+
 			if ($error) {
+				$this->db->rollback();
 				throw new RestException(500, 'Error accountancy export : '.implode(',', $accountancyexport->errors));
+			} else {
+				$this->db->commit();
 			}
 		}
 
