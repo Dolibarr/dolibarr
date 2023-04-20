@@ -916,6 +916,9 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		if (count($arrayfields) > 0 && !empty($arrayfields['t.label']['checked'])) {
 			print '<td></td>';
 		}
+        if (count($arrayfields) > 0 && ! empty($arrayfields['t.description']['checked'])) {
+            print '<td></td>';
+        }
 		if (count($arrayfields) > 0 && !empty($arrayfields['t.dateo']['checked'])) {
 			print '<td></td>';
 		}
@@ -1021,6 +1024,9 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
 			print '<td></td>';
 		}
+        if(!empty($totalarray['nbfield'])) {
+            print '<td colspan="'.$totalarray['nbfield'].'" class=""></td>';
+        }
 		print '<td class=""></td>';
 		print '</tr>';
 	}
