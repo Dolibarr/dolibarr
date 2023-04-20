@@ -158,8 +158,7 @@ if ($filtertype != 1) {
 	// Work station
 	if (isModEnabled('workstation')) {
 		$workstation = new Workstation($object->db);
-		$fk_default_workstation = (!empty($line->fk_default_workstation)) ? $line->fk_default_workstation : $tmpproduct->fk_default_workstation;
-		$res = $workstation->fetch($fk_default_workstation);
+		$res = $workstation->fetch($line->fk_default_workstation);
 
 		print '<td class="linecolworkstation nowrap right">';
 		$coldisplay++;
