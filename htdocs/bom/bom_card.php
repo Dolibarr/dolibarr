@@ -174,7 +174,7 @@ if (empty($reshook)) {
 		if(!empty($idprod) && $conf->workstation->enabled){
 			$product = new Product($db);
 			$res = $product->fetch($idprod);
-			if($res > 0 && $product->type == Product::TYPE_SERVICE) $fk_default_workstation = $product->fk_default_workstation;
+			if ($res > 0 && $product->type == Product::TYPE_SERVICE) $fk_default_workstation = $product->fk_default_workstation;
 		}
 
 		if ($qty == '') {
