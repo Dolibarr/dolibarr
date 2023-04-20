@@ -156,6 +156,7 @@ if ($user->admin && !getDolGlobalInt('MAIN_REMOVE_VERSION_WARNING') && $version 
 	$sfurl = '';
 	$version = '0.0';
 	$newversion = '';
+	$versionvulnerability = '';
 	$messageversion = '';
 	$conf->global->MAIN_USE_RESPONSE_TIMEOUT = 10;
 
@@ -193,16 +194,26 @@ if ($user->admin && !getDolGlobalInt('MAIN_REMOVE_VERSION_WARNING') && $version 
 		}
 	}
 
-	if ($version < DOL_VERSION) {
-		$messageversion = info_admin($langs->trans("CurrentVersion").' ('.$langs->trans("Programs").') : '.DOL_VERSION
-		.' '.$langs->trans("LastStableVersion").' : <b>'.(($version != '0.0') ? $version : $langs->trans("Unknown")).'</b> '.$changelog
-		.'<br>'.img_warning($langs->trans("VersionSécurityVulnerability")).' '.$langs->trans("RunningUpdateProcessMayBeImperative", DOL_VERSION)
-		.'. '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
-
-
-		if ($message) {
-			print $messageversion.'<br>';
+	$i = 0;
+	$versionvulnerabilityarray = (array('16.0.0','16.0.1','16.0.2','16.0.3','16.0.4'));
+	foreach ($versionvulnerabilityarray as $noversion) {
+		if ('16.0.1' == $noversion) {
+			$versionvulnerability = true;
 		}
+		$i++;
+	}
+
+	if (DOL_VERSION < $version) {
+		$messageversion = $langs->trans("CurrentVersion").' ('.$langs->trans("Programs").') : '.DOL_VERSION;
+		$messageversion .= ' '.$langs->trans("LastStableVersion").' : <b>'.(($version != '0.0') ? $version : $langs->trans("Unknown")).'</b> '.$changelog;
+	}
+	if (!empty($versionvulnerability)) {
+		$messageversion .= '<br>'.img_warning($langs->trans("VersionSécurityVulnerability")).' '.$langs->trans("RunningUpdateProcessMayBeImperative", DOL_VERSION);
+	}
+
+	if ($messageversion) {
+		$messageversion .= '. '.$langs->trans("WarningUntilDirRemoved");
+		print info_admin($messageversion, 0, 0, '1', 'clearboth').'<br>';
 	}
 }
 
