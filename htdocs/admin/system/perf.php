@@ -424,7 +424,7 @@ print '<br>';
 print '<strong>'.$langs->trans("HTTPCacheStaticResources").' - ';
 print $form->textwithpicto($langs->trans("CacheByServer"), $langs->trans("CacheByServerDesc"));
 print ':</strong><br>';
-// No cahce on PHP
+// No cache on PHP
 //print '<div id="httpcachephpok">'.img_picto('','warning.png').' '.$langs->trans("FilesOfTypeNotCompressed",'php (.php)').'</div>';
 //print '<div id="httpcachephpko">'.img_picto('','tick.png').' '.$langs->trans("FilesOfTypeNotCached",'php (.php)').'</div>';
 // Cache on rest
