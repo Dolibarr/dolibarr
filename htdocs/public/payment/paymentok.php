@@ -351,11 +351,14 @@ $parameters = [
 ];
 $reshook = $hookmanager->executeHooks('isPaymentOK', $parameters, $object, $action);
 if ($reshook >= 0) {
-	$ispaymentok = $hookmanager->resArray['ispaymentok'];
+	if (isset($hookmanager->resArray['ispaymentok'])) {
+		dol_syslog('ispaymentok overwrite by hook return with value='.$hookmanager->resArray['ispaymentok'], LOG_DEBUG, 0, '_payment');
+		$ispaymentok = $hookmanager->resArray['ispaymentok'];
+	}
 }
 
 
-// If data not provided from back url, search them into the session env
+// If data not provided into callback url, search them into the session env
 if (empty($ipaddress)) {
 	$ipaddress       = $_SESSION['ipaddress'];
 }
@@ -815,13 +818,13 @@ if ($ispaymentok) {
 			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
 
 			$paymentTypeId = 0;
-			if ($paymentmethod == 'paybox') {
+			if ($paymentmethod === 'paybox') {
 				$paymentTypeId = $conf->global->PAYBOX_PAYMENT_MODE_FOR_PAYMENTS;
 			}
-			if ($paymentmethod == 'paypal') {
+			if ($paymentmethod === 'paypal') {
 				$paymentTypeId = $conf->global->PAYPAL_PAYMENT_MODE_FOR_PAYMENTS;
 			}
-			if ($paymentmethod == 'stripe') {
+			if ($paymentmethod === 'stripe') {
 				$paymentTypeId = $conf->global->STRIPE_PAYMENT_MODE_FOR_PAYMENTS;
 			}
 			if (empty($paymentTypeId)) {
