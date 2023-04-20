@@ -196,8 +196,9 @@ if ($user->admin && !getDolGlobalInt('MAIN_REMOVE_VERSION_WARNING') && $version 
 
 	$i = 0;
 	$versionvulnerabilityarray = (array('16.0.0','16.0.1','16.0.2','16.0.3','16.0.4'));
-	foreach ($versionvulnerabilityarray as $noversion) {
-		if ('16.0.1' == $noversion) {
+	$versionminsecure = '16.0.3';
+	foreach ($versionvulnerabilityarray as $versionvulnerabilitychecked) {
+		if (DOL_VERSION == $versionvulnerabilitychecked || DOL_VERSION < $versionminsecure) {
 			$versionvulnerability = true;
 		}
 		$i++;
