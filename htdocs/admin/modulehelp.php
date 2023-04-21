@@ -369,14 +369,32 @@ if ($mode == 'desc') {
 
 if ($mode == 'feature') {
 	$text .= '<br><strong>'.$langs->trans("DependsOn").':</strong> ';
-	if (count($objMod->depends)) {
-		$text .= join(',', $objMod->depends);
+	if (is_array($objMod->depends) && count($objMod->depends)) {
+		$i = 0;
+		foreach($objMod->depends as $modulestringorarray) {
+			if (is_array($modulestringorarray)) {
+				$text .= ($i ? ', ' : '').join(', ', $modulestringorarray);
+			} else {
+				$text .= ($i ? ', ' : '').$modulestringorarray;
+			}
+			$i++;
+		}
 	} else {
 		$text .= '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	}
+	$text .= '<br>';
+
 	$text .= '<br><strong>'.$langs->trans("RequiredBy").':</strong> ';
-	if (count($objMod->requiredby)) {
-		$text .= join(',', $objMod->requiredby);
+	if (is_array($objMod->requiredby) && count($objMod->requiredby)) {
+		$i = 0;
+		foreach($objMod->requiredby as $modulestringorarray) {
+			if (is_array($modulestringorarray)) {
+				$text .= ($i ? ', ' : '').join(', ', $modulestringorarray);
+			} else {
+				$text .= ($i ? ', ' : '').$modulestringorarray;
+			}
+			$i++;
+		}
 	} else {
 		$text .= '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	}
