@@ -371,7 +371,7 @@ if ($mode == 'feature') {
 	$text .= '<br><strong>'.$langs->trans("DependsOn").':</strong> ';
 	if (is_array($objMod->depends) && count($objMod->depends)) {
 		$i = 0;
-		foreach($objMod->depends as $modulestringorarray) {
+		foreach ($objMod->depends as $modulestringorarray) {
 			if (is_array($modulestringorarray)) {
 				$text .= ($i ? ', ' : '').join(', ', $modulestringorarray);
 			} else {
@@ -387,7 +387,7 @@ if ($mode == 'feature') {
 	$text .= '<br><strong>'.$langs->trans("RequiredBy").':</strong> ';
 	if (is_array($objMod->requiredby) && count($objMod->requiredby)) {
 		$i = 0;
-		foreach($objMod->requiredby as $modulestringorarray) {
+		foreach ($objMod->requiredby as $modulestringorarray) {
 			if (is_array($modulestringorarray)) {
 				$text .= ($i ? ', ' : '').join(', ', $modulestringorarray);
 			} else {
