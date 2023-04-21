@@ -1770,8 +1770,7 @@ if ($action == 'create') {
 	}
 
 	/* Not for supplier proposals
-	if ($soc->outstanding_limit)
-	{
+	if ($soc->outstanding_limit) {
 		// Outstanding Bill
 		print '<tr><td>';
 		print $langs->trans('OutstandingBill');
@@ -1861,8 +1860,8 @@ if ($action == 'create') {
 	print '</table>';
 
 	// Margin Infos
-	/*if (!empty($conf->margin->enabled)) {
-	   $formmargin->displayMarginInfos($object);
+	/*if (isModEnabled('margin')) {
+		$formmargin->displayMarginInfos($object);
 	}*/
 
 	print '</div>';

@@ -746,7 +746,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					// Remain to take or to pay back
 					print '<td class="right">';
 					print price($sign * $remaintopay);
-					if (!empty($conf->prelevement->enabled)) {
+					if (isModEnabled('prelevement')) {
 						$numdirectdebitopen = 0;
 						$totaldirectdebit = 0;
 						$sql = "SELECT COUNT(pfd.rowid) as nb, SUM(pfd.amount) as amount";
@@ -859,8 +859,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 			print '<br><div class="center">';
 			print '<input type="checkbox" checked name="closepaidinvoices"> '.$checkboxlabel;
-			/*if (!empty($conf->prelevement->enabled))
-			{
+			/*if (isModEnabled('prelevement')) {
 				$langs->load("withdrawals");
 				if (!empty($conf->global->WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS)) print '<br>'.$langs->trans("IfInvoiceNeedOnWithdrawPaymentWontBeClosed");
 			}*/

@@ -253,7 +253,7 @@ class mailing_advthirdparties extends MailingTargets
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			if (empty($conf->categorie->enabled)) {
+			if (!isModEnabled("categorie")) {
 				$num = 0; // Force empty list if category module is not enabled
 			}
 

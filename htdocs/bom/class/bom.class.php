@@ -1732,8 +1732,8 @@ class BOMLine extends CommonObjectLine
 	 */
 	public $childBom = array();
 
-	/*
-	 * Service Workstation
+	/**
+	 * @var int Service Workstation
 	 */
 	public $fk_default_workstation;
 
