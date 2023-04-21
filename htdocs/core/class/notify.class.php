@@ -69,6 +69,7 @@ class Notify
 		'BILL_PAYED',
 		'ORDER_CREATE',
 		'ORDER_VALIDATE',
+		'ORDER_CLOSE',
 		'PROPAL_VALIDATE',
 		'PROPAL_CLOSE_SIGNED',
 		'PROPAL_CLOSE_REFUSED',
@@ -503,6 +504,13 @@ class Notify
 								$labeltouse = $conf->global->ORDER_VALIDATE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextOrderValidated", $link);
 								break;
+							case 'ORDER_CLOSE':
+								$link = '<a href="'.$urlwithroot.'/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$dir_output = $conf->commande->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'commande');
+								$object_type = 'order';
+								$labeltouse = $conf->global->ORDER_CLOSE_TEMPLATE;
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextOrderClose", $link);
+								break;
 							case 'PROPAL_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
@@ -782,6 +790,12 @@ class Notify
 						$dir_output = $conf->commande->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'commande');
 						$object_type = 'order';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated", $link);
+						break;
+					case 'ORDER_CLOSE':
+						$link = '<a href="'.$urlwithroot.'/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+						$dir_output = $conf->commande->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'commande');
+						$object_type = 'order';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextOrderClose", $link);
 						break;
 					case 'PROPAL_VALIDATE':
 						$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';

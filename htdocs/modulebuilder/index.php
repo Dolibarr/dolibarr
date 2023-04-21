@@ -471,72 +471,10 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 		);
 
 		if (count($objects) > 1) {
-			$file = $destfile;
-			$content = file($file);
-			$props = "public \$myobject;";
-			$varcomented = "@var MyObject \$myobject {@type MyObject}";
-			$constructObj = "\$this->myobject = new MyObject(\$this->db);";
-			// add properties and declare them in consturctor
-			foreach ($content as $lineNumber => &$lineContent) {
-				if (strpos($lineContent, $varcomented) !== false) {
-					$lineContent = '';
-					foreach ($objects as $object) {
-						$lineContent .= "\t * @var ".$object." \$".strtolower($object)." {@type ".$object."}". PHP_EOL;
-					}
-					//var_dump($lineContent);exit;
-				}
-				if (strpos($lineContent, $props) !== false) {
-					$lineContent = '';
-					foreach ($objects as $object) {
-						$lineContent .= "\tpublic \$".strtolower($object).";". PHP_EOL;
-					}
-				}
-				if (strpos($lineContent, $constructObj) !== false) {
-					$lineContent = '';
-					foreach ($objects as $object) {
-						$lineContent .= "\t\t\$this->".strtolower($object)."= new ".$object."(\$this->db);". PHP_EOL;
-					}
-				}
-			}
-			$allContent = implode("", $content);
-			file_put_contents($destfile, $allContent);
-		}
-		if (count($objects) > 1) {
-			$search = "/*begin methods CRUD*/";
-			// Open the file and read line by line
-			$handle = fopen($destfile, "r");
-				$i = 1;
-				$lines = array();
-				$props = " public \$myobject; ";
-			while (($line = fgets($handle)) !== false) {
-				//search line begin
-				if (strpos($line, $search) !== false) {
-					$start_line = $i;
-
-					// Copy lines until the end on array
-					while (($line = fgets($handle)) !== false) {
-						if (strpos($line, "/*end methods CRUD*/") !== false) {
-							$end_line = $i;
-							break;
-						}
-						$lines[] = $line;
-						$i++;
-					}
-					break;
-				}
-
-				$i++;
-			}
-			$allContent = implode("", $lines);
-
-			foreach ($objects as $object) {
-				$contentReplaced = str_replace(["myobject","MyObject"], [strtolower($object),$object], $allContent);
-				dolReplaceInFile($destfile, array('/*end methods CRUD*/' => '/*CRUD FOR '.strtoupper($object).'*/'."\n".$contentReplaced."\n\t".'/*END CRUD FOR '.strtoupper($object).'*/'."\n\t".'/*end methods CRUD*/'));
-			}
-				dolReplaceInFile($destfile, array($allContent => ''));
-			fclose($handle);
+			addObjectsToApiFile($destfile, $objects, $modulename);
 		} else {
 			dolReplaceInFile($destfile, $arrayreplacement);
+			dolReplaceInFile($destfile, array('/*begin methods CRUD*/' => '/*begin methods CRUD*/'."\n\t".'/*CRUD FOR '.strtoupper($objectname).'*/', '/*end methods CRUD*/' => '/*END CRUD FOR '.strtoupper($objectname).'*/'."\n\t".'/*end methods CRUD*/'));
 		}
 
 		if ($varnametoupdate) {
@@ -938,17 +876,25 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 
 	$relativefilename = dol_sanitizePathName(GETPOST('file', 'restricthtml'));
 
-	// Get list of existing objects
-	$objects = dolGetListOfObjectClasses($destdir);
-
-
 	// Now we delete the file
 	if ($relativefilename) {
 		$dirnametodelete = dirname($relativefilename);
 		$filetodelete = $dirins.'/'.$relativefilename;
 		$dirtodelete  = $dirins.'/'.$dirnametodelete;
 
-		$result = dol_delete_file($filetodelete);
+		//check when we want delete api_file
+		if (strpos($relativefilename, 'api') !== false) {
+			$removeFile = removeObjectFromApiFile($file_api, $objectname, $module);
+			$var = getFromFile($file_api, '/*begin methods CRUD*/', '/*end methods CRUD*/');
+			if (str_word_count($var) == 0) {
+				$result = dol_delete_file($filetodelete);
+			}
+			if ($removeFile) {
+				setEventMessages($langs->trans("ApiObjectDeleted"), null);
+			}
+		} else {
+			$result = dol_delete_file($filetodelete);
+		}
 		if (!$result) {
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", basename($filetodelete)), null, 'errors');
 		} else {

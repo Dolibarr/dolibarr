@@ -82,7 +82,7 @@ class EntrepotTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 
-		if (empty($conf->stock->enabled)) {
+		if (!isModEnabled('stock')) {
 			print __METHOD__." Module Stock must be enabled.\n"; die(1);
 		}
 

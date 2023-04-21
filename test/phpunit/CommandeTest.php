@@ -83,7 +83,7 @@ class CommandeTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-		if (empty($conf->commande->enabled)) {
+		if (!isModEnabled('commande')) {
 			print __METHOD__." module customer order must be enabled.\n"; die(1);
 		}
 

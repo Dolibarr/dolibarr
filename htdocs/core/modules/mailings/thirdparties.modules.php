@@ -142,6 +142,9 @@ class mailing_thirdparties extends MailingTargets
 			$sql .= " WHERE s.email <> ''";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
 			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
+			if (empty($this->evenunsubscribe)) {
+				$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = s.email) = 0";
+			}
 			$sql .= $addFilter;
 		} else {
 			$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
@@ -154,6 +157,9 @@ class mailing_thirdparties extends MailingTargets
 			if (GETPOST('filter_thirdparties', 'int') > 0) {
 				$sql .= " AND c.rowid=".((int) GETPOST('filter_thirdparties', 'int'));
 			}
+			if (empty($this->evenunsubscribe)) {
+				$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = s.email) = 0";
+			}
 			$sql .= $addFilter;
 			$sql .= " UNION ";
 			$sql .= "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
@@ -165,6 +171,9 @@ class mailing_thirdparties extends MailingTargets
 			$sql .= " AND c.rowid = cs.fk_categorie";
 			if (GETPOST('filter_thirdparties', 'int') > 0) {
 				$sql .= " AND c.rowid=".((int) GETPOST('filter_thirdparties', 'int'));
+			}
+			if (empty($this->evenunsubscribe)) {
+				$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = s.email) = 0";
 			}
 			$sql .= $addFilter;
 		}
@@ -250,7 +259,10 @@ class mailing_thirdparties extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE s.email <> ''";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
-		$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
+		}
+
 		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}

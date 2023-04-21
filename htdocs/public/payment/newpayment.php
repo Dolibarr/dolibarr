@@ -2678,7 +2678,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 	}
 }
 
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
+htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
 
 llxFooter('', 'public');
 

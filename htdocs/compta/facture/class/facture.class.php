@@ -574,6 +574,7 @@ class Facture extends CommonInvoice
 				$this->type = self::TYPE_STANDARD;
 			}
 			$this->ref_client = trim($this->ref_client);
+			$this->ref_customer = trim($this->ref_customer);
 			$this->note_public = trim($this->note_public);
 			$this->note_private = trim($this->note_private);
 			$this->note_private = dol_concatdesc($this->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->ref));
@@ -590,8 +591,6 @@ class Facture extends CommonInvoice
 			$this->linked_objects = $_facrec->linkedObjectsIds;
 			// We do not add link to template invoice or next invoice will be linked to all generated invoices
 			//$this->linked_objects['facturerec'][0] = $this->fac_rec;
-
-			$forceduedate = $this->calculate_date_lim_reglement();
 
 			// For recurring invoices, update date and number of last generation of recurring template invoice, before inserting new invoice
 			if ($_facrec->frequency > 0) {
@@ -1897,10 +1896,11 @@ class Facture extends CommonInvoice
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		$linkclose = ($target ? ' target="'.$target.'"' : '');
 		if (empty($notooltip) && $user->hasRight("facture", "read")) {
@@ -1908,8 +1908,8 @@ class Facture extends CommonInvoice
 				$label = $langs->trans("Invoice");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="'.$classfortooltip.'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -3393,7 +3393,6 @@ class Facture extends CommonInvoice
 
 			// Set new ref and define current status
 			if (!$error) {
-				$this->ref = $num;
 				$this->ref = $num;
 				$this->statut = self::STATUS_VALIDATED;
 				$this->status = self::STATUS_VALIDATED;
@@ -5468,10 +5467,10 @@ class Facture extends CommonInvoice
 
 
 	/**
-	 *  Send reminders by emails for ivoices that are due
+	 *  Send reminders by emails for invoices that are due
 	 *  CAN BE A CRON TASK
 	 *
-	 *  @param	int			$nbdays				Delay after due date (or before if delay is negative)
+	 *  @param	int			$nbdays				Delay before due date (or after if delay is negative)
 	 *  @param	string		$paymentmode		'' or 'all' by default (no filter), or 'LIQ', 'CHQ', CB', ...
 	 *  @param	int|string	$template			Name (or id) of email template (Must be a template of type 'facture_send')
 	 *  @param	string		$forcerecipient		Force email of recipient (for example to send the email to an accountant supervisor instead of the customer)
@@ -6441,7 +6440,7 @@ class FactureLigne extends CommonInvoiceLine
 			return -1;
 		}
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time';
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'element_time';
 		$sql .= ' SET invoice_id = NULL, invoice_line_id = NULL';
 		$sql .= ' WHERE invoice_line_id = '.((int) $this->id);
 		if (!$this->db->query($sql)) {

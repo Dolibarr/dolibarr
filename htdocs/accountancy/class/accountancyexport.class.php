@@ -816,8 +816,8 @@ class AccountancyExport
 			// Keep correct quadra named field instead of anon filler libelle_ecriture2 is 30 char not 32 !!!!
 			// as we use utf8, we must remove accent to have only one ascii char instead of utf8 2 chars for specials that report wrong line size that will exceed import format spec
 			// TODO: we should filter more than only accent to avoid wrong line size
-			// TODO: remove invoice number doc_ref in libelle,
-			// TODO: we should offer an option for customer to build the libelle using invoice number / name / date in accounting software
+			// TODO: remove invoice number doc_ref in label,
+			// TODO: we should offer an option for customer to build the label using invoice number / name / date in accounting software
 			//$Tab['libelle_ecriture2'] = str_pad(self::trunc($data->doc_ref . ' ' . $data->label_operation, 30), 30);
 			$Tab['libelle_ecriture2'] = str_pad(self::trunc($data->label_operation, 30), 30);
 			$Tab['codetva'] = str_repeat(' ', 2);
