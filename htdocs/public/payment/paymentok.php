@@ -1306,7 +1306,7 @@ if ($ispaymentok) {
 			$postactionmessages[] = 'Invoice paid '.$tmptag['ATT'].' was not found';
 			$ispostactionok = -1;
 		}
-	} elseif (array_key_exists('CON', $tmptag) && array_key_exists('COL', $tmptag) && $tmptag['CON'] > 0 && $tmptag['COL'] > 0) {
+	} elseif (array_key_exists('CON', $tmptag) && $tmptag['CON'] > 0) {
 			include_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
 			$object = new Contrat($db);
 			$result = $object->fetch((int) $tmptag['CON']);
@@ -1340,13 +1340,14 @@ if ($ispaymentok) {
 				}
 
 				$currencyCodeType = $_SESSION['currencyCodeType'];
+				$contract_lines = (array_key_exists('COL', $tmptag) && $tmptag['COL'] > 0) ? $tmptag['COL'] : null;
 	
 				// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 				if (isModEnabled('facture')) {
 					if (!empty($FinalPaymentAmt) && $paymentTypeId > 0 ) {
 						include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 						$invoice = new Facture($db);
-						$result = $invoice->createFromContract($object, $user, array((int) $tmptag['COL']));
+						$result = $invoice->createFromContract($object, $user, array((int) $contract_lines));
 						if ($result > 0) {
 							// $object->classifyBilled($user);
 							$invoice->validate($user);
@@ -1412,11 +1413,13 @@ if ($ispaymentok) {
 								$db->rollback();
 							}
 						} else {
-							$postactionmessages[] = 'Failed to create invoice form contract ' . $tmptag['CON'] . ' and col '. $tmptag['COL'] .'.';
+							$msg = 'Failed to create invoice form contract ' . $tmptag['CON'];
+							if (!empty($cols)) $msg .= ' and col '. $cols .'.';
+							$postactionmessages[] = $msg;
 							$ispostactionok = -1;
 						}
 					} else {
-						$postactionmessages[] = 'Failed to get a valid value for "amount paid" (' . $FinalPaymentAmt . ') or "payment type id" (' . $paymentTypeId . ') to record the payment of contract ' . $tmptag['CON'] . ' and col '. $tmptag['COL'] .'. Maybe payment was already recorded.';
+						$postactionmessages[] = 'Failed to get a valid value for "amount paid" (' . $FinalPaymentAmt . ') or "payment type id" (' . $paymentTypeId . ') to record the payment of contract ' . $tmptag['CON'] .'. Maybe payment was already recorded.';
 						$ispostactionok = -1;
 					}
 				} else {
@@ -1424,7 +1427,9 @@ if ($ispaymentok) {
 					$ispostactionok = -1;
 				}
 			} else {
-				$postactionmessages[] = 'Contract paid ' . $tmptag['CON'] . ' was not found for col '. $tmptag['COL'] .'.';
+				 $msg = 'Contract paid ' . $tmptag['CON'] . ' was not found';
+				 if (!empty($cols))  $msg .= ' for col '.$tmptag['COL'] .'.';
+				 $postactionmessages[] = $msg;
 				$ispostactionok = -1;
 			}
 		}
