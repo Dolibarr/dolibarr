@@ -102,6 +102,8 @@ $websitekey = '';
 
 $permissiontoadd = $permissiontouploadfile;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('ecmmediascard', 'globalcard'));
 
 /*
  *	Actions

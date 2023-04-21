@@ -121,7 +121,8 @@ if (preg_match('/PM=([^\.]+)/', $FULLTAG, $reg)) {
 	$paymentmethod = $reg[1];
 }
 if (empty($paymentmethod)) {
-	dol_print_error(null, 'The back url does not contains a parameter fulltag that should help us to find the payment method used');
+	dol_syslog("***** paymentok.php was called with a non valid parameter FULLTAG=".$FULLTAG, LOG_DEBUG, 0, '_payment');
+	dol_print_error(null, 'The callback url does not contains a parameter fulltag that should help us to find the payment method used');
 	exit;
 }
 
@@ -250,7 +251,7 @@ print '<br><br><br>';
 
 
 if (isModEnabled('paypal')) {
-	if ($paymentmethod == 'paypal') {							// We call this page only if payment is ok on payment system
+	if ($paymentmethod === 'paypal') {							// We call this page only if payment is ok on payment system
 		if ($PAYPALTOKEN) {
 			// Get on url call
 			$onlinetoken        = $PAYPALTOKEN;
@@ -330,14 +331,14 @@ if (isModEnabled('paypal')) {
 }
 
 if (isModEnabled('paybox')) {
-	if ($paymentmethod == 'paybox') {
+	if ($paymentmethod === 'paybox') {
 		// TODO Add a check to validate that payment is ok.
 		$ispaymentok = true; // We call this page only if payment is ok on payment system
 	}
 }
 
 if (isModEnabled('stripe')) {
-	if ($paymentmethod == 'stripe') {
+	if ($paymentmethod === 'stripe') {
 		// TODO Add a check to validate that payment is ok. We can request Stripe with payment_intent and payment_intent_client_secret
 		$ispaymentok = true; // We call this page only if payment is ok on payment system
 	}
@@ -350,11 +351,14 @@ $parameters = [
 ];
 $reshook = $hookmanager->executeHooks('isPaymentOK', $parameters, $object, $action);
 if ($reshook >= 0) {
-	$ispaymentok = $hookmanager->resArray['ispaymentok'];
+	if (isset($hookmanager->resArray['ispaymentok'])) {
+		dol_syslog('ispaymentok overwrite by hook return with value='.$hookmanager->resArray['ispaymentok'], LOG_DEBUG, 0, '_payment');
+		$ispaymentok = $hookmanager->resArray['ispaymentok'];
+	}
 }
 
 
-// If data not provided from back url, search them into the session env
+// If data not provided into callback url, search them into the session env
 if (empty($ipaddress)) {
 	$ipaddress       = $_SESSION['ipaddress'];
 }
@@ -814,13 +818,13 @@ if ($ispaymentok) {
 			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
 
 			$paymentTypeId = 0;
-			if ($paymentmethod == 'paybox') {
+			if ($paymentmethod === 'paybox') {
 				$paymentTypeId = $conf->global->PAYBOX_PAYMENT_MODE_FOR_PAYMENTS;
 			}
-			if ($paymentmethod == 'paypal') {
+			if ($paymentmethod === 'paypal') {
 				$paymentTypeId = $conf->global->PAYPAL_PAYMENT_MODE_FOR_PAYMENTS;
 			}
-			if ($paymentmethod == 'stripe') {
+			if ($paymentmethod === 'stripe') {
 				$paymentTypeId = $conf->global->STRIPE_PAYMENT_MODE_FOR_PAYMENTS;
 			}
 			if (empty($paymentTypeId)) {

@@ -135,10 +135,12 @@ class modMyModule extends DolibarrModules
 		// Dependencies
 		// A condition to hide module
 		$this->hidden = false;
-		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
+		// List of module class names that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR')...)
 		$this->depends = array();
-		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
-		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
+		// List of module class names to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
+		$this->requiredby = array();
+		// List of module class names this module is in conflict with. Example: array('modModuleToDisable1', ...)
+		$this->conflictwith = array();
 
 		// The language file dedicated to your module
 		$this->langfiles = array("mymodule@mymodule");
