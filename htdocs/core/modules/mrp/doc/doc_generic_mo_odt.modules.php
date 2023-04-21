@@ -4,7 +4,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018-2021  Philippe Grand      <philippe.grand@atoo-net.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,9 +48,9 @@ class doc_generic_mo_odt extends ModelePDFMo
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
-	public $phpmin = array(5, 6);
+	public $phpmin = array(7, 0);
 
 	/**
 	 * @var string Dolibarr version of the loaded document
@@ -89,7 +89,6 @@ class doc_generic_mo_odt extends ModelePDFMo
 		$this->option_tva = 0; // Manage the vat option
 		$this->option_modereg = 0; // Display payment mode
 		$this->option_condreg = 0; // Display payment terms
-		$this->option_codeproduitservice = 0; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes
@@ -122,6 +121,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 		$texte = $this->description.".<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="MRP_MO_ADDON_PDF_ODT_PATH">';
 		$texte .= '<table class="nobordernopadding" width="100%">';
@@ -158,7 +158,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 		$texte .= $conf->global->MRP_MO_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small" value="'.$langs->trans("Modify").'" name="Button">';
+		$texte .= '<input type="submit" class="button small reposition" name="modify" value="'.$langs->trans("Modify").'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
@@ -183,7 +183,9 @@ class doc_generic_mo_odt extends ModelePDFMo
 		$texte .= '</td>';
 
 		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
+		$texte .= '<span class="opacitymedium">';
 		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
+		$texte .= '</span>';
 		$texte .= '</td>';
 		$texte .= '</tr>';
 
@@ -262,7 +264,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 			if (file_exists($dir)) {
 				//print "srctemplatepath=".$srctemplatepath;	// Src filename
 				$newfile = basename($srctemplatepath);
-				$newfiletmp = preg_replace('/\.od(t|s)/i', '', $newfile);
+				$newfiletmp = preg_replace('/\.od[ts]/i', '', $newfile);
 				$newfiletmp = preg_replace('/template_/i', '', $newfiletmp);
 				$newfiletmp = preg_replace('/modele_/i', '', $newfiletmp);
 				$newfiletmp = $objectref.'_'.$newfiletmp;
@@ -286,7 +288,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 
 				dol_mkdir($conf->mrp->dir_temp);
 				if (!is_writable($conf->mrp->dir_temp)) {
-					$this->error = "Failed to write in temp directory ".$conf->mrp->dir_temp;
+					$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->mrp->dir_temp);
 					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
 					return -1;
 				}
@@ -355,8 +357,6 @@ class doc_generic_mo_odt extends ModelePDFMo
 				// [!-- BEGIN lines --]*[!-- END lines --]
 				//print html_entity_decode($odfHandler->__toString());
 				//print exit;
-				/*
-
 
 				// Make substitutions into odt of freetext
 				try {
@@ -457,7 +457,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
 				$reshook = $hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-				*/
+
 				// Write new file
 				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
 					try {
