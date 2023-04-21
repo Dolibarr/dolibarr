@@ -1178,7 +1178,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 						$modulestringorarray = array($modulestringorarray);
 					}
 
-					foreach($modulestringorarray as $modulestring) {
+					foreach ($modulestringorarray as $modulestring) {
 						$activate = false;
 						$activateerr = '';
 						foreach ($modulesdir as $dir) {
