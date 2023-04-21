@@ -77,7 +77,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-if (empty($user->rights->fournisseur->lire) && (empty($conf->margin->enabled) && !$user->hasRight("margin", "liretous"))) {
+if (empty($user->rights->fournisseur->lire) && (!isModEnabled('margin') && !$user->hasRight("margin", "liretous"))) {
 	accessforbidden();
 }
 
