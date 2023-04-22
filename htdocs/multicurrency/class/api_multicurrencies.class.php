@@ -351,8 +351,9 @@ class MultiCurrencies extends DolibarrApi
 		return $object;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible object datas
+	 * Clean sensible MultiCurrencyRate object datas
 	 *
 	 * @param   MultiCurrencyRate $object     Object to clean
 	 * @return  Object                     Object with cleaned properties
