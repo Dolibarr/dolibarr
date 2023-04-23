@@ -77,8 +77,13 @@ $object->substitutionarrayfortest = $substitutionarray;
 
 // List of sending methods
 $listofmethods = array();
+//$listofmethods['default'] = $langs->trans('DefaultOutgoingEmailSetup');
 $listofmethods['mail'] = 'PHP mail function';
+//$listofmethods['simplemail']='Simplemail class';
 $listofmethods['smtps'] = 'SMTP/SMTPS socket library';
+if (version_compare(phpversion(), '7.0', '>=')) {
+	$listofmethods['swiftmailer'] = 'Swift Mailer socket library';
+}
 
 // Security check
 if (empty($user->rights->mailing->lire) || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
@@ -1005,6 +1010,26 @@ if ($action == 'create') {
 			}
 			print '</td></tr>';
 
+			print '<tr><td>';
+			print $langs->trans("MAIN_MAIL_SENDMODE");
+			print '</td><td>';
+			if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
+				$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING')];
+			} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE')) {
+				$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE')];
+			} else {
+				$text = $listofmethods['mail'];
+			}
+			print $text;
+			if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
+				if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
+					print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING').')</span>';
+				}
+			} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE') != 'mail' && getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
+				print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER').')</span>';
+			}
+			print '</td></tr>';
+
 			// Other attributes. Fields from hook formObjectOptions and Extrafields.
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
@@ -1237,9 +1262,9 @@ if ($action == 'create') {
 			*/
 
 			// From
-			print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from, 0, 0, 0, 0, 1).'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td>'.dol_print_email($object->email_from, 0, 0, 0, 0, 1).'</td></tr>';
 			// To
-			print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1).'</td></tr>';
+			print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>'.dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1).'</td></tr>';
 
 			print '</table>';
 			print '</div>';
@@ -1253,7 +1278,7 @@ if ($action == 'create') {
 			// Number of distinct emails
 			print '<tr><td>';
 			print $langs->trans("TotalNbOfDistinctRecipients");
-			print '</td><td colspan="3">';
+			print '</td><td>';
 			$nbemail = ($object->nbemail ? $object->nbemail : 0);
 			if (is_numeric($nbemail)) {
 				$text = '';
@@ -1274,6 +1299,27 @@ if ($action == 'create') {
 				}
 			}
 			print '</td></tr>';
+
+			print '<tr><td>';
+			print $langs->trans("MAIN_MAIL_SENDMODE");
+			print '</td><td>';
+			if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
+				$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING')];
+			} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE')) {
+				$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE')];
+			} else {
+				$text = $listofmethods['mail'];
+			}
+			print $text;
+			if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
+				if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
+					print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING').')</span>';
+				}
+			} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE') != 'mail' && getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
+				print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER').')</span>';
+			}
+			print '</td></tr>';
+
 
 			// Other attributes
 			$parameters = array();

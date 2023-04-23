@@ -73,13 +73,23 @@ $result = $object->fetch($id);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('ciblescard', 'globalcard'));
 
+$sqlmessage = '';
+
+// List of sending methods
+$listofmethods = array();
+//$listofmethods['default'] = $langs->trans('DefaultOutgoingEmailSetup');
+$listofmethods['mail'] = 'PHP mail function';
+//$listofmethods['simplemail']='Simplemail class';
+$listofmethods['smtps'] = 'SMTP/SMTPS socket library';
+if (version_compare(phpversion(), '7.0', '>=')) {
+	$listofmethods['swiftmailer'] = 'Swift Mailer socket library';
+}
+
 // Security check
 if (!$user->hasRight('mailing', 'lire') || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'mailing');
-
-$sqlmessage = '';
 
 
 /*
@@ -351,6 +361,26 @@ if ($object->fetch($id) >= 0) {
 		} else {
 			print $nbemail;
 		}
+	}
+	print '</td></tr>';
+
+	print '<tr><td>';
+	print $langs->trans("MAIN_MAIL_SENDMODE");
+	print '</td><td>';
+	if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
+		$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING')];
+	} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE')) {
+		$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE')];
+	} else {
+		$text = $listofmethods['mail'];
+	}
+	print $text;
+	if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
+		if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
+			print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING').')</span>';
+		}
+	} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE') != 'mail' && getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
+		print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER').')</span>';
 	}
 	print '</td></tr>';
 

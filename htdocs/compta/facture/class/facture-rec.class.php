@@ -80,6 +80,12 @@ class FactureRec extends CommonInvoice
 	 */
 	public $title;
 
+	/**
+	 * @var string 	The label of recurring invoice
+	 * @deprecated 	Use $title instead
+	 */
+	public $titre;
+
 	public $socid;
 	public $number;
 	public $date;
