@@ -368,7 +368,8 @@ class mailing_thirdparties extends MailingTargets
 			// Choose language
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($this->db);
-			$s .= '<span class="opacitymedium">'.$langs->trans("DefaultLang").':</span> ';
+			$s .= img_picto($langs->trans("DefaultLang"), 'language', 'class="pictofixedwidth"');
+			//$s .= '<span class="opacitymedium">'.$langs->trans("DefaultLang").':</span> ';
 			$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang_thirdparties', 0, null, 1, 0, 0, '', 0, 0, 0, null, 1);
 		}
 
