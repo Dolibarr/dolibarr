@@ -109,6 +109,7 @@ function dolGetRandomBytes($length)
 /**
  *	Encode a string with a symetric encryption. Used to encrypt sensitive data into database.
  *  Note: If a backup is restored onto another instance with a different $dolibarr_main_instance_unique_id, then decoded value will differ.
+ *  This function is called for example by dol_set_const() when saving a sensible data into database configuration table llx_const.
  *
  *	@param   string		$chain		string to encode
  *	@param   string		$key		If '', we use $dolibarr_main_instance_unique_id

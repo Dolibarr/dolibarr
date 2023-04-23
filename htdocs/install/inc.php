@@ -323,6 +323,7 @@ if (!isset($conf->syslog) || !is_object($conf->syslog)) {
 	$conf->syslog = new stdClass();
 }
 $conf->syslog->enabled = 1;
+$conf->modules['syslog'] = 'syslog';
 $conf->global->SYSLOG_LEVEL = constant('LOG_DEBUG');
 if (!defined('SYSLOG_HANDLERS')) {
 	define('SYSLOG_HANDLERS', '["mod_syslog_file"]');
@@ -435,6 +436,7 @@ function conf($dolibarr_main_document_root)
 		$conf->syslog = new stdClass();
 	}
 	$conf->syslog->enabled = 1;
+	$conf->modules['syslog'] = 'syslog';
 	$conf->global->SYSLOG_LEVEL = constant('LOG_DEBUG');
 	if (!defined('SYSLOG_HANDLERS')) {
 		define('SYSLOG_HANDLERS', '["mod_syslog_file"]');

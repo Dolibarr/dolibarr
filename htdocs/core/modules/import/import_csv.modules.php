@@ -86,6 +86,8 @@ class ImportCsv extends ModeleImports
 
 	public $nbupdate = 0; // # of update done during the import
 
+	public $charset = '';
+
 
 	/**
 	 *	Constructor

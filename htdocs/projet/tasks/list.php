@@ -162,8 +162,8 @@ $arrayfields = array(
 	't.datee'=>array('label'=>"Deadline", 'checked'=>1, 'position'=>101),
 	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1),
 	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0),
-	's.nom'=>array('label'=>"ThirdParty", 'checked'=>0),
-	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>1),
+	's.nom'=>array('label'=>"ThirdParty", 'checked'=>0, 'csslist'=>'tdoverflowmax125'),
+	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>1, 'csslist'=>'tdoverflowmax125'),
 	'p.fk_statut'=>array('label'=>"ProjectStatus", 'checked'=>1),
 	't.planned_workload'=>array('label'=>"PlannedWorkload", 'checked'=>1, 'position'=>102),
 	't.duration_effective'=>array('label'=>"TimeSpent", 'checked'=>1, 'position'=>103),
@@ -806,7 +806,7 @@ $moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form-
 $moreforfilter .= '</div>';
 
 // Filter on customer categories
-if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST) && !empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST) && isModEnabled("categorie") && $user->rights->categorie->lire) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
@@ -1166,7 +1166,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 
-		$object->fk_statut = $projectstatic->getLibStatut(1);
+		$arraydata = array();
 		$arraydata['projectlink'] = $projectstatic->getNomUrl(1);
 		print $object->getKanbanView('', $arraydata);
 		if ($i == ($imaxinloop - 1)) {
@@ -1278,8 +1278,8 @@ while ($i < $imaxinloop) {
 			}
 			// Project title
 			if (!empty($arrayfields['p.title']['checked'])) {
-				print '<td>';
-				print dol_trunc($obj->projecttitle, 80);
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->projecttitle).'">';
+				print dol_escape_htmltag($obj->projecttitle);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1287,7 +1287,7 @@ while ($i < $imaxinloop) {
 			}
 			// Third party
 			if (!empty($arrayfields['s.nom']['checked'])) {
-				print '<td>';
+				print '<td class="tdoverflowmax125">';
 				if ($obj->socid) {
 					print $socstatic->getNomUrl(1, '', 0, 0, -1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 				} else {
@@ -1300,7 +1300,7 @@ while ($i < $imaxinloop) {
 			}
 			// Alias
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
-				print '<td>';
+				print '<td class="tdoverflowmax125">';
 				if ($obj->socid) {
 					print $socstatic->name_alias;
 				} else {
