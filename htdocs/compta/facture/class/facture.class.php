@@ -1503,8 +1503,9 @@ class Facture extends CommonInvoice
 		$use_all_lines = empty($lines);
 		$num = count($object->lines);
 		for ($i = 0; $i < $num; $i++) {
-
-			if (!$use_all_lines && !in_array($object->lines[$i]->id, $lines)) continue;
+			if (!$use_all_lines && !in_array($object->lines[$i]->id, $lines)) {
+				continue;
+			}
 
 			$line = new FactureLigne($this->db);
 
