@@ -3049,8 +3049,21 @@ class Form
 			$opt .= ' pbq="' . $objp->price_by_qty_rowid . '" data-pbq="' . $objp->price_by_qty_rowid . '" data-pbqup="' . $objp->price_by_qty_unitprice . '" data-pbqbase="' . $objp->price_by_qty_price_base_type . '" data-pbqqty="' . $objp->price_by_qty_quantity . '" data-pbqpercent="' . $objp->price_by_qty_remise_percent . '"';
 		}
 		if (isModEnabled('stock') && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
+			// Load virtual stock if needed to show product line OK on condition below
+			// using PRODUCT_STOCK_LIST_SHOW_VIRTUAL_WITH_NO_PHYSICAL and virtualstock > 0
+			if (empty($novirtualstock) && !empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO)) {  // Warning, this option may slow down combo list generation
+				$langs->load("stocks");
+
+				$tmpproduct = new Product($this->db);
+				$tmpproduct->fetch($objp->rowid, '', '', '', 1, 1, 1); // Load product without lang and prices arrays (we just need to make ->virtual_stock() after)
+				$tmpproduct->load_virtual_stock();
+				$virtualstock = $tmpproduct->stock_theorique;
+			}
+
 			if (!empty($user->rights->stock->lire)) {
-				if ($objp->stock > 0) {
+				if ($objp->stock > 0 ||
+					( !empty($conf->global->PRODUCT_STOCK_LIST_SHOW_VIRTUAL_WITH_NO_PHYSICAL) && $virtualstock > 0 )
+				) {
 					$opt .= ' class="product_line_stock_ok"';
 				} elseif ($objp->stock <= 0) {
 					$opt .= ' class="product_line_stock_too_low"';
@@ -3217,13 +3230,6 @@ class Form
 				$outval .= $langs->transnoentities("Stock") . ': ' . price(price2num($objp->stock, 'MS'));
 				$outval .= '</span>';
 				if (empty($novirtualstock) && !empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO)) {  // Warning, this option may slow down combo list generation
-					$langs->load("stocks");
-
-					$tmpproduct = new Product($this->db);
-					$tmpproduct->fetch($objp->rowid, '', '', '', 1, 1, 1); // Load product without lang and prices arrays (we just need to make ->virtual_stock() after)
-					$tmpproduct->load_virtual_stock();
-					$virtualstock = $tmpproduct->stock_theorique;
-
 					$opt .= ' - ' . $langs->trans("VirtualStock") . ':' . $virtualstock;
 
 					$outval .= ' - ' . $langs->transnoentities("VirtualStock") . ':';
