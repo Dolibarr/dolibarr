@@ -21,6 +21,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2023       Vincent de Grandpré     <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2604,6 +2605,9 @@ class Form
 			if (preg_match('/warehouseinternal/', $warehouseStatus)) {
 				$warehouseStatusArray[] = Entrepot::STATUS_OPEN_INTERNAL;
 			}
+			if ( is_numeric($warehouseStatus) ) {
+				$warehouseStatusArray[] = intval($warehouseStatus);
+			}
 		}
 
 		$selectFields = " p.rowid, p.ref, p.label, p.description, p.barcode, p.fk_country, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.default_vat_code, p.duration, p.fk_price_expression";
@@ -2678,7 +2682,11 @@ class Form
 		if (count($warehouseStatusArray)) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "product_stock as ps on ps.fk_product = p.rowid";
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "entrepot as e on ps.fk_entrepot = e.rowid AND e.entity IN (" . getEntity('stock') . ")";
-			$sql .= ' AND e.statut IN (' . $this->db->sanitize($this->db->escape(implode(',', $warehouseStatusArray))) . ')'; // Return line if product is inside the selected stock. If not, an empty line will be returned so we will count 0.
+			if (count($warehouseStatusArray) == 1 && is_numeric($warehouseStatusArray[0])) {
+				$sql .= ' AND e.rowid IN ('.$this->db->sanitize($warehouseStatusArray[0]).')'; // Return line if product is inside the selected warehouse.
+			} else {
+				$sql .= ' AND e.statut IN ('.$this->db->sanitize($this->db->escape(implode(',', $warehouseStatusArray))).')'; // Return line if product is inside the selected stock. If not, an empty line will be returned so we will count 0.
+			}
 		}
 
 		// include search in supplier ref
