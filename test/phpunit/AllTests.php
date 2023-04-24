@@ -37,7 +37,7 @@ if ($langs->defaultlang != 'en_US') {
 	print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
 	exit(1);
 }
-if (empty($conf->adherent->enabled)) {
+if (!isModEnabled('adherent')) {
 	print "Error: Module member must be enabled to have significant results.\n";
 	exit(1);
 }
@@ -45,7 +45,7 @@ if (isModEnabled('ldap')) {
 	print "Error: LDAP module should not be enabled.\n";
 	exit(1);
 }
-if (!empty($conf->google->enabled)) {
+if (isModEnabled('google')) {
 	print "Warning: Google module should not be enabled.\n";
 }
 if (empty($user->id)) {

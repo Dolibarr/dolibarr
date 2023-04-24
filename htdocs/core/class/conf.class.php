@@ -358,11 +358,12 @@ class Conf
 								if ($modulename == 'supplierproposal') {
 									$modulename = 'supplier_proposal';
 								}
+								$this->modules[$modulename] = $modulename; // Add this module in list of enabled modules
+								// deprecated in php 8.2
 								if (!isset($this->$modulename) || !is_object($this->$modulename)) {
 									$this->$modulename = new stdClass();
 								}
 								$this->$modulename->enabled = true;
-								$this->modules[] = $modulename; // Add this module in list of enabled modules
 							}
 						}
 					}
@@ -520,13 +521,6 @@ class Conf
 			$this->medias->multidir_temp = array($this->entity => $rootfortemp."/medias/temp");
 
 			// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
-
-			// Sous module bons d'expedition
-			$this->expedition_bon = new stdClass();
-			$this->expedition_bon->enabled = (empty($this->global->MAIN_SUBMODULE_EXPEDITION) ? 0 : $this->global->MAIN_SUBMODULE_EXPEDITION);
-			// Sub module delivery note  Sous module bons de livraison
-			$this->delivery_note = new stdClass();
-			$this->delivery_note->enabled = (empty($this->global->MAIN_SUBMODULE_DELIVERY) ? 0 : $this->global->MAIN_SUBMODULE_DELIVERY);
 
 			// Module fournisseur
 			if (!empty($this->fournisseur)) {

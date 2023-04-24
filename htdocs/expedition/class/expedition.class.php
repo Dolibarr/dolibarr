@@ -840,7 +840,7 @@ class Expedition extends CommonObject
 		// phpcs:enable
 		global $conf;
 
-		if ($conf->delivery_note->enabled) {
+		if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 			if ($this->statut == self::STATUS_VALIDATED || $this->statut == self::STATUS_CLOSED) {
 				// Expedition validee
 				include_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';

@@ -1458,7 +1458,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '</td>';
 				print '</tr>';
 
-				if ($conf->service->enabled) {
+				if (isModEnabled("service")) {
 					print '<tr>';
 					print '<td>';
 					print $langs->trans('ServiceToUseOnLines');
@@ -1750,7 +1750,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
 				print '<td></td>';
 
-				if ($conf->service->enabled && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
+				if (isModEnabled("service") && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
 					print '<td>'.$langs->trans("Product").'</td>';
 				}
 			}
@@ -1829,7 +1829,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<td>';
 				print '</td>';
 
-				if ($conf->service->enabled && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
+				if (isModEnabled("service") && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
 					print '<td class="nowraponall">';
 					print img_picto('', 'product');
 					print $form->select_produits('', 'fk_product', '1', 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth150', 0, '', null, 1);

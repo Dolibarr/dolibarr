@@ -75,6 +75,9 @@ class ModeleImports
 
 	public $libversion = array();
 
+	public $charset;
+
+
 	/**
 	 * @var	array	Element mapping from table name
 	 */
