@@ -109,6 +109,7 @@ function dolGetRandomBytes($length)
 /**
  *	Encode a string with a symetric encryption. Used to encrypt sensitive data into database.
  *  Note: If a backup is restored onto another instance with a different $dolibarr_main_instance_unique_id, then decoded value will differ.
+ *  This function is called for example by dol_set_const() when saving a sensible data into database configuration table llx_const.
  *
  *	@param   string		$chain		string to encode
  *	@param   string		$key		If '', we use $dolibarr_main_instance_unique_id
@@ -507,6 +508,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 			foreach ($feature2 as $subfeature) {
 				if ($subfeature == 'user' && $user->id == $objectid) {
 					continue; // A user can always read its own card
+				}
+				if ($subfeature == 'fiscalyear' && $user->hasRight('accounting', 'fiscalyear', 'write')) {
+					// only one right for fiscalyear
+					$tmpreadok = 1;
+					continue;
 				}
 				if (!empty($subfeature) && empty($user->rights->$feature->$subfeature->lire) && empty($user->rights->$feature->$subfeature->read)) {
 					$tmpreadok = 0;

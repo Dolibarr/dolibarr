@@ -86,6 +86,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	public $qty_asked;
 
 	public $libelle;
+	public $label;
 	public $desc;
 	public $tva_tx;
 	public $vat_src_code;

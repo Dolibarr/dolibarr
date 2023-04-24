@@ -16,7 +16,7 @@
  */
 
 /**
- *		\file       htdocs/core/modules/export/export_csv.modules.php
+ *		\file       htdocs/core/modules/export/exportcsv.modules.php
  *		\ingroup    export
  *		\brief      File of class to build exports with CSV format
  */
@@ -56,36 +56,6 @@ class ExportCsv extends ModeleExports
 	public $separator;
 
 	public $handle; // Handle fichier
-
-
-	/**
-	 *	Constructor
-	 *
-	 *	@param	    DoliDB	$db      Database handler
-	 */
-	public function __construct($db)
-	{
-		global $conf, $langs;
-		$this->db = $db;
-
-		$this->separator = ',';
-		if (!empty($conf->global->EXPORT_CSV_SEPARATOR_TO_USE)) {
-			$this->separator = $conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
-		}
-		$this->escape = '"';
-		$this->enclosure = '"';
-
-		$this->id = 'csv'; // Same value then xxx in file name export_xxx.modules.php
-		$this->label = 'CSV'; // Label of driver
-		$this->desc = $langs->trans("CSVFormatDesc", $this->separator, $this->enclosure, $this->escape);
-		$this->extension = 'csv'; // Extension for generated file by this driver
-		$this->picto = 'mime/other'; // Picto
-		$this->version = '1.32'; // Driver version
-
-		// If driver use an external library, put its name here
-		$this->label_lib = 'Dolibarr';
-		$this->version_lib = DOL_VERSION;
-	}
 
 	/**
 	 * getDriverId
@@ -215,11 +185,8 @@ class ExportCsv extends ModeleExports
 		// phpcs:enable
 		global $conf;
 
-		if (!empty($conf->global->EXPORT_CSV_FORCE_CHARSET)) {
-			$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
-		} else {
-			$outputlangs->charset_output = 'ISO-8859-1';
-		}
+		$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
+
 		$selectlabel = array();
 
 		foreach ($array_selected_sorted as $code => $value) {
@@ -256,11 +223,7 @@ class ExportCsv extends ModeleExports
 		// phpcs:enable
 		global $conf;
 
-		if (!empty($conf->global->EXPORT_CSV_FORCE_CHARSET)) {
-			$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
-		} else {
-			$outputlangs->charset_output = 'ISO-8859-1';
-		}
+		$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
 
 		$this->col = 0;
 

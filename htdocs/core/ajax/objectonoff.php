@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2015-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 /**
  *       \file       htdocs/core/ajax/objectonoff.php
- *       \brief      File to set status for an object
+ *       \brief      File to set status for an object. Called when ajax_object_onoff() is used.
  *       			 This Ajax service is oftenly called when option MAIN_DIRECT_STATUS_UPDATE is set.
  */
 
@@ -45,6 +45,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
 $action = GETPOST('action', 'aZ09');
+$backtopage = GETPOST('backtopage');
 
 $id = GETPOST('id', 'int');
 $element = GETPOST('element', 'alpha');	// 'myobject' (myobject=mymodule) or 'myobject@mymodule' or 'myobject_mysubobject' (myobject=mymodule)
@@ -79,7 +80,7 @@ if (!empty($user->socid)) {
 
 // We check permission.
 // Check is done on $user->rights->element->create or $user->rights->element->subelement->create (because $action = 'set')
-if (preg_match('/status$/', $field)) {
+if (preg_match('/status$/', $field) || ($field == 'evenunsubscribe' && $object->table_element == 'mailing')) {
 	restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
 } elseif ($element == 'product' && in_array($field, array('tosell', 'tobuy', 'tobatch'))) {	// Special case for products
 	restrictedArea($user, 'produit|service', $object, 'product&product', '', '', 'rowid');
@@ -112,6 +113,11 @@ if (($action == 'set') && !empty($id)) {
 	if ($result < 0) {
 		print $object->error;
 		http_response_code(500);
+		exit;
+	}
+
+	if ($backtopage) {
+		header('Location: '.$backtopage);
 		exit;
 	}
 }

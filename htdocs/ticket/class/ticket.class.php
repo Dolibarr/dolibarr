@@ -685,17 +685,14 @@ class Ticket extends CommonObject
 				$this->timing = $obj->timing;
 
 				$this->type_code = $obj->type_code;
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 				$label_type = ($langs->trans("TicketTypeShort".$obj->type_code) != ("TicketTypeShort".$obj->type_code) ? $langs->trans("TicketTypeShort".$obj->type_code) : ($obj->type_label != '-' ? $obj->type_label : ''));
 				$this->type_label = $label_type;
 
 				$this->category_code = $obj->category_code;
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 				$label_category = ($langs->trans("TicketCategoryShort".$obj->category_code) != ("TicketCategoryShort".$obj->category_code) ? $langs->trans("TicketCategoryShort".$obj->category_code) : ($obj->category_label != '-' ? $obj->category_label : ''));
 				$this->category_label = $label_category;
 
 				$this->severity_code = $obj->severity_code;
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 				$label_severity = ($langs->trans("TicketSeverityShort".$obj->severity_code) != ("TicketSeverityShort".$obj->severity_code) ? $langs->trans("TicketSeverityShort".$obj->severity_code) : ($obj->severity_label != '-' ? $obj->severity_label : ''));
 				$this->severity_label = $label_severity;
 
@@ -855,17 +852,14 @@ class Ticket extends CommonObject
 					$line->progress = $obj->progress;
 					$line->timing = $obj->timing;
 
-					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 					$label_type = ($langs->trans("TicketTypeShort".$obj->type_code) != ("TicketTypeShort".$obj->type_code) ? $langs->trans("TicketTypeShort".$obj->type_code) : ($obj->type_label != '-' ? $obj->type_label : ''));
 					$line->type_label = $label_type;
 
 					$this->category_code = $obj->category_code;
-					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 					$label_category = ($langs->trans("TicketCategoryShort".$obj->category_code) != ("TicketCategoryShort".$obj->category_code) ? $langs->trans("TicketCategoryShort".$obj->category_code) : ($obj->category_label != '-' ? $obj->category_label : ''));
 					$line->category_label = $label_category;
 
 					$this->severity_code = $obj->severity_code;
-					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 					$label_severity = ($langs->trans("TicketSeverityShort".$obj->severity_code) != ("TicketSeverityShort".$obj->severity_code) ? $langs->trans("TicketSeverityShort".$obj->severity_code) : ($obj->severity_label != '-' ? $obj->severity_label : ''));
 					$line->severity_label = $label_severity;
 
@@ -1254,7 +1248,6 @@ class Ticket extends CommonObject
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 				$label = ($langs->trans("TicketTypeShort".$obj->code) != ("TicketTypeShort".$obj->code) ? $langs->trans("TicketTypeShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_types_tickets[$obj->rowid]['code'] = $obj->code;
 				$this->cache_types_tickets[$obj->rowid]['label'] = $label;
@@ -1343,7 +1336,6 @@ class Ticket extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->cache_severity_tickets[$obj->rowid]['code'] = $obj->code;
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 				$label = ($langs->trans("TicketSeverityShort".$obj->code) != ("TicketSeverityShort".$obj->code) ? $langs->trans("TicketSeverityShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_severity_tickets[$obj->rowid]['label'] = $label;
 				$this->cache_severity_tickets[$obj->rowid]['use_default'] = $obj->use_default;

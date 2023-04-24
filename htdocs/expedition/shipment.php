@@ -773,7 +773,7 @@ if ($id > 0 || !empty($ref)) {
 						$toBeShippedTotal += $toBeShipped[$objp->fk_product];
 						print $toBeShipped[$objp->fk_product];
 					} else {
-						print '0 ('.$langs->trans("Service").')';
+						print '0 <span class="opacitymedium">('.$langs->trans("Service").')</span>';
 					}
 					print ($objp->unit_order ? ' '.$objp->unit_order : '').'</td>';
 

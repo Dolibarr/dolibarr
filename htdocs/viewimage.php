@@ -26,6 +26,8 @@
  *					DOL_URL_ROOT.'/viewimage.php?hashp=sharekey
  */
 
+define('MAIN_SECURITY_FORCECSP', "default-src: 'none'");
+
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 if (!defined('NOREQUIRESOC')) {
@@ -151,8 +153,8 @@ if ($modulepart == 'fckeditor') {
  */
 
 if (GETPOST("cache", 'alpha')) {
-	// Important: Following code is to avoid page request by browser and PHP CPU at
-	// each Dolibarr page access.
+	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+	// Add param cache=abcdef
 	if (empty($dolibarr_nocache)) {
 		header('Cache-Control: max-age=3600, public, must-revalidate');
 		header('Pragma: cache'); // This is to avoid having Pragma: no-cache

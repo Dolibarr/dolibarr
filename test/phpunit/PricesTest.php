@@ -149,11 +149,6 @@ class PricesTest extends PHPUnit\Framework\TestCase
 		global $mysoc;
 		$mysoc=new Societe($db);
 
-		// To force status that say module multicompany is on
-		//$conf->multicurrency=new stdClass();
-		//$conf->multicurrency->enabled = 0;
-
-
 		/*
 		 *  Country France
 		 */

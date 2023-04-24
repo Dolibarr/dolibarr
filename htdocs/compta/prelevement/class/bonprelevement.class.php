@@ -1888,7 +1888,7 @@ class BonPrelevement extends CommonObject
 
 		fputs($this->file, substr("000000000000000".$montant, -16));
 
-		// Libelle F
+		// Label F
 
 		fputs($this->file, substr("*_".$ref."_RDVnet".$rowid."                               ", 0, 31));
 

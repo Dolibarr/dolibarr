@@ -77,7 +77,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-if (empty($user->rights->fournisseur->lire) && (empty($conf->margin->enabled) && !$user->hasRight("margin", "liretous"))) {
+if (empty($user->rights->fournisseur->lire) && (!isModEnabled('margin') && !$user->hasRight("margin", "liretous"))) {
 	accessforbidden();
 }
 
@@ -923,7 +923,7 @@ END;
 					$param .= '&contextpage='.urlencode($contextpage);
 				}
 				if ($limit > 0 && $limit != $conf->liste_limit) {
-					$param .= '&limit='.urlencode($limit);
+					$param .= '&limit='.((int) $limit);
 				}
 				$param .= '&ref='.urlencode($object->ref);
 
