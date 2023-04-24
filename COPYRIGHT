@@ -43,7 +43,7 @@ Restler                3.1.1         LGPL-3+                     Yes            
 Sabre                  3.2.2         BSD                         Yes             DAV support
 Swift Mailer           5.4.2-DEV     MIT License                 Yes             Comprehensive mailing tools for PHP
 Symfony/var-dumper     ??? 			 MIT License                 Yes             Library to make var dump (used by DebugBar)
-Stripe                 7.67.0        MIT Licence                 Yes             Library for Stripe module
+Stripe                 10.7.0        MIT Licence                 Yes             Library for Stripe module
 TCPDF                  6.3.2         LGPL-3+                     Yes             PDF generation
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 
