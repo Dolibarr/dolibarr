@@ -2383,3 +2383,5 @@ NotAvailableByDefaultEnabledOnModuleActivation=Not created by default. Created o
 CSSPage=CSS Style
 Defaultfortype=Default
 DefaultForTypeDesc=Template used by default when creating a new email for the template type
+OptionXShouldBeEnabledInModuleY=Option "<b>%s</b>" should be enabled into module <b>%s</b>
+OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>%s</b>
