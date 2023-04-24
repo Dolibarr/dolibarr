@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,13 +143,10 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 
 		$localproduct=new Product($db);
 		$result = $localproduct->fetch(0, 'PINKDRESS');
-		if ($result < 0) {
-			print "\n".__METHOD__." Failed to make the fetch of product PINKDRESS. ".$localproduct->error; die(1);
-		}
+		$this->assertTrue($result >= 0, __METHOD__." Failed to make the fetch of product PINKDRESS. ".$localproduct->error);
+
 		$product_id = $localproduct->id;
-		if ($product_id <= 0) {
-			print "\n".__METHOD__." A product with ref PINKDRESS must exists into database. Create it manually before running the test"; die(1);
-		}
+		$this->assertTrue($product_id > 0, __METHOD__." A product with ref PINKDRESS must exists into database. Create it manually before running the test");
 
 		$localobject=new Facture($db);
 		$localobject->initAsSpecimen();
