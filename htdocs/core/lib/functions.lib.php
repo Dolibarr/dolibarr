@@ -11414,6 +11414,10 @@ function getElementProperties($element_type)
 		$classname = 'Websitepage';
 		$module = 'website';
 		$subelement = 'websitepage';
+	} elseif ($element_type == 'fiscalyear') {
+		$classpath = 'core/class';
+		$module = 'accounting';
+		$subelement = 'fiscalyear';
 	}
 
 	if (empty($classfile)) {

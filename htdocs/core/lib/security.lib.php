@@ -509,6 +509,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				if ($subfeature == 'user' && $user->id == $objectid) {
 					continue; // A user can always read its own card
 				}
+				if ($subfeature == 'fiscalyear' && $user->hasRight('accounting', 'fiscalyear', 'write')) {
+					// only one right for fiscalyear
+					$tmpreadok = 1;
+					continue;
+				}
 				if (!empty($subfeature) && empty($user->rights->$feature->$subfeature->lire) && empty($user->rights->$feature->$subfeature->read)) {
 					$tmpreadok = 0;
 				} elseif (empty($subfeature) && empty($user->rights->$feature->lire) && empty($user->rights->$feature->read)) {
