@@ -11550,7 +11550,7 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$error = '')
 	$t = str_replace(array('and','or','AND','OR',' '), '', $t);		// Remove the only strings allowed between each () criteria
 	// If the string result contains something else than '()', the syntax was wrong
 	if (preg_match('/[^\(\)]/', $t)) {
-		$error = 'Bad syntax of the search string, filter criteria is inhalited';
+		$error = 'Bad syntax of the search string, filter criteria is invalidated';
 		return '1 = 3';		// Bad syntax of the search string, we force a SQL not found
 	}
 
