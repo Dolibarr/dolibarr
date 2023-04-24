@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,6 +122,10 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
+
+		if (empty($conf->service->enabled)) {
+			$this->markTestSkipped("Error: Module service must be enabled.");
+		}
 
 		print __METHOD__."\n";
 	}

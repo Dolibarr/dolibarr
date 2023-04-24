@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,10 +74,6 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 		$this->savlangs=$langs;
 		$this->savdb=$db;
 
-		if (!isModEnabled('api')) {
-			print __METHOD__." module api must be enabled.\n"; die(1);
-		}
-
 		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
 		//print " - db ".$db->db;
 		print "\n";
@@ -120,6 +117,11 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
+
+		if (!isModEnabled('api')) {
+			$this->markTestSkipped(__METHOD__." module api must be enabled.");
+			return;
+		}
 
 		$this->api_url=DOL_MAIN_URL_ROOT.'/api/index.php';
 

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,10 +84,6 @@ class CommandeTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-		if (!isModEnabled('commande')) {
-			print __METHOD__." module customer order must be enabled.\n"; die(1);
-		}
-
 		print __METHOD__."\n";
 	}
 
@@ -115,6 +112,10 @@ class CommandeTest extends PHPUnit\Framework\TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
+
+		if (!isModEnabled('commande')) {
+			$this->markTestSkipped(__METHOD__." module customer order must be enabled.");
+		}
 
 		print __METHOD__."\n";
 		//print $db->getVersion()."\n";

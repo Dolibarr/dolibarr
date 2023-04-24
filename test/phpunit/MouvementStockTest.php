@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,7 +116,7 @@ class MouvementStockTest extends PHPUnit\Framework\TestCase
 		$db=$this->savdb;
 
 		if (!isModEnabled('productbatch')) {
-			print "\n".__METHOD__." module Lot/Serial must be enabled.\n"; die(1);
+			$this->markTestSkipped(__METHOD__." module Lot/Serial must be enabled.");
 		}
 
 		print __METHOD__."\n";

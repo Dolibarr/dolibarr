@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,10 +87,6 @@ class SupplierProposalTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-		if (empty($conf->global->MAIN_MODULE_SUPPLIERPROPOSAL)) {
-			print "\n".__METHOD__." module Supplier proposal must be enabled.\n"; die(1);
-		}
-
 		print __METHOD__."\n";
 	}
 
@@ -118,6 +115,10 @@ class SupplierProposalTest extends PHPUnit\Framework\TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
+
+		if (empty($conf->global->MAIN_MODULE_SUPPLIERPROPOSAL)) {
+			$this->markTestSkipped(__METHOD__." module Supplier proposal must be enabled.");
+		}
 
 		print __METHOD__."\n";
 		//print $db->getVersion()."\n";

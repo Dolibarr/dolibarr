@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,18 +84,6 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 
-		if ($conf->global->SOCIETE_CODECLIENT_ADDON != 'mod_codeclient_monkey') {
-			print "\n".__METHOD__." third party ref checker must be setup to 'mod_codeclient_monkey' not to '".$conf->global->SOCIETE_CODECLIENT_ADDON."'.\n"; die(1);
-		}
-
-		if (!empty($conf->global->MAIN_DISABLEPROFIDRULES)) {
-			print "\n".__METHOD__." constant MAIN_DISABLEPROFIDRULES must be empty (if a module set it, disable module).\n"; die(1);
-		}
-
-		if ($langs->defaultlang != 'en_US') {
-			print "\n".__METHOD__." default language of company must be set to autodetect.\n"; die(1);
-		}
-
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
 		print __METHOD__."\n";
@@ -125,6 +114,18 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
+
+		if ($conf->global->SOCIETE_CODECLIENT_ADDON != 'mod_codeclient_monkey') {
+			$this->markTestSkipped(__METHOD__." third party ref checker must be setup to 'mod_codeclient_monkey' not to '".$conf->global->SOCIETE_CODECLIENT_ADDON."'.");
+		}
+
+		if (!empty($conf->global->MAIN_DISABLEPROFIDRULES)) {
+			$this->markTestSkipped(__METHOD__." constant MAIN_DISABLEPROFIDRULES must be empty (if a module set it, disable module).");
+		}
+
+		if ($langs->defaultlang != 'en_US') {
+			$this->markTestSkipped(__METHOD__." default language of company must be set to autodetect.");
+		}
 
 		print __METHOD__."\n";
 	}

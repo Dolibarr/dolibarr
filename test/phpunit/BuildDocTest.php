@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2023       Alexandre Janniaux  <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,28 +113,6 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 
-		if (!isModEnabled('facture')) {
-			print __METHOD__." invoice module not enabled\n"; die(1);
-		}
-		if (!isModEnabled('commande')) {
-			print __METHOD__." order module not enabled\n"; die(1);
-		}
-		if (!isModEnabled('propal')) {
-			print __METHOD__." propal module not enabled\n"; die(1);
-		}
-		if (!isModEnabled('projet')) {
-			print __METHOD__." project module not enabled\n"; die(1);
-		}
-		if (!isModEnabled('expedition')) {
-			print __METHOD__." shipment module not enabled\n"; die(1);
-		}
-		if (!isModEnabled('ficheinter')) {
-			print __METHOD__." intervention module not enabled\n"; die(1);
-		}
-		if (!isModEnabled('expensereport')) {
-			print __METHOD__." expensereport module not enabled\n"; die(1);
-		}
-
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
 		print __METHOD__."\n";
@@ -164,6 +143,28 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
+
+		if (!isModEnabled('facture')) {
+			$this->markTestSkipped(__METHOD__." invoice module not enabled");
+		}
+		if (!isModEnabled('commande')) {
+			$this->markTestSkipped(__METHOD__." order module not enabled");
+		}
+		if (!isModEnabled('propal')) {
+			$this->markTestSkipped(__METHOD__." propal module not enabled");
+		}
+		if (!isModEnabled('projet')) {
+			$this->markTestSkipped(__METHOD__." project module not enabled");
+		}
+		if (!isModEnabled('expedition')) {
+			$this->markTestSkipped(__METHOD__." shipment module not enabled");
+		}
+		if (!isModEnabled('ficheinter')) {
+			$this->markTestSkipped(__METHOD__." intervention module not enabled");
+		}
+		if (!isModEnabled('expensereport')) {
+			$this->markTestSkipped(__METHOD__." expensereport module not enabled");
+		}
 
 		print __METHOD__."\n";
 	}

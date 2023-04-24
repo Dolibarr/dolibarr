@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021 SuperAdmin
+ * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,10 +86,6 @@ class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf, $user, $langs, $db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
-
-		if (!isModEnabled('knowledgemanagement')) {
-			print __METHOD__." module knowledgemanagement must be enabled.\n"; die(1);
-		}
 	}
 
 	/**
@@ -103,6 +100,10 @@ class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+
+		if (!isModEnabled('knowledgemanagement')) {
+			$this->markTestSkipped(__METHOD__." module knowledgemanagement must be enabled.");
+		}
 
 		print __METHOD__."\n";
 	}

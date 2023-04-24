@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,13 +83,6 @@ class DateLibTzFranceTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 
-		if (getServerTimeZoneString() != 'Europe/Paris' && getServerTimeZoneString() != 'Europe/Berlin') {
-			print "\n".__METHOD__." This PHPUnit test can be launched manually only onto a server with PHP timezone set to TZ=Europe/Paris, not a TZ=".getServerTimeZoneString().".\n";
-			print "You can launch the test from command line with:\n";
-			print "php -d date.timezone='Europe/Paris' phpunit DateLibTzFranceTest.php\n";
-			die(1);
-		}
-
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
 		print __METHOD__."\n";
@@ -119,6 +113,13 @@ class DateLibTzFranceTest extends PHPUnit\Framework\TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
+
+		if (getServerTimeZoneString() != 'Europe/Paris' && getServerTimeZoneString() != 'Europe/Berlin') {
+			$this->markTestSkipped(
+				__METHOD__.": This PHPUnit test can be launched manually only onto a server with PHP timezone set to TZ=Europe/Paris, not a TZ=".getServerTimeZoneString().".\n" .
+				"You can launch the test from command line with:\n" .
+				"php -d date.timezone='Europe/Paris' phpunit DateLibTzFranceTest.php");
+		}
 
 		print __METHOD__."\n";
 	}

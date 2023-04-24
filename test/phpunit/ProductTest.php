@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,10 +83,6 @@ class ProductTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 
-		if (!isModEnabled('product')) {
-			print __METHOD__." Module Product must be enabled.\n"; die(1);
-		}
-
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
 		print __METHOD__."\n";
@@ -116,6 +113,10 @@ class ProductTest extends PHPUnit\Framework\TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
+
+		if (!isModEnabled('product')) {
+			$this->markTestSkipped(__METHOD__." Module Product must be enabled.");
+		}
 
 		print __METHOD__."\n";
 	}

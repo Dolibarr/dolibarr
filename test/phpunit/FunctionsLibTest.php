@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,18 +116,6 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 		//$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-		if (! function_exists('mb_substr')) {
-			print "\n".__METHOD__." function mb_substr must be enabled.\n"; die(1);
-		}
-
-		if ($conf->global->MAIN_MAX_DECIMALS_UNIT != 5) {
-			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 5 for this test.\n"; die(1);
-		}
-
-		if ($conf->global->MAIN_MAX_DECIMALS_TOT != 2) {
-			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 2 for this test.\n"; die(1);
-		}
-
 		print __METHOD__."\n";
 	}
 
@@ -156,6 +145,18 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 		$mysoc=$this->savmysoc;
+
+		if (! function_exists('mb_substr')) {
+			$this->markTestSkipped(__METHOD__." function mb_substr must be enabled.");
+		}
+
+		if ($conf->global->MAIN_MAX_DECIMALS_UNIT != 5) {
+			$this->markTestSkipped(__METHOD__." bad setup for number of digits for unit amount. Must be 5 for this test.");
+		}
+
+		if ($conf->global->MAIN_MAX_DECIMALS_TOT != 2) {
+			$this->markTestSkipped(__METHOD__." bad setup for number of digits for unit amount. Must be 2 for this test.");
+		}
 
 		print __METHOD__."\n";
 	}
