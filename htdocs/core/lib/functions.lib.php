@@ -1537,7 +1537,7 @@ function dol_escape_json($stringtoescape)
 }
 
 /**
- *  Returns text escaped for inclusion in HTML alt or title tags, or into values of HTML input fields.
+ *  Returns text escaped for inclusion in HTML alt or title or value tags, or into values of HTML input fields.
  *
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Keep b tags, 0=remove them completely

@@ -584,18 +584,19 @@ if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 	print '</td>';
 }
 print '<td class="liste_titre">';
-print '<input class="flat" type="text" name="sref" size="6" value="'.$sref.'">';
+print '<input class="flat" type="text" name="sref" size="6" value="'.dol_escape_htmltag($sref).'">';
 print '</td>';
 print '<td class="liste_titre">';
-print '<input class="flat" type="text" name="snom" size="8" value="'.$snom.'">';
+print '<input class="flat" type="text" name="snom" size="8" value="'.dol_escape_htmltag($snom).'">';
 print '</td>';
 if (isModEnabled("service") && $type == 1) {
 	print '<td class="liste_titre">';
 	print '&nbsp;';
 	print '</td>';
 }
-print '<td class="liste_titre"><input class="flat" type="text" name="search_warehouse" size="6" value="'.$search_warehouse.'"></td>';
-print '<td class="liste_titre center"><input class="flat" type="text" name="search_batch" size="6" value="'.$search_batch.'"></td>';
+
+print '<td class="liste_titre"><input class="flat" type="text" name="search_warehouse" size="6" value="'.dol_escape_htmltag($search_warehouse).'"></td>';
+print '<td class="liste_titre center"><input class="flat" type="text" name="search_batch" size="6" value="'.dol_escape_htmltag($search_batch).'"></td>';
 if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 	print '<td class="liste_titre center">';
 	$key = 'sellby';
