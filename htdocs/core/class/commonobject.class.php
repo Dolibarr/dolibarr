@@ -5671,7 +5671,11 @@ abstract class CommonObject
 					$update_main_doc_field = 1;
 				}
 
-				$this->indexFile($destfull, $update_main_doc_field);
+				// Check that the file exists, before indexing it. 
+				// Hint: It does not exist, if we create a PDF and auto delete the ODT File
+				if (file_exists($destfull)) {
+					$this->indexFile($destfull, $update_main_doc_field);
+				}
 			} else {
 				dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
 			}
