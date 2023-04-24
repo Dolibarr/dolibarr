@@ -2,6 +2,8 @@
 
 namespace Stripe\Util;
 
+use Traversable;
+
 /**
  * CaseInsensitiveArray is an array-like class that ignores case for keys.
  *
@@ -21,17 +23,17 @@ class CaseInsensitiveArray implements \ArrayAccess, \Countable, \IteratorAggrega
         $this->container = \array_change_key_case($initial_array, \CASE_LOWER);
     }
 
-    public function count()
+    public function count(): int
     {
         return \count($this->container);
     }
 
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new \ArrayIterator($this->container);
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $offset = static::maybeLowercase($offset);
         if (null === $offset) {
@@ -41,20 +43,20 @@ class CaseInsensitiveArray implements \ArrayAccess, \Countable, \IteratorAggrega
         }
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         $offset = static::maybeLowercase($offset);
 
         return isset($this->container[$offset]);
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $offset = static::maybeLowercase($offset);
         unset($this->container[$offset]);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         $offset = static::maybeLowercase($offset);
 

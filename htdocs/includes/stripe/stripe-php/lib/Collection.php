@@ -2,6 +2,8 @@
 
 namespace Stripe;
 
+use Traversable;
+
 /**
  * Class Collection.
  *
@@ -47,7 +49,7 @@ class Collection extends StripeObject implements \Countable, \IteratorAggregate
         $this->filters = $filters;
     }
 
-    public function offsetGet($k)
+    public function offsetGet($k): mixed
     {
         if (\is_string($k)) {
             return parent::offsetGet($k);
@@ -107,7 +109,7 @@ class Collection extends StripeObject implements \Countable, \IteratorAggregate
     /**
      * @return int the number of objects in the current page
      */
-    public function count()
+    public function count(): int
     {
         return \count($this->data);
     }
@@ -116,7 +118,7 @@ class Collection extends StripeObject implements \Countable, \IteratorAggregate
      * @return \ArrayIterator an iterator that can be used to iterate
      *    across objects in the current page
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new \ArrayIterator($this->data);
     }
