@@ -92,7 +92,17 @@ class Fiscalyear extends CommonObject
 	 */
 	public $datec;
 
-	public $statut; // 0=open, 1=closed
+	/**
+	 * @var int status 0=open, 1=closed
+	 * @deprecated
+	 * @see $status
+	 */
+	public $statut;
+
+	/**
+	 * @var int status 0=open, 1=closed
+	 */
+	public $status;
 
 	/**
 	 * @var int Entity
@@ -101,6 +111,9 @@ class Fiscalyear extends CommonObject
 
 	public $statuts = array();
 	public $statuts_short = array();
+
+	const STATUS_OPEN = 0;
+	const STATUS_CLOSED = 1;
 
 
 	/**
@@ -220,7 +233,7 @@ class Fiscalyear extends CommonObject
 	 */
 	public function fetch($id)
 	{
-		$sql = "SELECT rowid, label, date_start, date_end, statut";
+		$sql = "SELECT rowid, label, date_start, date_end, statut as status";
 		$sql .= " FROM ".$this->db->prefix()."accounting_fiscalyear";
 		$sql .= " WHERE rowid = ".((int) $id);
 
@@ -234,7 +247,8 @@ class Fiscalyear extends CommonObject
 			$this->date_start	= $this->db->jdate($obj->date_start);
 			$this->date_end = $this->db->jdate($obj->date_end);
 			$this->label = $obj->label;
-			$this->statut	    = $obj->statut;
+			$this->statut = $obj->status;
+			$this->status = $obj->status;
 
 			return 1;
 		} else {
@@ -282,7 +296,7 @@ class Fiscalyear extends CommonObject
 
 		$datas = [];
 		$datas['picto'] = img_picto('', $this->picto).' <b><u>'.$langs->trans("FiscalPeriod").'</u></b>';
-		if (isset($this->statut)) {
+		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
@@ -387,7 +401,7 @@ class Fiscalyear extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
