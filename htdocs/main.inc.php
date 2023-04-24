@@ -603,8 +603,6 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 			$savid = ((int) $_POST['id']);
 		}
 		unset($_POST);
-		//unset($_POST['action']); unset($_POST['massaction']);
-		//unset($_POST['confirm']); unset($_POST['confirmmassaction']);
 		unset($_GET['confirm']);
 		unset($_GET['action']);
 		unset($_GET['confirmmassaction']);
@@ -613,6 +611,8 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		if (isset($savid)) {
 			$_POST['id'] = ((int) $savid);
 		}
+		// So rest of code can know something was wrong here
+		$_GET['errorcode'] = 'InvalidToken';
 	}
 
 	// Note: There is another CSRF protection into the filefunc.inc.php
