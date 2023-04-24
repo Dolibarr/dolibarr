@@ -102,6 +102,7 @@ class ImportXlsx extends ModeleImports
 	 *
 	 *	@param	DoliDB		$db				Database handler
 	 *	@param	string		$datatoimport	String code describing import set (ex: 'societe_1')
+	 *  @return	void|int
 	 */
 	public function __construct($db, $datatoimport)
 	{
@@ -334,7 +335,7 @@ class ImportXlsx extends ModeleImports
 	/**
 	 * 	Close file handle
 	 *
-	 *  @return	integer
+	 *  @return	void
 	 */
 	public function import_close_file()
 	{

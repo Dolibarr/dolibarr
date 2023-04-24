@@ -652,7 +652,7 @@ class Contrat extends CommonObject
 	 *    @param	string	$ref			Ref
 	 *    @param	string	$ref_customer	Customer ref
 	 *    @param	string	$ref_supplier	Supplier ref
-	 *    @return   int     				<0 if KO, 0 if not found or if two records found for same ref, Id of contract if OK
+	 *    @return   int|mixed     			<0 if KO, 0 if not found or if two records found for same ref, Id of contract if OK
 	 */
 	public function fetch($id, $ref = '', $ref_customer = '', $ref_supplier = '')
 	{

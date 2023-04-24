@@ -923,10 +923,11 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *  @param  Commande	$object			Object order
 	 *	@param	int			$posy			Position y in PDF
 	 *	@param	Translate	$outputlangs	Object langs for output
-	 *	@return int							<0 if KO, >0 if OK
+	 *	@return void							<0 if KO, >0 if OK
 	 */
 	protected function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
 	{
+		//TODO
 	}
 
 	/**
@@ -1733,7 +1734,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *      @param	int				$hidedetails	Do not show line details
 	 *      @param	int				$hidedesc		Do not show desc
 	 *      @param	int				$hideref		Do not show ref
-	 *      @return	null
+	 *      @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{

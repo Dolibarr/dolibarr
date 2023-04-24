@@ -1760,7 +1760,7 @@ class Holiday extends CommonObject
 	 *  Supprime un utilisateur du module Congés Payés
 	 *
 	 *  @param	int		$user_id        ID de l'utilisateur à supprimer
-	 *  @return boolean      			Vrai si pas d'erreur, faut si Erreur
+	 *  @return void      			Vrai si pas d'erreur, faut si Erreur
 	 */
 	public function deleteCPuser($user_id)
 	{

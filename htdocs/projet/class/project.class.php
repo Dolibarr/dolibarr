@@ -761,7 +761,7 @@ class Project extends CommonObject
 	 *  @param		int			$date_start		Start date
 	 *  @param		int			$date_end		End date
 	 *	@param		string		$projectkey		Equivalent key  to fk_projet for actual type
-	 * 	@return		mixed						Array list of object ids linked to project, < 0 or string if error
+	 * 	@return		mixed|void					Array list of object ids linked to project, < 0 or string if error
 	 */
 	public function get_element_list($type, $tablename, $datefieldname = '', $date_start = '', $date_end = '', $projectkey = 'fk_projet')
 	{
@@ -2348,7 +2348,7 @@ class Project extends CommonObject
 	 *
 	 *  @param  User	$user       		Object user we want project allowed to
 	 * @param	int		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
-	 * 	@return int							>0 if OK, <0 if KO
+	 * 	@return void
 	 */
 	public function getLinesArray($user, $loadRoleMode = 1)
 	{

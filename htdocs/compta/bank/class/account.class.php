@@ -1337,7 +1337,7 @@ class Account extends CommonObject
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *		@param		int			$filteraccountid	To get info for a particular account id
-	 *      @return     int         <0 if ko, >0 if ok
+	 *      @return     int|void         <0 if ko, >0 if ok
 	 */
 	public function load_state_board($filteraccountid = 0)
 	{
@@ -2605,10 +2605,11 @@ class AccountLine extends CommonObjectLine
 	 *
 	 *  @param	int		$status         Id statut
 	 *  @param	int		$mode           0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return	string          		Libelle du statut
+	 *  @return	void          		Libelle du statut
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
+		//TODO
 		// phpcs:enable
 		global $langs;
 		//$langs->load('companies');
