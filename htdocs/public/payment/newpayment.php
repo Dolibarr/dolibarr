@@ -1646,7 +1646,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 	} else {
 		print '<b class="amount">'.price($amount, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
 		if ($minimumamount > $amount) {
-			print ' '. $langs->trans("AmountIsLowerToMinimumNotice", price($minimumamount, 1, $langs, 1, -1, -1, $currency));
+			print ' &nbsp; <span class="opacitymedium small">'. $langs->trans("AmountIsLowerToMinimumNotice", price($minimumamount, 1, $langs, 1, -1, -1, $currency)).'</span>';
 		}
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
