@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled("categorie")) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -545,7 +545,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($search_all != '') {
 	$param .= '&search_all='.urlencode($search_all);
@@ -701,7 +701,7 @@ if (isModEnabled('categorie') && $user->rights->categorie->lire && ($user->right
 	$moreforfilter .= '</div>';
 }
 // Filter on customer categories
-if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_CONTRACT_LIST) && !empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_CONTRACT_LIST) && isModEnabled("categorie") && $user->rights->categorie->lire) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
@@ -964,10 +964,12 @@ while ($i < $imaxinloop) {
 	$contracttmp->ref_customer = $obj->ref_customer;
 	$contracttmp->ref_supplier = $obj->ref_supplier;
 
-	if ($obj->socid > 0) {
-		$result = $socstatic->fetch($obj->socid);
-	}
-	/*$socstatic->id = $obj->socid;
+	$contracttmp->nbofserviceswait = $obj->nb_initial;
+	$contracttmp->nbofservicesopened = $obj->nb_running;
+	$contracttmp->nbofservicesexpired = $obj->nb_expired;
+	$contracttmp->nbofservicesclosed = $obj->nb_closed;
+
+	$socstatic->id = $obj->socid;
 	$socstatic->name = $obj->name;
 	$socstatic->name_alias = $obj->name_alias;
 	$socstatic->email = $obj->email;
@@ -975,7 +977,8 @@ while ($i < $imaxinloop) {
 	$socstatic->logo = $obj->logo;
 	$socstatic->country_id = $obj->country_id;
 	$socstatic->country_code = '';
-	$socstatic->country = '';*/
+	$socstatic->country = '';
+
 	if ($obj->country_id > 0) {
 		if (!isset($cacheCountryIDCode[$obj->country_id]['code'])) {
 			$tmparray = getCountry($obj->country_id, 'all');
@@ -991,9 +994,9 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		$contracttmp->societe = $socstatic->getNomUrl();
+		$arraydata['thirdparty'] = $socstatic;
 		$contracttmp->date_contrat = $obj->date_contrat;
-		print $contracttmp->getKanbanView('');
+		print $contracttmp->getKanbanView('', $arraydata);
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

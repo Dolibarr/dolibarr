@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       charlene Benke          <charlie@patas-monkey.com>
  * Copyright (C) 2018-2021       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -256,6 +256,12 @@ class User extends CommonObject
 	 * @var string clicktodial poste
 	 */
 	public $clicktodial_poste;
+
+	/**
+	 * @var string 	0 by default, 1 if click to dial data were already loaded for this user
+	 */
+	public $clicktodial_loaded;
+
 
 	public $datelastlogin;
 	public $datepreviouslogin;
@@ -834,6 +840,12 @@ class User extends CommonObject
 		$entity = (empty($entity) ? $conf->entity : $entity);
 
 		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms, $entity, $notrigger for user id=".$this->id);
+
+		if (empty($this->id)) {
+			$error++;
+			$this->error = 'Try to call addrights on an object user with an empty id';
+			return -1;
+		}
 
 		$error = 0;
 		$whereforadd = '';
@@ -2441,7 +2453,7 @@ class User extends CommonObject
 			//print $password.'-'.$this->id.'-'.$dolibarr_main_instance_unique_id;
 			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword';
 			$url .= '&username='.urlencode($this->login)."&passworduidhash=".urlencode(dol_hash($password.'-'.$this->id.'-'.$dolibarr_main_instance_unique_id));
-			if (!empty($conf->multicompany->enabled)) {
+			if (isModEnabled('multicompany')) {
 				$url .= '&entity='.(!empty($this->entity) ? $this->entity : 1);
 			}
 
@@ -2863,10 +2875,12 @@ class User extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = " data-params='".json_encode($params)."'";
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
+
 		$companylink = '';
 		if (!empty($this->socid)) {	// Add thirdparty for external users
 			$thirdpartystatic = new Societe($this->db);
@@ -2904,8 +2918,10 @@ class User extends CommonObject
 				$label = $langs->trans("ShowUser");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams . ' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
 		$linkstart .= $linkclose.'>';
@@ -2920,7 +2936,7 @@ class User extends CommonObject
 			}
 			// Only picto
 			if ($withpictoimg > 0) {
-				$picto = '<!-- picto user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip ? '' : $dataparams.' class="paddingright '.$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1).'</span>';
+				$picto = '<!-- picto user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.img_object('', 'user', $paddafterimage.' class="paddingright")', 0, 0, $notooltip ? 0 : 1).'</span>';
 			} else {
 				// Picto must be a photo
 				$picto = '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';

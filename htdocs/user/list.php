@@ -151,7 +151,7 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Init search fields
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_user = GETPOST('search_user', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_lastname = GETPOST('search_lastname', 'alpha');
@@ -448,8 +448,8 @@ if ($search_job != '') {
 if ($search_statut != '' && $search_statut >= 0) {
 	$sql .= " AND u.statut IN (".$db->sanitize($search_statut).")";
 }
-if ($sall) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
+if ($search_all) {
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 // Search for tag/category ($searchCategoryUserList is an array of ID)
 $searchCategoryUserList = array($search_categ);
@@ -551,10 +551,10 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&amp;contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&amp;limit='.urlencode($limit);
+	$param .= '&amp;limit='.((int) $limit);
 }
-if ($sall != '') {
-	$param .= '&amp;search_all='.urlencode($sall);
+if ($search_all != '') {
+	$param .= '&amp;search_all='.urlencode($search_all);
 }
 if ($search_user != '') {
 	$param .= "&amp;search_user=".urlencode($search_user);
@@ -1189,13 +1189,14 @@ while ($i < $imaxinloop) {
 		// Multicompany enabled
 		if (isModEnabled('multicompany') && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			if (!empty($arrayfields['u.entity']['checked'])) {
-				print '<td>';
 				if (!$obj->entity) {
-					print $langs->trans("AllEntities");
+					$labeltouse = $langs->trans("AllEntities");
 				} else {
 					$mc->getInfo($obj->entity);
-					print $mc->label;
+					$labeltouse = $mc->label;
 				}
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labeltouse).'">';
+				print $labeltouse;
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

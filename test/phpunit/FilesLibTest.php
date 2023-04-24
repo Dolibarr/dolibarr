@@ -417,7 +417,10 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		$errorstring = '';
 
 		dol_mkdir($conf->admin->dir_temp);
-		$conf->global->MAIN_ENABLE_LOG_TO_HTML=1; $conf->syslog->enabled=1; $_REQUEST['logtohtml']=1;
+		$conf->global->MAIN_ENABLE_LOG_TO_HTML=1;
+		$conf->syslog->enabled=1;
+		$conf->modules['syslog'] = 'syslog';
+		$_REQUEST['logtohtml']=1;
 		$conf->logbuffer=array();
 
 		$result=dol_compress_file($filein, $fileout, $format, $errorstring);
@@ -427,6 +430,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 
 		$result=dol_uncompress($fileout, $dirout);
 		print __METHOD__." uncompress result=".join(',', $result)."\n";
+		print join(', ', $conf->logbuffer);
 		$this->assertEquals(0, count($result), "Pb with dol_uncompress_file of file ".$fileout);
 
 		// Format gz
@@ -445,7 +449,10 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		$errorstring = '';
 
 		dol_mkdir($conf->admin->dir_temp);
-		$conf->global->MAIN_ENABLE_LOG_TO_HTML=1; $conf->syslog->enabled=1; $_REQUEST['logtohtml']=1;
+		$conf->global->MAIN_ENABLE_LOG_TO_HTML=1;
+		$conf->syslog->enabled=1;
+		$conf->modules['syslog'] = 'syslog';
+		$_REQUEST['logtohtml']=1;
 		$conf->logbuffer=array();
 
 		$result=dol_compress_file($filein, $fileout, $format, $errorstring);

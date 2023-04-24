@@ -205,7 +205,7 @@ class CompanyBankAccount extends Account
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",default_rib = ".((int) $this->default_rib);
-		if (!empty($conf->prelevement->enabled)) {
+		if (isModEnabled('prelevement')) {
 			$sql .= ",frstrecur = '".$this->db->escape($this->frstrecur)."'";
 			$sql .= ",rum = '".$this->db->escape($this->rum)."'";
 			$sql .= ",date_rum = ".($this->date_rum ? "'".$this->db->idate($this->date_rum)."'" : "null");

@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 $langs->loadLangs(array("admin", "products"));
 
 // Security check
-if (!$user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled))) {
+if (!$user->admin || (!isModEnabled("product") && !isModEnabled("service"))) {
 	accessforbidden();
 }
 
@@ -271,10 +271,10 @@ $formbarcode = new FormBarCode($db);
 
 $title = $langs->trans('ProductServiceSetup');
 $tab = $langs->trans("ProductsAndServices");
-if (empty($conf->product->enabled)) {
+if (!isModEnabled("product")) {
 	$title = $langs->trans('ServiceSetup');
 	$tab = $langs->trans('Services');
-} elseif (empty($conf->service->enabled)) {
+} elseif (!isModEnabled("service")) {
 	$title = $langs->trans('ProductSetup');
 	$tab = $langs->trans('Products');
 }
@@ -601,7 +601,7 @@ print '</td>';
 print '</tr>';
 
 // Use conditionnement in buying
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	print '<tr class="oddeven">';
 	print '<td>'.$form->textwithpicto($langs->trans("UseProductSupplierPackaging"), $langs->trans("PackagingForThisProductDesc")).'</td>';
 	print '<td align="right">';

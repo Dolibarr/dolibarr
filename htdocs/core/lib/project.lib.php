@@ -99,7 +99,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			$nbTimeSpent = $dataretrieved;
 		} else {
 			$sql = "SELECT t.rowid";
-			//$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
+			//$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
 			//$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t, ".MAIN_DB_PREFIX."projet_task as pt";
 			$sql .= " WHERE t.fk_element = pt.rowid";
@@ -126,7 +126,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		$h++;
 	}
 
-	if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
+	if (isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")
 		|| isModEnabled("propal") || isModEnabled('commande')
 		|| isModEnabled('facture') || isModEnabled('contrat')
 		|| isModEnabled('ficheinter') || isModEnabled('agenda') || isModEnabled('deplacement') || isModEnabled('stock')) {
@@ -290,7 +290,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	} else {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-		$upload_dir = $conf->project->dir_output."/".dol_sanitizeFileName($project->ref);
+		$upload_dir = $conf->project->multidir_output[$project->entity]."/".dol_sanitizeFileName($project->ref);
 		$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 		$nbLinks = Link::count($db, $project->element, $project->id);
 		$totalAttached = $nbFiles + $nbLinks;
@@ -372,7 +372,7 @@ function task_prepare_head($object)
 	// Is there timespent ?
 	$nbTimeSpent = 0;
 	$sql = "SELECT t.rowid";
-	//$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
+	//$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
 	//$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t";
 	$sql .= " WHERE t.elementtype='task' AND t.fk_element = ".((int) $object->id);
@@ -418,7 +418,7 @@ function task_prepare_head($object)
 	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.(GETPOST('withproject') ? '&withproject=1' : '');
-	$filesdir = $conf->project->dir_output."/".dol_sanitizeFileName($object->project->ref).'/'.dol_sanitizeFileName($object->ref);
+	$filesdir = $conf->project->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->project->ref).'/'.dol_sanitizeFileName($object->ref);
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$nbFiles = count(dol_dir_list($filesdir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
@@ -1153,7 +1153,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 
 			if (empty($workloadforid[$projectstatic->id])) {
 				if ($preselectedday) {
-					$projectstatic->loadTimeSpent($preselectedday, 0, $fuser->id); // Load time spent from table projet_task_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
+					$projectstatic->loadTimeSpent($preselectedday, 0, $fuser->id); // Load time spent from table element_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
 					$workloadforid[$projectstatic->id] = 1;
 				}
 			}
@@ -1391,7 +1391,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 				if (empty($workloadforid[$projectstatic->id])) {
 					if ($preselectedday) {
-						$projectstatic->loadTimeSpent($preselectedday, 0, $fuser->id); // Load time spent from table projet_task_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
+						$projectstatic->loadTimeSpent($preselectedday, 0, $fuser->id); // Load time spent from table element_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
 						$workloadforid[$projectstatic->id] = 1;
 					}
 				}
@@ -1788,7 +1788,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				//var_dump('--- '.$level.' '.$firstdaytoshow.' '.$fuser->id.' '.$projectstatic->id.' '.$workloadforid[$projectstatic->id]);
 				//var_dump($projectstatic->weekWorkLoadPerTask);
 				if (empty($workloadforid[$projectstatic->id])) {
-					$projectstatic->loadTimeSpent($firstdaytoshow, 0, $fuser->id); // Load time spent from table projet_task_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
+					$projectstatic->loadTimeSpent($firstdaytoshow, 0, $fuser->id); // Load time spent from table element_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
 					$workloadforid[$projectstatic->id] = 1;
 				}
 				//var_dump($projectstatic->weekWorkLoadPerTask);
@@ -2175,7 +2175,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				//var_dump('--- '.$level.' '.$firstdaytoshow.' '.$fuser->id.' '.$projectstatic->id.' '.$workloadforid[$projectstatic->id]);
 				//var_dump($projectstatic->weekWorkLoadPerTask);
 				if (empty($workloadforid[$projectstatic->id])) {
-					$projectstatic->loadTimeSpentMonth($firstdaytoshow, 0, $fuser->id); // Load time spent from table projet_task_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
+					$projectstatic->loadTimeSpentMonth($firstdaytoshow, 0, $fuser->id); // Load time spent from table element_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
 					$workloadforid[$projectstatic->id] = 1;
 				}
 				//var_dump($projectstatic->weekWorkLoadPerTask);
@@ -2811,8 +2811,8 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 		// this conf is actually hidden, by default we use 10% for "be carefull or warning"
 		$warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
 
-		$diffTitle = '<br>'.$langs->trans('ProgressDeclared').' : '.$task->progress.($task->progress ? '%' : '');
-		$diffTitle .= '<br>'.$langs->trans('ProgressCalculated').' : '.$progressCalculated.($progressCalculated ? '%' : '');
+		$diffTitle = '<br>'.$langs->trans('ProgressDeclared').' : '.$task->progress.(isset($task->progress) ? '%' : '');
+		$diffTitle .= '<br>'.$langs->trans('ProgressCalculated').' : '.$progressCalculated.(isset($progressCalculated) ? '%' : '');
 
 		//var_dump($progressCalculated.' '.$warningRatio.' '.$task->progress.' '.floatval($task->progress * $warningRatio));
 		if (floatval($progressCalculated) > floatval($task->progress * $warningRatio)) {

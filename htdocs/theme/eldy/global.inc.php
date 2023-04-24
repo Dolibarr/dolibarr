@@ -731,6 +731,9 @@ th .button {
 .centpercent {
 	width: 100%;
 }
+.centpercentimp {
+	width: 100% !important;
+}
 .centpercentwithoutmenu {
 	width: calc(100% - 200px);
 }
@@ -1317,7 +1320,7 @@ select.flat.selectlimit {
 }
 /* using a tdoverflowxxx make the min-width not working */
 .tdnooverflowimp {
-   text-overflow: none;
+   text-overflow: unset;
 }
 .tdoverflow {
 	max-width: 0;
@@ -6546,7 +6549,7 @@ span#select2-boxbookmark-container {
 	font-weight: normal;
 }
 .select2-container-multi-dolibarr .select2-choices-dolibarr li {
-  float: left;
+  float: <?php echo $left; ?>;
   list-style: none;
 }
 .select2-container-multi-dolibarr .select2-choices-dolibarr {

@@ -127,7 +127,7 @@ class modECM extends DolibarrModules
 			'langs'=>'ecm',
 			'position'=>82,
 			'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload || $user->rights->ecm->setup',
-			'enabled'=>'$conf->ecm->enabled',
+			'enabled'=>'isModEnabled("ecm")',
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);

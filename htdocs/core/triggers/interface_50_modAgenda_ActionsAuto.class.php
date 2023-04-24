@@ -76,7 +76,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->agenda) || empty($conf->agenda->enabled)) {
+		if (!isModEnabled('agenda')) {
 			return 0; // Module not active, we do nothing
 		}
 

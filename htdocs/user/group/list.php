@@ -173,7 +173,7 @@ $morecss = array();
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec, g.tms as datem, COUNT(DISTINCT ugu.fk_user) as nb, COUNT(DISTINCT ugr.fk_id) as nbpermissions";
+$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec, g.tms, COUNT(DISTINCT ugu.fk_user) as nb, COUNT(DISTINCT ugr.fk_id) as nbpermissions";
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_rights as ugr ON ugr.fk_usergroup = g.rowid";
@@ -471,7 +471,7 @@ while ($i < $imaxinloop) {
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
-		print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datem), "dayhour").'</td>';
+		print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->tms), "dayhour").'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

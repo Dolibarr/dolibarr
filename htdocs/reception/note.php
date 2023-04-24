@@ -54,7 +54,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 
 	// Linked documents
-	if ($origin == 'order_supplier' && $object->$typeobject->id && (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order"))) {
+	if ($origin == 'order_supplier' && $object->$typeobject->id && isModEnabled("supplier_order")) {
 		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
@@ -90,7 +90,7 @@ if ($origin == 'reception') {
 		$result = restrictedArea($user, $origin, $object->id);
 	} else {
 		if ($origin == 'supplierorder' || $origin == 'order_supplier') {
-			$result = restrictedArea($user, 'fournisseur', $origin_id, 'commande_fournisseur', 'commande');
+			$result = restrictedArea($user, 'fournisseur', $object, 'commande_fournisseur', 'commande');
 		} elseif (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) {
 			accessforbidden();
 		}

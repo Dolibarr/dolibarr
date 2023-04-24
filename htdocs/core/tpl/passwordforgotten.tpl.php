@@ -238,21 +238,23 @@ if (!empty($morelogincontent)) {
 </form>
 
 
-<div class="center login_main_home divpasswordmessagedesc paddingtopbottom<?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow'; ?>" style="max-width: 70%">
 <?php
 if ($mode == 'dolibarr' || !$disabled) {
 	if ($action != 'validatenewpassword' && empty($message)) {
+		print '<div class="center login_main_home divpasswordmessagedesc paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'" style="max-width: 70%">';
 		print '<span class="passwordmessagedesc opacitymedium">';
 		print $langs->trans('SendNewPasswordDesc');
 		print '</span>';
+		print '</div>';
 	}
 } else {
+	print '<div class="center login_main_home divpasswordmessagedesc paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'" style="max-width: 70%">';
 	print '<div class="warning center">';
 	print $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode);
 	print '</div>';
+	print '</div>';
 }
 ?>
-</div>
 
 
 <br>
@@ -285,7 +287,7 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 
 // Google Analytics
 // TODO Remove this, and add content into hook getPasswordForgottenPageExtraOptions() instead
-if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
+if (isModEnabled('google') && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
 	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
 	foreach ($tmptagarray as $tmptag) {
 		print "\n";
@@ -306,7 +308,7 @@ if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID)) 
 
 // TODO Replace this with a hook
 // Google Adsense (need Google module)
-if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT)) {
+if (isModEnabled('google') && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT)) {
 	if (empty($conf->dol_use_jmobile)) {
 		?>
 	<div class="center"><br>

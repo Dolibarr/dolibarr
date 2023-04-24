@@ -128,7 +128,7 @@ function societe_prepare_head(Societe $object)
 		}
 	}
 	$supplier_module_enabled = 0;
-	if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_proposal') || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+	if (isModEnabled('supplier_proposal') || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$supplier_module_enabled = 1;
 	}
 	if ($supplier_module_enabled == 1 && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
@@ -179,7 +179,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	// Related items
-	if ((isModEnabled('commande') || isModEnabled('propal') || isModEnabled('facture') || isModEnabled('ficheinter') || (isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
+	if ((isModEnabled('commande') || isModEnabled('propal') || isModEnabled('facture') || isModEnabled('ficheinter') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
 		&& empty($conf->global->THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB)) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Referers");
@@ -1339,7 +1339,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 			// Photo - Name
 			if (!empty($arrayfields['t.name']['checked'])) {
-				print '<td>';
+				print '<td class="tdoverflowmax150">';
 				print $form->showphoto('contact', $contactstatic, 0, 0, 0, 'photorefnoborder valignmiddle marginrightonly', 'small', 1, 0, 1);
 				print $contactstatic->getNomUrl(0, '', 0, '&backtopage='.urlencode($backtopage));
 				print '</td>';
@@ -1347,17 +1347,18 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 			// Job position
 			if (!empty($arrayfields['t.poste']['checked'])) {
-				print '<td>';
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->poste).'">';
 				if ($obj->poste) {
-					print $obj->poste;
+					print dol_escape_htmltag($obj->poste);
 				}
 				print '</td>';
 			}
 
 			// Address - Phone - Email
 			if (!empty($arrayfields['t.address']['checked'])) {
-				print '<td>';
-				print $contactstatic->getBannerAddress('contact', $object);
+				$addresstoshow = $contactstatic->getBannerAddress('contact', $object);
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag(dol_string_nohtmltag($addresstoshow)).'">';
+				print $addresstoshow;
 				print '</td>';
 			}
 
@@ -1379,8 +1380,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 			// Birthday
 			if (!empty($arrayfields['t.birthday']['checked'])) {
-				print '<td>';
-				print dol_print_date($obj->birthday);
+				print '<td class="nowraponall">';
+				print dol_print_date($db->jdate($obj->birthday));
 				print '</td>';
 			}
 
@@ -1390,7 +1391,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			}
 
 			if ($showuserlogin) {
-				print '<td>';
+				print '<td class="tdoverflowmax125">';
 				$tmpuser= new User($db);
 				$resfetch = $tmpuser->fetch(0, '', '', 0, -1, '', $contactstatic->id);
 				if ($resfetch > 0) {
@@ -1433,7 +1434,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 					$colspan++;
 				}
 			}
-			print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 		}
 	} else {
 		$colspan = 1 + ($showuserlogin ? 1 : 0);
@@ -1442,7 +1443,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 				$colspan++;
 			}
 		}
-		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 	print "\n</table>\n";
 	print '</div>';

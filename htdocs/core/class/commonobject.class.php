@@ -4142,7 +4142,7 @@ abstract class CommonObject
 					} elseif ($objecttype == 'shipping') {
 						$classpath = 'expedition/class';
 						$subelement = 'expedition';
-						$module = 'expedition_bon';
+						$module = 'expedition';
 					} elseif ($objecttype == 'delivery') {
 						$classpath = 'delivery/class';
 						$subelement = 'delivery';
@@ -4650,7 +4650,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 *  Function to check if an object is used by others.
+	 *  Function to check if an object is used by others (by children).
 	 *  Check is done into this->childtables. There is no check into llx_element_element.
 	 *
 	 *  @param	int		$id			Force id of object
@@ -4671,8 +4671,8 @@ abstract class CommonObject
 			return -1;
 		}
 
-		$arraytoscan = $this->childtables;
-		// For backward compatibility, we check if array is old format array('table1', 'table2', ...)
+		$arraytoscan = $this->childtables;		// array('tablename'=>array('fk_element'=>'parentfield'), ...) or array('tablename'=>array('parent'=>table_parent, 'parentkey'=>'nameoffieldforparentfkkey'), ...)
+		// For backward compatibility, we check if array is old format array('tablename1', 'tablename2', ...)
 		$tmparray = array_keys($this->childtables);
 		if (is_numeric($tmparray[0])) {
 			$arraytoscan = array_flip($this->childtables);
@@ -4688,7 +4688,11 @@ abstract class CommonObject
 			if (!empty($element['parent']) && !empty($element['parentkey'])) {
 				$sql.= ", ".$this->db->prefix().$element['parent']." as p";
 			}
-			$sql.= " WHERE c.".$this->fk_element." = ".((int) $id);
+			if (!empty($element['fk_element'])) {
+				$sql.= " WHERE c.".$element['fk_element']." = ".((int) $id);
+			} else {
+				$sql.= " WHERE c.".$this->fk_element." = ".((int) $id);
+			}
 			if (!empty($element['parent']) && !empty($element['parentkey'])) {
 				$sql.= " AND c.".$element['parentkey']." = p.rowid";
 			}
@@ -4702,6 +4706,7 @@ abstract class CommonObject
 					$sql.= " AND c.entity = ".((int) $entity);
 				}
 			}
+
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
@@ -6456,6 +6461,14 @@ abstract class CommonObject
 							dol_syslog('Error bad setup of extrafield', LOG_WARNING);
 						}
 						break;
+					case 'checkbox':
+					case 'chkbxlst':
+						if (is_array($this->array_options[$key])) {
+							$new_array_options[$key] = implode(',', $this->array_options[$key]);
+						} else {
+							$new_array_options[$key] = $this->array_options[$key];
+						}
+						break;
 				}
 			}
 
@@ -6809,6 +6822,14 @@ abstract class CommonObject
 					}
 					break;
 				*/
+				case 'checkbox':
+				case 'chkbxlst':
+					if (is_array($this->array_options[$key])) {
+						$new_array_options[$key] = implode(',', $this->array_options[$key]);
+					} else {
+						$new_array_options[$key] = $this->array_options[$key];
+					}
+					break;
 			}
 
 			$this->db->begin();
@@ -8251,7 +8272,7 @@ abstract class CommonObject
 					// Test on 'enabled' ('enabled' is different than 'list' = 'visibility')
 					$enabled = 1;
 					if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
-						$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '1');
+						$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
 					}
 					if (empty($enabled)) {
 						continue;
@@ -8259,12 +8280,12 @@ abstract class CommonObject
 
 					$visibility = 1;
 					if ($visibility && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
-						$visibility = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '1');
+						$visibility = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
 					}
 
 					$perms = 1;
 					if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key])) {
-						$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '1');
+						$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
 					}
 
 					if (($mode == 'create') && abs($visibility) != 1 && abs($visibility) != 3) {
@@ -8746,9 +8767,10 @@ abstract class CommonObject
 	 *  @param      int     	$nolink         Do not add a href link to view enlarged imaged into a new tab
 	 *  @param      int|string  $overwritetitle Do not add title tag on image
 	 *  @param		int			$usesharelink	Use the public shared link of image (if not available, the 'nophoto' image will be shown instead)
+	 *  @param		string		$cache			A string if we want to use a cached version of image
 	 *  @return     string						Html code to show photo. Number of photos shown is saved in this->nbphoto
 	 */
-	public function show_photos($modulepart, $sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0, $overwritetitle = 0, $usesharelink = 0)
+	public function show_photos($modulepart, $sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0, $overwritetitle = 0, $usesharelink = 0, $cache = '')
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -8833,12 +8855,10 @@ abstract class CommonObject
 							if ($nbphoto % $nbbyrow == 1) {
 								$return .= '<tr class="center valignmiddle" style="border: 1px">';
 							}
-							$return .= '<td style="width: '.ceil(100 / $nbbyrow).'%" class="photo">';
+							$return .= '<td style="width: '.ceil(100 / $nbbyrow).'%" class="photo">'."\n";
 						} elseif ($nbbyrow < 0) {
-							$return .= '<div class="inline-block">';
+							$return .= '<div class="inline-block">'."\n";
 						}
-
-						$return .= "\n";
 
 						$relativefile = preg_replace('/^\//', '', $pdir.$photo);
 						if (empty($nolink)) {
@@ -8868,10 +8888,10 @@ abstract class CommonObject
 							if ($val['share']) {
 								if (empty($maxHeight) || ($photo_vignette && $imgarray['height'] > $maxHeight)) {
 									$return .= '<!-- Show original file (thumb not yet available with shared links) -->';
-									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
+									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).($cache ? '&cache='.urlencode($cache) : '').'" title="'.dol_escape_htmltag($alt).'">';
 								} else {
 									$return .= '<!-- Show original file -->';
-									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
+									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).($cache ? '&cache='.urlencode($cache) : '').'" title="'.dol_escape_htmltag($alt).'">';
 								}
 							} else {
 								$return .= '<!-- Show nophoto file (because file is not shared) -->';
@@ -8880,17 +8900,16 @@ abstract class CommonObject
 						} else {
 							if (empty($maxHeight) || ($photo_vignette && $imgarray['height'] > $maxHeight)) {
 								$return .= '<!-- Show thumb -->';
-								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').' maxwidth150onsmartphone maxwidth200"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').' maxwidth150onsmartphone maxwidth200"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.($cache ? '&cache='.urlencode($cache) : '').'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
 							} else {
 								$return .= '<!-- Show original file -->';
-								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.($cache ? '&cache='.urlencode($cache) : '').'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
 							}
 						}
 
 						if (empty($nolink)) {
 							$return .= '</a>';
 						}
-						$return .= "\n";
 
 						if ($showfilename) {
 							$return .= '<br>'.$viewfilename;
@@ -8919,7 +8938,7 @@ abstract class CommonObject
 								$return .= '</tr>';
 							}
 						} elseif ($nbbyrow < 0) {
-							$return .= '</div>';
+							$return .= '</div>'."\n";
 						}
 					}
 
@@ -9711,7 +9730,7 @@ abstract class CommonObject
 					return -1;
 				}
 			}
-		} elseif (!empty($this->fk_element) && !empty($this->childtables)) {	// If object has childs linked with a foreign key field, we check all child tables.
+		} elseif (!empty($this->childtables)) {	// If object has childs linked with a foreign key field, we check all child tables.
 			$objectisused = $this->isObjectUsed($this->id);
 			if (!empty($objectisused)) {
 				dol_syslog(get_class($this)."::deleteCommon Can't delete record as it has some child", LOG_WARNING);
@@ -9977,7 +9996,7 @@ abstract class CommonObject
 		$this->db->begin();
 
 		$statusfield = 'status';
-		if ($this->element == 'don' || $this->element == 'donation') {
+		if (in_array($this->element, array('don', 'donation', 'shipping'))) {
 			$statusfield = 'fk_statut';
 		}
 

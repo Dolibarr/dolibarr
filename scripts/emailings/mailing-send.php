@@ -234,13 +234,13 @@ if ($resql) {
 						$substitutionarray['__UNSUBSCRIBE_URL__'] = DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.urlencode($obj->tag).'&unsuscrib=1&securitykey='.dol_hash($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY."-".$obj->tag."-".$obj->email."-".$obj->rowid, "md5").'&email='.urlencode($obj->email).'&mtid='.((int) $obj->rowid);
 
 						$onlinepaymentenabled = 0;
-						if (!empty($conf->paypal->enabled)) {
+						if (isModEnabled('paypal')) {
 							$onlinepaymentenabled++;
 						}
-						if (!empty($conf->paybox->enabled)) {
+						if (isModEnabled('paybox')) {
 							$onlinepaymentenabled++;
 						}
-						if (!empty($conf->stripe->enabled)) {
+						if (isModEnabled('stripe')) {
 							$onlinepaymentenabled++;
 						}
 						if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
@@ -258,7 +258,7 @@ if ($resql) {
 							}
 						}
 						/* For backward compatibility */
-						if (!empty($conf->paypal->enabled) && !empty($conf->global->PAYPAL_SECURITY_TOKEN)) {
+						if (isModEnabled('paypal') && !empty($conf->global->PAYPAL_SECURITY_TOKEN)) {
 							$substitutionarray['__SECUREKEYPAYPAL__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
 
 							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {

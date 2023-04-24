@@ -176,9 +176,11 @@ if (empty($reshook)) {
 	}
 }
 
+
 /*
  * View
  */
+
 $person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 $title = $person_name." - ".$langs->trans('Card');
 $help_url = '';
@@ -186,33 +188,37 @@ $help_url = '';
 llxHeader('', $title, $help_url);
 
 // List of possible landing pages
-$tmparray = array('index.php'=>'Dashboard');
+$tmparray = array();
+$tmparray['index.php'] = array('label'=>'Dashboard', 'picto'=>'graph');
 if (isModEnabled("societe")) {
-	$tmparray['societe/index.php?mainmenu=companies&leftmenu='] = 'ThirdPartiesArea';
+	$tmparray['societe/index.php?mainmenu=companies&leftmenu='] = array('label'=>'ThirdPartiesArea', 'picto'=>'company');
 }
 if (!empty($conf->project->enabled)) {
-	$tmparray['projet/index.php?mainmenu=project&leftmenu='] = 'ProjectsArea';
+	$tmparray['projet/index.php?mainmenu=project&leftmenu='] = array('label'=>'ProjectsArea', 'picto'=>'project');
+	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
+		$tmparray['projet/list.php?mainmenu=project&leftmenu=&search_usage_opportunity=1&search_status=99&search_opp_status=openedopp&contextpage=lead'] = array('label'=>'ListOpenLeads', 'picto'=>'project');
+	}
 }
 if (isModEnabled('holiday') || isModEnabled('expensereport')) {
-	$tmparray['hrm/index.php?mainmenu=hrm&leftmenu='] = 'HRMArea'; // TODO Complete list with first level of menus
+	$tmparray['hrm/index.php?mainmenu=hrm&leftmenu='] = array('label'=>'HRMArea', 'picto'=>'user'); // TODO Complete list with first level of menus
 }
 if (isModEnabled("product") || isModEnabled("service")) {
-	$tmparray['product/index.php?mainmenu=products&leftmenu='] = 'ProductsAndServicesArea';
+	$tmparray['product/index.php?mainmenu=products&leftmenu='] = array('label'=>'ProductsAndServicesArea', 'picto'=>'product');
 }
 if (isModEnabled("propal") || isModEnabled('commande') || isModEnabled('ficheinter') || isModEnabled('contrat')) {
-	$tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = 'CommercialArea';
+	$tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = array('label'=>'CommercialArea', 'picto'=>'commercial');
 }
 if (isModEnabled('comptabilite') || isModEnabled('accounting')) {
-	$tmparray['compta/index.php?mainmenu=compta&leftmenu='] = 'AccountancyTreasuryArea';
+	$tmparray['compta/index.php?mainmenu=compta&leftmenu='] = array('label'=>'AccountancyTreasuryArea', 'picto'=>'bill');
 }
 if (isModEnabled('adherent')) {
-	$tmparray['adherents/index.php?mainmenu=members&leftmenu='] = 'MembersArea';
+	$tmparray['adherents/index.php?mainmenu=members&leftmenu='] = array('label'=>'MembersArea', 'picto'=>'member');
 }
 if (isModEnabled('agenda')) {
-	$tmparray['comm/action/index.php?mainmenu=agenda&leftmenu='] = 'Agenda';
+	$tmparray['comm/action/index.php?mainmenu=agenda&leftmenu='] = array('label'=>'Agenda', 'picto'=>'action');
 }
 if (isModEnabled('ticket')) {
-	$tmparray['ticket/list.php?mainmenu=ticket&leftmenu='] = 'Tickets';
+	$tmparray['ticket/list.php?mainmenu=ticket&leftmenu='] = array('label'=>'Tickets', 'picto'=>'ticket');
 }
 // add bookmarks to available landing pages
 if (empty($conf->global->MAIN_NO_BOOKMARKS_FOR_LANDING_PAGES)) {
@@ -227,11 +233,15 @@ if (empty($conf->global->MAIN_NO_BOOKMARKS_FOR_LANDING_PAGES)) {
 	if ($resql) {
 		$i = 0;
 		$num_rows = $db->num_rows($resql);
-		while ($i < $num_rows) {
-			$obj = $db->fetch_object($resql);
-			$landing_url = str_replace(DOL_URL_ROOT, '', $obj->url);
-			$tmparray[$landing_url] = $obj->title;
-			$i++;
+		if ($num_rows > 0) {
+			$tmparray['sep'.$i] = '<span class="opacitymedium">--- '.$langs->trans("Bookmarks").'</span>';
+			while ($i < $num_rows) {
+				$obj = $db->fetch_object($resql);
+
+				$landing_url = str_replace(DOL_URL_ROOT, '', $obj->url);
+				$tmparray[$landing_url] = array('label'=>$obj->title, 'picto'=>'generic');
+				$i++;
+			}
 		}
 	}
 }
@@ -241,9 +251,13 @@ $reshook = $hookmanager->executeHooks('addToLandingPageList', $tmparray, $object
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 } elseif ($reshook > 0) {
-	$tmparray=$hookmanager->resArray;
+	$tmparray = $hookmanager->resArray;
 } elseif ($reshook == 0) {
-	$tmparray=array_merge($tmparray, $hookmanager->resArray);
+	$tmparray = array_merge($tmparray, $hookmanager->resArray);
+}
+foreach ($tmparray as $key => $val) {
+	$tmparray[$key]['data-html'] = img_picto($langs->trans($val['label']), $val['picto'], 'class="pictofixedwidth"').$langs->trans($val['label']);
+	$tmparray[$key]['label'] = $langs->trans($val['label']);
 }
 
 $head = user_prepare_head($object);
@@ -338,7 +352,7 @@ if ($action == 'edit') {
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
 	print '> <label for="check_MAIN_LANDING_PAGE">'.$langs->trans("UsePersonalValue").'</label></td>';
 	print '<td>';
-	print $form->selectarray('MAIN_LANDING_PAGE', $tmparray, (!empty($object->conf->MAIN_LANDING_PAGE) ? $object->conf->MAIN_LANDING_PAGE : ''), 0, 0, 0, '', 1);
+	print $form->selectarray('MAIN_LANDING_PAGE', $tmparray, (!empty($object->conf->MAIN_LANDING_PAGE) ? $object->conf->MAIN_LANDING_PAGE : ''), 0, 0, 0, '', 0, 0, 0, '', 'maxwidth250');
 	//print info_admin($langs->trans("WarningYouMayLooseAccess"), 0, 0, 0);
 	print '</td></tr>';
 
@@ -444,13 +458,22 @@ if ($action == 'edit') {
 	print '> '.$langs->trans("UsePersonalValue").'</td>';
 	print '<td>';
 	if (!empty($object->conf->MAIN_LANDING_PAGE)) {
+		$urltoshow = '';
 		if (!empty($tmparray[$object->conf->MAIN_LANDING_PAGE])) {
-			print $langs->trans($tmparray[$object->conf->MAIN_LANDING_PAGE]);
+			if (is_array($tmparray[$object->conf->MAIN_LANDING_PAGE])) {
+				$urltoshow = $langs->trans($tmparray[$object->conf->MAIN_LANDING_PAGE]['label']);
+			} else {
+				$urltoshow = $langs->trans($tmparray[$object->conf->MAIN_LANDING_PAGE]);
+			}
 		} else {
-			print $object->conf->MAIN_LANDING_PAGE;
+			$urltoshow = $object->conf->MAIN_LANDING_PAGE;
 		}
+		print ' <a href="'.DOL_URL_ROOT.'/'.$object->conf->MAIN_LANDING_PAGE.'" target="_blank" rel="noopener">';
+		print img_picto($urltoshow, $tmparray[$object->conf->MAIN_LANDING_PAGE]['picto'], 'class="pictofixedwidth"');
+		print $urltoshow;
+		print img_picto($urltoshow, 'globe', 'class="paddingleft"');
+		print '</a>';
 	}
-	//print $form->selectarray('MAIN_LANDING_PAGE', $tmparray, (!empty($object->conf->MAIN_LANDING_PAGE)?$object->conf->MAIN_LANDING_PAGE:''), 0, 0, 0, '', 1);
 	print '</td></tr>';
 
 	// Landing page for Agenda - AGENDA_DEFAULT_VIEW
