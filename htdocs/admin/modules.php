@@ -1107,7 +1107,7 @@ if ($mode == 'deploy') {
 
 	$fullurl = '<a href="'.$urldolibarrmodules.'" target="_blank" rel="noopener noreferrer">'.$urldolibarrmodules.'</a>';
 	$message = '';
-	if (!empty($allowonlineinstall)) {
+	if ($allowonlineinstall) {
 		if (!in_array('/custom', explode(',', $dolibarr_main_url_root_alt))) {
 			$message = info_admin($langs->trans("ConfFileMustContainCustom", DOL_DOCUMENT_ROOT.'/custom', DOL_DOCUMENT_ROOT));
 			$allowfromweb = -1;
@@ -1126,7 +1126,7 @@ if ($mode == 'deploy') {
 	} else {
 		if (getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')) {
 			// Show clean message
-			if (!is_numeric('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')) {
+			if (!is_numeric(getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US'))) {
 				$message = info_admin($langs->trans(getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')));
 			} else {
 				$message = info_admin($langs->trans('InstallModuleFromWebHasBeenDisabledContactUs'));
