@@ -803,9 +803,9 @@ if ($action == 'create') {
 	print "</tr>";
 
 	// Show fields for topic, join files and body
-	$fieldsforcontent = array('topic', 'joinfiles', 'defaultfortype', 'content');
+	$fieldsforcontent = array('topic', 'joinfiles', 'content');
 	if (!empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
-		$fieldsforcontent = array('topic', 'joinfiles', 'defaultfortype', 'content', 'content_lines');
+		$fieldsforcontent = array('topic', 'joinfiles', 'content', 'content_lines');
 	}
 	foreach ($fieldsforcontent as $tmpfieldlist) {
 		print '<tr class="impair nodrag nodrop nohover"><td colspan="9" class="nobottom">';
@@ -1068,7 +1068,7 @@ if ($num) {
 					// Show value for field
 					if ($showfield) {
 						// Show line for topic, joinfiles and content
-						print '</tr><tr class="oddeven" nohover tr-'.$tmpfieldlist.'-'.$rowid.' ">';
+						print '</tr><tr class="oddeven nohover" id="tr-'.$tmpfieldlist.'-'.$rowid.'">';
 						print '<td colspan="10">';
 						if ($tmpfieldlist == 'topic') {
 							print '<strong>'.$form->textwithpicto($langs->trans("Topic"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
