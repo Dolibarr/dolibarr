@@ -551,14 +551,12 @@ class FormMail extends Form
 
 			if (!empty($this->withsubstit)) {	// Unset or set ->withsubstit=0 to disable this.
 				$out .= '<tr><td colspan="2" class="right">';
-				//$out.='<div class="floatright">';
 				if (is_numeric($this->withsubstit)) {
 					$out .= $form->textwithpicto($langs->trans("EMailTestSubstitutionReplacedByGenericValues"), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltip'); // Old usage
 				} else {
 					$out .= $form->textwithpicto($langs->trans('AvailableVariables'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltip'); // New usage
 				}
 				$out .= "</td></tr>\n";
-				//$out.='</div>';
 			}
 
 			// From
@@ -590,15 +588,16 @@ class FormMail extends Form
 						// Add user email
 						if (empty($user->email)) {
 							$langs->load('errors');
-							$liste['user'] = $user->getFullName($langs).' &lt;'.$langs->trans('ErrorNoMailDefinedForThisUser').'&gt;';
+							$s = $user->getFullName($langs).' &lt;'.$langs->trans('ErrorNoMailDefinedForThisUser').'&gt;';
 						} else {
-							$liste['user'] = $user->getFullName($langs).' &lt;'.$user->email.'&gt;';
+							$s = $user->getFullName($langs).' &lt;'.$user->email.'&gt;';
 						}
+						$liste['user'] = array('label' => $s, 'data-html' => $s);
 
 						// Add also company main email
 						if (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL)) {
-							$liste['company'] = !empty($conf->global->MAIN_INFO_SOCIETE_NOM)?$conf->global->MAIN_INFO_SOCIETE_NOM:$conf->global->MAIN_INFO_SOCIETE_MAIL;
-							$liste['company'].=' &lt;'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'&gt;';
+							$s = (empty($conf->global->MAIN_INFO_SOCIETE_NOM)?$conf->global->MAIN_INFO_SOCIETE_EMAIL:$conf->global->MAIN_INFO_SOCIETE_NOM).' &lt;'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'&gt;';
+							$liste['company'] = array('label' => $s, 'data-html' => $s);
 						}
 
 						// Add also email aliases if there is some
@@ -610,10 +609,11 @@ class FormMail extends Form
 						// Also add robot email
 						if (!empty($this->fromalsorobot)) {
 							if (!empty($conf->global->MAIN_MAIL_EMAIL_FROM) && getDolGlobalString('MAIN_MAIL_EMAIL_FROM') != getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
-								$liste['robot'] = $conf->global->MAIN_MAIL_EMAIL_FROM;
+								$s = $conf->global->MAIN_MAIL_EMAIL_FROM;
 								if ($this->frommail) {
-									$liste['robot'] .= ' &lt;'.$conf->global->MAIN_MAIL_EMAIL_FROM.'&gt;';
+									$s .= ' &lt;'.$conf->global->MAIN_MAIL_EMAIL_FROM.'&gt;';
 								}
+								array('label' => $s, 'data-html' => $s);
 							}
 						}
 
@@ -648,7 +648,7 @@ class FormMail extends Form
 									if (!preg_match('/&lt;/', $listaliasval)) {
 										$listaliasval = '&lt;'.$listaliasval.'&gt;';
 									}
-									$liste[$typealias.'_'.$posalias] = $listaliasval;
+									$liste[$typealias.'_'.$posalias] = array('label' => $listaliasval, 'data-html' => $listaliasval);
 								}
 							}
 						}
