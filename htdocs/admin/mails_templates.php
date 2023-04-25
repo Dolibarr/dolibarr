@@ -802,14 +802,14 @@ if ($action == 'create') {
 	print '</td>';
 	print "</tr>";
 
+	print '<tr class="impair nodrag nodrop nohover"><td colspan="9" class="nobottom">';
+
 	// Show fields for topic, join files and body
 	$fieldsforcontent = array('topic', 'joinfiles', 'content');
 	if (!empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
 		$fieldsforcontent = array('topic', 'joinfiles', 'content', 'content_lines');
 	}
 	foreach ($fieldsforcontent as $tmpfieldlist) {
-		print '<tr class="impair nodrag nodrop nohover"><td colspan="9" class="nobottom">';
-
 		// Topic of email
 		if ($tmpfieldlist == 'topic') {
 			print '<strong>'.$form->textwithpicto($langs->trans("Topic"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
@@ -834,12 +834,13 @@ if ($action == 'create') {
 			if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 				$okforextended = false;
 			}
-			$doleditor = new DolEditor($tmpfieldlist, (!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : ''), '', 180, 'dolibarr_mailings', 'In', false, $acceptlocallinktomedia, $okforextended, ROWS_4, '90%');
+			$doleditor = new DolEditor($tmpfieldlist, (!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : ''), '', 400, 'dolibarr_mailings', 'In', false, $acceptlocallinktomedia, $okforextended, ROWS_6, '90%');
 			print $doleditor->Create(1);
 		}
-		print '</td>';
-		print '</tr>';
+		print '<br>';
 	}
+
+	print '</tr>';
 
 	print '</table>';
 
@@ -874,7 +875,7 @@ print '<table class="noborder centpercent">';
 
 $i = 0;
 
-$param = '&id='.$id;
+$param = '&id='.((int) $id);
 if ($search_label) {
 	$param .= '&search_label='.urlencode($search_label);
 }
@@ -915,6 +916,13 @@ if ($num > $listlimit) {
 
 // Title line with search boxes
 print '<tr class="liste_titre">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre center" width="64">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 foreach ($fieldlist as $field => $value) {
 	if ($value == 'module') {
 		print '<td class="liste_titre"><input type="text" name="search_module" class="maxwidth75" value="'.dol_escape_htmltag($search_module).'"></td>';
@@ -944,14 +952,20 @@ foreach ($fieldlist as $field => $value) {
 // Status
 print '<td></td>';
 // Action column
-print '<td class="liste_titre center" width="64">';
-$searchpicto = $form->showFilterButtons();
-print $searchpicto;
-print '</td>';
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre center" width="64">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 print '</tr>';
 
 // Title of lines
 print '<tr class="liste_titre">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print getTitleFieldOfList('');
+}
 foreach ($fieldlist as $field => $value) {
 	$showfield = 1; // By defaut
 	$css = "left";
@@ -1023,7 +1037,10 @@ foreach ($fieldlist as $field => $value) {
 }
 
 print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
-print getTitleFieldOfList('');
+// Action column
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print getTitleFieldOfList('');
+}
 print '</tr>';
 
 if ($num) {
@@ -1042,22 +1059,38 @@ if ($num) {
 				$reshook = $hookmanager->executeHooks('editEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 				$error = $hookmanager->error; $errors = $hookmanager->errors;
 
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="center">';
+					print '<input type="hidden" name="page" value="'.$page.'">';
+					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+					print '<input type="submit" class="button buttongen button-save" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
+					print '<input type="submit" class="button buttongen button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+					print '</td>';
+				}
 				// Show main fields
 				if (empty($reshook)) {
 					fieldList($fieldlist, $obj, $tabname[$id], 'edit');
 				}
+				// Action column
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="center">';
+					print '<input type="hidden" name="page" value="'.$page.'">';
+					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+					print '<input type="submit" class="button buttongen button-save" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
+					print '<input type="submit" class="button buttongen button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+					print '</td>';
+				}
+				print "</tr>\n";
 
-				print '<td class="center">';
-				print '<input type="hidden" name="page" value="'.$page.'">';
-				print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-				print '<input type="submit" class="button buttongen button-save" name="actionmodify" value="'.$langs->trans("Modify").'">';
-				print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
-				print '<input type="submit" class="button buttongen button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
-				print '</td>';
+				print '<tr class="oddeven nohover'.(in_array($tmpfieldlist, array('topic', 'joinfiles')) ? ' nobottom' : '').'" id="tr-'.$tmpfieldlist.'-'.$rowid.'">';
+				print '<td colspan="10">';
 
 				$fieldsforcontent = array('topic', 'joinfiles', 'content');
 				if (!empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
-					$fieldsforcontent = array('topic', 'joinfiles', 'content', 'content_lines');
+					$fieldsforcontent[] = 'content_lines';
 				}
 				foreach ($fieldsforcontent as $tmpfieldlist) {
 					$showfield = 1;
@@ -1068,15 +1101,15 @@ if ($num) {
 					// Show value for field
 					if ($showfield) {
 						// Show line for topic, joinfiles and content
-						print '</tr><tr class="oddeven nohover" id="tr-'.$tmpfieldlist.'-'.$rowid.'">';
-						print '<td colspan="10">';
 						if ($tmpfieldlist == 'topic') {
 							print '<strong>'.$form->textwithpicto($langs->trans("Topic"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
 							print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'">';
+							print '<br>'."\n";
 						}
 						if ($tmpfieldlist == 'joinfiles') {
 							print '<strong>'.$form->textwithpicto($langs->trans("FilesAttachedToEmail"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
 							print $form->selectyesno($tmpfieldlist.'-'.$rowid, (isset($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '0'), 1, false, 0, 1);
+							print '<br>'."\n";
 						}
 
 						if ($tmpfieldlist == 'content') {
@@ -1089,6 +1122,7 @@ if ($num) {
 							print $doleditor->Create(1);
 						}
 						if ($tmpfieldlist == 'content_lines') {
+							print '<br>'."\n";
 							print $form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
 							$okforextended = true;
 							if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
@@ -1097,11 +1131,11 @@ if ($num) {
 							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, $acceptlocallinktomedia, $okforextended, ROWS_6, '90%');
 							print $doleditor->Create(1);
 						}
-						print '</td>';
-						print '<td></td>';
-						print '<td></td>';
 					}
 				}
+				print '</td>';
+				print '<td></td>';
+				print '<td></td>';
 
 				print "</tr>\n";
 
@@ -1129,7 +1163,33 @@ if ($num) {
 
 				$nbqualified++;
 
+				// Can an entry be erased or disabled ?
+				$iserasable = 1; $canbedisabled = 1; $canbemodified = 1; // true by default
+				if (!$user->admin && $obj->fk_user != $user->id) {
+					$iserasable = 0;
+					$canbedisabled = 0;
+					$canbemodified = 0;
+				}
+
+				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ?urlencode($obj->code) : '');
+				if ($param) {
+					$url .= '&'.$param;
+				}
+
 				print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
+
+				// Action column - Modify link / Delete link
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="center nowraponall" width="64">';
+					if ($canbemodified) {
+						print '<a class="reposition editfielda" href="'.$url.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
+					}
+					if ($iserasable) {
+						print '<a class="marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
+						//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
+					}
+					print '</td>';
+				}
 
 				$tmpaction = 'view';
 				$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
@@ -1211,19 +1271,6 @@ if ($num) {
 					}
 				}
 
-				// Can an entry be erased or disabled ?
-				$iserasable = 1; $canbedisabled = 1; $canbemodified = 1; // true by default
-				if (!$user->admin && $obj->fk_user != $user->id) {
-					$iserasable = 0;
-					$canbedisabled = 0;
-					$canbemodified = 0;
-				}
-
-				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ?urlencode($obj->code) : '');
-				if ($param) {
-					$url .= '&'.$param;
-				}
-
 				// Status / Active
 				print '<td class="center nowrap">';
 				if ($canbedisabled) {
@@ -1233,16 +1280,18 @@ if ($num) {
 				}
 				print "</td>";
 
-				// Modify link / Delete link
-				print '<td class="center nowraponall" width="64">';
-				if ($canbemodified) {
-					print '<a class="reposition editfielda" href="'.$url.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
+				// Action column - Modify link / Delete link
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="center nowraponall" width="64">';
+					if ($canbemodified) {
+						print '<a class="reposition editfielda" href="'.$url.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
+					}
+					if ($iserasable) {
+						print '<a class="marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
+						//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
+					}
+					print '</td>';
 				}
-				if ($iserasable) {
-					print '<a class="marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
-					//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
-				}
-				print '</td>';
 
 				print "</tr>\n";
 			}
