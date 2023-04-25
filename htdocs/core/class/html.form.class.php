@@ -6256,13 +6256,13 @@ class Form
 	/**
 	 *  Load into the cache vat rates of a country
 	 *
-	 * @param string $country_code Country code with quotes ("'CA'", or "'CA,IN,...'")
-	 * @return    int                            Nb of loaded lines, 0 if already loaded, <0 if KO
+	 * @param 	string 	$country_code 		Country code with quotes ("'CA'", or "'CA,IN,...'")
+	 * @return  int                         Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
 	public function load_cache_vatrates($country_code)
 	{
 		// phpcs:enable
-		global $langs;
+		global $langs, $user;
 
 		$num = count($this->cache_vatrates);
 		if ($num > 0) {
@@ -6313,7 +6313,16 @@ class Form
 
 				return $num;
 			} else {
-				$this->error = '<span class="error">' . $langs->trans("ErrorNoVATRateDefinedForSellerCountry", $country_code) . '</span>';
+				$this->error = '<span class="error">';
+				$this->error .= $langs->trans("ErrorNoVATRateDefinedForSellerCountry", $country_code);
+				$reg = array();
+				if (!empty($user) && $user->admin && preg_match('/\'(..)\'/', $country_code, $reg)) {
+					$langs->load("errors");
+					$new_country_code = $reg[1];
+					$country_id = dol_getIdFromCode($this->db, $new_country_code, 'c_pays', 'code', 'rowid');
+					$this->error .= '<br>'.$langs->trans("ErrorFixThisHere", DOL_URL_ROOT.'/admin/dict.php?id=10'.($country_id > 0 ? '&countryidforinsert='.$country_id : ''));
+				}
+				$this->error .= '</span>';
 				return -1;
 			}
 		} else {

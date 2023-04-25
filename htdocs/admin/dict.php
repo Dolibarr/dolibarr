@@ -1609,7 +1609,7 @@ if ($id > 0) {
 		$i = 0;
 
 		// There is several pages
-		if ($num > $listlimit || $page) {
+		if (($num > $listlimit) || $page) {
 			print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
 			print '<div class="clearboth"></div>';
 		}
@@ -1621,6 +1621,7 @@ if ($id > 0) {
 		print '<!-- line title to search record -->'."\n";
 		print '<tr class="liste_titre_filter">';
 		$filterfound = 0;
+		$colspan = 0;
 		foreach ($fieldlist as $field => $value) {
 			if ($value == 'entity') {
 				continue;
@@ -1638,28 +1639,35 @@ if ($id > 0) {
 					print $form->select_country($search_country_id, 'search_country_id', '', 28, 'minwidth100 maxwidth150 maxwidthonsmartphone');
 					print '</td>';
 					$filterfound++;
+					$colspan++;
 				} elseif ($value == 'code') {
 					print '<td class="liste_titre">';
 					print '<input type="text" class="maxwidth100" name="search_code" value="'.dol_escape_htmltag($search_code).'">';
 					print '</td>';
 					$filterfound++;
+					$colspan++;
 				} else {
 					print '<td class="liste_titre">';
 					print '</td>';
+					$colspan++;
 				}
 			}
 		}
 		if ($id == 4) {
 			print '<td></td>';
+			$colspan++;
 			print '<td></td>';
+			$colspan++;
 		}
 		print '<td class="liste_titre"></td>';
+		$colspan++;
 		print '<td class="liste_titre right" colspan="2">';
 		if ($filterfound) {
 			$searchpicto = $form->showFilterAndCheckAddButtons(0);
 			print $searchpicto;
 		}
 		print '</td>';
+		$colspan+=2;
 		print '</tr>';
 
 		// Title of lines
@@ -1905,8 +1913,10 @@ if ($id > 0) {
 			// Lines with values
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
+
 				//print_r($obj);
 				print '<tr class="oddeven" id="rowid-'.(empty($obj->rowid) ? '' : $obj->rowid).'">';
+
 				if ($action == 'edit' && ($rowid == (!empty($obj->rowid) ? $obj->rowid : $obj->code))) {
 					$tmpaction = 'edit';
 					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
@@ -2252,6 +2262,8 @@ if ($id > 0) {
 				}
 				$i++;
 			}
+		} else {
+			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 		}
 
 		print '</table>';
@@ -2372,8 +2384,12 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 				continue;
 			}	// For state page, we do not show the country input (we link to region, not country)
 			print '<td>';
-			$fieldname = 'country';
-			print $form->select_country((!empty($obj->country_code) ? $obj->country_code : (!empty($obj->country) ? $obj->country : '')), $fieldname, '', 28, 'minwidth100 maxwidth150 maxwidthonsmartphone');
+
+			$selected = (!empty($obj->country_code) ? $obj->country_code : (!empty($obj->country) ? $obj->country : ''));
+			if (!GETPOSTISSET('code')) {
+				$selected = GETPOST('countryidforinsert');
+			}
+			print $form->select_country($selected, $value, '', 28, 'minwidth100 maxwidth150 maxwidthonsmartphone');
 			print '</td>';
 		} elseif ($value == 'country_id') {
 			if (!in_array('country', $fieldlist)) {	// If there is already a field country, we don't show country_id (avoid duplicate)
