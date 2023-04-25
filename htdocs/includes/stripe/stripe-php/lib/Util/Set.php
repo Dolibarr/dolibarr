@@ -4,7 +4,6 @@ namespace Stripe\Util;
 
 use ArrayIterator;
 use IteratorAggregate;
-use Traversable;
 
 class Set implements IteratorAggregate
 {
@@ -38,7 +37,7 @@ class Set implements IteratorAggregate
         return \array_keys($this->_elts);
     }
 
-    public function getIterator(): Traversable
+    public function getIterator()
     {
         return new ArrayIterator($this->toArray());
     }

@@ -194,28 +194,28 @@ class StripeObject implements \ArrayAccess, \Countable, \JsonSerializable
     }
 
     // ArrayAccess methods
-    public function offsetSet($k, $v): void
+    public function offsetSet($k, $v)
     {
         $this->{$k} = $v;
     }
 
-    public function offsetExists($k): bool
+    public function offsetExists($k)
     {
         return \array_key_exists($k, $this->_values);
     }
 
-    public function offsetUnset($k): void
+    public function offsetUnset($k)
     {
         unset($this->{$k});
     }
 
-    public function offsetGet($k): mixed
+    public function offsetGet($k)
     {
         return \array_key_exists($k, $this->_values) ? $this->_values[$k] : null;
     }
 
     // Countable method
-    public function count(): int
+    public function count()
     {
         return \count($this->_values);
     }
@@ -419,7 +419,7 @@ class StripeObject implements \ArrayAccess, \Countable, \JsonSerializable
         }
     }
 
-    public function jsonSerialize(): mixed
+    public function jsonSerialize()
     {
         return $this->toArray();
     }
