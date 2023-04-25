@@ -28,13 +28,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
  */
 class MultiCurrencies extends DolibarrApi
 {
-
 	/**
 	 * Constructor
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
+
 		$this->db = $db;
 	}
 
@@ -43,16 +43,17 @@ class MultiCurrencies extends DolibarrApi
 	 *
 	 * Get a list of Currencies
 	 *
-	 * @param string	$sortfield	Sort field
-	 * @param string	$sortorder	Sort order
-	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:<:'20160101')"
-	 * @return array                Array of warehouse objects
+	 * @param string	$sortfield		Sort field
+	 * @param string	$sortorder		Sort order
+	 * @param int		$limit		    Limit for list
+	 * @param string    $sqlfilters 	Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:<:'20160101')"
+	 * @return array                	Array of warehouse objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $sqlfilters = '')
 	{
-		global $db, $conf;
+		global $db;
 
 		$obj_ret = array();
 
@@ -332,8 +333,8 @@ class MultiCurrencies extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   MultiCurrency $object     Object to clean
-	 * @return  Object                     Object with cleaned properties
+	 * @param   MultiCurrency	$object		Object to clean
+	 * @return  Object                     	Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -355,8 +356,8 @@ class MultiCurrencies extends DolibarrApi
 	/**
 	 * Clean sensible MultiCurrencyRate object datas
 	 *
-	 * @param   MultiCurrencyRate $object     Object to clean
-	 * @return  Object                     Object with cleaned properties
+	 * @param   MultiCurrency	$object     Object to clean
+	 * @return  Object          			Object with cleaned properties
 	 */
 	protected function _cleanObjectDatasRate($object)
 	{
