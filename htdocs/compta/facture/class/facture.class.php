@@ -116,8 +116,22 @@ class Facture extends CommonInvoice
 
 	/**
 	 * @var int ID
+	 * @deprecated
+	 * @see $fk_user_author
+	 */
+	public $user_author;
+
+	/**
+	 * @var int ID
 	 */
 	public $fk_user_author;
+
+	/**
+	 * @var int ID
+	 * @deprecated
+	 * @see $fk_user_valid
+	 */
+	public $user_valid;
 
 	/**
 	 * @var int ID
@@ -126,9 +140,15 @@ class Facture extends CommonInvoice
 
 	/**
 	 * @var int ID
+	 * @deprecated
+	 * @see $fk_uesr_modif
+	 */
+	public $user_modification;
+
+	/**
+	 * @var int ID
 	 */
 	public $fk_user_modif;
-
 
 	public $date; // Date invoice
 	public $datem;

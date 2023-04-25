@@ -336,7 +336,7 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  *	@param  string				$features	    Features to check (it must be module name or $object->element. Can be a 'or' check with 'levela|levelb'.
  *												Examples: 'societe', 'contact', 'produit&service', 'produit|service', ...)
  *												This is used to check permission $user->rights->features->...
- *	@param  int|string|object	$object      	Object or Object ID or list of Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
+ *	@param  int|string|Object	$object      	Object or Object ID or list of Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
  *	@param  string				$tableandshare  'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany module. Param not used if objectid is null (optional).
  *	@param  string				$feature2		Feature to check, second level of permission (optional). Can be a 'or' check with 'sublevela|sublevelb'.
  *												This is used to check permission $user->rights->features->feature2...
@@ -401,11 +401,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	if ($features == 'productbatch') {
 		$features = 'produit';
 	}
-	if ($features == 'fournisseur') {	// When vendor invoice and pruchase order are into module 'fournisseur'
+	if ($features == 'fournisseur') {	// When vendor invoice and purchase order are into module 'fournisseur'
 		$features = 'fournisseur';
-		if ($object->element == 'invoice_supplier') {
+		if (is_object($object) && $object->element == 'invoice_supplier') {
 			$feature2 = 'facture';
-		} elseif ($object->element == 'order_supplier') {
+		} elseif (is_object($object) && $object->element == 'order_supplier') {
 			$feature2 = 'commande';
 		}
 	}
