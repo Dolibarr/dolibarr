@@ -3727,6 +3727,7 @@ class Commande extends CommonOrder
 	{
 		global $conf, $langs, $user;
 
+		$langs->load('orders');
 		$datas = [];
 		$nofetch = !empty($params['nofetch']);
 
