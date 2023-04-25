@@ -1040,7 +1040,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 					'label'=>$extrafields->attributes[$contactstatic->table_element]['label'][$key],
 					'checked'=>(($extrafields->attributes[$contactstatic->table_element]['list'][$key] < 0) ? 0 : 1),
 					'position'=>1000 + $extrafields->attributes[$contactstatic->table_element]['pos'][$key],
-					'enabled'=>(abs($extrafields->attributes[$contactstatic->table_element]['list'][$key]) != 3 && $extrafields->attributes[$contactstatic->table_element]['perms'][$key]));
+					'enabled'=>(abs((int) $extrafields->attributes[$contactstatic->table_element]['list'][$key]) != 3 && $extrafields->attributes[$contactstatic->table_element]['perms'][$key]));
 			}
 		}
 	}
