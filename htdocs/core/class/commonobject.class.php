@@ -5673,7 +5673,7 @@ abstract class CommonObject
 
 				// Check that the file exists, before indexing it.
 				// Hint: It does not exist, if we create a PDF and auto delete the ODT File
-				if (file_exists($destfull)) {
+				if (dol_is_file($destfull)) {
 					$this->indexFile($destfull, $update_main_doc_field);
 				}
 			} else {
