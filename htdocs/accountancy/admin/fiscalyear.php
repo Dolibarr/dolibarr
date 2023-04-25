@@ -144,9 +144,11 @@ if ($result) {
 		while ($i < $num && $i < $max) {
 			$obj = $db->fetch_object($result);
 
+			$fiscalyearstatic->ref = $obj->rowid;
 			$fiscalyearstatic->id = $obj->rowid;
 			$fiscalyearstatic->date_start = $obj->date_start;
 			$fiscalyearstatic->date_end = $obj->date_end;
+			$fiscalyearstatic->statut = $obj->status;
 			$fiscalyearstatic->status = $obj->status;
 
 			print '<tr class="oddeven">';

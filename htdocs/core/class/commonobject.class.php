@@ -2834,7 +2834,7 @@ abstract class CommonObject
 
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
 			$sql .= " SET ".$fieldname." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
-			if (in_array($this->table_element, array('propal', 'commande'))) {
+			if (in_array($this->table_element, array('propal', 'commande', 'societe'))) {
 				$sql .= " , deposit_percent = " . (empty($deposit_percent) ? 'NULL' : "'".$this->db->escape($deposit_percent)."'");
 			}
 			$sql .= ' WHERE rowid='.((int) $this->id);
@@ -5816,10 +5816,17 @@ abstract class CommonObject
 	public function addThumbs($file)
 	{
 		$file_osencoded = dol_osencode($file);
-		if (file_exists($file_osencoded)) {
-			global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
 
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php'; // This define also $maxwidthsmall, $quality, ...
+		if (file_exists($file_osencoded)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+
+			$tmparraysize = getDefaultImageSizes();
+			$maxwidthsmall = $tmparraysize['maxwidthsmall'];
+			$maxheightsmall = $tmparraysize['maxheightsmall'];
+			$maxwidthmini = $tmparraysize['maxwidthmini'];
+			$maxheightmini = $tmparraysize['maxheightmini'];
+			//$quality = $tmparraysize['quality'];
+			$quality = 50;	// For thumbs, we force quality to 50
 
 			// Create small thumbs for company (Ratio is near 16/9)
 			// Used on logon for example
