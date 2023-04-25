@@ -908,7 +908,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
 		case 'restricthtmlallowunvalid':
-			$out = dol_htmlwithnojs($out, 1);
+			$out = dol_htmlwithnojs($out, 1, $check);
 			break;
 		case 'custom':
 			if (!empty($out)) {
@@ -7097,10 +7097,11 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
  * Sanitize a HTML to remove js and dangerous content
  *
  * @param	string	$stringtoencode				String to encode
- * @param	int     $nouseofiframesandbox	Allow use of option MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS for html sanitizing
+ * @param	int     $nouseofiframesandbox		Allow use of option MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS for html sanitizing
+ * @param  	string  $check	     				Type of check/sanitizing
  * @return	string								HTML sanitized
  */
-function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0)
+function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = 'restricthtml')
 {
 	global $conf;
 
@@ -7116,15 +7117,16 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0)
 		do {
 			$oldstringtoclean = $out;
 
+			libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
+
 			if (!empty($out) && !empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) && $check != 'restricthtmlallowunvalid') {
 				try {
 					$dom = new DOMDocument;
 					// Add a trick to solve pb with text without parent tag
-					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up without the trick into '<h1>Foo<p>bar</p></h1>'
-					// like 'abc' that wrongly ends up without the tric into with '<p>abc</p>'
+					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up, without the trick, with '<h1>Foo<p>bar</p></h1>'
+					// like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
 					$out = '<div class="tricktoremove">'.$out.'</div>';
-
-					$dom->loadHTML($out, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
+					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD|LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
 					$out = trim($dom->saveHTML());
 
 					// Remove the trick added to solve pb with text without parent tag
