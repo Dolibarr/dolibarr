@@ -5687,9 +5687,15 @@ abstract class CommonObject
 	 */
 	public function addThumbs($file)
 	{
-		global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php'; // This define also $maxwidthsmall, $quality, ...
+		$tmparraysize = getDefaultImageSizes();
+		$maxwidthsmall = $tmparraysize['maxwidthsmall'];
+		$maxheightsmall = $tmparraysize['maxheightsmall'];
+		$maxwidthmini = $tmparraysize['maxwidthmini'];
+		$maxheightmini = $tmparraysize['maxheightmini'];
+		//$quality = $tmparraysize['quality'];
+		$quality = 50;	// For thumbs, we force quality to 50
 
 		$file_osencoded = dol_osencode($file);
 		if (file_exists($file_osencoded)) {
