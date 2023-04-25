@@ -161,8 +161,8 @@ function getDolUserInt($key, $default = 0, $tmpuser = null)
 /**
  * Is Dolibarr module enabled
  *
- * @param string $module module name to check
- * @return int
+ * @param 	string 	$module 	Module name to check
+ * @return 	boolean				True if module is enabled
  */
 function isModEnabled($module)
 {
