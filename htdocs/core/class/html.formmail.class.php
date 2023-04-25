@@ -418,7 +418,7 @@ class FormMail extends Form
 					$model_id = $this->param["models_id"];
 				}
 
-				$arraydefaultmessage = $this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id); // If $model_id is empty, preselect the first one
+				$arraydefaultmessage = $this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, ($model_id > 0 ? $model_id : 0), 1, '', 1); // If $model_id is empty, preselect the first one
 			}
 
 			// Define list of attached files
@@ -1285,21 +1285,25 @@ class FormMail extends Form
 	 *  @param	string		$type_template	Get message for model/type=$type_template, type='all' also included.
 	 *  @param	User		$user			Get templates public + limited to this user
 	 *  @param	Translate	$outputlangs	Output lang object
-	 *  @param	int			$id				Id of template to get, or -1 for first found with position 0, or 0 for first found whatever is position (priority order depends on lang provided or not) or -2 for exact match with label (no answer if not found)
+	 *  @param	int			$id				Id of template to get, or
+	 *  									-1 for first found with position 0, or
+	 *  									0 for first found whatever is position (priority order depends on lang provided or not) or
+	 *  									-2 for exact match with label (no answer if not found)
 	 *  @param  int         $active         1=Only active template, 0=Only disabled, -1=All
 	 *  @param	string		$label			Label of template to get
+	 *  @param  int         $defaultfortype 1=Only default templates, 0=Only not default, -1=All
 	 *  @return ModelMail|integer			One instance of ModelMail or < 0 if error
 	 */
-	public function getEMailTemplate($dbs, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '')
+	public function getEMailTemplate($dbs, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '', $defaultfortype = -1)
 	{
-		global $conf, $langs;
-
-		$ret = new ModelMail();
+		global $conf;
 
 		if ($id == -2 && empty($label)) {
-			$this->error = 'LabelIsMandatoryWhenIdIs-2';
+			$this->error = 'LabelIsMandatoryWhenIdIs-2or-3';
 			return -1;
 		}
+
+		$ret = new ModelMail();
 
 		$languagetosearch = (is_object($outputlangs) ? $outputlangs->defaultlang : '');
 		// Define $languagetosearchmain to fall back on main language (for example to get 'es_ES' for 'es_MX')
@@ -1316,6 +1320,9 @@ class FormMail extends Form
 		$sql .= " AND (private = 0 OR fk_user = ".((int) $user->id).")"; // Get all public or private owned
 		if ($active >= 0) {
 			$sql .= " AND active = ".((int) $active);
+		}
+		if ($defaultfortype >= 0) {
+			$sql .= " AND defaultfortype = ".((int) $defaultfortype);
 		}
 		if ($label) {
 			$sql .= " AND label = '".$dbs->escape($label)."'";
@@ -1457,11 +1464,11 @@ class FormMail extends Form
 	 *      Find if template exists and are available for current user, then set them into $this->lines_module.
 	 *      Search into table c_email_templates
 	 *
-	 * 		@param	string		$type_template	Get message for key module
-	 *      @param	User		$user			Use template public or limited to this user
-	 *      @param	Translate	$outputlangs	Output lang object
-	 *      @param  int         $active         1=Only active template, 0=Only disabled, -1=All
-	 *      @return	int		                    <0 if KO, nb of records found if OK
+	 * 		@param	string		$type_template		Get message for key module
+	 *      @param	User		$user				Use template public or limited to this user
+	 *      @param	Translate	$outputlangs		Output lang object
+	 *      @param  int         $active         	1=Only active template, 0=Only disabled, -1=All
+	 *      @return	int		                    	<0 if KO, nb of records found if OK
 	 */
 	public function fetchAllEMailTemplate($type_template, $user, $outputlangs, $active = 1)
 	{
