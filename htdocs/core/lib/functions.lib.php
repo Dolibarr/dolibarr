@@ -6220,7 +6220,7 @@ function isOnlyOneLocalTax($local)
  * Get values of localtaxes (1 or 2) for company country for the common vat with the highest value
  *
  * @param	int				$local 		LocalTax to get
- * @return	string						Values of localtax (Can be '20', '-19:-15:-9')
+ * @return	string						Values of localtax (Can be '20', '-19:-15:-9') or 'Error'
  */
 function get_localtax_by_third($local)
 {
@@ -6237,12 +6237,14 @@ function get_localtax_by_third($local)
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
-		return $obj->localtax;
-	} else {
-		return 'Error';
+		if ($obj) {
+			return $obj->localtax;
+		} else {
+			return '0';
+		}
 	}
 
-	return '0';
+	return 'Error';
 }
 
 
