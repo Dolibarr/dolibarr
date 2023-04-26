@@ -108,6 +108,11 @@ abstract class CommonObject
 	public $table_element_line = '';
 
 	/**
+	 * @var int 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 */
+	public $ismultientitymanaged;
+
+	/**
 	 * @var string		Key value used to track if data is coming from import wizard
 	 */
 	public $import_key;
