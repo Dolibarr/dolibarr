@@ -146,7 +146,7 @@ if (empty($reshook)) {
 			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
 			$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
 			$sql .= " AND t.code = '".$db->escape($vatratecode)."'";
-			$sql .= " AND t.type_vat = 1";
+			$sql .= " AND t.type_vat IN (0, 1)";	// Use only VAT rates type all or i.e. the sales type VAT rates.
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
