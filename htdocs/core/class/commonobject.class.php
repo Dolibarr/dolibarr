@@ -743,6 +743,26 @@ abstract class CommonObject
 					$datas['more_extrafields'] = '<br>.../...';
 					break;
 				}
+				$enabled = 1;
+				if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
+					$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
+				}
+				if ($enabled && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
+					$enabled = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
+				}
+				$perms = 1;
+				if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key])) {
+					$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
+				}
+				if (empty($enabled)) {
+					continue; // 0 = Never visible field
+				}
+				if (abs($enabled) != 1 && abs($enabled) != 3 && abs($enabled) != 5 && abs($enabled) != 4) {
+					continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list <> 4 = not visible at the creation
+				}
+				if (empty($perms)) {
+					continue; // 0 = Not visible
+				}
 				if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
 					$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
 				}
