@@ -145,7 +145,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 
 		print __METHOD__." USER_PASSWORD_GENERATED=".getDolGlobalString('USER_PASSWORD_GENERATED')."\n";
 
-		$localobject=new User($this->savdb);
+		$localobject=new User($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -170,7 +170,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new User($this->savdb);
+		$localobject=new User($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -201,7 +201,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 		$this->assertLessThan($result, 0);
 
 		// Test everything are still same than specimen
-		$newlocalobject=new User($this->savdb);
+		$newlocalobject=new User($db);
 		$newlocalobject->initAsSpecimen();
 		$this->changeProperties($newlocalobject);
 		$this->assertEquals($this->objCompare($localobject, $newlocalobject, true, array('id','socid','societe_id','specimen','note','ref','pass','pass_indatabase','pass_indatabase_crypted','pass_temp','datec','datem','datelastlogin','datepreviouslogin','flagdelsessionsbefore','iplastlogin','ippreviouslogin','trackid')), array());    // Actual, Expected
@@ -418,7 +418,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new User($this->savdb);
+		$localobject=new User($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 
@@ -443,7 +443,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new User($this->savdb);
+		$localobject=new User($db);
 		$result=$localobject->fetch(1);			// Other tests use the user id 1
 		$result=$localobject->addrights(0, 'supplier_proposal');
 

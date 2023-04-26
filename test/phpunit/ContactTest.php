@@ -145,7 +145,7 @@ class ContactTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Contact($this->savdb);
+		$localobject=new Contact($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -171,7 +171,7 @@ class ContactTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Contact($this->savdb);
+		$localobject=new Contact($db);
 		$result=$localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -228,7 +228,7 @@ class ContactTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0, 'Contact::update_note (public) error');
 
-		$newobject=new Contact($this->savdb);
+		$newobject=new Contact($db);
 		$result=$newobject->fetch($localobject->id);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0, 'Contact::fetch error');
@@ -322,7 +322,7 @@ class ContactTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Contact($this->savdb);
+		$localobject=new Contact($db);
 		$result=$localobject->fetch($id);
 
 		$result=$localobject->delete(0);
