@@ -569,7 +569,8 @@ class BOM extends CommonObject
 	 * @param	int		$fk_bom_child			Id of BOM Child
 	 * @param	string	$import_key				Import Key
 	 * @param	string	$fk_unit				Unit
-	 * @param	array		$array_options		extrafields array
+	 * @param	array	$array_options			extrafields array
+	 * @param	int		$fk_default_workstation	Default workstation
 	 * @return	int								<0 if KO, Id of created object if OK
 	 */
 	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = '', $array_options = 0, $fk_default_workstation = null)

@@ -618,8 +618,10 @@ class Notify
 						$arraydefaultmessage = null;
 
 						$template = $notifcode.'_TEMPLATE';
-						$labeltouse = $conf->global->$template;
-						if (!empty($labeltouse)) $arraydefaultmessage = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $labeltouse);
+						$labeltouse = getDolGlobalString($template);
+						if (!empty($labeltouse)) {
+							$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $labeltouse);
+						}
 						if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 							complete_substitutions_array($substitutionarray, $outputlangs, $object);
