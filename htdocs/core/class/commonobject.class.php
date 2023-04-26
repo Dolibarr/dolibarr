@@ -731,13 +731,14 @@ abstract class CommonObject
 	{
 		global $action, $extrafields, $langs, $hookmanager;
 
-		$MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP = 5;	// If there is too much extrafields, we do not include them into tooltip
+		// If there is too much extrafields, we do not include them into tooltip
+		$MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP = getDolGlobalInt('MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP', 5);
 
 		$datas = $this->getTooltipContentArray($params);
 
 		// Add extrafields
 		if (!empty($extrafields->attributes[$this->table_element]['label'])) {
-			if (count($extrafields->attributes[$this->table_element]['label']) < $MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP) {
+			if ($extrafields->attributes[$this->table_element]['count'] < $MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP) {
 				foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
 					if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
 						$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
