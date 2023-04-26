@@ -16,7 +16,7 @@ class InvoiceService extends \Stripe\Service\AbstractService
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\Collection
+     * @return \Stripe\Collection<\Stripe\Invoice>
      */
     public function all($params = null, $opts = null)
     {
@@ -35,7 +35,7 @@ class InvoiceService extends \Stripe\Service\AbstractService
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\Collection
+     * @return \Stripe\Collection<\Stripe\InvoiceLineItem>
      */
     public function allLines($parentId, $params = null, $opts = null)
     {
@@ -43,12 +43,10 @@ class InvoiceService extends \Stripe\Service\AbstractService
     }
 
     /**
-     * This endpoint creates a draft invoice for a given customer. The draft invoice
-     * created pulls in all pending invoice items on that customer, including
-     * prorations. The invoice remains a draft until you <a
-     * href="#finalize_invoice">finalize</a> the invoice, which allows you to <a
-     * href="#pay_invoice">pay</a> or <a href="#send_invoice">send</a> the invoice to
-     * your customers.
+     * This endpoint creates a draft invoice for a given customer. The invoice remains
+     * a draft until you <a href="#finalize_invoice">finalize</a> the invoice, which
+     * allows you to <a href="#pay_invoice">pay</a> or <a href="#send_invoice">send</a>
+     * the invoice to your customers.
      *
      * @param null|array $params
      * @param null|array|\Stripe\Util\RequestOptions $opts
@@ -153,6 +151,26 @@ class InvoiceService extends \Stripe\Service\AbstractService
     }
 
     /**
+     * Search for invoices you’ve previously created using Stripe’s <a
+     * href="/docs/search#search-query-language">Search Query Language</a>. Don’t use
+     * search in read-after-write flows where strict consistency is necessary. Under
+     * normal operating conditions, data is searchable in less than a minute.
+     * Occasionally, propagation of new or updated data can be up to an hour behind
+     * during outages. Search functionality is not available to merchants in India.
+     *
+     * @param null|array $params
+     * @param null|array|\Stripe\Util\RequestOptions $opts
+     *
+     * @throws \Stripe\Exception\ApiErrorException if the request fails
+     *
+     * @return \Stripe\SearchResult<\Stripe\Invoice>
+     */
+    public function search($params = null, $opts = null)
+    {
+        return $this->requestSearchResult('get', '/v1/invoices/search', $params, $opts);
+    }
+
+    /**
      * Stripe will automatically send invoices to customers according to your <a
      * href="https://dashboard.stripe.com/account/billing/automatic">subscriptions
      * settings</a>. However, if you’d like to manually send an invoice to your
@@ -221,11 +239,11 @@ class InvoiceService extends \Stripe\Service\AbstractService
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\Invoice
+     * @return \Stripe\Collection<\Stripe\InvoiceLineItem>
      */
     public function upcomingLines($params = null, $opts = null)
     {
-        return $this->request('get', '/v1/invoices/upcoming/lines', $params, $opts);
+        return $this->requestCollection('get', '/v1/invoices/upcoming/lines', $params, $opts);
     }
 
     /**

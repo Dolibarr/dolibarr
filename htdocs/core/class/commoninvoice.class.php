@@ -34,6 +34,16 @@ abstract class CommonInvoice extends CommonObject
 	use CommonIncoterm;
 
 	/**
+	 * @var int		Type of invoice (See TYPE_XXX constants)
+	 */
+	public $type = self::TYPE_STANDARD;
+
+	/**
+	 * @var int		Sub type of invoice (A subtype code coming from llx_invoice_subtype table. May be used by some countries like Greece)
+	 */
+	public $subtype;
+
+	/**
 	 * Standard invoice
 	 */
 	const TYPE_STANDARD = 0;

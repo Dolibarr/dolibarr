@@ -169,6 +169,12 @@ if (empty($reshook)) {
 		$moline->origin_type = 'free'; // free consume line
 		$moline->position = 0;
 
+		if (!empty($moline->fk_product)) {
+			$product = new Product($db);
+			$product->fetch($moline->fk_product);
+			if ($product->type == Product::TYPE_SERVICE) $moline->fk_default_workstation = $product->fk_default_workstation;
+		}
+
 		$resultline = $moline->create($user, false); // Never use triggers here
 		if ($resultline <= 0) {
 			$error++;

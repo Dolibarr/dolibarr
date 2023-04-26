@@ -56,7 +56,7 @@ function facture_prepare_head($object)
 		$h++;
 	}
 
-	if (!empty($conf->prelevement->enabled)) {
+	if (isModEnabled('prelevement')) {
 		$nbStandingOrders = 0;
 		$sql = "SELECT COUNT(pfd.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";

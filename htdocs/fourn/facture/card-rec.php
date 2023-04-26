@@ -1059,9 +1059,9 @@ if ($action == 'create') {
 		print dol_get_fiche_end();
 
 		$title = $langs->trans("ProductsAndServices");
-		if (empty($conf->service->enabled)) {
+		if (!isModEnabled("service")) {
 			$title = $langs->trans("Products");
-		} elseif (empty($conf->product->enabled)) {
+		} elseif (!isModEnabled("product")) {
 			$title = $langs->trans("Services");
 		}
 

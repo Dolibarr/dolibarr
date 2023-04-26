@@ -69,8 +69,8 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
+$object = new Product($db);
 if ($id > 0 || !empty($ref)) {
-	$object = new Product($db);
 	$object->fetch($id, $ref);
 }
 

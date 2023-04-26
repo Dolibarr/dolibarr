@@ -952,8 +952,8 @@ class Conf
 			if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) {
 				// Value 1 makes CSRF check for all POST parameters only
 				// Value 2 makes also CSRF check for GET requests with action = a sensitive requests like action=del, action=remove...
-				// Value 3 makes also CSRF check for all GET requests with a param action or massaction
-				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2;
+				// Value 3 makes also CSRF check for all GET requests with a param action or massaction (except some sensitive values)
+				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2; // TODO Switch value to 3
 				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
 			}
 

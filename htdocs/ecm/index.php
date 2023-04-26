@@ -89,6 +89,8 @@ $permissiontocreatedir = $user->hasRight('ecm', 'setup');
 $permissiontodelete = $user->hasRight('ecm', 'upload');
 $permissiontodeletedir = $user->hasRight('ecm', 'setup');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('ecmindexcard', 'globalcard'));
 
 /*
  *	Actions
@@ -292,7 +294,7 @@ if ($action == 'refreshmanual' && $permissiontoread) {
 		}
 	}
 
-	$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories set cachenbofdoc = -1 WHERE cachenbofdoc < 0"; // If pb into cahce counting, we set to value -1 = "unknown"
+	$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories set cachenbofdoc = -1 WHERE cachenbofdoc < 0"; // If pb into cache counting, we set to value -1 = "unknown"
 	dol_syslog("sql = ".$sql);
 	$db->query($sql);
 

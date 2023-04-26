@@ -175,7 +175,7 @@ class EmailCollectorTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new EmailCollector($this->savdb);
+		$localobject=new EmailCollector($db);
 		$result=$localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -224,7 +224,7 @@ class EmailCollectorTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new EmailCollector($this->savdb);
+		$localobject=new EmailCollector($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

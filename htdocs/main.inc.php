@@ -533,7 +533,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	$sensitiveget = false;
 	if ((GETPOSTISSET('massaction') || GETPOST('action', 'aZ09')) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 3) {
 		// All GET actions and mass actions are processed as sensitive.
-		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'createsite', 'createcard', 'edit', 'editvalidator', 'file_manager', 'presend', 'presend_addmessage', 'preview', 'specimen'))) {	// We exclude the case action='create' and action='file_manager' that are legitimate
+		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'createsite', 'createcard', 'edit', 'editvalidator', 'file_manager', 'presend', 'presend_addmessage', 'preview', 'specimen'))) {	// We exclude some action that are legitimate
 			$sensitiveget = true;
 		}
 	} elseif (getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 2) {
@@ -603,8 +603,6 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 			$savid = ((int) $_POST['id']);
 		}
 		unset($_POST);
-		//unset($_POST['action']); unset($_POST['massaction']);
-		//unset($_POST['confirm']); unset($_POST['confirmmassaction']);
 		unset($_GET['confirm']);
 		unset($_GET['action']);
 		unset($_GET['confirmmassaction']);
@@ -613,6 +611,8 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		if (isset($savid)) {
 			$_POST['id'] = ((int) $savid);
 		}
+		// So rest of code can know something was wrong here
+		$_GET['errorcode'] = 'InvalidToken';
 	}
 
 	// Note: There is another CSRF protection into the filefunc.inc.php

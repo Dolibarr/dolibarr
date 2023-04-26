@@ -96,7 +96,7 @@ if (empty($reshook)) {
 	// Change customer bank information to withdraw
 	if ($action == 'modify') {
 		for ($i = 1; $i < 9; $i++) {
-			dolibarr_set_const($db, GETPOST("nom$i"), GETPOST("value$i"), 'chaine', 0, '', $conf->entity);
+			dolibarr_set_const($db, GETPOST("nom".$i), GETPOST("value".$i), 'chaine', 0, '', $conf->entity);
 		}
 	}
 	if ($action == 'create') {
@@ -104,7 +104,7 @@ if (empty($reshook)) {
 
 		//var_dump($default_account);var_dump($conf->global->$default_account);var_dump($id_bankaccount);exit;
 
-		if ($id_bankaccount != $conf->global->$default_account) {
+		if ($id_bankaccount != getDolGlobalInt($default_account)) {
 			$res = dolibarr_set_const($db, $default_account, $id_bankaccount, 'chaine', 0, '', $conf->entity); // Set as default
 		}
 

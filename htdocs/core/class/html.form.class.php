@@ -21,6 +21,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -909,18 +910,18 @@ class Form
 	/**
 	 *  Return combo list of activated countries, into language of user
 	 *
-	 * @param string $selected Id or Code or Label of preselected country
-	 * @param string $htmlname Name of html select object
-	 * @param string $htmloption More html options on select object
-	 * @param integer $maxlength Max length for labels (0=no limit)
-	 * @param string $morecss More css class
-	 * @param string $usecodeaskey ''=Use id as key (default), 'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
-	 * @param int|string $showempty Show empty choice
-	 * @param int $disablefavorites 1=Disable favorites,
-	 * @param int $addspecialentries 1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
-	 * @param array $exclude_country_code Array of country code (iso2) to exclude
-	 * @param int $hideflags Hide flags
-	 * @return string                        HTML string with select
+	 * @param string 	$selected 				Id or Code or Label of preselected country
+	 * @param string 	$htmlname 				Name of html select object
+	 * @param string 	$htmloption 			More html options on select object
+	 * @param integer 	$maxlength 				Max length for labels (0=no limit)
+	 * @param string 	$morecss 				More css class
+	 * @param string 	$usecodeaskey 			''=Use id as key (default), 'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
+	 * @param int|string $showempty 			Show empty choice
+	 * @param int 		$disablefavorites 		1=Disable favorites,
+	 * @param int 		$addspecialentries 		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
+	 * @param array 	$exclude_country_code 	Array of country code (iso2) to exclude
+	 * @param int 		$hideflags 				Hide flags
+	 * @return string                       	HTML string with select
 	 */
 	public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array(), $hideflags = 0)
 	{
@@ -973,7 +974,7 @@ class Form
 					if (is_numeric($showempty)) {
 						$out .= '<option value="">&nbsp;</option>' . "\n";
 					} else {
-						$out .= '<option value="">' . $langs->trans($showempty) . '</option>' . "\n";
+						$out .= '<option value="-1">' . $langs->trans($showempty) . '</option>' . "\n";
 					}
 				}
 
@@ -2544,6 +2545,7 @@ class Form
 			$error++;
 			dol_print_error($db);
 		}
+		$out .= '</select>';
 		if (empty($nooutput)) {
 			print $out;
 		} else {
@@ -6254,13 +6256,13 @@ class Form
 	/**
 	 *  Load into the cache vat rates of a country
 	 *
-	 * @param string $country_code Country code with quotes ("'CA'", or "'CA,IN,...'")
-	 * @return    int                            Nb of loaded lines, 0 if already loaded, <0 if KO
+	 * @param 	string 	$country_code 		Country code with quotes ("'CA'", or "'CA,IN,...'")
+	 * @return  int                         Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
 	public function load_cache_vatrates($country_code)
 	{
 		// phpcs:enable
-		global $langs;
+		global $langs, $user;
 
 		$num = count($this->cache_vatrates);
 		if ($num > 0) {
@@ -6311,7 +6313,16 @@ class Form
 
 				return $num;
 			} else {
-				$this->error = '<span class="error">' . $langs->trans("ErrorNoVATRateDefinedForSellerCountry", $country_code) . '</span>';
+				$this->error = '<span class="error">';
+				$this->error .= $langs->trans("ErrorNoVATRateDefinedForSellerCountry", $country_code);
+				$reg = array();
+				if (!empty($user) && $user->admin && preg_match('/\'(..)\'/', $country_code, $reg)) {
+					$langs->load("errors");
+					$new_country_code = $reg[1];
+					$country_id = dol_getIdFromCode($this->db, $new_country_code, 'c_pays', 'code', 'rowid');
+					$this->error .= '<br>'.$langs->trans("ErrorFixThisHere", DOL_URL_ROOT.'/admin/dict.php?id=10'.($country_id > 0 ? '&countryidforinsert='.$country_id : ''));
+				}
+				$this->error .= '</span>';
 				return -1;
 			}
 		} else {
