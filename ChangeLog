@@ -6,6 +6,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 18.0.0 compared to 17.0.0 *****
 
 NEW: PHP 8.2 compatibility.
+NEW: Right for stats orders new const MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS
 
 
 WARNING:
