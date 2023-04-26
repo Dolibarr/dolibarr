@@ -2727,6 +2727,8 @@ abstract class CommonObject
 								);
 								break;
 							case 'supplier_proposal':
+								/** @var SupplierProposal $this */
+								/** @var SupplierProposalLine $line */
 								$this->updateline(
 									$line->id,
 									$line->subprice,
@@ -2751,6 +2753,8 @@ abstract class CommonObject
 								);
 								break;
 							case 'order_supplier':
+								/** @var CommandeFournisseur $this */
+								/** @var CommandeFournisseurLigne $line */
 								$this->updateline(
 									$line->id,
 									($line->description ? $line->description : $line->desc),
@@ -2773,6 +2777,8 @@ abstract class CommonObject
 								);
 								break;
 							case 'invoice_supplier':
+								/** @var FactureFournisseur $this */
+								/** @var SupplierInvoiceLine $line */
 								$this->updateline(
 									$line->id,
 									($line->description ? $line->description : $line->desc),
