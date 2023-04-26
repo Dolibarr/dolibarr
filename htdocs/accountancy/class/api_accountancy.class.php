@@ -269,9 +269,8 @@ class Accountancy extends DolibarrApi
 				throw new RestException(500, 'Error accountancy export : '.implode(',', $accountancyexport->errors));
 			} else {
 				$this->db->commit();
+				exit();
 			}
 		}
-
-		return '';
 	}
 }
