@@ -165,7 +165,7 @@ class InventoryTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Inventory($this->savdb);
+		$localobject=new Inventory($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -337,7 +337,7 @@ class InventoryTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Inventory($this->savdb);
+		$localobject=new Inventory($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 		print __METHOD__." id=".$id." result=".$result."\n";

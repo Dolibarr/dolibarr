@@ -152,7 +152,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Societe($this->savdb);
+		$localobject=new Societe($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -179,7 +179,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Societe($this->savdb);
+		$localobject=new Societe($db);
 		$result=$localobject->fetch($id);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -237,7 +237,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0, 'Holiday::update_note (public) error');
 
-		$newobject=new Societe($this->savdb);
+		$newobject=new Societe($db);
 		$result=$newobject->fetch($localobject->id);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -395,7 +395,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Societe($this->savdb);
+		$localobject=new Societe($db);
 		$localobject->fetch($id);
 
 		$result=$localobject->getOutstandingBills();
@@ -424,7 +424,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Societe($this->savdb);
+		$localobject=new Societe($db);
 		$result=$localobject->fetch($id);
 
 		$result=$localobject->delete($id, $user);
