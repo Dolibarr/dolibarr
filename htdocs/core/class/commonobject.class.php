@@ -741,24 +741,48 @@ abstract class CommonObject
 	{
 		global $action, $extrafields, $langs, $hookmanager;
 
-		$MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP = 5;	// If there is too much extrafields, we do not include them into tooltip
+		// If there is too much extrafields, we do not include them into tooltip
+		$MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP = getDolGlobalInt('MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP', 5);
 
 		$datas = $this->getTooltipContentArray($params);
-
+		$count = 0;
 		// Add extrafields
 		if (!empty($extrafields->attributes[$this->table_element]['label'])) {
-			if (count($extrafields->attributes[$this->table_element]['label']) < $MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP) {
-				foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
-					if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
-						$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
-					}
-					$labelextra = $langs->trans((string) $extrafields->attributes[$this->table_element]['label'][$key]);
-					if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
-						$datas[$key]= '<br><b><u>'. $labelextra . '</u></b>';
-					} else {
-						$value = (empty($this->array_options['options_' . $key]) ? '' : $this->array_options['options_' . $key]);
-						$datas[$key]= '<br><b>'. $labelextra . ':</b> ' . $extrafields->showOutputField($key, $value, '', $this->table_element);
-					}
+			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+				if ($count >= $MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP) {
+					$datas['more_extrafields'] = '<br>.../...';
+					break;
+				}
+				$enabled = 1;
+				if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
+					$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
+				}
+				if ($enabled && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
+					$enabled = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
+				}
+				$perms = 1;
+				if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key])) {
+					$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
+				}
+				if (empty($enabled)) {
+					continue; // 0 = Never visible field
+				}
+				if (abs($enabled) != 1 && abs($enabled) != 3 && abs($enabled) != 5 && abs($enabled) != 4) {
+					continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list <> 4 = not visible at the creation
+				}
+				if (empty($perms)) {
+					continue; // 0 = Not visible
+				}
+				if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
+					$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
+				}
+				$labelextra = $langs->trans((string) $extrafields->attributes[$this->table_element]['label'][$key]);
+				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
+					$datas[$key]= '<br><b><u>'. $labelextra . '</u></b>';
+				} else {
+					$value = (empty($this->array_options['options_' . $key]) ? '' : $this->array_options['options_' . $key]);
+					$datas[$key]= '<br><b>'. $labelextra . ':</b> ' . $extrafields->showOutputField($key, $value, '', $this->table_element);
+					$count++;
 				}
 			}
 		}
