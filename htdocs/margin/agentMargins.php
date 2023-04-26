@@ -347,6 +347,12 @@ if ($result) {
 	}
 
 	// Show total margin
+	if (!isset($cumul_achat)) {
+		$cumul_achat = 0;
+	}
+	if (!isset($cumul_vente)) {
+		$cumul_vente = 0;
+	}
 	$totalMargin = $cumul_vente - $cumul_achat;
 
 	$marginRate = ($cumul_achat != 0) ? (100 * $totalMargin / $cumul_achat) : '';
