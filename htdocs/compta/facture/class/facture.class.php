@@ -1507,7 +1507,7 @@ class Facture extends CommonInvoice
 	 *
 	 *  @param      Object			$object         	Object source
 	 *  @param		User			$user				Object user
-	 * 	@param		Array(int)		$lines				Ids of lines to use for invoice. If empty, all lines will be used.
+	 * 	@param		array			$lines				Ids of lines to use for invoice. If empty, all lines will be used.
 	 *  @return     int             					<0 if KO, 0 if nothing done, 1 if OK
 	 */
 	public function createFromContract($object, User $user, $lines = array())

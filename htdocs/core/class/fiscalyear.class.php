@@ -304,7 +304,7 @@ class Fiscalyear extends CommonObject
 			$datas['date_start'] .= '<br><b>'.$langs->trans('DateStart').':</b> '.dol_print_date($this->date_start, 'day');
 		}
 		if (isset($this->date_start)) {
-			$datas['date_end'] .= '<br><b>'.$langs->trans('DateEnd').':</b> '.dol_print_date($this->date_end, 'day');;
+			$datas['date_end'] .= '<br><b>'.$langs->trans('DateEnd').':</b> '.dol_print_date($this->date_end, 'day');
 		}
 
 		return $datas;

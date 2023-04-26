@@ -82,6 +82,11 @@ class BonPrelevement extends CommonObject
 	public $invoice_in_error = array();
 	public $thirdparty_in_error = array();
 
+	/**
+	 * @var resource	Handler of the file for direct debit or credit transfer order
+	 */
+	public $file;
+
 
 	const STATUS_DRAFT = 0;
 	const STATUS_TRANSFERED = 1;
