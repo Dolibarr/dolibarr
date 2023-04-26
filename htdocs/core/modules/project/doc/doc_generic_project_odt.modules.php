@@ -1048,7 +1048,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'class' => 'ActionComm',
 						'table' => 'actioncomm',
 						'disableamount' => 1,
-						'test' => $conf->agenda->enabled && $user->rights->agenda->allactions->lire
+						'test' => isModEnabled('agenda') && $user->rights->agenda->allactions->lire
 					),
 				);
 

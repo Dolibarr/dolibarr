@@ -2115,7 +2115,7 @@ class EmailCollector extends CommonObject
 					$result = $thirdpartystatic->fetch(0, '', '', '', '', '', '', '', '', '', $from);
 					if ($result > 0) {
 						dol_syslog("We found a thirdparty with the email ".$from);
-						$thirdpartyid = $thirdpartystatic->id;;
+						$thirdpartyid = $thirdpartystatic->id;
 						$thirdpartyfoundby = 'email ('.$from.')';
 					}
 				}
@@ -2143,7 +2143,7 @@ class EmailCollector extends CommonObject
 				 $result = $thirdpartystatic->fetch(0, '', '', '', '', '', '', '', '', '', $replyto);
 				 if ($result > 0) {
 				 dol_syslog("We found a thirdparty with the email ".$replyto);
-				 $thirdpartyid = $thirdpartystatic->id;;
+				 $thirdpartyid = $thirdpartystatic->id;
 				 $thirdpartyfoundby = 'email ('.$replyto.')';
 				 }
 				 }

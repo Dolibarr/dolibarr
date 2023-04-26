@@ -394,3 +394,20 @@ ALTER TABLE llx_c_email_templates add COLUMN defaultfortype smallint DEFAULT 0;
 ALTER TABLE llx_mailing ADD COLUMN fk_user_modif integer AFTER fk_user_creat;
 ALTER TABLE llx_mailing ADD COLUMN evenunsubscribe smallint DEFAULT 0;
 ALTER TABLE llx_mailing ADD COLUMN name_from varchar(128) AFTER email_from;
+
+ALTER TABLE llx_bom_bomline ADD COLUMN fk_default_workstation integer DEFAULT NULL;
+ALTER TABLE llx_mrp_production ADD COLUMN fk_default_workstation integer DEFAULT NULL;
+
+ALTER TABLE llx_facture ADD COLUMN subtype smallint DEFAULT NULL;
+
+CREATE TABLE llx_c_invoice_subtype (
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  entity integer DEFAULT 1,
+  fk_country integer NOT NULL,
+  code varchar(3) NOT NULL,
+  label varchar(100),
+  active tinyint DEFAULT 1 NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_invoice_subtype ADD UNIQUE INDEX uk_c_invoice_subtype (entity, code);
+

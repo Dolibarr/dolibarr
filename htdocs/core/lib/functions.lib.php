@@ -161,8 +161,8 @@ function getDolUserInt($key, $default = 0, $tmpuser = null)
 /**
  * Is Dolibarr module enabled
  *
- * @param string $module module name to check
- * @return int
+ * @param 	string 	$module 	Module name to check
+ * @return 	boolean				True if module is enabled
  */
 function isModEnabled($module)
 {
@@ -170,7 +170,8 @@ function isModEnabled($module)
 
 	// Fix special cases
 	$arrayconv = array(
-		'project' => 'projet'
+		'project' => 'projet',
+		'contract' => 'contrat'
 	);
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
 		$arrayconv['supplier_order'] = 'fournisseur';
@@ -1446,13 +1447,17 @@ function dol_string_unaccent($str)
  * 	@param	string			$newstr				String to replace forbidden chars with
  *  @param  array|string	$badcharstoreplace  Array of forbidden characters to replace. Use '' to keep default list.
  *  @param  array|string	$badcharstoremove   Array of forbidden characters to remove. Use '' to keep default list.
+ *  @param	int				$keepspaces			1=Do not treat space as a special char to replace or remove
  * 	@return string          					Cleaned string
  *
  * 	@see    		dol_sanitizeFilename(), dol_string_unaccent(), dol_string_nounprintableascii()
  */
-function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '', $badcharstoremove = '')
+function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '', $badcharstoremove = '', $keepspaces = 0)
 {
-	$forbidden_chars_to_replace = array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=", '°', '$', ';'); // more complete than dol_sanitizeFileName
+	$forbidden_chars_to_replace = array("'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=", '°', '$', ';'); // more complete than dol_sanitizeFileName
+	if (empty($keepspaces)) {
+		$forbidden_chars_to_replace[] = " ";
+	}
 	$forbidden_chars_to_remove = array();
 	//$forbidden_chars_to_remove=array("(",")");
 
@@ -1536,7 +1541,7 @@ function dol_escape_json($stringtoescape)
 }
 
 /**
- *  Returns text escaped for inclusion in HTML alt or title tags, or into values of HTML input fields.
+ *  Returns text escaped for inclusion in HTML alt or title or value tags, or into values of HTML input fields.
  *
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Keep b tags, 0=remove them completely
@@ -3584,7 +3589,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			}
 		}
 
-		//if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
+		//if (($cid || $socid) && isModEnabled('agenda') && $user->rights->agenda->myactions->create)
 		if (isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
 			$type = 'AC_TEL';
 			$link = '';
@@ -3801,22 +3806,22 @@ function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $char
 
 			// TODO Remove this block, we can add this using the hook now
 			$showgmap = $showomap = 0;
-			if (($element == 'thirdparty' || $element == 'societe') && !empty($conf->google->enabled) && !empty($conf->global->GOOGLE_ENABLE_GMAPS)) {
+			if (($element == 'thirdparty' || $element == 'societe') && isModEnabled('google') && !empty($conf->global->GOOGLE_ENABLE_GMAPS)) {
 				$showgmap = 1;
 			}
-			if ($element == 'contact' && !empty($conf->google->enabled) && !empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) {
+			if ($element == 'contact' && isModEnabled('google') && !empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) {
 				$showgmap = 1;
 			}
-			if ($element == 'member' && !empty($conf->google->enabled) && !empty($conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS)) {
+			if ($element == 'member' && isModEnabled('google') && !empty($conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS)) {
 				$showgmap = 1;
 			}
-			if (($element == 'thirdparty' || $element == 'societe') && !empty($conf->openstreetmap->enabled) && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) {
+			if (($element == 'thirdparty' || $element == 'societe') && isModEnabled('openstreetmap') && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) {
 				$showomap = 1;
 			}
-			if ($element == 'contact' && !empty($conf->openstreetmap->enabled) && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS)) {
+			if ($element == 'contact' && isModEnabled('openstreetmap') && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS)) {
 				$showomap = 1;
 			}
-			if ($element == 'member' && !empty($conf->openstreetmap->enabled) && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS)) {
+			if ($element == 'member' && isModEnabled('openstreetmap') && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS)) {
 				$showomap = 1;
 			}
 			if ($showgmap) {
@@ -6219,7 +6224,7 @@ function isOnlyOneLocalTax($local)
  * Get values of localtaxes (1 or 2) for company country for the common vat with the highest value
  *
  * @param	int				$local 		LocalTax to get
- * @return	string						Values of localtax (Can be '20', '-19:-15:-9')
+ * @return	string						Values of localtax (Can be '20', '-19:-15:-9') or 'Error'
  */
 function get_localtax_by_third($local)
 {
@@ -6236,12 +6241,14 @@ function get_localtax_by_third($local)
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
-		return $obj->localtax;
-	} else {
-		return 'Error';
+		if ($obj) {
+			return $obj->localtax;
+		} else {
+			return '0';
+		}
 	}
 
-	return '0';
+	return 'Error';
 }
 
 
@@ -7295,15 +7302,16 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 		do {
 			$oldstringtoclean = $out;
 
+			libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
+
 			if (!empty($out) && !empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) && $check != 'restricthtmlallowunvalid') {
 				try {
 					$dom = new DOMDocument;
 					// Add a trick to solve pb with text without parent tag
-					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up without the trick into '<h1>Foo<p>bar</p></h1>'
-					// like 'abc' that wrongly ends up without the tric into with '<p>abc</p>'
+					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up, without the trick, with '<h1>Foo<p>bar</p></h1>'
+					// like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
 					$out = '<div class="tricktoremove">'.$out.'</div>';
-
-					$dom->loadHTML($out, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
+					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD|LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
 					$out = trim($dom->saveHTML());
 
 					// Remove the trick added to solve pb with text without parent tag
@@ -8025,7 +8033,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if ($object->fetch_optionals() > 0) {
 					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
-							$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $object->array_options['options_'.$key];
 							if ($extrafields->attributes[$object->table_element]['type'][$key] == 'date') {
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = dol_print_date($object->array_options['options_'.$key], 'day');
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_LOCALE__'] = dol_print_date($object->array_options['options_'.$key], 'day', 'tzserver', $outputlangs);
@@ -8041,6 +8048,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'price') {
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $object->array_options['options_'.$key];
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_FORMATED__'] = price($object->array_options['options_'.$key]);
+							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] != 'separator') {
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $object->array_options['options_'.$key];
 							}
 						}
 					}
@@ -9779,7 +9788,7 @@ function printCommonFooter($zone = 'private')
 
 			// Google Analytics
 			// TODO Add a hook here
-			if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
+			if (isModEnabled('google') && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
 				$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
 				foreach ($tmptagarray as $tmptag) {
 					print "\n";
@@ -11412,6 +11421,10 @@ function getElementProperties($element_type)
 		$classname = 'Websitepage';
 		$module = 'website';
 		$subelement = 'websitepage';
+	} elseif ($element_type == 'fiscalyear') {
+		$classpath = 'core/class';
+		$module = 'accounting';
+		$subelement = 'fiscalyear';
 	}
 
 	if (empty($classfile)) {
@@ -11783,7 +11796,7 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$error = '')
 	$t = str_replace(array('and','or','AND','OR',' '), '', $t);		// Remove the only strings allowed between each () criteria
 	// If the string result contains something else than '()', the syntax was wrong
 	if (preg_match('/[^\(\)]/', $t)) {
-		$error = 'Bad syntax of the search string, filter criteria is inhalited';
+		$error = 'Bad syntax of the search string, filter criteria is invalidated';
 		return 'Filter syntax error';		// Bad syntax of the search string, we force a SQL not found
 	}
 

@@ -223,7 +223,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	{
 		global $langs;
 
-		$s = '<select id="filter_services_expired" name="filter" class="flat">';
+		$s = img_picto('', 'product', 'class="pictofixedwidth"').'<select id="filter_services_expired" name="filter" class="flat">';
 		if (count($this->arrayofproducts)) {
 			$langs->loadLangs(array("products"));
 			$s .= '<option value="-1">'.$langs->trans("ProductOrService").'</option>';
