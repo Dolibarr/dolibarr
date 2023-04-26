@@ -33,13 +33,15 @@ create table llx_facture
   ref_client			varchar(255),							-- reference for customer
 
   type					smallint DEFAULT 0 NOT NULL,			-- type of invoice
+  subtype				smallint DEFAULT NULL,					-- subtype of invoice (some countries need a subtype to classify invoices)
   fk_soc				integer            NOT NULL,
+
   datec					datetime,								-- date de creation de la facture
   datef					date,									-- date invoice
   date_pointoftax		date DEFAULT NULL,									-- date point of tax (for GB)
   date_valid			date,									-- date validation
   tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,								-- last modification date
-  date_closing				datetime,							-- date de cloture
+  date_closing			datetime,								-- date de cloture
   paye					smallint DEFAULT 0 NOT NULL,
 
   remise_percent		real     DEFAULT 0,						-- remise relative
