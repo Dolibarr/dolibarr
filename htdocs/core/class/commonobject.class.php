@@ -735,21 +735,24 @@ abstract class CommonObject
 		$MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP = getDolGlobalInt('MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP', 5);
 
 		$datas = $this->getTooltipContentArray($params);
-
+		$count = 0;
 		// Add extrafields
 		if (!empty($extrafields->attributes[$this->table_element]['label'])) {
-			if ($extrafields->attributes[$this->table_element]['count'] < $MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP) {
-				foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
-					if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
-						$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
-					}
-					$labelextra = $langs->trans((string) $extrafields->attributes[$this->table_element]['label'][$key]);
-					if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
-						$datas[$key]= '<br><b><u>'. $labelextra . '</u></b>';
-					} else {
-						$value = (empty($this->array_options['options_' . $key]) ? '' : $this->array_options['options_' . $key]);
-						$datas[$key]= '<br><b>'. $labelextra . ':</b> ' . $extrafields->showOutputField($key, $value, '', $this->table_element);
-					}
+			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+				if ($count >= $MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP) {
+					$datas['more_extrafields'] = '<br>.../...';
+					break;
+				}
+				if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
+					$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
+				}
+				$labelextra = $langs->trans((string) $extrafields->attributes[$this->table_element]['label'][$key]);
+				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
+					$datas[$key]= '<br><b><u>'. $labelextra . '</u></b>';
+				} else {
+					$value = (empty($this->array_options['options_' . $key]) ? '' : $this->array_options['options_' . $key]);
+					$datas[$key]= '<br><b>'. $labelextra . ':</b> ' . $extrafields->showOutputField($key, $value, '', $this->table_element);
+					$count++;
 				}
 			}
 		}
