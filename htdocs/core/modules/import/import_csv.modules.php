@@ -852,6 +852,7 @@ class ImportCsv extends ModeleImports
 								foreach ($data as $key => $val) {
 									$set[] = $key.' = '.$val;
 								}
+								$set[] = "import_key =  '". $this->db->escape($importid)."'";
 								$sqlstart .= ' SET '.implode(', ', $set);
 
 								if (empty($keyfield)) {
