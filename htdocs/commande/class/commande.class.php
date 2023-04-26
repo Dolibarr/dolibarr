@@ -1899,7 +1899,7 @@ class Commande extends CommonOrder
 				$this->ref = $obj->ref;
 				$this->ref_client = $obj->ref_client;
 				$this->ref_customer = $obj->ref_client;
-				$this->ref_ext				= $obj->ref_ext;
+				$this->ref_ext = $obj->ref_ext;
 
 				$this->socid = $obj->fk_soc;
 				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty

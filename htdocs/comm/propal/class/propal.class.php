@@ -122,6 +122,7 @@ class Propal extends CommonObject
 	/**
 	 * Status of the quote
 	 * @var int
+	 * @deprecated Try to use $status now
 	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED
 	 */
 	public $statut;
@@ -1606,7 +1607,8 @@ class Propal extends CommonObject
 
 				$this->ref                  = $obj->ref;
 				$this->ref_client           = $obj->ref_client;
-				$this->ref_ext           = $obj->ref_ext;
+				$this->ref_customer         = $obj->ref_client;
+				$this->ref_ext              = $obj->ref_ext;
 
 				$this->remise               = $obj->remise;				// TODO deprecated
 				$this->remise_percent       = $obj->remise_percent;		// TODO deprecated

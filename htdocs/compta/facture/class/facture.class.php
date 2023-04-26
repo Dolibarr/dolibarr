@@ -177,9 +177,6 @@ class Facture extends CommonInvoice
 	 */
 	public $ref_customer;
 
-	//Check constants for types
-	public $type = self::TYPE_STANDARD;
-
 	// Warning: Do not set default value into property defintion. it must stay null.
 	// For example to avoid to have substition done when object is generic and not yet defined.
 	public $remise_absolue;
@@ -300,6 +297,7 @@ class Facture extends CommonInvoice
 	 * @var int Code in llx_c_paiement
 	 */
 	public $retained_warranty_fk_cond_reglement;
+
 
 
 	/**
@@ -492,7 +490,9 @@ class Facture extends CommonInvoice
 		if (empty($this->type)) {
 			$this->type = self::TYPE_STANDARD;
 		}
+
 		$this->ref_client = trim($this->ref_client);
+
 		$this->note = (isset($this->note) ? trim($this->note) : trim($this->note_private)); // deprecated
 		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : trim($this->note_private));
 		$this->note_public = trim($this->note_public);
