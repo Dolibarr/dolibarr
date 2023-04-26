@@ -594,14 +594,15 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referer=".(empty($_SERVER['HTTP_REFERER'])?'':$_SERVER['HTTP_REFERER']).", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha'), LOG_WARNING);
 		//dol_syslog("_SESSION['token']=".$sessiontokenforthisurl, LOG_DEBUG);
 		// Do not output anything on standard output because this create problems when using the BACK button on browsers. So we just set a message into session.
-		setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings');
+		if (!defined('NOTOKENRENEWAL')) {
+			// If the page is not a page that disable the token renewal, we report a warning message to explain token has epired.
+			setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings', '', 1);
+		}
 		$savid = null;
 		if (isset($_POST['id'])) {
 			$savid = ((int) $_POST['id']);
 		}
 		unset($_POST);
-		//unset($_POST['action']); unset($_POST['massaction']);
-		//unset($_POST['confirm']); unset($_POST['confirmmassaction']);
 		unset($_GET['confirm']);
 		unset($_GET['action']);
 		unset($_GET['confirmmassaction']);
@@ -610,6 +611,8 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		if (isset($savid)) {
 			$_POST['id'] = ((int) $savid);
 		}
+		// So rest of code can know something was wrong here
+		$_GET['errorcode'] = 'InvalidToken';
 	}
 
 	// Note: There is another CSRF protection into the filefunc.inc.php
@@ -2309,7 +2312,9 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	}
 	$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_TVAINTRA"), 'VAT').'</span>';
 	$dropdownBody .= '<br><b>'.$langs->trans("Country").'</b>: <span>'.($mysoc->country_code ? $langs->trans("Country".$mysoc->country_code) : '').'</span>';
-
+	if (isModEnabled('multicurrency')) {
+		$dropdownBody .= '<br><b>'.$langs->trans("Currency").'</b>: <span>'.$conf->currency.'</span>';
+	}
 	$dropdownBody .= '</div>';
 
 	$dropdownBody .= '<br>';
@@ -2541,7 +2546,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
  */
 function top_menu_quickadd()
 {
-	global $langs;
+	global $conf, $langs;
 
 	$html = '';
 
@@ -2843,7 +2848,6 @@ function top_menu_bookmark()
 	                  }
 	            });
 
-
 	            var openBookMarkDropDown = function() {
 	                event.preventDefault();
 	                jQuery("#topmenu-bookmark-dropdown").toggleClass("open");
@@ -2988,12 +2992,15 @@ function top_menu_search()
 
         // Key map shortcut
         jQuery(document).keydown(function(e){
-              if( e.which === 70 && e.ctrlKey && e.shiftKey ){
+              if ( e.which === 70 && e.ctrlKey && e.shiftKey ) {
                  console.log(\'control + shift + f : trigger open global-search dropdown\');
                  openGlobalSearchDropDown();
               }
+              if ( e.which === 70 && e.alKey ) {
+                 console.log(\'alt + f : trigger open global-search dropdown\');
+                 openGlobalSearchDropDown();
+              }
         });
-
 
         var openGlobalSearchDropDown = function() {
             jQuery("#topmenu-global-search-dropdown").toggleClass("open");
@@ -3088,6 +3095,24 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
                 </script>' . "\n";
 				$searchform .= '</div>';
 			}
+
+			// Key map shortcut
+			$searchform .= '<script>
+				jQuery(document).keydown(function(e){
+					if( e.which === 70 && e.ctrlKey && e.shiftKey ){
+						console.log(\'control + shift + f : trigger open global-search dropdown\');
+		                openGlobalSearchDropDown();
+		            }
+		            if( (e.which === 83 || e.which === 115) && e.altKey ){
+		                console.log(\'alt + s : trigger open global-search dropdown\');
+		                openGlobalSearchDropDown();
+		            }
+		        });
+
+		        var openGlobalSearchDropDown = function() {
+		            jQuery("#searchselectcombo").select2(\'open\');
+		        }
+			</script>';
 		}
 
 		// Left column

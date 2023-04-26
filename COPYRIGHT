@@ -29,7 +29,7 @@ GeoIP2                 0.2.0         Apache License 2.0          Yes            
 Mobiledetect           2.8.41        MIT License                 Yes             Detect mobile devices browsers
 NuSoap                 0.9.5         LGPL 2.1+                   Yes             Library to develop SOAP Web services (not into rpm and deb package)
 PEAR Mail_MIME         1.8.9         BSD                         Yes             NuSoap dependency
-ParseDown              1.6           MIT License                 Yes             Markdown parser
+ParseDown              1.7.4         MIT License                 Yes             Markdown parser
 PCLZip                 2.8.4         LGPL-3+                     Yes             Library to zip/unzip files
 PHPDebugBar            1.18.2        MIT License                 Yes             Used only by the module "debugbar" for developers
 PHP-Imap               2.7.2         MIT License                 Yes             Library to use IMAP with OAuth
@@ -43,7 +43,7 @@ Restler                3.1.1         LGPL-3+                     Yes            
 Sabre                  3.2.2         BSD                         Yes             DAV support
 Swift Mailer           5.4.2-DEV     MIT License                 Yes             Comprehensive mailing tools for PHP
 Symfony/var-dumper     ??? 			 MIT License                 Yes             Library to make var dump (used by DebugBar)
-Stripe                 7.67.0        MIT Licence                 Yes             Library for Stripe module
+Stripe                 10.7.0        MIT Licence                 Yes             Library for Stripe module
 TCPDF                  6.3.2         LGPL-3+                     Yes             PDF generation
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 

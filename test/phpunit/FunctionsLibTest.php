@@ -1141,10 +1141,10 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$verifcond=verifCond('1==2');
 		$this->assertFalse($verifcond, 'Test a false comparison');
 
-		$verifcond=verifCond('$conf->facture->enabled');
+		$verifcond=verifCond('isModEnabled("facture")');
 		$this->assertTrue($verifcond, 'Test that the conf property of a module reports true when enabled');
 
-		$verifcond=verifCond('$conf->moduledummy->enabled');
+		$verifcond=verifCond('isModEnabled("moduledummy")');
 		$this->assertFalse($verifcond, 'Test that the conf property of a module reports false when disabled');
 
 		$verifcond=verifCond(0);
@@ -1381,6 +1381,12 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 		print __METHOD__." tmp=".json_encode($tmp)."\n";
 		$this->assertEquals('{"AA":"B\/B","CC":"","EE":"FF","HH":"GG;"}', json_encode($tmp));
+
+		$stringtoexplode="AA=B/B;CC=\n\rEE=FF\nHH=GG;;;\nII=JJ\n";
+		$tmp=dolExplodeIntoArray($stringtoexplode, "(\r\n|\n|\r|;)", '=');
+
+		print __METHOD__." tmp=".json_encode($tmp)."\n";
+		$this->assertEquals('{"AA":"B\/B","CC":"","EE":"FF","HH":"GG","II":"JJ"}', json_encode($tmp));
 	}
 
 	/**

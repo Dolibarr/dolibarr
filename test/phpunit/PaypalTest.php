@@ -83,7 +83,7 @@ class PaypalTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 
-		if (empty($conf->paypal->enabled)) {
+		if (!isModEnabled('paypal')) {
 			print __METHOD__." Module Paypal must be enabled.\n"; die(1);
 		}
 

@@ -42,7 +42,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 $conf->global->MAIN_UMASK='0666';
 
-if (empty($conf->service->enabled)) {
+if (!isModEnabled('service')) {
 	print "Error: Module service must be enabled.\n";
 	exit(1);
 }

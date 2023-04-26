@@ -572,19 +572,20 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 	if (!empty($conf->use_javascript_ajax)) {
 		print "\n".'<!-- Js code to suggest a security key -->';
 		print '<script nonce="'.getNonce().'" type="text/javascript">';
-		print '$(document).ready(function () {
-            $("#'.dol_escape_js($htmlnameofbutton).'").click(function() {
-				console.log("We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. We will fill '.dol_escape_js($htmlname).'");
-            	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
+		print 'jQuery(document).ready(function () {
+            jQuery("#'.dol_escape_js($htmlnameofbutton).'").click(function() {
+				var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
+				console.log("We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currentotken is "+currenttoken+". We will fill '.dol_escape_js($htmlname).'");
+				jQuery.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
             		generic: '.($generic ? '1' : '0').',
-					token: \''.dol_escape_js(newToken()).'\'
+					token: currenttoken
 				},
 				function(result) {
-					if ($("input#'.dol_escape_js($htmlname).'").attr("type") == "password") {
-						$("input#'.dol_escape_js($htmlname).'").attr("type", "text");
+					if (jQuery("input#'.dol_escape_js($htmlname).'").attr("type") == "password") {
+						jQuery("input#'.dol_escape_js($htmlname).'").attr("type", "text");
 					}
-					$("#'.dol_escape_js($htmlname).'").val(result);
+					jQuery("#'.dol_escape_js($htmlname).'").val(result);
 				});
             });
 		});'."\n";

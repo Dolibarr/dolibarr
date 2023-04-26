@@ -410,8 +410,7 @@ $moreforfilter = '';
 
 // Filter on categories
 /*
-if (!empty($conf->categorie->enabled))
-{
+if (isModEnabled("categorie")) {
 	require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter.=$langs->trans('ProjectCategories'). ': ';
@@ -536,7 +535,7 @@ if (count($tasksarray) > 0) {
 	$totalforeachweek = array();
 	foreach ($listofdistinctprojectid as $tmpprojectid) {
 		$projectstatic->id = $tmpprojectid;
-		$projectstatic->loadTimeSpentMonth($firstdaytoshow, 0, $usertoprocess->id); // Load time spent from table projet_task_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
+		$projectstatic->loadTimeSpentMonth($firstdaytoshow, 0, $usertoprocess->id); // Load time spent from table element_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
 		foreach ($TWeek as $weekNb) {
 			$totalforeachweek[$weekNb] += $projectstatic->monthWorkLoad[$weekNb];
 		}

@@ -400,7 +400,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 						$nature = "sells";
 					}
 					if ($objp->nature == 3
-						&& ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_invoice'))
+						&& isModEnabled('supplier_invoice')
 						&& empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_PURCHASES)) {
 						$nature = "purchases";
 					}

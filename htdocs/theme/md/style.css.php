@@ -973,6 +973,9 @@ th .button {
 .centpercent {
 	width: 100%;
 }
+.centpercentimp {
+	width: 100% !important;
+}
 .centpercentwithoutmenu {
 	width: calc(100% - 200px);
 }
@@ -1553,7 +1556,7 @@ select.flat.selectlimit {
 }
 /* using a tdoverflowxxx make the min-width not working */
 .tdnooverflowimp {
-   text-overflow: none;
+   text-overflow: unset;
 }
 .tdoverflow {
 	max-width: 0;
@@ -3129,6 +3132,7 @@ div.login_block {
 	top: 0;
 	padding-top: 3px;
 	padding-bottom: 3px;
+	border-right: 1px solid rgba(0,0,0,0.2);
 	<?php print $left; ?>: 0;
 <?php if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	position: absolute;
@@ -3430,7 +3434,9 @@ a.vsmenu.addbookmarkpicto {
 }
 div.blockvmenufirst {
 	padding-top: 10px;
+	<?php if (getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) { ?>
 	border-top: 1px solid #e0e0e0;
+	<?php } ?>
 }
 div.blockvmenusearch, div.blockvmenubookmarks
 {

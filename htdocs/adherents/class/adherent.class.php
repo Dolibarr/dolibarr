@@ -1247,7 +1247,7 @@ class Adherent extends CommonObject
 
 					if ($result >= 0) {
 						$result = $luser->setPassword($user, $this->pass, 0, 0, 1);
-						if ($result < 0) {
+						if (is_numeric($result) && $result < 0) {
 							$this->error = $luser->error;
 							dol_syslog(get_class($this)."::setPassword ".$this->error, LOG_ERR);
 							$error++;
@@ -2413,8 +2413,7 @@ class Adherent extends CommonObject
 			}
 			// Only picto
 			if ($withpictoimg > 0) {
-				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">'.
-					img_object('', 'user', $paddafterimage.' '.($notooltip ? '' : $dataparams.' class="'.$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1).'</span>';
+				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip ? '' : $dataparams), 0, 0, $notooltip ? 0 : 1).'</span>';
 			} else {
 				// Picto must be a photo
 				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>';
@@ -3062,7 +3061,7 @@ class Adherent extends CommonObject
 
 		$blockingerrormsg = '';
 
-		if (empty($conf->adherent->enabled)) { // Should not happen. If module disabled, cron job should not be visible.
+		if (!isModEnabled('adherent')) { // Should not happen. If module disabled, cron job should not be visible.
 			$langs->load("agenda");
 			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
 			return 0;

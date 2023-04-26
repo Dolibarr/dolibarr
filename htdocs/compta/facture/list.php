@@ -993,7 +993,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($sall) {
 		$param .= '&sall='.urlencode($sall);
@@ -1178,7 +1178,7 @@ if ($resql) {
 	if (!empty($user->rights->facture->paiement)) {
 		$arrayofmassactions['makepayment'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakePaymentAndClassifyPayed");
 	}
-	if (!empty($conf->prelevement->enabled) && !empty($user->rights->prelevement->bons->creer)) {
+	if (isModEnabled('prelevement') && !empty($user->rights->prelevement->bons->creer)) {
 		$langs->load("withdrawals");
 		$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeWithdrawRequest");
 	}
@@ -2589,6 +2589,9 @@ if ($resql) {
 
 			$i++;
 		}
+
+		// Use correct digits number for totals
+		$totalarray['val']['total_margin'] = price2num($totalarray['val']['total_margin'], 'MT');
 
 		// Show total line
 		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';

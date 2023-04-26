@@ -235,7 +235,7 @@ if ($resql) {
 	$i = 0;
 
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param.='&limit='.urlencode($limit);
+		$param.='&limit='.((int) $limit);
 	}
 	$param = "&id=".urlencode($id);
 

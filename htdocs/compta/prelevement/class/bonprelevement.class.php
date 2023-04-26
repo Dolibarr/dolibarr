@@ -82,6 +82,11 @@ class BonPrelevement extends CommonObject
 	public $invoice_in_error = array();
 	public $thirdparty_in_error = array();
 
+	/**
+	 * @var resource	Handler of the file for direct debit or credit transfer order
+	 */
+	public $file;
+
 
 	const STATUS_DRAFT = 0;
 	const STATUS_TRANSFERED = 1;
@@ -1888,7 +1893,7 @@ class BonPrelevement extends CommonObject
 
 		fputs($this->file, substr("000000000000000".$montant, -16));
 
-		// Libelle F
+		// Label F
 
 		fputs($this->file, substr("*_".$ref."_RDVnet".$rowid."                               ", 0, 31));
 

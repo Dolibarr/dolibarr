@@ -101,6 +101,9 @@ class mailing_fraise extends MailingTargets
 		$sql  = "SELECT count(distinct(a.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql .= " WHERE (a.email IS NOT NULL AND a.email != '') AND a.entity IN (".getEntity('member').")";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = a.email and mu.entity = ".((int) $conf->entity).")";
+		}
 
 		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
@@ -277,6 +280,9 @@ class mailing_fraise extends MailingTargets
 		// Filter on type
 		if (GETPOST('filter_type', 'int') > 0) {
 			$sql .= " AND ta.rowid = ".((int) GETPOST('filter_type', 'int'));
+		}
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = a.email and mu.entity = ".((int) $conf->entity).")";
 		}
 		$sql .= " ORDER BY a.email";
 		//print $sql;

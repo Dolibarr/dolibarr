@@ -153,8 +153,8 @@ if ($modulepart == 'fckeditor') {
  */
 
 if (GETPOST("cache", 'alpha')) {
-	// Important: Following code is to avoid page request by browser and PHP CPU at
-	// each Dolibarr page access.
+	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+	// Add param cache=abcdef
 	if (empty($dolibarr_nocache)) {
 		header('Cache-Control: max-age=3600, public, must-revalidate');
 		header('Pragma: cache'); // This is to avoid having Pragma: no-cache

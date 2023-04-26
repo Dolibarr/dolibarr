@@ -947,7 +947,7 @@ if ($action == 'create') {
 		}
 		$htmltext .= '</i>';
 
-		// Libelle
+		// Label
 		print '<tr><td class="titlefieldcreate">' . $langs->trans("Label") . '</td><td>';
 		print '<input class="flat quatrevingtpercent" type="text" name="libelle" value="' . $object->label . '">';
 		print '</td></tr>';
@@ -1059,9 +1059,9 @@ if ($action == 'create') {
 		print dol_get_fiche_end();
 
 		$title = $langs->trans("ProductsAndServices");
-		if (empty($conf->service->enabled)) {
+		if (!isModEnabled("service")) {
 			$title = $langs->trans("Products");
-		} elseif (empty($conf->product->enabled)) {
+		} elseif (!isModEnabled("product")) {
 			$title = $langs->trans("Services");
 		}
 
