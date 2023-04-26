@@ -118,6 +118,11 @@ abstract class CommonObject
 	public $array_options = array();
 
 	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array();
+
+	/**
 	 * @var mixed		Array to store alternative languages values of object
 	 */
 	public $array_languages = null; // Value is array() when load already tried
@@ -2637,6 +2642,8 @@ abstract class CommonObject
 
 						switch ($this->element) {
 							case 'propal':
+								/** @var Propal $this */
+								/** @var PropaleLigne $line */
 								$this->updateline(
 									$line->id,
 									$line->subprice,
@@ -2663,6 +2670,8 @@ abstract class CommonObject
 								);
 								break;
 							case 'commande':
+								/** @var Commande $this */
+								/** @var OrderLine $line */
 								$this->updateline(
 									$line->id,
 									($line->description ? $line->description : $line->desc),
@@ -2689,6 +2698,8 @@ abstract class CommonObject
 								);
 								break;
 							case 'facture':
+								/** @var Facture $this */
+								/** @var FactureLigne $line */
 								$this->updateline(
 									$line->id,
 									($line->description ? $line->description : $line->desc),
