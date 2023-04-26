@@ -2,10 +2,10 @@
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2022  		Lionel Vessiller        <lvessiller@open-dsi.fr>
+ * Copyright (C) 2022       Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2022  		Progiseize         		<a.bisotti@progiseize.fr>
+ * Copyright (C) 2022       Progiseize              <a.bisotti@progiseize.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -835,7 +835,10 @@ if (empty($reshook)) {
 
 print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
-print info_admin($langs->trans("WarningDataDisappearsWhenDataIsExported"), 0, 0, 0);
+// Not display message when all the list of docs are included
+if (empty($conf->global->ACCOUNTING_REEXPORT)) {
+	print info_admin($langs->trans("WarningDataDisappearsWhenDataIsExported"), 0, 0, 0);
+}
 print '<br>';
 
 //$topicmail = "Information";
