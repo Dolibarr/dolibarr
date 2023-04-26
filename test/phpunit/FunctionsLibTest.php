@@ -674,6 +674,24 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 
 	/**
+	 * testDolStringNoSpecial
+	 *
+	 * @return boolean
+	 */
+	public function testDolStringNoSpecial()
+	{
+		$text="A string with space and special char like ' or ° and more...\n";
+		$after=dol_string_nospecial($text, '_', '', '', 0);
+		$this->assertEquals("A_string_with_space_and_special_char_like___or___and_more...\n", $after, "testDolStringNoSpecial 1");
+
+		$text="A string with space and special char like ' or ° and more...\n";
+		$after=dol_string_nospecial($text, '_', '', '', 1);
+		$this->assertEquals("A string with space and special char like _ or _ and more...\n", $after, "testDolStringNoSpecial 2");
+
+		return true;
+	}
+
+	/**
 	 * testDolStringNohtmltag
 	 *
 	 * @return boolean
