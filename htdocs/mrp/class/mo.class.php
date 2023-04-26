@@ -741,6 +741,7 @@ class Mo extends CommonObject
 								$moline->position = $line->position;
 								$moline->qty_frozen = $line->qty_frozen;
 								$moline->disable_stock_change = $line->disable_stock_change;
+								if (!empty($line->fk_default_workstation)) $moline->fk_default_workstation = $line->fk_default_workstation;
 
 								$resultline = $moline->create($user, false); // Never use triggers here
 								if ($resultline <= 0) {
@@ -1720,6 +1721,7 @@ class MoLine extends CommonObjectLine
 		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>170),
 		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModification', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
+		'fk_default_workstation' =>array('type'=>'integer', 'label'=>'DefaultWorkstation', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'position'=>185)
 	);
 
 	public $rowid;

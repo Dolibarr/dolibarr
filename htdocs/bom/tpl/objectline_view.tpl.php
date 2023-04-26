@@ -158,9 +158,9 @@ if ($filtertype != 1) {
 	// Work station
 	if (isModEnabled('workstation')) {
 		$workstation = new Workstation($object->db);
-		$res = $workstation->fetch($tmpproduct->fk_default_workstation);
+		$res = $workstation->fetch($line->fk_default_workstation);
 
-		print '<td class="linecolunit nowrap right">';
+		print '<td class="linecolworkstation nowrap right">';
 		$coldisplay++;
 		if ($res > 0) echo $workstation->getNomUrl();
 		print '</td>';
