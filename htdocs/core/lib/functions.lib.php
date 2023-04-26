@@ -11358,6 +11358,9 @@ function getElementProperties($element_type)
 		$classpath = 'adherents/class';
 		$module = 'adherent';
 		$subelement = 'adherent';
+	} elseif ($element_type == 'usergroup') {
+		$classpath = 'user/class';
+		$module = 'user';
 	} elseif ($element_type == 'mo') {
 		$classpath = 'mrp/class';
 		$classfile = 'mo';
