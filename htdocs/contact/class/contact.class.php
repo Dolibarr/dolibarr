@@ -33,6 +33,7 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonsocialnetworks.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 
 
 /**
@@ -41,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonsocialnetworks.class.php';
 class Contact extends CommonObject
 {
 	use CommonSocialNetworks;
+	use CommonPeople;
 
 	/**
 	 * @var string ID to identify managed object
