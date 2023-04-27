@@ -2066,7 +2066,7 @@ class BonPrelevement extends CommonObject
 			$XML_CREDITOR .= '				</CdtrAcct>'.$CrLf;
 			$XML_CREDITOR .= '				<RmtInf>'.$CrLf;
 			// A string with some information on payment - 140 max
-			$XML_CREDITOR .= '					<Ustrd>'.getDolGlobalString('CREDITTRANSFER_USTRD', dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($row_ref.($row_comment ? ' - '.$row_comment : '')), '', '', '', 1)), 135, 'right', 'UTF-8', 1)).'</Ustrd>'.$CrLf; // Free unstructured data - 140 max
+			$XML_CREDITOR .= '					<Ustrd>'.getDolGlobalString('CREDITTRANSFER_USTRD', dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($row_ref.($row_comment ? ' - '.$row_comment : '')), '', '', '', 1), 135, 'right', 'UTF-8', 1))).'</Ustrd>'.$CrLf; // Free unstructured data - 140 max
 			$XML_CREDITOR .= '				</RmtInf>'.$CrLf;
 			$XML_CREDITOR .= '			</CdtTrfTxInf>'.$CrLf;
 			return $XML_CREDITOR;
