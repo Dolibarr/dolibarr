@@ -143,13 +143,6 @@ if (php_sapi_name() === "cli") {
 		exit(1);
 	}
 
-	// Currently, scripts using inc.php will require addtional arguments,
-	// see help above for more details.
-	if ($rest_index > $argc - 2) {
-		usage($argv[0], "Missing mandatory arguments, usage:");
-		exit(1);
-	}
-
 	// Tricky argument list hack, should be removed someday.
 	// Reset argv to remove the argument that were parsed. This is needed
 	// currently because some install code, like in upgrade.php, are using
