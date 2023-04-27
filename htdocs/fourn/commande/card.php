@@ -860,7 +860,6 @@ if (empty($reshook)) {
 			// reopen order if necessary
 			if ($object->status == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
 				if ($object->setStatus($user, CommandeFournisseur::STATUS_RECEIVED_PARTIALLY) < 0) {
-					$db->rollback();
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 					$action = '';
