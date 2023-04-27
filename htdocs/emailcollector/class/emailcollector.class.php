@@ -2115,7 +2115,7 @@ class EmailCollector extends CommonObject
 					$result = $thirdpartystatic->fetch(0, '', '', '', '', '', '', '', '', '', $from);
 					if ($result > 0) {
 						dol_syslog("We found a thirdparty with the email ".$from);
-						$thirdpartyid = $thirdpartystatic->id;;
+						$thirdpartyid = $thirdpartystatic->id;
 						$thirdpartyfoundby = 'email ('.$from.')';
 					}
 				}
@@ -2143,7 +2143,7 @@ class EmailCollector extends CommonObject
 				 $result = $thirdpartystatic->fetch(0, '', '', '', '', '', '', '', '', '', $replyto);
 				 if ($result > 0) {
 				 dol_syslog("We found a thirdparty with the email ".$replyto);
-				 $thirdpartyid = $thirdpartystatic->id;;
+				 $thirdpartyid = $thirdpartystatic->id;
 				 $thirdpartyfoundby = 'email ('.$replyto.')';
 				 }
 				 }
@@ -2838,6 +2838,8 @@ class EmailCollector extends CommonObject
 									if (empty($projecttocreate->ref) || (is_numeric($projecttocreate->ref) && $projecttocreate->ref <= 0)) {
 										$errorforactions++;
 										$this->error = 'Failed to create project: Can\'t get a valid value for the field ref with numbering template = '.$modele.', thirdparty id = '.$thirdpartystatic->id;
+
+										$operationslog .= '<br>'.$this->error;
 									} else {
 										// Create project
 										$result = $projecttocreate->create($user);
@@ -2845,6 +2847,8 @@ class EmailCollector extends CommonObject
 											$errorforactions++;
 											$this->error = 'Failed to create project: '.$langs->trans($projecttocreate->error);
 											$this->errors = $projecttocreate->errors;
+
+											$operationslog .= '<br>'.$this->error;
 										} else {
 											if ($attachments) {
 												$destdir = $conf->project->dir_output.'/'.$projecttocreate->ref;

@@ -495,8 +495,7 @@ print '<div class="clearboth" style="padding-bottom: 20px;"></div>';
 $moreforfilter = '';
 
 // Filter on categories
-/*if (!empty($conf->categorie->enabled))
-{
+/*if (isModEnabled("categorie")) {
 	require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter.=$langs->trans('ProjectCategories'). ': ';

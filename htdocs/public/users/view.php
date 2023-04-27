@@ -269,12 +269,7 @@ if ($showbarcode) {
 }
 
 
-// Me
-// Show photo
-if ($urllogo) {
-	print '<img class="userphotopublicvcard" id="dolpaymentlogo" src="'.$urllogofull.'">';
-}
-
+// Me section
 
 $usersection = '';
 
@@ -325,6 +320,11 @@ if (!empty($object->socialnetworks) && is_array($object->socialnetworks) && coun
 }
 
 if ($usersection) {
+	// Show photo
+	if ($urllogo) {
+		print '<img class="userphotopublicvcard" id="dolpaymentlogo" src="'.$urllogofull.'">';
+	}
+
 	print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
 
 	// Output payment summary form
@@ -340,6 +340,11 @@ if ($usersection) {
 	print '</td></tr>'."\n";
 
 	print '</table>'."\n";
+} else {
+	// Show photo
+	if ($urllogo) {
+		print '<br><center><img class="userphotopublicvcard" style="position: unset !important;" id="dolpaymentlogo" src="'.$urllogofull.'"></center>';
+	}
 }
 
 

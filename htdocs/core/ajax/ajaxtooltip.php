@@ -80,6 +80,7 @@ $html = '';
 
 if (is_object($object)) {
 	if ($object->id > 0 || !empty($object->ref)) {
+		/** @var CommonObject $object */
 		$html = $object->getTooltipContent($params);
 	} elseif ($res == 0) {
 		$html = $langs->trans('Deleted');

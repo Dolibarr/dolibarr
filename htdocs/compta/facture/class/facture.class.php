@@ -116,8 +116,22 @@ class Facture extends CommonInvoice
 
 	/**
 	 * @var int ID
+	 * @deprecated
+	 * @see $fk_user_author
+	 */
+	public $user_author;
+
+	/**
+	 * @var int ID
 	 */
 	public $fk_user_author;
+
+	/**
+	 * @var int ID
+	 * @deprecated
+	 * @see $fk_user_valid
+	 */
+	public $user_valid;
 
 	/**
 	 * @var int ID
@@ -126,9 +140,15 @@ class Facture extends CommonInvoice
 
 	/**
 	 * @var int ID
+	 * @deprecated
+	 * @see $fk_uesr_modif
+	 */
+	public $user_modification;
+
+	/**
+	 * @var int ID
 	 */
 	public $fk_user_modif;
-
 
 	public $date; // Date invoice
 	public $datem;
@@ -156,9 +176,6 @@ class Facture extends CommonInvoice
 	 * @var string customer ref
 	 */
 	public $ref_customer;
-
-	//Check constants for types
-	public $type = self::TYPE_STANDARD;
 
 	// Warning: Do not set default value into property defintion. it must stay null.
 	// For example to avoid to have substition done when object is generic and not yet defined.
@@ -280,6 +297,7 @@ class Facture extends CommonInvoice
 	 * @var int Code in llx_c_paiement
 	 */
 	public $retained_warranty_fk_cond_reglement;
+
 
 
 	/**
@@ -472,7 +490,9 @@ class Facture extends CommonInvoice
 		if (empty($this->type)) {
 			$this->type = self::TYPE_STANDARD;
 		}
+
 		$this->ref_client = trim($this->ref_client);
+
 		$this->note = (isset($this->note) ? trim($this->note) : trim($this->note_private)); // deprecated
 		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : trim($this->note_private));
 		$this->note_public = trim($this->note_public);
@@ -1371,6 +1391,142 @@ class Facture extends CommonInvoice
 
 		$num = count($object->lines);
 		for ($i = 0; $i < $num; $i++) {
+			$line = new FactureLigne($this->db);
+
+			$line->libelle = $object->lines[$i]->libelle; // deprecated
+			$line->label			= $object->lines[$i]->label;
+			$line->desc				= $object->lines[$i]->desc;
+			$line->subprice			= $object->lines[$i]->subprice;
+			$line->total_ht			= $object->lines[$i]->total_ht;
+			$line->total_tva		= $object->lines[$i]->total_tva;
+			$line->total_localtax1	= $object->lines[$i]->total_localtax1;
+			$line->total_localtax2	= $object->lines[$i]->total_localtax2;
+			$line->total_ttc		= $object->lines[$i]->total_ttc;
+			$line->vat_src_code = $object->lines[$i]->vat_src_code;
+			$line->tva_tx = $object->lines[$i]->tva_tx;
+			$line->localtax1_tx		= $object->lines[$i]->localtax1_tx;
+			$line->localtax2_tx		= $object->lines[$i]->localtax2_tx;
+			$line->qty = $object->lines[$i]->qty;
+			$line->fk_remise_except = $object->lines[$i]->fk_remise_except;
+			$line->remise_percent = $object->lines[$i]->remise_percent;
+			$line->fk_product = $object->lines[$i]->fk_product;
+			$line->info_bits = $object->lines[$i]->info_bits;
+			$line->product_type		= $object->lines[$i]->product_type;
+			$line->rang = $object->lines[$i]->rang;
+			$line->special_code		= $object->lines[$i]->special_code;
+			$line->fk_parent_line = $object->lines[$i]->fk_parent_line;
+			$line->fk_unit = $object->lines[$i]->fk_unit;
+			$line->date_start = $object->lines[$i]->date_start;
+			$line->date_end = $object->lines[$i]->date_end;
+
+			// Multicurrency
+			$line->fk_multicurrency = $object->lines[$i]->fk_multicurrency;
+			$line->multicurrency_code = $object->lines[$i]->multicurrency_code;
+			$line->multicurrency_subprice = $object->lines[$i]->multicurrency_subprice;
+			$line->multicurrency_total_ht = $object->lines[$i]->multicurrency_total_ht;
+			$line->multicurrency_total_tva = $object->lines[$i]->multicurrency_total_tva;
+			$line->multicurrency_total_ttc = $object->lines[$i]->multicurrency_total_ttc;
+
+			$line->fk_fournprice = $object->lines[$i]->fk_fournprice;
+			$marginInfos			= getMarginInfos($object->lines[$i]->subprice, $object->lines[$i]->remise_percent, $object->lines[$i]->tva_tx, $object->lines[$i]->localtax1_tx, $object->lines[$i]->localtax2_tx, $object->lines[$i]->fk_fournprice, $object->lines[$i]->pa_ht);
+			$line->pa_ht			= $marginInfos[0];
+
+			// get extrafields from original line
+			$object->lines[$i]->fetch_optionals();
+			foreach ($object->lines[$i]->array_options as $options_key => $value) {
+				$line->array_options[$options_key] = $value;
+			}
+
+			$this->lines[$i] = $line;
+		}
+
+		$this->socid                = $object->socid;
+		$this->fk_project           = $object->fk_project;
+		$this->fk_account = $object->fk_account;
+		$this->cond_reglement_id    = $object->cond_reglement_id;
+		$this->mode_reglement_id    = $object->mode_reglement_id;
+		$this->availability_id      = $object->availability_id;
+		$this->demand_reason_id     = $object->demand_reason_id;
+		$this->delivery_date        = (empty($object->delivery_date) ? $object->date_livraison : $object->delivery_date);
+		$this->date_livraison       = $object->delivery_date; // deprecated
+		$this->fk_delivery_address  = $object->fk_delivery_address; // deprecated
+		$this->contact_id           = $object->contact_id;
+		$this->ref_client           = $object->ref_client;
+
+		if (empty($conf->global->MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN)) {
+			$this->note_private = $object->note_private;
+			$this->note_public = $object->note_public;
+		}
+
+		$this->module_source = $object->module_source;
+		$this->pos_source = $object->pos_source;
+
+		$this->origin = $object->element;
+		$this->origin_id = $object->id;
+
+		$this->fk_user_author = $user->id;
+
+		// get extrafields from original line
+		$object->fetch_optionals();
+		foreach ($object->array_options as $options_key => $value) {
+			$this->array_options[$options_key] = $value;
+		}
+
+		// Possibility to add external linked objects with hooks
+		$this->linked_objects[$this->origin] = $this->origin_id;
+		if (!empty($object->other_linked_objects) && is_array($object->other_linked_objects)) {
+			$this->linked_objects = array_merge($this->linked_objects, $object->other_linked_objects);
+		}
+
+		$ret = $this->create($user);
+
+		if ($ret > 0) {
+			// Actions hooked (by external module)
+			$hookmanager->initHooks(array('invoicedao'));
+
+			$parameters = array('objFrom'=>$object);
+			$action = '';
+			$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0) {
+				$this->setErrorsFromObject($hookmanager);
+				$error++;
+			}
+
+			if (!$error) {
+				return 1;
+			} else {
+				return -1;
+			}
+		} else {
+			return -1;
+		}
+	}
+
+	/**
+	 *  Load an object from an order and create a new invoice into database
+	 *
+	 *  @param      Object			$object         	Object source
+	 *  @param		User			$user				Object user
+	 * 	@param		array			$lines				Ids of lines to use for invoice. If empty, all lines will be used.
+	 *  @return     int             					<0 if KO, 0 if nothing done, 1 if OK
+	 */
+	public function createFromContract($object, User $user, $lines = array())
+	{
+		global $conf, $hookmanager;
+
+		$error = 0;
+
+		// Closed order
+		$this->date = dol_now();
+		$this->source = 0;
+
+		$use_all_lines = empty($lines);
+		$num = count($object->lines);
+		for ($i = 0; $i < $num; $i++) {
+			if (!$use_all_lines && !in_array($object->lines[$i]->id, $lines)) {
+				continue;
+			}
+
 			$line = new FactureLigne($this->db);
 
 			$line->libelle = $object->lines[$i]->libelle; // deprecated
@@ -5593,8 +5749,9 @@ class Facture extends CommonInvoice
 								}
 								if (empty($to) && !empty($recipient->email)) {
 									$to[] = $recipient->email;
-								} else {
-									$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->socid.". No email defined for user.";
+								}
+								if (empty($to)) {
+									$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->socid.". No email defined for invoice or customer.";
 									$error++;
 								}
 							} else {

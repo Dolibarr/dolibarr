@@ -2380,12 +2380,8 @@ class Task extends CommonObjectLine
 		if (property_exists($this, 'budget_amount')) {
 			//$return .= '<br><span class="info-box-label amount">'.$langs->trans("Budget").' : '.price($this->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
 		}
-		if (property_exists($this, 'fk_statut')) {
-			$return .= '<br><span class="info-box-status ">'.$this->fk_statut.'</span>';
-			//$return .= ' <span class="info-box-label amount">'.$this->progress.'%</span>';
-		}
 		if (property_exists($this, 'duration_effective')) {
-			$return .= '<div class="info-box-label progressinkanban">'.getTaskProgressView($this, false, true).'</div>';
+			$return .= '<br><br><div class="info-box-label progressinkanban">'.getTaskProgressView($this, false, true).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

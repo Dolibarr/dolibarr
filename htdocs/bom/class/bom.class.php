@@ -568,10 +568,11 @@ class BOM extends CommonObject
 	 * @param	int		$fk_bom_child			Id of BOM Child
 	 * @param	string	$import_key				Import Key
 	 * @param	string	$fk_unit				Unit
-	 * @param	array		$array_options		extrafields array
+	 * @param	array	$array_options			extrafields array
+	 * @param	int		$fk_default_workstation	Default workstation
 	 * @return	int								<0 if KO, Id of created object if OK
 	 */
-	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = '', $array_options = 0)
+	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = '', $array_options = 0, $fk_default_workstation = null)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -640,6 +641,7 @@ class BOM extends CommonObject
 			$line->import_key = $import_key;
 			$line->position = $rankToUse;
 			$line->fk_unit = $fk_unit;
+			$line->fk_default_workstation = $fk_default_workstation;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				$line->array_options = $array_options;
@@ -1420,21 +1422,32 @@ class BOM extends CommonObject
 						}
 					}
 				} else {
-					//Convert qty to hour
-					$unit = measuringUnitString($line->fk_unit, '', '', 1);
-					$qty = convertDurationtoHour($line->qty, $unit);
+					// Convert qty of line into hours
+					$unitforline = measuringUnitString($line->fk_unit, '', '', 1);
+					$qtyhourforline = convertDurationtoHour($line->qty, $unitforline);
 
 					if (isModEnabled('workstation') && !empty($tmpproduct->fk_default_workstation)) {
 						$workstation = new Workstation($this->db);
 						$res = $workstation->fetch($tmpproduct->fk_default_workstation);
 
-						if ($res > 0) $line->total_cost = price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+						if ($res > 0) $line->total_cost = price2num($qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
 						else {
 							$this->error = $workstation->error;
 								return -3;
 						}
 					} else {
-						$line->total_cost = price2num($qty * $tmpproduct->cost_price, 'MT');
+						$defaultdurationofservice = $tmpproduct->duration;
+						$reg = array();
+						$qtyhourservice = 0;
+						if (preg_match('/^(\d+)([a-z]+)$/', $defaultdurationofservice, $reg)) {
+							$qtyhourservice = convertDurationtoHour($reg[1], $reg[2]);
+						}
+
+						if ($qtyhourservice) {
+							$line->total_cost = price2num($qtyhourforline / $qtyhourservice * $tmpproduct->cost_price, 'MT');
+						} else {
+							$line->total_cost = price2num($line->qty * $tmpproduct->cost_price, 'MT');
+						}
 					}
 
 					$this->total_cost += $line->total_cost;
@@ -1667,6 +1680,7 @@ class BOMLine extends CommonObjectLine
 		'fk_unit' => array('type'=>'integer', 'label'=>'Unit', 'enabled'=>1, 'visible'=>1, 'position'=>120, 'notnull'=>-1,),
 		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'default'=>0, 'position'=>200, 'notnull'=>1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
+		'fk_default_workstation' =>array('type'=>'integer', 'label'=>'DefaultWorkstation', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'position'=>1050)
 	);
 
 	/**
@@ -1729,8 +1743,8 @@ class BOMLine extends CommonObjectLine
 	 */
 	public $childBom = array();
 
-	/*
-	 * Service Workstation
+	/**
+	 * @var int Service Workstation
 	 */
 	public $fk_default_workstation;
 

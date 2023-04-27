@@ -186,7 +186,7 @@ class MouvementStockTest extends PHPUnit\Framework\TestCase
 		$warehouse2->description.=' phpunit 2';
 		$warehouse2id=$warehouse2->create($user);
 
-		$localobject=new MouvementStock($this->savdb);
+		$localobject=new MouvementStock($db);
 
 		$datetest1 = dol_mktime(0, 0, 0, 1, 1, 2000);
 		$datetest2 = dol_mktime(0, 0, 0, 1, 2, 2000);

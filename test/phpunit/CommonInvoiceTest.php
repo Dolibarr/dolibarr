@@ -138,7 +138,7 @@ class CommonInvoiceTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Facture($this->savdb);
+		$localobject=new Facture($db);
 		$localobject->fetch(1);
 		$localobject->date = dol_mktime(12, 0, 0, 1, 1, 2010);
 

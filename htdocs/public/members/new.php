@@ -81,7 +81,7 @@ $error = 0;
 $langs->loadLangs(array("main", "members", "companies", "install", "other", "errors"));
 
 // Security check
-if (empty($conf->adherent->enabled)) {
+if (!isModEnabled('adherent')) {
 	httponly_accessforbidden('Module Membership not enabled');
 }
 

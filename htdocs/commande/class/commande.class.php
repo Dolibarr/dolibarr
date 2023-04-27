@@ -1355,6 +1355,9 @@ class Commande extends CommonOrder
 			$line->marge_tx			= $marginInfos[1];
 			$line->marque_tx		= $marginInfos[2];
 
+			$line->origin           = $object->element;
+			$line->origin_id        = $object->lines[$i]->id;
+
 			// get extrafields from original line
 			$object->lines[$i]->fetch_optionals();
 			foreach ($object->lines[$i]->array_options as $options_key => $value) {
@@ -1896,7 +1899,7 @@ class Commande extends CommonOrder
 				$this->ref = $obj->ref;
 				$this->ref_client = $obj->ref_client;
 				$this->ref_customer = $obj->ref_client;
-				$this->ref_ext				= $obj->ref_ext;
+				$this->ref_ext = $obj->ref_ext;
 
 				$this->socid = $obj->fk_soc;
 				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
@@ -3727,6 +3730,7 @@ class Commande extends CommonOrder
 	{
 		global $conf, $langs, $user;
 
+		$langs->load('orders');
 		$datas = [];
 		$nofetch = !empty($params['nofetch']);
 

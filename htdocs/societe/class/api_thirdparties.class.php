@@ -577,7 +577,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(501, 'Module "Thirdparties" needed for this request');
 		}
 
-		if (empty($conf->product->enabled)) {
+		if (!isModEnabled("product")) {
 			throw new RestException(501, 'Module "Products" needed for this request');
 		}
 
