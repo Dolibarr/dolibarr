@@ -227,7 +227,6 @@ class BOM extends CommonObject
 	public $unit_cost = 0;
 
 
-
 	/**
 	 * Constructor
 	 *
@@ -628,34 +627,34 @@ class BOM extends CommonObject
 			}
 
 			// Insert line
-			$this->line = new BOMLine($this->db);
+			$line = new BOMLine($this->db);
 
-			$this->line->context = $this->context;
+			$line->context = $this->context;
 
-			$this->line->fk_bom = $this->id;
-			$this->line->fk_product = $fk_product;
-			$this->line->qty = $qty;
-			$this->line->qty_frozen = $qty_frozen;
-			$this->line->disable_stock_change = $disable_stock_change;
-			$this->line->efficiency = $efficiency;
-			$this->line->fk_bom_child = $fk_bom_child;
-			$this->line->import_key = $import_key;
-			$this->line->position = $rankToUse;
-			$this->line->fk_unit = $fk_unit;
-			$this->line->fk_default_workstation = $fk_default_workstation;
+			$line->fk_bom = $this->id;
+			$line->fk_product = $fk_product;
+			$line->qty = $qty;
+			$line->qty_frozen = $qty_frozen;
+			$line->disable_stock_change = $disable_stock_change;
+			$line->efficiency = $efficiency;
+			$line->fk_bom_child = $fk_bom_child;
+			$line->import_key = $import_key;
+			$line->position = $rankToUse;
+			$line->fk_unit = $fk_unit;
+			$line->fk_default_workstation = $fk_default_workstation;
 
 			if (is_array($array_options) && count($array_options) > 0) {
-				$this->line->array_options = $array_options;
+				$line->array_options = $array_options;
 			}
 
-			$result = $this->line->create($user);
+			$result = $line->create($user);
 
 			if ($result > 0) {
 				$this->calculateCosts();
 				$this->db->commit();
 				return $result;
 			} else {
-				$this->error = $this->line->error;
+				$this->setErrorsFromObject($line);
 				dol_syslog(get_class($this)."::addLine error=".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
@@ -724,8 +723,7 @@ class BOM extends CommonObject
 
 			$staticLine = clone $line;
 			$line->oldcopy = $staticLine;
-			$this->line = $line;
-			$this->line->context = $this->context;
+			$line->context = $this->context;
 
 			// Rank to use
 			$rankToUse = (int) $position;
@@ -743,32 +741,32 @@ class BOM extends CommonObject
 			}
 
 
-			$this->line->fk_bom = $this->id;
-			$this->line->qty = $qty;
-			$this->line->qty_frozen = $qty_frozen;
-			$this->line->disable_stock_change = $disable_stock_change;
-			$this->line->efficiency = $efficiency;
-			$this->line->import_key = $import_key;
-			$this->line->position = $rankToUse;
+			$line->fk_bom = $this->id;
+			$line->qty = $qty;
+			$line->qty_frozen = $qty_frozen;
+			$line->disable_stock_change = $disable_stock_change;
+			$line->efficiency = $efficiency;
+			$line->import_key = $import_key;
+			$line->position = $rankToUse;
 			if (!empty($fk_unit)) {
-				$this->line->fk_unit = $fk_unit;
+				$line->fk_unit = $fk_unit;
 			}
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options
 				foreach ($array_options as $key => $value) {
-					$this->line->array_options[$key] = $array_options[$key];
+					$line->array_options[$key] = $array_options[$key];
 				}
 			}
 
-			$result = $this->line->update($user);
+			$result = $line->update($user);
 
 			if ($result > 0) {
 				$this->calculateCosts();
 				$this->db->commit();
 				return $result;
 			} else {
-				$this->error = $this->line->error;
+				$this->setErrorsFromObject($line);
 				dol_syslog(get_class($this)."::addLine error=".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
@@ -803,10 +801,9 @@ class BOM extends CommonObject
 
 		$staticLine = clone $line;
 		$line->oldcopy = $staticLine;
-		$this->line = $line;
-		$this->line->context = $this->context;
+		$line->context = $this->context;
 
-		$result = $this->line->delete($user, $notrigger);
+		$result = $line->delete($user, $notrigger);
 
 		//Positions (rank) reordering
 		foreach ($this->lines as $bl) {
@@ -821,7 +818,7 @@ class BOM extends CommonObject
 			$this->db->commit();
 			return $result;
 		} else {
-			$this->error = $this->line->error;
+			$this->setErrorsFromObject($line);
 			dol_syslog(get_class($this)."::addLine error=".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
