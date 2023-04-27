@@ -652,7 +652,7 @@ class BOM extends CommonObject
 				$this->db->commit();
 				return $result;
 			} else {
-				$this->error = $line->error;
+				$this->setErrorsFromObject($line);
 				dol_syslog(get_class($this)."::addLine error=".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
@@ -764,7 +764,7 @@ class BOM extends CommonObject
 				$this->db->commit();
 				return $result;
 			} else {
-				$this->error = $line->error;
+				$this->setErrorsFromObject($line);
 				dol_syslog(get_class($this)."::addLine error=".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
@@ -816,7 +816,7 @@ class BOM extends CommonObject
 			$this->db->commit();
 			return $result;
 		} else {
-			$this->error = $line->error;
+			$this->setErrorsFromObject($line);
 			dol_syslog(get_class($this)."::addLine error=".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
