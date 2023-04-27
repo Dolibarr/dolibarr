@@ -738,6 +738,8 @@ ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;
 
 ALTER TABLE llx_loan_schedule ADD UNIQUE INDEX uk_loan_schedule_ref (fk_loan, datep);
 
+ALTER TABLE llx_overwrite_trans DROP INDEX uk_overwrite_trans;
+ALTER TABLE llx_overwrite_trans ADD UNIQUE INDEX uk_overwrite_trans(lang, transkey, entity);
 
 
 -- Bank Thirdparty

@@ -1690,9 +1690,15 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destfull, $allowoverwrite, 0, $TFile['error'][$i], 0, $varfiles, $upload_dir);
 
 				if (is_numeric($resupload) && $resupload > 0) {   // $resupload can be 'ErrorFileAlreadyExists'
-					global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
-
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+
+					$tmparraysize = getDefaultImageSizes();
+					$maxwidthsmall = $tmparraysize['maxwidthsmall'];
+					$maxheightsmall = $tmparraysize['maxheightsmall'];
+					$maxwidthmini = $tmparraysize['maxwidthmini'];
+					$maxheightmini = $tmparraysize['maxheightmini'];
+					//$quality = $tmparraysize['quality'];
+					$quality = 50;	// For thumbs, we force quality to 50
 
 					// Generate thumbs.
 					if ($generatethumbs) {
@@ -1701,10 +1707,10 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 							// We can't use $object->addThumbs here because there is no $object known
 
 							// Used on logon for example
-							$imgThumbSmall = vignette($destfull, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
+							$imgThumbSmall = vignette($destfull, $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
 							// Create mini thumbs for image (Ratio is near 16/9)
 							// Used on menu or for setup page for example
-							$imgThumbMini = vignette($destfull, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+							$imgThumbMini = vignette($destfull, $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
 						}
 					}
 
