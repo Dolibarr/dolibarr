@@ -301,7 +301,7 @@ class MultiCurrencies extends DolibarrApi
 	 *
 	 * @param	int		$id				Currency ID
 	 * @param	array	$request_data	Request data
-	 * @return	array					The currency with the new rate
+	 * @return	Object|false		  	Object with cleaned properties
 	 *
 	 * @throws RestException
 	 */
@@ -343,9 +343,12 @@ class MultiCurrencies extends DolibarrApi
 
 		// Clear all fields out of interrest
 		foreach ($object as $key => $value) {
-			if ($key == "rate") $object->$key = $this->_cleanObjectDatasRate($object->$key);
-			if ($key == "id" || $key == "code" || $key == "rate" || $key == "name")
+			if ($key == "rate") {
+				$object->$key = $this->_cleanObjectDatasRate($object->$key);
+			}
+			if ($key == "id" || $key == "code" || $key == "rate" || $key == "name") {
 				continue;
+			}
 			unset($object->$key);
 		}
 
