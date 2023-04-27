@@ -146,12 +146,26 @@ if (php_sapi_name() === "cli") {
 			exit(0);
 	}
 
+	// Parse the arguments to find the options.
+	$args_options = array_filter(array_slice($argv, 0, $rest_index), function ($arg) {
+		return strlen($arg) >= 2 && $arg[0] == '-';
+	});
+	$parsed_options = array_map(function ($arg) {
+		if (strlen($arg) > 1)
+			return "--" . $arg;
+		return "-" . $arg;
+	}, array_keys($opts));
+
+	// Find options (dash-prefixed) that were not parsed.
+	$unknown_options = array_diff($args_options, $parsed_options);
+
 	// In the following test, only dash-prefixed arguments will trigger an
 	// error, given that scripts options can allow a variable number of
 	// additional non-prefixed argument and we mostly want to check for
 	// typo right now.
-	if ($rest_index < $argc && $argv[$rest_index][0] == "-") {
-		usage($argv[0], "Unknown option ".$argv[$rest_index]. ", usage:");
+	if (count($unknown_options) > 0) {
+		echo "Unknown option: ".array_values($unknown_options)[0]."\n";
+		usage($argv[0], "Usage:");
 		exit(1);
 	}
 
