@@ -1810,7 +1810,7 @@ if ($action == 'create') {
 		//$warehouse_id       = $soc->warehouse_id;
 	} else {
 		print '<td class="valuefieldcreate">';
-		$filter = '((s.client = 1 OR s.client = 2 OR s.client = 3) AND status=1)';
+		$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
 		print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
 		// reload page to retrieve customer informations
 		if (empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED)) {
@@ -2134,7 +2134,7 @@ if ($action == 'create') {
 	// Clone confirmation
 	if ($action == 'clone') {
 		// Create an array for form
-		$filter = '(s.client=1 OR s.client=2 OR s.client=3)';
+		$filter = '(s.client:IN:1,2,3)';
 		$formquestion = array(
 			// 'text' => $langs->trans("ConfirmClone"),
 			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),

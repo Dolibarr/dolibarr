@@ -615,7 +615,7 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
 	print '</div>';
 }
 print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
-$filter = 'fournisseur=1';
+$filter = '(fournisseur:=:1)';
 print $langs->trans('Supplier').' '.$form->select_company($fk_supplier, 'fk_supplier', $filter, 1);
 print '</div>';
 

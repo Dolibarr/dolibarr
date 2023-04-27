@@ -2199,7 +2199,7 @@ if ($action == 'create') {
 		print $societe->getNomUrl(1, 'supplier');
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 	} else {
-		$filter = '(s.fournisseur = 1 AND s.status = 1)';
+		$filter = '((s.fournisseur:=:1) AND (s.status:=:1))';
 		print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(empty($societe->id) ? 0 : $societe->id, 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 widthcentpercentminusxx maxwidth500');
 		// reload page to retrieve supplier informations
 		if (empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE_DISABLED)) {

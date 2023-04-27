@@ -264,7 +264,7 @@ print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->tra
 // Company
 print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
 print img_picto('', 'company', 'class="pictofixedwidth"');
-$filter = 's.client IN (1,2,3)';
+$filter = '(s.client:IN:1,2,3)';
 print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth300', '');
 print '</td></tr>';
 // ThirdParty Type

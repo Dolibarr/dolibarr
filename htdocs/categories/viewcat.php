@@ -590,7 +590,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
 				print $langs->trans("AddCustomerIntoCategory").' &nbsp;';
-				$filter = 's.client IN (1,3)';
+				$filter = '(s.client:IN:1,3)';
 				print $form->select_company('', 'elemid', $filter);
 				print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';
@@ -671,7 +671,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
 				print $langs->trans("AddSupplierIntoCategory").' &nbsp;';
-				$filter ='s.fournisseur = 1';
+				$filter ='(s.fournisseur:=:1)';
 				print $form->select_company('', 'elemid', $filter);
 				print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';

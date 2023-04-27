@@ -1273,7 +1273,7 @@ if ($action == 'create') {
 		print '</td>';
 	} else {
 		print '<td colspan="2">';
-		$filter = 's.fournisseur=1';
+		$filter = '(s.fournisseur:=:1)';
 		print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', $filter, 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 		// reload page to retrieve customer informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
@@ -1526,7 +1526,7 @@ if ($action == 'create') {
 
 	// Clone confirmation
 	if ($action == 'clone') {
-		$filter = 's.fournisseur=1';
+		$filter = '(s.fournisseur:=:1)';
 		// Create an array for form
 		$formquestion = array(
 			// 'text' => $langs->trans("ConfirmClone"),

@@ -11789,9 +11789,10 @@ function jsonOrUnserialize($stringtodecode)
  * 									aaa is a field name (with alias or not) and
  * 									bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'.
  * @param	string		$error		Error message
+ * @param	int			$noand		0=Default, 1=Do not add the AND before the condition string.
  * @return	string					Return forged SQL string
  */
-function forgeSQLFromUniversalSearchCriteria($filter, &$error = '')
+function forgeSQLFromUniversalSearchCriteria($filter, &$error = '', $noand = 0)
 {
 	$regexstring = '\(([a-zA-Z0-9_\.]+:[<>!=insotlke]+:[^\(\)]+)\)';	// Must be  (aaa:bbb:...) with aaa is a field name (with alias or not) and bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'
 
@@ -11808,7 +11809,7 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$error = '')
 		return 'Filter syntax error';		// Bad syntax of the search string, we force a SQL not found
 	}
 
-	return " AND (".preg_replace_callback('/'.$regexstring.'/i', 'dolForgeCriteriaCallback', $filter).")";
+	return ($noand ? "" : " AND ")."(".preg_replace_callback('/'.$regexstring.'/i', 'dolForgeCriteriaCallback', $filter).")";
 }
 
 /**

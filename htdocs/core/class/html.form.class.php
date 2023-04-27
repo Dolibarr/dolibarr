@@ -1368,7 +1368,9 @@ class Form
 	 *
 	 * @param string 	$selected 		Preselected type
 	 * @param string 	$htmlname 		Name of field in form
-	 * @param string 	$filter 		Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here (example: 's.rowid <> x', 's.client IN (1,3)'). Do not use a filter coming from input of users.
+	 * @param string 	$filter 		Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>] are allowed here, example: 's.rowid <> x'
+	 * 									If you need parenthesis, use the Universal Filter Syntax, example: '(s.client:in:(1,3))'
+	 * 									Do not use a filter coming from input of users.
 	 * @param string 	$showempty 		Add an empty field (Can be '1' or text to use on empty line like 'SelectThirdParty')
 	 * @param int 		$showtype 		Show third party type in combolist (customer, prospect or supplier)
 	 * @param int 		$forcecombo 	Force to use standard HTML select component without beautification
@@ -1407,8 +1409,23 @@ class Form
 			}
 		}
 
-		//$errormsg = '';
-		//$filter = forgeSQLFromUniversalSearchCriteria($filter, $errormsg);
+		if (preg_match('/[\(\)]/', $filter)) {
+			// If there is one parenthesis inside the criteria, we assume it is an Universal Filter Syntax.
+			$errormsg = '';
+			$filter = forgeSQLFromUniversalSearchCriteria($filter, $errormsg, 1);
+
+			// Redo clean $filter that may contains sql conditions so sql code
+			if (function_exists('testSqlAndScriptInject')) {
+				if (testSqlAndScriptInject($filter, 3) > 0) {
+					$filter = '';
+					return 'SQLInjectionTryDetected';
+				}
+			}
+		} else {
+			// If not, we do nothing. We already no that there is no parenthesis
+			// TODO Disallow this case in a future.
+			dol_syslog("Warning, select_thirdparty_list was called with a filter criteria not using the Universal Search Syntax.", LOG_WARNING);
+		}
 
 		// We search companies
 		$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.tva_intra, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
@@ -1428,6 +1445,8 @@ class Form
 			$sql .= " AND s.rowid = " . ((int) $user->socid);
 		}
 		if ($filter) {
+			// $filter is safe because, if it contains '(' or ')', it has been sanitized by testSqlAndScriptInject() and forgeSQLFromUniversalSearchCriteria()
+			// if not, by testSqlAndScriptInject() only.
 			$sql .= " AND (" . $filter . ")";
 		}
 		if (empty($user->rights->societe->client->voir) && !$user->socid) {

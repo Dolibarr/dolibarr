@@ -1694,7 +1694,7 @@ if ($action == 'create') {
 		print $societe->getNomUrl(1, 'supplier');
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 	} else {
-		$filter = '(s.fournisseur=1 AND s.status=1)';
+		$filter = '((s.fournisseur:=:1) AND (s.status:=:1))';
 		print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company((empty($socid) ? '' : $socid), 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
 		// reload page to retrieve customer informations
 		if (empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE_DISABLED)) {
@@ -1899,7 +1899,7 @@ if ($action == 'create') {
 
 	// Clone confirmation
 	if ($action == 'clone') {
-		$filter = '(s.fournisseur=1)';
+		$filter = '(s.fournisseur:=:1)';
 		// Create an array for form
 		$formquestion = array(
 			array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', $filter))
@@ -2036,7 +2036,7 @@ if ($action == 'create') {
 		$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 		$morehtmlref .= '<input type="hidden" name="action" value="set_thirdparty">';
 		$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$filter = 's.fournisseur=1';
+		$filter = '(s.fournisseur:=:1)';
 		$morehtmlref .= $form->select_company($object->thirdparty->id, 'new_socid', $filter, '', 0, 0, array(), 0, 'minwidth300');
 		$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 		$morehtmlref .= '</form>';

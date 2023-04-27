@@ -1944,7 +1944,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<tr>';
 		print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 		print '<td>';
-		$filter = 's.client IN (1,2,3)';
+		$filter = '(s.client:IN:1,2,3)';
 		print img_picto('', 'company').$form->select_company('', 'socid', $filter, 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
 		print '</td>';
 		print '</tr>';
