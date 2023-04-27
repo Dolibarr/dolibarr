@@ -93,9 +93,20 @@ $long_options = array(
 function usage($program, $header)
 {
 	echo $header."\n";
-	echo "  php ".$program." [options] previous_version new_version [script options]\n";
+	echo "  php ".$program." [options] [script options]\n";
 	echo "\n";
-	echo "Script options when using upgrade.php:\n";
+	echo "Script syntax when using step2.php:\n";
+	echo "  php ".$program." [options] [action] [selectlang]\n";
+	echo "\n";
+	echo "  action:\n";
+	echo "      Specify the action to execute for the file among the following ones.\n";
+	echo "       - set: Create tables, keys, functions and data for the instance.\n";
+	echo "\n";
+	echo "  selectlang:\n";
+	echo "      Setup the default lang to use, default to 'auto'.\n";
+	echo "\n";
+	echo "Script syntax when using upgrade.php:\n";
+	echo "  php ".$program." [options] previous_version new_version [script options]\n";
 	echo "\n";
 	echo "  dirmodule:\n";
 	echo "      Specify dirmodule to provide a path for an external module\n";
@@ -105,10 +116,11 @@ function usage($program, $header)
 	echo "      Allow to run migration even if database version does\n";
 	echo "      not match start version of migration.\n";
 	echo "\n";
-	echo "Script options when using upgrade2.php:\n";
+	echo "Script syntax when using upgrade2.php:\n";
+	echo "  php ".$program." [options] previous_version new_version [module list]\n";
 	echo "\n";
-	echo "  MODULE_NAME1_TO_ENABLE,MODULE_NAME2_TO_ENABLE:\n";
-	echo "      Specify a list of module-name to enable, joined by comma.\n";
+	echo "  MAIN_MODULE_NAME1,MAIN_MODULE_NAME2:\n";
+	echo "      Specify a list of module-name to enable, in upper case, with MAIN_MODULE_ prefix, joined by comma.\n";
 	echo "\n";
 	echo "Options:\n";
 	echo "  -c, --config <filename>:\n";
