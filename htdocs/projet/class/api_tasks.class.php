@@ -584,15 +584,7 @@ class Tasks extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->projet->creer) {
 			throw new RestException(401);
 		}
-		if ($this->task->fetch($id) <= 0) {
-			throw new RestException(404, 'Task not found');
-		}
-		if ($this->task->fetchTimeSpent($timespent_id) <= 0) {
-			throw new RestException(404, 'Timespent not found');
-		}
-		elseif ($this->task->id != $id) {
-			throw new RestException(404, 'Timespent not found in selected task');
-		}
+		$this->_timespentRecordChecks($id, $timespent_id);
 
 		if (!DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -620,6 +612,51 @@ class Tasks extends DolibarrApi
 				'message' => 'Time spent updated'
 			)
 		);
+	}
+
+	/**
+	 * Delete time spent for a task of a project.
+	 *
+	 * @param   int         $id                 Task ID
+	 * @param   int         $timespent_id       Time spent ID (llx_projet_task_time.rowid)
+	 *
+	 * @url DELETE    {id}/timespent/{timespent_id}
+	 *
+	 * @return  array
+	 */
+	public function deleteTimeSpent($id, $timespent_id, $user_id)
+	{
+		if (!DolibarrApiAccess::$user->rights->projet->supprimer) {
+			throw new RestException(401);
+		}
+		$this->_timespentRecordChecks($id, $timespent_id);
+
+		if (!DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if ($this->task->delTimeSpent(DolibarrApiAccess::$user, 0) < 0) {
+			throw new RestException(500, 'Error when deleting time spent: '.$this->task->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Time spent deleted'
+			)
+		);
+	}
+
+	protected function _timespentRecordChecks($id, $timespent_id) {
+		if ($this->task->fetch($id) <= 0) {
+			throw new RestException(404, 'Task not found');
+		}
+		if ($this->task->fetchTimeSpent($timespent_id) <= 0) {
+			throw new RestException(404, 'Timespent not found');
+		}
+		elseif ($this->task->id != $id) {
+			throw new RestException(404, 'Timespent not found in selected task');
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
