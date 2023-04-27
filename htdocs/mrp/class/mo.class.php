@@ -640,11 +640,6 @@ class Mo extends CommonObject
 			$error++;
 		}
 
-		$result = $this->updateProduction($user, $notrigger);
-		if ($result <= 0) {
-			$error++;
-		}
-
 		if (!$error) {
 			$this->db->commit();
 			return 1;
@@ -664,94 +659,28 @@ class Mo extends CommonObject
 	public function updateProduction(User $user, $notrigger = true)
 	{
 		$error = 0;
-		$role = "";
 
-		if ($this->status != self::STATUS_DRAFT) {
-			//$this->error = 'BadStatusForUpdateProduction';
-			//return -1;
-			return 1;
-		}
+		if ($this->status != self::STATUS_DRAFT) return 1;
 
 		$this->db->begin();
 
-		// Insert lines in mrp_production table from BOM data
-		if (!$error) {
-			// TODO Check that production has not started. If yes, we stop here.
+		$oldQty = $this->oldQty;
+		$newQty = $this->qty;
+		if ($newQty != $oldQty && !empty($this->oldQty)) {
+			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "mrp_production WHERE fk_mo = " . (int) $this->id;
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$moLine = new MoLine($this->db);
+					$res = $moLine->fetch($obj->rowid);
+					if (!$res) $error++;
 
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'mrp_production WHERE fk_mo = '.((int) $this->id);
-			$this->db->query($sql);
-
-			$moline = new MoLine($this->db);
-
-			// Line to produce
-			$moline->fk_mo = $this->id;
-			$moline->qty = $this->qty;
-			$moline->fk_product = $this->fk_product;
-			$moline->position = 1;
-
-			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to produce.
-				include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
-				$bom = new Bom($this->db);
-				$bom->fetch($this->fk_bom);
-				if ($bom->bomtype == 1) {
-					$role = 'toproduce';
-					$moline->role = 'toconsume';
-				} else {
-					$role = 'toconsume';
-					$moline->role = 'toproduce';
-				}
-			} else {
-				if ($this->mrptype == 1) {
-					$moline->role = 'toconsume';
-				} else {
-					$moline->role = 'toproduce';
-				}
-			}
-
-			$resultline = $moline->create($user, false); // Never use triggers here
-			if ($resultline <= 0) {
-				$error++;
-				$this->error = $moline->error;
-				$this->errors = $moline->errors;
-				dol_print_error($this->db, $moline->error, $moline->errors);
-			}
-
-			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to consume.
-				if ($bom->id > 0) {
-					// Lines to consume
-					if (!$error) {
-						foreach ($bom->lines as $line) {
-							$moline = new MoLine($this->db);
-
-							$moline->fk_mo = $this->id;
-							$moline->origin_id = $line->id;
-							$moline->origin_type = 'bomline';
-							if ($line->qty_frozen) {
-								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
-							} else {
-								$moline->qty = price2num(($line->qty / ( !empty($bom->qty) ? $bom->qty : 1 ) ) * $this->qty / ( !empty($line->efficiency) ? $line->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and  more presition
-							}
-							if ($moline->qty <= 0) {
-								$error++;
-								$this->error = "BadValueForquantityToConsume";
-								break;
-							} else {
-								$moline->fk_product = $line->fk_product;
-								$moline->role = $role;
-								$moline->position = $line->position;
-								$moline->qty_frozen = $line->qty_frozen;
-								$moline->disable_stock_change = $line->disable_stock_change;
-								if (!empty($line->fk_default_workstation)) $moline->fk_default_workstation = $line->fk_default_workstation;
-
-								$resultline = $moline->create($user, false); // Never use triggers here
-								if ($resultline <= 0) {
-									$error++;
-									$this->error = $moline->error;
-									$this->errors = $moline->errors;
-									dol_print_error($this->db, $moline->error, $moline->errors);
-									break;
-								}
-							}
+					if ($moLine->role == 'toconsume' || $moLine->role == 'toproduce') {
+						if (empty($moLine->qty_frozen)) {
+							$qty = $newQty * $moLine->qty / $oldQty;
+							$moLine->qty = price2num($qty * (!empty($line->efficiency) ? $line->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and  more presition
+							$res = $moLine->update($user);
+							if (!$res) $error++;
 						}
 					}
 				}
