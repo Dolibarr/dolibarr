@@ -97,6 +97,7 @@ abstract class CommonDocGenerator
 	public $option_multilang;
 	public $option_freetext;
 	public $option_draft_watermark;
+	public $watermark;
 
 	public $option_modereg;
 	public $option_condreg;
