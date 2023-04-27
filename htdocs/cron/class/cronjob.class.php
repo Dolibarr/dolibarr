@@ -996,7 +996,7 @@ class Cronjob extends CommonObject
 		}
 		$datas['space'] = '<br>';
 
-		if (!empty($this->datestart)) {
+		if (!empty($this->datestart) && $this->datestart >= dol_now()) {
 			$datas['crondtstart'] = '<br><b>'.$langs->trans('CronDtStart').':</b> '.dol_print_date($this->datestart, 'dayhour', 'tzuserrel');
 		}
 		if (!empty($this->dateend)) {
@@ -1025,8 +1025,6 @@ class Cronjob extends CommonObject
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $db, $conf, $langs;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
