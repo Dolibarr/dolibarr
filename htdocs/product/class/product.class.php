@@ -572,7 +572,7 @@ class Product extends CommonObject
 	 */
 	public function check()
 	{
-		if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+		if (getDolGlobalInt('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
 			$this->ref = trim($this->ref);
 		} else {
 			$this->ref = dol_sanitizeFileName(stripslashes($this->ref));
