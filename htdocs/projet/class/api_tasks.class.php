@@ -647,14 +647,14 @@ class Tasks extends DolibarrApi
 		);
 	}
 
-	protected function _timespentRecordChecks($id, $timespent_id) {
+	protected function _timespentRecordChecks($id, $timespent_id)
+	{
 		if ($this->task->fetch($id) <= 0) {
 			throw new RestException(404, 'Task not found');
 		}
 		if ($this->task->fetchTimeSpent($timespent_id) <= 0) {
 			throw new RestException(404, 'Timespent not found');
-		}
-		elseif ($this->task->id != $id) {
+		} elseif ($this->task->id != $id) {
 			throw new RestException(404, 'Timespent not found in selected task');
 		}
 	}
