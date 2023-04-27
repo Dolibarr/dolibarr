@@ -970,6 +970,49 @@ class Cronjob extends CommonObject
 
 
 	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $langs;
+
+		$langs->load('cron');
+		$datas = [];
+
+		$datas['picto'] = img_picto('', 'object_'.$this->picto).' <u>'.$langs->trans("CronTask").'</u>';
+		if (isset($this->status)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.dol_escape_htmltag($this->ref);
+		$datas['label'] = '<br><b>'.$langs->trans('Title').':</b> '.$langs->trans($this->label);
+		if ($this->label != $langs->trans($this->label)) {
+			$datas['label']  .= ' <span class="opacitymedium">('.$this->label.')</span>';
+		}
+		if (!empty($this->params)) {
+			$datas['params'] = '<br><b>'.$langs->trans('Parameters').':</b> '.dol_escape_htmltag($this->params);
+		}
+		$datas['space'] = '<br>';
+
+		if (!empty($this->datestart)) {
+			$datas['crondtstart'] = '<br><b>'.$langs->trans('CronDtStart').':</b> '.dol_print_date($this->datestart, 'dayhour', 'tzuserrel');
+		}
+		if (!empty($this->dateend)) {
+			$datas['crondtend'] = '<br><b>'.$langs->trans('CronDtEnd').':</b> '.dol_print_date($this->dateend, 'dayhour', 'tzuserrel');
+		}
+		if (!empty($this->datelastrun)) {
+			$datas['cronlastlaunch'] = '<br><b>'.$langs->trans('CronDtLastLaunch').':</b> '.dol_print_date($this->datelastrun, 'dayhour', 'tzuserrel');
+		}
+		if (!empty($this->datenextrun)) {
+			$datas['crondtnextlaunch'] = '<br><b>'.$langs->trans('CronDtNextLaunch').':</b> '.dol_print_date($this->datenextrun, 'dayhour', 'tzuserrel');
+		}
+
+		return $datas;
+	}
+
+	/**
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -991,31 +1034,18 @@ class Cronjob extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', 'object_'.$this->picto).' <u>'.$langs->trans("CronTask").'</u>';
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
-		}
-		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.dol_escape_htmltag($this->ref);
-		$label .= '<br><b>'.$langs->trans('Title').':</b> '.$langs->trans($this->label);
-		if ($this->label != $langs->trans($this->label)) {
-			$label .= ' <span class="opacitymedium">('.$this->label.')</span>';
-		}
-		if (!empty($this->params)) {
-			$label .= '<br><b>'.$langs->trans('Parameters').':</b> '.dol_escape_htmltag($this->params);
-		}
-		$label .= '<br>';
-
-		if (!empty($this->datestart)) {
-			$label .= '<br><b>'.$langs->trans('CronDtStart').':</b> '.dol_print_date($this->datestart, 'dayhour', 'tzuserrel');
-		}
-		if (!empty($this->dateend)) {
-			$label .= '<br><b>'.$langs->trans('CronDtEnd').':</b> '.dol_print_date($this->dateend, 'dayhour', 'tzuserrel');
-		}
-		if (!empty($this->datelastrun)) {
-			$label .= '<br><b>'.$langs->trans('CronDtLastLaunch').':</b> '.dol_print_date($this->datelastrun, 'dayhour', 'tzuserrel');
-		}
-		if (!empty($this->datenextrun)) {
-			$label .= '<br><b>'.$langs->trans('CronDtNextLaunch').':</b> '.dol_print_date($this->datenextrun, 'dayhour', 'tzuserrel');
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
 
 		$url = DOL_URL_ROOT.'/cron/card.php?id='.$this->id;
@@ -1038,7 +1068,7 @@ class Cronjob extends CommonObject
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -1049,7 +1079,7 @@ class Cronjob extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
