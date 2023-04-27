@@ -709,7 +709,7 @@ class Receptions extends DolibarrApi
 	private function _validate($data)
 	{
 		$reception = array();
-		foreach (Shipments::$FIELDS as $field) {
+		foreach (Receptions::$FIELDS as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
