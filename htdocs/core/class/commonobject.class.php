@@ -961,13 +961,16 @@ abstract class CommonObject
 		$thirdpartyid = 0;
 		$elementforaltlanguage = $this->element;
 		if ($this->element == 'societe') {
+			/** @var Societe $this */
 			$thirdpartyid = $this->id;
 		}
 		if ($this->element == 'contact') {
+			/** @var Contact $this*/
 			$contactid = $this->id;
 			$thirdpartyid = empty($this->fk_soc) ? 0 : $this->fk_soc;
 		}
 		if ($this->element == 'user') {
+			/** @var User $this */
 			$contactid = $this->contact_id;
 			$thirdpartyid = empty($object->fk_soc) ? 0 : $object->fk_soc;
 		}
@@ -975,7 +978,7 @@ abstract class CommonObject
 		$out = '';
 
 		$outdone = 0;
-		$coords = $this->getFullAddress(1, ', ', (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) ? $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT : 0));
+		$coords = $this->getFullAddress(1, ', ', getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT'));
 		if ($coords) {
 			if (!empty($conf->use_javascript_ajax)) {
 				// Add picto with tooltip on map
