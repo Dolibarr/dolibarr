@@ -134,7 +134,7 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="5">'.$langs->trans("SupplierInvoiceWaitingWithdraw").' ('.$num.')</th></tr>';
+	print '<th colspan="5">'.$langs->trans("SupplierInvoiceWaitingWithdraw").' <span class="opacitymedium">('.$num.')</span></th></tr>';
 	if ($num) {
 		while ($i < $num && $i < 20) {
 			$obj = $db->fetch_object($resql);
