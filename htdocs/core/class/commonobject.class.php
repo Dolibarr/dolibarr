@@ -794,6 +794,7 @@ abstract class CommonObject
 		// Note that $action and $object may have been modified by some hooks
 		$hookmanager->executeHooks('getTooltipContent', $parameters, $this, $action);
 
+		//var_dump($datas);
 		$label = implode($datas);
 
 		return $label;

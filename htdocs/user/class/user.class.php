@@ -2807,6 +2807,7 @@ class User extends CommonObject
 		$type = ($this->socid ? $langs->trans("ExternalUser").$company : $langs->trans("InternalUser"));
 		$datas['type'] = '<br><b>'.$langs->trans("Type").':</b> '.$type;
 		$datas['closediv'] = '</div>';
+
 		if ($infologin > 0) {
 			$datas['newlinelogin'] = '<br>';
 			$datas['session'] = '<br><u>'.$langs->trans("Session").'</u>';
