@@ -333,7 +333,7 @@ $sql .= empty($hookmanager->resPrint) ? "" : " ".$hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* This old and fast method to get and count full list returns all record so use a high amount of memory.
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);

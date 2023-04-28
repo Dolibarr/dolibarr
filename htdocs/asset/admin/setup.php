@@ -544,7 +544,7 @@ if ($action == 'edit') {
 					print '<datalist id="pcg_type_datalist">';
 					require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancysystem.class.php';
 					$accountsystem = new AccountancySystem($db);
-					$accountsystem->fetch($conf->global->CHARTOFACCOUNTS);
+					$accountsystem->fetch(getDolGlobalInt('CHARTOFACCOUNTS'));
 					$sql = 'SELECT DISTINCT pcg_type FROM ' . MAIN_DB_PREFIX . 'accounting_account';
 					$sql .= " WHERE fk_pcg_version = '" . $db->escape($accountsystem->ref) . "'";
 					$sql .= ' AND entity in ('.getEntity('accounting_account', 0).')';		// Always limit to current entity. No sharing in accountancy.
