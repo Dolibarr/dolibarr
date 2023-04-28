@@ -5623,16 +5623,17 @@ class Facture extends CommonInvoice
 
 
 	/**
-	 *  Send reminders by emails for invoices that are due
+	 *  Send reminders by emails for invoices validated that are due.
 	 *  CAN BE A CRON TASK
 	 *
 	 *  @param	int			$nbdays				Delay before due date (or after if delay is negative)
 	 *  @param	string		$paymentmode		'' or 'all' by default (no filter), or 'LIQ', 'CHQ', CB', ...
 	 *  @param	int|string	$template			Name (or id) of email template (Must be a template of type 'facture_send')
 	 *  @param	string		$forcerecipient		Force email of recipient (for example to send the email to an accountant supervisor instead of the customer)
+	 *  @param	string		$datetouse			'duedate' (default) or 'invoicedate'
 	 *  @return int         					0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function sendEmailsRemindersOnInvoiceDueDate($nbdays = 0, $paymentmode = 'all', $template = '', $forcerecipient = '')
+	public function sendEmailsRemindersOnInvoiceDueDate($nbdays = 0, $paymentmode = 'all', $template = '', $forcerecipient = '', $datetouse = 'duedate')
 	{
 		global $conf, $langs, $user;
 
@@ -5646,6 +5647,10 @@ class Facture extends CommonInvoice
 
 		if (!isModEnabled('facture')) {	// Should not happen. If module disabled, cron job should not be visible.
 			$this->output .= $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Facture"));
+			return 0;
+		}
+		if (!in_array($datetouse, array('duedate', 'invoicedate'))) {
+			$this->output .= 'Bad value for parameter datetouse. Must be "duedate" or "invoicedate"';
 			return 0;
 		}
 		/*if (empty($conf->global->FACTURE_REMINDER_EMAIL)) {
@@ -5672,15 +5677,23 @@ class Facture extends CommonInvoice
 		if (!empty($paymentmode) && $paymentmode != 'all') {
 			$sql .= ", ".MAIN_DB_PREFIX."c_paiement as cp";
 		}
-		$sql .= " WHERE f.paye = 0";
-		$sql .= " AND f.fk_statut = ".self::STATUS_VALIDATED;
-		$sql .= " AND f.date_lim_reglement = '".$this->db->idate($tmpidate, 'gmt')."'";
+		$sql .= " WHERE f.paye = 0";	// Only unpaid
+		$sql .= " AND f.fk_statut = ".self::STATUS_VALIDATED;	// Only validated status
+		if ($datetouse == 'invoicedate') {
+			$sql .= " AND f.datef = '".$this->db->idate($tmpidate, 'gmt')."'";
+		} else {
+			$sql .= " AND f.date_lim_reglement = '".$this->db->idate($tmpidate, 'gmt')."'";
+		}
 		$sql .= " AND f.entity IN (".getEntity('facture', 0).")";	// One batch process only one company (no sharing)
 		if (!empty($paymentmode) && $paymentmode != 'all') {
 			$sql .= " AND f.fk_mode_reglement = cp.id AND cp.code = '".$this->db->escape($paymentmode)."'";
 		}
 		// TODO Add a filter to check there is no payment started yet
-		$sql .= $this->db->order("date_lim_reglement", "ASC");
+		if ($datetouse == 'invoicedate') {
+			$sql .= $this->db->order("datef", "ASC");
+		} else {
+			$sql .= $this->db->order("date_lim_reglement", "ASC");
+		}
 
 		$resql = $this->db->query($sql);
 
@@ -5707,7 +5720,7 @@ class Facture extends CommonInvoice
 							$outputlangs = $langs;
 						}
 
-						// Select email template
+						// Select email template according to language of recipient
 						$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
 						if (is_numeric($arraymessage) && $arraymessage <= 0) {
 							$langs->load("errors");
@@ -5812,7 +5825,7 @@ class Facture extends CommonInvoice
 								$actioncomm->contact_id = 0;
 
 								$actioncomm->code = 'AC_EMAIL';
-								$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' forcerecipient='.$forcerecipient.')';
+								$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' forcerecipient='.$forcerecipient.' datetouse='.$datetouse.')';
 								$actioncomm->note_private = $sendContent;
 								$actioncomm->fk_project = $tmpinvoice->fk_project;
 								$actioncomm->datep = dol_now();
