@@ -653,6 +653,8 @@ class Tasks extends DolibarrApi
 	 *
 	 * @param   int         $id                 Task ID
 	 * @param   int         $timespent_id       Time spent ID (llx_projet_task_time.rowid)
+	 *
+	 * @return void
 	 */
 	protected function timespentRecordChecks($id, $timespent_id)
 	{
