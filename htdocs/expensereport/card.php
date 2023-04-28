@@ -2643,10 +2643,22 @@ if ($action == 'create') {
 							,async:false
 							,dataType:"json"
 							,success:function(response) {
-                                if (response.response_status == "success"){
-                                jQuery("#value_unit_ht").val(response.data);
-                                jQuery("#value_unit_ht").trigger("change");
-                                jQuery("#value_unit").val("");
+								if (response.response_status == "success"){';
+
+				if (!empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY)) {
+					print '
+									jQuery("#value_unit").val(parseFloat(response.data) * (100 + parseFloat(tva)) / 100);
+									jQuery("#value_unit").trigger("change");
+				                    ';
+				} else {
+					print '
+									jQuery("#value_unit_ht").val(response.data);
+									jQuery("#value_unit_ht").trigger("change");
+									jQuery("#value_unit").val("");
+									';
+				}
+
+				print '
                                 } else if(response.response_status == "error" && response.errorMessage != undefined && response.errorMessage.length > 0 ){
                                     $.jnotify(response.errorMessage, "error", {timeout: 0, type: "error"},{ remove: function (){} } );
                                 }
