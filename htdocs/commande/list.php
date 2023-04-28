@@ -213,6 +213,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+$error = 0;
 
 
 /*
@@ -503,6 +504,7 @@ if (empty($reshook)) {
 							} else {
 								$lineid = 0;
 								$error++;
+								$errors[] = $objecttmp->error;
 								break;
 							}
 							// Defined the new fk_parent_line
