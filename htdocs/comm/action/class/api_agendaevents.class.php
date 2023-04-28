@@ -134,7 +134,7 @@ class AgendaEvents extends DolibarrApi
 				$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 			}
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm AS t LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields AS ef ON (ef.fk_object = t.id)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		if (isModEnabled("societe")) {
 			if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
