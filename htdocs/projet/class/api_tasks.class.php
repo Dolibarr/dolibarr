@@ -584,7 +584,7 @@ class Tasks extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->projet->creer) {
 			throw new RestException(401);
 		}
-		$this->_timespentRecordChecks($id, $timespent_id);
+		$this->timespentRecordChecks($id, $timespent_id);
 
 		if (!DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -624,12 +624,12 @@ class Tasks extends DolibarrApi
 	 *
 	 * @return  array
 	 */
-	public function deleteTimeSpent($id, $timespent_id, $user_id)
+	public function deleteTimeSpent($id, $timespent_id)
 	{
 		if (!DolibarrApiAccess::$user->rights->projet->supprimer) {
 			throw new RestException(401);
 		}
-		$this->_timespentRecordChecks($id, $timespent_id);
+		$this->timespentRecordChecks($id, $timespent_id);
 
 		if (!DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -647,7 +647,14 @@ class Tasks extends DolibarrApi
 		);
 	}
 
-	protected function _timespentRecordChecks($id, $timespent_id)
+	/**
+	 * Validate task & timespent IDs for timespent API methods.
+	 * Loads the selected task & timespent records.
+	 *
+	 * @param   int         $id                 Task ID
+	 * @param   int         $timespent_id       Time spent ID (llx_projet_task_time.rowid)
+	 */
+	protected function timespentRecordChecks($id, $timespent_id)
 	{
 		if ($this->task->fetch($id) <= 0) {
 			throw new RestException(404, 'Task not found');
