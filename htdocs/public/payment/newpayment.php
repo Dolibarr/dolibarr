@@ -74,6 +74,8 @@ $hookmanager->initHooks(array('newpayment'));
 global $dolibarr_main_instance_unique_id;
 
 // Load translation files
+// Use browser-defined language
+$langs->setDefaultLang('auto');
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
 
 // Security check
