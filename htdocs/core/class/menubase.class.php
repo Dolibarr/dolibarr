@@ -313,7 +313,7 @@ class Menubase
 				}
 			} else {
 				dol_syslog(get_class($this)."::create menu entry already exists", LOG_WARNING);
-				$this->error = 'Error Menu entry already exists';
+				$this->error = 'Error Menu entry ('.$this->menu_handler.','.$this->position.','.$this->url.') already exists';
 				return 0;
 			}
 		} else {

@@ -33,12 +33,12 @@ namespace Stripe;
  * @property null|string $dynamic_last4 (For tokenized numbers only.) The last four digits of the device account number.
  * @property int $exp_month Two-digit number representing the card's expiration month.
  * @property int $exp_year Four-digit number representing the card's expiration year.
- * @property null|string $fingerprint Uniquely identifies this particular card number. You can use this attribute to check whether two customers who’ve signed up with you are using the same card number, for example. For payment methods that tokenize card information (Apple Pay, Google Pay), the tokenized number might be provided instead of the underlying card number.
+ * @property null|string $fingerprint <p>Uniquely identifies this particular card number. You can use this attribute to check whether two customers who’ve signed up with you are using the same card number, for example. For payment methods that tokenize card information (Apple Pay, Google Pay), the tokenized number might be provided instead of the underlying card number.</p><p><em>Starting May 1, 2021, card fingerprint in India for Connect will change to allow two fingerprints for the same card --- one for India and one for the rest of the world.</em></p>
  * @property string $funding Card funding type. Can be <code>credit</code>, <code>debit</code>, <code>prepaid</code>, or <code>unknown</code>.
  * @property string $last4 The last four digits of the card.
  * @property null|\Stripe\StripeObject $metadata Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
  * @property null|string $name Cardholder name.
- * @property null|string|\Stripe\Recipient $recipient The recipient that this card belongs to. This attribute will not be in the card object if the card belongs to a customer or account instead.
+ * @property null|string $status For external accounts, possible values are <code>new</code> and <code>errored</code>. If a transfer fails, the status is set to <code>errored</code> and transfers are stopped until account details are updated.
  * @property null|string $tokenization_method If the card number is tokenized, this is the method that was used. Can be <code>android_pay</code> (includes Google Pay), <code>apple_pay</code>, <code>masterpass</code>, <code>visa_checkout</code>, or null.
  */
 class Card extends ApiResource
@@ -91,12 +91,8 @@ class Card extends ApiResource
             $base = Account::classUrl();
             $parent = $this['account'];
             $path = 'external_accounts';
-        } elseif ($this['recipient']) {
-            $base = Recipient::classUrl();
-            $parent = $this['recipient'];
-            $path = 'cards';
         } else {
-            $msg = 'Cards cannot be accessed without a customer ID, account ID or recipient ID.';
+            $msg = 'Cards cannot be accessed without a customer ID, or account ID.';
 
             throw new Exception\UnexpectedValueException($msg);
         }

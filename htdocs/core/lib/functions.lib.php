@@ -20,6 +20,7 @@
  * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022       Ferran Marcet           	<fmarcet@2byte.es>
  * Copyright (C) 2022       Charlene Benke           	<charlene@patas-monkey.com>
+ * Copyright (C) 2023       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,13 +161,28 @@ function getDolUserInt($key, $default = 0, $tmpuser = null)
 /**
  * Is Dolibarr module enabled
  *
- * @param string $module module name to check
- * @return int
+ * @param 	string 	$module 	Module name to check
+ * @return 	boolean				True if module is enabled
  */
 function isModEnabled($module)
 {
 	global $conf;
-	return !empty($conf->$module->enabled);
+
+	// Fix special cases
+	$arrayconv = array(
+		'project' => 'projet',
+		'contract' => 'contrat'
+	);
+	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+		$arrayconv['supplier_order'] = 'fournisseur';
+		$arrayconv['supplier_invoice'] = 'fournisseur';
+	}
+	if (!empty($arrayconv[$module])) {
+		$module = $arrayconv[$module];
+	}
+
+	return !empty($conf->modules[$module]);
+	//return !empty($conf->$module->enabled);
 }
 
 /**
@@ -232,7 +248,7 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		$out = $mc->getEntity($element, $shared, $currentobject);
 	} else {
 		$out = '';
-		$addzero = array('user', 'usergroup', 'c_email_templates', 'email_template', 'default_values');
+		$addzero = array('user', 'usergroup', 'cronjob', 'c_email_templates', 'email_template', 'default_values');
 		if (in_array($element, $addzero)) {
 			$out .= '0,';
 		}
@@ -619,7 +635,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 				}
 			}
 			if (!empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) {
-				if (!empty($_GET['action']) && (preg_match('/^create|^add_price|^make/', $_GET['action']) || preg_match('/^presend/', $_GET['action'])) && !isset($_GET[$paramname]) && !isset($_POST[$paramname])) {
+				if (!empty($_GET['action']) && (preg_match('/^create/', $_GET['action']) || preg_match('/^presend/', $_GET['action'])) && !isset($_GET[$paramname]) && !isset($_POST[$paramname])) {
 					// Now search in setup to overwrite default values
 					if (!empty($user->default_values)) {		// $user->default_values defined from menu 'Setup - Default values'
 						if (isset($user->default_values[$relativepathstring]['createform'])) {
@@ -1431,13 +1447,17 @@ function dol_string_unaccent($str)
  * 	@param	string			$newstr				String to replace forbidden chars with
  *  @param  array|string	$badcharstoreplace  Array of forbidden characters to replace. Use '' to keep default list.
  *  @param  array|string	$badcharstoremove   Array of forbidden characters to remove. Use '' to keep default list.
+ *  @param	int				$keepspaces			1=Do not treat space as a special char to replace or remove
  * 	@return string          					Cleaned string
  *
  * 	@see    		dol_sanitizeFilename(), dol_string_unaccent(), dol_string_nounprintableascii()
  */
-function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '', $badcharstoremove = '')
+function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '', $badcharstoremove = '', $keepspaces = 0)
 {
-	$forbidden_chars_to_replace = array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=", '°', '$', ';'); // more complete than dol_sanitizeFileName
+	$forbidden_chars_to_replace = array("'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=", '°', '$', ';'); // more complete than dol_sanitizeFileName
+	if (empty($keepspaces)) {
+		$forbidden_chars_to_replace[] = " ";
+	}
 	$forbidden_chars_to_remove = array();
 	//$forbidden_chars_to_remove=array("(",")");
 
@@ -1521,7 +1541,7 @@ function dol_escape_json($stringtoescape)
 }
 
 /**
- *  Returns text escaped for inclusion in HTML alt or title tags, or into values of HTML input fields.
+ *  Returns text escaped for inclusion in HTML alt or title or value tags, or into values of HTML input fields.
  *
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Keep b tags, 0=remove them completely
@@ -1529,7 +1549,7 @@ function dol_escape_json($stringtoescape)
  *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape. TODO Does not works yet when there is attributes into tag.
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
  *  @return     string     				 			Escaped string
- *  @see		dol_string_nohtmltag(), dol_string_nospecial(), dol_string_unaccent()
+ *  @see		dol_string_nohtmltag(), dol_string_nospecial(), dol_string_unaccent(), dol_htmlentitiesbr()
  */
 function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0)
 {
@@ -3569,7 +3589,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			}
 		}
 
-		//if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
+		//if (($cid || $socid) && isModEnabled('agenda') && $user->rights->agenda->myactions->create)
 		if (isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
 			$type = 'AC_TEL';
 			$link = '';
@@ -3786,22 +3806,22 @@ function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $char
 
 			// TODO Remove this block, we can add this using the hook now
 			$showgmap = $showomap = 0;
-			if (($element == 'thirdparty' || $element == 'societe') && !empty($conf->google->enabled) && !empty($conf->global->GOOGLE_ENABLE_GMAPS)) {
+			if (($element == 'thirdparty' || $element == 'societe') && isModEnabled('google') && !empty($conf->global->GOOGLE_ENABLE_GMAPS)) {
 				$showgmap = 1;
 			}
-			if ($element == 'contact' && !empty($conf->google->enabled) && !empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) {
+			if ($element == 'contact' && isModEnabled('google') && !empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) {
 				$showgmap = 1;
 			}
-			if ($element == 'member' && !empty($conf->google->enabled) && !empty($conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS)) {
+			if ($element == 'member' && isModEnabled('google') && !empty($conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS)) {
 				$showgmap = 1;
 			}
-			if (($element == 'thirdparty' || $element == 'societe') && !empty($conf->openstreetmap->enabled) && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) {
+			if (($element == 'thirdparty' || $element == 'societe') && isModEnabled('openstreetmap') && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) {
 				$showomap = 1;
 			}
-			if ($element == 'contact' && !empty($conf->openstreetmap->enabled) && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS)) {
+			if ($element == 'contact' && isModEnabled('openstreetmap') && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS)) {
 				$showomap = 1;
 			}
-			if ($element == 'member' && !empty($conf->openstreetmap->enabled) && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS)) {
+			if ($element == 'member' && isModEnabled('openstreetmap') && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS)) {
 				$showomap = 1;
 			}
 			if ($showgmap) {
@@ -5329,7 +5349,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			$options = '&'.$options;
 		}
 
-		if (!$sortorder || $field1 != $sortfield1) {
+		if (!$sortorder || ($field1 != $sortfield1)) {
 			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
 		} else {
@@ -6204,7 +6224,7 @@ function isOnlyOneLocalTax($local)
  * Get values of localtaxes (1 or 2) for company country for the common vat with the highest value
  *
  * @param	int				$local 		LocalTax to get
- * @return	string						Values of localtax (Can be '20', '-19:-15:-9')
+ * @return	string						Values of localtax (Can be '20', '-19:-15:-9') or 'Error'
  */
 function get_localtax_by_third($local)
 {
@@ -6221,12 +6241,14 @@ function get_localtax_by_third($local)
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
-		return $obj->localtax;
-	} else {
-		return 'Error';
+		if ($obj) {
+			return $obj->localtax;
+		} else {
+			return '0';
+		}
 	}
 
-	return '0';
+	return 'Error';
 }
 
 
@@ -7280,15 +7302,16 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 		do {
 			$oldstringtoclean = $out;
 
+			libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
+
 			if (!empty($out) && !empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) && $check != 'restricthtmlallowunvalid') {
 				try {
 					$dom = new DOMDocument;
 					// Add a trick to solve pb with text without parent tag
-					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up without the trick into '<h1>Foo<p>bar</p></h1>'
-					// like 'abc' that wrongly ends up without the tric into with '<p>abc</p>'
+					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up, without the trick, with '<h1>Foo<p>bar</p></h1>'
+					// like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
 					$out = '<div class="tricktoremove">'.$out.'</div>';
-
-					$dom->loadHTML($out, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
+					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD|LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
 					$out = trim($dom->saveHTML());
 
 					// Remove the trick added to solve pb with text without parent tag
@@ -8010,7 +8033,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if ($object->fetch_optionals() > 0) {
 					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
-							$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $object->array_options['options_'.$key];
 							if ($extrafields->attributes[$object->table_element]['type'][$key] == 'date') {
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = dol_print_date($object->array_options['options_'.$key], 'day');
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_LOCALE__'] = dol_print_date($object->array_options['options_'.$key], 'day', 'tzserver', $outputlangs);
@@ -8026,6 +8048,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'price') {
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $object->array_options['options_'.$key];
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_FORMATED__'] = price($object->array_options['options_'.$key]);
+							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] != 'separator') {
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $object->array_options['options_'.$key];
 							}
 						}
 					}
@@ -8040,6 +8064,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				// Set the online payment url link into __ONLINE_PAYMENT_URL__ key
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 				$outputlangs->loadLangs(array('paypal', 'other'));
+
+				$amounttouse = 0;
 				$typeforonlinepayment = 'free';
 				if (is_object($object) && $object->element == 'commande') {
 					$typeforonlinepayment = 'order';
@@ -8049,7 +8075,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				if (is_object($object) && $object->element == 'member') {
 					$typeforonlinepayment = 'member';
-					$amounttouse = 0;
 					if (!empty($object->last_subscription_amount)) {
 						$amounttouse = $object->last_subscription_amount;
 					}
@@ -8522,21 +8547,28 @@ function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
  *
  *	@param	string|string[] $mesgs			Message string or array
  *  @param  string          $style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *  @param	int				$noduplicate	1 means we do not add the message if already present in session stack
  *  @return	void
  *  @see	dol_htmloutput_events()
  */
-function setEventMessage($mesgs, $style = 'mesgs')
+function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0)
 {
 	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);		This is not deprecated, it is used by setEventMessages function
 	if (!is_array($mesgs)) {
 		// If mesgs is a string
 		if ($mesgs) {
+			if (!empty($noduplicate) && isset($_SESSION['dol_events'][$style]) && in_array($mesgs, $_SESSION['dol_events'][$style])) {
+				return;
+			}
 			$_SESSION['dol_events'][$style][] = $mesgs;
 		}
 	} else {
 		// If mesgs is an array
 		foreach ($mesgs as $mesg) {
 			if ($mesg) {
+				if (!empty($noduplicate) && isset($_SESSION['dol_events'][$style]) && in_array($mesg, $_SESSION['dol_events'][$style])) {
+					return;
+				}
 				$_SESSION['dol_events'][$style][] = $mesg;
 			}
 		}
@@ -8551,13 +8583,14 @@ function setEventMessage($mesgs, $style = 'mesgs')
  *	@param	array|null	$mesgs			Message array
  *  @param  string		$style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
  *  @param	string		$messagekey		A key to be used to allow the feature "Never show this message again"
+ *  @param	int			$noduplicate	1 means we do not add the message if already present in session stack
  *  @return	void
  *  @see	dol_htmloutput_events()
  */
-function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '')
+function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '', $noduplicate = 0)
 {
 	if (empty($mesg) && empty($mesgs)) {
-		dol_syslog("Try to add a message in stack with empty message", LOG_WARNING);
+		dol_syslog("Try to add a message in stack, but value to add is empty message", LOG_WARNING);
 	} else {
 		if ($messagekey) {
 			// Complete message with a js link to set a cookie "DOLHIDEMESSAGE".$messagekey;
@@ -8569,12 +8602,12 @@ function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '')
 				dol_print_error('', 'Bad parameter style='.$style.' for setEventMessages');
 			}
 			if (empty($mesgs)) {
-				setEventMessage($mesg, $style);
+				setEventMessage($mesg, $style, $noduplicate);
 			} else {
 				if (!empty($mesg) && !in_array($mesg, $mesgs)) {
-					setEventMessage($mesg, $style); // Add message string if not already into array
+					setEventMessage($mesg, $style, $noduplicate); // Add message string if not already into array
 				}
-				setEventMessage($mesgs, $style);
+				setEventMessage($mesgs, $style, $noduplicate);
 			}
 		}
 	}
@@ -9755,7 +9788,7 @@ function printCommonFooter($zone = 'private')
 
 			// Google Analytics
 			// TODO Add a hook here
-			if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
+			if (isModEnabled('google') && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
 				$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
 				foreach ($tmptagarray as $tmptag) {
 					print "\n";
@@ -9804,13 +9837,21 @@ function printCommonFooter($zone = 'private')
  * For example: "A=1;B=2;C=2" is exploded into array('A'=>1,'B'=>2,'C'=>3)
  *
  * @param 	string	$string		String to explode
- * @param 	string	$delimiter	Delimiter between each couple of data
+ * @param 	string	$delimiter	Delimiter between each couple of data. Example: ';' or '[\n;]+' or '(\n\r|\r|\n|;)'
  * @param 	string	$kv			Delimiter between key and value
  * @return	array				Array of data exploded
  */
 function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 {
-	if ($a = explode($delimiter, $string)) {
+	if (preg_match('/^\[.*\]$/sm', $delimiter) || preg_match('/^\(.*\)$/sm', $delimiter)) {
+		// This is a regex string
+		$newdelimiter = $delimiter;
+	} else {
+		// This is a simple string
+		$newdelimiter = preg_quote($delimiter, '/');
+	}
+
+	if ($a = preg_split('/'.$newdelimiter.'/', $string)) {
 		$ka = array();
 		foreach ($a as $s) { // each part
 			if ($s) {
@@ -9823,6 +9864,7 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 		}
 		return $ka;
 	}
+
 	return array();
 }
 
@@ -9866,10 +9908,10 @@ function dol_getmypid()
  *                                      like "keyword1 keyword2" = We want record field like keyword1 AND field like keyword2
  *                                      or like "keyword1|keyword2" = We want record field like keyword1 OR field like keyword2
  *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < -1000"
- *                             			If param $mode is 2, can contains a list of int id separated by comma like "1,3,4"
- *                             			If param $mode is 3, can contains a list of string separated by comma like "a,b,c"
- * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of ID separated with comma (Example '1,3,4')
- * 										3=value is list of string separated with comma (Example 'text 1,text 2'), 4=value is a list of ID separated with comma (Example '2,7') to be used to search into a multiselect string '1,2,3,4'
+ *                             			If param $mode is 2 or -2, can contains a list of int id separated by comma like "1,3,4"
+ *                             			If param $mode is 3 or -3, can contains a list of string separated by comma like "a,b,c".
+ * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of ID separated with comma (Example '1,3,4'), -2 is for exclude list,
+ * 										3=value is list of string separated with comma (Example 'text 1,text 2'), -3 if for exclude list, 4=value is a list of ID separated with comma (Example '2,7') to be used to search into a multiselect string '1,2,3,4'
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  * @see dolSqlDateFilter()
@@ -9884,7 +9926,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 		$value = preg_replace('/\*/', '%', $value); // Replace * with %
 	}
 	if ($mode == 1) {
-		$value = preg_replace('/([!<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"), '/').'\-])/', '\1\2', $value); // Clean string '< 10' into '<10' so we can the explode on space to get all tests to do
+		$value = preg_replace('/([!<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"), '/').'\-])/', '\1\2', $value); // Clean string '< 10' into '<10' so we can then explode on space to get all tests to do
 	}
 
 	$value = preg_replace('/\s*\|\s*/', '|', $value);
@@ -9895,16 +9937,15 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 		$fields = array($fields);
 	}
 
-	$j = 0;
-	foreach ($crits as $crit) {
+	$i1 = 0;	// count the nb of and criteria added (all fields / criterias)
+	foreach ($crits as $crit) {		// Loop on each AND criteria
 		$crit = trim($crit);
-		$i = 0;
-		$i2 = 0;
+		$i2 = 0;	// count the nb of valid criteria added for this this first criteria
 		$newres = '';
 		foreach ($fields as $field) {
 			if ($mode == 1) {
 				$tmpcrits = explode('|', $crit);
-				$i3 = 0;	// count the nb of valid criteria added for this field
+				$i3 = 0;	// count the nb of valid criteria added for this current field
 				foreach ($tmpcrits as $tmpcrit) {
 					if ($tmpcrit !== '0' && empty($tmpcrit)) {
 						continue;
@@ -9931,7 +9972,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 						$i3++; // a criteria was added to string
 					}
 				}
-				$i2++;
+				$i2++; // a criteria for 1 more field was added to string
 			} elseif ($mode == 2 || $mode == -2) {
 				$crit = preg_replace('/[^0-9,]/', '', $crit); // ID are always integer
 				$newres .= ($i2 > 0 ? ' OR ' : '').$field." ".($mode == -2 ? 'NOT ' : '');
@@ -9939,7 +9980,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				if ($mode == -2) {
 					$newres .= ' OR '.$field.' IS NULL';
 				}
-				$i2++; // a criteria was added to string
+				$i2++; // a criteria for 1 more field was added to string
 			} elseif ($mode == 3 || $mode == -3) {
 				$tmparray = explode(',', $crit);
 				if (count($tmparray)) {
@@ -9952,7 +9993,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 						}
 					}
 					$newres .= ($i2 > 0 ? ' OR ' : '').$field." ".($mode == -3 ? 'NOT ' : '')."IN (".$db->sanitize($listofcodes, 1).")";
-					$i2++; // a criteria was added to string
+					$i2++; // a criteria for 1 more field was added to string
 				}
 				if ($mode == -3) {
 					$newres .= ' OR '.$field.' IS NULL';
@@ -9969,20 +10010,20 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 							$newres .= ' OR '.$field." LIKE '%,".$db->escape($val)."'";
 							$newres .= ' OR '.$field." LIKE '%,".$db->escape($val).",%'";
 							$newres .= ')';
-							$i2++;
+							$i2++; // a criteria for 1 more field was added to string (we can add several citeria for the same field as it is a multiselect search criteria)
 						}
 					}
 				}
 			} else { // $mode=0
 				$tmpcrits = explode('|', $crit);
-				$i3 = 0;	// count the nb of valid criteria added for this field
-				foreach ($tmpcrits as $tmpcrit) {
+				$i3 = 0;	// count the nb of valid criteria added for the current couple criteria/field
+				foreach ($tmpcrits as $tmpcrit) {	// loop on each OR criteria
 					if ($tmpcrit !== '0' && empty($tmpcrit)) {
 						continue;
 					}
 					$tmpcrit = trim($tmpcrit);
 
-					if ($tmpcrit == '^$') {	// If we search empty, we must combined different fields with AND
+					if ($tmpcrit == '^$' || strpos($crit, '!') === 0) {	// If we search empty, we must combined different OR fields with AND
 						$newres .= (($i2 > 0 || $i3 > 0) ? ' AND ' : '');
 					} else {
 						$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
@@ -10028,15 +10069,15 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 
 					$i3++;
 				}
-				$i2++; // a criteria was added to string
+
+				$i2++; // a criteria for 1 more field was added to string
 			}
-			$i++;
 		}
 
 		if ($newres) {
 			$res = $res.($res ? ' AND ' : '').($i2 > 1 ? '(' : '').$newres.($i2 > 1 ? ')' : '');
 		}
-		$j++;
+		$i1++;
 	}
 	$res = ($nofirstand ? "" : " AND ")."(".$res.")";
 
@@ -11247,6 +11288,9 @@ function getElementProperties($element_type)
 		$classpath = 'comm/action/class';
 		$subelement = 'Actioncomm';
 		$module = 'agenda';
+	} elseif ($element_type == 'cronjob') {
+		$classpath = 'cron/class';
+		$module = 'cron';
 	} elseif ($element_type == 'adherent_type') {
 		$classpath = 'adherents/class';
 		$classfile = 'adherent_type';
@@ -11311,10 +11355,25 @@ function getElementProperties($element_type)
 		$classpath = 'contrat/class';
 		$module = 'contrat';
 		$subelement = 'contrat';
+	} elseif ($element_type == 'mailing') {
+		$classpath = 'comm/mailing/class';
+		$module = 'mailing';
+		$classfile = 'mailing';
+		$classname = 'Mailing';
+		$subelement = '';
 	} elseif ($element_type == 'member') {
 		$classpath = 'adherents/class';
 		$module = 'adherent';
 		$subelement = 'adherent';
+	} elseif ($element_type == 'usergroup') {
+		$classpath = 'user/class';
+		$module = 'user';
+	} elseif ($element_type == 'mo') {
+		$classpath = 'mrp/class';
+		$classfile = 'mo';
+		$classname = 'Mo';
+		$module = 'mrp';
+		$subelement = '';
 	} elseif ($element_type == 'cabinetmed_cons') {
 		$classpath = 'cabinetmed/class';
 		$module = 'cabinetmed';
@@ -11368,6 +11427,10 @@ function getElementProperties($element_type)
 		$classname = 'Websitepage';
 		$module = 'website';
 		$subelement = 'websitepage';
+	} elseif ($element_type == 'fiscalyear') {
+		$classpath = 'core/class';
+		$module = 'accounting';
+		$subelement = 'fiscalyear';
 	}
 
 	if (empty($classfile)) {
@@ -11722,11 +11785,14 @@ function jsonOrUnserialize($stringtodecode)
 /**
  * forgeSQLFromUniversalSearchCriteria
  *
- * @param 	string		$filter		String with universal search string. Must be  (aaa:bbb:...) with aaa is a field name (with alias or not) and bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'.
+ * @param 	string		$filter		String with universal search string. Must be  (aaa:bbb:...) with
+ * 									aaa is a field name (with alias or not) and
+ * 									bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'.
  * @param	string		$error		Error message
+ * @param	int			$noand		0=Default, 1=Do not add the AND before the condition string.
  * @return	string					Return forged SQL string
  */
-function forgeSQLFromUniversalSearchCriteria($filter, &$error = '')
+function forgeSQLFromUniversalSearchCriteria($filter, &$error = '', $noand = 0)
 {
 	$regexstring = '\(([a-zA-Z0-9_\.]+:[<>!=insotlke]+:[^\(\)]+)\)';	// Must be  (aaa:bbb:...) with aaa is a field name (with alias or not) and bbb is one of this operator '=', '<', '>', '<=', '>=', '!=', 'in', 'notin', 'like', 'notlike', 'is', 'isnot'
 
@@ -11739,11 +11805,11 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$error = '')
 	$t = str_replace(array('and','or','AND','OR',' '), '', $t);		// Remove the only strings allowed between each () criteria
 	// If the string result contains something else than '()', the syntax was wrong
 	if (preg_match('/[^\(\)]/', $t)) {
-		$error = 'Bad syntax of the search string, filter criteria is inhalited';
+		$error = 'Bad syntax of the search string, filter criteria is invalidated';
 		return 'Filter syntax error';		// Bad syntax of the search string, we force a SQL not found
 	}
 
-	return " AND (".preg_replace_callback('/'.$regexstring.'/i', 'dolForgeCriteriaCallback', $filter).")";
+	return ($noand ? "" : " AND ")."(".preg_replace_callback('/'.$regexstring.'/i', 'dolForgeCriteriaCallback', $filter).")";
 }
 
 /**

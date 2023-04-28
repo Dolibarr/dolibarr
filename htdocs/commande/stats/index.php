@@ -295,11 +295,12 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
+$filter = '';
 if ($mode == 'customer') {
-	$filter = 's.client IN (1,2,3)';
+	$filter = '(s.client:IN:1,2,3)';
 }
 if ($mode == 'supplier') {
-	$filter = 's.fournisseur = 1';
+	$filter = '(s.fournisseur:=:1)';
 }
 print img_picto('', 'company', 'class="pictofixedwidth"');
 print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth300');

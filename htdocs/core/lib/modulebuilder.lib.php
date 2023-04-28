@@ -742,3 +742,108 @@ function writePermsInAsciiDoc($file, $destfile)
 	}
 	return 1;
 }
+
+/**
+ * Add Object in ModuleApi File
+ * @param  string $file           path of file
+ * @param  array  $objects        array of objects in the module
+ * @param  string $modulename     name of module
+ * @return int                    1 if OK, -1 if KO
+ */
+function addObjectsToApiFile($file, $objects, $modulename)
+{
+	if (!file_exists($file)) {
+		return -1;
+	}
+	$content = file($file);
+	$includeClass = "dol_include_once('/mymodule/class/myobject.class.php');";
+	$props = "public \$myobject;";
+	$varcomented = "@var MyObject \$myobject {@type MyObject}";
+	$constructObj = "\$this->myobject = new MyObject(\$this->db);";
+
+	// add properties and declare them in consturctor
+	foreach ($content as $lineNumber => &$lineContent) {
+		if (strpos($lineContent, $varcomented) !== false) {
+			$lineContent = '';
+			foreach ($objects as $object) {
+				$lineContent .= "\t * @var ".$object." \$".strtolower($object)." {@type ".$object."}". PHP_EOL;
+			}
+			//var_dump($lineContent);exit;
+		}
+		if (strpos($lineContent, $props) !== false) {
+			$lineContent = '';
+			foreach ($objects as $object) {
+				$lineContent .= "\tpublic \$".strtolower($object).";". PHP_EOL;
+			}
+		}
+		if (strpos($lineContent, $constructObj) !== false) {
+			$lineContent = '';
+			foreach ($objects as $object) {
+				$lineContent .= "\t\t\$this->".strtolower($object)." = new ".$object."(\$this->db);". PHP_EOL;
+			}
+		}
+		if (strpos($lineContent, $includeClass) !== false) {
+			$lineContent = '';
+			foreach ($objects as $object) {
+				$lineContent .= "dol_include_once('/".strtolower($modulename)."/class/".strtolower($object).".class.php');". PHP_EOL;
+			}
+		}
+	}
+	$allContent = implode("", $content);
+	file_put_contents($file, $allContent);
+
+	//add methods for each object
+	$allContent = getFromFile($file, '/*begin methods CRUD*/', '/*end methods CRUD*/');
+	foreach ($objects as $object) {
+		$contentReplaced =str_replace(["myobject","MyObject"], [strtolower($object),$object], $allContent);
+		dolReplaceInFile($file, array('/*end methods CRUD*/' => '/*CRUD FOR '.strtoupper($object).'*/'."\n".$contentReplaced."\n\t".'/*END CRUD FOR '.strtoupper($object).'*/'."\n\t".'/*end methods CRUD*/'));
+	}
+	dolReplaceInFile($file, array($allContent => '','MyModule' => ucfirst($modulename)));
+	return 1;
+}
+
+/**
+ * Remove Object variables and methods from API_Module File
+ * @param string   $file         file api module
+ * @param string   $objectname   name of object whant to remove
+ * @param string   $modulename   name of module
+ * @return int                    1 if OK, -1 if KO
+ */
+function removeObjectFromApiFile($file, $objectname, $modulename)
+{
+	$begin = '/*CRUD FOR '.strtoupper($objectname).'*/';
+	$end = '/*END CRUD FOR '.strtoupper($objectname).'*/';
+	$includeClass = "dol_include_once('/".strtolower($modulename)."/class/".strtolower($objectname).".class.php');";
+	$varcomentedDel = "\t * @var ".$objectname." \$".strtolower($objectname)." {@type ".$objectname."}";
+	$propsDel = "\tpublic \$".strtolower($objectname).";";
+	$constructObjDel = "\t\t\$this->".strtolower($objectname)." = new ".$objectname."(\$this->db);";
+
+	if (!file_exists($file)) {
+		return -1;
+	}
+	$content = file($file);
+	// for delete property and the initialization from the construct
+	foreach ($content as $lineNumber => &$lineContent) {
+		if (strpos($lineContent, $includeClass) !== false) {
+			$lineContent = '';
+		}
+		if (strpos($lineContent, $varcomentedDel) !== false) {
+			$lineContent = '';
+		}
+		if (strpos($lineContent, $propsDel) !== false) {
+			$lineContent = '';
+		}
+		if (strpos($lineContent, $constructObjDel) !== false) {
+			$lineContent = '';
+		}
+	}
+	$allContent = implode("", $content);
+	file_put_contents($file, $allContent);
+	// for delete methods of object
+	$allContent = getFromFile($file, $begin, $end);
+	$check = dolReplaceInFile($file, array($allContent => ''));
+	if ($check) {
+		dolReplaceInFile($file, array($begin => '', $end => ''));
+	}
+	return 1;
+}

@@ -56,6 +56,7 @@ class Import
 	public $errors = array();
 
 	// To store import templates
+	public $id;
 	public $hexa; // List of fields in the export profile
 	public $datatoimport;
 	public $model_name; // Name of export profile
@@ -162,9 +163,9 @@ class Import
 						$this->array_import_perms[$i] = $user->rights->import->run;
 						// Icon
 						$this->array_import_icon[$i] = (isset($module->import_icon[$r]) ? $module->import_icon[$r] : $module->picto);
-						// Code du dataset export
+						// Code of dataset export
 						$this->array_import_code[$i] = $module->import_code[$r];
-						// Libelle du dataset export
+						// Label of dataset export
 						$this->array_import_label[$i] = $module->getImportDatasetLabel($r);
 						// Array of tables to import (key=alias, value=tablename)
 						$this->array_import_tables[$i] = $module->import_tables_array[$r];
@@ -338,7 +339,6 @@ class Import
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."import_model";

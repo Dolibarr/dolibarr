@@ -1257,13 +1257,15 @@ class Reception extends CommonObject
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
+		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= ($linkstart.img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1).$linkend);
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, '', 0, 0, $notooltip ? 0 : 1);
 		}
-		if ($withpicto && $withpicto != 2) {
-			$result .= ' ';
+		if ($withpicto != 2) {
+			$result .= $this->ref;
 		}
-		$result .= $linkstart.$this->ref.$linkend;
+
+		$result .= $linkend;
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
@@ -1383,7 +1385,8 @@ class Reception extends CommonObject
 		while ($xnbp < $nbp) {
 			$line = new CommandeFournisseurDispatch($this->db);
 			$line->desc = $langs->trans("Description")." ".$xnbp;
-			$line->libelle = $langs->trans("Description")." ".$xnbp;
+			$line->libelle = $langs->trans("Description")." ".$xnbp;	// deprecated
+			$line->label = $langs->trans("Description")." ".$xnbp;
 			$line->qty = 10;
 
 			$line->fk_product = $this->commande->lines[$xnbp]->fk_product;

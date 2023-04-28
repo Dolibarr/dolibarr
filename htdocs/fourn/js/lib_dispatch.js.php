@@ -68,14 +68,16 @@ if (empty($dolibarr_nocache)) {
 function addDispatchLine(index, type, mode) {
 	mode = mode || 'qtymissing'
 
-	console.log("fourn/js/lib_dispatch.js.php Split line type=" + type + " index=" + index + " mode=" + mode);
-	var $row0 = $("tr[name='" + type + '_0_' + index + "']");
+	var $row0 = $("tr[name='"+type+'_0_'+index+"']");
 	var $dpopt = $row0.find('.hasDatepicker').first().datepicker('option', 'all'); // get current datepicker options to apply the same to the cloned datepickers
 	var $row = $row0.clone(true); 		// clone first batch line to jQuery object
-	var nbrTrs = $("tr[name^='" + type + "_'][name$='_" + index + "']").length; // position of line for batch
-	var qtyOrdered = parseFloat($("#qty_ordered_0_" + index).val()); 		// Qty ordered is same for all rows
-	var qty = parseFloat($("#qty_" + (nbrTrs - 1) + "_" + index).val());
-	var qtyDispatched;
+	var nbrTrs = $("tr[name^='"+type+"_'][name$='_"+index+"']").length; // position of line for batch
+	var qtyOrdered = parseFloat($("#qty_ordered_0_"+index).val()); 		// Qty ordered is same for all rows
+	var qty = parseFloat($("#qty_"+(nbrTrs - 1)+"_"+index).val());
+
+	console.log("fourn/js/lib_dispatch.js.php Split line type="+type+" index="+index+" mode="+mode+" qtyOrdered="+qtyOrdered+" qty="+qty);
+
+	var	qtyDispatched;
 
 	if (mode === 'lessone') {
 		qtyDispatched = parseFloat($("#qty_dispatched_0_" + index).val()) + 1;
@@ -90,9 +92,17 @@ function addDispatchLine(index, type, mode) {
 	}
 	console.log("qtyDispatched=" + qtyDispatched + " qtyOrdered=" + qtyOrdered);
 
-	if (qtyDispatched >= qtyOrdered || qtyOrdered <= 1) {
+	if (qty <= 1) {
 		window.alert("Remain quantity to dispatch is too low to be split");
-	} else if (qtyDispatched < qtyOrdered) {
+	} else {
+		oldlineqty = qtyDispatched;
+		newlineqty = qtyOrdered - qtyDispatched;
+		if (newlineqty <= 0) {
+			newlineqty = qty - 1;
+			oldlineqty = 1;
+			$("#qty_"+(nbrTrs - 1)+"_"+index).val(oldlineqty);
+		}
+
 		//replace tr suffix nbr
 		$row.html($row.html().replace(/_0_/g, "_" + nbrTrs + "_"));
 
@@ -123,8 +133,8 @@ function addDispatchLine(index, type, mode) {
 		$(".csswarehouse_" + nbrTrs + "_" + index + ":first-child").parent("span.selection").parent(".select2").detach();
 
 		/*  Suffix of lines are:  _ trs.length _ index  */
-		$("#qty_" + nbrTrs + "_" + index).focus();
-		$("#qty_dispatched_0_" + index).val(qtyDispatched);
+		$("#qty_"+nbrTrs+"_"+index).focus();
+		$("#qty_dispatched_0_"+index).val(oldlineqty);
 
 		//hide all buttons then show only the last one
 		$("tr[name^='" + type + "_'][name$='_" + index + "'] .splitbutton").hide();
@@ -145,12 +155,12 @@ function addDispatchLine(index, type, mode) {
 			}
 		});
 
-	if (mode === 'lessone')
-	{
-		qty = 1; // keep 1 in old line
-		$("#qty_"+(nbrTrs-1)+"_"+index).val(qty);
-	}
-		$("#qty_" + nbrTrs + "_" + index).val(qtyOrdered - qtyDispatched);
+		if (mode === 'lessone')
+		{
+			qty = 1; // keep 1 in old line
+			$("#qty_"+(nbrTrs-1)+"_"+index).val(qty);
+		}
+		$("#qty_"+nbrTrs+"_"+index).val(newlineqty);
 		// Store arbitrary data for dispatch qty input field change event
 		$("#qty_" + (nbrTrs - 1) + "_" + index).data('qty', qty);
 		$("#qty_" + (nbrTrs - 1) + "_" + index).data('type', type);

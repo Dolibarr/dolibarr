@@ -73,7 +73,7 @@ if (!$sortorder) {
 $object = new Societe($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('agendathirdparty'));
+$hookmanager->initHooks(array('agendathirdparty', 'globalcard'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -202,7 +202,7 @@ if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) ||
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 
 	// Try to know count of actioncomm from cache

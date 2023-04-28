@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       charlene Benke          <charlie@patas-monkey.com>
  * Copyright (C) 2018-2021       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -256,6 +256,12 @@ class User extends CommonObject
 	 * @var string clicktodial poste
 	 */
 	public $clicktodial_poste;
+
+	/**
+	 * @var string 	0 by default, 1 if click to dial data were already loaded for this user
+	 */
+	public $clicktodial_loaded;
+
 
 	public $datelastlogin;
 	public $datepreviouslogin;
@@ -834,6 +840,12 @@ class User extends CommonObject
 		$entity = (empty($entity) ? $conf->entity : $entity);
 
 		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms, $entity, $notrigger for user id=".$this->id);
+
+		if (empty($this->id)) {
+			$error++;
+			$this->error = 'Try to call addrights on an object user with an empty id';
+			return -1;
+		}
 
 		$error = 0;
 		$whereforadd = '';
@@ -2028,7 +2040,7 @@ class User extends CommonObject
 				if ($this->pass != $this->pass_indatabase && !dol_verifyHash($this->pass, $this->pass_indatabase_crypted)) {
 					// If a new value for password is set and different than the one crypted into database
 					$result = $this->setPassword($user, $this->pass, 0, $notrigger, $nosyncmemberpass, 0, 1);
-					if ($result < 0) {
+					if (is_numeric($result) && $result < 0) {
 						return -5;
 					}
 				}
@@ -2320,7 +2332,7 @@ class User extends CommonObject
 
 						if ($result >= 0) {
 							$result = $adh->setPassword($user, $this->pass, (empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1), 1); // Cryptage non gere dans module adherent
-							if ($result < 0) {
+							if (is_numeric($result) && $result < 0) {
 								$this->error = $adh->error;
 								dol_syslog(get_class($this)."::setPassword ".$this->error, LOG_ERR);
 								$error++;
@@ -2441,7 +2453,7 @@ class User extends CommonObject
 			//print $password.'-'.$this->id.'-'.$dolibarr_main_instance_unique_id;
 			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword';
 			$url .= '&username='.urlencode($this->login)."&passworduidhash=".urlencode(dol_hash($password.'-'.$this->id.'-'.$dolibarr_main_instance_unique_id));
-			if (!empty($conf->multicompany->enabled)) {
+			if (isModEnabled('multicompany')) {
 				$url .= '&entity='.(!empty($this->entity) ? $this->entity : 1);
 			}
 
@@ -2795,6 +2807,7 @@ class User extends CommonObject
 		$type = ($this->socid ? $langs->trans("ExternalUser").$company : $langs->trans("InternalUser"));
 		$datas['type'] = '<br><b>'.$langs->trans("Type").':</b> '.$type;
 		$datas['closediv'] = '</div>';
+
 		if ($infologin > 0) {
 			$datas['newlinelogin'] = '<br>';
 			$datas['session'] = '<br><u>'.$langs->trans("Session").'</u>';
@@ -2924,7 +2937,7 @@ class User extends CommonObject
 			}
 			// Only picto
 			if ($withpictoimg > 0) {
-				$picto = '<!-- picto user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip ? '' : $dataparams.' class="paddingright '.$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1).'</span>';
+				$picto = '<!-- picto user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.img_object('', 'user', $paddafterimage.' class="paddingright")', 0, 0, $notooltip ? 0 : 1).'</span>';
 			} else {
 				// Picto must be a photo
 				$picto = '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';

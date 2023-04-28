@@ -77,7 +77,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-if (empty($user->rights->fournisseur->lire) && (empty($conf->margin->enabled) && !$user->hasRight("margin", "liretous"))) {
+if (empty($user->rights->fournisseur->lire) && (!isModEnabled('margin') && !$user->hasRight("margin", "liretous"))) {
 	accessforbidden();
 }
 
@@ -501,7 +501,8 @@ if ($id > 0 || $ref) {
 				} else {
 					$events = array();
 					$events[] = array('method' => 'getVatRates', 'url' => dol_buildpath('/core/ajax/vatrates.php', 1), 'htmlname' => 'tva_tx', 'params' => array());
-					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', 'fournisseur=1', 'SelectThirdParty', 0, 0, $events);
+					$filter = '(fournisseur:=:1)';
+					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', $filter, 'SelectThirdParty', 0, 0, $events);
 
 					$parameters = array('filtre'=>"fournisseur=1", 'html_name'=>'id_fourn', 'selected'=>GETPOST("id_fourn"), 'showempty'=>1, 'prod_id'=>$object->id);
 					$reshook = $hookmanager->executeHooks('formCreateThirdpartyOptions', $parameters, $object, $action);
@@ -923,7 +924,7 @@ END;
 					$param .= '&contextpage='.urlencode($contextpage);
 				}
 				if ($limit > 0 && $limit != $conf->liste_limit) {
-					$param .= '&limit='.urlencode($limit);
+					$param .= '&limit='.((int) $limit);
 				}
 				$param .= '&ref='.urlencode($object->ref);
 

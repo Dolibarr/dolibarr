@@ -1273,7 +1273,8 @@ if ($action == 'create') {
 		print '</td>';
 	} else {
 		print '<td colspan="2">';
-		print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+		$filter = '(s.fournisseur:=:1)';
+		print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', $filter, 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 		// reload page to retrieve customer informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
 			print '<script>
@@ -1525,6 +1526,7 @@ if ($action == 'create') {
 
 	// Clone confirmation
 	if ($action == 'clone') {
+		$filter = '(s.fournisseur:=:1)';
 		// Create an array for form
 		$formquestion = array(
 			// 'text' => $langs->trans("ConfirmClone"),
@@ -1535,7 +1537,7 @@ if ($action == 'create') {
 				'type' => 'other',
 				'name' => 'socid',
 				'label' => $langs->trans("SelectThirdParty"),
-				'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', 's.fournisseur=1'))
+				'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', $filter))
 			);
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
@@ -1770,8 +1772,7 @@ if ($action == 'create') {
 	}
 
 	/* Not for supplier proposals
-	if ($soc->outstanding_limit)
-	{
+	if ($soc->outstanding_limit) {
 		// Outstanding Bill
 		print '<tr><td>';
 		print $langs->trans('OutstandingBill');
@@ -1861,8 +1862,8 @@ if ($action == 'create') {
 	print '</table>';
 
 	// Margin Infos
-	/*if (!empty($conf->margin->enabled)) {
-	   $formmargin->displayMarginInfos($object);
+	/*if (isModEnabled('margin')) {
+		$formmargin->displayMarginInfos($object);
 	}*/
 
 	print '</div>';
@@ -2005,7 +2006,7 @@ if ($action == 'create') {
 				}
 
 				// Create an order
-				if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) && $object->statut == SupplierProposal::STATUS_SIGNED) {
+				if (isModEnabled("supplier_order") && $object->statut == SupplierProposal::STATUS_SIGNED) {
 					if ($usercancreateorder) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'&amp;token='.newToken().'">'.$langs->trans("AddSupplierOrderShort").'</a></div>';
 					}

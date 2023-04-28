@@ -1403,7 +1403,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</table>';
 		print dol_get_fiche_end();
 
-		print $form->buttonsSaveCancel("Save", '');
+		print $form->buttonsSaveCancel("Save", 'Cancel');
 
 		print '</form>';
 	}
@@ -2041,7 +2041,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($useonlinepayment) {
 				print '<br>';
 				if (empty($amount)) {   // Take the maximum amount among what the member is supposed to pay / has paid in the past
-					$amount = price(max($adht->amount, $object->first_subscription_amount, $object->last_subscription_amount));
+					$amount = max($adht->amount, $object->first_subscription_amount, $object->last_subscription_amount);
 				}
 				if (empty($amount)) {
 					$amount = 0;

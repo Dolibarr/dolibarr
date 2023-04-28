@@ -269,17 +269,20 @@ WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * Minimal PHP version is now PHP 7.0 instead of PHP 5.6
+* Core has introduced a Universal Filter Syntax for seach criteria. Example: ((((field1:=:value1) OR (field2:in:1,2,3)) AND ...). In rare case, some filters
+  could be provided by URL parameters. For such cases (societe/ajax/company.php), use of Universal Filter Syntax become mandatory. 
 * The signature of method getNomUrl() of class ProductFournisseur has been modified to match the signature of method Product->getNomUrl()
 * Trigger ORDER_SUPPLIER_DISPATCH is removed, use ORDER_SUPPLIER_RECEIVE and/or LINEORDER_SUPPLIER_DISPATCH instead.
 * All functions fetch_all() have been set to deprecated for naming consitency, use fetchAll() instead.
 * Code standardization: '$user->rights->propale' is now '$user->rights->propal' everywhere.
 * Deprecated method set_billed() on shipment and reception class has been removed. Use setBilled() instead.
 * Tables llx_prelevement_facture and llx_prelevement_facture_demande have been renamed into llx_prelevement and llx_prelevement_demande.
-* Rename MAIN_LIST_ALLOW_NOTES into MAIN_LIST_HIDE_NOTES and rename MAIN_LIST_ALLOW_PRIVATE_NOTES into MAIN_LIST_HIDE_PRIVATE_NOTES
-* Rename the substitution for "project label" instead of "project title" in substitution variables
-* You must use "$objectoffield" to manipulate the current object inside the formulare of computed custom extrafields instead of $obj/$object.
+* Renamed MAIN_LIST_ALLOW_NOTES into MAIN_LIST_HIDE_NOTES and renamed MAIN_LIST_ALLOW_PRIVATE_NOTES into MAIN_LIST_HIDE_PRIVATE_NOTES
+* Renamed the substitution for "project label" instead of "project title" in substitution variables
+* You must use "$objectoffield" to manipulate the current object inside the form of computed custom extrafields instead of $obj/$object.
 * Making a global search is sending the parameter using always the name search_all (instead of sometimes sall and search_all)
 * The property $url_last_version must be public if defined into module descriptor files;
+
 
 ***** ChangeLog for 16.0.5 compared to 16.0.4 *****
 

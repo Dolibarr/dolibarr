@@ -152,7 +152,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 			'graph' => '1'
 		);
 
-		if ($user->rights->projet->lire || !empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if ($user->hasRight('projet', 'lire') || getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			$sql = "SELECT p.fk_opp_status as opp_status, cls.code, COUNT(p.rowid) as nb, SUM(p.opp_amount) as opp_amount, SUM(p.opp_amount * p.opp_percent) as ponderated_opp_amount";
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."c_lead_status as cls";
 			$sql .= " WHERE p.entity IN (".getEntity('project').")";

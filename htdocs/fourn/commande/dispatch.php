@@ -751,9 +751,9 @@ if ($id > 0 || !empty($ref)) {
 
 				// Select warehouse to force it everywhere
 				if (count($listwarehouses) > 1) {
-					print '<br><span class="opacitymedium">'.$langs->trans("ForceTo").'</span> '.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 1, 0, 0, '', 0, 0, $disabled, '', 'minwidth100 maxwidth300', 1);
+					print '<br>'.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, $langs->trans("ForceTo"), 0, 0, '', 0, 0, $disabled, '', 'minwidth100 maxwidth300', 1);
 				} elseif (count($listwarehouses) == 1) {
-					print '<br><span class="opacitymedium">'.$langs->trans("ForceTo").'</span> '.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 0, 0, 0, '', 0, 0, $disabled, '', 'minwidth100 maxwidth300', 1);
+					print '<br>'.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 0, 0, 0, '', 0, 0, $disabled, '', 'minwidth100 maxwidth300', 1);
 				}
 
 				print '</td>';
@@ -838,7 +838,7 @@ if ($id > 0 || !empty($ref)) {
 								print $linktoprod;
 								print "</td>";
 								print '<td class="dispatch_batch_number">';
-								print $langs->trans("ProductDoesNotUseBatchSerial");
+								print '<span class="opacitymedium small">'.$langs->trans("ProductDoesNotUseBatchSerial").'</small>';
 								print '</td>';
 								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 									print '<td class="dispatch_dlc"></td>';

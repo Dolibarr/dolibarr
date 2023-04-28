@@ -108,6 +108,11 @@ abstract class CommonObject
 	public $table_element_line = '';
 
 	/**
+	 * @var int 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 */
+	public $ismultientitymanaged;
+
+	/**
 	 * @var string		Key value used to track if data is coming from import wizard
 	 */
 	public $import_key;
@@ -116,6 +121,11 @@ abstract class CommonObject
 	 * @var mixed		Contains data to manage extrafields
 	 */
 	public $array_options = array();
+
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array();
 
 	/**
 	 * @var mixed		Array to store alternative languages values of object
@@ -731,24 +741,48 @@ abstract class CommonObject
 	{
 		global $action, $extrafields, $langs, $hookmanager;
 
-		$MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP = 5;	// If there is too much extrafields, we do not include them into tooltip
+		// If there is too much extrafields, we do not include them into tooltip
+		$MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP = getDolGlobalInt('MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP', 5);
 
 		$datas = $this->getTooltipContentArray($params);
-
+		$count = 0;
 		// Add extrafields
 		if (!empty($extrafields->attributes[$this->table_element]['label'])) {
-			if (count($extrafields->attributes[$this->table_element]['label']) < $MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP) {
-				foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
-					if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
-						$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
-					}
-					$labelextra = $langs->trans((string) $extrafields->attributes[$this->table_element]['label'][$key]);
-					if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
-						$datas[$key]= '<br><b><u>'. $labelextra . '</u></b>';
-					} else {
-						$value = (empty($this->array_options['options_' . $key]) ? '' : $this->array_options['options_' . $key]);
-						$datas[$key]= '<br><b>'. $labelextra . ':</b> ' . $extrafields->showOutputField($key, $value, '', $this->table_element);
-					}
+			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+				if ($count >= $MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP) {
+					$datas['more_extrafields'] = '<br>.../...';
+					break;
+				}
+				$enabled = 1;
+				if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
+					$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
+				}
+				if ($enabled && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
+					$enabled = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
+				}
+				$perms = 1;
+				if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key])) {
+					$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
+				}
+				if (empty($enabled)) {
+					continue; // 0 = Never visible field
+				}
+				if (abs($enabled) != 1 && abs($enabled) != 3 && abs($enabled) != 5 && abs($enabled) != 4) {
+					continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list <> 4 = not visible at the creation
+				}
+				if (empty($perms)) {
+					continue; // 0 = Not visible
+				}
+				if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
+					$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
+				}
+				$labelextra = $langs->trans((string) $extrafields->attributes[$this->table_element]['label'][$key]);
+				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
+					$datas[$key]= '<br><b><u>'. $labelextra . '</u></b>';
+				} else {
+					$value = (empty($this->array_options['options_' . $key]) ? '' : $this->array_options['options_' . $key]);
+					$datas[$key]= '<br><b>'. $labelextra . ':</b> ' . $extrafields->showOutputField($key, $value, '', $this->table_element);
+					$count++;
 				}
 			}
 		}
@@ -760,6 +794,7 @@ abstract class CommonObject
 		// Note that $action and $object may have been modified by some hooks
 		$hookmanager->executeHooks('getTooltipContent', $parameters, $this, $action);
 
+		//var_dump($datas);
 		$label = implode($datas);
 
 		return $label;
@@ -2637,6 +2672,8 @@ abstract class CommonObject
 
 						switch ($this->element) {
 							case 'propal':
+								/** @var Propal $this */
+								/** @var PropaleLigne $line */
 								$this->updateline(
 									$line->id,
 									$line->subprice,
@@ -2663,6 +2700,8 @@ abstract class CommonObject
 								);
 								break;
 							case 'commande':
+								/** @var Commande $this */
+								/** @var OrderLine $line */
 								$this->updateline(
 									$line->id,
 									($line->description ? $line->description : $line->desc),
@@ -2689,6 +2728,8 @@ abstract class CommonObject
 								);
 								break;
 							case 'facture':
+								/** @var Facture $this */
+								/** @var FactureLigne $line */
 								$this->updateline(
 									$line->id,
 									($line->description ? $line->description : $line->desc),
@@ -2716,6 +2757,8 @@ abstract class CommonObject
 								);
 								break;
 							case 'supplier_proposal':
+								/** @var SupplierProposal $this */
+								/** @var SupplierProposalLine $line */
 								$this->updateline(
 									$line->id,
 									$line->subprice,
@@ -2740,6 +2783,8 @@ abstract class CommonObject
 								);
 								break;
 							case 'order_supplier':
+								/** @var CommandeFournisseur $this */
+								/** @var CommandeFournisseurLigne $line */
 								$this->updateline(
 									$line->id,
 									($line->description ? $line->description : $line->desc),
@@ -2762,6 +2807,8 @@ abstract class CommonObject
 								);
 								break;
 							case 'invoice_supplier':
+								/** @var FactureFournisseur $this */
+								/** @var SupplierInvoiceLine $line */
 								$this->updateline(
 									$line->id,
 									($line->description ? $line->description : $line->desc),
@@ -2834,7 +2881,7 @@ abstract class CommonObject
 
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
 			$sql .= " SET ".$fieldname." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
-			if (in_array($this->table_element, array('propal', 'commande'))) {
+			if (in_array($this->table_element, array('propal', 'commande', 'societe'))) {
 				$sql .= " , deposit_percent = " . (empty($deposit_percent) ? 'NULL' : "'".$this->db->escape($deposit_percent)."'");
 			}
 			$sql .= ' WHERE rowid='.((int) $this->id);
@@ -4142,7 +4189,7 @@ abstract class CommonObject
 					} elseif ($objecttype == 'shipping') {
 						$classpath = 'expedition/class';
 						$subelement = 'expedition';
-						$module = 'expedition_bon';
+						$module = 'expedition';
 					} elseif ($objecttype == 'delivery') {
 						$classpath = 'delivery/class';
 						$subelement = 'delivery';
@@ -5671,7 +5718,11 @@ abstract class CommonObject
 					$update_main_doc_field = 1;
 				}
 
-				$this->indexFile($destfull, $update_main_doc_field);
+				// Check that the file exists, before indexing it.
+				// Hint: It does not exist, if we create a PDF and auto delete the ODT File
+				if (dol_is_file($destfull)) {
+					$this->indexFile($destfull, $update_main_doc_field);
+				}
 			} else {
 				dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
 			}
@@ -5816,10 +5867,17 @@ abstract class CommonObject
 	public function addThumbs($file)
 	{
 		$file_osencoded = dol_osencode($file);
-		if (file_exists($file_osencoded)) {
-			global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
 
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php'; // This define also $maxwidthsmall, $quality, ...
+		if (file_exists($file_osencoded)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+
+			$tmparraysize = getDefaultImageSizes();
+			$maxwidthsmall = $tmparraysize['maxwidthsmall'];
+			$maxheightsmall = $tmparraysize['maxheightsmall'];
+			$maxwidthmini = $tmparraysize['maxwidthmini'];
+			$maxheightmini = $tmparraysize['maxheightmini'];
+			//$quality = $tmparraysize['quality'];
+			$quality = 50;	// For thumbs, we force quality to 50
 
 			// Create small thumbs for company (Ratio is near 16/9)
 			// Used on logon for example
@@ -6461,6 +6519,14 @@ abstract class CommonObject
 							dol_syslog('Error bad setup of extrafield', LOG_WARNING);
 						}
 						break;
+					case 'checkbox':
+					case 'chkbxlst':
+						if (is_array($this->array_options[$key])) {
+							$new_array_options[$key] = implode(',', $this->array_options[$key]);
+						} else {
+							$new_array_options[$key] = $this->array_options[$key];
+						}
+						break;
 				}
 			}
 
@@ -6814,6 +6880,14 @@ abstract class CommonObject
 					}
 					break;
 				*/
+				case 'checkbox':
+				case 'chkbxlst':
+					if (is_array($this->array_options[$key])) {
+						$new_array_options[$key] = implode(',', $this->array_options[$key]);
+					} else {
+						$new_array_options[$key] = $this->array_options[$key];
+					}
+					break;
 			}
 
 			$this->db->begin();
@@ -8256,7 +8330,7 @@ abstract class CommonObject
 					// Test on 'enabled' ('enabled' is different than 'list' = 'visibility')
 					$enabled = 1;
 					if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
-						$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '1');
+						$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
 					}
 					if (empty($enabled)) {
 						continue;
@@ -8264,12 +8338,12 @@ abstract class CommonObject
 
 					$visibility = 1;
 					if ($visibility && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
-						$visibility = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '1');
+						$visibility = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
 					}
 
 					$perms = 1;
 					if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key])) {
-						$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '1');
+						$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
 					}
 
 					if (($mode == 'create') && abs($visibility) != 1 && abs($visibility) != 3) {
@@ -8751,9 +8825,10 @@ abstract class CommonObject
 	 *  @param      int     	$nolink         Do not add a href link to view enlarged imaged into a new tab
 	 *  @param      int|string  $overwritetitle Do not add title tag on image
 	 *  @param		int			$usesharelink	Use the public shared link of image (if not available, the 'nophoto' image will be shown instead)
+	 *  @param		string		$cache			A string if we want to use a cached version of image
 	 *  @return     string						Html code to show photo. Number of photos shown is saved in this->nbphoto
 	 */
-	public function show_photos($modulepart, $sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0, $overwritetitle = 0, $usesharelink = 0)
+	public function show_photos($modulepart, $sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0, $overwritetitle = 0, $usesharelink = 0, $cache = '')
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -8838,12 +8913,10 @@ abstract class CommonObject
 							if ($nbphoto % $nbbyrow == 1) {
 								$return .= '<tr class="center valignmiddle" style="border: 1px">';
 							}
-							$return .= '<td style="width: '.ceil(100 / $nbbyrow).'%" class="photo">';
+							$return .= '<td style="width: '.ceil(100 / $nbbyrow).'%" class="photo">'."\n";
 						} elseif ($nbbyrow < 0) {
-							$return .= '<div class="inline-block">';
+							$return .= '<div class="inline-block">'."\n";
 						}
-
-						$return .= "\n";
 
 						$relativefile = preg_replace('/^\//', '', $pdir.$photo);
 						if (empty($nolink)) {
@@ -8873,10 +8946,10 @@ abstract class CommonObject
 							if ($val['share']) {
 								if (empty($maxHeight) || ($photo_vignette && $imgarray['height'] > $maxHeight)) {
 									$return .= '<!-- Show original file (thumb not yet available with shared links) -->';
-									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
+									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).($cache ? '&cache='.urlencode($cache) : '').'" title="'.dol_escape_htmltag($alt).'">';
 								} else {
 									$return .= '<!-- Show original file -->';
-									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
+									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).($cache ? '&cache='.urlencode($cache) : '').'" title="'.dol_escape_htmltag($alt).'">';
 								}
 							} else {
 								$return .= '<!-- Show nophoto file (because file is not shared) -->';
@@ -8885,17 +8958,16 @@ abstract class CommonObject
 						} else {
 							if (empty($maxHeight) || ($photo_vignette && $imgarray['height'] > $maxHeight)) {
 								$return .= '<!-- Show thumb -->';
-								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').' maxwidth150onsmartphone maxwidth200"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').' maxwidth150onsmartphone maxwidth200"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.($cache ? '&cache='.urlencode($cache) : '').'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
 							} else {
 								$return .= '<!-- Show original file -->';
-								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' photoref' : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.($cache ? '&cache='.urlencode($cache) : '').'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
 							}
 						}
 
 						if (empty($nolink)) {
 							$return .= '</a>';
 						}
-						$return .= "\n";
 
 						if ($showfilename) {
 							$return .= '<br>'.$viewfilename;
@@ -8924,7 +8996,7 @@ abstract class CommonObject
 								$return .= '</tr>';
 							}
 						} elseif ($nbbyrow < 0) {
-							$return .= '</div>';
+							$return .= '</div>'."\n";
 						}
 					}
 
@@ -9982,7 +10054,7 @@ abstract class CommonObject
 		$this->db->begin();
 
 		$statusfield = 'status';
-		if ($this->element == 'don' || $this->element == 'donation') {
+		if (in_array($this->element, array('don', 'donation', 'shipping'))) {
 			$statusfield = 'fk_statut';
 		}
 

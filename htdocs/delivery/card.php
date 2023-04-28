@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
-if (isModEnabled('expedition_bon')) {
+if (isModEnabled('expedition')) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
 if (isModEnabled('stock')) {
@@ -104,9 +104,10 @@ if ($action == 'add') {
 	$object->commande_id   = GETPOST("commande_id", 'int');
 	$object->fk_incoterms  = GETPOST('incoterm_id', 'int');
 
-	if (!isModEnabled('expedition_bon') && isModEnabled('stock')) {
-		$expedition->entrepot_id = GETPOST('entrepot_id', 'int');
-	}
+	/* ->entrepot_id seems to not exists
+	if (!getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && isModEnabled('stock')) {
+		$object->entrepot_id = GETPOST('entrepot_id', 'int');
+	}*/
 
 	// We loop on each line of order to complete object delivery with qty to delivery
 	$commande = new Commande($db);
@@ -479,10 +480,11 @@ if ($action == 'create') {
 			print '<td colspan="3">'.$object->getLibStatut(4)."</td>\n";
 			print '</tr>';*/
 
-			if (!isModEnabled('expedition_bon') && isModEnabled('stock')) {
+
+			if (!getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && isModEnabled('stock')) {
 				// Entrepot
 				$entrepot = new Entrepot($db);
-				$entrepot->fetch($object->entrepot_id);
+				$entrepot->fetch($expedition->entrepot_id);
 				print '<tr><td width="20%">'.$langs->trans("Warehouse").'</td>';
 				print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$entrepot->id.'">'.$entrepot->label.'</a></td>';
 				print '</tr>';
@@ -647,7 +649,7 @@ if ($action == 'create') {
 				}
 
 				if ($user->rights->expedition->delivery->supprimer) {
-					if (isModEnabled('expedition_bon')) {
+					if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;expid='.$object->origin_id.'&amp;action=delete&amp;token='.newToken().'&amp;backtopage='.urlencode(DOL_URL_ROOT.'/expedition/card.php?id='.$object->origin_id), '');
 					} else {
 						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&amp;token='.newToken().'&amp;id='.$object->id, '');

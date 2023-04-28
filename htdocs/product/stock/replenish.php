@@ -440,7 +440,7 @@ if ($usevirtualstock) {
 		$sqlExpeditionsCli = '0';
 	}
 
-	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
+	if (isModEnabled("supplier_order")) {
 		$sqlCommandesFourn = "(SELECT ".$db->ifsql("SUM(cd3.qty) IS NULL", "0", "SUM(cd3.qty)")." as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
 		$sqlCommandesFourn .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd3,";
 		$sqlCommandesFourn .= " ".MAIN_DB_PREFIX."commande_fournisseur as c3";
@@ -615,7 +615,8 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
 	print '</div>';
 }
 print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
-print $langs->trans('Supplier').' '.$form->select_company($fk_supplier, 'fk_supplier', 'fournisseur=1', 1);
+$filter = '(fournisseur:=:1)';
+print $langs->trans('Supplier').' '.$form->select_company($fk_supplier, 'fk_supplier', $filter, 1);
 print '</div>';
 
 $parameters = array();
@@ -669,7 +670,7 @@ if ($search_ref || $search_label || $sall || $salert || $draftorder || GETPOST('
 	}
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$filters .= '&limit='.urlencode($limit);
+	$filters .= '&limit='.((int) $limit);
 }
 if (!empty($includeproductswithoutdesiredqty)) $filters .= '&includeproductswithoutdesiredqty='.urlencode($includeproductswithoutdesiredqty);
 if (!empty($salert)) $filters .= '&salert='.urlencode($salert);

@@ -149,7 +149,6 @@ if ($object->fk_project > 0) {
 }
 
 
-
 /*
  * Actions
  */
@@ -875,9 +874,11 @@ if ($action == 'confirm_generateinter') {
 	}
 }
 
+
 /*
  * View
  */
+
 $form = new Form($db);
 $formother = new FormOther($db);
 $formproject = new FormProjets($db);
@@ -1296,7 +1297,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$param .= '&contextpage='.urlencode($contextpage);
 		}
 		if ($limit > 0 && $limit != $conf->liste_limit) {
-			$param .= '&limit='.urlencode($limit);
+			$param .= '&limit='.((int) $limit);
 		}
 		if ($search_month > 0) {
 			$param .= '&search_month='.urlencode($search_month);
@@ -1304,7 +1305,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		if ($search_year > 0) {
 			$param .= '&search_year='.urlencode($search_year);
 		}
-		if ($search_user > 0) {
+		if (!empty($search_user)) { 	// We keep param if -1 because default value is forced to user id if not set
 			$param .= '&search_user='.urlencode($search_user);
 		}
 		if ($search_task_ref != '') {
@@ -1457,7 +1458,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '</td>';
 				print '</tr>';
 
-				if ($conf->service->enabled) {
+				if (isModEnabled("service")) {
 					print '<tr>';
 					print '<td>';
 					print $langs->trans('ServiceToUseOnLines');
@@ -1564,6 +1565,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		$sql = preg_replace('/,\s*$/', '', $sql);
+
+		$sqlfields = $sql; // $sql fields to remove for count total
+
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet as il ON il.rowid = t.invoice_line_id";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as inv ON inv.rowid = il.fk_facture";
@@ -1657,38 +1661,41 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
-		$sql .= $db->order($sortfield, $sortorder);
 
 		// Count total nb of records
 		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-			$resql = $db->query($sql);
-
-			if (! $resql) {
+			/* The fast and low memory method to get and count full list converts the sql into a sql count */
+			$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+			$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+			$resql = $db->query($sqlforcount);
+			if ($resql) {
+				$objforcount = $db->fetch_object($resql);
+				$nbtotalofrecords = $objforcount->nbtotalofrecords;
+			} else {
 				dol_print_error($db);
-				exit;
 			}
 
-			$nbtotalofrecords = $db->num_rows($resql);
-			if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+			if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 				$page = 0;
 				$offset = 0;
 			}
+			$db->free($resql);
 		}
-		// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
-		if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
-			$num = $nbtotalofrecords;
-		} else {
+
+		// Complete request and execute it with limit
+		$sql .= $db->order($sortfield, $sortorder);
+		if ($limit) {
 			$sql .= $db->plimit($limit + 1, $offset);
-
-			$resql = $db->query($sql);
-			if (!$resql) {
-				dol_print_error($db);
-				exit;
-			}
-
-			$num = $db->num_rows($resql);
 		}
+
+		$resql = $db->query($sql);
+		if (!$resql) {
+			dol_print_error($db);
+			exit;
+		}
+
+		$num = $db->num_rows($resql);
 
 		if ($num >= 0) {
 			if (!empty($projectidforalltimes)) {
@@ -1743,7 +1750,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
 				print '<td></td>';
 
-				if ($conf->service->enabled && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
+				if (isModEnabled("service") && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
 					print '<td>'.$langs->trans("Product").'</td>';
 				}
 			}
@@ -1790,7 +1797,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if ($projectstatic->public) {
 					$contactsofproject = array();
 				}
-				print $form->select_dolusers((GETPOST('userid', 'int') ? GETPOST('userid', 'int') : $userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth250');
+				print $form->select_dolusers((GETPOST('userid', 'int') ? GETPOST('userid', 'int') : $userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
 			} else {
 				if ($nboftasks) {
 					print img_error($langs->trans('FirstAddRessourceToAllocateTime')).' '.$langs->trans('FirstAddRessourceToAllocateTime');
@@ -1822,9 +1829,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<td>';
 				print '</td>';
 
-				if ($conf->service->enabled && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
-					print '<td class="nowrap">';
-					print $form->select_produits('', 'fk_product', '1', 0, $projectstatic->thirdparty->price_level, 1, 2, '', 0, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500');
+				if (isModEnabled("service") && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
+					print '<td class="nowraponall">';
+					print img_picto('', 'product');
+					print $form->select_produits('', 'fk_product', '1', 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth150', 0, '', null, 1);
 					print '</td>';
 				}
 			}
@@ -1836,7 +1844,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			print '<td class="center">';
 			$form->buttonsSaveCancel();
-			print '<input type="submit" name="save" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort button-add" value="'.$langs->trans("Add").'">';
+			print '<input type="submit" name="save" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort button-add reposition" value="'.$langs->trans("Add").'">';
 			print '<input type="submit" name="cancel" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort button-cancel" value="'.$langs->trans("Cancel").'">';
 			print '</td></tr>';
 
@@ -1870,6 +1878,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 		// Fields title search
+		// --------------------------------------------------------------------
 		print '<tr class="liste_titre_filter">';
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -1918,7 +1927,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		// Author
 		if (!empty($arrayfields['author']['checked'])) {
-			print '<td class="liste_titre">'.$form->select_dolusers(($search_user > 0 ? $search_user : -1), 'search_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250').'</td>';
+			print '<td class="liste_titre">'.$form->select_dolusers(($search_user > 0 ? $search_user : -1), 'search_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth150').'</td>';
 		}
 		// Note
 		if (!empty($arrayfields['t.note']['checked'])) {
@@ -1977,54 +1986,72 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		print '</tr>'."\n";
 
+		$totalarray = array();
+		$totalarray['nbfield'] = 0;
+
+		// Fields title label
+		// --------------------------------------------------------------------
 		print '<tr class="liste_titre">';
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'width="80"', $sortfield, $sortorder, 'center maxwidthsearch ');
+			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+			$totalarray['nbfield']++;
 		}
 		if (!empty($arrayfields['t.element_date']['checked'])) {
 			print_liste_field_titre($arrayfields['t.element_date']['label'], $_SERVER['PHP_SELF'], 't.element_date,t.element_datehour,t.rowid', '', $param, '', $sortfield, $sortorder);
+			$totalarray['nbfield']++;
 		}
-
 		if (!empty($arrayfields['p.fk_soc']['checked'])) {
 			print_liste_field_titre($arrayfields['p.fk_soc']['label'], $_SERVER['PHP_SELF'], 't.element_date,t.element_datehour,t.rowid', '', $param, '', $sortfield, $sortorder);
+			$totalarray['nbfield']++;
 		}
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
 			print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER['PHP_SELF'], 's.name_alias', '', $param, '', $sortfield, $sortorder);
+			$totalarray['nbfield']++;
 		}
 		if (!empty($allprojectforuser)) {
 			if (!empty($arrayfields['p.project_ref']['checked'])) {
 				print_liste_field_titre("Project", $_SERVER['PHP_SELF'], 'p.ref', '', $param, '', $sortfield, $sortorder);
+				$totalarray['nbfield']++;
 			}
 			if (!empty($arrayfields['p.project_label']['checked'])) {
 				print_liste_field_titre("ProjectLabel", $_SERVER['PHP_SELF'], 'p.title', '', $param, '', $sortfield, $sortorder);
+				$totalarray['nbfield']++;
 			}
 		}
 		if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
 			if (!empty($arrayfields['t.element_ref']['checked'])) {
 				print_liste_field_titre($arrayfields['t.element_ref']['label'], $_SERVER['PHP_SELF'], 'pt.ref', '', $param, '', $sortfield, $sortorder);
+				$totalarray['nbfield']++;
 			}
 			if (!empty($arrayfields['t.element_label']['checked'])) {
 				print_liste_field_titre($arrayfields['t.element_label']['label'], $_SERVER['PHP_SELF'], 'pt.label', '', $param, '', $sortfield, $sortorder);
+				$totalarray['nbfield']++;
 			}
 		}
 		if (!empty($arrayfields['author']['checked'])) {
 			print_liste_field_titre($arrayfields['author']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
+			$totalarray['nbfield']++;
 		}
 		if (!empty($arrayfields['t.note']['checked'])) {
 			print_liste_field_titre($arrayfields['t.note']['label'], $_SERVER['PHP_SELF'], 't.note', '', $param, '', $sortfield, $sortorder);
+			$totalarray['nbfield']++;
 		}
 		if (!empty($arrayfields['t.element_duration']['checked'])) {
 			print_liste_field_titre($arrayfields['t.element_duration']['label'], $_SERVER['PHP_SELF'], 't.element_duration', '', $param, '', $sortfield, $sortorder, 'right ');
+			$totalarray['nbfield']++;
 		}
 		if (!empty($arrayfields['t.fk_product']['checked'])) {
 			print_liste_field_titre($arrayfields['t.fk_product']['label'], $_SERVER['PHP_SELF'], 't.fk_product', '', $param, '', $sortfield, $sortorder);
+			$totalarray['nbfield']++;
 		}
 
 		if (!empty($arrayfields['value']['checked'])) {
 			print_liste_field_titre($arrayfields['value']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
+			$totalarray['nbfield']++;
 		}
 		if (!empty($arrayfields['valuebilled']['checked'])) {
 			print_liste_field_titre($arrayfields['valuebilled']['label'], $_SERVER['PHP_SELF'], 'il.total_ht', '', $param, '', $sortfield, $sortorder, 'center ', $langs->trans("SelectLinesOfTimeSpentToInvoice"));
+			$totalarray['nbfield']++;
 		}
 		/*
 		// Extra fields
@@ -2036,6 +2063,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		print $hookmanager->resPrint;
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'width="80"', $sortfield, $sortorder, 'center maxwidthsearch ');
+			$totalarray['nbfield']++;
 		}
 		print "</tr>\n";
 
@@ -2043,10 +2071,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$tmpinvoice = new Facture($db);
 
 		$i = 0;
-
 		$total = 0;
 		$totalvalue = 0;
-		$totalarray = array('nbfield'=>0);
+
+		$savnbfield = $totalarray['nbfield'];
+		$totalarray = array();
+		$totalarray['nbfield'] = 0;
+		//$imaxinloop = ($limit ? min($num, $limit) : $num);
 		foreach ($tasks as $task_time) {
 			if ($i >= $limit) {
 				break;
@@ -2055,11 +2086,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$date1 = $db->jdate($task_time->element_date);
 			$date2 = $db->jdate($task_time->element_datehour);
 
-			print '<tr class="oddeven">';
+			// Show here line of result
+			$j = 0;
+			print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-				print '<td class="center nowraponall">';
+				print '<td class="center nowraponall maxwidth75">';
 				if (($action == 'editline' || $action == 'splitline') && GETPOST('lineid', 'int') == $task_time->rowid) {
 					print '<input type="hidden" name="lineid" value="'.GETPOST('lineid', 'int').'">';
 					print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-save" name="save" value="'.$langs->trans("Save").'">';
@@ -2092,6 +2125,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 						}
 					}
 				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
 			}
 			// Date
 			if (!empty($arrayfields['t.element_date']['checked'])) {
@@ -2113,7 +2150,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			// Thirdparty
 			if (!empty($arrayfields['p.fk_soc']['checked'])) {
-				print '<td class="nowrap">';
+				print '<td class="tdoverflowmax125">';
 				if ($task_time->fk_soc > 0) {
 					if (empty($conf->cache['thridparty'][$task_time->fk_soc])) {
 						$tmpsociete = new Societe($db);
@@ -2132,7 +2169,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			// Thirdparty alias
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
-				print '<td class="nowrap">';
 				if ($task_time->fk_soc > 0) {
 					if (empty($conf->cache['thridparty'][$task_time->fk_soc])) {
 						$tmpsociete = new Societe($db);
@@ -2141,8 +2177,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					} else {
 						$tmpsociete = $conf->cache['thridparty'][$task_time->fk_soc];
 					}
-					print $tmpsociete->name_alias;
+					$valtoshow = $tmpsociete->name_alias;
 				}
+				print '<td class="nowrap tdoverflowmax150" title="'.dol_escape_htmltag($valtoshow).'">';
+				print $valtoshow;
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2294,9 +2332,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				}
 			}
 
-			//Product
+			// Product
 			if (!empty($arrayfields['t.fk_product']['checked'])) {
-				print '<td class="nowraponall">';
+				print '<td class="nowraponall tdoverflowmax125">';
 				if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid) {
 					$form->select_produits($task_time->fk_product, 'fk_product', '1', 0, $projectstatic->thirdparty->price_level, 1, 2, '', 0, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500');
 				} elseif (!empty($task_time->fk_product)) {
@@ -2309,6 +2347,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					}
 				}
 				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
 			}
 
 			// Value spent
@@ -2392,9 +2433,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<td class="center nowraponall">';
 				if (($action == 'editline' || $action == 'splitline') && GETPOST('lineid', 'int') == $task_time->rowid) {
 					print '<input type="hidden" name="lineid" value="'.GETPOST('lineid', 'int').'">';
-					print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-save" name="save" value="'.$langs->trans("Save").'">';
+					print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-save small" name="save" value="'.$langs->trans("Save").'">';
 					print ' ';
-					print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+					print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-cancel small" name="cancel" value="'.$langs->trans("Cancel").'">';
 				} elseif ($user->hasRight('projet', 'time') || $user->hasRight('projet', 'all', 'creer')) {	 // Read project and enter time consumed on assigned tasks
 					if (in_array($task_time->fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
 						if (getDolGlobalString('MAIN_FEATURES_LEVEL') >= 2) {
@@ -2422,10 +2463,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 						}
 					}
 				}
-			}
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
 			}
 
 			print "</tr>\n";
@@ -2434,6 +2475,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Add line to split
 
 			if ($action == 'splitline' && GETPOST('lineid', 'int') == $task_time->rowid) {
+				print '<!-- first line -->';
 				print '<tr class="oddeven">';
 
 				// Date
@@ -2448,6 +2490,18 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					} else {
 						print dol_print_date(($date2 ? $date2 : $date1), ($task_time->element_date_withhour ? 'dayhour' : 'day'));
 					}
+					print '</td>';
+				}
+
+				// Thirdparty
+				if (!empty($arrayfields['p.fk_soc']['checked'])) {
+					print '<td class="nowrap">';
+					print '</td>';
+				}
+
+				// Thirdparty alias
+				if (!empty($arrayfields['s.name_alias']['checked'])) {
+					print '<td class="nowrap">';
 					print '</td>';
 				}
 
@@ -2482,7 +2536,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 				// User
 				if (!empty($arrayfields['author']['checked'])) {
-					print '<td>';
+					print '<td class="nowraponall">';
 					if ($action == 'splitline' && GETPOST('lineid', 'int') == $task_time->rowid) {
 						if (empty($object->id)) {
 							$object->fetch($id);
@@ -2533,6 +2587,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '</td>';
 				}
 
+				// Product
+				if (!empty($arrayfields['t.fk_product']['checked'])) {
+					print '<td class="nowraponall tdoverflowmax125">';
+					print '</td>';
+				}
+
 				// Value spent
 				if (!empty($arrayfields['value']['checked'])) {
 					print '<td class="right">';
@@ -2572,7 +2632,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 				// Line for second dispatching
 
-				print '<tr class="oddeven">';
+				print '<!-- second line --><tr class="oddeven">';
 
 				// Date
 				if (!empty($arrayfields['t.element_date']['checked'])) {
@@ -2586,6 +2646,18 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					} else {
 						print dol_print_date(($date2 ? $date2 : $date1), ($task_time->element_date_withhour ? 'dayhour' : 'day'));
 					}
+					print '</td>';
+				}
+
+				// Thirdparty
+				if (!empty($arrayfields['p.fk_soc']['checked'])) {
+					print '<td class="nowrap">';
+					print '</td>';
+				}
+
+				// Thirdparty alias
+				if (!empty($arrayfields['s.name_alias']['checked'])) {
+					print '<td class="nowrap">';
 					print '</td>';
 				}
 
@@ -2613,14 +2685,14 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (!empty($arrayfields['t.element_label']['checked'])) {
 					if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
 						print '<td class="nowrap">';
-						print $task_time->label;
+						print dol_escape_htmltag($task_time->label);
 						print '</td>';
 					}
 				}
 
 				// User
 				if (!empty($arrayfields['author']['checked'])) {
-					print '<td>';
+					print '<td class="nowraponall">';
 					if ($action == 'splitline' && GETPOST('lineid', 'int') == $task_time->rowid) {
 						if (empty($object->id)) {
 							$object->fetch($id);
@@ -2668,6 +2740,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					} else {
 						print convertSecondToTime($task_time->element_duration, 'allhourmin');
 					}
+					print '</td>';
+				}
+
+				// Product
+				if (!empty($arrayfields['t.fk_product']['checked'])) {
+					print '<td class="nowraponall tdoverflowmax125">';
 					print '</td>';
 				}
 
@@ -2724,7 +2802,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					if ($num < $limit && empty($offset)) {
 						print '<td class="left">'.$langs->trans("Total").'</td>';
 					} else {
-						print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+						print '<td class="left">'.$form->textwithpicto($langs->trans("Total"), $langs->trans("Totalforthispage")).'</td>';
 					}
 				} elseif ($totalarray['totaldurationfield'] == $i) {
 					print '<td class="right">'.convertSecondToTime($totalarray['totalduration'], 'allhourmin').'</td>';
