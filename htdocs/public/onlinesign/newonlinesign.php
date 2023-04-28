@@ -158,7 +158,9 @@ if ($source == 'proposal') {
 } elseif ($source == 'societe_rib') {
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 	$object = new CompanyBankAccount($db);
+	var_dump($ref);
 	$result= $object->fetch($ref);
+	var_dump($object->id);
 } else {
 	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source", 400, 1);
 }
@@ -476,7 +478,8 @@ if ($source == 'proposal') {
 	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 	print '</td></tr>'."\n";
-} elseif ($source == 'fichinter') { // Signature on fichinter
+} elseif ($source == 'fichinter') {
+	// Signature on fichinter
 	$found = true;
 	$langs->load("fichinter");
 
@@ -524,6 +527,118 @@ if ($source == 'proposal') {
 	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 	print '</td></tr>'."\n";
+} elseif ($source == 'societe_rib') {
+	$found = true;
+	$langs->loadLangs(array("companies", "commercial", "banks", "bills", 'withdrawals'));
+
+	$result = $object->fetch_thirdparty();
+	var_dump($object);
+
+
+	// Proposer
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Proposer");
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$creditor.'</b>';
+	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+	print '</td></tr>'."\n";
+
+	// Target
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$object->thirdparty->name.'</b>';
+	print '</td></tr>'."\n";
+
+	// Object
+	$text = '<b>'.$langs->trans("Signature".dol_ucfirst($source)."Ref", $object->ref).'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow2">'.$text;
+
+	$last_main_doc_file = $object->last_main_doc;
+
+
+	/*if ($action == 'builddocrib') {
+		$action = 'builddoc';
+		$moreparams = array(
+			'use_companybankid'=>GETPOST('companybankid'),
+			'force_dir_output'=>$conf->societe->multidir_output[$object->thirdparty->entity].'/'.dol_sanitizeFileName($object->id)
+		);
+		$_POST['lang_id'] = GETPOST('lang_idrib'.GETPOST('companybankid', 'int'), 'alpha');
+		$_POST['model'] = GETPOST('modelrib'.GETPOST('companybankid', 'int'), 'alpha');
+	}
+
+	$id = $socid;
+	$upload_dir = $conf->societe->multidir_output[$object->entity];
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';*/
+
+	if (empty($last_main_doc_file) ||
+		!dol_is_file($conf->societe->multidir_output[$object->thirdparty->entity].'/'
+			.dol_sanitizeFileName($object->thirdparty->id).'/'
+			.$langs->transnoentitiesnoconv("SepaMandateShort").' '.$objectref."-".dol_sanitizeFileName($object->rum).".pdf")) {
+		// It seems document has never been generated, or was generated and then deleted.
+		// So we try to regenerate it with its default template.
+		$defaulttemplate = 'sepamandate';
+		$object->thirdparty->generateDocument($defaulttemplate, $langs);
+	}
+
+	$directdownloadlink = $object->thirdparty->getLastMainDocLink($source);
+	if ($directdownloadlink) {
+		print '<br><a href="'.$directdownloadlink.'">';
+		print img_mime($object->last_main_doc, '');
+		if ($message == "signed") {
+			print $langs->trans("DownloadSignedDocument").'</a>';
+		} else {
+			print $langs->trans("DownloadDocument").'</a>';
+		}
+	}
+} else {
+	$found = true;
+	$langs->load('companies');
+
+	if (!empty($object->socid) || !empty($object->fk_soc)) {
+		$result = $object->fetch_thirdparty();
+	}
+
+	// Proposer
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Proposer");
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$creditor.'</b>';
+	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+	print '</td></tr>'."\n";
+
+	// Target
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$object->thirdparty->name.'</b>';
+	print '</td></tr>'."\n";
+
+	// Object
+	$text = '<b>'.$langs->trans("Signature".dol_ucfirst($source)."Ref", $object->ref).'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow2">'.$text;
+
+	$last_main_doc_file = $object->last_main_doc;
+
+	if (empty($last_main_doc_file) || !dol_is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
+		// It seems document has never been generated, or was generated and then deleted.
+		// So we try to regenerate it with its default template.
+		$defaulttemplate = '';		// We force the use an empty string instead of $object->model_pdf to be sure to use a "main" default template and not the last one used.
+		$object->generateDocument($defaulttemplate, $langs);
+	}
+
+	$directdownloadlink = $object->getLastMainDocLink($source);
+	if ($directdownloadlink) {
+		print '<br><a href="'.$directdownloadlink.'">';
+		print img_mime($object->last_main_doc, '');
+		if ($message == "signed") {
+			print $langs->trans("DownloadSignedDocument").'</a>';
+		} else {
+			print $langs->trans("DownloadDocument").'</a>';
+		}
+	}
 }
 
 // Call Hook addFormSign
