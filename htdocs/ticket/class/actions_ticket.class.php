@@ -306,7 +306,7 @@ class ActionsTicket
 							if ($res) {
 								print $userstat->getNomUrl(0);
 							}
-						} else if (isset($arraymsgs['fk_contact_author'])) {
+						} elseif (isset($arraymsgs['fk_contact_author'])) {
 							$contactstat = new Contact($this->db);
 							$res = $contactstat->fetch(0, null, '', $arraymsgs['fk_contact_author']);
 							if ($res) {

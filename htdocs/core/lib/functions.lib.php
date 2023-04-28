@@ -12504,12 +12504,11 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 				}
 				$out .= $userGetNomUrlCache[$histo[$key]['userid']];
 			}
-			else if (!empty($histo[$key]['msg_from']) && $actionstatic->code == 'TICKET_MSG') {
+			elseif (!empty($histo[$key]['msg_from']) && $actionstatic->code == 'TICKET_MSG') {
 				if (!isset($contactGetNomUrlCache[$histo[$key]['msg_from']])) {
-					if ($contactstatic->fetch(0,null,'',$histo[$key]['msg_from']) > 0) {
+					if ($contactstatic->fetch(0, null, '', $histo[$key]['msg_from']) > 0) {
 						$contactGetNomUrlCache[$histo[$key]['msg_from']] = $contactstatic->getNomUrl(-1, '', 16);
-					}
-					else {
+					} else {
 						$contactGetNomUrlCache[$histo[$key]['msg_from']] = $histo[$key]['msg_from'];
 					}
 				}
