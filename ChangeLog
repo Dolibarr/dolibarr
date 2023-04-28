@@ -5,7 +5,185 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 18.0.0 compared to 17.0.0 *****
 
-NEW: PHP 8.2 compatibility.
+For uses:
+---------
+
+NEW: PHP 8.2 compatibility (test not yet completed).
+NEW: #22740 Add OpenID Connect impl
+NEW: #23436 Group social networks fields
+NEW: Accountancy - Add specific page to export accounting data rather than the journals page
+NEW: Accountancy - Add sub-account balance FPC22
+NEW: Accountancy - Manage customer retained warranty FPC21+
+NEW: Accountancy - Manage intra-community VAT on supplier invoices - FPC22
+NEW: adapt category and product pictures sizes on takepos
+NEW: Add ability of ODT support to supplier invoices
+NEW: Add a public virtual card page for each user
+NEW: Add a status on supplier price ref (WIP to close a supplier ref)
+NEW: Add a trigger when create a shipping line batch and fix propagate missing errors
+NEW: add bookmarks in selectable landing pages for users
+NEW: Add column ext_payment_site for societe_rib
+NEW: add convertion of images to webp for a single image
+NEW: Add CRC for currency symbol before amount
+NEW: add css editor to admin ihm
+NEW: add customer code to invoices listing
+NEW: Add Customer Order delivered (ORDER_NEW) in module Notification
+NEW: add customize CSS in admin/ihm settings
+NEW: Add date due and labels into customer comm card
+NEW: Add dropdown button actions (example on Create button on project)
+NEW: added an option to display the progress of tickets on the public interface
+NEW: Add field reply-to in email collector as possible filter
+NEW: Add filter on nb of generation done in list of recurring invoices
+NEW: Add filters and sort on product unit column
+NEW: adding button Send Email on the salary file
+NEW: Add link to edit VAT list from error message of missing VAT
+NEW: add link to thirdparty tickets history
+NEW: add margin in paiement/card.php
+NEW: Add mass action delete on VAT
+NEW: Add more zip, town, country for owner of a bank account
+NEW: add numbering modules for members
+NEW: add option keepspace into dol_string_nospecialchar()
+NEW: Add origin info when create a product batch when created from a movement stock
+NEW: Add possibility to choose format #21426
+NEW: Add SQL contraint on product_stock table to allow only exsting product and warehouse#23543
+NEW: Add statistics by amount on statistics of products.
+NEW: Add STRIPE_DEBUG, a way to log Stripe IPN
+NEW: Add sub total in order list det
+NEW: Add warehouse create and modify triggers.
+NEW: Add widget box_members_by_tags.php
+NEW: An external module can modify the quick search fields
+NEW: Auto activate some modules on install (export/import/wysiwyg editor)
+NEW: Autofill email form with the email template with status "Default" on
+NEW: Bank name no more mandatory on creation. Can be generated if empty.
+NEW: batch referential objets
+NEW: Better responsive for mass actions
+NEW: Can add any contact on events if global MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT is set at 1
+NEW: Can add the add now link on date into addfieldvalue()
+NEW: Can bin accounting line for a given month
+NEW: Can edit account on miscellaneous payment (if not transfered)
+NEW: Can edit inline the vat number from supplier tab
+NEW: Can fill date of salary payment with date of start of salary
+NEW: Can filter on a custom group of accounts. Perf or ledger list.
+NEW: Can go back to draft on shipment when stock change not on validate
+NEW: Can modify bank account of sepa payment (if file not sent yet)
+NEW: Can modify margin rates in offers like VAT rates.
+NEW: Can modify the date of payment of a salary (if not reconciled)
+NEW: Can now edit service name for oauth token
+NEW: Can receive more than qty ordered on reception
+NEW: Can select several warehouses into the view stock at date in past
+NEW: Can select the export format during export of journals
+NEW: Can set a checkbox in formconfirm by clicking on the label
+NEW: Can set background style with MAIN_LOGIN_BACKGROUND_STYLE
+NEW: Can set flag default value on email templates
+NEW: Can set the page "List of opportunities" as landing page
+NEW: Can show the sql request used on emailing selection
+NEW: can stay on edit field when errors occurs
+NEW: Can test a geoip conversion from the geoip setup page
+NEW: Captcha for public member's subscription form
+NEW: category of operation for crabe PDF model
+NEW: color for start date and owner
+NEW: comment in api_mymodule for seperate methods
+NEW: constant PROPALE_ADDON_NOTE_PUBLIC_DEFAULT
+NEW: create email substitution variable for intervention signature URL
+NEW: Date for salary payment includes the hour/min
+NEW: Debug the custom CSS feature to avoid a directory search/scan at
+NEW: dev name
+NEW: Disable bad reputation product price
+NEW: dolExplodeIntoArray can accept regex
+NEW: dol_sort_array can sort on alphabetical order even if val is num
+NEW: don't have closed contact proposed as receiver for the mails
+NEW: Dynamic choice of warehouse and batch in MO production.
+NEW: element time integration code + sql
+NEW: events list with color
+NEW: expend/collapse list of social networks
+NEW: filter for Signed+Billed in proposals
+NEW: Filter on amount and qty on list of service's contracts
+NEW: filter on entity in import
+NEW: formconfirm can support field with format datetime
+NEW: getCommonSubstitutionArray to have more substitute keys
+NEW: helper functions for dates + small demo case
+NEW: hook printFieldListFrom in contact list
+NEW: inc.php: handle parameters from argv
+NEW: Increment website counter on each page access in website module
+NEW: Invalidate all sessions of a user when password is modified.
+NEW: Invoice - Show Category of operations
+NEW: iSuiteExpert export model
+NEW: Keep a link between user created from recruitment and application
+NEW: limit load products in takepos
+NEW: List product in orders
+NEW: Make it possible to select hours and minutes in form_confirm
+NEW: map table to element for get entity in import
+NEW: migration script + delete old table + rename fields and indexes
+NEW: Multicurrency REST API to create, update, delete, update rate...
+NEW: Multiselect for filter on prospection status
+NEW: Name and date to print on PDF Sign
+NEW: [Bulk delete Project tasks]
+NEW: No overwrite of optionals during put() contact
+NEW: Notification for Sign or Refused Propal from Online Page
+NEW: notify also the contributor affected to a ticket if a new message public is post (add global TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ALSO_CONTRIBUTOR)
+NEW: Now we can edit amount on vat and salaries clone action
+NEW: only get openned contact from liste_contact function, to not have acces to closed contact as mail receiver
+NEW: operation type in email collector to load or create contact
+NEW: option filter for NoSalesRepresentativeAffected in proposals list
+NEW: Option to manage deposit slips for more payment modes (not only
+NEW: Option to show column for field and line selection on the left
+NEW: Order export : allow to export field 'shipment method'.
+NEW: payment default values when supplier order created from reception
+NEW: Payment : manage contracts
+NEW: Possibility to link to German pages in help
+NEW: presend mass action in contact list
+NEW: product images on popup are cached
+NEW: Provide the oldcopy value when calling setValueFrom() function with a trigger key
+NEW: Quadratus export with attachments in accountancy export
+NEW: referential objects of batch
+NEW: remove default percentage for event creation url
+NEW: remove keys whose table element is the same as element in map list
+NEW: repair script skip views
+NEW: Save date to invalidate other session into user table
+NEW: search on time spent duration range
+NEW: Send an email when ticket assigned
+NEW: Send a notification email when ticket assigned
+NEW: sepaStripe now creates the payment mode with type pm_ using new API
+NEW: set payment default values when supplier order created from reception
+NEW: set ticket status to answered if the client has answered from the public interface
+NEW: set today start time at begining
+NEW: Setup emailcollector easier. Can also use ! for negative search.
+NEW: Show counter of access of website in website list
+NEW: Show main currency in company info user tooltip
+NEW: Show module into list of emails templates
+NEW: Show picto into the combobox of widgets
+NEW: Show supplier invoice ref of direct debit transfer tab invoices
+NEW: show supplier name in getNomUrl of supplier order
+NEW: sort of column of custom group of account
+NEW: Stock limit for alert and desired optimal stock by product and warehouse import
+NEW: substitute date now in email collector
+NEW: Support different bank account for several direct debit payments
+NEW: Support multiselect in the warehouse selection combo box
+NEW: Support option MAIN_SECURITY_MAXFILESIZE_DOWNLOADED #yogosha10660
+NEW: table llx_element_time to store time spent on several elements (mo, ticket...)
+NEW: The batch for remind on due date can be setup for using validation date
+NEW: The refresh link for imap collector is always visible
+NEW: The upgrade process can be done by creating a file upgrade.unlock
+NEW: Tooltip to explain how to add a photo on a product
+NEW: Use a cache file for external RSS in calendar
+NEW: Use by default the domain $dolibarr_main_url_root for SMTP HELO
+NEW: use more recent model by default
+NEW: VAT can be modified during add of line
+NEW: write all fields and their properties in asciidoc format
+
+For developers or integrators:
+------------------------------
+
+NEW: triggers on mailing
+NEW: add function for listiong objects from directory
+NEW: Add helplist property to describe fields of obects
+NEW: Add hook in loadLotStock() in html.formproduct.class.php file, add hook 'llxFooter', Add hook online sign
+NEW: Update lib parsedownto 1.7.4, phpspreadsheet lib to v1.12
+NEW: Support contact in post() document API
+NEW: updating in modulbuilder on tab Menu when adding object
+NEW: Add/Edit permissions in ModuleBuilder
+NEW: Better generated documentation for modulebuilder
+NEW: Add sent info in the parameters provided to the hook sendMailAfter
+NEW: add setAsSelectUser into factory for generic setup page
 
 
 WARNING:
