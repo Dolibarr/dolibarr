@@ -1447,6 +1447,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		}
 		print_liste_field_titre("Default", '', '', '', '', '', '', '', 'center ');
 		print_liste_field_titre('', '', '', '', '', '', '', '', 'center ');
+		print_liste_field_titre('', '', '', '', '', '', '', '', 'center ');
 		// Fields from hook
 		$parameters = array('arrayfields'=>array(), 'linetype'=>'stripebantitle');
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -1621,6 +1622,17 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
+			// Show online signature link
+			print '<td class="right nowraponall">';
+
+			$useonlinesignature = 1;
+
+			if ($useonlinesignature) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+				print showOnlineSignatureUrl($companybankaccount->element, $object->id);
+			}
+			print '</td>';
+
 			// Edit/Delete
 			print '<td class="right nowraponall">';
 			if ($permissiontoaddupdatepaymentinformation) {
@@ -1630,6 +1642,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					print img_picto($langs->trans("CreateBANOnStripe"), 'stripe');
 					print '</a>';
 				}
+
+
 
 				print '<a class="editfielda marginrightonly marginleftonly" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=edit">';
 				print img_picto($langs->trans("Modify"), 'edit');

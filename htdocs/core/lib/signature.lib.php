@@ -146,6 +146,21 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 		} else {
 			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(!isModEnabled('multicompany') ? '' : $object->entity), '0');
 		}
+	} else {
+		$securekeyseed = getDolUserString(dol_strtoupper($type).'ONLINE_SIGNATURE_SECURITY_TOKEN');
+		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source='.$type.'&ref='.($mode ? '<span style="color: #666666">' : '');
+		if ($mode == 1) {
+			$out .= $type.'_ref';
+		}
+		if ($mode == 0) {
+			$out .= urlencode($ref);
+		}
+		$out .= ($mode ? '</span>' : '');
+		if ($mode == 1) {
+			$out .= "hash('".$securekeyseed."' + '".$type."' + $type + '_ref)";
+		} else {
+			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(!isModEnabled('multicompany') ? '' : $object->entity), '0');
+		}
 	}
 
 	// For multicompany
