@@ -158,9 +158,7 @@ if ($source == 'proposal') {
 } elseif ($source == 'societe_rib') {
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 	$object = new CompanyBankAccount($db);
-	var_dump($ref);
 	$result= $object->fetch($ref);
-	var_dump($object->id);
 } else {
 	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source", 400, 1);
 }
@@ -532,8 +530,6 @@ if ($source == 'proposal') {
 	$langs->loadLangs(array("companies", "commercial", "banks", "bills", 'withdrawals'));
 
 	$result = $object->fetch_thirdparty();
-	var_dump($object);
-
 
 	// Proposer
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Proposer");

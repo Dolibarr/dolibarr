@@ -1624,12 +1624,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 			// Show online signature link
 			print '<td class="right nowraponall">';
-
 			$useonlinesignature = 1;
-
 			if ($useonlinesignature) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
-				print showOnlineSignatureUrl($companybankaccount->element, $object->id);
+				print showOnlineSignatureUrl($companybankaccount->element, $rib->id);
 			}
 			print '</td>';
 
