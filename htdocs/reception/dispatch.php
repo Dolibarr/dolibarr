@@ -520,6 +520,7 @@ if ($id > 0 || !empty($ref)) {
 		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
+			$numline = 1;
 
 			if ($num) {
 				print '<tr class="liste_titre">';
@@ -714,6 +715,7 @@ if ($id > 0 || !empty($ref)) {
 
 									print '</tr>';
 
+									print '<!-- line for batch '.$numline.' -->';
 									print '<tr class="oddeven autoresettr" name="'.$type.$suffix.'" data-remove="clear">';
 									print '<td>';
 									print '<input id="fk_commandefourndet'.$suffix.'" name="fk_commandefourndet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
@@ -772,6 +774,7 @@ if ($id > 0 || !empty($ref)) {
 
 									print '</tr>';
 
+									print '<!-- line no batch '.$numline.' -->';
 									print '<tr class="oddeven autoresettr" name="'.$type.$suffix.'" data-remove="clear">';
 									print '<td colspan="'.$colspan.'">';
 									print '<input id="fk_commandefourndet'.$suffix.'" name="fk_commandefourndet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
@@ -854,6 +857,8 @@ if ($id > 0 || !empty($ref)) {
 
 								print "</tr>\n";
 								$j++;
+
+								$numline++;
 							}
 							$suffix = "_".$j."_".$i;
 						}
@@ -882,6 +887,7 @@ if ($id > 0 || !empty($ref)) {
 
 								print '</tr>';
 
+								print '<!-- line for batch '.$numline.' (not dispatched line yet for this order line) -->';
 								print '<tr class="oddeven autoresettr" name="'.$type.$suffix.'">';
 								print '<td>';
 								print '<input id="fk_commandefourndet'.$suffix.'" name="fk_commandefourndet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
@@ -940,6 +946,7 @@ if ($id > 0 || !empty($ref)) {
 
 								print '</tr>';
 
+								print '<!-- line no batch '.$numline.' (not dispatched line yet for this order line) -->';
 								print '<tr class="oddeven autoresettr" name="'.$type.$suffix.'" data-remove="clear">';
 								print '<td colspan="'.$colspan.'">';
 								print '<input id="fk_commandefourndet'.$suffix.'" name="fk_commandefourndet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';

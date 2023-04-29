@@ -8785,13 +8785,13 @@ class Form
 	}
 
 	/**
-	 *    Render list of categories linked to object with id $id and type $type
+	 * Render list of categories linked to object with id $id and type $type
 	 *
-	 * @param int $id Id of object
-	 * @param string $type Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
-	 * @param int $rendermode 0=Default, use multiselect. 1=Emulate multiselect (recommended)
-	 * @param int $nolink 1=Do not add html links
-	 * @return        string                    String with categories
+	 * @param int 		$id 		Id of object
+	 * @param string 	$type 		Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @param int 		$rendermode 0=Default, use multiselect. 1=Emulate multiselect (recommended)
+	 * @param int 		$nolink 	1=Do not add html links
+	 * @return string               String with categories
 	 */
 	public function showCategories($id, $type, $rendermode = 0, $nolink = 0)
 	{
