@@ -2131,10 +2131,11 @@ class AccountancyExport
 	/**
 	 * Export format : Charlemagne
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportCharlemagne($objectLines)
+	public function exportCharlemagne($objectLines, $exportFile = null)
 	{
 		global $langs;
 		$langs->load('compta');
@@ -2142,52 +2143,66 @@ class AccountancyExport
 		$separator = "\t";
 		$end_line = "\n";
 
-		/*
-		 * Charlemagne export need header
-		 */
-		print $langs->transnoentitiesnoconv('Date').$separator;
-		print self::trunc($langs->transnoentitiesnoconv('Journal'), 6).$separator;
-		print self::trunc($langs->transnoentitiesnoconv('Account'), 15).$separator;
-		print self::trunc($langs->transnoentitiesnoconv('LabelAccount'), 60).$separator;
-		print self::trunc($langs->transnoentitiesnoconv('Piece'), 20).$separator;
-		print self::trunc($langs->transnoentitiesnoconv('LabelOperation'), 60).$separator;
-		print $langs->transnoentitiesnoconv('Amount').$separator;
-		print 'S'.$separator;
-		print self::trunc($langs->transnoentitiesnoconv('Analytic').' 1', 15).$separator;
-		print self::trunc($langs->transnoentitiesnoconv('AnalyticLabel').' 1', 60).$separator;
-		print self::trunc($langs->transnoentitiesnoconv('Analytic').' 2', 15).$separator;
-		print self::trunc($langs->transnoentitiesnoconv('AnalyticLabel').' 2', 60).$separator;
-		print self::trunc($langs->transnoentitiesnoconv('Analytic').' 3', 15).$separator;
-		print self::trunc($langs->transnoentitiesnoconv('AnalyticLabel').' 3', 60).$separator;
-		print $end_line;
+		$tab = array();
+
+		$tab[] = $langs->transnoentitiesnoconv('Date');
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('Journal'), 6);
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('Account'), 15);
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('LabelAccount'), 60);
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('Piece'), 20);
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('LabelOperation'), 60);
+		$tab[] = $langs->transnoentitiesnoconv('Amount');
+		$tab[] = 'S';
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('Analytic').' 1', 15);
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('AnalyticLabel').' 1', 60);
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('Analytic').' 2', 15);
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('AnalyticLabel').' 2', 60);
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('Analytic').' 3', 15);
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('AnalyticLabel').' 3', 60);
+
+		$output = implode($separator, $tab).$end_line;
+		if ($exportFile) {
+			fwrite($exportFile, $output);
+		} else {
+			print $output;
+		}
 
 		foreach ($objectLines as $line) {
-			$date = dol_print_date($line->doc_date, '%Y%m%d');
-			print $date.$separator; //Date
+			$date_document = dol_print_date($line->doc_date, '%Y%m%d');
 
-			print self::trunc($line->code_journal, 6).$separator; //Journal code
+			$tab = array();
+
+			$tab[] = $date_document; //Date
+
+			$tab[] = self::trunc($line->code_journal, 6); //Journal code
 
 			if (!empty($line->subledger_account)) {
 				$account = $line->subledger_account;
 			} else {
 				$account = $line->numero_compte;
 			}
-			print self::trunc($account, 15).$separator; //Account number
+			$tab[] = self::trunc($account, 15); //Account number
 
-			print self::trunc($line->label_compte, 60).$separator; //Account label
-			print self::trunc($line->doc_ref, 20).$separator; //Piece
+			$tab[] = self::trunc($line->label_compte, 60); //Account label
+			$tab[] = self::trunc($line->doc_ref, 20); //Piece
 			// Clean label operation to prevent problem on export with tab separator & other character
 			$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
-			print self::trunc($line->label_operation, 60).$separator; //Operation label
-			print price(abs($line->debit - $line->credit)).$separator; //Amount
-			print $line->sens.$separator; //Direction
-			print $separator; //Analytic
-			print $separator; //Analytic
-			print $separator; //Analytic
-			print $separator; //Analytic
-			print $separator; //Analytic
-			print $separator; //Analytic
-			print $end_line;
+			$tab[] = self::trunc($line->label_operation, 60); //Operation label
+			$tab[] = price(abs($line->debit - $line->credit)); //Amount
+			$tab[] = $line->sens; //Direction
+			$tab[] = ""; //Analytic
+			$tab[] = ""; //Analytic
+			$tab[] = ""; //Analytic
+			$tab[] = ""; //Analytic
+			$tab[] = ""; //Analytic
+			$tab[] = ""; //Analytic
+
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
