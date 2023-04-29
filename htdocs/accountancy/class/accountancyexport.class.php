@@ -1556,19 +1556,47 @@ class AccountancyExport
 	 * https://onlinehelp.sageschweiz.ch/default.aspx?tabid=19984
 	 * http://media.topal.ch/Public/Schnittstellen/TAF/Specification/Sage50-TAF-format.pdf
 	 *
-	 * @param array $objectLines data
-	 *
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportSAGE50SWISS($objectLines)
+	public function exportSAGE50SWISS($objectLines, $exportFile = null)
 	{
 		// SAGE50SWISS
-		$this->separator = ',';
-		$this->end_line = "\r\n";
+		$separator = ',';
+		$end_line = "\r\n";
 
 		// Print header line
-		print "Blg,Datum,Kto,S/H,Grp,GKto,SId,SIdx,KIdx,BTyp,MTyp,Code,Netto,Steuer,FW-Betrag,Tx1,Tx2,PkKey,OpId,Flag";
-		print $this->end_line;
+		$tab = array();
+
+		$tab[] = "Blg";
+		$tab[] = "Datum";
+		$tab[] = "Kto";
+		$tab[] = "S/H";
+		$tab[] = "Grp";
+		$tab[] = "GKto";
+		$tab[] = "SId";
+		$tab[] = "SIdx";
+		$tab[] = "KIdx";
+		$tab[] = "BTyp";
+		$tab[] = "MTyp";
+		$tab[] = "Code";
+		$tab[] = "Netto";
+		$tab[] = "Steuer";
+		$tab[] = "FW-Betrag";
+		$tab[] = "Tx1";
+		$tab[] = "Tx2";
+		$tab[] = "PkKey";
+		$tab[] = "OpId";
+		$tab[] = "Flag";
+
+		$output = implode($separator, $tab).$end_line;
+		if ($exportFile) {
+			fwrite($exportFile, $output);
+		} else {
+			print $output;
+		}
+
 		$thisPieceNum = "";
 		$thisPieceAccountNr = "";
 		$aSize = count($objectLines);
@@ -1586,56 +1614,58 @@ class AccountancyExport
 				$sammelBuchung = true;
 			}
 
+			$tab = array();
+
 			//Blg
-			print $line->piece_num.$this->separator;
+			$tab[] = $line->piece_num;
 
 			// Datum
-			$date = dol_print_date($line->doc_date, '%d.%m.%Y');
-			print $date.$this->separator;
+			$date_document = dol_print_date($line->doc_date, '%d.%m.%Y');
+			$tab[] = $date_document;
 
 			// Kto
-			print length_accountg($line->numero_compte).$this->separator;
+			$tab[] = length_accountg($line->numero_compte);
 			// S/H
 			if ($line->sens == 'D') {
-				print 'S'.$this->separator;
+				$tab[] = 'S';
 			} else {
-				print 'H'.$this->separator;
+				$tab[] = 'H';
 			}
-			//Grp
-			print self::trunc($line->code_journal, 1).$this->separator;
+			// Grp
+			$tab[] = self::trunc($line->code_journal, 1);
 			// GKto
 			if (empty($line->code_tiers)) {
 				if ($line->piece_num == $thisPieceNum) {
-					print length_accounta($thisPieceAccountNr).$this->separator;
+					$tab[] = length_accounta($thisPieceAccountNr);
 				} else {
-					print "div".$this->separator;
+					$tab[] = "div";
 				}
 			} else {
-				print length_accounta($line->code_tiers).$this->separator;
+				$tab[] = length_accounta($line->code_tiers);
 			}
-			//SId
-			print $this->separator;
-			//SIdx
-			print "0".$this->separator;
-			//KIdx
-			print "0".$this->separator;
-			//BTyp
-			print "0".$this->separator;
+			// SId
+			$tab[] = $this->separator;
+			// SIdx
+			$tab[] = "0";
+			// KIdx
+			$tab[] = "0";
+			// BTyp
+			$tab[] = "0";
 
-			//MTyp 1=Fibu Einzelbuchung 2=Sammebuchung
+			// MTyp 1=Fibu Einzelbuchung 2=Sammebuchung
 			if ($sammelBuchung) {
-				print "2".$this->separator;
+				$tab[] = "2";
 			} else {
-				print "1".$this->separator;
+				$tab[] = "1";
 			}
 			// Code
-			print '""'.$this->separator;
+			$tab[] = '""';
 			// Netto
-			print abs($line->debit - $line->credit).$this->separator;
+			$tab[] = abs($line->debit - $line->credit);
 			// Steuer
-			print "0.00".$this->separator;
+			$tab[] = "0.00";
 			// FW-Betrag
-			print "0.00".$this->separator;
+			$tab[] = "0.00";
 			// Tx1
 			$line1 = self::toAnsi($line->label_compte, 29);
 			if ($line1 == "LIQ" || $line1 == "LIQ Beleg ok" || strlen($line1) <= 3) {
@@ -1651,18 +1681,23 @@ class AccountancyExport
 				$line2 = "";
 			}
 
-			print '"'.self::toAnsi($line1).'"'.$this->separator;
+			$tab[] = '"'.self::toAnsi($line1).'"';
 			// Tx2
-			print '"'.self::toAnsi($line2).'"'.$this->separator;
+			$tab[] = '"'.self::toAnsi($line2).'"';
 			//PkKey
-			print "0".$this->separator;
+			$tab[] = "0";
 			//OpId
-			print $this->separator;
+			$tab[] = $this->separator;
 
 			// Flag
-			print "0";
+			$tab[] = "0";
 
-			print $this->end_line;
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 
 			if ($line->piece_num !== $thisPieceNum) {
 				$thisPieceNum = $line->piece_num;
