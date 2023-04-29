@@ -1851,11 +1851,11 @@ class AccountancyExport
 	 *
 	 * Help : http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW10.pdf
 	 *
-	 * @param array $objectLines data
-	 *
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportLDCompta10($objectLines)
+	public function exportLDCompta10($objectLines, $exportFile = null)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
@@ -1889,107 +1889,116 @@ class AccountancyExport
 						$address[2] = substr(str_replace(array("\t", "\r"), " ", $soc->address), 82, 40);
 					}
 
+					$tab = array();
+
 					$type_enregistrement = 'C';
 					//TYPE
-					print $type_enregistrement.$separator;
+					$tab[] = $type_enregistrement;
 					//NOCL
-					print $soc->code_client.$separator;
+					$tab[] = $soc->code_client;
 					//NMCM
-					print $separator;
+					$tab[] = "";
 					//LIBI
-					print $separator;
+					$tab[] = "";
 					//TITR
-					print $separator;
+					$tab[] = "";
 					//RSSO
-					print $soc->nom.$separator;
+					$tab[] = $soc->nom;
 					//CAD1
-					print  $address[0].$separator;
+					$tab[] = $address[0];
 					//CAD2
-					print  $address[1].$separator;
+					$tab[] = $address[1];
 					//CAD3
-					print  $address[2].$separator;
+					$tab[] = $address[2];
 					//COPO
-					print  $soc->zip.$separator;
+					$tab[] = $soc->zip;
 					//BUDI
-					print  substr($soc->town, 0, 40).$separator;
+					$tab[] = substr($soc->town, 0, 40);
 					//CPAY
-					print  $separator;
+					$tab[] = "";
 					//PAYS
-					print  substr(getCountry($soc->fk_pays), 0, 40).$separator;
+					$tab[] = substr(getCountry($soc->fk_pays), 0, 40);
 					//NTEL
-					print $soc->phone.$separator;
+					$tab[] = $soc->phone;
 					//TLEX
-					print $separator;
+					$tab[] = "";
 					//TLPO
-					print $separator;
+					$tab[] = "";
 					//TLCY
-					print $separator;
+					$tab[] = "";
 					//NINT
-					print $separator;
+					$tab[] = "";
 					//COMM
-					print $separator;
+					$tab[] = "";
 					//SIRE
-					print str_replace(" ", "", $soc->siret).$separator;
+					$tab[] = str_replace(" ", "", $soc->siret);
 					//RIBP
-					print $separator;
+					$tab[] = "";
 					//DOBQ
-					print $separator;
+					$tab[] = "";
 					//IBBQ
-					print $separator;
+					$tab[] = "";
 					//COBQ
-					print $separator;
+					$tab[] = "";
 					//GUBQ
-					print $separator;
+					$tab[] = "";
 					//CPBQ
-					print $separator;
+					$tab[] = "";
 					//CLBQ
-					print $separator;
+					$tab[] = "";
 					//BIBQ
-					print $separator;
+					$tab[] = "";
 					//MOPM
-					print $separator;
+					$tab[] = "";
 					//DJPM
-					print $separator;
+					$tab[] = "";
 					//DMPM
-					print $separator;
+					$tab[] = "";
 					//REFM
-					print $separator;
+					$tab[] = "";
 					//SLVA
-					print $separator;
+					$tab[] = "";
 					//PLCR
-					print $separator;
+					$tab[] = "";
 					//ECFI
-					print $separator;
+					$tab[] = "";
 					//CREP
-					print $separator;
+					$tab[] = "";
 					//NREP
-					print $separator;
+					$tab[] = "";
 					//TREP
-					print $separator;
+					$tab[] = "";
 					//MREP
-					print $separator;
+					$tab[] = "";
 					//GRRE
-					print $separator;
+					$tab[] = "";
 					//LTTA
-					print $separator;
+					$tab[] = "";
 					//CACT
-					print $separator;
+					$tab[] = "";
 					//CODV
-					print $separator;
+					$tab[] = "";
 					//GRTR
-					print $separator;
+					$tab[] = "";
 					//NOFP
-					print $separator;
+					$tab[] = "";
 					//BQAF
-					print $separator;
+					$tab[] = "";
 					//BONP
-					print $separator;
+					$tab[] = "";
 					//CESC
-					print $separator;
+					$tab[] = "";
 
-					print $end_line;
+					$output = implode($separator, $tab).$end_line;
+					if ($exportFile) {
+						fwrite($exportFile, $output);
+					} else {
+						print $output;
+					}
 				}
 			}
+
+			$tab = array();
 
 			$date_document = dol_print_date($line->doc_date, '%Y%m%d');
 			$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
@@ -1997,19 +2006,19 @@ class AccountancyExport
 
 			// TYPE E
 			$type_enregistrement = 'E'; // For write movement
-			print $type_enregistrement.$separator;
+			$tab[] = $type_enregistrement;
 			// JNAL
-			print substr($line->code_journal, 0, 2).$separator;
+			$tab[] = substr($line->code_journal, 0, 2);
 			// NECR
-			print $line->id.$separator;
+			$tab[] = $line->id;
 			// NPIE
-			print $line->piece_num.$separator;
+			$tab[] = $line->piece_num;
 			// DATP
-			print $date_document.$separator;
+			$tab[] = $date_document;
 			// LIBE
-			print dol_trunc($line->label_operation, 25, 'right', 'UTF-8', 1).$separator;
+			$tab[] = dol_trunc($line->label_operation, 25, 'right', 'UTF-8', 1);
 			// DATH
-			print $date_lim_reglement.$separator;
+			$tab[] = $date_lim_reglement;
 			// CNPI
 			if ($line->doc_type == 'supplier_invoice') {
 				if (($line->amount) < 0) {		// Currently, only the sign of amount allows to know the type of invoice (standard or credit note). Other solution is to analyse debit/credit/role of account. TODO Add column doc_type_long or make amount mandatory with rule on sign.
@@ -2026,7 +2035,7 @@ class AccountancyExport
 			} else {
 				$nature_piece = '';
 			}
-			print $nature_piece.$separator;
+			$tab[] = $nature_piece;
 			// RACI
 			//			if (!empty($line->subledger_account)) {
 			//				if ($line->doc_type == 'supplier_invoice') {
@@ -2040,75 +2049,80 @@ class AccountancyExport
 			$racine_subledger_account = ''; // for records of type E leave this field blank
 			//			}
 
-			print $racine_subledger_account.$separator; // deprecated CPTG & CPTA use instead
+			$tab[] = $racine_subledger_account; // deprecated CPTG & CPTA use instead
 			// MONT
-			print price(abs($line->debit - $line->credit), 0, '', 1, 2).$separator;
+			$tab[] = price(abs($line->debit - $line->credit), 0, '', 1, 2);
 			// CODC
-			print $line->sens.$separator;
+			$tab[] = $line->sens;
 			// CPTG
-			print length_accountg($line->numero_compte).$separator;
+			$tab[] = length_accountg($line->numero_compte);
 			// DATE
-			print $date_document.$separator;
+			$tab[] = $date_document;
 			// CLET
-			print $line->lettering_code.$separator;
+			$tab[] = $line->lettering_code;
 			// DATL
-			print $line->date_lettering.$separator;
+			$tab[] = $line->date_lettering;
 			// CPTA
 			if (!empty($line->subledger_account)) {
-				print length_accounta($line->subledger_account).$separator;
+				$tab[] = length_accounta($line->subledger_account);
 			} else {
-				print $separator;
+				$tab[] = "";
 			}
 			// CNAT
 			if ($line->doc_type == 'supplier_invoice' && !empty($line->subledger_account)) {
-				print 'F'.$separator;
+				$tab[] = 'F';
 			} elseif ($line->doc_type == 'customer_invoice' && !empty($line->subledger_account)) {
-				print 'C'.$separator;
+				$tab[] = 'C';
 			} else {
-				print $separator;
+				$tab[] = "";
 			}
 			// CTRE
-			print $separator;
+			$tab[] = "";
 			// NORL
-			print $separator;
+			$tab[] = "";
 			// DATV
-			print $separator;
+			$tab[] = "";
 			// REFD
-			print $line->doc_ref.$separator;
+			$tab[] = $line->doc_ref;
 			// NECA
-			print '0'.$separator;
+			$tab[] = '0';
 			// CSEC
-			print $separator;
+			$tab[] = "";
 			// CAFF
-			print $separator;
+			$tab[] = "";
 			// CDES
-			print $separator;
+			$tab[] = "";
 			// QTUE
-			print $separator;
+			$tab[] = "";
 			// MTDV
-			print '0'.$separator;
+			$tab[] = '0';
 			// CODV
-			print $separator;
+			$tab[] = "";
 			// TXDV
-			print '0'.$separator;
+			$tab[] = '0';
 			// MOPM
-			print $separator;
+			$tab[] = "";
 			// BONP
-			print $separator;
+			$tab[] = "";
 			// BQAF
-			print $separator;
+			$tab[] = "";
 			// ECES
-			print $separator;
+			$tab[] = "";
 			// TXTL
-			print $separator;
+			$tab[] = "";
 			// ECRM
-			print $separator;
+			$tab[] = "";
 			// DATK
-			print $separator;
+			$tab[] = "";
 			// HEUK
-			print $separator;
+			$tab[] = "";
 
-			print $end_line;
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 
 			$last_codeinvoice = $line->doc_ref;
 		}
