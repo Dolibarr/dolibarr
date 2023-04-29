@@ -799,13 +799,13 @@ class AccountancyExport
 	 * Help : https://docplayer.fr/20769649-Fichier-d-entree-ascii-dans-quadracompta.html
 	 * In QuadraCompta | Use menu : "Outils" > "Suivi des dossiers" > "Import ASCII(Compta)"
 	 *
-	 * @param 	array		$TData					Data
+	 * @param 	array 		$objectLines 			data
 	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
 	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
 	 * @param 	bool		$withAttachment			[=0] Not add files or 1 to have attached in an archive
 	 * @return	array		Archive file list : array of ['path', 'name']
 	 */
-	public function exportQuadratus(&$TData, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
+	public function exportQuadratus($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
 	{
 		global $conf, $db;
 
@@ -814,152 +814,152 @@ class AccountancyExport
 		// We should use dol_now function not time however this is wrong date to transfert in accounting
 		// $date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		// $date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
-		foreach ($TData as $data) {
+		foreach ($objectLines as $line) {
 			// Clean some data
-			$data->doc_ref = dol_string_unaccent($data->doc_ref);
-			$data->label_operation = dol_string_unaccent($data->label_operation);
-			$data->numero_compte = dol_string_unaccent($data->numero_compte);
-			$data->label_compte = dol_string_unaccent($data->label_compte);
-			$data->subledger_account = dol_string_unaccent($data->subledger_account);
-			$data->subledger_label = dol_string_unaccent($data->subledger_label);
+			$line->doc_ref = dol_string_unaccent($line->doc_ref);
+			$line->label_operation = dol_string_unaccent($line->label_operation);
+			$line->numero_compte = dol_string_unaccent($line->numero_compte);
+			$line->label_compte = dol_string_unaccent($line->label_compte);
+			$line->subledger_account = dol_string_unaccent($line->subledger_account);
+			$line->subledger_label = dol_string_unaccent($line->subledger_label);
 
-			$code_compta = $data->numero_compte;
-			if (!empty($data->subledger_account)) {
-				$code_compta = $data->subledger_account;
+			$code_compta = $line->numero_compte;
+			if (!empty($line->subledger_account)) {
+				$code_compta = $line->subledger_account;
 			}
 
-			$Tab = array();
+			$tab = array();
 
-			if (!empty($data->subledger_account)) {
-				$Tab['type_ligne'] = 'C';
-				$Tab['num_compte'] = str_pad(self::trunc($data->subledger_account, 8), 8);
-				$Tab['lib_compte'] = str_pad(self::trunc($data->subledger_label, 30), 30);
+			if (!empty($line->subledger_account)) {
+				$tab['type_ligne'] = 'C';
+				$tab['num_compte'] = str_pad(self::trunc($line->subledger_account, 8), 8);
+				$tab['lib_compte'] = str_pad(self::trunc($line->subledger_label, 30), 30);
 
-				if ($data->doc_type == 'customer_invoice') {
-					$Tab['lib_alpha'] = strtoupper(str_pad('C'.self::trunc($data->subledger_label, 6), 6));
-					$Tab['filler'] = str_repeat(' ', 52);
-					$Tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, 8), 8);
-				} elseif ($data->doc_type == 'supplier_invoice') {
-					$Tab['lib_alpha'] = strtoupper(str_pad('F'.self::trunc($data->subledger_label, 6), 6));
-					$Tab['filler'] = str_repeat(' ', 52);
-					$Tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER, 8), 8);
+				if ($line->doc_type == 'customer_invoice') {
+					$tab['lib_alpha'] = strtoupper(str_pad('C'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 6));
+					$tab['filler'] = str_repeat(' ', 52);
+					$tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, 8), 8);
+				} elseif ($line->doc_type == 'supplier_invoice') {
+					$tab['lib_alpha'] = strtoupper(str_pad('F'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 6));
+					$tab['filler'] = str_repeat(' ', 52);
+					$tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER, 8), 8);
 				} else {
-					$Tab['filler'] = str_repeat(' ', 59);
-					$Tab['coll_compte'] = str_pad(' ', 8);
+					$tab['filler'] = str_repeat(' ', 59);
+					$tab['coll_compte'] = str_pad(' ', 8);
 				}
 
-				$Tab['filler2'] = str_repeat(' ', 110);
-				$Tab['Maj'] = 2; // Partial update (alpha key, label, address, collectif, RIB)
+				$tab['filler2'] = str_repeat(' ', 110);
+				$tab['Maj'] = 2; // Partial update (alpha key, label, address, collectif, RIB)
 
-				if ($data->doc_type == 'customer_invoice') {
-					$Tab['type_compte'] = 'C';
-				} elseif ($data->doc_type == 'supplier_invoice') {
-					$Tab['type_compte'] = 'F';
+				if ($line->doc_type == 'customer_invoice') {
+					$tab['type_compte'] = 'C';
+				} elseif ($line->doc_type == 'supplier_invoice') {
+					$tab['type_compte'] = 'F';
 				} else {
-					$Tab['type_compte'] = 'G';
+					$tab['type_compte'] = 'G';
 				}
 
-				$Tab['filler3'] = str_repeat(' ', 235);
+				$tab['filler3'] = str_repeat(' ', 235);
 
-				$Tab['end_line'] = $end_line;
+				$tab['end_line'] = $end_line;
 
 				if ($exportFile) {
-					fwrite($exportFile, implode($Tab));
+					fwrite($exportFile, implode($tab));
 				} else {
-					print implode($Tab);
+					print implode($tab);
 				}
 			}
 
-			$Tab = array();
-			$Tab['type_ligne'] = 'M';
-			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 8), 8);
-			$Tab['code_journal'] = str_pad(self::trunc($data->code_journal, 2), 2);
-			$Tab['folio'] = '000';
+			$tab = array();
+			$tab['type_ligne'] = 'M';
+			$tab['num_compte'] = str_pad(self::trunc($code_compta, 8), 8);
+			$tab['code_journal'] = str_pad(self::trunc($line->code_journal, 2), 2);
+			$tab['folio'] = '000';
 
-			// We use invoice date $data->doc_date not $date_ecriture which is the transfert date
+			// We use invoice date $line->doc_date not $date_ecriture which is the transfert date
 			// maybe we should set an option for customer who prefer to keep in accounting software the tranfert date instead of invoice date ?
-			//$Tab['date_ecriture'] = $date_ecriture;
-			$Tab['date_ecriture'] = dol_print_date($data->doc_date, '%d%m%y');
-			$Tab['filler'] = ' ';
-			$Tab['libelle_ecriture'] = str_pad(self::trunc($data->doc_ref.' '.$data->label_operation, 20), 20);
+			//$tab['date_ecriture'] = $date_ecriture;
+			$tab['date_ecriture'] = dol_print_date($line->doc_date, '%d%m%y');
+			$tab['filler'] = ' ';
+			$tab['libelle_ecriture'] = str_pad(self::trunc($line->doc_ref.' '.$line->label_operation, 20), 20);
 
 			// Credit invoice - invert sens
 			/*
-			if ($data->montant < 0) {
-				if ($data->sens == 'C') {
-					$Tab['sens'] = 'D';
+			if ($line->montant < 0) {
+				if ($line->sens == 'C') {
+					$tab['sens'] = 'D';
 				} else {
-					$Tab['sens'] = 'C';
+					$tab['sens'] = 'C';
 				}
-				$Tab['signe_montant'] = '-';
+				$tab['signe_montant'] = '-';
 			} else {
-				$Tab['sens'] = $data->sens; // C or D
-				$Tab['signe_montant'] = '+';
+				$tab['sens'] = $line->sens; // C or D
+				$tab['signe_montant'] = '+';
 			}*/
-			$Tab['sens'] = $data->sens; // C or D
-			$Tab['signe_montant'] = '+';
+			$tab['sens'] = $line->sens; // C or D
+			$tab['signe_montant'] = '+';
 
 			// The amount must be in centimes without decimal points.
-			$Tab['montant'] = str_pad(abs(($data->debit - $data->credit) * 100), 12, '0', STR_PAD_LEFT);
-			$Tab['contrepartie'] = str_repeat(' ', 8);
+			$tab['montant'] = str_pad(abs(($line->debit - $line->credit) * 100), 12, '0', STR_PAD_LEFT);
+			$tab['contrepartie'] = str_repeat(' ', 8);
 
 			// Force date format : %d%m%y
-			if (!empty($data->date_lim_reglement)) {
-				//$Tab['date_echeance'] = dol_print_date($data->date_lim_reglement, $conf->global->ACCOUNTING_EXPORT_DATE);
-				$Tab['date_echeance'] = dol_print_date($data->date_lim_reglement, '%d%m%y'); // Format must be ddmmyy
+			if (!empty($line->date_lim_reglement)) {
+				//$tab['date_echeance'] = dol_print_date($line->date_lim_reglement, $conf->global->ACCOUNTING_EXPORT_DATE);
+				$tab['date_echeance'] = dol_print_date($line->date_lim_reglement, '%d%m%y'); // Format must be ddmmyy
 			} else {
-				$Tab['date_echeance'] = '000000';
+				$tab['date_echeance'] = '000000';
 			}
 
 			// Please keep quadra named field lettrage(2) + codestat(3) instead of fake lettrage(5)
-			// $Tab['lettrage'] = str_repeat(' ', 5);
-			$Tab['lettrage'] = str_repeat(' ', 2);
-			$Tab['codestat'] = str_repeat(' ', 3);
-			$Tab['num_piece'] = str_pad(self::trunc($data->piece_num, 5), 5);
+			// $tab['lettrage'] = str_repeat(' ', 5);
+			$tab['lettrage'] = str_repeat(' ', 2);
+			$tab['codestat'] = str_repeat(' ', 3);
+			$tab['num_piece'] = str_pad(self::trunc($line->piece_num, 5), 5);
 
 			// Keep correct quadra named field instead of anon filler
-			// $Tab['filler2'] = str_repeat(' ', 20);
-			$Tab['affaire'] = str_repeat(' ', 10);
-			$Tab['quantity1'] = str_repeat(' ', 10);
-			$Tab['num_piece2'] = str_pad(self::trunc($data->piece_num, 8), 8);
-			$Tab['devis'] = str_pad($conf->currency, 3);
-			$Tab['code_journal2'] = str_pad(self::trunc($data->code_journal, 3), 3);
-			$Tab['filler3'] = str_repeat(' ', 3);
+			// $tab['filler2'] = str_repeat(' ', 20);
+			$tab['affaire'] = str_repeat(' ', 10);
+			$tab['quantity1'] = str_repeat(' ', 10);
+			$tab['num_piece2'] = str_pad(self::trunc($line->piece_num, 8), 8);
+			$tab['devis'] = str_pad($conf->currency, 3);
+			$tab['code_journal2'] = str_pad(self::trunc($line->code_journal, 3), 3);
+			$tab['filler3'] = str_repeat(' ', 3);
 
 			// Keep correct quadra named field instead of anon filler libelle_ecriture2 is 30 char not 32 !!!!
 			// as we use utf8, we must remove accent to have only one ascii char instead of utf8 2 chars for specials that report wrong line size that will exceed import format spec
 			// TODO: we should filter more than only accent to avoid wrong line size
 			// TODO: remove invoice number doc_ref in label,
 			// TODO: we should offer an option for customer to build the label using invoice number / name / date in accounting software
-			//$Tab['libelle_ecriture2'] = str_pad(self::trunc($data->doc_ref . ' ' . $data->label_operation, 30), 30);
-			$Tab['libelle_ecriture2'] = str_pad(self::trunc($data->label_operation, 30), 30);
-			$Tab['codetva'] = str_repeat(' ', 2);
+			//$tab['libelle_ecriture2'] = str_pad(self::trunc($line->doc_ref . ' ' . $line->label_operation, 30), 30);
+			$tab['libelle_ecriture2'] = str_pad(self::trunc($line->label_operation, 30), 30);
+			$tab['codetva'] = str_repeat(' ', 2);
 
 			// We need to keep the 10 lastest number of invoice doc_ref not the beginning part that is the unusefull almost same part
-			// $Tab['num_piece3'] = str_pad(self::trunc($data->piece_num, 10), 10);
-			$Tab['num_piece3'] = substr(self::trunc($data->doc_ref, 20), -10);
-			$Tab['reserved'] = str_repeat(' ', 10); // position 159
-			$Tab['currency_amount'] = str_repeat(' ', 13); // position 169
+			// $tab['num_piece3'] = str_pad(self::trunc($line->piece_num, 10), 10);
+			$tab['num_piece3'] = substr(self::trunc($line->doc_ref, 20), -10);
+			$tab['reserved'] = str_repeat(' ', 10); // position 159
+			$tab['currency_amount'] = str_repeat(' ', 13); // position 169
 			// get document file
 			$attachmentFileName = '';
 			if ($withAttachment == 1) {
-				$attachmentFileKey = trim($data->piece_num);
+				$attachmentFileKey = trim($line->piece_num);
 
 				if (!isset($archiveFileList[$attachmentFileKey])) {
 					$objectDirPath = '';
-					$objectFileName = dol_sanitizeFileName($data->doc_ref);
-					if ($data->doc_type == 'customer_invoice') {
+					$objectFileName = dol_sanitizeFileName($line->doc_ref);
+					if ($line->doc_type == 'customer_invoice') {
 						$objectDirPath = !empty($conf->facture->multidir_output[$conf->entity]) ? $conf->facture->multidir_output[$conf->entity] : $conf->facture->dir_output;
-					} elseif ($data->doc_type == 'expense_report') {
+					} elseif ($line->doc_type == 'expense_report') {
 						$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->factureexpensereport->dir_output;
-					} elseif ($data->doc_type == 'supplier_invoice') {
+					} elseif ($line->doc_type == 'supplier_invoice') {
 						$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
 					}
 					$arrayofinclusion = array();
 					$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').'\.pdf$';
 					$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, true);
 					if (!empty($fileFoundList)) {
-						$attachmentFileNameTrunc = str_pad(self::trunc($data->piece_num, 8), 8, '0', STR_PAD_LEFT);
+						$attachmentFileNameTrunc = str_pad(self::trunc($line->piece_num, 8), 8, '0', STR_PAD_LEFT);
 						foreach ($fileFoundList as $fileFound) {
 							if (strstr($fileFound['name'], $objectFileName)) {
 								$fileFoundPath = $objectDirPath.'/'.$objectFileName.'/'.$fileFound['name'];
@@ -980,17 +980,17 @@ class AccountancyExport
 				}
 			}
 			if (dol_strlen($attachmentFileName) == 12) {
-				$Tab['attachment'] = $attachmentFileName; // position 182
+				$tab['attachment'] = $attachmentFileName; // position 182
 			} else {
-				$Tab['attachment'] = str_repeat(' ', 12); // position 182
+				$tab['attachment'] = str_repeat(' ', 12); // position 182
 			}
-			$Tab['filler4'] = str_repeat(' ', 38);
-			$Tab['end_line'] = $end_line;
+			$tab['filler4'] = str_repeat(' ', 38);
+			$tab['end_line'] = $end_line;
 
 			if ($exportFile) {
-				fwrite($exportFile, implode($Tab));
+				fwrite($exportFile, implode($tab));
 			} else {
-				print implode($Tab);
+				print implode($tab);
 			}
 		}
 
