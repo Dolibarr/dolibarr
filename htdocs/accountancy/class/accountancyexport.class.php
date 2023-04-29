@@ -1710,11 +1710,11 @@ class AccountancyExport
 	 * Export format : LD Compta version 9
 	 * http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW9.pdf
 	 *
-	 * @param array $objectLines data
-	 *
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportLDCompta($objectLines)
+	public function exportLDCompta($objectLines, $exportFile = null)
 	{
 
 		$separator = ';';
@@ -1725,21 +1725,23 @@ class AccountancyExport
 			$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
 			$date_lim_reglement = dol_print_date($line->date_lim_reglement, '%Y%m%d');
 
+			$tab = array();
+
 			// TYPE
 			$type_enregistrement = 'E'; // For write movement
-			print $type_enregistrement.$separator;
+			$tab[] = $type_enregistrement;
 			// JNAL
-			print substr($line->code_journal, 0, 2).$separator;
+			$tab[] = substr($line->code_journal, 0, 2);
 			// NECR
-			print $line->id.$separator;
+			$tab[] = $line->id;
 			// NPIE
-			print $line->piece_num.$separator;
+			$tab[] = $line->piece_num;
 			// DATP
-			print $date_document.$separator;
+			$tab[] = $date_document;
 			// LIBE
-			print $line->label_operation.$separator;
+			$tab[] = $line->label_operation;
 			// DATH
-			print $date_lim_reglement.$separator;
+			$tab[] = $date_lim_reglement;
 			// CNPI
 			if ($line->doc_type == 'supplier_invoice') {
 				if (($line->debit - $line->credit) > 0) {
@@ -1756,7 +1758,7 @@ class AccountancyExport
 			} else {
 				$nature_piece = '';
 			}
-			print $nature_piece.$separator;
+			$tab[] = $nature_piece;
 			// RACI
 			//			if (!empty($line->subledger_account)) {
 			//              if ($line->doc_type == 'supplier_invoice') {
@@ -1770,71 +1772,76 @@ class AccountancyExport
 			$racine_subledger_account = ''; // for records of type E leave this field blank
 			//          }
 
-			print $racine_subledger_account.$separator; // deprecated CPTG & CPTA use instead
+			$tab[] = $racine_subledger_account; // deprecated CPTG & CPTA use instead
 			// MONT
-			print price(abs($line->debit - $line->credit), 0, '', 1, 2, 2).$separator;
+			$tab[] = price(abs($line->debit - $line->credit), 0, '', 1, 2, 2);
 			// CODC
-			print $line->sens.$separator;
+			$tab[] = $line->sens;
 			// CPTG
-			print length_accountg($line->numero_compte).$separator;
+			$tab[] = length_accountg($line->numero_compte);
 			// DATE
-			print $date_creation.$separator;
+			$tab[] = $date_creation;
 			// CLET
-			print $line->lettering_code.$separator;
+			$tab[] = $line->lettering_code;
 			// DATL
-			print $line->date_lettering.$separator;
+			$tab[] = $line->date_lettering;
 			// CPTA
 			if (!empty($line->subledger_account)) {
-				print length_accounta($line->subledger_account).$separator;
+				$tab[] = length_accounta($line->subledger_account);
 			} else {
-				print $separator;
+				$tab[] = "";
 			}
 			// CNAT
 			if ($line->doc_type == 'supplier_invoice' && !empty($line->subledger_account)) {
-				print 'F'.$separator;
+				$tab[] = 'F';
 			} elseif ($line->doc_type == 'customer_invoice' && !empty($line->subledger_account)) {
-				print 'C'.$separator;
+				$tab[] = 'C';
 			} else {
-				print $separator;
+				$tab[] = "";
 			}
 			// SECT
-			print $separator;
+			$tab[] = "";
 			// CTRE
-			print $separator;
+			$tab[] = "";
 			// NORL
-			print $separator;
+			$tab[] = "";
 			// DATV
-			print $separator;
+			$tab[] = "";
 			// REFD
-			print $line->doc_ref.$separator;
+			$tab[] = $line->doc_ref;
 			// CODH
-			print $separator;
+			$tab[] = "";
 			// NSEQ
-			print $separator;
+			$tab[] = "";
 			// MTDV
-			print '0'.$separator;
+			$tab[] = '0';
 			// CODV
-			print $separator;
+			$tab[] = "";
 			// TXDV
-			print '0'.$separator;
+			$tab[] = '0';
 			// MOPM
-			print $separator;
+			$tab[] = "";
 			// BONP
-			print $separator;
+			$tab[] =  "";
 			// BQAF
-			print $separator;
+			$tab[] = "";
 			// ECES
-			print $separator;
+			$tab[] = "";
 			// TXTL
-			print $separator;
+			$tab[] = "";
 			// ECRM
-			print $separator;
+			$tab[] = "";
 			// DATK
-			print $separator;
+			$tab[] = "";
 			// HEUK
-			print $separator;
+			$tab[] = "";
 
-			print $end_line;
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
