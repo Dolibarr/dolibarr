@@ -663,7 +663,7 @@ while ($i < $imaxinloop) {
 				$selected = 1;
 			}
 		}
-		print $salstatic->getKanbanView('', array('user' => $userstatic));
+		print $salstatic->getKanbanView('', array('user' => $userstatic, 'selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

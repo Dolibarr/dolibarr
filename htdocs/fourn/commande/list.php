@@ -1694,7 +1694,7 @@ if ($resql) {
 			$thirdpartytmp->fournisseur = $obj->fournisseur;
 			$objectstatic->socid = $thirdpartytmp->getNomUrl('supplier', 0, 0, -1);
 			// Output Kanban
-			print $objectstatic->getKanbanView('');
+			print $objectstatic->getKanbanView('', array('selected' => in_array($objectstatic->id, $arrayofselected)));
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';

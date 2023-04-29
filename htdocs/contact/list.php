@@ -1308,7 +1308,7 @@ while ($i < $imaxinloop) {
 		if ($obj->socid > 0) {
 			$contactstatic->fetch_thirdparty($obj->socid);
 		}
-		print $contactstatic->getKanbanView('');
+		print $contactstatic->getKanbanView('', array('selected' => in_array($contactstatic->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

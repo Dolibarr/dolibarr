@@ -342,7 +342,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				}
 				//output kanban
 				$membertype->label = $objp->label;
-				print $membertype->getKanbanView('');
+				print $membertype->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
 					print '</td></tr>';

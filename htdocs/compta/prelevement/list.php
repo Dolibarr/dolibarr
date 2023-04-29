@@ -286,7 +286,7 @@ if ($result) {
 					print '<div class="box-flex-container kanban">';
 				}
 				// Output Kanban
-				print $bon->getKanbanView('');
+				print $bon->getKanbanView('', array('selected' => in_array($bon->id, $arrayofselected)));
 				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
 					print '</td></tr>';

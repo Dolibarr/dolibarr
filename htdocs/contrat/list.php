@@ -995,6 +995,7 @@ while ($i < $imaxinloop) {
 		}
 		// Output Kanban
 		$arraydata['thirdparty'] = $socstatic;
+		$arraydata['selected'] = in_array($obj->rowid, $arrayofselected);
 		$contracttmp->date_contrat = $obj->date_contrat;
 		print $contracttmp->getKanbanView('', $arraydata);
 		if ($i == ($imaxinloop - 1)) {

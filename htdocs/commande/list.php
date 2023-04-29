@@ -2002,7 +2002,7 @@ if ($resql) {
 				print '<div class="box-flex-container kanban">';
 			}
 
-			print $generic_commande->getKanbanView('');
+			print $generic_commande->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';

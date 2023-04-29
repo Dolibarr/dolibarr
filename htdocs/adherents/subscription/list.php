@@ -647,7 +647,7 @@ while ($i < $imaxinloop) {
 			$subscription->fk_bank = $accountstatic->getNomUrl(1);
 		}
 		// Output Kanban
-		print $subscription->getKanbanView('');
+		print $subscription->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

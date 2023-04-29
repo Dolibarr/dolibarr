@@ -1016,13 +1016,16 @@ while ($i < $imaxinloop) {
 		}
 
 		// get infos needed from object
-		$data = array();
+		// TODO Create a cache on users
+		$arraydata = array();
 		if ($obj->fk_user_assign > 0) {
 			$user_temp->fetch($obj->fk_user_assign);
-			$data['user_assignment'] = $user_temp->getNomUrl(-3);
+			$arraydata['user_assignment'] = $user_temp->getNomUrl(-3);
 		}
+		$arraydata['selected'] = in_array($object->id, $arrayofselected);
+
 		// Output Kanban
-		print $object->getKanbanView('', $data);
+		print $object->getKanbanView('', $arraydata);
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

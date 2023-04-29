@@ -1421,19 +1421,54 @@ while ($i < $imaxinloop) {
 
 
 	//$userAccess = $object->restrictedProjectArea($user); // disabled, permission on project must be done by the select
-	//if ($userAccess >= 0) {
-		// Thirdparty
-		$companystatic->id = $obj->socid;
-		$companystatic->name = $obj->name;
-		$companystatic->name_alias = $obj->alias;
-		$companystatic->client = $obj->client;
-		$companystatic->code_client = $obj->code_client;
-		$companystatic->email = $obj->email;
-		$companystatic->phone = $obj->phone;
-		$companystatic->address = $obj->address;
-		$companystatic->zip = $obj->zip;
-		$companystatic->town = $obj->town;
-		$companystatic->country_code = $obj->country_code;
+
+	// Thirdparty
+	$companystatic->id = $obj->socid;
+	$companystatic->name = $obj->name;
+	$companystatic->name_alias = $obj->alias;
+	$companystatic->client = $obj->client;
+	$companystatic->code_client = $obj->code_client;
+	$companystatic->email = $obj->email;
+	$companystatic->phone = $obj->phone;
+	$companystatic->address = $obj->address;
+	$companystatic->zip = $obj->zip;
+	$companystatic->town = $obj->town;
+	$companystatic->country_code = $obj->country_code;
+
+	$stringassignedusers = '';
+
+	if (!empty($arrayfields['c.assigned']['checked'])) {
+		$ifisrt = 1;
+		foreach (array('internal', 'external') as $source) {
+			$tab = $object->liste_contact(-1, $source, 0, '', 1);
+			$numcontact = count($tab);
+			if (!empty($numcontact)) {
+				foreach ($tab as $contactproject) {
+					//var_dump($contacttask);
+					if ($source == 'internal') {
+						$c = new User($db);
+					} else {
+						$c = new Contact($db);
+					}
+					$c->fetch($contactproject['id']);
+					if (!empty($c->photo)) {
+						if (get_class($c) == 'User') {
+							$stringassignedusers .= $c->getNomUrl(-2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
+						} else {
+							$stringassignedusers .= $c->getNomUrl(-2, '', 0, '', -1, 0, ($ifisrt ? '' : 'notfirst'));
+						}
+					} else {
+						if (get_class($c) == 'User') {
+							$stringassignedusers .= $c->getNomUrl(2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
+						} else {
+							$stringassignedusers .= $c->getNomUrl(2, '', 0, '', -1, 0, ($ifisrt ? '' : 'notfirst'));
+						}
+					}
+					$ifisrt = 0;
+				}
+			}
+		}
+	}
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
@@ -1441,7 +1476,10 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 
-		print $object->getKanbanView('');
+		$selected = in_array($object->id, $arrayofselected);
+		$arrayofdata = array('assignedusers' => $stringassignedusers, 'selected' => $selected);
+
+		print $object->getKanbanView('', $arrayofdata);
 
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
@@ -1592,39 +1630,10 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Contacts of project
+		// Assigned contacts of project
 		if (!empty($arrayfields['c.assigned']['checked'])) {
 			print '<td class="center nowraponall tdoverflowmax200">';
-			$ifisrt = 1;
-			foreach (array('internal', 'external') as $source) {
-				$tab = $object->liste_contact(-1, $source, 0, '', 1);
-				$numcontact = count($tab);
-				if (!empty($numcontact)) {
-					foreach ($tab as $contactproject) {
-						//var_dump($contacttask);
-						if ($source == 'internal') {
-							$c = new User($db);
-						} else {
-							$c = new Contact($db);
-						}
-						$c->fetch($contactproject['id']);
-						if (!empty($c->photo)) {
-							if (get_class($c) == 'User') {
-								print $c->getNomUrl(-2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
-							} else {
-								print $c->getNomUrl(-2, '', 0, '', -1, 0, ($ifisrt ? '' : 'notfirst'));
-							}
-						} else {
-							if (get_class($c) == 'User') {
-								print $c->getNomUrl(2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
-							} else {
-								print $c->getNomUrl(2, '', 0, '', -1, 0, ($ifisrt ? '' : 'notfirst'));
-							}
-						}
-						$ifisrt = 0;
-					}
-				}
-			}
+			print $stringassignedusers;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

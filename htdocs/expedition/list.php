@@ -905,10 +905,9 @@ while ($i < min($num, $limit)) {
 			print '<tr><td colspan="12">';
 			print '<div class="box-flex-container kanban">';
 		}
-		$object->socid = $companystatic->getNomUrl(1);
 		$object->date_delivery = $obj->delivery_date;
 		$object->town = $obj->town;
-		print $object->getKanbanView('');
+		print $object->getKanbanView('', array('thirdparty' => $companystatic->getNomUrl(1), 'selected' => in_array($obj->id, $arrayofselected)));
 		if ($i == min($num, $limit) - 1) {
 			print '</div>';
 			print '</td></tr>';

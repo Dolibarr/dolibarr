@@ -1168,6 +1168,8 @@ while ($i < $imaxinloop) {
 
 		$arraydata = array();
 		$arraydata['projectlink'] = $projectstatic->getNomUrl(1);
+		$arraydata['selected'] = in_array($object->id, $arrayofselected);
+
 		print $object->getKanbanView('', $arraydata);
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';

@@ -1564,7 +1564,7 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		print $companystatic->getKanbanView('');
+		print $companystatic->getKanbanView('', array('selected' => in_array($obj->rowid, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

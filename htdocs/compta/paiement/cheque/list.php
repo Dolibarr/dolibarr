@@ -262,7 +262,7 @@ if ($resql) {
 					print '<div class="box-flex-container kanban">';
 				}
 				// Output Kanban
-				print $checkdepositstatic->getKanbanView('');
+				print $checkdepositstatic->getKanbanView('', array('selected' => in_array($checkdepositstatic->id, $arrayofselected)));
 				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
 					print '</td></tr>';

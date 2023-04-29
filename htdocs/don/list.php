@@ -314,7 +314,7 @@ if ($resql) {
 				$donationstatic->societe = $objp->societe;
 			}
 
-			print $donationstatic->getKanbanView('');
+			print $donationstatic->getKanbanView('', array('selected' => in_array($donationstatic->id, $arrayofselected)));
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';

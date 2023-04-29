@@ -1929,10 +1929,7 @@ if ($resql) {
 					print '<div class="box-flex-container kanban">';
 				}
 				// Output Kanban
-				$facturestatic->socid = $companystatic->getNomUrl(1, 'company', 15);
-				$userstatic->fetch($obj->fk_user_author);
-				$facturestatic->fk_user_author = $userstatic->getNomUrl(1);
-				print $facturestatic->getKanbanView('');
+				print $facturestatic->getKanbanView('', array('thirdparty'=>$companystatic->getNomUrl(1, 'company', 15), 'userauthor'=>$userstatic->getNomUrl(1), 'selected' => in_array($object->id, $arrayofselected)));
 				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
 					print '</td></tr>';

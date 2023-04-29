@@ -754,14 +754,14 @@ if ($resql) {
 					print '<tr><td colspan="12">';
 					print '<div class="box-flex-container kanban">';
 				}
+				// TODO Use a cache on user
 				$usertmp->fetch($obj->id_user);
-				$expensereportstatic->fk_user_author = $usertmp->getNomUrl(1);
 
 				// Output Kanban
 				if ($massactionbutton || $massaction) {
 					$selected = 0;
 
-					print $expensereportstatic->getKanbanView('');
+					print $expensereportstatic->getKanbanView('', array('userauthor' => $usertmp->getNomUrl(1), 'selected' => in_array($expensereportstatic->id, $arrayofselected)));
 				}
 				if ($i == ($imaxinloop - 1)) {
 					print '</div>';

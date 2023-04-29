@@ -578,7 +578,6 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$object->year_close = $obj->year_close;
 		$object->cheque = $obj->cheque;
 
-
 		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 		if ($i == (min($num, $limit) - 1)) {
 			print '</div>';

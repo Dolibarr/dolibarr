@@ -294,7 +294,7 @@ if ($resql) {
 			$loan_static->capital = $obj->capital;
 			$loan_static->totalpaid = $obj->paid;
 
-			print $loan_static->getKanbanView('');
+			print $loan_static->getKanbanView('', array('selected' => in_array($loan_static->id, $arrayofselected)));
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';

@@ -597,7 +597,7 @@ while ($i < $imaxinloop) {
 			$selected = 0;
 		}
 		// Output Kanban
-		print $object->getKanbanView('');
+		print $object->getKanbanView('', array('nbapplications'=>$obj->nbapplications, 'selected' => in_array($object->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

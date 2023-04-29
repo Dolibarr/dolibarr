@@ -1722,7 +1722,7 @@ if ($resql) {
 			$userstatic->fetch($obj->fk_user_author);
 			$objectstatic->author = $userstatic->getNomUrl(1);
 			$objectstatic->fk_project = $projectstatic->getNomUrl(1);
-			print $objectstatic->getKanbanView('');
+			print $objectstatic->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';

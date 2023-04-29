@@ -640,8 +640,7 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		$chargesociale_static->fk_project = $projectstatic->getNomUrl();
-		print $chargesociale_static->getKanbanView('', array('selected' => in_array($chargesociale_static->id, $arrayofselected)));
+		print $chargesociale_static->getKanbanView('', array('projectlink'=> $projectstatic->getNomUrl(1), 'selected' => in_array($chargesociale_static->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

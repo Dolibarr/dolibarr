@@ -989,11 +989,10 @@ if ($resql) {
 				print '<div class="box-flex-container kanban">';
 			}
 			// Output Kanban
+			// TODO Use a cahe on user
 			$userstatic->fetch($obj->fk_user_author);
-			$objectstatic->socid = $companystatic->getNomUrl(1);
-			$objectstatic->user_author_id = $userstatic->getNomUrl(1);
 			$objectstatic->delivery_date = $obj->dp;
-			print $objectstatic->getKanbanView('');
+			print $objectstatic->getKanbanView('', array('thirdparty'=>$companystatic, 'userauthor'=>$userstatic, 'selected' => in_array($obj->id, $arrayofselected)));
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';

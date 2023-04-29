@@ -600,7 +600,7 @@ foreach ($accounts as $key => $type) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		print $objecttmp->getKanbanView('');
+		print $objecttmp->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

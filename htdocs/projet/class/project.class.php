@@ -2386,18 +2386,19 @@ class Project extends CommonObject
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
 	 *  @return		string		HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '')
+	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $langs, $user;
+		global $langs;
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
-		$return .= img_picto('', $this->picto);
+		$return .= img_picto('', $this->public ? 'projectpub' : $this->picto);
 		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
@@ -2407,6 +2408,8 @@ class Project extends CommonObject
 		}
 		$return .= '</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		// Date
+		/*
 		if (property_exists($this, 'date_start') && $this->date_start) {
 			$return .= '<br><span class="info-box-label">'.dol_print_date($this->date_start, 'day').'</>';
 		}
@@ -2416,7 +2419,10 @@ class Project extends CommonObject
 			} else {
 				$return .= '<br>';
 			}
-			$return .= '<span class="info-box-label">'.dol_print_date($this->date_end, 'day').'</>';
+			$return .= '<span class="info-box-label">'.dol_print_date($this->date_end, 'day').'</span>';
+		}*/
+		if (!empty($arraydata['assignedusers'])) {
+			$return .= '<br><span class="small">'.$arraydata['assignedusers'].'</span>';
 		}
 		/*if (property_exists($this, 'user_author_id')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Author").'</span>';
@@ -2424,12 +2430,12 @@ class Project extends CommonObject
 		}*/
 		if ($this->usage_opportunity && $this->opp_status_code) {
 			//$return .= '<br><span class="info-bo-label opacitymedium">'.$langs->trans("OpportunityStatusShort").'</span>';
-			$return .= '<br><span class="info-box-label">'.	$langs->trans("OppStatus".$this->opp_status_code);
-			$return .= ' <span class="opacitymedium">('.round($this->opp_percent).'%)</span>';
-			$return .= '<br><span class="amount">'.price($this->opp_amount).'</span>';
+			$return .= '<br><span class="info-box-label small">'.$langs->trans("OppStatus".$this->opp_status_code).'</span>';
+			$return .= ' <span class="opacitymedium small">('.round($this->opp_percent).'%)</span>';
+			$return .= '<br><span class="amount small">'.price($this->opp_amount).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status small">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

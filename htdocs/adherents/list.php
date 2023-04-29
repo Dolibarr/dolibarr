@@ -1068,7 +1068,7 @@ while ($i < $imaxinloop) {
 		$memberstatic->type = $membertypestatic->label;
 		$memberstatic->photo = $obj->photo;
 		// Output Kanban
-		print $memberstatic->getKanbanView('');
+		print $memberstatic->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 		if ($i == (min($num, $limit) - 1)) {
 			print '</div>';
 			print '</td></tr>';
