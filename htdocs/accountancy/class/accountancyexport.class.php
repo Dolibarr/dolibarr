@@ -1219,21 +1219,23 @@ class AccountancyExport
 	/**
 	 * Export format : Configurable CSV
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return	void
 	 */
-	public function exportConfigurable($objectLines)
+	public function exportConfigurable($objectLines, $exportFile = null)
 	{
 		global $conf;
 
 		$separator = $this->separator;
 
 		foreach ($objectLines as $line) {
+			$date_document = dol_print_date($line->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
+
 			$tab = array();
 			// export configurable
-			$date = dol_print_date($line->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
 			$tab[] = $line->piece_num;
-			$tab[] = $date;
+			$tab[] = $date_document;
 			$tab[] = $line->doc_ref;
 			$tab[] = preg_match('/'.$separator.'/', $line->label_operation) ? "'".$line->label_operation."'" : $line->label_operation;
 			$tab[] = length_accountg($line->numero_compte);
@@ -1243,7 +1245,12 @@ class AccountancyExport
 			$tab[] = price2num($line->debit - $line->credit);
 			$tab[] = $line->code_journal;
 
-			print implode($separator, $tab).$this->end_line;
+			$output = implode($separator, $tab).$this->end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
