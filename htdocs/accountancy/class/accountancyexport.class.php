@@ -655,28 +655,37 @@ class AccountancyExport
 	/**
 	 * Export format : COALA
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportCoala($objectLines)
+	public function exportCoala($objectLines, $exportFile = null)
 	{
 		// Coala export
 		$separator = ";";
 		$end_line = "\n";
 
 		foreach ($objectLines as $line) {
-			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
+			$date_document = dol_print_date($line->doc_date, '%d/%m/%Y');
 
-			print $date.$separator;
-			print $line->code_journal.$separator;
-			print length_accountg($line->numero_compte).$separator;
-			print $line->piece_num.$separator;
-			print $line->doc_ref.$separator;
-			print price($line->debit).$separator;
-			print price($line->credit).$separator;
-			print 'E'.$separator;
-			print length_accounta($line->subledger_account).$separator;
-			print $end_line;
+			$tab = array();
+
+			$tab[] = $date_document;
+			$tab[] = $line->code_journal;
+			$tab[] = length_accountg($line->numero_compte);
+			$tab[] = $line->piece_num;
+			$tab[] = $line->doc_ref;
+			$tab[] = price($line->debit);
+			$tab[] = price($line->credit);
+			$tab[] = 'E';
+			$tab[] = length_accounta($line->subledger_account);
+
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
