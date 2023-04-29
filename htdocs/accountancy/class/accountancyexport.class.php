@@ -1181,31 +1181,38 @@ class AccountancyExport
 	/**
 	 * Export format : OpenConcerto
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportOpenConcerto($objectLines)
+	public function exportOpenConcerto($objectLines, $exportFile = null)
 	{
-
 		$separator = ';';
 		$end_line = "\n";
 
 		foreach ($objectLines as $line) {
-			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
+			$date_document = dol_print_date($line->doc_date, '%d/%m/%Y');
 
-			print $date.$separator;
-			print $line->code_journal.$separator;
+			$tab = array();
+
+			$tab[] = $date_document;
+			$tab[] = $line->code_journal;
 			if (empty($line->subledger_account)) {
-				print length_accountg($line->numero_compte).$separator;
+				$tab[] = length_accountg($line->numero_compte);
 			} else {
-				print length_accounta($line->subledger_account).$separator;
+				$tab[] = length_accounta($line->subledger_account);
 			}
-			print $line->doc_ref.$separator;
-			print $line->label_operation.$separator;
-			print price($line->debit).$separator;
-			print price($line->credit).$separator;
+			$tab[] = $line->doc_ref;
+			$tab[] = $line->label_operation;
+			$tab[] = price($line->debit);
+			$tab[] = price($line->credit);
 
-			print $end_line;
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
