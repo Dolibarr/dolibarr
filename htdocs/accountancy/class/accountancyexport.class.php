@@ -612,33 +612,43 @@ class AccountancyExport
 	/**
 	 * Export format : COGILOG
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return	void
 	 */
-	public function exportCogilog($objectLines)
+	public function exportCogilog($objectLines, $exportFile = null)
 	{
-		foreach ($objectLines as $line) {
-			$date = dol_print_date($line->doc_date, '%d%m%Y');
-			$separator = ";";
-			$end_line = "\n";
+		$separator = ";";
+		$end_line = "\n";
 
-			print $line->code_journal.$separator;
-			print $date.$separator;
-			print $line->piece_num.$separator;
-			print length_accountg($line->numero_compte).$separator;
-			print $separator;
-			print $line->label_operation.$separator;
-			print $date.$separator;
+		foreach ($objectLines as $line) {
+			$date_document = dol_print_date($line->doc_date, '%d%m%Y');
+
+			$tab = array();
+
+			$tab[] = $line->code_journal;
+			$tab[] = $date_document;
+			$tab[] = $line->piece_num;
+			$tab[] = length_accountg($line->numero_compte);
+			$tab[] = "";
+			$tab[] = $line->label_operation;
+			$tab[] = $date_document;
 			if ($line->sens == 'D') {
-				print price($line->debit).$separator;
-				print $separator;
+				$tab[] = price($line->debit);
+				$tab[] = "";
 			} elseif ($line->sens == 'C') {
-				print $separator;
-				print price($line->credit).$separator;
+				$tab[] = "";
+				$tab[] = price($line->credit);
 			}
-			print $line->doc_ref.$separator;
-			print $line->label_operation.$separator;
-			print $end_line;
+			$tab[] = $line->doc_ref;
+			$tab[] = $line->label_operation;
+
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
