@@ -747,41 +747,46 @@ class AccountancyExport
 	 * If you want to force filename to "XIMPORT.TXT" for automatically import file present in a directory :
 	 * use constant ACCOUNTING_EXPORT_XIMPORT_FORCE_FILENAME
 	 *
-	 * @param array $TData data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportCiel(&$TData)
+	public function exportCiel($objectLines, $exportFile = null)
 	{
 		$end_line = "\r\n";
 
 		$i = 1;
 
-		foreach ($TData as $data) {
-			$code_compta = length_accountg($data->numero_compte);
-			if (!empty($data->subledger_account)) {
-				$code_compta = length_accounta($data->subledger_account);
+		foreach ($objectLines as $line) {
+			$code_compta = length_accountg($line->numero_compte);
+			if (!empty($line->subledger_account)) {
+				$code_compta = length_accounta($line->subledger_account);
 			}
 
-			$date_document = dol_print_date($data->doc_date, '%Y%m%d');
-			$date_echeance = dol_print_date($data->date_lim_reglement, '%Y%m%d');
+			$date_document = dol_print_date($line->doc_date, '%Y%m%d');
+			$date_echeance = dol_print_date($line->date_lim_reglement, '%Y%m%d');
 
-			$Tab = array();
-			$Tab['num_ecriture'] = str_pad($data->piece_num, 5);
-			$Tab['code_journal'] = str_pad(self::trunc($data->code_journal, 2), 2);
-			$Tab['date_ecriture'] = str_pad($date_document, 8, ' ', STR_PAD_LEFT);
-			$Tab['date_echeance'] = str_pad($date_echeance, 8, ' ', STR_PAD_LEFT);
-			$Tab['num_piece'] = str_pad(self::trunc($data->doc_ref, 12), 12);
-			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 11), 11);
-			$Tab['libelle_ecriture'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref).dol_string_unaccent($data->label_operation), 25), 25);
-			$Tab['montant'] = str_pad(price2fec(abs($data->debit - $data->credit)), 13, ' ', STR_PAD_LEFT);
-			$Tab['type_montant'] = str_pad($data->sens, 1);
-			$Tab['vide'] = str_repeat(' ', 18); // Analytical accounting - Not managed in Dolibarr
-			$Tab['intitule_compte'] = str_pad(self::trunc(dol_string_unaccent($data->label_operation), 34), 34);
-			$Tab['end'] = 'O2003'; // 0 = EUR | 2003 = Format Ciel
+			$tab = array();
 
-			$Tab['end_line'] = $end_line;
+			$tab[] = str_pad($line->piece_num, 5);
+			$tab[] = str_pad(self::trunc($line->code_journal, 2), 2);
+			$tab[] = str_pad($date_document, 8, ' ', STR_PAD_LEFT);
+			$tab[] = str_pad($date_echeance, 8, ' ', STR_PAD_LEFT);
+			$tab[] = str_pad(self::trunc($line->doc_ref, 12), 12);
+			$tab[] = str_pad(self::trunc($code_compta, 11), 11);
+			$tab[] = str_pad(self::trunc(dol_string_unaccent($line->doc_ref).dol_string_unaccent($line->label_operation), 25), 25);
+			$tab[] = str_pad(price2fec(abs($line->debit - $line->credit)), 13, ' ', STR_PAD_LEFT);
+			$tab[] = str_pad($line->sens, 1);
+			$tab[] = str_repeat(' ', 18); // Analytical accounting - Not managed in Dolibarr
+			$tab[] = str_pad(self::trunc(dol_string_unaccent($line->label_operation), 34), 34);
+			$tab[] = 'O2003'; // 0 = EUR | 2003 = Format Ciel
 
-			print implode($Tab);
+			$output = implode($tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 			$i++;
 		}
 	}
