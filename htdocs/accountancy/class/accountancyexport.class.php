@@ -2369,14 +2369,14 @@ class AccountancyExport
 	*
 	* by OpenSolus [https://opensolus.fr]
 	*
-	* @param array $objectLines data
-	*
-	* @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	*/
-	public function exportiSuiteExpert($objectLines)
+	public function exportiSuiteExpert($objectLines, $exportFile = null)
 	{
-		$this->separator = ';';
-		$this->end_line = "\r\n";
+		$separator = ';';
+		$end_line = "\r\n";
 
 
 		foreach ($objectLines as $line) {
@@ -2417,8 +2417,12 @@ class AccountancyExport
 			$tab[] = price($line->montant);
 			$tab[] = $line->code_journal;
 
-			$separator = $this->separator;
-			print implode($separator, $tab) . $this->end_line;
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
