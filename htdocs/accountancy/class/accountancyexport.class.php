@@ -1003,11 +1003,11 @@ class AccountancyExport
 	 *
 	 * Help : https://wiki.gestan.fr/lib/exe/fetch.php?media=wiki:v15:compta:accountancy-format_winfic-ewinfic-winsiscompta.pdf
 	 *
-	 * @param array $TData data
-	 *
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportWinfic(&$TData)
+	public function exportWinfic($objectLines, $exportFile = null)
 	{
 		global $conf;
 
@@ -1020,67 +1020,67 @@ class AccountancyExport
 
 		// Warning ! When truncation is necessary, no dot because 3 dots = three characters. The columns are shifted
 
-		foreach ($TData as $data) {
-			$code_compta = $data->numero_compte;
-			if (!empty($data->subledger_account)) {
-				$code_compta = $data->subledger_account;
+		foreach ($objectLines as $line) {
+			$code_compta = $line->numero_compte;
+			if (!empty($line->subledger_account)) {
+				$code_compta = $line->subledger_account;
 			}
 
-			$Tab = array();
-			//$Tab['type_ligne'] = 'M';
-			$Tab['code_journal'] = str_pad(dol_trunc($data->code_journal, 2, 'right', 'UTF-8', 1), 2);
+			$tab = array();
+			//$tab['type_ligne'] = 'M';
+			$tab['code_journal'] = str_pad(dol_trunc($line->code_journal, 2, 'right', 'UTF-8', 1), 2);
 
-			//We use invoice date $data->doc_date not $date_ecriture which is the transfert date
+			//We use invoice date $line->doc_date not $date_ecriture which is the transfert date
 			//maybe we should set an option for customer who prefer to keep in accounting software the tranfert date instead of invoice date ?
-			//$Tab['date_ecriture'] = $date_ecriture;
-			$Tab['date_operation'] = dol_print_date($data->doc_date, '%d%m%Y');
+			//$tab['date_ecriture'] = $date_ecriture;
+			$tab['date_operation'] = dol_print_date($line->doc_date, '%d%m%Y');
 
-			$Tab['folio'] = '     1';
+			$tab['folio'] = '     1';
 
-			$Tab['num_ecriture'] = str_pad(dol_trunc($index, 6, 'right', 'UTF-8', 1), 6, ' ', STR_PAD_LEFT);
+			$tab['num_ecriture'] = str_pad(dol_trunc($index, 6, 'right', 'UTF-8', 1), 6, ' ', STR_PAD_LEFT);
 
-			$Tab['jour_ecriture'] = dol_print_date($data->doc_date, '%d%m%y');
+			$tab['jour_ecriture'] = dol_print_date($line->doc_date, '%d%m%y');
 
-			$Tab['num_compte'] = str_pad(dol_trunc($code_compta, 6, 'right', 'UTF-8', 1), 6, '0');
+			$tab['num_compte'] = str_pad(dol_trunc($code_compta, 6, 'right', 'UTF-8', 1), 6, '0');
 
-			if ($data->sens == 'D') {
-				$Tab['montant_debit']  = str_pad(number_format($data->debit, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
+			if ($line->sens == 'D') {
+				$tab['montant_debit']  = str_pad(number_format($line->debit, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 
-				$Tab['montant_crebit'] = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
+				$tab['montant_crebit'] = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 			} else {
-				$Tab['montant_debit']  = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
+				$tab['montant_debit']  = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 
-				$Tab['montant_crebit'] = str_pad(number_format($data->credit, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
+				$tab['montant_crebit'] = str_pad(number_format($line->credit, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 			}
 
-			$Tab['libelle_ecriture'] = str_pad(dol_trunc(dol_string_unaccent($data->doc_ref).' '.dol_string_unaccent($data->label_operation), 30, 'right', 'UTF-8', 1), 30);
+			$tab['libelle_ecriture'] = str_pad(dol_trunc(dol_string_unaccent($line->doc_ref).' '.dol_string_unaccent($line->label_operation), 30, 'right', 'UTF-8', 1), 30);
 
-			$Tab['lettrage'] = str_repeat(dol_trunc($data->lettering_code, 2, 'left', 'UTF-8', 1), 2);
+			$tab['lettrage'] = str_repeat(dol_trunc($line->lettering_code, 2, 'left', 'UTF-8', 1), 2);
 
-			$Tab['code_piece'] = str_pad(dol_trunc($data->piece_num, 5, 'left', 'UTF-8', 1), 5, ' ', STR_PAD_LEFT);
+			$tab['code_piece'] = str_pad(dol_trunc($line->piece_num, 5, 'left', 'UTF-8', 1), 5, ' ', STR_PAD_LEFT);
 
-			$Tab['code_stat'] = str_repeat(' ', 4);
+			$tab['code_stat'] = str_repeat(' ', 4);
 
-			if (!empty($data->date_lim_reglement)) {
-				//$Tab['date_echeance'] = dol_print_date($data->date_lim_reglement, $conf->global->ACCOUNTING_EXPORT_DATE);
-				$Tab['date_echeance'] = dol_print_date($data->date_lim_reglement, '%d%m%Y');
+			if (!empty($line->date_lim_reglement)) {
+				//$tab['date_echeance'] = dol_print_date($line->date_lim_reglement, $conf->global->ACCOUNTING_EXPORT_DATE);
+				$tab['date_echeance'] = dol_print_date($line->date_lim_reglement, '%d%m%Y');
 			} else {
-				$Tab['date_echeance'] = dol_print_date($data->doc_date, '%d%m%Y');
+				$tab['date_echeance'] = dol_print_date($line->doc_date, '%d%m%Y');
 			}
 
-			$Tab['monnaie'] = '1';
+			$tab['monnaie'] = '1';
 
-			$Tab['filler'] = ' ';
+			$tab['filler'] = ' ';
 
-			$Tab['ind_compteur'] = ' ';
+			$tab['ind_compteur'] = ' ';
 
-			$Tab['quantite'] = '0,000000000';
+			$tab['quantite'] = '0,000000000';
 
-			$Tab['code_pointage'] = str_repeat(' ', 2);
+			$tab['code_pointage'] = str_repeat(' ', 2);
 
-			$Tab['end_line'] = $end_line;
+			$tab['end_line'] = $end_line;
 
-			print implode('|', $Tab);
+			print implode('|', $tab);
 
 			$index++;
 		}
