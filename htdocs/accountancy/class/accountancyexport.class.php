@@ -1405,37 +1405,45 @@ class AccountancyExport
 	/**
 	 * Export format : FEC2
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportFEC2($objectLines)
+	public function exportFEC2($objectLines, $exportFile = null)
 	{
 		global $langs;
 
 		$separator = "\t";
 		$end_line = "\r\n";
 
-		print "JournalCode".$separator;
-		print "JournalLib".$separator;
-		print "EcritureNum".$separator;
-		print "EcritureDate".$separator;
-		print "CompteNum".$separator;
-		print "CompteLib".$separator;
-		print "CompAuxNum".$separator;
-		print "CompAuxLib".$separator;
-		print "PieceRef".$separator;
-		print "PieceDate".$separator;
-		print "EcritureLib".$separator;
-		print "Debit".$separator;
-		print "Credit".$separator;
-		print "EcritureLet".$separator;
-		print "DateLet".$separator;
-		print "ValidDate".$separator;
-		print "Montantdevise".$separator;
-		print "Idevise".$separator;
-		print "DateLimitReglmt".$separator;
-		print "NumFacture";
-		print $end_line;
+		$tab = array();
+		$tab[] = "JournalCode";
+		$tab[] = "JournalLib";
+		$tab[] = "EcritureNum";
+		$tab[] = "EcritureDate";
+		$tab[] = "CompteNum";
+		$tab[] = "CompteLib";
+		$tab[] = "CompAuxNum";
+		$tab[] = "CompAuxLib";
+		$tab[] = "PieceRef";
+		$tab[] = "PieceDate";
+		$tab[] = "EcritureLib";
+		$tab[] = "Debit";
+		$tab[] = "Credit";
+		$tab[] = "EcritureLet";
+		$tab[] = "DateLet";
+		$tab[] = "ValidDate";
+		$tab[] = "Montantdevise";
+		$tab[] = "Idevise";
+		$tab[] = "DateLimitReglmt";
+		$tab[] = "NumFacture";
+
+		$output = implode($separator, $tab).$end_line;
+		if ($exportFile) {
+			fwrite($exportFile, $output);
+		} else {
+			print $output;
+		}
 
 		foreach ($objectLines as $line) {
 			if ($line->debit == 0 && $line->credit == 0) {
@@ -1464,74 +1472,80 @@ class AccountancyExport
 					$refInvoice = $invoice->ref_supplier;
 				}
 
+				$tab = array();
+
 				// FEC:JournalCode
-				print $line->code_journal . $separator;
+				$tab[] = $line->code_journal;
 
 				// FEC:JournalLib
 				$labeljournal = dol_string_unaccent($langs->transnoentities($line->journal_label));
 				$labeljournal = dol_string_nospecial($labeljournal, ' ');
-				print $labeljournal . $separator;
+				$tab[] = $labeljournal;
 
 				// FEC:EcritureNum
-				print $line->piece_num . $separator;
+				$tab[] = $line->piece_num;
 
 				// FEC:EcritureDate
-				print $date_creation . $separator;
+				$tab[] = $date_creation;
 
 				// FEC:CompteNum
-				print length_accountg($line->numero_compte) . $separator;
+				$tab[] = length_accountg($line->numero_compte);
 
 				// FEC:CompteLib
-				print dol_string_unaccent($line->label_compte) . $separator;
+				$tab[] = dol_string_unaccent($line->label_compte);
 
 				// FEC:CompAuxNum
-				print length_accounta($line->subledger_account) . $separator;
+				$tab[] = length_accounta($line->subledger_account);
 
 				// FEC:CompAuxLib
-				print dol_string_unaccent($line->subledger_label) . $separator;
+				$tab[] = dol_string_unaccent($line->subledger_label);
 
 				// FEC:PieceRef
-				print $line->doc_ref . $separator;
+				$tab[] = $line->doc_ref;
 
 				// FEC:PieceDate
-				print $date_document . $separator;
+				$tab[] = $date_document;
 
 				// FEC:EcritureLib
 				// Clean label operation to prevent problem on export with tab separator & other character
 				$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
-				print dol_string_unaccent($line->label_operation) . $separator;
+				$tab[] = dol_string_unaccent($line->label_operation);
 
 				// FEC:Debit
-				print price2fec($line->debit) . $separator;
+				$tab[] = price2fec($line->debit);
 
 				// FEC:Credit
-				print price2fec($line->credit) . $separator;
+				$tab[] = price2fec($line->credit);
 
 				// FEC:EcritureLet
-				print $line->lettering_code . $separator;
+				$tab[] = $line->lettering_code;
 
 				// FEC:DateLet
-				print $date_lettering . $separator;
+				$tab[] = $date_lettering;
 
 				// FEC:ValidDate
-				print $date_validation . $separator;
+				$tab[] = $date_validation;
 
 				// FEC:Montantdevise
-				print $line->multicurrency_amount . $separator;
+				$tab[] = $line->multicurrency_amount;
 
 				// FEC:Idevise
-				print $line->multicurrency_code . $separator;
+				$tab[] = $line->multicurrency_code;
 
 				// FEC_suppl:DateLimitReglmt
-				print $date_limit_payment . $separator;
+				$tab[] = $date_limit_payment;
 
 				// FEC_suppl:NumFacture
 				// Clean ref invoice to prevent problem on export with tab separator & other character
 				$refInvoice = str_replace(array("\t", "\n", "\r"), " ", $refInvoice);
-				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
+				$tab[] = dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
 
-
-				print $end_line;
+				$output = implode($separator, $tab).$end_line;
+				if ($exportFile) {
+					fwrite($exportFile, $output);
+				} else {
+					print $output;
+				}
 			}
 		}
 	}
