@@ -2317,40 +2317,49 @@ class AccountancyExport
 	/**
 	 * Export format : Gestimum V5
 	 *
-	 * @param array $objectLines data
-	 *
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportGestimumV5($objectLines)
+	public function exportGestimumV5($objectLines, $exportFile = null)
 	{
 
-		$this->separator = ',';
+		$separator = ',';
+		$end_line = "\r\n";
 
 		foreach ($objectLines as $line) {
 			if ($line->debit == 0 && $line->credit == 0) {
 				//unset($array[$line]);
 			} else {
-				$date = dol_print_date($line->doc_date, '%d%m%Y');
+				$date_document = dol_print_date($line->doc_date, '%d%m%Y');
 
-				print $line->id . $this->separator;
-				print $date . $this->separator;
-				print substr($line->code_journal, 0, 4) . $this->separator;
+				$tab = array();
+
+				$tab[] = $line->id;
+				$tab[] = $date_document;
+				$tab[] = substr($line->code_journal, 0, 4);
 				if ((substr($line->numero_compte, 0, 3) == '411') || (substr($line->numero_compte, 0, 3) == '401')) {	// TODO No hard code value
-					print length_accountg($line->subledger_account) . $this->separator;
+					$tab[] = length_accountg($line->subledger_account);
 				} else {
-					print substr(length_accountg($line->numero_compte), 0, 15) . $this->separator;
+					$tab[] = substr(length_accountg($line->numero_compte), 0, 15);
 				}
-				print $this->separator;
-				//print '"'.dol_trunc(str_replace('"', '', $line->label_operation),40,'right','UTF-8',1).'"' . $this->separator;
-				print '"' . dol_trunc(str_replace('"', '', $line->doc_ref), 40, 'right', 'UTF-8', 1) . '"' . $this->separator;
-				print '"' . dol_trunc(str_replace('"', '', $line->piece_num), 10, 'right', 'UTF-8', 1) . '"' . $this->separator;
-				print price2num(abs($line->debit - $line->credit)) . $this->separator;
-				print $line->sens . $this->separator;
-				print $date . $this->separator;
-				print $this->separator;
-				print $this->separator;
-				print 'EUR';
-				print $this->end_line;
+				$tab[] = "";
+				$tab[] = '"'.dol_trunc(str_replace('"', '', $line->label_operation),40,'right','UTF-8',1).'"';
+				$tab[] = '"' . dol_trunc(str_replace('"', '', $line->doc_ref), 40, 'right', 'UTF-8', 1) . '"';
+				$tab[] = '"' . dol_trunc(str_replace('"', '', $line->piece_num), 10, 'right', 'UTF-8', 1) . '"';
+				$tab[] = price2num(abs($line->debit - $line->credit));
+				$tab[] = $line->sens;
+				$tab[] = $date_document;
+				$tab[] = "";
+				$tab[] = "";
+				$tab[] = 'EUR';
+
+				$output = implode($separator, $tab).$end_line;
+				if ($exportFile) {
+					fwrite($exportFile, $output);
+				} else {
+					print $output;
+				}
 			}
 		}
 	}
