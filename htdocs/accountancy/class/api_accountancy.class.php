@@ -244,7 +244,7 @@ class Accountancy extends DolibarrApi
 
 						$sql = " UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 						$sql .= " SET date_export = '" . $this->db->idate($now) . "'";
-						$sql .= " WHERE rowid = " . ((int)$movement->id);
+						$sql .= " WHERE rowid = " . ((int) $movement->id);
 
 						$result = $this->db->query($sql);
 						if (!$result) {

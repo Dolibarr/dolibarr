@@ -2344,7 +2344,7 @@ class AccountancyExport
 					$tab[] = substr(length_accountg($line->numero_compte), 0, 15);
 				}
 				$tab[] = "";
-				$tab[] = '"'.dol_trunc(str_replace('"', '', $line->label_operation),40,'right','UTF-8',1).'"';
+				$tab[] = '"'.dol_trunc(str_replace('"', '', $line->label_operation), 40, 'right', 'UTF-8', 1).'"';
 				$tab[] = '"' . dol_trunc(str_replace('"', '', $line->doc_ref), 40, 'right', 'UTF-8', 1) . '"';
 				$tab[] = '"' . dol_trunc(str_replace('"', '', $line->piece_num), 10, 'right', 'UTF-8', 1) . '"';
 				$tab[] = price2num(abs($line->debit - $line->credit));
