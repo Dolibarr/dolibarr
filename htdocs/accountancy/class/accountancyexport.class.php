@@ -692,38 +692,47 @@ class AccountancyExport
 	/**
 	 * Export format : BOB50
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportBob50($objectLines)
+	public function exportBob50($objectLines, $exportFile = null)
 	{
-
 		// Bob50
 		$separator = ";";
 		$end_line = "\n";
 
 		foreach ($objectLines as $line) {
-			print $line->piece_num.$separator;
-			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
-			print $date.$separator;
+			$date_document = dol_print_date($line->doc_date, '%d/%m/%Y');
+
+			$tab = array();
+
+			$tab[] = $line->piece_num;
+			$tab[] = $date_document;
 
 			if (empty($line->subledger_account)) {
-				print 'G'.$separator;
-				print length_accounta($line->numero_compte).$separator;
+				$tab[] = 'G';
+				$tab[] = length_accountg($line->numero_compte);
 			} else {
 				if (substr($line->numero_compte, 0, 3) == '411') {
-					print 'C'.$separator;
+					$tab[] = 'C';
 				}
 				if (substr($line->numero_compte, 0, 3) == '401') {
-					print 'F'.$separator;
+					$tab[] = 'F';
 				}
-				print length_accountg($line->subledger_account).$separator;
+				$tab[] = length_accounta($line->subledger_account);
 			}
 
-			print price($line->debit).$separator;
-			print price($line->credit).$separator;
-			print dol_trunc($line->label_operation, 32).$separator;
-			print $end_line;
+			$tab[] = price($line->debit);
+			$tab[] = price($line->credit);
+			$tab[] = dol_trunc($line->label_operation, 32);
+
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
