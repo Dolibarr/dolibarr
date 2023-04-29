@@ -37,8 +37,10 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 /**
  * Manage the different format accountancy export
@@ -313,12 +315,19 @@ class AccountancyExport
 	/**
 	 * Function who chose which export to use with the default config, and make the export into a file
 	 *
-	 * @param 	array	$TData 				Array with data
-	 * @param	int		$formatexportset	Id of export format
-	 * @param	int		$withAttachment		[=0] Not add files or 1 to have attached in an archive (ex : Quadratus)
+	 * @param 	array	$TData 						Array with data
+	 * @param	int		$formatexportset			Id of export format
+	 * @param	int		$withAttachment				[=0] Not add files
+	 * 												or 1 to have attached in an archive (ex : Quadratus) - Force output mode to write in a file (output mode = 1)
+	 * @param	int		$downloadMode				[=0] Direct download
+	 * 												or 1 to download after writing files - Forced by default when use withAttachment = 1
+	 * 												or -1 not to download files
+	 * @param	int		$outputMode					[=0] Print on screen
+	 * 												or 1 to write in file and uses a temp directory - Forced by default when use withAttachment = 1
+	 * 												or 2 to write in file a default export directory (accounting/export/)
 	 * @return 	int		<0 if KO, >0 OK
 	 */
-	public function export(&$TData, $formatexportset, $withAttachment = 0)
+	public function export(&$TData, $formatexportset, $withAttachment = 0, $downloadMode = 0, $outputMode = 0)
 	{
 		global $conf, $langs;
 		global $search_date_end; // Used into /accountancy/tpl/export_journal.tpl.php
@@ -332,101 +341,152 @@ class AccountancyExport
 		$exportFile = null;
 		$exportFileName = '';
 		$exportFilePath = '';
+		$archiveFullName = '';
+		$archivePath = '';
 		$archiveFileList = array();
 		if ($withAttachment == 1) {
+			if ($downloadMode == 0) {
+				$downloadMode = 1; // force to download after writing all files (can't use direct download)
+			}
+			if ($outputMode == 0) {
+				$outputMode = 1; // force to put files in a temp directory (can't use print on screen)
+			}
+
 			// PHP ZIP extension must be enabled
 			if (!extension_loaded('zip')) {
 				$langs->load('install');
 				$this->errors[] = $langs->trans('ErrorPHPDoesNotSupport', 'ZIP');
 				return -1;
 			}
-		} else {
-			$mimetype = $this->getMimeType($formatexportset);
+		}
+
+		$mimetype = $this->getMimeType($formatexportset);
+		if ($downloadMode == 0) {
+			// begin to print header for direct download
 			top_httphead($mimetype, 1);
 		}
 		include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
-		if ($withAttachment == 1 && !empty($completefilename)) {
-			// create export file
-			$tmpDir = !empty($conf->accounting->multidir_temp[$conf->entity]) ? $conf->accounting->multidir_temp[$conf->entity] : $conf->accounting->dir_temp;
-			$exportFileFullName = $completefilename;
-			$exportFileBaseName = basename($exportFileFullName);
-			$exportFileName = pathinfo($exportFileBaseName, PATHINFO_FILENAME);
-			$exportFilePath = $tmpDir.'/'.$exportFileFullName;
-			$exportFile = fopen($exportFilePath, 'w');
-			if (!$exportFile) {
-				$this->errors[] = $langs->trans('ErrorFileNotFound', $exportFilePath);
-				return -1;
-			}
-			$archiveFileList[0] = array(
-				'path' => $exportFilePath,
-				'name' => $exportFileFullName,
-			);
+		if ($outputMode == 1 || $outputMode == 2) {
+			if ($outputMode == 1) {
+				// uses temp directory by default to write files
+				if (!empty($conf->accounting->multidir_temp[$conf->entity])) {
+					$outputDir = $conf->accounting->multidir_temp[$conf->entity];
+				} else {
+					$outputDir = $conf->accounting->dir_temp;
+				}
+			} else {
+				// uses default export directory "accounting/export"
+				if (!empty($conf->accounting->multidir_output[$conf->entity])) {
+					$outputDir = $conf->accounting->multidir_output[$conf->entity];
+				} else {
+					$outputDir = $conf->accounting->dir_output;
+				}
 
-			// archive name and path
-			$archiveFullName = $exportFileName.'.zip';
-			$archivePath = $tmpDir.'/'.$archiveFullName;
+				// directory already created when module is enabled
+				$outputDir .= '/export';
+				$outputDir .= '/'.dol_sanitizePathName($formatexportset);
+				if (!dol_is_dir($outputDir)) {
+					if (dol_mkdir($outputDir) < 0) {
+						$this->errors[] = $langs->trans('ErrorCanNotCreateDir', $outputDir);;
+						return -1;
+					}
+				}
+			}
+
+			if ($outputDir != '') {
+				if (!dol_is_dir($outputDir)) {
+					$langs->load('errors');
+					$this->errors[] = $langs->trans('ErrorDirNotFound', $outputDir);;
+					return -1;
+				}
+
+				if (!empty($completefilename)) {
+					// create export file
+					$exportFileFullName = $completefilename;
+					$exportFileBaseName = basename($exportFileFullName);
+					$exportFileName = pathinfo($exportFileBaseName, PATHINFO_FILENAME);
+					$exportFilePath = $outputDir . '/' . $exportFileFullName;
+					$exportFile = fopen($exportFilePath, 'w');
+					if (!$exportFile) {
+						$this->errors[] = $langs->trans('ErrorFileNotFound', $exportFilePath);
+						return -1;
+					}
+
+					if ($withAttachment == 1) {
+						$archiveFileList[0] = array(
+							'path' => $exportFilePath,
+							'name' => $exportFileFullName,
+						);
+
+						// archive name and path
+						$archiveFullName = $exportFileName . '.zip';
+						$archivePath = $outputDir . '/' . $archiveFullName;
+					}
+				}
+			}
 		}
 
+		// export file (print on screen or write in a file) and prepare archive list if with attachment is set to 1
 		switch ($formatexportset) {
 			case self::$EXPORT_TYPE_CONFIGURABLE:
-				$this->exportConfigurable($TData);
+				$this->exportConfigurable($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_CEGID:
-				$this->exportCegid($TData);
+				$this->exportCegid($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_COALA:
-				$this->exportCoala($TData);
+				$this->exportCoala($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_BOB50:
-				$this->exportBob50($TData);
+				$this->exportBob50($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_CIEL:
-				$this->exportCiel($TData);
+				$this->exportCiel($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_QUADRATUS:
 				$archiveFileList = $this->exportQuadratus($TData, $exportFile, $archiveFileList, $withAttachment);
 				break;
 			case self::$EXPORT_TYPE_WINFIC:
-				$this->exportWinfic($TData);
+				$this->exportWinfic($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_EBP:
-				$this->exportEbp($TData);
+				$this->exportEbp($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_COGILOG:
-				$this->exportCogilog($TData);
+				$this->exportCogilog($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_AGIRIS:
-				$this->exportAgiris($TData);
+				$this->exportAgiris($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_OPENCONCERTO:
-				$this->exportOpenConcerto($TData);
+				$this->exportOpenConcerto($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_SAGE50_SWISS:
-				$this->exportSAGE50SWISS($TData);
+				$this->exportSAGE50SWISS($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_CHARLEMAGNE:
-				$this->exportCharlemagne($TData);
+				$this->exportCharlemagne($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_LDCOMPTA:
-				$this->exportLDCompta($TData);
+				$this->exportLDCompta($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_LDCOMPTA10:
-				$this->exportLDCompta10($TData);
+				$this->exportLDCompta10($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_GESTIMUMV3:
-				$this->exportGestimumV3($TData);
+				$this->exportGestimumV3($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_GESTIMUMV5:
-				$this->exportGestimumV5($TData);
+				$this->exportGestimumV5($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_FEC:
-				$this->exportFEC($TData);
+				$this->exportFEC($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_FEC2:
-				$this->exportFEC2($TData);
+				$this->exportFEC2($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_ISUITEEXPERT :
-				$this->exportiSuiteExpert($TData);
+				$this->exportiSuiteExpert($TData, $exportFile);
 				break;
 			default:
 				global $hookmanager;
@@ -440,7 +500,7 @@ class AccountancyExport
 		}
 
 		// create and download export file or archive
-		if ($withAttachment == 1) {
+		if ($outputMode == 1 || $outputMode == 2) {
 			$error = 0;
 
 			// close export file
@@ -448,50 +508,60 @@ class AccountancyExport
 				fclose($exportFile);
 			}
 
-			if (!empty($archiveFullName) && !empty($archivePath) && !empty($archiveFileList)) {
-				// archive files
-				$downloadFileMimeType = 'application/zip';
-				$downloadFileFullName = $archiveFullName;
-				$downloadFilePath = $archivePath;
+			if ($withAttachment == 1) {
+				// create archive file
+				if (!empty($archiveFullName) && !empty($archivePath) && !empty($archiveFileList)) {
+					// archive files
+					$downloadFileMimeType = 'application/zip';
+					$downloadFileFullName = $archiveFullName;
+					$downloadFilePath = $archivePath;
 
-				// create archive
-				$archive = new ZipArchive();
-				$res = $archive->open($archivePath, ZipArchive::OVERWRITE | ZipArchive::CREATE);
-				if ($res !== true) {
-					$error++;
-					$this->errors[] = $langs->trans('ErrorFileNotFound', $archivePath);
-				}
-				if (!$error) {
-					// add files
-					foreach ($archiveFileList as $archiveFileArr) {
-						$res = $archive->addFile($archiveFileArr['path'], $archiveFileArr['name']);
-						if (!$res) {
-							$error++;
-							$this->errors[] = $langs->trans('ErrorArchiveAddFile', $archiveFileArr['name']);
-							break;
+					// create archive
+					$archive = new ZipArchive();
+					$res = $archive->open($archivePath, ZipArchive::OVERWRITE | ZipArchive::CREATE);
+					if ($res !== true) {
+						$error++;
+						$this->errors[] = $langs->trans('ErrorFileNotFound', $archivePath);
+					}
+					if (!$error) {
+						// add files
+						foreach ($archiveFileList as $archiveFileArr) {
+							$res = $archive->addFile($archiveFileArr['path'], $archiveFileArr['name']);
+							if (!$res) {
+								$error++;
+								$this->errors[] = $langs->trans('ErrorArchiveAddFile', $archiveFileArr['name']);
+								break;
+							}
 						}
 					}
+					if (!$error) {
+						// close archive
+						$archive->close();
+					}
 				}
-				if (!$error) {
-					// close archive
-					$archive->close();
-				}
-			} elseif (!empty($exportFileFullName) && !empty($exportFilePath)) {
-				// only one file to download
-				$downloadFileMimeType = 'text/csv';
-				$downloadFileFullName = $exportFileFullName;
-				$downloadFilePath = $exportFilePath;
 			}
 
 			if (!$error) {
-				// download export file
-				if (!empty($downloadFileMimeType) && !empty($downloadFileFullName) && !empty($downloadFilePath)) {
-					header('Content-Type: '.$downloadFileMimeType);
-					header('Content-Disposition: attachment; filename='.$downloadFileFullName);
-					header('Cache-Control: Public, must-revalidate');
-					header('Pragma: public');
-					header('Content-Length: '.dol_filesize($downloadFilePath));
-					readfileLowMemory($downloadFilePath);
+				// download after writing files
+				if ($downloadMode == 1) {
+					if ($withAttachment == 0) {
+						// only download exported file
+						if (!empty($exportFileFullName) && !empty($exportFilePath)) {
+							$downloadFileMimeType = $mimetype;
+							$downloadFileFullName = $exportFileFullName;
+							$downloadFilePath = $exportFilePath;
+						}
+					}
+
+					// download export file or archive
+					if (!empty($downloadFileMimeType) && !empty($downloadFileFullName) && !empty($downloadFilePath)) {
+						header('Content-Type: ' . $downloadFileMimeType);
+						header('Content-Disposition: attachment; filename=' . $downloadFileFullName);
+						header('Cache-Control: Public, must-revalidate');
+						header('Pragma: public');
+						header('Content-Length: ' . dol_filesize($downloadFilePath));
+						readfileLowMemory($downloadFilePath);
+					}
 				}
 			}
 
