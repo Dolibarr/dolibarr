@@ -15,7 +15,7 @@ exclude:
       - htdocs/custom
       - htdocs/includes
       - htdocs/install/doctemplates
-      - htdocs/modulebuilder/template/test/functionnal
+      - htdocs/modulebuilder/template/test/phpunit/functionnal
   - name: PhpIssetCanBeReplacedWithCoalesceInspection
   - name: PhpRedundantOptionalArgumentInspection
   - name: PhpLanguageLevelInspection

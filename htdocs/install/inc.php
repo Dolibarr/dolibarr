@@ -41,8 +41,8 @@ if (!defined('DOL_DOCUMENT_ROOT')) {
 	define('DOL_DOCUMENT_ROOT', '..');
 }
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -338,10 +338,6 @@ if ($islocked) {	// Pages are locked
 
 
 // Force usage of log file for install and upgrades
-if (!isset($conf->syslog) || !is_object($conf->syslog)) {
-	$conf->syslog = new stdClass();
-}
-$conf->syslog->enabled = 1;
 $conf->modules['syslog'] = 'syslog';
 $conf->global->SYSLOG_LEVEL = constant('LOG_DEBUG');
 if (!defined('SYSLOG_HANDLERS')) {
@@ -451,10 +447,6 @@ function conf($dolibarr_main_document_root)
 	$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
 	// Force usage of log file for install and upgrades
-	if (!isset($conf->syslog) || !is_object($conf->syslog)) {
-		$conf->syslog = new stdClass();
-	}
-	$conf->syslog->enabled = 1;
 	$conf->modules['syslog'] = 'syslog';
 	$conf->global->SYSLOG_LEVEL = constant('LOG_DEBUG');
 	if (!defined('SYSLOG_HANDLERS')) {
