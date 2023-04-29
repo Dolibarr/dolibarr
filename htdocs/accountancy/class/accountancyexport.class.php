@@ -577,25 +577,35 @@ class AccountancyExport
 	/**
 	 * Export format : CEGID
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return	void
 	 */
-	public function exportCegid($objectLines)
+	public function exportCegid($objectLines, $exportFile = null)
 	{
-		foreach ($objectLines as $line) {
-			$date = dol_print_date($line->doc_date, '%d%m%Y');
-			$separator = ";";
-			$end_line = "\n";
+		$separator = ";";
+		$end_line = "\n";
 
-			print $date.$separator;
-			print $line->code_journal.$separator;
-			print length_accountg($line->numero_compte).$separator;
-			print length_accounta($line->subledger_account).$separator;
-			print $line->sens.$separator;
-			print price2fec(abs($line->debit - $line->credit)).$separator;
-			print dol_string_unaccent($line->label_operation).$separator;
-			print dol_string_unaccent($line->doc_ref);
-			print $end_line;
+		foreach ($objectLines as $line) {
+			$date_document = dol_print_date($line->doc_date, '%d%m%Y');
+
+			$tab = array();
+
+			$tab[] = $date_document;
+			$tab[] = $line->code_journal;
+			$tab[] = length_accountg($line->numero_compte);
+			$tab[] = length_accounta($line->subledger_account);
+			$tab[] = $line->sens;
+			$tab[] = price2fec(abs($line->debit - $line->credit));
+			$tab[] = dol_string_unaccent($line->label_operation);
+			$tab[] = dol_string_unaccent($line->doc_ref);
+
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
