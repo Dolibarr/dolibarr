@@ -1121,7 +1121,7 @@ class AccountancyExport
 			$tab[] = $date_document;
 			//print 'EUR';
 
-			$output = implode($tab).$end_line;
+			$output = implode($separator, $tab).$end_line;
 			if ($exportFile) {
 				fwrite($exportFile, $output);
 			} else {
@@ -1134,39 +1134,47 @@ class AccountancyExport
 	/**
 	 * Export format : Agiris Isacompta
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportAgiris($objectLines)
+	public function exportAgiris($objectLines, $exportFile = null)
 	{
-
 		$separator = ';';
 		$end_line = "\n";
 
 		foreach ($objectLines as $line) {
-			$date = dol_print_date($line->doc_date, '%d%m%Y');
+			$date_document = dol_print_date($line->doc_date, '%d%m%Y');
 
-			print $line->piece_num.$separator;
-			print self::toAnsi($line->label_operation).$separator;
-			print $date.$separator;
-			print self::toAnsi($line->label_operation).$separator;
+			$tab = array();
+
+			$tab[] = $line->piece_num;
+			$tab[] = self::toAnsi($line->label_operation);
+			$tab[] = $date_document;
+			$tab[] = self::toAnsi($line->label_operation);
 
 			if (empty($line->subledger_account)) {
-				print length_accountg($line->numero_compte).$separator;
-				print self::toAnsi($line->label_compte).$separator;
+				$tab[] = length_accountg($line->numero_compte);
+				$tab[] = self::toAnsi($line->label_compte);
 			} else {
-				print length_accounta($line->subledger_account).$separator;
-				print self::toAnsi($line->subledger_label).$separator;
+				$tab[] = length_accounta($line->subledger_account);
+				$tab[] = self::toAnsi($line->subledger_label);
 			}
 
-			print self::toAnsi($line->doc_ref).$separator;
-			print price($line->debit).$separator;
-			print price($line->credit).$separator;
-			print price(abs($line->debit - $line->credit)).$separator;
-			print $line->sens.$separator;
-			print $line->lettering_code.$separator;
-			print $line->code_journal;
-			print $end_line;
+			$tab[] = self::toAnsi($line->doc_ref);
+			$tab[] = price($line->debit);
+			$tab[] = price($line->credit);
+			$tab[] = price(abs($line->debit - $line->credit));
+			$tab[] = $line->sens;
+			$tab[] = $line->lettering_code;
+			$tab[] = $line->code_journal;
+
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
