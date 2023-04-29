@@ -1090,34 +1090,43 @@ class AccountancyExport
 	/**
 	 * Export format : EBP
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportEbp($objectLines)
+	public function exportEbp($objectLines, $exportFile = null)
 	{
 
 		$separator = ',';
 		$end_line = "\n";
 
 		foreach ($objectLines as $line) {
-			$date = dol_print_date($line->doc_date, '%d%m%Y');
+			$date_document = dol_print_date($line->doc_date, '%d%m%Y');
 
-			print $line->id.$separator;
-			print $date.$separator;
-			print $line->code_journal.$separator;
+			$tab = array();
+
+			$tab[] = $line->id;
+			$tab[] = $date_document;
+			$tab[] = $line->code_journal;
 			if (empty($line->subledger_account)) {
-				print $line->numero_compte.$separator;
+				$tab[] = $line->numero_compte;
 			} else {
-				print $line->subledger_account.$separator;
+				$tab[] = $line->subledger_account;
 			}
-			//print substr(length_accountg($line->numero_compte), 0, 2) . $separator;
-			print '"'.dol_trunc($line->label_operation, 40, 'right', 'UTF-8', 1).'"'.$separator;
-			print '"'.dol_trunc($line->piece_num, 15, 'right', 'UTF-8', 1).'"'.$separator;
-			print price2num(abs($line->debit - $line->credit)).$separator;
-			print $line->sens.$separator;
-			print $date.$separator;
+			//$tab[] = substr(length_accountg($line->numero_compte), 0, 2) . $separator;
+			$tab[] = '"'.dol_trunc($line->label_operation, 40, 'right', 'UTF-8', 1).'"';
+			$tab[] = '"'.dol_trunc($line->piece_num, 15, 'right', 'UTF-8', 1).'"';
+			$tab[] = price2num(abs($line->debit - $line->credit));
+			$tab[] = $line->sens;
+			$tab[] = $date_document;
 			//print 'EUR';
-			print $end_line;
+
+			$output = implode($tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
