@@ -2209,15 +2209,16 @@ class AccountancyExport
 	/**
 	 * Export format : Gestimum V3
 	 *
-	 * @param array $objectLines data
-	 *
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return	void
 	 */
-	public function exportGestimumV3($objectLines)
+	public function exportGestimumV3($objectLines, $exportFile = null)
 	{
 		global $langs;
 
-		$this->separator = ',';
+		$separator = ',';
+		$end_line = "\r\n";
 
 		$invoices_infos = array();
 		$supplier_invoices_infos = array();
@@ -2225,7 +2226,8 @@ class AccountancyExport
 			if ($line->debit == 0 && $line->credit == 0) {
 				//unset($array[$line]);
 			} else {
-				$date = dol_print_date($line->doc_date, '%d/%m/%Y');
+				$date_document = dol_print_date($line->doc_date, '%d/%m/%Y');
+				$date_echeance = dol_print_date($line->date_lim_reglement, '%Y%m%d');
 
 				$invoice_ref = $line->doc_ref;
 				$company_name = "";
@@ -2273,33 +2275,41 @@ class AccountancyExport
 					}
 				}
 
-				print $line->id . $this->separator;
-				print $date . $this->separator;
-				print substr($line->code_journal, 0, 4) . $this->separator;
+				$tab = array();
+
+				$tab[] = $line->id;
+				$tab[] = $date_document;
+				$tab[] = substr($line->code_journal, 0, 4);
 
 				if ((substr($line->numero_compte, 0, 3) == '411') || (substr($line->numero_compte, 0, 3) == '401')) {
-					print length_accountg($line->subledger_account) . $this->separator;
+					$tab[] = length_accountg($line->subledger_account);
 				} else {
-					print substr(length_accountg($line->numero_compte), 0, 15) . $this->separator;
+					$tab[] = substr(length_accountg($line->numero_compte), 0, 15);
 				}
 				//Libellé Auto
-				print $this->separator;
-				//print '"'.dol_trunc(str_replace('"', '', $line->label_operation),40,'right','UTF-8',1).'"' . $this->separator;
+				$tab[] = "";
+				//print '"'.dol_trunc(str_replace('"', '', $line->label_operation),40,'right','UTF-8',1).'"';
 				//Libellé manuel
-				print dol_trunc(str_replace('"', '', $invoice_ref . (!empty($company_name) ? ' - ' : '') . $company_name), 40, 'right', 'UTF-8', 1) . $this->separator;
+				$tab[] = dol_trunc(str_replace('"', '', $invoice_ref . (!empty($company_name) ? ' - ' : '') . $company_name), 40, 'right', 'UTF-8', 1);
 				//Numéro de pièce
-				print dol_trunc(str_replace('"', '', $line->piece_num), 10, 'right', 'UTF-8', 1) . $this->separator;
+				$tab[] = dol_trunc(str_replace('"', '', $line->piece_num), 10, 'right', 'UTF-8', 1);
 				//Devise
-				print 'EUR' . $this->separator;
+				$tab[] = 'EUR';
 				//Amount
-				print price2num(abs($line->debit - $line->credit)) . $this->separator;
+				$tab[] = price2num(abs($line->debit - $line->credit));
 				//Sens
-				print $line->sens . $this->separator;
+				$tab[] = $line->sens;
 				//Code lettrage
-				print $this->separator;
+				$tab[] = "";
 				//Date Echéance
-				print $date;
-				print $this->end_line;
+				$tab[] = $date_echeance;
+
+				$output = implode($separator, $tab).$end_line;
+				if ($exportFile) {
+					fwrite($exportFile, $output);
+				} else {
+					print $output;
+				}
 			}
 		}
 	}
