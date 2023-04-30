@@ -102,5 +102,7 @@ exclude:
   - name: JSHint
   - name: ReservedWordUsedAsNameJS
   - name: JSUnusedLocalSymbols
-
-  
+  - name: TrivialIfJS
+  - name: JSJQueryEfficiency
+  - name: JSDuplicatedDeclaration
+  - name: JSUnresolvedLibraryURL

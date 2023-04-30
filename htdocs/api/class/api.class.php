@@ -80,7 +80,7 @@ class DolibarrApi
 	 *
 	 * @param	string		$field		Field name
 	 * @param	string		$value		Value to check/clean
-	 * @param	stdClass	$object		Object
+	 * @param	Object		$object		Object
 	 * @return 	string					Value cleaned
 	 */
 	protected function _checkValForAPI($field, $value, $object)
