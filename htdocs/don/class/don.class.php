@@ -75,6 +75,11 @@ class Don extends CommonObject
 	public $amount;
 
 	/**
+	 * @var integer Thirdparty ID
+	 */
+	public $socid;
+
+	/**
 	 * @var string Thirdparty name
 	 */
 	public $societe;

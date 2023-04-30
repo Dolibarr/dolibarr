@@ -245,18 +245,18 @@ function PrintCategories(first) {
 
 function MoreCategories(moreorless) {
 	console.log("MoreCategories moreorless="+moreorless+" pagecategories="+pagecategories);
-	if (moreorless=="more") {
+	if (moreorless == "more") {
 		$('#catimg15').animate({opacity: '0.5'}, 1);
 		$('#catimg15').animate({opacity: '1'}, 100);
 		pagecategories=pagecategories+1;
 	}
-	if (moreorless=="less") {
+	if (moreorless == "less") {
 		$('#catimg14').animate({opacity: '0.5'}, 1);
 		$('#catimg14').animate({opacity: '1'}, 100);
 		if (pagecategories==0) return; //Return if no less pages
 		pagecategories=pagecategories-1;
 	}
-	if (typeof (categories[<?php echo ($MAXCATEG - 2); ?> * pagecategories] && moreorless=="more") == "undefined"){ // Return if no more pages
+	if (typeof (categories[<?php echo ($MAXCATEG - 2); ?> * pagecategories] && moreorless == "more") == "undefined") { // Return if no more pages
 		pagecategories=pagecategories-1;
 		return;
 	}

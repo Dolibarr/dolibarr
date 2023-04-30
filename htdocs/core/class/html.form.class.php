@@ -9987,14 +9987,14 @@ class Form
 	/**
 	 * Return HTML to show the select of expense categories
 	 *
-	 * @param string $selected preselected category
-	 * @param string $htmlname name of HTML select list
-	 * @param integer $useempty 1=Add empty line
-	 * @param array $excludeid id to exclude
-	 * @param string $target htmlname of target select to bind event
-	 * @param int $default_selected default category to select if fk_c_type_fees change = EX_KME
-	 * @param array $params param to give
-	 * @param int $info_admin Show the tooltip help picto to setup list
+	 * @param string 	$selected 		preselected category
+	 * @param string 	$htmlname 		name of HTML select list
+	 * @param integer 	$useempty 		1=Add empty line
+	 * @param array 	$excludeid 		id to exclude
+	 * @param string 	$target 		htmlname of target select to bind event
+	 * @param int 		$default_selected default category to select if fk_c_type_fees change = EX_KME
+	 * @param array 	$params 		param to give
+	 * @param int 		$info_admin 	Show the tooltip help picto to setup list
 	 * @return    string
 	 */
 	public function selectExpenseCategories($selected = '', $htmlname = 'fk_c_exp_tax_cat', $useempty = 0, $excludeid = array(), $target = '', $default_selected = 0, $params = array(), $info_admin = 1)

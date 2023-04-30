@@ -72,12 +72,9 @@ function regexEvent(objet,evt,type)
                   // ((charCode>=96) && (charCode<=105)) || //numpad
             	  return true;
 
-              }else
-              {
+              } else {
                   return false;
               }
-
-              break;
           default:
               break;
       }

@@ -51,7 +51,7 @@ class ImportCsv extends ModeleImports
 	public $errors = array();
 
 	/**
-	 * @var int ID
+	 * @var string Code of driver
 	 */
 	public $id;
 

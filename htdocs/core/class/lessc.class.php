@@ -53,6 +53,11 @@ class Lessc
 	public $importDisabled = false;
 	public $importDir = '';
 
+	public $scope;
+	public $formatter;
+	public $env;
+	public $count;
+
 	protected $numberPrecision = null;
 
 	protected $allParsedFiles = array();

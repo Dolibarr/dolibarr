@@ -16,6 +16,7 @@ exclude:
       - htdocs/includes
       - htdocs/install/doctemplates
       - htdocs/modulebuilder/template/test/phpunit/functionnal
+      - htdocs/theme/common/fontawesome-5
   - name: PhpIssetCanBeReplacedWithCoalesceInspection
   - name: PhpRedundantOptionalArgumentInspection
   - name: PhpLanguageLevelInspection
@@ -84,3 +85,12 @@ exclude:
   - name: PhpPointlessBooleanExpressionInConditionInspection  
   - name: PhpUndefinedMethodInspection
   - name: PhpDuplicateCatchBodyInspection
+  - name: PhpDefineCanBeReplacedWithConstInspection
+  - name: PhpMissingParamTypeInspection
+  - name: PhpMissingReturnTypeInspection
+  - name: CommaExpressionJS
+  - name: JSTypeOfValues
+  - name: PhpRedundantVariableDocTypeInspection
+  - name: PhpUnhandledExceptionInspection
+  - name: JSIgnoredPromiseFromCall
+  

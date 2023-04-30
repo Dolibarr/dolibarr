@@ -75,7 +75,7 @@ if ("Notification" in window) {
 	/* Check if permission ok */
 	if (Notification.permission !== "granted") {
 		console.log("Ask Notification.permission");
-		Notification.requestPermission()
+		Notification.requestPermission();
 	}
 
 	/* Launch timer */
