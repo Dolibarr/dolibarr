@@ -1147,9 +1147,9 @@ function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + deci
  *
  */
 function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
-	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
-	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
-	var main_rounding_tot = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalInt('MAIN_MAX_DECIMALS_SHOWN')); ?>;
+	var main_rounding_unit = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'); ?>;
+	var main_rounding_tot = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'); ?>;
 	var main_decimal_separator = <?php echo json_encode($dec) ?>;
 	var main_thousand_separator = <?php echo json_encode($thousand) ?>;
 	var locale_code = force_locale || <?php echo json_encode($langs->defaultlang) ?>;
@@ -1225,9 +1225,9 @@ function price2numjs(amount) {
 	var dec = <?php echo json_encode($dec) ?>;
 	var thousand = <?php echo json_encode($thousand) ?>;
 
-	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
-	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
-	var main_rounding_tot = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalInt('MAIN_MAX_DECIMALS_SHOWN')); ?>;
+	var main_rounding_unit = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'); ?>;
+	var main_rounding_tot = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'); ?>;
 
 	var amount = amount.toString();
 

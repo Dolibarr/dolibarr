@@ -5529,19 +5529,19 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Show a form to select a project
+	 * Show a form to select a project
 	 *
-	 * @param int $page Page
-	 * @param int $socid Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-	 * @param int $selected Id pre-selected project
-	 * @param string $htmlname Name of select field
-	 * @param int $discard_closed Discard closed projects (0=Keep,1=hide completely except $selected,2=Disable)
-	 * @param int $maxlength Max length
-	 * @param int $forcefocus Force focus on field (works with javascript only)
-	 * @param int $nooutput No print is done. String is returned.
-	 * @param string $textifnoproject Text to show if no project
-	 * @param string $morecss More CSS
-	 * @return    string                      Return html content
+	 * @param 	int 		$page 				Page
+	 * @param 	int 		$socid 				Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+	 * @param 	int 		$selected 			Id pre-selected project
+	 * @param 	string 		$htmlname 			Name of select field
+	 * @param 	int 		$discard_closed 	Discard closed projects (0=Keep,1=hide completely except $selected,2=Disable)
+	 * @param 	int 		$maxlength 			Max length
+	 * @param 	int 		$forcefocus 		Force focus on field (works with javascript only)
+	 * @param 	int 		$nooutput 			No print is done. String is returned.
+	 * @param 	string 		$textifnoproject 	Text to show if no project
+	 * @param 	string 		$morecss 			More CSS
+	 * @return	string                      	Return html content
 	 */
 	public function form_project($page, $socid, $selected = '', $htmlname = 'projectid', $discard_closed = 0, $maxlength = 20, $forcefocus = 0, $nooutput = 0, $textifnoproject = '', $morecss = '')
 	{
@@ -5585,19 +5585,19 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Show a form to select payment conditions
+	 * Show a form to select payment conditions
 	 *
-	 * @param int $page Page
-	 * @param string $selected Id condition pre-selectionne
-	 * @param string $htmlname Name of select html field
-	 * @param int $addempty Add empty entry
-	 * @param string $type Type ('direct-debit' or 'bank-transfer')
-	 * @param int $filtertype If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
-	 * @param string $deposit_percent < 0 : deposit_percent input makes no sense (for example, in list filters)
-	 *                                0 : use default deposit percentage from entry
-	 *                                > 0 : force deposit percentage (for example, from company object)
-	 * @param int $nooutput No print is done. String is returned.
-	 * @return    string                        HTML output or ''
+	 * @param int 		$page 				Page
+	 * @param string 	$selected 			Id condition pre-selectionne
+	 * @param string 	$htmlname 			Name of select html field
+	 * @param int 		$addempty 			Add empty entry
+	 * @param string 	$type 				Type ('direct-debit' or 'bank-transfer')
+	 * @param int 		$filtertype 		If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
+	 * @param string 	$deposit_percent 	< 0 : deposit_percent input makes no sense (for example, in list filters)
+	 *                                		0 : use default deposit percentage from entry
+	 *                                		> 0 : force deposit percentage (for example, from company object)
+	 * @param int 		$nooutput 			No print is done. String is returned.
+	 * @return string                   	HTML output or ''
 	 */
 	public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0, $type = '', $filtertype = -1, $deposit_percent = -1, $nooutput = 0)
 	{
@@ -5648,11 +5648,11 @@ class Form
 	/**
 	 *  Show a form to select a delivery delay
 	 *
-	 * @param int $page Page
-	 * @param string $selected Id condition pre-selectionne
-	 * @param string $htmlname Name of select html field
-	 * @param int $addempty Ajoute entree vide
-	 * @return    void
+	 * @param 	int 		$page 		Page
+	 * @param 	string 		$selected 	Id condition pre-selectionne
+	 * @param 	string 		$htmlname 	Name of select html field
+	 * @param 	int 		$addempty 	Add an empty entry
+	 * @return  void
 	 */
 	public function form_availability($page, $selected = '', $htmlname = 'availability', $addempty = 0)
 	{
@@ -8375,7 +8375,7 @@ class Form
 					    placeholder: "' . dol_escape_js($placeholder) . '",
 				    	escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
 				    	minimumInputLength: ' . ((int) $minimumInputLength) . ',
-				        formatResult: function(result, container, query, escapeMarkup) {
+				        formatResult: function (result, container, query, escapeMarkup) {
 	                        return escapeMarkup(result.text);
 	                    },
 				    });
@@ -8464,7 +8464,7 @@ class Form
 						placeholder: "' . dol_escape_js($placeholder) . '",
 						escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
 						minimumInputLength: ' . $minimumInputLength . ',
-						formatResult: function(result, container, query, escapeMarkup) {
+						formatResult: function (result, container, query, escapeMarkup) {
 							return escapeMarkup(result.text);
 						},
 						matcher: function (params, data) {

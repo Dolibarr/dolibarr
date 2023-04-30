@@ -93,4 +93,14 @@ exclude:
   - name: PhpRedundantVariableDocTypeInspection
   - name: PhpUnhandledExceptionInspection
   - name: JSIgnoredPromiseFromCall
+  - name: DuplicatedCode
+  - name: BadExpressionStatementJS
+  - name: PhpRedundantCatchClauseInspection
+  - name: PhpIssetCanCheckNestedAccessDirectlyInspection
+  - name: JSEqualityComparisonWithCoercion
+  - name: JSUnusedAssignment
+  - name: JSHint
+  - name: ReservedWordUsedAsNameJS
+  - name: JSUnusedLocalSymbols
+
   
