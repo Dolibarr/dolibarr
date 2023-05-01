@@ -305,7 +305,7 @@ function barcode_encode_upc($upc, $encoding = "UPC")
 		if ($a > 1) {
 			$text .= " ";
 		}
-		$text .= "$pos:12:{$upc[$a]}";
+		$text .= $pos.":12:".$upc[$a];
 		if ($a == 1) {
 			$pos += 15;
 		} elseif ($a == 6) {

@@ -2837,18 +2837,18 @@ function top_menu_bookmark()
 
 	            jQuery("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
 					console.log("Click on #topmenu-bookmark-dropdown .dropdown-toggle");
-					openBookMarkDropDown();
+					openBookMarkDropDown(event);
 	            });
 
 	            // Key map shortcut
-	            jQuery(document).keydown(function(e){
-	                  if( e.which === 77 && e.ctrlKey && e.shiftKey ){
-	                     console.log(\'control + shift + m : trigger open bookmark dropdown\');
-	                     openBookMarkDropDown();
+	            jQuery(document).keydown(function(event){
+	                  if( event.which === 77 && event.ctrlKey && event.shiftKey ){
+	                     console.log("Click on control + shift + m : trigger open bookmark dropdown");
+	                     openBookMarkDropDown(event);
 	                  }
 	            });
 
-	            var openBookMarkDropDown = function() {
+	            var openBookMarkDropDown = function(event) {
 	                event.preventDefault();
 	                jQuery("#topmenu-bookmark-dropdown").toggleClass("open");
 	                jQuery("#top-bookmark-search-input").focus();

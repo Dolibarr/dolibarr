@@ -1866,8 +1866,8 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 									console.log("open popup name='.$name.', backtopagejsfields='.$backtopagejsfields.'");
 	       						},
 								close: function (event, ui) {
-									returnedid = jQuery("#varforreturndialogid'.$name.'").text();
-									returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
+									var returnedid = jQuery("#varforreturndialogid'.$name.'").text();
+									var returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
 									console.log("popup has been closed. returnedid (js var defined into parent page)="+returnedid+" returnedlabel="+returnedlabel);
 									if (returnedid != "" && returnedid != "div for returned id") {
 										jQuery("#'.(empty($backtopagejsfieldsid)?"none":$backtopagejsfieldsid).'").val(returnedid);

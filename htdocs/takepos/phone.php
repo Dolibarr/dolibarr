@@ -249,6 +249,8 @@ function AddProductConfirm(placeid, productid){
 		});';
 	}
 	?>
+
+	return true;
 }
 
 function SetQty(place, selectedline, qty){
@@ -278,6 +280,8 @@ function SetQty(place, selectedline, qty){
 	}
 	?>
 	LoadCats();
+
+	return true;
 }
 
 function SetNote(place, selectedline){

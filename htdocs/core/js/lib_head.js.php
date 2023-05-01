@@ -1227,7 +1227,7 @@ function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
  * Function similar to PHP price2num()
  *
  * @param  {number|string} amount    The amount to convert/clean
- * @return {string}                  The amount in universal numeric format (Example: '99.99999')
+ * @return {number}                  The amount in universal numeric format (Example: '99.99999')
  * @todo Implement rounding parameter
  */
 function price2numjs(amount) {
@@ -1246,20 +1246,27 @@ function price2numjs(amount) {
 	var rounding = main_rounding_unit;
 	var pos = amount.indexOf(dec);
 	var decpart = '';
-	if (pos >= 0) decpart = amount.substr(pos + 1).replace('/0+$/i', '');    // Remove 0 for decimal part
+	if (pos >= 0) {
+		decpart = amount.substring(pos + 1).replace('/0+$/i', '');    // Remove 0 for decimal part
+	}
 	var nbdec = decpart.length;
-	if (nbdec > rounding) rounding = nbdec;
+	if (nbdec > rounding) {
+		rounding = nbdec;
+	}
 	// If rounding higher than max shown
 	if (rounding > main_max_dec_shown) rounding = main_max_dec_shown;
 	if (thousand != ',' && thousand != '.') amount = amount.replace(',', '.');
 	amount = amount.replace(' ', '');             // To avoid spaces
 	amount = amount.replace(thousand, '');        // Replace of thousand before replace of dec to avoid pb if thousand is .
 	amount = amount.replace(dec, '.');
+
 	//console.log("amount before="+amount+" rouding="+rounding)
 	var res = Math.round10(amount, - rounding);
 	// Other solution is
 	// var res = dolroundjs(amount, rounding)
+
 	console.log("price2numjs text="+amount+" return="+res);
+
 	return res;
 }
 
