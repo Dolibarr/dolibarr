@@ -221,6 +221,22 @@ class Documents extends DolibarrApi
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document');
 			}
+		} elseif ($modulepart == 'contrat' || $modulepart == 'contract') {
+			require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
+
+			$this->contract = new Contrat($this->db);
+			$result = $this->contract->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+
+			if (!$result) {
+				throw new RestException(404, 'Contract not found');
+			}
+
+			$templateused = $doctemplate ? $doctemplate : $this->contract->model_pdf;
+			$result = $this->contract->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+			if ($result <= 0) {
+				throw new RestException(500, 'Error generating document missing doctemplate parameter');
+			}
 		} else {
 			throw new RestException(403, 'Generation not available for this modulepart');
 		}
