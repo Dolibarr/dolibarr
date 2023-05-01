@@ -502,7 +502,7 @@ class Documents extends DolibarrApi
 			// $upload_dir = $conf->ecm->dir_output;
 			// $type = 'all';
 			// $recursive = 0;
-		} elseif($modulepart == 'contrat' || $modulepart == 'contract') {
+		} elseif ($modulepart == 'contrat' || $modulepart == 'contract') {
 			$modulepart = 'contrat';
 			require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
 
