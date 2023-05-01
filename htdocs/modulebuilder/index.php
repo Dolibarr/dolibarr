@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019	   Nicolas ZABOURI	<info@inovea-conseil.com>
+ * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1334,6 +1335,11 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 						setEventMessages($langs->trans("FileAlreadyExists", $destfile), null, 'warnings');
 					}
 				}
+				$arrayreplacement = array(
+					'/myobject\.class\.php/' => strtolower($objectname).'.class.php',
+					'/myobject\.lib\.php/' => strtolower($objectname).'.lib.php',
+				);
+				dolReplaceInFile($destdir.'/'.$destfile, $arrayreplacement, '', 0, 0, 1);
 			}
 		}
 
