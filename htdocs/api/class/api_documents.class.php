@@ -666,6 +666,10 @@ class Documents extends DolibarrApi
 				$modulepart = 'propale';
 				require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 				$object = new Propal($this->db);
+			} elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event') {
+				$modulepart = 'agenda';
+				require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
+				$object = new ActionComm($this->db);
 			} else {
 				// TODO Implement additional moduleparts
 				throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
@@ -740,6 +744,11 @@ class Documents extends DolibarrApi
 
 		if (!$overwriteifexists && dol_is_file($destfile)) {
 			throw new RestException(500, "File with name '".$original_file."' already exists.");
+		}
+
+		// in case temporary directory doesn't exist
+		if (!dol_is_dir(dirname(DOL_DATA_ROOT . '/admin/temp/'))) {
+			dol_mkdir(DOL_DATA_ROOT . '/admin/temp/');
 		}
 
 		$fhandle = @fopen($destfiletmp, 'w');
