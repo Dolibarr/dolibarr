@@ -99,8 +99,10 @@ class SMTPs
 
 	/**
 	 * Message Content
+	 *
+	 * @var	array	$_msgContent	Array of messages
 	 */
-	private $_msgContent = null;
+	private array $_msgContent = array();
 
 	/**
 	 * Custom X-Headers
@@ -1841,7 +1843,7 @@ class SMTPs
 	/**
 	 * Retrieves the Message X-Header Content
 	 *
-	 * @return string[] $_msgContent Message X-Header Content
+	 * @return array	$_msgContent 	Message X-Header Content
 	 */
 	public function getXheader()
 	{

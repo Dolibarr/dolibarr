@@ -782,7 +782,7 @@ class FormOther
 	 *
 	 *  @param	string		$color				String with hex (FFFFFF) or comma RGB ('255,255,255')
 	 *  @param	string		$textifnotdefined	Text to show if color not defined
-	 *  @return	void
+	 *  @return	string							Show color string
 	 *  @see selectColor()
 	 */
 	public static function showColor($color, $textifnotdefined = '')
@@ -796,9 +796,9 @@ class FormOther
 		$color = colorArrayToHex(colorStringToArray($color, array()), '');
 
 		if ($color) {
-			print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
+			return '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
 		} else {
-			print $textifnotdefined;
+			return $textifnotdefined;
 		}
 	}
 
