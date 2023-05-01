@@ -1270,6 +1270,7 @@ class Task extends CommonObjectLine
 		$this->db->begin();
 
 		$timespent = new TimeSpent($this->db);
+		if (!empty($this->timespent_id)) $timespent->rowid = $this->timespent_id;
 		$timespent->fk_element = $this->id;
 		$timespent->elementtype = 'task';
 		$timespent->element_date = $this->timespent_date;

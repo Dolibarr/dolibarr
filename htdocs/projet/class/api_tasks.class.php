@@ -515,13 +515,14 @@ class Tasks extends DolibarrApi
 	 * @param   int         $duration           Duration in seconds (3600 = 1h)
 	 * @param   int         $user_id            User (Use 0 for connected user)
 	 * @param   string      $note               Note
+	 * @param   int         $timespent_id       Timespent ID, to bypass AUTO_INCREMENT
 	 *
 	 * @url POST    {id}/addtimespent
 	 *      NOTE: Should be "POST {id}/timespent", since POST already implies "add"
 	 *
 	 * @return  array
 	 */
-	public function addTimeSpent($id, $date, $duration, $user_id = 0, $note = '')
+	public function addTimeSpent($id, $date, $duration, $user_id = 0, $note = '', $timespent_id = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->projet->creer) {
 			throw new RestException(401);
@@ -547,6 +548,7 @@ class Tasks extends DolibarrApi
 		$this->task->timespent_duration = $duration;
 		$this->task->timespent_fk_user  = $uid;
 		$this->task->timespent_note     = $note;
+		$this->task->timespent_id       = $timespent_id;
 
 		$result = $this->task->addTimeSpent(DolibarrApiAccess::$user, 0);
 		if ($result == 0) {
