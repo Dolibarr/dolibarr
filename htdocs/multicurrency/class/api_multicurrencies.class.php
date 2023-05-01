@@ -218,7 +218,7 @@ class MultiCurrencies extends DolibarrApi
 
 		// Add default rate if defined
 		if (isset($request_data['rate']) && $request_data['rate'] > 0) {
-			if ($multicurrency->addRate(DolibarrApiAccess::$user, $request_data['rate']) < 0) {
+			if ($multicurrency->addRate($request_data['rate']) < 0) {
 				throw new RestException(500, "Error adding currency rate", array_merge(array($multicurrency->error), $multicurrency->errors));
 			}
 
