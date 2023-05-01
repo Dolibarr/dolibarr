@@ -502,6 +502,17 @@ class Documents extends DolibarrApi
 			// $upload_dir = $conf->ecm->dir_output;
 			// $type = 'all';
 			// $recursive = 0;
+		} elseif($modulepart == 'contrat' || $modulepart == 'contract') {
+			$modulepart = 'contrat';
+			require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
+
+			$object = new Contrat($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'Contract not found');
+			}
+
+			$upload_dir = $conf->contrat->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'contract');
 		} else {
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 		}
