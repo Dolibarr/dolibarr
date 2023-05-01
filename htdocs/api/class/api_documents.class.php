@@ -2,7 +2,7 @@
 /* Copyright (C) 2016   Xebax Christy           <xebax@wanadoo.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2016   Jean-François Ferry     <jfefe@aternatik.fr>
- * COpyright (C) 2023   Romain Neil             <contact@romain-neil.fr>
+ * Copyright (C) 2023   Romain Neil             <contact@romain-neil.fr>
  *
  * This program is free software you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
