@@ -873,7 +873,7 @@ class Lessc
 
 				break;
 			default:
-				$this->throwError("unknown op: {$prop[0]}\n");
+				$this->throwError("unknown op: $prop[0]\n");
 		}
 	}
 

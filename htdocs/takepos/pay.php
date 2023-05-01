@@ -297,6 +297,8 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 				$('.change2').addClass('colorwhite');
 			}
 		}
+
+		return true;
 	}
 
 	function reset()
@@ -332,6 +334,8 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 				location.reload();
 			}
 		});
+
+		return true;
 	}
 
 	function fetchPaymentIntentClientSecret(amount, invoiceid) {

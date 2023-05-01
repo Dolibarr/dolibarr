@@ -2864,11 +2864,7 @@ if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule') {
 		dol_include_once($fullpathdirtodescriptor);
 
 		$class = 'mod'.$module;
-	} catch (Throwable $e) {		// This is called in PHP 7 only (includes Error and Exception). Never called with PHP 5.6-.
-		$loadclasserrormessage = $e->getMessage()."<br>\n";
-		$loadclasserrormessage .= 'File: '.$e->getFile()."<br>\n";
-		$loadclasserrormessage .= 'Line: '.$e->getLine()."<br>\n";
-	} catch (Exception $e) {		// This is called in PHP 5.6- because not already trapped by previous case in PHP 5.6-.
+	} catch (Throwable $e) {		// This is called in PHP 7 only (includes Error and Exception)
 		$loadclasserrormessage = $e->getMessage()."<br>\n";
 		$loadclasserrormessage .= 'File: '.$e->getFile()."<br>\n";
 		$loadclasserrormessage .= 'Line: '.$e->getLine()."<br>\n";

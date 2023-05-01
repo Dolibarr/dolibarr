@@ -106,3 +106,9 @@ exclude:
   - name: JSJQueryEfficiency
   - name: JSDuplicatedDeclaration
   - name: JSUnresolvedLibraryURL
+  - name: UnnecessaryReturnJS
+  - name: UnreachableCodeJS
+  - name: JSUnnecessarySemicolon
+  - name: JSPrimitiveTypeWrapperUsage
+  - name: PhpFullyQualifiedNameUsageInspection
+  

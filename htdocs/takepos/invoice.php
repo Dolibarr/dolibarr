@@ -1074,16 +1074,19 @@ function SendTicket(id)
 {
 	console.log("Open box to select the Print/Send form");
 	$.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("SendTicket")); ?>'});
+	return true;
 }
 
 function PrintBox(id, action) {
 	console.log("Open box before printing");
 	$.colorbox({href:"printbox.php?facid="+id+"&action="+action+"&token=<?php echo newToken(); ?>", width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("PrintWithoutDetails"); ?>"});
+	return true;
 }
 
 function Print(id, gift){
 	console.log("Call Print() to generate the receipt.");
 	$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("PrintTicket")); ?>'});
+	return true;
 }
 
 function TakeposPrinting(id){
@@ -1097,6 +1100,7 @@ function TakeposPrinting(id){
 			data: receipt
 		});
 	});
+	return true;
 }
 
 function TakeposConnector(id){
@@ -1108,6 +1112,7 @@ function TakeposConnector(id){
 			data: 'invoice='+data
 		});
 	});
+	return true;
 }
 
 function DolibarrTakeposPrinting(id) {
@@ -1117,15 +1122,17 @@ function DolibarrTakeposPrinting(id) {
 		data: { token: '<?php echo currentToken(); ?>' },
 		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&token='.newToken().'&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
 	});
+	return true;
 }
 
 function CreditNote() {
-	$("#poslines").load("invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid, function() {
-	});
+	$("#poslines").load("invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid, function() {	});
+	return true;
 }
 
 function SetNote() {
 	$("#poslines").load("invoice.php?action=addnote&token=<?php echo newToken() ?>&invoiceid="+placeid+"&idline="+selectedline, { "addnote": $("#textinput").val() });
+	return true;
 }
 
 

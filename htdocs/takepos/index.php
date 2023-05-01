@@ -92,6 +92,7 @@ if ($conf->browser->layout == 'phone') {
 }
 $MAXCATEG = (empty($conf->global->TAKEPOS_NB_MAXCATEG) ? $maxcategbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXCATEG);
 $MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT) ? $maxproductbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXPRODUCT);
+$MAXCATEG = 5;
 
 /*
  $constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
@@ -260,8 +261,11 @@ function MoreCategories(moreorless) {
 		pagecategories=pagecategories-1;
 		return;
 	}
+
 	for (i = 0; i < <?php echo ($MAXCATEG - 2); ?>; i++) {
 		if (typeof (categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]) == "undefined") {
+			// complete with empty record
+			console.log("complete with empty record");
 			$("#catdivdesc"+i).hide();
 			$("#catdesc"+i).text("");
 			$("#catimg"+i).attr("src","genimg/empty.png");
@@ -589,8 +593,8 @@ function New() {
 /**
  * Search products
  *
- * @param   string			keyCodeForEnter     Key code for "enter" or '' if not
- * @param   int				moreorless          ??
+ * @param   keyCodeForEnter     Key code for "enter" or '' if not
+ * @param   moreorless          "more" or "less"
  * return   void
  */
 function Search2(keyCodeForEnter, moreorless) {
@@ -875,6 +879,8 @@ function MoreActions(totalactions){
 			else $("#action"+i).hide();
 		}
 	}
+
+	return true;
 }
 
 function ControlCashOpening()

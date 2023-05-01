@@ -527,7 +527,7 @@ function ServerMapFolder($resourceType, $folderPath, $sCommand)
 	// Ensure that the directory exists.
 	$sErrorMsg = CreateServerFolder($sResourceTypePath);
 	if ($sErrorMsg != '') {
-		SendError(1, "Error creating folder \"{$sResourceTypePath}\" ({$sErrorMsg})");
+		SendError(1, "Error creating folder \"$sResourceTypePath\" ($sErrorMsg)");
 	}
 
 	// Return the resource type directory combined with the required path.

@@ -257,7 +257,7 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
 		if ($a > 0) {
 			$text .= " ";
 		}
-		$text .= "$pos:12:{$ean[$a]}";
+		$text .= $pos.":12:".$ean[$a];
 		if ($a == 0) {
 			$pos += 12;
 		} elseif ($a == 6) {
