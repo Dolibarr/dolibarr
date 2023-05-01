@@ -341,6 +341,7 @@ class ImportXlsx extends ModeleImports
 		// phpcs:enable
 		$this->workbook->disconnectWorksheets();
 		unset($this->workbook);
+		return 0;
 	}
 
 

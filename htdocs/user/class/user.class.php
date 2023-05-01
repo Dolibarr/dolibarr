@@ -3881,6 +3881,8 @@ class User extends CommonObject
 		} else {
 			dol_print_error($this->db);
 		}
+
+		return '';
 	}
 
 	/**

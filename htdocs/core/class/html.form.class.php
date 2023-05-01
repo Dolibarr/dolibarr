@@ -802,17 +802,16 @@ class Form
 	/**
 	 * Generate select HTML to choose massaction
 	 *
-	 * @param string $selected Value auto selected when at least one record is selected. Not a preselected value. Use '0' by default.
-	 * @param array $arrayofaction array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
-	 * @param int $alwaysvisible 1=select button always visible
-	 * @param string $name Name for massaction
-	 * @param string $cssclass CSS class used to check for select
-	 * @return    string|void                Select list
+	 * @param string 	$selected 		Value auto selected when at least one record is selected. Not a preselected value. Use '0' by default.
+	 * @param array 	$arrayofaction 	array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
+	 * @param int 		$alwaysvisible 	1=select button always visible
+	 * @param string 	$name 			Name for massaction
+	 * @param string 	$cssclass 		CSS class used to check for select
+	 * @return string|void              Select list
 	 */
 	public function selectMassAction($selected, $arrayofaction, $alwaysvisible = 0, $name = 'massaction', $cssclass = 'checkforselect')
 	{
 		global $conf, $langs, $hookmanager;
-
 
 		$disabled = 0;
 		$ret = '<div class="centpercent center">';

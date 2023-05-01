@@ -127,6 +127,7 @@ function SendErrorNode($number, $text)
 	} else {
 		echo '<Error number="'.$number.'" />';
 	}
+	return '';
 }
 
 

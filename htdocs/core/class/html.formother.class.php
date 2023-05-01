@@ -782,7 +782,7 @@ class FormOther
 	 *
 	 *  @param	string		$color				String with hex (FFFFFF) or comma RGB ('255,255,255')
 	 *  @param	string		$textifnotdefined	Text to show if color not defined
-	 *  @return	string							HTML code for color thumb
+	 *  @return	void
 	 *  @see selectColor()
 	 */
 	public static function showColor($color, $textifnotdefined = '')
@@ -1091,7 +1091,7 @@ class FormOther
 	 *  @param	string		$option			Option
 	 *  @param	string		$morecss		More CSS
 	 *  @param  bool		$addjscombo		Add js combo
-	 *  @return	string
+	 *  @return	void
 	 *  @deprecated
 	 */
 	public function select_year($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp', $addjscombo = false)

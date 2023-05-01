@@ -1591,6 +1591,7 @@ class CommandeFournisseur extends CommonOrder
 						$result = $this->call_trigger('ORDER_SUPPLIER_CREATE', $user);
 						if ($result < 0) {
 							$this->db->rollback();
+
 							return -1;
 						}
 						// End call triggers
@@ -1601,12 +1602,18 @@ class CommandeFournisseur extends CommonOrder
 				} else {
 					$this->error = $this->db->lasterror();
 					$this->db->rollback();
+
 					return -2;
 				}
+			} else {
+				$this->error = 'Failed to get ID of inserted line';
+
+				return -1;
 			}
 		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
+
 			return -1;
 		}
 	}

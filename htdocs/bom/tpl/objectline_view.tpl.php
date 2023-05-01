@@ -34,6 +34,8 @@
  * $type, $text, $description, $line
  */
 
+/** var ObjectLine $line */
+
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
 // Protection to avoid direct call of template
