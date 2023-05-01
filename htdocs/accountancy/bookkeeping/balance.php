@@ -304,7 +304,7 @@ if ($action != 'export_csv') {
 
 		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
-			jQuery("#exportcsvbutton").click(function() {
+			jQuery("#exportcsvbutton").click(function(event) {
 				event.preventDefault();
 				console.log("Set action to export_csv");
 				jQuery("#action").val("export_csv");
