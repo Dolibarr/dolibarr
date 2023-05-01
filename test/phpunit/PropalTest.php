@@ -138,7 +138,7 @@ class PropalTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Propal($this->savdb);
+		$localobject=new Propal($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -164,7 +164,7 @@ class PropalTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Propal($this->savdb);
+		$localobject=new Propal($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -292,7 +292,7 @@ class PropalTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Propal($this->savdb);
+		$localobject=new Propal($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

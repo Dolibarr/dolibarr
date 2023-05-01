@@ -7,6 +7,7 @@
  * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	  <info@inovea-conseil.com>
  * Copyright (C) 2018       Frédéric France         <frederic.francenetlogic.fr>
+ * Copyright (C) 2023      Joachim Kueter		  <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -341,7 +342,18 @@ class PaiementFourn extends Paiement
 										}
 									}
 								} else {
-									dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing.");
+									// hook to have an option to automatically close a closable invoice with less payment than the total amount (e.g. agreed cash discount terms)
+									global $hookmanager;
+									$hookmanager->initHooks(array('payment_supplierdao'));
+									$parameters = array('facid' => $facid, 'invoice' => $invoice, 'remaintopay' => $remaintopay);
+									$action = 'CLOSEPAIDSUPPLIERINVOICE';
+									$reshook = $hookmanager->executeHooks('createPayment', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+									if ($reshook < 0) {
+										$this->error = $hookmanager->error;
+										$error++;
+									} elseif ($reshook == 0) {
+										dol_syslog("Remain to pay for invoice " . $facid . " not null. We do nothing more.");
+									}
 								}
 							}
 
@@ -350,6 +362,7 @@ class PaiementFourn extends Paiement
 								$newlang = '';
 								$outputlangs = $langs;
 								if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+									$invoice->fetch_thirdparty();
 									$newlang = $invoice->thirdparty->default_lang;
 								}
 								if (!empty($newlang)) {
@@ -568,10 +581,10 @@ class PaiementFourn extends Paiement
 	}
 
 	/**
-	 *	Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *  Return the label of the status
 	 *
-	 *	@param      int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *	@return     string				Libelle
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -580,11 +593,11 @@ class PaiementFourn extends Paiement
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *	@param      int		$status     Statut
-	 *	@param      int		$mode      0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *	@return     string      		Libelle du statut
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{

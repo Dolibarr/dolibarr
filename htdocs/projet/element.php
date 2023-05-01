@@ -54,10 +54,10 @@ if (isModEnabled('commande')) {
 if (isModEnabled('supplier_proposal')) {
 	require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 }
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")) {
+if (isModEnabled("supplier_invoice")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 }
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
+if (isModEnabled("supplier_order")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 }
 if (isModEnabled('contrat')) {
@@ -341,7 +341,7 @@ print '<table class="border tableforfield centpercent">';
 
 // Description
 print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-print nl2br($object->description);
+print dol_htmlentitiesbr($object->description);
 print '</td></tr>';
 
 // Categories
@@ -412,7 +412,7 @@ $listofreferent = array(
 	'lang'=>'bills',
 	'buttonnew'=>'CreateBill',
 	'testnew'=>$user->hasRight('facture', 'creer'),
-	'test'=>!empty($conf->facture->enabled) && $user->hasRight('facture', 'lire')),
+	'test'=>isModEnabled('facture') && $user->hasRight('facture', 'lire')),
 'invoice_predefined'=>array(
 	'name'=>"PredefinedInvoices",
 	'title'=>"ListPredefinedInvoicesAssociatedProject",
@@ -423,7 +423,7 @@ $listofreferent = array(
 	'lang'=>'bills',
 	'buttonnew'=>'CreateBill',
 	'testnew'=>$user->hasRight('facture', 'creer'),
-	'test'=>!empty($conf->facture->enabled) && $user->hasRight('facture', 'lire')),
+	'test'=>isModEnabled('facture') && $user->hasRight('facture', 'lire')),
 'proposal_supplier'=>array(
 	'name'=>"SuppliersProposals",
 	'title'=>"ListSupplierProposalsAssociatedProject",
@@ -581,7 +581,7 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&action=createtime&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'buttonnew'=>'AddTimeSpent',
 	'testnew'=>$user->hasRight('project', 'creer'),
-	'test'=>!empty($conf->project->enabled) && $user->hasRight('projet', 'lire') && !empty($conf->global->PROJECT_HIDE_TASKS)),
+	'test'=>!empty($conf->project->enabled) && $user->hasRight('projet', 'lire') && empty($conf->global->PROJECT_HIDE_TASKS)),
 'stock_mouvement'=>array(
 	'name'=>"MouvementStockAssociated",
 	'title'=>"ListMouvementStockProject",
@@ -616,7 +616,7 @@ $listofreferent = array(
 	'lang'=>'banks',
 	'buttonnew'=>'AddVariousPayment',
 	'testnew'=>$user->hasRight('banque', 'modifier'),
-	'test'=>!empty($conf->banque->enabled) && $user->hasRight('banque', 'lire') && !empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)),
+	'test'=>isModEnabled("banque") && $user->hasRight('banque', 'lire') && !empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)),
 /* No need for this, available on dedicated tab "Agenda/Events"
 'agenda'=>array(
 	'name'=>"Agenda",
@@ -629,7 +629,7 @@ $listofreferent = array(
 	'lang'=>'agenda',
 	'buttonnew'=>'AddEvent',
 	'testnew'=>$user->rights->agenda->myactions->create,
-	'test'=>$conf->agenda->enabled && $user->rights->agenda->myactions->read),
+	'test'=> isModEnabled('agenda') && $user->rights->agenda->myactions->read),
 */
 );
 
@@ -1259,6 +1259,10 @@ foreach ($listofreferent as $key => $value) {
 					// Show customer ref
 					if (!empty($element->ref_customer)) {
 						print ' - '.$element->ref_customer;
+					}
+					// Compatibility propale
+					if (empty($element->ref_customer) && !empty($element->ref_client)) {
+						print ' - '.$element->ref_client;
 					}
 				}
 				print "</td>\n";

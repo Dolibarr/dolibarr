@@ -231,7 +231,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
@@ -313,7 +313,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
@@ -377,7 +377,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 foreach ($search as $key => $val) {
 	if (is_array($search[$key]) && count($search[$key])) {
@@ -585,20 +585,20 @@ while ($i < $imaxinloop) {
 		// Output Kanban
 		$object->date_eval = $obj->date_eval;
 
+		// TODO Use a cache on job
 		$job = new job($db);
 		$job->fetch($obj->fk_job);
-		$object->fk_job = $job->getNomUrl();
 
+		// TODO Use a cache on user
 		$userstatic = new User($db);
 		$userstatic->fetch($obj->fk_user);
-		$object->fk_user = $userstatic->getNomUrl(1);
 
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($object->id, $arrayofselected)) {
 				$selected = 1;
 			}
-			print $object->getKanbanView('');
+			print $object->getKanbanView('', array('user'=>$userstatic->getNomUrl(1), 'job'=>$job->getNomUrl(1), 'selected' => in_array($object->id, $arrayofselected)));
 		}
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';

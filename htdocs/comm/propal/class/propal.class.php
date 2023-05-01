@@ -122,6 +122,7 @@ class Propal extends CommonObject
 	/**
 	 * Status of the quote
 	 * @var int
+	 * @deprecated Try to use $status now
 	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED
 	 */
 	public $statut;
@@ -326,7 +327,7 @@ class Propal extends CommonObject
 		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'LocalTax1', 'enabled'=>1, 'visible'=>-1, 'position'=>135, 'isameasure'=>1),
 		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'LocalTax2', 'enabled'=>1, 'visible'=>-1, 'position'=>140, 'isameasure'=>1),
 		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'TotalTTC', 'enabled'=>1, 'visible'=>-1, 'position'=>145, 'isameasure'=>1),
-		'fk_account' =>array('type'=>'integer', 'label'=>'BankAccount', 'enabled'=>'$conf->banque->enabled', 'visible'=>-1, 'position'=>150),
+		'fk_account' =>array('type'=>'integer', 'label'=>'BankAccount', 'enabled'=>'isModEnabled("banque")', 'visible'=>-1, 'position'=>150),
 		'fk_currency' =>array('type'=>'varchar(3)', 'label'=>'Currency', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
 		'deposit_percent' =>array('type'=>'varchar(63)', 'label'=>'DepositPercent', 'enabled'=>1, 'visible'=>-1, 'position'=>161),
@@ -1360,9 +1361,10 @@ class Propal extends CommonObject
 	 *		@param		int		$socid			Id of thirdparty
 	 *		@param		int		$forceentity	Entity id to force
 	 *		@param		bool	$update_prices	[=false] Update prices if true
+	 *		@param		bool	$update_desc	[=false] Update description if true
 	 * 	 	@return		int						New id of clone
 	 */
-	public function createFromClone(User $user, $socid = 0, $forceentity = null, $update_prices = false)
+	public function createFromClone(User $user, $socid = 0, $forceentity = null, $update_prices = false, $update_desc = false)
 	{
 		global $conf, $hookmanager, $mysoc;
 
@@ -1413,9 +1415,9 @@ class Propal extends CommonObject
 		}
 
 		// update prices
-		if ($update_prices === true) {
+		if ($update_prices === true || $update_desc === true) {
 			if ($objsoc->id > 0 && !empty($object->lines)) {
-				if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+				if ($update_prices === true && !empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 					// If price per customer
 					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 				}
@@ -1425,36 +1427,41 @@ class Propal extends CommonObject
 						$prod = new Product($this->db);
 						$res = $prod->fetch($line->fk_product);
 						if ($res > 0) {
-							$pu_ht = $prod->price;
-							$tva_tx = get_default_tva($mysoc, $objsoc, $prod->id);
-							$remise_percent = $objsoc->remise_percent;
+							if ($update_prices === true) {
+								$pu_ht = $prod->price;
+								$tva_tx = get_default_tva($mysoc, $objsoc, $prod->id);
+								$remise_percent = $objsoc->remise_percent;
 
-							if (!empty($conf->global->PRODUIT_MULTIPRICES) && $objsoc->price_level > 0) {
-								$pu_ht = $prod->multiprices[$objsoc->price_level];
-								if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {  // using this option is a bug. kept for backward compatibility
-									if (isset($prod->multiprices_tva_tx[$objsoc->price_level])) {
-										$tva_tx = $prod->multiprices_tva_tx[$objsoc->price_level];
+								if (!empty($conf->global->PRODUIT_MULTIPRICES) && $objsoc->price_level > 0) {
+									$pu_ht = $prod->multiprices[$objsoc->price_level];
+									if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {  // using this option is a bug. kept for backward compatibility
+										if (isset($prod->multiprices_tva_tx[$objsoc->price_level])) {
+											$tva_tx = $prod->multiprices_tva_tx[$objsoc->price_level];
+										}
 									}
-								}
-							} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
-								$prodcustprice = new Productcustomerprice($this->db);
-								$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $objsoc->id);
-								$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
-								if ($result) {
-									// If there is some prices specific to the customer
-									if (count($prodcustprice->lines) > 0) {
-										$pu_ht = price($prodcustprice->lines[0]->price);
-										$tva_tx = ($prodcustprice->lines[0]->default_vat_code ? $prodcustprice->lines[0]->tva_tx.' ('.$prodcustprice->lines[0]->default_vat_code.' )' : $prodcustprice->lines[0]->tva_tx);
-										if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
-											$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+								} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+									$prodcustprice = new Productcustomerprice($this->db);
+									$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $objsoc->id);
+									$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
+									if ($result) {
+										// If there is some prices specific to the customer
+										if (count($prodcustprice->lines) > 0) {
+											$pu_ht = price($prodcustprice->lines[0]->price);
+											$tva_tx = ($prodcustprice->lines[0]->default_vat_code ? $prodcustprice->lines[0]->tva_tx.' ('.$prodcustprice->lines[0]->default_vat_code.' )' : $prodcustprice->lines[0]->tva_tx);
+											if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
+												$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+											}
 										}
 									}
 								}
-							}
 
-							$line->subprice = $pu_ht;
-							$line->tva_tx = $tva_tx;
-							$line->remise_percent = $remise_percent;
+								$line->subprice = $pu_ht;
+								$line->tva_tx = $tva_tx;
+								$line->remise_percent = $remise_percent;
+							}
+							if ($update_desc === true) {
+								$line->desc = $prod->description;
+							}
 						}
 					}
 				}
@@ -1600,7 +1607,8 @@ class Propal extends CommonObject
 
 				$this->ref                  = $obj->ref;
 				$this->ref_client           = $obj->ref_client;
-				$this->ref_ext           = $obj->ref_ext;
+				$this->ref_customer         = $obj->ref_client;
+				$this->ref_ext              = $obj->ref_ext;
 
 				$this->remise               = $obj->remise;				// TODO deprecated
 				$this->remise_percent       = $obj->remise_percent;		// TODO deprecated
@@ -3708,6 +3716,7 @@ class Propal extends CommonObject
 		global $conf, $langs, $user;
 
 		$datas = [];
+		$nofetch = !empty($params['nofetch']);
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			return ['optimize' => $langs->trans("Proposal")];
@@ -3720,8 +3729,24 @@ class Propal extends CommonObject
 			if (!empty($this->ref)) {
 				$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 			}
+			if (!$nofetch) {
+				$langs->load('companies');
+				if (empty($this->thirdparty)) {
+					$this->fetch_thirdparty();
+				}
+				$datas['customer'] = '<br><b>'.$langs->trans('Customer').':</b> '.$this->thirdparty->getNomUrl(1, '', 0, 1);
+			}
 			if (!empty($this->ref_client)) {
 				$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_client;
+			}
+			if (!$nofetch) {
+				$langs->load('project');
+				if (empty($this->project)) {
+					$res = $this->fetch_project();
+					if ($res > 0) {
+						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
+					}
+				}
 			}
 			if (!empty($this->total_ht)) {
 				$datas['amountht'] = '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
@@ -3767,15 +3792,17 @@ class Propal extends CommonObject
 			'id' => $this->id,
 			'objecttype' => $this->element,
 			'option' => $option,
+			'nofetch' => 1,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = '';
 		if ($user->rights->propal->lire) {
@@ -3807,7 +3834,7 @@ class Propal extends CommonObject
 				$label = $langs->trans("Proposal");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
@@ -3973,7 +4000,6 @@ class Propal extends CommonObject
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
-		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';

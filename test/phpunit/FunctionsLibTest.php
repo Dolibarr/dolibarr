@@ -80,6 +80,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	protected $savuser;
 	protected $savlangs;
 	protected $savdb;
+	protected $savmysoc;
 
 	/**
 	 * Constructor
@@ -92,11 +93,12 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		parent::__construct();
 
 		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$this->savconf=$conf;
 		$this->savuser=$user;
 		$this->savlangs=$langs;
 		$this->savdb=$db;
+		$this->savmysoc=$mysoc;
 
 		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
 		//print " - db ".$db->db;
@@ -142,17 +144,18 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-	 * Init phpunit tests
+	 * Init phpunit tests. Restore variables before each test.
 	 *
 	 * @return	void
 	 */
 	protected function setUp(): void
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
+		$mysoc=$this->savmysoc;
 
 		print __METHOD__."\n";
 	}
@@ -202,18 +205,20 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolClone()
 	{
-		$newproduct1 = new Product($this->savdb);
+		global $db;
 
-		print __METHOD__." this->savdb has type ".(is_resource($this->savdb->db) ? get_resource_type($this->savdb->db) : (is_object($this->savdb->db) ? 'object' : 'unknown'))."\n";
+		$newproduct1 = new Product($db);
+
+		print __METHOD__." this->savdb has type ".(is_resource($db->db) ? get_resource_type($db->db) : (is_object($db->db) ? 'object' : 'unknown'))."\n";
 		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
-		$this->assertEquals($this->savdb->connected, 1, 'Savdb is connected');
+		$this->assertEquals($db->connected, 1, 'Savdb is connected');
 		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
 
 		$newproductcloned1 = dol_clone($newproduct1);
 
-		print __METHOD__." this->savdb has type ".(is_resource($this->savdb->db) ? get_resource_type($this->savdb->db) : (is_object($this->savdb->db) ? 'object' : 'unknown'))."\n";
+		print __METHOD__." this->savdb has type ".(is_resource($db->db) ? get_resource_type($db->db) : (is_object($db->db) ? 'object' : 'unknown'))."\n";
 		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
-		$this->assertEquals($this->savdb->connected, 1, 'Savdb is connected');
+		$this->assertEquals($db->connected, 1, 'Savdb is connected');
 		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
 
 		$newproductcloned2 = dol_clone($newproduct1, 2);
@@ -585,6 +590,9 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$input='This is a text with accent &eacute;';
 		$after=dol_textishtml($input);
 		$this->assertTrue($after, 'Test with a &eacute;');
+		$input='<i class="abc">xxx</i>';
+		$after=dol_textishtml($input);
+		$this->assertTrue($after, 'Test with i tag and class;');
 
 		// False
 		$input='xxx < br>';
@@ -666,6 +674,24 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		return true;
 	}
 
+
+	/**
+	 * testDolStringNoSpecial
+	 *
+	 * @return boolean
+	 */
+	public function testDolStringNoSpecial()
+	{
+		$text="A string with space and special char like ' or ° and more...\n";
+		$after=dol_string_nospecial($text, '_', '', '', 0);
+		$this->assertEquals("A_string_with_space_and_special_char_like___or___and_more...\n", $after, "testDolStringNoSpecial 1");
+
+		$text="A string with space and special char like ' or ° and more...\n";
+		$after=dol_string_nospecial($text, '_', '', '', 1);
+		$this->assertEquals("A string with space and special char like _ or _ and more...\n", $after, "testDolStringNoSpecial 2");
+
+		return true;
+	}
 
 	/**
 	 * testDolStringNohtmltag
@@ -1135,10 +1161,10 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$verifcond=verifCond('1==2');
 		$this->assertFalse($verifcond, 'Test a false comparison');
 
-		$verifcond=verifCond('$conf->facture->enabled');
+		$verifcond=verifCond('isModEnabled("facture")');
 		$this->assertTrue($verifcond, 'Test that the conf property of a module reports true when enabled');
 
-		$verifcond=verifCond('$conf->moduledummy->enabled');
+		$verifcond=verifCond('isModEnabled("moduledummy")');
 		$this->assertFalse($verifcond, 'Test that the conf property of a module reports false when disabled');
 
 		$verifcond=verifCond(0);
@@ -1233,7 +1259,6 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		// We do same tests but with option SERVICE_ARE_ECOMMERCE_200238EC on.
 		$conf->global->SERVICE_ARE_ECOMMERCE_200238EC = 1;
 
-
 		// Test RULE 1 (FR-US)
 		$vat=get_default_tva($companyfr, $companyus, 0);
 		$this->assertEquals(0, $vat, 'RULE 1 ECOMMERCE_200238EC');
@@ -1256,7 +1281,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-	 * testGetDefaultTva
+	 * testGetDefaultLocalTax
 	 *
 	 * @return	void
 	 */
@@ -1344,6 +1369,27 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 
 	/**
+	 * testGetLocalTaxByThird
+	 *
+	 * @return	void
+	 */
+	public function testGetLocalTaxByThird()
+	{
+		global $mysoc;
+
+		$mysoc->country_code = 'ES';
+
+		$result = get_localtax_by_third(1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('5.2', $result);
+
+		$result = get_localtax_by_third(2);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('-19:-15:-9', $result);
+	}
+
+
+	/**
 	 * testDolExplodeIntoArray
 	 *
 	 * @return	void
@@ -1355,6 +1401,12 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 		print __METHOD__." tmp=".json_encode($tmp)."\n";
 		$this->assertEquals('{"AA":"B\/B","CC":"","EE":"FF","HH":"GG;"}', json_encode($tmp));
+
+		$stringtoexplode="AA=B/B;CC=\n\rEE=FF\nHH=GG;;;\nII=JJ\n";
+		$tmp=dolExplodeIntoArray($stringtoexplode, "(\r\n|\n|\r|;)", '=');
+
+		print __METHOD__." tmp=".json_encode($tmp)."\n";
+		$this->assertEquals('{"AA":"B\/B","CC":"","EE":"FF","HH":"GG","II":"JJ"}', json_encode($tmp));
 	}
 
 	/**

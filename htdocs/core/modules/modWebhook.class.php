@@ -130,7 +130,7 @@ class modWebhook extends DolibarrModules
 		// Dependencies
 		// A condition to hide module
 		$this->hidden = false;
-		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
+		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
 		$this->depends = array();
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
@@ -260,17 +260,17 @@ class modWebhook extends DolibarrModules
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
 		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read objects of Webhook'; // Permission label
+		$this->rights[$r][1] = 'Read Webhooks'; // Permission label
 		$this->rights[$r][4] = 'webhook_target';
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->webhook->webhook_target->read)
 		$r++;
 		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/Update objects of Webhook'; // Permission label
+		$this->rights[$r][1] = 'Create/Update Webhooks'; // Permission label
 		$this->rights[$r][4] = 'webhook_target';
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->webhook->webhook_target->write)
 		$r++;
 		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Delete objects of Webhook'; // Permission label
+		$this->rights[$r][1] = 'Delete Webhooks'; // Permission label
 		$this->rights[$r][4] = 'webhook_target';
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->webhook->webhook_target->delete)
 		$r++;

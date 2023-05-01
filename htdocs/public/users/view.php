@@ -262,19 +262,14 @@ if ($showbarcode) {
 	$qrcodecontent = $output = $v->buildVCardString($object, $company, $langs);
 
 	print '<br>';
-	print '<div class="floatleft inline-block valignmiddle divphotoref">';
-	print '<img src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode&entity='.((int) $conf->entity).'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode($qrcodecontent).'">';
+	print '<div class="floatleft inline-block valignmiddle paddingleft paddingright">';
+	print '<img style="max-width: 100%" src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode&entity='.((int) $conf->entity).'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode($qrcodecontent).'">';
 	print '</div>';
 	print '<br>';
 }
 
 
-// Me
-// Show photo
-if ($urllogo) {
-	print '<img class="userphotopublicvcard" id="dolpaymentlogo" src="'.$urllogofull.'">';
-}
-
+// Me section
 
 $usersection = '';
 
@@ -325,6 +320,11 @@ if (!empty($object->socialnetworks) && is_array($object->socialnetworks) && coun
 }
 
 if ($usersection) {
+	// Show photo
+	if ($urllogo) {
+		print '<img class="userphotopublicvcard" id="dolpaymentlogo" src="'.$urllogofull.'">';
+	}
+
 	print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
 
 	// Output payment summary form
@@ -340,6 +340,11 @@ if ($usersection) {
 	print '</td></tr>'."\n";
 
 	print '</table>'."\n";
+} else {
+	// Show photo
+	if ($urllogo) {
+		print '<br><center><img class="userphotopublicvcard" style="position: unset !important;" id="dolpaymentlogo" src="'.$urllogofull.'"></center>';
+	}
 }
 
 

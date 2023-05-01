@@ -30,11 +30,11 @@ require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/iUs
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Resources.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Defaults.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/RestException.php';
-use \Luracast\Restler\iAuthenticate;
-use \Luracast\Restler\iUseAuthentication;
-use \Luracast\Restler\Resources;
-use \Luracast\Restler\Defaults;
-use \Luracast\Restler\RestException;
+use Luracast\Restler\iAuthenticate;
+use Luracast\Restler\iUseAuthentication;
+use Luracast\Restler\Resources;
+use Luracast\Restler\Defaults;
+use Luracast\Restler\RestException;
 
 /**
  * Dolibarr API access class
@@ -105,6 +105,9 @@ class DolibarrApiAccess implements iAuthenticate
 		}
 		if (isset($_SERVER['HTTP_DOLAPIKEY'])) {         // Param DOLAPIKEY in header can be read with HTTP_DOLAPIKEY
 			$api_key = $_SERVER['HTTP_DOLAPIKEY']; // With header method (recommanded)
+		}
+		if (preg_match('/^dolcrypt:/i', $api_key)) {
+			throw new RestException(503, 'Bad value for the API key. An API key should not start with dolcrypt:');
 		}
 
 		if ($api_key) {

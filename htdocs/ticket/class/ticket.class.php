@@ -234,6 +234,11 @@ class Ticket extends CommonObject
 	public $email_date;
 
 	/**
+	 * @var string 	IP address
+	 */
+	public $ip;
+
+	/**
 	 * @var Ticket $oldcopy  State of this ticket as it was stored before an update operation (for triggers)
 	 */
 	public $oldcopy;
@@ -630,6 +635,7 @@ class Ticket extends CommonObject
 		$sql .= " t.date_last_msg_sent,";
 		$sql .= " t.date_close,";
 		$sql .= " t.tms,";
+		$sql .= " t.ip,";
 		$sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
@@ -669,6 +675,7 @@ class Ticket extends CommonObject
 				$this->email_date = $this->db->jdate($obj->email_date);
 				$this->subject = $obj->subject;
 				$this->message = $obj->message;
+				$this->ip = $obj->ip;
 
 				$this->status = $obj->status;
 				$this->fk_statut = $this->status; // For backward compatibility
@@ -678,17 +685,14 @@ class Ticket extends CommonObject
 				$this->timing = $obj->timing;
 
 				$this->type_code = $obj->type_code;
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 				$label_type = ($langs->trans("TicketTypeShort".$obj->type_code) != ("TicketTypeShort".$obj->type_code) ? $langs->trans("TicketTypeShort".$obj->type_code) : ($obj->type_label != '-' ? $obj->type_label : ''));
 				$this->type_label = $label_type;
 
 				$this->category_code = $obj->category_code;
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 				$label_category = ($langs->trans("TicketCategoryShort".$obj->category_code) != ("TicketCategoryShort".$obj->category_code) ? $langs->trans("TicketCategoryShort".$obj->category_code) : ($obj->category_label != '-' ? $obj->category_label : ''));
 				$this->category_label = $label_category;
 
 				$this->severity_code = $obj->severity_code;
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 				$label_severity = ($langs->trans("TicketSeverityShort".$obj->severity_code) != ("TicketSeverityShort".$obj->severity_code) ? $langs->trans("TicketSeverityShort".$obj->severity_code) : ($obj->severity_label != '-' ? $obj->severity_label : ''));
 				$this->severity_label = $label_severity;
 
@@ -848,17 +852,14 @@ class Ticket extends CommonObject
 					$line->progress = $obj->progress;
 					$line->timing = $obj->timing;
 
-					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 					$label_type = ($langs->trans("TicketTypeShort".$obj->type_code) != ("TicketTypeShort".$obj->type_code) ? $langs->trans("TicketTypeShort".$obj->type_code) : ($obj->type_label != '-' ? $obj->type_label : ''));
 					$line->type_label = $label_type;
 
 					$this->category_code = $obj->category_code;
-					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 					$label_category = ($langs->trans("TicketCategoryShort".$obj->category_code) != ("TicketCategoryShort".$obj->category_code) ? $langs->trans("TicketCategoryShort".$obj->category_code) : ($obj->category_label != '-' ? $obj->category_label : ''));
 					$line->category_label = $label_category;
 
 					$this->severity_code = $obj->severity_code;
-					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 					$label_severity = ($langs->trans("TicketSeverityShort".$obj->severity_code) != ("TicketSeverityShort".$obj->severity_code) ? $langs->trans("TicketSeverityShort".$obj->severity_code) : ($obj->severity_label != '-' ? $obj->severity_label : ''));
 					$line->severity_label = $label_severity;
 
@@ -1247,7 +1248,6 @@ class Ticket extends CommonObject
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 				$label = ($langs->trans("TicketTypeShort".$obj->code) != ("TicketTypeShort".$obj->code) ? $langs->trans("TicketTypeShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_types_tickets[$obj->rowid]['code'] = $obj->code;
 				$this->cache_types_tickets[$obj->rowid]['label'] = $label;
@@ -1336,7 +1336,6 @@ class Ticket extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->cache_severity_tickets[$obj->rowid]['code'] = $obj->code;
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 				$label = ($langs->trans("TicketSeverityShort".$obj->code) != ("TicketSeverityShort".$obj->code) ? $langs->trans("TicketSeverityShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_severity_tickets[$obj->rowid]['label'] = $label;
 				$this->cache_severity_tickets[$obj->rowid]['use_default'] = $obj->use_default;
@@ -1376,7 +1375,7 @@ class Ticket extends CommonObject
 	public function LibStatut($status, $mode = 0, $notooltip = 0, $progress = 0)
 	{
 		// phpcs:enable
-		global $langs;
+		global $langs, $hookmanager;
 
 		$labelStatus = $this->statuts[$status];
 		$labelStatusShort = $this->statuts_short[$status];
@@ -1402,6 +1401,18 @@ class Ticket extends CommonObject
 			$labelStatusShort = 'Unknown';
 			$statusType = 'status0';
 			$mode = 0;
+		}
+
+		$parameters = array(
+			'status'          => $status,
+			'mode'            => $mode,
+		);
+
+		// Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this);
+
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
 		}
 
 		$params = array();
@@ -1488,10 +1499,11 @@ class Ticket extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = " data-params='".json_encode($params)."'";
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/ticket/card.php?id='.$this->id;
 
@@ -1512,8 +1524,8 @@ class Ticket extends CommonObject
 				$label = $langs->trans("ShowTicket");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -1921,20 +1933,18 @@ class Ticket extends CommonObject
 	{
 		$contacts = array();
 
-		// Generation requete recherche
+		// Forge the search SQL
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople";
 		$sql .= " WHERE entity IN (".getEntity('contact').")";
 		if (!empty($socid)) {
-			$sql .= " AND fk_soc='".$this->db->escape($socid)."'";
+			$sql .= " AND fk_soc = ".((int) $socid);
 		}
-
 		if (!empty($email)) {
 			$sql .= " AND ";
-
 			if (!$case) {
-				$sql .= "email LIKE '".$this->db->escape($email)."'";
+				$sql .= "email = '".$this->db->escape($email)."'";
 			} else {
-				$sql .= "email LIKE BINARY '".$this->db->escape($email)."'";
+				$sql .= "email LIKE BINARY '".$this->db->escape($this->db->escapeforlike($email))."'";
 			}
 		}
 

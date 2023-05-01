@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       charlene Benke          <charlie@patas-monkey.com>
  * Copyright (C) 2018-2021       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,6 +38,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 
 
 /**
@@ -45,6 +46,8 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
  */
 class User extends CommonObject
 {
+	use CommonPeople;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -256,6 +259,12 @@ class User extends CommonObject
 	 * @var string clicktodial poste
 	 */
 	public $clicktodial_poste;
+
+	/**
+	 * @var string 	0 by default, 1 if click to dial data were already loaded for this user
+	 */
+	public $clicktodial_loaded;
+
 
 	public $datelastlogin;
 	public $datepreviouslogin;
@@ -715,7 +724,8 @@ class User extends CommonObject
 			'skill@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
 			'job@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
 			'position@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
-			'facturerec' => 'facture'
+			'facturerec' => 'facture',
+			'margins' => 'margin',
 		);
 
 		if (!empty($moduletomoduletouse[$module])) {
@@ -834,6 +844,12 @@ class User extends CommonObject
 
 		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms, $entity, $notrigger for user id=".$this->id);
 
+		if (empty($this->id)) {
+			$error++;
+			$this->error = 'Try to call addrights on an object user with an empty id';
+			return -1;
+		}
+
 		$error = 0;
 		$whereforadd = '';
 
@@ -887,6 +903,7 @@ class User extends CommonObject
 		}
 
 		// Add automatically other permission using the criteria whereforadd
+		// $whereforadd can be a SQL filter or the string 'allmodules'
 		if (!empty($whereforadd)) {
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
@@ -896,31 +913,37 @@ class User extends CommonObject
 				$sql .= " AND (".$whereforadd.")";	// Note: parenthesis are important because whereforadd can contains OR. Also note that $whereforadd is already sanitized
 			}
 
-			$result = $this->db->query($sql);
-			if ($result) {
-				$num = $this->db->num_rows($result);
-				$i = 0;
-				while ($i < $num) {
-					$obj = $this->db->fetch_object($result);
-
-					if ($obj) {
-						$nid = $obj->id;
-
-						$sql = "DELETE FROM ".$this->db->prefix()."user_rights WHERE fk_user = ".((int) $this->id)." AND fk_id = ".((int) $nid)." AND entity = ".((int) $entity);
-						if (!$this->db->query($sql)) {
-							$error++;
-						}
-						$sql = "INSERT INTO ".$this->db->prefix()."user_rights (entity, fk_user, fk_id) VALUES (".((int) $entity).", ".((int) $this->id).", ".((int) $nid).")";
-						if (!$this->db->query($sql)) {
-							$error++;
-						}
-					}
-
-					$i++;
-				}
-			} else {
+			$sqldelete = "DELETE FROM ".$this->db->prefix()."user_rights";
+			$sqldelete .= " WHERE fk_user = ".((int) $this->id)." AND fk_id IN (";
+			$sqldelete .= $sql;
+			$sqldelete .= ") AND entity = ".((int) $entity);
+			if (!$this->db->query($sqldelete)) {
 				$error++;
-				dol_print_error($this->db);
+			}
+
+			if (!$error) {
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$num = $this->db->num_rows($resql);
+					$i = 0;
+					while ($i < $num) {
+						$obj = $this->db->fetch_object($resql);
+
+						if ($obj) {
+							$nid = $obj->id;
+
+							$sql = "INSERT INTO ".$this->db->prefix()."user_rights (entity, fk_user, fk_id) VALUES (".((int) $entity).", ".((int) $this->id).", ".((int) $nid).")";
+							if (!$this->db->query($sql)) {
+								$error++;
+							}
+						}
+
+						$i++;
+					}
+				} else {
+					$error++;
+					dol_print_error($this->db);
+				}
 			}
 		}
 
@@ -1033,24 +1056,14 @@ class User extends CommonObject
 				$sql .= " AND id NOT IN (358)"; // user export
 			}
 
-			$result = $this->db->query($sql);
-			if ($result) {
-				$num = $this->db->num_rows($result);
-				$i = 0;
-				while ($i < $num) {
-					$obj = $this->db->fetch_object($result);
-					$nid = $obj->id;
+			$sqldelete = "DELETE FROM ".$this->db->prefix()."user_rights";
+			$sqldelete .= " WHERE fk_user = ".((int) $this->id)." AND fk_id IN (";
+			$sqldelete .= $sql;
+			$sqldelete .= ")";
+			$sqldelete .= " AND entity = ".((int) $entity);
 
-					$sql = "DELETE FROM ".$this->db->prefix()."user_rights";
-					$sql .= " WHERE fk_user = ".((int) $this->id)." AND fk_id = ".((int) $nid);
-					$sql .= " AND entity = ".((int) $entity);
-					if (!$this->db->query($sql)) {
-						$error++;
-					}
-
-					$i++;
-				}
-			} else {
+			$resql = $this->db->query($sqldelete);
+			if (!$resql) {
 				$error++;
 				dol_print_error($this->db);
 			}
@@ -2030,7 +2043,7 @@ class User extends CommonObject
 				if ($this->pass != $this->pass_indatabase && !dol_verifyHash($this->pass, $this->pass_indatabase_crypted)) {
 					// If a new value for password is set and different than the one crypted into database
 					$result = $this->setPassword($user, $this->pass, 0, $notrigger, $nosyncmemberpass, 0, 1);
-					if ($result < 0) {
+					if (is_numeric($result) && $result < 0) {
 						return -5;
 					}
 				}
@@ -2322,7 +2335,7 @@ class User extends CommonObject
 
 						if ($result >= 0) {
 							$result = $adh->setPassword($user, $this->pass, (empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1), 1); // Cryptage non gere dans module adherent
-							if ($result < 0) {
+							if (is_numeric($result) && $result < 0) {
 								$this->error = $adh->error;
 								dol_syslog(get_class($this)."::setPassword ".$this->error, LOG_ERR);
 								$error++;
@@ -2443,7 +2456,7 @@ class User extends CommonObject
 			//print $password.'-'.$this->id.'-'.$dolibarr_main_instance_unique_id;
 			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword';
 			$url .= '&username='.urlencode($this->login)."&passworduidhash=".urlencode(dol_hash($password.'-'.$this->id.'-'.$dolibarr_main_instance_unique_id));
-			if (!empty($conf->multicompany->enabled)) {
+			if (isModEnabled('multicompany')) {
 				$url .= '&entity='.(!empty($this->entity) ? $this->entity : 1);
 			}
 
@@ -2797,6 +2810,7 @@ class User extends CommonObject
 		$type = ($this->socid ? $langs->trans("ExternalUser").$company : $langs->trans("InternalUser"));
 		$datas['type'] = '<br><b>'.$langs->trans("Type").':</b> '.$type;
 		$datas['closediv'] = '</div>';
+
 		if ($infologin > 0) {
 			$datas['newlinelogin'] = '<br>';
 			$datas['session'] = '<br><u>'.$langs->trans("Session").'</u>';
@@ -2865,10 +2879,12 @@ class User extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = " data-params='".json_encode($params)."'";
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
+
 		$companylink = '';
 		if (!empty($this->socid)) {	// Add thirdparty for external users
 			$thirdpartystatic = new Societe($this->db);
@@ -2906,8 +2922,10 @@ class User extends CommonObject
 				$label = $langs->trans("ShowUser");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams . ' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
 		$linkstart .= $linkclose.'>';
@@ -2922,7 +2940,7 @@ class User extends CommonObject
 			}
 			// Only picto
 			if ($withpictoimg > 0) {
-				$picto = '<!-- picto user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip ? '' : $dataparams.' class="paddingright '.$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1).'</span>';
+				$picto = '<!-- picto user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.img_object('', 'user', $paddafterimage.' class="paddingright")', 0, 0, $notooltip ? 0 : 1).'</span>';
 			} else {
 				// Picto must be a photo
 				$picto = '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
@@ -3863,6 +3881,8 @@ class User extends CommonObject
 		} else {
 			dol_print_error($this->db);
 		}
+
+		return '';
 	}
 
 	/**

@@ -607,6 +607,7 @@ class Documents extends DolibarrApi
 
 		if ($ref) {
 			$tmpreldir = '';
+			$fetchbyid = false;
 
 			if ($modulepart == 'facture' || $modulepart == 'invoice') {
 				$modulepart = 'facture';
@@ -670,13 +671,22 @@ class Documents extends DolibarrApi
 				$modulepart = 'agenda';
 				require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 				$object = new ActionComm($this->db);
+			} elseif ($modulepart == 'contact' || $modulepart == 'socpeople') {
+				$modulepart = 'contact';
+				require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+				$object = new Contact($this->db);
+				$fetchbyid = true;
 			} else {
 				// TODO Implement additional moduleparts
 				throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 			}
 
 			if (is_object($object)) {
-				$result = $object->fetch('', $ref);
+				if ($fetchbyid) {
+					$result = $object->fetch($ref);
+				} else {
+					$result = $object->fetch('', $ref);
+				}
 
 				if ($result == 0) {
 					throw new RestException(404, "Object with ref '".$ref."' was not found.");

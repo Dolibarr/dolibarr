@@ -69,7 +69,7 @@ class box_validated_projects extends ModeleBoxes
 
 		$this->hidden = empty($user->rights->projet->lire);
 
-		if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 			$this->enabled = 0;
 		}
 	}

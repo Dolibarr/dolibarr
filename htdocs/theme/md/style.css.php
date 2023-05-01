@@ -973,6 +973,9 @@ th .button {
 .centpercent {
 	width: 100%;
 }
+.centpercentimp {
+	width: 100% !important;
+}
 .centpercentwithoutmenu {
 	width: calc(100% - 200px);
 }
@@ -1553,7 +1556,7 @@ select.flat.selectlimit {
 }
 /* using a tdoverflowxxx make the min-width not working */
 .tdnooverflowimp {
-   text-overflow: none;
+   text-overflow: unset;
 }
 .tdoverflow {
 	max-width: 0;
@@ -1968,6 +1971,8 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.hideonsmartphone { display: none; }
 	.hideonsmartphoneimp { display: none !important; }
 
+	.margintoponsmartphone { margin-top: 6px; }
+
 	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth200imp, select.minwidth300 {
 		width: calc(100% - 40px) !important;
 		display: inline-block;
@@ -1988,13 +1993,13 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.smallonsmartphone {
 		font-size: 0.8em;
 	}
-	
+
 	.nopaddingtoponsmartphone {
 		padding-top: 0 !important;
 	}
 	.nopaddingbottomonsmartphone {
 		padding-bottom: 0 !important;
-	}	
+	}
 }
 
 /* Force values for small screen 570 */
@@ -2237,7 +2242,7 @@ td.showDragHandle {
 	if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	} else { ?>
 	position: fixed;
-	top: 50px;
+	top: 75px;
 	<?php } ?>
 	z-index: 90;
 	-webkit-transform: translateZ(0);
@@ -2364,7 +2369,7 @@ div.backgroundsemitransparent {
 	z-index: 91;
 	background: var(--colorbackvmenu1);
 	border-right: 1px solid rgba(0,0,0,0.3);
-	padding-top: 20px;
+	/* padding-top: 20px; */
 	<?php
 	if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	top: 66px ! important;
@@ -3127,6 +3132,7 @@ div.login_block {
 	top: 0;
 	padding-top: 3px;
 	padding-bottom: 3px;
+	border-right: 1px solid rgba(0,0,0,0.2);
 	<?php print $left; ?>: 0;
 <?php if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	position: absolute;
@@ -3428,7 +3434,9 @@ a.vsmenu.addbookmarkpicto {
 }
 div.blockvmenufirst {
 	padding-top: 10px;
-/*	border-top: 1px solid #e0e0e0; */
+	<?php if (getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) { ?>
+	border-top: 1px solid #e0e0e0;
+	<?php } ?>
 }
 div.blockvmenusearch, div.blockvmenubookmarks
 {
@@ -6451,7 +6459,7 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
 	font-weight: normal;
 }
 .select2-container-multi-dolibarr .select2-choices-dolibarr li {
-  float: left;
+  float: <?php echo $left; ?>;
   list-style: none;
 }
 .select2-container-multi-dolibarr .select2-choices-dolibarr {
@@ -7508,6 +7516,29 @@ div.clipboardCPValue.hidewithsize {
 	zoom: 0.20;
 }
 
+/* ============================================================================== */
+/* For drag and drop file feature                                                 */
+/* ============================================================================== */
+
+.cssDragDropArea{
+	position: relative;
+}
+.highlightDragDropArea{
+	border: 2px #000 dashed !important;
+	background-color: #eee !important;
+}
+.highlightDragDropArea * :not(.dragDropAreaMessage *){
+	opacity:0.8;
+	filter: blur(1px) grayscale(90%);
+}
+.dragDropAreaMessage {
+	position: absolute;
+	left:50%;
+	top:50%;
+	transform: translate(-50%, -50%);
+	text-align:center;
+	font-size: 2em;
+}
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */

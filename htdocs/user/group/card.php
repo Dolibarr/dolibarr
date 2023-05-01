@@ -209,6 +209,7 @@ if (empty($reshook)) {
 
 			$object->name = GETPOST("nom", 'alphanohtml');
 			$object->note = dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
+			$object->tms = dol_now();
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');

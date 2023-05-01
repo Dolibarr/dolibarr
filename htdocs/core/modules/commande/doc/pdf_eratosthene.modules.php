@@ -296,18 +296,18 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 
 
-		if ($conf->commande->multidir_output[$conf->entity]) {
+		if (getMultidirOutput($object)) {
 			$object->fetch_thirdparty();
 
 			$deja_regle = 0;
 
 			// Definition of $dir and $file
 			if ($object->specimen) {
-				$dir = $conf->commande->multidir_output[$conf->entity];
+				$dir = getMultidirOutput($object);
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->commande->multidir_output[$object->entity]."/".$objectref;
+				$dir = getMultidirOutput($object)."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 
@@ -927,6 +927,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 */
 	protected function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
 	{
+		return 0;
 	}
 
 	/**
@@ -1447,7 +1448,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null, $titlekey = "PdfOrderTitle")
 	{
 		// phpcs:enable
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs, $hookmanager, $mysoc;
 
 		$ltrdirection = 'L';
 		if ($outputlangs->trans("DIRECTION") == 'rtl') $ltrdirection = 'R';
@@ -1473,8 +1474,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity];
+				if (!empty(getMultidirOutput($mysoc, 'mycompany'))) {
+					$logodir = getMultidirOutput($mysoc, 'mycompany');
 				}
 				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
@@ -1733,7 +1734,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *      @param	int				$hidedetails	Do not show line details
 	 *      @param	int				$hidedesc		Do not show desc
 	 *      @param	int				$hideref		Do not show ref
-	 *      @return	null
+	 *      @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{

@@ -9,6 +9,7 @@
  * Copyright (C) 2015-2016  Abbes Bahfir            <bafbes@gmail.com>
  * Copyright (C) 2018-2022 	Philippe Grand       	<philippe.grand@atoo-net.com>
  * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Benjamin Grembi         <benjamin@oarces.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,6 +63,8 @@ $contratid = (int) GETPOST('contratid', 'int');
 $action		= GETPOST('action', 'alpha');
 $cancel		= GETPOST('cancel', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+
 $mesg = GETPOST('msg', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ?GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
@@ -605,7 +608,7 @@ if (empty($reshook)) {
 		// Extrafields
 		$extrafields->fetch_name_optionals_label($object->table_element_line);
 		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
-		$objectline->array_options = $array_options;
+		$objectline->array_options = array_merge($objectline->array_options, $array_options);
 
 		$result = $objectline->update($user);
 		if ($result < 0) {
@@ -890,6 +893,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="socid" value='.$soc->id.'>';
 		print '<input type="hidden" name="action" value="add">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 		print dol_get_fiche_head('');
 
@@ -1043,6 +1047,7 @@ if ($action == 'create') {
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="create">';		// We go back to create action
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 		print dol_get_fiche_head('');
 
@@ -1271,9 +1276,9 @@ if ($action == 'create') {
 	print '<table class="border tableforfield centpercent">';
 
 	if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
-		// Duration
+		// Duration in time
 		print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
-		print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+		print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).' ('.convertDurationtoHour($object->duration, "s").' '.$langs->trans("h").')</td>';
 		print '</tr>';
 	}
 
@@ -1308,6 +1313,7 @@ if ($action == 'create') {
 		} else {
 			print '<input type="hidden" name="action" value="addline">';
 		}
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 		// Intervention lines
 		$sql = 'SELECT ft.rowid, ft.description, ft.fk_fichinter, ft.duree, ft.rang,';
@@ -1638,7 +1644,7 @@ if ($action == 'create') {
 				}
 
 				// Proposal
-				if ($conf->service->enabled && isModEnabled("propal") && $object->statut > Fichinter::STATUS_DRAFT) {
+				if (isModEnabled("service") && isModEnabled("propal") && $object->statut > Fichinter::STATUS_DRAFT) {
 					$langs->load("propal");
 					if ($object->statut < Fichinter::STATUS_BILLED) {
 						if ($user->rights->propal->creer) {

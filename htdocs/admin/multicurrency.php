@@ -143,6 +143,15 @@ if ($action == 'add_currency') {
 }
 
 
+$TAvailableCurrency = array();
+$sql = "SELECT code_iso, label, unicode, active FROM ".MAIN_DB_PREFIX."c_currencies";
+$resql = $db->query($sql);
+if ($resql) {
+	while ($obj = $db->fetch_object($resql)) {
+		$TAvailableCurrency[$obj->code_iso] = array('code'=>$obj->code_iso, 'active'=>$obj->active);
+	}
+}
+
 $TCurrency = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."multicurrency WHERE entity = ".((int) $conf->entity);
 $resql = $db->query($sql);
@@ -319,10 +328,15 @@ print '</tr>';
 
 print '</form>';
 
+// Main currency
 print '<tr class="oddeven">';
 print '<td>'.$conf->currency;
 print ' ('.$langs->getCurrencySymbol($conf->currency).')';
-print $form->textwithpicto(' ', $langs->trans("BaseCurrency")).'</td>';
+print $form->textwithpicto(' ', $langs->trans("BaseCurrency"));
+if (!empty($TAvailableCurrency[$conf->currency]) && empty($TAvailableCurrency[$conf->currency]['active'])) {
+	print img_warning('Warning: This code has been disabled into Home - Setup - Dictionaries - Currencies');
+}
+print '</td>';
 print '<td class="right">1</td>';
 print '</tr>';
 
@@ -332,7 +346,11 @@ foreach ($TCurrency as &$currency) {
 	}
 
 	print '<tr class="oddeven">';
-	print '<td>'.$currency->code.' - '.$currency->name.'</td>';
+	print '<td>'.$currency->code.' - '.$currency->name;
+	if (!empty($TAvailableCurrency[$currency->code]) && empty($TAvailableCurrency[$currency->code]['active'])) {
+		print img_warning('Warning: The code '.$currency->code.' has been disabled into Home - Setup - Dictionaries - Currencies');
+	}
+	print '</td>';
 	print '<td class="right">';
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';

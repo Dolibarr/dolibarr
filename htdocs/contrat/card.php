@@ -56,6 +56,7 @@ $langs->loadLangs(array("contracts", "orders", "companies", "bills", "products",
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 $socid = GETPOST('socid', 'int');
 $id = GETPOST('id', 'int');
@@ -745,12 +746,22 @@ if (empty($reshook)) {
 
 			$fk_unit = GETPOST('unit', 'alpha');
 
+			// update price_ht with discount
+			// TODO Use object->updateline instead objedtline->update
+
+			$price_ht =  price2num(GETPOST('elprice'), 'MU');
+			$remise_percent = price2num(GETPOST('elremise_percent'), 2);
+			if ($remise_percent > 0) {
+				$remise = round(($price_ht * $remise_percent / 100), 2);
+				$price_ht = ($price_ht - $remise);
+			}
+
 			$objectline->fk_product = GETPOST('idprod', 'int');
 			$objectline->description = GETPOST('product_desc', 'restricthtml');
-			$objectline->price_ht = price2num(GETPOST('elprice'), 'MU');
+			$objectline->price_ht = $price_ht;
 			$objectline->subprice = price2num(GETPOST('elprice'), 'MU');
 			$objectline->qty = price2num(GETPOST('elqty'), 'MS');
-			$objectline->remise_percent = price2num(GETPOST('elremise_percent'), 2);
+			$objectline->remise_percent = $remise_percent;
 			$objectline->tva_tx = ($txtva ? $txtva : 0); // Field may be disabled, so we use vat rate 0
 			$objectline->vat_src_code = $vat_src_code;
 			$objectline->localtax1_tx = is_numeric($localtax1_tx) ? $localtax1_tx : 0;
@@ -1135,10 +1146,10 @@ if ($action == 'create') {
 
 	print '<form name="form_contract" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input type="hidden" name="remise_percent" value="0">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print dol_get_fiche_head();
 
@@ -1321,8 +1332,9 @@ if ($action == 'create') {
 			);
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ActivateAllOnContract"), $langs->trans("ConfirmActivateAllOnContract"), "confirm_activate", $formquestion, 'yes', 1, 280);
 		} elseif ($action == 'clone') {
+			$filter = '(s.client:IN:1,2,3)';
 			// Clone confirmation
-			$formquestion = array(array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)')));
+			$formquestion = array(array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', $filter)));
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 		}
 
@@ -1350,6 +1362,7 @@ if ($action == 'create') {
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setremise">';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		}
 
 		// Contract card
@@ -1490,6 +1503,7 @@ if ($action == 'create') {
 			print '<form name="update" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="updateline">';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			print '<input type="hidden" name="elrowid" value="'.$object->lines[$cursorline - 1]->id.'">';
 			print '<input type="hidden" name="fournprice" value="'.(!empty($object->lines[$cursorline - 1]->fk_fournprice) ? $object->lines[$cursorline - 1]->fk_fournprice : 0).'">';
 
@@ -1808,7 +1822,7 @@ if ($action == 'create') {
 					$moreparam = 'style="display: none;"';
 				}
 				print '<tr class="oddeven" '.$moreparam.'>';
-				print '<td class="tdhrthin" colspan="'.($conf->margin->enabled ? 7 : 6).'"><hr class="opacitymedium tdhrthin"></td>';
+				print '<td class="tdhrthin" colspan="'.(isModEnabled('margin') ? 7 : 6).'"><hr class="opacitymedium tdhrthin"></td>';
 				print "</tr>\n";
 			}
 
@@ -1914,6 +1928,7 @@ if ($action == 'create') {
 				print '<form name="active" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="confirm_active">';
+				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				print '<input type="hidden" name="ligne" value="'.GETPOST('ligne', 'int').'">';
 				print '<input type="hidden" name="confirm" value="yes">';
@@ -1952,7 +1967,7 @@ if ($action == 'create') {
 				print '</tr>';
 
 				print '<tr class="oddeven">';
-				print '<td class="nohover">'.$langs->trans("Comment").'</td><td colspan="3" class="nohover" colspan="'.($conf->margin->enabled ? 4 : 3).'"><input type="text" class="minwidth300" name="comment" value="'.dol_escape_htmltag(GETPOST("comment", 'alphanohtml')).'"></td>';
+				print '<td class="nohover">'.$langs->trans("Comment").'</td><td colspan="3" class="nohover" colspan="'.(isModEnabled('margin') ? 4 : 3).'"><input type="text" class="minwidth300" name="comment" value="'.dol_escape_htmltag(GETPOST("comment", 'alphanohtml')).'"></td>';
 				print '<td class="nohover right">';
 				print '<input type="submit" class="button" name="activate" value="'.$langs->trans("Activate").'"> &nbsp; ';
 				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -1973,6 +1988,7 @@ if ($action == 'create') {
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="confirm" value="yes">';
 				print '<input type="hidden" name="action" value="confirm_closeline">';
+				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').'" width="100%">';
 
@@ -2038,6 +2054,7 @@ if ($action == 'create') {
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="id" value="'.$object->id.'">
 			<input type="hidden" name="page_y" value="">
+			<input type="hidden" name="backtopage" value="'.$backtopage.'">
 			';
 
 			print '<div class="div-table-responsive-no-min">';

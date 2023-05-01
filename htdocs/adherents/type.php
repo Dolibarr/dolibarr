@@ -50,6 +50,7 @@ $mode = GETPOST('mode', 'alopha');
 
 $sall = GETPOST("sall", "alpha");
 $filter = GETPOST("filter", 'alpha');
+$search_ref = GETPOST('search_ref', 'alpha');
 $search_lastname = GETPOST('search_lastname', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_email = GETPOST('search_email', 'alpha');
@@ -96,15 +97,6 @@ $hookmanager->initHooks(array('membertypecard', 'globalcard'));
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
-	$search_lastname = "";
-	$search_login = "";
-	$search_email = "";
-	$type = "";
-	$sall = "";
-}
-
-
 // Security check
 $result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
 
@@ -112,6 +104,15 @@ $result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
 /*
  *	Actions
  */
+
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+	$search_ref = "";
+	$search_lastname = "";
+	$search_login = "";
+	$search_email = "";
+	$type = "";
+	$sall = "";
+}
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
@@ -341,7 +342,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				}
 				//output kanban
 				$membertype->label = $objp->label;
-				print $membertype->getKanbanView('');
+				print $membertype->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
 					print '</td></tr>';
@@ -433,7 +434,7 @@ if ($action == 'create') {
 	print $form->selectarray("morphy", $morphys, GETPOSTISSET("morphy") ? GETPOST("morphy", 'aZ09') : 'morphy');
 	print "</td></tr>";
 
-	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
+	print '<tr><td>'.$form->textwithpicto($langs->trans("SubscriptionRequired"), $langs->trans("SubscriptionRequiredDesc")).'</td><td>';
 	print $form->selectyesno("subscription", 1, 1);
 	print '</td></tr>';
 
@@ -456,12 +457,12 @@ if ($action == 'create') {
 
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('comment', (GETPOSTISSET('comment') ? GETPOST('comment', 'restricthtml') : $object->note_public), '', 200, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
+	$doleditor = new DolEditor('comment', (GETPOSTISSET('comment') ? GETPOST('comment', 'restricthtml') : $object->note_public), '', 200, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor'), 15, '90%');
 	$doleditor->Create();
 
 	print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('mail_valid', GETPOSTISSET('mail_valid') ? GETPOST('mail_valid') : $object->mail_valid, '', 250, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
+	$doleditor = new DolEditor('mail_valid', GETPOSTISSET('mail_valid') ? GETPOST('mail_valid') : $object->mail_valid, '', 250, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor'), 15, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -509,7 +510,7 @@ if ($rowid > 0) {
 		print '<tr><td>'.$langs->trans("MembersNature").'</td><td class="valeur" >'.$object->getmorphylib($object->morphy).'</td>';
 		print '</tr>';
 
-		print '<tr><td class="titlefield">'.$langs->trans("SubscriptionRequired").'</td><td>';
+		print '<tr><td>'.$form->textwithpicto($langs->trans("SubscriptionRequired"), $langs->trans("SubscriptionRequiredDesc")).'</td><td>';
 		print yn($object->subscription);
 		print '</tr>';
 
@@ -549,6 +550,7 @@ if ($rowid > 0) {
 
 		print dol_get_fiche_end();
 
+
 		/*
 		 * Buttons
 		 */
@@ -561,8 +563,16 @@ if ($rowid > 0) {
 		}
 
 		// Add
+		if ($object->morphy == 'phy') {
+			$morphy = 'phy';
+		} elseif ($object->morphy == 'mor') {
+			$morphy = 'mor';
+		} else {
+			$morphy = '';
+		}
+
 		if ($user->hasRight('adherent', 'configurer')&& !empty($object->status)) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&token='.newToken().'&typeid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&token='.newToken().'&typeid='.$object->id.($morphy ? '&morphy='.urlencode($morphy) : '').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoAddMember")).'">'.$langs->trans("AddMember").'</a></div>';
 		}
@@ -581,10 +591,13 @@ if ($rowid > 0) {
 
 		$now = dol_now();
 
-		$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe as company,";
+		$sql = "SELECT d.rowid, d.ref, d.entity, d.login, d.firstname, d.lastname, d.societe as company, d.fk_soc,";
 		$sql .= " d.datefin,";
-		$sql .= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut as status,";
+		$sql .= " d.email, d.photo, d.fk_adherent_type as type_id, d.morphy, d.statut as status,";
 		$sql .= " t.libelle as type, t.subscription, t.amount";
+
+		$sqlfields = $sql; // $sql fields to remove for count total
+
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql .= " WHERE d.fk_adherent_type = t.rowid ";
 		$sql .= " AND d.entity IN (".getEntity('adherent').")";
@@ -599,6 +612,9 @@ if ($rowid > 0) {
 			if (GETPOST('search', 'alpha')) {
 				$sql .= natural_search(array("d.firstname", "d.lastname"), GETPOST('search', 'alpha'));
 			}
+		}
+		if (!empty($search_ref)) {
+			$sql .= natural_search("d.ref", $search_ref);
 		}
 		if (!empty($search_lastname)) {
 			$sql .= natural_search(array("d.firstname", "d.lastname"), $search_lastname);
@@ -616,24 +632,32 @@ if ($rowid > 0) {
 			$sql .= " AND (datefin < '".$db->idate($now)."' AND t.subscription = 1)";
 		}
 
-		$sql .= " ".$db->order($sortfield, $sortorder);
-
 		// Count total nb of records
 		$nbtotalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-			$resql = $db->query($sql);
+		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
+			/* The fast and low memory method to get and count full list converts the sql into a sql count */
+			$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+			$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+			$resql = $db->query($sqlforcount);
 			if ($resql) {
-				$nbtotalofrecords = $db->num_rows($result);
+				$objforcount = $db->fetch_object($resql);
+				$nbtotalofrecords = $objforcount->nbtotalofrecords;
 			} else {
 				dol_print_error($db);
 			}
-			if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+
+			if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 				$page = 0;
 				$offset = 0;
 			}
+			$db->free($resql);
 		}
 
-		$sql .= " ".$db->plimit($conf->liste_limit + 1, $offset);
+		// Complete request and execute it with limit
+		$sql .= $db->order($sortfield, $sortorder);
+		if ($limit) {
+			$sql .= $db->plimit($limit + 1, $offset);
+		}
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -668,8 +692,20 @@ if ($rowid > 0) {
 			}
 
 			$param = "&rowid=".urlencode($object->id);
+			if (!empty($mode)) {
+				$param .= '&mode='.urlencode($mode);
+			}
+			if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+				$param .= '&contextpage='.urlencode($contextpage);
+			}
+			if ($limit > 0 && $limit != $conf->liste_limit) {
+				$param .= '&limit='.((int) $limit);
+			}
 			if (!empty($status)) {
 				$param .= "&status=".urlencode($status);
+			}
+			if (!empty($search_ref)) {
+				$param .= "&search_ref=".urlencode($search_ref);
 			}
 			if (!empty($search_lastname)) {
 				$param .= "&search_lastname=".urlencode($search_lastname);
@@ -691,12 +727,11 @@ if ($rowid > 0) {
 				print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
 			}
 
-			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input class="flat" type="hidden" name="rowid" value="'.$object->id.'" size="12"></td>';
+			print '<input class="flat" type="hidden" name="rowid" value="'.$object->id.'"></td>';
 
-			print '<br>';
-			print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
+			print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
 
 			$moreforfilter = '';
 
@@ -706,24 +741,38 @@ if ($rowid > 0) {
 			// Fields title search
 			print '<tr class="liste_titre_filter">';
 
-			print '<td class="liste_titre left">';
-			print '<input class="flat" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'" size="12"></td>';
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="liste_titre center maxwidthsearch">';
+				$searchpicto = $form->showFilterButtons('left');
+				print $searchpicto;
+				print '</td>';
+			}
 
 			print '<td class="liste_titre left">';
-			print '<input class="flat" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'" size="7"></td>';
+			print '<input class="flat maxwidth100" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
+
+			print '<td class="liste_titre left">';
+			print '<input class="flat maxwidth100" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'"></td>';
+
+			print '<td class="liste_titre left">';
+			print '<input class="flat maxwidth100" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'"></td>';
 
 			print '<td class="liste_titre">&nbsp;</td>';
 
 			print '<td class="liste_titre left">';
-			print '<input class="flat" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'" size="12"></td>';
+			print '<input class="flat maxwidth100" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'"></td>';
 
 			print '<td class="liste_titre">&nbsp;</td>';
 
-			print '<td class="liste_titre right" colspan="2">';
-			print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-			print '&nbsp; ';
-			print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-			print '</td>';
+			print '<td class="liste_titre">&nbsp;</td>';
+
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="liste_titre center nowraponall">';
+				print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+				print '&nbsp; ';
+				print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+				print '</td>';
+			}
 
 			print "</tr>\n";
 
@@ -731,6 +780,7 @@ if ($rowid > 0) {
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
 			}
+			print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.ref", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("NameSlashCompany", $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "d.login", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("MemberNature", $_SERVER["PHP_SELF"], "d.morphy", $param, "", "", $sortfield, $sortorder);
@@ -750,13 +800,19 @@ if ($rowid > 0) {
 
 				$datefin = $db->jdate($objp->datefin);
 
+				$adh->id = $objp->rowid;
+				$adh->ref = $objp->ref;
+				$adh->login = $objp->login;
 				$adh->lastname = $objp->lastname;
 				$adh->firstname = $objp->firstname;
 				$adh->datefin = $datefin;
 				$adh->need_subscription = $objp->subscription;
 				$adh->statut = $objp->status;
+				$adh->email = $objp->email;
+				$adh->photo = $objp->photo;
 
 				print '<tr class="oddeven">';
+
 				// Actions
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					print '<td class="center">';
@@ -768,6 +824,12 @@ if ($rowid > 0) {
 					}
 					print "</td>";
 				}
+
+				// Ref
+				print "<td>";
+				print $adh->getNomUrl(-1, 0, 'card', 'ref', '', -1, 0, 1);
+				print "</td>\n";
+
 				// Lastname
 				if ($objp->company != '') {
 					print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user", 'class="paddingright"').$adh->getFullName($langs, 0, -1, 20).' / '.dol_trunc($objp->company, 12).'</a></td>'."\n";
@@ -913,12 +975,12 @@ if ($rowid > 0) {
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('comment', $object->note_public, '', 220, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
+		$doleditor = new DolEditor('comment', $object->note_public, '', 220, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor'), 15, '90%');
 		$doleditor->Create();
 		print "</td></tr>";
 
 		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
-		$doleditor = new DolEditor('mail_valid', $object->mail_valid, '', 280, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
+		$doleditor = new DolEditor('mail_valid', $object->mail_valid, '', 280, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor'), 15, '90%');
 		$doleditor->Create();
 		print "</td></tr>";
 

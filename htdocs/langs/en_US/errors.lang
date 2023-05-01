@@ -310,6 +310,9 @@ ErrorFieldExist=The value for <b>%s</b> already exist
 ErrorEqualModule=Module invalid in <b>%s</b>
 ErrorFieldValue=Value for <b>%s</b> is incorrect
 ErrorCoherenceMenu=<b>%s</b> is required when <b>%s</b> is 'left'
+ErrorUploadFileDragDrop=There was an error while the file(s) upload
+ErrorUploadFileDragDropPermissionDenied=There was an error while the file(s) upload : Permission denied 
+ErrorFixThisHere=<a href="%s">Fix this here</a>
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

@@ -305,12 +305,37 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		}
 	}
 
-	if ($prodcomb->update($user) > 0) {
+	$error = 0;
+	$db->begin();
+
+	// Update product variant ref
+	$product_child = new Product($db);
+	$product_child->fetch($prodcomb->fk_product_child);
+	$product_child->oldcopy = clone $product_child;
+	$product_child->ref = $reference;
+
+	$result = $product_child->update($product_child->id, $user);
+	if ($result < 0) {
+		setEventMessages($product_child->error, $product_child->errors, 'errors');
+		$error++;
+	}
+
+	if (!$error) {
+		// Update product variant infos
+		$result = $prodcomb->update($user);
+		if ($result < 0) {
+			setEventMessages($prodcomb->error, $prodcomb->errors, 'errors');
+			$error++;
+		}
+	}
+
+	if (!$error) {
+		$db->commit();
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-		header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
+		header('Location: ' . dol_buildpath('/variants/combinations.php?id=' . $id, 2));
 		exit();
 	} else {
-		setEventMessages($prodcomb->error, $prodcomb->errors, 'errors');
+		$db->rollback();
 	}
 }
 
@@ -339,6 +364,9 @@ if ($action === 'confirm_deletecombination') {
 		exit();
 	}
 
+	$product_child = new Product($db);
+	$product_child->fetch($prodcomb->fk_product_child);
+	$reference = $product_child->ref;
 	$weight_impact = $prodcomb->variation_weight;
 	$price_impact = $prodcomb->variation_price;
 	$price_impact_percent = $prodcomb->variation_price_percentage;
