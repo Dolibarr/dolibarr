@@ -2957,14 +2957,14 @@ class Form
 	 * This define value for &$opt and &$optJson.
 	 * This function is called by select_produits_list().
 	 *
-	 * @param object $objp Resultset of fetch
-	 * @param string $opt Option (var used for returned value in string option format)
-	 * @param string $optJson Option (var used for returned value in json format)
-	 * @param int $price_level Price level
-	 * @param string $selected Preselected value
-	 * @param int $hidepriceinlabel Hide price in label
-	 * @param string $filterkey Filter key to highlight
-	 * @param int $novirtualstock Do not load virtual stock, even if slow option STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO is on.
+	 * @param object 	$objp 			Resultset of fetch
+	 * @param string 	$opt 			Option (var used for returned value in string option format)
+	 * @param array 	$optJson 		Option (var used for returned value in json format)
+	 * @param int 		$price_level 	Price level
+	 * @param string 	$selected 		Preselected value
+	 * @param int 		$hidepriceinlabel Hide price in label
+	 * @param string 	$filterkey 		Filter key to highlight
+	 * @param int 		$novirtualstock Do not load virtual stock, even if slow option STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO is on.
 	 * @return    void
 	 */
 	protected function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected, $hidepriceinlabel = 0, $filterkey = '', $novirtualstock = 0)
@@ -7387,11 +7387,11 @@ class Form
 	 * constructTicketListOption.
 	 * This define value for &$opt and &$optJson.
 	 *
-	 * @param object $objp Result set of fetch
-	 * @param string $opt Option (var used for returned value in string option format)
-	 * @param string $optJson Option (var used for returned value in json format)
-	 * @param string $selected Preselected value
-	 * @param string $filterkey Filter key to highlight
+	 * @param object 	$objp 		Result set of fetch
+	 * @param string 	$opt 		Option (var used for returned value in string option format)
+	 * @param array 	$optJson 	Option (var used for returned value in json format)
+	 * @param string 	$selected 	Preselected value
+	 * @param string 	$filterkey 	Filter key to highlight
 	 * @return    void
 	 */
 	protected function constructTicketListOption(&$objp, &$opt, &$optJson, $selected, $filterkey = '')
@@ -7593,11 +7593,11 @@ class Form
 	 * constructProjectListOption.
 	 * This define value for &$opt and &$optJson.
 	 *
-	 * @param object $objp Result set of fetch
-	 * @param string $opt Option (var used for returned value in string option format)
-	 * @param string $optJson Option (var used for returned value in json format)
-	 * @param string $selected Preselected value
-	 * @param string $filterkey Filter key to highlight
+	 * @param object 	$objp 		Result set of fetch
+	 * @param string 	$opt 		Option (var used for returned value in string option format)
+	 * @param array 	$optJson 	Option (var used for returned value in json format)
+	 * @param string 	$selected 	Preselected value
+	 * @param string 	$filterkey 	Filter key to highlight
 	 * @return    void
 	 */
 	protected function constructProjectListOption(&$objp, &$opt, &$optJson, $selected, $filterkey = '')
@@ -7813,11 +7813,11 @@ class Form
 	 * constructMemberListOption.
 	 * This define value for &$opt and &$optJson.
 	 *
-	 * @param object $objp Result set of fetch
-	 * @param string $opt Option (var used for returned value in string option format)
-	 * @param string $optJson Option (var used for returned value in json format)
-	 * @param string $selected Preselected value
-	 * @param string $filterkey Filter key to highlight
+	 * @param object 	$objp 			Result set of fetch
+	 * @param string 	$opt 			Option (var used for returned value in string option format)
+	 * @param array 	$optJson 		Option (var used for returned value in json format)
+	 * @param string 	$selected 		Preselected value
+	 * @param string 	$filterkey 		Filter key to highlight
 	 * @return    void
 	 */
 	protected function constructMemberListOption(&$objp, &$opt, &$optJson, $selected, $filterkey = '')
