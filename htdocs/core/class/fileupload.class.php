@@ -577,7 +577,10 @@ class FileUpload
 				}
 			}
 		}
+		// Return result in json format
 		header('Content-type: application/json');
 		echo json_encode($success);
+
+		return null;
 	}
 }

@@ -97,6 +97,7 @@ abstract class CommonDocGenerator
 	public $option_multilang;
 	public $option_freetext;
 	public $option_draft_watermark;
+	public $watermark;
 
 	public $option_modereg;
 	public $option_condreg;
@@ -104,6 +105,11 @@ abstract class CommonDocGenerator
 	public $option_credit_note;
 
 	public $emetteur;
+
+	/**
+	 * @var array	Array of columns
+	 */
+	public $cols;
 
 
 	/**
@@ -1534,8 +1540,8 @@ abstract class CommonDocGenerator
 	/**
 	 *  get column status from column key
 	 *
-	 *  @param	string			$colKey    		the column key
-	 *  @return	float      width in mm
+	 *  @param	string		$colKey    		the column key
+	 *  @return	boolean						true if column on
 	 */
 	public function getColumnStatus($colKey)
 	{

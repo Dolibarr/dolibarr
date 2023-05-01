@@ -21,7 +21,7 @@
  *	\ingroup    debugbar
  */
 
-use \DebugBar\DataCollector\TimeDataCollector;
+use DebugBar\DataCollector\TimeDataCollector;
 
 /**
  * DolTimeDataCollector class

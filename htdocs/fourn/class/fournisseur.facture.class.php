@@ -2765,6 +2765,9 @@ class FactureFournisseur extends CommonInvoice
 		if (!empty($this->date)) {
 			$datas['date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
 		}
+		if (!empty($this->date_echeance)) {
+			$datas['date_echeance'] = '<br><b>'.$langs->trans('DateDue').':</b> '.dol_print_date($this->date_echeance, 'day');
+		}
 		if (!empty($this->total_ht)) {
 			$datas['amountht'] = '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
 		}
@@ -3490,6 +3493,12 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @var float
 	 */
 	public $remise_percent;
+
+	/**
+	 * Buying price value
+	 * @var float
+	 */
+	public $pa_ht;
 
 	/**
 	 * Total amount without taxes

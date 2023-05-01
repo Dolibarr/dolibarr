@@ -462,7 +462,7 @@ $sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	//$result = $db->query($sql);
 	//$nbtotalofrecords = $db->num_rows($result);
 
@@ -995,6 +995,7 @@ while ($i < $imaxinloop) {
 		}
 		// Output Kanban
 		$arraydata['thirdparty'] = $socstatic;
+		$arraydata['selected'] = in_array($obj->rowid, $arrayofselected);
 		$contracttmp->date_contrat = $obj->date_contrat;
 		print $contracttmp->getKanbanView('', $arraydata);
 		if ($i == ($imaxinloop - 1)) {

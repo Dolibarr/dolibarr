@@ -312,7 +312,7 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -747,15 +747,16 @@ while ($i < $imaxinloop) {
 			print '<tr><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
-		$recuitment = new RecruitmentJobPosition($db);
-		$recuitment->fetch($obj->fk_recruitmentjobposition);
-		$object->fk_recruitmentjobposition = $recuitment->getNomUrl();
+		// TODO Use a cache for $recruitment
+		$recruitment = new RecruitmentJobPosition($db);
+		$recruitment->fetch($obj->fk_recruitmentjobposition);
+
 		$object->phone = $obj->phone;
 		if ($massactionbutton || $massaction) {
 			$selected = 0;
 		}
 		// Output Kanban
-		print $object->getKanbanView('');
+		print $object->getKanbanView('', array('jobpositionlink'=>$recruitment->getNomUrl(1), 'selected' => in_array($object->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

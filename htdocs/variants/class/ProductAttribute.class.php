@@ -607,7 +607,7 @@ class ProductAttribute extends CommonObject
 	public function addLine($ref, $value, $position = -1, $notrigger = 0)
 	{
 		global $langs, $user;
-		dol_syslog(__METHOD__ . " id={$this->id}, ref=$ref, value=$value, notrigger=$notrigger");
+		dol_syslog(__METHOD__ . " id=".$this->id.", ref=".$ref.", value=".$value.", notrigger=".$notrigger);
 		$error = 0;
 
 		// Clean parameters

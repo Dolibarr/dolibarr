@@ -150,7 +150,7 @@ class SupplierProposalTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new SupplierProposal($this->savdb);
+		$localobject=new SupplierProposal($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -176,7 +176,7 @@ class SupplierProposalTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new SupplierProposal($this->savdb);
+		$localobject=new SupplierProposal($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -286,7 +286,7 @@ class SupplierProposalTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new SupplierProposal($this->savdb);
+		$localobject=new SupplierProposal($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

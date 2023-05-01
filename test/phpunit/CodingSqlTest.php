@@ -171,10 +171,16 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 		$db=$this->savdb;
 
 		if ($db->type == 'mysqli') {
-			$a = 'abc"\'def';
+			$a = 'abc"\'def';	// string is abc"'def
 			print $a;
-			$result = $db->escape($a);	// $result must be abc\"\'def with mysql
+			$result = $db->escape($a);	// $result must be abc\"\'def
 			$this->assertEquals('abc\"\\\'def', $result);
+		}
+		if ($db->type == 'pgsql') {
+			$a = 'abc"\'def';	// string is abc"'def
+			print $a;
+			$result = $db->escape($a);	// $result must be abc"''def
+			$this->assertEquals('abc"\'\'def', $result);
 		}
 	}
 

@@ -73,7 +73,7 @@ if (!$sortorder) {
 $object = new Societe($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('agendathirdparty'));
+$hookmanager->initHooks(array('agendathirdparty', 'globalcard'));
 
 // Security check
 $socid = GETPOST('socid', 'int');

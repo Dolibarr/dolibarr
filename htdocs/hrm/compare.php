@@ -86,8 +86,8 @@ print dol_get_fiche_head($head, 'compare', '', 1);
 				}
 
 
-				$userl = $(this).closest('ul');
-				listname = $userl.attr('name');
+				var $userl = $(this).closest('ul');
+				var listname = $userl.attr('name');
 
 				var TId = [];
 

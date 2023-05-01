@@ -73,7 +73,7 @@ $year_current = $year_start;
 // Validate History
 $action = GETPOST('action', 'aZ09');
 
-$chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
+$chartaccountcode = dol_getIdFromCode($db, getDolGlobalInt('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -100,9 +100,9 @@ if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accou
 	$sql1 .= '	(SELECT accnt.rowid ';
 	$sql1 .= '	FROM '.MAIN_DB_PREFIX.'accounting_account as accnt';
 	$sql1 .= '	INNER JOIN '.MAIN_DB_PREFIX.'accounting_system as syst';
-	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid='.$conf->global->CHARTOFACCOUNTS.' AND accnt.entity = '.$conf->entity.')';
-	$sql1 .= ' AND fd.fk_facture_fourn IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE entity = '.$conf->entity.')';
-	$sql1 .= ' AND fk_code_ventilation <> 0';
+	$sql1 .= "	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid = ".getDolGlobalInt('CHARTOFACCOUNTS')." AND accnt.entity = ".((int) $conf->entity).")";
+	$sql1 .= " AND fd.fk_facture_fourn IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE entity = ".((int) $conf->entity).")";
+	$sql1 .= " AND fk_code_ventilation <> 0";
 
 	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
 	$resql1 = $db->query($sql1);

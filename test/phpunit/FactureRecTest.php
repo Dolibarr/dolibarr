@@ -140,13 +140,13 @@ class FactureRecTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobjectinv=new Facture($this->savdb);
+		$localobjectinv=new Facture($db);
 		$localobjectinv->initAsSpecimen();
 		$result = $localobjectinv->create($user);
 
 		print __METHOD__." result=".$result."\n";
 
-		$localobject=new FactureRec($this->savdb);
+		$localobject=new FactureRec($db);
 		$localobject->initAsSpecimen();
 		$result = $localobject->create($user, $localobjectinv->id);
 
@@ -173,7 +173,7 @@ class FactureRecTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new FactureRec($this->savdb);
+		$localobject=new FactureRec($db);
 		$result = $localobject->fetch($id);
 
 		print __METHOD__." result=".$result."\n";

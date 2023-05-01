@@ -41,8 +41,8 @@ if (!defined('DOL_DOCUMENT_ROOT')) {
 	define('DOL_DOCUMENT_ROOT', '..');
 }
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -93,9 +93,20 @@ $long_options = array(
 function usage($program, $header)
 {
 	echo $header."\n";
-	echo "  php ".$program." [options] previous_version new_version [script options]\n";
+	echo "  php ".$program." [options] [script options]\n";
 	echo "\n";
-	echo "Script options when using upgrade.php:\n";
+	echo "Script syntax when using step2.php:\n";
+	echo "  php ".$program." [options] [action] [selectlang]\n";
+	echo "\n";
+	echo "  action:\n";
+	echo "      Specify the action to execute for the file among the following ones.\n";
+	echo "       - set: Create tables, keys, functions and data for the instance.\n";
+	echo "\n";
+	echo "  selectlang:\n";
+	echo "      Setup the default lang to use, default to 'auto'.\n";
+	echo "\n";
+	echo "Script syntax when using upgrade.php:\n";
+	echo "  php ".$program." [options] previous_version new_version [script options]\n";
 	echo "\n";
 	echo "  dirmodule:\n";
 	echo "      Specify dirmodule to provide a path for an external module\n";
@@ -105,10 +116,11 @@ function usage($program, $header)
 	echo "      Allow to run migration even if database version does\n";
 	echo "      not match start version of migration.\n";
 	echo "\n";
-	echo "Script options when using upgrade2.php:\n";
+	echo "Script syntax when using upgrade2.php:\n";
+	echo "  php ".$program." [options] previous_version new_version [module list]\n";
 	echo "\n";
-	echo "  MODULE_NAME1_TO_ENABLE,MODULE_NAME2_TO_ENABLE:\n";
-	echo "      Specify a list of module-name to enable, joined by comma.\n";
+	echo "  MAIN_MODULE_NAME1,MAIN_MODULE_NAME2:\n";
+	echo "      Specify a list of module-name to enable, in upper case, with MAIN_MODULE_ prefix, joined by comma.\n";
 	echo "\n";
 	echo "Options:\n";
 	echo "  -c, --config <filename>:\n";
@@ -134,19 +146,26 @@ if (php_sapi_name() === "cli") {
 			exit(0);
 	}
 
+	// Parse the arguments to find the options.
+	$args_options = array_filter(array_slice($argv, 0, $rest_index), function ($arg) {
+		return strlen($arg) >= 2 && $arg[0] == '-';
+	});
+	$parsed_options = array_map(function ($arg) {
+		if (strlen($arg) > 1)
+			return "--" . $arg;
+		return "-" . $arg;
+	}, array_keys($opts));
+
+	// Find options (dash-prefixed) that were not parsed.
+	$unknown_options = array_diff($args_options, $parsed_options);
+
 	// In the following test, only dash-prefixed arguments will trigger an
 	// error, given that scripts options can allow a variable number of
 	// additional non-prefixed argument and we mostly want to check for
 	// typo right now.
-	if ($rest_index < $argc && $argv[$rest_index][0] == "-") {
-		usage($argv[0], "Unknown option ".$argv[$rest_index]. ", usage:");
-		exit(1);
-	}
-
-	// Currently, scripts using inc.php will require addtional arguments,
-	// see help above for more details.
-	if ($rest_index > $argc - 2) {
-		usage($argv[0], "Missing mandatory arguments, usage:");
+	if (count($unknown_options) > 0) {
+		echo "Unknown option: ".array_values($unknown_options)[0]."\n";
+		usage($argv[0], "Usage:");
 		exit(1);
 	}
 
@@ -319,10 +338,6 @@ if ($islocked) {	// Pages are locked
 
 
 // Force usage of log file for install and upgrades
-if (!isset($conf->syslog) || !is_object($conf->syslog)) {
-	$conf->syslog = new stdClass();
-}
-$conf->syslog->enabled = 1;
 $conf->modules['syslog'] = 'syslog';
 $conf->global->SYSLOG_LEVEL = constant('LOG_DEBUG');
 if (!defined('SYSLOG_HANDLERS')) {
@@ -432,10 +447,6 @@ function conf($dolibarr_main_document_root)
 	$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
 	// Force usage of log file for install and upgrades
-	if (!isset($conf->syslog) || !is_object($conf->syslog)) {
-		$conf->syslog = new stdClass();
-	}
-	$conf->syslog->enabled = 1;
 	$conf->modules['syslog'] = 'syslog';
 	$conf->global->SYSLOG_LEVEL = constant('LOG_DEBUG');
 	if (!defined('SYSLOG_HANDLERS')) {

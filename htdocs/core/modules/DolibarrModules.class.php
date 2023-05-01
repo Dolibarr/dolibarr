@@ -683,11 +683,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			if ((float) DOL_VERSION >= 6.0) {
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
 
-				// Replace a HTML string with a Markdown syntax
-				$content = preg_replace('/<a href="([^"]+)">([^<]+)<\/a>/', '[\2](\1)', $content);
-				//$content = preg_replace('/<a href="([^"]+)" target="([^"]+)">([^<]+)<\/a>/', '[\3](\1){:target="\2"}', $content);
-				$content = preg_replace('/<a href="([^"]+)" target="([^"]+)">([^<]+)<\/a>/', '[\3](\1)', $content);
-
 				$content = dolMd2Html(
 					$content,
 					'parsedown',
@@ -788,6 +783,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 			if ((float) DOL_VERSION >= 6.0) {
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
+
 				$content = dolMd2Html($content, 'parsedown', array('doc/'=>dol_buildpath(strtolower($this->name).'/doc/', 1)));
 			} else {
 				$content = nl2br($content);
