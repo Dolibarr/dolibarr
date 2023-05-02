@@ -103,7 +103,7 @@ if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('acc
 	$sql1 .= '	FROM '.MAIN_DB_PREFIX.'accounting_account as accnt';
 	$sql1 .= '	INNER JOIN '.MAIN_DB_PREFIX.'accounting_system as syst';
 	$sql1 .= "	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS'))." AND accnt.entity = ".((int) $conf->entity).")";
-	$sql1 .= " AND fd.fk_facture IN (SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE entity = ".((int) $conf->entity).")";
+	$sql1 .= " AND fd.fk_facture IN (SELECT rowid FROM ".$db->prefix()."facture WHERE entity = ".((int) $conf->entity).")";
 	$sql1 .= " AND fk_code_ventilation <> 0";
 
 	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
