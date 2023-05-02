@@ -315,6 +315,10 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 			$result=strpos($filecontent, 'eldy@');
 			print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
 			$this->assertTrue($result===false, 'Found a bad key eldy@ into file '.$file);
+
+			$result=strpos($filecontent, 'INSERT INTO `llx_oauth_token`');
+			print __METHOD__." Result for checking we don't have data into llx_oauth_token = ".$result."\n";
+			$this->assertTrue($result===false, 'Found a non expected insert into file '.$file);
 		}
 
 		return;
