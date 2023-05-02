@@ -756,9 +756,9 @@ class Documents extends DolibarrApi
 			throw new RestException(500, "File with name '".$original_file."' already exists.");
 		}
 
-		// in case temporary directory doesn't exist
-		if (!dol_is_dir(dirname(DOL_DATA_ROOT . '/admin/temp/'))) {
-			dol_mkdir(DOL_DATA_ROOT . '/admin/temp/');
+		// in case temporary directory admin/temp doesn't exist
+		if (!dol_is_dir(dirname($destfiletmp))) {
+			dol_mkdir(dirname($destfiletmp));
 		}
 
 		$fhandle = @fopen($destfiletmp, 'w');
