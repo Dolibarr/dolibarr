@@ -418,7 +418,6 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 
 		dol_mkdir($conf->admin->dir_temp);
 		$conf->global->MAIN_ENABLE_LOG_TO_HTML=1;
-		$conf->syslog->enabled=1;
 		$conf->modules['syslog'] = 'syslog';
 		$_REQUEST['logtohtml']=1;
 		$conf->logbuffer=array();
@@ -450,7 +449,6 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 
 		dol_mkdir($conf->admin->dir_temp);
 		$conf->global->MAIN_ENABLE_LOG_TO_HTML=1;
-		$conf->syslog->enabled=1;
 		$conf->modules['syslog'] = 'syslog';
 		$_REQUEST['logtohtml']=1;
 		$conf->logbuffer=array();
