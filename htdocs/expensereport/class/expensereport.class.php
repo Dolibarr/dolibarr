@@ -1138,9 +1138,9 @@ class ExpenseReport extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param   User    $user       User that delete
-	 * @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
-	 * @return  int                 <0 if KO, >0 if OK
+	 * @param   User|null   $user       User that delete
+	 * @param 	bool 		$notrigger  false=launch triggers after, true=disable triggers
+	 * @return  int         	        <0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null, $notrigger = false)
 	{
