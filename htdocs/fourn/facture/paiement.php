@@ -499,8 +499,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			$supplierstatic->name = $obj->name;
 			print $supplierstatic->getNomUrl(1, 'supplier');
 			print '</td></tr>';
+
 			print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
-			print $form->selectDate($dateinvoice, '', '', '', 0, "addpaiement", 1, 1, 0, '', '', $object->date);
+			// $object is default vendor invoice
+			$adddateof = array(array('adddateof'=>$object->date));
+			$adddateof[] = array('adddateof'=>$object->date_echeance, 'labeladddateof'=>$langs->transnoentities('DateDue'));
+			print $form->selectDate($dateinvoice, '', '', '', 0, "addpaiement", 1, 1, 0, '', '', $adddateof);
 			print '</td></tr>';
 			print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
 			$form->select_types_paiements(!GETPOST('paiementid') ? $obj->fk_mode_reglement : GETPOST('paiementid'), 'paiementid');

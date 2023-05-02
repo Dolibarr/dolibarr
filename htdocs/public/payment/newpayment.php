@@ -1580,6 +1580,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 
 		if (empty($amount) && !GETPOST('newamount', 'alpha')) {
 			$_GET['newamount'] = $member->last_subscription_amount;
+			$_GET['amount'] = $member->last_subscription_amount;
 		}
 	}
 
