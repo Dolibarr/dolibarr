@@ -624,7 +624,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<tr>';
 		print '<td>'.$langs->trans("DescCP").'</td>';
 		print '<td class="tdtop">';
-		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, ROWS_3, '90%');
+		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, isModEnabled('fckeditor'), ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 
@@ -657,10 +657,12 @@ if (is_object($db)) {
 }
 /**
  * send email to validator for current leave represented by (id)
- * @param $id validator for current leave represented by (id)
- * @param $cancreate flag for user right
- * @param $now date
- * @param $autoValidation boolean flag on autovalidation
+ *
+ * @param int		$id validator for current leave represented by (id)
+ * @param int 	$cancreate flag for user right
+ * @param int 	$now date
+ * @param int		$autoValidation boolean flag on autovalidation
+ *
  * @return stdClass
  * @throws Exception
  */

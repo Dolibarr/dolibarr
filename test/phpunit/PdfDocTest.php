@@ -81,7 +81,7 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -94,7 +94,7 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -107,7 +107,7 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -122,7 +122,7 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -140,7 +140,7 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localproduct=new Product($this->savdb);
+		$localproduct=new Product($db);
 		$result = $localproduct->fetch(0, 'PINKDRESS');
 		if ($result < 0) {
 			print "\n".__METHOD__." Failed to make the fetch of product PINKDRESS. ".$localproduct->error; die(1);
@@ -150,10 +150,10 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 			print "\n".__METHOD__." A product with ref PINKDRESS must exists into database. Create it manually before running the test"; die(1);
 		}
 
-		$localobject=new Facture($this->savdb);
+		$localobject=new Facture($db);
 		$localobject->initAsSpecimen();
 		$localobject->lines=array();
-		$localobject->lines[0]=new FactureLigne($this->savdb);
+		$localobject->lines[0]=new FactureLigne($db);
 		$localobject->lines[0]->fk_product=$product_id;
 		$localobject->lines[0]->label='Label 1';
 		$localobject->lines[0]->desc="This is a description with a é accent\n(Country of origin: France)";

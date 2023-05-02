@@ -31,7 +31,6 @@
 
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/productfournisseurprice.class.php';
 
 
@@ -135,6 +134,9 @@ class ProductFournisseur extends Product
 	public $supplier_fk_barcode_type;
 
 	public $packaging;
+
+	const STATUS_OPEN = 1;
+	const STATUS_CANCELED = 0;
 
 
 	/**
@@ -419,7 +421,11 @@ class ProductFournisseur extends Product
 							$productfournisseurprice->array_options[$key] = $value;
 						}
 						$res = $productfournisseurprice->update($user);
-						if ($res < 0) $error++;
+						if ($res < 0) {
+							$this->error = $productfournisseurprice->error;
+							$this->errors = $productfournisseurprice->errors;
+							$error++;
+						}
 					}
 				}
 			}
@@ -506,6 +512,7 @@ class ProductFournisseur extends Product
 				if ($resql) {
 					$this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur_price");
 				} else {
+					$this->error = $this->db->lasterror();
 					$error++;
 				}
 
@@ -518,7 +525,11 @@ class ProductFournisseur extends Product
 								$productfournisseurprice->array_options[$key] = $value;
 							}
 							$res = $productfournisseurprice->update($user);
-							if ($res < 0) $error++;
+							if ($res < 0) {
+								$this->error = $productfournisseurprice->error;
+								$this->errors = $productfournisseurprice->errors;
+								$error++;
+							}
 						}
 					}
 				}
@@ -629,7 +640,8 @@ class ProductFournisseur extends Product
 				}
 				$this->packaging = $obj->packaging;
 
-				if (empty($ignore_expression) && !empty($this->fk_supplier_price_expression)) {
+				if (isModEnabled('dynamicprices') && empty($ignore_expression) && !empty($this->fk_supplier_price_expression)) {
+					require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 					$priceparser = new PriceParser($this->db);
 					$price_result = $priceparser->parseProductSupplier($this);
 					if ($price_result >= 0) {
@@ -658,13 +670,14 @@ class ProductFournisseur extends Product
 	/**
 	 *    List all supplier prices of a product
 	 *
-	 *    @param    int		$prodid	    Id of product
-	 *    @param	string	$sortfield	Sort field
-	 *    @param	string	$sortorder	Sort order
-	 *    @param	int		$limit		Limit
-	 *    @param	int		$offset		Offset
-	 *    @param	int		$socid		Filter on a third party id
-	 *    @return	array				Array of ProductFournisseur with new properties to define supplier price
+	 *    @param    int			$prodid	    Id of product
+	 *    @param	string		$sortfield	Sort field
+	 *    @param	string		$sortorder	Sort order
+	 *    @param	int			$limit		Limit
+	 *    @param	int			$offset		Offset
+	 *    @param	int			$socid		Filter on a third party id
+	 *    @return	array|int				Array of ProductFournisseur with new properties to define supplier price
+	 *    @see find_min_price_product_fournisseur()
 	 */
 	public function list_product_fournisseur_price($prodid, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0, $socid = 0)
 	{
@@ -675,7 +688,7 @@ class ProductFournisseur extends Product
 		$sql .= " pfp.rowid as product_fourn_pri_id, pfp.entity, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
 		$sql .= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation,";
 		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code, pfp.datec, pfp.tms,";
-		$sql .= " pfp.barcode, pfp.fk_barcode_type, pfp.packaging";
+		$sql .= " pfp.barcode, pfp.fk_barcode_type, pfp.packaging, pfp.status as pfstatus";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
 		$sql .= " AND pfp.fk_soc = s.rowid AND pfp.fk_product = p.rowid";
@@ -732,13 +745,15 @@ class ProductFournisseur extends Product
 				$prodfourn->fourn_multicurrency_code        = $record["multicurrency_code"];
 
 				$prodfourn->packaging = $record["packaging"];
+				$prodfourn->status = $record["pfstatus"];
 
 				if (isModEnabled('barcode')) {
 					$prodfourn->supplier_barcode = $record["barcode"];
 					$prodfourn->supplier_fk_barcode_type = $record["fk_barcode_type"];
 				}
 
-				if (!empty($conf->dynamicprices->enabled) && !empty($prodfourn->fk_supplier_price_expression)) {
+				if (isModEnabled('dynamicprices') && !empty($prodfourn->fk_supplier_price_expression)) {
+					require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 					$priceparser = new PriceParser($this->db);
 					$price_result = $priceparser->parseProductSupplier($prodfourn);
 					if ($price_result >= 0) {
@@ -774,6 +789,7 @@ class ProductFournisseur extends Product
 	 *  @param	int		$qty		Minimum quantity
 	 *  @param	int		$socid		get min price for specific supplier
 	 *  @return int					<0 if KO, 0=Not found of no product id provided, >0 if OK
+	 *  @see list_product_fournisseur_price()
 	 */
 	public function find_min_price_product_fournisseur($prodid, $qty = 0, $socid = 0)
 	{
@@ -844,13 +860,15 @@ class ProductFournisseur extends Product
 					$fourn_unitprice = $record["unitprice"];
 					$fourn_unitprice_with_discount = $record["unitprice"] * (1 - $record["remise_percent"] / 100);
 
-					if (!empty($conf->dynamicprices->enabled) && !empty($record["fk_supplier_price_expression"])) {
+					if (isModEnabled('dynamicprices') && !empty($record["fk_supplier_price_expression"])) {
 						$prod_supplier = new ProductFournisseur($this->db);
 						$prod_supplier->product_fourn_price_id = $record["product_fourn_price_id"];
 						$prod_supplier->id = $prodid;
 						$prod_supplier->fourn_qty = $record["quantity"];
 						$prod_supplier->fourn_tva_tx = $record["tva_tx"];
 						$prod_supplier->fk_supplier_price_expression = $record["fk_supplier_price_expression"];
+
+						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($this->db);
 						$price_result = $priceparser->parseProductSupplier($prod_supplier);
 						if ($price_result >= 0) {
@@ -991,35 +1009,35 @@ class ProductFournisseur extends Product
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'product_fournisseur_price'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
 	 * Function used to replace a product id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old product id
-	 * @param int $dest_id New product id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceProduct(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'product_fournisseur_price'
 		);
 
-		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceProduct($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -1030,7 +1048,7 @@ class ProductFournisseur extends Product
 	 *    @param	string  $sortorder              Sort order
 	 *    @param	int     $limit                  Limit
 	 *    @param	int     $offset                 Offset
-	 *    @return	array   Array of Log prices
+	 *    @return	array|int   Array of Log prices
 	 */
 	public function listProductFournisseurPriceLog($product_fourn_price_id, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0)
 	{
@@ -1235,7 +1253,7 @@ class ProductFournisseur extends Product
 			$label .= $this->displayPriceProductFournisseurLog($logPrices);
 		}
 
-		$url = dol_buildpath('/product/fournisseurs.php', 1).'?id='.$this->id.'&action=add_price&token='.newToken().'&socid='.$this->fourn_id.'&rowid='.$this->product_fourn_price_id;
+		$url = DOL_URL_ROOT.'/product/fournisseurs.php?id='.((int) $this->id).'&action=create_price&token='.newToken().'&socid='.((int) $this->fourn_id).'&rowid='.((int) $this->product_fourn_price_id);
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -1286,6 +1304,46 @@ class ProductFournisseur extends Product
 			$result .= $hookmanager->resPrint;
 		}
 		return $result;
+	}
+
+	/**
+	 *  Return the label of the status
+	 *
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @param	int		$type			Type of product
+	 *  @return	string 			       	Label of status
+	 */
+	public function getLibStatut($mode = 0, $type = 0)		// must be compatible with getLibStatut of inherited Product
+	{
+		return $this->LibStatut($this->status, $mode);
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return the status
+	 *
+	 *  @param	int		$status        	Id status
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @param	int		$type			Type of product
+	 *  @return string 			       	Label of status
+	 */
+	public function LibStatut($status, $mode = 0, $type = 0)
+	{
+		// phpcs:enable
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+			global $langs;
+			//$langs->load("mymodule@mymodule");
+			$this->labelStatus[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+		}
+
+		$statusType = 'status4';
+		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
+		if ($status == self::STATUS_CANCELED) {
+			$statusType = 'status6';
+		}
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**

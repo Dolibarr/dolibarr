@@ -28,7 +28,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         acces_type integer DEFAULT 0,
         oauth_service varchar(128),
         password varchar(128),
-        source_directory varchar(255) NOT NULL,
+        source_directory varchar(255) DEFAULT 'Inbox' NOT NULL,
         target_directory varchar(255),
         maxemailpercollect integer DEFAULT 100,
         datelastresult datetime,

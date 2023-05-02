@@ -114,7 +114,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($sortfield) {
 	$param .= '&sortfield='.urlencode($sortfield);
@@ -182,7 +182,7 @@ if (preg_match('/^cs\./', $sortfield)
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
@@ -270,7 +270,7 @@ while ($i < min($num, $limit)) {
 
 	$payment_sc_static->id = $obj->pid;
 	$payment_sc_static->ref = $obj->pid;
-	$payment_sc_static->date = $db->jdate($obj->datep);
+	$payment_sc_static->datep = $db->jdate($obj->datep);
 
 	$socialcontrib->id = $obj->rowid;
 	$socialcontrib->ref = empty($obj->label_sc) ? $obj->type_label : $obj->label_sc;

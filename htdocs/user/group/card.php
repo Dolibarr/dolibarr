@@ -209,6 +209,7 @@ if (empty($reshook)) {
 
 			$object->name = GETPOST("nom", 'alphanohtml');
 			$object->note = dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
+			$object->tms = dol_now();
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -247,6 +248,7 @@ if (empty($reshook)) {
 /*
  * View
  */
+
 $title = $object->name.' - '.$langs->trans("Card");
 if ($action == 'create') {
 	$title = $langs->trans("NewGroup");
@@ -309,8 +311,6 @@ if ($action == 'create') {
 	/*                                                                            */
 	/* ************************************************************************** */
 	if ($id) {
-		$res = $object->fetch_optionals();
-
 		$head = group_prepare_head($object);
 		$title = $langs->trans("Group");
 
@@ -418,6 +418,7 @@ if ($action == 'create') {
 					print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";
 					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="adduser">';
+					print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 					print '<table class="noborder centpercent">'."\n";
 					print '<tr class="liste_titre"><td class="titlefield liste_titre">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
 					print '<td class="liste_titre">';
@@ -426,8 +427,10 @@ if ($action == 'create') {
 					print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 					print '<input type="submit" class="button buttongen button-add" value="'.$langs->trans("Add").'">';
 					print '</td></tr>'."\n";
-					print '</table></form>'."\n";
-					print '<br>';
+					print '</table>';
+					print '</div>';
+					print '</form>'."\n";
+					//print '<br>';
 				}
 
 				/*
@@ -443,6 +446,8 @@ if ($action == 'create') {
 				print '<td class="liste_titre center" width="5">'.$langs->trans("Status").'</td>';
 				print '<td class="liste_titre right" width="5">&nbsp;</td>';
 				print "</tr>\n";
+
+				$object->fetch($object->id, '', true);	// true to force load of all users, member of the group
 
 				if (!empty($object->members)) {
 					foreach ($object->members as $useringroup) {
@@ -469,7 +474,7 @@ if ($action == 'create') {
 						print "</td></tr>\n";
 					}
 				} else {
-					print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+					print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 				}
 				print "</table>";
 				print '</div>';

@@ -22,7 +22,7 @@
  */
 
 /**
- * \file       admin/bankline_extrafields.php
+ * \file       htdocs/admin/bankline_extrafields.php
  * \ingroup    bank
  * \brief      Page to setup extra fields of bankline
  */
@@ -41,7 +41,7 @@ $form = new Form($db);
 
 // List of supported format
 $tmptype2label = ExtraFields::$type2label;
-$type2label = [];
+$type2label = array();
 foreach ($tmptype2label as $key => $val) {
 	$type2label[$key] = $langs->transnoentitiesnoconv($val);
 }
@@ -80,17 +80,11 @@ $head = bank_admin_prepare_head(null);
 
 print dol_get_fiche_head($head, 'bankline_extrafields', $langs->trans($page_name), -1, 'account');
 
+$textobject = $langs->transnoentitiesnoconv("BankTransaction");
+
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 print dol_get_fiche_end();
-
-
-// Buttons
-if ($action != 'create' && $action != 'edit') {
-	print '<div class="tabsAction">';
-	print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a>';
-	print "</div>";
-}
 
 
 /*

@@ -35,7 +35,7 @@ $langs->loadLangs(array("admin", "compta"));
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->fiscalyear->write)) {
+if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {
 	accessforbidden();
 }
 
@@ -305,7 +305,7 @@ if ($action == 'create') {
 
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';
 
-				// print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&token='.newToken().'&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
+				//print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
 
 				print '</div>';
 			}

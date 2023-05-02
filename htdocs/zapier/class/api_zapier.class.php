@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class ZapierApi extends DolibarrApi
+class Zapier extends DolibarrApi
 {
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
@@ -66,8 +66,8 @@ class ZapierApi extends DolibarrApi
 	 *
 	 * Return an array with hook informations
 	 *
-	 * @param   int             $id ID of hook
-	 * @return  array|mixed     data without useless information
+	 * @param   int             $id 	ID of hook
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @url GET /hooks/{id}
 	 * @throws  RestException
@@ -198,11 +198,10 @@ class ZapierApi extends DolibarrApi
 		}
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -240,7 +239,7 @@ class ZapierApi extends DolibarrApi
 	 * Create hook object
 	 *
 	 * @param array $request_data   Request datas
-	 * @return int  ID of hook
+	 * @return array  ID of hook
 	 *
 	 * @url	POST /hook/
 	 */

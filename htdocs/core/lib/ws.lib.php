@@ -86,6 +86,10 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
 
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			$login = checkLoginPassEntity($authentication['login'], $authentication['password'], $authentication['entity'], $authmode, 'ws');
+			if ($login === '--bad-login-validity--') {
+				$login = '';
+			}
+
 			if (empty($login)) {
 				$error++;
 				$errorcode = 'BAD_CREDENTIALS';

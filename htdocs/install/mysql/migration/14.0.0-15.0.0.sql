@@ -558,3 +558,9 @@ ALTER TABLE llx_element_tag ADD CONSTRAINT fk_element_tag_categorie_rowid FOREIG
 -- Idea is to update this column manually in v15 with value in currency of company for bank that are not into the main currency and the transfer
 -- into accounting will use it in priority if value is not null. The script repair.sql contains the sequence to fix datas in llx_bank.
 ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;
+
+ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN ref varchar(128);
+ALTER TABLE llx_facture_fourn_det MODIFY COLUMN ref varchar(128);
+
+UPDATE llx_c_tva SET localtax2 = '-19:-15:-9' WHERE localtax2 = '-19' AND localtax2_type = '5' AND fk_pays = 4 AND taux = 21;
+

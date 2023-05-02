@@ -40,6 +40,11 @@ class CommActionRapport
 	 */
 	public $db;
 
+	public $error;
+
+	public $errors;
+
+
 	/**
 	 * @var string description
 	 */
@@ -98,10 +103,10 @@ class CommActionRapport
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur, $this->page_hauteur);
-		$this->marge_gauche = isset($conf->global->MAIN_PDF_MARGIN_LEFT) ? $conf->global->MAIN_PDF_MARGIN_LEFT : 10;
-		$this->marge_droite = isset($conf->global->MAIN_PDF_MARGIN_RIGHT) ? $conf->global->MAIN_PDF_MARGIN_RIGHT : 10;
-		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
-		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
+		$this->marge_gauche = getDolGlobalInt('MAIN_PDF_MARGIN_LEFT', 10);
+		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
+		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
+		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
 
 		$this->title = $langs->transnoentitiesnoconv("ActionsReport").' '.$this->year."-".$this->month;
 		$this->subject = $langs->transnoentitiesnoconv("ActionsReport").' '.$this->year."-".$this->month;
@@ -204,9 +209,7 @@ class CommActionRapport
 				$this->errors = $hookmanager->errors;
 			}
 
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($file, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($file);
 
 			$this->result = array('fullpath'=>$file);
 
@@ -234,8 +237,8 @@ class CommActionRapport
 
 		$sql = "SELECT s.nom as thirdparty, s.rowid as socid, s.client,";
 		$sql .= " a.id, a.datep as dp, a.datep2 as dp2,";
-		$sql .= " a.fk_contact, a.note, a.percent as percent, a.label, a.fk_project,";
-		$sql .= " c.code, c.libelle,";
+		$sql .= " a.fk_contact, a.note, a.percent as percent, a.fulldayevent, a.label, a.fk_project,";
+		$sql .= " c.code, c.libelle as label_type,";
 		$sql .= " u.login";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
@@ -332,7 +335,7 @@ class CommActionRapport
 
 				// Description of event
 				$pdf->SetXY(106, $y);
-				$pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset(dol_string_nohtmltag($text, 0)), 0, 'L', 0);
+				$pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset(dol_trunc(dol_string_nohtmltag($text, 0), 250, 'right', 'UTF-8', 0)), 0, 'L', 0);
 				$y3 = $pdf->GetY();
 
 				$i++;

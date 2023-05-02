@@ -75,7 +75,7 @@ abstract class ModeleNumRefBarCode
 	 */
 	public function getNom($langs)
 	{
-		return empty($this->name) ? $this->nom : $this->name;
+		return empty($this->name) ? get_class($this) : $this->name;
 	}
 
 	/**     Return a numbering example

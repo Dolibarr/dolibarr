@@ -78,12 +78,12 @@ class ActionCommTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-		if (empty($conf->agenda->enabled)) {
+		if (!isModEnabled('agenda')) {
 			print __METHOD__." module agenda must be enabled.\n"; die(1);
 		}
 
@@ -95,7 +95,7 @@ class ActionCommTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -108,7 +108,7 @@ class ActionCommTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -125,7 +125,7 @@ class ActionCommTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -145,7 +145,7 @@ class ActionCommTest extends PHPUnit\Framework\TestCase
 
 		$now = dol_now();
 
-		$localobject=new ActionComm($this->savdb);
+		$localobject=new ActionComm($db);
 
 		$localobject->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 		$localobject->code        = 'AC_PHPUNITTEST';
@@ -196,7 +196,7 @@ class ActionCommTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new ActionComm($this->savdb);
+		$localobject=new ActionComm($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -246,7 +246,7 @@ class ActionCommTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new ActionComm($this->savdb);
+		$localobject=new ActionComm($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

@@ -120,7 +120,7 @@ class SupplierOrders extends DolibarrApi
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur AS t LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
@@ -176,11 +176,10 @@ class SupplierOrders extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -286,6 +285,155 @@ class SupplierOrders extends DolibarrApi
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get contacts of given supplier order
+	 *
+	 * Return an array with contact informations
+	 *
+	 * @param 	int    	$id   		ID of supplier order
+	 * @param 	string 	$source 	Source of the contact (internal, external, all).
+	 * @param 	string 	$type 		Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...)
+	 * @return	Object				Object with cleaned properties
+	 *
+	 * @url	GET {id}/contacts
+	 *
+	 * @throws 	RestException
+	 */
+	public function getContacts($id, $source, $type = '')
+	{
+		if (!DolibarrApiAccess::$user->rights->fournisseur->commande->lire) {
+			throw new RestException(401);
+		}
+
+		$result = $this->order->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Supplier order not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		$contacts = array();
+
+		if ($source == 'all' || $source == 'external') {
+			$tmpContacts = $this->order->liste_contact(-1, 'external', 0, $type);
+			$contacts =	array_merge($contacts, $tmpContacts);
+		}
+
+		if ($source == 'all' || $source == 'internal') {
+			$tmpContacts = $this->order->liste_contact(-1, 'internal', 0, $type);
+			$contacts = array_merge($contacts, $tmpContacts);
+		}
+
+		return $this->_cleanObjectDatas($contacts);
+	}
+
+	/**
+	 * Add a contact type of given supplier order
+	 *
+	 * @param int    	$id				Id of supplier order to update
+	 * @param int    	$contactid		Id of contact/user to add
+	 * @param string 	$type			Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...)
+	 * @param string 	$source			Source of the contact (external, internal)
+	 * @return array
+	 *
+	 * @url	POST {id}/contact/{contactid}/{type}/{source}
+	 *
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 */
+	public function postContact($id, $contactid, $type, $source)
+	{
+		if (!DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
+			throw new RestException(401);
+		}
+
+		$result = $this->order->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Supplier order not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->order->add_contact($contactid, $type, $source);
+
+		if ($result < 0) {
+			throw new RestException(500, 'Error when added the contact');
+		}
+
+		if ($result == 0) {
+			throw new RestException(304, 'contact already added');
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Contact linked to the order'
+			)
+		);
+	}
+
+	/**
+	 * Unlink a contact type of given supplier order
+	 *
+	 * @param 	int    	$id             Id of supplier order to update
+	 * @param 	int    	$contactid      Id of contact/user to add
+	 * @param 	string 	$type           Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...).
+	 * @param 	string 	$source 		Source of the contact (internal, external).
+	 *
+	 * @url	DELETE {id}/contact/{contactid}/{type}/{source}
+	 *
+	 * @return array
+	 *
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function deleteContact($id, $contactid, $type, $source)
+	{
+		if (!DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
+			throw new RestException(401);
+		}
+
+		$result = $this->order->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Supplier order not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$contacts = $this->order->liste_contact(-1, $source, 0, $type);
+
+		$contactToUnlink = 0;
+		foreach ($contacts as $contact) {
+			if ($contact['id'] == $contactid && $contact['code'] == $type) {
+				$contactToUnlink = $contact['rowid'];
+				break;
+			}
+		}
+
+		if ($contactToUnlink == 0) {
+			throw new RestException(404, 'Linked contact not found');
+		}
+
+		$result = $this->order->delete_contact($contact['rowid']);
+
+		if (!$result) {
+			throw new RestException(500, 'Error when deleted the contact');
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Contact unlinked from supplier order'
+			)
+		);
 	}
 
 	/**

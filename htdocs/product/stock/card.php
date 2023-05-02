@@ -364,7 +364,7 @@ if ($action == 'create') {
 
 	// Status
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
-	print '<select id="warehousestatus" name="statut" class="flat">';
+	print '<select id="warehousestatus" name="statut" class="flat minwidth100">';
 	foreach ($object->statuts as $key => $value) {
 		if ($key == 1) {
 			print '<option value="'.$key.'" selected>'.$langs->trans($value).'</option>';
@@ -383,7 +383,7 @@ if ($action == 'create') {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
-		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
 	print '</table>';
@@ -403,9 +403,7 @@ if ($action == 'create') {
 			exit;
 		}
 
-		/*
-		 * Affichage fiche
-		 */
+		// View mode
 		if ($action <> 'edit' && $action <> 're-edit') {
 			$head = stock_prepare_head($object);
 
@@ -453,7 +451,7 @@ if ($action == 'create') {
 						$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 						$morehtmlref .= '</form>';
 					} else {
-						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, ($socid > 0 ? $socid : -1), $object->fk_project, 'none', 0, 0, 0, 1);
+						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, ($socid > 0 ? $socid : -1), $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 					}
 				} else {
 					if (!empty($object->fk_project)) {
@@ -593,12 +591,11 @@ if ($action == 'create') {
 			print "</div>";
 
 
-			/* ************************************************************************** */
-			/*                                                                            */
-			/* Affichage de la liste des produits de l'entrepot                           */
-			/*                                                                            */
-			/* ************************************************************************** */
+			// Show list of products into warehouse
 			print '<br>';
+
+
+			// TODO Create $arrayfields with all fields to show
 
 			print '<table class="noborder centpercent">';
 			print "<tr class=\"liste_titre\">";
@@ -692,7 +689,7 @@ if ($action == 'create') {
 					$objp = $db->fetch_object($resql);
 
 					// Multilangs
-					if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
+					if (getDolGlobalInt('MAIN_MULTILANGS')) { // si l'option est active
 						$sql = "SELECT label";
 						$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 						$sql .= " WHERE fk_product = ".((int) $objp->rowid);
@@ -734,6 +731,7 @@ if ($action == 'create') {
 					$productstatic->accountancy_code_buy_intra = $objp->accountancy_code_buy_intra;
 					$productstatic->accountancy_code_buy_export = $objp->accountancy_code_buy_export;
 
+					// Ref
 					print "<td>";
 					print $productstatic->getNomUrl(1, 'stock', 16);
 					print '</td>';
@@ -741,6 +739,7 @@ if ($action == 'create') {
 					// Label
 					print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objp->produit).'">'.dol_escape_htmltag($objp->produit).'</td>';
 
+					// Value
 					print '<td class="right">';
 					$valtoshow = price(price2num($objp->value, 'MS'), 0, '', 0, 0); // TODO replace with a qty() function
 					print empty($valtoshow) ? '0' : $valtoshow;
@@ -756,6 +755,7 @@ if ($action == 'create') {
 						print $langs->trans($productstatic->getLabelOfUnit());
 						print '</td>';
 					}
+
 					// Price buy PMP
 					print '<td class="right nowraponall">'.price(price2num($objp->ppmp, 'MU')).'</td>';
 
@@ -776,6 +776,7 @@ if ($action == 'create') {
 					}
 					$totalvaluesell += price2num($pricemin * $objp->value, 'MT');
 
+					// Link to transfer
 					if ($user->rights->stock->mouvement->creer) {
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print img_picto($langs->trans("TransferStock"), 'add', 'class="hideonsmartphone pictofixedwidth" style="color: #a69944"');
@@ -783,12 +784,19 @@ if ($action == 'create') {
 						print "</a></td>";
 					}
 
+					// Link to stock
 					if ($user->rights->stock->creer) {
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print img_picto($langs->trans("CorrectStock"), 'add', 'class="hideonsmartphone pictofixedwidth" style="color: #a69944"');
 						print $langs->trans("CorrectStock");
 						print "</a></td>";
 					}
+
+					print "</tr>";
+
+					$i++;
+
+					// Define $unit and $sameunits
 					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 						if ($i == 0) {
 							$units = $productstatic->fk_unit;
@@ -796,11 +804,10 @@ if ($action == 'create') {
 							$sameunits = false;
 						}
 					}
-					print "</tr>";
-					$i++;
 				}
 				$db->free($resql);
 
+				// Total
 				print '<tr class="liste_total"><td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
 				print '<td class="liste_total right">';
 				$valtoshow = price2num($totalunit, 'MS');
@@ -818,9 +825,15 @@ if ($action == 'create') {
 					print '<td class="liste_total">&nbsp;</td>';
 					print '<td class="liste_total right">'.price(price2num($totalvaluesell, 'MT')).'</td>';
 				}
-				print '<td class="liste_total">&nbsp;</td>';
-				print '<td class="liste_total">&nbsp;</td>';
-				print '<td class="liste_total">&nbsp;</td>';
+
+				if ($user->rights->stock->mouvement->creer) {
+					print '<td class="liste_total">&nbsp;</td>';
+				}
+
+				if ($user->rights->stock->creer) {
+					print '<td class="liste_total">&nbsp;</td>';
+				}
+
 				print '</tr>';
 			} else {
 				dol_print_error($db);
@@ -829,9 +842,7 @@ if ($action == 'create') {
 		}
 
 
-		/*
-		 * Edition fiche
-		 */
+		// Edit mode
 		if ($action == 'edit' || $action == 're-edit') {
 			$langs->trans("WarehouseEdit");
 
@@ -936,7 +947,7 @@ if ($action == 'create') {
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
-				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 			}
 

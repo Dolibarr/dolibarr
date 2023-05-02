@@ -42,6 +42,11 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
+$type = GETPOST('type');
+if (empty($type)) {
+	$type = 'CHQ';
+}
+
 $object = new RemiseCheque($db);
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -60,6 +65,7 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
 $upload_dir = $conf->bank->multidir_output[$object->entity ? $object->entity : $conf->entity]."/checkdeposits";
+
 // filter by dates from / to
 $search_date_start_day = GETPOST('search_date_start_day', 'int');
 $search_date_start_month = GETPOST('search_date_start_month', 'int');
@@ -82,6 +88,11 @@ $usercanread = $user->rights->banque->cheque;
 $usercancreate = $user->rights->banque->cheque;
 $usercandelete = $user->rights->banque->cheque;
 
+$permissiontodelete = $user->rights->banque->cheque;
+
+// List of payment mode to support
+// Example: BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT = 'CHQ','TRA'
+$arrayofpaymentmodetomanage = explode(',', getDolGlobalString('BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT', 'CHQ'));
 
 
 /*
@@ -131,18 +142,21 @@ if ($action == 'setref' && $user->rights->banque->cheque) {
 }
 
 if ($action == 'create' && GETPOST("accountid", "int") > 0 && $user->rights->banque->cheque) {
-	if (is_array(GETPOST('toRemise'))) {
-		$result = $object->create($user, GETPOST("accountid", "int"), 0, GETPOST('toRemise'));
+	if (GETPOSTISARRAY('toRemise')) {
+		$object->type = $type;
+		$arrayofid = GETPOST('toRemise', 'array:int');
+
+		$result = $object->create($user, GETPOST("accountid", "int"), 0, $arrayofid);
 		if ($result > 0) {
 			if ($object->statut == 1) {     // If statut is validated, we build doc
 				$object->fetch($object->id); // To force to reload all properties in correct property name
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				//if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) $newlang=$object->client->default_lang;
+				//if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) $newlang=$object->client->default_lang;
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
@@ -190,10 +204,10 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->banque-
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		//if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) $newlang=$object->client->default_lang;
+		//if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) $newlang=$object->client->default_lang;
 		if (!empty($newlang)) {
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
@@ -232,10 +246,10 @@ if ($action == 'builddoc' && $user->rights->banque->cheque) {
 
 	$outputlangs = $langs;
 	$newlang = '';
-	if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+	if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 		$newlang = GETPOST('lang_id', 'aZ09');
 	}
-	//if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) $newlang=$object->client->default_lang;
+	//if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) $newlang=$object->client->default_lang;
 	if (!empty($newlang)) {
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlang);
@@ -285,7 +299,16 @@ if (GETPOST('removefilter')) {
 	$filteraccountid = 0;
 }
 
-$title = $langs->trans("Cheques")." - ".$langs->trans("Card");
+if ($action == 'new') {
+	$title = $langs->trans("NewChequeDeposit");
+} else {
+	if ($type == 'CHQ') {
+		$title = $langs->trans("Cheques");
+	} else {
+		$title = ($langs->trans("PaymentType".$type) != "PaymentType".$type ? $langs->trans("PaymentType".$type) : $langs->trans("PaymentMode").' '.$type);
+	}
+}
+
 $helpurl = "";
 llxHeader("", $title, $helpurl);
 
@@ -301,7 +324,7 @@ if ($action == 'new') {
 	$hselected = $h;
 	$h++;
 
-	print load_fiche_titre($langs->trans("Cheques"), '', 'bank_account');
+	print load_fiche_titre($title, '', 'bank_account');
 } else {
 	$result = $object->fetch($id, $ref);
 	if ($result < 0) {
@@ -356,7 +379,12 @@ if ($action == 'new') {
 
 	$now = dol_now();
 
-	print '<span class="opacitymedium">'.$langs->trans("SelectChequeTransactionAndGenerate").'</span><br><br>'."\n";
+	$labeltype = ($langs->trans("PaymentType".$type) != "PaymentType".$type ? $langs->trans("PaymentType".$type) : $type);
+	if ($type == 'CHQ') {
+		print '<span class="opacitymedium">'.$langs->trans("SelectChequeTransactionAndGenerate").'</span><br><br>'."\n";
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("SelectPaymentTransactionAndGenerate", $labeltype).'</span><br><br>'."\n";
+	}
 
 	print '<form class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -365,9 +393,28 @@ if ($action == 'new') {
 	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
-	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
-	// Filter
-	print '<tr><td class="titlefieldcreate">'.$langs->trans("DateChequeReceived").'</td><td>';
+
+	if (count($arrayofpaymentmodetomanage) > 1) {
+		$arrayoflabels = array();
+		foreach ($arrayofpaymentmodetomanage as $key => $val) {
+			$labelval = ($langs->trans("PaymentType".$val) != "PaymentType".$val ? $langs->trans("PaymentType".$val) : $val);
+			$arrayoflabels[$key] = $labelval;
+		}
+		// Type
+		print '<tr><td>';
+		print $langs->trans("Type");
+		print '</td><td>';
+		print $form->selectarray('type', $arrayoflabels, $type);
+		print '</td></tr>';
+	}
+	// Date
+	print '<tr><td class="titlefieldcreate">';
+	if ($type == 'CHQ') {
+		print $langs->trans("DateChequeReceived");
+	} else {
+		print $langs->trans("DatePaymentReceived");
+	}
+	print '</td><td>';
 	// filter by dates from / to
 	print '<div class="nowrap">';
 	print $form->selectDate($search_date_start, 'search_date_start_', 0, 0, 1, '', 1, 1, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -384,13 +431,14 @@ if ($action == 'new') {
 	print dol_get_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" name="filter" value="'.dol_escape_htmltag($langs->trans("ToFilter")).'">';
+	print '<input type="submit" class="button small" name="filter" value="'.dol_escape_htmltag($langs->trans("ToFilter")).'">';
 	if ($search_date_start || $search_date_end || $filteraccountid > 0) {
 		print ' &nbsp; ';
-		print '<input type="submit" class="button" name="removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+		print '<input type="submit" class="button" name="removefilter small" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	}
 	print '</div>';
 	print '</form>';
+	print '<br>';
 	print '<br>';
 
 	$sql = "SELECT ba.rowid as bid, ba.label,";
@@ -400,7 +448,7 @@ if ($action == 'new') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON (b.fk_account = ba.rowid)";
-	$sql .= " WHERE b.fk_type = 'CHQ'";
+	$sql .= " WHERE b.fk_type = '".$db->escape($type)."'";
 	$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 	$sql .= " AND b.fk_bordereau = 0";
 	$sql .= " AND b.amount > 0";
@@ -435,7 +483,11 @@ if ($action == 'new') {
 		}
 
 		if ($i == 0) {
-			print '<div class="opacitymedium">'.$langs->trans("NoWaitingChecks").'</div><br>';
+			if ($type == 'CHQ') {
+				print '<div class="opacitymedium">'.$langs->trans("NoWaitingChecks").'</div><br>';
+			} else {
+				print '<div class="opacitymedium">'.$langs->trans("NoWaitingPaymentForDeposit", $labeltype).'</div><br>';
+			}
 		}
 	}
 
@@ -457,9 +509,11 @@ if ($action == 'new') {
         ';
 
 		$num = $db->num_rows($resql);
+
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="create">';
+		print '<input type="hidden" name="type" value="'.$type.'">';
 		print '<input type="hidden" name="accountid" value="'.$bid.'">';
 
 		$moreforfilter = '';
@@ -467,11 +521,17 @@ if ($action == 'new') {
 		print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("DateChequeReceived").'</td>'."\n";
+		print '<td>';
+		if ($type == 'CHQ') {
+			print $langs->trans("DateChequeReceived");
+		} else {
+			print $langs->trans("DatePaymentForDepositReceived", $type);
+		}
+		print '</td>'."\n";
 		print '<td>'.$langs->trans("ChequeNumber")."</td>\n";
 		print '<td>'.$langs->trans("CheckTransmitter")."</td>\n";
 		print '<td>'.$langs->trans("Bank")."</td>\n";
-		print '<td>'.$langs->trans("Amount")."</td>\n";
+		print '<td class="right">'.$langs->trans("Amount")."</td>\n";
 		print '<td class="center">'.$langs->trans("Payment")."</td>\n";
 		print '<td class="center">'.$langs->trans("LineRecord")."</td>\n";
 		print '<td class="center">'.$langs->trans("Select")."<br>";
@@ -483,13 +543,6 @@ if ($action == 'new') {
 
 		if (count($lines[$bid])) {
 			foreach ($lines[$bid] as $lid => $value) {
-				//$account_id = $bid; FIXME not used
-
-				// FIXME $accounts[$bid] is a label !
-				/*if (! isset($accounts[$bid]))
-					$accounts[$bid]=0;
-				$accounts[$bid] += 1;*/
-
 				print '<tr class="oddeven">';
 				print '<td>'.dol_print_date($value["date"], 'day').'</td>';
 				print '<td>'.$value["numero"]."</td>\n";
@@ -523,8 +576,6 @@ if ($action == 'new') {
 				print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
 				print '</td>';
 				print '</tr>';
-
-				$i++;
 			}
 		}
 		print "</table>";
@@ -548,7 +599,13 @@ if ($action == 'new') {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '';
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	$morehtmlleft = '';
+	$moreghtmlright = '';
+
+	$labelval = ($langs->trans("PaymentType".$object->type) != "PaymentType".$object->type ? $langs->trans("PaymentType".$object->type) : $object->type);
+	$morehtmlref = '<br><div class="refidno">'.$langs->trans("Type").' : '.$labelval.'</div>';
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, $morehtmlleft, '', 0, $moreghtmlright);
 
 
 	print '<div class="fichecenter">';
@@ -639,7 +696,7 @@ if ($action == 'new') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON (b.fk_account = ba.rowid)";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
 	$sql .= " WHERE ba.entity IN (".getEntity('bank_account').")";
-	$sql .= " AND b.fk_type= 'CHQ'";
+	$sql .= " AND b.fk_type= '".$db->escape($object->type)."'";
 	$sql .= " AND b.fk_bordereau = ".((int) $object->id);
 	$sql .= $db->order($sortfield, $sortorder);
 
@@ -713,9 +770,9 @@ if ($action == 'new') {
 				$i++;
 			}
 		} else {
-			print '<td colspan="8" class="opacitymedium">';
+			print '<td colspan="9"><span class="opacitymedium">';
 			print $langs->trans("None");
-			print '</td>';
+			print '</span></td>';
 		}
 
 		print "</table>";
@@ -750,7 +807,7 @@ if ($user->socid == 0 && !empty($object->id) && $object->statut == 0 && $user->r
 }
 
 if ($user->socid == 0 && !empty($object->id) && $user->rights->banque->cheque) {
-	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&sortfield='.$sortfield.'&sortorder='.$sortorder.'">'.$langs->trans('Delete').'</a>';
+	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
 }
 print '</div>';
 

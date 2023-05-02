@@ -64,9 +64,10 @@ interface Database
 	/**
 	 * Start transaction
 	 *
-	 * @return  int         1 if transaction successfuly opened or already opened, 0 if error
+	 * @param	string	$textinlog		Add a small text into log. '' by default.
+	 * @return  int      				1 if transaction successfuly opened or already opened, 0 if error
 	 */
-	public function begin();
+	public function begin($textinlog = '');
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -128,6 +129,17 @@ interface Database
 	public function DDLListTables($database, $table = '');
 	// phpcs:enable
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  List tables into a database with table type
+	 *
+	 *  @param	string		$database	Name of database
+	 *  @param	string		$table		Name of table filter ('xxx%')
+	 *  @return	array					List of tables in an array
+	 */
+	public function DDLListTablesFull($database, $table = '');
+	// phpcs:enable
+
 	/**
 	 * Return last request executed with query()
 	 *
@@ -172,19 +184,10 @@ interface Database
 	/**
 	 * Escape a string to insert data
 	 *
-	 * @param   string $stringtoencode String to escape
-	 * @return  string                        String escaped
+	 * @param   string $stringtoencode 		String to escape
+	 * @return  string                      String escaped
 	 */
 	public function escape($stringtoencode);
-
-	/**
-	 * Escape a string to insert data
-	 *
-	 * @param   string $stringtoencode String to escape
-	 * @return  string                        String escaped
-	 * @deprecated
-	 */
-	public function escapeunderscore($stringtoencode);
 
 	/**
 	 *	Escape a string to insert data into a like

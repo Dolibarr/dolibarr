@@ -71,7 +71,7 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripeTransactionList"));
 
-if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+if (isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
@@ -220,11 +220,11 @@ if (!$rowid) {
 			// Status
 			print "<td class='right'>";
 			if ($txn->status == 'available') {
-				print img_picto($langs->trans("".$txn->status.""), 'statut4');
+				print img_picto($langs->trans($txn->status), 'statut4');
 			} elseif ($txn->status == 'pending') {
-				print img_picto($langs->trans("".$txn->status.""), 'statut7');
+				print img_picto($langs->trans($txn->status), 'statut7');
 			} elseif ($txn->status == 'failed') {
-				print img_picto($langs->trans("".$txn->status.""), 'statut8');
+				print img_picto($langs->trans($txn->status), 'statut8');
 			}
 			print '</td>';
 			print "</tr>\n";

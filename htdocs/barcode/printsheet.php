@@ -116,6 +116,11 @@ if ($action == 'builddoc') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BarcodeValue")), null, 'errors');
 		$error++;
 	}
+	$MAXLENGTH = 51200;	// Limit set to 50Ko
+	if (dol_strlen($forbarcode) > $MAXLENGTH) {			// barcode value
+		setEventMessages($langs->trans("ErrorFieldTooLong", $langs->transnoentitiesnoconv("BarcodeValue")).' ('.$langs->trans("RequireXStringMax", $MAXLENGTH).')', null, 'errors');
+		$error++;
+	}
 	if (empty($fk_barcode_type)) {		// barcode type = barcode encoding
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BarcodeType")), null, 'errors');
 		$error++;
@@ -226,7 +231,7 @@ if ($action == 'builddoc') {
 						'code'=>$code,
 						'encoding'=>$encoding,
 						'is2d'=>$is2d,
-						'photo'=>$barcodeimage	// Photo must be a file that exists with format supported by TCPDF
+						'photo'=>!empty($barcodeimage) ? $barcodeimage : ''	// Photo must be a file that exists with format supported by TCPDF
 					);
 				}
 			} else {

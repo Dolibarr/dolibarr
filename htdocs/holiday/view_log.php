@@ -222,7 +222,7 @@ $log_holiday = $object->fetchLog($sqlorder, $sqlwhere); // Load $object->logs
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	//TODO: $result = $db->query($sql);
 	//TODO: $nbtotalofrecords = $db->num_rows($result);
 	$nbtotalofrecords = is_array($object->logs) ? count($object->logs) : 0;
@@ -241,7 +241,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if (!empty($search_id)) {
 	$param .= '&search_statut='.urlencode($search_statut);
@@ -283,7 +283,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=request', '', $user->rights->holiday->write);
+$newcardbutton = dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create', '', $user->rights->holiday->write);
 print_barre_liste($langs->trans('LogCP'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_hrm', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 print '<div class="info">'.$langs->trans('LastUpdateCP').': ';
@@ -333,11 +333,10 @@ if (!empty($arrayfields['cpl.date_action']['checked'])) {
 if (!empty($arrayfields['cpl.fk_user_action']['checked'])) {
 	$validator = new UserGroup($db);
 	$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
-	$valideurobjects = $validator->listUsersForGroup($excludefilter);
+	$valideurobjects = $validator->listUsersForGroup($excludefilter, 1);
 	$valideurarray = array();
-
 	foreach ($valideurobjects as $val) {
-		$valideurarray[$val->id] = $val->id;
+		$valideurarray[$val] = $val;
 	}
 
 	print '<td class="liste_titre">';

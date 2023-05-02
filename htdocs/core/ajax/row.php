@@ -49,7 +49,9 @@ if (!defined('NOREQUIRETRAN')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
+
 $hookmanager->initHooks(array('rowinterface'));
+
 // Security check
 // This is done later into view.
 
@@ -74,13 +76,13 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 
 	// Make test on permission
 	$perm = 0;
-	if ($table_element_line == 'propaldet' && $user->rights->propal->creer) {
+	if ($table_element_line == 'propaldet' && $user->hasRight('propal', 'creer')) {
 		$perm = 1;
-	} elseif ($table_element_line == 'commandedet' && $user->rights->commande->creer) {
+	} elseif ($table_element_line == 'commandedet' && $user->hasRight('commande', 'creer')) {
 		$perm = 1;
-	} elseif ($table_element_line == 'facturedet' && $user->rights->facture->creer) {
+	} elseif ($table_element_line == 'facturedet' && $user->hasRight('facture', 'creer')) {
 		$perm = 1;
-	} elseif ($table_element_line == 'facturedet_rec' && $user->rights->facture->creer) {
+	} elseif ($table_element_line == 'facturedet_rec' && $user->hasRight('facture', 'creer')) {
 		$perm = 1;
 	} elseif ($table_element_line == 'emailcollector_emailcollectoraction' && $user->admin) {
 		$perm = 1;
@@ -113,6 +115,8 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 	} elseif ($table_element_line == 'product_association' && $fk_element == 'fk_product' && (!empty($user->rights->produit->creer) || !empty($user->rights->service->creer))) {
 		$perm = 1;
 	} elseif ($table_element_line == 'projet_task' && $fk_element == 'fk_projet' && $user->rights->projet->creer) {
+		$perm = 1;
+	} elseif ($table_element_line == 'contratdet' && $fk_element == 'fk_contrat' && $user->hasRight('contrat', 'creer')) {
 		$perm = 1;
 	} else {
 		$tmparray = explode('_', $table_element_line);
@@ -152,7 +156,7 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 
 	// Reorder line to have position of children lines sharing same counter than parent lines
 	// This should be useless because there is no need to have children sharing same counter than parent, but well, it's cleaner into database.
-	if (in_array($fk_element, array('fk_facture', 'fk_propal', 'fk_commande'))) {
+	if (in_array($fk_element, array('fk_facture', 'fk_propal', 'fk_commande','fk_contrat'))) {
 		$result = $row->line_order(true);
 	}
 } else {

@@ -4,12 +4,12 @@
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
--- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
+-- Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2010-2016 Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2012      Sebastian Neuwert    <sebastian.neuwert@modula71.de>
--- Copyright (C) 2012	   Ricardo Schluter     <info@ripasch.nl>
--- Copyright (C) 2015	   Ferran Marcet        <fmarcet@2byte.es>
--- Copyright (C) 2019~	   Lao Tian        <281388879@qq.com>
+-- Copyright (C) 2012      Ricardo Schluter     <info@ripasch.nl>
+-- Copyright (C) 2015      Ferran Marcet        <fmarcet@2byte.es>
+-- Copyright (C) 2019~     Lao Tian             <281388879@qq.com>
 -- Copyright (C) 2020-2021 Udo Tamm             <dev@dolibit.de>
 -- Copyright (C) 2022      Miro Sertić          <miro.sertic0606@gmail.com>
 --
@@ -52,11 +52,12 @@
 -- Belgium
 -- Bolivia
 -- Brazil -> for Departmements
+-- Burundi
 -- Canada -> for Departmements
 -- Chile
 -- China
 -- Colombie -> for Departmements
--- Croatia -> for Departmements
+-- Croatia
 -- Denmark
 -- France
 -- Germany -> for Departmements
@@ -66,6 +67,7 @@
 -- India -> for Departmements
 -- Indonesia -> for Departmements
 -- Italy
+-- Japan -> only for Departmements
 -- Luxembourg
 -- Mauritius
 -- Mexique -> for Departmements
@@ -76,6 +78,7 @@
 -- Portugal
 -- Romania -> for Departmements
 -- San Salvador
+-- Slovakia
 -- Slovenia
 -- Spain
 -- Switzerland/Suisse -> for Departmements/Cantons
@@ -332,6 +335,10 @@ insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 3
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 3, 320, NULL, 1, 'Veneto');
 
 
+-- Japan Region (id country=123)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 123, 12301, '', 0,'日本');
+
+
 -- Luxembourg Regions (districts) (id country=140)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 140, 14001, '', 0, 'Diekirch');
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 140, 14002, '', 0, 'Grevenmacher');
@@ -444,6 +451,13 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 8
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 86, 8603, NULL, NULL, 'Occidental');
 
 
+-- Slovakia Regions (rowid country=201)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 201, '20101', 'SK01', NULL, 'Bratislava Region');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 201, '20102', 'SK02', NULL, 'Western Slovakia');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 201, '20103', 'SK03', NULL, 'Central Slovakia');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 201, '20104', 'SK04', NULL, 'Eastern Slovakia');
+
+
 -- Slovenia Regions (rowid country=202)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 202, '20203', 'SI03', NULL, 'East Slovenia');
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 202, '20204', 'SI04', NULL, 'West Slovenia');
@@ -533,5 +547,11 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 2
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 232, 23208, '', 0, 'Nor-Oriental');
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 232, 23209, '', 0, 'Zuliana');
 
--- Japan Region (id country=123)
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 123, 12301, '', 0,'日本');
+-- Turkiye (Turkey) Regions (id country=221)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 221, 22101, '', 0, 'Marmara');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 221, 22102, '', 0, 'İç Anadolu');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 221, 22103, '', 0, 'Ege');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 221, 22104, '', 0, 'Akdeniz');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 221, 22105, '', 0, 'Güneydoğu');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 221, 22106, '', 0, 'Karadeniz');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 221, 22107, '', 0, 'Doğu Anadolu');

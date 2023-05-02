@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2010  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2023	   	Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +22,9 @@
  */
 
 /**
- *	\file       htdocs/core/lib/product.lib.php
- *	\brief      Ensemble de fonctions de base pour le module produit et service
- * 	\ingroup	product
+ * \file       htdocs/core/lib/product.lib.php
+ * \brief      Ensemble de fonctions de base pour le module produit et service
+ * \ingroup	product
  */
 
 /**
@@ -53,30 +54,44 @@ function product_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (!empty($object->status) && $usercancreadprice) {
-		$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
-		$head[$h][1] = $langs->trans("SellingPrices");
-		$head[$h][2] = 'price';
-		$h++;
+	if (!empty($object->status)) {
+		if ($usercancreadprice) {
+			$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
+			$head[$h][1] = $langs->trans("SellingPrices");
+			$head[$h][2] = 'price';
+			$h++;
+		} else {
+			$head[$h][0] = '#';
+			$head[$h][1] = $langs->trans("SellingPrices");
+			$head[$h][2] = 'price';
+			$head[$h][5] = 'disabled';
+			$h++;
+		}
 	}
 
-	if (!empty($object->status_buy) || (!empty($conf->margin->enabled) && !empty($object->status))) {   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
-		if ((((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $user->rights->fournisseur->lire)
-		|| (!empty($conf->margin->enabled) && $user->rights->margin->liretous)
+	if (!empty($object->status_buy) || (isModEnabled('margin') && !empty($object->status))) {   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
+		if ((isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && ($user->hasRight('fournisseur', 'lire') || $user->hasRight('supplier_order', 'read') || $user->hasRight('supplier_invoice', 'read'))
+		|| (isModEnabled('margin') && $user->hasRight("margin", "liretous"))
 		) {
 			if ($usercancreadprice) {
 				$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
 				$head[$h][1] = $langs->trans("BuyingPrices");
 				$head[$h][2] = 'suppliers';
 				$h++;
+			} else {
+				$head[$h][0] = '#';
+				$head[$h][1] = $langs->trans("BuyingPrices");
+				$head[$h][2] = 'suppliers';
+				$head[$h][5] = 'disabled';
+				$h++;
 			}
 		}
 	}
 
 	// Multilangs
-	if (!empty($conf->global->MAIN_MULTILANGS)) {
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$object->id;
-		$head[$h][1] = $langs->trans("Translation");
+		$head[$h][1] = $langs->trans("Translations");
 		$head[$h][2] = 'translation';
 		$h++;
 	}
@@ -94,7 +109,7 @@ function product_prepare_head($object)
 		$h++;
 	}
 
-	if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
+	if (isModEnabled('variants') && ($object->isProduct() || $object->isService())) {
 		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
@@ -115,7 +130,7 @@ function product_prepare_head($object)
 	}
 
 	if ($object->isProduct() || ($object->isService() && !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {    // If physical product we can stock (or service with option)
-		if (!empty($conf->stock->enabled) && $user->rights->stock->lire) {
+		if (isModEnabled('stock') && $user->rights->stock->lire) {
 			$head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$object->id;
 			$head[$h][1] = $langs->trans("Stock");
 			$head[$h][2] = 'stock';
@@ -153,7 +168,7 @@ function product_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'product');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'product', 'add', 'core');
 
 	// Notes
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
@@ -183,7 +198,7 @@ function product_prepare_head($object)
 		$upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 	}
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-	if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 		if (isModEnabled("product") && ($object->type == Product::TYPE_PRODUCT)) {
 			$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
 		}
@@ -201,8 +216,6 @@ function product_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'product', 'remove');
-
 	// Log
 	$head[$h][0] = DOL_URL_ROOT.'/product/agenda.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
@@ -212,6 +225,10 @@ function product_prepare_head($object)
 	}
 	$head[$h][2] = 'agenda';
 	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'product', 'add', 'external');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'product', 'remove');
 
 	return $head;
 }
@@ -237,6 +254,11 @@ function productlot_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/product/stock/stats/expedition.php?showmessage=1&id=".$object->id;
+	$head[$h][1] = $langs->trans('Referers');
+	$head[$h][2] = 'referers';
+	$h++;
+
 	// Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
@@ -250,6 +272,24 @@ function productlot_prepare_head($object)
 	}
 	$head[$h][2] = 'documents';
 	$h++;
+
+	// Notes
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+		$nbNote = 0;
+		if (!empty($object->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
+		$head[$h][0] = DOL_URL_ROOT .'/product/stock/productlot_note.php?id=' . $object->id;
+		$head[$h][1] = $langs->trans('Notes');
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNote . '</span>';
+		}
+		$head[$h][2] = 'note';
+		$h++;
+	}
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
@@ -279,7 +319,11 @@ function productlot_prepare_head($object)
 */
 function product_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('product');
+	$extrafields->fetch_name_optionals_label('product_fournisseur_price');
 
 	$h = 0;
 	$head = array();
@@ -306,11 +350,19 @@ function product_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['product']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_supplier_extrafields.php';
 	$head[$h][1] = $langs->trans("ProductSupplierExtraFields");
+	$nbExtrafields = $extrafields->attributes['product_fournisseur_price']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'supplierAttributes';
 	$h++;
 
@@ -322,13 +374,16 @@ function product_admin_prepare_head()
 
 
 /**
- *  Return array head with list of tabs to view object informations.
+ * Return array head with list of tabs to view object informations.
  *
- *  @return	array   	        head array with tabs
+ * @return	array   	        head array with tabs
  */
 function product_lot_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('product_lot');
 
 	$h = 0;
 	$head = array();
@@ -346,6 +401,10 @@ function product_lot_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_lot_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['product_lot']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
@@ -379,7 +438,7 @@ function show_stats_for_company($product, $socid)
 	print '</tr>';
 
 	// Customer proposals
-	if (isModEnabled("propal") && $user->rights->propale->lire) {
+	if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_propale($socid);
 		if ($ret < 0) {
@@ -416,8 +475,8 @@ function show_stats_for_company($product, $socid)
 		print '</td>';
 		print '</tr>';
 	}
-	// Customer orders
-	if (isModEnabled('commande') && $user->rights->commande->lire) {
+	// Sales orders
+	if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_commande($socid);
 		if ($ret < 0) {
@@ -455,7 +514,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Customer invoices
-	if (isModEnabled('facture') && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_facture($socid);
 		if ($ret < 0) {
@@ -474,7 +533,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Customer template invoices
-	if (isModEnabled("facture") && $user->rights->facture->lire) {
+	if (isModEnabled("facture") && $user->hasRight('facture', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_facturerec($socid);
 		if ($ret < 0) {
@@ -513,7 +572,7 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// Contracts
-	if (isModEnabled('contrat') && $user->rights->contrat->lire) {
+	if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_contrat($socid);
 		if ($ret < 0) {
@@ -533,7 +592,7 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// BOM
-	if (!empty($conf->bom->enabled) && $user->rights->bom->read) {
+	if (isModEnabled('bom') && $user->rights->bom->read) {
 		$nblines++;
 		$ret = $product->load_stats_bom($socid);
 		if ($ret < 0) {
@@ -556,11 +615,11 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// MO
-	if (!empty($conf->mrp->enabled) && $user->rights->mrp->read) {
+	if (isModEnabled('mrp') && !empty($user->rights->mrp->read)) {
 		$nblines++;
 		$ret = $product->load_stats_mo($socid);
 		if ($ret < 0) {
-			setEventMessage($product->error, 'errors');
+			setEventMessages($product->error, $product->errors, 'errors');
 		}
 		$langs->load("mrp");
 		print '<tr><td>';
@@ -585,7 +644,129 @@ function show_stats_for_company($product, $socid)
 	}
 	$parameters = array('socid'=>$socid);
 	$reshook = $hookmanager->executeHooks('addMoreProductStat', $parameters, $product, $nblines); // Note that $action and $object may have been modified by some hooks
-	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	}
+
+	print $hookmanager->resPrint;
+
+
+	return $nblines++;
+}
+
+/**
+ * Show stats for product batch
+ *
+ * @param	Productlot	$batch	Product batch object
+ * @param 	int			$socid	Thirdparty id
+ * @return	integer				NB of lines shown into array
+ */
+function show_stats_for_batch($batch, $socid)
+{
+	global $conf, $langs, $user, $db, $hookmanager;
+
+	$langs->LoadLangs(array('sendings', 'orders', 'receptions'));
+
+	$form = new Form($db);
+
+	$nblines = 0;
+
+	print '<tr class="liste_titre">';
+	print '<td class="left" width="25%">'.$langs->trans("Referers").'</td>';
+	print '<td class="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
+	print '<td class="right" width="25%">'.$langs->trans("NbOfObjectReferers").'</td>';
+	print '<td class="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
+	print '</tr>';
+
+	// Expeditions
+	if (isModEnabled('expedition') && !empty($user->rights->expedition->lire)) {
+		$nblines++;
+		$ret = $batch->loadStatsExpedition($socid);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
+		$langs->load("bills");
+		print '<tr><td>';
+		print '<a href="'.dol_buildpath('/product/stock/stats/expedition.php', 1).'?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("Shipments").'</a>';
+		print '</td><td class="right">';
+		print $batch->stats_expedition['customers'];
+		print '</td><td class="right">';
+		print $batch->stats_expedition['nb'];
+		print '</td><td class="right">';
+		print $batch->stats_expedition['qty'];
+		print '</td>';
+		print '</tr>';
+	}
+
+	if (isModEnabled("reception") && !empty($user->rights->reception->lire)) {
+		$nblines++;
+		$ret = $batch->loadStatsReception($socid);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
+		$langs->load("bills");
+		print '<tr><td>';
+		print '<a href="'.dol_buildpath('/product/stock/stats/reception.php', 1).'?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("Receptions").'</a>';
+		print '</td><td class="right">';
+		print $batch->stats_reception['customers'];
+		print '</td><td class="right">';
+		print $batch->stats_reception['nb'];
+		print '</td><td class="right">';
+		print $batch->stats_reception['qty'];
+		print '</td>';
+		print '</tr>';
+	} elseif (isModEnabled('supplier_order') && !empty($user->rights->fournisseur->commande->lire)) {
+		$nblines++;
+		$ret = $batch->loadStatsSupplierOrder($socid);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
+		$langs->load("bills");
+		print '<tr><td>';
+		print '<a href="'.dol_buildpath('/product/stock/stats/commande_fournisseur.php', 1).'?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("SuppliersOrders").'</a>';
+		print '</td><td class="right">';
+		print $batch->stats_supplier_order['customers'];
+		print '</td><td class="right">';
+		print $batch->stats_supplier_order['nb'];
+		print '</td><td class="right">';
+		print $batch->stats_supplier_order['qty'];
+		print '</td>';
+		print '</tr>';
+	}
+
+	if (isModEnabled('mrp') && !empty($user->rights->mrp->read)) {
+		$nblines++;
+		$ret = $batch->loadStatsMo($socid);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
+		$langs->load("mrp");
+		print '<tr><td>';
+		print '<a href="'.dol_buildpath('/product/stock/stats/mo.php', 1).'?id='.$batch->id.'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
+		print '</td><td class="right">';
+		//      print $form->textwithpicto($batch->stats_mo['customers_toconsume'], $langs->trans("ToConsume")); Makes no sense with batch, at this moment we don't know batch number
+		print $form->textwithpicto($batch->stats_mo['customers_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		//      print $form->textwithpicto($batch->stats_mo['customers_toproduce'], $langs->trans("QtyToProduce")); Makes no sense with batch, at this moment we don't know batch number
+		print $form->textwithpicto($batch->stats_mo['customers_produced'], $langs->trans("QtyAlreadyProduced"));
+		print '</td><td class="right">';
+		//      print $form->textwithpicto($batch->stats_mo['nb_toconsume'], $langs->trans("ToConsume")); Makes no sense with batch, at this moment we don't know batch number
+		print $form->textwithpicto($batch->stats_mo['nb_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		//      print $form->textwithpicto($batch->stats_mo['nb_toproduce'], $langs->trans("QtyToProduce")); Makes no sense with batch, at this moment we don't know batch number
+		print $form->textwithpicto($batch->stats_mo['nb_produced'], $langs->trans("QtyAlreadyProduced"));
+		print '</td><td class="right">';
+		//      print $form->textwithpicto($batch->stats_mo['qty_toconsume'], $langs->trans("ToConsume")); Makes no sense with batch, at this moment we don't know batch number
+		print $form->textwithpicto($batch->stats_mo['qty_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		//      print $form->textwithpicto($batch->stats_mo['qty_toproduce'], $langs->trans("QtyToProduce")); Makes no sense with batch, at this moment we don't know batch number
+		print $form->textwithpicto($batch->stats_mo['qty_produced'], $langs->trans("QtyAlreadyProduced"));
+		print '</td>';
+		print '</tr>';
+	}
+
+	$parameters = array('socid'=>$socid);
+	$reshook = $hookmanager->executeHooks('addMoreBatchProductStat', $parameters, $batch, $nblines); // Note that $action and $object may have been modified by some hooks
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	}
 
 	print $hookmanager->resPrint;
 

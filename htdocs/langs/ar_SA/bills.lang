@@ -13,10 +13,12 @@ BillsStatistics=إحصاءات فواتير العملاء
 BillsStatisticsSuppliers=إحصاءات فواتير الموردين
 DisabledBecauseDispatchedInBookkeeping=معطل لأنه تم إرسال الفاتورة إلى مسك الدفاتر
 DisabledBecauseNotLastInvoice=معطل لأن الفاتورة غير قابلة للحذف.  لقد تم تسجيل فواتير بعد هذه الفاتورة وسوف يؤدي ذلك إلى وجود ثقب في نظام العد.
+DisabledBecauseNotLastSituationInvoice=معطل بسبب الفاتورة لا يمكن حذفها\nهذه الفاتورة لسيت اخر فاتورة في دورة الفواتير
 DisabledBecauseNotErasable=معطل لأنه لا يمكن محوه
 InvoiceStandard=الفاتورة القياسية
 InvoiceStandardAsk=الفاتورة القياسية
 InvoiceStandardDesc=هذا النوع من الفاتورة هي فاتورة عام.
+InvoiceStandardShort=قياسي
 InvoiceDeposit=فاتورة الدفعة الأولى
 InvoiceDepositAsk=فاتورة الدفعة الأولى
 InvoiceDepositDesc=يتم هذا النوع من الفاتورة عند استلام دفعة أولى.
@@ -24,6 +26,7 @@ InvoiceProForma=الفاتورة الأولية
 InvoiceProFormaAsk=الفاتورة الأولية
 InvoiceProFormaDesc=<b> الفاتورة المبدئية </b> عبارة عن صورة فاتورة حقيقية ولكنها لا تحتوي على قيمة محاسبية.
 InvoiceReplacement=استبدال الفاتورة
+InvoiceReplacementShort=الاستبدال
 InvoiceReplacementAsk=فاتورة استبدال الفاتورة
 InvoiceReplacementDesc= <b> فاتورة الاستبدال </b> تُستخدم لاستبدال فاتورة بالكامل بدون دفعة مستلمة بالفعل. <br> <br> ملاحظة: يمكن فقط استبدال الفواتير التي لم يتم سدادها. إذا لم يتم إغلاق الفاتورة التي قمت باستبدالها بعد ، فسيتم إغلاقها تلقائيًا لتصبح "مهجورة".
 InvoiceAvoir=ملاحظة ائتمانية
@@ -55,7 +58,7 @@ CustomerInvoice=فاتورة العميل
 CustomersInvoices=فواتير العملاء
 SupplierInvoice=فاتورة مورد
 SuppliersInvoices=فواتير الموردين
-SupplierInvoiceLines=Vendor invoice lines
+SupplierInvoiceLines=سطور فاتورة البائع
 SupplierBill=فاتورة مورد
 SupplierBills=فواتير الموردين
 Payment=دفعة
@@ -81,14 +84,14 @@ PaymentsReports=تقارير المدفوعات
 PaymentsAlreadyDone=المدفوعات قد فعلت
 PaymentsBackAlreadyDone=تم رد الأموال
 PaymentRule=قاعدة الدفع
-PaymentMode=Payment method
-PaymentModes=Payment methods
-DefaultPaymentMode=Default Payment method
-DefaultBankAccount=Default Bank Account
-IdPaymentMode=Payment method (id)
-CodePaymentMode=Payment method (code)
-LabelPaymentMode=Payment method (label)
-PaymentModeShort=Payment method
+PaymentMode=طريقة الدفع او السداد
+PaymentModes=طرق الدفع
+DefaultPaymentMode=طريقه تسديد خاطئه
+DefaultBankAccount=حساب مصرفي افتراضي
+IdPaymentMode=طريقة الدفع (المعرف)
+CodePaymentMode=طريقة الدفع (كود)
+LabelPaymentMode=طريقة الدفع (التسمية)
+PaymentModeShort=طريقة الدفع او السداد
 PaymentTerm=شروط السداد
 PaymentConditions=شروط السداد
 PaymentConditionsShort=شروط السداد
@@ -119,7 +122,7 @@ ConvertExcessPaidToReduc=تحويل الفائض المستلم إلى خصم م
 EnterPaymentReceivedFromCustomer=أدخل الدفعة المستلمة من العميل
 EnterPaymentDueToCustomer=انشاء استحقاق دفع للعميل
 DisabledBecauseRemainderToPayIsZero=معطل لأن المتبقي غير المسدد يساوي صفر
-PriceBase=Base price
+PriceBase=السعر الأساسي
 BillStatus=حالة الفاتورة
 StatusOfGeneratedInvoices=حالة الفواتير المنشأة
 BillStatusDraft=مسودة (يجب التحقق من صحتها)
@@ -156,9 +159,10 @@ ErrorInvoiceAvoirMustBeNegative=خطأ ، يجب أن يكون للفاتورة 
 ErrorInvoiceOfThisTypeMustBePositive=خطأ ، يجب أن يحتوي هذا النوع من الفاتورة على مبلغ لا يشمل الضريبة موجبًا (أو فارغًا)
 ErrorCantCancelIfReplacementInvoiceNotValidated=خطأ ، لا يمكن إلغاء فاتورة تم استبدالها بفاتورة أخرى لا تزال في حالة المسودة
 ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=تم استخدام هذا الجزء أو آخر لذا لا يمكن إزالة سلسلة الخصم.
-ErrorInvoiceIsNotLastOfSameType=Error: The date of invoice %s  is %s. It must be posterior or equal to last date for same type invoices (%s). Please change the invoice date.
+ErrorInvoiceIsNotLastOfSameType=خطأ: تاريخ الفاتورة %s هو %s. يجب أن تكون لاحقة أو مساوية للتاريخ الأخير للفواتير من نفس النوع (%s). الرجاء تغيير تاريخ الفاتورة.
 BillFrom=من:
 BillTo=فاتورة الى:
+ShippingTo=شحن الي 
 ActionsOnBill=الإجراءات على الفاتورة
 RecurringInvoiceTemplate=نموذج او فاتورة متكررة
 NoQualifiedRecurringInvoiceTemplateFound=لا يوجد نموذج فاتورة متكرر مؤهل للإنشاء.
@@ -192,7 +196,7 @@ ConfirmClassifyPaidPartiallyReasonDiscount=المتبقي الغير مدفوع 
 ConfirmClassifyPaidPartiallyReasonDiscountNoVat=المتبقي الغير مدفوع <b> (%s %s) </b> هو خصم ممنوح لأن السداد تم قبل الأجل. أنا أقبل خسارة ضريبة القيمة المضافة على هذا الخصم.
 ConfirmClassifyPaidPartiallyReasonDiscountVat=المتبقي الغير مدفوع <b> (%s %s) </b> هو خصم ممنوح لأن السداد تم قبل الأجل. أسترد ضريبة القيمة المضافة على هذا الخصم بدون إشعار دائن.
 ConfirmClassifyPaidPartiallyReasonBadCustomer=عميل سيء
-ConfirmClassifyPaidPartiallyReasonBankCharge=Deduction by bank (intermediary bank fees)
+ConfirmClassifyPaidPartiallyReasonBankCharge=الخصم من قبل البنك (رسوم البنك الوسيط)
 ConfirmClassifyPaidPartiallyReasonProductReturned=تم إرجاع بعض المنتجات
 ConfirmClassifyPaidPartiallyReasonOther=التخلي عن المبلغ لسبب آخر
 ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=هذا الاختيار ممكن إذا تم تزويد فاتورتك بالتعليقات المناسبة. (مثال «فقط الضريبة المقابلة للسعر الذي تم دفعه هي التي تعطي الحق في الخصم»)
@@ -200,7 +204,7 @@ ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=في بعض البلدان ، 
 ConfirmClassifyPaidPartiallyReasonAvoirDesc=استخدم هذا الاختيار إذا كانت جميع الاختيارات الاخرى لا تناسبك
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=العميل السيئ <b> </b> هو العميل الذي يرفض سداد ديونه.
 ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=يستخدم هذا الاختيار عندما لا يكتمل السداد بسبب إرجاع بعض المنتجات
-ConfirmClassifyPaidPartiallyReasonBankChargeDesc=The unpaid amount is <b>intermediary bank fees</b>, deducted directly from the <b>correct amount</b> paid by the Customer.
+ConfirmClassifyPaidPartiallyReasonBankChargeDesc=المبلغ غير المدفوع هو <b> رسوم البنك الوسيط </b> ، يتم خصمها مباشرة من المبلغ الصحيح <b> وهو </b> الذي يدفعه العميل.
 ConfirmClassifyPaidPartiallyReasonOtherDesc=استخدم هذا الخيار إذا لم يكن هناك خيار مناسب ، على سبيل المثال في الحالة التالية: <br> - الدفع غير مكتمل لأن بعض المنتجات تم شحنها مرة أخرى <br> - المبلغ المطالب به مهم جدًا لأنه تم نسيان الخصم <br> في جميع الحالات ، يجب تصحيح المبلغ المطالب به في نظام المحاسبة عن طريق إنشاء إشعار دائن.
 ConfirmClassifyAbandonReasonOther=أخرى
 ConfirmClassifyAbandonReasonOtherDesc=سيتم استخدام هذا الاختيار في جميع الحالات الأخرى. على سبيل المثال ، لأنك تخطط لإنشاء فاتورة بديلة.
@@ -236,24 +240,24 @@ AlreadyPaidBack=سددت بالفعل
 AlreadyPaidNoCreditNotesNoDeposits=سددت (بدون اشعار دائن ودفعات مقدمة)
 Abandoned=المهجورة
 RemainderToPay=المتبقي غير مسدد
-RemainderToPayMulticurrency=Remaining unpaid, original currency
+RemainderToPayMulticurrency=العملة الأصلية المتبقية غير المسددة
 RemainderToTake=الميلغ المتبقي لاتخاذ
-RemainderToTakeMulticurrency=Remaining amount to take, original currency
+RemainderToTakeMulticurrency=المبلغ المتبقي ، العملة الأصلية
 RemainderToPayBack=المبلغ المتبقي للاسترجاع
-RemainderToPayBackMulticurrency=Remaining amount to refund, original currency
-NegativeIfExcessRefunded=negative if excess refunded
+RemainderToPayBackMulticurrency=المبلغ المتبقي للرد ، العملة الأصلية
+NegativeIfExcessRefunded=سلبي إذا تم رد المبالغ الزائدة
 Rest=بانتظار
 AmountExpected=المبلغ المطالب به
 ExcessReceived=المبالغ الزائدة المستلمة
-ExcessReceivedMulticurrency=Excess received, original currency
-NegativeIfExcessReceived=negative if excess received
+ExcessReceivedMulticurrency=المبالغ الزائدة المستلمة ، العملة الأصلية
+NegativeIfExcessReceived=سلبي إذا تم استلام الفائض
 ExcessPaid=المبالغ الزائدة المسددة
-ExcessPaidMulticurrency=Excess paid, original currency
+ExcessPaidMulticurrency=المبالغ الزائدة المدفوعة ، العملة الأصلية
 EscompteOffered=عرض الخصم (الدفع قبل الأجل)
 EscompteOfferedShort=خصم
 SendBillRef=تسليم الفاتورة %s
 SendReminderBillRef=تسليم الفاتورة %s (تذكير)
-SendPaymentReceipt=Submission of payment receipt %s
+SendPaymentReceipt=تقديم إيصال الدفع %s
 NoDraftBills=لا توجد مسودات فواتير
 NoOtherDraftBills=لا توجد مسودات فواتير أخرى
 NoDraftInvoices=لا توجد مسودات فواتير
@@ -269,8 +273,8 @@ DateMaxPayment=السداد المستحق في
 DateInvoice=تاريخ الفاتورة
 DatePointOfTax=Point of tax
 NoInvoice=لا فاتورة
-NoOpenInvoice=No open invoice
-NbOfOpenInvoices=Number of open invoices
+NoOpenInvoice=لا يوجد فاتورة مفتوحة
+NbOfOpenInvoices=عدد الفواتير المفتوحة
 ClassifyBill=صنف كفاتورة
 SupplierBillsToPay=فواتير المورد الغير مسددة
 CustomerBillsUnpaid=فواتير العملاء غير المسددة
@@ -280,11 +284,11 @@ SetMode=حدد نوع السداد
 SetRevenuStamp=حدد ختم الإيرادات
 Billed=فواتير
 RecurringInvoices=الفواتير المتكررة
-RecurringInvoice=Recurring invoice
+RecurringInvoice=فاتورة متكررة
 RepeatableInvoice=قالب الفاتورة
 RepeatableInvoices=قالب الفواتير
-RecurringInvoicesJob=Generation of recurring invoices (sales invoices)
-RecurringSupplierInvoicesJob=Generation of recurring invoices (purchase invoices)
+RecurringInvoicesJob=إصدار الفواتير المتكررة (فواتير المبيعات)
+RecurringSupplierInvoicesJob=إنشاء الفواتير المتكررة (فواتير الشراء)
 Repeatable=قالب
 Repeatables=القوالب
 ChangeIntoRepeatableInvoice=تحويل إلى قالب فاتورة
@@ -391,7 +395,7 @@ DateLastGeneration=تاريخ أحدث اصدار
 DateLastGenerationShort=تاريخ أحدث اصدار
 MaxPeriodNumber=العدد الأعلى لإصدار الفاتورة
 NbOfGenerationDone=عدد الفواتير المنجزة بالفعل
-NbOfGenerationOfRecordDone=Number of record generation already done
+NbOfGenerationOfRecordDone=عدد إنشاء السجل الذي تم إنجازه بالفعل
 NbOfGenerationDoneShort=عدد الفواتير المنجزة بالفعل
 MaxGenerationReached=تم بلوغ الحد الأقصى لعدد الاصدار
 InvoiceAutoValidate=اعتماد الفواتير تلقائيًا
@@ -429,14 +433,24 @@ PaymentConditionShort14D=14 يوما
 PaymentCondition14D=14 يوما
 PaymentConditionShort14DENDMONTH=14 يومًا من نهاية الشهر
 PaymentCondition14DENDMONTH=في غضون 14 يومًا بعد نهاية الشهر
+PaymentConditionShortDEP30PCTDEL=__DEPOSIT_PERCENT__%% الإيداع
+PaymentConditionDEP30PCTDEL=__DEPOSIT_PERCENT__%% إيداع ، الباقي عند التسليم
 FixAmount=المبلغ الثابت - بند واحد بالتسمية "%s"
 VarAmount=المبلغ المتغير (%% إجمالي)
 VarAmountOneLine=المبلغ المتغير (إجمالي %%.) - بند واحد بالتسمية "%s"
-VarAmountAllLines=Variable amount (%% tot.) - all lines from origin
+VarAmountAllLines=المبلغ المتغير (%% tot.) - جميع الأسطر من الأصل
+DepositPercent=إيداع %%
+DepositGenerationPermittedByThePaymentTermsSelected=هذا مسموح به من خلال شروط الدفع المحددة
+GenerateDeposit=إنشاء فاتورة إيداع %s%%
+ValidateGeneratedDeposit=تحقق من صحة الإيداع الذي تم إنشاؤه
+DepositGenerated=تم إنشاء الإيداع
+ErrorCanOnlyAutomaticallyGenerateADepositFromProposalOrOrder=يمكنك فقط إنشاء إيداع تلقائيًا من عرض أو طلب
+ErrorPaymentConditionsNotEligibleToDepositCreation=شروط الدفع المختارة غير مؤهلة لإنشاء الإيداع التلقائي
 # PaymentType
 PaymentTypeVIR=حوالة مصرفية
 PaymentTypeShortVIR=حوالة مصرفية
 PaymentTypePRE=أمر دفع الخصم المباشر
+PaymentTypePREdetails=علي الحساب
 PaymentTypeShortPRE=أمر دفع المدين
 PaymentTypeLIQ=نقدا
 PaymentTypeShortLIQ=نقدا
@@ -471,7 +485,7 @@ RegulatedOn=وتنظم على
 ChequeNumber=رقم الشيك
 ChequeOrTransferNumber=رقم شيك / تحويل 
 ChequeBordereau=Check schedule
-ChequeMaker=Check/Transfer sender
+ChequeMaker=تحقق / تحويل المرسل
 ChequeBank=الشيكات المصرفية
 CheckBank=الشيك
 NetToBePaid=الصافي للدفع
@@ -485,7 +499,7 @@ PaymentByChequeOrderedToShort=مدفوعات الشيكات (شامل الضرا
 SendTo=أرسل إلى
 PaymentByTransferOnThisBankAccount=الدفع عن طريق التحويل إلى الحساب المصرفي التالي
 VATIsNotUsedForInvoice=* غير سارية ضريبة القيمة المضافة art-293B من CGI
-VATIsNotUsedForInvoiceAsso=* Non applicable VAT art-261-7 of CGI
+VATIsNotUsedForInvoiceAsso=* غير سارية ضريبة القيمة المضافة art-261-7 من CGI
 LawApplicationPart1=من خلال تطبيق القانون 80.335 من 12/05/80
 LawApplicationPart2=البضاعة تظل ملكا لل
 LawApplicationPart3=البائع حتى السداد الكامل ل
@@ -517,7 +531,7 @@ Reported=تأخير
 DisabledBecausePayments=غير ممكن لأن هناك بعض المدفوعات
 CantRemovePaymentWithOneInvoicePaid=لا يمكن إزالة الدفعة نظرًا لوجود فاتورة مصنفة واحدة على الأقل مدفوعة
 CantRemovePaymentVATPaid=لا يمكن إزالة الدفعة لأن إقرار ضريبة القيمة المضافة مصنف كمدفوع
-CantRemovePaymentSalaryPaid=Can't remove payment since salary is classified paid
+CantRemovePaymentSalaryPaid=لا يمكن إزالة الدفعة لأن الراتب مصنف كمدفوع
 ExpectedToPay=من المتوقع الدفع
 CantRemoveConciliatedPayment=لا يمكن إزالة الدفعة التي تمت تسويتها
 PayedByThisPayment=سدد بعدهذه الدفعة
@@ -525,7 +539,7 @@ ClosePaidInvoicesAutomatically=تصنيف جميع الفواتير القياس
 ClosePaidCreditNotesAutomatically=تصنيف جميع اشعارات دائن تلقائيًا على أنها "مدفوعة" عندما يتم استرداد الأموال بالكامل.
 ClosePaidContributionsAutomatically=تصنيف جميع المساهمات الاجتماعية أو المالية تلقائيًا على أنها "مدفوعة" عندما يتم الدفع بالكامل.
 ClosePaidVATAutomatically=تصنيف إقرار ضريبة القيمة المضافة تلقائيًا على أنه "مدفوع" عندما يتم الدفع بالكامل.
-ClosePaidSalaryAutomatically=Classify automatically salary as "Paid" when payment is done entirely.
+ClosePaidSalaryAutomatically=تصنيف الراتب تلقائيًا على أنه "مدفوع" عندما يتم السداد بالكامل.
 AllCompletelyPayedInvoiceWillBeClosed=سيتم تلقائيًا إغلاق جميع الفواتير المدفوعة وتحول الى "مدفوعة".
 ToMakePayment=سدد
 ToMakePaymentBack=تسديد
@@ -538,10 +552,10 @@ YouMustCreateStandardInvoiceFirstDesc=يجب عليك إنشاء فاتورة ق
 PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (old implementation of Sponge template)
 PDFSpongeDescription=Invoice PDF template Sponge. A complete invoice template
 PDFCrevetteDescription=Invoice PDF template Crevette. A complete invoice template for situation invoices
-TerreNumRefModelDesc1=Return number in the format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequencial auto-incrementing number with no break and no return to 0
-MarsNumRefModelDesc1=Return number in the format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for down payment invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequencial auto-incrementing number with no break and no return to 0
+TerreNumRefModelDesc1=رقم الإرجاع بالتنسيق %syymm-nnnn للفواتير القياسية و %syymm-nnnn للإشعارات الدائنة حيث yy سنة ، mm شهر و nnnn هو رقم تزايد تلقائي تسلسلي بدون فاصل ولا عودة إلى 0
+MarsNumRefModelDesc1=رقم الإرجاع بالتنسيق %syymm-nnnn للفواتير القياسية ، %syymm-nnnn للفواتير البديلة ، %syymm-nnnn لفواتير الدَفعة المقدمة و a0ecb2ecny87m49fz0 هو الرقم التسلسلي لشهر nnny و a0ecb2ecny. مع عدم وجود فاصل ولا عودة إلى 0
 TerreNumRefModelError=A bill starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
-CactusNumRefModelDesc1=Return number in the format %syymm-nnnn for standard invoices, %syymm-nnnn for credit notes and %syymm-nnnn for down payment invoices where yy is year, mm is month and nnnn is a sequencial auto-incrementing number with no break and no return to 0
+CactusNumRefModelDesc1=رقم الإرجاع بالتنسيق %syymm-nnnn للفواتير القياسية ، %syymm-nnnn للإشعارات الدائنة و %syymm-nnnn لفواتير الدفعة المقدمة حيث yy هو العام ، mm هو رقم الشهر و nnnnn بدون زيادة تلقائية 0
 EarlyClosingReason=سبب الإغلاق المبكر
 EarlyClosingComment=ملاحظة اغلاق مبكرة
 ##### Types de contacts #####
@@ -587,7 +601,7 @@ ToCreateARecurringInvoiceGene=لإنشاء فواتير مستقبلية بشك�
 ToCreateARecurringInvoiceGeneAuto=إذا كنت بحاجة إلى إنشاء مثل هذه الفواتير تلقائيًا ، فاطلب من المسؤول تمكين وحدة الإعداد <strong> %s </strong> وإعدادها. لاحظ أنه يمكن استخدام كلتا الطريقتين (يدويًا وآليًا) مع عدم وجود خطر التكرار.
 DeleteRepeatableInvoice=حذف قالب الفاتورة
 ConfirmDeleteRepeatableInvoice=هل أنت متأكد أنك تريد حذف قالب الفاتورة؟
-CreateOneBillByThird=Create one invoice per third party (otherwise, one invoice per selected object)
+CreateOneBillByThird=إنشاء فاتورة واحدة لكل طرف ثالث (خلاف ذلك ، فاتورة واحدة لكل كائن محدد)
 BillCreated=%s إصدار فاتورة (فواتير) 
 BillXCreated=تم إنشاء %s الفاتورة 
 StatusOfGeneratedDocuments=حالة إنشاء الوثيقة
@@ -606,9 +620,14 @@ SupplierInvoicesArea=منطقة فواتير المورد
 SituationTotalRayToRest=ما تبقى للدفع بدون ضريبة
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=إجمالي التقدم %d %%
-SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s
-NoPaymentAvailable=No payment available for %s
-PaymentRegisteredAndInvoiceSetToPaid=Payment registered and invoice %s set to paid
-SendEmailsRemindersOnInvoiceDueDate=Send reminder by email for unpaid invoices
-MakePaymentAndClassifyPayed=Record payment
-BulkPaymentNotPossibleForInvoice=Bulk payment is not possible for invoice %s (bad type or status)
+SearchUnpaidInvoicesWithDueDate=البحث في الفواتير غير المسددة بتاريخ استحقاق = %s
+NoPaymentAvailable=لا توجد مدفوعات متاحة مقابل %s
+PaymentRegisteredAndInvoiceSetToPaid=تم تسجيل الدفعة وتم تعيين الفاتورة %s على الدفع
+SendEmailsRemindersOnInvoiceDueDate=إرسال تذكير عن طريق البريد الإلكتروني للفواتير غير المسددة
+MakePaymentAndClassifyPayed=دفع قياسي
+BulkPaymentNotPossibleForInvoice=الدفع بالجملة غير ممكن للفاتورة %s (نوع أو حالة سيئة)
+MentionVATDebitOptionIsOn=Option to pay tax based on debits
+MentionCategoryOfOperations=Category of operations
+MentionCategoryOfOperations0=Delivery of goods
+MentionCategoryOfOperations1=Provision of services
+MentionCategoryOfOperations2=Mixed - Delivery of goods & provision of services

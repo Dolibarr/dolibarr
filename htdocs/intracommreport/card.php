@@ -119,7 +119,7 @@ if ($action == 'add' && $permissiontoadd) {
 	$object->label = trim($label);
 	$object->type = trim($exporttype);
 	$object->type_declaration =  $type_declaration;
-	$object->subscription = (int) $subscription;
+	//$object->subscription = (int) $subscription;
 
 	// Fill array 'array_options' with data from add form
 	// $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
@@ -274,7 +274,7 @@ if ($id > 0 && $action != 'edit') {
 	print "</table>\n";
 
 	print "</div></div></div>\n";
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
 }

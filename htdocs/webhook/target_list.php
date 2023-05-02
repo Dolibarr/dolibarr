@@ -48,9 +48,11 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'ta
 $backtopage  = GETPOST('backtopage', 'alpha');    // Go back to a dedicated page
 $optioncss   = GETPOST('optioncss', 'aZ');    // Option for the css output (always '' except when 'print')
 $mode        = GETPOST('mode', 'aZ');
+if (empty($mode)) {
+	$mode = 'modulesetup';
+}
 
 $id          = GETPOST('id', 'int');
-
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -229,7 +231,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 //$sql .= ", COUNT(rc.rowid) as anotherfield";
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
@@ -313,7 +315,7 @@ $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPri
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* This old and fast method to get and count full list returns all record so use a high amount of memory.
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
@@ -328,7 +330,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		 }
 	 }*/
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/Ui', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
 	$resql = $db->query($sqlforcount);
 	$objforcount = $db->fetch_object($resql);
 	$nbtotalofrecords = $objforcount->nbtotalofrecords;
@@ -379,7 +381,7 @@ if ($mode == 'modulesetup') {
 	print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 	$head = webhookAdminPrepareHead();
-	print dol_get_fiche_head($head, 'targets', $langs->trans($page_name), -1, "webhook@webhook");
+	print dol_get_fiche_head($head, 'targets', $langs->trans($page_name), -1, "webhook");
 }
 
 // Example : Adding jquery code
@@ -407,7 +409,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 foreach ($search as $key => $val) {
 	if (is_array($search[$key]) && count($search[$key])) {
@@ -623,16 +625,20 @@ while ($i < $imaxinloop) {
 		break; // Should not happen
 	}
 
+	if (empty($obj->ref)) {
+		$obj->ref = $obj->rowid;
+	}
+
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="'.$savnbfield.'">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		print $object->getKanbanView('');
+		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

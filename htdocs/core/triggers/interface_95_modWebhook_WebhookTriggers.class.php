@@ -103,7 +103,23 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 		foreach ($target_url as $key => $tmpobject) {
 			$actionarray = explode(",", $tmpobject->trigger_codes);
 			if (is_array($actionarray) && in_array($action, $actionarray)) {
-				$jsonstr = '{"triggercode":'.json_encode($action).',"object":'.json_encode($object).'}';
+				// Build the answer object
+				$resobject = new stdClass();
+				$resobject->triggercode = $action;
+				$resobject->object = dol_clone($object, 2);
+
+				if (property_exists($resobject->object, 'fields')) {
+					unset($resobject->object->fields);
+				}
+				if (property_exists($resobject->object, 'error')) {
+					unset($resobject->object->error);
+				}
+				if (property_exists($resobject->object, 'errors')) {
+					unset($resobject->object->errors);
+				}
+
+				$jsonstr = json_encode($resobject);
+
 				$response = getURLContent($tmpobject->url, 'POST', $jsonstr, 1, array(), array('http', 'https'), 0, -1);
 				if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 					$nbPosts ++;

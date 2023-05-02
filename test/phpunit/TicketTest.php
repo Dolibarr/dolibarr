@@ -79,7 +79,7 @@ class TicketTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -92,7 +92,7 @@ class TicketTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -105,7 +105,7 @@ class TicketTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -120,7 +120,7 @@ class TicketTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -139,7 +139,7 @@ class TicketTest extends PHPUnit\Framework\TestCase
 		$db=$this->savdb;
 
 		// Try to create one with bad values
-		$localobject=new Ticket($this->savdb);
+		$localobject=new Ticket($db);
 		$localobject->initAsSpecimen();
 		$localobject->ref = '';
 		$result=$localobject->create($user);
@@ -148,7 +148,7 @@ class TicketTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals(-3, $result, $localobject->error.join(',', $localobject->errors));
 
 		// Try to create one with correct values
-		$localobject=new Ticket($this->savdb);
+		$localobject=new Ticket($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -175,7 +175,7 @@ class TicketTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Ticket($this->savdb);
+		$localobject=new Ticket($db);
 		$result=$localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -382,7 +382,7 @@ class TicketTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Ticket($this->savdb);
+		$localobject=new Ticket($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

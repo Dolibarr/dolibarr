@@ -118,7 +118,7 @@ if (isModEnabled('adherent')) {
 	}
 	print '<br>';
 }
-if (!empty($conf->don->enabled)) {
+if (isModEnabled('don')) {
 	print '<div id="donation"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnDonation", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'donation')."</strong><br>\n";

@@ -132,21 +132,23 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		}
 	}
 	print '</td></tr>';
+}
 
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseSpecificEditorName").'</td>';
-	print '<td>';
-	print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_NAME" value="'.$conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME.'">';
-	print '</td>';
-	print '</tr>';
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("UseSpecificEditorName").'</td>';
+print '<td>';
+print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_NAME" value="'.$conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME.'">';
+print '</td>';
+print '</tr>';
 
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseSpecificEditorURL").'</td>';
-	print '<td>';
-	print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_URL" value="'.$conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL.'">';
-	print '</td>';
-	print '</tr>';
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("UseSpecificEditorURL").'</td>';
+print '<td>';
+print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_URL" value="'.$conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL.'">';
+print '</td>';
+print '</tr>';
 
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UseSpecificFamily").'</td>';
 	print '<td>';

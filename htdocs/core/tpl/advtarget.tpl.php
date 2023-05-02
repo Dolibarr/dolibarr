@@ -198,7 +198,7 @@ if (!empty($array_query['cust_prospect_status'])) {
 	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 }
 print '</td><td>';
-print $formadvtargetemaling->multiselectProspectionStatus($array_query['cust_prospect_status'], 'cust_prospect_status', 1);
+print $formadvtargetemaling->multiselectProspectionStatus($array_query['cust_prospect_status'], 'cust_prospect_status');
 print '</td><td>'."\n";
 print '</td></tr>'."\n";
 
@@ -243,7 +243,7 @@ print '</td><td>'."\n";
 print '</td></tr>'."\n";
 
 // Customer Default Langauge
-if (!empty($conf->global->MAIN_MULTILANGS)) {
+if (getDolGlobalInt('MAIN_MULTILANGS')) {
 	print '<tr><td>'.$langs->trans("DefaultLang");
 	if (!empty($array_query['cust_language'])) {
 		print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
@@ -336,12 +336,7 @@ if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
 	$std_soc = new Societe($db);
 	$action_search = 'query';
 
-	// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-	$hookmanager = new HookManager($db);
-	$hookmanager->initHooks(array('thirdpartycard'));
-
-	$parameters = array();
+	$parameters = array('advtarget'=>1);
 	if (!empty($advTarget->id)) {
 		$parameters = array('array_query' => $advTarget->filtervalue);
 	}

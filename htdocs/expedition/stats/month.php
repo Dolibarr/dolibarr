@@ -47,11 +47,12 @@ $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mesg = '';
+$mode = '';
 
 print load_fiche_titre($langs->trans("StatisticsOfSendings").' '.$year, $mesg);
 
-$stats = new ExpeditionStats($db);
-$data = $stats->getNbExpeditionByMonth($year);
+$stats = new ExpeditionStats($db, $socid, $mode);
+$data = $stats->getNbByMonth($year);
 
 dol_mkdir($conf->expedition->dir_temp);
 

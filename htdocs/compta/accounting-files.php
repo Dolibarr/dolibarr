@@ -135,14 +135,14 @@ if (empty($entity)) {
 $error = 0;
 
 $listofchoices = array(
-	'selectinvoices'=>array('label'=>'Invoices', 'lang'=>'bills', 'enabled' => isModEnabled('facture'), 'perms' => !empty($user->rights->facture->lire)),
-	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'lang'=>'bills', 'enabled' => isModEnabled('supplier_invoice'), 'perms' => !empty($user->rights->fournisseur->facture->lire)),
-	'selectexpensereports'=>array('label'=>'ExpenseReports', 'lang'=>'trips', 'enabled' => isModEnabled('expensereport'), 'perms' => !empty($user->rights->expensereport->lire)),
-	'selectdonations'=>array('label'=>'Donations', 'lang'=>'donation', 'enabled' => isModEnabled('don'), 'perms' => !empty($user->rights->don->lire)),
-	'selectsocialcontributions'=>array('label'=>'SocialContributions', 'enabled' => isModEnabled('tax'), 'perms' => !empty($user->rights->tax->charges->lire)),
-	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'lang'=>'salaries', 'enabled' => isModEnabled('salaries'), 'perms' => !empty($user->rights->salaries->read)),
-	'selectvariouspayment'=>array('label'=>'VariousPayment', 'enabled' => isModEnabled('banque'), 'perms' => !empty($user->rights->banque->lire)),
-	'selectloanspayment'=>array('label'=>'PaymentLoan', 'enabled' => isModEnabled('don'), 'perms' => !empty($user->rights->loan->read)),
+	'selectinvoices'=>array('label'=>'Invoices', 'picto'=>'bill', 'lang'=>'bills', 'enabled' => isModEnabled('facture'), 'perms' => !empty($user->rights->facture->lire)),
+	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'picto'=>'supplier_invoice', 'lang'=>'bills', 'enabled' => isModEnabled('supplier_invoice'), 'perms' => !empty($user->rights->fournisseur->facture->lire)),
+	'selectexpensereports'=>array('label'=>'ExpenseReports', 'picto'=>'expensereport', 'lang'=>'trips', 'enabled' => isModEnabled('expensereport'), 'perms' => !empty($user->rights->expensereport->lire)),
+	'selectdonations'=>array('label'=>'Donations', 'picto'=>'donation', 'lang'=>'donation', 'enabled' => isModEnabled('don'), 'perms' => !empty($user->rights->don->lire)),
+	'selectsocialcontributions'=>array('label'=>'SocialContributions', 'picto'=>'bill', 'enabled' => isModEnabled('tax'), 'perms' => !empty($user->rights->tax->charges->lire)),
+	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'picto'=>'salary', 'lang'=>'salaries', 'enabled' => isModEnabled('salaries'), 'perms' => !empty($user->rights->salaries->read)),
+	'selectvariouspayment'=>array('label'=>'VariousPayment', 'picto'=>'payment', 'enabled' => isModEnabled('banque'), 'perms' => !empty($user->rights->banque->lire)),
+	'selectloanspayment'=>array('label'=>'PaymentLoan','picto'=>'loan', 'enabled' => isModEnabled('don'), 'perms' => !empty($user->rights->loan->read)),
 );
 
 
@@ -376,6 +376,9 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 							$nofile['country_code'] = $objd->country_code;
 							$nofile['vatnum'] = $objd->vatnum;
 							$nofile['sens'] = $objd->sens;
+							$nofile['currency'] = $objd->currency;
+							$nofile['link'] = '';
+							$nofile['name'] = '';
 
 							$filesarray[$nofile['item'].'_'.$nofile['id']] = $nofile;
 						} else {
@@ -396,6 +399,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 								$file['country_code'] = $objd->country_code;
 								$file['vatnum'] = $objd->vatnum;
 								$file['sens'] = $objd->sens;
+								$file['currency'] = $objd->currency;
 
 								// Save record into array (only the first time it is found)
 								if (empty($filesarray[$file['item'].'_'.$file['id']])) {
@@ -415,6 +419,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 									'relpathnamelang' => $langs->trans($file['item']).'/'.$file['name'],
 									'modulepart' => $modulepart,
 									'subdir' => $subdir,
+									'currency' => $file['currency']
 								);
 								//var_dump($file['item'].'_'.$file['id']);
 								//var_dump($filesarray[$file['item'].'_'.$file['id']]['files']);
@@ -451,87 +456,86 @@ if (empty($dirfortmpfile)) {
 if ($result && $action == "dl" && !$error) {
 	if (!extension_loaded('zip')) {
 		setEventMessages('PHPZIPExtentionNotLoaded', null, 'errors');
-		exit;
-	}
+	} else {
+		dol_mkdir($dirfortmpfile);
 
-	dol_mkdir($dirfortmpfile);
-
-	$log = $langs->transnoentitiesnoconv("Type");
-	if (isModEnabled('multicompany') && is_object($mc)) {
-		$log .= ','.$langs->transnoentitiesnoconv("Entity");
-	}
-	$log .= ','.$langs->transnoentitiesnoconv("Date");
-	$log .= ','.$langs->transnoentitiesnoconv("DateDue");
-	$log .= ','.$langs->transnoentitiesnoconv("Ref");
-	$log .= ','.$langs->transnoentitiesnoconv("TotalHT");
-	$log .= ','.$langs->transnoentitiesnoconv("TotalTTC");
-	$log .= ','.$langs->transnoentitiesnoconv("TotalVAT");
-	$log .= ','.$langs->transnoentitiesnoconv("Paid");
-	$log .= ','.$langs->transnoentitiesnoconv("Document");
-	$log .= ','.$langs->transnoentitiesnoconv("ItemID");
-	$log .= ','.$langs->transnoentitiesnoconv("ThirdParty");
-	$log .= ','.$langs->transnoentitiesnoconv("Code");
-	$log .= ','.$langs->transnoentitiesnoconv("Country");
-	$log .= ','.$langs->transnoentitiesnoconv("VATIntra");
-	$log .= ','.$langs->transnoentitiesnoconv("Sens")."\n";
-	$zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc', 'tzuserrel')."-".dol_print_date($date_stop, 'dayrfc', 'tzuserrel');
-	if (!empty($projectid)) {
-		$project = new Project($db);
-		$project->fetch($projectid);
-		if ($project->ref) {
-			$zipname .= '_'.$project->ref;
+		$log = $langs->transnoentitiesnoconv("Type");
+		if (isModEnabled('multicompany') && is_object($mc)) {
+			$log .= ','.$langs->transnoentitiesnoconv("Entity");
 		}
-	}
-	$zipname .='_export.zip';
-
-	dol_delete_file($zipname);
-
-	$zip = new ZipArchive;
-	$res = $zip->open($zipname, ZipArchive::OVERWRITE | ZipArchive::CREATE);
-	if ($res) {
-		foreach ($filesarray as $key => $file) {
-			if (!empty($file['files'])) {
-				foreach ($file['files'] as $filecursor) {
-					if (file_exists($filecursor["fullname"])) {
-						$zip->addFile($filecursor["fullname"], $filecursor["relpathnamelang"]);
-					}
-				}
+		$log .= ','.$langs->transnoentitiesnoconv("Date");
+		$log .= ','.$langs->transnoentitiesnoconv("DateDue");
+		$log .= ','.$langs->transnoentitiesnoconv("Ref");
+		$log .= ','.$langs->transnoentitiesnoconv("TotalHT");
+		$log .= ','.$langs->transnoentitiesnoconv("TotalTTC");
+		$log .= ','.$langs->transnoentitiesnoconv("TotalVAT");
+		$log .= ','.$langs->transnoentitiesnoconv("Paid");
+		$log .= ','.$langs->transnoentitiesnoconv("Document");
+		$log .= ','.$langs->transnoentitiesnoconv("ItemID");
+		$log .= ','.$langs->transnoentitiesnoconv("ThirdParty");
+		$log .= ','.$langs->transnoentitiesnoconv("Code");
+		$log .= ','.$langs->transnoentitiesnoconv("Country");
+		$log .= ','.$langs->transnoentitiesnoconv("VATIntra");
+		$log .= ','.$langs->transnoentitiesnoconv("Sens")."\n";
+		$zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc', 'tzuserrel')."-".dol_print_date($date_stop, 'dayrfc', 'tzuserrel');
+		if (!empty($projectid)) {
+			$project = new Project($db);
+			$project->fetch($projectid);
+			if ($project->ref) {
+				$zipname .= '_'.$project->ref;
 			}
-
-			$log .= '"'.$langs->trans($file['item']).'"';
-			if (isModEnabled('multicompany') && is_object($mc)) {
-				$log .= ',"'.(empty($arrayofentities[$file['entity']]) ? $file['entity'] : $arrayofentities[$file['entity']]).'"';
-			}
-			$log .= ','.dol_print_date($file['date'], 'dayrfc');
-			$log .= ','.dol_print_date($file['date_due'], 'dayrfc');
-			$log .= ',"'.$file['ref'].'"';
-			$log .= ','.$file['amount_ht'];
-			$log .= ','.$file['amount_ttc'];
-			$log .= ','.$file['amount_vat'];
-			$log .= ','.$file['paid'];
-			$log .= ',"'.$file["name"].'"';
-			$log .= ','.$file['fk'];
-			$log .= ',"'.$file['thirdparty_name'].'"';
-			$log .= ',"'.$file['thirdparty_code'].'"';
-			$log .= ',"'.$file['country_code'].'"';
-			$log .= ',"'.$file['vatnum'].'"';
-			$log .= ',"'.$file['sens'].'"';
-			$log .= "\n";
 		}
-		$zip->addFromString('transactions.csv', $log);
-		$zip->close();
-
-		// Then download the zipped file.
-		header('Content-Type: application/zip');
-		header('Content-disposition: attachment; filename='.basename($zipname));
-		header('Content-Length: '.filesize($zipname));
-		readfile($zipname);
+		$zipname .='_export.zip';
 
 		dol_delete_file($zipname);
 
-		exit();
-	} else {
-		setEventMessages($langs->trans("FailedToOpenFile", $zipname), null, 'errors');
+		$zip = new ZipArchive;
+		$res = $zip->open($zipname, ZipArchive::OVERWRITE | ZipArchive::CREATE);
+		if ($res) {
+			foreach ($filesarray as $key => $file) {
+				if (!empty($file['files'])) {
+					foreach ($file['files'] as $filecursor) {
+						if (file_exists($filecursor["fullname"])) {
+							$zip->addFile($filecursor["fullname"], $filecursor["relpathnamelang"]);
+						}
+					}
+				}
+
+				$log .= '"'.$langs->trans($file['item']).'"';
+				if (isModEnabled('multicompany') && is_object($mc)) {
+					$log .= ',"'.(empty($arrayofentities[$file['entity']]) ? $file['entity'] : $arrayofentities[$file['entity']]).'"';
+				}
+				$log .= ','.dol_print_date($file['date'], 'dayrfc');
+				$log .= ','.dol_print_date($file['date_due'], 'dayrfc');
+				$log .= ',"'.$file['ref'].'"';
+				$log .= ','.$file['amount_ht'];
+				$log .= ','.$file['amount_ttc'];
+				$log .= ','.$file['amount_vat'];
+				$log .= ','.$file['paid'];
+				$log .= ',"'.$file["name"].'"';
+				$log .= ','.$file['fk'];
+				$log .= ',"'.$file['thirdparty_name'].'"';
+				$log .= ',"'.$file['thirdparty_code'].'"';
+				$log .= ',"'.$file['country_code'].'"';
+				$log .= ',"'.$file['vatnum'].'"';
+				$log .= ',"'.$file['sens'].'"';
+				$log .= "\n";
+			}
+			$zip->addFromString('transactions.csv', $log);
+			$zip->close();
+
+			// Then download the zipped file.
+			header('Content-Type: application/zip');
+			header('Content-disposition: attachment; filename='.basename($zipname));
+			header('Content-Length: '.filesize($zipname));
+			readfile($zipname);
+
+			dol_delete_file($zipname);
+
+			exit();
+		} else {
+			setEventMessages($langs->trans("FailedToOpenFile", $zipname), null, 'errors');
+		}
 	}
 }
 
@@ -601,7 +605,7 @@ if (isModEnabled('multicompany') && is_object($mc)) {
 print '<br>';
 
 // Project filter
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('projet')) {
 	$formproject = new FormProjets($db);
 	$langs->load('projects');
 	print '<span class="marginrightonly">'.$langs->trans('Project').":</span>";
@@ -610,6 +614,7 @@ if (!empty($conf->projet->enabled)) {
 	print '<br>';
 }
 
+$i = 0;
 foreach ($listofchoices as $choice => $val) {
 	if (empty($val['enabled'])) {
 		continue; // list not qualified
@@ -619,7 +624,10 @@ foreach ($listofchoices as $choice => $val) {
 		$disabled = ' disabled';
 	}
 	$checked = (((!GETPOSTISSET('search') && $action != 'searchfiles') || GETPOST($choice)) ? ' checked="checked"' : '');
-	print '<div class="paddingleft inline-block marginrightonly"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.$disabled.'> <label for="'.$choice.'">'.$langs->trans($val['label']).'</label></div>';
+	print '<div class="'.($i > 0 ? 'paddingleft marginleftonly' : '').' inline-block marginrightonly paddingright"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.$disabled.'><label for="'.$choice.'"> ';
+	print img_picto($langs->trans($val['label']), $val['picto'], 'class=""').' '.$langs->trans($val['label']);
+	print '</label></div>';
+	$i++;
 }
 
 print '<input type="submit" class="button small" name="search" value="'.$langs->trans("Search").'">';
@@ -649,7 +657,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 
 	echo dol_print_date($date_start, 'day', 'tzuserrel')." - ".dol_print_date($date_stop, 'day', 'tzuserrel');
 
-	print '<a class="marginleftonly small'.(empty($TData) ? ' butActionRefused' : ' butAction').'" href="'.$_SERVER["PHP_SELF"].'?action=dl&token='.newToken().'&projectid='.$projectid.'&output=file&file='.urlencode($filename).$param.'"';
+	print '<a class="marginleftonly small'.(empty($TData) ? ' butActionRefused' : ' butAction').'" href="'.$_SERVER["PHP_SELF"].'?action=dl&token='.currentToken().'&projectid='.$projectid.'&output=file&file='.urlencode($filename).$param.'"';
 	if (empty($TData)) {
 		print " disabled";
 	}

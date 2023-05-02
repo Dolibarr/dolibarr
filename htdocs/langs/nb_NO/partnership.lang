@@ -20,6 +20,7 @@ ModulePartnershipName=Håndtering av partnerskap
 PartnershipDescription=Modul for Partnerskapshåndtering
 PartnershipDescriptionLong= Modul for Partnerskapshåndtering
 Partnership=Partnerskap
+Partnerships=Partnerskap
 AddPartnership=Legg til partnerskap
 CancelPartnershipForExpiredMembers=Partnerskap: Avbryt partnerskap for medlemmer med utløpt abonnement
 PartnershipCheckBacklink=Partnerskap: Sjekk refererende tilbakekobling
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Partnerskap: Sjekk refererende tilbakekobling
 # Menu
 #
 NewPartnership=Nytt partnerskap
+NewPartnershipbyWeb=Din partnerskapsforespørsel er lagt til. Vi kan kontakte deg snart...
 ListOfPartnerships=Liste over partnerskap
 
 #

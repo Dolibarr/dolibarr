@@ -86,7 +86,7 @@ print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</
 
 print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToPayByBankTransfer").'</td>';
 print '<td class="right">';
-print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer">';
+print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer">';
 print $bprev->nbOfInvoiceToPay('bank-transfer');
 print '</a>';
 print '</td></tr>';
@@ -101,7 +101,7 @@ print '</span></td></tr></table></div><br>';
 /*
  * Invoices waiting for withdraw
  */
-$sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
+$sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type, f.datef, f.date_lim_reglement,";
 $sql .= " pfd.date_demande, pfd.amount,";
 $sql .= " s.nom as name, s.email, s.rowid as socid, s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
@@ -109,7 +109,7 @@ $sql .= " ".MAIN_DB_PREFIX."societe as s";
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
-$sql .= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+$sql .= ", ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 $sql .= " WHERE s.rowid = f.fk_soc";
 $sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 $sql .= " AND f.total_ttc > 0";
@@ -134,16 +134,20 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="5">'.$langs->trans("SupplierInvoiceWaitingWithdraw").' ('.$num.')</th></tr>';
+	print '<th colspan="5">'.$langs->trans("SupplierInvoiceWaitingWithdraw").' <span class="opacitymedium">('.$num.')</span></th></tr>';
 	if ($num) {
 		while ($i < $num && $i < 20) {
 			$obj = $db->fetch_object($resql);
 
 			$invoicestatic->id = $obj->rowid;
 			$invoicestatic->ref = $obj->ref;
-			$invoicestatic->statut = $obj->fk_statut;
+			$invoicestatic->status = $obj->fk_statut;
+			$invoicestatic->statut = $obj->fk_statut;	// For backward comaptibility
 			$invoicestatic->paye = $obj->paye;
 			$invoicestatic->type = $obj->type;
+			$invoicestatic->date = $db->jdate($obj->datef);
+			$invoicestatic->date_echeance = $db->jdate($obj->date_lim_reglement);
+			$invoicestatic->total_ttc = $obj->total_ttc;
 			$alreadypayed = $invoicestatic->getSommePaiement();
 
 			$thirdpartystatic->id = $obj->socid;
@@ -183,7 +187,8 @@ if ($resql) {
 			$i++;
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("NoSupplierInvoiceToWithdraw", $langs->transnoentitiesnoconv("BankTransfer")).'</span></td></tr>';
+		$titlefortab = $langs->transnoentitiesnoconv("BankTransfer");
+		print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("NoSupplierInvoiceToWithdraw", $titlefortab, $titlefortab).'</span></td></tr>';
 	}
 	print "</table></div><br>";
 } else {

@@ -222,11 +222,8 @@ print dol_get_fiche_end();
 
 $disable_delete = 0;
 $sql = 'SELECT f.rowid as scid, f.label as label, f.paye, f.amount as tva_amount, pf.amount';
-//$sql .= ', pc.libelle as sc_type';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_vat as pf,'.MAIN_DB_PREFIX.'tva as f';
-//$sql .= ', '.MAIN_DB_PREFIX.'c_chargesociales as pc';
 $sql .= ' WHERE pf.fk_tva = f.rowid';
-//$sql .= ' AND f.fk_type = pc.id';
 $sql .= ' AND f.entity = '.$conf->entity;
 $sql .= ' AND pf.rowid = '.((int) $object->id);
 
@@ -308,9 +305,9 @@ if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 if ($action == '') {
 	if ($user->rights->tax->charges->supprimer) {
 		if (!$disable_delete) {
-			print '<a class="butActionDelete" href="card.php?id='.GETPOST('id', 'int').'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
+			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
 		} else {
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentVATPaid")).'">'.$langs->trans('Delete').'</a>';
+			print dolGetButtonAction($langs->trans("CantRemovePaymentVATPaid"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 0);
 		}
 	}
 }

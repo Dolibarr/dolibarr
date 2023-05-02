@@ -92,6 +92,7 @@ if ($conf->browser->layout == 'phone') {
 }
 $MAXCATEG = (empty($conf->global->TAKEPOS_NB_MAXCATEG) ? $maxcategbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXCATEG);
 $MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT) ? $maxproductbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXPRODUCT);
+$MAXCATEG = 5;
 
 /*
  $constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
@@ -245,23 +246,26 @@ function PrintCategories(first) {
 
 function MoreCategories(moreorless) {
 	console.log("MoreCategories moreorless="+moreorless+" pagecategories="+pagecategories);
-	if (moreorless=="more") {
+	if (moreorless == "more") {
 		$('#catimg15').animate({opacity: '0.5'}, 1);
 		$('#catimg15').animate({opacity: '1'}, 100);
 		pagecategories=pagecategories+1;
 	}
-	if (moreorless=="less") {
+	if (moreorless == "less") {
 		$('#catimg14').animate({opacity: '0.5'}, 1);
 		$('#catimg14').animate({opacity: '1'}, 100);
 		if (pagecategories==0) return; //Return if no less pages
 		pagecategories=pagecategories-1;
 	}
-	if (typeof (categories[<?php echo ($MAXCATEG - 2); ?> * pagecategories] && moreorless=="more") == "undefined"){ // Return if no more pages
+	if (typeof (categories[<?php echo ($MAXCATEG - 2); ?> * pagecategories] && moreorless == "more") == "undefined") { // Return if no more pages
 		pagecategories=pagecategories-1;
 		return;
 	}
+
 	for (i = 0; i < <?php echo ($MAXCATEG - 2); ?>; i++) {
 		if (typeof (categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]) == "undefined") {
+			// complete with empty record
+			console.log("complete with empty record");
 			$("#catdivdesc"+i).hide();
 			$("#catdesc"+i).text("");
 			$("#catimg"+i).attr("src","genimg/empty.png");
@@ -322,7 +326,12 @@ function LoadProducts(position, issubcat) {
 	});
 
 	idata=0; //product data counter
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&category='+currentcat, function(data) {
+	var limit = 0;
+	if (maxproduct >= 1) {
+		limit = maxproduct-1;
+	}
+	// Only show products for sale (tosell=1)
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&category='+currentcat+'&tosell=1&limit='+limit+'&offset=0', function(data) {
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat+" then loop on result to fill image thumbs");
 		console.log(data);
 		while (ishow < maxproduct) {
@@ -342,10 +351,7 @@ function LoadProducts(position, issubcat) {
 				$("#proprice"+ishow).html("");
 				$("#prodiv"+ishow).data("rowid","");
 				$("#prodiv"+ishow).attr("class","wrapper2 divempty");
-				$("#prowatermark"+ishow).hide();
-				ishow++; //Next product to show after print data product
-			}
-			else if ((data[idata]['status']) == "1") {		// Only show products with status=1 (for sell)
+			} else  {
 				<?php
 					$titlestring = "'".dol_escape_js($langs->transnoentities('Ref').': ')."' + data[idata]['ref']";
 					$titlestring .= " + ' - ".dol_escape_js($langs->trans("Barcode").': ')."' + data[idata]['barcode']";
@@ -367,7 +373,7 @@ function LoadProducts(position, issubcat) {
 				?>
 				if (data[parseInt(idata)]['price_formated']) {
 					$("#proprice"+ishow).attr("class", "productprice");
-					$("#proprice"+ishow).html(data[parseInt(idata)]['price_formated']);
+					$("#proprice"+ishow).html(data[parseInt(idata)]['price_ttc_formated']);
 				}
 				console.log("#prodiv"+ishow+".data(rowid)="+data[idata]['id']);
 				console.log($("#prodiv"+ishow));
@@ -376,8 +382,7 @@ function LoadProducts(position, issubcat) {
 				console.log($('#prodiv4').data('rowid'));
 				$("#prodiv"+ishow).data("iscat", 0);
 				$("#prodiv"+ishow).attr("class","wrapper2");
-				$("#prowatermark"+ishow).hide();
-				ishow++; //Next product to show after print data product
+
 				<?php
 				// Add js from hooks
 				$parameters=array();
@@ -386,7 +391,8 @@ function LoadProducts(position, issubcat) {
 				print $hookmanager->resPrint;
 				?>
 			}
-			//console.log("Hide the prowatermark for ishow="+ishow);
+			$("#prowatermark"+ishow).hide();
+			ishow++; //Next product to show after print data product
 			idata++; //Next data everytime
 		}
 	});
@@ -397,7 +403,9 @@ function LoadProducts(position, issubcat) {
 function MoreProducts(moreorless) {
 	console.log("MoreProducts");
 
-	if ($('#search_pagination').val() != '') return Search2('<?php echo $keyCodeForEnter; ?>', moreorless);
+	if ($('#search_pagination').val() != '') {
+		return Search2('<?php echo (isset($keyCodeForEnter) ? $keyCodeForEnter : ''); ?>', moreorless);
+	}
 
 	var maxproduct = <?php echo ($MAXPRODUCT - 2); ?>;
 
@@ -412,15 +420,22 @@ function MoreProducts(moreorless) {
 		if (pageproducts==0) return; //Return if no less pages
 		pageproducts=pageproducts-1;
 	}
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&category='+currentcat, function(data) {
+
+	ishow=0; //product to show counter
+	idata=0; //product data counter
+	var limit = 0;
+	if (maxproduct >= 1) {
+		limit = maxproduct-1;
+	}
+	var offset = <?php echo ($MAXPRODUCT - 2); ?> * pageproducts;
+	// Only show products for sale (tosell=1)
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&category='+currentcat+'&tosell=1&limit='+limit+'&offset='+offset, function(data) {
 		console.log("Call ajax.php (in MoreProducts) to get Products of category "+currentcat);
 
-		if (typeof (data[(maxproduct * pageproducts)]) == "undefined" && moreorless=="more"){ // Return if no more pages
+		if (typeof (data[0]) == "undefined" && moreorless=="more"){ // Return if no more pages
 			pageproducts=pageproducts-1;
 			return;
 		}
-		idata=<?php echo ($MAXPRODUCT - 2); ?> * pageproducts; //product data counter
-		ishow=0; //product to show counter
 
 		while (ishow < maxproduct) {
 			if (typeof (data[idata]) == "undefined") {
@@ -432,10 +447,7 @@ function MoreProducts(moreorless) {
 				$("#proprice"+ishow).html("");
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
-				ishow++; //Next product to show after print data product
-			}
-			else if ((data[idata]['status']) == "1") {
-				//Only show products with status=1 (for sell)
+			} else {
 				$("#prodivdesc"+ishow).show();
 				<?php
 				if (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 1) { ?>
@@ -447,14 +459,14 @@ function MoreProducts(moreorless) {
 				$("#probutton"+ishow).show();
 				if (data[parseInt(idata)]['price_formated']) {
 					$("#proprice"+ishow).attr("class", "productprice");
-					$("#proprice"+ishow).html(data[parseInt(idata)]['price_formated']);
+					$("#proprice"+ishow).html(data[parseInt(idata)]['price_ttc_formated']);
 				}
 				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
 				$("#prodiv"+ishow).data("iscat",0);
-				ishow++; //Next product to show after print data product
 			}
 			$("#prowatermark"+ishow).hide();
+			ishow++; //Next product to show after print data product
 			idata++; //Next data everytime
 		}
 	});
@@ -581,11 +593,14 @@ function New() {
 /**
  * Search products
  *
- * @param   {int}			keyCodeForEnter     Key code for "enter"
- * return   {void}
+ * @param   keyCodeForEnter     Key code for "enter" or '' if not
+ * @param   moreorless          "more" or "less"
+ * return   void
  */
 function Search2(keyCodeForEnter, moreorless) {
-	console.log("Search2 Call ajax search to replace products keyCodeForEnter="+keyCodeForEnter);
+	var eventKeyCode = window.event.keyCode;
+
+	console.log("Search2 Call ajax search to replace products keyCodeForEnter="+keyCodeForEnter+", eventKeyCode="+eventKeyCode);
 
 	var search_term  = $('#search').val();
 	var search_start = 0;
@@ -594,6 +609,8 @@ function Search2(keyCodeForEnter, moreorless) {
 		search_term = $('#search_pagination').val();
 		search_start = $('#search_start_'+moreorless).val();
 	}
+
+	console.log("search_term="+search_term);
 
 	if (search_term == '') {
 		$("[id^=prowatermark]").html("");
@@ -608,20 +625,19 @@ function Search2(keyCodeForEnter, moreorless) {
 	}
 
 	var search = false;
-	var eventKeyCode = window.event.keyCode;
 	if (keyCodeForEnter == '' || eventKeyCode == keyCodeForEnter) {
 		search = true;
 	}
 
 	if (search === true) {
-
-		// temporization time to give time to type
+		// if a timer has been already started (search2_timer is a global js variable), we cancel it now
+		// we click onto another key, we will restart another timer just after
 		if (search2_timer) {
 			clearTimeout(search2_timer);
 		}
 
+		// temporization time to give time to type
 		search2_timer = setTimeout(function(){
-
 			pageproducts = 0;
 			jQuery(".wrapper2 .catwatermark").hide();
 			var nbsearchresults = 0;
@@ -654,7 +670,7 @@ function Search2(keyCodeForEnter, moreorless) {
 					$("#probutton" + i).show();
 					if (data[i]['price_formated']) {
 						$("#proprice" + i).attr("class", "productprice");
-						$("#proprice" + i).html(data[i]['price_formated']);
+						$("#proprice" + i).html(data[i]['price_ttc_formated']);
 					}
 					$("#proimg" + i).attr("title", titlestring);
 					if( undefined !== data[i]['img']) {
@@ -693,8 +709,8 @@ function Search2(keyCodeForEnter, moreorless) {
 					if (data.length == 0) {
 						$('#search').val('<?php
 						$langs->load('errors');
-						echo dol_escape_js($langs->trans("ErrorRecordNotFound"));
-						?>');
+						echo dol_escape_js($langs->transnoentitiesnoconv("ErrorRecordNotFoundShort"));
+						?> ('+search_term+')');
 						$('#search').select();
 					}
 					else ClearSearch();
@@ -863,6 +879,8 @@ function MoreActions(totalactions){
 			else $("#action"+i).hide();
 		}
 	}
+
+	return true;
 }
 
 function ControlCashOpening()
@@ -936,6 +954,65 @@ $( document ).ready(function() {
 		}
 	}
 	?>
+
+	/* For Header Scroll */
+	var elem1 = $("#topnav-left")[0];
+	var elem2 = $("#topnav-right")[0];
+	var checkOverflow = function() {
+		if (scrollBars().horizontal) $("#topnav").addClass("overflow");
+		else  $("#topnav").removeClass("overflow");
+	}
+
+	var scrollBars = function(){
+		var container= $('#topnav')[0];
+		return {
+			vertical:container.scrollHeight > container.clientHeight,
+			horizontal:container.scrollWidth > container.clientWidth
+		}
+	}
+
+	$(window).resize(function(){
+		checkOverflow();
+	});
+
+	   let resizeObserver = new ResizeObserver(() => {
+		   checkOverflow();
+	   });
+		  resizeObserver.observe(elem1);
+	   resizeObserver.observe(elem2);
+	checkOverflow();
+
+	var pressTimer = [];
+	var direction = 1;
+	var step = 200;
+
+	$(".indicator").mousedown(function(){
+		direction = $(this).hasClass("left") ? -1 : 1;
+		scrollTo();
+		pressTimer.push(setInterval(scrollTo, 100));
+	});
+
+	$(".indicator").mouseup(function(){
+		pressTimer.forEach(clearInterval);
+	});
+
+	$("body").mouseup(function(){
+		pressTimer.forEach(clearInterval);
+		console.log("body");
+	});
+
+	function scrollTo(){
+		console.log("here");
+		var pos = $("#topnav").scrollLeft();
+		document.getElementById("topnav").scrollTo({ left: $("#topnav").scrollLeft() + direction * step, behavior: 'smooth' })
+	}
+
+	$("#topnav").scroll(function(){
+		if (($("#topnav").offsetWidth + $("#topnav").scrollLeft >= $("#topnav").scrollWidth)) {
+			console.log("end");
+		}
+	});
+	/* End Header Scroll */
 });
 </script>
 
@@ -948,10 +1025,10 @@ $keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION
 if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	?>
 	<div class="header">
-		<div class="topnav">
-			<div class="topnav-left">
+		<div id="topnav" class="topnav">
+			<div id="topnav-left" class="topnav-left">
 				<div class="inline-block valignmiddle">
-				<a class="topnav-terminalhour" onclick="ModalBox('ModalTerminal');">
+				<a class="topnav-terminalhour" onclick="ModalBox('ModalTerminal')">
 				<span class="fa fa-cash-register"></span>
 				<span class="hideonsmartphone">
 				<?php echo getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$_SESSION["takeposterminal"], $langs->trans("TerminalName", $_SESSION["takeposterminal"])); ?>
@@ -962,7 +1039,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				</a>
 				<?php
 				if (isModEnabled('multicurrency')) {
-					print '<a class="valignmiddle tdoverflowmax100" id="multicurrency" onclick="ModalBox(\'ModalCurrency\');" title=""><span class="fas fa-coins paddingrightonly"></span>';
+					print '<a class="valignmiddle tdoverflowmax100" id="multicurrency" onclick="ModalBox(\'ModalCurrency\')" title=""><span class="fas fa-coins paddingrightonly"></span>';
 					print '<span class="hideonsmartphone">'.$langs->trans("Currency").'</span>';
 					print '</a>';
 				}
@@ -983,7 +1060,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				}
 				?>
 			</div>
-			<div class="topnav-right">
+			<div id="topnav-right" class="topnav-right">
 				<div class="login_block_other">
 				<input type="text" id="search" name="search" class="input-search-takepos" onkeyup="Search2('<?php echo dol_escape_js($keyCodeForEnter); ?>', null);" placeholder="<?php echo dol_escape_htmltag($langs->trans("Search")); ?>" autofocus>
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
@@ -998,6 +1075,10 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				print top_menu_user(1);
 				?>
 				</div>
+			</div>
+			<div class="arrows">
+				<span class="indicator left"><i class="fa fa-arrow-left"></i></span>
+				<span class="indicator right"><i class="fa fa-arrow-right"></i></span>
 			</div>
 		</div>
 	</div>
@@ -1087,19 +1168,19 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			<button type="button" class="calcbutton" onclick="Edit(7);">7</button>
 			<button type="button" class="calcbutton" onclick="Edit(8);">8</button>
 			<button type="button" class="calcbutton" onclick="Edit(9);">9</button>
-			<button type="button" id="qty" class="calcbutton2" onclick="Edit('qty');"><?php echo $langs->trans("Qty"); ?></button>
+			<button type="button" id="qty" class="calcbutton2" onclick="Edit('qty')"><?php echo $langs->trans("Qty"); ?></button>
 			<button type="button" class="calcbutton" onclick="Edit(4);">4</button>
 			<button type="button" class="calcbutton" onclick="Edit(5);">5</button>
 			<button type="button" class="calcbutton" onclick="Edit(6);">6</button>
-			<button type="button" id="price" class="calcbutton2" onclick="Edit('p');"><?php echo $langs->trans("Price"); ?></button>
+			<button type="button" id="price" class="calcbutton2" onclick="Edit('p')"><?php echo $langs->trans("Price"); ?></button>
 			<button type="button" class="calcbutton" onclick="Edit(1);">1</button>
 			<button type="button" class="calcbutton" onclick="Edit(2);">2</button>
 			<button type="button" class="calcbutton" onclick="Edit(3);">3</button>
-			<button type="button" id="reduction" class="calcbutton2" onclick="Edit('r');"><?php echo $langs->trans("ReductionShort"); ?></button>
+			<button type="button" id="reduction" class="calcbutton2" onclick="Edit('r')"><?php echo $langs->trans("ReductionShort"); ?></button>
 			<button type="button" class="calcbutton" onclick="Edit(0);">0</button>
-			<button type="button" class="calcbutton" onclick="Edit('.');">.</button>
-			<button type="button" class="calcbutton poscolorblue" onclick="Edit('c');">C</button>
-			<button type="button" class="calcbutton2 poscolordelete" id="delete" onclick="deleteline();"><span class="fa fa-trash"></span></button>
+			<button type="button" class="calcbutton" onclick="Edit('.')">.</button>
+			<button type="button" class="calcbutton poscolorblue" onclick="Edit('c')">C</button>
+			<button type="button" class="calcbutton2 poscolordelete" id="delete" onclick="deleteline()"><span class="fa fa-trash"></span></button>
 		</div>
 
 <?php
@@ -1268,7 +1349,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 		foreach ($menus as $menu) {
 			$i++;
 			if (count($menus) > 12 and $i == 12) {
-				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).');">'.$langs->trans("Next").'</button>';
+				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).')">'.$langs->trans("Next").'</button>';
 				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 			} elseif ($i > 12) {
 				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
@@ -1304,11 +1385,11 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 		while ($count < $MAXCATEG) {
 			?>
 			<div class="wrapper" <?php if ($count == ($MAXCATEG - 2)) {
-				echo 'onclick="MoreCategories(\'less\');"';
+				echo 'onclick="MoreCategories(\'less\')"';
 								 } elseif ($count == ($MAXCATEG - 1)) {
-									 echo 'onclick="MoreCategories(\'more\');"';
+									 echo 'onclick="MoreCategories(\'more\')"';
 								 } else {
-									 echo 'onclick="LoadProducts('.$count.');"';
+									 echo 'onclick="LoadProducts('.$count.')"';
 								 } ?> id="catdiv<?php echo $count; ?>">
 				<?php
 				if ($count == ($MAXCATEG - 2)) {
@@ -1319,7 +1400,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 					echo '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em; cursor: pointer;"></span>';
 				} else {
 					if (!getDolGlobalString('TAKEPOS_HIDE_CATEGORY_IMAGES')) {
-						echo '<img class="imgwrapper" height="100%" id="catimg'.$count.'" />';
+						echo '<img class="imgwrapper" id="catimg'.$count.'" />';
 					}
 				}
 				?>
@@ -1343,14 +1424,14 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 	<?php
 	$count = 0;
 	while ($count < $MAXPRODUCT) {
-			print '<div class="wrapper2" id="prodiv'.$count.'"  ';
+			print '<div class="wrapper2 arrow" id="prodiv'.$count.'"  ';
 		?>
 				<?php if ($count == ($MAXPRODUCT - 2)) {
-					?> onclick="MoreProducts('less');" <?php
+					?> onclick="MoreProducts('less')" <?php
 				} if ($count == ($MAXPRODUCT - 1)) {
-					?> onclick="MoreProducts('more');" <?php
+					?> onclick="MoreProducts('more')" <?php
 				} else {
-					echo 'onclick="ClickProduct('.$count.');"';
+					echo 'onclick="ClickProduct('.$count.')"';
 				} ?>>
 					<?php
 					if ($count == ($MAXPRODUCT - 2)) {
@@ -1364,7 +1445,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 							echo '<button type="button" id="probutton'.$count.'" class="productbutton" style="display: none;"></button>';
 						} else {
 							print '<div class="" id="proprice'.$count.'"></div>';
-							print '<img class="imgwrapper" height="100%" title="" id="proimg'.$count.'">';
+							print '<img class="imgwrapper" title="" id="proimg'.$count.'">';
 						}
 					}
 					?>

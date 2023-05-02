@@ -90,7 +90,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->mymodule) || empty($conf->mymodule->enabled)) {
+		if (!isModEnabled('mymodule')) {
 			return 0; // If module is not enabled, we do nothing
 		}
 
@@ -107,7 +107,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			);
 
 			return call_user_func($callback, $action, $object, $user, $langs, $conf);
-		};
+		}
 
 		// Or you can execute some code here
 		switch ($action) {
@@ -155,7 +155,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'MYECMDIR_MODIFY':
 			//case 'MYECMDIR_DELETE':
 
-			// Customer orders
+			// Sales orders
 			//case 'ORDER_CREATE':
 			//case 'ORDER_MODIFY':
 			//case 'ORDER_VALIDATE':

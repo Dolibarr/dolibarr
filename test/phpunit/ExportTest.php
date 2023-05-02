@@ -103,7 +103,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		//$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -116,7 +116,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		//$db->rollback();
@@ -129,7 +129,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -144,9 +144,97 @@ class ExportTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
+	}
+
+	/**
+	 * Other tests
+	 *
+	 * @return void
+	 */
+	public function testExportCsvUtf()
+	{
+		global $conf,$user,$langs,$db;
+
+		$model='csvutf8';
+
+		$conf->global->EXPORT_CSV_SEPARATOR_TO_USE = ',';
+		print 'EXPORT_CSV_SEPARATOR_TO_USE = '.$conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
+
+		// Creation of class to export using model ExportXXX
+		$dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
+		$file = "export_".$model.".modules.php";
+		$classname = "Export".$model;
+		require_once $dir.$file;
+		$objmodel = new $classname($db);
+
+		// First test without option USE_STRICT_CSV_RULES
+		unset($conf->global->USE_STRICT_CSV_RULES);
+
+		$valtotest='A simple string';
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, 'A simple string');
+
+		$valtotest='A string with , and ; inside';
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, '"A string with , and ; inside"', 'Error in csvClean for '.$file);
+
+		$valtotest='A string with " inside';
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, '"A string with "" inside"');
+
+		$valtotest='A string with " inside and '."\r\n".' carriage returns';
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, '"A string with "" inside and \n carriage returns"');
+
+		$valtotest='A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>'."\n";
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
+
+		// Same tests with strict mode
+		$conf->global->USE_STRICT_CSV_RULES = 1;
+
+		$valtotest='A simple string';
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, 'A simple string');
+
+		$valtotest='A string with , and ; inside';
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, '"A string with , and ; inside"');
+
+		$valtotest='A string with " inside';
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, '"A string with "" inside"');
+
+		$valtotest='A string with " inside and '."\r\n".' carriage returns';
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, "\"A string with \"\" inside and \r\n carriage returns\"");
+
+		$valtotest='A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>'."\n";
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
 	}
 
 
@@ -159,7 +247,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 
-		$model='csv';
+		$model='csviso';
 
 		$conf->global->EXPORT_CSV_SEPARATOR_TO_USE = ',';
 		print 'EXPORT_CSV_SEPARATOR_TO_USE = '.$conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
@@ -263,7 +351,15 @@ class ExportTest extends PHPUnit\Framework\TestCase
 
 		dol_mkdir($conf->export->dir_temp);
 
-		$model='csv';
+		$model='csviso';
+
+		// Build export file
+		print "Process build_file for model = ".$model."\n";
+		$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
+		$expectedresult = 1;
+		$this->assertEquals($expectedresult, $result, 'Error in CSV export');
+
+		$model='csvutf8';
 
 		// Build export file
 		print "Process build_file for model = ".$model."\n";
@@ -353,7 +449,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 
-		$model='csv';
+		$model='csviso';
 
 		$filterdatatoexport='';
 		//$filterdatatoexport='';

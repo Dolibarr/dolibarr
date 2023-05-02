@@ -137,7 +137,7 @@ if ($enablepermissioncheck) {
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-//restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
+//restrictedArea($user, $object->module, $object->id, $object->table_element, $object->element, 'fk_soc', 'rowid', $isdraft);
 if (!isModEnabled("mymodule")) {
 	accessforbidden();
 }
@@ -193,8 +193,7 @@ $morehtmlref = '<div class="refidno">';
  // Thirdparty
  $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
  // Project
- if (!empty($conf->project->enabled))
- {
+ if (isModEnabled('project')) {
  $langs->load("projects");
  $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
  if ($permissiontoadd)

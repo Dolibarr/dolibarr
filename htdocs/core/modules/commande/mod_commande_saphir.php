@@ -23,14 +23,14 @@
 /**
  * \file       htdocs/core/modules/commande/mod_commande_saphir.php
  * \ingroup    commande
- * \brief      Fichier contenant la classe du modele de numerotation de reference de commande Saphir
+ *  \brief     File of class to manage Sales Order numbering rules Saphir
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 
 
 /**
- *	Class to manage customer order numbering rules Saphir
+ *	Class to manage Sales Order numbering rules Saphir
  */
 class mod_commande_saphir extends ModeleNumRefCommandes
 {
@@ -54,7 +54,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{

@@ -46,8 +46,8 @@ CKEDITOR.editorConfig = function( config )
 	    ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
 	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	    ['BidiLtr', 'BidiRtl'],
-	    ['Link','Unlink','Anchor'],
-	    ['Image','Table','HorizontalRule','Smiley','SpecialChar'],
+	    ['Link','Unlink'],
+	    ['Image','Table','HorizontalRule','Smiley'],
 	    ['Styles','Format','Font','FontSize'],
 	    ['TextColor','BGColor'],
 	 	['Source']
@@ -64,7 +64,7 @@ CKEDITOR.editorConfig = function( config )
 	 	['Bold','Italic','Underline','Strike','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-	 	['Link','Unlink','Anchor','Image','Table','HorizontalRule','SpecialChar'],
+	 	['Link','Unlink','Image','Table','HorizontalRule'],
 	 	['Source']
 	 ];
 
@@ -78,7 +78,7 @@ CKEDITOR.editorConfig = function( config )
 	 	['Bold','Italic','Underline','Strike','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-	    ['Link','Unlink','Image','Table','HorizontalRule','SpecialChar'],
+	    ['Link','Unlink','Image','Table','HorizontalRule'],
 	 	['Source']
 	];
 
@@ -91,7 +91,7 @@ CKEDITOR.editorConfig = function( config )
 	    ['Bold','Italic','Underline','Strike','-','TextColor','RemoveFormat'],	// ,'Subscript','Superscript' useless
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-	    ['Link','Unlink','SpecialChar'],
+	    ['Link','Unlink'],
 	 	['Source']
 	];
 
@@ -100,6 +100,7 @@ CKEDITOR.editorConfig = function( config )
 	[
 	 	['Maximize'],
 	 	['Find'],
+	 	['Image'],
 	 	['Source']
 	];
 };

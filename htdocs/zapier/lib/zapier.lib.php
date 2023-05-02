@@ -54,5 +54,7 @@ function zapierAdminPrepareHead()
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'zapier');
 
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'zapier', 'remove');
+
 	return $head;
 }

@@ -57,7 +57,7 @@ class modAccounting extends DolibarrModules
 		$this->picto = 'accountancy';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array('/accounting/temp');
+		$this->dirs = array('/accounting/temp', '/accounting/export');
 
 		// Config pages
 		$this->config_page_url = array('accounting.php?mainmenu=accountancy&leftmenu=accountancy_admin');
@@ -66,7 +66,7 @@ class modAccounting extends DolibarrModules
 		$this->depends = array("modFacture", "modBanque", "modTax"); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array("modComptabilite"); // List of modules are in conflict with this module
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 9); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("accountancy", "compta");
 
@@ -124,22 +124,10 @@ class modAccounting extends DolibarrModules
 				"",
 				"", 0, 'current', 0
 		);
-		$this->const[9] = array(
-				"ACCOUNTING_LIST_SORT_VENTILATION_TODO",
-				"yesno",
-				"1",
-				"", 0, 'current', 0
-		);
-		$this->const[10] = array(
-				"ACCOUNTING_LIST_SORT_VENTILATION_DONE",
-				"yesno",
-				"1",
-				"", 0, 'current', 0
-		);
 		$this->const[11] = array(
 				"ACCOUNTING_EXPORT_DATE",
 				"chaine",
-				"%d%m%Y",
+				"%Y-%m-%d",
 				"", 0, 'current', 0
 		);
 		$this->const[12] = array(
@@ -258,14 +246,16 @@ class modAccounting extends DolibarrModules
 		$this->export_label[$r] = 'Chartofaccounts';
 		$this->export_icon[$r] = $this->picto;
 		$this->export_permission[$r] = array(array("accounting", "chartofaccount"));
-		$this->export_fields_array[$r] = array('ac.rowid'=>'ChartofaccountsId', 'ac.pcg_version'=>'Chartofaccounts', 'aa.rowid'=>'ID', 'aa.account_number'=>"AccountAccounting", 'aa.label'=>"Label", 'aa.account_parent'=>"Accountparent", 'aa.pcg_type'=>"Pcgtype", 'aa.active'=>'Status');
-		$this->export_TypeFields_array[$r] = array('ac.rowid'=>'List:accounting_system:pcg_version', 'ac.pcg_version'=>'Text', 'aa.rowid'=>'Numeric', 'aa.account_number'=>"Text", 'aa.label'=>"Text", 'aa.account_parent'=>"Text", 'aa.pcg_type'=>'Text', 'aa.active'=>'Status');
-		$this->export_entities_array[$r] = array('ac.rowid'=>"Accounting", 'ac.pcg_version'=>"Accounting", 'aa.rowid'=>'Accounting', 'aa.account_number'=>"Accounting", 'aa.label'=>"Accounting", 'aa.accountparent'=>"Accounting", 'aa.pcg_type'=>"Accounting", 'aa_active'=>"Accounting");
+		$this->export_fields_array[$r] = array('ac.rowid'=>'ChartofaccountsId', 'ac.pcg_version'=>'Chartofaccounts', 'aa.rowid'=>'ID', 'aa.account_number'=>"AccountAccounting", 'aa.label'=>"Label", 'aa2.account_number'=>"Accountparent", 'aa.pcg_type'=>"Pcgtype", 'aa.active'=>'Status');
+		$this->export_TypeFields_array[$r] = array('ac.rowid'=>'List:accounting_system:pcg_version', 'ac.pcg_version'=>'Text', 'aa.rowid'=>'Numeric', 'aa.account_number'=>"Text", 'aa.label'=>"Text", 'aa2.account_number'=>"Text", 'aa.pcg_type'=>'Text', 'aa.active'=>'Status');
+		$this->export_entities_array[$r] = array(); // We define here only fields that use another picto
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'accounting_account as aa';
 		$this->export_sql_end[$r] .= ' ,'.MAIN_DB_PREFIX.'accounting_system as ac';
-		$this->export_sql_end[$r] .= ' WHERE ac.pcg_version = aa.fk_pcg_version AND aa.entity IN ('.getEntity('accounting').') ';
+		$this->export_sql_end[$r] .= ' ,'.MAIN_DB_PREFIX.'accounting_account as aa2';
+		$this->export_sql_end[$r] .= ' WHERE ac.pcg_version = aa.fk_pcg_version AND aa.entity IN ('.getEntity('accounting').')';
+		$this->export_sql_end[$r] .= ' AND aa2.rowid = aa.account_parent AND aa2.active = 1 AND ac.pcg_version = aa2.fk_pcg_version AND aa2.entity IN ('.getEntity('accounting').')';
 
 
 		// Imports
@@ -336,7 +326,7 @@ class modAccounting extends DolibarrModules
 			'b.sens'=>'C'	// This field is still used by accounting export. We can remove it once it has been replace into accountancyexport.class.php by a detection using ->debit and ->credit
 		);
 
-		// General ledger - Fichier FEC
+		// General ledger - File FEC
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = 'ImportAccountingEntriesFECFormat';

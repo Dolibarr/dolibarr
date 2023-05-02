@@ -19,7 +19,8 @@
 /**
  *  \file       product/class/productbatch.class.php
  *  \ingroup    productbatch
- *  \brief      Manage record and specific data for batch number management
+ *  \brief      Manage record and specific data for batch number management.
+ *  			Manage table llx_product_batch (should have been named product_stock_batch)
  */
 
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
@@ -100,7 +101,7 @@ class Productbatch extends CommonObject
 		$sql .= " ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").",";			// no more used
 		$sql .= " ".(!isset($this->batch) ? 'NULL' : "'".$this->db->escape($this->batch)."'").",";
 		$sql .= " ".(!isset($this->qty) ? 'NULL' : $this->qty).",";
-		$sql .= " ".(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'")."";
+		$sql .= " ".(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -136,7 +137,6 @@ class Productbatch extends CommonObject
 		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-
 		$sql .= " t.tms,";
 		$sql .= " t.fk_product_stock,";
 		$sql .= " t.sellby as oldsellby,";
@@ -148,8 +148,8 @@ class Productbatch extends CommonObject
 		$sql .= " w.fk_product,";
 		$sql .= " pl.eatby,";
 		$sql .= " pl.sellby";
-
-		$sql .= " FROM ".$this->db->prefix()."product_batch as t INNER JOIN ".$this->db->prefix()."product_stock w on t.fk_product_stock = w.rowid";
+		$sql .= " FROM ".$this->db->prefix()."product_batch as t";
+		$sql .= " INNER JOIN ".$this->db->prefix()."product_stock w on t.fk_product_stock = w.rowid";	// llx_product_stock is a parent table so this link does NOT generate duplicate record
 		$sql .= " LEFT JOIN ".$this->db->prefix()."product_lot as pl on pl.fk_product = w.fk_product and pl.batch = t.batch";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
@@ -205,7 +205,7 @@ class Productbatch extends CommonObject
 		$sql .= " eatby=".(dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
 		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
 		$sql .= " qty=".(isset($this->qty) ? $this->qty : "null").",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -245,7 +245,7 @@ class Productbatch extends CommonObject
 		$this->db->begin();
 
 		if (!$error) {
-			$sql = "DELETE FROM ".$this->db->prefix().self::$_table_element."";
+			$sql = "DELETE FROM ".$this->db->prefix().self::$_table_element;
 			$sql .= " WHERE rowid=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -432,7 +432,7 @@ class Productbatch extends CommonObject
 	 *  @param	int			$fk_product_stock	id product_stock for objet
 	 *  @param	int			$with_qty    		1 = doesn't return line with 0 quantity
 	 *  @param  int         $fk_product         If set to a product id, get eatby and sellby from table llx_product_lot
-	 *  @return array         					<0 if KO, array of batch
+	 *  @return array|int         					<0 if KO, array of batch
 	 */
 	public static function findAll($dbs, $fk_product_stock, $with_qty = 0, $fk_product = 0)
 	{

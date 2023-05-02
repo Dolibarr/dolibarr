@@ -28,6 +28,7 @@
 /**
  * Check validity of user/password/entity
  * If test is ko, reason must be filled into $_SESSION["dol_loginmesg"]
+ * Note: On critical error (hack attempt), we put a log "functions_dolibarr::check_user_password_dolibarr authentication KO"
  *
  * @param	string	$usertotest		Login
  * @param	string	$passwordtotest	Password
@@ -56,7 +57,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 		$usernamecol2 = 'email';
 		$entitycol = 'entity';
 
-		$sql = "SELECT rowid, login, entity, pass, pass_crypted, datestartvalidity, dateendvalidity";
+		$sql = "SELECT rowid, login, entity, pass, pass_crypted, datestartvalidity, dateendvalidity, flagdelsessionsbefore";
 		$sql .= " FROM ".$table;
 		$sql .= " WHERE (".$usernamecol1." = '".$db->escape($usertotest)."'";
 		if (preg_match('/@/', $usertotest)) {
@@ -73,20 +74,6 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
-				$now = dol_now();
-				if ($obj->datestartvalidity && $db->jdate($obj->datestartvalidity) > $now) {
-					// Load translation files required by the page
-					$langs->loadLangs(array('main', 'errors'));
-					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
-					return '--bad-login-validity--';
-				}
-				if ($obj->dateendvalidity && $db->jdate($obj->dateendvalidity) < dol_get_first_hour($now)) {
-					// Load translation files required by the page
-					$langs->loadLangs(array('main', 'errors'));
-					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
-					return '--bad-login-validity--';
-				}
-
 				$passclear = $obj->pass;
 				$passcrypted = $obj->pass_crypted;
 				$passtyped = $passwordtotest;
@@ -116,7 +103,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 					if ((!$passcrypted || $passtyped)
 						&& ($passclear && ($passtyped == $passclear))) {
 						$passok = true;
-						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - found pass in database");
+						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - found old pass in database", LOG_WARNING);
 					}
 				}
 
@@ -124,8 +111,8 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 				if ($passok) {
 					$login = $obj->login;
 				} else {
-					sleep(2); // Anti brut force protection
 					dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication KO bad password for '".$usertotest."', cryptType=".$cryptType, LOG_NOTICE);
+					sleep(1); // Anti brut force protection. Must be same delay when login is not valid
 
 					// Load translation files required by the page
 					$langs->loadLangs(array('main', 'errors'));
@@ -153,7 +140,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 				}
 			} else {
 				dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication KO user not found for '".$usertotest."'", LOG_NOTICE);
-				sleep(1);
+				sleep(1);	// Anti brut force protection. Must be same delay when password is not valid
 
 				// Load translation files required by the page
 				$langs->loadLangs(array('main', 'errors'));

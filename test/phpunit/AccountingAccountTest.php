@@ -78,7 +78,7 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
@@ -95,7 +95,7 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -108,7 +108,7 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -125,7 +125,7 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -143,7 +143,7 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new AccountingAccount($this->savdb);
+		$localobject=new AccountingAccount($db);
 		$localobject->fk_pcg_version = 'PCG99-ABREGE';
 		$localobject->account_category = 0;
 		$localobject->pcg_type = 'XXXXX';
@@ -177,7 +177,7 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new AccountingAccount($this->savdb);
+		$localobject=new AccountingAccount($db);
 		$result=$localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -229,7 +229,7 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new AccountingAccount($this->savdb);
+		$localobject=new AccountingAccount($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

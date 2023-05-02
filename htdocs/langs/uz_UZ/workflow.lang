@@ -22,7 +22,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Sotib oluvchi hisob-f
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Bog'langan manba sotib olish buyurtmasini qabul qilish tasdiqlanganda olingan deb tasniflang (va barcha qabullar tomonidan qabul qilingan miqdor yangilash uchun xarid buyurtmasi bilan bir xil bo'lsa)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Bog'langan manba buyurtmasini qabulxona yopilganda olingan deb tasniflang (va barcha qabulxonalar tomonidan qabul qilingan miqdor yangilash uchun xarid buyurtmasidagi bilan bir xil bo'lsa)
 # Autoclassify purchase invoice
-descWORKFLOW_BILL_ON_RECEPTION=Bog'langan etkazib beruvchining buyurtmasi tasdiqlanganda qabullarni "hisob-kitob" ga tasniflang
+descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=Chipta yaratishda, mos keladigan uchinchi tomonning mavjud shartnomalarini bog'lang
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Shartnomalarni ulashda, ota-onalar kompaniyalari orasidan qidiring
@@ -31,6 +31,6 @@ descWORKFLOW_TICKET_CLOSE_INTERVENTION=Chipta yopilganda chipta bilan bog'liq ba
 AutomaticCreation=Avtomatik yaratish
 AutomaticClassification=Avtomatik tasnif
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Mijozlarning hisob-fakturasi tasdiqlanganda bog'langan manbalarni etkazib berishni yopiq deb tasniflang
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
 AutomaticClosing=Avtomatik yopish
 AutomaticLinking=Avtomatik ulanish

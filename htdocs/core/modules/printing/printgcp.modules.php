@@ -116,10 +116,12 @@ class printing_printgcp extends PrintingDriver
 				'type'=>'info',
 			);
 		} else {
+			$keyforprovider = '';	// @FIXME
+
 			$this->google_id = getDolGlobalString('OAUTH_GOOGLE_ID');
 			$this->google_secret = getDolGlobalString('OAUTH_GOOGLE_SECRET');
 			// Token storage
-			$storage = new DoliStorage($this->db, $this->conf);
+			$storage = new DoliStorage($this->db, $conf, $keyforprovider);
 			//$storage->clearToken($this->OAUTH_SERVICENAME_GOOGLE);
 			// Setup the credentials for the requests
 			$credentials = new Credentials(
@@ -253,9 +255,13 @@ class printing_printgcp extends PrintingDriver
 	 */
 	public function getlistAvailablePrinters()
 	{
+		global $conf;
 		$ret = array();
+
+		$keyforprovider = '';	// @FIXME
+
 		// Token storage
-		$storage = new DoliStorage($this->db, $this->conf);
+		$storage = new DoliStorage($this->db, $conf, $keyforprovider);
 		// Setup the credentials for the requests
 		$credentials = new Credentials(
 			$this->google_id,
@@ -332,6 +338,7 @@ class printing_printgcp extends PrintingDriver
 		}
 		$fileprint .= '/'.$file;
 		$mimetype = dol_mimetype($fileprint);
+		$printer_id = '';
 		// select printer uri for module order, propal,...
 		$sql = "SELECT rowid, printer_id, copy FROM ".MAIN_DB_PREFIX."printing WHERE module='".$this->db->escape($module)."' AND driver='printgcp' AND userid=".((int) $user->id);
 		$result = $this->db->query($sql);
@@ -371,6 +378,7 @@ class printing_printgcp extends PrintingDriver
 	 */
 	public function sendPrintToPrinter($printerid, $printjobtitle, $filepath, $contenttype)
 	{
+		global $conf;
 		// Check if printer id
 		if (empty($printerid)) {
 			return array('status' =>0, 'errorcode' =>'', 'errormessage'=>'No provided printer ID');
@@ -391,8 +399,11 @@ class printing_printgcp extends PrintingDriver
 			'content' => base64_encode($contents), // encode file content as base64
 			'contentType' => $contenttype,
 		);
+
+		$keyforprovider = '';	// @FIXME
+
 		// Dolibarr Token storage
-		$storage = new DoliStorage($this->db, $this->conf);
+		$storage = new DoliStorage($this->db, $conf, $keyforprovider);
 		// Setup the credentials for the requests
 		$credentials = new Credentials(
 			$this->google_id,
@@ -440,8 +451,11 @@ class printing_printgcp extends PrintingDriver
 
 		$error = 0;
 		$html = '';
+
+		$keyforprovider = '';	// @FIXME
+
 		// Token storage
-		$storage = new DoliStorage($this->db, $this->conf);
+		$storage = new DoliStorage($this->db, $conf, $keyforprovider);
 		// Setup the credentials for the requests
 		$credentials = new Credentials(
 			$this->google_id,

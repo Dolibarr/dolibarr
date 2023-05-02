@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/commande/index.php
  *	\ingroup    commande
- *	\brief      Home page of customer order module
+ *	\brief      Home page of sales order module
  */
 
 

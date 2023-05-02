@@ -37,7 +37,8 @@ EventOrganization=Event organization
 Settings=ການຕັ້ງຄ່າ
 EventOrganizationSetupPage = ໜ້າ ການຕັ້ງອົງການຈັດຕັ້ງເຫດການ
 EVENTORGANIZATION_TASK_LABEL = ປ້າຍ ກຳ ກັບ ໜ້າ ວຽກເພື່ອສ້າງອັດຕະໂນມັດເມື່ອໂຄງການໄດ້ຮັບການກວດສອບ
-EVENTORGANIZATION_TASK_LABELTooltip = ເມື່ອເຈົ້າກວດສອບເຫດການທີ່ມີການຈັດຕັ້ງ, ບາງ ໜ້າ ວຽກສາມາດຖືກສ້າງຂຶ້ນໂດຍອັດຕະໂນມັດໃນໂຄງການ <br> <br> ຕົວຢ່າງ: <br> ສົ່ງສາຍສໍາລັບກອງປະຊຸມ <br> ສົ່ງສາຍສໍາລັບກອງປະຊຸມ <br> ຮັບສາຍໂທເຂົ້າກອງປະຊຸມ a034 a0342fccf1919bz0 ຮັບສາຍໂທສໍາລັບກອງປະຊຸມ a034 a344 fc f19 a034 ຈັດການສໍາລັບກອງປະຊຸມ ເຕືອນເຫດການໃຫ້ລໍາໂພງ <br> ສົ່ງການເຕືອນເຫດການໃຫ້ Booth hoster <br> ສົ່ງເຕືອນເຫດການໃຫ້ກັບຜູ້ເຂົ້າຮ່ວມ
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
+EVENTORGANIZATION_TASK_LABELTooltip2=Keep empty if you don't need to create tasks automatically.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Categoryວດtoູ່ເພື່ອເພີ່ມໃສ່ພາກສ່ວນທີສາມສ້າງໂດຍອັດຕະໂນມັດເມື່ອມີຄົນແນະ ນຳ ການປະຊຸມ
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Categoryວດtoູ່ເພື່ອເພີ່ມໃສ່ພາກສ່ວນທີສາມສ້າງໂດຍອັດຕະໂນມັດເມື່ອພວກເຂົາແນະ ນຳ ບູດ
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = ແມ່ແບບຂອງອີເມລ send ເພື່ອສົ່ງຫຼັງຈາກໄດ້ຮັບຄໍາແນະນໍາຂອງກອງປະຊຸມ.
@@ -53,12 +54,15 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, 
 # Object
 #
 EventOrganizationConfOrBooth= ກອງປະຊຸມຫຼືບູດ
+EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = Manage the organization of an event
 ConferenceOrBooth = ກອງປະຊຸມຫຼືບູດ
 ConferenceOrBoothTab = ກອງປະຊຸມຫຼືບູດ
 AmountPaid = Amount paid
 DateOfRegistration = Date of registration
 ConferenceOrBoothAttendee = ຜູ້ເຂົ້າຮ່ວມກອງປະຊຸມຫຼືບູດ
+ApplicantOrVisitor=Applicant or visitor
+Speaker=Speaker
 
 #
 # Template Mail
@@ -111,15 +115,15 @@ EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest 
 EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
 EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
 ListOfSuggestedConferences = ລາຍຊື່ກອງປະຊຸມແນະ ນຳ
-ListOfSuggestedBooths = ລາຍຊື່ບູດທີ່ແນະ ນຳ
-ListOfConferencesOrBooths=List of conferences or booths of event project
+ListOfSuggestedBooths=Suggested booths
+ListOfConferencesOrBooths=Conferences or booths of event project
 SuggestConference = ແນະ ນຳ ການປະຊຸມໃ່
 SuggestBooth = ແນະ ນຳ ບູດ
 ViewAndVote = ເບິ່ງແລະລົງຄະແນນສຽງ ສຳ ລັບເຫດການທີ່ແນະ ນຳ
 PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
 PublicAttendeeSubscriptionPage = Public link for registration to this event only
 MissingOrBadSecureKey = ກະແຈຄວາມປອດໄພບໍ່ຖືກຕ້ອງຫຼືບໍ່ມີ
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event : <b>%s</b>
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event
 EvntOrgDuration = ກອງປະຊຸມນີ້ເລີ່ມຕົ້ນໃນ %s ແລະສິ້ນສຸດໃນ %s.
 ConferenceAttendeeFee = ຄ່າທໍານຽມຜູ້ເຂົ້າຮ່ວມກອງປະຊຸມສໍາລັບເຫດການ: '%s' ເກີດຂຶ້ນຈາກ %s ຫາ %s.
 BoothLocationFee = ສະຖານທີ່ບູດສໍາລັບເຫດການ: '%s' ເກີດຂຶ້ນຈາກ %s ຫາ %s
@@ -129,7 +133,7 @@ LabelOfconference=ປ້າຍປະຊຸມ
 ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
 DateMustBeBeforeThan=%s ຕ້ອງແມ່ນກ່ອນ %s
 DateMustBeAfterThan=%s ຕ້ອງເປັນຫຼັງຈາກ %s
-
+MaxNbOfAttendeesReached=The maximum number of participants has been reached
 NewSubscription=Registration
 OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
 OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
@@ -138,6 +142,7 @@ OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event re
 OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
 OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
 OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
+OrganizationEvenLabelName=Public name of the conference or booth
 
 NewSuggestionOfBooth=Application for a booth
 NewSuggestionOfConference=Application for a conference
@@ -153,7 +158,7 @@ VoteOk = ການລົງຄະແນນສຽງຂອງທ່ານໄດ�
 AlreadyVoted = ທ່ານໄດ້ໂຫວດໃຫ້ເຫດການນີ້ແລ້ວ.
 VoteError = ເກີດຄວາມຜິດພາດໃນລະຫວ່າງການລົງຄະແນນສຽງ, ກະລຸນາລອງໃagain່ອີກຄັ້ງ.
 
-SubscriptionOk = Your registration has been validated
+SubscriptionOk=Your registration has been recorded
 ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
 Attendee = ຜູ້ເຂົ້າຮ່ວມ
 PaymentConferenceAttendee = ການຈ່າຍເງິນໃຫ້ຜູ້ເຂົ້າຮ່ວມກອງປະຊຸມ
@@ -161,7 +166,9 @@ PaymentBoothLocation = ການຊໍາລະສະຖານທີ່ບູດ
 DeleteConferenceOrBoothAttendee=Remove attendee
 RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
 EmailAttendee=Attendee email
+EmailCompany=Company email
 EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
 ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
 ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
 NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
+MaxNbOfAttendees=Max number of attendees

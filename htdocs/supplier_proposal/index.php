@@ -90,7 +90,7 @@ if ($resql) {
 	$dataseries = array();
 	$colorseries = array();
 	$vals = array();
-	// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
+	// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for sales orders), 3=Closed (Sent/Received, billed or not)
 	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 		if ($row) {
