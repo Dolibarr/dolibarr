@@ -113,5 +113,6 @@ exclude:
   - name: PhpFullyQualifiedNameUsageInspection
   - name: PhpDocMissingThrowsInspection
   - name: UnnecessaryLabelJS
+  - name: JSCheckFunctionSignatures
   
     
