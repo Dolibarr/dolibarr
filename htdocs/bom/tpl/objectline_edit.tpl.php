@@ -121,7 +121,11 @@ if (($line->info_bits & 2) != 2) {
 	// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 	// must also not be output for most entities (proposal, intervention, ...)
 	//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
-	print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="'.$line->qty.'">';
+	if ($filtertype != 1) {
+		print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="' . $line->qty . '">';
+	} else {
+		print $form->select_duration('timespent_duration', $line->qty, 0, 'text');
+	}
 }
 print '</td>';
 

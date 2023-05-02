@@ -142,10 +142,12 @@ print '</td>';
 
 
 $coldisplay++;
-print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1).'">';
-print '</td>';
 
 if ($filtertype != 1) {
+
+	print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="' . (GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1) . '">';
+	print '</td>';
+
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
@@ -172,12 +174,17 @@ if ($filtertype != 1) {
 	print '</td>';
 } else {
 	$coldisplay++;
-	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
-	$cUnit = new CUnits($this->db);
-	$fk_unit_default = $cUnit->getUnitFromCode('h', 'short_label', 'time');
-	print '<td class="bordertop nobottom nowrap linecolunit right">';
-	print  $formproduct->selectMeasuringUnits("fk_unit", "time", $fk_unit_default, 0, 0);
+
+	print '<td class="nowrap right">';
+	print $form->select_duration('timespent_duration', $durationtouse, 0, 'text');
 	print '</td>';
+
+//	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+//	$cUnit = new CUnits($this->db);
+//	$fk_unit_default = $cUnit->getUnitFromCode('h', 'short_label', 'time');
+//	print '<td class="bordertop nobottom nowrap linecolunit right">';
+//	print  $formproduct->selectMeasuringUnits("fk_unit", "time", $fk_unit_default, 0, 0);
+//	print '</td>';
 
 	$coldisplay++;
 	print '<td class="bordertop nobottom nowrap linecolworkstation right">';

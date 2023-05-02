@@ -167,6 +167,8 @@ if (empty($reshook)) {
 
 		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
+		$timespent_durationhour = GETPOST('timespent_durationhour', 'int');
+		$timespent_durationmin = GETPOST('timespent_durationmin', 'int');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
 		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
@@ -213,6 +215,8 @@ if (empty($reshook)) {
 				}
 			}
 
+			if($timespent_durationmin > 0 || $timespent_durationhour > 0) $qty = $timespent_durationhour*3600 + $timespent_durationmin*60;
+
 			$result = $object->addLine($idprod, $qty, $qty_frozen, $disable_stock_change, $efficiency, -1, $bom_child_id, null, $fk_unit, $array_options, $fk_default_workstation);
 
 			if ($result <= 0) {
@@ -240,6 +244,8 @@ if (empty($reshook)) {
 		// Set if we used free entry or predefined product
 		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
+		$timespent_durationhour = GETPOST('timespent_durationhour', 'int');
+		$timespent_durationmin = GETPOST('timespent_durationmin', 'int');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
 		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
@@ -260,6 +266,8 @@ if (empty($reshook)) {
 					unset($_POST["options_".$key]);
 				}
 			}
+
+			if($timespent_durationmin > 0 || $timespent_durationhour > 0) $qty = $timespent_durationhour*3600 + $timespent_durationmin*60;
 
 			$bomline = new BOMLine($db);
 			$bomline->fetch($lineid);

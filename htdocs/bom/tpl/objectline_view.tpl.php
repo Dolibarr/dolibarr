@@ -119,13 +119,14 @@ if (!empty($extrafields)) {
 
 print '</td>';
 
-// Qty
-print '<td class="linecolqty nowrap right">';
-$coldisplay++;
-echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
-print '</td>';
-
 if ($filtertype != 1) {
+
+	// Qty
+	print '<td class="linecolqty nowrap right">';
+	$coldisplay++;
+	echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
+	print '</td>';
+
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		print '<td class="linecoluseunit nowrap left">';
 		$label = $tmpproduct->getLabelOfUnit('long');
@@ -149,18 +150,25 @@ if ($filtertype != 1) {
 	echo $line->efficiency;
 	print '</td>';
 } else {
-	// Unit
-	print '<td class="linecolunit nowrap right">';
+
+	// Qty
+	print '<td class="linecolqty nowrap right">';
 	$coldisplay++;
-
-	if (!empty($line->fk_unit)) {
-		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
-		$unit = new CUnits($this->db);
-		$unit->fetch($line->fk_unit);
-		print (isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '');
-	}
-
+	print convertSecondToTime($line->qty, 'allhourmin');
 	print '</td>';
+
+	// Unit
+//	print '<td class="linecolunit nowrap right">';
+//	$coldisplay++;
+
+//	if (!empty($line->fk_unit)) {
+//		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+//		$unit = new CUnits($this->db);
+//		$unit->fetch($line->fk_unit);
+//		print (isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '');
+//	}
+
+//	print '</td>';
 
 	// Work station
 	if (isModEnabled('workstation')) {
