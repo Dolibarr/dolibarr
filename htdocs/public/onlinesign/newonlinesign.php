@@ -527,7 +527,7 @@ if ($source == 'proposal') {
 	print '</td></tr>'."\n";
 } elseif ($source == 'societe_rib') {
 	$found = true;
-	$langs->loadLangs(array("companies", "commercial", "banks", "bills", 'withdrawals'));
+	$langs->loadLangs(array("companies", "commercial"));
 
 	$result = $object->fetch_thirdparty();
 
@@ -553,25 +553,10 @@ if ($source == 'proposal') {
 
 	$last_main_doc_file = $object->last_main_doc;
 
-
-	/*if ($action == 'builddocrib') {
-		$action = 'builddoc';
-		$moreparams = array(
-			'use_companybankid'=>GETPOST('companybankid'),
-			'force_dir_output'=>$conf->societe->multidir_output[$object->thirdparty->entity].'/'.dol_sanitizeFileName($object->id)
-		);
-		$_POST['lang_id'] = GETPOST('lang_idrib'.GETPOST('companybankid', 'int'), 'alpha');
-		$_POST['model'] = GETPOST('modelrib'.GETPOST('companybankid', 'int'), 'alpha');
-	}
-
-	$id = $socid;
-	$upload_dir = $conf->societe->multidir_output[$object->entity];
-	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';*/
-
 	if (empty($last_main_doc_file) ||
 		!dol_is_file($conf->societe->multidir_output[$object->thirdparty->entity].'/'
 			.dol_sanitizeFileName($object->thirdparty->id).'/'
-			.$langs->transnoentitiesnoconv("SepaMandateShort").' '.$objectref."-".dol_sanitizeFileName($object->rum).".pdf")) {
+			.$langs->transnoentitiesnoconv("SepaMandateShort").' '.$object->id."-".dol_sanitizeFileName($object->rum).".pdf")) {
 		// It seems document has never been generated, or was generated and then deleted.
 		// So we try to regenerate it with its default template.
 		$defaulttemplate = 'sepamandate';
