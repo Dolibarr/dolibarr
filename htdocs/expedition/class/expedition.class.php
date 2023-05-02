@@ -516,7 +516,10 @@ class Expedition extends CommonObject
 		$tab = $line_ext->detail_batch;
 		// create stockLocation Qty array
 		foreach ($tab as $detbatch) {
-			if ($detbatch->entrepot_id) {
+			if (!empty($detbatch->entrepot_id)) {
+				if (empty($stockLocationQty[$detbatch->entrepot_id])) {
+					$stockLocationQty[$detbatch->entrepot_id] = 0;
+				}
 				$stockLocationQty[$detbatch->entrepot_id] += $detbatch->qty;
 			}
 		}
@@ -979,7 +982,7 @@ class Expedition extends CommonObject
 					$linebatch->qty = $value['q'];
 					$tab[] = $linebatch;
 
-					if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT) {
+					if (!empty(getDolUserString("STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT", '0'))) {
 						require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 						$prod_batch = new Productbatch($this->db);
 						$prod_batch->fetch($value['id_batch']);
