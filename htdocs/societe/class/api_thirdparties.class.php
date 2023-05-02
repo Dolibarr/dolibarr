@@ -657,8 +657,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @param int		$id				Id of thirdparty
 	 * @param int       $category_id	Id of category
-	 *
-	 * @return mixed
+	 * @return Object|void
 	 *
 	 * @url POST {id}/categories/{category_id}
 	 */
