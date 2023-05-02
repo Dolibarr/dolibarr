@@ -13,6 +13,7 @@
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2022		Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2023		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -484,9 +485,9 @@ $sql .= " country.code as country_code, country.label as country_label,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " region.code_region as region_code, region.nom as region_name";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
-if ($search_sale && $search_sale != '-1') {
-	$sql .= ", sc.fk_soc, sc.fk_user";
-}
+// if ($search_sale && $search_sale != '-1') {
+// 	$sql .= ", sc.fk_soc, sc.fk_user";
+// }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -512,33 +513,39 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_effectif as staff on (staff.id = s.fk_ef
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.code_region = state.fk_region)";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."c_stcomm as st ON s.fk_stcomm = st.id";
-// We'll need this table joined to the select in order to filter by sale
-if ($search_sale == -2) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
-	//elseif ($search_sale || (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-} elseif (!empty($search_sale) && $search_sale != '-1' || (empty($user->rights->societe->client->voir) && !$socid)) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
+// // We'll need this table joined to the select in order to filter by sale
+// if ($search_sale == -2) {
+// 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
+// 	//elseif ($search_sale || (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+// } elseif (!empty($search_sale) && $search_sale != '-1' || (empty($user->rights->societe->client->voir) && !$socid)) {
+// 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+// }
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " WHERE s.entity IN (".getEntity('societe').")";
-//if (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-}
-if ($search_sale && $search_sale != '-1' && $search_sale != '-2') {
-	$sql .= " AND s.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
-}
 if (empty($user->rights->fournisseur->lire)) {
 	$sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
 }
-if ($search_sale == -2) {
-	$sql .= " AND sc.fk_user IS NULL";
-} elseif ($search_sale > 0) {
-	$sql .= " AND sc.fk_user = ".((int) $search_sale);
+if ($search_sale == -2  || !empty($search_sale) && $search_sale != '-1' || (empty($user->rights->societe->client->voir) && !$socid)) {
+	$sql .= " AND EXISTS (SELECT 1 FROM  ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+
+	//if (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	}
+	if ($search_sale && $search_sale != '-1' && $search_sale != '-2') {
+		$sql .= " AND s.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
+	}
+	if ($search_sale == -2) {
+		$sql .= " AND sc.fk_user IS NULL";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND sc.fk_user = ".((int) $search_sale);
+	}
+	$sql .= ")";
 }
+	
 $searchCategoryCustomerList = $search_categ_cus ? array($search_categ_cus) : array();
 $searchCategoryCustomerOperator = 0;
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
