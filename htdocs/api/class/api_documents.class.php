@@ -2,6 +2,7 @@
 /* Copyright (C) 2016   Xebax Christy           <xebax@wanadoo.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2016   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2023   Romain Neil             <contact@romain-neil.fr>
  *
  * This program is free software you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -220,6 +221,22 @@ class Documents extends DolibarrApi
 			$result = $this->propal->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document');
+			}
+		} elseif ($modulepart == 'contrat' || $modulepart == 'contract') {
+			require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
+
+			$this->contract = new Contrat($this->db);
+			$result = $this->contract->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+
+			if (!$result) {
+				throw new RestException(404, 'Contract not found');
+			}
+
+			$templateused = $doctemplate ? $doctemplate : $this->contract->model_pdf;
+			$result = $this->contract->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+			if ($result <= 0) {
+				throw new RestException(500, 'Error generating document missing doctemplate parameter');
 			}
 		} else {
 			throw new RestException(403, 'Generation not available for this modulepart');
@@ -502,6 +519,17 @@ class Documents extends DolibarrApi
 			// $upload_dir = $conf->ecm->dir_output;
 			// $type = 'all';
 			// $recursive = 0;
+		} elseif ($modulepart == 'contrat' || $modulepart == 'contract') {
+			$modulepart = 'contrat';
+			require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
+
+			$object = new Contrat($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'Contract not found');
+			}
+
+			$upload_dir = $conf->contrat->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'contract');
 		} else {
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 		}
@@ -676,6 +704,10 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 				$object = new Contact($this->db);
 				$fetchbyid = true;
+			} elseif ($modulepart == 'contrat' || $modulepart == 'contract') {
+				$modulepart = 'contrat';
+				require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
+				$object = new Contrat($this->db);
 			} else {
 				// TODO Implement additional moduleparts
 				throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
