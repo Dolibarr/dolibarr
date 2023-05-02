@@ -870,6 +870,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
 		// phpcs:enable
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -1497,7 +1498,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	 *      @param	int			   $hidedetails		Do not show line details
 	 *      @param	int			   $hidedesc		Do not show desc
 	 *      @param	int			   $hideref			Do not show ref
-	 *      @return	null
+	 *      @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{

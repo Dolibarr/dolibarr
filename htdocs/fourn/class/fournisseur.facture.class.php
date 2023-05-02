@@ -3495,6 +3495,12 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $remise_percent;
 
 	/**
+	 * Buying price value
+	 * @var float
+	 */
+	public $pa_ht;
+
+	/**
 	 * Total amount without taxes
 	 * @var float
 	 */

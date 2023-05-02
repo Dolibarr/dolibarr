@@ -122,10 +122,10 @@ $error = 0;
 
 try {
 	$event = \Stripe\Webhook::constructEvent($payload, $sig_header, $endpoint_secret);
-} catch (\UnexpectedValueException $e) {
+} catch (UnexpectedValueException $e) {
 	// Invalid payload
 	httponly_accessforbidden('Invalid payload', 400);
-} catch (\Stripe\Error\SignatureVerification $e) {
+} catch (\Stripe\Exception\SignatureVerificationException $e) {
 	httponly_accessforbidden('Invalid signature', 400);
 } catch (Exception $e) {
 	httponly_accessforbidden('Error '.$e->getMessage(), 400);

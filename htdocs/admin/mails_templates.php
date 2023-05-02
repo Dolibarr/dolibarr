@@ -463,10 +463,10 @@ if (empty($reshook)) {
 					$_POST['joinfiles'] = GETPOST('joinfiles-'.$rowid);
 				}
 				if ($field == 'content') {
-					$_POST['content'] = GETPOST('content-'.$rowid);
+					$_POST['content'] = GETPOST('content-'.$rowid, 'restricthtml');
 				}
 				if ($field == 'content_lines') {
-					$_POST['content_lines'] = GETPOST('content_lines-'.$rowid);
+					$_POST['content_lines'] = GETPOST('content_lines-'.$rowid, 'restricthtml');
 				}
 
 				if ($i) {
@@ -494,7 +494,7 @@ if (empty($reshook)) {
 				$i++;
 			}
 
-			$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
+			$sql .= " WHERE ".$db->escape($rowidcol)." = ".((int) $rowid);
 			if (!$user->admin) {	// A non admin user can only edit its own template
 				$sql .= " AND fk_user  = ".((int) $user->id);
 			}

@@ -1138,9 +1138,9 @@ class ExpenseReport extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param   User    $user       User that delete
-	 * @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
-	 * @return  int                 <0 if KO, >0 if OK
+	 * @param   User|null   $user       User that delete
+	 * @param 	bool 		$notrigger  false=launch triggers after, true=disable triggers
+	 * @return  int         	        <0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null, $notrigger = false)
 	{
@@ -2335,7 +2335,7 @@ class ExpenseReport extends CommonObject
 		// phpcs:enable
 		$sql = "SELECT rowid, date_debut, date_fin";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " WHERE fk_user_author = '{$fuser->id}'";
+		$sql .= " WHERE fk_user_author = ".((int) $fuser->id);
 
 		dol_syslog(get_class($this)."::periode_existe sql=".$sql);
 		$result = $this->db->query($sql);

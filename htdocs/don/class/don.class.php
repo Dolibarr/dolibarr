@@ -68,11 +68,19 @@ class Don extends CommonObject
 	 */
 	public $date;
 
+	public $datec;
+	public $datem;
+
 	/**
 	 * amount of donation
 	 * @var double
 	 */
 	public $amount;
+
+	/**
+	 * @var integer Thirdparty ID
+	 */
+	public $socid;
 
 	/**
 	 * @var string Thirdparty name
@@ -99,6 +107,9 @@ class Don extends CommonObject
 	 */
 	public $email;
 
+	public $phone;
+	public $phone_mobile;
+
 	/**
 	 * @var int 0 or 1
 	 */
@@ -121,6 +132,9 @@ class Don extends CommonObject
 	 * @var int payment mode id
 	 */
 	public $modepaymentid = 0;
+
+	public $paid;
+
 
 	/**
 	 * @var array Array of status label

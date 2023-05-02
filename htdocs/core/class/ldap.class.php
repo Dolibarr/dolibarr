@@ -69,6 +69,9 @@ class Ldap
 	 * Server DN
 	 */
 	public $domain;
+
+	public $domainFQDN;
+
 	/**
 	 * User administrateur Ldap
 	 * Active Directory ne supporte pas les connexions anonymes

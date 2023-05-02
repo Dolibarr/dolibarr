@@ -243,10 +243,10 @@ class FormAdmin
 		foreach ($menuarray as $key => $val) {
 			$tab = explode('_', $key);
 			$newprefix = $tab[0];
-			if ($newprefix == '1' && ($conf->global->MAIN_FEATURES_LEVEL < 1)) {
+			if ($newprefix == '1' && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1)) {
 				continue;
 			}
-			if ($newprefix == '2' && ($conf->global->MAIN_FEATURES_LEVEL < 2)) {
+			if ($newprefix == '2' && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2)) {
 				continue;
 			}
 			if ($newprefix != $oldprefix) {	// Add separators

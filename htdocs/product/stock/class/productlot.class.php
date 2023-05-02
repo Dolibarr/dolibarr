@@ -57,6 +57,20 @@ class Productlot extends CommonObject
 	 */
 	public $ismultientitymanaged = 1;
 
+	public $stats_propale;
+	public $stats_commande;
+	public $stats_contrat;
+	public $stats_facture;
+	public $stats_commande_fournisseur;
+	public $stats_expedition;
+	public $stats_reception;
+	public $stats_mo;
+	public $stats_bom;
+	public $stats_mrptoconsume;
+	public $stats_mrptoproduce;
+	public $stats_facturerec;
+	public $stats_facture_fournisseur;
+
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')

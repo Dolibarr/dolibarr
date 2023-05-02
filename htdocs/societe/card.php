@@ -1722,7 +1722,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print "}\n";
 				print '</script>';
 				print "\n";
-				$s .= '<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+				$s .= '<a href="#" class="hideonsmartphone" onclick="CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 				$s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 			} else {
 				$s .= '<a href="'.$langs->transcountry("VATIntraCheckURL", $object->country_id).'" target="_blank" rel="noopener noreferrer">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
@@ -2494,7 +2494,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print "}\n";
 					print '</script>';
 					print "\n";
-					$s .= '<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+					$s .= '<a href="#" class="hideonsmartphone" onclick="CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 					$s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 				} else {
 					$s .= '<a href="'.$langs->transcountry("VATIntraCheckURL", $object->country_id).'" class="hideonsmartphone" target="_blank" rel="noopener noreferrer">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
@@ -2962,7 +2962,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print "}\n";
 					print '</script>';
 					print "\n";
-					$s .= '<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT( $(\'#tva_intra\').val() );">'.$langs->trans("VATIntraCheck").'</a>';
+					$s .= '<a href="#" class="hideonsmartphone" onclick="CheckVAT( $(\'#tva_intra\').val() );">'.$langs->trans("VATIntraCheck").'</a>';
 					$s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 				} else {
 					$s .= '<a href="'.$langs->transcountry("VATIntraCheckURL", $object->country_id).'" class="hideonsmartphone" target="_blank" rel="noopener noreferrer">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';

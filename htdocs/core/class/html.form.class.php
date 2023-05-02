@@ -255,7 +255,7 @@ class Form
 				if (empty($notabletag)) {
 					$ret .= '<tr><td>';
 				}
-				if (preg_match('/^(string|safehtmlstring|email)/', $typeofdata)) {
+				if (preg_match('/^(string|safehtmlstring|email|url)/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata);
 					$ret .= '<input type="text" id="' . $htmlname . '" name="' . $htmlname . '" value="' . ($editvalue ? $editvalue : $value) . '"' . (empty($tmp[1]) ? '' : ' size="' . $tmp[1] . '"') . ' autofocus>';
 				} elseif (preg_match('/^(integer)/', $typeofdata)) {
@@ -339,6 +339,8 @@ class Form
 			} else {
 				if (preg_match('/^(email)/', $typeofdata)) {
 					$ret .= dol_print_email($value, 0, 0, 0, 0, 1);
+				} elseif (preg_match('/^url/', $typeofdata)) {
+					$ret .= dol_print_url($value, '_blank', 32, 1);
 				} elseif (preg_match('/^(amount|numeric)/', $typeofdata)) {
 					$ret .= ($value != '' ? price($value, '', $langs, 0, -1, -1, $conf->currency) : '');
 				} elseif (preg_match('/^(checkbox)/', $typeofdata)) {
@@ -802,17 +804,16 @@ class Form
 	/**
 	 * Generate select HTML to choose massaction
 	 *
-	 * @param string $selected Value auto selected when at least one record is selected. Not a preselected value. Use '0' by default.
-	 * @param array $arrayofaction array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
-	 * @param int $alwaysvisible 1=select button always visible
-	 * @param string $name Name for massaction
-	 * @param string $cssclass CSS class used to check for select
-	 * @return    string|void                Select list
+	 * @param string 	$selected 		Value auto selected when at least one record is selected. Not a preselected value. Use '0' by default.
+	 * @param array 	$arrayofaction 	array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
+	 * @param int 		$alwaysvisible 	1=select button always visible
+	 * @param string 	$name 			Name for massaction
+	 * @param string 	$cssclass 		CSS class used to check for select
+	 * @return string|void              Select list
 	 */
 	public function selectMassAction($selected, $arrayofaction, $alwaysvisible = 0, $name = 'massaction', $cssclass = 'checkforselect')
 	{
 		global $conf, $langs, $hookmanager;
-
 
 		$disabled = 0;
 		$ret = '<div class="centpercent center">';
@@ -1115,7 +1116,7 @@ class Form
 			$out .= '</select>';
 
 			if ($conf->use_javascript_ajax && empty($disableautocomplete)) {
-				$out .= ajax_multiautocompleter('location_incoterms', '', DOL_URL_ROOT . '/core/ajax/locationincoterms.php') . "\n";
+				$out .= ajax_multiautocompleter('location_incoterms', array(), DOL_URL_ROOT . '/core/ajax/locationincoterms.php') . "\n";
 				$moreattrib .= ' autocomplete="off"';
 			}
 			$out .= '<input id="location_incoterms" class="maxwidthonsmartphone type="text" name="location_incoterms" value="' . $location_incoterms . '">' . "\n";
@@ -2958,14 +2959,14 @@ class Form
 	 * This define value for &$opt and &$optJson.
 	 * This function is called by select_produits_list().
 	 *
-	 * @param object $objp Resultset of fetch
-	 * @param string $opt Option (var used for returned value in string option format)
-	 * @param string $optJson Option (var used for returned value in json format)
-	 * @param int $price_level Price level
-	 * @param string $selected Preselected value
-	 * @param int $hidepriceinlabel Hide price in label
-	 * @param string $filterkey Filter key to highlight
-	 * @param int $novirtualstock Do not load virtual stock, even if slow option STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO is on.
+	 * @param object 	$objp 			Resultset of fetch
+	 * @param string 	$opt 			Option (var used for returned value in string option format)
+	 * @param array 	$optJson 		Option (var used for returned value in json format)
+	 * @param int 		$price_level 	Price level
+	 * @param string 	$selected 		Preselected value
+	 * @param int 		$hidepriceinlabel Hide price in label
+	 * @param string 	$filterkey 		Filter key to highlight
+	 * @param int 		$novirtualstock Do not load virtual stock, even if slow option STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO is on.
 	 * @return    void
 	 */
 	protected function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected, $hidepriceinlabel = 0, $filterkey = '', $novirtualstock = 0)
@@ -5529,19 +5530,19 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Show a form to select a project
+	 * Show a form to select a project
 	 *
-	 * @param int $page Page
-	 * @param int $socid Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-	 * @param int $selected Id pre-selected project
-	 * @param string $htmlname Name of select field
-	 * @param int $discard_closed Discard closed projects (0=Keep,1=hide completely except $selected,2=Disable)
-	 * @param int $maxlength Max length
-	 * @param int $forcefocus Force focus on field (works with javascript only)
-	 * @param int $nooutput No print is done. String is returned.
-	 * @param string $textifnoproject Text to show if no project
-	 * @param string $morecss More CSS
-	 * @return    string                      Return html content
+	 * @param 	int 		$page 				Page
+	 * @param 	int 		$socid 				Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+	 * @param 	int 		$selected 			Id pre-selected project
+	 * @param 	string 		$htmlname 			Name of select field
+	 * @param 	int 		$discard_closed 	Discard closed projects (0=Keep,1=hide completely except $selected,2=Disable)
+	 * @param 	int 		$maxlength 			Max length
+	 * @param 	int 		$forcefocus 		Force focus on field (works with javascript only)
+	 * @param 	int 		$nooutput 			No print is done. String is returned.
+	 * @param 	string 		$textifnoproject 	Text to show if no project
+	 * @param 	string 		$morecss 			More CSS
+	 * @return	string                      	Return html content
 	 */
 	public function form_project($page, $socid, $selected = '', $htmlname = 'projectid', $discard_closed = 0, $maxlength = 20, $forcefocus = 0, $nooutput = 0, $textifnoproject = '', $morecss = '')
 	{
@@ -5585,19 +5586,19 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Show a form to select payment conditions
+	 * Show a form to select payment conditions
 	 *
-	 * @param int $page Page
-	 * @param string $selected Id condition pre-selectionne
-	 * @param string $htmlname Name of select html field
-	 * @param int $addempty Add empty entry
-	 * @param string $type Type ('direct-debit' or 'bank-transfer')
-	 * @param int $filtertype If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
-	 * @param string $deposit_percent < 0 : deposit_percent input makes no sense (for example, in list filters)
-	 *                                0 : use default deposit percentage from entry
-	 *                                > 0 : force deposit percentage (for example, from company object)
-	 * @param int $nooutput No print is done. String is returned.
-	 * @return    string                        HTML output or ''
+	 * @param int 		$page 				Page
+	 * @param string 	$selected 			Id condition pre-selectionne
+	 * @param string 	$htmlname 			Name of select html field
+	 * @param int 		$addempty 			Add empty entry
+	 * @param string 	$type 				Type ('direct-debit' or 'bank-transfer')
+	 * @param int 		$filtertype 		If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
+	 * @param string 	$deposit_percent 	< 0 : deposit_percent input makes no sense (for example, in list filters)
+	 *                                		0 : use default deposit percentage from entry
+	 *                                		> 0 : force deposit percentage (for example, from company object)
+	 * @param int 		$nooutput 			No print is done. String is returned.
+	 * @return string                   	HTML output or ''
 	 */
 	public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0, $type = '', $filtertype = -1, $deposit_percent = -1, $nooutput = 0)
 	{
@@ -5648,11 +5649,11 @@ class Form
 	/**
 	 *  Show a form to select a delivery delay
 	 *
-	 * @param int $page Page
-	 * @param string $selected Id condition pre-selectionne
-	 * @param string $htmlname Name of select html field
-	 * @param int $addempty Ajoute entree vide
-	 * @return    void
+	 * @param 	int 		$page 		Page
+	 * @param 	string 		$selected 	Id condition pre-selectionne
+	 * @param 	string 		$htmlname 	Name of select html field
+	 * @param 	int 		$addempty 	Add an empty entry
+	 * @return  void
 	 */
 	public function form_availability($page, $selected = '', $htmlname = 'availability', $addempty = 0)
 	{
@@ -7388,11 +7389,11 @@ class Form
 	 * constructTicketListOption.
 	 * This define value for &$opt and &$optJson.
 	 *
-	 * @param object $objp Result set of fetch
-	 * @param string $opt Option (var used for returned value in string option format)
-	 * @param string $optJson Option (var used for returned value in json format)
-	 * @param string $selected Preselected value
-	 * @param string $filterkey Filter key to highlight
+	 * @param object 	$objp 		Result set of fetch
+	 * @param string 	$opt 		Option (var used for returned value in string option format)
+	 * @param array 	$optJson 	Option (var used for returned value in json format)
+	 * @param string 	$selected 	Preselected value
+	 * @param string 	$filterkey 	Filter key to highlight
 	 * @return    void
 	 */
 	protected function constructTicketListOption(&$objp, &$opt, &$optJson, $selected, $filterkey = '')
@@ -7594,11 +7595,11 @@ class Form
 	 * constructProjectListOption.
 	 * This define value for &$opt and &$optJson.
 	 *
-	 * @param object $objp Result set of fetch
-	 * @param string $opt Option (var used for returned value in string option format)
-	 * @param string $optJson Option (var used for returned value in json format)
-	 * @param string $selected Preselected value
-	 * @param string $filterkey Filter key to highlight
+	 * @param object 	$objp 		Result set of fetch
+	 * @param string 	$opt 		Option (var used for returned value in string option format)
+	 * @param array 	$optJson 	Option (var used for returned value in json format)
+	 * @param string 	$selected 	Preselected value
+	 * @param string 	$filterkey 	Filter key to highlight
 	 * @return    void
 	 */
 	protected function constructProjectListOption(&$objp, &$opt, &$optJson, $selected, $filterkey = '')
@@ -7814,11 +7815,11 @@ class Form
 	 * constructMemberListOption.
 	 * This define value for &$opt and &$optJson.
 	 *
-	 * @param object $objp Result set of fetch
-	 * @param string $opt Option (var used for returned value in string option format)
-	 * @param string $optJson Option (var used for returned value in json format)
-	 * @param string $selected Preselected value
-	 * @param string $filterkey Filter key to highlight
+	 * @param object 	$objp 			Result set of fetch
+	 * @param string 	$opt 			Option (var used for returned value in string option format)
+	 * @param array 	$optJson 		Option (var used for returned value in json format)
+	 * @param string 	$selected 		Preselected value
+	 * @param string 	$filterkey 		Filter key to highlight
 	 * @return    void
 	 */
 	protected function constructMemberListOption(&$objp, &$opt, &$optJson, $selected, $filterkey = '')
@@ -8375,7 +8376,7 @@ class Form
 					    placeholder: "' . dol_escape_js($placeholder) . '",
 				    	escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
 				    	minimumInputLength: ' . ((int) $minimumInputLength) . ',
-				        formatResult: function(result, container, query, escapeMarkup) {
+				        formatResult: function (result, container, query, escapeMarkup) {
 	                        return escapeMarkup(result.text);
 	                    },
 				    });
@@ -8464,7 +8465,7 @@ class Form
 						placeholder: "' . dol_escape_js($placeholder) . '",
 						escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
 						minimumInputLength: ' . $minimumInputLength . ',
-						formatResult: function(result, container, query, escapeMarkup) {
+						formatResult: function (result, container, query, escapeMarkup) {
 							return escapeMarkup(result.text);
 						},
 						matcher: function (params, data) {
@@ -8785,13 +8786,13 @@ class Form
 	}
 
 	/**
-	 *    Render list of categories linked to object with id $id and type $type
+	 * Render list of categories linked to object with id $id and type $type
 	 *
-	 * @param int $id Id of object
-	 * @param string $type Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
-	 * @param int $rendermode 0=Default, use multiselect. 1=Emulate multiselect (recommended)
-	 * @param int $nolink 1=Do not add html links
-	 * @return        string                    String with categories
+	 * @param int 		$id 		Id of object
+	 * @param string 	$type 		Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @param int 		$rendermode 0=Default, use multiselect. 1=Emulate multiselect (recommended)
+	 * @param int 		$nolink 	1=Do not add html links
+	 * @return string               String with categories
 	 */
 	public function showCategories($id, $type, $rendermode = 0, $nolink = 0)
 	{
@@ -9181,7 +9182,7 @@ class Form
 					if (empty($conf->use_javascript_ajax)) {
 						print '<input type="submit" class="button button-cancel marginleftonly marginrightonly" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
 					} else {
-						print '<input type="submit"; onclick="javascript:jQuery(\'#' . $key . 'list\').toggle(); return false;" class="button button-cancel marginleftonly marginrightonly" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
+						print '<input type="submit" onclick="jQuery(\'#' . $key . 'list\').toggle(); return false;" class="button button-cancel marginleftonly marginrightonly" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
 					}
 					print '</form>';
 					$this->db->free($resqllist);
@@ -9987,14 +9988,14 @@ class Form
 	/**
 	 * Return HTML to show the select of expense categories
 	 *
-	 * @param string $selected preselected category
-	 * @param string $htmlname name of HTML select list
-	 * @param integer $useempty 1=Add empty line
-	 * @param array $excludeid id to exclude
-	 * @param string $target htmlname of target select to bind event
-	 * @param int $default_selected default category to select if fk_c_type_fees change = EX_KME
-	 * @param array $params param to give
-	 * @param int $info_admin Show the tooltip help picto to setup list
+	 * @param string 	$selected 		preselected category
+	 * @param string 	$htmlname 		name of HTML select list
+	 * @param integer 	$useempty 		1=Add empty line
+	 * @param array 	$excludeid 		id to exclude
+	 * @param string 	$target 		htmlname of target select to bind event
+	 * @param int 		$default_selected default category to select if fk_c_type_fees change = EX_KME
+	 * @param array 	$params 		param to give
+	 * @param int 		$info_admin 	Show the tooltip help picto to setup list
 	 * @return    string
 	 */
 	public function selectExpenseCategories($selected = '', $htmlname = 'fk_c_exp_tax_cat', $useempty = 0, $excludeid = array(), $target = '', $default_selected = 0, $params = array(), $info_admin = 1)

@@ -876,7 +876,7 @@ class FormCompany extends Form
 	 *    @param    string      $morecss                More css
 	 *    @return	string
 	 */
-	public function select_ziptown($selected = '', $htmlname = 'zipcode', $fields = '', $fieldsize = 0, $disableautocomplete = 0, $moreattrib = '', $morecss = '')
+	public function select_ziptown($selected = '', $htmlname = 'zipcode', $fields = array(), $fieldsize = 0, $disableautocomplete = 0, $moreattrib = '', $morecss = '')
 	{
 		// phpcs:enable
 		global $conf;

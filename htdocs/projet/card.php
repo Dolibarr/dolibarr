@@ -1449,8 +1449,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
                     else
                     {
 	                    console.log("oldpercent="+oldpercent+" defaultpercent="+defaultpercent);
-                    	if ((parseFloat(jQuery("#opp_percent").val()) < parseFloat(defaultpercent)));
-                    	{
+                    	if ((parseFloat(jQuery("#opp_percent").val()) < parseFloat(defaultpercent))) {
                         	if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+price2numjs(oldpercent)+\' %\');
                         	jQuery("#opp_percent").val(price2numjs(defaultpercent));
                     	}

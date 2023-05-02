@@ -390,9 +390,14 @@ class Product extends CommonObject
 	public $stats_contrat = array();
 	public $stats_facture = array();
 	public $stats_commande_fournisseur = array();
+	public $stats_expedition = array();
 	public $stats_reception = array();
+	public $stats_mo = array();
+	public $stats_bom = array();
 	public $stats_mrptoconsume = array();
 	public $stats_mrptoproduce = array();
+	public $stats_facturerec = array();
+	public $stats_facture_fournisseur = array();
 
 	//! Size of image
 	public $imgWidth;
@@ -572,7 +577,7 @@ class Product extends CommonObject
 	 */
 	public function check()
 	{
-		if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+		if (getDolGlobalInt('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
 			$this->ref = trim($this->ref);
 		} else {
 			$this->ref = dol_sanitizeFileName(stripslashes($this->ref));
@@ -608,7 +613,7 @@ class Product extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+		if (getDolGlobalInt('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
 			$this->ref = trim($this->ref);
 		} else {
 			$this->ref = dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)));
@@ -702,7 +707,7 @@ class Product extends CommonObject
 
 		if (empty($this->ref) || $this->ref == 'auto') {
 			// Load object modCodeProduct
-			$module = (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
+			$module = getDolGlobalString('PRODUCT_CODEPRODUCT_ADDON', 'mod_codeproduct_leopard');
 			if ($module != 'mod_codeproduct_leopard') {    // Do not load module file for leopard
 				if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php') {
 					$module = substr($module, 0, dol_strlen($module) - 4);
@@ -1008,7 +1013,7 @@ class Product extends CommonObject
 		}
 
 		// Clean parameters
-		if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+		if (getDolGlobalInt('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
 			$this->ref = trim($this->ref);
 		} else {
 			$this->ref = dol_string_nospecial(trim($this->ref));
