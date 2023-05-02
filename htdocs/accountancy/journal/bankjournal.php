@@ -147,8 +147,8 @@ if ($date_start && $date_end) {
 	$sql .= " AND b.dateo >= '".$db->idate($date_start)."' AND b.dateo <= '".$db->idate($date_end)."'";
 }
 // Define begin binding date
-if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
-	$sql .= " AND b.dateo >= '".$db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'))."'";
+if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
+	$sql .= " AND b.dateo >= '".$db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
 }
 // Already in bookkeeping or not
 if ($in_bookkeeping == 'already') {
