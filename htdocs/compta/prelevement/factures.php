@@ -147,6 +147,7 @@ if ($id > 0 || $ref) {
 		print '<tr><td class="titlefieldcreate">';
 		print $form->textwithpicto($langs->trans("BankAccount"), $langs->trans($labelofbankfield));
 		print '</td>';
+
 		print '<td>';
 		if ($acc->id > 0) {
 			print $acc->getNomUrl(1);
@@ -347,12 +348,12 @@ if ($resql) {
 		}
 		print '<td>&nbsp;</td>';
 		print '<td class="right">';
-		//if ($totalinvoices != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");		// It is normal to have total that differs. For an amount of invoice of 100, request to pay may be 50 only.
-		if ($totalamount_requested != $object->amount) {
-			print img_warning("AmountOfFileDiffersFromSumOfInvoices");
-		}
 		print "</td>\n";
 		print '<td class="right">';
+		// If the page show all record (no pagination) and total does not match total of file, we show a warning. Should not happen.
+		if (($nbtotalofrecords <= $num) && $totalamount_requested != $object->amount) {
+			print img_warning("AmountOfFileDiffersFromSumOfInvoices");
+		}
 		print price($totalamount_requested);
 		print "</td>\n";
 		print '<td>&nbsp;</td>';

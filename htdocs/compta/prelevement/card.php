@@ -249,7 +249,7 @@ if ($id > 0 || $ref) {
 	print '</td>';
 	print '</tr>';
 	*/
-	print '<tr><td class="nowrap">';
+	print '<tr><td class="titlefieldcreate">';
 	print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 	print $form->textwithpicto($langs->trans("BankAccount"), $langs->trans($labelofbankfield));
 	print '<td>';
