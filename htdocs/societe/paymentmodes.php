@@ -1641,8 +1641,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					print '</a>';
 				}
 
-
-
 				print '<a class="editfielda marginrightonly marginleftonly" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=edit">';
 				print img_picto($langs->trans("Modify"), 'edit');
 				print '</a>';

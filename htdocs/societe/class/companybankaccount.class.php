@@ -217,7 +217,6 @@ class CompanyBankAccount extends Account
 
 	protected $update_main_doc_field;
 
-
 	/**
 	 *  Constructor
 	 *
@@ -228,6 +227,7 @@ class CompanyBankAccount extends Account
 		$this->db = $db;
 
 		$this->socid = 0;
+		$this->solde = 0;
 		$this->error_number = 0;
 		$this->default_rib = 0;
 		$this->type = "ban";
