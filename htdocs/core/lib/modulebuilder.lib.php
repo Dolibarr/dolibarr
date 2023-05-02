@@ -483,6 +483,16 @@ function deletePerms($file)
 }
 
 /**
+ *  Compare two value
+ * @param int|string  $a value 1
+ * @param int|string  $b value 2
+ * @return int      less 0 if str1 is less than str2; > 0 if str1 is greater than str2, and 0 if they are equal.
+*/
+function compareFirstValue($a, $b)
+{
+	return strcmp($a[0], $b[0]);
+}
+/**
  * Rewriting all permissions after any actions
  * @param string      $file            filename or path
  * @param array       $permissions     permissions existing in file
@@ -515,11 +525,46 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $action)
 			$permissions[$i][4] = "\$this->rights[\$r][4] = '".$permissions[$i][4]."'";
 			$permissions[$i][5] = "\$this->rights[\$r][5] = '".$permissions[$i][5]."';\n\t\t";
 		}
+			// for group permissions by object
+			$perms_grouped = array();
+		foreach ($permissions as $perms) {
+			$object = $perms[4];
+			if (!isset($perms_grouped[$object])) {
+				$perms_grouped[$object] = [];
+			}
+			$perms_grouped[$object][] = $perms;
+		}
+		//$perms_grouped = array_values($perms_grouped);
+		$permissions = $perms_grouped;
+
+
+		// parcourir les objets
+		$o=0;
+		foreach ($permissions as &$object) {
+			// récupérer la permission de l'objet
+			$p = 1;
+			foreach ($object as &$obj) {
+				if (str_contains($obj[5], 'read')) {
+					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + 0 + 1)";
+				} elseif (str_contains($obj[5], 'write')) {
+					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + 1 + 1)";
+				} elseif (str_contains($obj[5], 'delete')) {
+					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + 2 + 1)";
+				} else {
+					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + ".$p." + 1)";
+					$p++;
+				}
+			}
+			usort($object, 'compareFirstValue');
+			$o++;
+		}
 
 		//convert to string
 		foreach ($permissions as $perms) {
-			$rights[] = implode(";\n\t\t", $perms);
-			$rights[] = "\$r++;\n\t\t";
+			foreach ($perms as $per) {
+				$rights[] = implode(";\n\t\t", $per);
+				$rights[] = "\$r++;\n\t\t";
+			}
 		}
 		$rights_str = implode("", $rights);
 		// delete all permission from file
@@ -527,6 +572,8 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $action)
 		// rewrite all permission again
 		dolReplaceInFile($file, array('/* BEGIN MODULEBUILDER PERMISSIONS */' => '/* BEGIN MODULEBUILDER PERMISSIONS */'."\n\t\t".$rights_str));
 		return 1;
+	} else {
+		return -1;
 	}
 }
 
