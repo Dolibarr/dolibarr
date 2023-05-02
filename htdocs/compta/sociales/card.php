@@ -667,6 +667,8 @@ if ($id > 0) {
 		print '</div>';
 		print '<div class="fichehalfright">';
 
+		print '<div class="underbanner clearboth"></div>';
+
 		$nbcols = 3;
 		if (isModEnabled("banque")) {
 			$nbcols++;
