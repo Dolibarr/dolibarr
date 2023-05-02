@@ -1,0 +1,3 @@
+# Dolibarr language file - Source file is en_US - companies
+HasRelativeDiscountFromSupplier=You have a default discount of <b>%s%%</b> with this vendor
+HasNoRelativeDiscountFromSupplier=No default relative discount with this vendor

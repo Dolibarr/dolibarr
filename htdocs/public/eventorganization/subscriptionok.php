@@ -98,7 +98,7 @@ dol_syslog("Callback url when a payment was done. query_string=".(dol_escape_htm
 
 $tracepost = "";
 foreach ($_POST as $k => $v) {
-	$tracepost .= "{$k} - {$v}\n";
+	$tracepost .= "$k - $v\n";
 }
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
 
@@ -167,7 +167,7 @@ print $langs->trans("SubscriptionOk");
 print "\n</div>\n";
 
 
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix);
+htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix);
 
 
 // Clean session variables to avoid duplicate actions if post is resent

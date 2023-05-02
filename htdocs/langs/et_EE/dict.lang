@@ -21,7 +21,7 @@ CountryNL=Madalmaad
 CountryHU=Ungari
 CountryRU=Venemaa
 CountrySE=Rootsi
-CountryCI=Elevandiluurannik
+CountryCI=Ivory Coast
 CountrySN=Senegal
 CountryAR=Argentiina
 CountryCM=Kamerun
@@ -250,7 +250,9 @@ CountryMF=Saint Martin
 
 ##### Civilities #####
 CivilityMME=Pr
+CivilityMMEShort=Pr
 CivilityMR=Hr
+CivilityMRShort=Hr
 CivilityMLE=Prl
 CivilityMTRE=Master
 CivilityDR=Dr

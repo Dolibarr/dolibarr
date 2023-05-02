@@ -63,3 +63,25 @@ function check_user_password_http($usertotest, $passwordtotest, $entitytotest)
 
 	return $login;
 }
+
+
+/**
+ * Decode the value found into the Authorization HTTP header.
+ * Ex: "Authorization: Basic bG9naW46cGFzcw==", $value is "Basic bG9naW46cGFzcw==" and after base64decode is "login:pass"
+ * Note: the $_SERVER["REMOTE_USER"] contains only the login used in the HTTP Basic form
+ * Method not used yet, but we keep it for some dev/test purposes.
+ *
+ * @param 	string	$value 		Ex: $_SERVER["REMOTE_USER"]
+ * @return 	Object 				object.login & object.password
+ */
+function decodeHttpBasicAuth($value)
+{
+	$encoded_basic_auth = substr($value, 6);	// Remove the "Basic " string
+	$decoded_basic_auth = base64_decode($encoded_basic_auth);
+	$credentials_basic_auth = explode(':', $decoded_basic_auth);
+
+	return (object) [
+		'username'=> $credentials_basic_auth[0],
+		'password' => $credentials_basic_auth[1]
+	];
+}

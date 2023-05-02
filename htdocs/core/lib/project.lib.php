@@ -4,6 +4,7 @@
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
+ * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,10 +99,11 @@ function project_prepare_head(Project $project, $moreparam = '')
 			$nbTimeSpent = $dataretrieved;
 		} else {
 			$sql = "SELECT t.rowid";
-			//$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
+			//$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
 			//$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
-			$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt";
-			$sql .= " WHERE t.fk_task = pt.rowid";
+			$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t, ".MAIN_DB_PREFIX."projet_task as pt";
+			$sql .= " WHERE t.fk_element = pt.rowid";
+			$sql .= " AND t.elementtype = 'task'";
 			$sql .= " AND pt.fk_projet =".((int) $project->id);
 			$resql = $db->query($sql);
 			if ($resql) {
@@ -124,7 +126,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		$h++;
 	}
 
-	if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
+	if (isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")
 		|| isModEnabled("propal") || isModEnabled('commande')
 		|| isModEnabled('facture') || isModEnabled('contrat')
 		|| isModEnabled('ficheinter') || isModEnabled('agenda') || isModEnabled('deplacement') || isModEnabled('stock')) {
@@ -288,7 +290,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	} else {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-		$upload_dir = $conf->project->dir_output."/".dol_sanitizeFileName($project->ref);
+		$upload_dir = $conf->project->multidir_output[$project->entity]."/".dol_sanitizeFileName($project->ref);
 		$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 		$nbLinks = Link::count($db, $project->element, $project->id);
 		$totalAttached = $nbFiles + $nbLinks;
@@ -370,10 +372,10 @@ function task_prepare_head($object)
 	// Is there timespent ?
 	$nbTimeSpent = 0;
 	$sql = "SELECT t.rowid";
-	//$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
+	//$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
 	//$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
-	$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
-	$sql .= " WHERE t.fk_task = ".((int) $object->id);
+	$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t";
+	$sql .= " WHERE t.elementtype='task' AND t.fk_element = ".((int) $object->id);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
@@ -416,7 +418,7 @@ function task_prepare_head($object)
 	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.(GETPOST('withproject') ? '&withproject=1' : '');
-	$filesdir = $conf->project->dir_output."/".dol_sanitizeFileName($object->project->ref).'/'.dol_sanitizeFileName($object->ref);
+	$filesdir = $conf->project->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->project->ref).'/'.dol_sanitizeFileName($object->ref);
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$nbFiles = count(dol_dir_list($filesdir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
@@ -569,9 +571,10 @@ function project_admin_prepare_head()
  * @param   string      $filterprogresscalc     filter text
  * @param   string      $showbilltime           Add the column 'TimeToBill' and 'TimeBilled'
  * @param   array       $arrayfields            Array with displayed coloumn information
+ * @param   array       $arrayofselected        Array with selected fields
  * @return	int									Nb of tasks shown
  */
-function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId = '', $addordertick = 0, $projectidfortotallink = 0, $filterprogresscalc = '', $showbilltime = 0, $arrayfields = array())
+function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId = '', $addordertick = 0, $projectidfortotallink = 0, $filterprogresscalc = '', $showbilltime = 0, $arrayfields = array(), $arrayofselected = array())
 {
 	global $user, $langs, $conf, $db, $hookmanager;
 	global $projectstatic, $taskstatic, $extrafields;
@@ -910,6 +913,16 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				// Tick to drag and drop
 				print '<td class="tdlineupdown center"></td>';
 
+				// Action column
+				print '<td class="nowrap" align="center">';
+				$selected = 0;
+				if (in_array($lines[$i]->id, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb' . $lines[$i]->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $lines[$i]->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
+
+				print '</td>';
+
 				print "</tr>\n";
 
 				if (!$showlineingray) {
@@ -1056,11 +1069,247 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
 			print '<td></td>';
 		}
+
+		//Check if Extrafields is totalizable
+		foreach ($extrafields->attributes['projet_task']['totalizable'] as $key=>$value) {
+			if ($arrayfields['ef.'.$key]['checked'] == 1) {
+				print '<td align="right">';
+				if ($value == 1) {
+					print $totalarray['totalizable'][$key]['total'];
+				}
+				print '</td>';
+			}
+		}
+
 		print '<td class=""></td>';
 		print '</tr>';
 	}
 
 	return $inc;
+}
+
+
+/**
+ * Output a task line into a pertime intput mode
+ *
+ * @param	string	   	$inc					Line number (start to 0, then increased by recursive call)
+ * @param   string		$parent					Id of parent task to show (0 to show all)
+ * @param	User|null	$fuser					Restrict list to user if defined
+ * @param   Task[]		$lines					Array of lines
+ * @param   int			$level					Level (start to 0, then increased/decrease by recursive call)
+ * @param   string		$projectsrole			Array of roles user has on project
+ * @param   string		$tasksrole				Array of roles user has on task
+ * @param	string		$mine					Show only task lines I am assigned to
+ * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is a task i am affected to
+ * @param	int			$preselectedday			Preselected day
+ * @param   array       $isavailable			Array with data that say if user is available for several days for morning and afternoon
+ * @param	int			$oldprojectforbreak		Old project id of last project break
+ * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and substasks
+ */
+function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, $preselectedday, &$isavailable, $oldprojectforbreak = 0)
+{
+	global $conf, $db, $user, $langs;
+	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
+
+	$lastprojectid = 0;
+	$totalforeachline = array();
+	$workloadforid = array();
+	$lineswithoutlevel0 = array();
+
+	$numlines = count($lines);
+
+	// Create a smaller array with sublevels only to be used later. This increase dramatically performances.
+	if ($parent == 0) { // Always and only if at first level
+		for ($i = 0; $i < $numlines; $i++) {
+			if ($lines[$i]->fk_task_parent) {
+				$lineswithoutlevel0[] = $lines[$i];
+			}
+		}
+	}
+
+	if (empty($oldprojectforbreak)) {
+		$oldprojectforbreak = (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT) ? 0 : -1); // 0 to start break , -1 no break
+	}
+
+	//dol_syslog('projectLinesPerDay inc='.$inc.' preselectedday='.$preselectedday.' task parent id='.$parent.' level='.$level." count(lines)=".$numlines." count(lineswithoutlevel0)=".count($lineswithoutlevel0));
+	for ($i = 0; $i < $numlines; $i++) {
+		if ($parent == 0) {
+			$level = 0;
+		}
+
+		//if ($lines[$i]->fk_task_parent == $parent)
+		//{
+		// If we want all or we have a role on task, we show it
+		if (empty($mine) || !empty($tasksrole[$lines[$i]->id])) {
+			//dol_syslog("projectLinesPerWeek Found line ".$i.", a qualified task (i have role or want to show all tasks) with id=".$lines[$i]->id." project id=".$lines[$i]->fk_project);
+
+			// Break on a new project
+			if ($parent == 0 && $lines[$i]->fk_project != $lastprojectid) {
+				$lastprojectid = $lines[$i]->fk_project;
+				if ($preselectedday) {
+					$projectstatic->id = $lines[$i]->fk_project;
+				}
+			}
+
+			if (empty($workloadforid[$projectstatic->id])) {
+				if ($preselectedday) {
+					$projectstatic->loadTimeSpent($preselectedday, 0, $fuser->id); // Load time spent from table element_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
+					$workloadforid[$projectstatic->id] = 1;
+				}
+			}
+
+			$projectstatic->id = $lines[$i]->fk_project;
+			$projectstatic->ref = $lines[$i]->project_ref;
+			$projectstatic->title = $lines[$i]->project_label;
+			$projectstatic->public = $lines[$i]->public;
+			$projectstatic->status = $lines[$i]->project->status;
+
+			$taskstatic->id = $lines[$i]->fk_statut;
+			$taskstatic->ref = ($lines[$i]->task_ref ? $lines[$i]->task_ref : $lines[$i]->task_id);
+			$taskstatic->label = $lines[$i]->task_label;
+			$taskstatic->date_start = $lines[$i]->date_start;
+			$taskstatic->date_end = $lines[$i]->date_end;
+
+			$thirdpartystatic->id = $lines[$i]->socid;
+			$thirdpartystatic->name = $lines[$i]->thirdparty_name;
+			$thirdpartystatic->email = $lines[$i]->thirdparty_email;
+
+			if (empty($oldprojectforbreak) || ($oldprojectforbreak != -1 && $oldprojectforbreak != $projectstatic->id)) {
+				print '<tr class="oddeven trforbreak nobold">'."\n";
+				print '<td colspan="11">';
+				print $projectstatic->getNomUrl(1, '', 0, $langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
+				if ($projectstatic->title) {
+					print ' - ';
+					print $projectstatic->title;
+				}
+				print '</td>';
+				print '</tr>';
+			}
+
+			if ($oldprojectforbreak != -1) {
+				$oldprojectforbreak = $projectstatic->id;
+			}
+
+			print '<tr class="oddeven">'."\n";
+
+			// User
+			/*
+			 print '<td class="nowrap">';
+			 print $fuser->getNomUrl(1, 'withproject', 'time');
+			 print '</td>';
+			 */
+
+			// Project
+			print "<td>";
+			if ($oldprojectforbreak == -1) {
+				print $projectstatic->getNomUrl(1, '', 0, $langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
+				print '<br>'.$projectstatic->title;
+			}
+			print "</td>";
+
+			// Thirdparty
+			print '<td class="tdoverflowmax100">';
+			if ($thirdpartystatic->id > 0) {
+				print $thirdpartystatic->getNomUrl(1, 'project', 10);
+			}
+			print '</td>';
+
+			// Ref
+			print '<td>';
+			print '<!-- Task id = '.$lines[$i]->id.' -->';
+			for ($k = 0; $k < $level; $k++) {
+				print "&nbsp;&nbsp;&nbsp;";
+			}
+			print $taskstatic->getNomUrl(1, 'withproject', 'time');
+			// Label task
+			print '<br>';
+			for ($k = 0; $k < $level; $k++) {
+				print "&nbsp;&nbsp;&nbsp;";
+			}
+			print $taskstatic->label;
+			//print "<br>";
+			//for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
+			//print get_date_range($lines[$i]->date_start,$lines[$i]->date_end,'',$langs,0);
+			print "</td>\n";
+
+			// Date
+			print '<td class="center">';
+			print dol_print_date($lines[$i]->timespent_datehour, 'day');
+			print '</td>';
+
+			$disabledproject = 1;
+			$disabledtask = 1;
+			//print "x".$lines[$i]->fk_project;
+			//var_dump($lines[$i]);
+			//var_dump($projectsrole[$lines[$i]->fk_project]);
+			// If at least one role for project
+			if ($lines[$i]->public || !empty($projectsrole[$lines[$i]->fk_project]) || $user->rights->projet->all->creer) {
+				$disabledproject = 0;
+				$disabledtask = 0;
+			}
+			// If $restricteditformytask is on and I have no role on task, i disable edit
+			if ($restricteditformytask && empty($tasksrole[$lines[$i]->id])) {
+				$disabledtask = 1;
+			}
+
+			// Hour
+			print '<td class="nowrap center">';
+			print dol_print_date($lines[$i]->timespent_datehour, 'hour');
+			print '</td>';
+
+			$cssonholiday = '';
+			if (!$isavailable[$preselectedday]['morning'] && !$isavailable[$preselectedday]['afternoon']) {
+				$cssonholiday .= 'onholidayallday ';
+			} elseif (!$isavailable[$preselectedday]['morning']) {
+				$cssonholiday .= 'onholidaymorning ';
+			} elseif (!$isavailable[$preselectedday]['afternoon']) {
+				$cssonholiday .= 'onholidayafternoon ';
+			}
+
+			// Duration
+			print '<td class="duration'.($cssonholiday ? ' '.$cssonholiday : '').' center">';
+
+			$dayWorkLoad = $lines[$i]->timespent_duration;
+			$totalforeachline[$preselectedday] += $lines[$i]->timespent_duration;
+
+			$alreadyspent = '';
+			if ($dayWorkLoad > 0) {
+				$alreadyspent = convertSecondToTime($lines[$i]->timespent_duration, 'allhourmin');
+			}
+
+			print convertSecondToTime($lines[$i]->timespent_duration, 'allhourmin');
+
+			print '</td>';
+
+			// Note
+			print '<td class="center">';
+			print '<textarea name="'.$lines[$i]->id.'note" rows="'.ROWS_2.'" id="'.$lines[$i]->id.'note"'.($disabledtask ? ' disabled="disabled"' : '').'>';
+			print $lines[$i]->timespent_note;
+			print '</textarea>';
+			print '</td>';
+
+			// Warning
+			print '<td class="right">';
+			/*if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('',$langs->trans("UserIsNotContactOfProject"));
+			elseif ($disabledtask)
+			{
+				$titleassigntask = $langs->trans("AssignTaskToMe");
+				if ($fuser->id != $user->id) $titleassigntask = $langs->trans("AssignTaskToUser", '...');
+
+				print $form->textwithpicto('',$langs->trans("TaskIsNotAssignedToUser", $titleassigntask));
+			}*/
+			print '</td>';
+
+			print "</tr>\n";
+		}
+		//}
+		//else
+		//{
+			//$level--;
+		//}
+	}
+
+	return $totalforeachline;
 }
 
 
@@ -1142,7 +1391,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 				if (empty($workloadforid[$projectstatic->id])) {
 					if ($preselectedday) {
-						$projectstatic->loadTimeSpent($preselectedday, 0, $fuser->id); // Load time spent from table projet_task_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
+						$projectstatic->loadTimeSpent($preselectedday, 0, $fuser->id); // Load time spent from table element_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
 						$workloadforid[$projectstatic->id] = 1;
 					}
 				}
@@ -1391,8 +1640,10 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 				// Duration
 				print '<td class="center duration'.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">';
-				$dayWorkLoad = !empty($projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id]) ? $projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id] : 0;
-				if (!isset($totalforeachday[$preselectedday])) $totalforeachday[$preselectedday] = 0;
+				$dayWorkLoad = empty($projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id]) ? 0 : $projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id];
+				if (!isset($totalforeachday[$preselectedday])) {
+					$totalforeachday[$preselectedday] = 0;
+				}
 				$totalforeachday[$preselectedday] += $dayWorkLoad;
 
 				$alreadyspent = '';
@@ -1409,15 +1660,6 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				$tableCell .= $form->select_duration($lines[$i]->id.'duration', '', $disabledtask, 'text', 0, 1);
 				//$tableCell.='&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled':'').' value="'.$langs->trans("Add").'">';
 				print $tableCell;
-
-				// Comment for avoid unnecessary multiple calculation
-				/*$modeinput = 'hours';
-
-				print '<script type="text/javascript">';
-				print "jQuery(document).ready(function () {\n";
-				print " 	jQuery('.inputhour, .inputminute').bind('keyup', function(e) { updateTotal(0, '".$modeinput."') });";
-				print "})\n";
-				print '</script>';*/
 
 				print '</td>';
 
@@ -1546,7 +1788,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				//var_dump('--- '.$level.' '.$firstdaytoshow.' '.$fuser->id.' '.$projectstatic->id.' '.$workloadforid[$projectstatic->id]);
 				//var_dump($projectstatic->weekWorkLoadPerTask);
 				if (empty($workloadforid[$projectstatic->id])) {
-					$projectstatic->loadTimeSpent($firstdaytoshow, 0, $fuser->id); // Load time spent from table projet_task_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
+					$projectstatic->loadTimeSpent($firstdaytoshow, 0, $fuser->id); // Load time spent from table element_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
 					$workloadforid[$projectstatic->id] = 1;
 				}
 				//var_dump($projectstatic->weekWorkLoadPerTask);
@@ -1933,7 +2175,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				//var_dump('--- '.$level.' '.$firstdaytoshow.' '.$fuser->id.' '.$projectstatic->id.' '.$workloadforid[$projectstatic->id]);
 				//var_dump($projectstatic->weekWorkLoadPerTask);
 				if (empty($workloadforid[$projectstatic->id])) {
-					$projectstatic->loadTimeSpentMonth($firstdaytoshow, 0, $fuser->id); // Load time spent from table projet_task_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
+					$projectstatic->loadTimeSpentMonth($firstdaytoshow, 0, $fuser->id); // Load time spent from table element_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
 					$workloadforid[$projectstatic->id] = 1;
 				}
 				//var_dump($projectstatic->weekWorkLoadPerTask);
@@ -2192,12 +2434,15 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
  * @param	int		$status				-1=No filter on statut, 0 or 1 = Filter on status
  * @param	array	$listofoppstatus	List of opportunity status
  * @param   array   $hiddenfields       List of info to not show ('projectlabel', 'declaredprogress', '...', )
+ * @param	int		$max				Max nb of record to show in HTML list
  * @return	void
  */
-function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks = 0, $status = -1, $listofoppstatus = array(), $hiddenfields = array())
+function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks = 0, $status = -1, $listofoppstatus = array(), $hiddenfields = array(), $max = 0)
 {
 	global $langs, $conf, $user;
 	global $theme_datacolor;
+
+	$maxofloop = (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
 
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
@@ -2228,8 +2473,6 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	if (strcmp($status, '') && $status >= 0) {
 		$title = $langs->trans("Projects").' '.$langs->trans($projectstatic->statuts_long[$status]);
 	}
-
-	$arrayidtypeofcontact = array();
 
 	print '<!-- print_projecttasks_array -->';
 	print '<div class="div-table-responsive-no-min">';
@@ -2309,11 +2552,15 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 	$resql = $db->query($sql2);
 	if ($resql) {
+		$othernb = 0;
 		$total_task = 0;
 		$total_opp_amount = 0;
 		$ponderated_opp_amount = 0;
+		$total_plannedworkload = 0;
+		$total_declaredprogressworkload = 0;
 
 		$num = $db->num_rows($resql);
+		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 		$i = 0;
 
 		print '<tr class="liste_titre">';
@@ -2340,10 +2587,22 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		}
 		print "</tr>\n";
 
-		$total_plannedworkload = 0;
-		$total_declaredprogressworkload = 0;
-		while ($i < $num) {
+		while ($i < $nbofloop) {
 			$objp = $db->fetch_object($resql);
+
+			if ($max && $i >= $max) {
+				$othernb++;
+				$i++;
+				$total_task += $objp->nb;
+				$total_opp_amount += $objp->opp_amount;
+				$opp_weighted_amount = $objp->opp_percent * $objp->opp_amount / 100;
+				$ponderated_opp_amount += price2num($opp_weighted_amount);
+				$plannedworkload = $objp->planned_workload;
+				$total_plannedworkload += $plannedworkload;
+				$declaredprogressworkload = $objp->declared_progess_workload;
+				$total_declaredprogressworkload += $declaredprogressworkload;
+				continue;
+			}
 
 			$projectstatic->id = $objp->projectid;
 			$projectstatic->user_author_id = $objp->fk_user_creat;
@@ -2363,7 +2622,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				print '<td class="tdoverflowmax150">';
 				print $projectstatic->getNomUrl(1, '', 0, '', '-', 0, -1, 'nowraponall');
 				if (!in_array('projectlabel', $hiddenfields)) {
-					print '<br><span class="opacitymedium">'.dol_trunc($objp->title, 24).'</span>';
+					print '<br><span class="opacitymedium small">'.dol_escape_htmltag($objp->title).'</span>';
 				}
 				print '</td>';
 
@@ -2451,11 +2710,19 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 				print "</tr>\n";
 
-				$total_task = $total_task + $objp->nb;
-				$total_opp_amount = $total_opp_amount + $objp->opp_amount;
+				$total_task += $objp->nb;
+				$total_opp_amount += $objp->opp_amount;
 			}
 
 			$i++;
+		}
+
+		if ($othernb) {
+			print '<tr class="oddeven">';
+			print '<td class="nowrap" colspan="5">';
+			print '<span class="opacitymedium">'.$langs->trans("More").'...'.($othernb < $maxofloop ? ' ('.$othernb.')' : '').'</span>';
+			print '</td>';
+			print "</tr>\n";
 		}
 
 		print '<tr class="liste_total">';
@@ -2544,8 +2811,8 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 		// this conf is actually hidden, by default we use 10% for "be carefull or warning"
 		$warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
 
-		$diffTitle = '<br>'.$langs->trans('ProgressDeclared').' : '.$task->progress.($task->progress ? '%' : '');
-		$diffTitle .= '<br>'.$langs->trans('ProgressCalculated').' : '.$progressCalculated.($progressCalculated ? '%' : '');
+		$diffTitle = '<br>'.$langs->trans('ProgressDeclared').' : '.$task->progress.(isset($task->progress) ? '%' : '');
+		$diffTitle .= '<br>'.$langs->trans('ProgressCalculated').' : '.$progressCalculated.(isset($progressCalculated) ? '%' : '');
 
 		//var_dump($progressCalculated.' '.$warningRatio.' '.$task->progress.' '.floatval($task->progress * $warningRatio));
 		if (floatval($progressCalculated) > floatval($task->progress * $warningRatio)) {
@@ -2621,13 +2888,13 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 		// good
 		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.floatval($task->progress).'%" title="'.floatval($task->progress).'%">';
 		if (!empty($task->progress)) {
-			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.floatval($progressCalculated / $task->progress * 100).'%" title="'.floatval($progressCalculated).'%"></div>';
+			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.floatval($progressCalculated / (floatval($task->progress) == 0 ? 1 : $task->progress) * 100).'%" title="'.floatval($progressCalculated).'%"></div>';
 		}
 		$out .= '        </div>';
 	} else {
 		// bad
 		$out .= '        <div class="progress-bar progress-bar-consumed-late" style="width: '.floatval($progressCalculated).'%" title="'.floatval($progressCalculated).'%">';
-		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.($task->progress ? floatval($task->progress / $progressCalculated * 100).'%' : '1px').'" title="'.floatval($task->progress).'%"></div>';
+		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.($task->progress ? floatval($task->progress / (floatval($progressCalculated) == 0 ? 1 : $progressCalculated) * 100).'%' : '1px').'" title="'.floatval($task->progress).'%"></div>';
 		$out .= '        </div>';
 	}
 	$out .= '    </div>';

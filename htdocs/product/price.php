@@ -69,8 +69,8 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
+$object = new Product($db);
 if ($id > 0 || !empty($ref)) {
-	$object = new Product($db);
 	$object->fetch($id, $ref);
 }
 
@@ -465,7 +465,8 @@ if (empty($reshook)) {
 					break;
 				}
 
-				if ($object->multiprices[$key] != $newprice || $object->multiprices_min[$key] != $newprice_min || $object->multiprices_base_type[$key] != $val['price_base_type'] || $object->multiprices_tva_tx[$key] != $newvattx) {
+				// If price has changed, we update it
+				if (!array_key_exists($key, $object->multiprices) || $object->multiprices[$key] != $newprice || $object->multiprices_min[$key] != $newprice_min || $object->multiprices_base_type[$key] != $val['price_base_type'] || $object->multiprices_tva_tx[$key] != $newvattx) {
 					$res = $object->updatePrice($newprice, $val['price_base_type'], $user, $val['vat_tx'], $newprice_min, $key, $val['npr'], $psq, 0, $val['localtaxes_array'], $val['default_vat_code']);
 				} else {
 					$res = 0;
@@ -1311,7 +1312,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 print "</table>\n";
 
 print '</div>';
-print '<div style="clear:both"></div>';
+print '<div class="clearboth"></div>';
 
 
 print dol_get_fiche_end();
@@ -1528,7 +1529,7 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 					otherPrices.show();
 					minPrice1.show();
 				}
-			};
+			}
 
 			jQuery(document).ready(function () {
 				showHidePriceRules();
@@ -1943,7 +1944,8 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<tr>';
 		print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 		print '<td>';
-		print img_picto('', 'company').$form->select_company('', 'socid', 's.client IN (1,2,3)', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
+		$filter = '(s.client:IN:1,2,3)';
+		print img_picto('', 'company').$form->select_company('', 'socid', $filter, 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
 		print '</td>';
 		print '</tr>';
 
@@ -2098,7 +2100,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		// Count total nb of records
 		$nbtotalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$nbtotalofrecords = $prodcustprice->fetch_all_log($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		}
 
@@ -2225,7 +2227,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		// Count total nb of records
 		$nbtotalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$nbtotalofrecords = $prodcustprice->fetchAll($sortorder, $sortfield, 0, 0, $filter);
 		}
 

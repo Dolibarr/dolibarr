@@ -39,10 +39,11 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'partnershipcard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $lineid   = GETPOST('lineid', 'int');
+$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
 // Initialize technical objects
 $object = new Partnership($db);
@@ -73,16 +74,25 @@ if (empty($action) && empty($id) && empty($ref)) {
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 
-$permissiontoread 		= $user->rights->partnership->read;
-$permissiontoadd 		= $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete 	= $user->rights->partnership->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote 		= $user->rights->partnership->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink 		= $user->rights->partnership->write; // Used by the include of actions_dellink.inc.php
+$permissiontoread 		= $user->hasRight('partnership', 'read');
+$permissiontoadd 		= $user->hasRight('partnership', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete 	= $user->hasRight('partnership', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissionnote 		= $user->hasRight('partnership', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink 		= $user->hasRight('partnership', 'write'); // Used by the include of actions_dellink.inc.php
 $upload_dir 			= $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
 $managedfor 			= getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 
-if (empty($conf->partnership->enabled)) accessforbidden();
-if (empty($permissiontoread)) accessforbidden();
+// Security check (enable the most restrictive one)
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+//$isdraft = (isset($object->status) && ($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+//restrictedArea($user, $object->module, $object->id, $object->table_element, $object->element, 'fk_soc', 'rowid', $isdraft);
+if (!isModEnabled('partnership')) {
+	accessforbidden();
+}
+if (!$permissiontoread) {
+	accessforbidden();
+}
 if ($object->id > 0 && !($object->fk_member > 0) && $managedfor == 'member') accessforbidden();
 if ($object->id > 0 && !($object->fk_soc > 0) && $managedfor == 'thirdparty') accessforbidden();
 
@@ -115,10 +125,10 @@ if (empty($reshook)) {
 	$fk_partner 	= ($managedfor == 'member') ? GETPOST('fk_member', 'int') : GETPOST('fk_soc', 'int');
 	$obj_partner 	= ($managedfor == 'member') ? $object->fk_member : $object->fk_soc;
 
+	$triggermodname = 'PARTNERSHIP_MODIFY'; // Name of trigger action code to execute when we modify record
+
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
-
-	$triggermodname = 'PARTNERSHIP_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Action accept object
 	if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
@@ -260,6 +270,10 @@ llxHeader('', $title, $help_url);
 
 // Part to create
 if ($action == 'create') {
+	if (empty($permissiontoadd)) {
+		accessforbidden('NotEnoughPermissions', 0, 1);
+	}
+
 	print load_fiche_titre($langs->trans("NewPartnership"), '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -329,9 +343,8 @@ if (($id || $ref) && $action == 'edit') {
 
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
-	$res = $object->fetch_optionals();
-
 	$head = partnershipPrepareHead($object);
+
 	print dol_get_fiche_head($head, 'card', $langs->trans("Partnership"), -1, $object->picto);
 
 	$formconfirm = '';
@@ -401,38 +414,35 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref = '<div class="refidno">';
 	/*
 	 // Ref customer
-	 $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-	 $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+	 $morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
+	 $morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 	 // Thirdparty
-	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
+		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
+		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
+			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+		}
 	 // Project
-	 if (!empty($conf->project->enabled)) {
-	 $langs->load("projects");
-	 $morehtmlref .= '<br>'.$langs->trans('Project') . ' ';
-	 if ($permissiontoadd) {
-	 //if ($action != 'classify') $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
-	 $morehtmlref .= ' : ';
-	 if ($action == 'classify') {
-	 //$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-	 $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-	 $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-	 $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-	 $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-	 $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-	 $morehtmlref .= '</form>';
-	 } else {
-	 $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-	 }
-	 } else {
-	 if (!empty($object->fk_project)) {
-	 $proj = new Project($db);
-	 $proj->fetch($object->fk_project);
-	 $morehtmlref .= ': '.$proj->getNomUrl();
-	 } else {
-	 $morehtmlref .= '';
-	 }
-	 }
-	 }*/
+		if (isModEnabled('project')) {
+			$langs->load("projects");
+			$morehtmlref .= '<br>';
+			if ($permissiontoadd) {
+				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
+				if ($action != 'classify') {
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				}
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			} else {
+				if (!empty($object->fk_project)) {
+					$proj = new Project($db);
+					$proj->fetch($object->fk_project);
+					$morehtmlref .= $proj->getNomUrl(1);
+					if ($proj->title) {
+						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
+					}
+				}
+			}
+		}
+	*/
 	$morehtmlref .= '</div>';
 	if (!isset($npfilter)) {
 		$npfilter = "";
@@ -560,9 +570,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
 			}
 
-			if ($object->status == $object::STATUS_DRAFT) {
-				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
-			}
+			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 
 			// Back to draft
 			if ($object->status != $object::STATUS_DRAFT) {
@@ -630,8 +638,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$relativepath = $objref.'/'.$objref.'.pdf';
 			$filedir = $conf->partnership->dir_output.'/'.$object->element.'/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->rights->partnership->read; // If you can read, you can build the PDF to read content
-			$delallowed = $user->rights->partnership->write; // If you can create/edit, you can remove a file on card
+			$genallowed = $permissiontoread; // If you can read, you can build the PDF to read content
+			$delallowed = $permissiontoadd; // If you can create/edit, you can remove a file on card
 			print $formfile->showdocuments('partnership:Partnership', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 
@@ -649,7 +657,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, $object->element, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlcenter);
+		$somethingshown = $formactions->showactions($object, $object->element.'@'.$object->module, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlcenter);
 
 		print '</div></div>';
 	}

@@ -62,6 +62,10 @@ $hookmanager->initHooks(array('takeposproductsearch')); // new context for produ
  */
 
 if ($action == 'getProducts') {
+	$tosell = GETPOSTISSET('tosell') ? GETPOST('tosell', 'int') : '';
+	$limit = GETPOSTISSET('limit') ? GETPOST('limit', 'int') : 0;
+	$offset = GETPOSTISSET('offset') ? GETPOST('offset', 'int') : 0;
+
 	top_httphead('application/json');
 
 	$object = new Categorie($db);
@@ -70,7 +74,11 @@ if ($action == 'getProducts') {
 	}
 	$result = $object->fetch($category);
 	if ($result > 0) {
-		$prods = $object->getObjectsInCateg("product", 0, 0, 0, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD'), 'ASC');
+		$filter = array();
+		if ($tosell != '') {
+			$filter = array('customsql' => 'o.tosell = '.((int) $tosell));
+		}
+		$prods = $object->getObjectsInCateg("product", 0, $limit, $offset, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD'), 'ASC', $filter);
 		// Removed properties we don't need
 		$res = array();
 		if (is_array($prods) && count($prods) > 0) {
@@ -169,7 +177,7 @@ if ($action == 'getProducts') {
 					$sql .= " AND EXISTS (SELECT cp.fk_product FROM " . $db->prefix() . "categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN (".$db->sanitize($filteroncategids)."))";
 				}
 				$sql .= " AND tosell = 1";
-				$sql .= " AND (barcode IS NULL OR barcode != '" . $db->escape($term) . "')";
+				$sql .= " AND (barcode IS NULL OR barcode <> '" . $db->escape($term) . "')";
 
 				$resql = $db->query($sql);
 				if ($resql && $db->num_rows($resql) == 1) {
@@ -241,9 +249,10 @@ if ($action == 'getProducts') {
 
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps';
+		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_stock as ps';
 		$sql .= ' ON (p.rowid = ps.fk_product';
 		$sql .= " AND ps.fk_entrepot = ".((int) getDolGlobalInt("CASHDESK_ID_WAREHOUSE".$_SESSION['takeposterminal']));
+		$sql .= ')';
 	}
 
 	// Add tables from hooks
@@ -257,7 +266,7 @@ if ($action == 'getProducts') {
 	if ($filteroncategids) {
 		$sql .= ' AND EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$db->sanitize($filteroncategids).'))';
 	}
-	$sql .= ' AND tosell = 1';
+	$sql .= ' AND p.tosell = 1';
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
 		$sql .= ' AND ps.reel > 0';
 	}
@@ -370,6 +379,9 @@ if ($action == 'getProducts') {
 	$place = GETPOST('place', 'alpha');
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+
+	$object = new Facture($db);
+
 	$printer = new dolReceiptPrinter($db);
 	$printer->sendToPrinter($object, getDolGlobalString('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term), getDolGlobalString('TAKEPOS_PRINTER_TO_USE'.$term));
 }

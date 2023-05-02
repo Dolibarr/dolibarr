@@ -634,9 +634,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -752,8 +750,8 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == 0 && (!empty($conf->global->COMMANDE_DRAFT_WATERMARK))) {
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->COMMANDE_DRAFT_WATERMARK);
+		if ($object->statut == 0 && getDolGlobalString('COMMANDE_DRAFT_WATERMARK')) {
+			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', getDolGlobalString('COMMANDE_DRAFT_WATERMARK'));
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
@@ -935,7 +933,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 *      @param	int			   $hidedetails		Do not show line details
 	 *      @param	int			   $hidedesc		Do not show desc
 	 *      @param	int			   $hideref			Do not show ref
-	 *      @return	null
+	 *      @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{

@@ -33,6 +33,7 @@ Header=Encabezamiento
 Footer=Pie de página
 TheoricalAmount=Cantidad teórica
 RealAmount=Cantidad real
+CashFence=cierre de caja
 NbOfInvoices=Nb de facturas
 Paymentnumpad=Tipo de Pad para ingresar el pago
 Numberspad=Pad de números

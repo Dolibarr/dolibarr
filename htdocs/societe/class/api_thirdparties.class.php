@@ -150,6 +150,7 @@ class Thirdparties extends DolibarrApi
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields AS ef ON ef.fk_object = t.rowid";	// So we will be able to filter on extrafields
 		if ($category > 0) {
 			if ($mode != 4) {
 				$sql .= ", ".MAIN_DB_PREFIX."categorie_societe as c";
@@ -203,11 +204,10 @@ class Thirdparties extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -523,7 +523,7 @@ class Thirdparties extends DolibarrApi
 	 * Delete thirdparty
 	 *
 	 * @param int $id   Thirdparty ID
-	 * @return integer
+	 * @return array
 	 */
 	public function delete($id)
 	{
@@ -577,7 +577,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(501, 'Module "Thirdparties" needed for this request');
 		}
 
-		if (empty($conf->product->enabled)) {
+		if (!isModEnabled("product")) {
 			throw new RestException(501, 'Module "Products" needed for this request');
 		}
 
@@ -622,8 +622,7 @@ class Thirdparties extends DolibarrApi
 	 * @param string	$sortorder	Sort order
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
-	 *
-	 * @return mixed
+	 * @return array|void
 	 *
 	 * @url GET {id}/categories
 	 */
@@ -640,17 +639,17 @@ class Thirdparties extends DolibarrApi
 
 		$categories = new Categorie($this->db);
 
-		$result = $categories->getListForItem($id, 'customer', $sortfield, $sortorder, $limit, $page);
+		$arrayofcateg = $categories->getListForItem($id, 'customer', $sortfield, $sortorder, $limit, $page);
 
-		if (is_numeric($result) && $result < 0) {
+		if (is_numeric($arrayofcateg) && $arrayofcateg < 0) {
 			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
 		}
 
-		if (is_numeric($result) && $result == 0) {	// To fix a return of 0 instead of empty array of method getListForItem
+		if (is_numeric($arrayofcateg) && $arrayofcateg >= 0) {	// To fix a return of 0 instead of empty array of method getListForItem
 			return array();
 		}
 
-		return $result;
+		return $arrayofcateg;
 	}
 
 	/**
@@ -658,8 +657,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @param int		$id				Id of thirdparty
 	 * @param int       $category_id	Id of category
-	 *
-	 * @return mixed
+	 * @return Object|void
 	 *
 	 * @url POST {id}/categories/{category_id}
 	 */
@@ -697,7 +695,7 @@ class Thirdparties extends DolibarrApi
 	 * @param int		$id				Id of thirdparty
 	 * @param int		$category_id	Id of category
 	 *
-	 * @return mixed
+	 * @return Object|void
 	 *
 	 * @url DELETE {id}/categories/{category_id}
 	 */
@@ -1353,7 +1351,7 @@ class Thirdparties extends DolibarrApi
 	 * @param int 		$id 			Thirdparty id
 	 * @param int 		$companybankid 	Companybank id
 	 * @param string 	$model 			Model of document to generate
-	 * @return void
+	 * @return array
 	 *
 	 * @url GET {id}/generateBankAccountDocument/{companybankid}/{model}
 	 */
@@ -1374,6 +1372,7 @@ class Thirdparties extends DolibarrApi
 		$this->company->setDocModel(DolibarrApiAccess::$user, $model);
 
 		$this->company->fk_bank = $this->company->fk_account;
+		$this->company->fk_account = $this->company->fk_account;
 
 		$outputlangs = $langs;
 		$newlang = '';
@@ -1791,7 +1790,7 @@ class Thirdparties extends DolibarrApi
 	 * Clean sensible object datas
 	 *
 	 * @param   Object  $object     Object to clean
-	 * @return  array|mixed         Object with cleaned properties
+	 * @return  Object				Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -1823,16 +1822,6 @@ class Thirdparties extends DolibarrApi
 		unset($object->thirdparty);
 
 		unset($object->fk_delivery_address); // deprecated feature
-
-		unset($object->skype);
-		unset($object->twitter);
-		unset($object->facebook);
-		unset($object->linkedin);
-		unset($object->instagram);
-		unset($object->snapchat);
-		unset($object->googleplus);
-		unset($object->youtube);
-		unset($object->whatsapp);
 
 		return $object;
 	}

@@ -4,7 +4,7 @@
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -106,8 +106,8 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
-$sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code,";
-$sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code,";
+$sql = "SELECT f.rowid, f.ref, f.type, f.situation_cycle_ref, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code, f.retained_warranty,";
+$sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code, fd.info_bits,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur,";
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 	$sql .= " spe.accountancy_code_customer as code_compta,";
@@ -158,7 +158,7 @@ if ($in_bookkeeping == 'notyet') {
 	$sql .= " AND f.rowid NOT IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";
 	// $sql .= " AND fd.rowid NOT IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
 }
-$sql .= " ORDER BY f.datef";
+$sql .= " ORDER BY f.datef, f.ref";
 //print $sql; exit;
 
 dol_syslog('accountancy/journal/sellsjournal.php', LOG_DEBUG);
@@ -168,6 +168,7 @@ if ($result) {
 	$tabht = array();
 	$tabtva = array();
 	$def_tva = array();
+	$tabwarranty = array();
 	$tabttc = array();
 	$tablocaltax1 = array();
 	$tablocaltax2 = array();
@@ -205,21 +206,23 @@ if ($result) {
 			$def_tva[$obj->rowid][$compta_tva][vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : '')] = (vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''));
 		}
 
-		$line = new FactureLigne($db);
-		$line->fetch($obj->fdid);
+		// Create a compensation rate.
+		$situation_ratio = 1;
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+			if ($obj->situation_cycle_ref) {
+				// Avoid divide by 0
+				if ($obj->situation_percent == 0) {
+					$situation_ratio = 0;
+				} else {
+					$line = new FactureLigne($db);
+					$line->fetch($obj->fdid);
 
-		// Situation invoices handling
-		$prev_progress = $line->get_prev_progress($obj->rowid);
+					// Situation invoices handling
+					$prev_progress = $line->get_prev_progress($obj->rowid);
 
-		if ($obj->type == Facture::TYPE_SITUATION) {
-			// Avoid divide by 0
-			if ($obj->situation_percent == 0) {
-				$situation_ratio = 0;
-			} else {
-				$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
+					$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
+				}
 			}
-		} else {
-			$situation_ratio = 1;
 		}
 
 		// Invoice lines
@@ -248,13 +251,27 @@ if ($result) {
 			$tablocaltax2[$obj->rowid][$compta_localtax2] = 0;
 		}
 
-		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc * $situation_ratio;
+		// Compensation of data for invoice situation by using $situation_ratio. This works (nearly) for invoice that was not correctly recorded
+		// but it may introduces an error for situation invoices that were correctly saved. There is still rounding problem that differs between
+		// real data we should have stored and result obtained with a compensation.
+		// It also seems that credit notes on situation invoices are correctly saved (but it depends on the version used in fact).
+		// For credit notes, we hope to have situation_ratio = 1 so the compensation has no effect to avoid introducing troubles with credit notes.
+		$total_ttc = $obj->total_ttc * $situation_ratio;
+		if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY) && $obj->retained_warranty > 0) {
+			$retained_warranty = (double) price2num($total_ttc * $obj->retained_warranty / 100, 'MT');
+			$tabwarranty[$obj->rowid][$compta_soc] += $retained_warranty;
+			$total_ttc -= $retained_warranty;
+		}
+		$tabttc[$obj->rowid][$compta_soc] += $total_ttc;
 		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht * $situation_ratio;
-		if (empty($line->tva_npr)) {
-			$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva * $situation_ratio; // We ignore line if VAT is a NPR
+		$tva_npr = (($obj->info_bits & 1 == 1) ? 1 : 0);
+		if (!$tva_npr) { // We ignore line if VAT is a NPR
+			$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva * $situation_ratio;
 		}
 		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1 * $situation_ratio;
 		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2 * $situation_ratio;
+
+
 		$tabcompany[$obj->rowid] = array(
 			'id' => $obj->socid,
 			'name' => $obj->name,
@@ -300,6 +317,10 @@ if ($action == 'writebookkeeping') {
 
 	$accountingaccountcustomer->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, true);
 
+	$accountingaccountcustomerwarranty = new AccountingAccount($db);
+
+	$accountingaccountcustomerwarranty->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY, true);
+
 	foreach ($tabfac as $key => $val) {		// Loop on each invoice
 		$errorforline = 0;
 
@@ -342,6 +363,55 @@ if ($action == 'writebookkeeping') {
 			$error++;
 			$errorforline++;
 			setEventMessages($langs->trans('ErrorInvoiceContainsLinesNotYetBounded', $val['ref']), null, 'errors');
+		}
+
+		// Warranty
+		if (!$errorforline) {
+			foreach ($tabwarranty[$key] as $k => $mt) {
+				$bookkeeping = new BookKeeping($db);
+				$bookkeeping->doc_date = $val["date"];
+				$bookkeeping->date_lim_reglement = $val["datereg"];
+				$bookkeeping->doc_ref = $val["ref"];
+				$bookkeeping->date_creation = $now;
+				$bookkeeping->doc_type = 'customer_invoice';
+				$bookkeeping->fk_doc = $key;
+				$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+				$bookkeeping->thirdparty_code = $companystatic->code_client;
+
+				$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
+				$bookkeeping->subledger_label = $tabcompany[$key]['name'];
+
+				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY;
+				$bookkeeping->label_compte = $accountingaccountcustomerwarranty->label;
+
+				$bookkeeping->label_operation = dol_trunc($companystatic->name, 16).' - '.$invoicestatic->ref.' - '.$langs->trans("Retainedwarranty");
+				$bookkeeping->montant = $mt;
+				$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
+				$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
+				$bookkeeping->credit = ($mt < 0) ? -$mt : 0;
+				$bookkeeping->code_journal = $journal;
+				$bookkeeping->journal_label = $langs->transnoentities($journal_label);
+				$bookkeeping->fk_user_author = $user->id;
+				$bookkeeping->entity = $conf->entity;
+
+				$totaldebit += $bookkeeping->debit;
+				$totalcredit += $bookkeeping->credit;
+
+				$result = $bookkeeping->create($user);
+				if ($result < 0) {
+					if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {	// Already exists
+						$error++;
+						$errorforline++;
+						$errorforinvoice[$key] = 'alreadyjournalized';
+						//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+					} else {
+						$error++;
+						$errorforline++;
+						$errorforinvoice[$key] = 'other';
+						setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+					}
+				}
+			}
 		}
 
 		// Thirdparty
@@ -390,10 +460,18 @@ if ($action == 'writebookkeeping') {
 						setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 					}
 				} else {
-					if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
+					if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && getDolGlobalInt('ACCOUNTING_ENABLE_AUTOLETTERING')) {
 						require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
 						$lettering_static = new Lettering($db);
+
 						$nb_lettering = $lettering_static->bookkeepingLettering(array($bookkeeping->id));
+
+						if ($nb_lettering < 0) {
+							$error++;
+							$errorforline++;
+							$errorforinvoice[$key] = 'other';
+							setEventMessages($lettering_static->error, $lettering_static->errors, 'errors');
+						}
 					}
 				}
 			}
@@ -598,7 +676,8 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	foreach ($tabfac as $key => $val) {
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
-		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
+		$companystatic->code_compta = $tabcompany[$key]['code_compta'];				// deprecated
+		$companystatic->code_compta_client = $tabcompany[$key]['code_compta'];
 		$companystatic->code_client = $tabcompany[$key]['code_client'];
 		$companystatic->client = 3;
 
@@ -622,6 +701,25 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 		// If not already into bookkeeping, we won't add it. If yes, do nothing (should not happen because creating replacement not possible if invoice is accounted)
 		if ($replacedinvoice == 1) {
 			continue;
+		}
+
+		// Warranty
+		foreach ($tabwarranty[$key] as $k => $mt) {
+			//if ($mt) {
+			print '"'.$key.'"'.$sep;
+			print '"'.$date.'"'.$sep;
+			print '"'.$val["ref"].'"'.$sep;
+			print '"'.utf8_decode(dol_trunc($companystatic->name, 32)).'"'.$sep;
+			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
+			print '"'.length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY).'"'.$sep;
+			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
+			print '"'.$langs->trans("Thirdparty").'"'.$sep;
+			print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.$invoicestatic->ref.' - '.$langs->trans("Retainedwarranty").'"'.$sep;
+			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
+			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
+			print '"'.$journal.'"';
+			print "\n";
+			//}
 		}
 
 		// Third party
@@ -767,7 +865,6 @@ if (empty($action) || $action == 'view') {
 	 */
 	print '<br>';
 
-	$i = 0;
 	print '<div class="div-table-responsive">';
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
@@ -780,7 +877,7 @@ if (empty($action) || $action == 'view') {
 	print '<td class="center">'.$langs->trans("AccountingCredit")."</td>";
 	print "</tr>\n";
 
-	$r = '';
+	$i = 0;
 
 	$companystatic = new Client($db);
 	$invoicestatic = new Facture($db);
@@ -828,6 +925,7 @@ if (empty($action) || $action == 'view') {
 			print '<td class="right"></td>';
 			print "</tr>";
 
+			$i++;
 			continue;
 		}
 		if ($errorforinvoice[$key] == 'somelinesarenotbound') {
@@ -846,6 +944,38 @@ if (empty($action) || $action == 'view') {
 			print "</td>";
 			print '<td class="right"></td>';
 			print '<td class="right"></td>';
+			print "</tr>";
+
+			$i++;
+		}
+
+		// Warranty
+		foreach ($tabwarranty[$key] as $k => $mt) {
+			print '<tr class="oddeven">';
+			print "<!-- Thirdparty warranty -->";
+			print "<td>".$date."</td>";
+			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+			// Account
+			print "<td>";
+			$accountoshow = length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY);
+			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+				print '<span class="error">'.$langs->trans("MainAccountForCustomersNotDefined").'</span>';
+			} else {
+				print $accountoshow;
+			}
+			print '</td>';
+			// Subledger account
+			print "<td>";
+			$accountoshow = length_accounta($k);
+			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+				print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
+			} else {
+				print $accountoshow;
+			}
+			print '</td>';
+			print "<td>".$companystatic->getNomUrl(0, 'customer', 16).' - '.$invoicestatic->ref.' - '.$langs->trans("Retainedwarranty")."</td>";
+			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
+			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 			print "</tr>";
 		}
 
@@ -877,6 +1007,8 @@ if (empty($action) || $action == 'view') {
 			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 			print "</tr>";
+
+			$i++;
 		}
 
 		// Product / Service
@@ -913,6 +1045,8 @@ if (empty($action) || $action == 'view') {
 			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 			print "</tr>";
+
+			$i++;
 		}
 
 		// VAT
@@ -949,9 +1083,15 @@ if (empty($action) || $action == 'view') {
 					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 					print "</tr>";
+
+					$i++;
 				}
 			}
 		}
+	}
+
+	if (!$i) {
+		print '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	print "</table>";

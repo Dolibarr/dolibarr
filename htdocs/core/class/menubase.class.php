@@ -50,6 +50,11 @@ class Menubase
 	public $id;
 
 	/**
+	 * @var int Entity
+	 */
+	public $entity;
+
+	/**
 	 * @var string Menu handler
 	 */
 	public $menu_handler;
@@ -152,6 +157,10 @@ class Menubase
 	 */
 	public $tms;
 
+	/**
+	 * @var Menu menu
+	 */
+	public $newmenu;
 
 	/**
 	 *  Constructor
@@ -181,6 +190,7 @@ class Menubase
 		if (!isset($this->enabled)) {
 			$this->enabled = '1';
 		}
+		$this->entity = (isset($this->entity) && (int) $this->entity >= 0 ? (int) $this->entity : $conf->entity);
 		$this->menu_handler = trim((string) $this->menu_handler);
 		$this->module = trim((string) $this->module);
 		$this->type = trim((string) $this->type);
@@ -242,7 +252,7 @@ class Menubase
 		$sql .= " AND fk_menu = ".((int) $this->fk_menu);
 		$sql .= " AND position = ".((int) $this->position);
 		$sql .= " AND url = '".$this->db->escape($this->url)."'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity IN (0, ".$conf->entity.")";
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -271,7 +281,7 @@ class Menubase
 				$sql .= "usertype";
 				$sql .= ") VALUES (";
 				$sql .= " '".$this->db->escape($this->menu_handler)."',";
-				$sql .= " '".$this->db->escape($conf->entity)."',";
+				$sql .= " '".$this->db->escape($this->entity)."',";
 				$sql .= " '".$this->db->escape($this->module)."',";
 				$sql .= " '".$this->db->escape($this->type)."',";
 				$sql .= " ".($this->mainmenu ? "'".$this->db->escape($this->mainmenu)."'" : "''").","; // Can't be null
@@ -303,7 +313,7 @@ class Menubase
 				}
 			} else {
 				dol_syslog(get_class($this)."::create menu entry already exists", LOG_WARNING);
-				$this->error = 'Error Menu entry already exists';
+				$this->error = 'Error Menu entry ('.$this->menu_handler.','.$this->position.','.$this->url.') already exists';
 				return 0;
 			}
 		} else {
@@ -647,7 +657,7 @@ class Menubase
 		$sql .= " ORDER BY m.position, m.rowid";
 		//print $sql;
 
-		//dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu)."", LOG_DEBUG);
+		//dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu), LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$numa = $this->db->num_rows($resql);

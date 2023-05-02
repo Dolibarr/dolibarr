@@ -54,7 +54,6 @@ $hookmanager->initHooks(array('takeposinvoice'));
 
 $langs->loadLangs(array("companies", "commercial", "bills", "cashdesk", "stocks", "banks"));
 
-$id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $idproduct = GETPOST('idproduct', 'int');
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
@@ -166,7 +165,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook)) {
 	// Action to record a payment on a TakePOS invoice
-	if ($action == 'valid' && $user->rights->facture->creer) {
+	if ($action == 'valid' && $user->hasRight('facture', 'creer')) {
 		$bankaccount = 0;
 		$error = 0;
 
@@ -174,12 +173,12 @@ if (empty($reshook)) {
 			$bankaccount = GETPOST('accountid', 'int');
 		} else {
 			if ($pay == 'LIQ') {
-				$bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]};            // For backward compatibility
+				$bankaccount = getDolGlobalString('CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]);            // For backward compatibility
 			} elseif ($pay == "CHQ") {
-				$bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]};    // For backward compatibility
+				$bankaccount = getDolGlobalString('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]);    // For backward compatibility
 			} else {
 				$accountname = "CASHDESK_ID_BANKACCOUNT_".$pay.$_SESSION["takeposterminal"];
-				$bankaccount = $conf->global->$accountname;
+				$bankaccount = getDolGlobalString($accountname);
 			}
 		}
 
@@ -216,13 +215,6 @@ if (empty($reshook)) {
 			$invoice->fk_facture_source = $fk_source;
 			$invoice->update($user);
 		}
-
-		//$sav_FACTURE_ADDON = '';
-		//if (!empty($conf->global->TAKEPOS_ADDON)) {
-		//	$sav_FACTURE_ADDON = $conf->global->FACTURE_ADDON;
-		//	if ($conf->global->TAKEPOS_ADDON == "terminal") $conf->global->FACTURE_ADDON = $conf->global->{'TAKEPOS_ADDON'.$_SESSION["takeposterminal"]};
-		//	else $conf->global->FACTURE_ADDON = $conf->global->TAKEPOS_ADDON;
-		//}
 
 		$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
 		if ($error) {
@@ -312,7 +304,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'creditnote' && $user->rights->facture->creer) {
+	if ($action == 'creditnote' && $user->hasRight('facture', 'creer')) {
 		$creditnote = new Facture($db);
 		$creditnote->socid = $invoice->socid;
 		$creditnote->date = dol_now();
@@ -334,76 +326,79 @@ if (empty($reshook)) {
 			if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
 				$fk_parent_line = 0;
 			}
-			if ($invoice->type == Facture::TYPE_SITUATION) {
-				$source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id
-				$line->fk_prev_id  = $line->id; // The new line of the new credit note we are creating must be linked to the situation invoice line it is created from
-				if (!empty($invoice->tab_previous_situation_invoice)) {
-					// search the last standard invoice in cycle and the possible credit note between this last and invoice
-					// TODO Move this out of loop of $invoice->lines
-					$tab_jumped_credit_notes = array();
-					$lineIndex = count($invoice->tab_previous_situation_invoice) - 1;
-					$searchPreviousInvoice = true;
-					while ($searchPreviousInvoice) {
-						if ($invoice->tab_previous_situation_invoice[$lineIndex]->type == Facture::TYPE_SITUATION || $lineIndex < 1) {
-							$searchPreviousInvoice = false; // find, exit;
-							break;
-						} else {
-							if ($invoice->tab_previous_situation_invoice[$lineIndex]->type == Facture::TYPE_CREDIT_NOTE) {
-								$tab_jumped_credit_notes[$lineIndex] = $invoice->tab_previous_situation_invoice[$lineIndex]->id;
-							}
-							$lineIndex--; // go to previous invoice in cycle
-						}
-					}
 
-					$maxPrevSituationPercent = 0;
-					foreach ($invoice->tab_previous_situation_invoice[$lineIndex]->lines as $prevLine) {
-						if ($prevLine->id == $source_fk_prev_id) {
-							$maxPrevSituationPercent = max($maxPrevSituationPercent, $prevLine->situation_percent);
-
-							//$line->subprice  = $line->subprice - $prevLine->subprice;
-							$line->total_ht  = $line->total_ht - $prevLine->total_ht;
-							$line->total_tva = $line->total_tva - $prevLine->total_tva;
-							$line->total_ttc = $line->total_ttc - $prevLine->total_ttc;
-							$line->total_localtax1 = $line->total_localtax1 - $prevLine->total_localtax1;
-							$line->total_localtax2 = $line->total_localtax2 - $prevLine->total_localtax2;
-
-							$line->multicurrency_subprice  = $line->multicurrency_subprice - $prevLine->multicurrency_subprice;
-							$line->multicurrency_total_ht  = $line->multicurrency_total_ht - $prevLine->multicurrency_total_ht;
-							$line->multicurrency_total_tva = $line->multicurrency_total_tva - $prevLine->multicurrency_total_tva;
-							$line->multicurrency_total_ttc = $line->multicurrency_total_ttc - $prevLine->multicurrency_total_ttc;
-						}
-					}
-
-					// prorata
-					$line->situation_percent = $maxPrevSituationPercent - $line->situation_percent;
-
-					//print 'New line based on invoice id '.$invoice->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
-
-					// If there is some credit note between last situation invoice and invoice used for credit note generation (note: credit notes are stored as delta)
-					$maxPrevSituationPercent = 0;
-					foreach ($tab_jumped_credit_notes as $index => $creditnoteid) {
-						foreach ($invoice->tab_previous_situation_invoice[$index]->lines as $prevLine) {
-							if ($prevLine->fk_prev_id == $source_fk_prev_id) {
-								$maxPrevSituationPercent = $prevLine->situation_percent;
-
-								$line->total_ht  -= $prevLine->total_ht;
-								$line->total_tva -= $prevLine->total_tva;
-								$line->total_ttc -= $prevLine->total_ttc;
-								$line->total_localtax1 -= $prevLine->total_localtax1;
-								$line->total_localtax2 -= $prevLine->total_localtax2;
-
-								$line->multicurrency_subprice  -= $prevLine->multicurrency_subprice;
-								$line->multicurrency_total_ht  -= $prevLine->multicurrency_total_ht;
-								$line->multicurrency_total_tva -= $prevLine->multicurrency_total_tva;
-								$line->multicurrency_total_ttc -= $prevLine->multicurrency_total_ttc;
+			if (getDolGlobalInt('INVOICE_USE_SITUATION')) {
+				if (!empty($invoice->situation_counter)) {
+					$source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id
+					$line->fk_prev_id  = $line->id; // The new line of the new credit note we are creating must be linked to the situation invoice line it is created from
+					if (!empty($invoice->tab_previous_situation_invoice)) {
+						// search the last standard invoice in cycle and the possible credit note between this last and invoice
+						// TODO Move this out of loop of $invoice->lines
+						$tab_jumped_credit_notes = array();
+						$lineIndex = count($invoice->tab_previous_situation_invoice) - 1;
+						$searchPreviousInvoice = true;
+						while ($searchPreviousInvoice) {
+							if ($invoice->tab_previous_situation_invoice[$lineIndex]->situation_cycle_ref || $lineIndex < 1) {
+								$searchPreviousInvoice = false; // find, exit;
+								break;
+							} else {
+								if ($invoice->tab_previous_situation_invoice[$lineIndex]->type == Facture::TYPE_CREDIT_NOTE) {
+									$tab_jumped_credit_notes[$lineIndex] = $invoice->tab_previous_situation_invoice[$lineIndex]->id;
+								}
+								$lineIndex--; // go to previous invoice in cycle
 							}
 						}
+
+						$maxPrevSituationPercent = 0;
+						foreach ($invoice->tab_previous_situation_invoice[$lineIndex]->lines as $prevLine) {
+							if ($prevLine->id == $source_fk_prev_id) {
+								$maxPrevSituationPercent = max($maxPrevSituationPercent, $prevLine->situation_percent);
+
+								//$line->subprice  = $line->subprice - $prevLine->subprice;
+								$line->total_ht  = $line->total_ht - $prevLine->total_ht;
+								$line->total_tva = $line->total_tva - $prevLine->total_tva;
+								$line->total_ttc = $line->total_ttc - $prevLine->total_ttc;
+								$line->total_localtax1 = $line->total_localtax1 - $prevLine->total_localtax1;
+								$line->total_localtax2 = $line->total_localtax2 - $prevLine->total_localtax2;
+
+								$line->multicurrency_subprice  = $line->multicurrency_subprice - $prevLine->multicurrency_subprice;
+								$line->multicurrency_total_ht  = $line->multicurrency_total_ht - $prevLine->multicurrency_total_ht;
+								$line->multicurrency_total_tva = $line->multicurrency_total_tva - $prevLine->multicurrency_total_tva;
+								$line->multicurrency_total_ttc = $line->multicurrency_total_ttc - $prevLine->multicurrency_total_ttc;
+							}
+						}
+
+						// prorata
+						$line->situation_percent = $maxPrevSituationPercent - $line->situation_percent;
+
+						//print 'New line based on invoice id '.$invoice->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
+
+						// If there is some credit note between last situation invoice and invoice used for credit note generation (note: credit notes are stored as delta)
+						$maxPrevSituationPercent = 0;
+						foreach ($tab_jumped_credit_notes as $index => $creditnoteid) {
+							foreach ($invoice->tab_previous_situation_invoice[$index]->lines as $prevLine) {
+								if ($prevLine->fk_prev_id == $source_fk_prev_id) {
+									$maxPrevSituationPercent = $prevLine->situation_percent;
+
+									$line->total_ht  -= $prevLine->total_ht;
+									$line->total_tva -= $prevLine->total_tva;
+									$line->total_ttc -= $prevLine->total_ttc;
+									$line->total_localtax1 -= $prevLine->total_localtax1;
+									$line->total_localtax2 -= $prevLine->total_localtax2;
+
+									$line->multicurrency_subprice  -= $prevLine->multicurrency_subprice;
+									$line->multicurrency_total_ht  -= $prevLine->multicurrency_total_ht;
+									$line->multicurrency_total_tva -= $prevLine->multicurrency_total_tva;
+									$line->multicurrency_total_ttc -= $prevLine->multicurrency_total_ttc;
+								}
+							}
+						}
+
+						// prorata
+						$line->situation_percent += $maxPrevSituationPercent;
+
+						//print 'New line based on invoice id '.$invoice->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
 					}
-
-					// prorata
-					$line->situation_percent += $maxPrevSituationPercent;
-
-					//print 'New line based on invoice id '.$invoice->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
 				}
 			}
 
@@ -905,23 +900,23 @@ if (empty($reshook)) {
 		$sectionwithinvoicelink .= '</span><br>';
 		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 			if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposConnector('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposConnector('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
 			} else {
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
 			}
 		} elseif (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
-			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
 		} else {
-			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
 			if (getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintBox('.$placeid.', \'without_details\');">'.$langs->trans('PrintWithoutDetails').'</button>';
+				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintBox('.$placeid.', \'without_details\')">'.$langs->trans('PrintWithoutDetails').'</button>';
 			}
 			if (getDolGlobalString('TAKEPOS_GIFT_RECEIPT')) {
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1);">'.$langs->trans('GiftReceipt').'</button>';
+				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1)">'.$langs->trans('GiftReceipt').'</button>';
 			}
 		}
 		if (getDolGlobalString('TAKEPOS_EMAIL_TEMPLATE_INVOICE') && $conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE > 0) {
-			$sectionwithinvoicelink .= ' <button id="buttonsend" type="button" onclick="SendTicket('.$placeid.');">'.$langs->trans('SendTicket').'</button>';
+			$sectionwithinvoicelink .= ' <button id="buttonsend" type="button" onclick="SendTicket('.$placeid.')">'.$langs->trans('SendTicket').'</button>';
 		}
 
 		if ($remaintopay <= 0 && getDolGlobalString('TAKEPOS_AUTO_PRINT_TICKETS') && $action != "history") {
@@ -1079,22 +1074,25 @@ function SendTicket(id)
 {
 	console.log("Open box to select the Print/Send form");
 	$.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("SendTicket")); ?>'});
+	return true;
 }
 
 function PrintBox(id, action) {
 	console.log("Open box before printing");
 	$.colorbox({href:"printbox.php?facid="+id+"&action="+action+"&token=<?php echo newToken(); ?>", width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("PrintWithoutDetails"); ?>"});
+	return true;
 }
 
 function Print(id, gift){
 	console.log("Call Print() to generate the receipt.");
 	$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("PrintTicket")); ?>'});
+	return true;
 }
 
 function TakeposPrinting(id){
 	var receipt;
 	console.log("TakeposPrinting" + id);
-	$.get("receipt.php?facid="+id, function(data, status){
+	$.get("receipt.php?facid="+id, function(data, status) {
 		receipt=data.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '');
 		$.ajax({
 			type: "POST",
@@ -1102,6 +1100,7 @@ function TakeposPrinting(id){
 			data: receipt
 		});
 	});
+	return true;
 }
 
 function TakeposConnector(id){
@@ -1113,6 +1112,7 @@ function TakeposConnector(id){
 			data: 'invoice='+data
 		});
 	});
+	return true;
 }
 
 function DolibarrTakeposPrinting(id) {
@@ -1122,15 +1122,17 @@ function DolibarrTakeposPrinting(id) {
 		data: { token: '<?php echo currentToken(); ?>' },
 		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&token='.newToken().'&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
 	});
+	return true;
 }
 
 function CreditNote() {
-	$("#poslines").load("invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid, function() {
-	});
+	$("#poslines").load("invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid, function() {	});
+	return true;
 }
 
 function SetNote() {
 	$("#poslines").load("invoice.php?action=addnote&token=<?php echo newToken() ?>&invoiceid="+placeid+"&idline="+selectedline, { "addnote": $("#textinput").val() });
+	return true;
 }
 
 
@@ -1299,7 +1301,7 @@ if (!empty($conf->use_javascript_ajax)) {
 
 print '<!-- invoice.php place='.(int) $place.' invoice='.$invoice->ref.' mobilepage='.(empty($mobilepage) ? '' : $mobilepage).' $_SESSION["basiclayout"]='.(empty($_SESSION["basiclayout"])?'':$_SESSION["basiclayout"]).' conf->global->TAKEPOS_BAR_RESTAURANT='.getDolGlobalString('TAKEPOS_BAR_RESTAURANT').' -->'."\n";
 print '<div class="div-table-responsive-no-min invoice">';
-print '<table id="tablelines" class="noborder noshadow postablelines" width="100%">';
+print '<table id="tablelines" class="noborder noshadow postablelines centpercent">';
 if ($sectionwithinvoicelink && ($mobilepage == "invoice" || $mobilepage == "")) {
 	if (!empty($conf->global->TAKEPOS_SHOW_HT)) {
 		print '<tr><td colspan="5">'.$sectionwithinvoicelink.'</td></tr>';
@@ -1431,7 +1433,7 @@ if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 			$htmlforlines .= '" onclick="AddProduct(\''.$place.'\', '.$row->id.')">';
 			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 				$htmlforlines .= '<img class="imgwrapper" width="33%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=pro&query=pro&id='.$row->id.'"><br>';
-				$htmlforlines .= $row->label.''.price($row->price_ttc, 1, $langs, 1, -1, -1, $conf->currency);
+				$htmlforlines .= $row->label.' '.price($row->price_ttc, 1, $langs, 1, -1, -1, $conf->currency);
 				$htmlforlines .= '</div>'."\n";
 			} else {
 				$htmlforlines .= '<td class="left">';
@@ -1699,4 +1701,3 @@ print '</div>';
 if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	print '</body></html>';
 }
-

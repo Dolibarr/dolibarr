@@ -26,7 +26,7 @@ CronCommand=命令
 CronList=计划任务
 CronDelete=删除计划任务
 CronConfirmDelete=您确定要删除这些预定作业吗？
-CronExecute=安排计划工作
+CronExecute=Launch now
 CronConfirmExecute=您确定要立即执行这些预定作业吗？
 CronInfo=计划作业模块允许计划作业以自动执行它们。也可以手动启动作业。
 CronTask=工作
@@ -58,7 +58,7 @@ CronNote=说明
 CronFieldMandatory=栏位 %s 为必填
 CronErrEndDateStartDt=结束日期不能早过开始日期啊，时光不能倒流呀魂淡
 StatusAtInstall=模块安装时的状态
-CronStatusActiveBtn=Schedule
+CronStatusActiveBtn=Enable scheduling
 CronStatusInactiveBtn=禁用
 CronTaskInactive=This job is disabled (not scheduled)
 CronId=Id
@@ -82,10 +82,19 @@ UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - 
 JobDisabled=岗位无效
 MakeLocalDatabaseDumpShort=本地数据库备份
 MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' or filename to build, number of backup files to keep
+MakeSendLocalDatabaseDumpShort=Send local database backup
+MakeSendLocalDatabaseDump=Send local database backup by email. Parameters are: to, from, subject, message, filename (Name of file sent), filter ('sql' for backup of database only)
+BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
+CleanUnfinishedCronjobShort=Clean unfinished cronjob
+CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
 WarningCronDelayed=注意，出于性能目的，无论启用作业的下一个执行日期是什么，您的作业可能会在运行之前延迟到最大值%s小时。
 DATAPOLICYJob=Data cleaner and anonymizer
 JobXMustBeEnabled=Job %s must be enabled
+EmailIfError=Email for warning on error
+ErrorInBatch=Error when running the job %s
+
 # Cron Boxes
 LastExecutedScheduledJob=Last executed scheduled job
 NextScheduledJobExecute=Next scheduled job to execute
 NumberScheduledJobError=Number of scheduled jobs in error
+NumberScheduledJobNeverFinished=Number of scheduled jobs never finished

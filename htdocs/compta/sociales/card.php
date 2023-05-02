@@ -440,7 +440,7 @@ if ($action == 'create') {
 	print '<div class="center">';
 	print '<input type="submit" class="button button-add" value="'.$langs->trans("Add").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="history.go(-1)">';
 	print '</div>';
 
 	print '</form>';
@@ -557,7 +557,7 @@ if ($id > 0) {
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
 				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, 0, $object->fk_project, 'none', 0, 0, 0, 1);
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, 0, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 				}
 			} else {
 				if (!empty($object->fk_project)) {
@@ -632,7 +632,7 @@ if ($id > 0) {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editmode') {
-			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id');
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', '', 1, 1);
 		} else {
 			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none');
 		}

@@ -813,7 +813,7 @@ if ($id > 0 || $ref) {
 			}
 
 			// Number of supplier order running
-			if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+			if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 				if ($found) {
 					$helpondiff .= '<br>';
 				} else {
@@ -829,7 +829,7 @@ if ($id > 0 || $ref) {
 			}
 
 			// Number of product from supplier order already received (partial receipt)
-			if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+			if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 				if ($found) {
 					$helpondiff .= '<br>';
 				} else {
@@ -903,7 +903,7 @@ if ($id > 0 || $ref) {
 			print '</div>';
 			print '</div>';
 
-			print '<div style="clear:both"></div>';
+			print '<div class="clearboth"></div>';
 		}
 
 		print dol_get_fiche_end();

@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +84,8 @@ class mod_asset_standard extends ModeleNumRefAsset
 	{
 		global $conf, $langs, $db;
 
-		$coyymm = ''; $max = '';
+		$coyymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
@@ -124,7 +126,7 @@ class mod_asset_standard extends ModeleNumRefAsset
 		// first we get the max value
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql .= " FROM ".MAIN_DB_PREFIX."asset_asset";
+		$sql .= " FROM ".MAIN_DB_PREFIX."asset";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
 			$sql .= " AND entity = ".$conf->entity;

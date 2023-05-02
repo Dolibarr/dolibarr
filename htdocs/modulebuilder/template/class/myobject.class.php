@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2017  Laurent Destailleur      <eldy@users.sourceforge.net>
+ * Copyright (C) 2023  Frédéric France          <frederic.france@netlogic.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -81,7 +82,7 @@ class MyObject extends CommonObject
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'mail', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM' or 'isModEnabled("multicurrency")' ...)
@@ -96,7 +97,7 @@ class MyObject extends CommonObject
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
 	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
-	 *  'help' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
+	 *  'help' and 'helplist' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
 	 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
@@ -119,8 +120,8 @@ class MyObject extends CommonObject
 		'label'         => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>'Help text', 'showoncombobox'=>2, 'validate'=>1, 'alwayseditable'=>1),
 		'amount'        => array('type'=>'price', 'label'=>'Amount', 'enabled'=>1, 'visible'=>1, 'default'=>'null', 'position'=>40, 'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for amount', 'validate'=>1),
 		'qty'           => array('type'=>'real', 'label'=>'Qty', 'enabled'=>1, 'visible'=>1, 'default'=>'0', 'position'=>45, 'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for quantity', 'css'=>'maxwidth75imp', 'validate'=>1),
-		'fk_soc' 		=> array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'picto'=>'company', 'label'=>'ThirdParty', 'visible'=> 1, 'enabled'=>'$conf->societe->enabled', 'position'=>50, 'notnull'=>-1, 'index'=>1, 'help'=>'OrganizationEventLinkToThirdParty', 'validate'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
-		'fk_project'    => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'picto'=>'project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>52, 'notnull'=>-1, 'index'=>1, 'validate'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
+		'fk_soc' 		=> array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'picto'=>'company', 'label'=>'ThirdParty', 'visible'=> 1, 'enabled'=>'isModEnabled("societe")', 'position'=>50, 'notnull'=>-1, 'index'=>1, 'help'=>'OrganizationEventLinkToThirdParty', 'validate'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
+		'fk_project'    => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'picto'=>'project', 'enabled'=>'isModEnabled("project")', 'visible'=>-1, 'position'=>52, 'notnull'=>-1, 'index'=>1, 'validate'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
 		'description'   => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>3, 'position'=>60, 'validate'=>1),
 		'note_public'   => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61, 'validate'=>1, 'cssview'=>'wordbreak'),
 		'note_private'  => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>62, 'validate'=>1, 'cssview'=>'wordbreak'),
@@ -224,7 +225,7 @@ class MyObject extends CommonObject
 	// /**
 	//  * @var array	List of child tables. To test if we can delete object.
 	//  */
-	// protected $childtables = array();
+	// protected $childtables = array('mychildtable' => array('name'=>'MyObject', 'fk_element'=>'fk_myobject'));
 
 	// /**
 	//  * @var array    List of child tables. To know object to delete on cascade.
@@ -259,7 +260,7 @@ class MyObject extends CommonObject
 		}
 
 		// Example to show how to set values of fields definition dynamically
-		/*if ($user->rights->mymodule->myobject->read) {
+		/*if ($user->hasRights->('mymodule', 'myobject', 'read')) {
 			$this->fields['myfield']['visible'] = 1;
 			$this->fields['myfield']['noteditable'] = 0;
 		}*/
@@ -367,8 +368,7 @@ class MyObject extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
@@ -751,6 +751,31 @@ class MyObject extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 *
+	 * @param 	array 	$params 	Params to construct tooltip data
+	 * @since 	v18
+	 * @return 	array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$datas = [];
+
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			return ['optimize' => $langs->trans("ShowMyObject")];
+		}
+		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("MyObject").'</u>';
+		if (isset($this->status)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
+		$datas['ref'] .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+
+		return $datas;
+	}
+
+	/**
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -769,13 +794,20 @@ class MyObject extends CommonObject
 		}
 
 		$result = '';
-
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("MyObject").'</u>';
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element.($this->module ? '@'.$this->module : ''),
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
 		$url = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$this->id;
 
@@ -796,8 +828,8 @@ class MyObject extends CommonObject
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -818,7 +850,7 @@ class MyObject extends CommonObject
 
 		if (empty($this->showphoto_on_popup)) {
 			if ($withpicto) {
-				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 			}
 		} else {
 			if ($withpicto) {
@@ -840,7 +872,7 @@ class MyObject extends CommonObject
 
 					$result .= '</div>';
 				} else {
-					$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+					$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 				}
 			}
 		}
@@ -853,7 +885,7 @@ class MyObject extends CommonObject
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
 		global $action, $hookmanager;
-		$hookmanager->initHooks(array('myobjectdao'));
+		$hookmanager->initHooks(array($this->element.'dao'));
 		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
@@ -869,23 +901,32 @@ class MyObject extends CommonObject
 	 *	Return a thumb for kanban views
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
 	 *  @return		string								HTML Code for Kanban thumb.
 	 */
-	/*
-	public function getKanbanView($option = '')
+	public function getKanbanView($option = '', $arraydata = null)
 	{
+		global $conf, $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'label')) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
+			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
+		}
+		if (property_exists($this, 'amount')) {
+			$return .= '<br>';
+			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -893,7 +934,6 @@ class MyObject extends CommonObject
 
 		return $return;
 	}
-	*/
 
 	/**
 	 *  Return the label of the status
@@ -919,7 +959,7 @@ class MyObject extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Return the status
+	 *  Return the label of a given status
 	 *
 	 *  @param	int		$status        Id status
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
@@ -1015,8 +1055,7 @@ class MyObject extends CommonObject
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_myobject = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
-			$this->error = $objectline->error;
-			$this->errors = $objectline->errors;
+			$this->setErrorsFromObject($objectline);
 			return $result;
 		} else {
 			$this->lines = $result;
@@ -1127,7 +1166,7 @@ class MyObject extends CommonObject
 	 */
 	public function doScheduledJob()
 	{
-		global $conf, $langs;
+		//global $conf, $langs;
 
 		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
 

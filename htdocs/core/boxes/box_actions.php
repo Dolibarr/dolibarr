@@ -60,7 +60,7 @@ class box_actions extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->enabled = $conf->agenda->enabled;
+		$this->enabled = isModEnabled('agenda');
 
 		$this->hidden = !($user->hasRight('agenda', 'myactions', 'read'));
 	}
@@ -220,7 +220,9 @@ class box_actions extends ModeleBoxes
 		if (!empty($conf->global->SHOW_DIALOG_HOMEPAGE)) {
 			$actioncejour = false;
 			$contents = $this->info_box_contents;
-			$nblines = count($contents);
+			if (is_countable($contents) && count($contents) > 0) {
+				$nblines = count($contents);
+			}
 			if ($contents[0][0]['text'] != $langs->trans("NoActionsToDo")) {
 				$out .= '<div id="dialogboxaction" title="'.$nblines." ".$langs->trans("ActionsToDo").'">';
 				$out .= '<table width=100%>';
@@ -254,7 +256,7 @@ class box_actions extends ModeleBoxes
 			}
 			$out .= '</div>';
 			if ($actioncejour) {
-				$out .= '<script>';
+				$out .= '<script nonce="'.getNonce().'">';
 				$out .= '$("#dialogboxaction").dialog({ autoOpen: true });';
 				if ($conf->global->SHOW_DIALOG_HOMEPAGE > 1) {    // autoclose after this delay
 					$out .= 'setTimeout(function(){';
@@ -263,7 +265,7 @@ class box_actions extends ModeleBoxes
 				}
 				$out .= '</script>';
 			} else {
-				$out .= '<script>';
+				$out .= '<script nonce="'.getNonce().'">';
 				$out .= '$("#dialogboxaction").dialog({ autoOpen: false });';
 				$out .= '</script>';
 			}

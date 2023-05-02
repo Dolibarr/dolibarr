@@ -24,15 +24,36 @@
  *	\ingroup    banque
  *	\brief      File to build payment reports
  */
+
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
- *	Classe permettant de generer les rapports de paiement
+ *	Class to manage reporting of payments
  */
-class pdf_paiement
+class pdf_paiement extends CommonDocGenerator
 {
+	public $tab_top;
+
+	public $line_height;
+
+	public $line_per_page;
+
+	public $tab_height;
+
+	public $posxdate;
+
+	public $posxpaymenttype;
+	public $posxinvoice;
+	public $posxbankaccount;
+	public $posxinvoiceamount;
+	public $posxpaymentamount;
+
+	public $doc_type;
+
+
 	/**
 	 *  Constructor
 	 *
@@ -211,7 +232,7 @@ class pdf_paiement
 				if (!empty($socid)) {
 					$sql .= " AND s.rowid = ".((int) $socid);
 				}
-				// If global param PAYMENTS_REPORT_GROUP_BY_MOD is set, payement are ordered by paiement_code
+				// If global param PAYMENTS_REPORT_GROUP_BY_MOD is set, payment are ordered by paiement_code
 				if (!empty($conf->global->PAYMENTS_REPORT_GROUP_BY_MOD)) {
 					$sql .= " ORDER BY paiement_code ASC, p.datep ASC, pf.fk_paiement ASC";
 				} else {
@@ -249,7 +270,7 @@ class pdf_paiement
 				if (!empty($socid)) {
 					$sql .= " AND s.rowid = ".((int) $socid);
 				}
-				// If global param PAYMENTS_FOURN_REPORT_GROUP_BY_MOD is set, payement fourn are ordered by paiement_code
+				// If global param PAYMENTS_FOURN_REPORT_GROUP_BY_MOD is set, payment fourn are ordered by paiement_code
 				if (!empty($conf->global->PAYMENTS_FOURN_REPORT_GROUP_BY_MOD)) {
 					$sql .= " ORDER BY paiement_code ASC, p.datep ASC, pf.fk_paiementfourn ASC";
 				} else {
@@ -343,9 +364,7 @@ class pdf_paiement
 			$this->errors = $hookmanager->errors;
 		}
 
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($file, octdec($conf->global->MAIN_UMASK));
-		}
+		dolChmod($file);
 
 		$this->result = array('fullpath'=>$file);
 

@@ -137,7 +137,7 @@ class FichinterTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Fichinter($this->savdb);
+		$localobject=new Fichinter($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -164,7 +164,7 @@ class FichinterTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Fichinter($this->savdb);
+		$localobject=new Fichinter($db);
 		$result=$localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -243,7 +243,7 @@ class FichinterTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Fichinter($this->savdb);
+		$localobject=new Fichinter($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

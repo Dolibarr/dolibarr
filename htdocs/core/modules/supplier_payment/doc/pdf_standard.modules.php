@@ -478,9 +478,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -605,10 +603,10 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  FactureFournisseur		$object     	Object to show
-	 *  @param  int	    	$showaddress    0=no, 1=yes
-	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @param	TCPDF			$pdf     		Object PDF
+	 *  @param  PaiementFourn	$object     	Object to show
+	 *  @param  int	    		$showaddress    0=no, 1=yes
+	 *  @param  Translate		$outputlangs	Object lang for output
 	 *  @return	void
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
@@ -816,11 +814,11 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	/**
 	 *   	Show footer of page. Need this->emetteur object
 	 *
-	 *   	@param	TCPDF		$pdf     			PDF
-	 * 		@param	FactureFournisseur		$object				Object to show
-	 *      @param	Translate	$outputlangs		Object lang for output
-	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @return	int								Return height of bottom margin including footer text
+	 *   	@param	TCPDF			$pdf     			PDF
+	 * 		@param	PaiementFourn	$object				Object to show
+	 *      @param	Translate		$outputlangs		Object lang for output
+	 *      @param	int				$hidefreetext		1=Hide free text
+	 *      @return	int									Return height of bottom margin including footer text
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{

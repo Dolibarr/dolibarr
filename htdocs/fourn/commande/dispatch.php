@@ -68,7 +68,7 @@ $hookmanager->initHooks(array('ordersupplierdispatch'));
 
 // Recuperation de l'id de projet
 $projectid = 0;
-if ($_GET["projectid"]) {
+if (GETPOSTISSET("projectid")) {
 	$projectid = GETPOST("projectid", 'int');
 }
 
@@ -94,7 +94,7 @@ if (empty($conf->reception->enabled)) {
 }
 
 // $id is id of a purchase order.
-$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
+$result = restrictedArea($user, 'fournisseur', $object, 'commande_fournisseur', 'commande');
 
 if (!isModEnabled('stock')) {
 	accessforbidden();
@@ -486,6 +486,7 @@ if ($action == 'updateline' && $permissiontoreceive) {
 	}
 }
 
+
 /*
  * View
  */
@@ -554,7 +555,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($action != 'classify' && $caneditproject) {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -615,6 +616,10 @@ if ($id > 0 || !empty($ref)) {
 	if ($object->statut <= CommandeFournisseur::STATUS_ACCEPTED || $object->statut >= CommandeFournisseur::STATUS_CANCELED) {
 		print '<br><span class="opacitymedium">'.$langs->trans("OrderStatusNotReadyToDispatch").'</span>';
 	}
+
+
+	print '<br>';
+
 
 	if ($object->statut == CommandeFournisseur::STATUS_ORDERSENT
 		|| $object->statut == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY
@@ -731,7 +736,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="right">'.$langs->trans("QtyOrdered").'</td>';
 				print '<td class="right">'.$langs->trans("QtyDispatchedShort").'</td>';
 				print ' <td class="right">'.$langs->trans("QtyToDispatchShort");
-				print '<br><a href="#" id="autoreset">'.$langs->trans("Reset").'</a></td>';
+				print '<br><a href="#" id="autoreset">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').$langs->trans("Reset").'</a></td>';
 				print '<td width="32"></td>';
 
 				if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
@@ -746,9 +751,9 @@ if ($id > 0 || !empty($ref)) {
 
 				// Select warehouse to force it everywhere
 				if (count($listwarehouses) > 1) {
-					print '<br><span class="opacitymedium">'.$langs->trans("ForceTo").'</span> '.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 1, 0, 0, '', 0, 0, $disabled, '', 'minwidth100 maxwidth300', 1);
+					print '<br>'.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, $langs->trans("ForceTo"), 0, 0, '', 0, 0, $disabled, '', 'minwidth100 maxwidth300', 1);
 				} elseif (count($listwarehouses) == 1) {
-					print '<br><span class="opacitymedium">'.$langs->trans("ForceTo").'</span> '.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 0, 0, 0, '', 0, 0, $disabled, '', 'minwidth100 maxwidth300', 1);
+					print '<br>'.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 0, 0, 0, '', 0, 0, $disabled, '', 'minwidth100 maxwidth300', 1);
 				}
 
 				print '</td>';
@@ -782,7 +787,8 @@ if ($id > 0 || !empty($ref)) {
 				if (!$objp->fk_product > 0) {
 					$nbfreeproduct++;
 				} else {
-					$remaintodispatch = price2num($objp->qty - ((float) $products_dispatched[$objp->rowid]), 5); // Calculation of dispatched
+					$alreadydispatched = isset($products_dispatched[$objp->rowid])?$products_dispatched[$objp->rowid]:0;
+					$remaintodispatch = price2num($objp->qty - ((float) $alreadydispatched), 5); // Calculation of dispatched
 					if ($remaintodispatch < 0 && empty($conf->global->SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN)) {
 						$remaintodispatch = 0;
 					}
@@ -799,7 +805,7 @@ if ($id > 0 || !empty($ref)) {
 						print '<!-- Line to dispatch '.$suffix.' -->'."\n";
 						// hidden fields for js function
 						print '<input id="qty_ordered'.$suffix.'" type="hidden" value="'.$objp->qty.'">';
-						print '<input id="qty_dispatched'.$suffix.'" type="hidden" value="'.(float) $products_dispatched[$objp->rowid].'">';
+						print '<input id="qty_dispatched'.$suffix.'" type="hidden" value="'.(float) $alreadydispatched.'">';
 						print '<tr class="oddeven">';
 
 						if (empty($conf->cache['product'][$objp->fk_product])) {
@@ -832,7 +838,7 @@ if ($id > 0 || !empty($ref)) {
 								print $linktoprod;
 								print "</td>";
 								print '<td class="dispatch_batch_number">';
-								print $langs->trans("ProductDoesNotUseBatchSerial");
+								print '<span class="opacitymedium small">'.$langs->trans("ProductDoesNotUseBatchSerial").'</small>';
 								print '</td>';
 								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 									print '<td class="dispatch_dlc"></td>';
@@ -860,7 +866,7 @@ if ($id > 0 || !empty($ref)) {
 						print '<td class="right">'.$objp->qty.'</td>';
 
 						// Already dispatched
-						print '<td class="right">'.$products_dispatched[$objp->rowid].'</td>';
+						print '<td class="right">'.$alreadydispatched.'</td>';
 
 						if (isModEnabled('productbatch') && $objp->tobatch > 0) {
 							$type = 'batch';
@@ -972,7 +978,8 @@ if ($id > 0 || !empty($ref)) {
 
 						// Qty to dispatch
 						print '<td class="right">';
-						print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" class="width50 right" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0)).'">';
+						print '<a href="#" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
+						print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0)).'">';
 						print '</td>';
 
 						print '<td>';
@@ -1068,6 +1075,7 @@ if ($id > 0 || !empty($ref)) {
 				$dispatchBt = empty($conf->reception->enabled) ? $langs->trans("Receive") : $langs->trans("CreateReception");
 
 				print '<br>';
+				print '<input type="hidden" name="backtopageforcancel" value="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 				print '<input type="submit" class="button" name="dispatch" value="'.dol_escape_htmltag($dispatchBt).'"';
 				$disabled = 0;
 				if (!$permissiontoreceive) {
@@ -1108,14 +1116,30 @@ if ($id > 0 || !empty($ref)) {
 					$("select[name^=entrepot_]").val(fk_default_warehouse).change();
                 });
 
-	            jQuery("#autoreset").click(function() {';
-	$i = 0;
-	while ($i < $nbproduct) {
-		print '           jQuery("#qty_0_'.$i.'").val("");';
-		$i++;
-	}
-	print '
+	            $("#autoreset").click(function() {
+					$(".qtydispatchinput").each(function(){
+						id = $(this).attr("id");
+						idtab = id.split("_");
+						if(idtab[1] == 0){
+							console.log(idtab);
+							$(this).val("");
+							$("#qty_dispatched_0_"+idtab[2]).val("0");
+						} else {
+							obj = $(this).parent().parent();
+							nameobj = obj.attr("name");
+							nametab = nameobj.split("_");
+							obj.remove();
+							$("tr[name^=\'"+nametab[0]+"_\'][name$=\'_"+nametab[2]+"\']:last .splitbutton").show();
+						}
+					});
                 });
+
+				$(".resetline").click(function(){
+					id = $(this).attr("id");
+					id = id.split("reset_");
+					console.log("Reset trigger for id = qty_"+id[1]);
+					$("#qty_"+id[1]).val("");
+				});
 			});
 		</script>';
 

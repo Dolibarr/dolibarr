@@ -20,6 +20,7 @@ ModulePartnershipName=合作夥伴關係管理
 PartnershipDescription=合作夥伴管理模組
 PartnershipDescriptionLong= 合作夥伴管理模組
 Partnership=合夥
+Partnerships=夥伴關係
 AddPartnership=增加合作夥伴
 CancelPartnershipForExpiredMembers=合作夥伴：取消訂閱過期會員的合作關係
 PartnershipCheckBacklink=合作夥伴：檢查參考反向連結
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=合作夥伴：檢查參考反向連結
 # Menu
 #
 NewPartnership=新合作夥伴
+NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
 ListOfPartnerships=合作夥伴清單
 
 #
@@ -42,6 +44,7 @@ PARTNERSHIP_BACKLINKS_TO_CHECK=要檢查的反向連結
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=訂閱到期後取消合作關係狀態前的 Nb 天
 ReferingWebsiteCheck=檢查網站參考
 ReferingWebsiteCheckDesc=您可以啟用一項功能來檢查您的合作夥伴是否在他們自己的網站上增加了指向您網站網域的反向連結。
+PublicFormRegistrationPartnerDesc=Dolibarr can provide you a public URL/website to allow external visitors to request to be part of the partnership program.
 
 #
 # Object
@@ -60,6 +63,11 @@ ConfirmClosePartnershipAsk=您確定要取消此合作關係嗎？
 PartnershipType=合作夥伴類型
 PartnershipRefApproved=合作夥伴 %s 已核准
 KeywordToCheckInWebsite=如果您想檢查給定關鍵字是否出現在每個合作夥伴的網站中，請在此處定義此關鍵字
+PartnershipDraft=草稿
+PartnershipAccepted=已接受
+PartnershipRefused=已拒絕
+PartnershipCanceled=已取消
+PartnershipManagedFor=合作夥伴是
 
 #
 # Template Mail
@@ -83,12 +91,6 @@ CountLastUrlCheckError=上次檢查網址的錯誤數量
 LastCheckBacklink=上次檢查網址的日期
 ReasonDeclineOrCancel=拒絕原因
 
-#
-# Status
-#
-PartnershipDraft=草稿
-PartnershipAccepted=已接受
-PartnershipRefused=已拒絕
-PartnershipCanceled=已取消
-PartnershipManagedFor=合作夥伴是
+NewPartnershipRequest=New partnership request
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 

@@ -184,7 +184,7 @@ if (empty($reshook)) {
 				$param .= '&contextpage='.urlencode($contextpage);
 			}
 			if ($limit > 0 && $limit != $conf->liste_limit) {
-				$param .= '&limit='.urlencode($limit);
+				$param .= '&limit='.((int) $limit);
 			}
 			if ($search_label) {
 				$param .= '&search_label='.urlencode($search_label);
@@ -302,7 +302,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -327,7 +327,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($search_status) {
 	$param .= '&search_status='.urlencode($search_status);
@@ -448,7 +448,7 @@ print '<td class="liste_titre center"><input type="text" class="width50" name="s
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre center">';
-print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Scheduled")), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'onrightofpage');
+print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Scheduled")), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 print '</td><td class="liste_titre right">';
 $searchpicto = $form->showFilterButtons();
 print $searchpicto;
@@ -509,6 +509,9 @@ if ($num > 0) {
 		$object->datestart = $db->jdate($obj->datestart);
 		$object->dateend = $db->jdate($obj->dateend);
 		$object->module_name = $obj->module_name;
+		$object->params = $obj->params;
+		$object->datelastrun = $db->jdate($obj->datelastrun);
+		$object->datenextrun = $db->jdate($obj->datenextrun);
 
 		$datelastrun = $db->jdate($obj->datelastrun);
 		$datelastresult = $db->jdate($obj->datelastresult);

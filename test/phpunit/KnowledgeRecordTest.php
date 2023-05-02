@@ -86,7 +86,7 @@ class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 		global $conf, $user, $langs, $db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-		if (empty($conf->knowledgemanagement->enabled)) {
+		if (!isModEnabled('knowledgemanagement')) {
 			print __METHOD__." module knowledgemanagement must be enabled.\n"; die(1);
 		}
 	}
@@ -132,27 +132,6 @@ class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 
 
 	/**
-	 * A sample test
-	 *
-	 * @return bool
-	 */
-	public function testSomething()
-	{
-		global $conf, $user, $langs, $db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
-
-		$result = true;
-
-		print __METHOD__." result=".$result."\n";
-		$this->assertTrue($result);
-
-		return $result;
-	}
-
-	/**
 	 * testKnowledgeRecordCreate
 	 *
 	 * @return int
@@ -165,7 +144,7 @@ class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$localobject = new KnowledgeRecord($this->savdb);
+		$localobject = new KnowledgeRecord($db);
 		$localobject->initAsSpecimen();
 		$result = $localobject->create($user);
 
@@ -192,7 +171,7 @@ class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new KnowledgeRecord($this->savdb);
+		$localobject=new KnowledgeRecord($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -242,7 +221,7 @@ class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$localobject = new KnowledgeRecord($this->savdb);
+		$localobject = new KnowledgeRecord($db);
 		print __METHOD__." id=".$id."\n";
 		$result = $localobject->fetch($id);
 		print __METHOD__." result=".$result."\n";

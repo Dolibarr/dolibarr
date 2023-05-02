@@ -100,7 +100,7 @@ if ($resql) {
 
 
 // Draft orders
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
+if (isModEnabled("supplier_order")) {
 	$langs->load("orders");
 
 	$sql = "SELECT cf.rowid, cf.ref, cf.total_ttc,";
@@ -158,7 +158,7 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 }
 
 // Draft invoices
-if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")) && $user->rights->fournisseur->facture->lire) {
+if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'read'))) {
 	$sql = "SELECT ff.ref_supplier, ff.rowid, ff.total_ttc, ff.type";
 	$sql .= ", s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";

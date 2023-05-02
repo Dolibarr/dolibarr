@@ -64,7 +64,7 @@ $conditions = array(
 	'NOTE_PRIVATE' => 1,
 	'SOCIETE' => 1,
 	'PRODUCTDESC' => (isModEnabled("product") || isModEnabled("service")),
-	'DETAILS' => (isModEnabled('facture') || isModEnabled("propal") || isModEnabled('commande') || isModEnabled('supplier_proposal') || (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")),
+	'DETAILS' => (isModEnabled('facture') || isModEnabled("propal") || isModEnabled('commande') || isModEnabled('supplier_proposal') || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")),
 	'USERSIGN' => 1,
 	'MAILING' => isModEnabled('mailing'),
 	'MAIL' => (isModEnabled('facture') || isModEnabled("propal") || isModEnabled('commande')),
@@ -165,14 +165,14 @@ if (empty($conf->use_javascript_ajax)) {
 		$constante = 'FCKEDITOR_ENABLE_'.$const;
 		print '<!-- constant = '.$constante.' -->'."\n";
 		print '<tr class="oddeven">';
-		print '<td width="16">'.img_object("", $picto[$const]).'</td>';
+		print '<td class="width20">'.img_object("", $picto[$const]).'</td>';
 		print '<td>';
 		print $langs->trans($desc);
 		if ($const == 'DETAILS') {
 			print '<br><span class="warning">'.$langs->trans("FCKeditorForProductDetails2").'</span>';
 		}
 		print '</td>';
-		print '<td class="center centpercent">';
+		print '<td class="center centpercent width100">';
 		$value = (isset($conf->global->$constante) ? $conf->global->$constante : 0);
 		if ($value == 0) {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';

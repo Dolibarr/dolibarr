@@ -216,13 +216,29 @@ if ($result) {
 	dol_print_error($db);
 }
 
-// Lecture des droits groupes
+// Read the permissions of a user inherited by its groups
 $permsgroupbyentity = array();
 
-$sql = "SELECT DISTINCT gr.fk_id, gu.entity";
+$sql = "SELECT DISTINCT gr.fk_id, gu.entity";	// fk_id are permission id and entity is entity of the group
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
-$sql .= " ".MAIN_DB_PREFIX."usergroup_user as gu";
-$sql .= " WHERE gr.entity = ".((int) $entity);
+$sql .= " ".MAIN_DB_PREFIX."usergroup_user as gu";	// all groups of a user
+$sql .= " WHERE 1 = 1";
+// A very strange business rules. Must be same than into user->getrights() user/perms.php and user/group/perms.php
+if (!empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY)) {
+	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+		$sql .= " AND gu.entity IN (0,".$conf->entity.")";
+	} else {
+		//$sql .= " AND r.entity = ".((int) $conf->entity);
+	}
+} else {
+	$sql .= " AND gr.entity = ".((int) $conf->entity);	// Only groups created in current entity
+	// The entity on the table usergroup_user should be useless and should never be used because it is alreay into gr and r.
+	// but when using MULTICOMPANY_TRANSVERSE_MODE, we may insert record that make rubbish result due to duplicate record of
+	// other entities, so we are forced to add a filter here
+	$sql .= " AND gu.entity IN (0,".$conf->entity.")";
+	//$sql .= " AND r.entity = ".((int) $conf->entity);	// Only permission of modules enabled in current entity
+}
+// End of strange business rule
 $sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
 $sql .= " AND gu.fk_user = ".((int) $object->id);
 
@@ -245,6 +261,7 @@ if ($result) {
 }
 
 
+
 /*
  * Part to add/remove permissions
  */
@@ -255,9 +272,12 @@ if ($user->hasRight("user", "user", "read") || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
 $morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 $morehtmlref .= '</a>';
+
+$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
+$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
 dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 
@@ -287,6 +307,23 @@ if (!empty($object->ldap_sid) && $object->statut == 0) {
 	print '</td>';
 }
 print '</tr>'."\n";
+
+// Type
+print '<tr><td>';
+$text = $langs->trans("Type");
+print $form->textwithpicto($text, $langs->trans("InternalExternalDesc"));
+print '</td><td>';
+$type = $langs->trans("Internal");
+if ($object->socid > 0) {
+	$type = $langs->trans("External");
+}
+print '<span class="badgeneutral">';
+print $type;
+if ($object->ldap_sid) {
+	print ' ('.$langs->trans("DomainUser").')';
+}
+print '</span>';
+print '</td></tr>'."\n";
 
 print '</table>';
 
@@ -479,6 +516,15 @@ if ($result) {
 		$isexpanded = ! $ishidden;
 		//var_dump("isexpanded=".$isexpanded);
 
+		$permsgroupbyentitypluszero = array();
+		if (!empty($permsgroupbyentity[0])) {
+			$permsgroupbyentitypluszero = array_merge($permsgroupbyentitypluszero, $permsgroupbyentity[0]);
+		}
+		if (!empty($permsgroupbyentity[$entity])) {
+			$permsgroupbyentitypluszero = array_merge($permsgroupbyentitypluszero, $permsgroupbyentity[$entity]);
+		}
+		//var_dump($permsgroupbyentitypluszero);
+
 		// Break found, it's a new module to catch
 		if (isset($obj->module) && ($oldmod <> $obj->module)) {
 			$oldmod = $obj->module;
@@ -586,8 +632,8 @@ if ($result) {
 				//print img_picto($langs->trans("Active"), 'tick');
 			}
 			print '</td>';
-		} elseif (isset($permsgroupbyentity[$entity]) && is_array($permsgroupbyentity[$entity])) {
-			if (in_array($obj->id, $permsgroupbyentity[$entity])) {	// Permission granted by group
+		} elseif (isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero)) {
+			if (in_array($obj->id, $permsgroupbyentitypluszero)) {	// Permission granted by group
 				if ($caneditperms) {
 					print '<td class="center">';
 					print $form->textwithtooltip($langs->trans("Inherited"), $langs->trans("PermissionInheritedFromAGroup"));

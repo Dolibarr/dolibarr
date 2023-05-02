@@ -234,22 +234,22 @@ if ($action == 'add') {
 } elseif ($action == 'delete' && $user->rights->ficheinter->supprimer) {
 	// delete modele
 	$object->fetch($id);
-	$object->delete();
+	$object->delete($user);
 	$id = 0;
 	header('Location: '.$_SERVER["PHP_SELF"]);
 	exit;
-} elseif ($action == 'setfrequency' && $user->rights->ficheinter->creer) {
+} elseif ($action == 'setfrequency' && $user->hasRight('ficheinter', 'creer')) {
 	// Set frequency and unit frequency
 	$object->fetch($id);
 	$object->setFrequencyAndUnit(GETPOST('frequency', 'int'), GETPOST('unit_frequency', 'alpha'));
-} elseif ($action == 'setdate_when' && $user->rights->ficheinter->creer) {
+} elseif ($action == 'setdate_when' && $user->hasRight('ficheinter', 'creer')) {
 	// Set next date of execution
 	$object->fetch($id);
 	$date = dol_mktime(GETPOST('date_whenhour'), GETPOST('date_whenmin'), 0, GETPOST('date_whenmonth'), GETPOST('date_whenday'), GETPOST('date_whenyear'));
 	if (!empty($date)) {
 		$object->setNextDate($date);
 	}
-} elseif ($action == 'setnb_gen_max' && $user->rights->ficheinter->creer) {
+} elseif ($action == 'setnb_gen_max' && $user->hasRight('ficheinter', 'creer')) {
 	// Set max period
 	$object->fetch($id);
 	$object->setMaxPeriod(GETPOST('nb_gen_max', 'int'));
@@ -398,9 +398,9 @@ if ($action == 'create') {
 		print '<br>';
 
 		$title = $langs->trans("ProductsAndServices");
-		if (empty($conf->service->enabled)) {
+		if (!isModEnabled("service")) {
 			$title = $langs->trans("Products");
-		} elseif (empty($conf->product->enabled)) {
+		} elseif (!isModEnabled("product")) {
 			$title = $langs->trans("Services");
 		}
 
@@ -527,7 +527,7 @@ if ($action == 'create') {
 						$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 						$morehtmlref .= '</form>';
 					} else {
-						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 					}
 				} else {
 					if (!empty($object->fk_project)) {
@@ -611,7 +611,7 @@ if ($action == 'create') {
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('Frequency');
 			print '</td>';
-			if ($action != 'editfrequency' && $user->rights->ficheinter->creer) {
+			if ($action != 'editfrequency' && $user->hasRight('ficheinter', 'creer')) {
 				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editfrequency&token='.newToken().'&id='.$id.'">';
 				print img_edit($langs->trans('Edit'), 1).'</a></td>';
 			}
@@ -709,9 +709,9 @@ if ($action == 'create') {
 			 */
 
 			$title = $langs->trans("ProductsAndServices");
-			if (empty($conf->service->enabled)) {
+			if (!isModEnabled("service")) {
 				$title = $langs->trans("Products");
-			} elseif (empty($conf->product->enabled)) {
+			} elseif (!isModEnabled("product")) {
 				$title = $langs->trans("Services");
 			}
 
@@ -761,7 +761,7 @@ if ($action == 'create') {
 
 			if ($user->rights->ficheinter->creer) {
 				print '<div class="inline-block divButAction">';
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createfrommodel&token='.newToken().'';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createfrommodel&token='.newToken();
 				print '&socid='.$object->thirdparty->id.'&id='.$object->id.'">';
 				print $langs->trans("AddIntervention").'</a></div>';
 			}

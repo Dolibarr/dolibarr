@@ -11,6 +11,7 @@
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Andreu Bisquerra Gaya <jove@bisquerra.com>
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
+ * Copyright (C) 2023       Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -275,9 +276,8 @@ class Paiement extends CommonObject
 				return -1;
 			}
 			if (empty($currencyofpayment)) {
-				$currencyofpayment = $this->multicurrency_code[$key];
-			}
-			if ($currencyofpayment != $this->multicurrency_code[$key]) {
+				$currencyofpayment = isset($this->multicurrency_code[$key]) ? $this->multicurrency_code[$key] : "";
+			} elseif ($currencyofpayment != $this->multicurrency_code[$key]) {
 				// If we have invoices with different currencies in the payment, we stop here
 				$this->error = 'ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment';
 				return -1;
@@ -383,7 +383,19 @@ class Paiement extends CommonObject
 							if (!in_array($invoice->type, $affected_types)) {
 								dol_syslog("Invoice ".$facid." is not a standard, nor replacement invoice, nor credit note, nor deposit invoice, nor situation invoice. We do nothing more.");
 							} elseif ($remaintopay) {
-								dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
+								// hook to have an option to automatically close a closable invoice with less payment than the total amount (e.g. agreed cash discount terms)
+								global $hookmanager;
+								$hookmanager->initHooks(array('paymentdao'));
+								$parameters = array('facid' => $facid, 'invoice' => $invoice, 'remaintopay' => $remaintopay);
+								$action = 'CLOSEPAIDINVOICE';
+								$reshook = $hookmanager->executeHooks('createPayment', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+								if ($reshook < 0) {
+									$this->errors[] = $hookmanager->error;
+									$this->error = $hookmanager->error;
+									$error++;
+								} elseif ($reshook == 0) {
+									dol_syslog("Remain to pay for invoice " . $facid . " not null. We do nothing more.");
+								}
 								// } else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
 							} else {
 								// If invoice is a down payment, we also convert down payment to discount
@@ -643,6 +655,8 @@ class Paiement extends CommonObject
 			$acc = new Account($this->db);
 			$result = $acc->fetch($this->fk_account);
 			if ($result < 0) {
+				$this->error = $acc->error;
+				$this->errors = $acc->errors;
 				$error++;
 				return -1;
 			}
@@ -768,7 +782,7 @@ class Paiement extends CommonObject
 				}
 
 				// Add link 'InvoiceRefused' in bank_url
-				if (! $error && $label == '(InvoiceRefused)') {
+				if (!$error && $label == '(InvoiceRefused)') {
 					$result=$acc->add_url_line(
 						$bank_line_id,
 						$this->id_prelevement,
@@ -788,6 +802,7 @@ class Paiement extends CommonObject
 				}
 			} else {
 				$this->error = $acc->error;
+				$this->errors = $acc->errors;
 				$error++;
 			}
 
@@ -916,11 +931,11 @@ class Paiement extends CommonObject
 	}
 
 	/**
-	 *    Validate payment
+	 * Validate payment
 	 *
-	 *	  @param	User	$user		User making validation
-	 *    @return   int     			<0 if KO, >0 if OK
-	 *    @deprecated
+	 * @param	User|null	$user		User making validation
+	 * @return	int     				<0 if KO, >0 if OK
+	 * @deprecated
 	 */
 	public function valide(User $user = null)
 	{
@@ -928,10 +943,10 @@ class Paiement extends CommonObject
 	}
 
 	/**
-	 *    Validate payment
+	 * Validate payment
 	 *
-	 *	  @param	User	$user		User making validation
-	 *    @return   int     			<0 if KO, >0 if OK
+	 * @param	User|null	$user		User making validation
+	 * @return	int     				<0 if KO, >0 if OK
 	 */
 	public function validate(User $user = null)
 	{
@@ -949,10 +964,10 @@ class Paiement extends CommonObject
 	}
 
 	/**
-	 *    Reject payment
+	 * Reject payment
 	 *
-	 *	  @param	User	$user		User making reject
-	 *    @return   int     			<0 if KO, >0 if OK
+	 * @param	User|null	$user		User making reject
+	 * @return  int     				<0 if KO, >0 if OK
 	 */
 	public function reject(User $user = null)
 	{
@@ -970,10 +985,10 @@ class Paiement extends CommonObject
 	}
 
 	/**
-	 *    Information sur l'objet
+	 * Information sur l'objet
 	 *
-	 *    @param   int     $id      id du paiement dont il faut afficher les infos
-	 *    @return  void
+	 * @param   int     $id      id du paiement dont il faut afficher les infos
+	 * @return  void
 	 */
 	public function info($id)
 	{
@@ -1288,10 +1303,10 @@ class Paiement extends CommonObject
 	}
 
 	/**
-	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *  Return the label of the status
 	 *
-	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * @return  string				Libelle
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -1300,11 +1315,11 @@ class Paiement extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 * @param   int		$status     Statut
-	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * @return	string  		    Libelle du statut
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{

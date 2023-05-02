@@ -175,7 +175,7 @@ $arrayfields = array(
 	'balance'=>array('label'=>$langs->trans("Balance"), 'checked'=>1, 'position'=>120),
 	'b.num_releve'=>array('label'=>$langs->trans("AccountStatement"), 'checked'=>1, 'position'=>130),
 	'b.conciliated'=>array('label'=>$langs->trans("BankLineReconciled"), 'enabled'=> $object->rappro, 'checked'=>($action == 'reconcile' ? 1 : 0), 'position'=>140),
-	'b.fk_bordereau'=>array('label'=>$langs->trans("ChequeReceipt"), 'checked'=>0, 'position'=>150),
+	'b.fk_bordereau'=>array('label'=>$langs->trans("ChequeNumber"), 'checked'=>0, 'position'=>150),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -286,7 +286,7 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 			$param .= '&offset='.urlencode($offset);
 		}
 		if ($limit) {
-			$param .= '&limit='.urlencode($limit);
+			$param .= '&limit='.((int) $limit);
 		}
 		if ($search_conciliated != '' && $search_conciliated != '-1') {
 			$param .= '&search_conciliated='.urlencode($search_conciliated);
@@ -438,7 +438,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($id > 0) {
 	$param .= '&id='.urlencode($id);
@@ -701,7 +701,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 $nbtotalofpages = 0;
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	$nbtotalofpages = ceil($nbtotalofrecords / $limit);
@@ -1134,8 +1134,8 @@ if ($resql) {
 	}
 	// Conciliated
 	if (!empty($arrayfields['b.conciliated']['checked'])) {
-		print '<td class="liste_titre" align="center">';
-		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1, 1);
+		print '<td class="liste_titre center parentonrightofpage">';
+		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1, 1, 'search_status onrightofpage maxwidth75');
 		print '</td>';
 	}
 	// Bordereau

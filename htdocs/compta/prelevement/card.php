@@ -71,9 +71,20 @@ $type = $object->type;
 
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+
+	$permissiontoadd = $user->hasRight('paymentbybanktransfer', 'read');
+	$permissiontosend = $user->hasRight('paymentbybanktransfer', 'send');
+	$permissiontocreditdebit = $user->hasRight('paymentbybanktransfer', 'debit');
+	$permissiontodelete = $user->hasRight('paymentbybanktransfer', 'read');
 } else {
 	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
+
+	$permissiontoadd = $user->hasRight('prelevement', 'bons', 'read');
+	$permissiontosend = $user->hasRight('prelevement', 'bons', 'send');
+	$permissiontocreditdebit = $user->hasRight('prelevement', 'bons', 'credit');
+	$permissiontodelete = $user->hasRight('prelevement', 'bons', 'read');
 }
+
 
 
 /*
@@ -87,20 +98,13 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($action == 'confirm_delete') {
-		$savtype = $object->type;
-		$res = $object->delete($user);
-		if ($res > 0) {
-			if ($savtype == 'bank-transfer') {
-				header("Location: ".DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php');
-			} else {
-				header("Location: ".DOL_URL_ROOT.'/compta/prelevement/index.php');
-			}
-			exit;
-		}
+	if ($action == 'setbankaccount' && $permissiontoadd) {
+		$object->oldcopy = dol_clone($object);
+		$object->fk_bank_account = GETPOST('fk_bank_account', 'int');
+		$object->update($user);
 	}
 
-	if ($action == 'infotrans' && (($user->rights->prelevement->bons->send && $object->type != 'bank-transfer') || ($user->rights->paymentbybanktransfer->send && $object->type == 'bank-transfer'))) {
+	if ($action == 'infotrans' && $permissiontosend) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
@@ -133,7 +137,7 @@ if (empty($reshook)) {
 	}
 
 	// Set direct debit order to credited, create payment and close invoices
-	if ($action == 'infocredit' && (($user->rights->prelevement->bons->credit && $object->type != 'bank-transfer') || ($user->rights->paymentbybanktransfer->debit && $object->type == 'bank-transfer'))) {
+	if ($action == 'infocredit' && $permissiontocreditdebit) {
 		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
 		if (($object->type != 'bank-transfer' && $object->statut == BonPrelevement::STATUS_CREDITED) || ($object->type == 'bank-transfer' && $object->statut == BonPrelevement::STATUS_DEBITED)) {
@@ -145,6 +149,19 @@ if (empty($reshook)) {
 
 		if ($error) {
 			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	if ($action == 'confirm_delete' && $permissiontodelete) {
+		$savtype = $object->type;
+		$res = $object->delete($user);
+		if ($res > 0) {
+			if ($savtype == 'bank-transfer') {
+				header("Location: ".DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php');
+			} else {
+				header("Location: ".DOL_URL_ROOT.'/compta/prelevement/index.php');
+			}
+			exit;
 		}
 	}
 }
@@ -179,13 +196,6 @@ if ($id > 0 || $ref) {
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount).'</span></td></tr>';
 
-	// Status
-	/*
-	print '<tr><td>'.$langs->trans('Status').'</td>';
-	print '<td>'.$object->getLibStatut(1).'</td>';
-	print '</tr>';
-	*/
-
 	if (!empty($object->date_trans)) {
 		$muser = new User($db);
 		$muser->fetch($object->user_trans);
@@ -210,23 +220,53 @@ if ($id > 0 || $ref) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
+	// Get bank account for the payment
 	$acc = new Account($db);
-	$result = $acc->fetch(($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT));
+	$fk_bank_account = $object->fk_bank_account;
+	if (empty($fk_bank_account)) {
+		$fk_bank_account = ($object->type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
+	}
+	if ($fk_bank_account > 0) {
+		$result = $acc->fetch($fk_bank_account);
+	}
 
-	print '<tr><td class="titlefieldcreate">';
+	// Bank account
 	$labelofbankfield = "BankToReceiveWithdraw";
 	if ($object->type == 'bank-transfer') {
 		$labelofbankfield = 'BankToPayCreditTransfer';
 	}
-	print $langs->trans($labelofbankfield);
+	//print $langs->trans($labelofbankfield);
+	$caneditbank = $permissiontoadd;
+	if ($object->status != $object::STATUS_DRAFT) {
+		$caneditbank = 0;
+	}
+	/*
+	print '<tr><td class="titlefieldcreate">';
+	print $form->editfieldkey($langs->trans($labelofbankfield), 'fk_bank_account', $acc->id, $object, $caneditbank);
 	print '</td>';
 	print '<td>';
-	if ($acc->id > 0) {
-		print $acc->getNomUrl(1);
-	}
+	print $form->editfieldval($langs->trans($labelofbankfield), 'fk_bank_account', $acc->id, $acc, $caneditbank, 'string', '', null, null, '', 1, 'getNomUrl');
 	print '</td>';
 	print '</tr>';
+	*/
+	print '<tr><td class="titlefieldcreate">';
+	print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
+	print $form->textwithpicto($langs->trans("BankAccount"), $langs->trans($labelofbankfield));
+	print '<td>';
+	if (($action != 'editbankaccount') && $caneditbank) {
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editfkbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+	}
+	print '</tr></table>';
+	print '</td><td>';
+	if ($action == 'editfkbankaccount') {
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $fk_bank_account, 'fk_bank_account', 0);
+	} else {
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $fk_bank_account, 'none');
+	}
+	print "</td>";
+	print '</tr>';
 
+	// Donwload file
 	print '<tr><td class="titlefieldcreate">';
 	$labelfororderfield = 'WithdrawalFile';
 	if ($object->type == 'bank-transfer') {
@@ -272,7 +312,7 @@ if ($id > 0 || $ref) {
 	print $formconfirm;
 
 
-	if (empty($object->date_trans) && $user->rights->prelevement->bons->send && $action == 'settransmitted') {
+	if (empty($object->date_trans) && (($user->rights->prelevement->bons->send && $object->type != 'bank-transfer') || ($user->rights->paymentbybanktransfer->send && $object->type == 'bank-transfer')) && $action == 'settransmitted') {
 		print '<form method="post" name="userfile" action="card.php?id='.$object->id.'" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="infotrans">';
@@ -291,7 +331,7 @@ if ($id > 0 || $ref) {
 		print '<br>';
 	}
 
-	if (!empty($object->date_trans) && empty($object->date_credit) && $user->rights->prelevement->bons->credit && $action == 'setcredited') {
+	if (!empty($object->date_trans) && empty($object->date_credit) && (($user->rights->prelevement->bons->credit && $object->type != 'bank-transfer') || ($user->rights->paymentbybanktransfer->debit && $object->type == 'bank-transfer')) && $action == 'setcredited') {
 		$btnLabel = ($object->type == 'bank-transfer') ? $langs->trans("ClassDebited") : $langs->trans("ClassCredited");
 		print '<form name="infocredit" method="post" action="card.php?id='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -352,7 +392,7 @@ if ($id > 0 || $ref) {
 
 	// Count total nb of records
 	$nbtotalofrecords = '';
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
 		if (($page * $limit) > $nbtotalofrecords) {
@@ -372,7 +412,7 @@ if ($id > 0 || $ref) {
 
 		$urladd = "&id=".urlencode($id);
 		if ($limit > 0 && $limit != $conf->liste_limit) {
-			$urladd .= '&limit='.urlencode($limit);
+			$urladd .= '&limit='.((int) $limit);
 		}
 
 		print '<form method="POST" action="'.$_SERVER ['PHP_SELF'].'" name="search_form">'."\n";

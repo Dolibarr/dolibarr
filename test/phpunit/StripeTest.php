@@ -83,7 +83,7 @@ class StripeTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 
-		if (empty($conf->stripe->enabled)) {
+		if (!isModEnabled('stripe')) {
 			print __METHOD__." Module Stripe must be enabled.\n"; die(1);
 		}
 
