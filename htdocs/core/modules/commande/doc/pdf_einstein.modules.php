@@ -260,12 +260,12 @@ class pdf_einstein extends ModelePDFCommandes
 				$suffix = '';
 				if (!empty($conf->global->PROFORMA_PDF_WITH_SUFFIX)) {
 					$suffix = (GETPOST('model', 2)=='proforma') ? $conf->global->PROFORMA_PDF_WITH_SUFFIX : '';
+					$suffix = dol_sanitizeFileName($suffix);
 				}
 
 				$objectref = dol_sanitizeFileName($object->ref);
-				$suffix = dol_sanitizeFileName($suffix);
 				$dir = $conf->commande->multidir_output[$object->entity]."/".$objectref;
-				$file = $dir . "/" .$objectref.$suffix.".pdf";
+				$file = $dir."/".$objectref.$suffix.".pdf";
 			}
 
 			if (!file_exists($dir)) {
