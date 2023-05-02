@@ -411,3 +411,4 @@ CREATE TABLE llx_c_invoice_subtype (
 
 ALTER TABLE llx_c_invoice_subtype ADD UNIQUE INDEX uk_c_invoice_subtype (entity, code);
 
+ALTER TABLE llx_societe_rib ADD COLUMN last_main_doc varchar(255) AFTER currency_code;

@@ -56,7 +56,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "members", "paybox", "propal", "commercial"));
-
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
 
@@ -139,10 +138,11 @@ if ($source == 'proposal') {
 } elseif ($source == 'societe_rib') {
 	$securekeyseed = getDolGlobalString('SOCIETE_RIB_ONLINE_SIGNATURE_SECURITY_TOKEN');
 }
+var_dump($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? $entity : ''), $SECUREKEY);
 if (!dol_verifyHash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? $entity : ''), $SECUREKEY, '0')) {
 	httponly_accessforbidden('Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref), 403, 1);
 }
-
+var_dump('truc');
 if ($source == 'proposal') {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$object = new Propal($db);
@@ -532,24 +532,24 @@ if ($source == 'proposal') {
 	$result = $object->fetch_thirdparty();
 
 	// Proposer
-	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Proposer");
+	print '<tr class="CTableRow2"><td class="CTableRow2">' . $langs->trans("Proposer");
 	print '</td><td class="CTableRow2">';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
-	print '<b>'.$creditor.'</b>';
-	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
-	print '</td></tr>'."\n";
+	print '<b>' . $creditor . '</b>';
+	print '<input type="hidden" name="creditor" value="' . $creditor . '">';
+	print '</td></tr>' . "\n";
 
 	// Target
-	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
+	print '<tr class="CTableRow2"><td class="CTableRow2">' . $langs->trans("ThirdParty");
 	print '</td><td class="CTableRow2">';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
-	print '<b>'.$object->thirdparty->name.'</b>';
-	print '</td></tr>'."\n";
+	print '<b>' . $object->thirdparty->name . '</b>';
+	print '</td></tr>' . "\n";
 
 	// Object
-	$text = '<b>'.$langs->trans("Signature".dol_ucfirst($source)."Ref", $object->ref).'</b>';
-	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow2">'.$text;
+	$text = '<b>' . $langs->trans("Signature" . dol_ucfirst($source) . "Ref", $object->ref) . '</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">' . $langs->trans("Designation");
+	print '</td><td class="CTableRow2">' . $text;
 
 	$last_main_doc_file = $object->last_main_doc;
 
@@ -560,10 +560,12 @@ if ($source == 'proposal') {
 		// It seems document has never been generated, or was generated and then deleted.
 		// So we try to regenerate it with its default template.
 		$defaulttemplate = 'sepamandate';
-		$object->thirdparty->generateDocument($defaulttemplate, $langs);
+		//$result = $companybankaccount->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		$result = $object->thirdparty->generateDocument($defaulttemplate, $langs);
 	}
 
 	$directdownloadlink = $object->thirdparty->getLastMainDocLink($source);
+	var_dump($directdownloadlink);
 	if ($directdownloadlink) {
 		print '<br><a href="'.$directdownloadlink.'">';
 		print img_mime($object->last_main_doc, '');

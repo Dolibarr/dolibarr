@@ -47,12 +47,14 @@ create table llx_societe_rib
   fk_country     integer,
   currency_code  varchar(3),
 
+  last_main_doc	 varchar(255),					-- relative filepath+filename of last main generated document
+
   -- For BAN direct debit feature
   rum            varchar(32),	 				-- RUM value to use for SEPA generation
   date_rum		 date,							-- Date of mandate
   frstrecur      varchar(16) default 'FRST',    -- 'FRST' or 'RECUR'
 
-  --For credit card
+  -- For credit card
   last_four varchar(4),										-- last 4
   card_type varchar(255),									-- card type 'VISA', 'MC' , ...
   cvn varchar(255),
@@ -60,7 +62,7 @@ create table llx_societe_rib
   exp_date_year INTEGER,
   country_code varchar(10),
 
-  --For Paypal
+  -- For Paypal
   approved INTEGER DEFAULT 0,
   email varchar(255),
   ending_date date,
@@ -69,7 +71,7 @@ create table llx_societe_rib
   starting_date date,
   total_amount_of_all_payments double(24,8),
 
-  --For Stripe
+  -- For Stripe
   stripe_card_ref varchar(128),								-- 'card_...'
   stripe_account varchar(128),								-- 'pk_live_...'
 
