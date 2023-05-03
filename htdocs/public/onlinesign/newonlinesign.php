@@ -565,10 +565,11 @@ if ($source == 'proposal') {
 			'force_dir_output'=>$diroutput
 		);
 		$result = $object->thirdparty->generateDocument($defaulttemplate, $langs, 0, 0, 0, $moreparams);
+		$object->last_main_doc=$object->thirdparty->last_main_doc;
 	}
-
+	var_dump($object->last_main_doc);
 	$directdownloadlink = $object->getLastMainDocLink('company');
-	var_dump($directdownloadlink);
+	var_dump('toto', $directdownloadlink);
 	if ($directdownloadlink) {
 		print '<br><a href="'.$directdownloadlink.'">';
 		print img_mime($object->last_main_doc, '');

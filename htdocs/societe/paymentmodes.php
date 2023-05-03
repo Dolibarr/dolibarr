@@ -1446,6 +1446,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print_liste_field_titre("WithdrawMode");
 		}
 		print_liste_field_titre("Default", '', '', '', '', '', '', '', 'center ');
+
 		print_liste_field_titre('', '', '', '', '', '', '', '', 'center ');
 		print_liste_field_titre('', '', '', '', '', '', '', '', 'center ');
 		// Fields from hook
