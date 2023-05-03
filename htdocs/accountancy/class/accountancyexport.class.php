@@ -387,7 +387,7 @@ class AccountancyExport
 				$outputDir .= '/'.dol_sanitizePathName($formatexportset);
 				if (!dol_is_dir($outputDir)) {
 					if (dol_mkdir($outputDir) < 0) {
-						$this->errors[] = $langs->trans('ErrorCanNotCreateDir', $outputDir);;
+						$this->errors[] = $langs->trans('ErrorCanNotCreateDir', $outputDir);
 						return -1;
 					}
 				}
@@ -396,7 +396,7 @@ class AccountancyExport
 			if ($outputDir != '') {
 				if (!dol_is_dir($outputDir)) {
 					$langs->load('errors');
-					$this->errors[] = $langs->trans('ErrorDirNotFound', $outputDir);;
+					$this->errors[] = $langs->trans('ErrorDirNotFound', $outputDir);
 					return -1;
 				}
 

@@ -946,8 +946,25 @@ if (empty($reshook)) {
 
 				$label = ((GETPOST('product_label') && GETPOST('product_label') != $prod->label) ? GETPOST('product_label') : '');
 
+				// Force VAT if a rate is defined on state dictionary
+				$state_id = $object->thirdparty->state_id;
+
+				$sql = "SELECT d.rowid, t.taux as vat_default_rate, t.code as vat_default_code ";
+				$sql .= " FROM ".MAIN_DB_PREFIX."c_departements as d";
+				$sql .= " ,".MAIN_DB_PREFIX."c_tva as t";
+				$sql .= " WHERE d.fk_tva = t.rowid";
+				$sql .= " AND d.rowid = ".((int) $state_id);
+
+				$resql = $db->query($sql);
+				if ($resql) {
+					if ($db->num_rows($resql)) {
+						$objvat = $db->fetch_object($resql);
+					}
+				}
+
 				// Update if prices fields are defined
-				$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
+				$tva_code = isset($objvat->vat_default_code) ? '('.$objvat->vat_default_code.')' : '';
+				$tva_tx = isset($objvat->vat_default_rate) ? $objvat->vat_default_rate.$tva_code : get_default_tva($mysoc, $object->thirdparty, $prod->id);
 				$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
 				if (empty($tva_tx)) {
 					$tva_npr = 0;
