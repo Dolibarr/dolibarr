@@ -2623,7 +2623,7 @@ abstract class CommonObject
 					$row = $this->db->fetch_row($resql);
 					$rows[] = $row[0]; // Add parent line into array rows
 
-					(!empty(getDolGlobalString('CARE_GRANDCHILD'))) ? $grandchild = 1: $grandchild = 0;
+					$grandchild = getDolGlobalString('CARE_GRANDCHILD',0);
 					$childrens = $this->getChildrenOfLine($row[0], $grandchild);
 					if (!empty($childrens))
 					{
