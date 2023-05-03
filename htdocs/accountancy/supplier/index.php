@@ -525,11 +525,11 @@ if ($resql) {
 		}
 		print '</td>';
 
-		print '<td class="left">';
+		print '<td class="tdoverflowmax300"'.(empty($row[1]) ? '' : ' title="'.dol_escape_htmltag($row[1]).'"').'>';
 		if ($row[0] == 'tobind') {
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.((int) $y), $langs->transnoentitiesnoconv("ToBind"));
 		} else {
-			print $row[1];
+			print dol_escape_htmltag($row[1]);
 		}
 		print '</td>';
 
