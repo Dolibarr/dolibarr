@@ -411,3 +411,6 @@ CREATE TABLE llx_c_invoice_subtype (
 
 ALTER TABLE llx_c_invoice_subtype ADD UNIQUE INDEX uk_c_invoice_subtype (entity, code);
 
+-- All duration of services in bom are now stored in seconds
+UPDATE llx_bom_bomline b INNER JOIN llx_c_units u ON b.fk_unit = u.rowid SET b.qty = b.qty * u.scale;
+UPDATE llx_bom_bomline b SET b.fk_unit = 30;
