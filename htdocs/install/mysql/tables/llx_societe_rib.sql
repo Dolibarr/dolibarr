@@ -75,6 +75,11 @@ create table llx_societe_rib
   stripe_card_ref varchar(128),								-- 'card_...'
   stripe_account varchar(128),								-- 'pk_live_...'
 
+  -- For Online Sign
+  date_signature		datetime,
+  online_sign_ip		varchar(48),
+  online_sign_name		varchar(64),
+
   comment        varchar(255),
   ipaddress      varchar(68),
   status integer NOT NULL DEFAULT 1,						-- 1=ACTIVE, 0=IN_TRASH

@@ -249,6 +249,8 @@ print '<input type="hidden" name="suffix" value="'.GETPOST("suffix", 'alpha').'"
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print '<input type="hidden" name="page_y" value="" />';
+print '<input type="hidden" name="source" value="'.$source.'" />';
+print '<input type="hidden" name="ref" value="'.$ref.'" />';
 print "\n";
 print '<!-- Form to sign -->'."\n";
 
@@ -568,9 +570,7 @@ if ($source == 'proposal') {
 		$result = $object->thirdparty->generateDocument($defaulttemplate, $langs, 0, 0, 0, $moreparams);
 		$object->last_main_doc=$object->thirdparty->last_main_doc;
 	}
-	var_dump($object->last_main_doc);
 	$directdownloadlink = $object->getLastMainDocLink('company');
-	var_dump('toto', $directdownloadlink);
 	if ($directdownloadlink) {
 		print '<br><a href="'.$directdownloadlink.'">';
 		print img_mime($object->last_main_doc, '');
@@ -759,7 +759,7 @@ if ($action == "dosign" && empty($cancel)) {
 		if ($message == 'signed') {
 			print '<span class="ok">'.$langs->trans(dol_ucfirst($source)."Signed").'</span>';
 		} else {
-			print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("Sign".dol_ucfirst($source)).'">';
+				print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("Sign".dol_ucfirst($source)).'">';
 		}
 	}
 }

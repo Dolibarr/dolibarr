@@ -422,6 +422,145 @@ if ($action == "importSignature") {
 					// We should just create an image file with the signature.
 				}
 			}
+		} elseif ($mode == "societe_rib") {
+			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+			$object = new CompanyBankAccount($db);
+			$object->fetch($ref);
+			if (!empty($object->id)) {
+				$object->fetch_thirdparty();
+			}
+
+			$upload_dir = $conf->societe->multidir_output[$object->thirdparty->entity].'/'
+			.dol_sanitizeFileName($object->thirdparty->id).'/';
+
+			$default_font_size = pdf_getPDFFontSize($langs);	// Must be after pdf_getInstance
+			$default_font = pdf_getPDFFont($langs);	// Must be after pdf_getInstance
+			$langs->loadLangs(array("main", "companies"));
+
+			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
+			$filename = "signatures/".$date."_signature.png";
+			if (!is_dir($upload_dir."signatures/")) {
+				if (!dol_mkdir($upload_dir."signatures/")) {
+					$response ="Error mkdir. Failed to create dir ".$upload_dir."signatures/";
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				$return = file_put_contents($upload_dir.$filename, $data);
+				if ($return == false) {
+					$error++;
+					$response = 'Error file_put_content: failed to create signature file.';
+				}
+			}
+
+			if (!$error) {
+				// Defined modele of doc
+				$last_main_doc_file = $object->last_main_doc;
+				$directdownloadlink = $object->getLastMainDocLink('company');	// url to download the $object->last_main_doc
+
+				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
+					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
+					$newpdffilename = $upload_dir.$ref."_signed-".$date.".pdf";
+					$sourcefile = $upload_dir.$ref.".pdf";
+
+					if (dol_is_file($sourcefile)) {
+						// We build the new PDF
+						$pdf = pdf_getInstance();
+						if (class_exists('TCPDF')) {
+							$pdf->setPrintHeader(false);
+							$pdf->setPrintFooter(false);
+						}
+						$pdf->SetFont(pdf_getPDFFont($langs));
+
+						if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+							$pdf->SetCompression(false);
+						}
+
+						//$pdf->Open();
+						$pagecount = $pdf->setSourceFile($sourcefile);		// original PDF
+
+						$s = array(); 	// Array with size of each page. Exemple array(w'=>210, 'h'=>297);
+						for ($i=1; $i<($pagecount+1); $i++) {
+							try {
+								$tppl = $pdf->importPage($i);
+								$s = $pdf->getTemplatesize($tppl);
+								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+								$pdf->useTemplate($tppl);
+							} catch (Exception $e) {
+								dol_syslog("Error when manipulating the PDF ".$sourcefile." by onlineSign: ".$e->getMessage(), LOG_ERR);
+								$response = $e->getMessage();
+								$error++;
+							}
+						}
+
+						// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+						// TODO Get position of box from PDF template
+						$xforimgstart = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
+						$yforimgstart = (empty($s['h']) ? 240 : $s['h'] - 60);
+						$wforimg = $s['w'] - 20 - $xforimgstart;
+
+						$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4) - 4);
+						$pdf->SetFont($default_font, '', $default_font_size - 1);
+						$pdf->MultiCell($wforimg, 4, $langs->trans("DateSigning").': '.dol_print_date(dol_now(), "daytext", false, $langs, true), 0, 'L');
+						$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4));
+						$pdf->MultiCell($wforimg, 4, $langs->trans("Lastname").': '.$online_sign_name, 0, 'L');
+
+						$pdf->Image($upload_dir.$filename, $xforimgstart, $yforimgstart, $wforimg, round($wforimg / 4));
+
+						//$pdf->Close();
+						$pdf->Output($newpdffilename, "F");
+
+						// Index the new file and update the last_main_doc property of object.
+						$object->indexFile($newpdffilename, 1);
+					}
+				} elseif (preg_match('/\.odt/i', $last_main_doc_file)) {
+					// Adding signature on .ODT not yet supported
+					// TODO
+				} else {
+					// Document format not supported to insert online signature.
+					// We should just create an image file with the signature.
+				}
+			}
+
+			if (!$error) {
+				$db->begin();
+
+				$online_sign_ip = getUserRemoteIP();
+
+				$sql  = "UPDATE ".MAIN_DB_PREFIX.$object->table_element;
+				$sql .= " SET ";
+				$sql .= " date_signature = '".$db->idate(dol_now())."',";
+				$sql .= " online_sign_ip = '".$db->escape($online_sign_ip)."'";
+				if ($online_sign_name) {
+					$sql .= ", online_sign_name = '".$db->escape($online_sign_name)."'";
+				}
+				$sql .= " WHERE rowid = ".((int) $object->id);
+
+				dol_syslog(__METHOD__, LOG_DEBUG);
+				$resql = $db->query($sql);
+				if (!$resql) {
+					$error++;
+				} else {
+					$num = $db->affected_rows($resql);
+				}
+
+				if (!$error) {
+						$response = "success";
+				} else {
+					$error++;
+					$response = "error sql";
+				}
+
+				if (!$error) {
+					$db->commit();
+					$response = "success";
+					setEventMessages("PropalSigned", null, 'warnings');
+				} else {
+					$db->rollback();
+				}
+			}
 		}
 	} else {
 		$error++;
