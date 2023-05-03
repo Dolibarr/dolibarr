@@ -167,6 +167,7 @@ qtyToTranferLotIsNotEnough=You don't have enough stock, for this lot number, fro
 ShowWarehouse=Show warehouse
 MovementCorrectStock=Stock correction for product %s
 MovementTransferStock=Stock transfer of product %s into another warehouse
+BatchStockMouvementAddInGlobal=Batch stock move into global stock (product doesn't use batch anymore)
 InventoryCodeShort=Inv./Mov. code
 NoPendingReceptionOnSupplierOrder=No pending reception due to open purchase order
 ThisSerialAlreadyExistWithDifferentDate=This lot/serial number (<strong>%s</strong>) already exists but with different eatby or sellby date (found <strong>%s</strong> but you enter <strong>%s</strong>).
