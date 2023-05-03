@@ -2650,7 +2650,13 @@ if ($action == 'create') {
 
 			// Force mandatory order method
 			print '<tr><td class="fieldrequired">'.$langs->trans("OrderMode").'</td><td>';
-			$formorder->selectInputMethod(GETPOST('methodecommande'), "methodecommande", 1);
+
+			$selectedInputMethod = GETPOST('methodecommande');
+			if (empty($selectedInputMethod) && !empty($conf->global->SUPPLIER_ORDER_DEFAULT_INPUT_METHOD)) {
+				$selectedInputMethod = $conf->global->SUPPLIER_ORDER_DEFAULT_INPUT_METHOD;
+			}
+
+			$formorder->selectInputMethod($selectedInputMethod, "methodecommande", 1);
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment" value="'.GETPOST('comment').'"></td></tr>';
