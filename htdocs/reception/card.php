@@ -735,7 +735,9 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader('', $langs->trans('Reception'), 'Reception');
+$title = $object->ref.' - '.$langs->trans('Reception');
+
+llxHeader('', $title, 'Reception');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
