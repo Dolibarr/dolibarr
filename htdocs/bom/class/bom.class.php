@@ -1423,8 +1423,7 @@ class BOM extends CommonObject
 					}
 				} else {
 					// Convert qty of line into hours
-					$unitforline = measuringUnitString($line->fk_unit, '', '', 1);
-					$qtyhourforline = convertDurationtoHour($line->qty, $unitforline);
+					$qtyhourforline = convertDurationtoHour($line->qty, 's');
 
 					if (isModEnabled('workstation') && !empty($tmpproduct->fk_default_workstation)) {
 						$workstation = new Workstation($this->db);

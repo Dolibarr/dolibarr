@@ -320,8 +320,7 @@ if ($resql) {
 			$total_cost+= $sub_bom->total_cost * $sub_bom_line->qty * $line->qty;
 		} elseif ($sub_bom_product->type == Product::TYPE_SERVICE && isModEnabled('workstation') && !empty($sub_bom_product->fk_default_workstation)) {
 			//Convert qty to hour
-			$unit = measuringUnitString($sub_bom_line->fk_unit, '', '', 1);
-			$qty = convertDurationtoHour($sub_bom_line->qty, $unit);
+			$qty = convertDurationtoHour($sub_bom_line->qty, 's');
 			$workstation = new Workstation($this->db);
 			$res = $workstation->fetch($sub_bom_product->fk_default_workstation);
 			if ($res > 0) $sub_bom_line->total_cost = price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
