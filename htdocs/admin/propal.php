@@ -625,7 +625,7 @@ print '<td class="right"><input type="submit" class="button button-edit" value="
 print '</tr>';
 print '</form>';
 
-// Allow external download
+// Allow OnLine Sign
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
 print '<td class="center" colspan="2">';
