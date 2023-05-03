@@ -1568,7 +1568,7 @@ class Invoices extends DolibarrApi
 			$totalcreditnotes = $this->invoice->getSumCreditNotesUsed($is_multicurrency);
 			$totaldeposits = $this->invoice->getSumDepositsUsed($is_multicurrency);
 			$remainstopay = $amount = price2num($total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
-			
+
 			// hook to finalize the remaining amount, considering e.g. cash discount agreements
 			$parameters = array('$totalpaid'=>$totalpaid, '$totalcreditnotes'=>$totalcreditnotes, '$totaldeposits'=>$totaldeposits, 'remaintopay'=>$remainstopay);
 			$action = 'API_CUSTOMER_INVOICE';
