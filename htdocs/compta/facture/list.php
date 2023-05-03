@@ -14,6 +14,7 @@
  * Copyright (C) 2017      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  * Copyright (C) 2018      Charlene Benke        <charlie@patas-monkey.com>
  * Copyright (C) 2019-2021 Alexandre Spangaro    <aspangaro@open-dsi.fr>
+ * Copyright (C) 2023	   Joachim Kueter		 <git-jk@bloxera.com>	
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -423,6 +424,19 @@ if ($action == 'makepayment_confirm' && !empty($user->rights->facture->paiement)
 						$totaldeposits = $facture->getSumDepositsUsed();
 						$totalpay = $paiementAmount + $totalcreditnotes + $totaldeposits;
 						$remaintopay = price2num($facture->total_ttc - $totalpay);
+
+						// hook to finalize the remaining amount, considering e.g. cash discount agreements
+						$parameters = array('$totalpaid'=>$totalpaid, '$totalcreditnotes'=>$totalcreditnotes, '$totaldeposits'=>$totaldeposits, 'remaintopay'=>$remaintopay);
+						$reshook = $hookmanager->executeHooks('finalizeAmountOfCustomerInvoice', $parameters, $facture, $action); // Note that $action and $object may have been modified by some hooks
+						if ($reshook > 0) {
+							if (!empty($remain = $hookmanager->resArray['remaintopay'])) {
+								$remaintopay = $remain;
+							}
+						} elseif ($reshook < 0) {
+							$error++;
+							setEventMessages($facture->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
+						}
+
 						if ($remaintopay != 0) {
 							$resultBank = $facture->setBankAccount($bankid);
 							if ($resultBank < 0) {
@@ -487,6 +501,19 @@ if ($action == 'makepayment_confirm' && !empty($user->rights->facture->paiement)
 				$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
 				$totaldeposits = $objecttmp->getSumDepositsUsed();
 				$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
+
+				// hook to finalize the remaining amount, considering e.g. cash discount agreements
+				$parameters = array('$totalpaid'=>$totalpaid, '$totalcreditnotes'=>$totalcreditnotes, '$totaldeposits'=>$totaldeposits, 'remaintopay'=>$objecttmp->resteapayer);
+				$reshook = $hookmanager->executeHooks('finalizeAmountOfCustomerInvoice', $parameters, $objecttmp, $action); // Note that $action and $object may have been modified by some hooks
+				if ($reshook > 0) {
+					if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
+						$objecttmp->resteapayer = $remaintopay;
+					}
+				} elseif ($reshook < 0) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
+				}
+
 				if ($objecttmp->statut == Facture::STATUS_DRAFT) {
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');

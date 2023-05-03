@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2020   Thibault FOUCART     	<support@ptibogxiv.net>
+ * Copyright (C) 2023	Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1414,6 +1415,20 @@ class Invoices extends DolibarrApi
 		$totaldeposits = $this->invoice->getSumDepositsUsed();
 		$resteapayer = price2num($this->invoice->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
+		// hook to finalize the remaining amount, considering e.g. cash discount agreements
+		$parameters = array('$totalpaid'=>$totalpaid, '$totalcreditnotes'=>$totalcreditnotes, '$totaldeposits'=>$totaldeposits, 'remaintopay'=>$resteapayer);
+		$action = 'API_CUSTOMER_INVOICE';
+		$hookmanager->initHooks(array('apicustomerinvoice'));
+		$reshook = $hookmanager->executeHooks('finalizeAmountOfCustomerInvoice', $parameters, $this->invoice, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
+				$resteapayer = $remaintopay;
+			}
+		} elseif ($reshook < 0) {
+			$error++;
+			setEventMessages($this->invoice->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
+		}
+
 		$this->db->begin();
 
 		$amounts = array();
@@ -1553,6 +1568,20 @@ class Invoices extends DolibarrApi
 			$totalcreditnotes = $this->invoice->getSumCreditNotesUsed($is_multicurrency);
 			$totaldeposits = $this->invoice->getSumDepositsUsed($is_multicurrency);
 			$remainstopay = $amount = price2num($total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
+			
+			// hook to finalize the remaining amount, considering e.g. cash discount agreements
+			$parameters = array('$totalpaid'=>$totalpaid, '$totalcreditnotes'=>$totalcreditnotes, '$totaldeposits'=>$totaldeposits, 'remaintopay'=>$remainstopay);
+			$action = 'API_CUSTOMER_INVOICE';
+			$hookmanager->initHooks(array('apicustomerinvoice'));
+			$reshook = $hookmanager->executeHooks('finalizeAmountOfCustomerInvoice', $parameters, $this->invoice, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook > 0) {
+				if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
+					$remainstopay = $remaintopay;
+				}
+			} elseif ($reshook < 0) {
+				$error++;
+				setEventMessages($this->invoice->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
+			}
 
 			if (!$is_multicurrency && $amountarray["amount"] != 'remain') {
 				$amount = price2num($amountarray["amount"], 'MT');

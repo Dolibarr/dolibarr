@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2023	Joachim Kueter		    <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -452,6 +453,21 @@ class SupplierInvoices extends DolibarrApi
 		$totalpaid = $this->invoice->getSommePaiement();
 		$totaldeposits = $this->invoice->getSumDepositsUsed();
 		$resteapayer = price2num($this->invoice->total_ttc - $totalpaid - $totaldeposits, 'MT');
+
+		// hook to finalize the remaining amount, considering e.g. cash discount agreements
+		$parameters = array('$totalpaid'=>$totalpaid, '$totalcreditnotes'=>$totalcreditnotes, '$totaldeposits'=>$totaldeposits, 'remaintopay'=>$resteapayer);
+		$action = 'API_SUPPLIER_INVOICE';
+		$hookmanager->initHooks(array('apisupplierinvoice'));
+		$reshook = $hookmanager->executeHooks('finalizeAmountOfSupplierInvoice', $parameters, $this->invoice, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			// print $hookmanager->resPrint;
+			if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
+				$resteapayer = $remaintopay;
+			}
+		} elseif ($reshook < 0) {
+			$error++;
+			setEventMessages($this->invoice->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
+		}
 
 		$this->db->begin();
 
