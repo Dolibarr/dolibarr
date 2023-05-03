@@ -102,7 +102,7 @@ class SMTPs
 	 *
 	 * @var	array	$_msgContent	Array of messages
 	 */
-	private array $_msgContent = array();
+	private $_msgContent = array();
 
 	/**
 	 * Custom X-Headers

@@ -169,6 +169,7 @@ NEW: Use by default the domain $dolibarr_main_url_root for SMTP HELO
 NEW: use more recent model by default
 NEW: VAT can be modified during add of line
 NEW: write all fields and their properties in asciidoc format
+NEW: Can add an array of several links in date selector
 
 For developers or integrators:
 ------------------------------

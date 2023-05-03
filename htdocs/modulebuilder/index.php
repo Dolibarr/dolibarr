@@ -1542,6 +1542,13 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			setEventMessages($langs->trans('ErrorFailToCreateFile', $pathoffiletoeditsrc), null, 'errors');
 			$error++;
 		}
+		// check if documentation was generate and add table of properties object
+		$file = $destdir.'/class/'.strtolower($objectname).'.class.php';
+		$destfile = $destdir.'/doc/Documentation.asciidoc';
+
+		if (file_exists($destfile)) {
+			writePropsInAsciiDoc($file, $objectname, $destfile);
+		}
 	}
 	if (!$error) {
 		// Edit sql with new properties
@@ -1869,6 +1876,12 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 			'core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php'=>'core/modules/'.strtolower($module).'/doc/doc_generic_'.strtolower($objectname).'_odt.modules.php',
 			'core/modules/mymodule/doc/pdf_standard_myobject.modules.php'=>'core/modules/'.strtolower($module).'/doc/pdf_standard_'.strtolower($objectname).'.modules.php'
 		);
+
+		// delete property if documentation was generated
+		$file_doc = $dirins.'/'.strtolower($module).'/doc/Documentation.asciidoc';
+		if (file_exists($file_doc)) {
+			deletePropsFromDoc($file_doc, $objectname);
+		}
 
 		//menu for the object selected
 		// load class and check if menu exist for this object
@@ -4779,7 +4792,7 @@ if ($module == 'initmodule') {
 
 				//form for add new right
 				print '<tr class="small">';
-				print '<td><input type="text" readonly  name="id" class="width75" value="'.dol_escape_htmltag($moduleobj->numero.sprintf('%02d', $i + count($perms))).'"></td>';
+				print '<td><input type="text" readonly  name="id" class="width75" value="0"></td>';
 				print '<td>';
 				print '<select name="label" >';
 				print '<option value=""></option>';

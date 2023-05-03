@@ -415,7 +415,6 @@ if (empty($reshook)) {
 
 
 
-
 /*
  * View
  */
