@@ -86,6 +86,8 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 		// Define column position
 		$this->posxref = $this->marge_gauche;
+
+		$this->update_main_doc_field=1;
 	}
 
 

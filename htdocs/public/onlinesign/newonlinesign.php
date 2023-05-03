@@ -551,19 +551,23 @@ if ($source == 'proposal') {
 	print '</td><td class="CTableRow2">' . $text;
 
 	$last_main_doc_file = $object->last_main_doc;
-
+	$diroutput = $conf->societe->multidir_output[$object->thirdparty->entity].'/'
+			.dol_sanitizeFileName($object->thirdparty->id).'/';
 	if (empty($last_main_doc_file) ||
-		!dol_is_file($conf->societe->multidir_output[$object->thirdparty->entity].'/'
-			.dol_sanitizeFileName($object->thirdparty->id).'/'
+		!dol_is_file($diroutput
 			.$langs->transnoentitiesnoconv("SepaMandateShort").' '.$object->id."-".dol_sanitizeFileName($object->rum).".pdf")) {
 		// It seems document has never been generated, or was generated and then deleted.
 		// So we try to regenerate it with its default template.
 		$defaulttemplate = 'sepamandate';
-		//$result = $companybankaccount->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-		$result = $object->thirdparty->generateDocument($defaulttemplate, $langs);
+
+		$moreparams = array(
+			'use_companybankid'=>$object->id,
+			'force_dir_output'=>$diroutput
+		);
+		$result = $object->thirdparty->generateDocument($defaulttemplate, $langs, 0, 0, 0, $moreparams);
 	}
 
-	$directdownloadlink = $object->thirdparty->getLastMainDocLink($source);
+	$directdownloadlink = $object->getLastMainDocLink('company');
 	var_dump($directdownloadlink);
 	if ($directdownloadlink) {
 		print '<br><a href="'.$directdownloadlink.'">';

@@ -215,8 +215,6 @@ class CompanyBankAccount extends Account
 	 */
 	const TRIGGER_PREFIX = 'COMPANY_RIB';
 
-	protected $update_main_doc_field;
-
 	/**
 	 *  Constructor
 	 *
@@ -231,8 +229,6 @@ class CompanyBankAccount extends Account
 		$this->error_number = 0;
 		$this->default_rib = 0;
 		$this->type = "ban";
-
-		$this->update_main_doc_field = 1;
 	}
 
 

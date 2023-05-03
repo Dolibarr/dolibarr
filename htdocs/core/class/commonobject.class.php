@@ -5484,6 +5484,7 @@ abstract class CommonObject
 					$update_main_doc_field = 1;
 				}
 
+
 				// Check that the file exists, before indexing it.
 				// Hint: It does not exist, if we create a PDF and auto delete the ODT File
 				if (dol_is_file($destfull)) {
@@ -5609,7 +5610,6 @@ abstract class CommonObject
 			if ($update_main_doc_field && !empty($this->table_element)) {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET last_main_doc = '".$this->db->escape($ecmfile->filepath."/".$ecmfile->filename)."'";
 				$sql .= " WHERE rowid = ".((int) $this->id);
-
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					dol_print_error($this->db);
