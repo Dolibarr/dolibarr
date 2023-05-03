@@ -49,6 +49,20 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	public $version = 'dolibarr';
 
 	/**
+	 * @var int Height reserved to output the info and total part
+	 */
+	private $heightforinfotot;
+
+	/**
+	 * @var int Height reserved to output the free text on last page
+	 */
+	private $heightforfreetext;
+
+	/**
+	 * @var int Height reserved to output the footer (value include bottom margin)
+	 */
+	private $heightforfooter;
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -88,6 +102,12 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$this->posxref = $this->marge_gauche;
 
 		$this->update_main_doc_field=1;
+
+		$this->heightforinfotot=50;
+
+		$this->heightforfreetext = (!empty(getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT')) ? getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT') : 5);
+
+		$this->heightforfooter = $this->marge_basse + 8;
 	}
 
 
@@ -161,11 +181,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
-				$heightforinfotot = 50; // Height reserved to output the info and total part
-				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
-				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
+
 				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
-					$heightforfooter += 6;
+					$this->heightforfooter  += 6;
 				}
 				$pdf->SetAutoPageBreak(1, 0);
 
@@ -201,7 +219,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$tab_top = 50;
 				$tab_top_newpage = 40;
 
-				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
+				$tab_height = $this->page_hauteur - $tab_top - $this->heightforfooter  - $this->heightforfreetext ;
 
 				// Show notes
 				if (!empty($object->note_public)) {
@@ -389,17 +407,17 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 				// Show square
 				if ($pagenb == 1) {
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
-					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $this->heightforinfotot  - $this->heightforfreetext  - $this->heightforfooter, 0, $outputlangs, 0, 0);
+					$bottomlasttab = $this->page_hauteur - $this->heightforinfotot  - $this->heightforfreetext  - $this->heightforfooter  + 1;
 				} else {
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0);
-					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $this->heightforinfotot  - $this->heightforfreetext  - $this->heightforfooter, 0, $outputlangs, 1, 0);
+					$bottomlasttab = $this->page_hauteur - $this->heightforinfotot  - $this->heightforfreetext  - $this->heightforfooter  + 1;
 				}
 
 				//var_dump($tab_top);
-				//var_dump($heightforinfotot);
-				//var_dump($heightforfreetext);
-				//var_dump($heightforfooter);
+				//var_dump($this->heightforinfotot );
+				//var_dump($this->heightforfreetext );
+				//var_dump($this->heightforfooter );
 				//var_dump($bottomlasttab);
 
 				// Affiche zone infos

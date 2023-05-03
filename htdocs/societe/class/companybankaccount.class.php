@@ -209,6 +209,12 @@ class CompanyBankAccount extends Account
 	public $datem;
 
 	/**
+	 * @var string
+	 * @see SetDocModel()
+	 */
+	public $model_pdf;
+
+	/**
 	 * @var string TRIGGER_PREFIX  Dolibarr 16.0 and above use the prefix to prevent the creation of inconsistently
 	 *                             named triggers
 	 * @see CommonObject::call_trigger()
@@ -273,8 +279,12 @@ class CompanyBankAccount extends Account
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, type, datec)";
-		$sql .= " VALUES (".((int) $this->socid).", '".$this->type."', '".$this->db->idate($this->datec)."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, type, datec";
+		$sql .= ", model_pdf";
+		$sql .= ")";
+		$sql .= " VALUES (".((int) $this->socid).", '".$this->type."', '".$this->db->idate($this->datec)."'";
+		$sql .= "\"".getDolGlobalString()."\"";
+		$sql .= ")";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
@@ -328,6 +338,10 @@ class CompanyBankAccount extends Account
 			$this->owner_address = dol_trunc($this->owner_address, 254, 'right', 'UTF-8', 1);
 		}
 
+		if (isset($this->model_pdf)) {
+			$this->model_pdf = trim($this->model_pdf);
+		}
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET";
@@ -354,6 +368,7 @@ class CompanyBankAccount extends Account
 		}
 		$sql .= ",stripe_card_ref = '".$this->db->escape($this->stripe_card_ref)."'";
 		$sql .= ",stripe_account = '".$this->db->escape($this->stripe_account)."'";
+		$sql .= ",model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
@@ -403,6 +418,7 @@ class CompanyBankAccount extends Account
 		$sql = "SELECT rowid, type, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
 		$sql .= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur, date_rum,";
 		$sql .= " stripe_card_ref, stripe_account";
+		$sql .= " ,last_main_doc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -445,6 +461,7 @@ class CompanyBankAccount extends Account
 				$this->date_rum        = $this->db->jdate($obj->date_rum);
 				$this->stripe_card_ref = $obj->stripe_card_ref;
 				$this->stripe_account  = $obj->stripe_account;
+				$this->last_main_doc   = $obj->last_main_doc;
 			}
 			$this->db->free($resql);
 
