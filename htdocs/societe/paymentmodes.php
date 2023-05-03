@@ -1446,8 +1446,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print_liste_field_titre("WithdrawMode");
 		}
 		print_liste_field_titre("Default", '', '', '', '', '', '', '', 'center ');
-
-		print_liste_field_titre('', '', '', '', '', '', '', '', 'center ');
+		if (empty(getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT')) && !empty(getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN"))) {
+			print_liste_field_titre('', '', '', '', '', '', '', '', 'center ');
+		}
 		print_liste_field_titre('', '', '', '', '', '', '', '', 'center ');
 		// Fields from hook
 		$parameters = array('arrayfields'=>array(), 'linetype'=>'stripebantitle');
@@ -1623,14 +1624,16 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
-			// Show online signature link
-			print '<td class="right nowraponall">';
-			$useonlinesignature = 1;
-			if ($useonlinesignature) {
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
-				print showOnlineSignatureUrl($companybankaccount->element, $rib->id);
+			if (empty(getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT')) && !empty(getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN"))) {
+				// Show online signature link
+				print '<td class="right nowraponall">';
+				$useonlinesignature = 1;
+				if ($useonlinesignature) {
+					require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
+					print showOnlineSignatureUrl($companybankaccount->element, $rib->id);
+				}
+				print '</td>';
 			}
-			print '</td>';
 
 			// Edit/Delete
 			print '<td class="right nowraponall">';
