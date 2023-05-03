@@ -10,7 +10,7 @@
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Bahfir abbes         <dolipar@dolipar.org>
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
- * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2017-2023 Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2017      Rui Strecht		    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018-2020 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
@@ -2622,7 +2622,9 @@ abstract class CommonObject
 				{
 					$row = $this->db->fetch_row($resql);
 					$rows[] = $row[0]; // Add parent line into array rows
-					$childrens = $this->getChildrenOfLine($row[0]);
+
+					(!empty(getDolGlobalString('CARE_GRANDCHILD'))) ? $grandchild = 1: $grandchild = 0;
+					$childrens = $this->getChildrenOfLine($row[0],$grandchild);
 					if (!empty($childrens))
 					{
 						foreach ($childrens as $child)
@@ -2671,7 +2673,7 @@ abstract class CommonObject
 			if ($this->db->num_rows($resql) > 0) {
 				while ($row = $this->db->fetch_row($resql)) {
 					$rows[] = $row[0];
-					if (!empty($includealltree)) $rows = array_merge($rows, $this->getChildrenOfLine($row[0]), $includealltree);
+					if (!empty($includealltree)) $rows = array_merge($rows, $this->getChildrenOfLine($row[0]));
 				}
 			}
 		}
