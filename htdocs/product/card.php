@@ -1926,7 +1926,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print img_warning().'&nbsp;'.$langs->trans("WarningTransferBatchStockMouvToGlobal").'</span>';
 
 					if ($object->status_batch) {
-
 						// Display message to make user know that all batch will be move into global stock
 						print '<script type="text/javascript">
 							$(document).ready(function() {
@@ -1941,8 +1940,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 							})</script>';
 
 						// Display message to explain that if the product currently have a quantity higher or equal to 2, switching to this choice means we will still have a product with different objects of the same batch (while we want a unique serial number)
-						if($object->status_batch == 1) {
-
+						if ($object->status_batch == 1) {
 							print '<script type="text/javascript">
 							$(document).ready(function() {
                                 console.log($("#statusBatchWarning"))
@@ -1954,9 +1952,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
                                     }
                                 })
 							})</script>';
-
 						}
-
 					}
 
 					print '</td></tr>';
