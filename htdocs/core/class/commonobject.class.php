@@ -5535,7 +5535,7 @@ abstract class CommonObject
 			// Set the public "share" key
 			$setsharekey = false;
 			if ($this->element == 'propal' || $this->element == 'proposal') {
-				if (!emptygetDolGlobalInt("PROPOSAL_ALLOW_ONLINESIGN")) {
+				if (!empty(getDolGlobalInt("PROPOSAL_ALLOW_ONLINESIGN"))) {
 					$setsharekey = true;	// feature to make online signature is not set or set to on (default)
 				}
 				if (!empty(getDolGlobalInt("PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD"))) {
