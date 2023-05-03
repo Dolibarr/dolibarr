@@ -1925,6 +1925,9 @@ if ($action == 'create') {
 
 								$qtyalreadyreceived += $receptionline_var['qty'];
 							}
+							if ($j) {
+								$htmltooltip = $langs->trans("QtyInOtherReceptions").'...<br><br>'.$htmltooltip.'<br><input type="submit" name="dummyhiddenbuttontogetfocus" style="display:none" autofocus>';
+							}
 						}
 					}
 				}
