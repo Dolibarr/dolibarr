@@ -613,12 +613,30 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 	}
 	// end table
 	$table .= "|===";
+	$table .= "__ end table for object $objectname";
 	//write in file
 	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS'=> $table));
 	if ($writeInFile<0) {
 		return -1;
 	}
 	return 1;
+}
+
+/**
+ * Delete property from documentation if we delete object
+ * @param  string  $file         file or path
+ * @param  string  $objectname   name of object wants to deleted
+ * @return void
+ */
+function deletePropsFromDoc($file, $objectname)
+{
+
+	$start = "== Table of fields and their properties for object *".ucfirst($objectname)."* : ";
+	$end = "__ end table for object ".ucfirst($objectname);
+	$str = file_get_contents($file);
+	$search = '/' . preg_quote($start, '/') . '(.*?)' . preg_quote($end, '/') . '/s';
+	$new_contents = preg_replace($search, '', $str);
+	file_put_contents($file, $new_contents);
 }
 
 /**
