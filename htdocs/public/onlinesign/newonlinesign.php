@@ -142,6 +142,7 @@ if ($source == 'proposal') {
 if (!dol_verifyHash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? $entity : ''), $SECUREKEY, '0')) {
 	httponly_accessforbidden('Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref), 403, 1);
 }
+
 if ($source == 'proposal') {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$object = new Propal($db);
