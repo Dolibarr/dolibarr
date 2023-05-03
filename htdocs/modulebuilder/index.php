@@ -4792,7 +4792,7 @@ if ($module == 'initmodule') {
 
 				//form for add new right
 				print '<tr class="small">';
-				print '<td><input type="text" readonly  name="id" class="width75" value="'.dol_escape_htmltag($moduleobj->numero.sprintf('%02d', $i + count($perms))).'"></td>';
+				print '<td><input type="text" readonly  name="id" class="width75" value="0"></td>';
 				print '<td>';
 				print '<select name="label" >';
 				print '<option value=""></option>';
