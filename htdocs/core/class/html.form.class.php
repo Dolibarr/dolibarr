@@ -8760,9 +8760,10 @@ class Form
             <input type="hidden" class="' . $htmlname . '" name="' . $htmlname . '" value="' . $listcheckedstring . '">
             </dt>
             <dd class="dropdowndd">
-                <div class="multiselectcheckbox' . $htmlname . '">
-                    <ul class="' . $htmlname . ($pos == '1' ? 'left' : '') . '">
-                    ' . $listoffieldsforselection . '
+                <div class="multiselectcheckbox'.$htmlname.'">
+                    <ul class="'.$htmlname.($pos == '1' ? 'left' : '').'">
+                    <li><input class="inputsearch_dropdownselectedfields width90p minwidth200" style="width:90%;" type="text" placeholder="'.$langs->trans('Search').'"></li>
+                    '.$listoffieldsforselection.'
                     </ul>
                 </div>
             </dd>
@@ -8785,6 +8786,12 @@ class Form
                   // Now, we submit page
                   //$(this).parents(\'form:first\').submit();
               });
+              $("input.inputsearch_dropdownselectedfields").on("keyup", function() {
+			    var value = $(this).val().toLowerCase();
+			    $(\'.multiselectcheckbox'.$htmlname.' li > label\').filter(function() {
+			      $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
+			    });
+			  });
 
 
            });
