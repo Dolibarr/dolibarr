@@ -59,7 +59,7 @@ function showOnlineSignatureUrl($type, $ref)
  */
 function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 {
-	global $conf, $db, $langs, $dolibarr_main_url_root;
+	global $conf, $object, $dolibarr_main_url_root;
 
 	$ref = str_replace(' ', '', $ref);
 	$out = '';
@@ -150,7 +150,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 
 	// For multicompany
 	if (!empty($out) && isModEnabled('multicompany')) {
-		$out .= "&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
+		$out .= "&entity=".$object->entity; // Check the entity because we may have the same reference in several entities
 	}
 
 	return $out;

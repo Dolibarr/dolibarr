@@ -62,7 +62,7 @@ if ($sortfield == "") {
 	$sortfield = "pl.fk_soc";
 }
 
-$type = $object->type;
+
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
 } else {
@@ -119,7 +119,13 @@ if ($action == 'confirm_rejet') {
  * View
  */
 
-$invoicestatic = new Facture($db);
+if ($type == 'bank-transfer') {
+	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+	$invoicestatic = new FactureFournisseur($db);
+} else {
+	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+	$invoicestatic = new Facture($db);
+}
 
 $title = $langs->trans("WithdrawalsLine");
 if ($type == 'bank-transfer') {
@@ -262,7 +268,7 @@ if ($id) {
 	$sql .= " , s.rowid as socid, s.nom as name";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-	$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
+	$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";
 	if ($type == 'bank-transfer') {
 		$sql .= " , ".MAIN_DB_PREFIX."facture_fourn as f";
 	} else {
@@ -312,9 +318,17 @@ if ($id) {
 			print img_object($langs->trans("ShowBill"), "bill");
 			print '</a>&nbsp;';
 
-			print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
+			if ($type == 'bank-transfer') {
+				print '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
+			} else {
+				print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
+			}
 
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
+			if ($type == 'bank-transfer') {
+				print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">';
+			} else {
+				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
+			}
 			print img_object($langs->trans("ShowCompany"), "company").' '.$obj->name."</a></td>\n";
 
 			print '<td class="right"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";

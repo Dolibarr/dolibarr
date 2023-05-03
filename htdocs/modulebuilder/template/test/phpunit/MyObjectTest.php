@@ -56,8 +56,6 @@ class MyObjectTest extends PHPUnit\Framework\TestCase
 	/**
 	 * Constructor
 	 * We save global variables into local variables
-	 *
-	 * @return MyObjectTest
 	 */
 	public function __construct()
 	{

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2016-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -253,7 +253,7 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 
-$permtouploadfile = $user->rights->website->write;
+$permtouploadfile = $user->hasRight('website', 'write');
 $diroutput = $conf->medias->multidir_output[$conf->entity];
 
 $relativepath = $section_dir;
@@ -345,7 +345,7 @@ if ($mode == 'replacesite') {
 
 $usercanedit = $user->rights->website->write;
 $permissiontoadd = $user->rights->website->write;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
-$permissiontodelete = $user->rights->website->delete;
+$permissiontodelete = $user->hasRight('website', 'delete');
 
 
 /*
@@ -410,7 +410,7 @@ if ($sortfield) {
 if ($sortorder) {
 	$backtopage .= '&sortorder='.urlencode($sortorder);
 }
-include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';	// This manage 'sendit' action when submitting new file.
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';	// This manage 'sendit', 'confirm_deletefile', 'renamefile' action when submitting new file.
 
 $backtopage = $savbacktopage;
 //var_dump($backtopage);
@@ -572,7 +572,23 @@ if ($massaction == 'delcategory' && GETPOST('confirmmassaction', 'alpha') && $us
 if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && $usercanedit) {
 	$replacestring = GETPOST('replacestring', 'none');
 
-	if (empty($user->rights->website->writephp)) {
+	$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
+	$allowimportsite = true;
+	if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
+		$allowimportsite = false;
+	}
+
+	if (!$allowimportsite) {
+		// Blocked by installmodules.lock
+		if (getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')) {
+			// Show clean corporate message
+			$message = $langs->trans('InstallModuleFromWebHasBeenDisabledContactUs');
+		} else {
+			// Show technical generic message
+			$message = $langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock');
+		}
+		setEventMessages($message, null, 'errors');
+	} elseif (empty($user->rights->website->writephp)) {
 		setEventMessages("NotAllowedToAddDynamicContent", null, 'errors');
 	} elseif (!$replacestring) {
 		setEventMessages("ErrorReplaceStringEmpty", null, 'errors');
@@ -694,7 +710,10 @@ if ($action == 'addsite' && $usercanedit) {
 		$tmpobject->virtualhost = GETPOST('virtualhost', 'alpha');
 
 		$result = $tmpobject->create($user);
-		if ($result <= 0) {
+		if ($result == 0) {
+			$error++;
+			setEventMessages($langs->trans("ErrorLabelAlreadyExists"), null, 'errors');
+		} elseif ($result < 0) {
 			$error++;
 			setEventMessages($tmpobject->error, $tmpobject->errors, 'errors');
 		}
@@ -787,6 +806,16 @@ if ($action == 'addcontainer' && $usercanedit) {
 				// Remove comments
 				$tmp['content'] = removeHtmlComment($tmp['content']);
 
+				// Check there is no PHP content into the imported file (must be only HTML + JS)
+				$phpcontent = dolKeepOnlyPhpCode($tmp['content']);
+				if ($phpcontent) {
+					$error++;
+					setEventMessages('Error getting '.$urltograb.': file that include PHP content is not allowed', null, 'errors');
+					$action = 'createcontainer';
+				}
+			}
+
+			if (!$error) {
 				$regs = array();
 
 				preg_match('/<head>(.*)<\/head>/ims', $tmp['content'], $regs);
@@ -910,8 +939,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 						$fp = fopen($filetosave, "w");
 						fputs($fp, $tmpgeturl['content']);
 						fclose($fp);
-						if (!empty($conf->global->MAIN_UMASK))
-							@chmod($file, octdec($conf->global->MAIN_UMASK));
+						dolChmod($file);
 					}
 					*/
 
@@ -979,8 +1007,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 						//$fp = fopen($filetosave, "w");
 						//fputs($fp, $tmpgeturl['content']);
 						//fclose($fp);
-						//if (!empty($conf->global->MAIN_UMASK))
-						//	@chmod($file, octdec($conf->global->MAIN_UMASK));
+						//dolChmod($file);
 
 						//	$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
 						$pagecsscontent .= '/* Content of file '.$urltograbbis.' */'."\n";
@@ -2374,76 +2401,101 @@ if ($action == 'regeneratesite' && $usercanedit) {
 
 // Import site
 if ($action == 'importsiteconfirm' && $usercanedit) {
-	if (empty($_FILES) && !GETPOSTISSET('templateuserfile')) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
-		$action = 'importsite';
-	} else {
-		if (!empty($_FILES) || GETPOSTISSET('templateuserfile')) {
-			// Check symlink to medias and restore it if ko. Recreate also dir of website if not found.
-			$pathtomedias = DOL_DATA_ROOT.'/medias';
-			$pathtomediasinwebsite = $pathofwebsite.'/medias';
-			if (!is_link(dol_osencode($pathtomediasinwebsite))) {
-				dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
-				dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
-				$result = symlink($pathtomedias, $pathtomediasinwebsite);
-				if (!$result) {
-					setEventMessages($langs->trans("ErrorFieldToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
-					$action = 'importsite';
-				}
-			}
+	$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
+	$allowimportsite = true;
+	if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
+		$allowimportsite = false;
+	}
 
-			$fileofzip = '';
-			if (GETPOSTISSET('templateuserfile')) {
-				$fileofzip = DOL_DATA_ROOT.'/doctemplates/websites/'.GETPOST('templateuserfile', 'alpha');
-			} elseif (!empty($_FILES)) {
-				if (is_array($_FILES['userfile']['tmp_name'])) {
-					$userfiles = $_FILES['userfile']['tmp_name'];
-				} else {
-					$userfiles = array($_FILES['userfile']['tmp_name']);
+	if ($allowimportsite) {
+		if (empty($_FILES) && !GETPOSTISSET('templateuserfile')) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+			$action = 'importsite';
+		} else {
+			if (!empty($_FILES) || GETPOSTISSET('templateuserfile')) {
+				// Check symlink to medias and restore it if ko. Recreate also dir of website if not found.
+				$pathtomedias = DOL_DATA_ROOT.'/medias';
+				$pathtomediasinwebsite = $pathofwebsite.'/medias';
+				if (!is_link(dol_osencode($pathtomediasinwebsite))) {
+					dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
+					dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
+					$result = symlink($pathtomedias, $pathtomediasinwebsite);
+					if (!$result) {
+						setEventMessages($langs->trans("ErrorFieldToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
+						$action = 'importsite';
+					}
 				}
 
-				foreach ($userfiles as $key => $userfile) {
-					if (empty($_FILES['userfile']['tmp_name'][$key])) {
-						$error++;
-						if ($_FILES['userfile']['error'][$key] == 1 || $_FILES['userfile']['error'][$key] == 2) {
-							setEventMessages($langs->trans('ErrorFileSizeTooLarge'), null, 'errors');
-							$action = 'importsite';
-						} else {
-							setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
-							$action = 'importsite';
+				$fileofzip = '';
+				if (GETPOSTISSET('templateuserfile')) {
+					// Case we selected one template
+					$fileofzip = DOL_DATA_ROOT.'/doctemplates/websites/'.GETPOST('templateuserfile', 'alpha');	// $fileofzip will be sanitized later into the importWebSite()
+				} elseif (!empty($_FILES)) {
+					// Case we upload a new template
+					if (is_array($_FILES['userfile']['tmp_name'])) {
+						$userfiles = $_FILES['userfile']['tmp_name'];
+					} else {
+						$userfiles = array($_FILES['userfile']['tmp_name']);
+					}
+
+					// Check if $_FILES is ok
+					foreach ($userfiles as $key => $userfile) {
+						if (empty($_FILES['userfile']['tmp_name'][$key])) {
+							$error++;
+							if ($_FILES['userfile']['error'][$key] == 1 || $_FILES['userfile']['error'][$key] == 2) {
+								setEventMessages($langs->trans('ErrorFileSizeTooLarge'), null, 'errors');
+								$action = 'importsite';
+							} else {
+								setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+								$action = 'importsite';
+							}
 						}
 					}
-				}
 
-				if (!$error) {
-					$upload_dir = $conf->website->dir_temp;
-					$result = dol_add_file_process($upload_dir, 1, -1, 'userfile', '');
-				}
-
-				// Get name of file (take last one if several name provided)
-				$fileofzip = $upload_dir.'/unknown';
-				foreach ($_FILES as $key => $ifile) {
-					foreach ($ifile['name'] as $key2 => $ifile2) {
-						$fileofzip = $upload_dir.'/'.$ifile2;
+					if (!$error) {
+						//$upload_dir = $conf->website->dir_temp;
+						$upload_dir = DOL_DATA_ROOT.'/doctemplates/websites/';
+						$result = dol_add_file_process($upload_dir, 1, -1, 'userfile', '');
 					}
-				}
-			}
 
-			if (!$error) {
-				$result = $object->importWebSite($fileofzip);
+					// Get name of file (take last one if several name provided)
+					/*
+					$fileofzip = $upload_dir.'/unknown';
+					foreach ($_FILES as $key => $ifile) {
+						foreach ($ifile['name'] as $key2 => $ifile2) {
+							$fileofzip = $upload_dir.'/'.$ifile2;
+						}
+					}
+					*/
 
-				if ($result < 0) {
-					setEventMessages($object->error, $object->errors, 'errors');
 					$action = 'importsite';
-				} else {
-					// Force mode dynamic on
-					dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 1, 'chaine', 0, '', $conf->entity);
+				}
 
-					header("Location: ".$_SERVER["PHP_SELF"].'?website='.$object->ref);
-					exit();
+				if (!$error && GETPOSTISSET('templateuserfile')) {
+					$result = $object->importWebSite($fileofzip);
+
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+						$action = 'importsite';
+					} else {
+						// Force mode dynamic on
+						dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 1, 'chaine', 0, '', $conf->entity);
+
+						header("Location: ".$_SERVER["PHP_SELF"].'?website='.$object->ref);
+						exit();
+					}
 				}
 			}
 		}
+	} else {
+		if (getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')) {
+			// Show clean corporate message
+			$message = $langs->trans('InstallModuleFromWebHasBeenDisabledContactUs');
+		} else {
+			// Show technical generic message
+			$message = $langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock');
+		}
+		setEventMessages($message, null, 'errors');
 	}
 }
 
@@ -2452,6 +2504,14 @@ $tempdir = $conf->website->dir_output.'/'.$websitekey.'/';
 
 // Generate web site sitemaps
 if ($action == 'generatesitemaps' && $usercanedit) {
+	// Define $domainname
+	if ($website->virtualhost) {
+		$domainname = $website->virtualhost;
+	}
+	if (! preg_match('/^http/i', $domainname)) {
+		$domainname = 'https://'.$domainname;
+	}
+
 	$domtree = new DOMDocument('1.0', 'UTF-8');
 
 	$root = $domtree->createElementNS('http://www.sitemaps.org/schemas/sitemap/0.9', 'urlset');
@@ -2459,6 +2519,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 
 	$domtree->formatOutput = true;
 
+	$addrsswrapper = 0;
 	$xmlname = 'sitemap.xml';
 
 	$sql = "SELECT wp.rowid, wp.type_container , wp.pageurl, wp.lang, wp.fk_page, wp.tms as tms,";
@@ -2487,6 +2548,11 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 					$shortlangcode = substr($object->lang, 0, 2); // Use short lang code of website
 				}
 
+				// Is it a blog post for the RSS wrapper ?
+				if ($objp->type_container == 'blogpost') {
+					$addrsswrapper = 1;
+				}
+
 				// Forge $pageurl, adding language prefix if it is an alternative language
 				$pageurl = $objp->pageurl.'.php';
 				if ($objp->fk_default_home == $objp->rowid) {
@@ -2497,24 +2563,18 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 					}
 				}
 
-				if ($objp->virtualhost) {
-					$domainname = $objp->virtualhost;
-				}
-				if (! preg_match('/^http/i', $domainname)) {
-					$domainname = 'https://'.$domainname;
-				}
 				//$pathofpage = $dolibarr_main_url_root.'/'.$pageurl.'.php';
 
 				// URL of sitemaps must end with trailing slash if page is ''
 				$loc = $domtree->createElement('loc', $domainname.'/'.$pageurl);
 				$lastmod = $domtree->createElement('lastmod', dol_print_date($db->jdate($objp->tms), 'dayrfc', 'gmt'));
-				$changefreq = $domtree->createElement('changefreq', 'weekly');	// TODO Manage other values
 				$priority = $domtree->createElement('priority', '1');
 
 				$url->appendChild($loc);
 				$url->appendChild($lastmod);
 				// Add suggested frequency for refresh
 				if (!empty($conf->global->WEBSITE_SITEMAPS_ADD_WEEKLY_FREQ)) {
+					$changefreq = $domtree->createElement('changefreq', 'weekly');	// TODO Manage other values
 					$url->appendChild($changefreq);
 				}
 				// Add higher priority for home page
@@ -2603,11 +2663,33 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 				$root->appendChild($url);
 				$i++;
 			}
-			$domtree->appendChild($root);
-			if ($domtree->save($tempdir.$xmlname)) {
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($tempdir.$xmlname, octdec($conf->global->MAIN_UMASK));
+
+			// Adding a RSS feed into a sitemap should nto be required. The RSS contains pages that are already included into
+			// the sitemap and RSS feeds are not shown into index.
+			if ($addrsswrapper && getDolGlobalInt('WEBSITE_ADD_RSS_FEED_INTO_SITEMAP')) {
+				$url = $domtree->createElement('url');
+
+				$pageurl = 'wrapper.php?rss=1';
+
+				// URL of sitemaps must end with trailing slash if page is ''
+				$loc = $domtree->createElement('loc', $domainname.'/'.$pageurl);
+				$lastmod = $domtree->createElement('lastmod', dol_print_date($db->jdate(dol_now()), 'dayrfc', 'gmt'));
+
+				$url->appendChild($loc);
+				$url->appendChild($lastmod);
+				// Add suggested frequency for refresh
+				if (!empty($conf->global->WEBSITE_SITEMAPS_ADD_WEEKLY_FREQ)) {
+					$changefreq = $domtree->createElement('changefreq', 'weekly');	// TODO Manage other values
+					$url->appendChild($changefreq);
 				}
+
+				$root->appendChild($url);
+			}
+
+			$domtree->appendChild($root);
+
+			if ($domtree->save($tempdir.$xmlname)) {
+				dolChmod($tempdir.$xmlname);
 				setEventMessages($langs->trans("SitemapGenerated", $xmlname), null, 'mesgs');
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -2617,12 +2699,8 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 		dol_print_error($db);
 	}
 
-	// Add the entry Sitemap: into the robot file.
+	// Add the entry Sitemap: into the robot.txt file.
 	$robotcontent = @file_get_contents($filerobot);
-	$result = preg_replace('/<?php // BEGIN PHP[^?]END PHP ?>\n/ims', '', $robotcontent);
-	if ($result) {
-		$robotcontent = $result;
-	}
 	$robotsitemap = "Sitemap: ".$domainname."/".$xmlname;
 	$result = strpos($robotcontent, 'Sitemap: ');
 	if ($result) {
@@ -2679,7 +2757,7 @@ $moreheadjs .= '<script type="text/javascript">'."\n";
 $moreheadjs .= 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
 $moreheadjs .= '</script>'."\n";
 
-llxHeader($moreheadcss.$moreheadjs, $langs->trans("WebsiteSetup"), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
+llxHeader($moreheadcss.$moreheadjs, $langs->trans("Website").(empty($website->ref) ? '' : ' - '.$website->ref), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n";
 print '<!-- Open form for all page -->'."\n";
@@ -2763,7 +2841,7 @@ if (!GETPOST('hide_websitemenu')) {
 	$atleastonepage = (is_array($array) && count($array) > 0);
 
 	$websitepage = new WebSitePage($db);
-	if ($pageid > 0 && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')) {
+	if ($pageid > 0) {
 		$websitepage->fetch($pageid);
 	}
 
@@ -2890,16 +2968,22 @@ if (!GETPOST('hide_websitemenu')) {
 			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
 
 			// Delete website
-			if ($website->status == $website::STATUS_VALIDATED) {
+			if (!$permissiontodelete) {
 				$disabled = ' disabled="disabled"';
-				$title = $langs->trans("WebsiteMustBeDisabled", $langs->transnoentitiesnoconv($website->LibStatut(0, 0)));
+				$title = $langs->trans("NotEnoughPermissions");
 				$url = '#';
 			} else {
-				$disabled = '';
-				$title = $langs->trans("Delete");
-				$url = $_SERVER["PHP_SELF"].'?action=deletesite&token='.newToken().'&website='.urlencode($website->ref);
+				if ($website->status == $website::STATUS_VALIDATED) {
+					$disabled = ' disabled="disabled"';
+					$title = $langs->trans("WebsiteMustBeDisabled", $langs->transnoentitiesnoconv($website->LibStatut(0, 0)));
+					$url = '#';
+				} else {
+					$disabled = '';
+					$title = $langs->trans("Delete");
+					$url = $_SERVER["PHP_SELF"].'?action=deletesite&token='.newToken().'&website='.urlencode($website->ref);
+				}
 			}
-			print '<a href="'.$url.'" class="buttonDelete bordertransp'.($disabled ? ' disabled' : '').'"'.$disabled.' title="'.dol_escape_htmltag($title).'">'.img_picto('', 'delete', 'class=""').'<span class="hideonsmartphone paddingleft">'.$langs->trans("Delete").'</span></a>';
+			print '<a href="'.$url.'" class="button buttonDelete bordertransp'.($disabled ? ' disabled' : '').'"'.$disabled.' title="'.dol_escape_htmltag($title).'">'.img_picto('', 'delete', 'class=""').'<span class="hideonsmartphone paddingleft">'.$langs->trans("Delete").'</span></a>';
 
 			// Regenerate all pages
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=regeneratesite&token='.newToken().'&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="far fa-hdd"></span></a>';
@@ -3194,6 +3278,12 @@ if (!GETPOST('hide_websitemenu')) {
 
 				// Edit HTML content
 				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editsource&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "HTML" : "EditHTMLSource")).'</a>';
+
+				// Edit CKEditor
+				if (getDolGlobalInt('WEBSITE_ALLOW_CKEDITOR')) {
+					print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editcontent&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "CKEditor" : "CKEditor")).'</a>';
+				}
+
 				print '</span>';
 
 
@@ -3254,7 +3344,7 @@ if (!GETPOST('hide_websitemenu')) {
 									}
 									isEditingEnabled = false;
 								}
-							};
+							}
 						});
 						</script>';
 				print $langs->trans("EditInLine");
@@ -3292,17 +3382,16 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
 
 				// Delete
-				//print '<input type="submit" class="buttonDelete bordertransp" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage ? '' : ' disabled="disabled"').'>';
-				if ($websitepage->status == $websitepage::STATUS_DRAFT || !$atleastonepage) {
+				if ($websitepage->status != $websitepage::STATUS_DRAFT) {
 					$disabled = ' disabled="disabled"';
 					$title = $langs->trans("WebpageMustBeDisabled", $langs->transnoentitiesnoconv($websitepage->LibStatut(0, 0)));
 					$url = '#';
 				} else {
 					$disabled = '';
 					$title = '';
-					$url = $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&website='.urlencode($website->ref);
+					$url = $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&pageid='.((int) $websitepage->id).'&website='.urlencode($website->ref);	// action=delete for webpage, deletesite for website
 				}
-				print '<a href="'.$url.'" class="buttonDelete bordertransp'.($disabled ? ' disabled' : '').'"'.$disabled.' title="'.dol_escape_htmltag($title).'">'.img_picto('', 'delete', 'class=""').'<span class="hideonsmartphone paddingleft">'.$langs->trans("Delete").'</span></a>';
+				print '<a href="'.$url.'" class="button buttonDelete bordertransp'.($disabled ? ' disabled' : '').'"'.$disabled.' title="'.dol_escape_htmltag($title).'">'.img_picto('', 'delete', 'class=""').'<span class="hideonsmartphone paddingleft">'.$langs->trans("Delete").'</span></a>';
 			}
 		}
 
@@ -3678,7 +3767,7 @@ if ($action == 'editcss') {
 	// Manifest.json
 	print '<tr><td class="tdtop">';
 	$htmlhelp = $langs->trans("Example").' :<br>';
-	$htmlhelp .= dol_htmlentitiesbr($manifestjsoncontentdefault);
+	$htmlhelp .= '<small>'.dol_htmlentitiesbr($manifestjsoncontentdefault).'</small>';
 	print $form->textwithpicto($langs->trans('WEBSITE_MANIFEST_JSON'), $htmlhelp, 1, 'help', '', 0, 2, 'manifestjsontooltip');
 	print '</td><td>';
 	print $langs->trans("UseManifest").': '.$form->selectyesno('use_manifest', $website->use_manifest, 1).'<br>';
@@ -3844,16 +3933,33 @@ if ($action == 'importsite') {
 
 	print '<span class="opacitymedium">'.$langs->trans("ZipOfWebsitePackageToImport").'</span><br><br>';
 
-	$maxfilesizearray = getMaxFileSizeArray();
-	$maxmin = $maxfilesizearray['maxmin'];
-	if ($maxmin > 0) {
-		print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
-	}
-	print '<input class="flat minwidth400" type="file" name="userfile[]" accept=".zip">';
-	print '<input type="submit" class="button small" name="buttonsubmitimportfile" value="'.dol_escape_htmltag($langs->trans("Upload")).'">';
-	print '<input type="submit" class="button button-cancel small" name="preview" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 
-	print '<br><br><br>';
+	$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
+	$allowimportsite = true;
+	if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
+		$allowimportsite = false;
+	}
+
+	if ($allowimportsite) {
+		$maxfilesizearray = getMaxFileSizeArray();
+		$maxmin = $maxfilesizearray['maxmin'];
+		if ($maxmin > 0) {
+			print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		}
+		print '<input class="flat minwidth400" type="file" name="userfile[]" accept=".zip">';
+		print '<input type="submit" class="button small" name="buttonsubmitimportfile" value="'.dol_escape_htmltag($langs->trans("Upload")).'">';
+		print '<input type="submit" class="button button-cancel small" name="preview" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+		print '<br><br><br>';
+	} else {
+		if (getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')) {
+			// Show clean corporate message
+			$message = $langs->trans('InstallModuleFromWebHasBeenDisabledContactUs');
+		} else {
+			// Show technical generic message
+			$message = $langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock');
+		}
+		print info_admin($message).'<br><br>';
+	}
 
 
 	print '<span class="opacitymedium">'.$langs->trans("ZipOfWebsitePackageToLoad").'</span><br><br>';
@@ -4396,8 +4502,7 @@ if ($action == 'editsource') {
 	$doleditor->Create(0, '', false, 'HTML Source', 'php');
 }
 
-/*if ($action == 'editcontent')
-{
+if ($action == 'editcontent') {
 	// Editing with default ckeditor
 
 	$contentforedit = '';
@@ -4406,13 +4511,15 @@ if ($action == 'editsource') {
 	//$contentforedit.='</style>'."\n";
 	$contentforedit .= $objectpage->content;
 
+	$nbrep = array();
 	$contentforedit = preg_replace('/(<img.*src=")(?!http)/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $contentforedit, -1, $nbrep);
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$poscursor = array('x'=>GETPOST('PAGE_CONTENT_x'), 'y'=>GETPOST('PAGE_CONTENT_y'));
-	$doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,true,ROWS_5,'90%',$poscursor);
+	$doleditor=new DolEditor('PAGE_CONTENT', $contentforedit, '', 500, 'Full', '', true, true, true, ROWS_5, '90%', 0, $poscursor);
 	$doleditor->Create(0, '', false);
-}*/
+}
+
 
 print "</div>\n";
 print "</form>\n";
@@ -4950,8 +5057,7 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 		print $out;
 
 		/*file_put_contents($filetpl, $out);
-		if (!empty($conf->global->MAIN_UMASK))
-			@chmod($filetpl, octdec($conf->global->MAIN_UMASK));
+		dolChmod($filetpl);
 
 		// Output file on browser
 		dol_syslog("index.php include $filetpl $filename content-type=$type");

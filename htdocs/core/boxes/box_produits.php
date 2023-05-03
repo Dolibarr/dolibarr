@@ -168,12 +168,14 @@ class box_produits extends ModeleBoxes
 					$price = '';
 					$price_base_type = '';
 					if ($usercancreadprice) {
-						if (empty($conf->dynamicprices->enabled) || empty($objp->fk_price_expression)) {
+						if (!isModEnabled('dynamicprices') || empty($objp->fk_price_expression)) {
 							$price_base_type = $langs->trans($objp->price_base_type);
 							$price = ($objp->price_base_type == 'HT') ?price($objp->price) : $price = price($objp->price_ttc);
 						} else {
 							//Parse the dynamic price
 							$productstatic->fetch($objp->rowid, '', '', 1);
+
+							require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 							$priceparser = new PriceParser($this->db);
 							$price_result = $priceparser->parseProduct($productstatic);
 							if ($price_result >= 0) {

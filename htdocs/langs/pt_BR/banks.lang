@@ -96,7 +96,6 @@ DeleteTransaction=Excluir transação
 ConfirmDeleteTransaction=Você tem certeza que deseja excluir esta transação?
 ThisWillAlsoDeleteBankRecord=Isto também excluirá as transações geradas
 PlannedTransactions=Transações planejadas
-Graph=Gráficos
 ExportDataset_banque_1=Entradas bancárias e demonstrações contábeis
 ExportDataset_banque_2=Comprovante de depósito
 TransactionOnTheOtherAccount=Transação de outra conta

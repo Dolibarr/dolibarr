@@ -203,7 +203,7 @@ $vatexpensereport = $langs->trans("VATPaid");
 
 // VAT Received and paid
 print '<div class="div-table-responsive">';
-print '<table class="noborder centpercent">';
+print '<table class="liste noborder centpercent">';
 
 $y = $year_current;
 $i = 0;

@@ -188,6 +188,7 @@ class LesscTest extends PHPUnit\Framework\TestCase
 			//var_dump($contentforlessc); exit;
 		} catch (exception $e) {
 			//echo "failed to compile lessc";
+			$result = 'Error';
 			dol_syslog("Failed to compile the CSS with lessc: ".$e->getMessage(), LOG_WARNING);
 		}
 
@@ -200,7 +201,7 @@ class LesscTest extends PHPUnit\Framework\TestCase
 }
 ";
 
-		print __METHOD__." SeparatorDecimal=".$result."\n";
+		print __METHOD__." Result=".$result."\n";
 		$this->assertEquals(trim($result), trim($cssexpected));
 
 		return;

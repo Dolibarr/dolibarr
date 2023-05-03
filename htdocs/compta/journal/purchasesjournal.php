@@ -55,7 +55,7 @@ if (isModEnabled('comptabilite')) {
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
-
+$hookmanager->initHooks(['purchasejournallist']);
 
 /*
  * Actions
@@ -74,7 +74,7 @@ llxHeader('', $langs->trans("PurchasesJournal"), '', '', 0, 0, '', '', $morequer
 
 $form = new Form($db);
 
-$year_current = strftime("%Y", dol_now());
+$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $pastmonth = strftime("%m", dol_now()) - 1;
 $pastmonthyear = $year_current;
 if ($pastmonth == 0) {
@@ -192,13 +192,15 @@ if ($result) {
 /*
  * Show result array
  */
-print "<table class=\"noborder\" width=\"100%\">";
+print '<table class="liste noborder centpercent">';
 print "<tr class=\"liste_titre\">";
 ///print "<td>".$langs->trans("JournalNum")."</td>";
 print "<td>".$langs->trans("Date")."</td>";
 print "<td>".$langs->trans("Piece").' ('.$langs->trans("InvoiceRef").")</td>";
 print "<td>".$langs->trans("Account")."</td>";
-print "<td>".$langs->trans("Type")."</td><td class='right'>".$langs->trans("Debit")."</td><td class='right'>".$langs->trans("Credit")."</td>";
+print "<td>".$langs->trans("Type")."</td>";
+print "<td class='right'>".$langs->trans("AccountingDebit")."</td>";
+print "<td class='right'>".$langs->trans("AccountingCredit")."</td>";
 print "</tr>\n";
 
 

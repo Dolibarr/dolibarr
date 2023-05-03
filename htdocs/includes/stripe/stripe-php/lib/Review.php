@@ -15,15 +15,15 @@ namespace Stripe;
  * @property string $object String representing the object's type. Objects of the same type share the same value.
  * @property null|string $billing_zip The ZIP or postal code of the card used, if applicable.
  * @property null|string|\Stripe\Charge $charge The charge associated with this review.
- * @property null|string $closed_reason The reason the review was closed, or null if it has not yet been closed. One of <code>approved</code>, <code>refunded</code>, <code>refunded_as_fraud</code>, or <code>disputed</code>.
+ * @property null|string $closed_reason The reason the review was closed, or null if it has not yet been closed. One of <code>approved</code>, <code>refunded</code>, <code>refunded_as_fraud</code>, <code>disputed</code>, or <code>redacted</code>.
  * @property int $created Time at which the object was created. Measured in seconds since the Unix epoch.
  * @property null|string $ip_address The IP address where the payment originated.
  * @property null|\Stripe\StripeObject $ip_address_location Information related to the location of the payment. Note that this information is an approximation and attempts to locate the nearest population center - it should not be used to determine a specific address.
  * @property bool $livemode Has the value <code>true</code> if the object exists in live mode or the value <code>false</code> if the object exists in test mode.
  * @property bool $open If <code>true</code>, the review needs action.
  * @property string $opened_reason The reason the review was opened. One of <code>rule</code> or <code>manual</code>.
- * @property string|\Stripe\PaymentIntent $payment_intent The PaymentIntent ID associated with this review, if one exists.
- * @property string $reason The reason the review is currently open or closed. One of <code>rule</code>, <code>manual</code>, <code>approved</code>, <code>refunded</code>, <code>refunded_as_fraud</code>, or <code>disputed</code>.
+ * @property null|string|\Stripe\PaymentIntent $payment_intent The PaymentIntent ID associated with this review, if one exists.
+ * @property string $reason The reason the review is currently open or closed. One of <code>rule</code>, <code>manual</code>, <code>approved</code>, <code>refunded</code>, <code>refunded_as_fraud</code>, <code>disputed</code>, or <code>redacted</code>.
  * @property null|\Stripe\StripeObject $session Information related to the browsing session of the user who initiated the payment.
  */
 class Review extends ApiResource
@@ -53,7 +53,7 @@ class Review extends ApiResource
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return Review the approved review
+     * @return \Stripe\Review the approved review
      */
     public function approve($params = null, $opts = null)
     {

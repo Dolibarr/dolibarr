@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2016  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -696,11 +697,12 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 /**
  * Prepare array with list of tabs
  *
- * @param	int		$nbofactivatedmodules	Number if activated modules
- * @param	int		$nboftotalmodules		Nb of total modules
- * @return  array							Array of tabs to show
+ * @param	int		$nbofactivatedmodules		Number if activated modules
+ * @param	int		$nboftotalmodules			Nb of total modules
+ * @param	int		$nbmodulesnotautoenabled	Nb of modules not auto enabled that are activated
+ * @return  array								Array of tabs to show
  */
-function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules)
+function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules, $nbmodulesnotautoenabled)
 {
 	global $langs, $conf, $user, $form;
 
@@ -711,7 +713,7 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules)
 	$head = array();
 	$mode = empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT;
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$mode;
-	if ($nbofactivatedmodules <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled)
+	if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled)
 		//$head[$h][1] = $form->textwithpicto($langs->trans("AvailableModules"), $desc);
 		$head[$h][1] = $langs->trans("AvailableModules");
 		$head[$h][1] .= $form->textwithpicto('', $langs->trans("YouMustEnableOneModule").'.<br><br><span class="opacitymedium">'.$desc.'</span>', 1, 'warning');
@@ -769,6 +771,11 @@ function ihm_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=login";
 	$head[$h][1] = $langs->trans("LoginPage");
 	$head[$h][2] = 'login';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=css";
+	$head[$h][1] = $langs->trans("CSSPage");
+	$head[$h][2] = 'css';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin');
@@ -1084,11 +1091,12 @@ function purgeSessions($mysessionid)
 /**
  *  Enable a module
  *
- *  @param      string		$value      Name of module to activate
- *  @param      int			$withdeps   Activate/Disable also all dependencies
- *  @return     array      			    array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
+ *  @param      string		$value      			Name of module to activate
+ *  @param      int			$withdeps  				Activate/Disable also all dependencies
+ * 	@param		int			$noconfverification		Remove verification of $conf variable for module
+ *  @return     array      			    			array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
  */
-function activateModule($value, $withdeps = 1)
+function activateModule($value, $withdeps = 1, $noconfverification = 0)
 {
 	global $db, $langs, $conf, $mysoc;
 
@@ -1144,8 +1152,10 @@ function activateModule($value, $withdeps = 1)
 	}
 
 	$const_name = $objMod->const_name;
-	if (!empty($conf->global->$const_name)) {
-		return $ret;
+	if ($noconfverification == 0) {
+		if (!empty($conf->global->$const_name)) {
+			return $ret;
+		}
 	}
 
 	$result = $objMod->init(); // Enable module
@@ -1156,33 +1166,45 @@ function activateModule($value, $withdeps = 1)
 		if ($withdeps) {
 			if (isset($objMod->depends) && is_array($objMod->depends) && !empty($objMod->depends)) {
 				// Activation of modules this module depends on
-				// this->depends may be array('modModule1', 'mmodModule2') or array('always1'=>"modModule1", 'FR'=>'modModule2')
-				foreach ($objMod->depends as $key => $modulestring) {
+				// this->depends may be array('modModule1', 'mmodModule2') or array('always'=>array('modModule1'), 'FR'=>array('modModule2"))
+				foreach ($objMod->depends as $key => $modulestringorarray) {
 					//var_dump((! is_numeric($key)) && ! preg_match('/^always/', $key) && $mysoc->country_code && ! preg_match('/^'.$mysoc->country_code.'/', $key));exit;
 					if ((!is_numeric($key)) && !preg_match('/^always/', $key) && $mysoc->country_code && !preg_match('/^'.$mysoc->country_code.'/', $key)) {
 						dol_syslog("We are not concerned by dependency with key=".$key." because our country is ".$mysoc->country_code);
 						continue;
 					}
-					$activate = false;
-					foreach ($modulesdir as $dir) {
-						if (file_exists($dir.$modulestring.".class.php")) {
-							$resarray = activateModule($modulestring);
-							if (empty($resarray['errors'])) {
-								$activate = true;
-							} else {
-								foreach ($resarray['errors'] as $errorMessage) {
-									dol_syslog($errorMessage, LOG_ERR);
-								}
-							}
-							break;
-						}
+
+					if (!is_array($modulestringorarray)) {
+						$modulestringorarray = array($modulestringorarray);
 					}
 
-					if ($activate) {
-						$ret['nbmodules'] += $resarray['nbmodules'];
-						$ret['nbperms'] += $resarray['nbperms'];
-					} else {
-						$ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $modulestring);
+					foreach ($modulestringorarray as $modulestring) {
+						$activate = false;
+						$activateerr = '';
+						foreach ($modulesdir as $dir) {
+							if (file_exists($dir.$modulestring.".class.php")) {
+								$resarray = activateModule($modulestring);
+								if (empty($resarray['errors'])) {
+									$activate = true;
+								} else {
+									$activateerr = join(', ', $resarray['errors']);
+									foreach ($resarray['errors'] as $errorMessage) {
+										dol_syslog($errorMessage, LOG_ERR);
+									}
+								}
+								break;
+							}
+						}
+
+						if ($activate) {
+							$ret['nbmodules'] += $resarray['nbmodules'];
+							$ret['nbperms'] += $resarray['nbperms'];
+						} else {
+							if ($activateerr) {
+								$ret['errors'][] = $activateerr;
+							}
+							$ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $modulestring);
+						}
 					}
 				}
 			}
@@ -1706,7 +1728,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 
 			print '<tr class="oddeven">';
 
-			// Show constant
+			// Show label of parameter
 			print '<td>';
 			if (empty($strictw3c)) {
 				print '<input type="hidden" name="action" value="update">';
@@ -1715,8 +1737,11 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 			print '<input type="hidden" name="constname'.(empty($strictw3c) ? '' : '[]').'" value="'.$const.'">';
 			print '<input type="hidden" name="constnote_'.$obj->name.'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 			print '<input type="hidden" name="consttype_'.$obj->name.'" value="'.($obj->type ? $obj->type : 'string').'">';
-
-			print ($label ? $label : $langs->trans('Desc'.$const));
+			if (!empty($tableau[$key]['tooltip'])) {
+				print $form->textwithpicto($label ? $label : $langs->trans('Desc'.$const), $tableau[$key]['tooltip']);
+			} else {
+				print ($label ? $label : $langs->trans('Desc'.$const));
+			}
 
 			if ($const == 'ADHERENT_MAILMAN_URL') {
 				print '. '.$langs->trans("Example").': <a href="#" id="exampleclick1">'.img_down().'</a><br>';
@@ -1724,15 +1749,13 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 				print '<div id="example1" class="hidden">';
 				print 'http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members/add?subscribees_upload=%EMAIL%&amp;adminpw=%MAILMAN_ADMINPW%&amp;subscribe_or_invite=0&amp;send_welcome_msg_to_this_batch=0&amp;notification_to_list_owner=0';
 				print '</div>';
-			}
-			if ($const == 'ADHERENT_MAILMAN_UNSUB_URL') {
+			} elseif ($const == 'ADHERENT_MAILMAN_UNSUB_URL') {
 				print '. '.$langs->trans("Example").': <a href="#" id="exampleclick2">'.img_down().'</a><br>';
 				print '<div id="example2" class="hidden">';
 				print 'http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members/remove?unsubscribees_upload=%EMAIL%&amp;adminpw=%MAILMAN_ADMINPW%&amp;send_unsub_ack_to_this_batch=0&amp;send_unsub_notifications_to_list_owner=0';
 				print '</div>';
 				//print 'http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members/remove?adminpw=%MAILMAN_ADMINPW%&unsubscribees=%EMAIL%';
-			}
-			if ($const == 'ADHERENT_MAILMAN_LISTS') {
+			} elseif ($const == 'ADHERENT_MAILMAN_LISTS') {
 				print '. '.$langs->trans("Example").': <a href="#" id="exampleclick3">'.img_down().'</a><br>';
 				print '<div id="example3" class="hidden">';
 				print 'mymailmanlist<br>';
@@ -1743,6 +1766,8 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 				}
 				print '</div>';
 				//print 'http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members/remove?adminpw=%MAILMAN_ADMINPW%&unsubscribees=%EMAIL%';
+			} elseif ($const == 'ADHERENT_MAIL_FROM') {
+				print ' '.img_help(1, $langs->trans("EMailHelpMsgSPFDKIM"));
 			}
 
 			print "</td>\n";
@@ -1840,10 +1865,12 @@ function showModulesExludedForExternal($modules)
 	global $conf, $langs;
 
 	$text = $langs->trans("OnlyFollowingModulesAreOpenedToExternalUsers");
-	$listofmodules = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	$listofmodules = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);	// List of modules qualified for external user management
+
 	$i = 0;
 	if (!empty($modules)) {
-		foreach ($modules as $module) {
+		$tmpmodules = dol_sort_array($modules, 'module_position');
+		foreach ($tmpmodules as $module) {		// Loop on array of modules
 			$moduleconst = $module->const_name;
 			$modulename = strtolower($module->name);
 			//print 'modulename='.$modulename;
@@ -1860,9 +1887,16 @@ function showModulesExludedForExternal($modules)
 				$text .= ' ';
 			}
 			$i++;
-			$text .= $langs->trans('Module'.$module->numero.'Name');
+
+			$tmptext = $langs->trans('Module'.$module->numero.'Name');
+			if ($tmptext != 'Module'.$module->numero.'Name') {
+				$text .= $langs->trans('Module'.$module->numero.'Name');
+			} else {
+				$text .= $langs->trans($module->name);
+			}
 		}
 	}
+
 	return $text;
 }
 
@@ -2043,6 +2077,11 @@ function email_admin_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
 	$head[$h][1] = $langs->trans("EMailTemplates");
 	$head[$h][2] = 'templates';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/mails_ingoing.php";
+	$head[$h][1] = $langs->trans("InGoingEmailSetup", $langs->transnoentitiesnoconv("EMailing"));
+	$head[$h][2] = 'common_ingoing';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'email_admin', 'remove');

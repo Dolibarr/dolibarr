@@ -66,6 +66,7 @@ class Productcustomerprice extends CommonObject
 	public $price_min;
 	public $price_min_ttc;
 	public $price_base_type;
+	public $default_vat_code;
 	public $tva_tx;
 	public $recuperableonly;
 	public $localtax1_type;
@@ -78,6 +79,9 @@ class Productcustomerprice extends CommonObject
 	 */
 	public $fk_user;
 
+	/**
+	 * @var PriceByCustomerLine[]
+	 */
 	public $lines = array();
 
 
@@ -227,7 +231,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " ".(empty($this->localtax2_type) ? "'0'" : "'".$this->db->escape($this->localtax2_type)."'").",";
 		$sql .= " ".(!isset($this->localtax2_tx) ? 'NULL' : (empty($this->localtax2_tx) ? 0 : $this->localtax2_tx)).",";
 		$sql .= " ".((int) $user->id).",";
-		$sql .= " ".(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'")."";
+		$sql .= " ".(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -773,7 +777,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " localtax1_type=".(!empty($this->localtax1_type) ? "'".$this->db->escape($this->localtax1_type)."'" : "'0'").",";
 		$sql .= " localtax2_type=".(!empty($this->localtax2_type) ? "'".$this->db->escape($this->localtax2_type)."'" : "'0'").",";
 		$sql .= " fk_user=".$user->id.",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -871,7 +875,7 @@ class Productcustomerprice extends CommonObject
 							$prodsocpriceupd->recuperableonly = $this->recuperableonly;
 
 							$resultupd = $prodsocpriceupd->update($user, 0, $forceupdateaffiliate);
-							if ($result < 0) {
+							if ($resultupd < 0) {
 								$error++;
 								$this->error = $prodsocpriceupd->error;
 							}
@@ -889,7 +893,7 @@ class Productcustomerprice extends CommonObject
 						$prodsocpricenew->recuperableonly = $this->recuperableonly;
 
 						$resultupd = $prodsocpricenew->create($user, 0, $forceupdateaffiliate);
-						if ($result < 0) {
+						if ($resultupd < 0) {
 							$error++;
 							$this->error = $prodsocpricenew->error;
 						}
@@ -923,7 +927,7 @@ class Productcustomerprice extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error && !$notrigger) {
+		if (!$notrigger) {
 			$result = $this->call_trigger('PRODUCT_CUSTOMER_PRICE_DELETE', $user);
 			if ($result < 0) {
 				$error++;

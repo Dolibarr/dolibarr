@@ -3,6 +3,7 @@
  * Copyright (C) 2015	Charlie BENKE       <charlie@patas-monkey.com>
  * Copyright (C) 2019	Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +77,10 @@ function salaries_prepare_head($object)
  */
 function salaries_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $conf, $db, $langs, $user;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('salary');
 
 	$h = 0;
 	$head = array();
@@ -94,6 +98,10 @@ function salaries_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/salaries/admin/salaries_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSalaries");
+	$nbExtrafields = $extrafields->attributes['salary']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 

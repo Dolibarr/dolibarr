@@ -89,7 +89,6 @@ DoPaymentBack=Insira o reembolso
 EnterPaymentReceivedFromCustomer=Entrar pagamento recebido de cliente
 EnterPaymentDueToCustomer=Realizar pagamento devido para cliente
 DisabledBecauseRemainderToPayIsZero=Desabilitado porque o restante a pagar é zero
-PriceBase=Preço base
 BillStatus=Status de fatura
 StatusOfGeneratedInvoices=Situação das faturas geradas
 BillStatusDraft=Rascunho (precisa ser validada)

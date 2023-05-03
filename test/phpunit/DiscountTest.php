@@ -138,7 +138,7 @@ class DiscountTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new DiscountAbsolute($this->savdb);
+		$localobject=new DiscountAbsolute($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -164,7 +164,7 @@ class DiscountTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new DiscountAbsolute($this->savdb);
+		$localobject=new DiscountAbsolute($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -189,7 +189,7 @@ class DiscountTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new DiscountAbsolute($this->savdb);
+		$localobject=new DiscountAbsolute($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

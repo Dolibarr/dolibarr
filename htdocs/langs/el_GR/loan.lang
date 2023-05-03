@@ -28,7 +28,7 @@ CantUseScheduleWithLoanStartedToPaid = Δεν είναι δυνατή η δημ�
 CantModifyInterestIfScheduleIsUsed = Δεν μπορείτε να τροποποιήσετε το επιτόκιο εάν χρησιμοποιείτε χρονοδιάγραμμα
 # Admin
 ConfigLoan=Διαμόρφωση της ενότητας δανείου
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Κεφάλαιο λογιστικού λογαριασμού από προεπιλογή
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Επιτόκιο λογιστικού λογαριασμού από προεπιλογή
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Ασφάλιση λογιστικού λογαριασμού από προεπιλογή
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Λογαριασμός (από το λογιστικό σχέδιο) που θα χρησιμοποιηθεί από προεπιλογή για κεφάλαια (ενότητα δανείου)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Λογαριασμός (από το λογιστικό σχέδιο) που θα χρησιμοποιηθεί από προεπιλογή για τόκους (ενότητα δανείου)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Λογαριασμός (από το λογιστικό σχέδιο) που θα χρησιμοποιηθεί από προεπιλογή για ασφάλιση (ενότητα δανείου)
 CreateCalcSchedule=Επεξεργασία οικονομικής δέσμευσης

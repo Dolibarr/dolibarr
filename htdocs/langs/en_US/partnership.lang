@@ -20,6 +20,7 @@ ModulePartnershipName=Partnership management
 PartnershipDescription=Module Partnership management
 PartnershipDescriptionLong= Module Partnership management
 Partnership=Partnership
+Partnerships=Partnerships
 AddPartnership=Add partnership
 CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
 PartnershipCheckBacklink=Partnership: Check referring backlink
@@ -28,7 +29,7 @@ PartnershipCheckBacklink=Partnership: Check referring backlink
 # Menu
 #
 NewPartnership=New Partnership
-NewPartnershipbyWeb= Your partnership was added successfully.
+NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
 ListOfPartnerships=List of partnership
 
 #
@@ -49,8 +50,8 @@ PublicFormRegistrationPartnerDesc=Dolibarr can provide you a public URL/website 
 # Object
 #
 DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party	
-PartnershipDedicatedToThisMember=Partnership dedicated to this member	
+PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
+PartnershipDedicatedToThisMember=Partnership dedicated to this member
 DatePartnershipStart=Start date
 DatePartnershipEnd=End date
 ReasonDecline=Decline reason
@@ -92,4 +93,5 @@ ReasonDeclineOrCancel=Reason for declining or canceling
 
 NewPartnershipRequest=New partnership request
 NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=This page must contains at least one link to one of the following domain: %s 
 

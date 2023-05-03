@@ -55,10 +55,12 @@ if (empty($conf->global->CONTRACT_ADDON)) {
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
+$error=0;
+
 if ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconstcontract', 'alpha');
+	$maskconst = GETPOST('maskconstcontract', 'aZ09');
 	$maskvalue = GETPOST('maskcontract', 'alpha');
-	if ($maskconst) {
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -158,9 +160,36 @@ if ($action == 'updateMask') {
 	if (!dolibarr_set_const($db, "CONTRACT_ALLOW_ONLINESIGN", $value, 0, 'int', $conf->entity)) {
 		$error++;
 	}
-} elseif ($action == "allowexternaldownload") {
-	if (!dolibarr_set_const($db, "CONTRACT_ALLOW_EXTERNAL_DOWNLOAD", $value, 0, 'int', $conf->entity)) {
+} elseif (preg_match('/set_(.*)/', $action, $reg)) {
+	$code = $reg[1];
+	$value = (GETPOST($code) ? GETPOST($code) : 1);
+
+	$res = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
 		$error++;
+	}
+
+	if ($error) {
+		setEventMessages($langs->trans('Error'), null, 'errors');
+	} else {
+		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
+		header("Location: " . $_SERVER["PHP_SELF"]);
+		exit();
+	}
+} elseif (preg_match('/del_(.*)/', $action, $reg)) {
+	$code = $reg[1];
+	$res = dolibarr_del_const($db, $code, $conf->entity);
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if ($error) {
+		setEventMessages($langs->trans('Error'), null, 'errors');
+	} else {
+		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
+		header("Location: " . $_SERVER["PHP_SELF"]);
+		exit();
 	}
 }
 
@@ -489,7 +518,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowOnlineSign").'</td>';
 print '<td class="center">';
-if ($conf->global->CONTRACT_ALLOW_ONLINESIGN) {
+if (getDolGlobalString('CONTRACT_ALLOW_ONLINESIGN')) {
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowonlinesign&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activited"), 'switch_on');
 	print '</a>';
@@ -504,16 +533,8 @@ print '</tr>';
 // Allow external download
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
-print '<td class="center">';
-if ($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD) {
-	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowexternaldownload&token='.newToken().'&value=0">';
-	print img_picto($langs->trans("Activited"), 'switch_on');
-	print '</a>';
-} else {
-	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowexternaldownload&token='.newToken().'&value=1">';
-	print img_picto($langs->trans("Disabled"), 'switch_off');
-	print '</a>';
-}
+print '<td class="center" colspan="2">';
+print ajax_constantonoff('CONTRACT_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td>';
 print '</tr>';
 print '</table>';

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016    Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016         Christophe Battarel <christophe@altairis.fr>
+ * Copyright (C) 2023         Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +27,6 @@
 if (!defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
 }*/
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', '1');
-}
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
@@ -60,6 +58,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -163,8 +162,17 @@ if (empty($reshook)) {
 			// Le premier contact trouvé est utilisé pour déterminer le contact suivi
 			$contacts = $object->searchContactByEmail($origin_email);
 
+			// Ensure that contact is active and select first active contact
+			$cid = -1;
+			foreach ($contacts as $key => $contact) {
+				if ((int) $contact->statut == 1) {
+					$cid = $key;
+					break;
+				}
+			}
+
 			// Option to require email exists to create ticket
-			if (!empty($conf->global->TICKET_EMAIL_MUST_EXISTS) && !$contacts[0]->socid) {
+			if (!empty($conf->global->TICKET_EMAIL_MUST_EXISTS) && ($cid < 0 || empty($contacts[$cid]->socid))) {
 				$error++;
 				array_push($object->errors, $langs->trans("ErrorEmailMustExistToCreateTicket"));
 				$action = '';
@@ -237,7 +245,9 @@ if (empty($reshook)) {
 			$object->severity_code = GETPOST("severity_code", 'aZ09');
 			$object->ip = getUserRemoteIP();
 
-			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1000);
+			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+			$now = dol_now();
+			$minmonthpost = dol_time_plus_duree($now, -1, "m");
 
 			// Calculate nb of post for IP
 			$nb_post_ip = 0;
@@ -245,6 +255,7 @@ if (empty($reshook)) {
 				$sql = "SELECT COUNT(ref) as nb_tickets";
 				$sql .= " FROM ".MAIN_DB_PREFIX."ticket";
 				$sql .= " WHERE ip = '".$db->escape($object->ip)."'";
+				$sql .= " AND datec > '".$db->idate($minmonthpost)."'";
 				$resql = $db->query($sql);
 				if ($resql) {
 					$num = $db->num_rows($resql);
@@ -310,13 +321,13 @@ if (empty($reshook)) {
 				}
 			}
 
-			if (is_array($searched_companies)) {
+			if (!empty($searched_companies) && is_array($searched_companies)) {
 				$object->fk_soc = $searched_companies[0]->id;
 			}
 
-			if (is_array($contacts) and count($contacts) > 0) {
-				$object->fk_soc = $contacts[0]->socid;
-				$usertoassign = $contacts[0]->id;
+			if (is_array($contacts) && count($contacts) > 0 && $cid >= 0) {
+				$object->fk_soc = $contacts[$cid]->socid;
+				$usertoassign = $contacts[$cid]->id;
 			}
 
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -329,7 +340,7 @@ if (empty($reshook)) {
 			if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
 				$error++;
 				$errors = array($langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
-				array_push($object->errors, array($langs->trans("AlreadyTooMuchPostOnThisIPAdress")));
+				array_push($object->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
 				$action = 'create_ticket';
 			}
 
@@ -501,7 +512,7 @@ $arrayofcss = array('/opensurvey/css/style.css', '/ticket/css/styles.css.php');
 llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
-print '<div class="ticketpublicarea">';
+print '<div class="ticketpublicarea ticketlargemargin centpercent">';
 
 if ($action != "infos_success") {
 	$formticket->withfromsocid = isset($socid) ? $socid : $user->socid;
@@ -534,7 +545,7 @@ if ($action != "infos_success") {
 print '</div>';
 
 // End of page
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
+htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
 
 llxFooter('', 'public');
 

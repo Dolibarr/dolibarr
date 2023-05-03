@@ -20,6 +20,7 @@ ModulePartnershipName=Partnerschaften
 PartnershipDescription=Modul zur Parnterschafts-Verwaltung
 PartnershipDescriptionLong= Modul zur Parnterschafts-Verwaltung
 Partnership=Partnerschaft
+Partnerships=Partnerschaften
 AddPartnership=Partnerschaft hinzufügen
 CancelPartnershipForExpiredMembers=Partnerschaft: Partnerschaft von Mitgliedern mit abgelaufenen Abonnements kündigen
 PartnershipCheckBacklink=Partnerschaft: Überprüfen Sie den verweisenden Backlink
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Partnerschaft: Überprüfen Sie den verweisenden Backli
 # Menu
 #
 NewPartnership=Neue Partnerschaft
+NewPartnershipbyWeb=Ihre Partnerschaftsanfrage wurde erfolgreich hinzugefügt. Wir werden uns in Kürze mit Ihnen in Verbindung setzen...
 ListOfPartnerships=Liste der Partnerschaften
 
 #

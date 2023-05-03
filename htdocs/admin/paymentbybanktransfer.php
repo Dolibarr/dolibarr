@@ -188,7 +188,7 @@ print '</td></tr>';
 //USTRD
 print '<tr class="oddeven"><td>'.$langs->trans("USTRD").'</td>';
 print '<td>';
-print '<input type="text" name="PRELEVEMENT_USTRD" value="'.$conf->global->PRELEVEMENT_USTRD.'" class="width100"></td>';
+print '<input type="text" name="CREDITTRANSFER_USTRD" value="'.$conf->global->CREDITTRANSFER_USTRD.'" class="width100"></td>';
 print '</td></tr>';
 */
 

@@ -22,6 +22,7 @@ ErrorGoBackAndCorrectParameters=Regresa y revisa / corrige los parámetros.
 ErrorWrongValueForParameter=Es posible que haya escrito un valor incorrecto para el parámetro '%s'.
 ErrorFailedToConnectToDatabase=Error al conectarse a la base de datos '%s'.
 ErrorDatabaseVersionTooLow=Versión de la base de datos (%s) demasiado antigua. Se requiere la versión %s o superior.
+ErrorPHPVersionTooHigh=Versión de PHP demasiado alta. Se requiere la versión %s o inferior.
 ErrorConnectedButDatabaseNotFound=La conexión al servidor fue exitosa pero no se encontró la base de datos '%s'.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Si la base de datos no existe, vuelva atrás y marque la opción "Crear base de datos".
 IfDatabaseExistsGoBackAndCheckCreate=Si la base de datos ya existe, vuelva atrás y desmarque la opción "Crear base de datos".
@@ -68,7 +69,7 @@ WithNoSlashAtTheEnd=Sin la barra "/" al final
 DirectoryRecommendation=<span class="warning"> IMPORTANTE </span>: Debe usar un directorio que esté fuera de las páginas web (por lo tanto, no use un subdirectorio del parámetro anterior).
 AdminLoginAlreadyExists=La cuenta de administrador de Dolibarr '<b> %s </b>' ya existe. Vuelve si quieres crear otro.
 FailedToCreateAdminLogin=Error al crear la cuenta de administrador de Dolibarr.
-WarningRemoveInstallDir=Una advertencia, por razones de seguridad, una vez que se complete la instalación o actualización, debe agregar un archivo llamado <b> install.lock </b> en el directorio de documentos de Dolibarr para evitar nuevamente el uso accidental / malicioso de las herramientas de instalación.
+WarningRemoveInstallDir=Warning, for security reasons, once the installation process is complete, you must add a file called <b>install.lock</b> into the Dolibarr document directory in order to prevent the accidental/malicious use of the install tools again.
 ChoosedMigrateScript=Elegir script de migración
 DataMigration=Migración de base de datos (datos)
 DatabaseMigration=Migración de base de datos (estructura + algunos datos)

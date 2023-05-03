@@ -90,21 +90,21 @@ if ($module == 'ecm') {
 }
 
 // Permissions
-$permtoread = 0;
-$permtoadd = 0;
-$permtoupload = 0;
+$permissiontoread = 0;
+$permissiontoadd = 0;
+$permissiontoupload = 0;
 if ($module == 'ecm') {
-	$permtoread = $user->rights->ecm->read;
-	$permtoadd = $user->rights->ecm->setup;
-	$permtoupload = $user->rights->ecm->upload;
+	$permissiontoread = $user->hasRight("ecm", "read");
+	$permissiontoadd = $user->hasRight("ecm", "setup");
+	$permissiontoupload = $user->hasRight("ecm", "upload");
 }
 if ($module == 'medias') {
-	$permtoread = ($user->rights->mailing->lire || $user->rights->website->read);
-	$permtoadd = ($user->rights->mailing->creer || $user->rights->website->write);
-	$permtoupload = ($user->rights->mailing->creer || $user->rights->website->write);
+	$permissiontoread = ($user->hasRight("mailing", "lire") || $user->hasRight("website", "read"));
+	$permissiontoadd = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
+	$permissiontoupload = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
 }
 
-if (!$permtoread) {
+if (!$permissiontoread) {
 	accessforbidden();
 }
 
@@ -114,7 +114,7 @@ if (!$permtoread) {
  */
 
 // Upload file
-if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC) && $permtoupload) {
+if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC) && $permissiontoupload) {
 	if (dol_mkdir($upload_dir) >= 0) {
 		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir."/".dol_unescapefile($_FILES['userfile']['name']), 0, 0, $_FILES['userfile']['error']);
 		if (is_numeric($resupload) && $resupload > 0) {
@@ -139,7 +139,7 @@ if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC) && $permtoupload
 }
 
 // Remove file
-if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permtoupload) {
+if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permissiontoupload) {
 	$langs->load("other");
 	$file = $upload_dir."/".GETPOST('urlfile'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 	$ret = dol_delete_file($file);
@@ -153,7 +153,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permtoupload) {
 }
 
 // Remove dir
-if ($action == 'confirm_deletedir' && $confirm == 'yes' && $permtoupload) {
+if ($action == 'confirm_deletedir' && $confirm == 'yes' && $permissiontoupload) {
 	$backtourl = DOL_URL_ROOT."/ecm/index.php";
 	if ($module == 'medias') {
 		$backtourl = DOL_URL_ROOT."/website/index.php?file_manager=1";
@@ -189,7 +189,7 @@ if ($action == 'confirm_deletedir' && $confirm == 'yes' && $permtoupload) {
 }
 
 // Update dirname or description
-if ($action == 'update' && !GETPOST('cancel', 'alpha') && $permtoadd) {
+if ($action == 'update' && !GETPOST('cancel', 'alpha') && $permissiontoadd) {
 	$error = 0;
 
 	if ($module == 'ecm') {
@@ -454,17 +454,17 @@ print dol_get_fiche_end();
 if ($action != 'edit' && $action != 'delete' && $action != 'deletefile') {
 	print '<div class="tabsAction">';
 
-	if ($permtoadd) {
+	if ($permissiontoadd) {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().($module ? '&module='.$module : '').'&section='.$section.'">'.$langs->trans('Edit').'</a>';
 	}
 
-	if ($permtoadd) {
+	if ($permissiontoadd) {
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&token='.newToken().($module ? '&module='.$module : '').'&catParent='.$section.'">'.$langs->trans('ECMAddSection').'</a>';
 	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
 	}
 
-	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().($module ? '&module='.urlencode($module) : '').'&section='.urlencode($section).($backtopage ? '&backtopage='.urlencode($backtopage) : ''), '', $permtoadd);
+	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().($module ? '&module='.urlencode($module) : '').'&section='.urlencode($section).($backtopage ? '&backtopage='.urlencode($backtopage) : ''), '', $permissiontoadd);
 
 	print '</div>';
 }

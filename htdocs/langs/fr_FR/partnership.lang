@@ -20,6 +20,7 @@ ModulePartnershipName=Gestion des partenariats
 PartnershipDescription=Module de gestion des partenariats
 PartnershipDescriptionLong= Module de gestion des partenariats
 Partnership=Partenariat
+Partnerships=Partenariats
 AddPartnership=Ajouter un partenariat
 CancelPartnershipForExpiredMembers=Partenariat : annuler le partenariat des adhérents dont les cotisations ont expirés
 PartnershipCheckBacklink=Partenariat : Vérifiez le backlink référent
@@ -28,7 +29,7 @@ PartnershipCheckBacklink=Partenariat : Vérifiez le backlink référent
 # Menu
 #
 NewPartnership=Nouveau partenariat
-NewPartnershipbyWeb= Votre partenariat a été ajouté avec succès.
+NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
 ListOfPartnerships=Listes des partenariats
 
 #

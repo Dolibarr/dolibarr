@@ -103,11 +103,11 @@ if ($result < 0) {
 }
 
 // Permissions
-$permtoread = $user->rights->ecm->read;
-$permtoadd = $user->rights->ecm->setup;
-$permtoupload = $user->rights->ecm->upload;
+$permissiontoread = $user->rights->ecm->read;
+$permissiontoadd = $user->rights->ecm->setup;
+$permissiontoupload = $user->rights->ecm->upload;
 
-if (!$permtoread) {
+if (!$permissiontoread) {
 	accessforbidden();
 }
 
@@ -128,7 +128,7 @@ if ($cancel) {
 }
 
 // Rename file
-if ($action == 'update' && $permtoadd) {
+if ($action == 'update' && $permissiontoadd) {
 	$error = 0;
 
 	$oldlabel = GETPOST('urlfile', 'alpha');

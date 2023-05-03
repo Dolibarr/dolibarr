@@ -52,7 +52,7 @@ $confirm = GETPOST('confirm', 'alpha');
 llxHeader('', $langs->trans("Payment"));
 
 $object = new PaymentExpenseReport($db);
-$object->fetch($id, $ref);
+$object->fetch($id);
 $object->info($object->id);
 
 $head = payment_expensereport_prepare_head($object);

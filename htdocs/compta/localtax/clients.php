@@ -39,7 +39,7 @@ $local = GETPOST('localTaxType', 'int');
 // Date range
 $year = GETPOST("year", "int");
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
+	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
@@ -110,7 +110,7 @@ if (empty($local)) {
 	accessforbidden('Parameter localTaxType is missing');
 	exit;
 }
-
+$hookmanager->initHooks(['customerlocaltaxlist']);
 
 $calc = 0;
 /*
@@ -185,7 +185,7 @@ $vatcust = $langs->transcountry($local == 1 ? "LT1" : "LT2", $mysoc->country_cod
 $vatsup = $langs->transcountry($local == 1 ? "LT1" : "LT2", $mysoc->country_code);
 
 print '<div class="div-table-responsive">';
-print '<table class="noborder centpercent">';
+print '<table class="liste noborder centpercent">';
 
 // IRPF that the customer has retained me
 if ($calc == 0 || $calc == 2) {

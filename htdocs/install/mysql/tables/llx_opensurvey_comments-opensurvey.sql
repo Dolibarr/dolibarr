@@ -20,6 +20,8 @@ CREATE TABLE llx_opensurvey_comments (
     id_sondage CHAR(16) NOT NULL,
     comment text NOT NULL,
     tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    usercomment text
+    usercomment text,
+    date_creation datetime NOT NULL, 
+    ip varchar(250)              --ip used to create record (for public submission page)
 ) ENGINE=innodb;
 

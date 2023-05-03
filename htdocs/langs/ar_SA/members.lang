@@ -15,6 +15,7 @@ ErrorMemberIsAlreadyLinkedToThisThirdParty=عضو آخر (الاسم : <b>٪ ق<
 ErrorUserPermissionAllowsToLinksToItselfOnly=لأسباب أمنية ، يجب أن تمنح أذونات لتحرير جميع المستخدمين لتكون قادرة على ربط عضو لمستخدم هذا ليس لك.
 SetLinkToUser=وصلة إلى مستخدم Dolibarr
 SetLinkToThirdParty=وصلة إلى طرف ثالث Dolibarr
+MemberCountersArePublic=Counters of valid members are public
 MembersCards=توليد بطاقات للاعضاء
 MembersList=قائمة الأعضاء
 MembersListToValid=قائمة مشاريع أعضاء (ينبغي التأكد من صحة)
@@ -34,7 +35,8 @@ DateSubscription=تاريخ العضوية
 DateEndSubscription=تاريخ انتهاء العضوية
 EndSubscription=انتهاء العضوية
 SubscriptionId=معرف المساهمة
-WithoutSubscription=بدون مساهمة
+WithoutSubscription=Without membership
+WaitingSubscription=Membership pending
 MemberId=معرف العضو
 MemberRef=عضو المرجع
 NewMember=عضو جديد
@@ -72,6 +74,12 @@ MemberTypeCanNotBeDeleted=لا يمكن حذف نوع العضو
 NewSubscription=مساهمة جديدة
 NewSubscriptionDesc=هذا النموذج يسمح لك لتسجيل الاشتراك الخاص بك كعضو جديد من الأساس. إذا كنت ترغب في تجديد الاشتراك (إذا كان بالفعل عضوا)، يرجى الاتصال مؤسسة المجلس بدلا من %s البريد الإلكتروني.
 Subscription=إسهام
+AnyAmountWithAdvisedAmount=Any amount of your choice, recommended %s
+AnyAmountWithoutAdvisedAmount=Any amount of your choice
+CanEditAmountShort=Any amount
+CanEditAmountShortForValues=recommended, any amount
+MembershipDuration=مدة
+GetMembershipButtonLabel=Join
 Subscriptions=مساهمات
 SubscriptionLate=متأخر
 SubscriptionNotReceived=المساهمة لم يتم استلامها
@@ -136,7 +144,7 @@ CardContent=مضمون البطاقة الخاصة بك عضوا
 # Text of email templates
 ThisIsContentOfYourMembershipRequestWasReceived=نريد إخبارك بأنه قد تم استلام طلب العضوية الخاص بك. <br> <br>
 ThisIsContentOfYourMembershipWasValidated=نود إعلامك بأنه تم التحقق من عضويتك بالمعلومات التالية: <br> <br>
-ThisIsContentOfYourSubscriptionWasRecorded=We want to let you know that your new subscription was recorded.<br><br>
+ThisIsContentOfYourSubscriptionWasRecorded=We want to let you know that your new subscription was recorded. Please find your invoice here enclosed.<br><br>
 ThisIsContentOfSubscriptionReminderEmail=نريد إخبارك بأن اشتراكك على وشك الانتهاء أو انتهى بالفعل (__MEMBER_LAST_SUBSCRIPTION_DATE_END__). نأمل أن تقوم بتجديده. <br> <br>
 ThisIsContentOfYourCard=هذا ملخص للمعلومات التي لدينا عنك. يرجى الاتصال بنا إذا كان أي شيء غير صحيح. <br> <br>
 DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=موضوع إشعار البريد الإلكتروني المستلم في حالة التسجيل التلقائي للضيف
@@ -198,9 +206,12 @@ SubscriptionsStatistics=إحصاءات المساهمات
 NbOfSubscriptions=عدد المساهمات
 AmountOfSubscriptions=المبلغ المحصل من المساهمات
 TurnoverOrBudget=دوران (لشركة) أو الميزانية (على أساس)
-DefaultAmount=المبلغ الافتراضي للمساهمة
-CanEditAmount=Visitor can choose/edit amount of its contribution
-MEMBER_NEWFORM_PAYONLINE=القفز على صفحة الدفع عبر الانترنت المتكاملة
+DefaultAmount=Default amount of contribution (used only if no amount is defined at member type level)
+MinimumAmount=Minimum amount (used only when contribution amount is free)
+CanEditAmount=Subscription amount is free
+CanEditAmountDetail=Visitor can choose/edit amount of its contribution regardless of the member type
+AmountIsLowerToMinimumNotice=sur un dû total de %s
+MEMBER_NEWFORM_PAYONLINE=After the online registration, switch automatically on the online payment page
 ByProperties=بالطبيعة
 MembersStatisticsByProperties=إحصائيات الأعضاء حسب الطبيعة
 VATToUseForSubscriptions=معدل ضريبة القيمة المضافة لاستخدامه في المساهمات
@@ -221,3 +232,4 @@ CreateDolibarrLoginDesc=يسمح إنشاء تسجيل دخول مستخدم ل�
 CreateDolibarrThirdPartyDesc=الطرف الثالث هو الكيان القانوني الذي سيتم استخدامه في الفاتورة إذا قررت إنشاء فاتورة لكل مساهمة. ستتمكن من إنشائه لاحقًا أثناء عملية تسجيل المساهمة.
 MemberFirstname=الاسم الأول للعضو
 MemberLastname=اسم العائلة للعضو
+MemberCodeDesc=Member Code, unique for all members

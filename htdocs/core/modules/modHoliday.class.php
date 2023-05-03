@@ -78,10 +78,6 @@ class modHoliday extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("holiday.php");
 
-
-		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
-		// $this->config_page_url = array("holiday.php?leftmenu=setup@holiday");
-
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled

@@ -85,9 +85,9 @@ if (!empty($section)) {
 	}
 }
 
-$permtoread = $user->rights->ecm->read;
+$permissiontoread = $user->rights->ecm->read;
 
-if (!$permtoread) {
+if (!$permissiontoread) {
 	accessforbidden();
 }
 
@@ -135,11 +135,11 @@ if (isModEnabled('facture')) {
 if (isModEnabled('supplier_proposal')) {
 	$langs->load("supplier_proposal"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'supplier_proposal', 'test'=>isModEnabled('supplier_proposal'), 'label'=>$langs->trans("SupplierProposals"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierProposals")));
 }
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
-	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'order_supplier', 'test'=>((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")), 'label'=>$langs->trans("SuppliersOrders"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("PurchaseOrders")));
+if (isModEnabled("supplier_order")) {
+	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'order_supplier', 'test'=>isModEnabled("supplier_order"), 'label'=>$langs->trans("SuppliersOrders"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("PurchaseOrders")));
 }
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")) {
-	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'invoice_supplier', 'test'=>((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")), 'label'=>$langs->trans("SuppliersInvoices"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierInvoices")));
+if (isModEnabled("supplier_invoice")) {
+	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'invoice_supplier', 'test'=>isModEnabled("supplier_invoice"), 'label'=>$langs->trans("SuppliersInvoices"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierInvoices")));
 }
 if (isModEnabled('tax')) {
 	$langs->load("compta"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'tax', 'test'=>isModEnabled('tax'), 'label'=>$langs->trans("SocialContributions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SocialContributions")));
@@ -172,13 +172,10 @@ if (isModEnabled('recruitment')) {
 //***********************
 print load_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("Search"));
 
-//print $langs->trans("ECMAreaDesc")."<br>";
-//print $langs->trans("ECMAreaDesc2")."<br>";
-//print "<br>\n";
 print $langs->trans("FeatureNotYetAvailable").'.<br><br>';
 
 // Tool bar
-$head = ecm_prepare_head_fm($ecmdir, $module, $section);
+$head = ecm_prepare_head_fm($ecmdir);
 //print dol_get_fiche_head($head, 'search_form', '', 1);
 
 

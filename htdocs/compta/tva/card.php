@@ -75,17 +75,6 @@ $hookmanager->initHooks(array('taxvatcard', 'globalcard'));
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
-
-// Initialize array of search criterias
-$search_all = GETPOST("search_all", 'alpha');
-$search = array();
-foreach ($object->fields as $key => $val) {
-	if (GETPOST('search_'.$key, 'alpha')) {
-		$search[$key] = GETPOST('search_'.$key, 'alpha');
-	}
-}
-
 if (empty($action) && empty($id) && empty($ref)) {
 	$action = 'view';
 }
@@ -344,6 +333,10 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 		$object->id = $object->ref = null;
 		$object->paye = 0;
 
+		if (GETPOST('amount', 'alphanohtml')) {
+			$object->amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT', 2);
+		}
+
 		if (GETPOST('clone_label', 'alphanohtml')) {
 			$object->label = GETPOST('clone_label', 'alphanohtml');
 		} else {
@@ -416,7 +409,7 @@ if ($action == 'create') {
 						$("#label_type_payment").removeClass("fieldrequired");
 						$(".hide_if_no_auto_create_payment").hide();
 					}
-				};
+				}
 				$("#radiopayment").click(function() {
 					$("#label").val($(this).data("label"));
 				});
@@ -551,6 +544,7 @@ if ($id > 0) {
 
 		//$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_period', 'label' => $langs->trans("PeriodEndDate"), 'value' => -1);
+		$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100');
 
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVAT', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 240);
 	}
