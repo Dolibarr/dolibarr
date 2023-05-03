@@ -625,14 +625,14 @@ print '<td class="right"><input type="submit" class="button button-edit" value="
 print '</tr>';
 print '</form>';
 
-// Allow OnLine Sign
+// Allow external download
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
 print '<td class="center" colspan="2">';
 print ajax_constantonoff('PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td></tr>';
 
-// Allow external download
+// Allow OnLine Sign
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowOnLineSign").'</td>';
 print '<td class="center" colspan="2">';
