@@ -11268,7 +11268,7 @@ function getElementProperties($element_type)
 
 	$regs = array();
 
-	$classfile = $classname = $classpath = $dir_output = '';
+	$classfile = $classname = $classpath = $subdir = $dir_output = '';
 
 	// Parse element/subelement
 	$module = $element_type;
@@ -11439,6 +11439,10 @@ function getElementProperties($element_type)
 	} elseif ($element_type == 'chargesociales') {
 		$classpath = 'compta/sociales/class';
 		$module = 'tax';
+	} elseif ($element_type == 'tva') {
+		$classpath = 'compta/tva/class';
+		$module = 'tax';
+		$subdir = '/vat';
 	}
 
 	if (empty($classfile)) {
@@ -11450,6 +11454,8 @@ function getElementProperties($element_type)
 	if (empty($classpath)) {
 		$classpath = $module.'/class';
 	}
+
+	//print 'getElementProperties subdir='.$subdir;
 
 	// Set dir_output
 	if ($module && isset($conf->$module)) {	// The generic case
@@ -11468,6 +11474,7 @@ function getElementProperties($element_type)
 	} elseif ($element == 'invoice_supplier') {
 		$dir_output = $conf->fournisseur->facture->dir_output;
 	}
+	$dir_output .= $subdir;
 
 	$element_properties = array(
 		'module' => $module,

@@ -453,9 +453,6 @@ if ($action == 'create') {
 
 // View mode
 if ($id > 0) {
-	$object = new ChargeSociales($db);
-	$result = $object->fetch($id);
-
 	$formconfirm = '';
 
 	if ($result > 0) {
