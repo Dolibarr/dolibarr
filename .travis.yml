@@ -77,7 +77,7 @@ jobs:
       php: '8.1'
       env: DB=mysql
     - stage: PHP Dev
-      if: type = push AND branch = develop
+      if: type = push AND branch = developdisabled
       php: '8.2'
       env: DB=mysql
 

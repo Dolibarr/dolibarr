@@ -114,7 +114,7 @@ class MouvementStockTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		if (empty($conf->productbatch->enabled)) {
+		if (!isModEnabled('productbatch')) {
 			print "\n".__METHOD__." module Lot/Serial must be enabled.\n"; die(1);
 		}
 
@@ -186,7 +186,7 @@ class MouvementStockTest extends PHPUnit\Framework\TestCase
 		$warehouse2->description.=' phpunit 2';
 		$warehouse2id=$warehouse2->create($user);
 
-		$localobject=new MouvementStock($this->savdb);
+		$localobject=new MouvementStock($db);
 
 		$datetest1 = dol_mktime(0, 0, 0, 1, 1, 2000);
 		$datetest2 = dol_mktime(0, 0, 0, 1, 2, 2000);

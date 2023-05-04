@@ -42,16 +42,19 @@ function propal_prepare_head($object)
 	$head[$h][2] = 'comm';
 	$h++;
 
-	if ((empty($conf->commande->enabled) && ((isModEnabled("expedition") && isModEnabled('expedition_bon') && $user->rights->expedition->lire)
-		|| (isModEnabled("expedition") && !empty($conf->delivery_note->enabled) && $user->rights->expedition->delivery->lire)))) {
+	if ((empty($conf->commande->enabled) && ((isModEnabled("expedition") && getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->rights->expedition->lire)
+		|| (isModEnabled("expedition") && getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->rights->expedition->delivery->lire)))) {
 		$langs->load("sendings");
 		$text = '';
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$object->id;
-		if (isModEnabled('expedition_bon')) {
+		if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 			$text = $langs->trans("Shipment");
 		}
-		if (isModEnabled('delivery_note')) {
-			$text .= '/'.$langs->trans("Receivings");
+		if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
+			$text .= '/';
+		}
+		if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
+			$text .= $langs->trans("Receivings");
 		}
 		$head[$h][1] = $text;
 		$head[$h][2] = 'shipping';

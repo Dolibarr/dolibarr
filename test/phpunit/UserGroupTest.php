@@ -138,7 +138,7 @@ class UserGroupTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new UserGroup($this->savdb);
+		$localobject=new UserGroup($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -163,7 +163,7 @@ class UserGroupTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new UserGroup($this->savdb);
+		$localobject=new UserGroup($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -280,7 +280,7 @@ class UserGroupTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new UserGroup($this->savdb);
+		$localobject=new UserGroup($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

@@ -358,11 +358,12 @@ class Conf
 								if ($modulename == 'supplierproposal') {
 									$modulename = 'supplier_proposal';
 								}
+								$this->modules[$modulename] = $modulename; // Add this module in list of enabled modules
+								// deprecated in php 8.2
 								if (!isset($this->$modulename) || !is_object($this->$modulename)) {
 									$this->$modulename = new stdClass();
 								}
 								$this->$modulename->enabled = true;
-								$this->modules[] = $modulename; // Add this module in list of enabled modules
 							}
 						}
 					}
@@ -520,13 +521,6 @@ class Conf
 			$this->medias->multidir_temp = array($this->entity => $rootfortemp."/medias/temp");
 
 			// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
-
-			// Sous module bons d'expedition
-			$this->expedition_bon = new stdClass();
-			$this->expedition_bon->enabled = (empty($this->global->MAIN_SUBMODULE_EXPEDITION) ? 0 : $this->global->MAIN_SUBMODULE_EXPEDITION);
-			// Sub module delivery note  Sous module bons de livraison
-			$this->delivery_note = new stdClass();
-			$this->delivery_note->enabled = (empty($this->global->MAIN_SUBMODULE_DELIVERY) ? 0 : $this->global->MAIN_SUBMODULE_DELIVERY);
 
 			// Module fournisseur
 			if (!empty($this->fournisseur)) {
@@ -818,11 +812,6 @@ class Conf
 				$this->global->USE_STRICT_CSV_RULES = 2;
 			}
 
-			// By default, option is on. Once set by user, this code is useless
-			if (!isset($this->global->ACCOUNTING_REEXPORT)) {
-				$this->global->ACCOUNTING_REEXPORT = 1;
-			}
-
 			// Use a SCA ready workflow with Stripe module (STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION by default if nothing defined)
 			if (!isset($this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) && empty($this->global->STRIPE_USE_NEW_CHECKOUT)) {
 				$this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 1;
@@ -958,13 +947,17 @@ class Conf
 			if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) {
 				// Value 1 makes CSRF check for all POST parameters only
 				// Value 2 makes also CSRF check for GET requests with action = a sensitive requests like action=del, action=remove...
-				// Value 3 makes also CSRF check for all GET requests with a param action or massaction
-				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2;
+				// Value 3 makes also CSRF check for all GET requests with a param action or massaction (except some sensitive values)
+				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2; // TODO Switch value to 3
 				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
 			}
 
 			if (!isset($this->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA)) {
 				$this->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA = 1;
+			}
+
+			if (!isset($this->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
+				$this->global->MAIL_SMTP_USE_FROM_FOR_HELO = 2;
 			}
 
 			if (!defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {

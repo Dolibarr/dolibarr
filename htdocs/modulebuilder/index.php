@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019	   Nicolas ZABOURI	<info@inovea-conseil.com>
+ * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -471,72 +472,10 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 		);
 
 		if (count($objects) > 1) {
-			$file = $destfile;
-			$content = file($file);
-			$props = "public \$myobject;";
-			$varcomented = "@var MyObject \$myobject {@type MyObject}";
-			$constructObj = "\$this->myobject = new MyObject(\$this->db);";
-			// add properties and declare them in consturctor
-			foreach ($content as $lineNumber => &$lineContent) {
-				if (strpos($lineContent, $varcomented) !== false) {
-					$lineContent = '';
-					foreach ($objects as $object) {
-						$lineContent .= "\t * @var ".$object." \$".strtolower($object)." {@type ".$object."}". PHP_EOL;
-					}
-					//var_dump($lineContent);exit;
-				}
-				if (strpos($lineContent, $props) !== false) {
-					$lineContent = '';
-					foreach ($objects as $object) {
-						$lineContent .= "\tpublic \$".strtolower($object).";". PHP_EOL;
-					}
-				}
-				if (strpos($lineContent, $constructObj) !== false) {
-					$lineContent = '';
-					foreach ($objects as $object) {
-						$lineContent .= "\t\t\$this->".strtolower($object)."= new ".$object."(\$this->db);". PHP_EOL;
-					}
-				}
-			}
-			$allContent = implode("", $content);
-			file_put_contents($destfile, $allContent);
-		}
-		if (count($objects) > 1) {
-			$search = "/*begin methods CRUD*/";
-			// Open the file and read line by line
-			$handle = fopen($destfile, "r");
-				$i = 1;
-				$lines = array();
-				$props = " public \$myobject; ";
-			while (($line = fgets($handle)) !== false) {
-				//search line begin
-				if (strpos($line, $search) !== false) {
-					$start_line = $i;
-
-					// Copy lines until the end on array
-					while (($line = fgets($handle)) !== false) {
-						if (strpos($line, "/*end methods CRUD*/") !== false) {
-							$end_line = $i;
-							break;
-						}
-						$lines[] = $line;
-						$i++;
-					}
-					break;
-				}
-
-				$i++;
-			}
-			$allContent = implode("", $lines);
-
-			foreach ($objects as $object) {
-				$contentReplaced = str_replace(["myobject","MyObject"], [strtolower($object),$object], $allContent);
-				dolReplaceInFile($destfile, array('/*end methods CRUD*/' => '/*CRUD FOR '.strtoupper($object).'*/'."\n".$contentReplaced."\n\t".'/*END CRUD FOR '.strtoupper($object).'*/'."\n\t".'/*end methods CRUD*/'));
-			}
-				dolReplaceInFile($destfile, array($allContent => ''));
-			fclose($handle);
+			addObjectsToApiFile($destfile, $objects, $modulename);
 		} else {
 			dolReplaceInFile($destfile, $arrayreplacement);
+			dolReplaceInFile($destfile, array('/*begin methods CRUD*/' => '/*begin methods CRUD*/'."\n\t".'/*CRUD FOR '.strtoupper($objectname).'*/', '/*end methods CRUD*/' => '/*END CRUD FOR '.strtoupper($objectname).'*/'."\n\t".'/*end methods CRUD*/'));
 		}
 
 		if ($varnametoupdate) {
@@ -938,17 +877,25 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 
 	$relativefilename = dol_sanitizePathName(GETPOST('file', 'restricthtml'));
 
-	// Get list of existing objects
-	$objects = dolGetListOfObjectClasses($destdir);
-
-
 	// Now we delete the file
 	if ($relativefilename) {
 		$dirnametodelete = dirname($relativefilename);
 		$filetodelete = $dirins.'/'.$relativefilename;
 		$dirtodelete  = $dirins.'/'.$dirnametodelete;
 
-		$result = dol_delete_file($filetodelete);
+		//check when we want delete api_file
+		if (strpos($relativefilename, 'api') !== false) {
+			$removeFile = removeObjectFromApiFile($file_api, $objectname, $module);
+			$var = getFromFile($file_api, '/*begin methods CRUD*/', '/*end methods CRUD*/');
+			if (str_word_count($var) == 0) {
+				$result = dol_delete_file($filetodelete);
+			}
+			if ($removeFile) {
+				setEventMessages($langs->trans("ApiObjectDeleted"), null);
+			}
+		} else {
+			$result = dol_delete_file($filetodelete);
+		}
 		if (!$result) {
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", basename($filetodelete)), null, 'errors');
 		} else {
@@ -1388,6 +1335,11 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 						setEventMessages($langs->trans("FileAlreadyExists", $destfile), null, 'warnings');
 					}
 				}
+				$arrayreplacement = array(
+					'/myobject\.class\.php/' => strtolower($objectname).'.class.php',
+					'/myobject\.lib\.php/' => strtolower($objectname).'.lib.php',
+				);
+				dolReplaceInFile($destdir.'/'.$destfile, $arrayreplacement, '', 0, 0, 1);
 			}
 		}
 
@@ -1589,6 +1541,13 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			$pathoffiletoeditsrc = $destdir.'/class/'.strtolower($objectname).'.class.php';
 			setEventMessages($langs->trans('ErrorFailToCreateFile', $pathoffiletoeditsrc), null, 'errors');
 			$error++;
+		}
+		// check if documentation was generate and add table of properties object
+		$file = $destdir.'/class/'.strtolower($objectname).'.class.php';
+		$destfile = $destdir.'/doc/Documentation.asciidoc';
+
+		if (file_exists($destfile)) {
+			writePropsInAsciiDoc($file, $objectname, $destfile);
 		}
 	}
 	if (!$error) {
@@ -1917,6 +1876,12 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 			'core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php'=>'core/modules/'.strtolower($module).'/doc/doc_generic_'.strtolower($objectname).'_odt.modules.php',
 			'core/modules/mymodule/doc/pdf_standard_myobject.modules.php'=>'core/modules/'.strtolower($module).'/doc/pdf_standard_'.strtolower($objectname).'.modules.php'
 		);
+
+		// delete property if documentation was generated
+		$file_doc = $dirins.'/'.strtolower($module).'/doc/Documentation.asciidoc';
+		if (file_exists($file_doc)) {
+			deletePropsFromDoc($file_doc, $objectname);
+		}
 
 		//menu for the object selected
 		// load class and check if menu exist for this object
@@ -2918,11 +2883,7 @@ if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule') {
 		dol_include_once($fullpathdirtodescriptor);
 
 		$class = 'mod'.$module;
-	} catch (Throwable $e) {		// This is called in PHP 7 only. Never called with PHP 5.6
-		$loadclasserrormessage = $e->getMessage()."<br>\n";
-		$loadclasserrormessage .= 'File: '.$e->getFile()."<br>\n";
-		$loadclasserrormessage .= 'Line: '.$e->getLine()."<br>\n";
-	} catch (Exception $e) {
+	} catch (Throwable $e) {		// This is called in PHP 7 only (includes Error and Exception)
 		$loadclasserrormessage = $e->getMessage()."<br>\n";
 		$loadclasserrormessage .= 'File: '.$e->getFile()."<br>\n";
 		$loadclasserrormessage .= 'Line: '.$e->getLine()."<br>\n";
@@ -4831,7 +4792,7 @@ if ($module == 'initmodule') {
 
 				//form for add new right
 				print '<tr class="small">';
-				print '<td><input type="text" readonly  name="id" class="width75" value="'.dol_escape_htmltag($moduleobj->numero.sprintf('%02d', $i + count($perms))).'"></td>';
+				print '<td><input type="text" readonly  name="id" class="width75" value="0"></td>';
 				print '<td>';
 				print '<select name="label" >';
 				print '<option value=""></option>';

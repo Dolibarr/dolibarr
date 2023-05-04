@@ -50,10 +50,10 @@ if (isModEnabled('facture')) {
 if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")) {
+if (isModEnabled("supplier_invoice")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 }
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
+if (isModEnabled("supplier_order")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 }
 if (isModEnabled('contrat')) {
@@ -184,15 +184,13 @@ class doc_generic_project_odt extends ModelePDFProjects
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$task				Task Object
+	 *	@param  Task			$task				Task Object
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
 	public function get_substitutionarray_tasks(Task $task, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$resarray = array(
 			'task_ref'=>$task->ref,
 			'task_fk_project'=>$task->fk_project,
@@ -1048,7 +1046,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'class' => 'ActionComm',
 						'table' => 'actioncomm',
 						'disableamount' => 1,
-						'test' => $conf->agenda->enabled && $user->rights->agenda->allactions->lire
+						'test' => isModEnabled('agenda') && $user->rights->agenda->allactions->lire
 					),
 				);
 

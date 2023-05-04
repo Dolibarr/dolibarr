@@ -337,9 +337,9 @@ print '</div>';
 print '</form>';
 
 print '		<script type="text/javascript">
-			function increment(){
+			function increment() {
 				$(".numvir").nextAll(".hidejs:first").removeClass("hidejs").removeClass("hideobject").addClass("active").show();
-			};
+			}
 			$(".number1").on("click",(function() {
 				console.log("We click on number1");
 				$(".hidejs").each(function (){$(this).hide()});

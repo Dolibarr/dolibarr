@@ -1440,7 +1440,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print_liste_field_titre("RIB");
 		print_liste_field_titre("IBAN");
 		print_liste_field_titre("BIC");
-		if (!empty($conf->prelevement->enabled)) {
+		if (isModEnabled('prelevement')) {
 			print_liste_field_titre("RUM");
 			print_liste_field_titre("DateRUM");
 			print_liste_field_titre("WithdrawMode");
@@ -1530,7 +1530,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print dol_escape_htmltag($rib->bic);
 			print '</td>';
 
-			if (!empty($conf->prelevement->enabled)) {
+			if (isModEnabled('prelevement')) {
 				// RUM
 				//print '<td>'.$prelevement->buildRumNumber($object->code_client, $rib->datec, $rib->id).'</td>';
 				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->rum).'">'.dol_escape_htmltag($rib->rum).'</td>';
@@ -1695,7 +1695,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			//var_dump($src);
 			print '</td>';
 
-			if (!empty($conf->prelevement->enabled)) {
+			if (isModEnabled('prelevement')) {
 				// RUM
 				print '<td valign="middle">';
 				//var_dump($src);

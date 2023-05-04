@@ -139,7 +139,7 @@ class BOMTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new BOM($this->savdb);
+		$localobject=new BOM($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -166,7 +166,7 @@ class BOMTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new BOM($this->savdb);
+		$localobject=new BOM($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

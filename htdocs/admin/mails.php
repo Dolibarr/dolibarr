@@ -809,7 +809,7 @@ if ($action == 'edit') {
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail' && empty($conf->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) {
 			$messagetoshow = $langs->trans("WarningPHPMail").'<br>'.$langs->trans("WarningPHPMailA").'<br>'.$langs->trans("WarningPHPMailB").'<br>'.$langs->trans("WarningPHPMailC").'<br><br>'.$langs->trans("WarningPHPMailD");
 			$messagetoshow .= ' '.$langs->trans("WarningPHPMailDbis", '{s1}', '{s2}');
-			$linktosetvar1 = '<a href="'.$_SERVER["PHP_SELF"].'?action=disablephpmailwarning&token='.newToken().'">';
+			$linktosetvar1 = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=disablephpmailwarning&token='.newToken().'">';
 			$linktosetvar2 = '</a>';
 			$messagetoshow = str_replace('{s1}', $linktosetvar1, $messagetoshow);
 			$messagetoshow = str_replace('{s2}', $linktosetvar2, $messagetoshow);

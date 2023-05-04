@@ -310,7 +310,7 @@ $found = 0;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnBill").'</td>';
 print '<td class="right">';
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	if ($conf->use_javascript_ajax) {
 		if ($disabled) {
 			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
@@ -332,7 +332,7 @@ $found++;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnValidateOrder").'</td>';
 print '<td class="right">';
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	if ($conf->use_javascript_ajax) {
 		if ($disabled) {
 			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
@@ -381,7 +381,7 @@ if (isModEnabled("reception")) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ReStockOnDispatchOrder").'</td>';
 	print '<td class="right">';
-	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
+	if (isModEnabled("supplier_order")) {
 		if ($conf->use_javascript_ajax) {
 			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', array(), null, 0, 0, 0, 2, 1, '', '', 'reposition');
 		} else {

@@ -38,6 +38,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 
 
 /**
@@ -45,6 +46,8 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
  */
 class Adherent extends CommonObject
 {
+	use CommonPeople;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -1247,7 +1250,7 @@ class Adherent extends CommonObject
 
 					if ($result >= 0) {
 						$result = $luser->setPassword($user, $this->pass, 0, 0, 1);
-						if ($result < 0) {
+						if (is_numeric($result) && $result < 0) {
 							$this->error = $luser->error;
 							dol_syslog(get_class($this)."::setPassword ".$this->error, LOG_ERR);
 							$error++;
@@ -3061,7 +3064,7 @@ class Adherent extends CommonObject
 
 		$blockingerrormsg = '';
 
-		if (empty($conf->adherent->enabled)) { // Should not happen. If module disabled, cron job should not be visible.
+		if (!isModEnabled('adherent')) { // Should not happen. If module disabled, cron job should not be visible.
 			$langs->load("agenda");
 			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
 			return 0;
@@ -3303,7 +3306,7 @@ class Adherent extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $selected;
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';

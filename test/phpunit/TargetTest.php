@@ -141,7 +141,7 @@ class TargetTest extends PHPUnit\Framework\TestCase
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$localobject = new Target($this->savdb);
+		$localobject = new Target($db);
 		$localobject->initAsSpecimen();
 		$result = $localobject->create($user);
 
@@ -168,7 +168,7 @@ class TargetTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Target($this->savdb);
+		$localobject=new Target($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -218,7 +218,7 @@ class TargetTest extends PHPUnit\Framework\TestCase
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$localobject = new Target($this->savdb);
+		$localobject = new Target($db);
 		$result = $localobject->fetch($id);
 		$result = $localobject->delete($user);
 

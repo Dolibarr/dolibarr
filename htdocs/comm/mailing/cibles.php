@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2021 Laurent Destailleur  <eldy@uers.sourceforge.net>
+ * Copyright (C) 2005-2023 Laurent Destailleur  <eldy@uers.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
  *
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 
 // Load translation files required by the page
-$langs->load("mails");
+$langs->loadLangs(array("mails", "admin"));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -73,13 +73,23 @@ $result = $object->fetch($id);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('ciblescard', 'globalcard'));
 
+$sqlmessage = '';
+
+// List of sending methods
+$listofmethods = array();
+//$listofmethods['default'] = $langs->trans('DefaultOutgoingEmailSetup');
+$listofmethods['mail'] = 'PHP mail function';
+//$listofmethods['simplemail']='Simplemail class';
+$listofmethods['smtps'] = 'SMTP/SMTPS socket library';
+if (version_compare(phpversion(), '7.0', '>=')) {
+	$listofmethods['swiftmailer'] = 'Swift Mailer socket library';
+}
+
 // Security check
 if (!$user->hasRight('mailing', 'lire') || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'mailing');
-
-$sqlmessage = '';
 
 
 /*
@@ -354,6 +364,26 @@ if ($object->fetch($id) >= 0) {
 	}
 	print '</td></tr>';
 
+	print '<tr><td>';
+	print $langs->trans("MAIN_MAIL_SENDMODE");
+	print '</td><td>';
+	if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
+		$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING')];
+	} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE')) {
+		$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE')];
+	} else {
+		$text = $listofmethods['mail'];
+	}
+	print $text;
+	if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
+		if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
+			print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING').')</span>';
+		}
+	} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE') != 'mail' && getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
+		print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER').')</span>';
+	}
+	print '</td></tr>';
+
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
@@ -375,14 +405,14 @@ if ($object->fetch($id) >= 0) {
 		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"), ($user->admin ?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1) : ''), 'generic');
 
 		print '<div class="div-table-responsive">';
-		print '<div class="tagtable centpercent liste_titre_bydiv borderbottom" id="tablelines">';
+		print '<div class="tagtable centpercentimp liste_titre_bydiv borderbottom" id="tablelines">';
 
 		print '<div class="tagtr liste_titre">';
 		print '<div class="tagtd"></div>';
 		print '<div class="tagtd">'.$langs->trans("RecipientSelectionModules").'</div>';
-		print '<div class="tagtd" align="center">'.$langs->trans("NbOfUniqueEMails").'</div>';
-		print '<div class="tagtd left">'.$langs->trans("Filters");
-		print ' &nbsp; &nbsp; <div class="floatright">'.$langs->trans("EvenUnsubscribe").' ';
+		print '<div class="tagtd center maxwidth150">'.$langs->trans("NbOfUniqueEMails").'</div>';
+		print '<div class="tagtd left"><div class="inline-block">'.$langs->trans("Filters").'</div>';
+		print ' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <div class=" inline-block">'.$langs->trans("EvenUnsubscribe").' ';
 		print ajax_object_onoff($object, 'evenunsubscribe', 'evenunsubscribe', 'EvenUnsubscribe:switch_on:warning', 'EvenUnsubscribe', array(), 'small valignmiddle', '', 1);
 		print '</div>';
 		print '</div>';
@@ -563,7 +593,7 @@ if ($object->fetch($id) >= 0) {
 
 	// Count total nb of records
 	$nbtotalofrecords = '';
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
 		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0

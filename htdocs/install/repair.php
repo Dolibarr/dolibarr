@@ -1244,7 +1244,7 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 	if ($db->type == "mysql" || $db->type == "mysqli") {
 		$force_utf8_on_tables = GETPOST('force_utf8_on_tables', 'alpha');
 
-		$listoftables = $db->DDLListTables($db->database_name);
+		$listoftables = $db->DDLListTablesFull($db->database_name);
 
 		// Disable foreign key checking for avoid errors
 		if ($force_utf8_on_tables == 'confirmed') {
@@ -1255,14 +1255,18 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 
 		foreach ($listoftables as $table) {
 			// do not convert llx_const if mysql encrypt/decrypt is used
-			if ($conf->db->dolibarr_main_db_encryption != 0 && preg_match('/\_const$/', $table)) {
+			if ($conf->db->dolibarr_main_db_encryption != 0 && preg_match('/\_const$/', $table[0])) {
+				continue;
+			}
+			if ($table[1] == 'VIEW') {
+				print '<tr><td colspan="2">'.$table[0].' is a '.$table[1].' (Skipped)</td></tr>';
 				continue;
 			}
 
 			print '<tr><td colspan="2">';
-			print $table;
-			$sql1 = "ALTER TABLE ".$table." ROW_FORMAT=dynamic";
-			$sql2 = "ALTER TABLE ".$table." CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+			print $table[0];
+			$sql1 = "ALTER TABLE ".$table[0]." ROW_FORMAT=dynamic";
+			$sql2 = "ALTER TABLE ".$table[0]." CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci";
 			print '<!-- '.$sql1.' -->';
 			print '<!-- '.$sql2.' -->';
 			if ($force_utf8_on_tables == 'confirmed') {
@@ -1297,7 +1301,7 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 	if ($db->type == "mysql" || $db->type == "mysqli") {
 		$force_utf8mb4_on_tables = GETPOST('force_utf8mb4_on_tables', 'alpha');
 
-		$listoftables = $db->DDLListTables($db->database_name);
+		$listoftables = $db->DDLListTablesFull($db->database_name);
 
 		// Disable foreign key checking for avoid errors
 		if ($force_utf8mb4_on_tables == 'confirmed') {
@@ -1308,14 +1312,18 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 
 		foreach ($listoftables as $table) {
 			// do not convert llx_const if mysql encrypt/decrypt is used
-			if ($conf->db->dolibarr_main_db_encryption != 0 && preg_match('/\_const$/', $table)) {
+			if ($conf->db->dolibarr_main_db_encryption != 0 && preg_match('/\_const$/', $table[0])) {
+				continue;
+			}
+			if ($table[1] == 'VIEW') {
+				print '<tr><td colspan="2">'.$table[0].' is a '.$table[1].' (Skipped)</td></tr>';
 				continue;
 			}
 
 			print '<tr><td colspan="2">';
-			print $table;
-			$sql1 = "ALTER TABLE ".$table." ROW_FORMAT=dynamic";
-			$sql2 = "ALTER TABLE ".$table." CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+			print $table[0];
+			$sql1 = "ALTER TABLE ".$table[0]." ROW_FORMAT=dynamic";
+			$sql2 = "ALTER TABLE ".$table[0]." CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
 			print '<!-- '.$sql1.' -->';
 			print '<!-- '.$sql2.' -->';
 			if ($force_utf8mb4_on_tables == 'confirmed') {

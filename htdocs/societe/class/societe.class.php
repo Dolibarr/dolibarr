@@ -41,6 +41,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonsocialnetworks.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 
@@ -51,6 +52,7 @@ class Societe extends CommonObject
 {
 	use CommonIncoterm;
 	use CommonSocialNetworks;
+	use CommonPeople;
 
 	/**
 	 * @var string ID of module.
@@ -2038,10 +2040,10 @@ class Societe extends CommonObject
 	/**
 	 *    Delete a third party from database and all its dependencies (contacts, rib...)
 	 *
-	 *    @param	int		$id             Id of third party to delete
-	 *    @param    User    $fuser          User who ask to delete thirdparty
-	 *    @param    int		$call_trigger   0=No, 1=yes
-	 *    @return	int						<0 if KO, 0 if nothing done, >0 if OK
+	 *    @param	int			$id             Id of third party to delete
+	 *    @param    User|null   $fuser          User who ask to delete thirdparty
+	 *    @param    int			$call_trigger   0=No, 1=yes
+	 *    @return	int							<0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function delete($id, User $fuser = null, $call_trigger = 1)
 	{
@@ -2970,7 +2972,7 @@ class Societe extends CommonObject
 			}
 		}
 		if (empty($option) || preg_match('/supplier/', $option)) {
-			if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $this->fournisseur) {
+			if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $this->fournisseur) {
 				$s .= '<'.$tag.' class="vendor-back" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id.'">'.dol_substr($langs->trans("Supplier"), 0, 1).'</'.$tag.'>';
 			}
 		}

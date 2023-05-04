@@ -1350,7 +1350,7 @@ class CMailFile
 	/**
 	 * Build a css style (mode = all) into this->styleCSS and this->bodyCSS
 	 *
-	 * @return string
+	 * @return void
 	 */
 	public function buildCSS()
 	{

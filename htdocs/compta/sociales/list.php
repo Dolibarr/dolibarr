@@ -270,7 +270,7 @@ if (isModEnabled('project')) {
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -640,8 +640,7 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		$chargesociale_static->fk_project = $projectstatic->getNomUrl();
-		print $chargesociale_static->getKanbanView('', array('selected' => in_array($chargesociale_static->id, $arrayofselected)));
+		print $chargesociale_static->getKanbanView('', array('projectlink'=> $projectstatic->getNomUrl(1), 'selected' => in_array($chargesociale_static->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

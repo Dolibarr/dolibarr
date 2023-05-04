@@ -390,9 +390,14 @@ class Product extends CommonObject
 	public $stats_contrat = array();
 	public $stats_facture = array();
 	public $stats_commande_fournisseur = array();
+	public $stats_expedition = array();
 	public $stats_reception = array();
+	public $stats_mo = array();
+	public $stats_bom = array();
 	public $stats_mrptoconsume = array();
 	public $stats_mrptoproduce = array();
+	public $stats_facturerec = array();
+	public $stats_facture_fournisseur = array();
 
 	//! Size of image
 	public $imgWidth;
@@ -572,7 +577,7 @@ class Product extends CommonObject
 	 */
 	public function check()
 	{
-		if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+		if (getDolGlobalInt('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
 			$this->ref = trim($this->ref);
 		} else {
 			$this->ref = dol_sanitizeFileName(stripslashes($this->ref));
@@ -608,7 +613,7 @@ class Product extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+		if (getDolGlobalInt('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
 			$this->ref = trim($this->ref);
 		} else {
 			$this->ref = dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)));
@@ -702,7 +707,7 @@ class Product extends CommonObject
 
 		if (empty($this->ref) || $this->ref == 'auto') {
 			// Load object modCodeProduct
-			$module = (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
+			$module = getDolGlobalString('PRODUCT_CODEPRODUCT_ADDON', 'mod_codeproduct_leopard');
 			if ($module != 'mod_codeproduct_leopard') {    // Do not load module file for leopard
 				if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php') {
 					$module = substr($module, 0, dol_strlen($module) - 4);
@@ -1008,7 +1013,7 @@ class Product extends CommonObject
 		}
 
 		// Clean parameters
-		if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+		if (getDolGlobalInt('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
 			$this->ref = trim($this->ref);
 		} else {
 			$this->ref = dol_string_nospecial(trim($this->ref));
@@ -5032,10 +5037,9 @@ class Product extends CommonObject
 		}
 
 		if (!empty($this->entity)) {
-			$tmpphoto = $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 80);
+			$tmpphoto = $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 80, 0, 0, 0, 0, 1);
 			if ($this->nbphoto > 0) {
-				$datas['photo'] = '<div class="photointooltip floatright">' . $tmpphoto . '</div>';
-				//$label .= '<div style="clear: both;"></div>';
+				$datas['photo'] = '<div class="photointooltip floatright">'."\n" . $tmpphoto . '</div>';
 			}
 		}
 
@@ -5172,9 +5176,9 @@ class Product extends CommonObject
 		if (empty($notooltip)) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowProduct");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1, 1).'"' :  ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="nowraponall '.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ' class="nowraponall'.($morecss ? ' '.$morecss : '').'"';
@@ -5636,7 +5640,7 @@ class Product extends CommonObject
 			}
 			$stock_sending_client = $this->stats_expedition['qty'];
 		}
-		if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
+		if (isModEnabled("supplier_order")) {
 			$filterStatus = empty($conf->global->SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK) ? '3,4' : $conf->global->SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK;
 			if (isset($includedraftpoforvirtual)) {
 				$filterStatus = '0,1,2,'.$filterStatus;	// 1,2 may have already been inside $filterStatus but it is better to have twice than missing $filterStatus does not include them
@@ -5647,7 +5651,7 @@ class Product extends CommonObject
 			}
 			$stock_commande_fournisseur = $this->stats_commande_fournisseur['qty'];
 		}
-		if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && empty($conf->reception->enabled)) {
+		if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && empty($conf->reception->enabled)) {
 			// Case module reception is not used
 			$filterStatus = '4';
 			if (isset($includedraftpoforvirtual)) {
@@ -5659,7 +5663,7 @@ class Product extends CommonObject
 			}
 			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}
-		if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && isModEnabled("reception")) {
+		if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && isModEnabled("reception")) {
 			// Case module reception is used
 			$filterStatus = '4';
 			if (isset($includedraftpoforvirtual)) {

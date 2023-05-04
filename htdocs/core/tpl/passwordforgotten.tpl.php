@@ -36,7 +36,6 @@ if ($size > 10000) {
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 header('Cache-Control: Public, must-revalidate');
-header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 if (GETPOST('dol_hide_topmenu')) {
 	$conf->dol_hide_topmenu = 1;
@@ -287,7 +286,7 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 
 // Google Analytics
 // TODO Remove this, and add content into hook getPasswordForgottenPageExtraOptions() instead
-if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
+if (isModEnabled('google') && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
 	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
 	foreach ($tmptagarray as $tmptag) {
 		print "\n";
@@ -308,7 +307,7 @@ if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID)) 
 
 // TODO Replace this with a hook
 // Google Adsense (need Google module)
-if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT)) {
+if (isModEnabled('google') && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT)) {
 	if (empty($conf->dol_use_jmobile)) {
 		?>
 	<div class="center"><br>

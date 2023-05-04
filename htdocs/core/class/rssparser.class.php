@@ -667,7 +667,7 @@ class RssParser
 
 
 	/**
-	 * 	To concat 2 string with no warning if an operand is not defined
+	 * 	To concat 2 strings with no warning if an operand is not defined
 	 *
 	 * 	@param	string	$str1		Str1
 	 *  @param	string	$str2		Str2

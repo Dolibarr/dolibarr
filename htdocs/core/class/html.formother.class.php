@@ -782,7 +782,7 @@ class FormOther
 	 *
 	 *  @param	string		$color				String with hex (FFFFFF) or comma RGB ('255,255,255')
 	 *  @param	string		$textifnotdefined	Text to show if color not defined
-	 *  @return	string							HTML code for color thumb
+	 *  @return	string							Show color string
 	 *  @see selectColor()
 	 */
 	public static function showColor($color, $textifnotdefined = '')
@@ -796,9 +796,9 @@ class FormOther
 		$color = colorArrayToHex(colorStringToArray($color, array()), '');
 
 		if ($color) {
-			print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
+			return '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
 		} else {
-			print $textifnotdefined;
+			return $textifnotdefined;
 		}
 	}
 
@@ -1091,7 +1091,7 @@ class FormOther
 	 *  @param	string		$option			Option
 	 *  @param	string		$morecss		More CSS
 	 *  @param  bool		$addjscombo		Add js combo
-	 *  @return	string
+	 *  @return	void
 	 *  @deprecated
 	 */
 	public function select_year($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp', $addjscombo = false)
@@ -1207,7 +1207,7 @@ class FormOther
 				if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone') {
 					$label = $label.' <span class="fa fa-bar-chart"></span>';
 				}
-				$arrayboxtoactivatelabel[$box->id] = $label; // We keep only boxes not shown for user, to show into combo list
+				$arrayboxtoactivatelabel[$box->id] = array('label'=>$label, 'data-html'=>img_picto('', $box->boximg, 'class="pictofixedwidth"').$langs->trans($label)); // We keep only boxes not shown for user, to show into combo list
 			}
 			foreach ($boxidactivatedforuser as $boxid) {
 				if (empty($boxorder)) {
@@ -1226,7 +1226,7 @@ class FormOther
 			$selectboxlist .= '<input type="hidden" name="userid" value="'.$user->id.'">';
 			$selectboxlist .= '<input type="hidden" name="areacode" value="'.$areacode.'">';
 			$selectboxlist .= '<input type="hidden" name="boxorder" value="'.$boxorder.'">';
-			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone hideonprint', 0, 'hidden selected', 0, 1);
+			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone hideonprint', 0, 'hidden selected', 0, 0);
 			if (empty($conf->use_javascript_ajax)) {
 				$selectboxlist .= ' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
 			}

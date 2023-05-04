@@ -996,7 +996,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 				print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
-				print img_picto('', 'company').$form->select_company(GETPOST('socid', 'int') ?GETPOST('socid', 'int') : ($object->socid ? $object->socid : -1), 'socid', '', $langs->trans("SelectThirdParty"));
+				print img_picto('', 'company').$form->select_company(GETPOST('socid', 'int') ? GETPOST('socid', 'int') : ($object->socid ? $object->socid : -1), 'socid', '', $langs->trans("SelectThirdParty"));
 				print '</td>';
 				print '</tr>';
 			}

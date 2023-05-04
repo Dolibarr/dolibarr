@@ -43,7 +43,7 @@ class ModeleImports
 	public $error = '';
 
 	/**
-	 * @var int id of driver
+	 * @var string Code of driver
 	 */
 	public $id;
 
@@ -74,6 +74,9 @@ class ModeleImports
 	public $liblabel = array();
 
 	public $libversion = array();
+
+	public $charset;
+
 
 	/**
 	 * @var	array	Element mapping from table name
@@ -126,7 +129,7 @@ class ModeleImports
 	/**
 	 * getDriverId
 	 *
-	 * @return string		Id
+	 * @return int		Id
 	 */
 	public function getDriverId()
 	{

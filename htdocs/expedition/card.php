@@ -357,7 +357,8 @@ if (empty($reshook)) {
 		}
 
 		//var_dump($batch_line[2]);
-		if ($totalqty > 0 && !$error) {		// There is at least one thing to ship and no error
+		if (($totalqty > 0 || !empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) && !$error) {		// There is at least one thing to ship and no error
+			//var_dump($_POST);exit;
 			for ($i = 0; $i < $num; $i++) {
 				$qty = "qtyl".$i;
 
@@ -367,7 +368,7 @@ if (empty($reshook)) {
 						//shipment from multiple stock locations
 						$nbstockline = count($stockLine[$i]);
 						for ($j = 0; $j < $nbstockline; $j++) {
-							if ($stockLine[$i][$j]['qty'] > 0) {
+							if ($stockLine[$i][$j]['qty'] > 0 || ($stockLine[$i][$j]['qty'] == 0 && !empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))) {
 								$ret = $object->addline($stockLine[$i][$j]['warehouse_id'], $stockLine[$i][$j]['ix_l'], $stockLine[$i][$j]['qty'], $array_options[$i]);
 								if ($ret < 0) {
 									setEventMessages($object->error, $object->errors, 'errors');
@@ -376,7 +377,7 @@ if (empty($reshook)) {
 							}
 						}
 					} else {
-						if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
+						if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && !empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))) {
 							$ent = "entl".$i;
 							$idl = "idl".$i;
 							$entrepot_id = is_numeric(GETPOST($ent, 'int')) ?GETPOST($ent, 'int') : GETPOST('entrepot_id', 'int');
@@ -436,7 +437,7 @@ if (empty($reshook)) {
 			$_GET["commande_id"] = GETPOST('commande_id', 'int');
 			$action = 'create';
 		}
-	} elseif ($action == 'create_delivery' && $conf->delivery_note->enabled && $user->rights->expedition->delivery->creer) {
+	} elseif ($action == 'create_delivery' && getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->rights->expedition->delivery->creer) {
 		// Build a receiving receipt
 		$db->begin();
 
@@ -2157,13 +2158,13 @@ if ($action == 'create') {
 		$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.fk_unit, obj.date_start, obj.date_end";
 		$sql .= ", ed.rowid as shipmentline_id, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line, ed.fk_entrepot";
 		$sql .= ", e.rowid as shipment_id, e.ref as shipment_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_expedition";
-		//if ($conf->delivery_note->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received";
+		//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received";
 		$sql .= ', p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch';
 		$sql .= ', p.description as product_desc';
 		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
 		$sql .= ", ".MAIN_DB_PREFIX."expedition as e";
 		$sql .= ", ".MAIN_DB_PREFIX.$origin."det as obj";
-		//if ($conf->delivery_note->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
+		//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 		$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
 		$sql .= " AND obj.fk_".$origin." = ".((int) $origin_id);
@@ -2310,6 +2311,9 @@ if ($action == 'create') {
 							//print ' '.$form->textwithpicto('', $htmltext, 1);
 
 							$qtyalreadysent += $shipmentline_var['qty_shipped'];
+						}
+						if ($j) {
+							$htmltooltip = $langs->trans("QtyInOtherShipments").'...<br><br>'.$htmltooltip.'<br><input type="submit" name="dummyhiddenbuttontogetfocus" style="display:none" autofocus>';
 						}
 					}
 				}
@@ -2592,7 +2596,7 @@ if ($action == 'create') {
 
 			// This is just to generate a delivery receipt
 			//var_dump($object->linkedObjectsIds['delivery']);
-			if ($conf->delivery_note->enabled && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED) && $user->rights->expedition->delivery->creer && empty($object->linkedObjectsIds['delivery'])) {
+			if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED) && $user->rights->expedition->delivery->creer && empty($object->linkedObjectsIds['delivery'])) {
 				print dolGetButtonAction('', $langs->trans('CreateDeliveryOrder'), 'default', $_SERVER["PHP_SELF"].'?action=create_delivery&token='.newToken().'&id='.$object->id, '');
 			}
 			// Close

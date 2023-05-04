@@ -935,7 +935,7 @@ $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPri
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -1178,7 +1178,7 @@ if ($resql) {
 	if (!empty($user->rights->facture->paiement)) {
 		$arrayofmassactions['makepayment'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakePaymentAndClassifyPayed");
 	}
-	if (!empty($conf->prelevement->enabled) && !empty($user->rights->prelevement->bons->creer)) {
+	if (isModEnabled('prelevement') && !empty($user->rights->prelevement->bons->creer)) {
 		$langs->load("withdrawals");
 		$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeWithdrawRequest");
 	}
@@ -1929,10 +1929,7 @@ if ($resql) {
 					print '<div class="box-flex-container kanban">';
 				}
 				// Output Kanban
-				$facturestatic->socid = $companystatic->getNomUrl(1, 'company', 15);
-				$userstatic->fetch($obj->fk_user_author);
-				$facturestatic->fk_user_author = $userstatic->getNomUrl(1);
-				print $facturestatic->getKanbanView('');
+				print $facturestatic->getKanbanView('', array('thirdparty'=>$companystatic->getNomUrl(1, 'company', 15), 'userauthor'=>$userstatic->getNomUrl(1), 'selected' => in_array($object->id, $arrayofselected)));
 				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
 					print '</td></tr>';

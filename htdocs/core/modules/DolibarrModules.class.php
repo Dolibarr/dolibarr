@@ -692,6 +692,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						'images/' => dol_buildpath(strtolower($this->name).'/images/', 1),
 					)
 				);
+
+				$content = preg_replace('/<a href="/', '<a target="_blank" rel="noopener noreferrer" href="', $content);
 			} else {
 				$content = nl2br($content);
 			}
@@ -781,6 +783,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 			if ((float) DOL_VERSION >= 6.0) {
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
+
 				$content = dolMd2Html($content, 'parsedown', array('doc/'=>dol_buildpath(strtolower($this->name).'/doc/', 1)));
 			} else {
 				$content = nl2br($content);

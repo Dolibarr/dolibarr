@@ -931,11 +931,11 @@ class Paiement extends CommonObject
 	}
 
 	/**
-	 *    Validate payment
+	 * Validate payment
 	 *
-	 *	  @param	User	$user		User making validation
-	 *    @return   int     			<0 if KO, >0 if OK
-	 *    @deprecated
+	 * @param	User|null	$user		User making validation
+	 * @return	int     				<0 if KO, >0 if OK
+	 * @deprecated
 	 */
 	public function valide(User $user = null)
 	{
@@ -943,10 +943,10 @@ class Paiement extends CommonObject
 	}
 
 	/**
-	 *    Validate payment
+	 * Validate payment
 	 *
-	 *	  @param	User	$user		User making validation
-	 *    @return   int     			<0 if KO, >0 if OK
+	 * @param	User|null	$user		User making validation
+	 * @return	int     				<0 if KO, >0 if OK
 	 */
 	public function validate(User $user = null)
 	{
@@ -964,10 +964,10 @@ class Paiement extends CommonObject
 	}
 
 	/**
-	 *    Reject payment
+	 * Reject payment
 	 *
-	 *	  @param	User	$user		User making reject
-	 *    @return   int     			<0 if KO, >0 if OK
+	 * @param	User|null	$user		User making reject
+	 * @return  int     				<0 if KO, >0 if OK
 	 */
 	public function reject(User $user = null)
 	{
@@ -985,10 +985,10 @@ class Paiement extends CommonObject
 	}
 
 	/**
-	 *    Information sur l'objet
+	 * Information sur l'objet
 	 *
-	 *    @param   int     $id      id du paiement dont il faut afficher les infos
-	 *    @return  void
+	 * @param   int     $id      id du paiement dont il faut afficher les infos
+	 * @return  void
 	 */
 	public function info($id)
 	{

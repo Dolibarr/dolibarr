@@ -1448,7 +1448,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 	 *      @param	int				$hidedetails	Do not show line details
 	 *      @param	int				$hidedesc		Do not show desc
 	 *      @param	int				$hideref		Do not show ref
-	 *      @return	null
+	 *      @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{

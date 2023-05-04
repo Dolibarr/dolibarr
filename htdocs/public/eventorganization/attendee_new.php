@@ -551,8 +551,8 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 				// Add link between invoice and the attendee registration
 				/*if (!$error) {
-					$facture->add_object_linked($confattendee->element, $confattendee->id);
-				}*/
+				 $facture->add_object_linked($confattendee->element, $confattendee->id);
+				 }*/
 			}
 
 			if (!$error) {
@@ -723,6 +723,9 @@ if ($project->date_start_event || $project->date_end_event) {
 }
 if ($project->location) {
 	print '<span class="fa fa-map-marked-alt pictofixedwidth opacitymedium"></span>'.dol_escape_htmltag($project->location).'<br>';
+}
+if ($project->note_public) {
+	print '<br><span class="opacitymedium">'.dol_htmlentitiesbr($project->note_public).'</span><br>';
 }
 
 print '</div>';

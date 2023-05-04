@@ -138,7 +138,7 @@ class CompanyBankAccountTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new CompanyBankAccount($this->savdb);
+		$localobject=new CompanyBankAccount($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -164,7 +164,7 @@ class CompanyBankAccountTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new CompanyBankAccount($this->savdb);
+		$localobject=new CompanyBankAccount($db);
 		$result=$localobject->fetch($id);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);

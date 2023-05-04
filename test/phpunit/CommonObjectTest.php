@@ -139,7 +139,7 @@ class CommonObjectTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
+		$localobject=new Commande($db);
 		$localobject->fetch(1);
 
 		$result=$localobject->fetch_user(1);
@@ -162,7 +162,7 @@ class CommonObjectTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
+		$localobject=new Commande($db);
 		$localobject->fetch(1);
 		$result=$localobject->fetch_projet();
 
@@ -184,7 +184,7 @@ class CommonObjectTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
+		$localobject=new Commande($db);
 		$localobject->fetch(1);
 
 		$result=$localobject->fetch_thirdparty();
