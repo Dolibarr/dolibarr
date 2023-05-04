@@ -936,7 +936,7 @@ $( document ).ready(function() {
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			// If there is no cash control from today open it
-			if ($obj->rowid == null) {
+			if (!isset($obj->rowid) || is_null($obj->rowid)) {
 				print "ControlCashOpening();";
 			}
 		}

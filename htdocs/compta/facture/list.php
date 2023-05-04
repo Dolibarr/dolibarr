@@ -1185,6 +1185,7 @@ if ($resql) {
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	// Show the new button only when this page is not opend from the Extended POS
+	$newcardbutton = '';
 	if ($contextpage != 'poslist') {
 		$url = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
 		if (!empty($socid)) {
@@ -2548,7 +2549,7 @@ if ($resql) {
 		}
 
 		// Use correct digits number for totals
-		$totalarray['val']['total_margin'] = price2num($totalarray['val']['total_margin'], 'MT');
+		$totalarray['val']['total_margin'] = (isset($totalarray['val']['total_margin']) ? price2num($totalarray['val']['total_margin'], 'MT') : null);
 
 		// Show total line
 		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
