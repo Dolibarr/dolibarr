@@ -158,7 +158,7 @@ if ($search_company) {
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -196,7 +196,7 @@ if ($result) {
 		$param .= '&amp;type=bank-transfer';
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
@@ -265,7 +265,8 @@ if ($result) {
 	print "</tr>\n";
 
 	if ($num) {
-		while ($i < min($num, $limit)) {
+		$imaxinloop = ($limit ? min($num, $limit) : $num);
+		while ($i < $imaxinloop) {
 			$obj = $db->fetch_object($result);
 
 			$bon->id = $obj->rowid;
@@ -282,12 +283,11 @@ if ($result) {
 			if ($mode == 'kanban') {
 				if ($i == 0) {
 					print '<tr><td colspan="12">';
-					print '<div class="box-flex-container">';
+					print '<div class="box-flex-container kanban">';
 				}
 				// Output Kanban
-
-				print $bon->getKanbanView('');
-				if ($i == (min($num, $limit) - 1)) {
+				print $bon->getKanbanView('', array('selected' => in_array($bon->id, $arrayofselected)));
+				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
 					print '</td></tr>';
 				}

@@ -150,7 +150,7 @@ class BonPrelevementTest extends PHPUnit\Framework\TestCase
 
 
 		// Create withdraw record and generate SEPA file
-		$localobject=new BonPrelevement($this->savdb);
+		$localobject=new BonPrelevement($db);
 		//$localobject->date_solde=dol_now();
 		$result=$localobject->Create(0, 0, 'simu');
 
@@ -180,7 +180,7 @@ class BonPrelevementTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new BonPrelevement($this->savdb);
+		$localobject=new BonPrelevement($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($id);
 

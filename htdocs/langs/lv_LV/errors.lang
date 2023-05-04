@@ -303,6 +303,7 @@ ErrorValueForTooLow=<b> %s </b> vērtība ir pārāk zema
 ErrorValueCantBeNull=<b> %s </b> vērtība nevar būt nulle
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Bankas darījuma datums nedrīkst būt mazāks par faila pārsūtīšanas datumu
 ErrorTooMuchFileInForm=Pārāk daudz failu formā, maksimālais skaits ir %s fails(-i)
+ErrorSessionInvalidatedAfterPasswordChange=Sesija tika anulēta pēc paroles, statusa vai derīguma datuma maiņas. Lūdzu, piesakieties atkārtoti.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Jūsu PHP parametrs upload_max_filesize (%s) ir augstāks nekā PHP parametrs post_max_size (%s). Šī nav konsekventa iestatīšana.
@@ -325,6 +326,7 @@ WarningPaymentDateLowerThanInvoiceDate=Apmaksas datums (%s) ir agrāks par rēķ
 WarningTooManyDataPleaseUseMoreFilters=Too many data (more than %s lines). Please use more filters or set the constant %s to a higher limit.
 WarningSomeLinesWithNullHourlyRate=Daži lietotāji dažreiz ierakstīja, bet viņu stundas likme netika definēta. Tika izmantota vērtība 0 %s stundā, taču tas var novest pie nepareiza pavadītā laika vērtējuma.
 WarningYourLoginWasModifiedPleaseLogin=Jūsu pieteikšanās tika mainīta. Drošības nolūkos pirms nākamās darbības jums būs jāpiesakās ar jauno pieteikumvārdu.
+WarningYourPasswordWasModifiedPleaseLogin=Jūsu parole tika mainīta. Drošības nolūkos jums tagad būs jāpiesakās ar savu jauno paroli.
 WarningAnEntryAlreadyExistForTransKey=Šīs valodas tulkošanas taustiņam jau ir ieraksts
 WarningNumberOfRecipientIsRestrictedInMassAction=Brīdinājums, ja izmantojat masveida darbību sarakstos, saņēmēju skaits ir ierobežots <b>%s</b>
 WarningDateOfLineMustBeInExpenseReportRange=Brīdinājums, rindas datums nav izdevumu pārskata diapazonā

@@ -134,13 +134,13 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Permissions
-$permissiontoread    = $user->rights->hrm->evaluation->read;
-$permissiontoreadall = $user->rights->hrm->evaluation->readall;
-$permissiontoadd     = $user->rights->hrm->evaluation->write;
-$permissiontodelete  = $user->rights->hrm->evaluation->delete;
+$permissiontoread    = $user->hasRight('hrm', 'evaluation', 'read');
+$permissiontoreadall = $user->hasRight('hrm', 'evaluation', 'readall');
+$permissiontoadd     = $user->hasRight('hrm', 'evaluation', 'write');
+$permissiontodelete  = $user->hasRight('hrm', 'evaluation', 'delete');
 
 // Security check
-if (empty($conf->hrm->enabled)) {
+if (!isModEnabled('hrm')) {
 	accessforbidden('Module not enabled');
 }
 
@@ -231,7 +231,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
@@ -313,7 +313,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
@@ -377,7 +377,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 foreach ($search as $key => $val) {
 	if (is_array($search[$key]) && count($search[$key])) {
@@ -567,7 +567,8 @@ if (isset($extrafields->attributes[$object->table_element]['computed']) && is_ar
 $i = 0;
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-while ($i < ($limit ? min($num, $limit) : $num)) {
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
 		break; // Should not happen
@@ -579,25 +580,25 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="'.$savnbfield.'">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
 		$object->date_eval = $obj->date_eval;
 
+		// TODO Use a cache on job
 		$job = new job($db);
 		$job->fetch($obj->fk_job);
-		$object->fk_job = $job->getNomUrl();
 
+		// TODO Use a cache on user
 		$userstatic = new User($db);
 		$userstatic->fetch($obj->fk_user);
-		$object->fk_user = $userstatic->getNomUrl(1);
 
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($object->id, $arrayofselected)) {
 				$selected = 1;
 			}
-			print $object->getKanbanView('');
+			print $object->getKanbanView('', array('user'=>$userstatic->getNomUrl(1), 'job'=>$job->getNomUrl(1), 'selected' => in_array($object->id, $arrayofselected)));
 		}
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';

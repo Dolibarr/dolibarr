@@ -138,7 +138,7 @@ class FormAdminTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new FormAdmin($this->savdb);
+		$localobject=new FormAdmin($db);
 		$result=$localobject->select_paper_format('', 'paperformat_id', 'A4', 0, 1);
 
 		$this->assertEquals($result, '<select class="flat" id="paperformat_id" name="paperformat_id"><option value="EUA4">Format A4 - 210x297 mm</option></select>');

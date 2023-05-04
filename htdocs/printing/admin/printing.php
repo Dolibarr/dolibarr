@@ -201,13 +201,15 @@ if ($mode == 'setup' && $user->admin) {
 			$i++;
 
 			if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS') {
+				$keyforprovider = '';	// @BUG This must be set
+
 				// Token
 				print '<tr class="oddeven">';
 				print '<td>'.$langs->trans("Token").'</td>';
 				print '<td colspan="2">';
 				$tokenobj = null;
 				// Dolibarr storage
-				$storage = new DoliStorage($db, $conf);
+				$storage = new DoliStorage($db, $conf, $keyforprovider);
 				try {
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME_GOOGLE);
 				} catch (Exception $e) {
@@ -237,7 +239,7 @@ if ($mode == 'setup' && $user->admin) {
 
 	if (!empty($driver)) {
 		if ($submit_enabled) {
-			print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Modify")).'"></div>';
+			print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
 		}
 	}
 

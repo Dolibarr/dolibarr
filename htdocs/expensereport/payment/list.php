@@ -232,7 +232,7 @@ $sql .= ' ba.rowid, ba.ref, ba.label, ba.number, ba.account_number, ba.iban_pref
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {		// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -262,7 +262,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER['PHP_SELF']) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -477,7 +477,8 @@ $i = 0;
 $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-while ($i < min($num, $limit)) {
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$objp = $db->fetch_object($resql);
 
 	$paymentexpensereportstatic->id = $objp->rowid;
@@ -500,11 +501,11 @@ while ($i < min($num, $limit)) {
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="12">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		print $paymentexpensereportstatic->getKanbanView('');
-		if ($i == (min($num, $limit) - 1)) {
+		print $paymentexpensereportstatic->getKanbanView('', array('selected' => in_array($objp->id, $arrayofselected)));
+		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
 		}

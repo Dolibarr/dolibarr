@@ -653,7 +653,8 @@ class pdf_azur extends ModelePDFPropales
 					$localtax1_type = $object->lines[$i]->localtax1_type;
 					$localtax2_type = $object->lines[$i]->localtax2_type;
 
-					if ($object->remise_percent) {
+					// TODO remise_percent is an obsolete field for object parent
+					/*if ($object->remise_percent) {
 						$tvaligne -= ($tvaligne * $object->remise_percent) / 100;
 					}
 					if ($object->remise_percent) {
@@ -661,7 +662,7 @@ class pdf_azur extends ModelePDFPropales
 					}
 					if ($object->remise_percent) {
 						$localtax2ligne -= ($localtax2ligne * $object->remise_percent) / 100;
-					}
+					}*/
 
 					$vatrate = (string) $object->lines[$i]->tva_tx;
 
@@ -873,9 +874,7 @@ class pdf_azur extends ModelePDFPropales
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -904,6 +903,7 @@ class pdf_azur extends ModelePDFPropales
 	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
 		// phpcs:enable
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -1033,12 +1033,12 @@ class pdf_azur extends ModelePDFPropales
 			// Show payment mode CHQ
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ') {
 				// Si mode reglement non force ou si force a CHQ
-				if (!empty($conf->global->FACTURE_CHQ_NUMBER)) {
+				if (getDolGlobalInt('FACTURE_CHQ_NUMBER')) {
 					$diffsizetitle = (empty($conf->global->PDF_DIFFSIZE_TITLE) ? 3 : $conf->global->PDF_DIFFSIZE_TITLE);
 
 					if ($conf->global->FACTURE_CHQ_NUMBER > 0) {
 						$account = new Account($this->db);
-						$account->fetch($conf->global->FACTURE_CHQ_NUMBER);
+						$account->fetch(getDolGlobalInt('FACTURE_CHQ_NUMBER'));
 
 						$pdf->SetXY($this->marge_gauche, $posy);
 						$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
@@ -1484,7 +1484,7 @@ class pdf_azur extends ModelePDFPropales
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	void
+	 *  @return	int|float
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{

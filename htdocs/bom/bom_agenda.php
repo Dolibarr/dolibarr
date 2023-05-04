@@ -52,6 +52,7 @@ if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
 
+$search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
 // Load variables for pagination
@@ -91,7 +92,7 @@ if ($id > 0 || !empty($ref)) {
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-restrictedArea($user, 'bom', $object->id, 'bom_bom', '', '', 'rowid', $isdraft);
+restrictedArea($user, 'bom', $object->id, $object->table_element, '', '', 'rowid', $isdraft);
 
 
 /*
@@ -240,7 +241,7 @@ if ($object->id > 0) {
 			$param .= '&contextpage='.urlencode($contextpage);
 		}
 		if ($limit > 0 && $limit != $conf->liste_limit) {
-			$param .= '&limit='.urlencode($limit);
+			$param .= '&limit='.((int) $limit);
 		}
 
 
@@ -249,6 +250,7 @@ if ($object->id > 0) {
 		// List of all actions
 		$filters = array();
 		$filters['search_agenda_label'] = $search_agenda_label;
+		$filters['search_rowid'] = $search_rowid;
 
 		// TODO Replace this with same code than into list.php
 		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);

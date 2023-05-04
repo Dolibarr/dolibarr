@@ -82,7 +82,7 @@ class EntrepotTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 
-		if (empty($conf->stock->enabled)) {
+		if (!isModEnabled('stock')) {
 			print __METHOD__." Module Stock must be enabled.\n"; die(1);
 		}
 
@@ -143,7 +143,7 @@ class EntrepotTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Entrepot($this->savdb);
+		$localobject=new Entrepot($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -170,7 +170,7 @@ class EntrepotTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Entrepot($this->savdb);
+		$localobject=new Entrepot($db);
 		$result=$localobject->fetch($id);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -243,7 +243,7 @@ class EntrepotTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Entrepot($this->savdb);
+		$localobject=new Entrepot($db);
 		$result=$localobject->fetch($id);
 
 		$result=$localobject->delete($user);

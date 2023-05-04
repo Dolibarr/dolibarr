@@ -69,6 +69,9 @@ class Ldap
 	 * Server DN
 	 */
 	public $domain;
+
+	public $domainFQDN;
+
 	/**
 	 * User administrateur Ldap
 	 * Active Directory ne supporte pas les connexions anonymes
@@ -339,17 +342,12 @@ class Ldap
 	 * This method seems a duplicate/alias of unbind().
 	 *
 	 * @return	boolean			true or false
-	 * @deprecated ldap_close is an alias of ldap_unbind
+	 * @deprecated ldap_close is an alias of ldap_unbind, so use unbind() instead.
 	 * @see unbind()
 	 */
 	public function close()
 	{
-		$r_type = get_resource_type($this->connection);
-		if ($this->connection && ($r_type === "Unknown" || !@ldap_close($this->connection))) {
-			return false;
-		} else {
-			return true;
-		}
+		return $this->unbind();
 	}
 
 	/**
@@ -401,7 +399,7 @@ class Ldap
 	public function unbind()
 	{
 		$this->result = true;
-		if ($this->connection) {
+		if (is_resource($this->connection) || is_object($this->connection)) {
 			$this->result = @ldap_unbind($this->connection);
 		}
 		if ($this->result) {
@@ -743,9 +741,7 @@ class Ldap
 		if ($fp) {
 			fputs($fp, $content);
 			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($outputfile);
 			return 1;
 		} else {
 			return -1;
@@ -1291,7 +1287,6 @@ class Ldap
 			$this->firstname  = $this->convToOutputCharset($result[0][$this->attr_firstname][0], $this->ldapcharset);
 			$this->login      = $this->convToOutputCharset($result[0][$this->attr_login][0], $this->ldapcharset);
 			$this->phone      = $this->convToOutputCharset($result[0][$this->attr_phone][0], $this->ldapcharset);
-			$this->skype      = $this->convToOutputCharset($result[0][$this->attr_skype][0], $this->ldapcharset);
 			$this->fax        = $this->convToOutputCharset($result[0][$this->attr_fax][0], $this->ldapcharset);
 			$this->mail       = $this->convToOutputCharset($result[0][$this->attr_mail][0], $this->ldapcharset);
 			$this->mobile     = $this->convToOutputCharset($result[0][$this->attr_mobile][0], $this->ldapcharset);

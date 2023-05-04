@@ -5,6 +5,7 @@
  * Copyright (C) 2016-2021 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Thibault FOUCART     <support@ptibogxiv.net>
+ * Copyright (C) 2023      Christophe Battarel	<christophe@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +73,6 @@ $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOST('search_datedelivery_e
 $search_datereceipt_start = dol_mktime(0, 0, 0, GETPOST('search_datereceipt_startmonth', 'int'), GETPOST('search_datereceipt_startday', 'int'), GETPOST('search_datereceipt_startyear', 'int'));
 $search_datereceipt_end = dol_mktime(23, 59, 59, GETPOST('search_datereceipt_endmonth', 'int'), GETPOST('search_datereceipt_endday', 'int'), GETPOST('search_datereceipt_endyear', 'int'));
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$socid = GETPOST('socid', 'int');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
@@ -142,8 +142,8 @@ $arrayfields = array(
 	'e.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'e.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'e.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
-	'l.ref'=>array('label'=>$langs->trans("DeliveryRef"), 'checked'=>1, 'enabled'=>(empty($conf->delivery_note->enabled) ? 0 : 1)),
-	'l.date_delivery'=>array('label'=>$langs->trans("DateReceived"), 'checked'=>1, 'enabled'=>(empty($conf->delivery_note->enabled) ? 0 : 1)),
+	'l.ref'=>array('label'=>$langs->trans("DeliveryRef"), 'checked'=>1, 'enabled'=>(getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
+	'l.date_delivery'=>array('label'=>$langs->trans("DateReceived"), 'checked'=>1, 'enabled'=>(getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
 	'e.billed'=>array('label'=>$langs->trans("Billed"), 'checked'=>1, 'position'=>1000, 'enabled'=>(!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)))
 );
 
@@ -451,7 +451,7 @@ $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $obje
 $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -497,7 +497,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($sall) {
 	$param .= "&sall=".urlencode($sall);
@@ -903,12 +903,11 @@ while ($i < min($num, $limit)) {
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="12">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
-		$object->socid = $companystatic->getNomUrl(1);
 		$object->date_delivery = $obj->delivery_date;
 		$object->town = $obj->town;
-		print $object->getKanbanView('');
+		print $object->getKanbanView('', array('thirdparty' => $companystatic->getNomUrl(1), 'selected' => in_array($obj->id, $arrayofselected)));
 		if ($i == min($num, $limit) - 1) {
 			print '</div>';
 			print '</td></tr>';

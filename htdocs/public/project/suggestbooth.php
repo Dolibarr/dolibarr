@@ -475,6 +475,7 @@ if (empty($reshook) && $action == 'add') {
 			}
 		}
 	}
+
 	if (!$error) {
 		$db->commit();
 
@@ -540,29 +541,60 @@ $formcompany = new FormCompany($db);
 
 llxHeaderVierge($langs->trans("NewSuggestionOfBooth"));
 
+
+print '<div align="center">';
+print '<div id="divsubscribe">';
+
 print '<br>';
 
 // Event summary
 print '<div class="center">';
-print '<span class="large">'.$project->title.'</span><br>';
-print img_picto('', 'calendar', 'class="pictofixedwidth"').$langs->trans("Date").': ';
-print dol_print_date($project->date_start, 'daytext');
-if ($project->date_end && $project->date_start != $project->date_end) {
-	print ' - '.dol_print_date($project->date_end, 'daytext');
-}
+print '<span class="eventlabel large">'.dol_escape_htmltag($project->title . ' '. $project->label).'</span><br>';
 print '<br><br>'."\n";
-//print $langs->trans("EvntOrgRegistrationWelcomeMessage")."\n";
-//print $project->note_public."\n";
+print '<span class="opacitymedium">'.$langs->trans("EvntOrgRegistrationWelcomeMessage")."</span>\n";
+print $project->note_public."\n";
 //print img_picto('', 'map-marker-alt').$langs->trans("Location").': xxxx';
 print '</div>';
 
 
+// Help text
+print '<div class="center subscriptionformhelptext">';
+
+if ($project->date_start_event || $project->date_end_event) {
+	print '<br><span class="fa fa-calendar pictofixedwidth opacitymedium"></span>';
+}
+if ($project->date_start_event) {
+	$format = 'day';
+	$tmparray = dol_getdate($project->date_start_event, false, '');
+	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['minutes']) {
+		$format = 'dayhour';
+	}
+	print dol_print_date($project->date_start_event, $format);
+}
+if ($project->date_start_event && $project->date_end_event) {
+	print ' - ';
+}
+if ($project->date_end_event) {
+	$format = 'day';
+	$tmparray = dol_getdate($project->date_end_event, false, '');
+	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['minutes']) {
+		$format = 'dayhour';
+	}
+	print dol_print_date($project->date_end_event, $format);
+}
+if ($project->date_start_event || $project->date_end_event) {
+	print '<br>';
+}
+if ($project->location) {
+	print '<span class="fa fa-map-marked-alt pictofixedwidth opacitymedium"></span>'.dol_escape_htmltag($project->location).'<br>';
+}
+
+print '</div>';
+
+print '<br>';
+
 print load_fiche_titre($langs->trans("NewSuggestionOfBooth"), '', '', 0, 0, 'center');
 
-
-print '<div align="center">';
-print '<div id="divsubscribe">';
-print '<div class="center subscriptionformhelptext justify">';
 
 dol_htmloutput_errors($errmsg);
 
@@ -574,7 +606,6 @@ print '<input type="hidden" name="action" value="add" />';
 print '<input type="hidden" name="id" value="'.$id.'" />';
 print '<input type="hidden" name="securekey" value="'.$securekeyreceived.'" />';
 
-print '<br>';
 
 print '<br><span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
 //print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
@@ -595,13 +626,13 @@ jQuery(document).ready(function () {
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
 // Name
-print '<tr><td><label for="lastname">'.$langs->trans("Lastname").'<span style="color: red">*</span></label></td>';
+print '<tr><td><label for="lastname">'.$langs->trans("Lastname").'<span class="star">*</span></label></td>';
 print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha') ?GETPOST("lastname", 'alpha') : $object->lastname).'" autofocus="autofocus"></td>';
 print '</tr>';
 // Email
-print '<tr><td>'.$langs->trans("Email").'<span style="color: red">*</span></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Email").'<span class="star">*</span></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Company
-print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'<span style="color: red">*</span>';
+print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'<span class="star">*</span>';
 print ' </td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
@@ -614,8 +645,7 @@ print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode', 'se
 print '</td></tr>';
 // Country
 print '<tr><td>'.$langs->trans('Country');
-print '<span style="color:red">*</span>';
-
+print '<span class="star">*</span>';
 print '</td><td>';
 $country_id = GETPOST('country_id');
 if (!$country_id && !empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) {
@@ -646,13 +676,13 @@ if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 	print '</td></tr>';
 }
 // Type of event
-print '<tr><td>'.$langs->trans("Format").'<span style="color: red">*</span></td>'."\n";
+print '<tr><td>'.$langs->trans("Format").'<span class="star">*</span></td>'."\n";
 print '<td>'.Form::selectarray('eventtype', $arrayofconfboothtype, $eventtype, 1).'</td>';
 // Label
-print '<tr><td>'.$langs->trans("LabelOfBooth").'<span style="color: red">*</span></td>'."\n";
+print '<tr><td>'.$langs->trans("LabelOfBooth").'<span class="star">*</span></td>'."\n";
 print '</td><td><input type="text" name="label" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('label')).'"></td></tr>'."\n";
 // Note
-print '<tr><td>'.$langs->trans("Description").'<span style="color: red">*</span></td>'."\n";
+print '<tr><td>'.$langs->trans("Description").'<span class="star">*</span></td>'."\n";
 print '<td><textarea name="note" id="note" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
 
 print "</table>\n";
@@ -666,7 +696,6 @@ print '<br>';
 print '<input type="submit" value="'.$langs->trans("SuggestBooth").'" name="suggestbooth" id="suggestbooth" class="button">';
 print '</div>';
 print '<br><br>';
-
 
 
 print "</form>\n";

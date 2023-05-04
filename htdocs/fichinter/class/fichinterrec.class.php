@@ -24,7 +24,7 @@
 
 /**
  *  \file       htdocs/fichinter/class/fichinterrec.class.php
- *  \ingroup    facture
+ *  \ingroup    fichinter
  *  \brief      Fichier de la classe des factures recurentes
  */
 
@@ -245,6 +245,7 @@ class FichinterRec extends Fichinter
 
 				if ($error) {
 					$this->db->rollback();
+					return -1;
 				} else {
 					$this->db->commit();
 					return $this->id;
@@ -478,6 +479,7 @@ class FichinterRec extends Fichinter
 
 		// Check parameters
 		if ($type < 0) {
+			$this->error = 'Bad value for parameter type';
 			return -1;
 		}
 
@@ -569,6 +571,9 @@ class FichinterRec extends Fichinter
 				$this->error = $this->db->lasterror();
 				return -1;
 			}
+		} else {
+			$this->error = 'Bad status of recurring intervention. Must be draft status to allow addition of lines';
+			return -1;
 		}
 	}
 

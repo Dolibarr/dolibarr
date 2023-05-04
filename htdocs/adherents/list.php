@@ -5,7 +5,7 @@
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2023	Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("members", "companies"));
+$langs->loadLangs(array("members", "companies", "categories"));
 
 
 // Get parameters
@@ -188,7 +188,8 @@ $result = restrictedArea($user, 'adherent');
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -324,14 +325,17 @@ $formother = new FormOther($db);
 $membertypestatic = new AdherentType($db);
 $memberstatic = new Adherent($db);
 
-// Page Header
-$title = $langs->trans("Members")." - ".$langs->trans("List");;
-$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
-llxHeader('', $title, $help_url);
-
-
 $now = dol_now();
 
+// Page Header
+$title = $langs->trans("Members")." - ".$langs->trans("List");
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
+$morejs = array();
+$morecss = array();
+
+
+// Build and execute select
+// --------------------------------------------------------------------
 if ((!empty($search_categ) && $search_categ > 0) || !empty($catid)) {
 	$sql = "SELECT DISTINCT";
 } else {
@@ -345,19 +349,19 @@ $sql .= " d.note_private, d.note_public, d.import_key,";
 $sql .= " s.nom,";
 $sql .= " ".$db->ifsql("d.societe IS NULL", "s.nom", "d.societe")." as companyname,";
 $sql .= " t.libelle as type, t.subscription,";
-$sql .= " state.code_departement as state_code, state.nom as state_name,";
+$sql .= " state.code_departement as state_code, state.nom as state_name";
 
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key." as options_".$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 
 // Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
@@ -424,10 +428,10 @@ if ($search_filter == 'waitingsubscription') {
 	$sql .= " AND (datefin IS NULL AND t.subscription = '1')";
 }
 if ($search_filter == 'uptodate') {
-	$sql .= " AND (datefin >= '".$db->idate($now)."' OR t.subscription = '0')";
+	$sql .= " AND (datefin >= '".$db->idate($now)."' OR (datefin IS NULL AND t.subscription = '0'))";
 }
 if ($search_filter == 'outofdate') {
-	$sql .= " AND (datefin < '".$db->idate($now)."' AND t.subscription = '1')";
+	$sql .= " AND (datefin < '".$db->idate($now)."')";
 }
 if ($search_status != '') {
 	// Peut valoir un nombre ou liste de nombre separes par virgules
@@ -487,18 +491,16 @@ if ($search_country) {
 if ($search_import_key) {
 	$sql .= natural_search("d.import_key", $search_import_key);
 }
-
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
-
 // Add where from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-// Count total nb of records with no order and no limits
+// Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -510,12 +512,13 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
 	$db->free($resql);
 }
+//print $sql;
 
 // Complete request and execute it with limit
 $sql .= $db->order($sortfield, $sortorder);
@@ -532,14 +535,20 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 
-$arrayofselected = is_array($toselect) ? $toselect : array();
-
+// Direct jump if only one record found
 if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/adherents/card.php?id='.$id);
 	exit;
 }
+
+// Output page
+// --------------------------------------------------------------------
+
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
+
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
 
 if ($search_type > 0) {
@@ -557,7 +566,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($sall != "") {
 	$param .= "&sall=".urlencode($sall);
@@ -711,7 +720,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -1014,7 +1023,8 @@ print "</tr>\n";
 $i = 0;
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-while ($i < min($num, $limit)) {
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 
 	$datefin = $db->jdate($obj->datefin);
@@ -1051,14 +1061,14 @@ while ($i < min($num, $limit)) {
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="12">';
-			print '<div class="box-flex-container">';
+			print '<div class="box-flex-container kanban">';
 		}
 		$membertypestatic->id = $obj->type_id;
 		$membertypestatic->label = $obj->type;
 		$memberstatic->type = $membertypestatic->label;
 		$memberstatic->photo = $obj->photo;
 		// Output Kanban
-		print $memberstatic->getKanbanView('');
+		print $memberstatic->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 		if ($i == (min($num, $limit) - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -1349,7 +1359,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}
-	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
 $db->free($resql);

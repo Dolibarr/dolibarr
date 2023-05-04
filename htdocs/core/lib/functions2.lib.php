@@ -113,8 +113,8 @@ function dolGetModulesDirs($subdir = '')
 /**
  *  Try to guess default paper format according to language into $langs
  *
- *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if setup not done
- *	@return		string							Default paper format code
+ *	@param		Translate|null	$outputlangs		Output lang to use to autodetect output format if setup not done
+ *	@return		string								Default paper format code
  */
 function dol_getDefaultFormat(Translate $outputlangs = null)
 {
@@ -178,9 +178,9 @@ function dol_print_file($langs, $filename, $searchalt = 0)
 				$content = file_get_contents($formfilealt);
 				$isutf8 = utf8_check($content);
 				if (!$isutf8 && $conf->file->character_set_client == 'UTF-8') {
-					print utf8_encode($content);
+					print mb_convert_encoding($content, 'UTF-8', 'ISO-8859-1');
 				} elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') {
-					print utf8_decode($content);
+					print mb_convert_encoding($content, 'ISO-8859-1', 'UTF-8');
 				} else {
 					print $content;
 				}
@@ -1314,8 +1314,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	if (empty($counter)) {
 		$counter = $maskoffset;
 	} elseif (preg_match('/[^0-9]/i', $counter)) {
-		$counter = 0;
 		dol_syslog("Error, the last counter found is '".$counter."' so is not a numeric value. We will restart to 1.", LOG_ERR);
+		$counter = 0;
 	} elseif ($counter < $maskoffset && empty($conf->global->MAIN_NUMBERING_OFFSET_ONLY_FOR_FIRST)) {
 		$counter = $maskoffset;
 	}
@@ -1936,14 +1936,14 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 	$sql .= " ORDER BY description DESC";
 
 	dol_syslog('/core/lib/function2.lib.php::getListOfModels', LOG_DEBUG);
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
+	$resql_models = $db->query($sql);
+	if ($resql_models) {
+		$num = $db->num_rows($resql_models);
 		$i = 0;
 		while ($i < $num) {
 			$found = 1;
 
-			$obj = $db->fetch_object($resql);
+			$obj = $db->fetch_object($resql_models);
 
 			// If this generation module needs to scan a directory, then description field is filled
 			// with the constant that contains list of directories to scan (COMPANY_ADDON_PDF_ODT_PATH, ...).
@@ -2668,6 +2668,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'fichinter';
 	} elseif ($moduleobject == 'mos') {
 		$moduledirforclass = 'mrp';
+	} elseif ($moduleobject == 'accounting') {
+		$moduledirforclass = 'accountancy';
 	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions'))) {
 		$moduledirforclass = preg_replace('/s$/', '', $moduleobject);
 	}

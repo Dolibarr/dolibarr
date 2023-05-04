@@ -10,7 +10,7 @@
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018		Charlene Benke			<charlie@patas-monkey.com>
+ * Copyright (C) 2018-2023	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2021		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -380,7 +380,7 @@ if ($search_login) {
 	$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_login);
 }
 if ($search_montant_ht) {
-	$sql .= natural_search('sp.total_ht=', $search_montant_ht, 1);
+	$sql .= natural_search('sp.total_ht', $search_montant_ht, 1);
 }
 if ($search_montant_vat != '') {
 	$sql .= natural_search("sp.total_tva", $search_montant_vat, 1);
@@ -464,7 +464,7 @@ if (!empty($searchCategoryProductList)) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
@@ -472,7 +472,7 @@ $sql .= ', sp.ref DESC';
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -518,7 +518,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($sall) {
 		$param .= '&sall='.urlencode($sall);
@@ -965,7 +965,9 @@ if ($resql) {
 	$totalarray['val']['sp.total_ht'] = 0;
 	$totalarray['val']['sp.total_tva'] = 0;
 	$totalarray['val']['sp.total_ttc'] = 0;
-	while ($i < min($num, $limit)) {
+
+	$imaxinloop = ($limit ? min($num, $limit) : $num);
+	while ($i < $imaxinloop) {
 		$obj = $db->fetch_object($resql);
 
 		$objectstatic->id = $obj->rowid;
@@ -984,15 +986,14 @@ if ($resql) {
 		if ($mode == 'kanban') {
 			if ($i == 0) {
 				print '<tr><td colspan="12">';
-				print '<div class="box-flex-container">';
+				print '<div class="box-flex-container kanban">';
 			}
 			// Output Kanban
+			// TODO Use a cahe on user
 			$userstatic->fetch($obj->fk_user_author);
-			$objectstatic->socid = $companystatic->getNomUrl(1);
-			$objectstatic->user_author_id = $userstatic->getNomUrl(1);
 			$objectstatic->delivery_date = $obj->dp;
-			print $objectstatic->getKanbanView('');
-			if ($i == (min($num, $limit) - 1)) {
+			print $objectstatic->getKanbanView('', array('thirdparty'=>$companystatic, 'userauthor'=>$userstatic, 'selected' => in_array($obj->id, $arrayofselected)));
+			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';
 			}

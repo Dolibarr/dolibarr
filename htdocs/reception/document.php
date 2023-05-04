@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'other'));
+$langs->loadLangs(array('receptions', 'companies', 'other'));
 
 $action		= GETPOST('action', 'aZ09');
 $confirm	= GETPOST('confirm');
@@ -79,7 +79,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 
 	// Linked documents
-	if ($origin == 'order_supplier' && $object->$typeobject->id && (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order"))) {
+	if ($origin == 'order_supplier' && $object->$typeobject->id && isModEnabled("supplier_order")) {
 		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}

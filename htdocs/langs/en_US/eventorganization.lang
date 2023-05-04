@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, 
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= Conference Or Booth
 EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = Manage the organization of an event

@@ -684,9 +684,7 @@ class pdf_vinci extends ModelePDFMo
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -715,6 +713,7 @@ class pdf_vinci extends ModelePDFMo
 	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
 		// phpcs:enable
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -1067,7 +1066,7 @@ class pdf_vinci extends ModelePDFMo
 	 *  @param  CommandeFournisseur		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -1367,7 +1366,7 @@ class pdf_vinci extends ModelePDFMo
 	 *      @param	int			   $hidedetails		Do not show line details
 	 *      @param	int			   $hidedesc		Do not show desc
 	 *      @param	int			   $hideref			Do not show ref
-	 *      @return	null
+	 *      @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{

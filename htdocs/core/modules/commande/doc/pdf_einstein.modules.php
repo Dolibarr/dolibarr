@@ -261,9 +261,16 @@ class pdf_einstein extends ModelePDFCommandes
 				$dir = $conf->commande->multidir_output[$conf->entity];
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
+				// Possibility to use suffix for proforma
+				$suffix = '';
+				if (!empty($conf->global->PROFORMA_PDF_WITH_SUFFIX)) {
+					$suffix = (GETPOST('model', 2)=='proforma') ? $conf->global->PROFORMA_PDF_WITH_SUFFIX : '';
+					$suffix = dol_sanitizeFileName($suffix);
+				}
+
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = $conf->commande->multidir_output[$object->entity]."/".$objectref;
-				$file = $dir."/".$objectref.".pdf";
+				$file = $dir."/".$objectref.$suffix.".pdf";
 			}
 
 			if (!file_exists($dir)) {
@@ -542,7 +549,8 @@ class pdf_einstein extends ModelePDFCommandes
 					$localtax1_type = $object->lines[$i]->localtax1_type;
 					$localtax2_type = $object->lines[$i]->localtax2_type;
 
-					if ($object->remise_percent) {
+					// TODO remise_percent is an obsolete field for object parent
+					/*if ($object->remise_percent) {
 						$tvaligne -= ($tvaligne * $object->remise_percent) / 100;
 					}
 					if ($object->remise_percent) {
@@ -550,7 +558,7 @@ class pdf_einstein extends ModelePDFCommandes
 					}
 					if ($object->remise_percent) {
 						$localtax2ligne -= ($localtax2ligne * $object->remise_percent) / 100;
-					}
+					}*/
 
 					$vatrate = (string) $object->lines[$i]->tva_tx;
 
@@ -676,9 +684,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -707,6 +713,7 @@ class pdf_einstein extends ModelePDFCommandes
 	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
 		// phpcs:enable
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

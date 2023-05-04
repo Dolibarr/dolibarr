@@ -289,7 +289,7 @@ $nav .= ' <input type="submit" name="submitdateselect" class="button" value="'.$
 
 $now = dol_now();
 
-$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda|DE:Modul_Terminplanung';
 $title = $langs->trans("Agenda");
 llxHeader('', $title, $help_url);
 
@@ -301,7 +301,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($actioncode != '') {
 	if (is_array($actioncode)) {
@@ -415,7 +415,7 @@ if ($usergroup > 0) {
 }
 $sql .= " s.nom as societe, s.rowid as socid, s.client, s.email as socemail,";
 $sql .= " a.id, a.code, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulldayevent, a.location,";
-$sql .= ' a.fk_user_author,a.fk_user_action,';
+$sql .= " a.fk_user_author, a.fk_user_action,";
 $sql .= " a.fk_contact, a.note, a.percent as percent,";
 $sql .= " a.fk_element, a.elementtype, a.datec, a.tms as datem,";
 $sql .= " c.code as type_code, c.libelle as type_label, c.color as type_color, c.type as type_type, c.picto as type_picto,";
@@ -570,7 +570,7 @@ $sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -933,6 +933,8 @@ while ($i < $imaxinloop) {
 	$actionstatic->note_private = dol_htmlentitiesbr($obj->note);
 	$actionstatic->datep = $db->jdate($obj->dp);
 	$actionstatic->percentage = $obj->percent;
+	$actionstatic->authorid = $obj->fk_user_author;
+	$actionstatic->userownerid = $obj->fk_user_action;
 
 	// Initialize $this->userassigned && this->socpeopleassigned array && this->userownerid
 	// but only if we need it
@@ -1010,7 +1012,8 @@ while ($i < $imaxinloop) {
 
 	// User owner
 	if (!empty($arrayfields['owner']['checked'])) {
-		print '<td class="tdoverflowmax150"' . ($event_owner_style != '' ? ' style="'.$event_owner_style.'"' : '') . '>'; // With edge and chrome the td overflow is not supported correctly when content is not full text.
+		//print '<td class="tdoverflowmax150"' . ($event_owner_style != '' ? ' style="'.$event_owner_style.'"' : '') . '>';
+		print '<td class="tdoverflowmax150">';
 		if ($obj->fk_user_action > 0 && !isset($cache_user_list[$obj->fk_user_action])) {
 			$userstatic = new User($db);
 			$res = $userstatic->fetch($obj->fk_user_action);

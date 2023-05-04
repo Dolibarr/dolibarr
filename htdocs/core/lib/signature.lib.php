@@ -150,7 +150,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 
 	// For multicompany
 	if (!empty($out) && isModEnabled('multicompany')) {
-		$out .= "&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
+		$out .= "&entity=".$object->entity; // Check the entity because we may have the same reference in several entities
 	}
 
 	return $out;

@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Живий ключ Webhook
 ONLINE_PAYMENT_WAREHOUSE=Запас, який буде використовуватися для зменшення запасу, коли здійснюється онлайн-оплата <br> (TODO Коли опція зменшення запасу виконується за дією на рахунку-фактурі, а онлайн-платеж сам створює рахунок?)
 StripeLiveEnabled=Stripe live увімкнено (інакше тестовий режим/режим пісочниці)
 StripeImportPayment=Імпортні платежі Stripe
-ExampleOfTestCreditCard=Приклад кредитної картки для тесту: %s => дійсний, %s => помилка CVC, %s => термін дії закінчився, %s => платіж не виконується
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=Смугові шлюзи
 OAUTH_STRIPE_TEST_ID=Ідентифікатор клієнта Stripe Connect (ca_...)
 OAUTH_STRIPE_LIVE_ID=Ідентифікатор клієнта Stripe Connect (ca_...)
@@ -61,6 +62,7 @@ DeleteACard=Видалити картку
 ConfirmDeleteCard=Ви впевнені, що хочете видалити цю кредитну або дебетову картку?
 CreateCustomerOnStripe=Створіть клієнта на Stripe
 CreateCardOnStripe=Створіть картку на Stripe
+CreateBANOnStripe=Create bank on Stripe
 ShowInStripe=Показати в Stripe
 StripeUserAccountForActions=Обліковий запис користувача для сповіщень електронною поштою про деякі події Stripe (виплати Stripe)
 StripePayoutList=Список виплат Stripe
@@ -69,3 +71,8 @@ ToOfferALinkForLiveWebhook=Посилання на налаштування Stri
 PaymentWillBeRecordedForNextPeriod=Оплата буде зафіксована на наступний період.
 ClickHereToTryAgain= <a href="%s"> Натисніть тут, щоб спробувати ще раз... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=У зв’язку зі строгими правилами автентифікації клієнтів створення картки має здійснюватися з бек-офісу Stripe. Ви можете натиснути тут, щоб увімкнути запис клієнта Stripe: %s
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
+RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+

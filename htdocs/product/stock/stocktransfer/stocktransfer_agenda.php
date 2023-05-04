@@ -47,6 +47,7 @@ if (GETPOST('actioncode', 'array')) {
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
+$search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -213,7 +214,7 @@ if ($object->id > 0) {
 	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$param = '&id='.$object->id.'&socid='.$socid;
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-		if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+		if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.((int) $limit);
 
 
 		//print load_fiche_titre($langs->trans("ActionsOnStockTransfer"), '', '');
@@ -221,9 +222,9 @@ if ($object->id > 0) {
 		// List of all actions
 		$filters = array();
 		$filters['search_agenda_label'] = $search_agenda_label;
+		$filters['search_rowid'] = $search_rowid;
 
 		// TODO Replace this with same code than into list.php
-
 		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, '');
 	}
 }

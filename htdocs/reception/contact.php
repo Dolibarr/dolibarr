@@ -57,7 +57,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 
 	// Linked documents
-	if ($origin == 'order_supplier' && $object->$typeobject->id && (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order"))) {
+	if ($origin == 'order_supplier' && $object->$typeobject->id && isModEnabled("supplier_order")) {
 		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
@@ -71,7 +71,7 @@ if ($origin == 'reception') {
 	$result = restrictedArea($user, $origin, $object->id);
 } else {
 	if ($origin == 'supplierorder' || $origin == 'order_supplier') {
-		$result = restrictedArea($user, 'fournisseur', $origin_id, 'commande_fournisseur', 'commande');
+		$result = restrictedArea($user, 'fournisseur', $object, 'commande_fournisseur', 'commande');
 	} elseif (!$user->hasRight($origin, "lire") && !$user->hasRight($origin, "read")) {
 		accessforbidden();
 	}
@@ -195,7 +195,7 @@ if ($id > 0 || !empty($ref)) {
 
 	print '<table class="border centpercent tableforfield">';
 	// Linked documents
-	if ($origin == 'order_supplier' && $object->$typeobject->id && (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order"))) {
+	if ($origin == 'order_supplier' && $object->$typeobject->id && isModEnabled("supplier_order")) {
 		print '<tr><td class="titlefield">';
 		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->$typeobject->id);

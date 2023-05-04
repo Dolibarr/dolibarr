@@ -136,7 +136,8 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 a.info-box-text.info-box-text-a {
-	display: table-cell;
+	/* display: table-cell; */
+	display: contents;
 }
 a.info-box-text-a i.fa.fa-exclamation-triangle {
 	font-size: 0.9em;
@@ -153,7 +154,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	margin-bottom: 15px;
 	border: 1px solid #e9e9e9;
 }
-.info-box.info-box-sm{
+.info-box.info-box-sm {
 	min-height: 80px;
 	margin-bottom: 10px;
 }
@@ -167,7 +168,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 .info-box small {
 	font-size: 14px;
 }
-.info-box .progress {
+.info-box:not(.info-box-kanban) .progress {
 	background: rgba(0, 0, 0, 0.2);
 	margin: 5px -10px 5px -10px;
 	height: 2px;
@@ -177,7 +178,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	border-radius: 0;
 }
 
-.info-box .progress .progress-bar {
+.info-box:not(.info-box-kanban) .progress .progress-bar {
 		float: left;
 		width: 0;
 		height: 100%;
@@ -197,7 +198,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	overflow: hidden;
 	float: left;
 	/* height: 90px; */
-	width: 90px;
+	width: 86px;
 	text-align: center;
 	font-size: 45px;
 	line-height: 90px;
@@ -212,6 +213,10 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	width: 80px;
 	font-size: 25px;
 	line-height: 92px;
+}
+.info-box-module .info-box-icon {
+	padding-top: 4px;
+	padding-bottom: 4px;
 }
 .opened-dash-board-wrap .info-box .info-box-icon {
 	font-size: 2em;
@@ -229,7 +234,11 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	max-width: 55%;
 }
 
-.info-box-icon-text{
+.info-box-line {
+	line-height: 1.2em;
+}
+
+.info-box-icon-text {
 	box-sizing: border-box;
 	display: block;
 	position: absolute;
@@ -330,7 +339,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	width: calc(100% - 20px);
 }
 .info-box-text{
-	font-size: 0.92em;
+	font-size: 0.90em;
 }
 .info-box-text:first-letter{text-transform: uppercase}
 a.info-box-text{ text-decoration: none;}

@@ -205,7 +205,7 @@ $arrayofjs = array();
 $arrayofcss = array();
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
-llxHeader($head, $langs->trans("UserProfile").' '.$object->getFullName($langs), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1, 1);
+llxHeader($head, $object->getFullName($langs).' - '.$langs->trans("PublicVirtualCard"), '', '', 0, 0, '', '', '', 'onlinepaymentbody'.(GETPOST('mode')=='preview' ? ' scalepreview cursorpointer virtualcardpreview' : ''), $replacemainarea, 1, 1);
 
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
@@ -229,6 +229,12 @@ if ($object->job && !getDolUserInt('USER_PUBLIC_HIDE_JOBPOSITION', 0, $object)) 
 	print dol_escape_htmltag($object->job);
 	print '</div>';
 }
+if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
+	print '<div class="bold">';
+	print dol_escape_htmltag($mysoc->name);
+	print '</div>';
+}
+
 
 
 print '</div>';
@@ -240,7 +246,7 @@ print '</div>';
 
 if (!empty($conf->global->USER_IMAGE_PUBLIC_INTERFACE)) {
 	print '<div class="backimagepublicrecruitment">';
-	print '<img id="idUSER_IMAGE_PUBLIC_SUGGEST_BOOTH" src="'.$conf->global->USER_IMAGE_PUBLIC_INTERFACE.'">';
+	print '<img id="idUSER_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->USER_IMAGE_PUBLIC_INTERFACE.'">';
 	print '</div>';
 }
 
@@ -256,19 +262,14 @@ if ($showbarcode) {
 	$qrcodecontent = $output = $v->buildVCardString($object, $company, $langs);
 
 	print '<br>';
-	print '<div class="floatleft inline-block valignmiddle divphotoref">';
-	print '<img src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode&entity='.((int) $conf->entity).'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode($qrcodecontent).'">';
+	print '<div class="floatleft inline-block valignmiddle paddingleft paddingright">';
+	print '<img style="max-width: 100%" src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode&entity='.((int) $conf->entity).'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode($qrcodecontent).'">';
 	print '</div>';
 	print '<br>';
 }
 
 
-// Me
-// Show photo
-if ($urllogo) {
-	print '<img class="userphotopublicvcard" id="dolpaymentlogo" src="'.$urllogofull.'">';
-}
-
+// Me section
 
 $usersection = '';
 
@@ -292,19 +293,19 @@ if ($object->office_phone && !getDolUserInt('USER_PUBLIC_HIDE_OFFICE_PHONE', 0, 
 	$usersection .= '<div class="flexitemsmall">';
 	$usersection .= img_picto('', 'phone', 'class="pictofixedwidth"');
 	$usersection .= dol_print_phone($object->office_phone, $object->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
-	$usersection .= '<div>';
+	$usersection .= '</div>';
 }
 if ($object->office_fax && !getDolUserInt('USER_PUBLIC_HIDE_OFFICE_FAX', 0, $object)) {
 	$usersection .= '<div class="flexitemsmall">';
 	$usersection .= img_picto('', 'phoning_fax', 'class="pictofixedwidth"');
 	$usersection .= dol_print_phone($object->office_fax, $object->country_code, 0, $mysoc->id, 'fax', ' ', 0, '');
-	$usersection .= '<div>';
+	$usersection .= '</div>';
 }
 if ($object->user_mobile && !getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object)) {
 	$usersection .= '<div class="flexitemsmall">';
 	$usersection .= img_picto('', 'phone', 'class="pictofixedwidth"');
 	$usersection .= dol_print_phone($object->user_mobile, $object->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
-	$usersection .= '<div>';
+	$usersection .= '</div>';
 }
 
 // Social networks
@@ -319,12 +320,17 @@ if (!empty($object->socialnetworks) && is_array($object->socialnetworks) && coun
 }
 
 if ($usersection) {
+	// Show photo
+	if ($urllogo) {
+		print '<img class="userphotopublicvcard" id="dolpaymentlogo" src="'.$urllogofull.'">';
+	}
+
 	print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
 
 	// Output payment summary form
 	print '<tr><td class="left">';
 
-	print '<div class="nowidthimp" id="tablepublicpayment">';
+	print '<div class="nowidthimp nopaddingtoponsmartphone" id="tablepublicpayment">';
 
 	print $usersection;
 
@@ -334,6 +340,11 @@ if ($usersection) {
 	print '</td></tr>'."\n";
 
 	print '</table>'."\n";
+} else {
+	// Show photo
+	if ($urllogo) {
+		print '<br><center><img class="userphotopublicvcard" style="position: unset !important;" id="dolpaymentlogo" src="'.$urllogofull.'"></center>';
+	}
 }
 
 
@@ -344,7 +355,7 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 		$companysection .= '<div class="flexitemsmall">';
 		$companysection .= img_picto('', 'email', 'class="pictofixedwidth"');
 		$companysection .= dol_print_email($mysoc->email, 0, 0, 1);
-		$companysection .= '<div>';
+		$companysection .= '</div>';
 	}
 
 	if ($mysoc->url) {
@@ -358,13 +369,13 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 		$companysection .= '<div class="flexitemsmall">';
 		$companysection .= img_picto('', 'phone', 'class="pictofixedwidth"');
 		$companysection .= dol_print_phone($mysoc->phone, $mysoc->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
-		$companysection .= '<div>';
+		$companysection .= '</div>';
 	}
 	if ($mysoc->fax) {
 		$companysection .= '<div class="flexitemsmall">';
 		$companysection .= img_picto('', 'phoning_fax', 'class="pictofixedwidth"');
 		$companysection .= dol_print_phone($mysoc->fax, $mysoc->country_code, 0, $mysoc->id, 'fax', ' ', 0, '');
-		$companysection .= '<div>';
+		$companysection .= '</div>';
 	}
 
 	// Social networks
@@ -414,12 +425,12 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	// Output payment summary form
 	print '<tr><td class="left">';
 
-	print '<div class="nowidthimp" id="tablepublicpayment">';
+	print '<div class="nowidthimp nopaddingtoponsmartphone" id="tablepublicpayment">';
 
 	// Add company info
 	if ($mysoc->name) {
 		print '<div class="center bold">';
-		print $mysoc->name;
+		print dol_escape_htmltag($mysoc->name);
 		print '</div>';
 		print '<br>';
 	}
@@ -445,8 +456,6 @@ print '</div>'."\n";
 print '<br>';
 
 
-//htmlPrintOnlinePaymentFooter($mysoc, $langs);
-
 print '<div class="backgreypublicpayment">';
 print '<div class="center">';
 print '<a href="'.$urlforqrcode.'">';
@@ -458,6 +467,19 @@ print '</div>';
 //print '<div>';
 //print '</div>';
 print '</div>';
+
+$fullexternaleurltovirtualcard = $object->getOnlineVirtualCardUrl('', 'external');
+$fullinternalurltovirtualcard = $object->getOnlineVirtualCardUrl('', 'internal');
+
+print '<script>';
+print 'jQuery(document).ready(function() {
+ 	jQuery(".virtualcardpreview").click(function(event) {
+ 		event.preventDefault();
+		console.log("We click on the card");
+		window.open("'.$fullexternaleurltovirtualcard.'");
+ 	});
+});';
+print '</script>';
 
 llxFooter('', 'public');
 

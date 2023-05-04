@@ -195,11 +195,11 @@ class pdf_baleine extends ModelePDFProjects
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
-		if ($conf->project->dir_output) {
+		if ($conf->project->multidir_output[$object->entity]) {
 			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->project->dir_output;
+			$dir = $conf->project->multidir_output[$object->entity];
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
 			}
@@ -521,9 +521,7 @@ class pdf_baleine extends ModelePDFProjects
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 

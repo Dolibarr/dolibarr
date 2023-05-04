@@ -38,6 +38,8 @@ require '../main.inc.php';
 
 $langs->load('compta');
 
+// No permission check. This is just a formatting data service.
+
 
 /*
  * View
@@ -72,6 +74,10 @@ if (is_array($remains)) {
 			unset($remains[$key]);
 		}
 	}
+} elseif ($remains) {
+	$remains = array(price2num($remains));
+} else {
+	$remains = array();
 }
 
 // Treatment

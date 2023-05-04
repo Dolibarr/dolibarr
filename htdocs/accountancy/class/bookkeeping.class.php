@@ -2031,7 +2031,7 @@ class BookKeeping extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
-		$pcgver = $conf->global->CHARTOFACCOUNTS;
+		$pcgver = getDolGlobalInt('CHARTOFACCOUNTS');
 
 		$sql = "SELECT DISTINCT ab.numero_compte as account_number, aa.label as label, aa.rowid as rowid, aa.fk_pcg_version";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab";
@@ -2088,12 +2088,12 @@ class BookKeeping extends CommonObject
 	 * FIXME: This function takes the parent of parent to get the root account !
 	 *
 	 * @param 	string 	$account	Accounting account
-	 * @return 	array 				Array with root account information (max 2 upper level)
+	 * @return 	array|int 			Array with root account information (max 2 upper level), <0 if KO
 	 */
 	public function getRootAccount($account = null)
 	{
 		global $conf;
-		$pcgver = $conf->global->CHARTOFACCOUNTS;
+		$pcgver = getDolGlobalInt('CHARTOFACCOUNTS');
 
 		$sql  = "SELECT root.rowid, root.account_number, root.label as label,";
 		$sql .= " parent.rowid as parent_rowid, parent.account_number as parent_account_number, parent.label as parent_label";
@@ -2135,7 +2135,7 @@ class BookKeeping extends CommonObject
 		// phpcs:enable
 		global $conf;
 
-		$pcgver = $conf->global->CHARTOFACCOUNTS;
+		$pcgver = getDolGlobalInt('CHARTOFACCOUNTS');
 		$sql  = "SELECT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version, cat.label as category";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa ";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";

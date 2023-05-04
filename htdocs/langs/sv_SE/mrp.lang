@@ -102,6 +102,7 @@ NbOperatorsRequired=Antal operatörer som krävs
 THMOperatorEstimated=Uppskattad operatör THM
 THMMachineEstimated=Beräknad maskin THM
 WorkstationType=Arbetsstationstyp
+DefaultWorkstation=Standard arbetsstation
 Human=Mänsklig
 Machine=Maskin
 HumanMachine=Människa / maskin

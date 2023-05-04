@@ -262,6 +262,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Feil, parameter <b> %s </b> må v�
 ErrorLoginDateValidity=Feil, denne påloggingen er utenfor gyldig datoområde
 ErrorValueLength=Lengden på feltet '<b> %s </b>' må være høyere enn '<b> %s </b>'
 ErrorReservedKeyword=Ordet '<b> %s </b>' er et reservert nøkkelord
+ErrorFilenameReserved=Filnavnet <b> %s </b> kan ikke brukes da det er en reservert og beskyttet kommando.
 ErrorNotAvailableWithThisDistribution=Ikke tilgjengelig i denne distribusjonen
 ErrorPublicInterfaceNotEnabled=Offentlig grensesnitt var ikke aktivert
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=Språket til den nye siden må defineres hvis den er angitt som oversettelse av en annen side
@@ -303,6 +304,12 @@ ErrorValueForTooLow=Verdien for <b> %s </b> er for lav
 ErrorValueCantBeNull=Verdien for <b> %s </b> kan ikke være null
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Datoen for banktransaksjonen kan ikke være lavere enn datoen for filoverføringen
 ErrorTooMuchFileInForm=For mange filer i skjemaet, maksimalt antall er %s fil(er)
+ErrorSessionInvalidatedAfterPasswordChange=Økten ble ugyldig etter endring av passord, status eller gyldighetsdato. Logg på på nytt.
+ErrorExistingPermission = Tillatelse <b> %s </b> for objekt <b> %s </b> finnes allerede
+ErrorFieldExist=Verdien for <b> %s </b> finnes allerede
+ErrorEqualModule=Modulen er ugyldig i <b> %s </b>
+ErrorFieldValue=Verdien for <b> %s </b> er feil
+ErrorCoherenceMenu=<b>%s</b> er påkrevd når <b>%s</b> er 'venstre'
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP-parameteren upload_max_filesize (%s) er høyere enn PHP-parameteren post_max_size (%s). Dette er ikke et konsistent oppsett.
@@ -325,6 +332,7 @@ WarningPaymentDateLowerThanInvoiceDate=Betalingsdato (%s) er tidligere enn faktu
 WarningTooManyDataPleaseUseMoreFilters=For mange data (mer enn %s linjer). Bruk flere filtre eller sett konstanten %s til en høyere grense.
 WarningSomeLinesWithNullHourlyRate=Noen tider ble registrert av noen brukere mens deres timepris ikke var definert. En verdi på 0 %s pr. time ble brukt, men dette kan føre til feil verdivurdering av tidsbruk.
 WarningYourLoginWasModifiedPleaseLogin=Din innlogging er blitt endret. Av sikkerhetsgrunner må du logge inn på nytt før du kan gjøre noe.
+WarningYourPasswordWasModifiedPleaseLogin=Passordet ditt ble endret. Av sikkerhetshensyn må du logge på nå med ditt nye passord.
 WarningAnEntryAlreadyExistForTransKey=En oppføring eksisterer allerede for oversettelsesnøkkel for dette språket
 WarningNumberOfRecipientIsRestrictedInMassAction=Advarsel, antall forskjellige mottakere er begrenset til <b> %s </b> ved bruk av massehandlinger på lister
 WarningDateOfLineMustBeInExpenseReportRange=Advarsel, datoen for linjen ligger utenfor tiden til utgiftsrapporten
@@ -340,6 +348,7 @@ WarningPaypalPaymentNotCompatibleWithStrict=Verdien 'Strict' gjør at betalingsf
 WarningThemeForcedTo=Advarsel, tema har blitt tvunget til <b> %s </b> av skjult konstant MAIN_FORCETHEME
 WarningPagesWillBeDeleted=Advarsel, dette vil også slette alle eksisterende sider/beholdere på nettstedet. Du bør eksportere nettstedet ditt før, så du har en sikkerhetskopi for å reimportere den senere.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatisk validering er deaktivert når alternativet for å redusere beholdning er satt på "Fakturavalidering".
+WarningModuleNeedRefrech = Modul <b> %s </b> er deaktivert. Ikke glem å aktivere den
 
 # Validate
 RequireValidValue = Verdien er ikke gyldig

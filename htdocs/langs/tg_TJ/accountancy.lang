@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=Навъи бозгашти вагонро интих�
 ACCOUNTING_EXPORT_PREFIX_SPEC=Префикси номи файлро муайян кунед
 ThisService=Ин хидмат
 ThisProduct=Ин маҳсулот
-DefaultForService=Пешфарз барои хидмат
-DefaultForProduct=Пешфарз барои маҳсулот
+DefaultForService=Default for services
+DefaultForProduct=Default for products
 ProductForThisThirdparty=Маҳсулот барои ин тарафи сеюм
 ServiceForThisThirdparty=Хидмат барои ин шахси сеюм
 CantSuggest=Тавсия дода наметавонад
@@ -101,7 +101,8 @@ ShowAccountingAccount=Нишон додани ҳисоби баҳисобгир�
 ShowAccountingJournal=Нишон додани маҷаллаи баҳисобгирӣ
 ShowAccountingAccountInLedger=Ҳисобгирии муҳосибиро дар дафтар нишон диҳед
 ShowAccountingAccountInJournals=Нишон додани ҳисоби баҳисобгирӣ дар маҷаллаҳо
-AccountAccountingSuggest=Ҳисоби баҳисобгирӣ пешниҳод карда мешавад
+DataUsedToSuggestAccount=Data used to suggest account
+AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=Ҳисобҳои пешфарз
 MenuBankAccounts=Ҳисобҳои бонкӣ
 MenuVatAccounts=Ҳисобҳои андоз аз арзиши иловашуда
@@ -126,6 +127,7 @@ WriteBookKeeping=Record transactions in accounting
 Bookkeeping=Китоб
 BookkeepingSubAccount=Подшоҳ
 AccountBalance=Тавозуни суратҳисоб
+AccountBalanceSubAccount=Sub-accounts balance
 ObjectsRef=Манбаи объекти истинод
 CAHTF=Фурӯшандаи умумии харид пеш аз андоз
 TotalExpenseReport=Ҳисоботи умумии хароҷот
@@ -189,6 +191,7 @@ ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be us
 UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
 UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
@@ -218,6 +221,7 @@ JournalLabel=Нишони рӯзнома
 NumPiece=Рақами дона
 TransactionNumShort=Адад муомилот
 AccountingCategory=Custom group of accounts
+AccountingCategories=Custom groups of accounts
 GroupByAccountAccounting=Гурӯҳбандӣ аз рӯи ҳисоби китоби умумӣ
 GroupBySubAccountAccounting=Гурӯҳбандӣ аз рӯи ҳисоби зерпардохт
 AccountingAccountGroupsDesc=Шумо метавонед дар ин ҷо баъзе гурӯҳҳои баҳисобгирии муҳосибиро муайян кунед. Онҳо барои ҳисоботи шахсии баҳисобгирӣ истифода мешаванд.
@@ -265,6 +269,7 @@ ShowSubtotalByGroup=Нишон додани маҷмӯа аз рӯи сатҳ
 
 Pcgtype=Гурӯҳи ҳисоб
 PcgtypeDesc=Гурӯҳи ҳисобҳо ҳамчун меъёрҳои пешакӣ муайяншудаи 'филтр' ва 'гурӯҳбандӣ' барои баъзе ҳисоботҳои баҳисобгирӣ истифода мешаванд. Масалан, 'ДАРОМАД' ё 'ХАРОҶО' ҳамчун гурӯҳҳо барои ҳисобҳои баҳисобгирии маҳсулот барои таҳияи гузориши хароҷот/даромад истифода мешаванд.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 
 Reconcilable=Оштӣ
 
@@ -294,6 +299,7 @@ DescValidateMovements=Ҳама гуна тағир ё нест кардани н
 
 ValidateHistory=Ба таври худкор пайваст кунед
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
+DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
@@ -337,11 +343,13 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Ҳатмӣ ва интиқол дар муҳ
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Ҳатмӣ ва интиқол дар муҳосибот ҳангоми харидро хомӯш кунед (фактураҳои фурӯшанда ҳангоми баҳисобгирӣ ба назар гирифта намешаванд)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Ҳатмӣ ва интиқол дар муҳосибот дар ҳисоботи хароҷотро хомӯш кунед (ҳисоботи хароҷот ҳангоми баҳисобгирӣ ба назар гирифта намешаванд)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
 NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
 NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportFull=Export documents ?
 DateValidationAndLock=Date validation and lock
 ConfirmExportFile=Тасдиқи тавлиди файли содироти баҳисобгирӣ?
 ExportDraftJournal=Содироти маҷаллаи лоиҳа
@@ -398,7 +406,7 @@ SaleLocal=Фурӯши маҳаллӣ
 SaleExport=Фурӯши содирот
 SaleEEC=Фурӯш дар EEC
 SaleEECWithVAT=Фурӯш дар ИАА бо арзиши иловашуда бо арзиши иловашуда бекор нест, бинобар ин мо фикр мекунем, ки ин фурӯши дохилиидоравӣ нест ва ҳисоби пешниҳодшуда ҳисоби стандартии маҳсулот аст.
-SaleEECWithoutVATNumber=Фурӯш дар ЕЭК бидуни андоз аз арзиши иловашуда, аммо ID -и ААИ аз тарафи сеюм муайян карда нашудааст. Мо аз ҳисоби маҳсулот барои фурӯши стандартӣ бармегардем. Агар лозим бошад, шумо метавонед ID ААИ -и тарафи сеюм ё ҳисоби маҳсулотро ислоҳ кунед.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
 ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
@@ -442,6 +450,7 @@ AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
+ErrorArchiveAddFile=Can't put "%s" file in archive
 
 ## Import
 ImportAccountingEntries=Сабтҳои баҳисобгирӣ
@@ -468,5 +477,7 @@ FECFormatMulticurrencyCode=Рамзи бисёрҷониба (Idevise)
 DateExport=Содироти сана
 WarningReportNotReliable=Огоҳӣ, ин гузориш ба дафтарча асос наёфтааст, аз ин рӯ амалиётеро, ки дар дафтар ба таври дастӣ тағир дода шудааст, дар бар намегирад. Агар рӯзноманигории шумо нав бошад, назари ҳисобдорӣ дақиқтар аст.
 ExpenseReportJournal=Ҳисоботи хароҷоти рӯзнома
+DocsAlreadyExportedAreExcluded=Docs already exported are excluded
+ClickToHideAlreadyExportedLines=Click to hide already exported lines
 
 NAccounts=ҳисобҳои %s

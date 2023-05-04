@@ -109,8 +109,7 @@ $search_date_endyear = GETPOST('search_date_endyear', 'int');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_date_end_startday = GETPOST('search_date_end_startday', 'int');
-$search_date_end_startmonth = GETPOST('se$sql .= $db->plimit($limit + 1, $offset);
-arch_date_end_startmonth', 'int');
+$search_date_end_startmonth = GETPOST('search_date_end_startmonth', 'int');
 $search_date_end_startyear = GETPOST('search_date_end_startyear', 'int');
 $search_date_end_endday = GETPOST('search_date_end_endday', 'int');
 $search_date_end_endmonth = GETPOST('search_date_end_endmonth', 'int');
@@ -197,7 +196,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'p.ref'=>'Ref',
-	'p.ref_client'=>'CustomerRef',
+	'p.ref_client'=>'RefCustomer',
 	'pd.description'=>'Description',
 	's.nom'=>"ThirdParty",
 	's.name_alias'=>"AliasNameShort",
@@ -558,10 +557,6 @@ $formcompany = new FormCompany($db);
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
-$title = $langs->trans('ListOfProposals');
-$help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
-llxHeader('', $title, $help_url);
-
 $sql = 'SELECT';
 if ($sall || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
@@ -814,7 +809,7 @@ $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPri
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -869,6 +864,9 @@ if ($resql) {
 		exit;
 	}
 
+	$help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
+	llxHeader('', $title, $help_url);
+
 	$param = '&search_status='.urlencode($search_status);
 	if (!empty($mode)) {
 		$param .= '&mode='.urlencode($mode);
@@ -877,7 +875,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($sall) {
 		$param .= '&sall='.urlencode($sall);
@@ -1718,14 +1716,14 @@ if ($resql) {
 		if ($mode == 'kanban') {
 			if ($i == 0) {
 				print '<tr><td colspan="12">';
-				print '<div class="box-flex-container">';
+				print '<div class="box-flex-container kanban">';
 			}
 			// Output Kanban
 			$userstatic->fetch($obj->fk_user_author);
 			$objectstatic->author = $userstatic->getNomUrl(1);
 			$objectstatic->fk_project = $projectstatic->getNomUrl(1);
-			print $objectstatic->getKanbanView('');
-			if ($i == (min($num, $limit) - 1)) {
+			print $objectstatic->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';
 			}

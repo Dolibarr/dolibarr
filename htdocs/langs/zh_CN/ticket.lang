@@ -26,6 +26,7 @@ Permission56002=修改票证
 Permission56003=删除票据
 Permission56004=管理票据
 Permission56005=See tickets of all third parties (not effective for external users, always be limited to the third party they depend on)
+Permission56006=Export tickets
 
 Tickets=工单
 TicketDictType=Ticket - Types
@@ -60,6 +61,8 @@ TypeContact_ticket_external_CONTRIBUTOR=外部贡献者
 
 OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Send ticket message by email
+
+ExportDataset_ticket_1=工单
 
 # Status
 Read=阅读

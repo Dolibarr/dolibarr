@@ -5,6 +5,7 @@
  * Copyright (C) 2021      Frédéric France		<frederic.france@netlogic.fr>
  * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
+ * Copyright (C) 2023      Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,6 +74,7 @@ if (GETPOST('actioncode', 'array')) {
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
+$search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
 // Initialize technical object to manage hooks of ticket. Note that conf->hooks_modules contains array array
@@ -275,7 +277,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// File transfer
-				$object->copyFilesForTicket();
+				$object->copyFilesForTicket('');		// trackid is forced to '' because files were uploaded when no id for ticket exists yet and trackid was ''
 			}
 
 			if (!$error) {
@@ -725,6 +727,7 @@ if ($action == 'create' || $action == 'presend') {
 
 	print load_fiche_titre($langs->trans('NewTicket'), '', 'ticket');
 
+	$formticket->trackid = '';		// TODO Use a unique key 'tic' to avoid conflict in upload file feature
 	$formticket->withfromsocid = $socid ? $socid : $user->socid;
 	$formticket->withfromcontactid = $contactid ? $contactid : '';
 	$formticket->withtitletopic = 1;
@@ -735,7 +738,6 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withfile = 2;
 	$formticket->withextrafields = 1;
 	$formticket->param = array('origin' => GETPOST('origin'), 'originid' => GETPOST('originid'));
-	$formticket->trackid = 'tic'.$object->id;
 
 	$formticket->withcancel = 1;
 
@@ -801,7 +803,7 @@ if ($action == 'create' || $action == 'presend') {
 
 		// Confirmation close
 		if ($action == 'close') {
-			$thirdparty_contacts = $object->getInfosTicketExternalContact();
+			$thirdparty_contacts = $object->getInfosTicketExternalContact(1);
 			$contacts_select = array(
 				'-2' => $langs->trans('TicketNotifyAllTiersAtClose'),
 				'-3' => $langs->trans('TicketNotNotifyTiersAtClose')
@@ -960,6 +962,9 @@ if ($action == 'create' || $action == 'presend') {
 				$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty'), 0).'</a> ';
 			}
 			$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
+			if (!empty($object->socid)) {
+				$morehtmlref .= ' - <a href="'.DOL_URL_ROOT.'/ticket/list.php?socid='.$object->socid.'&sortfield=t.datec&sortorder=desc">'.img_picto($langs->trans("Tickets"), 'ticket', 'class="pictofixedwidth"').' '.$langs->trans("TicketHistory").'</a>';
+			}
 		}
 
 		// Project
@@ -1178,7 +1183,7 @@ if ($action == 'create' || $action == 'presend') {
 						$arrayselected[] = $cat->id;
 					}
 
-					print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 					print '<input type="submit" class="button button-edit small" value="'.$langs->trans('Save').'">';
 					print '</form>';
 					print "</td>";
@@ -1247,10 +1252,12 @@ if ($action == 'create' || $action == 'presend') {
 			}
 			print '</td></tr>';
 			// Group
-			print '<tr><td>'.$langs->trans("TicketCategory").'</td><td>';
+			$s = '';
 			if (!empty($object->category_code)) {
-				print $langs->getLabelFromKey($db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
+				$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
 			}
+			print '<tr><td>'.$langs->trans("TicketCategory").'</td><td class="tdoverflowmax200" title="'.dol_escape_htmltag($s).'">';
+			print dol_escape_htmltag($s);
 			print '</td></tr>';
 			// Severity
 			print '<tr><td>'.$langs->trans("TicketSeverity").'</td><td>';
@@ -1386,7 +1393,7 @@ if ($action == 'create' || $action == 'presend') {
 		}
 
 		print '</div></div>';
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 
@@ -1416,7 +1423,7 @@ if ($action == 'create' || $action == 'presend') {
 				if (!$object->fk_soc && $user->hasRight("ficheinter", "creer")) {
 					print dolGetButtonAction($langs->trans('UnableToCreateInterIfNoSocid'), $langs->trans('TicketAddIntervention'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 				}
-				if ($object->fk_soc > 0 && isset($object->status) && $object->status < Ticket::STATUS_CLOSED && $user->rights->ficheinter->creer) {
+				if ($object->fk_soc > 0 && isset($object->status) && $object->status < Ticket::STATUS_CLOSED && $user->hasRight('ficheinter', 'creer')) {
 					print dolGetButtonAction('', $langs->trans('TicketAddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&token='.newToken().'&socid='. $object->fk_soc.'&origin=ticket_ticket&originid='. $object->id, '');
 				}
 
@@ -1554,6 +1561,8 @@ if ($action == 'create' || $action == 'presend') {
 			// List of all actions
 			$filters = array();
 			$filters['search_agenda_label'] = $search_agenda_label;
+			$filters['search_rowid'] = $search_rowid;
+
 			show_actions_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 		}
 

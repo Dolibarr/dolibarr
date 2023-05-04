@@ -30,6 +30,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 
 
 /**
@@ -37,6 +38,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Don extends CommonObject
 {
+	use CommonPeople;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -68,11 +71,19 @@ class Don extends CommonObject
 	 */
 	public $date;
 
+	public $datec;
+	public $datem;
+
 	/**
 	 * amount of donation
 	 * @var double
 	 */
 	public $amount;
+
+	/**
+	 * @var integer Thirdparty ID
+	 */
+	public $socid;
 
 	/**
 	 * @var string Thirdparty name
@@ -99,6 +110,9 @@ class Don extends CommonObject
 	 */
 	public $email;
 
+	public $phone;
+	public $phone_mobile;
+
 	/**
 	 * @var int 0 or 1
 	 */
@@ -121,6 +135,9 @@ class Don extends CommonObject
 	 * @var int payment mode id
 	 */
 	public $modepaymentid = 0;
+
+	public $paid;
+
 
 	/**
 	 * @var array Array of status label
@@ -438,7 +455,7 @@ class Don extends CommonObject
 			}
 		}
 
-		if (!$error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS)) {
+		if (!$error && (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_DONATION'))) {
 			//$res = $this->setValid($user);
 			//if ($res < 0) $error++;
 		}
@@ -1154,6 +1171,8 @@ class Don extends CommonObject
 	{
 		global $langs;
 
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -1161,6 +1180,7 @@ class Don extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'date')) {
 			$return .= ' | <span class="opacitymedium" >'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->date).'</span>';
 		}
@@ -1171,7 +1191,7 @@ class Don extends CommonObject
 			$return .= '<br><span class="opacitymedium" >'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->LibStatut($this->labelStatus, 5).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
