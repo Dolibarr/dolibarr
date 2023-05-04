@@ -6,8 +6,9 @@
  * Copyright (C) 2014		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2023		Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -178,13 +179,6 @@ if ($filtertype != 1) {
 	print '<td class="nowrap right">';
 	print $form->select_duration('timespent_duration', $durationtouse, 0, 'text');
 	print '</td>';
-
-//	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
-//	$cUnit = new CUnits($this->db);
-//	$fk_unit_default = $cUnit->getUnitFromCode('h', 'short_label', 'time');
-//	print '<td class="bordertop nobottom nowrap linecolunit right">';
-//	print  $formproduct->selectMeasuringUnits("fk_unit", "time", $fk_unit_default, 0, 0);
-//	print '</td>';
 
 	$coldisplay++;
 	print '<td class="bordertop nobottom nowrap linecolworkstation right">';

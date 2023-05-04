@@ -6,6 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2023		Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +84,6 @@ if ($filtertype != 1) {
 	// Cost
 	print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td>';
 } else {
-//	print '<td class="linecolunit right">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
 
 	if (isModEnabled('workstation')) print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('DefaultWorkstation'), '') . '</td>';
 

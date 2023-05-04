@@ -6,6 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2023		Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,19 +157,6 @@ if ($filtertype != 1) {
 	$coldisplay++;
 	print convertSecondToTime($line->qty, 'allhourmin');
 	print '</td>';
-
-	// Unit
-//	print '<td class="linecolunit nowrap right">';
-//	$coldisplay++;
-
-//	if (!empty($line->fk_unit)) {
-//		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
-//		$unit = new CUnits($this->db);
-//		$unit->fetch($line->fk_unit);
-//		print (isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '');
-//	}
-
-//	print '</td>';
 
 	// Work station
 	if (isModEnabled('workstation')) {
