@@ -2578,18 +2578,18 @@ function top_menu_quickadd()
             });
             $("#topmenu-quickadd-dropdown .dropdown-toggle").on("click", function(event) {
 				console.log("Click on #topmenu-quickadd-dropdown .dropdown-toggle");
-                openQuickAddDropDown();
+                openQuickAddDropDown(event);
             });
 
             // Key map shortcut
-            $(document).keydown(function(e){
-                  if( e.which === 76 && e.ctrlKey && e.shiftKey ){
+            $(document).keydown(function(event){
+                  if ( event.which === 76 && event.ctrlKey && event.shiftKey ){
                      console.log(\'control + shift + l : trigger open quick add dropdown\');
-                     openQuickAddDropDown();
+                     openQuickAddDropDown(event);
                   }
             });
 
-            var openQuickAddDropDown = function() {
+            var openQuickAddDropDown = function(event) {
                 event.preventDefault();
                 $("#topmenu-quickadd-dropdown").toggleClass("open");
                 //$("#top-quickadd-search-input").focus();
@@ -2837,18 +2837,18 @@ function top_menu_bookmark()
 
 	            jQuery("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
 					console.log("Click on #topmenu-bookmark-dropdown .dropdown-toggle");
-					openBookMarkDropDown();
+					openBookMarkDropDown(event);
 	            });
 
 	            // Key map shortcut
-	            jQuery(document).keydown(function(e){
-	                  if( e.which === 77 && e.ctrlKey && e.shiftKey ){
-	                     console.log(\'control + shift + m : trigger open bookmark dropdown\');
-	                     openBookMarkDropDown();
+	            jQuery(document).keydown(function(event){
+	                  if( event.which === 77 && event.ctrlKey && event.shiftKey ){
+	                     console.log("Click on control + shift + m : trigger open bookmark dropdown");
+	                     openBookMarkDropDown(event);
 	                  }
 	            });
 
-	            var openBookMarkDropDown = function() {
+	            var openBookMarkDropDown = function(event) {
 	                event.preventDefault();
 	                jQuery("#topmenu-bookmark-dropdown").toggleClass("open");
 	                jQuery("#top-bookmark-search-input").focus();

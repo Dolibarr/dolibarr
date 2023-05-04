@@ -132,7 +132,7 @@ dol_syslog("Callback url when an online payment is refused or canceled. query_st
 $tracepost = "";
 foreach ($_POST as $k => $v) {
 	if (is_scalar($k) && is_scalar($v)) {
-		$tracepost .= "{$k} - {$v}\n";
+		$tracepost .= "$k - $v\n";
 	}
 }
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');

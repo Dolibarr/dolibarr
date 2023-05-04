@@ -515,6 +515,7 @@ if (empty($reshook)) {
 							} else {
 								$lineid = 0;
 								$error++;
+								$errors[] = $objecttmp->error;
 								break;
 							}
 							// Defined the new fk_parent_line
@@ -1060,7 +1061,7 @@ $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPri
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -2002,7 +2003,7 @@ if ($resql) {
 				print '<div class="box-flex-container kanban">';
 			}
 
-			print $generic_commande->getKanbanView('');
+			print $generic_commande->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';

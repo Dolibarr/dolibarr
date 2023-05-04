@@ -2359,8 +2359,6 @@ class Task extends CommonObjectLine
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $langs, $conf;
-
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';

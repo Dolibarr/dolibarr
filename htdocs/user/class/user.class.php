@@ -38,6 +38,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 
 
 /**
@@ -45,6 +46,8 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
  */
 class User extends CommonObject
 {
+	use CommonPeople;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -2807,6 +2810,7 @@ class User extends CommonObject
 		$type = ($this->socid ? $langs->trans("ExternalUser").$company : $langs->trans("InternalUser"));
 		$datas['type'] = '<br><b>'.$langs->trans("Type").':</b> '.$type;
 		$datas['closediv'] = '</div>';
+
 		if ($infologin > 0) {
 			$datas['newlinelogin'] = '<br>';
 			$datas['session'] = '<br><u>'.$langs->trans("Session").'</u>';
@@ -3877,6 +3881,8 @@ class User extends CommonObject
 		} else {
 			dol_print_error($this->db);
 		}
+
+		return '';
 	}
 
 	/**

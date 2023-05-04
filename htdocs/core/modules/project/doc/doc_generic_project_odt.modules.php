@@ -184,15 +184,13 @@ class doc_generic_project_odt extends ModelePDFProjects
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$task				Task Object
+	 *	@param  Task			$task				Task Object
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
 	public function get_substitutionarray_tasks(Task $task, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$resarray = array(
 			'task_ref'=>$task->ref,
 			'task_fk_project'=>$task->fk_project,

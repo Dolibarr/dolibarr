@@ -242,9 +242,8 @@ print '<table class="border centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-$filter = '';
 print img_picto('', 'company', 'class="pictofixedwidth"');
-print $form->select_company($socid, 'socid', $filter, 1, 1, 0, array(), 0, 'widthcentpercentminusx maxwidth300', '');
+print $form->select_company($socid, 'socid', '', 1, 1, 0, array(), 0, 'widthcentpercentminusx maxwidth300', '');
 print '</td></tr>';
 // User
 print '<tr><td>'.$langs->trans("User").'</td><td>';

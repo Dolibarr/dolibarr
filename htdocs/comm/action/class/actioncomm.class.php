@@ -2101,8 +2101,6 @@ class ActionComm extends CommonObject
 			dol_syslog(get_class($this)."::build_exportfile select events", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				// Note: Output of sql request is encoded in $conf->file->character_set_client
-				// This assignment in condition is not a bug. It allows walking the results.
 				$diff = 0;
 				while ($obj = $this->db->fetch_object($resql)) {
 					$qualified = true;

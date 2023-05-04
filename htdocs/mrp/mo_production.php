@@ -169,10 +169,14 @@ if (empty($reshook)) {
 		$moline->origin_type = 'free'; // free consume line
 		$moline->position = 0;
 
+		// Is it a product or a service ?
 		if (!empty($moline->fk_product)) {
-			$product = new Product($db);
-			$product->fetch($moline->fk_product);
-			if ($product->type == Product::TYPE_SERVICE) $moline->fk_default_workstation = $product->fk_default_workstation;
+			$tmpproduct = new Product($db);
+			$tmpproduct->fetch($moline->fk_product);
+			if ($tmpproduct->type == Product::TYPE_SERVICE) {
+				$moline->fk_default_workstation = $tmpproduct->fk_default_workstation;
+			}
+			$moline->disable_stock_change = ($tmpproduct->type == Product::TYPE_SERVICE ? 1 : 0);
 		}
 
 		$resultline = $moline->create($user, false); // Never use triggers here
@@ -184,6 +188,7 @@ if (empty($reshook)) {
 		$action = '';
 		// Redirect to refresh the tab information
 		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
+		exit;
 	}
 
 	if (in_array($action, array('confirm_consumeorproduce', 'confirm_consumeandproduceall')) && $permissiontoproduce) {

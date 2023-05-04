@@ -159,7 +159,8 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
 print '<td>';
-print $form->select_company(getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$terminaltouse), 'socid', '(s.client IN (1, 3) AND s.status = 1)', 1, 0, 0, array(), 0);
+$filter = '((s.client:IN:1,3) AND (s.status:=:1))';
+print $form->select_company(getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$terminaltouse), 'socid', $filter, 1, 0, 0, array(), 0);
 print '</td></tr>';
 
 $atleastonefound = 0;

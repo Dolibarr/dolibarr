@@ -932,8 +932,8 @@ class Account extends CommonObject
 	/**
 	 *  Update BBAN (RIB) account fields
 	 *
-	 *  @param	User	$user       Object user making update
-	 *	@return	int					<0 if KO, >0 if OK
+	 *  @param	User|null	$user       Object user making update
+	 *  @return	int						<0 if KO, >0 if OK
 	 */
 	public function update_bban(User $user = null)
 	{
@@ -1110,8 +1110,8 @@ class Account extends CommonObject
 	/**
 	 *  Delete bank account from database
 	 *
-	 *	@param	User	$user	User deleting
-	 *  @return int             <0 if KO, >0 if OK
+	 *  @param	User|null	$user	User deleting
+	 *  @return int      	       	<0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null)
 	{
@@ -1336,6 +1336,7 @@ class Account extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
+	 *
 	 *		@param		int			$filteraccountid	To get info for a particular account id
 	 *      @return     int         <0 if ko, >0 if ok
 	 */
@@ -2157,8 +2158,8 @@ class AccountLine extends CommonObjectLine
 	/**
 	 *      Delete bank transaction record
 	 *
-	 *		@param	User	$user	User object that delete
-	 *      @return	int 			<0 if KO, >0 if OK
+	 *		@param	User|null	$user	User object that delete
+	 *      @return	int 				<0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null)
 	{
@@ -2230,10 +2231,10 @@ class AccountLine extends CommonObjectLine
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Delete bank line records
+	 * 	Delete bank line records
 	 *
-	 *		@param	User	$user	User object that delete
-	 *      @return	int 			<0 if KO, >0 if OK
+	 *	@param	User|null	$user	User object that delete
+	 *  @return	int 				<0 if KO, >0 if OK
 	 */
 	public function delete_urls(User $user = null)
 	{
