@@ -808,8 +808,18 @@ if ($resql) {
 	// Form to reconcile
 	if ($user->rights->banque->consolidate && $action == 'reconcile') {
 		print '<div class="valignmiddle inline-block" style="padding-right: 20px;">';
-		print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
-		print '<input class="flat" id="num_releve" name="num_releve" type="text" value="'.(GETPOST('num_releve') ?GETPOST('num_releve') : '').'" size="10">'; // The only default value is value we just entered
+		$texttoshow = $langs->trans("InputReceiptNumber").': ';
+		$yyyy = dol_substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1);
+		$mm = dol_substr($langs->transnoentitiesnoconv("Month"), 0, 1).substr($langs->transnoentitiesnoconv("Month"), 0, 1);
+		$dd = dol_substr($langs->transnoentitiesnoconv("Day"), 0, 1).substr($langs->transnoentitiesnoconv("Day"), 0, 1);
+		$placeholder = $yyyy.$mm;
+		$placeholder .= ' '.$langs->trans("or").' ';
+		$placeholder .= $yyyy.$mm.$dd;
+		if (!$placeholder) {
+			$texttoshow .= $langs->trans("InputReceiptNumberBis");
+		}
+		print $texttoshow;
+		print '<input class="flat width175" pattern="[0-9]+" title="'.dol_escape_htmltag($texttoshow.($placeholder ? ': '.$placeholder : '')).'" id="num_releve" name="num_releve" placeholder="'.dol_escape_htmltag($placeholder).'" type="text" value="'.(GETPOST('num_releve', 'int') ? GETPOST('num_releve', 'int') : '').'">'; // The only default value is value we just entered
 		print '</div>';
 		if (is_array($options) && count($options)) {
 			print $langs->trans("EventualyAddCategory").': ';
