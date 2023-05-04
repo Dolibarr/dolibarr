@@ -130,7 +130,7 @@ llxHeader('', $title, $help_url);
 
 
 // Customer
-$sql = "SELECT sa.rowid, sa.nom as label, sa.code_compta as subaccount, '1' as type, sa.entity";
+$sql = "SELECT sa.rowid, sa.nom as label, sa.code_compta as subaccount, '1' as type, sa.entity, sa.client as nature";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe sa";
 $sql .= " WHERE sa.entity IN (".getEntity('societe').")";
 $sql .= " AND sa.code_compta <> ''";
@@ -178,7 +178,7 @@ if (!empty($search_type) && $search_type >= 0) {
 
 // Supplier
 $sql .= " UNION ";
-$sql .= " SELECT sa.rowid, sa.nom as label, sa.code_compta_fournisseur as subaccount, '2' as type, sa.entity FROM ".MAIN_DB_PREFIX."societe sa";
+$sql .= " SELECT sa.rowid, sa.nom as label, sa.code_compta_fournisseur as subaccount, '2' as type, sa.entity, '0' as nature FROM ".MAIN_DB_PREFIX."societe sa";
 $sql .= " WHERE sa.entity IN (".getEntity('societe').")";
 $sql .= " AND sa.code_compta_fournisseur <> ''";
 //print $sql;
@@ -225,7 +225,7 @@ if (!empty($search_type) && $search_type >= 0) {
 
 // User - Employee
 $sql .= " UNION ";
-$sql .= " SELECT u.rowid, u.lastname as label, u.accountancy_code as subaccount, '3' as type, u.entity FROM ".MAIN_DB_PREFIX."user u";
+$sql .= " SELECT u.rowid, u.lastname as label, u.accountancy_code as subaccount, '3' as type, u.entity, '0' as nature FROM ".MAIN_DB_PREFIX."user u";
 $sql .= " WHERE u.entity IN (".getEntity('user').")";
 $sql .= " AND u.accountancy_code <> ''";
 //print $sql;
@@ -393,7 +393,7 @@ if ($resql) {
 		// Subaccount label
 		if (!empty($arrayfields['label']['checked'])) {
 			print "<td>";
-			print $obj->label;
+			print $obj->nature == 2 ? '<span style = "color: red;"><b>'.$obj->label.' ('.$langs->trans("	Prospect").')</b></span>' : $obj->label;
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
