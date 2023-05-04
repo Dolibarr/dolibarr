@@ -492,8 +492,9 @@ if ($id > 0) {
 		}
 
 		if ($action == 'edit') {
-			print "<form name=\"charge\" action=\"".$_SERVER["PHP_SELF"]."?id=$object->id&amp;action=update\" method=\"post\">";
+			print '<form name="charge" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="action" value="update">';
 		}
 		// Call Hook formConfirm
 		$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);

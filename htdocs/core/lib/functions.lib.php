@@ -11256,17 +11256,19 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  * Get an array with properties of an element.
  *
  * @param   string 	$element_type 	Element type (Value of $object->element). Example:
- * 									'action', 'facture', 'project_task',
+ * 									'action', 'facture', 'project', 'project_task' or
  * 									'myobject@mymodule' or
  * 									'myobject_mysubobject' (where mymodule = myobject, like 'project_task')
- * @return  array					(module, classpath, element, subelement, classfile, classname)
+ * @return  array					array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>)
  * @see fetchObjectByElement()
  */
 function getElementProperties($element_type)
 {
+	global $conf;
+
 	$regs = array();
 
-	$classfile = $classname = $classpath = '';
+	$classfile = $classname = $classpath = $dir_output = '';
 
 	// Parse element/subelement
 	$module = $element_type;
@@ -11401,14 +11403,14 @@ function getElementProperties($element_type)
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.commande';
-		$element = 'commande';
+		$element = 'order_supplier';
 		$subelement = '';
 		$classname = 'CommandeFournisseur';
 	} elseif ($element_type == 'invoice_supplier') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.facture';
-		$element = 'facture';
+		$element = 'invoice_supplier';
 		$subelement = '';
 		$classname = 'FactureFournisseur';
 	} elseif ($element_type == "service") {
@@ -11434,6 +11436,9 @@ function getElementProperties($element_type)
 		$classpath = 'core/class';
 		$module = 'accounting';
 		$subelement = 'fiscalyear';
+	} elseif ($element_type == 'chargesociales') {
+		$classpath = 'compta/sociales/class';
+		$module = 'tax';
 	}
 
 	if (empty($classfile)) {
@@ -11446,13 +11451,32 @@ function getElementProperties($element_type)
 		$classpath = $module.'/class';
 	}
 
+	// Set dir_output
+	if ($module && isset($conf->$module)) {	// The generic case
+		if (!empty($conf->$module->multidir_output[$conf->entity])) {
+			$dir_output = $conf->$module->multidir_output[$conf->entity];
+		} elseif (!empty($conf->$module->output[$conf->entity])) {
+			$dir_output = $conf->$module->output[$conf->entity];
+		} elseif (!empty($conf->$module->dir_output)) {
+			$dir_output = $conf->$module->dir_output;
+		}
+	}
+
+	// Overwrite value for special cases
+	if ($element == 'order_supplier') {
+		$dir_output = $conf->fournisseur->commande->dir_output;
+	} elseif ($element == 'invoice_supplier') {
+		$dir_output = $conf->fournisseur->facture->dir_output;
+	}
+
 	$element_properties = array(
 		'module' => $module,
-		'classpath' => $classpath,
 		'element' => $element,
 		'subelement' => $subelement,
+		'classpath' => $classpath,
 		'classfile' => $classfile,
-		'classname' => $classname
+		'classname' => $classname,
+		'dir_output' => $dir_output
 	);
 	return $element_properties;
 }
