@@ -62,8 +62,8 @@ $object->fetch($id, '', '', 1);
 $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
 
 // Security check
-global $dolibarr_main_instance_unique_id;
-$encodedsecurekey = dol_hash($dolibarr_main_instance_unique_id.'uservirtualcard'.$object->id.'-'.$object->login, 'md5');
+global $conf;
+$encodedsecurekey = dol_hash($conf->file->instance_unique_id.'uservirtualcard'.$object->id.'-'.$object->login, 'md5');
 if ($encodedsecurekey != $securekey) {
 	httponly_accessforbidden('Bad value for securitykey or public profile not enabled');
 }
