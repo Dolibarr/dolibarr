@@ -736,6 +736,7 @@ class Mo extends CommonObject
 								$moline->position = $line->position;
 								$moline->qty_frozen = $line->qty_frozen;
 								$moline->disable_stock_change = $line->disable_stock_change;
+								if (!empty($line->fk_default_workstation)) $moline->fk_default_workstation = $line->fk_default_workstation;
 
 								$resultline = $moline->create($user, false); // Never use triggers here
 								if ($resultline <= 0) {
