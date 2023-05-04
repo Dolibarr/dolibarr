@@ -869,7 +869,7 @@ if ($id > 0 || !empty($ref)) {
 						}
 
 						if ($j == 0) {
-							if (isModEnabled('productbatch') && !empty($objp->batch)) {
+							if (isModEnabled('productbatch') && !empty($objp->tobatch)) {
 								$type = 'batch';
 
 								// Enable hooks to append additional columns
@@ -910,7 +910,7 @@ if ($id > 0 || !empty($ref)) {
 								print '</td>';
 
 								print '<td>';
-								print '<input disabled="" type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
+								print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.GETPOST('lot_number'.$suffix).'">';
 								print '</td>';
 								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 									print '<td class="nowraponall">';
