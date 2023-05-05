@@ -368,7 +368,7 @@ class CompanyBankAccount extends Account
 		}
 		$sql .= ",stripe_card_ref = '".$this->db->escape($this->stripe_card_ref)."'";
 		$sql .= ",stripe_account = '".$this->db->escape($this->stripe_account)."'";
-		$sql .= ",model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
+		$sql .= ",model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
